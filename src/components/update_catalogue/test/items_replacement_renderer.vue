@@ -1,0 +1,829 @@
+<template>
+  <div class="canvas-container" ref="canvasContainer">
+    <!-- Loading Overlay -->
+   
+<div v-if="isLoading" class="scanning-loading-overlay">
+  <div class="loading-screen" :style="{ backgroundImage: `url(${backgroundImageUrl})` }">
+    <div class="wave-overlay"></div>
+    <div class="loading-text">
+      <div class="process-text">Loading Room...</div>
+    </div>
+  </div>
+</div>
+
+    <!-- Main Canvas -->
+    <canvas
+      ref="canvas"
+      :width="canvasWidth"
+      :height="canvasHeight"
+      class="main-canvas"
+      :class="{ 'disabled': isLoading }"
+    ></canvas>
+
+    <!-- Zoom Controls -->
+    <div v-if="!isLoading" class="zoom-controls">
+      <button @click="zoomIn" class="zoom-btn" title="Zoom In">+</button>
+      <span class="zoom-level">{{ Math.round(zoom * 100) }}%</span>
+      <button @click="zoomOut" class="zoom-btn" title="Zoom Out">-</button>
+      <button @click="resetZoomAndPan" class="zoom-btn reset-btn" title="Reset View">⌂</button>
+    </div>
+
+    <!-- Pan Instructions -->
+    <div v-if="zoom > 1 && !isLoading" class="instructions">
+      Click and drag to pan • Mouse wheel to zoom
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'items_replacement_renderer',
+  props: {
+    baseImage: {
+      type: String,
+      required: true
+    }
+  },
+
+  data() {
+    return {
+      canvas: null,
+      ctx: null,
+      baseImg: null,
+      isLoading: false,
+      
+      // Canvas dimensions
+      canvasWidth: 800,
+      canvasHeight: 600,
+      containerWidth: 800,
+      containerHeight: 600,
+      
+      // Image rendering properties
+      renderWidth: 800,
+      renderHeight: 600,
+      renderOffsetX: 0,
+      renderOffsetY: 0,
+      scaleX: 1,
+      scaleY: 1,
+      
+      // Zoom and pan functionality
+      zoom: 1,
+      minZoom:1.0,
+      maxZoom: 5,
+      panX: 0,
+      panY: 0,
+      isDragging: false,
+      dragStartX: 0,
+      dragStartY: 0,
+      dragStartPanX: 0,
+      dragStartPanY: 0,
+      
+      // Resize observer
+      resizeObserver: null
+    }
+  },
+  
+  mounted() {
+    this.setupResizeObserver();
+    this.updateCanvasDimensions();
+    this.initCanvas();
+    this.setupEventListeners();
+    this.loadImage();
+  },
+  
+  beforeUnmount() {
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+    }
+    this.removeEventListeners();
+  },
+  
+  watch: {
+    baseImage() {
+      this.loadImage();
+    }
+  },
+  
+  methods: {
+    // ===================
+    // INITIALIZATION
+    // ===================
+    
+    setupResizeObserver() {
+      if (typeof ResizeObserver !== 'undefined') {
+        this.resizeObserver = new ResizeObserver(() => {
+          this.updateCanvasDimensions();
+          this.$nextTick(() => {
+            this.render();
+          });
+        });
+        
+        if (this.$refs.canvasContainer) {
+          this.resizeObserver.observe(this.$refs.canvasContainer);
+        }
+      } else {
+        // Fallback for older browsers
+        window.addEventListener('resize', this.handleWindowResize);
+      }
+    },
+
+    handleWindowResize() {
+      this.updateCanvasDimensions();
+      this.$nextTick(() => {
+        this.render();
+      });
+    },
+    
+    updateCanvasDimensions() {
+      if (this.$refs.canvasContainer) {
+        const rect = this.$refs.canvasContainer.getBoundingClientRect();
+        this.containerWidth = Math.floor(rect.width);
+        this.containerHeight = Math.floor(rect.height);
+        this.canvasWidth = this.containerWidth;
+        this.canvasHeight = this.containerHeight;
+      }
+    },
+
+    initCanvas() {
+      this.canvas = this.$refs.canvas;
+      
+      if (!this.canvas) {
+        console.error('Canvas ref not found');
+        return;
+      }
+      
+      this.ctx = this.canvas.getContext('2d');
+      
+      // Set initial background
+      this.ctx.fillStyle = '#f0f0f0';
+      this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+    },
+
+    // ===================
+    // EVENT LISTENERS
+    // ===================
+    
+    setupEventListeners() {
+      if (!this.canvas || this.isLoading) return;
+      
+      // Mouse events
+      this.canvas.addEventListener('wheel', this.handleWheel, { passive: false });
+      this.canvas.addEventListener('mousedown', this.handleMouseDown);
+      this.canvas.addEventListener('mousemove', this.handleMouseMove);
+      this.canvas.addEventListener('mouseup', this.handleMouseUp);
+      this.canvas.addEventListener('mouseleave', this.handleMouseUp);
+      this.canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+      
+      // Touch events for mobile
+      this.canvas.addEventListener('touchstart', this.handleTouchStart, { passive: false });
+      this.canvas.addEventListener('touchmove', this.handleTouchMove, { passive: false });
+      this.canvas.addEventListener('touchend', this.handleTouchEnd);
+    },
+
+    removeEventListeners() {
+      if (!this.canvas) return;
+      
+      this.canvas.removeEventListener('wheel', this.handleWheel);
+      this.canvas.removeEventListener('mousedown', this.handleMouseDown);
+      this.canvas.removeEventListener('mousemove', this.handleMouseMove);
+      this.canvas.removeEventListener('mouseup', this.handleMouseUp);
+      this.canvas.removeEventListener('mouseleave', this.handleMouseUp);
+      this.canvas.removeEventListener('touchstart', this.handleTouchStart);
+      this.canvas.removeEventListener('touchmove', this.handleTouchMove);
+      this.canvas.removeEventListener('touchend', this.handleTouchEnd);
+      
+      if (typeof ResizeObserver === 'undefined') {
+        window.removeEventListener('resize', this.handleWindowResize);
+      }
+    },
+
+    // ===================
+    // MOUSE & TOUCH HANDLERS
+    // ===================
+    
+    handleWheel(e) {
+      if (this.isLoading) return;
+      e.preventDefault();
+      
+      const rect = this.canvas.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+      
+      const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
+      const newZoom = Math.max(this.minZoom, Math.min(this.maxZoom, this.zoom * zoomFactor));
+      
+      if (newZoom !== this.zoom) {
+        // Zoom towards mouse position
+        const imageX = (mouseX - this.panX) / this.zoom;
+        const imageY = (mouseY - this.panY) / this.zoom;
+        
+        this.zoom = newZoom;
+        this.panX = mouseX - imageX * this.zoom;
+        this.panY = mouseY - imageY * this.zoom;
+        
+        this.constrainPan();
+        this.render();
+      }
+    },
+
+    handleMouseDown(e) {
+      if (this.isLoading) return;
+      
+      if (e.button === 0 || e.button === 2) { // Left or right click
+        this.isDragging = true;
+        this.dragStartX = e.clientX;
+        this.dragStartY = e.clientY;
+        this.dragStartPanX = this.panX;
+        this.dragStartPanY = this.panY;
+        this.canvas.style.cursor = 'grabbing';
+        e.preventDefault();
+      }
+    },
+
+    handleMouseMove(e) {
+      if (this.isLoading) return;
+      
+      if (this.isDragging) {
+        const deltaX = e.clientX - this.dragStartX;
+        const deltaY = e.clientY - this.dragStartY;
+        
+        this.panX = this.dragStartPanX + deltaX;
+        this.panY = this.dragStartPanY + deltaY;
+        
+        this.constrainPan();
+        this.render();
+        e.preventDefault();
+      } else {
+        // Update cursor based on zoom level
+        this.canvas.style.cursor = this.zoom > 1 ? 'grab' : 'default';
+      }
+    },
+
+    handleMouseUp(e) {
+      if (this.isLoading) return;
+      
+      if (this.isDragging) {
+        this.isDragging = false;
+        this.canvas.style.cursor = this.zoom > 1 ? 'grab' : 'default';
+        e.preventDefault();
+      }
+    },
+
+    // Touch events for mobile devices
+    handleTouchStart(e) {
+      if (this.isLoading) return;
+      e.preventDefault();
+      
+      if (e.touches.length === 1) {
+        const touch = e.touches[0];
+        this.isDragging = true;
+        this.dragStartX = touch.clientX;
+        this.dragStartY = touch.clientY;
+        this.dragStartPanX = this.panX;
+        this.dragStartPanY = this.panY;
+      }
+    },
+
+    handleTouchMove(e) {
+      if (this.isLoading) return;
+      e.preventDefault();
+      
+      if (this.isDragging && e.touches.length === 1) {
+        const touch = e.touches[0];
+        const deltaX = touch.clientX - this.dragStartX;
+        const deltaY = touch.clientY - this.dragStartY;
+        
+        this.panX = this.dragStartPanX + deltaX;
+        this.panY = this.dragStartPanY + deltaY;
+        
+        this.constrainPan();
+        this.render();
+      }
+    },
+
+    handleTouchEnd(e) {
+      if (this.isLoading) return;
+      e.preventDefault();
+      this.isDragging = false;
+    },
+
+    // ===================
+    // ZOOM & PAN CONTROLS
+    // ===================
+    
+    constrainPan() {
+      if (!this.baseImg) return;
+      
+      const zoomedImageWidth = this.renderWidth * this.zoom;
+      const zoomedImageHeight = this.renderHeight * this.zoom;
+      const zoomedImageLeft = this.renderOffsetX * this.zoom;
+      const zoomedImageTop = this.renderOffsetY * this.zoom;
+      
+      // Calculate boundaries
+      const maxPanX = Math.max(0, zoomedImageWidth + zoomedImageLeft - this.canvasWidth);
+      const minPanX = Math.min(0, -zoomedImageLeft);
+      const maxPanY = Math.max(0, zoomedImageHeight + zoomedImageTop - this.canvasHeight);
+      const minPanY = Math.min(0, -zoomedImageTop);
+      
+      // Apply constraints
+      this.panX = Math.max(-maxPanX, Math.min(minPanX, this.panX));
+      this.panY = Math.max(-maxPanY, Math.min(minPanY, this.panY));
+    },
+
+    zoomIn() {
+      if (this.isLoading) return;
+      
+      const newZoom = Math.min(this.maxZoom, this.zoom * 1.2);
+      if (newZoom !== this.zoom) {
+        this.zoomToCenter(newZoom);
+      }
+    },
+
+    zoomOut() {
+      if (this.isLoading) return;
+      
+      const newZoom = Math.max(this.minZoom, this.zoom / 1.2);
+      if (newZoom !== this.zoom) {
+        this.zoomToCenter(newZoom);
+      }
+    },
+
+    zoomToCenter(newZoom) {
+      const centerX = this.canvasWidth / 2;
+      const centerY = this.canvasHeight / 2;
+      
+      const imageX = (centerX - this.panX) / this.zoom;
+      const imageY = (centerY - this.panY) / this.zoom;
+      
+      this.zoom = newZoom;
+      this.panX = centerX - imageX * this.zoom;
+      this.panY = centerY - imageY * this.zoom;
+      
+      this.constrainPan();
+      this.render();
+    },
+
+    resetZoomAndPan() {
+      if (this.isLoading) return;
+      
+      this.zoom = 1;
+      this.panX = 0;
+      this.panY = 0;
+      this.render();
+    },
+
+    // ===================
+    // IMAGE LOADING
+    // ===================
+    
+    async loadImage() {
+      if (!this.baseImage) {
+        console.warn('No base image provided');
+        return;
+      }
+      
+      this.isLoading = true;
+      
+      try {
+        this.baseImg = await this.createImageFromSrc(this.baseImage);
+        this.calculateImageDimensions();
+        this.render();
+      } catch (error) {
+        console.error('Error loading image:', error);
+        this.showErrorState();
+      } finally {
+        this.isLoading = false;
+      }
+    },
+
+    createImageFromSrc(src) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        
+        img.onload = () => resolve(img);
+        img.onerror = (error) => reject(new Error(`Failed to load image: ${src}`));
+        
+        img.src = src;
+      });
+    },
+
+    calculateImageDimensions() {
+      if (!this.baseImg) return;
+      
+      const maxWidth = this.canvasWidth;
+      const maxHeight = this.canvasHeight;
+      
+      const imgAspectRatio = this.baseImg.width / this.baseImg.height;
+      const canvasAspectRatio = maxWidth / maxHeight;
+      
+      if (imgAspectRatio > canvasAspectRatio) {
+        // Image is wider than canvas
+        this.renderWidth = maxWidth;
+        this.renderHeight = Math.round(maxWidth / imgAspectRatio);
+        this.renderOffsetX = 0;
+        this.renderOffsetY = Math.round((maxHeight - this.renderHeight) / 2);
+      } else {
+        // Image is taller than canvas
+        this.renderHeight = maxHeight;
+        this.renderWidth = Math.round(maxHeight * imgAspectRatio);
+        this.renderOffsetX = Math.round((maxWidth - this.renderWidth) / 2);
+        this.renderOffsetY = 0;
+      }
+      
+      this.scaleX = this.renderWidth / this.baseImg.width;
+      this.scaleY = this.renderHeight / this.baseImg.height;
+    },
+
+    // ===================
+    // RENDERING
+    // ===================
+    
+    render() {
+      if (!this.canvas || !this.ctx) return;
+
+      // Clear canvas
+      this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+      
+      // Fill background
+      this.ctx.fillStyle = '#f5f5f5';
+      this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+      
+      if (!this.baseImg) return;
+      
+      this.ctx.save();
+      
+      // Apply transformations
+      this.ctx.translate(this.panX, this.panY);
+      this.ctx.scale(this.zoom, this.zoom);
+      
+      try {
+        // Draw image
+        this.ctx.drawImage(
+          this.baseImg,
+          this.renderOffsetX,
+          this.renderOffsetY,
+          this.renderWidth,
+          this.renderHeight
+        );
+        
+        // Add subtle border
+        this.ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
+        this.ctx.lineWidth = 1 / this.zoom;
+        this.ctx.strokeRect(
+          this.renderOffsetX,
+          this.renderOffsetY,
+          this.renderWidth,
+          this.renderHeight
+        );
+        
+      } catch (error) {
+        console.error('Error rendering image:', error);
+        this.showErrorState();
+      }
+      
+      this.ctx.restore();
+    },
+
+    showErrorState() {
+      if (!this.ctx) return;
+      
+      this.ctx.fillStyle = '#ffcccc';
+      this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+      this.ctx.fillStyle = '#cc0000';
+      this.ctx.font = '20px Arial';
+      this.ctx.textAlign = 'center';
+      this.ctx.fillText(
+        'Error loading image',
+        this.canvasWidth / 2,
+        this.canvasHeight / 2
+      );
+    },
+
+    // ===================
+    // PUBLIC METHODS
+    // ===================
+    
+    updateImage(newImageSrc) {
+      this.baseImage = newImageSrc;
+      this.loadImage();
+    },
+
+    getCanvasState() {
+      return {
+        zoom: this.zoom,
+        panX: this.panX,
+        panY: this.panY,
+        canvasWidth: this.canvasWidth,
+        canvasHeight: this.canvasHeight,
+        renderWidth: this.renderWidth,
+        renderHeight: this.renderHeight,
+        renderOffsetX: this.renderOffsetX,
+        renderOffsetY: this.renderOffsetY
+      };
+    }
+  }
+}
+</script>
+
+<style scoped>
+.canvas-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 300px;
+  overflow: hidden;
+  background: #f5f5f5;
+  /* border-radius: 8px; */
+  border: 1px solid #e1e5e9;
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.9);
+  z-index: 10;
+  border-radius: 8px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f0f0f0;
+  border-left: 4px solid #1890ff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+  margin-top: 16px;
+  color: #666;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.main-canvas {
+  display: block;
+  transition: opacity 0.2s ease;
+  cursor: default;
+}
+
+.main-canvas.disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.zoom-controls {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 8px 12px;
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 5;
+}
+
+.zoom-btn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  background: #1890ff;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+
+.zoom-btn:hover {
+  background: #40a9ff;
+  transform: scale(1.05);
+}
+
+.zoom-btn:active {
+  transform: scale(0.95);
+}
+
+.zoom-btn.reset-btn {
+  font-size: 12px;
+}
+
+.zoom-level {
+  font-size: 12px;
+  font-weight: 500;
+  color: #666;
+  min-width: 36px;
+  text-align: center;
+}
+
+.instructions {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.75);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  text-align: center;
+  z-index: 5;
+  pointer-events: none;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .zoom-controls {
+    top: 8px;
+    right: 8px;
+    padding: 6px 8px;
+    gap: 6px;
+  }
+  
+  .zoom-btn {
+    width: 24px;
+    height: 24px;
+    font-size: 12px;
+  }
+  
+  .zoom-level {
+    font-size: 11px;
+    min-width: 32px;
+  }
+  
+  .instructions {
+    bottom: 8px;
+    font-size: 10px;
+    padding: 6px 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .canvas-container {
+    min-height: 250px;
+  }
+  
+  .zoom-controls {
+    top: 4px;
+    right: 4px;
+    padding: 4px 6px;
+    gap: 4px;
+  }
+  
+  .zoom-btn {
+    width: 20px;
+    height: 20px;
+    font-size: 10px;
+  }
+  
+  .zoom-level {
+    font-size: 10px;
+    min-width: 28px;
+  }
+  
+  .instructions {
+    bottom: 4px;
+    font-size: 9px;
+    padding: 4px 8px;
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .zoom-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+  
+  .main-canvas {
+    touch-action: none;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Updated scanning loading overlay to fit canvas only */
+.scanning-loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.loading-screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+.loading-screen::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* background: rgba(0, 0, 0, 0.05); */
+  z-index: 1;
+}
+.wave-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to left,
+    rgba(0,102,255,1) 0%,   /* bold vertical scanning line */
+    rgba(0,102,255,0.4) 20%,
+    rgba(0,102,255,0.3) 30%, /* fade tail after the bold line */
+    rgba(0,102,255,0.2) 35%,
+    rgba(0,102,255,0.15) 40%,
+    rgba(0,102,255,0.10) 50%,
+    rgba(0,102,255,0.0) 100%
+  );
+  animation: moveWaveLeftToRight 3s linear infinite,
+             waveFade 3s ease-in-out infinite; /* fade control */
+  z-index: 2;
+}
+
+@keyframes moveWaveLeftToRight {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(50%); }
+}
+
+@keyframes waveFade {
+  0%   { opacity: 0; }   /* invisible before entering */
+  10%  { opacity: 1; }   /* fade in */
+  90%  { opacity: 1; }   /* stay visible */
+  100% { opacity: 0; }   /* fade out before reset */
+}
+
+.loading-text {
+  position: relative;
+  color: #fff;
+  text-align: center;
+  z-index: 3;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+  background: rgba(0, 0, 0, 0.3);
+  padding: 20px 30px;
+  border-radius: 10px;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.process-text {
+  font-size: 18px;
+  opacity: 0.9;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+</style>
