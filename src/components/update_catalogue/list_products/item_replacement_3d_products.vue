@@ -46,33 +46,31 @@
 
       <!-- Product Grid/List -->
       <div v-if="!loading" class="product-container" :class="{ 'grid-view': showGrid, 'list-view': !showGrid }">
-         <div v-for="(item, index) in filteredItems" :key="index" @click="updateItemRendering(item.id,item.type,item.model_3d_url)" style="
+         <div v-for="(item, index) in filteredItems" :key="index" @click="updateItemRendering(item['id'],item['3d_model'])" style="
   background: #ffffff;
   border: none;
   border-radius: 4px;
   padding:2px;
   border:1px solid rgba(128, 128, 128, 0.14);">
           <div  class="product-item">
-
           <div class="product-image">
-            <img :src="item.image" :alt="item.title" />
-            <!-- <img :src="this.$store.state.root_api+item.texture_image" :alt="item.title" /> -->
+            <img :src="this.$store.state.root_api+item.primary_image" :alt="item.name" />
             <!-- <div class="product-tag">Ad</div> -->
           </div>
           <div class="product-info">
             <div style="display:flex;justify-content: space-between;" class="">
               <div style="background-color: grey;color :white;border-radius:5px;padding-left:5px;padding-right:5px;padding-top:1px;height:22px;font-size:12px">
-                Modern Floor
+                {{item.category.name}}
               </div>
               <div style="padding:3px;border:1px solid grey;border-radius:5px;padding-left:5px;padding-right:5px;padding-top:1px;height:22px;font-size:12px">AR</div>
             </div>
-            <div class="product-name">{{ item.title }}</div>
-            <div class="product-subtitle">Brown melody'</div>
-            <div class="product-details">
+            <div class="product-name">{{ item.name }}</div>
+            <div class="product-subtitle">{{ item.short_description }}</div>
+            <!-- <div class="product-details">
               <span class="product-color">Color {{ item.color }}</span>
               <div class="color-dot" :style="{ backgroundColor: 'red' }"></div>
-            </div>
-            <div class="product-price">Price <span style="font-weight: 600;">$399</span></div>
+            </div> -->
+            <div class="product-price">Price <span style="font-weight: 600;"><span><del style="font-size:10px;color:orange">${{item.pricing.price}}</del></span>${{item.pricing.current_price}}</span></div>
           </div>
           <!-- <div class="product-actions">
             <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 20 20" fill="none" class="heart-icon">
@@ -115,42 +113,7 @@ export default {
       searchText: '',
       loading: false,
       error: null,
-      catalogItems: [
-        { id:"abc",
-          image:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSCRxeS2S5i8SPy_5IojY8t8Fotgzc8t8sPYA&s',
-          title:"Magnetic Light",
-          type:'strip'
-          // color:"pink"
-        },
-        { id:"bcd",
-          image:'https://image.made-in-china.com/202f0j00PhioLGqdfwbD/Magnetic-Light-System-Recessed-Suction-Lamp-60cm-Magnetic-LED-Track-Lighting.webp',
-            title:"Magnetic strip",
-          type:'strip',
-          // color:"pink"
-        },
-        
-        { id:"def",
-          image:'https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcTdn2k770G_o_V7FzU2UNXP990TerRgVajYa3_TxG1jG_bqXu_Ba-2MYwf9jHwDlExEb2Z9ioEXoWQKWPWkA0D67vm0JzmBkTfikj-oDJmGENJDZTvogQywgg',
-            title:"Plate light",
-          type:'hanging',
-          model_3d_url:'http://127.0.0.1:8000/media/products/lamp_hanger.glb'+ '?t=' + new Date().getTime()
-          // color:"pink"
-        },
-         { id:"efg",
-          image:'https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcTdn2k770G_o_V7FzU2UNXP990TerRgVajYa3_TxG1jG_bqXu_Ba-2MYwf9jHwDlExEb2Z9ioEXoWQKWPWkA0D67vm0JzmBkTfikj-oDJmGENJDZTvogQywgg',
-            title:"hanging light light",
-          type:'hanging',
-          model_3d_url:'http://127.0.0.1:8000/media/products/ceiling_lamp_disk.glb'+ '?t=' + new Date().getTime()
-          // color:"pink"
-        },{ id:"def",
-          image:'https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcTdn2k770G_o_V7FzU2UNXP990TerRgVajYa3_TxG1jG_bqXu_Ba-2MYwf9jHwDlExEb2Z9ioEXoWQKWPWkA0D67vm0JzmBkTfikj-oDJmGENJDZTvogQywgg',
-            title:"hanged  light",
-          type:'hanging',
-          model_3d_url:'http://127.0.0.1:8000/media/products/hanged-lighte.glb'+ '?t=' + new Date().getTime()
-          // color:"pink"
-        },
-
-      ],
+      catalogItems: [],
       showGrid: false, // true for grid, false for list
       // Mock data
       productItems:[]
@@ -169,13 +132,13 @@ export default {
     }
   },
   mounted() {
-    // this.fetchCatalogItems();
+    this.fetchCatalogItems();
   },
   methods: {
     async fetchCatalogItems() {
       this.loading = true;
       try {
-        const url = `${this.$store.state.root_api}room/api/floors/`;
+        const url = `${this.$store.state.root_api}product/api/3d-products/`;
         const response = await fetch(url);
         const data = await response.json();
         console.log(data)
@@ -189,10 +152,10 @@ export default {
       }
     },
     seeAllClicked(){
-      this.$emit('light-see-all', true);
+      this.$emit('products-see-all', true);
     },
-updateItemRendering(uuid, type,model_3d_url){
-      this.$emit('light-selected', {'uuid':uuid,'type':type,'model_3d_url':model_3d_url});
+updateItemRendering(model_id,model_url){
+      this.$emit('change-3d-model', {'model_uuid':model_id ,'model_url':model_url});
 
 }
   }

@@ -157,17 +157,27 @@ Switch Furniture</a-button>
                  @texture-selected="wallTextureSelected"
                  @walls-see-all="wallsSeeAll"
                  ></walls>
-                 <fernitures v-if="current_tab=='image' && active_tab_image ==='home_design' && select_replace==='Furniture'">
+                 <fernitures v-if="current_tab=='image' && active_tab_image ==='home_design' && select_replace==='Furniture'"
+                 @furniture-selected="furnitureSelected"
+                 @furniture-see-all="furnitureSeeAll"
+                 >
                  </fernitures>
-                 <lights v-if="current_tab=='image' && active_tab_image ==='home_design' && select_replace==='Lights'">
+                 <lights v-if="current_tab=='image' && active_tab_image ==='home_design' && select_replace==='Lights'"
+                 @light-selected="lightSelected"
+                 @light-see-all="lightsSeeAll"
+                 >
                  </lights>
                 </div>
             </div>
             <div class="category-section" v-if="active_tab_image === 'item_replacement'">
-               <div class="tab-content-placeholder">
+              <ai_catalog_item_replacement_3d_products
+              @products-see-all=seeAllProductsClicked
+@change-3d-model=change3dModel
+/>
+               <!-- <div class="tab-content-placeholder">
             <h3>Item Replacement </h3>
             <p>Item Replacement tools will be displayed here</p>
-          </div>
+          </div> -->
             </div>
           </div>
         </a-col>
@@ -302,10 +312,7 @@ Switch Furniture</a-button>
  :style="{
     width: '100%',
     height: closeShareMenu
-      ? 'calc(100% - 40px)'
-      : (current_tab === 'image' && active_tab_image === 'home_design' && select_replace === 'Lights'
-          ? 'calc(100% - 0px)'
-          : '100%')
+      ? 'calc(100% - 40px)': '100%'
   }"
 >
 
@@ -332,33 +339,52 @@ Switch Furniture</a-button>
               @make-room-empty="makeRoomEmpty"
               @reset-entire-room="resetChangesinBaseImage"
             />
-
+<!-- ceiling light renderer -->
             <canvas_lights_render 
-              v-if="current_tab=='image' && active_tab_image ==='home_design' && select_replace==='Lights'" 
+              v-if="current_tab=='image' && active_tab_image ==='home_design' && select_replace==='Lights' && selected_light_type==='strip'" 
               :baseImage="base_image_url"
               :isLoading="canvasLoading"
               :depthMask="depthMask"
               :key="canvasKey"
             />
+
+            <!-- glbUrl="http://127.0.0.1:8000/media/products/ceiling_lamp_disk.glb" -->
+  <ceiling_3d_object_renderer 
+              v-if="current_tab=='image' && active_tab_image ==='home_design' && select_replace==='Lights' && selected_light_type==='hanging'" 
+                  :glbUrl="model_3d_url"
+  :baseImageUrl=base_image_url
+  :floorMaskUrl=depthMask
+
+  :roll="ceiling_roll"
+  :pitch="ceiling_pitch"
+  :yaw="ceiling_yaw"/>
+
+<!-- ceiling light renderer -->
+
+
+
             <canvas_walls_render 
               v-if="current_tab=='image' && active_tab_image ==='home_design' && select_replace==='Wall'"
               :baseImage="base_image_url"
               :binaryMasks="binaryMaskList"
               :isLoading="canvasLoading"
               @update:selectedMasks="selected_wall_masks"
+              @rescale-room-layout="rescaleWallMask"
               :key="canvasKey"
             />
 
+            <!-- glbUrl="http://127.0.0.1:8000/media/products/3d_models/046-cp7.glb" -->
             <items_replacement_renderer 
-                 v-if="current_tab === 'image' && active_tab_image === 'item_replacement'" 
-
-                  glbUrl="http://127.0.0.1:8000/media/products/3d_models/046-cp7.glb"
+                 v-if="current_tab === 'image' && active_tab_image === 'item_replacement' " 
+                  :glbUrl="item_replacement_renderer_3d_model_url"
+                  :product_id="selected_3d_product_model"
   :baseImageUrl=base_image_url
   :floorMaskUrl=depthMask
-  :roll="0"
-  :pitch="1.05"
-  :yaw="0"
-            />
+  :roll="floor_roll"
+  :pitch="floor_pitch"
+  :yaw="floor_yaw"
+  @rendered-comfyui-workflow="updateBaskeImageURL_CANVAS"
+  />
 </div>
 
         </a-col>
@@ -408,9 +434,13 @@ import walls from '@/components/update_catalogue/list_products/walls.vue'
 import floor from '@/components/update_catalogue/list_products/floor.vue' 
 import lights from '@/components/update_catalogue/list_products/lights.vue'
 
+// 3d object renderer
+import ceiling_3d_object_renderer from '@/components/update_catalogue/renderer_3d_objects/ceiling_3d_renderer.vue' 
 // imports for bottom drawer products
 import wall_textures_bottom_drawer_menu from '@/components/update_catalogue/bottom_drawer_item_components/wall_textures.vue'
 import floor_textures_bottom_drawer_menu from '@/components/update_catalogue/bottom_drawer_item_components/floor_textures.vue'
+
+import ai_catalog_item_replacement_3d_products from '@/components/update_catalogue/list_products/item_replacement_3d_products.vue'
 export default {
   name: "update_catelogue",
   data() {
@@ -420,6 +450,19 @@ export default {
       current_tab: 'image',
       active_tab_image: 'home_design',
       searchText: '',
+      selected_light_type:'strip',
+      model_3d_url:'',
+      item_replacement_renderer_3d_model_url:'',
+      selected_3d_product_model:'',
+      
+      // 3d room Floor Cordinates       
+      floor_roll:0,
+      floor_pitch:0,
+      floor_yaw:0,
+
+      ceiling_roll:0,
+      ceiling_pitch:0,
+      ceiling_yaw:0,
 
       // Room Data
       base_image_url: '',
@@ -599,6 +642,45 @@ computed: {
       console.log("clicked")
       this.openSeeAll_Floor=true
     },
+    lightsSeeAll(e){
+      console.log(e)
+      console.log("Light See All clicked")
+    },
+    furnitureSeeAll(e){
+      console.log(e)
+      console.log("Furniture See All clicked")
+    },
+    furnitureSelected(e){
+      console.log(e)
+      console.log("Furniture See All clicked")
+    },
+    lightSelected(e){
+      console.log(e)
+      const selectedlightuuid =e['uuid']
+      this.selected_light_type=e['type']
+      this.model_3d_url = e['model_3d_url'] 
+
+    },
+    // itemreplacerenderer
+seeAllProductsClicked(e){
+
+      this.openSeeAll_Products=true
+},
+change3dModel(e){
+this.item_replacement_renderer_3d_model_url=this.$store.state.root_api + e['model_url']
+this.selected_3d_product_model= e['model_uuid']
+// model_uuid
+// model_url
+},
+    updateBaskeImageURL_CANVAS(e){
+      console.log(e)
+      // Update the base image
+          this.base_image_url = this.$store.state.root_api + e
+          // Force canvas to update with new image
+          this.forceCanvasUpdate();
+
+    },
+
     onClose_drawer_modal(){
       this.openSeeAll_Walls=false
       this.openSeeAll_Floor=false
@@ -619,11 +701,13 @@ computed: {
       try {
         // Step 1: Fetch room data first (this will handle polling if not ready)
         await this.fetchRoom();
-        
+        // await this.fetchRoom_floor_3d_cords();
         // Step 2: Only proceed if room is ready
         if (this.is_ready) {
           this.roomLoadingMessage = 'Loading room configurations...';
           await this.fetchBinaryWallMasks();
+          await this.fetchRoom_floor_3d_cords();
+
           console.log('✅ Component initialization completed');
         }
         
@@ -765,6 +849,51 @@ computed: {
       }
     },
 
+    
+    async fetchRoom_floor_3d_cords() {
+      console.log('📡 ---------------------------------...');
+      
+      try {
+        const roomId = this.$route.params.id;
+        const url = `${this.$store.state.root_api}engine/get-room-floor-3d-cords/${roomId}`;
+
+        const responseData = await this.makeApiRequest(url, { method: 'GET' 
+        ,headers: {
+          'Content-Type': 'application/json',
+              'Authorization': `Token ${localStorage.getItem('token')}`
+
+        },
+        }, 'room');
+
+        if (responseData && responseData.data_floor && responseData.data_ceiling) {
+            console.log(responseData.data_floor)
+            this.floor_roll=responseData.data_floor.roll
+            this.floor_pitch=responseData.data_floor.pitch
+            this.floor_yaw=responseData.data_floor.yaw
+
+            
+            console.log(responseData.data_ceiling)
+            this.ceiling_roll=responseData.data_ceiling.roll
+            this.ceiling_pitch=responseData.data_ceiling.pitch
+            this.ceiling_yaw=responseData.data_ceiling.yaw
+        }
+      } catch (error) {
+        console.error("❌ Failed to fetch room:", error);
+        this.error.room = error.message;
+        
+        // Clear polling if error occurs
+        if (this.roomPollingInterval) {
+          clearInterval(this.roomPollingInterval);
+          this.roomPollingInterval = null;
+        }
+        
+        this.showError('Failed to Load Room', error.message, () => {
+          this.roomRetryCount = 0;
+          this.fetchRoom();
+        });
+      }
+    },
+
     startRoomPolling() {
       // Clear existing polling first
       if (this.roomPollingInterval) {
@@ -820,6 +949,8 @@ computed: {
           // Update the base image
           this.base_image_url = this.$store.state.root_api + responseData.final_output;
           
+          await this.fetchBinaryWallMasks(); // This will refresh object masks too
+          // this.forceCanvasUpdate();
           // Force canvas to update with new image
           this.forceCanvasUpdate();
 
@@ -860,8 +991,12 @@ computed: {
           // Update the base image
           this.base_image_url = this.$store.state.root_api + responseData.final_output;
           
+          await this.fetchBinaryWallMasks(); // This will refresh object masks too
+          // this.forceCanvasUpdate();
+          
           // Force canvas to update with new image
           this.forceCanvasUpdate();
+          
 
           this.$message.success('Room image reseted changes successfully !');
         } else {
@@ -1461,6 +1596,51 @@ computed: {
     console.log(e)
     this.selected_binarymasks_walls=e
   },
+async  rescaleWallMask(e){
+
+// 2. FLOOR TEXTURE METHOD (corrected)
+  this.canvasLoading = true;
+
+  try {
+    const url = `${this.$store.state.root_api}engine/rescale-room-layout/`;
+    const requestBody = {
+      room_id: this.$route.params.id,
+    };
+
+    const responseData = await this.makeApiRequest(
+      url,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Token ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify(requestBody)
+      },
+      'rescale-room-walls-layout'
+    );
+
+    if (responseData) {
+      
+      await this.fetchBinaryWallMasks(); // This will refresh object masks too
+      this.forceCanvasUpdate();
+
+      this.$message.success('Floor texture applied successfully!');
+    } else {
+      throw new Error('No final output received from server');
+    }
+  } catch (error) {
+    console.error("Failed to apply floor texture:", error);
+    this.showError(
+      'Failed to Apply Floor Texture', 
+      error.message || 'An error occurred while applying the floor texture.', 
+      () => this.floorTextureSelected(texture_id)
+    );
+  } finally {
+    this.canvasLoading = false;
+  }
+},
+
   // floorTextureSelected(e){
   //   console.log(e)
   // },
@@ -1683,6 +1863,8 @@ async floorTextureSelected(texture_id) {
     canvas_item_remover_render,
     canvas_lights_render,
     canvas_walls_render,
+    
+    // 3d model renderer
     items_replacement_renderer,
 
     // product listings 
@@ -1690,10 +1872,15 @@ async floorTextureSelected(texture_id) {
     walls,
     floor,
     lights,
+    ai_catalog_item_replacement_3d_products,
+
 
     // bottom drawer Menu
     wall_textures_bottom_drawer_menu,
-floor_textures_bottom_drawer_menu
+floor_textures_bottom_drawer_menu,
+
+// 3d floor rendering 
+ceiling_3d_object_renderer
   }
 }
 </script>

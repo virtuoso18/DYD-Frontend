@@ -37,7 +37,7 @@
 
 <script>
 export default {
-  name: 'items_replacement_renderer',
+  name: 'test',
   props: {
     baseImage: {
       type: String,

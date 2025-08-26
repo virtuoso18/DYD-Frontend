@@ -109,6 +109,9 @@
         <a-button type="primary" class="toolbar-btn primary-btn" @click="reset_entire_room">
             Reset room
          </a-button>
+        <a-button type="primary" class="toolbar-btn primary-btn" @click="reset_entire_room">
+            Detect all furniture
+         </a-button>
     </div>
 
     <!-- Zoom Controls -->

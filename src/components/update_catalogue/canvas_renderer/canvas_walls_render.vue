@@ -86,8 +86,8 @@
         </svg>
         Clear
       </button>
-      <a-button type='primary'>
-        Redetect Walls
+      <a-button type='primary' @click="rescaleRoomLayout"> 
+        Rescale Room layout
       </a-button>
       </div>
       
@@ -248,17 +248,15 @@ export default {
              this.internalSelectedMasks.length < this.maskRegions.length;
     }
   },
-  
   mounted() {
-    this.setupResizeObserver();
-    this.updateCanvasDimensions();
-    this.initCanvas();
-    this.setupEventListeners();
-    this.internalSelectedMasks = [...this.selectedMasks];
-    this.loadImages();
-    
-  },
-  
+  this.setupResizeObserver();
+  this.updateCanvasDimensions();
+  this.initCanvas();
+  this.setupEventListeners();
+  this.internalSelectedMasks = [...this.selectedMasks];
+  this.loadImages();
+},
+
   beforeUnmount() {
     if (this.resizeObserver) {
       this.resizeObserver.disconnect();
@@ -686,32 +684,45 @@ export default {
     // MASK PROCESSING
     // ===================
     
-    async processMaskRegions() {
-      if (!this.showSelectionButtons) return;
-      
-      console.log('🚀 Processing mask regions...');
-      
-      this.maskRegions = [];
-      this.maskImageData = [];
-      
-      const batchSize = 3;
-      
-      for (let i = 0; i < this.maskImages.length; i += batchSize) {
-        const batch = this.maskImages.slice(i, i + batchSize);
-        
-        // Process batch
-        await this.processMaskBatch(batch, i);
-        
-        // Yield to browser
-        await this.yieldToBrowser();
-      }
-      
-      // Resolve overlapping buttons
-      this.maskRegions = this.resolveOverlappingButtons(this.maskRegions);
-      
-      console.log(`✅ Processed ${this.maskRegions.length} wall masks`);
-    },
+// 2. Add this new method to select all masks after they're processed
+async processMaskRegions() {
+  if (!this.showSelectionButtons) return;
+  
+  console.log('🚀 Processing mask regions...');
+  
+  this.maskRegions = [];
+  this.maskImageData = [];
+  
+  const batchSize = 3;
+  
+  for (let i = 0; i < this.maskImages.length; i += batchSize) {
+    const batch = this.maskImages.slice(i, i + batchSize);
+    
+    // Process batch
+    await this.processMaskBatch(batch, i);
+    
+    // Yield to browser
+    await this.yieldToBrowser();
+  }
+  
+  // Resolve overlapping buttons
+  this.maskRegions = this.resolveOverlappingButtons(this.maskRegions);
+  
+  // NEW: Auto-select all masks if none are currently selected
+  if (this.internalSelectedMasks.length === 0) {
+    this.selectAllWallsOnInit();
+  }
+  
+  console.log(`✅ Processed ${this.maskRegions.length} wall masks`);
+},
 
+// 3. Add this new method for initial selection
+selectAllWallsOnInit() {
+  const allIndices = this.maskRegions.map(region => region.maskIndex);
+  this.internalSelectedMasks = [...allIndices];
+  this.emitSelectionChange();
+  console.log('🔄 Auto-selected all walls on initialization');
+},
     async processMaskBatch(maskBatch, startIndex) {
       return new Promise((resolve) => {
         setTimeout(() => {
@@ -1125,7 +1136,10 @@ export default {
     // ===================
     // EVENT EMISSION
     // ===================
-    
+    rescaleRoomLayout(){
+      this.$emit('rescale-room-layout', true);
+
+    },
     emitSelectionChange() {
       const selectionData = {
         selectedMasks: [...this.internalSelectedMasks],
