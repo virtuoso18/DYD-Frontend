@@ -1,13 +1,85 @@
 <template>
-    roll = {{roll}} ||  &nbsp; pitch = {{pitch}} ||  &nbsp; yaw = {{yaw}}
+    <!-- roll = {{roll}} ||  &nbsp; pitch = {{pitch}} ||  &nbsp; yaw = {{yaw}} -->
   <div class="main-canvas" ref="canvasContainer">
   
     <div id="viewer" ref="viewer">
       <div id="loading" v-if="loading">Loading 3D model and ceiling data...</div>
       </div>
-  <button @click="generateBinaryMask" class="action-btn" style="">Generate Binary Mask</button>
-  </div>
+    </div>
 
+
+  <div  class="" style="display:flex;justify-content: space-between;padding-left:8px;padding-top:10px;padding-right:10px;background: white;height:50px">
+     
+    <div style="display:flex;flex-direction: row; ">
+    <!-- Roll Control -->
+    <div style="display:flex;align-items:center;gap:4px;">
+      <label style="font-size:10px;font-weight:bold;white-space:nowrap;">Roll</label>
+      <a-slider 
+  v-model:value="adjustRoll"
+  :min="-45"
+  :max="45" 
+  :step="1"
+  :tooltip-formatter="value => `${value}°`"
+  style="width:120px;height:10px"
+/>
+      <span style="font-size:9px;min-width:25px;text-align:center;">{{adjustRoll}}°</span>
+    </div>
+    <!-- Pitch Control -->
+    <div style="display:flex;align-items:center;gap:4px;">
+      <label style="font-size:10px;font-weight:bold;white-space:nowrap;">Pitch</label>
+      <a-slider 
+  v-model:value="adjustPitch"
+  :min="-45"
+  :max="45" 
+  :step="1"
+  :tooltip-formatter="value => `${value}°`"
+  style="width:120px;height:10px"
+/>
+      <span style="font-size:9px;min-width:25px;text-align:center;">{{adjustPitch}}°</span>
+    </div>
+    <!-- Size Control -->
+    
+  <div style="display:flex;align-items:center;gap:4px;">
+      <label style="font-size:10px;font-weight:bold;white-space:nowrap;">Size</label>
+      <a-slider 
+        type="range"
+        v-model:value="modelSizeScale"
+        :min="0.5"
+        :max="2.0"
+        :step="0.1"
+        :tooltip-formatter="value => `${value}°`"
+        style="width:120px;height:10px"
+      />
+      <span style="font-size:9px;min-width:25px;text-align:center;">{{modelSizeScale}}x</span>
+    </div>
+  </div>
+  <!-- Action Button -->
+  <!-- <a-button @click="generateBinaryMask" type="primary" size="medium" >
+    Generate Mask
+  </a-button> -->
+  <!-- <a-button @click="downloadCurrentSceneImage" type="primary" size="medium" >
+    Download current scene
+  </a-button> -->
+  
+
+<div>
+  
+<div style="display:flex;gap:10px;">
+
+  <a-button  class="toolbar-btn primary-btn" @click="reset_entire_room" :disabled="isLoading">
+    Before
+  </a-button>
+  <a-button type="primary" class="toolbar-btn primary-btn" @click="reset_entire_room" :disabled="isLoading">
+    After
+  </a-button>
+</div>
+      </div>
+      <div >
+        <a-button type="primary" class="toolbar-btn primary-btn" @click="downloadCurrentSceneImage" :disabled="isLoading">
+          Apply Changes
+        </a-button>
+      </div>
+    </div>
 </template>
 
 <script setup>
@@ -16,6 +88,16 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
+
+import { useRoute } from 'vue-router';
+import { useStore } from 'vuex';
+import { defineEmits } from 'vue';
+
+// Define the emit
+const emit = defineEmits(['model-3d-light-added']);
+const route = useRoute();
+const store=useStore();
+
 const props = defineProps({
   glbUrl: { type: String, required: true },
   baseImageUrl: { type: String, required: true },
@@ -23,8 +105,19 @@ const props = defineProps({
   roll: { type: Number, default: 0 },
   pitch: { type: Number, default: 0 },
   yaw: { type: Number, default: 0 },
+  isLoading:{ type: Boolean, default: false,required: false },
   ceilingHeight: { type: Number, default:1-0 }, // New prop for ceiling height
 });
+
+// Add these reactive variables at the top of your script setup
+const canvasWidth = ref(800);
+const canvasHeight = ref(600);
+
+// New reactive variables for the controls
+const adjustRoll = ref(0);
+const adjustPitch = ref(0);
+const modelSizeScale = ref(1.0);
+let originalModelScale = 1.0; // Store the original scale after initial fitting
 
 // Add watchers for props that should trigger reloads
 watch(() => props.glbUrl, (newUrl, oldUrl) => {
@@ -63,6 +156,25 @@ watch([() => props.roll, () => props.pitch, () => props.yaw], ([newRoll, newPitc
   }
   if (gridHelper) {
     createVisualGrid();
+  }
+});
+
+// Watch for adjust roll changes
+watch(adjustRoll, (newRoll) => {
+  if (model) {
+    updateModelRoll();
+  }
+});
+watch(adjustPitch, (adjustPitch) => {
+  if (model) {
+    updateModelPitch();
+  }
+});
+
+// Watch for model size changes
+watch(modelSizeScale, (newScale) => {
+  if (model) {
+    updateModelSize();
   }
 });
 
@@ -153,12 +265,79 @@ let rotationControlsGroup, rotationCircle, rotationArrows;
 let currentBackgroundTexture = null;
 let ceilingMaskMesh = null; // Changed from floorMaskMesh
 
+// New function to update model roll
+function updateModelRoll() {
+  if (!model) return;
+  
+  // Apply roll rotation to the model
+  const rollRadians = THREE.MathUtils.degToRad(adjustRoll.value);
+  
+  // Create rotation matrix for roll (rotation around Z-axis)
+  const rollMatrix = new THREE.Matrix4().makeRotationZ(rollRadians);
+  
+  // Create rotation matrix for existing Y rotation
+  const yRotationMatrix = new THREE.Matrix4().makeRotationY(THREE.MathUtils.degToRad(modelRotation.y));
+  
+  // Combine rotations: apply Y rotation first, then roll
+  const combinedMatrix = new THREE.Matrix4().multiplyMatrices(rollMatrix, yRotationMatrix);
+  
+  // Apply the combined rotation to the model
+  model.rotation.setFromRotationMatrix(combinedMatrix);
+}
+
+
+// New function to update model Pitch
+
+// Corrected function to update model Pitch
+function updateModelPitch() {
+  if (!model) return;
+  
+  // Apply pitch rotation to the model (rotation around X-axis)
+  const pitchRadians = THREE.MathUtils.degToRad(adjustPitch.value);
+  
+  // Create rotation matrix for pitch (rotation around X-axis)
+  const pitchMatrix = new THREE.Matrix4().makeRotationX(pitchRadians);
+  
+  // Create rotation matrix for existing Y rotation
+  const yRotationMatrix = new THREE.Matrix4().makeRotationY(THREE.MathUtils.degToRad(modelRotation.y));
+  
+  // Create rotation matrix for existing roll rotation (if you have adjustRoll)
+  const rollMatrix = new THREE.Matrix4().makeRotationZ(THREE.MathUtils.degToRad(adjustRoll.value || 0));
+  
+  // Combine rotations in proper order: Y (yaw) -> X (pitch) -> Z (roll)
+  const tempMatrix = new THREE.Matrix4().multiplyMatrices(pitchMatrix, yRotationMatrix);
+  const combinedMatrix = new THREE.Matrix4().multiplyMatrices(rollMatrix, tempMatrix);
+  
+  // Apply the combined rotation to the model
+  model.rotation.setFromRotationMatrix(combinedMatrix);
+}
+
+
+// New function to update model size
+function updateModelSize() {
+  if (!model || !originalModelScale) return;
+  
+  // Apply the new scale based on the original fitted scale
+  const newScale = originalModelScale * modelSizeScale.value;
+  model.scale.setScalar(newScale);
+  
+  // Update bounding box and related properties
+  modelBoundingBox = new THREE.Box3().setFromObject(model);
+  modelSize = modelBoundingBox.getSize(new THREE.Vector3());
+  modelCenter = modelBoundingBox.getCenter(new THREE.Vector3());
+  
+  // Update position to maintain ceiling attachment
+  updateModelPositionOnCeiling();
+  updateRotationControlsPosition();
+}
+
+// Update your onMounted to include resize observer setup
 onMounted(() => {
   const container = viewer.value;
   initializeScene(container);
   initializeBackground();
   initializeLighting();
-  loadCeilingMask(); // Changed from loadFloorMask
+  loadCeilingMask();
   initializeEnhancedGrid();
   initializeRotationControls();
   initializeControls();
@@ -166,18 +345,37 @@ onMounted(() => {
   loadModel();
 
   window.addEventListener("resize", onWindowResize);
+  
+  // Setup resize observer for better responsiveness
+  const cleanupResize = setupResizeObserver();
+  
+  // Store cleanup function for unmount
+  if (cleanupResize) {
+    onBeforeUnmount(cleanupResize);
+  }
+  
   animate();
 });
-
+// Update your initializeScene function to use reactive dimensions
 function initializeScene(container) {
   scene = new THREE.Scene();
   backgroundScene = new THREE.Scene();
   backgroundCamera = new THREE.Camera();
 
-  camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+  // Get initial container dimensions
+  const rect = container.getBoundingClientRect();
+  canvasWidth.value = rect.width;
+  canvasHeight.value = rect.height;
+
+  camera = new THREE.PerspectiveCamera(
+    45, 
+    canvasWidth.value / canvasHeight.value, 
+    0.1, 
+    1000
+  );
 
   renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.setSize(container.clientWidth, container.clientHeight);
+  renderer.setSize(canvasWidth.value, canvasHeight.value);
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.shadowMap.enabled = true;
@@ -185,6 +383,23 @@ function initializeScene(container) {
   container.appendChild(renderer.domElement);
 }
 
+// Add a resize observer for better responsiveness (optional but recommended)
+function setupResizeObserver() {
+  if (typeof ResizeObserver !== 'undefined' && canvasContainer.value) {
+    const resizeObserver = new ResizeObserver(() => {
+      if (currentBackgroundTexture) {
+        adjustCanvasToImageAspectRatio(currentBackgroundTexture);
+        updateBackground(currentBackgroundTexture);
+      }
+    });
+    
+    resizeObserver.observe(canvasContainer.value);
+    
+    // Return cleanup function
+    return () => resizeObserver.disconnect();
+  }
+  return null;
+}
 function initializeBackground() {
   const canvas = document.createElement('canvas');
   canvas.width = 512;
@@ -271,30 +486,286 @@ function generateBinaryMask() {
   console.log(`Binary mask generated with dimensions: ${bgWidth}x${bgHeight}`);
 }
 
+// Alternative simpler version if you want to render directly from the main scene
+// function downloadCurrentSceneImage() {
+//   if (!renderer || !scene || !camera || !currentBackgroundTexture || !model) {
+//     console.warn("Required components not available for image generation");
+//     return;
+//   }
+
+//   // Get current canvas dimensions
+//   const width = renderer.domElement.width;
+//   const height = renderer.domElement.height;
+
+//   // Store original visibility states
+//   const originalRotationControlsVisible = rotationControlsGroup ? rotationControlsGroup.visible : false;
+//   const originalGridVisible = gridHelper ? gridHelper.visible : false;
+//   const originalCeilingMaskVisible = ceilingMaskMesh ? ceilingMaskMesh.visible : false;
+
+//   // Hide UI elements temporarily
+//   if (rotationControlsGroup) rotationControlsGroup.visible = false;
+//   if (gridHelper) gridHelper.visible = false;
+//   if (ceilingMaskMesh) ceilingMaskMesh.visible = false;
+
+//   // Create a temporary canvas for compositing
+//   const compositeCanvas = document.createElement('canvas');
+//   compositeCanvas.width = width;
+//   compositeCanvas.height = height;
+//   const ctx = compositeCanvas.getContext('2d');
+
+//   // Step 1: Draw the background image
+//   const bgImage = currentBackgroundTexture.image;
+//   ctx.drawImage(bgImage, 0, 0, width, height);
+
+//   // Step 2: Render only the 3D model scene
+//   // Temporarily clear the background scene to render only the model
+//   const originalBgMeshVisible = bgMesh ? bgMesh.visible : false;
+//   if (bgMesh) bgMesh.visible = false;
+
+//   // Set transparent background for model rendering
+//   const originalClearColor = renderer.getClearColor(new THREE.Color());
+//   const originalClearAlpha = renderer.getClearAlpha();
+//   renderer.setClearColor(0x000000, 0); // Transparent background
+
+//   // Render only the 3D scene (model without background)
+//   renderer.autoClear = false;
+//   renderer.clear();
+//   renderer.render(scene, camera);
+
+//   // Step 3: Get the model render as image data
+//   const modelImageData = renderer.domElement.toDataURL('image/png');
+
+//   // Step 4: Create an image element and composite it
+//   const modelImage = new Image();
+//   modelImage.onload = function() {
+//     // Draw the model on top of the background with proper blending
+//     ctx.globalCompositeOperation = 'source-over';
+//     ctx.drawImage(modelImage, 0, 0, width, height);
+
+//     // Step 5: Download the composite image
+//     const finalDataURL = compositeCanvas.toDataURL('image/png', 0.95);
+    
+//     const link = document.createElement('a');
+//     link.download = `ceiling_model_composite_${Date.now()}.png`;
+//     link.href = finalDataURL;
+//     document.body.appendChild(link);
+//     link.click();
+//     document.body.removeChild(link);
+
+//     console.log(`Composite image downloaded with dimensions: ${width}x${height}`);
+
+//     // Restore original states
+//     if (rotationControlsGroup) rotationControlsGroup.visible = originalRotationControlsVisible;
+//     if (gridHelper) gridHelper.visible = originalGridVisible;
+//     if (ceilingMaskMesh) ceilingMaskMesh.visible = originalCeilingMaskVisible;
+//     if (bgMesh) bgMesh.visible = originalBgMeshVisible;
+    
+//     // Restore renderer settings
+//     renderer.setClearColor(originalClearColor, originalClearAlpha);
+//     renderer.autoClear = true;
+
+//     // Resume normal rendering
+//     renderer.clear();
+//     renderer.render(backgroundScene, backgroundCamera);
+//     renderer.render(scene, camera);
+//   };
+
+//   modelImage.src = modelImageData;
+// }
+
+async function downloadCurrentSceneImage() {
+  if (!renderer || !scene || !camera || !currentBackgroundTexture || !model) {
+    console.warn("Required components not available for image generation");
+    return;
+  }
+
+  try {
+    // Get current canvas dimensions
+    const width = renderer.domElement.width;
+    const height = renderer.domElement.height;
+
+    // Store original visibility states
+    const originalRotationControlsVisible = rotationControlsGroup ? rotationControlsGroup.visible : false;
+    const originalGridVisible = gridHelper ? gridHelper.visible : false;
+    const originalCeilingMaskVisible = ceilingMaskMesh ? ceilingMaskMesh.visible : false;
+
+    // Hide UI elements temporarily
+    if (rotationControlsGroup) rotationControlsGroup.visible = false;
+    if (gridHelper) gridHelper.visible = false;
+    if (ceilingMaskMesh) ceilingMaskMesh.visible = false;
+
+    // Create a temporary canvas for compositing
+    const compositeCanvas = document.createElement('canvas');
+    compositeCanvas.width = width;
+    compositeCanvas.height = height;
+    const ctx = compositeCanvas.getContext('2d');
+
+    // Step 1: Draw the background image
+    const bgImage = currentBackgroundTexture.image;
+    ctx.drawImage(bgImage, 0, 0, width, height);
+
+    // Step 2: Render only the 3D model scene
+    // Temporarily clear the background scene to render only the model
+    const originalBgMeshVisible = bgMesh ? bgMesh.visible : false;
+    if (bgMesh) bgMesh.visible = false;
+
+    // Set transparent background for model rendering
+    const originalClearColor = renderer.getClearColor(new THREE.Color());
+    const originalClearAlpha = renderer.getClearAlpha();
+    renderer.setClearColor(0x000000, 0); // Transparent background
+
+    // Render only the 3D scene (model without background)
+    renderer.autoClear = false;
+    renderer.clear();
+    renderer.render(scene, camera);
+
+    // Step 3: Get the model render as image data
+    const modelImageData = renderer.domElement.toDataURL('image/png');
+
+    // Step 4: Create composite image
+    const finalDataURL = await new Promise((resolve) => {
+      const modelImage = new Image();
+      modelImage.onload = function() {
+        // Draw the model on top of the background with proper blending
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.drawImage(modelImage, 0, 0, width, height);
+        
+        // Get final composite image
+        resolve(compositeCanvas.toDataURL('image/png', 0.95));
+      };
+      modelImage.src = modelImageData;
+    });
+
+    // Step 5: Send to server via POST request
+    const response = await fetch(store.state.root_api + '/engine/added-3d-light-to-room/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        image: finalDataURL,
+        room_id: route.params.id,
+        timestamp: Date.now(),
+        // Add any additional metadata you want to send
+        metadata: {
+          modelPosition: {
+            x: modelPosition.x,
+            y: modelPosition.y,
+            rotation: modelRotation.y
+          },
+          ceilingAngles: {
+            roll: ceilingAngles.roll,
+            pitch: ceilingAngles.pitch,
+            yaw: ceilingAngles.yaw
+          },
+          modelScale: modelSizeScale.value,
+          ceilingHeight: currentCeilingHeight.value,
+          dimensions: {
+            width: width,
+            height: height
+          }
+        }
+      })
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      console.log('Image successfully sent to server:', result);
+      emit('model-3d-light-added', result);
+      
+      // Optional: Still download locally as backup
+      // const link = document.createElement('a');
+      // link.download = `ceiling_model_composite_${Date.now()}.png`;
+      // link.href = finalDataURL;
+      // document.body.appendChild(link);
+      // link.click();
+      // document.body.removeChild(link);
+    } else {
+      console.error('Failed to send image to server:', response.status, response.statusText);
+      
+      // Fallback: Download locally if server fails
+      const link = document.createElement('a');
+      link.download = `ceiling_model_composite_${Date.now()}.png`;
+      link.href = finalDataURL;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    console.log(`Composite image processed with dimensions: ${width}x${height}`);
+
+    // Restore original states
+    if (rotationControlsGroup) rotationControlsGroup.visible = originalRotationControlsVisible;
+    if (gridHelper) gridHelper.visible = originalGridVisible;
+    if (ceilingMaskMesh) ceilingMaskMesh.visible = originalCeilingMaskVisible;
+    if (bgMesh) bgMesh.visible = originalBgMeshVisible;
+    
+    // Restore renderer settings
+    renderer.setClearColor(originalClearColor, originalClearAlpha);
+    renderer.autoClear = true;
+
+    // Resume normal rendering
+    renderer.clear();
+    renderer.render(backgroundScene, backgroundCamera);
+    renderer.render(scene, camera);
+
+  } catch (error) {
+    console.error('Error in downloadCurrentSceneImage:', error);
+    
+    // Restore states even if error occurs
+    if (rotationControlsGroup) rotationControlsGroup.visible = originalRotationControlsVisible;
+    if (gridHelper) gridHelper.visible = originalGridVisible;
+    if (ceilingMaskMesh) ceilingMaskMesh.visible = originalCeilingMaskVisible;
+    if (bgMesh) bgMesh.visible = originalBgMeshVisible;
+    
+    if (renderer) {
+      renderer.setClearColor(originalClearColor || 0x000000, originalClearAlpha || 1);
+      renderer.autoClear = true;
+    }
+  }
+}
+
+
+
+// Corrected adjustCanvasToImageAspectRatio function with 800px max width
 function adjustCanvasToImageAspectRatio(texture) {
   if (!texture.image || !canvasContainer.value) return;
   
   const imgAspect = texture.image.width / texture.image.height;
-  const maxWidth = 800;
-  const maxHeight = 550;
+  const maxWidth = 850;
   
-  let canvasWidth, canvasHeight;
+  // Get the parent container's width
+  const containerRect = canvasContainer.value.getBoundingClientRect();
+  const availableWidth = containerRect.width;
   
-  if (imgAspect > maxWidth / maxHeight) {
-    canvasWidth = maxWidth;
-    canvasHeight = maxWidth / imgAspect;
-  } else {
-    canvasHeight = maxHeight;
-    canvasWidth = maxHeight * imgAspect;
+  // Use smaller of available width or max width
+  const newCanvasWidth = Math.min(availableWidth, maxWidth);
+  const newCanvasHeight = Math.round(newCanvasWidth / imgAspect);
+  
+  // Update reactive variables
+  canvasWidth.value = newCanvasWidth;
+  canvasHeight.value = newCanvasHeight;
+  
+  // Update container styling
+  canvasContainer.value.style.width = `${newCanvasWidth}px`;
+  canvasContainer.value.style.height = `${newCanvasHeight}px`;
+  canvasContainer.value.style.maxWidth = `${maxWidth}px`;
+  canvasContainer.value.style.margin = '0 auto'; // Center the canvas
+  
+  // Update Three.js renderer
+  if (renderer) {
+    renderer.setSize(newCanvasWidth, newCanvasHeight);
   }
   
-  canvasContainer.value.style.width = `${canvasWidth}px`;
-  canvasContainer.value.style.height = `${canvasHeight}px`;
+  // Update camera aspect ratio
+  if (camera) {
+    camera.aspect = imgAspect;
+    camera.updateProjectionMatrix();
+  }
   
-  renderer.setSize(canvasWidth, canvasHeight);
-  camera.aspect = canvasWidth / canvasHeight;
-  camera.updateProjectionMatrix();
+  console.log(`Canvas resized to: ${newCanvasWidth}x${newCanvasHeight} (aspect: ${imgAspect.toFixed(2)}, max: ${maxWidth}px)`);
 }
+
 
 function loadCeilingMask() { // Changed from loadFloorMask
   const loader = new THREE.TextureLoader();
@@ -602,24 +1073,16 @@ function updateRotationControlsPosition() {
   rotationControlsGroup.scale.setScalar(scale);
 }
 
-// function initializeControls() {
-//   controls = new OrbitControls(camera, renderer.domElement);
-  
-//   controls.enableRotate = false;
-//   controls.enableZoom = false;
-//   controls.enablePan = false;
-
-//   // Position camera to view ceiling-mounted objects
-//   camera.position.set(10, props.ceilingHeight - 5, 10);
-//   controls.target.set(0, props.ceilingHeight - 2, 0);
-//   controls.update();
-// }
 function initializeControls() {
   controls = new OrbitControls(camera, renderer.domElement);
   
   controls.enableRotate = false;
-  controls.enableZoom = false;
+  controls.enableZoom = true; // Enable zoom
   controls.enablePan = false;
+
+  // Set zoom limits
+  controls.minDistance = 5;
+  controls.maxDistance = 50;
 
   // NEW: Position camera to view top area of canvas
   const topAreaY = props.ceilingHeight + 3; // Higher Y position
@@ -823,6 +1286,9 @@ function loadModel() {
       const desiredSize = 2;
       const scaleFactor = desiredSize / maxDim;
       model.scale.setScalar(scaleFactor);
+      
+      // Store the original scale for size adjustments
+      originalModelScale = scaleFactor;
 
       modelBoundingBox = new THREE.Box3().setFromObject(model);
       modelSize = modelBoundingBox.getSize(new THREE.Vector3());
@@ -884,26 +1350,7 @@ function cleanupResources() {
     currentBackgroundTexture.dispose();
   }
 }
-// function fitCameraToModel() {
-//   if (!model || !modelSize) return;
-  
-//   const maxDim = Math.max(modelSize.x, modelSize.y, modelSize.z);
-//   const fov = camera.fov * (Math.PI / 180);
-//   const fitHeightDistance = maxDim / (2 * Math.tan(fov / 2));
-//   const fitWidthDistance = fitHeightDistance / camera.aspect;
-  
-//   const distance = Math.max(fitHeightDistance, fitWidthDistance) * 5.0;
 
-//   // Position camera below the ceiling-mounted model
-//   camera.position.set(distance * 0.5, props.ceilingHeight - distance * 0.6, distance * 0.8);
-  
-//   const modelWorldY = model.position.y - modelSize.y * 0.5; // Look at bottom of hanging model
-//   controls.target.copy(new THREE.Vector3(0, modelWorldY, 0));
-//   controls.update();
-// }
-
-
-// 2. In fitCameraToModel() function - REPLACE the camera positioning section:
 function fitCameraToModel() {
   if (!model || !modelSize) return;
   
@@ -958,7 +1405,20 @@ function updateModelPositionOnCeiling() { // Changed from updateModelPositionOnF
 
 function updateModelRotation() {
   if (!model) return;
-  model.rotation.y = THREE.MathUtils.degToRad(modelRotation.y);
+  
+  // Combine Y rotation with roll rotation
+  const yRotation = THREE.MathUtils.degToRad(modelRotation.y);
+  const rollRotation = THREE.MathUtils.degToRad(adjustRoll.value);
+  
+  // Create rotation matrices
+  const yRotationMatrix = new THREE.Matrix4().makeRotationY(yRotation);
+  const rollMatrix = new THREE.Matrix4().makeRotationZ(rollRotation);
+  
+  // Combine rotations: apply Y rotation first, then roll
+  const combinedMatrix = new THREE.Matrix4().multiplyMatrices(rollMatrix, yRotationMatrix);
+  
+  // Apply the combined rotation to the model
+  model.rotation.setFromRotationMatrix(combinedMatrix);
 }
 
 function animate() {
@@ -971,9 +1431,11 @@ function animate() {
   renderer.render(scene, camera);
 }
 
+// Enhanced onWindowResize function
 function onWindowResize() {
-  if (!currentBackgroundTexture) return;
+  if (!currentBackgroundTexture || !canvasContainer.value) return;
   
+  // Recalculate dimensions based on current container size
   adjustCanvasToImageAspectRatio(currentBackgroundTexture);
   updateBackground(currentBackgroundTexture);
 }
@@ -1000,11 +1462,10 @@ onBeforeUnmount(() => {
   }
 });
 </script>
-
 <style scoped>
 .controls-panel {
   display: none;
-  position: absolute;
+  /* position: absolute; */
   right: 10px;
   background: rgba(0, 0, 0, 0.8);
   color: white;
@@ -1012,8 +1473,8 @@ onBeforeUnmount(() => {
   border-radius: 8px;
   font-family: Arial, sans-serif;
   font-size: 12px;
-  max-width: 300px;
-  max-height: calc(100vh);
+  max-width: 600px;
+  max-height: calc(90vh);
   overflow-y: auto;
   z-index: 1000;
 }
@@ -1106,25 +1567,6 @@ onBeforeUnmount(() => {
   font-size: 11px;
 }
 
-button {
-  background: #444;
-  color: white;
-  border: 1px solid #666;
-  padding: 6px 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 11px;
-  margin: 2px;
-}
-
-button:hover {
-  background: #555;
-}
-
-button:active {
-  background: #333;
-}
-
 .drag-info {
   margin-top: 8px;
   padding-top: 8px;
@@ -1175,7 +1617,7 @@ button:active {
     display: block;
     margin: auto;
     width: 100%;
-    height: 100vh;
+    height: 70vh;
 }
 
 #viewer {
@@ -1195,30 +1637,6 @@ button:active {
   border-radius: 8px;
   font-family: Arial, sans-serif;
   z-index: 1000;
-}
-
-.action-btn {
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-  background: #007acc;
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: bold;
-  z-index: 1000;
-  transition: background-color 0.3s ease;
-}
-
-.action-btn:hover {
-  background: #005a99;
-}
-
-.action-btn:active {
-  background: #004477;
 }
 
 /* Ceiling-specific visual indicators */

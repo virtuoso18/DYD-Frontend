@@ -6,7 +6,7 @@
       <div style="font-size:14px;margin-top:8px;">Choose any product to get replacement visualization</div>
     </div>
   </div>
-  <div v-else>
+  <div v-else style="display: flex;justify-content: center;align-items: center;">
     <!-- roll = {{roll}} ||  &nbsp; pitch = {{pitch}} ||  &nbsp; yaw = {{yaw}} -->
     
     <div class="main-canvas" ref="canvasContainer">
@@ -27,12 +27,34 @@
       <!-- Action Buttons -->
       
     </div>
-    <div v-if="!isLoading && modelLoaded" class="action-buttons">
-      <!-- <button @click="generateBinaryMask" class="action-btn">Generate Binary Mask</button> -->
-      <a-button size="small" @click="renderItem"type='primary'>Render 3D Item</a-button>
-    </div>
     
   </div>
+  <div v-if="!isLoading" class="action-buttons" style="display:flex;justify-content: space-between;padding-left:10px;padding-right:10px;background: white;">
+     
+  <div style="padding-top:5px;">
+<div style="display:flex;gap:5px;padding-top:5px;">
+    <a-button size="medium" @click="renderItem"type='primary'>Render 3D Item</a-button>
+</div>
+</div>
+<div>
+  
+<div style="padding-top:5px;display:flex;gap:10px;">
+
+  <a-button   @click="reset_entire_room">
+    Before
+  </a-button>
+  <a-button type="primary"  @click="reset_entire_room">
+    After
+  </a-button>
+</div>
+      </div>
+      <div style="padding-top:10px;">
+        <a-button type="primary"  @click="reset_entire_room">
+          Apply Changes
+        </a-button>
+      </div>
+    </div>
+
 </template>
 
 <script>
@@ -951,30 +973,40 @@ export default {
       this.controls.update();
     },
 
-    adjustCanvasToImageAspectRatio(texture) {
-      if (!texture.image || !this.$refs.canvasContainer) return;
-      
-      const imgAspect = texture.image.width / texture.image.height;
-      const maxWidth = 800;
-      const maxHeight = 550;
-      
-      let canvasWidth, canvasHeight;
-      
-      if (imgAspect > maxWidth / maxHeight) {
-        canvasWidth = maxWidth;
-        canvasHeight = maxWidth / imgAspect;
-      } else {
-        canvasHeight = maxHeight;
-        canvasWidth = maxHeight * imgAspect;
-      }
-      
-      this.$refs.canvasContainer.style.width = `${canvasWidth}px`;
-      this.$refs.canvasContainer.style.height = `${canvasHeight}px`;
-      
-      this.renderer.setSize(canvasWidth, canvasHeight);
-      this.camera.aspect = canvasWidth / canvasHeight;
-      this.camera.updateProjectionMatrix();
-    },
+adjustCanvasToImageAspectRatio(texture) {
+  if (!texture.image || !this.$refs.canvasContainer) return;
+  
+  // Get available container space
+  const containerRect = this.$refs.canvasContainer.getBoundingClientRect();
+  const availableWidth = Math.floor(containerRect.width);
+  const availableHeight = Math.floor(containerRect.height);
+  
+  // Apply your maximum constraints
+  const maxWidth = Math.min(availableWidth, 900);
+  const maxHeight = Math.min(availableHeight, 600);
+  
+  const imgAspect = texture.image.width / texture.image.height;
+  const maxAspect = maxWidth / maxHeight;
+  
+  let canvasWidth, canvasHeight;
+  
+  if (imgAspect > maxAspect) {
+    // Image is wider - constrain by width
+    canvasWidth = maxWidth;
+    canvasHeight = Math.round(maxWidth / imgAspect);
+  } else {
+    // Image is taller - constrain by height
+    canvasHeight = maxHeight;
+    canvasWidth = Math.round(maxHeight * imgAspect);
+  }
+  
+  // this.$refs.canvasContainer.style.width = `${canvasWidth}px`;
+  // this.$refs.canvasContainer.style.height = `${canvasHeight}px`;
+  
+  this.renderer.setSize(canvasWidth, canvasHeight);
+  this.camera.aspect = canvasWidth / canvasHeight;
+  this.camera.updateProjectionMatrix();
+},
 
     updateBackground(texture) {
       texture.minFilter = THREE.LinearFilter;
@@ -1321,24 +1353,6 @@ export default {
   font-size: 11px;
 }
 
-button {
-  background: #444;
-  color: white;
-  border: 1px solid #666;
-  padding: 6px 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 11px;
-  margin: 2px;
-}
-
-button:hover {
-  background: #555;
-}
-
-button:active {
-  background: #333;
-}
 
 .drag-info {
   margin-top: 8px;
@@ -1385,16 +1399,19 @@ button:active {
   color: #00ff88 !important;
   font-weight: bold;
 }
-
 .main-canvas {
   display: block;
-  margin: auto;
+  margin: 0 auto;
+  /* width: fit-content; */
   width: 100%;
-  /* height: 100vh; */
-  /* position: relative; */
+  height: 76vh;
+  position: relative;
+  text-align: center;
 }
-
 #viewer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 100%;
   height: 100%;
 }
@@ -1404,6 +1421,8 @@ button:active {
   bottom: 20px;
   right: 20px;
   display: flex;
+  background:rgb(255, 255, 255);
+  height:8vh;
   gap: 10px;
   z-index: 5;
 }

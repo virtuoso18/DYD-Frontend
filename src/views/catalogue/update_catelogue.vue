@@ -74,7 +74,7 @@ Switch Furniture</a-button>
         <!-- Left Sidebar - Tool Icons -->
         <a-col :span="1" class="left-sidebar">
           <div class="tool-icons">
-            <div :class="current_tab==='image' ?'tool-item active' :'tool-item '" @click="current_tab='image'">
+            <div :class="current_tab==='image' ?'tool-item active' :'tool-item '" @click="changeCurrentTab('image')">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none">
                 <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke="currentColor" stroke-width="2"/>
                 <circle cx="8.5" cy="8.5" r="1.5" stroke="currentColor" stroke-width="2"/>
@@ -82,7 +82,7 @@ Switch Furniture</a-button>
               </svg>
               <span>Image</span>
             </div>
-            <div :class="current_tab==='3d' ?'tool-item active' :'tool-item '" @click="current_tab='3d'">
+            <div :class="current_tab==='3d' ?'tool-item active' :'tool-item '" @click="changeCurrentTab('3d')">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none">
                 <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2"/>
                 <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2"/>
@@ -90,7 +90,7 @@ Switch Furniture</a-button>
               </svg>
               <span>3D</span>
             </div>
-            <div :class="current_tab==='edit_image' ? 'tool-item active' :'tool-item'" @click="current_tab='edit_image'">
+            <div :class="current_tab==='edit_image' ? 'tool-item active' :'tool-item'" @click="changeCurrentTab('edit_image')">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none">
                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="currentColor" stroke-width="2"/>
                 <path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="2"/>
@@ -124,8 +124,12 @@ Switch Furniture</a-button>
             </div>
 
             <!-- Category Tabs -->
-            <div class="category-section" v-if="active_tab_image === 'home_design'">
+            <div class="category-section" v-if="active_tab_image === 'item_replacement'">
               <div class="category-tabs">
+                <div :class="select_replace === 'All' ? 'category-tab active' : 'category-tab'" @click="selectCategory('All')">
+                 <svg width="1.875em" height="1.5em" viewBox="13 1 38 30" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M32 3L43.5 9.5L43.5 23L32 29L20.5 23L20.5 9.5L32 3ZM32 3V16.5" stroke="currentColor" stroke-linejoin="round"></path><path d="M32 16.5L43.5 23L32 29L20.5 23L32 16.5Z" fill="url(#paint0_linear_1_56)" stroke="currentColor" stroke-linejoin="round"></path><defs><linearGradient id="paint0_linear_1_56" x1="32" y1="16.5" x2="32" y2="29" gradientUnits="userSpaceOnUse"><stop stop-color="#00000033" stop-opacity="0"></stop><stop offset="1" stop-color="#00000033"></stop></linearGradient></defs></svg>
+                  All
+                </div>
                 <div :class="select_replace === 'Floor' ? 'category-tab active' : 'category-tab'" @click="selectCategory('Floor')">
                  <svg width="1.875em" height="1.5em" viewBox="13 1 38 30" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M32 3L43.5 9.5L43.5 23L32 29L20.5 23L20.5 9.5L32 3ZM32 3V16.5" stroke="currentColor" stroke-linejoin="round"></path><path d="M32 16.5L43.5 23L32 29L20.5 23L32 16.5Z" fill="url(#paint0_linear_1_56)" stroke="currentColor" stroke-linejoin="round"></path><defs><linearGradient id="paint0_linear_1_56" x1="32" y1="16.5" x2="32" y2="29" gradientUnits="userSpaceOnUse"><stop stop-color="#00000033" stop-opacity="0"></stop><stop offset="1" stop-color="#00000033"></stop></linearGradient></defs></svg>
                   Floor
@@ -148,32 +152,33 @@ Switch Furniture</a-button>
               </div>
 
               <!-- AI Catalog Section -->
-               <div style="">
-                 <floor v-if="current_tab=='image' && active_tab_image ==='home_design' && select_replace==='Floor'"
+              <div style="">
+                 <ai_catalog_item_replacement_3d_products
+                 v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Furniture'"
+                 @products-see-all=seeAllProductsClicked
+     @change-3d-model=change3dModel
+     />
+                 <floor v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Floor'"
                  @texture-selected="floorTextureSelected"
                  @floor-see-all="floorSeeAll"
                  ></floor>
-                 <walls v-if="current_tab=='image' && active_tab_image ==='home_design' && select_replace==='Wall'"
+                 <walls v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Wall'"
                  @texture-selected="wallTextureSelected"
                  @walls-see-all="wallsSeeAll"
                  ></walls>
-                 <fernitures v-if="current_tab=='image' && active_tab_image ==='home_design' && select_replace==='Furniture'"
+                 <fernitures v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='All'"
                  @furniture-selected="furnitureSelected"
                  @furniture-see-all="furnitureSeeAll"
                  >
                  </fernitures>
-                 <lights v-if="current_tab=='image' && active_tab_image ==='home_design' && select_replace==='Lights'"
+                 <lights v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Lights'"
                  @light-selected="lightSelected"
                  @light-see-all="lightsSeeAll"
                  >
                  </lights>
                 </div>
             </div>
-            <div class="category-section" v-if="active_tab_image === 'item_replacement'">
-              <ai_catalog_item_replacement_3d_products
-              @products-see-all=seeAllProductsClicked
-@change-3d-model=change3dModel
-/>
+            <div class="category-section" v-if="active_tab_image === 'home_design'">
                <!-- <div class="tab-content-placeholder">
             <h3>Item Replacement </h3>
             <p>Item Replacement tools will be displayed here</p>
@@ -183,10 +188,15 @@ Switch Furniture</a-button>
         </a-col>
 
         <a-col :span="6" class="middle-panel" v-if="current_tab=='3d'" >
-          <div class="tab-content-placeholder">
+          <sidepanel_3d_tab
+              @processing-generate="processinggenerate_loading"
+
+          @generated="new3DModelGenerated"
+          />
+          <!-- <div class="tab-content-placeholder">
             <h3>3D Tools</h3>
             <p>3D editing tools will be displayed here</p>
-          </div>
+          </div> -->
         </a-col>
 
         <a-col :span="6" class="middle-panel" v-if="current_tab=='edit_image'" >
@@ -199,7 +209,7 @@ Switch Furniture</a-button>
         <!-- Right Panel - Canvas -->
         <a-col :span="17" class="canvas-panel">
           
-          <div style="background:white;display:flex;align-items:center;justify-content:space-between;padding:5px 10px;height:40px;;background-color: #f3f3f6;" v-if="current_tab=='image' && closeShareMenu">
+          <div style="background:white;display:flex;align-items:center;justify-content:space-between;padding:5px 10px;height:40px;;background-color: #f3f3f6;" v-if=" current_tab ==='image' &&  closeShareMenu">
   
   <!-- Left: Share section -->
   <div style="display:flex;align-items:center;gap:8px;" >
@@ -317,13 +327,13 @@ Switch Furniture</a-button>
 >
 
           <canvas_floor_render 
-              v-if="current_tab=='image' && active_tab_image ==='home_design' && select_replace==='Floor'" 
+              v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Floor'" 
               :baseImage="base_image_url"
               :isLoading="canvasLoading"
               :key="canvasKey"
             />
             <canvas_item_remover_render 
-              v-if="current_tab=='image' && active_tab_image ==='home_design' && select_replace==='Furniture'"
+              v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='All'"
               :baseImage="base_image_url"
               :objectMasks="binaryMasks_objects_detected"
               :cachedObjectImages="cachedObjectImages"
@@ -338,44 +348,50 @@ Switch Furniture</a-button>
               @processing-complete="onProcessingComplete"
               @make-room-empty="makeRoomEmpty"
               @reset-entire-room="resetChangesinBaseImage"
-            />
+              />
+              <!-- @redetect-objects-room="fetch_redetect_ObjectsBinary_Masks" -->
 <!-- ceiling light renderer -->
             <canvas_lights_render 
-              v-if="current_tab=='image' && active_tab_image ==='home_design' && select_replace==='Lights' && selected_light_type==='strip'" 
+              v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Lights' && selected_light_type==='strip'" 
               :baseImage="base_image_url"
               :isLoading="canvasLoading"
               :depthMask="depthMask"
               :key="canvasKey"
+              @magentic-lights-added="magneticLightsMearjed"
             />
 
             <!-- glbUrl="http://127.0.0.1:8000/media/products/ceiling_lamp_disk.glb" -->
   <ceiling_3d_object_renderer 
-              v-if="current_tab=='image' && active_tab_image ==='home_design' && select_replace==='Lights' && selected_light_type==='hanging'" 
+              v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Lights' && selected_light_type==='hanging'" 
                   :glbUrl="model_3d_url"
   :baseImageUrl=base_image_url
   :floorMaskUrl=depthMask
 
   :roll="ceiling_roll"
   :pitch="ceiling_pitch"
-  :yaw="ceiling_yaw"/>
+  :yaw="ceiling_yaw"
+  @model-3d-light-added="magneticLightsMearjed"
+  />
 
 <!-- ceiling light renderer -->
 
 
 
             <canvas_walls_render 
-              v-if="current_tab=='image' && active_tab_image ==='home_design' && select_replace==='Wall'"
+              v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Wall'"
               :baseImage="base_image_url"
               :binaryMasks="binaryMaskList"
               :isLoading="canvasLoading"
+              :maskUpdateTrigger="maskUpdateTrigger"
               @update:selectedMasks="selected_wall_masks"
               @rescale-room-layout="rescaleWallMask"
               :key="canvasKey"
             />
+            
 
             <!-- glbUrl="http://127.0.0.1:8000/media/products/3d_models/046-cp7.glb" -->
             <items_replacement_renderer 
-                 v-if="current_tab === 'image' && active_tab_image === 'item_replacement' " 
+                  v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Furniture'" 
                   :glbUrl="item_replacement_renderer_3d_model_url"
                   :product_id="selected_3d_product_model"
   :baseImageUrl=base_image_url
@@ -385,6 +401,28 @@ Switch Furniture</a-button>
   :yaw="floor_yaw"
   @rendered-comfyui-workflow="updateBaskeImageURL_CANVAS"
   />
+
+  <!-- :glbModelUrl="this.$store.state.root_api+'/media/3d-Rendered-Models/temp/8a36f84a-39e3-40f3-a194-05c5a46c0c2d/HY-2.0-3D-Textured-model_00023_.glb '" -->
+  <a-row v-if="current_tab=='3d'">
+    <a-col :sm="0" :xs="0" :md="16" :lg="16" >
+
+  <object_viewer_3d_tab v-if="current_tab=='3d'"
+  :glbModelUrl="generated3dModel_url"
+  :isLoading="processing_generate_is_Loading"
+  :Model_instance_id="model_instance_id"
+  />
+    </a-col>
+    
+    <a-col :sm="0" :xs="0" :md="8" :lg="8" >
+  <models_3d_generate_history v-if="current_tab=='3d'"
+  :list_history_generated_3d_models="list_history_generated_3d_models"
+  :loading_generated_models_history="loading_generated_models_history"
+  @clicked-model="new3DModelGenerated"
+  />
+
+    </a-col>
+
+  </a-row>
 </div>
 
         </a-col>
@@ -428,6 +466,10 @@ import canvas_lights_render from '@/components/update_catalogue/canvas_renderer/
 import canvas_walls_render from '@/components/update_catalogue/canvas_renderer/canvas_walls_render.vue'
 import items_replacement_renderer from '@/components/update_catalogue/item_replacement/items_replacement_3d_model_renderer.vue'
 
+// 3d Panel Tab 
+import sidepanel_3d_tab from '@/components/update_catalogue/tab_3d/side_panel_3d.vue'
+import object_viewer_3d_tab from '@/components/update_catalogue/tab_3d/canvas_renderer.vue'
+import models_3d_generate_history from '@/components/update_catalogue/tab_3d/generate_history.vue'
 // listings of items here 
 import fernitures from '@/components/update_catalogue/list_products/fernitures.vue' 
 import walls from '@/components/update_catalogue/list_products/walls.vue' 
@@ -446,15 +488,23 @@ export default {
   data() {
     return {
       // UI State
-      select_replace: 'Floor',
+      select_replace: 'All',
       current_tab: 'image',
-      active_tab_image: 'home_design',
+      active_tab_image: 'item_replacement',
       searchText: '',
       selected_light_type:'strip',
       model_3d_url:'',
       item_replacement_renderer_3d_model_url:'',
       selected_3d_product_model:'',
+       maskUpdateTrigger: 0,
       
+      //  3dTab 
+      generated3dModel_url: '',
+      model_instance_id:'',
+      processing_generate_is_Loading:false,
+      list_history_generated_3d_models:[],
+      loading_generated_models_history:false,
+
       // 3d room Floor Cordinates       
       floor_roll:0,
       floor_pitch:0,
@@ -666,7 +716,36 @@ seeAllProductsClicked(e){
 
       this.openSeeAll_Products=true
 },
-change3dModel(e){
+processinggenerate_loading(e){
+this.processing_generate_is_Loading=e
+},
+changeCurrentTab(e){
+  this.current_tab=e
+  this.generated3dModel_url=""
+this.processing_generate_is_Loading=false
+this.model_instance_id=""
+},
+async magneticLightsMearjed(e){
+  this.base_image_url= this.$store.state.root_api+ e['image_url']
+  this.forceCanvasUpdate();
+
+},
+async new3DModelGenerated(e){
+//   {
+//     "error": false,
+//     "msg": "3D model generation successful",
+//     "output_path": "C:\\Users\\adminay\\Documents\\AI-Applications\\002 webapp - ComfyUI\\comfyui_api_backend\\media\\3d-Rendered-Models/e25444e1-a6f5-4423-b573-dc9f4a90c52d\\Hy3D_00076_.glb",
+//     "media_url": "/media/3d-Rendered-Models/e25444e1-a6f5-4423-b573-dc9f4a90c52d/Hy3D_00076_.glb",
+//     "model_id": "e25444e1-a6f5-4423-b573-dc9f4a90c52d"
+// }
+
+  this.generated3dModel_url=this.$store.state.root_api+ e.media_url
+  this.model_instance_id=e.new3d_model_instance
+
+await this.fetch3d_models_generated_by_room()
+
+},
+async change3dModel(e){
 this.item_replacement_renderer_3d_model_url=this.$store.state.root_api + e['model_url']
 this.selected_3d_product_model= e['model_uuid']
 // model_uuid
@@ -707,6 +786,8 @@ this.selected_3d_product_model= e['model_uuid']
           this.roomLoadingMessage = 'Loading room configurations...';
           await this.fetchBinaryWallMasks();
           await this.fetchRoom_floor_3d_cords();
+          await this.fetch3d_models_generated_by_room();
+          
 
           console.log('✅ Component initialization completed');
         }
@@ -1009,56 +1090,170 @@ this.selected_3d_product_model= e['model_uuid']
       }
     },
 
-    async fetchBinaryWallMasks() {
-      this.loading.binaryMasks = true;
-      this.error.binaryMasks = null;
+    
+// 2. Enhanced fetchBinaryWallMasks method with immediate update
+async fetchBinaryWallMasks() {
+  this.loading.binaryMasks = true;
+  this.error.binaryMasks = null;
 
-      try {
-        const roomId = this.$route.params.id;
-        const url = `${this.$store.state.root_api}engine/new-room/?room_id=${roomId}`;
+  try {
+    const roomId = this.$route.params.id;
+    const url = `${this.$store.state.root_api}engine/new-room/?room_id=${roomId}`;
+    
+    console.log('📡 Fetching binary masks...');
+    const responseData = await this.makeApiRequest(url, { 
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Token ${localStorage.getItem('token')}`
+      },
+    }, 'binaryMasks');
+    
+    if (responseData) {
+      // Process wall masks first
+      const binary_masks = responseData.binary_masks || [];
+      this.allWallsBinaryMasks = binary_masks;
+      this.binaryMask_List_media = binary_masks;
+      
+      // CRITICAL: Create new array references to trigger reactivity
+      this.binaryMaskList = binary_masks.map(path => `${this.$store.state.root_api}${path}`);
+      this.selectedMasks = Array.from({ length: this.binaryMaskList.length }, (_, i) => i);
+
+      // Store object masks data
+      this.binaryMasks_objects_detected = { ...responseData.objects_detected_masks } || {};
+      this.allObjectsBinaryMasks = { ...this.binaryMasks_objects_detected };
+      
+      console.log('✅ Wall masks loaded:', this.binaryMaskList.length, 'masks');
+      console.log('📦 Object masks found:', Object.keys(this.binaryMasks_objects_detected).length, 'objects');
+
+      // IMMEDIATE UPDATE TRIGGER
+      this.maskUpdateTrigger += 1; // This will force child component to react
+      
+      // Force canvas update immediately
+      this.$nextTick(() => {
+        this.forceCanvasUpdate();
         
-        console.log('📡 Fetching binary masks...');
-        const responseData = await this.makeApiRequest(url, { method: 'GET',
-          headers: {
-          'Content-Type': 'application/json',
-              'Authorization': `Token ${localStorage.getItem('token')}`
+        // Additional force update after a short delay to ensure rendering
+        setTimeout(() => {
+          this.forceCanvasUpdate();
+        }, 100);
+      });
 
-        },
-         }, 'binaryMasks');
-        
-        if (responseData) {
-          // Process wall masks first
-          const binary_masks = responseData.binary_masks || [];
-          this.allWallsBinaryMasks = binary_masks;
-          this.binaryMask_List_media = binary_masks;
-          this.binaryMaskList = binary_masks.map(path => `${this.$store.state.root_api}${path}`);
-          this.selectedMasks = Array.from({ length: this.binaryMaskList.length }, (_, i) => i);
-
-          console.log('✅ Wall masks loaded:', this.binaryMaskList.length, 'masks');
-
-          // Store object masks data
-          this.binaryMasks_objects_detected = responseData.objects_detected_masks || {};
-          this.allObjectsBinaryMasks = this.binaryMasks_objects_detected;
-          
-          console.log('📦 Object masks found:', Object.keys(this.binaryMasks_objects_detected).length, 'objects');
-
-          // CRITICAL: Start preloading object masks immediately without blocking
-          if (Object.keys(this.binaryMasks_objects_detected).length > 0) {
-            this.initializeObjectMaskCacheImmediate();
-          } else {
-            this.objectMaskCacheReady = true; // No masks to load
-            console.log('📭 No object masks to preload');
-          }
-        }
-      } catch (error) {
-        console.error("❌ Failed to fetch binary wall masks:", error);
-        this.error.binaryMasks = error.message;
-        this.showError('Failed to Load Wall Masks', error.message, () => this.fetchBinaryWallMasks());
-      } finally {
-        this.loading.binaryMasks = false;
+      // Handle object mask caching
+      if (Object.keys(this.binaryMasks_objects_detected).length > 0) {
+        this.initializeObjectMaskCacheImmediate();
+      } else {
+        this.objectMaskCacheReady = true;
+        console.log('📭 No object masks to preload');
       }
-    },
+    }
+  } catch (error) {
+    console.error("❌ Failed to fetch binary wall masks:", error);
+    this.error.binaryMasks = error.message;
+    this.showError('Failed to Load Wall Masks', error.message, () => this.fetchBinaryWallMasks());
+  } finally {
+    this.loading.binaryMasks = false;
+  }
+},
 
+
+// 3. Enhanced fetch3d Models History  method with immediate update the History 
+async fetch3d_models_generated_by_room() {
+  this.loading_generated_models_history= true;
+
+  try {
+    const roomId = this.$route.params.id;
+    const url = `${this.$store.state.root_api}engine/generated-3d-models-history/${roomId}`;
+    
+    console.log('📡 Fetching generated 3d models hisrtory ...');
+    const responseData = await this.makeApiRequest(url, { 
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Token ${localStorage.getItem('token')}`
+      },
+    }, 'fetch_generated_3d_models');
+    
+    if (responseData) {
+      // Process wall masks first
+      const generated_models = responseData.models || [];
+      this.list_history_generated_3d_models = generated_models;
+      
+    }
+  } catch (error) {
+    console.error("❌ Failed to fetch history generated 3d Models :", error);
+    this.error.general = error.message;
+    this.showError('Failed to fetch history generated 3d Models', error.message, () => this.fetch3d_models_generated_by_room());
+  } finally {
+    this.loading_generated_models_history = false;
+  }
+},
+
+  
+// 4. Redetect the binary masks which is got detected 
+// async fetch_redetect_ObjectsBinary_Masks(e) {
+//   this.loading.binaryMasks = true;
+//   this.error.binaryMasks = null;
+
+//   try {
+//     const roomId = this.$route.params.id;
+//     const url = `${this.$store.state.root_api}engine/redetect-room-ferniture/${roomId}`;
+    
+//     console.log('📡 Fetching binary masks...');
+//     const responseData = await this.makeApiRequest(url, { 
+//       method: 'GET',
+//       headers: {
+//         'Content-Type': 'application/json',
+//         'Authorization': `Token ${localStorage.getItem('token')}`
+//       },
+//     }, 'objects_binary_masks');
+    
+//     if (responseData) {
+//       // Process wall masks first
+//       const binary_masks = responseData.binary_masks || [];
+//       this.allWallsBinaryMasks = binary_masks;
+//       this.binaryMask_List_media = binary_masks;
+      
+//       // CRITICAL: Create new array references to trigger reactivity
+//       this.binaryMaskList = binary_masks.map(path => `${this.$store.state.root_api}${path}`);
+//       this.selectedMasks = Array.from({ length: this.binaryMaskList.length }, (_, i) => i);
+
+//       // Store object masks data
+//       this.binaryMasks_objects_detected = { ...responseData.objects_detected_masks } || {};
+//       this.allObjectsBinaryMasks = { ...this.binaryMasks_objects_detected };
+      
+//       console.log('✅ Wall masks loaded:', this.binaryMaskList.length, 'masks');
+//       console.log('📦 Object masks found:', Object.keys(this.binaryMasks_objects_detected).length, 'objects');
+
+//       // IMMEDIATE UPDATE TRIGGER
+//       this.maskUpdateTrigger += 1; // This will force child component to react
+      
+//       // Force canvas update immediately
+//       this.$nextTick(() => {
+//         this.forceCanvasUpdate();
+        
+//         // Additional force update after a short delay to ensure rendering
+//         setTimeout(() => {
+//           this.forceCanvasUpdate();
+//         }, 100);
+//       });
+
+//       // Handle object mask caching
+//       if (Object.keys(this.binaryMasks_objects_detected).length > 0) {
+//         this.initializeObjectMaskCacheImmediate();
+//       } else {
+//         this.objectMaskCacheReady = true;
+//         console.log('📭 No object masks to preload');
+//       }
+//     }
+//   } catch (error) {
+//     console.error("❌ Failed to fetch binary wall masks:", error);
+//     this.error.binaryMasks = error.message;
+//     this.showError('Failed to Load Wall Masks', error.message, () => this.fetchBinaryWallMasks());
+//   } finally {
+//     this.loading.binaryMasks = false;
+//   }
+// },
     // ==========================================
     // OBJECT MASK CACHING SYSTEM
     // ==========================================
@@ -1133,7 +1328,7 @@ this.selected_3d_product_model= e['model_uuid']
         console.log('🎉 All object masks cached and ready!');
 
         // Notify if currently in furniture mode
-        if (this.select_replace === 'Furniture') {
+        if (this.select_replace === 'All') {
           this.$message?.success('Furniture detection ready!', 2);
         }
 
@@ -1243,7 +1438,7 @@ this.selected_3d_product_model= e['model_uuid']
       console.log('🎯 Selecting category:', category);
       this.select_replace = category;
       
-      if (category === 'Furniture') {
+      if (category === 'All') {
         this.showSelectionButtons = false;
         this.selectedMasks = [];
         
@@ -1259,7 +1454,7 @@ this.selected_3d_product_model= e['model_uuid']
           console.log('🔄 Starting cache initialization...');
           this.showFurnitureLoadingState();
           this.initializeObjectMaskCacheImmediate().then(() => {
-            if (this.select_replace === 'Furniture') {
+            if (this.select_replace === 'ALL') {
               this.switchToFurnitureModeWithCache();
             }
           });
@@ -1316,7 +1511,7 @@ this.selected_3d_product_model= e['model_uuid']
     async waitForCacheAndSwitch() {
       try {
         await this.cacheInitializationPromise;
-        if (this.select_replace === 'Furniture') {
+        if (this.select_replace === 'All') {
           this.$message?.destroy();
           this.switchToFurnitureModeWithCache();
         }
@@ -1347,17 +1542,40 @@ this.selected_3d_product_model= e['model_uuid']
       // Canvas component will receive updated props automatically
     },
 
-    forceCanvasUpdate() {
-      console.log('🔄 Force updating canvas...');
+    // forceCanvasUpdate() {
+    //   console.log('🔄 Force updating canvas...');
       
-      // Increment key to force canvas component re-render
-      this.canvasKey += 1;
+    //   // Increment key to force canvas component re-render
+    //   this.canvasKey += 1;
       
-      // Wait for next tick to ensure props are updated
-      this.$nextTick(() => {
-        console.log('✅ Canvas update completed');
-      });
-    },
+    //   // Wait for next tick to ensure props are updated
+    //   this.$nextTick(() => {
+    //     console.log('✅ Canvas update completed');
+    //   });
+    // },
+    
+// 3. Enhanced forceCanvasUpdate method
+forceCanvasUpdate() {
+  console.log('🔄 Force updating canvas...');
+  
+  // Increment key to force canvas component re-render
+  this.canvasKey += 1;
+  
+  // Also increment mask update trigger
+  this.maskUpdateTrigger += 1;
+  
+  // Ensure child components receive the updates
+  this.$nextTick(() => {
+    console.log('✅ Canvas update completed');
+    
+    // Emit an event to child components if needed
+    this.$emit('masks-updated', {
+      binaryMasks: this.binaryMaskList,
+      selectedMasks: this.selectedMasks,
+      timestamp: Date.now()
+    });
+  });
+},
 
     // ==========================================
     // CACHE MANAGEMENT METHODS
@@ -1525,7 +1743,12 @@ this.selected_3d_product_model= e['model_uuid']
       
       // Call your removal API
       const result = await this.removeObjectsFromRoom(removalData);
-      
+      console.log(" Old Binary MAsks ==========================================")
+      console.log(this.binaryMasks_objects_detected)
+      console.log(" Result Recieved ==========================================")
+      console.log(result)
+      console.log(" New  Binary MAsks ==========================================")
+      console.log(result.objects_detected_masks)
       if (!result.error) {
         // Update the binary masks with new data
         this.binaryMasks_objects_detected = result.objects_detected_masks || {};
@@ -1880,7 +2103,12 @@ async floorTextureSelected(texture_id) {
 floor_textures_bottom_drawer_menu,
 
 // 3d floor rendering 
-ceiling_3d_object_renderer
+ceiling_3d_object_renderer,
+
+// 3d tab 
+sidepanel_3d_tab,
+object_viewer_3d_tab,
+models_3d_generate_history
   }
 }
 </script>
@@ -1929,7 +2157,7 @@ ceiling_3d_object_renderer
 
 .tool-item.active {
   background: #e6f7ff;
-  color: #1890ff;
+  color: #3B63FB;
 }
 
 .tool-item span {
@@ -1982,8 +2210,8 @@ ceiling_3d_object_renderer
 }
 
 .action-btn.active {
-  background: #1890ff;
-  border-color: #1890ff;
+  background: #3B63FB;
+  border-color: #3B63FB;
   color: white;
 }
 
@@ -1996,27 +2224,28 @@ ceiling_3d_object_renderer
 
 .category-tabs {
   display: flex;
-  padding: 5px 16px 0;
+  padding: 5px 5px 0;
   gap: 4px;
-  border-bottom: 1px solid #f0f0f0;
+  /* border-bottom: 1px solid #f0f0f0; */
 }
 
 .category-tab {
-  padding: 12px ;
+  padding: 7px ;
   font-size: 12px;
   font-weight: 500;
   gap:5px;
   display: flex;
   color: #666;
+  border:1px solid rgba(0,0,0,0.1);
   cursor: pointer;
-  border-radius: 6px 6px 0 0;
+  border-radius: 6px 6px 6px 6px;
   transition: all 0.2s ease;
 }
 
 .category-tab.active {
-  color: #1890ff;
-  background: #f0f8ff;
-  border-bottom: 2px solid #1890ff;
+  color: #ffffff;
+  background: #3B63FB;
+  /* border-bottom: 2px solid #3B63FB; */
 }
 
 /* AI Catalog Section */
@@ -2042,7 +2271,7 @@ ceiling_3d_object_renderer
 
 .see-all-link {
   font-size: 14px;
-  color: #1890ff;
+  color: #3B63FB;
   text-decoration: none;
 }
 
@@ -2096,7 +2325,7 @@ ceiling_3d_object_renderer
 }
 
 .product-item:hover {
-  border-color: #1890ff;
+  border-color: #3B63FB;
   box-shadow: 0 2px 8px rgba(24, 144, 255, 0.1);
 }
 
@@ -2119,7 +2348,7 @@ ceiling_3d_object_renderer
   position: absolute;
   top: -4px;
   right: -4px;
-  background: #1890ff;
+  background: #3B63FB;
   color: white;
   font-size: 10px;
   font-weight: 500;
@@ -2165,7 +2394,7 @@ ceiling_3d_object_renderer
 
 .product-price {
   font-size: 13px;
-  color: #1890ff;
+  color: #3B63FB;
   font-weight: 500;
 }
 
@@ -2199,7 +2428,7 @@ ceiling_3d_object_renderer
 /* Canvas Panel Styles */
 .canvas-panel {
   /* background: #000; */
-  padding:10px;
+  /* padding:10px; */
 
   position: relative;
    width: 100%; height: 100%;
@@ -2224,13 +2453,13 @@ ceiling_3d_object_renderer
 }
 
 :deep(.ant-input:focus) {
-  border-color: #1890ff;
+  border-color: #3B63FB;
   box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
 }
 
 :deep(.ant-btn-primary) {
-  background: #1890ff;
-  border-color: #1890ff;
+  background: #3B63FB;
+  border-color: #3B63FB;
 }
 
 :deep(.ant-btn-primary:hover) {

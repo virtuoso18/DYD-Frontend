@@ -62,34 +62,10 @@
     </div>
 
     <!-- Selection Controls -->
-    <div v-if="showSelectionButtons && !isLoading && isReady" class="selection-controls">
-      <div class="control-group">
-        <button 
-          class="control-btn"
-          :class="{ 'active': allWallsSelected }"
-          @click="toggleSelectAll"
-          :title="allWallsSelected ? 'Deselect All' : 'Select All'"
-        >
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-            <path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16zm3.5-5L7 6.5 4.5 9 3 7.5 7 3.5 13 9.5 11.5 11z"/>
-          </svg>
-          {{ allWallsSelected ? 'Deselect All' : 'Select All' }}
-        </button>
-        <button 
-        class="control-btn clear-btn"
-        @click="clearAllSelections"
-        :disabled="internalSelectedMasks.length === 0"
-        title="Clear Selection"
-        >
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-          <path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16zM4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
-        </svg>
-        Clear
-      </button>
-      <a-button type='primary' @click="rescaleRoomLayout"> 
-        Rescale Room layout
-      </a-button>
-      </div>
+    <!-- <div v-if="showSelectionButtons && !isLoading && isReady" class="selection-controls"> -->
+      <!-- <div class="control-group"> -->
+      
+      <!-- </div> -->
       
       <!-- Selection Info -->
       <!-- <div class="selection-info" v-if="maskRegions.length > 0">
@@ -99,7 +75,7 @@
         <span v-if="selectionMode === 'single'" class="selection-mode">Single Select</span>
         <span v-else class="selection-mode">Multiple Select</span>
       </div> -->
-    </div>
+    <!-- </div> -->
 
     <!-- Processing Indicator -->
     <div v-if="processingMasks" class="processing-overlay">
@@ -140,37 +116,97 @@
       </div>
     </div>
   </div>
+   <div  class="" style="display:flex;justify-content: space-between;padding-left:10px;padding-right:10px;background: white;">
+     
+  <div style="padding-top:5px;">
+<div style="display:flex;gap:5px;padding-top:5px;">
+    <a-button 
+          class="control-btn"
+          :class="{ 'active': allWallsSelected }"
+          @click="toggleSelectAll"
+          :disabled="isLoading"
+          :title="allWallsSelected ? 'Deselect All' : 'Select All'"
+        >
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16zm3.5-5L7 6.5 4.5 9 3 7.5 7 3.5 13 9.5 11.5 11z"/>
+          </svg>
+          {{ allWallsSelected ? 'Deselect All' : 'Select All' }}
+        </a-button>
+        <a-button 
+        class="control-btn clear-btn"
+        @click="clearAllSelections"
+        :disabled="internalSelectedMasks.length === 0 || isLoading"
+        title="Clear Selection"
+        
+        >
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16zM4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+        </svg>
+        Clear
+      </a-button>
+      <a-button type='primary' :disabled="isLoading" @click="rescaleRoomLayout"> 
+        Rescale Room layout
+      </a-button>
+
+</div>
+</div>
+<div>
+  
+<div style="padding-top:5px;display:flex;gap:10px;">
+
+  <a-button  class="toolbar-btn primary-btn" @click="reset_entire_room" :disabled="isLoading">
+    Before
+  </a-button>
+  <a-button type="primary" class="toolbar-btn primary-btn" @click="reset_entire_room" :disabled="isLoading">
+    After
+  </a-button>
+</div>
+      </div>
+      <div style="padding-top:10px;">
+        <a-button type="primary" class="toolbar-btn primary-btn" @click="reset_entire_room" :disabled="isLoading">
+          Apply Changes
+        </a-button>
+      </div>
+    </div>
 </template>
 <script>
 export default {
   name: 'walls_renderer',
-  props: {
-    baseImage: {
-      type: String,
-      required: true
-    },
-    binaryMasks: {
-      type: Array,
-      default: () => []
-    },
-    selectedMasks: {
-      type: Array,
-      default: () => []
-    },
-    isLoading: {
-      type: Boolean,
-      default: false
-    },
-    selectionMode: {
-      type: String,
-      default: 'multiple',
-      validator: value => ['single', 'multiple'].includes(value)
-    },
-    showSelectionButtons: {
-      type: Boolean,
-      default: true
-    }
+  
+// 1. Add maskUpdateTrigger as a prop in child component
+props: {
+  baseImage: {
+    type: String,
+    required: true
   },
+  binaryMasks: {
+    type: Array,
+    default: () => []
+  },
+  selectedMasks: {
+    type: Array,
+    default: () => []
+  },
+  // ADD THIS NEW PROP
+  maskUpdateTrigger: {
+    type: Number,
+    default: 0
+  },
+  isLoading: {
+    type: Boolean,
+    default: false
+  },
+  selectionMode: {
+    type: String,
+    default: 'multiple',
+    validator: value => ['single', 'multiple'].includes(value)
+  },
+  showSelectionButtons: {
+    type: Boolean,
+    default: true
+  }
+},
+
 
   data() {
     return {
@@ -264,33 +300,58 @@ export default {
     this.removeEventListeners();
   },
   
-  watch: {
-    baseImage() {
+// 2. Enhanced watch handlers in child component
+watch: {
+  baseImage: {
+    handler(newVal, oldVal) {
+      if (newVal !== oldVal) {
+        console.log('🖼️ Base image changed, reloading...');
+        this.loadImages();
+      }
+    },
+    immediate: false
+  },
+  
+  binaryMasks: {
+    handler(newVal, oldVal) {
+      // Check if the arrays are actually different
+      const isDifferent = JSON.stringify(newVal) !== JSON.stringify(oldVal);
+      
+      if (isDifferent) {
+        console.log('🧱 Binary masks changed, reloading...', newVal.length, 'masks');
+        this.loadImages();
+      }
+    },
+    deep: true,
+    immediate: false
+  },
+  
+  // ADD THIS NEW WATCHER FOR THE TRIGGER
+  maskUpdateTrigger: {
+    handler(newVal) {
+      console.log('🔥 Mask update trigger activated:', newVal);
       this.loadImages();
     },
-    
-    binaryMasks: {
-      handler() {
-        this.loadImages();
-      },
-      deep: true
-    },
-    
-    selectedMasks: {
-      handler(newVal) {
-        this.internalSelectedMasks = [...newVal];
-      },
-      deep: true
-    },
-    
-    isLoading(newVal) {
-      if (newVal) {
-        this.removeEventListeners();
-      } else {
-        this.setupEventListeners();
-      }
-    }
+    immediate: false
   },
+  
+  selectedMasks: {
+    handler(newVal) {
+      this.internalSelectedMasks = [...newVal];
+    },
+    deep: true
+  },
+  
+  isLoading(newVal) {
+    if (newVal) {
+      this.removeEventListeners();
+    } else {
+      this.setupEventListeners();
+    }
+  }
+},
+
+
   
   methods: {
     // ===================
@@ -576,36 +637,49 @@ export default {
     // IMAGE LOADING
     // ===================
     
-    async loadImages() {
-      if (!this.baseImage) {
-        console.warn('No base image provided');
-        return;
-      }
-      
-      this.isImagesLoaded = false;
-      this.maskRegions = [];
-      this.maskImageData = [];
-      
-      try {
-        // Load base image first
-        this.baseImg = await this.createImageFromSrc(this.baseImage);
-        this.calculateImageDimensions();
-        this.render();
-        
-        // Load wall masks if available
-        if (this.hasWallMasks && this.showSelectionButtons) {
-          await this.loadWallMasks();
-        }
-        
-        this.isImagesLoaded = true;
-        this.render();
-        this.updateButtonPositions();
-        
-      } catch (error) {
-        console.error('Error loading images:', error);
-        this.showErrorState();
-      }
-    },
+// 3. Enhanced loadImages method in child component
+async loadImages() {
+  if (!this.baseImage) {
+    console.warn('No base image provided');
+    return;
+  }
+  
+  console.log('🔄 Starting image reload process...');
+  
+  // Reset state immediately
+  this.isImagesLoaded = false;
+  this.maskRegions = [];
+  this.maskImageData = [];
+  
+  // Clear any existing highlights
+  this.removeHighlight();
+  
+  try {
+    // Load base image first
+    console.log('📸 Loading base image...');
+    this.baseImg = await this.createImageFromSrc(this.baseImage);
+    this.calculateImageDimensions();
+    this.render();
+    
+    // Load wall masks if available
+    if (this.hasWallMasks && this.showSelectionButtons) {
+      console.log('🧱 Loading wall masks...', this.binaryMasks.length, 'masks');
+      await this.loadWallMasks();
+    }
+    
+    this.isImagesLoaded = true;
+    
+    // Force re-render
+    this.render();
+    this.updateButtonPositions();
+    
+    console.log('✅ Image loading completed successfully');
+    
+  } catch (error) {
+    console.error('❌ Error loading images:', error);
+    this.showErrorState();
+  }
+},
 
     async loadWallMasks() {
       console.log('🧱 Loading wall masks...');
@@ -1262,7 +1336,7 @@ selectAllWallsOnInit() {
 .canvas-container {
   position: relative;
   width: 100%;
-  height: 100%;
+  height: 93%;
   min-height: 300px;
   overflow: hidden;
   background: #f5f5f5;

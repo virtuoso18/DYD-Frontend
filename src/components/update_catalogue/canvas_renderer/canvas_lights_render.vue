@@ -62,12 +62,6 @@
       <button @click="zoomOut" class="zoom-btn" title="Zoom Out">-</button>
       <button @click="resetView" class="zoom-btn reset-btn" title="Reset View">⌂</button>
     </div>
-        <!-- <button @click="resetView" class="nav-btn reset-btn" title="Reset View">
-          <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>
-        </button>
-        <button @click="toggleDepth" class="nav-btn" :class="{ active: showDepth }" title="Toggle Depth View" v-if="depthMask">
-          <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
-        </button> -->
       </div>
 
       <!-- Help Text -->
@@ -103,22 +97,6 @@
             </svg>
             Clear Tracks
           </a-button>
-          <!-- <button 
-            @click="toggleTrackMode" 
-            :class="{ active: trackMode }" 
-            class="tool-btn primary"
-          >
-            <svg viewBox="0 0 24 24" width="18" height="18">
-              <path fill="currentColor" d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"/>
-            </svg>
-            {{ trackMode ? 'Exit Track Mode' : 'Draw Tracks' }}
-          </button>
-          <button @click="clearTracks" class="tool-btn danger" :disabled="tracks.length === 0">
-            <svg viewBox="0 0 24 24" width="18" height="18">
-              <path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
-            </svg>
-            Clear Tracks
-          </button> -->
         </div>
       </div>
 
@@ -133,7 +111,6 @@
             :class="{ active: selectedLightType === 'rectangular' }" 
             
           >
-            <!-- <div class="light-preview rectangular"></div> -->
              🟧
             Rectangle
           </a-button>
@@ -143,17 +120,8 @@
             :class="{ active: selectedLightType === 'circular' }" 
             
           >
-            <!-- <div class="light-preview circular"></div> -->
             🟠Circular
           </a-button>
-          <!-- <button 
-            @click="setLightType('square')" 
-            :class="{ active: selectedLightType === 'square' }" 
-            class="tool-btn light-type"
-          >
-            <div class="light-preview square"></div>
-            Square
-          </button> -->
         </div>
       </div></a-col>
       <a-col :span="8" style="display :flex; justify-content: end;"><div class="tool-section stats-section">
@@ -177,15 +145,10 @@
         style="margin:0;margin-top: 5px;margin-left: 16px;color:white"
         :disabled="lights.length === 0"
       >
-        <!-- <svg viewBox="0 0 20 20" width="15" height="15" style="margin-top: 2px;">
-          <path fill="currentColor" d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z"/>
-        </svg> -->
         Save 
       </a-button>
     </a-col>
     </a-row>
-    <!-- Main Toolbar -->
-    
 
     <!-- Light Editor Modal -->
     <div v-if="editingLight" class="modal-overlay" @click="closeEditor">
@@ -210,17 +173,19 @@
             <h4>Appearance</h4>
             <div class="editor-grid">
               <div class="editor-item">
-                <label>Width</label>
+                <label>Light Width (along track)</label>
                 <div class="input-group">
-                  <input type="range" v-model.number="editingLight.width" min="6" max="50" class="slider">
+                  <input 
+                    type="range" 
+                    v-model.number="editingLight.width" 
+                    :min="editingLight.minWidth || getTrackWidth()" 
+                    :max="editingLight.maxWidth || getTrackLength(editingLight.track) * 0.8" 
+                    class="slider"
+                  >
                   <span class="value">{{ editingLight.width }}px</span>
                 </div>
-              </div>
-              <div class="editor-item">
-                <label>Height</label>
-                <div class="input-group">
-                  <input type="range" v-model.number="editingLight.height" min="6" max="50" class="slider">
-                  <span class="value">{{ editingLight.height }}px</span>
+                <div class="range-info">
+                  <small>Track: {{ getTrackWidth() }}px | Max: {{ Math.round((editingLight.maxWidth || getTrackLength(editingLight.track) * 0.8)) }}px</small>
                 </div>
               </div>
               <div class="editor-item">
@@ -242,34 +207,13 @@
 
           <!-- Position & Rotation -->
           <div class="editor-section">
-            <h4>Transform</h4>
+            <h4>Position</h4>
             <div class="editor-grid">
               <div class="editor-item">
                 <label>Track Position</label>
                 <div class="input-group">
                   <input type="range" v-model.number="editingLight.trackPosition" min="0" max="1" step="0.01" class="slider">
                   <span class="value">{{ Math.round(editingLight.trackPosition * 100) }}%</span>
-                </div>
-              </div>
-              <div class="editor-item">
-                <label>Rotation</label>
-                <div class="input-group">
-                  <input type="range" v-model.number="editingLight.rotation" min="-180" max="180" class="slider">
-                  <span class="value">{{ editingLight.rotation }}°</span>
-                </div>
-              </div>
-              <div class="editor-item">
-                <label>Tilt X</label>
-                <div class="input-group">
-                  <input type="range" v-model.number="editingLight.tiltX" min="-45" max="45" class="slider">
-                  <span class="value">{{ editingLight.tiltX }}°</span>
-                </div>
-              </div>
-              <div class="editor-item">
-                <label>Tilt Y</label>
-                <div class="input-group">
-                  <input type="range" v-model.number="editingLight.tiltY" min="-45" max="45" class="slider">
-                  <span class="value">{{ editingLight.tiltY }}°</span>
                 </div>
               </div>
             </div>
@@ -303,7 +247,17 @@
 </template>
 
 <script setup>
+
 import { ref, computed, onMounted, onBeforeUnmount, watch, nextTick } from 'vue';
+import { useRoute } from 'vue-router';
+import { useStore } from 'vuex';
+
+import { defineEmits } from 'vue';
+
+// Define the emit
+const emit = defineEmits(['magentic-lights-added']);
+const route = useRoute();
+const store=useStore();
 
 // Props
 const props = defineProps({
@@ -340,7 +294,7 @@ const depthMaskImage = ref(null);
 // View Controls
 const zoom = ref(1);
 const minZoom = ref(1);
-const maxZoom = ref(3);
+const maxZoom = ref(5);
 const panX = ref(0);
 const panY = ref(0);
 const showDepth = ref(false);
@@ -366,7 +320,7 @@ const editingLight = ref(null);
 
 // Default Settings
 const defaultSettings = ref({
-  size: 20,
+  height: 8, // Fixed height for track alignment
   brightness: 0.8,
   temperature: 4000,
 });
@@ -410,12 +364,17 @@ onBeforeUnmount(() => {
 
 watch([() => props.baseImage, () => props.depthMask], loadImages);
 
+// Watch for editing light changes to update position
+watch(() => editingLight.value?.trackPosition, (newPosition) => {
+  if (editingLight.value && newPosition !== undefined) {
+    updateLightPositionOnTrack(editingLight.value);
+  }
+});
 
 // ===================
-// Export room Light  layer
+// Export room Light layer
 // ===================
 
-// Add this function after your other functions, before the closing script tag
 async function saveRoom() {
   if (!backgroundImage.value || lights.value.length === 0) {
     console.warn('No background image or lights to save');
@@ -453,12 +412,46 @@ async function saveRoom() {
     
     exportCtx.restore();
     
-    // Convert canvas to blob and download
+    // Convert canvas to base64
+    const base64Data = exportCanvas.toDataURL('image/png');
+    
+    // Send to server via POST request
+    const response = await fetch(store.state.root_api+'/engine/mearj-room-lights/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        image: base64Data,
+        room_id: route.params.id,
+        timestamp: Date.now(),
+        // Add any additional metadata you want to send
+        metadata: {
+          lightsCount: lights.value.length,
+          tracksCount: tracks.value.length,
+          dimensions: {
+            width: backgroundImage.value.width,
+            height: backgroundImage.value.height
+          }
+        }
+      })
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Server error: ${response.status} ${response.statusText}`);
+    }
+    
+    const result = await response.json();
+    emit('magentic-lights-added', result);
+    console.log('Room saved to server successfully!', result);
+    
+    // Optional: Still provide local download as backup
+    // Uncomment the lines below if you want both server upload AND local download
+    /*
     const blob = await new Promise(resolve => {
       exportCanvas.toBlob(resolve, 'image/png', 1.0);
     });
     
-    // Create download link
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
@@ -467,11 +460,12 @@ async function saveRoom() {
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
-    
-    console.log('Room saved successfully!');
+    */
     
   } catch (error) {
     console.error('Error saving room:', error);
+    // You might want to show a user-friendly error message here
+    throw error;
   }
 }
 
@@ -547,8 +541,9 @@ function drawLightToExport(exportCtx, light, scaleX, scaleY) {
   // Move to light position
   exportCtx.translate(x, y);
   
-  // Apply transformations
-  exportCtx.rotate((light.rotation * Math.PI) / 180);
+  // Apply track alignment rotation
+  const trackAngle = getTrackAngle(light.track);
+  exportCtx.rotate(trackAngle);
   
   // Create light glow effect
   const glowSize = Math.max(finalWidth, finalHeight) * 1.5;
@@ -575,7 +570,7 @@ function drawLightToExport(exportCtx, light, scaleX, scaleY) {
     exportCtx.arc(0, 0, Math.min(finalWidth, finalHeight) / 2, 0, 2 * Math.PI);
     exportCtx.fill();
   } else {
-    // Rectangular or square
+    // Rectangular - aligned with track
     exportCtx.fillRect(-finalWidth / 2, -finalHeight / 2, finalWidth, finalHeight);
   }
   
@@ -594,6 +589,7 @@ function drawLightToExport(exportCtx, light, scaleX, scaleY) {
   
   exportCtx.restore();
 }
+
 // ===================
 // INITIALIZATION
 // ===================
@@ -664,6 +660,7 @@ function calculateImageDimensions() {
     renderOffsetY.value = 0;
   }
 }
+
 // ===================
 // EVENT HANDLING
 // ===================
@@ -821,6 +818,9 @@ function handleGlobalMouseMove(e) {
     draggedLight.value.x = projected.x;
     draggedLight.value.y = projected.y;
     draggedLight.value.trackPosition = projected.position;
+    
+    // Update light alignment to track angle
+    updateLightAlignment(draggedLight.value);
   }
 }
 
@@ -841,6 +841,17 @@ function getMousePos(e) {
 // ===================
 // TRACK MANAGEMENT
 // ===================
+
+function getTrackLength(track) {
+  const deltaX = track.x2 - track.x1;
+  const deltaY = track.y2 - track.y1;
+  return Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+}
+
+function getTrackWidth() {
+  // Return the visual width of the magnetic track (4px from drawTrack function)
+  return 4;
+}
 
 function toggleTrackMode() {
   trackMode.value = !trackMode.value;
@@ -953,7 +964,7 @@ function projectPointOnTrack(px, py, track) {
 }
 
 // ===================
-// LIGHT MANAGEMENT
+// LIGHT MANAGEMENT & ALIGNMENT
 // ===================
 
 function setLightType(type) {
@@ -962,6 +973,11 @@ function setLightType(type) {
 
 function createLight(track, x, y) {
   const projected = projectPointOnTrack(x, y, track);
+  const trackLength = getTrackLength(track);
+  const trackWidth = getTrackWidth();
+  
+  // Default light width should match track width, but allow it to be longer along the track
+  const defaultWidth = Math.min(trackWidth * 6, trackLength * 0.3); // Start with reasonable size
   
   const light = {
     id: ++lightCounter.value,
@@ -970,17 +986,49 @@ function createLight(track, x, y) {
     x: projected.x,
     y: projected.y,
     trackPosition: projected.position,
-    width: defaultSettings.value.size,
-    height: defaultSettings.value.size,
+    width: defaultWidth,
+    height: trackWidth, // Height matches track width for perfect alignment
+    maxWidth: trackLength * 0.8, // Maximum width is 80% of track length
+    minWidth: trackWidth, // Minimum width is track width
     brightness: defaultSettings.value.brightness,
     temperature: defaultSettings.value.temperature,
-    rotation: 0,
+    rotation: 0, // Will be calculated from track angle
     tiltX: 0,
     tiltY: 0,
   };
 
+  // Align light with track
+  updateLightAlignment(light);
+  
   lights.value.push(light);
   selectedLightId.value = light.id;
+}
+
+function updateLightAlignment(light) {
+  // Calculate track angle and align light rotation
+  light.rotation = getTrackAngleDegrees(light.track);
+}
+
+function updateLightPositionOnTrack(light) {
+  const { x1, y1, x2, y2 } = light.track;
+  const position = light.trackPosition;
+  
+  light.x = x1 + position * (x2 - x1);
+  light.y = y1 + position * (y2 - y1);
+  
+  // Maintain alignment with track
+  updateLightAlignment(light);
+}
+
+function getTrackAngle(track) {
+  const deltaX = track.x2 - track.x1;
+  const deltaY = track.y2 - track.y1;
+  return Math.atan2(deltaY, deltaX);
+}
+
+function getTrackAngleDegrees(track) {
+  const angle = getTrackAngle(track);
+  return (angle * 180) / Math.PI;
 }
 
 function startLightDrag(e, light) {
@@ -993,29 +1041,47 @@ function startLightDrag(e, light) {
 }
 
 function openLightEditor(light) {
-  editingLight.value = light;
+  editingLight.value = { ...light }; // Create a copy to avoid direct mutation
   selectedLightId.value = light.id;
 }
 
 function closeEditor() {
+  if (editingLight.value) {
+    // Apply changes back to the original light
+    const originalLight = lights.value.find(l => l.id === editingLight.value.id);
+    if (originalLight) {
+      Object.assign(originalLight, editingLight.value);
+      updateLightPositionOnTrack(originalLight);
+    }
+  }
   editingLight.value = null;
 }
 
 function duplicateLight() {
   if (!editingLight.value) return;
   
+  // Find a new position slightly offset along the track
+  let newPosition = editingLight.value.trackPosition + 0.1;
+  if (newPosition > 1) newPosition = editingLight.value.trackPosition - 0.1;
+  if (newPosition < 0) newPosition = 0.5;
+  
+  const trackLength = getTrackLength(editingLight.value.track);
+  const trackWidth = getTrackWidth();
+  
   const newLight = {
     ...editingLight.value,
     id: ++lightCounter.value,
-    x: editingLight.value.x + 20,
-    y: editingLight.value.y + 20,
+    trackPosition: newPosition,
+    height: trackWidth, // Ensure height matches track width
+    maxWidth: trackLength * 0.8,
+    minWidth: trackWidth,
   };
   
-  // Ensure the new position is on the track
-  const projected = projectPointOnTrack(newLight.x, newLight.y, newLight.track);
-  newLight.x = projected.x;
-  newLight.y = projected.y;
-  newLight.trackPosition = projected.position;
+  // Ensure width is within track constraints
+  newLight.width = Math.max(newLight.minWidth, Math.min(newLight.width, newLight.maxWidth));
+  
+  updateLightPositionOnTrack(newLight);
+  updateLightAlignment(newLight);
   
   lights.value.push(newLight);
   editingLight.value = newLight;
@@ -1025,13 +1091,14 @@ function duplicateLight() {
 function resetLight() {
   if (!editingLight.value) return;
   
-  editingLight.value.width = defaultSettings.value.size;
-  editingLight.value.height = defaultSettings.value.size;
+  const trackLength = getTrackLength(editingLight.value.track);
+  const trackWidth = getTrackWidth();
+  
+  editingLight.value.width = Math.min(trackWidth * 6, trackLength * 0.3);
+  editingLight.value.height = trackWidth;
   editingLight.value.brightness = defaultSettings.value.brightness;
   editingLight.value.temperature = defaultSettings.value.temperature;
-  editingLight.value.rotation = 0;
-  editingLight.value.tiltX = 0;
-  editingLight.value.tiltY = 0;
+  updateLightAlignment(editingLight.value);
 }
 
 function deleteLight() {
@@ -1042,7 +1109,7 @@ function deleteLight() {
     lights.value.splice(lightIndex, 1);
   }
   
-  closeEditor();
+  editingLight.value = null;
   selectedLightId.value = null;
 }
 
@@ -1058,11 +1125,13 @@ function getLightStyle(light) {
     depthScale = 0.7 + (depth * 0.5);
   }
   
+  // Calculate track angle for proper alignment
+  const trackAngle = getTrackAngleDegrees(light.track);
+  
   const transforms = [
     `translate(${screenX}px, ${screenY}px)`,
-    `rotateX(${light.tiltX}deg)`,
-    `rotateY(${light.tiltY}deg)`,
-    `rotateZ(${light.rotation}deg)`,
+    `translate(-50%, -50%)`, // Center the light on its position
+    `rotate(${trackAngle}deg)`, // Align with track direction
     `scale(${scale * depthScale})`,
   ];
   
@@ -1076,6 +1145,7 @@ function getLightStyle(light) {
     transformOrigin: 'center center',
     opacity: light.brightness,
     '--light-temperature': getLightColor(light.temperature),
+    pointerEvents: trackMode.value ? 'none' : 'auto',
   };
 }
 
@@ -1192,37 +1262,6 @@ function redrawCanvas() {
     drawTrack(track);
   });
 
-  // Move this OUTSIDE of redrawCanvas function, place it before redrawCanvas
-function drawTrack(track) {
-  if (!ctx.value) return;
-  
-  // Main track line - BLACK COLOR
-  ctx.value.strokeStyle = '#000000';  // Pure black instead of #363636
-  ctx.value.lineWidth = 4 / zoom.value;
-  ctx.value.lineCap = 'round';
-  ctx.value.beginPath();
-  ctx.value.moveTo(track.x1, track.y1);
-  ctx.value.lineTo(track.x2, track.y2);
-  ctx.value.stroke();
-  
-  // Track shadow/glow effect - BLACK
-  ctx.value.strokeStyle = 'rgba(0, 0, 0, 0.3)';  // Black shadow instead of gray
-  ctx.value.lineWidth = 8 / zoom.value;
-  ctx.value.beginPath();
-  ctx.value.moveTo(track.x1, track.y1);
-  ctx.value.lineTo(track.x2, track.y2);
-  ctx.value.stroke();
-  
-  // Track endpoints - BLACK
-  const endpointSize = 3 / zoom.value;
-  ctx.value.fillStyle = '#000000';  // Pure black endpoints
-  ctx.value.beginPath();
-  ctx.value.arc(track.x1, track.y1, endpointSize, 0, 2 * Math.PI);
-  ctx.value.fill();
-  ctx.value.beginPath();
-  ctx.value.arc(track.x2, track.y2, endpointSize, 0, 2 * Math.PI);
-  ctx.value.fill();
-}
   // Draw current track being drawn with enhanced visuals
   if (isDrawingTrack.value && currentTrack.value) {
     const hasEndPoint = currentTrack.value.x2 !== undefined && 
@@ -1299,6 +1338,38 @@ function drawTrack(track) {
   ctx.value.restore();
 }
 
+function drawTrack(track) {
+  if (!ctx.value) return;
+  
+  // Track shadow/glow effect - BLACK
+  ctx.value.strokeStyle = 'rgba(0, 0, 0, 0.3)';
+  ctx.value.lineWidth = 8 / zoom.value;
+  ctx.value.lineCap = 'round';
+  ctx.value.beginPath();
+  ctx.value.moveTo(track.x1, track.y1);
+  ctx.value.lineTo(track.x2, track.y2);
+  ctx.value.stroke();
+  
+  // Main track line - BLACK COLOR
+  ctx.value.strokeStyle = '#000000';
+  ctx.value.lineWidth = 4 / zoom.value;
+  ctx.value.lineCap = 'round';
+  ctx.value.beginPath();
+  ctx.value.moveTo(track.x1, track.y1);
+  ctx.value.lineTo(track.x2, track.y2);
+  ctx.value.stroke();
+  
+  // Track endpoints - BLACK
+  const endpointSize = 3 / zoom.value;
+  ctx.value.fillStyle = '#000000';
+  ctx.value.beginPath();
+  ctx.value.arc(track.x1, track.y1, endpointSize, 0, 2 * Math.PI);
+  ctx.value.fill();
+  ctx.value.beginPath();
+  ctx.value.arc(track.x2, track.y2, endpointSize, 0, 2 * Math.PI);
+  ctx.value.fill();
+}
+
 function redrawDepthCanvas() {
   if (!depthCtx.value || !depthMaskImage.value) return;
   
@@ -1318,7 +1389,6 @@ function redrawDepthCanvas() {
   
   depthCtx.value.restore();
 }
-
 </script>
 
 <style scoped>
@@ -1561,7 +1631,7 @@ function redrawDepthCanvas() {
   position: relative;
   /* gap: 24px; */
   padding: 5px 5px;
-  background: rgba(255, 255, 255, 0.95);
+  background: white;
   backdrop-filter: blur(16px);
   border-top: 1px solid rgba(0, 0, 0, 0.1);
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);

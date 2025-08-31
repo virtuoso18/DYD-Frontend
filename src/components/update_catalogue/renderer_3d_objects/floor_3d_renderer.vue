@@ -198,7 +198,7 @@ function adjustCanvasToImageAspectRatio(texture) {
   
   const imgAspect = texture.image.width / texture.image.height;
   const maxWidth = 800;
-  const maxHeight = 550;
+  const maxHeight = 600;
   
   let canvasWidth, canvasHeight;
   

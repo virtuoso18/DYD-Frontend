@@ -217,7 +217,7 @@ updateItemRendering(uuid, type,model_3d_url){
 }
 
 .see-all-link {
-  color: #1890ff;
+  color: #3B63FB;
   text-decoration: none;
 }
 
@@ -291,8 +291,8 @@ updateItemRendering(uuid, type,model_3d_url){
 }
 
 .filter-btn.active {
-  background: #1890ff;
-  border-color: #1890ff;
+  background: #3B63FB;
+  border-color: #3B63FB;
 }
 
 .filter-btn.active svg path,
@@ -381,7 +381,7 @@ updateItemRendering(uuid, type,model_3d_url){
 .list-view .product-price {
   font-size: 16px;
   font-weight: 600;
-  color: #1890ff;
+  color: #3B63FB;
   display: flex;
   justify-content: space-between;
 }
@@ -466,7 +466,7 @@ updateItemRendering(uuid, type,model_3d_url){
 .grid-view .product-price {
   font-size: 14px;
   font-weight: 600;
-  color: #1890ff;
+  color: #3B63FB;
   text-align: left;
   margin-top: auto;
   

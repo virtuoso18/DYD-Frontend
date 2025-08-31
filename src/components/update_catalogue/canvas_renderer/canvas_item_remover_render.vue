@@ -1,24 +1,14 @@
 <template>
   <div class="canvas-container" ref="canvasContainer">
     <!-- Loading Overlay -->
-    <!-- <div v-if="isLoading || objectMasksLoading" class="loading-overlay">
-      <div class="spinner"></div>
-      <div class="loading-text">
-        {{ objectMasksLoading ? `Loading furniture detection... ${objectMasksLoadingProgress}%` : 'Loading image...' }}
+    <div v-if="isLoading || objectMasksLoading" class="scanning-loading-overlay">
+      <div class="loading-screen" :style="{ backgroundImage: `url(${backgroundImageUrl})` }">
+        <div class="wave-overlay"></div>
+        <div class="loading-text">
+          <div class="process-text">Loading Room...</div>
+        </div>
       </div>
-      <div v-if="objectMasksLoading" class="loading-progress-bar">
-        <div class="progress-fill" :style="{ width: objectMasksLoadingProgress + '%' }"></div>
-      </div>
-    </div> -->
-    <!-- 1. ADD THIS TO YOUR TEMPLATE (replace the existing loading overlay) -->
-<div v-if="isLoading || objectMasksLoading" class="scanning-loading-overlay">
-  <div class="loading-screen" :style="{ backgroundImage: `url(${backgroundImageUrl})` }">
-    <div class="wave-overlay"></div>
-    <div class="loading-text">
-      <div class="process-text">Loading Room...</div>
     </div>
-  </div>
-</div>
 
     <!-- Main Canvas -->
     <canvas
@@ -68,50 +58,11 @@
       </div>
     </div>
 
-    <!-- Mode Indicator -->
-    <!-- <div 
-      v-if="!isLoading" 
-      class="mode-indicator furniture-mode"
-    >
-      <span class="mode-text">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-          <path d="M4.59 13.83V16.13M13.79 13.83V16.13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-          <path d="M15.32 7.70C15.32 6.27 15.32 5.55 15.01 5.02C14.81 4.67 14.52 4.38 14.17 4.18C13.64 3.87 12.92 3.87 11.49 3.87H6.89C5.46 3.87 4.74 3.87 4.21 4.18C3.86 4.38 3.57 4.67 3.37 5.02C3.06 5.55 3.06 6.27 3.06 7.70" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-          <path d="M15.32 7.70C14.48 7.70 13.79 8.39 13.79 9.23V10.77C13.79 11.40 13.66 11.53 13.03 11.53H5.36C4.73 11.53 4.59 11.40 4.59 10.77V9.23C4.59 8.39 3.91 7.70 3.06 7.70C2.21 7.70 1.53 8.39 1.53 9.23C1.53 9.80 1.84 10.30 2.29 10.56V10.77C2.29 12.21 2.29 12.93 2.74 13.38C3.19 13.83 3.92 13.83 5.36 13.83H13.03C14.47 13.83 15.19 13.83 15.64 13.38C16.09 12.93 16.09 12.21 16.09 10.77V10.56C16.55 10.30 16.86 9.80 16.86 9.23C16.86 8.39 16.17 7.70 15.32 7.70Z" stroke="currentColor" stroke-width="1.5"/>
-        </svg>
-        Furniture Selection Mode
-      </span>
-      <span class="mode-hint">
-        {{ objectMaskCacheReady ? 'Click on objects to select for removal' : 'Loading object detection...' }}
-      </span>
-    </div> -->
-
     <!-- Selection Controls -->
     <div v-if="!isLoading && objectMaskCacheReady " class="selection-controls">
-      <button
-  @click="toggleSelection"
-  class="control-btn"
-  :disabled="objectMaskRegions.length === 0"
->
-  {{ selectedObjects.length === objectMaskRegions.length ? 'Clear Selection'+`(${selectedObjects.length})` : 'Select All' }}
-</button>
-
-      <button 
-        @click="removeSelectedObjects" 
-        class="control-btn remove"
-        :disabled="selectedObjects.length === 0"
-      >
-        Remove Selected ({{ selectedObjects.length }})
-      </button>
-      <a-button type="primary" class="toolbar-btn primary-btn" @click="make_room_empty">
-            Make room empty
-          </a-button>
-        <a-button type="primary" class="toolbar-btn primary-btn" @click="reset_entire_room">
-            Reset room
-         </a-button>
-        <a-button type="primary" class="toolbar-btn primary-btn" @click="reset_entire_room">
-            Detect all furniture
-         </a-button>
+      <a-button class="toolbar-btn primary-btn" @click="make_room_empty">
+        Remove All Furniture
+      </a-button>
     </div>
 
     <!-- Zoom Controls -->
@@ -127,12 +78,47 @@
       Click and drag to pan • Mouse wheel to zoom • Click objects to select
     </div>
 
-    <!-- Debug Info (remove in production) -->
+    <!-- Debug Info -->
     <div v-if="showDebugInfo" class="debug-info">
       <div>Objects detected: {{ Object.keys(objectMasks || {}).length }}</div>
       <div>Cache ready: {{ objectMaskCacheReady }}</div>
       <div>Regions processed: {{ objectMaskRegions.length }}</div>
       <div>Selected: {{ selectedObjects.length }}</div>
+    </div>
+  </div>
+  
+  <div  class="" style="display:flex;justify-content: space-between;background: white;padding-left:10px;padding-right:10px;">
+    <div style="display:flex;gap:5px;padding-top:5px;">
+      <a-button
+        @click="toggleSelection"
+        class="control-btn"
+        :disabled="objectMaskRegions.length === 0"
+      >
+        {{ selectedObjects.length === objectMaskRegions.length ? 'Clear Selection'+`(${selectedObjects.length})` : 'Select All' }}
+      </a-button>
+
+      <a-button 
+        @click="removeSelectedObjects" 
+        class="control-btn remove"
+        :disabled="selectedObjects.length === 0"
+      >
+        Remove Selected ({{ selectedObjects.length }})
+      </a-button>
+      
+      <a-button type="primary" class="toolbar-btn primary-btn" @click="reset_entire_room" 
+      :disabled="isLoading">
+        Reset room
+      </a-button>
+      
+      <!-- <a-button type="primary" class="toolbar-btn primary-btn" @click="" :disabled="isLoading">
+        Detect all furniture
+      </a-button> -->
+    </div>
+    
+    <div style="padding-top:10px;">
+      <a-button type="primary" class="toolbar-btn primary-btn" @click="" :disabled="isLoading">
+        Apply Changes
+      </a-button>
     </div>
   </div>
 </template>
@@ -192,6 +178,7 @@ export default {
       isCacheInitialized: false,
       objectMasksLoading: false,
       objectMasksLoadingProgress: 0,
+      currentObjectMasksHash: '',
       
       // Canvas dimensions
       canvasWidth: 800,
@@ -229,6 +216,12 @@ export default {
     }
   },
   
+  computed: {
+    objectMasksHash() {
+      return JSON.stringify(this.objectMasks || {});
+    }
+  },
+  
   mounted() {
     this.setupResizeObserver();
     this.updateCanvasDimensions();
@@ -246,57 +239,156 @@ export default {
   },
   
   watch: {
-    baseImage() {
-      this.loadImage();
-    },
-    objectMasks: {
-      handler(newVal, oldVal) {
-        console.log('🪑 ObjectMasks prop changed:', {
-          old: Object.keys(oldVal || {}).length,
-          new: Object.keys(newVal || {}).length
-        });
-        
-        if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
-          console.log('🔄 Object masks changed, refreshing...');
-          this.handleObjectMasksUpdate(newVal || {});
-        }
+    baseImage: {
+      handler() {
+        console.log('Base image changed, reloading...');
+        this.loadImage();
       },
-      deep: true,
       immediate: false
     },
+    
+    objectMasksHash: {
+      handler(newHash, oldHash) {
+        if (oldHash && newHash !== oldHash) {
+          console.log('Object masks changed, clearing and reloading...');
+          this.handleObjectMasksChange();
+        }
+      },
+      immediate: false
+    },
+    
     cachedObjectImages: {
-      handler(newCached) {
-        if (newCached && newCached.size > 0 && this.objectMaskCacheReady) {
-          console.log('📦 Using cached object images from parent');
+      handler(newCached, oldCached) {
+        if (this.objectMaskCacheReady && newCached && newCached.size > 0) {
+          const newSize = newCached ? newCached.size : 0;
+          const oldSize = oldCached ? oldCached.size : 0;
+          
+          if (newSize !== oldSize) {
+            console.log('Cached images changed, reloading from parent cache');
+            this.loadFromParentCache();
+          }
+        }
+      },
+      deep: false
+    },
+    
+    objectMaskCacheReady: {
+      handler(isReady) {
+        if (isReady && this.cachedObjectImages && this.cachedObjectImages.size > 0) {
+          console.log('Cache became ready, loading from parent cache');
           this.loadFromParentCache();
         }
       },
-      deep: true
+      immediate: false
     },
-    objectMaskCacheReady(isReady) {
-      if (isReady && this.cachedObjectImages && this.cachedObjectImages.size > 0) {
-        console.log('✅ Cache became ready, loading from parent cache');
-        this.loadFromParentCache();
-      }
-    },
+    
     selectedObjects: {
       handler() {
         this.emitObjectSelectionChange();
+        this.$nextTick(() => {
+          this.render();
+        });
       },
       deep: true
     }
   },
   
   methods: {
+    // ===================
+    // OBJECT MASKS CHANGE HANDLING
+    // ===================
+    
+    async handleObjectMasksChange() {
+      try {
+        this.clearAllObjectState();
+        this.removeObjectHighlight();
+        this.render();
+        
+        if (this.objectMasks && Object.keys(this.objectMasks).length > 0) {
+          this.currentObjectMasksHash = this.objectMasksHash;
+          
+          if (this.objectMaskCacheReady && this.cachedObjectImages && this.cachedObjectImages.size > 0) {
+            console.log('Using parent cache for new masks');
+            await this.loadFromParentCache();
+          } else {
+            console.log('Initializing new object mask cache');
+            await this.initializeObjectMaskCache();
+          }
+        } else {
+          console.log('No object masks to load');
+          this.showEmptyFurnitureState();
+        }
+        
+      } catch (error) {
+        console.error('Error handling object masks change:', error);
+        this.showEmptyFurnitureState();
+      }
+    },
+    
+    clearAllObjectState() {
+      console.log('Clearing all object state...');
+      
+      this.objectMaskCache.clear();
+      this.isCacheInitialized = false;
+      this.objectMaskImages = [];
+      this.objectMaskRegions = [];
+      this.objectMaskImageData = [];
+      this.selectedObjects = [];
+      this.hoveredObject = null;
+      this.objectMasksLoading = false;
+      this.objectMasksLoadingProgress = 0;
+    },
+    
+    // ===================
+    // SELECTION CONTROLS
+    // ===================
+    
     toggleSelection() {
-    if (this.selectedObjects.length === this.objectMaskRegions.length) {
-      // All selected → clear them
+      if (this.selectedObjects.length === this.objectMaskRegions.length) {
+        this.clearSelections();
+      } else {
+        this.selectAllObjects();
+      }
+    },
+    
+    selectAllObjects() {
+      if (this.isLoading || this.objectMasksLoading) return;
+      this.selectedObjects = this.objectMaskRegions.map(region => region.objectKey);
+    },
+
+    clearSelections() {
+      if (this.isLoading) return;
+      this.selectedObjects = [];
+      this.removeObjectHighlight();
+    },
+
+    removeSelectedObjects() {
+      if (this.selectedObjects.length === 0) return;
+      
+      console.log('Removing selected objects:', this.selectedObjects);
+      
+      this.$emit('objects-selected-for-removal', {
+        selectedObjects: [...this.selectedObjects],
+        objectMasks: this.selectedObjects.reduce((acc, key) => {
+          if (this.objectMasks[key]) {
+            acc[key] = this.objectMasks[key];
+          }
+          return acc;
+        }, {}),
+        canvasDimensions: this.getCanvasDimensions()
+      });
+      
       this.clearSelections();
-    } else {
-      // Not all selected → select all
-      this.selectAllObjects();
-    }
-  },
+    },
+    
+    make_room_empty() {
+      this.$emit('make-room-empty', true)
+    },
+    
+    reset_entire_room() {
+      this.$emit('reset-entire-room', true)
+    },
+    
     // ===================
     // INITIALIZATION
     // ===================
@@ -347,7 +439,6 @@ export default {
       this.ctx = this.canvas.getContext('2d');
       this.overlayCtx = this.overlayCanvas.getContext('2d');
       
-      // Set initial background
       this.ctx.fillStyle = '#f0f0f0';
       this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
     },
@@ -357,13 +448,13 @@ export default {
     // ===================
     
     setupEventListeners() {
-      if (!this.canvas || this.isLoading) return;
+      if (!this.canvas) return;
       
       this.canvas.addEventListener('wheel', this.handleWheel, { passive: false });
       this.canvas.addEventListener('mousedown', this.handleMouseDown);
       this.canvas.addEventListener('mousemove', this.handleMouseMove);
       this.canvas.addEventListener('mouseup', this.handleMouseUp);
-      this.canvas.addEventListener('mouseleave', this.handleMouseUp);
+      this.canvas.addEventListener('mouseleave', this.handleMouseLeave);
       this.canvas.addEventListener('click', this.handleObjectClick);
       this.canvas.addEventListener('contextmenu', (e) => e.preventDefault());
       this.canvas.addEventListener('touchstart', this.handleTouchStart, { passive: false });
@@ -378,7 +469,7 @@ export default {
       this.canvas.removeEventListener('mousedown', this.handleMouseDown);
       this.canvas.removeEventListener('mousemove', this.handleMouseMove);
       this.canvas.removeEventListener('mouseup', this.handleMouseUp);
-      this.canvas.removeEventListener('mouseleave', this.handleMouseUp);
+      this.canvas.removeEventListener('mouseleave', this.handleMouseLeave);
       this.canvas.removeEventListener('click', this.handleObjectClick);
       this.canvas.removeEventListener('touchstart', this.handleTouchStart);
       this.canvas.removeEventListener('touchmove', this.handleTouchMove);
@@ -445,7 +536,9 @@ export default {
         this.render();
         e.preventDefault();
       } else {
-        this.handleObjectHover(e);
+        if (this.objectMaskCacheReady && this.objectMaskRegions.length > 0) {
+          this.handleObjectHover(e);
+        }
       }
     },
 
@@ -457,6 +550,11 @@ export default {
         this.canvas.style.cursor = this.zoom > 1 ? 'grab' : 'default';
         e.preventDefault();
       }
+    },
+    
+    handleMouseLeave(e) {
+      this.handleMouseUp(e);
+      this.removeObjectHighlight();
     },
 
     handleTouchStart(e) {
@@ -494,6 +592,7 @@ export default {
       if (this.isLoading) return;
       e.preventDefault();
       this.isDragging = false;
+      this.removeObjectHighlight();
     },
 
     // ===================
@@ -573,19 +672,25 @@ export default {
         this.baseImg = await this.createImageFromSrc(this.baseImage);
         this.calculateImageDimensions();
         this.render();
-        
-        // Load object masks if available
-        if (this.objectMaskCacheReady && this.cachedObjectImages && this.cachedObjectImages.size > 0) {
-          console.log('📦 Loading from cached object images');
-          this.loadFromParentCache();
-        } else if (this.objectMasks && Object.keys(this.objectMasks).length > 0) {
-          console.log('🔄 Initializing object mask cache');
-          await this.initializeObjectMaskCache();
-        }
+        await this.processInitialObjectMasks();
         
       } catch (error) {
         console.error('Error loading image:', error);
         this.showErrorState();
+      }
+    },
+    
+    async processInitialObjectMasks() {
+      this.currentObjectMasksHash = this.objectMasksHash;
+      
+      if (this.objectMaskCacheReady && this.cachedObjectImages && this.cachedObjectImages.size > 0) {
+        console.log('Loading from cached object images');
+        await this.loadFromParentCache();
+      } else if (this.objectMasks && Object.keys(this.objectMasks).length > 0) {
+        console.log('Initializing object mask cache');
+        await this.initializeObjectMaskCache();
+      } else {
+        this.showEmptyFurnitureState();
       }
     },
 
@@ -630,19 +735,8 @@ export default {
     // OBJECT MASK CACHING
     // ===================
     
-    async handleObjectMasksUpdate(newObjectMasks) {
-      console.log('🔄 Handling object masks update');
-      this.clearObjectMaskCache();
-      
-      if (Object.keys(newObjectMasks).length > 0) {
-        await this.initializeObjectMaskCache();
-      } else {
-        this.showEmptyFurnitureState();
-      }
-    },
-
     async initializeObjectMaskCache() {
-      if (this.isCacheInitialized || !this.objectMasks || Object.keys(this.objectMasks).length === 0) {
+      if (this.isCacheInitialized || this.objectMasksLoading || !this.objectMasks || Object.keys(this.objectMasks).length === 0) {
         return;
       }
 
@@ -650,7 +744,7 @@ export default {
       this.objectMasksLoading = true;
       this.objectMasksLoadingProgress = 0;
       
-      console.log('🚀 Initializing object mask cache...');
+      console.log('Initializing object mask cache...');
       
       const objectEntries = Object.entries(this.objectMasks);
       const totalMasks = objectEntries.length;
@@ -683,9 +777,9 @@ export default {
         await Promise.allSettled(loadingPromises);
         
         this.objectMasksLoading = false;
-        console.log('✅ Object mask cache initialized');
+        console.log('Object mask cache initialized');
         
-        this.loadFromCache();
+        await this.loadFromCache();
         
       } catch (error) {
         console.error('Failed to initialize object mask cache:', error);
@@ -694,9 +788,10 @@ export default {
       }
     },
 
-    loadFromCache() {
+    async loadFromCache() {
       if (this.objectMaskCache.size === 0) {
-        console.log('📭 No cached masks to load');
+        console.log('No cached masks to load');
+        this.showEmptyFurnitureState();
         return;
       }
 
@@ -715,16 +810,16 @@ export default {
         }
       });
       
-      console.log(`📦 Loaded ${loadedFromCache} object masks from cache`);
+      console.log(`Loaded ${loadedFromCache} object masks from cache`);
       
-      this.processObjectMaskRegions().then(() => {
-        this.render();
-      });
+      await this.processObjectMaskRegions();
+      this.render();
     },
 
-    loadFromParentCache() {
+    async loadFromParentCache() {
       if (!this.cachedObjectImages || this.cachedObjectImages.size === 0) {
-        console.log('📭 No parent cached images to load');
+        console.log('No parent cached images to load');
+        this.showEmptyFurnitureState();
         return;
       }
 
@@ -743,38 +838,20 @@ export default {
         }
       });
       
-      console.log(`📦 Loaded ${loadedFromParentCache} object masks from parent cache`);
+      console.log(`Loaded ${loadedFromParentCache} object masks from parent cache`);
       
-      this.processObjectMaskRegions().then(() => {
-        this.render();
-      });
+      await this.processObjectMaskRegions();
+      this.render();
     },
 
     clearObjectMaskCache() {
-      console.log('🧹 Clearing object mask cache...');
-      
-      this.objectMaskCache.clear();
-      this.isCacheInitialized = false;
-      
-      this.objectMaskImages = [];
-      this.objectMaskRegions = [];
-      this.objectMaskImageData = [];
-      
-      this.objectMasksLoading = false;
-      this.objectMasksLoadingProgress = 0;
-      
-      this.hoveredObject = null;
-      this.selectedObjects = [];
+      console.log('Clearing object mask cache...');
+      this.clearAllObjectState();
       this.removeObjectHighlight();
     },
 
     showEmptyFurnitureState() {
-      this.objectMaskImages = [];
-      this.objectMaskRegions = [];
-      this.objectMaskImageData = [];
-      this.hoveredObject = null;
-      this.selectedObjects = [];
-      this.removeObjectHighlight();
+      this.clearAllObjectState();
       this.render();
     },
 
@@ -806,13 +883,13 @@ export default {
     // ===================
     
     async processObjectMaskRegions() {
-      console.log('🚀 Starting object mask region processing...');
+      console.log('Starting object mask region processing...');
       
       this.objectMaskRegions = [];
       this.objectMaskImageData = [];
       
       if (!this.objectMaskImages.length) {
-        console.log('📭 No object mask images to process');
+        console.log('No object mask images to process');
         return;
       }
 
@@ -837,7 +914,7 @@ export default {
           await this.yieldToBrowser();
         }
         
-        console.log(`✅ Processed ${this.objectMaskRegions.length} object masks`);
+        console.log(`Processed ${this.objectMaskRegions.length} object masks`);
         
       } catch (error) {
         console.error('Error in object mask processing:', error);
@@ -1035,45 +1112,6 @@ export default {
       this.selectedObjects = updatedObjects;
     },
 
-    selectAllObjects() {
-      if (this.isLoading || this.objectMasksLoading) return;
-      
-      this.selectedObjects = this.objectMaskRegions.map(region => region.objectKey);
-    },
-
-    clearSelections() {
-      if (this.isLoading) return;
-      
-      this.selectedObjects = [];
-      this.removeObjectHighlight();
-    },
-
-    removeSelectedObjects() {
-      if (this.selectedObjects.length === 0) return;
-      
-      console.log('🗑️ Removing selected objects:', this.selectedObjects);
-      
-      this.$emit('objects-selected-for-removal', {
-        selectedObjects: [...this.selectedObjects],
-        objectMasks: this.selectedObjects.reduce((acc, key) => {
-          if (this.objectMasks[key]) {
-            acc[key] = this.objectMasks[key];
-          }
-          return acc;
-        }, {}),
-        canvasDimensions: this.getCanvasDimensions()
-      });
-      
-      // Clear selections after emitting
-      this.clearSelections();
-    },
-      make_room_empty() {
-      this.$emit('make-room-empty',true)
-    },
-      reset_entire_room() {
-      this.$emit('reset-entire-room', true)
-    },
-
     highlightObject(objectKey) {
       const region = this.objectMaskRegions.find(r => r.objectKey === objectKey);
       if (!region || !this.overlayCtx) return;
@@ -1087,13 +1125,14 @@ export default {
       const imageData = region.imageData;
       const data = imageData.data;
       
-      // Use different colors for selected vs hovered
       const isSelected = this.selectedObjects.includes(objectKey);
       this.overlayCtx.fillStyle = isSelected ? 'rgba(255, 0, 0, 0.4)' : 'rgba(255, 165, 0, 0.4)';
       
-      for (let y = 0; y < this.canvasHeight; y += 2) {
+      const step = Math.max(1, Math.floor(4 / this.zoom));
+      
+      for (let y = 0; y < this.canvasHeight; y += step) {
         let startX = -1;
-        for (let x = 0; x < this.canvasWidth; x += 2) {
+        for (let x = 0; x < this.canvasWidth; x += step) {
           const index = (y * this.canvasWidth + x) * 4;
           const r = data[index];
           const g = data[index + 1];
@@ -1103,13 +1142,13 @@ export default {
             if (startX === -1) startX = x;
           } else {
             if (startX !== -1) {
-              this.overlayCtx.fillRect(startX / this.zoom, y / this.zoom, (x - startX) / this.zoom, 2 / this.zoom);
+              this.overlayCtx.fillRect(startX / this.zoom, y / this.zoom, (x - startX) / this.zoom, step / this.zoom);
               startX = -1;
             }
           }
         }
         if (startX !== -1) {
-          this.overlayCtx.fillRect(startX / this.zoom, y / this.zoom, (this.canvasWidth - startX) / this.zoom, 2 / this.zoom);
+          this.overlayCtx.fillRect(startX / this.zoom, y / this.zoom, (this.canvasWidth - startX) / this.zoom, step / this.zoom);
         }
       }
       
@@ -1160,7 +1199,6 @@ export default {
           this.renderHeight
         );
         
-        // Draw selected object outlines
         this.drawSelectedObjectOutlines();
         
       } catch (error) {
@@ -1267,8 +1305,8 @@ export default {
     },
 
     forceRefreshObjectMasks(newObjectMasks) {
-      console.log('🔄 Force refreshing object masks...');
-      this.handleObjectMasksUpdate(newObjectMasks || {});
+      console.log('Force refreshing object masks...');
+      this.handleObjectMasksChange();
     }
   }
 }
@@ -1278,15 +1316,13 @@ export default {
 .canvas-container {
   position: relative;
   width: 100%;
-  height: 100%;
+  height: 92%;
   overflow: hidden;
-  /* border-radius: 10px; */
   background: #f5f5f5;
 }
 
 .main-canvas {
   display: block;
-  /* border-radius: 10px; */
   transition: opacity 0.3s ease;
 }
 
@@ -1306,58 +1342,6 @@ export default {
 
 .overlay-canvas.disabled {
   opacity: 0.5;
-}
-
-.loading-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(245, 245, 245, 0.9);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
-  border-radius: 10px;
-}
-
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #1890ff;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.loading-text {
-  margin-top: 16px;
-  font-size: 16px;
-  color: #666;
-  font-weight: 500;
-}
-
-.loading-progress-bar {
-  width: 200px;
-  height: 4px;
-  background: rgba(0, 0, 0, 0.1);
-  border-radius: 2px;
-  margin-top: 12px;
-  overflow: hidden;
-}
-
-.progress-fill {
-  height: 100%;
-  background: #1890ff;
-  border-radius: 2px;
-  transition: width 0.3s ease;
 }
 
 .object-indicators {
@@ -1409,58 +1393,23 @@ export default {
   background: rgba(255, 0, 0, 1);
 }
 
-.mode-indicator {
-  position: absolute;
-  bottom: 20px;
-  left: 20px;
-  background: rgba(0, 0, 0, 0.8);
-  color: white;
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-size: 14px;
-  z-index: 6;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.mode-indicator.furniture-mode {
-  background: rgba(139, 69, 19, 0.9);
-}
-
-.mode-text {
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.mode-hint {
-  font-size: 12px;
-  opacity: 0.9;
-  font-style: italic;
-}
 .selection-controls {
   position: absolute;
   bottom: 20px;
   left: 50%;
-  transform: translateX(-50%); /* shifts box back by half its width */
-  
+  transform: translateX(-50%);
   display: flex;
   flex-direction: row;
-  justify-content: center; /* centers buttons inside */
+  justify-content: center;
   align-items: center;
-  
   gap: 8px;
   z-index: 6;
   background-color: rgba(255, 255, 255, 0.136);
   backdrop-filter: blur(5px);
   max-width: 700px;
-  width: 100%;     /* optional: ensures responsive shrink */
   padding: 10px;
-  border-radius: 8px; /* optional: looks cleaner */
+  border-radius: 8px;
 }
-
 
 .control-btn {
   padding: 8px 16px;
@@ -1504,7 +1453,6 @@ export default {
 .control-btn.remove:hover:not(:disabled) {
   background: #cf1322;
 }
-
 
 .zoom-controls {
   position: absolute;
@@ -1557,7 +1505,6 @@ export default {
   text-align: center;
 }
 
-
 .instructions {
   position: absolute;
   bottom: 20px;
@@ -1587,42 +1534,7 @@ export default {
   margin-bottom: 2px;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* Updated scanning loading overlay to fit canvas only */
+/* Loading overlay styles */
 .scanning-loading-overlay {
   position: absolute;
   top: 0;
@@ -1655,9 +1567,9 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  /* background: rgba(0, 0, 0, 0.05); */
   z-index: 1;
 }
+
 .wave-overlay {
   position: absolute;
   top: 0;
@@ -1666,16 +1578,16 @@ export default {
   height: 100%;
   background: linear-gradient(
     to left,
-    rgba(0,102,255,1) 0%,   /* bold vertical scanning line */
+    rgba(0,102,255,1) 0%,
     rgba(0,102,255,0.4) 20%,
-    rgba(0,102,255,0.3) 30%, /* fade tail after the bold line */
+    rgba(0,102,255,0.3) 30%,
     rgba(0,102,255,0.2) 35%,
     rgba(0,102,255,0.15) 40%,
     rgba(0,102,255,0.10) 50%,
     rgba(0,102,255,0.0) 100%
   );
   animation: moveWaveLeftToRight 3s linear infinite,
-             waveFade 3s ease-in-out infinite; /* fade control */
+             waveFade 3s ease-in-out infinite;
   z-index: 2;
 }
 
@@ -1685,10 +1597,10 @@ export default {
 }
 
 @keyframes waveFade {
-  0%   { opacity: 0; }   /* invisible before entering */
-  10%  { opacity: 1; }   /* fade in */
-  90%  { opacity: 1; }   /* stay visible */
-  100% { opacity: 0; }   /* fade out before reset */
+  0%   { opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { opacity: 0; }
 }
 
 .loading-text {

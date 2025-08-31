@@ -318,7 +318,7 @@ background-size: cover;
   right: 0;
   width: 32px;
   height: 32px;
-  background: #1890ff;
+  background: #3B63FB;
   border: 3px solid white;
   border-radius: 50%;
   display: flex;
@@ -361,7 +361,7 @@ background-size: cover;
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #1890ff;
+  color: #3B63FB;
   font-weight: 500;
   padding: 8px 16px;
   border-radius: 8px;
@@ -387,7 +387,7 @@ background-size: cover;
 
 .form-input:focus,
 .form-textarea:focus {
-  border-color: #1890ff;
+  border-color: #3B63FB;
   box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
 }
 
@@ -438,7 +438,7 @@ background-size: cover;
 }
 
 .add-social-btn {
-  color: #1890ff;
+  color: #3B63FB;
   padding: 0;
   height: auto;
   font-weight: 500;
@@ -452,8 +452,8 @@ background-size: cover;
 }
 
 .save-btn {
-  background: #1890ff;
-  border-color: #1890ff;
+  background: #3B63FB;
+  border-color: #3B63FB;
   border-radius: 8px;
   height: 40px;
   padding: 0 24px;
@@ -549,7 +549,7 @@ background-size: cover;
 }
 
 :deep(.ant-input:focus) {
-  border-color: #1890ff;
+  border-color: #3B63FB;
   box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
 }
 </style>

@@ -32,6 +32,23 @@
       Click and drag to pan • Mouse wheel to zoom
     </div>
   </div>
+   <div class="" style="display:flex;justify-content: space-between;padding-left:10px;padding-right:10px;">
+     
+  <div style="display:flex;gap:5px;padding-top:5px;">
+
+      <a-button  :disabled="isLoading" class="toolbar-btn primary-btn" @click="reset_entire_room">
+        Before
+      </a-button>
+      <a-button  :disabled="isLoading"type="primary" class="toolbar-btn primary-btn" @click="reset_entire_room">
+          After
+       </a-button>
+      </div>
+      <div style="padding-top:10px;">
+        <a-button :disabled="isLoading" type="primary" class="toolbar-btn primary-btn" @click="reset_entire_room">
+          Apply Changes
+        </a-button>
+      </div>
+    </div>
 </template>
 
 <script>
@@ -65,13 +82,13 @@ export default {
       
       // Canvas dimensions
       canvasWidth: 800,
-      canvasHeight: 600,
+      canvasHeight: 500,
       containerWidth: 800,
-      containerHeight: 600,
+      containerHeight: 500,
       
       // Image rendering properties
       renderWidth: 800,
-      renderHeight: 600,
+      renderHeight: 500,
       renderOffsetX: 0,
       renderOffsetY: 0,
       scaleX: 1,
@@ -614,7 +631,7 @@ export default {
 .canvas-container {
   position: relative;
   width: 100%;
-  height: 100%;
+  height: 93%;
   min-height: 300px;
   overflow: hidden;
   background: #f5f5f5;
