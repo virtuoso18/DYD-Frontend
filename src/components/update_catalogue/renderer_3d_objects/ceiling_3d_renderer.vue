@@ -112,7 +112,8 @@ const props = defineProps({
 // Add these reactive variables at the top of your script setup
 const canvasWidth = ref(800);
 const canvasHeight = ref(600);
-
+// 4. Add this variable at the top of your script setup:
+let resizeDebounce = null;
 // New reactive variables for the controls
 const adjustRoll = ref(0);
 const adjustPitch = ref(0);
@@ -331,7 +332,8 @@ function updateModelSize() {
   updateRotationControlsPosition();
 }
 
-// Update your onMounted to include resize observer setup
+
+// 5. Update the onMounted function to include the resize observer:
 onMounted(() => {
   const container = viewer.value;
   initializeScene(container);
@@ -356,16 +358,19 @@ onMounted(() => {
   
   animate();
 });
+
 // Update your initializeScene function to use reactive dimensions
+
+// 6. Update the initializeScene function to use full container dimensions:
 function initializeScene(container) {
   scene = new THREE.Scene();
   backgroundScene = new THREE.Scene();
   backgroundCamera = new THREE.Camera();
 
-  // Get initial container dimensions
+  // Get initial container dimensions - use full available space
   const rect = container.getBoundingClientRect();
-  canvasWidth.value = rect.width;
-  canvasHeight.value = rect.height;
+  canvasWidth.value = Math.max(rect.width, 400);
+  canvasHeight.value = Math.max(rect.height, 300);
 
   camera = new THREE.PerspectiveCamera(
     45, 
@@ -384,19 +389,30 @@ function initializeScene(container) {
 }
 
 // Add a resize observer for better responsiveness (optional but recommended)
+
+// 3. Add a new resize observer setup in onMounted:
 function setupResizeObserver() {
   if (typeof ResizeObserver !== 'undefined' && canvasContainer.value) {
-    const resizeObserver = new ResizeObserver(() => {
-      if (currentBackgroundTexture) {
-        adjustCanvasToImageAspectRatio(currentBackgroundTexture);
-        updateBackground(currentBackgroundTexture);
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (let entry of entries) {
+        // Debounce resize events
+        clearTimeout(resizeDebounce);
+        resizeDebounce = setTimeout(() => {
+          if (currentBackgroundTexture) {
+            adjustCanvasToImageAspectRatio(currentBackgroundTexture);
+            updateBackground(currentBackgroundTexture);
+          }
+        }, 100);
       }
     });
     
     resizeObserver.observe(canvasContainer.value);
     
     // Return cleanup function
-    return () => resizeObserver.disconnect();
+    return () => {
+      clearTimeout(resizeDebounce);
+      resizeObserver.disconnect();
+    };
   }
   return null;
 }
@@ -728,19 +744,34 @@ async function downloadCurrentSceneImage() {
 
 
 // Corrected adjustCanvasToImageAspectRatio function with 800px max width
+
+// 2. Update the adjustCanvasToImageAspectRatio function:
 function adjustCanvasToImageAspectRatio(texture) {
   if (!texture.image || !canvasContainer.value) return;
   
   const imgAspect = texture.image.width / texture.image.height;
-  const maxWidth = 850;
   
-  // Get the parent container's width
+  // Get the parent container's dimensions
   const containerRect = canvasContainer.value.getBoundingClientRect();
   const availableWidth = containerRect.width;
+  const availableHeight = Math.min(containerRect.height, 540);
   
-  // Use smaller of available width or max width
-  const newCanvasWidth = Math.min(availableWidth, maxWidth);
-  const newCanvasHeight = Math.round(newCanvasWidth / imgAspect);
+  // Calculate dimensions based on available space and image aspect ratio
+  let newCanvasWidth, newCanvasHeight;
+  
+  // Try to fit by width first
+  newCanvasWidth = availableWidth;
+  newCanvasHeight = availableWidth / imgAspect;
+  
+  // If height exceeds available space, fit by height instead
+  if (newCanvasHeight > availableHeight) {
+    newCanvasHeight = availableHeight;
+    newCanvasWidth = availableHeight * imgAspect;
+  }
+  
+  // Ensure minimum dimensions
+  newCanvasWidth = Math.max(newCanvasWidth, 400);
+  newCanvasHeight = Math.max(newCanvasHeight, 500);
   
   // Update reactive variables
   canvasWidth.value = newCanvasWidth;
@@ -749,7 +780,6 @@ function adjustCanvasToImageAspectRatio(texture) {
   // Update container styling
   canvasContainer.value.style.width = `${newCanvasWidth}px`;
   canvasContainer.value.style.height = `${newCanvasHeight}px`;
-  canvasContainer.value.style.maxWidth = `${maxWidth}px`;
   canvasContainer.value.style.margin = '0 auto'; // Center the canvas
   
   // Update Three.js renderer
@@ -763,8 +793,9 @@ function adjustCanvasToImageAspectRatio(texture) {
     camera.updateProjectionMatrix();
   }
   
-  console.log(`Canvas resized to: ${newCanvasWidth}x${newCanvasHeight} (aspect: ${imgAspect.toFixed(2)}, max: ${maxWidth}px)`);
+  console.log(`Canvas resized to: ${newCanvasWidth}x${newCanvasHeight} (aspect: ${imgAspect.toFixed(2)})`);
 }
+
 
 
 function loadCeilingMask() { // Changed from loadFloorMask
@@ -1617,14 +1648,17 @@ onBeforeUnmount(() => {
     display: block;
     margin: auto;
     width: 100%;
-    height: 70vh;
+    height: 100%; 
+    min-height: 400px;
 }
 
 #viewer {
     position: relative;
     width: 100%;
     height: 100%;
+    min-height: 400px; 
 }
+
 
 #loading {
   position: absolute;

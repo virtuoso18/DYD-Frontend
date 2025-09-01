@@ -46,12 +46,14 @@
 
       <!-- Product Grid/List -->
       <div v-if="!loading" class="product-container" :class="{ 'grid-view': showGrid, 'list-view': !showGrid }">
-         <div v-for="(item, index) in filteredItems" :key="index" @click="updateItemRendering(item.id)" style="
+         <div v-for="(item, index) in filteredItems" :key="index" @click="selectTexture(item.id)" style="
   background: #ffffff;
   border: none;
   border-radius: 4px;
   padding:2px;
-  border:1px solid rgba(128, 128, 128, 0.14);">
+  border:1px solid rgba(128, 128, 128, 0.14);"
+  :style="selected_texture===item.id ? 'border:1px solid blue': ''"
+  >
           <div  class="product-item">
 
           <div class="product-image">
@@ -97,11 +99,11 @@
     </div>
 
     <!-- Fixed Apply Button -->
-    <!-- <div class="apply-section">
-      <a-button type="primary" size="large" block class="apply-button">
+    <div class="apply-section">
+      <a-button type="primary" size="large" block class="apply-button" @click=updateItemRendering()>
         Apply
       </a-button>
-    </div> -->
+    </div>
   </div>
 </template>
 
@@ -112,6 +114,7 @@ export default {
   data() {
     return {
       searchText: '',
+      selected_texture:'',
       loading: false,
       error: null,
       catalogItems: [],
@@ -155,8 +158,12 @@ export default {
     seeAllClicked(){
       this.$emit('floor-see-all', true);
     },
-updateItemRendering(uuid){
-      this.$emit('texture-selected', uuid);
+    
+selectTexture(uuid){
+      this.selected_texture=uuid
+},
+updateItemRendering(){
+      this.$emit('texture-selected', this.selected_texture);
 
 }
   }

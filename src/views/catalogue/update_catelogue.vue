@@ -316,7 +316,10 @@ Switch Furniture</a-button>
           <template v-else>
             
           </template> -->
-          
+          <!-- {{this.base_image_url}} -->
+          <!-- {{ this.binaryMaskList }} -->
+          <!-- {{ this.binaryMasks_objects_detected }} -->
+
   <!-- Alternative: If you want to show loading for all canvas components -->
 <div  
  :style="{

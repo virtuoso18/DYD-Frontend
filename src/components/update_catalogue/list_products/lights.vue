@@ -51,7 +51,8 @@
   border: none;
   border-radius: 4px;
   padding:2px;
-  border:1px solid rgba(128, 128, 128, 0.14);">
+  border:1px solid rgba(128, 128, 128, 0.14);"
+  :style="selected_light===item.id ? 'border:1px solid blue': ''">
           <div  class="product-item">
 
           <div class="product-image">
@@ -98,11 +99,11 @@
     </div>
 
     <!-- Fixed Apply Button -->
-    <!-- <div class="apply-section">
+    <div class="apply-section">
       <a-button type="primary" size="large" block class="apply-button">
         Apply
       </a-button>
-    </div> -->
+    </div>
   </div>
 </template>
 
@@ -113,6 +114,7 @@ export default {
   data() {
     return {
       searchText: '',
+      selected_light:'',
       loading: false,
       error: null,
       catalogItems: [
@@ -192,6 +194,7 @@ export default {
       this.$emit('light-see-all', true);
     },
 updateItemRendering(uuid, type,model_3d_url){
+  this.selected_light=uuid
       this.$emit('light-selected', {'uuid':uuid,'type':type,'model_3d_url':model_3d_url});
 
 }
@@ -217,7 +220,7 @@ updateItemRendering(uuid, type,model_3d_url){
 }
 
 .see-all-link {
-  color: #3B63FB;
+  color: #1890ff;
   text-decoration: none;
 }
 
@@ -291,8 +294,8 @@ updateItemRendering(uuid, type,model_3d_url){
 }
 
 .filter-btn.active {
-  background: #3B63FB;
-  border-color: #3B63FB;
+  background: #1890ff;
+  border-color: #1890ff;
 }
 
 .filter-btn.active svg path,
@@ -381,7 +384,7 @@ updateItemRendering(uuid, type,model_3d_url){
 .list-view .product-price {
   font-size: 16px;
   font-weight: 600;
-  color: #3B63FB;
+  color: #1890ff;
   display: flex;
   justify-content: space-between;
 }
@@ -466,7 +469,7 @@ updateItemRendering(uuid, type,model_3d_url){
 .grid-view .product-price {
   font-size: 14px;
   font-weight: 600;
-  color: #3B63FB;
+  color: #1890ff;
   text-align: left;
   margin-top: auto;
   

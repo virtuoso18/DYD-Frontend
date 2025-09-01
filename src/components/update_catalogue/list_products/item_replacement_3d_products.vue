@@ -47,11 +47,12 @@
       <!-- Product Grid/List -->
       <div v-if="!loading" class="product-container" :class="{ 'grid-view': showGrid, 'list-view': !showGrid }">
          <div v-for="(item, index) in filteredItems" :key="index" @click="updateItemRendering(item['id'],item['3d_model'])" style="
-  background: #ffffff;
-  border: none;
-  border-radius: 4px;
-  padding:2px;
-  border:1px solid rgba(128, 128, 128, 0.14);">
+            background: #ffffff;
+            border: none;
+            border-radius: 4px;
+            padding:2px;
+            border:1px solid rgba(128, 128, 128, 0.14);"
+            :style="selected_item===item.id ? 'border:1px solid blue': ''">
           <div  class="product-item">
           <div class="product-image">
             <img :src="this.$store.state.root_api+item.primary_image" :alt="item.name" />
@@ -96,11 +97,11 @@
     </div>
 
     <!-- Fixed Apply Button -->
-    <!-- <div class="apply-section">
-      <a-button type="primary" size="large" block class="apply-button">
+    <div class="apply-section">
+      <a-button type="primary" size="large" block >
         Apply
       </a-button>
-    </div> -->
+    </div>
   </div>
 </template>
 
@@ -111,6 +112,7 @@ export default {
   data() {
     return {
       searchText: '',
+      selected_item:'',
       loading: false,
       error: null,
       catalogItems: [],
@@ -155,6 +157,7 @@ export default {
       this.$emit('products-see-all', true);
     },
 updateItemRendering(model_id,model_url){
+      this.selected_item=model_id
       this.$emit('change-3d-model', {'model_uuid':model_id ,'model_url':model_url});
 
 }
@@ -180,7 +183,7 @@ updateItemRendering(model_id,model_url){
 }
 
 .see-all-link {
-  color: #3B63FB;
+  color: #1890ff;
   text-decoration: none;
 }
 
@@ -254,8 +257,8 @@ updateItemRendering(model_id,model_url){
 }
 
 .filter-btn.active {
-  background: #3B63FB;
-  border-color: #3B63FB;
+  background: #1890ff;
+  border-color: #1890ff;
 }
 
 .filter-btn.active svg path,
@@ -344,7 +347,7 @@ updateItemRendering(model_id,model_url){
 .list-view .product-price {
   font-size: 16px;
   font-weight: 600;
-  color: #3B63FB;
+  color: #1890ff;
   display: flex;
   justify-content: space-between;
 }
@@ -429,7 +432,7 @@ updateItemRendering(model_id,model_url){
 .grid-view .product-price {
   font-size: 14px;
   font-weight: 600;
-  color: #3B63FB;
+  color: #1890ff;
   text-align: left;
   margin-top: auto;
   

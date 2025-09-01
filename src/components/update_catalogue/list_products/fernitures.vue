@@ -98,11 +98,11 @@
     </div>
 
     <!-- Fixed Apply Button -->
-    <!-- <div class="apply-section">
-      <a-button type="primary" size="large" block class="apply-button">
+    <div class="apply-section">
+      <a-button type="primary" size="large" block >
         Apply
       </a-button>
-    </div> -->
+    </div>
   </div>
 </template>
 

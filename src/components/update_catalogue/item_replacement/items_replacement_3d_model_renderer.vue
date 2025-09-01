@@ -1,13 +1,20 @@
 <template>
-  <div v-if="!glbUrl || glbUrl === ''" class="no-product-state" style="display:flex;justify-content: center;align-items: center;height:100%;width:100%;min-height:400px;background:#f5f5f5;border-radius:8px;">
+<!--  <div v-if="!glbUrl || glbUrl === ''" class="no-product-state" style="display:flex;justify-content: center;align-items: center;height:100%;width:100%;min-height:400px;background:#f5f5f5;border-radius:8px;">
     <div style="text-align:center;color:#666;">
       <div style="font-size:48px;margin-bottom:16px;">📦</div>
       <div style="font-size:18px;font-weight:500;">Please select a Product</div>
       <div style="font-size:14px;margin-top:8px;">Choose any product to get replacement visualization</div>
     </div>
+  </div> -->
+  <div v-if="!glbUrl || glbUrl === ''" >
+    <div style="text-align:center;color:#666;">
+      
+      <img :src="this.baseImageUrl" alt="" style="max-width:850px;margin:auto">
+    </div>
   </div>
   <div v-else style="display: flex;justify-content: center;align-items: center;">
     <!-- roll = {{roll}} ||  &nbsp; pitch = {{pitch}} ||  &nbsp; yaw = {{yaw}} -->
+      
     
     <div class="main-canvas" ref="canvasContainer">
       

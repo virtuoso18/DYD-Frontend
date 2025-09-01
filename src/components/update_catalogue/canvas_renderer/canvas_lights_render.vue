@@ -1864,7 +1864,7 @@ function redrawDepthCanvas() {
 .light-editor {
   width: 90%;
   max-width: 480px;
-  max-height: 90vh;
+  max-height: 70vh;
   background: white;
   border-radius: 16px;
   overflow: hidden;
