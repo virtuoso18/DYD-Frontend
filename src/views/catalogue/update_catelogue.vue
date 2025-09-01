@@ -1,6 +1,4 @@
 <template>
-  
-
 <a-drawer
     title="AI Catalog Walls Textures"
     :placement="'bottom'"
@@ -156,6 +154,7 @@ Switch Furniture</a-button>
                  <ai_catalog_item_replacement_3d_products
                  v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Furniture'"
                  @products-see-all=seeAllProductsClicked
+                 @trigger-render-3d-object="execute3DRederer"
      @change-3d-model=change3dModel
      />
                  <floor v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Floor'"
@@ -179,6 +178,10 @@ Switch Furniture</a-button>
                 </div>
             </div>
             <div class="category-section" v-if="active_tab_image === 'home_design'">
+              <side_panel_home_design/>
+              
+              <!-- main_panel_home_design
+              history_panel_home_design -->
                <!-- <div class="tab-content-placeholder">
             <h3>Item Replacement </h3>
             <p>Item Replacement tools will be displayed here</p>
@@ -200,16 +203,18 @@ Switch Furniture</a-button>
         </a-col>
 
         <a-col :span="6" class="middle-panel" v-if="current_tab=='edit_image'" >
-          <div class="tab-content-placeholder">
+              <side_panel_edit_image/>
+          
+          <!-- <div class="tab-content-placeholder">
             <h3>Edit Image</h3>
             <p>Image editing tools will be displayed here</p>
-          </div>
+          </div> -->
         </a-col>
 
         <!-- Right Panel - Canvas -->
         <a-col :span="17" class="canvas-panel">
           
-          <div style="background:white;display:flex;align-items:center;justify-content:space-between;padding:5px 10px;height:40px;;background-color: #f3f3f6;" v-if=" current_tab ==='image' &&  closeShareMenu">
+          <div style="background:white;display:flex;align-items:center;justify-content:space-between;padding:5px 10px;height:40px;;background-color: #f3f3f6;" v-if=" (current_tab ==='image' &&  closeShareMenu ) && !(current_tab ==='image' && active_tab_image === 'home_design'  )">
   
   <!-- Left: Share section -->
   <div style="display:flex;align-items:center;gap:8px;" >
@@ -402,6 +407,7 @@ Switch Furniture</a-button>
   :roll="floor_roll"
   :pitch="floor_pitch"
   :yaw="floor_yaw"
+  ref="floor_item_3d_renderer"
   @rendered-comfyui-workflow="updateBaskeImageURL_CANVAS"
   />
 
@@ -418,6 +424,50 @@ Switch Furniture</a-button>
     
     <a-col :sm="0" :xs="0" :md="8" :lg="8" >
   <models_3d_generate_history v-if="current_tab=='3d'"
+  :list_history_generated_3d_models="list_history_generated_3d_models"
+  :loading_generated_models_history="loading_generated_models_history"
+  @clicked-model="new3DModelGenerated"
+  />
+
+    </a-col>
+
+  </a-row>
+
+
+  <a-row v-if="current_tab=='image' && active_tab_image === 'home_design'">
+    <a-col :sm="0" :xs="0" :md="16" :lg="16" >
+
+  <main_panel_home_design v-if="current_tab=='image' && active_tab_image === 'home_design'"
+  :glbModelUrl="generated3dModel_url"
+  :isLoading="processing_generate_is_Loading"
+  :Model_instance_id="model_instance_id"
+  />
+    </a-col>
+    
+    <a-col :sm="0" :xs="0" :md="8" :lg="8" >
+  <history_panel_home_design v-if="current_tab=='image' && active_tab_image === 'home_design'"
+  :list_history_generated_3d_models="list_history_generated_3d_models"
+  :loading_generated_models_history="loading_generated_models_history"
+  @clicked-model="new3DModelGenerated"
+  />
+
+    </a-col>
+
+  </a-row>
+
+
+    <a-row v-if="current_tab=='edit_image'">
+    <a-col :sm="0" :xs="0" :md="16" :lg="16" >
+
+  <main_panel_edit_image v-if="current_tab=='edit_image'"
+  :glbModelUrl="generated3dModel_url"
+  :isLoading="processing_generate_is_Loading"
+  :Model_instance_id="model_instance_id"
+  />
+    </a-col>
+    
+    <a-col :sm="0" :xs="0" :md="8" :lg="8" >
+  <history_panel_edit_image v-if="current_tab=='edit_image'"
   :list_history_generated_3d_models="list_history_generated_3d_models"
   :loading_generated_models_history="loading_generated_models_history"
   @clicked-model="new3DModelGenerated"
@@ -479,6 +529,15 @@ import walls from '@/components/update_catalogue/list_products/walls.vue'
 import floor from '@/components/update_catalogue/list_products/floor.vue' 
 import lights from '@/components/update_catalogue/list_products/lights.vue'
 
+// home-design_panel
+import side_panel_home_design from '@/components/update_catalogue/home_design/side_panel.vue'
+import main_panel_home_design from '@/components/update_catalogue/home_design/main_panel.vue'
+import history_panel_home_design from '@/components/update_catalogue/home_design/history_panel.vue'
+
+// edit image Panel 
+import side_panel_edit_image from '@/components/update_catalogue/edit_image/side_panel.vue'
+import main_panel_edit_image from '@/components/update_catalogue/edit_image/main_panel.vue'
+import history_panel_edit_image from '@/components/update_catalogue/edit_image/history_panel.vue'
 // 3d object renderer
 import ceiling_3d_object_renderer from '@/components/update_catalogue/renderer_3d_objects/ceiling_3d_renderer.vue' 
 // imports for bottom drawer products
@@ -718,6 +777,9 @@ computed: {
 seeAllProductsClicked(e){
 
       this.openSeeAll_Products=true
+},
+execute3DRederer(e){
+  this.$refs.floor_item_3d_renderer.renderItem();
 },
 processinggenerate_loading(e){
 this.processing_generate_is_Loading=e
@@ -2108,6 +2170,18 @@ floor_textures_bottom_drawer_menu,
 // 3d floor rendering 
 ceiling_3d_object_renderer,
 
+
+// home_design_panel
+side_panel_home_design,
+main_panel_home_design,
+history_panel_home_design,
+
+// edit_image
+side_panel_edit_image,
+main_panel_edit_image,
+history_panel_edit_image,
+
+
 // 3d tab 
 sidepanel_3d_tab,
 object_viewer_3d_tab,
@@ -2159,12 +2233,13 @@ models_3d_generate_history
 }
 
 .tool-item.active {
-  background: #e6f7ff;
+  /* background: #e6f7ff; */
   color: #3B63FB;
 }
 
 .tool-item span {
-  font-size: 12px;
+  font-size: 10px;
+  line-height: 10px;;
   font-weight: 500;
 }
 

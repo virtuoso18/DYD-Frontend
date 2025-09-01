@@ -36,27 +36,27 @@
     </div>
     
   </div>
-  <div v-if="!isLoading" class="action-buttons" style="display:flex;justify-content: space-between;padding-left:10px;padding-right:10px;background: white;">
+  <div  class="action-buttons" style="display:flex;justify-content: space-between;padding-left:10px;padding-right:10px;background: white;">
      
   <div style="padding-top:5px;">
-<div style="display:flex;gap:5px;padding-top:5px;">
+<!-- <div style="display:flex;gap:5px;padding-top:5px;">
     <a-button size="medium" @click="renderItem"type='primary'>Render 3D Item</a-button>
-</div>
+</div> -->
 </div>
 <div>
   
 <div style="padding-top:5px;display:flex;gap:10px;">
 
-  <a-button   @click="reset_entire_room">
+  <a-button   @click="reset_entire_room" :disabled="isLoading">
     Before
   </a-button>
-  <a-button type="primary"  @click="reset_entire_room">
+  <a-button type="primary"  @click="reset_entire_room" :disabled="isLoading">
     After
   </a-button>
 </div>
       </div>
       <div style="padding-top:10px;">
-        <a-button type="primary"  @click="reset_entire_room">
+        <a-button type="primary"  @click="reset_entire_room" :disabled="isLoading">
           Apply Changes
         </a-button>
       </div>

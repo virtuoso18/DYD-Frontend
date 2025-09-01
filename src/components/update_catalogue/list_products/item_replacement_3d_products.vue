@@ -98,7 +98,7 @@
 
     <!-- Fixed Apply Button -->
     <div class="apply-section">
-      <a-button type="primary" size="large" block >
+      <a-button type="primary" size="large" block  @click="$emit('trigger-render-3d-object')">
         Apply
       </a-button>
     </div>
