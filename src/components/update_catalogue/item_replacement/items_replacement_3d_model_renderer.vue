@@ -9,7 +9,7 @@
   <div v-if="!glbUrl || glbUrl === ''" >
     <div style="text-align:center;color:#666;">
       
-      <img :src="this.baseImageUrl" alt="" style="max-width:850px;margin:auto">
+      <img :src="this.baseImageUrl" alt="" style="max-width:850px;max-height:540px;margin:auto">
     </div>
   </div>
   <div v-else style="display: flex;justify-content: center;align-items: center;">

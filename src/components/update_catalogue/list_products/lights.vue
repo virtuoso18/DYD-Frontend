@@ -127,7 +127,7 @@ export default {
         { id:"bcd",
           image:'https://image.made-in-china.com/202f0j00PhioLGqdfwbD/Magnetic-Light-System-Recessed-Suction-Lamp-60cm-Magnetic-LED-Track-Lighting.webp',
             title:"Magnetic strip",
-          type:'strip',
+          type:'unsunk-strip',
           // color:"pink"
         },
         

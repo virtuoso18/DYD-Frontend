@@ -359,8 +359,17 @@ Switch Furniture</a-button>
               />
               <!-- @redetect-objects-room="fetch_redetect_ObjectsBinary_Masks" -->
 <!-- ceiling light renderer -->
+ 
             <canvas_lights_render 
               v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Lights' && selected_light_type==='strip'" 
+              :baseImage="base_image_url"
+              :isLoading="canvasLoading"
+              :depthMask="depthMask"
+              :key="canvasKey"
+              @magentic-lights-added="magneticLightsMearjed"
+            />
+            <canvas_unsunk_lights_render
+              v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Lights' && selected_light_type==='unsunk-strip'" 
               :baseImage="base_image_url"
               :isLoading="canvasLoading"
               :depthMask="depthMask"
@@ -516,6 +525,7 @@ import { BulbOutlined } from '@ant-design/icons-vue';
 import canvas_floor_render from '@/components/update_catalogue/canvas_renderer/canvas_floor_render.vue'
 import canvas_item_remover_render from '@/components/update_catalogue/canvas_renderer/canvas_item_remover_render.vue'
 import canvas_lights_render from '@/components/update_catalogue/canvas_renderer/canvas_lights_render.vue'
+import canvas_unsunk_lights_render from '@/components/update_catalogue/canvas_renderer/canvas_unsunk_lights_render.vue'
 import canvas_walls_render from '@/components/update_catalogue/canvas_renderer/canvas_walls_render.vue'
 import items_replacement_renderer from '@/components/update_catalogue/item_replacement/items_replacement_3d_model_renderer.vue'
 
@@ -2150,6 +2160,7 @@ async floorTextureSelected(texture_id) {
     canvas_floor_render,
     canvas_item_remover_render,
     canvas_lights_render,
+    canvas_unsunk_lights_render,
     canvas_walls_render,
     
     // 3d model renderer
