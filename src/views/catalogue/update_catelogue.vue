@@ -178,7 +178,8 @@ Switch Furniture</a-button>
                 </div>
             </div>
             <div class="category-section" v-if="active_tab_image === 'home_design'">
-              <side_panel_home_design/>
+              <side_panel_home_design :base_image_url="base_image_url"
+              @home-design-generation-complete="newhome_designes_generated"/>
               
               <!-- main_panel_home_design
               history_panel_home_design -->
@@ -276,7 +277,7 @@ Switch Furniture</a-button>
   <!-- Middle: Buttons -->
   <div style="display:flex;align-items:center;gap:12px;">
     <a-button style="border:none;background:#f9f9f9;padding:5px 12px;border-radius:6px;cursor:pointer;
-                   color:#2a5afc;display:flex;align-items:center;gap:6px;font-size:16px;">
+                   color:#2a5afc;display:flex;align-items:center;gap:6px;font-size:16px;" @click="downloadImage">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M12 14.5V4.5M12 14.5C11.2998 14.5 9.99153 12.5057 9.5 12M12 14.5C12.7002 14.5 14.0085 12.5057 14.5 12" stroke="#3B63FB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 <path d="M20 16.5C20 18.982 19.482 19.5 17 19.5H7C4.518 19.5 4 18.982 4 16.5" stroke="#3B63FB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -447,17 +448,14 @@ Switch Furniture</a-button>
     <a-col :sm="0" :xs="0" :md="16" :lg="16" >
 
   <main_panel_home_design v-if="current_tab=='image' && active_tab_image === 'home_design'"
-  :glbModelUrl="generated3dModel_url"
-  :isLoading="processing_generate_is_Loading"
-  :Model_instance_id="model_instance_id"
+  :home_design_images="home_design_images"
   />
     </a-col>
     
     <a-col :sm="0" :xs="0" :md="8" :lg="8" >
   <history_panel_home_design v-if="current_tab=='image' && active_tab_image === 'home_design'"
-  :list_history_generated_3d_models="list_history_generated_3d_models"
-  :loading_generated_models_history="loading_generated_models_history"
-  @clicked-model="new3DModelGenerated"
+  @home-design-history-clicked="home_design_history_clicked"
+  ref="home_design_history"
   />
 
     </a-col>
@@ -634,6 +632,7 @@ export default {
       maxRetryAttempts: 200, // Maximum retry attempts
       roomPollingInterval: null, // Store polling interval
       
+      home_design_images:null,
       // Loading States
       loading: {
         room: false,
@@ -754,6 +753,30 @@ computed: {
   },
 
   methods: {
+    home_design_history_clicked(e){
+      // since the input image is 0th index of this list remove that 
+      const images=e
+      // images.splice(0, 1)
+      console.log(e)
+      // console.log(e['input_image'])
+    // this.home_design_images={'image_paths':e['images'],'images':e['images']}
+
+    this.home_design_images={
+    "error": false,
+    "home_design_id": null,
+    "prompt_id": null,
+    "generated_count": images.length,
+    "images": images,
+    "image_paths": images,
+    "msg": "Home design variations changed successfully"
+}
+
+    },
+    newhome_designes_generated(e){
+this.home_design_images=e
+  this.$refs.home_design_history.fetchGenerateHistory();
+
+    },
     wallsSeeAll(e){
       console.log(e)
       console.log("clicked")
@@ -2119,6 +2142,21 @@ async floorTextureSelected(texture_id) {
       console.log('✅ Canvas forced update completed');
     });
   },
+
+  async downloadImage() {
+      const response = await fetch(this.base_image_url);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "downloaded-image.jpg"; // filename
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      window.URL.revokeObjectURL(url);
+    },
 
   // Debug method for object mask status
   debugObjectMaskStatus() {

@@ -99,6 +99,11 @@ export default {
           // Save token & user details
           localStorage.setItem("token", data.token);
           localStorage.setItem("user", JSON.stringify(data.user));
+          localStorage.setItem("profile", JSON.stringify(data.profile));
+          if (data.user.is_business){
+            localStorage.setItem("business_profile", JSON.stringify(data.business_profile));
+          }
+
 
           notification.success({
             message: "Login Successful",

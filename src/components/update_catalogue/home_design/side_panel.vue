@@ -10,7 +10,7 @@
         class="upload-dragger"
       >
         <div v-if="!uploadedImage && !uploading" class="upload-content">
-          <a-icon type="download" class="upload-icon" />
+          <CloudUploadOutlined class="upload-icon"  />
           <div class="upload-text">Click / upload from camera / drag and drop</div>
           <div class="upload-hint">Support format: .png .jpeg</div>
         </div>
@@ -20,9 +20,15 @@
           <div class="uploading-text">Uploading...</div>
         </div>
         
-        <div v-if="uploadedImage && !uploading" class="image-preview">
+        <!-- <div v-if="uploadedImage && !uploading" class="image-preview">
           <img :src="uploadedImage" alt="uploaded" />
-        </div>
+        </div> -->
+        <div v-if="uploadedImage && !uploading" class="image-preview">
+  <img :src="uploadedImage" alt="uploaded" />
+  <div class="delete-button" @click.stop="deleteImage">
+    <DeleteOutlined />
+  </div>
+</div>
       </a-upload-dragger>
     </div>
 
@@ -69,25 +75,47 @@
 
     <!-- Generate Button -->
     <a-button 
-      type="primary" 
-      size="large" 
-      block
-      class="generate-button"
-      @click="handleGenerate"
-    >
-      <a-icon type="thunderbolt" />
-      Generate
-    </a-button>
+  type="primary" 
+  size="large" 
+  block
+  class="generate-button"
+  :loading="generating"
+  @click="handleGenerate"
+>
+  <a-icon type="thunderbolt" />
+  {{ generating ? 'Generating...' : 'Generate' }}
+</a-button>
   </div>
 </template>
 
 <script>
+import { DeleteOutlined,CloudUploadOutlined  } from '@ant-design/icons-vue';
 export default {
   name: 'SidePanel',
+  components:{
+    DeleteOutlined,CloudUploadOutlined 
+  },
+  props: {
+  base_image_url: {
+    type: String,
+    default: ''
+  }
+},
+watch: {
+  base_image_url: {
+    handler(newVal) {
+      if (newVal) {
+        this.uploadedImage = newVal
+      }
+    },
+    immediate: true
+  }
+},
   data() {
     return {
       fileList: [],
-      uploadedImage: '',
+       generating: false,
+      uploadedImage: this.base_image_url || '',
       uploading: false,
       selectedVariation: 4,
       selectedAspectRatio: '3:2',
@@ -100,8 +128,66 @@ export default {
   },
   mounted() {
     // Component mounted
+     if (this.base_image_url) {
+    this.uploadedImage = this.base_image_url
+  }
   },
   methods: {
+     deleteImage() {
+    this.uploadedImage = ''
+    this.fileList = []
+  },
+
+  async handleGenerate() {
+  // Validate that an image is selected
+  if (!this.uploadedImage) {
+    this.$message.warning('Please select an image first')
+    return
+  }
+
+  // Show loading state (optional)
+  this.generating = true // Add this to your data if you want loading state
+
+  try {
+    const payload = {
+      room_id:this.$route.params.id,
+      base64_image: this.uploadedImage,
+      variations: this.selectedVariation,
+      aspect_ratio: this.selectedAspectRatio,
+      // Add any other data you need to send
+    }
+    console.log(payload)
+
+    const response = await fetch(this.$store.state.root_api+'engine/generate-home-design-images/', { // Replace with your actual API endpoint
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        // Add authorization header if needed
+        'Authorization': `Token ${localStorage.getItem('token')}`,
+      },
+      body: JSON.stringify(payload)
+    })
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+
+    const result = await response.json()
+    
+    // Handle successful response
+    console.log('Generation successful:', result)
+    this.$message.success('Image generated successfully!')
+    
+    // Emit event to parent component or handle result as needed
+    this.$emit('home-design-generation-complete', result)
+    
+  } catch (error) {
+    console.error('Generation failed:', error)
+    this.$message.error('Failed to generate image. Please try again.')
+  } finally {
+    this.generating = false // Reset loading state
+  }
+},
     beforeUpload(file) {
       this.uploading = true
       
@@ -125,13 +211,7 @@ export default {
       this.selectedAspectRatio = value
     },
     
-    handleGenerate() {
-      console.log('Generate clicked', {
-        variation: this.selectedVariation,
-        aspectRatio: this.selectedAspectRatio,
-        image: this.uploadedImage
-      })
-    }
+    
   }
 }
 </script>
@@ -173,7 +253,7 @@ export default {
 }
 
 .upload-icon {
-  font-size: 28px;
+  font-size: 38px;
   color: #1890ff;
   margin-bottom: 16px;
 }
@@ -263,5 +343,45 @@ export default {
   border-radius: 6px;
   font-size: 15px;
   font-weight: 500;
+}
+
+.image-preview {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: 8px;
+  padding-right: 8px;
+  position: relative; /* Add this */
+}
+
+.image-preview img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 6px;
+}
+
+/* Add this new CSS */
+.delete-button {
+  position: absolute;
+  top: 8px;
+  right: 16px;
+  width: 24px;
+  height: 24px;
+  background: rgb(255, 45, 45);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: white;
+  font-size: 12px;
+  transition: background-color 0.2s;
+}
+
+.delete-button:hover {
+  background: rgba(255, 13, 13, 0.8);
 }
 </style>

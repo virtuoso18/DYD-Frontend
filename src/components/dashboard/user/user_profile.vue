@@ -7,6 +7,7 @@
       <a-col :xs="24" :sm="24" :md="24" :lg="24" class="content-area">
         <div class="content-wrapper">
           <!-- Wavy Background Header -->
+          <!-- <div class="wavy-header" :style="'background: url('+this.$store.state.root_api+profile.background_picture+') center/cover no-repeat;'"> -->
           <div class="wavy-header" :style="'background: url('+this.$store.state.root_api+profile.background_picture+') center/cover no-repeat;'">
   <!-- Profile Avatar in Header -->
   <div class="header-profile">
@@ -105,10 +106,6 @@ export default {
     profile: {
       type: Object,
       required: true
-    },
-    buisness_info: {
-      type: Object,
-      required: true
     }
   },
   data() {
@@ -122,6 +119,10 @@ export default {
     currentRouteName() {
       return this.$route.name
     }
+  },
+  mounted(){
+    console.log(this.profile)
+    console.log(this.user)
   },
   methods: {
      toggleEdit() {

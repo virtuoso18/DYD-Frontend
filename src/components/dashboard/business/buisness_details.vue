@@ -4,10 +4,10 @@
       <a-col :xs="24" :sm="24" :md="24" :lg="24" class="content-area">
         <div class="content-wrapper">
           <!-- Header with Furniture Image -->
-          <div class="header-banner">
+          <div class="header-banner" :style="'background: url('+this.$store.state.root_api+buisness_info.business_picture+') center/cover no-repeat;'">
             <div class="profile-section">
               <div class="profile-avatar">
-                <img :src="businessInfo.avatar" alt="Business Avatar" />
+                <img   :src="businessInfo.avatar"  alt="Business Avatar" />
                 <div class="camera-overlay" @click="handleAvatarUpload">
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none">
                     <path opacity="0.5" d="M9.77778 21H14.2222C17.3433 21 18.9038 21 20.0248 20.2646C20.51 19.9462 20.9267 19.5371 21.251 19.0607C22 17.9601 22 16.4279 22 13.3636C22 10.2994 22 8.76721 21.251 7.6666C20.9267 7.19014 20.51 6.78104 20.0248 6.46268C19.3044 5.99013 18.4027 5.82123 17.022 5.76086C16.3631 5.76086 15.7959 5.27068 15.6667 4.63636C15.4728 3.68489 14.6219 3 13.6337 3H10.3663C9.37805 3 8.52715 3.68489 8.33333 4.63636C8.20412 5.27068 7.63685 5.76086 6.978 5.76086C5.59733 5.82123 4.69555 5.99013 3.97524 6.46268C3.48995 6.78104 3.07328 7.19014 2.74902 7.6666C2 8.76721 2 10.2994 2 13.3636C2 16.4279 2 17.9601 2.74902 19.0607C3.07328 19.5371 3.48995 19.9462 3.97524 20.2646C5.09624 21 6.65675 21 9.77778 21Z" stroke="currentColor" stroke-width="1.5"/>
@@ -17,7 +17,12 @@
               </div>
             </div>
           </div>
-
+ <!-- {{ user }} -->
+    <!-- <br> -->
+<!-- {{profile}} -->
+<!-- <br>
+{{ this.$store.state.root_api+buisness_info.business_picture }}
+{{buisness_info}} -->
           <!-- Business Details Form -->
           <div class="business-details-section" style="margin-top:100px;">
             <div class="section-header">
@@ -193,23 +198,34 @@
 <script>
 export default {
   name: 'BusinessDetails',
+  props: {
+    user: {
+      type: Object,
+      required: true
+    },
+    profile: {
+      type: Object,
+      required: true
+    },
+    buisness_info: {
+      type: Object,
+      required: true
+    }
+  },
   data() {
     return {
       isEditMode: false,
       businessInfo: {
-        name: 'Business name',
-        email: 'john.doe@gmail.com',
-        phone: '+91 9876543210',
-        avatar: 'https://static.vecteezy.com/system/resources/previews/036/744/532/non_2x/user-profile-icon-symbol-template-free-vector.jpg',
-        description: 'Welcome to John, your go-to lighting store specializing in advanced lighting solutions for homes and businesses. With 14 years of experience in the industry, we offer a wide range of unique and stylish lighting fixtures, along with professional consultation services to bring your design vision to life.',
-        services: `• Architectural and Designer Lighting - A collection of modern, classic, and innovative lighting fixtures for every space
-• Professional Installation Service - Our expert team will work to your home with state-of-the-art visualization technology
-• Personalized Professional Consultation - Our expert team will help you find the perfect lighting for your needs and design style
-• Smart Lighting & Advanced Solutions - Integrating cutting-edge technologies to illuminate your space with style and efficiency`,
-        whatsapp: 'https://wa.me/918976543210',
-        instagram: 'https://instagram.com/business',
-        facebook: 'https://facebook.com/business',
-        website: 'https://',
+        name: this.buisness_info.name ||  "",
+        email: this.buisness_info.email,
+        phone: this.buisness_info.phone_number,
+        avatar: this.$store.state.root_api+this.buisness_info.banner_picture,
+        description:  this.buisness_info.description,
+        services:  this.buisness_info.services,
+        whatsapp: 'https://wa.me/'+this.buisness_info.whatsapp_number,
+        instagram: 'https://instagram.com/'+this.buisness_info.instagram_url,
+        facebook: 'https://facebook.com/'+this.buisness_info.facebook_url,
+        website: 'https://'+this.buisness_info.website_url,
         cartLink: 'https://'
       },
       originalBusinessInfo: {}
@@ -285,7 +301,7 @@ export default {
   right: 0;
   bottom: 0;
   /* background-color: red; */
-  background-image: url('../../../assets/pricing-banner.png');
+  /* background-image: url('../../../assets/pricing-banner.png'); */
 background-size: cover;
   /* background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="50" opacity="0.1">🛋️</text></svg>') center/contain no-repeat; */
   pointer-events: none;
@@ -318,7 +334,7 @@ background-size: cover;
   right: 0;
   width: 32px;
   height: 32px;
-  background: #3B63FB;
+  background: #1890ff;
   border: 3px solid white;
   border-radius: 50%;
   display: flex;
@@ -361,7 +377,7 @@ background-size: cover;
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #3B63FB;
+  color: #1890ff;
   font-weight: 500;
   padding: 8px 16px;
   border-radius: 8px;
@@ -377,17 +393,25 @@ background-size: cover;
   max-width: 100%;
 }
 
+
 .form-input,
 .form-textarea {
-    /* height:50px; */
-  border-radius: 8px;
-  border: 1px solid #d9d9d9;
-  transition: all 0.2s ease;
+  width: 100%;
+  padding: 14px 18px;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  font-size: 15px;
+  background: #f9fafb;
+  color: #6b7280;
+  resize: none;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+  line-height: 1.5;
 }
 
 .form-input:focus,
 .form-textarea:focus {
-  border-color: #3B63FB;
+  border-color: #1890ff;
   box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
 }
 
@@ -438,7 +462,7 @@ background-size: cover;
 }
 
 .add-social-btn {
-  color: #3B63FB;
+  color: #1890ff;
   padding: 0;
   height: auto;
   font-weight: 500;
@@ -452,8 +476,8 @@ background-size: cover;
 }
 
 .save-btn {
-  background: #3B63FB;
-  border-color: #3B63FB;
+  background: #1890ff;
+  border-color: #1890ff;
   border-radius: 8px;
   height: 40px;
   padding: 0 24px;
@@ -549,7 +573,7 @@ background-size: cover;
 }
 
 :deep(.ant-input:focus) {
-  border-color: #3B63FB;
+  border-color: #1890ff;
   box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
 }
 </style>

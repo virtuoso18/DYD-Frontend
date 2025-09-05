@@ -249,13 +249,13 @@
                   <text x="200" y="80" text-anchor="middle" font-family="serif" font-size="24" font-weight="bold" fill="#2c2c2c">CERTIFICATE</text>
                   <text x="200" y="105" text-anchor="middle" font-family="serif" font-size="12" fill="#666">SUCCESSFUL COMPLETION</text>
                   
-                  <text x="200" y="135" text-anchor="middle" font-family="serif" font-size="16" font-weight="bold" fill="#3B63FB">John Doe</text>
+                  <text x="200" y="135" text-anchor="middle" font-family="serif" font-size="16" font-weight="bold" fill="#1890ff">John Doe</text>
                   
                   <text x="200" y="165" text-anchor="middle" font-family="serif" font-size="14" font-weight="bold" fill="#2c2c2c">IBM LEAN ENTERPRISE ARCHITECT™</text>
                   
                   <!-- Decorative elements -->
-                  <circle cx="200" cy="185" r="15" fill="#3B63FB" opacity="0.1"/>
-                  <text x="200" y="190" text-anchor="middle" font-family="serif" font-size="12" font-weight="bold" fill="#3B63FB">A</text>
+                  <circle cx="200" cy="185" r="15" fill="#1890ff" opacity="0.1"/>
+                  <text x="200" y="190" text-anchor="middle" font-family="serif" font-size="12" font-weight="bold" fill="#1890ff">A</text>
                   
                   <!-- Signatures -->
                   <line x1="120" y1="220" x2="180" y2="220" stroke="#bfbfbf" stroke-width="1"/>

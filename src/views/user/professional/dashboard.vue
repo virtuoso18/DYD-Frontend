@@ -7,7 +7,7 @@
         <div class="sidebar">
           <div class="user-info">
             <div class="user-avatar">
-              <img :src="this.$store.state.root_api+profile.profile_picture" alt="John Doe" />
+               <img :src="this.$store.state.root_api+profile.profile_picture" alt="John Doe" />
             </div>
             <h3>{{ user?.full_name || 'John Doe' }}</h3>
             <p class="user-email">{{ user?.email || 'johndoe@gmail.com' }}</p>
@@ -16,9 +16,8 @@
               <div class="completion-circle">
                 <span class="completion-text">
                   <svg xmlns="http://www.w3.org/2000/svg" width="22px" height="22px" viewBox="0 0 24 24" fill="none">
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12ZM12 17.75C12.4142 17.75 12.75 17.4142 12.75 17V11C12.75 10.5858 12.4142 10.25 12 10.25C11.5858 10.25 11.25 10.5858 11.25 11V17C11.25 17.4142 11.5858 17.75 12 17.75ZM12 7C12.5523 7 13 7.44772 13 8C13 8.55228 12.5523 9 12 9C11.4477 9 11 8.55228 11 8C11 7.44772 11.4477 7 12 7Z" fill="currentcolor"/>
-                  </svg> &nbsp;90% completed
-                </span>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12ZM12 17.75C12.4142 17.75 12.75 17.4142 12.75 17V11C12.75 10.5858 12.4142 10.25 12 10.25C11.5858 10.25 11.25 10.5858 11.25 11V17C11.25 17.4142 11.5858 17.75 12 17.75ZM12 7C12.5523 7 13 7.44772 13 8C13 8.55228 12.5523 9 12 9C11.4477 9 11 8.55228 11 8C11 7.44772 11.4477 7 12 7Z" fill="currentcolor"/>
+</svg> &nbsp;90% completed</span>
               </div>
             </div> 
             
@@ -28,9 +27,14 @@
                 <router-link to="/pricing" class="upgrade-link">Upgrade</router-link>
               </div>
               <div class="package-card">
-                <span class="package-type">Business</span>
+                <span class="package-type">professional</span>
                 <div class="package-icon">
                   <img src="../../../assets/dyd-logo.png" alt="" style="width:40px;height:40px">
+                  <!-- <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                    <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                    <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                  </svg> -->
                 </div>
               </div>
             </div>
@@ -39,9 +43,10 @@
           <!-- Navigation Menu -->
           <nav class="dashboard-nav">
             <router-link 
-              to="/business-dashboard/my-profile" 
+              to="/professional-dashboard/my-profile" 
               class="nav-item"
-              :class="{ active: $route.name === 'business_my_profile' }"
+              
+              :class="{ active: $route.name === 'my_profile' }"
             >
               <div class="nav-icon-wrapper">
                 <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -53,25 +58,9 @@
             </router-link>
             
             <router-link 
-              to="/business-dashboard/business-details" 
+              to="/professional-dashboard/my-designs" 
               class="nav-item"
-              :class="{ active: $route.name === 'business_business_details' }"
-            >
-              <div class="nav-icon-wrapper">
-                <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
-                  <path d="M3 21H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M5 21V7L13 2L21 7V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M9 9V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M17 9V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </div>
-              <span class="nav-text">Business Detail</span>
-            </router-link>
-            
-            <router-link 
-              to="/business-dashboard/my-designs" 
-              class="nav-item"
-              :class="{ active: $route.name === 'business_my_designs' }"
+              :class="{ active: $route.name === 'my_designs' }"
             >
               <div class="nav-icon-wrapper">
                 <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -83,9 +72,9 @@
             </router-link>
             
             <router-link 
-              to="/business-dashboard/my-products" 
+              to="/professional-dashboard/my-products" 
               class="nav-item"
-              :class="{ active: $route.name === 'business_my_products' }"
+              :class="{ active: $route.name === 'my_products' }"
             >
               <div class="nav-icon-wrapper">
                 <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -98,9 +87,9 @@
             </router-link>
             
             <router-link 
-              to="/business-dashboard/comunity" 
+              to="/professional-dashboard/comunity" 
               class="nav-item"
-              :class="{ active: $route.name === 'business_dashboard_community' }"
+              :class="{ active: $route.name === 'dashboard_community' }"
             >
               <div class="nav-icon-wrapper">
                 <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -114,9 +103,9 @@
             </router-link>
             
             <router-link 
-              to="/business-dashboard/generate-banner" 
+              to="/professional-dashboard/generate-banner" 
               class="nav-item"
-              :class="{ active: $route.name === 'business_generate_banner' }"
+              :class="{ active: $route.name === 'generate_banner' }"
             >
               <div class="nav-icon-wrapper">
                 <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -129,9 +118,9 @@
             </router-link>
             
             <router-link 
-              to="/business-dashboard/manage-subscription" 
+              to="/professional-dashboard/manage-subscription" 
               class="nav-item"
-              :class="{ active: $route.name === 'business_manage_subscription' }"
+              :class="{ active: $route.name === 'manage_subscription' }"
             >
               <div class="nav-icon-wrapper">
                 <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -146,8 +135,10 @@
       
       <!-- Content Area -->
       <a-col :xs="24" :sm="24" :md="18" :lg="18" class="content-area">
-        <!-- This router-view will render the active child route component -->
-        <router-view :user="user" :profile="profile" :buisness_info="business_info" />
+        
+          <!-- This router-view will render the active child route component -->
+          <router-view :user="user" :profile="profile"/>
+        
       </a-col>
     </a-row>
   </div>
@@ -155,27 +146,19 @@
 
 <script>
 export default {
-  name: 'DashboardManager_business_user',
+  name: 'DashboardManager_professional_user',
   
   data() {
     return {
-      user: JSON.parse(localStorage.getItem('user') || '{}'),
-      profile: JSON.parse(localStorage.getItem('profile') || '{}'),
-      business_info: JSON.parse(localStorage.getItem('business_profile') || '{}'),
+      user: JSON.parse(localStorage.getItem('user') ),
+      profile: JSON.parse(localStorage.getItem('profile') )
+      // Any dashboard-level data can go here
     }
   },
-  
   computed: {
     currentRouteName() {
       return this.$route.name
     }
-  },
-  
-  created() {
-    // Debug: Log current route information
-    console.log('Current route:', this.$route)
-    console.log('Current route name:', this.$route.name)
-    console.log('Current route path:', this.$route.path)
   }
 }
 </script>
@@ -199,6 +182,7 @@ export default {
   background: white;
   border-radius: 20px;
   padding: 24px;
+  /* box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); */
   border: 1px solid #e9ecef;
 }
 
@@ -210,7 +194,7 @@ export default {
 .user-avatar {
   width: 100px;
   height: 100px;
-  margin: auto;
+  margin:  auto ;
   position: relative;
 }
 
@@ -236,20 +220,21 @@ export default {
 }
 
 .completion-badge {
-  position: absolute;
+  position:absolute;
   top: 10px;
-  right: 10px;
+  right:10px
 }
 
 .completion-circle {
   display: inline-block;
+  /* background: linear-gradient(135deg, #3b82f6, #1d4ed8); */
   color: #3b82f6;
   padding: 8px 16px;
+  /* border-radius: 20px; */
   font-size: 14px;
   font-weight: 600;
 }
-
-.completion-text {
+.completion-text{
   display: flex;
   font-size: 14px;
   font-weight: 600;
@@ -355,4 +340,79 @@ export default {
 .content-area {
   padding: 0;
 }
-</style>
+
+.content-wrapper {
+  background: white;
+  border-radius: 20px;
+  margin: 20px;
+  margin-left: 0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e9ecef;
+  overflow: hidden;
+}
+
+.wavy-header {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 50%, #a5b4fc 100%);
+}
+
+.wave-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.header-profile {
+  position: absolute;
+  bottom: -40px;
+  left: 40px;
+  z-index: 10;
+}
+
+.header-avatar {
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+
+.header-avatar img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.camera-icon {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  background: #374151;
+  border: 2px solid white;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  cursor: pointer;
+}
+
+.personal-info-section {
+  padding: 60px 40px 40px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+</style>  

@@ -86,12 +86,12 @@
             <div class="image-grid" :class="gridClass">
 
       <div 
-        v-for="(image, index) in images" 
+        v-for="(image, index) in images"  
         :key="index"
         class="image-container"
         :class="getImageClass(index)"
       >
-        <a-image :src="image" :alt="`Generated image ${index + 1}`" />
+        <a-image :src="this.$store.state.root_api+image" :alt="`Generated image ${index + 1}`" />
       </div>
     </div>
     
@@ -122,16 +122,28 @@
 
 export default {
   name: "AdaptiveImageGrid",
+  props:{
+    home_design_images: {
+      type: Object,
+      default: () => ({})
+    }
+  },
   data() {
     return {
-closeShareMenu:true,
-        allImages: [
-        // "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&h=400&fit=crop",
-        "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=600&h=400&fit=crop",
-        "https://images.unsplash.com/photo-1567767292278-a4f21aa2d36e?w=600&h=400&fit=crop",
-        "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&h=400&fit=crop&sat=-100"
-      ],
+      closeShareMenu: true,
+      allImages:[],
       images: []
+    }
+  },
+  watch: {
+    home_design_images: {
+      handler(newVal) {
+        if (newVal && newVal.images) {
+          this.updateImages();
+        }
+      },
+      immediate: true,
+      deep: true
     }
   },
 computed: {
@@ -144,6 +156,18 @@ computed: {
     }
   },
   methods: {
+    updateImages() {
+  if (this.home_design_images && this.home_design_images.images) {
+    const imageUrls = Object.values(this.home_design_images.image_paths || {})
+      .filter(url => url !== null && url !== undefined && url !== ""); // filter invalid
+    this.allImages = imageUrls;
+    this.images = imageUrls;
+  } else {
+    this.allImages = [];
+    this.images = [];
+  }
+},
+
     setImageCount(count) {
       this.images = this.allImages.slice(0, count);
     },
@@ -162,19 +186,65 @@ computed: {
     }
   },
   mounted() {
-    // Start with 4 images by default
-    this.setImageCount(4);
+    // Initialize images when component is mounted
+    this.updateImages();
   }
 }
 </script>
 
 <style scoped>
+/* Fade transition for image grid */
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
+
+/* Loading overlay */
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #e9ecef;
+  border-top: 3px solid #2a5afc;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-overlay p {
+  color: #6c757d;
+  font-size: 14px;
+  margin: 0;
+}
+
 .main-panel {
   flex: 1;
   padding: 24px;
   display: flex;
   flex-direction: column;
   transition: min-height 0.3s ease;
+  position: relative; /* For loading overlay */
 }
 
 .panel-expanded {
@@ -184,7 +254,6 @@ computed: {
 .panel-collapsed {
   min-height: calc(100vh - 50px); /* Reduced height when share menu is visible */
 }
-
 .image-grid {
   display: grid;
   /* gap: 8px; */
@@ -192,6 +261,8 @@ computed: {
   margin-bottom: 32px;
   width: 100%;
   max-width: 900px;
+  /* max-height: 300px;   restrict grid height */
+  overflow-y: auto;    /* allow scrolling if content exceeds 700px */
   margin-left: auto;
   margin-right: auto;
 }
@@ -199,7 +270,8 @@ computed: {
 /* Single image - centered, aspect ratio maintained */
 .grid-1 {
   grid-template-columns: 1fr;
-  max-width: 500px;
+  max-width: 450px;
+
   justify-content: center;
 }
 
@@ -219,6 +291,8 @@ computed: {
 .grid-4 {
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
+  max-height: 450px;
+
 }
 
 .image-container {
