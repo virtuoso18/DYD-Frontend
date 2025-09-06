@@ -268,8 +268,96 @@ export default {
                 // Add other business_info fields as needed
             }
         }
+        this.loadBusinessProfile()
     },
     methods: {
+        
+    async saveChanges() {
+        try {
+            // Prepare data for API
+            const payload = {
+                storeTitle: this.editData.storeTitle,
+                storeDescription: this.editData.storeDescription,
+                welcomeMessage: this.editData.welcomeMessage,
+                services: this.editData.services,
+                business_picture: this.editData.business_picture,
+                banner_picture: this.editData.banner_picture
+            };
+
+            // Get auth token from localStorage
+            const token = localStorage.getItem('token');
+
+            const response = await fetch(`${this.$store.state.root_api}/Auth/api/business-profile/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Token ${token}`
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                this.$message.success('Changes saved successfully!');
+                this.isEditing = false;
+                this.editStoreDescription = false;
+                this.editServices = false;
+                
+                // Update localStorage
+                const updatedBusinessInfo = {
+                    ...this.business_info,
+                    ...payload
+                };
+                localStorage.setItem('business_profile', JSON.stringify(updatedBusinessInfo));
+                this.business_info = updatedBusinessInfo;
+                
+            } else {
+                this.$message.error(result.message || 'Failed to save changes');
+            }
+            
+        } catch (error) {
+            this.$message.error('Network error. Please try again.');
+            console.error('Error saving changes:', error);
+        }
+    },
+
+    async loadBusinessProfile() {
+        try {
+            const token = localStorage.getItem('token');
+            
+            const response = await fetch(`${this.$store.state.root_api}/Auth/api/business-profile/`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Token ${token}`
+                }
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                const data = result.data;
+                console.log(data)
+                this.editData = {
+                    ...this.editData,
+                    business_picture: data.business_picture || this.editData.business_picture,
+                    banner_picture: data.banner_picture || this.editData.banner_picture,
+                    welcomeMessage: data.description || this.editData.welcomeMessage,
+                    storeTitle: data.buisness_info_title || this.editData.storeTitle,
+                    storeDescription: data.buisness_info || this.editData.storeDescription,
+                    services: data.services_offered || this.editData.services
+                };
+
+                // Update localStorage
+                localStorage.setItem('business_profile', JSON.stringify(data));
+                this.business_info = data;
+            }
+            
+        } catch (error) {
+            console.error('Error loading business profile:', error);
+        }
+    },
+
         enableEdit() {
             this.isEditing = true;
             // Create a deep copy of current data for restoration if needed
@@ -284,35 +372,35 @@ export default {
             this.editData = JSON.parse(JSON.stringify(this.originalData));
         },
         
-        async saveChanges() {
-            try {
-                // Here you would typically make an API call to save the data
-                // For now, we'll just update localStorage and show success message
+        // async saveChanges() {
+        //     try {
+        //         // Here you would typically make an API call to save the data
+        //         // For now, we'll just update localStorage and show success message
                 
-                // Update business_info with new data
-                const updatedBusinessInfo = {
-                    ...this.business_info,
-                    business_picture: this.editData.business_picture,
-                    banner_picture: this.editData.banner_picture,
-                    // Add other fields as needed
-                };
+        //         // Update business_info with new data
+        //         const updatedBusinessInfo = {
+        //             ...this.business_info,
+        //             business_picture: this.editData.business_picture,
+        //             banner_picture: this.editData.banner_picture,
+        //             // Add other fields as needed
+        //         };
                 
-                localStorage.setItem('business_profile', JSON.stringify(updatedBusinessInfo));
-                this.business_info = updatedBusinessInfo;
+        //         localStorage.setItem('business_profile', JSON.stringify(updatedBusinessInfo));
+        //         this.business_info = updatedBusinessInfo;
                 
-                // You can add your API call here
-                // await this.updateBusinessProfile(this.editData);
+        //         // You can add your API call here
+        //         // await this.updateBusinessProfile(this.editData);
                 
-                this.$message.success('Changes saved successfully!');
-                this.isEditing = false;
-                this.editStoreDescription = false;
-                this.editServices = false;
+        //         this.$message.success('Changes saved successfully!');
+        //         this.isEditing = false;
+        //         this.editStoreDescription = false;
+        //         this.editServices = false;
                 
-            } catch (error) {
-                this.$message.error('Failed to save changes. Please try again.');
-                console.error('Error saving changes:', error);
-            }
-        },
+        //     } catch (error) {
+        //         this.$message.error('Failed to save changes. Please try again.');
+        //         console.error('Error saving changes:', error);
+        //     }
+        // },
         
         changeBackgroundImage() {
             this.$refs.backgroundImageInput.click();

@@ -46,6 +46,7 @@ import normal_community_dashboard from '@/components/dashboard/user/comunity.vue
 import normal_generate_banner from '@/components/dashboard/user/generate_banner.vue'
 import normal_manage_subscription from '@/components/dashboard/user/manage_subscription.vue'
 
+import buisness_page from '@/views/store/vendor_store.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -74,6 +75,11 @@ const router = createRouter({
       path: '/start-new-catalogue',
       name: 'new_catelogue',
       component: start_new_catalogue,
+    },
+     {
+      path: '/:buisness_name',
+      name: 'buisness_name',
+      component: buisness_page,
     },
     
     {
@@ -182,6 +188,7 @@ const router = createRouter({
       children: [
         {
           path: '',
+          name:'my-store',
           redirect: '/my-store/analytics',
         },
         {

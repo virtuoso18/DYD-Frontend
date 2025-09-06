@@ -24,18 +24,7 @@
             </div>
 
             <!-- Product Table Header -->
-            <div style="background: #f8f9fa; padding: 12px; border-radius: 8px 8px 0 0; display: grid; grid-template-columns: 40px 1fr 70px 70px 120px 100px 80px 40px 80px; gap: 15px; align-items: center; border: 1px solid #e9ecef; font-weight: 600; font-size: 14px; color: #495057;">
-                <div></div>
-                <div>Product</div>
-                <div>Category</div>
-                <div>Type</div>
-                <div>Create date</div>
-                <div>Size</div>
-                <div>Color</div>
-                <div>Price</div>
-                <div>AR/VR</div>
-            </div>
-
+            
             <a-table
   :columns="columns"
   :data-source="filteredProducts"

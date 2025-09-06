@@ -147,7 +147,7 @@
       <a-col :xs="24" :sm="24" :md="18" :lg="18" class="content-area">
         
           <!-- This router-view will render the active child route component -->
-          <router-view :user="user" :profile="profile" />
+          <router-view :user="user" :profile="profile" :business_info="business_info" />
         
       </a-col>
     </a-row>
