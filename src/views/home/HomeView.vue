@@ -174,6 +174,7 @@ Drag & drop Image
         </a-col>
     </a-row>
 
+    
     <br>
     <a-row style="background:blue;height:200px;">
         <a-col :sm="12" :xs="12" :md="6" :lg="6" style="color:white;display:flex;justify-content: center;align-items: center;flex-direction: column;">
@@ -273,29 +274,82 @@ Drag & drop Image
     <br>
 
 
+    
     <div
       :style="{
-  backgroundImage: `url(${bannerImage})`,
-  backgroundPosition: 'center 60%',
+  backgroundImage: `url(${swiper_bg})`,
+  backgroundPosition: 'center 90%',
   backgroundSize: 'cover',
   backgroundRepeat: 'no-repeat',
-  height: '600px',
+  height: '700px',
   width: '100%',
   display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center'
+  justifyContent: 'end',
+  alignItems: 'end'
 }"
 
       >
-        <div style="text-align: center;">
+        <div style="text-align: center;width:100%;padding-top:100px;">
+          
           <!-- <div>{{ business_info.name }}</div> -->
             <div class="banner-text">Swap the furniture to</div>
     <div class="banner-text">match your vision</div>
-          <h1>SWIPER-CHAIRS-HERE</h1>
+          <!-- <h1>SWIPER-CHAIRS-HERE</h1> -->
+          
+ <swiper style="margin-top:50px;"
+    :modules="modules"
+    :slides-per-view="1"
+    :space-between="50"
+    navigation
+    Autoplay 
+    :pagination="{ clickable: true }"
+    
+    @swiper="onSwiper"
+    @slideChange="onSlideChange"
+  >
+ <swiper-slide>
+  <div style="width:100%;">
+    <img src="../../assets/ch_1_home_page.png" style="max-width:450px;width:100%;object-fit: contain;" alt="">
+    <!-- <a-row>
+      <a-col :sm="24" :xs="24" :md="12" :lg="12">
+      </a-col>
+      <a-col :sm="24" :xs="24" :md="12" :lg="12">
+        <div class="banner-text">Swap the furniture to</div>
+    <div class="banner-text">match your vision</div>
+      </a-col>
+    </a-row> -->
+  </div>
+ </swiper-slide>
+    <swiper-slide>
+      <div style="width:100%;">
+        <img src="../../assets/ch_2_home_page.png" style="max-width:350px;width:100%;object-fit: contain;" alt="">
+        <!-- <a-row>
+          <a-col :sm="24" :xs="24" :md="12" :lg="12">
+          </a-col>
+          <a-col :sm="24" :xs="24" :md="12" :lg="12">
+            <div class="banner-text">Swap the furniture to</div>
+    <div class="banner-text">match your vision</div>
+          </a-col>
+        </a-row> -->
+      </div>
+    </swiper-slide>
+    <swiper-slide>
+      <div style="width:100%;">
+        <img src="../../assets/ch_3_home_page.png" style="max-width:400px;width:100%;object-fit: contain;" alt="">
+        <!-- <a-row>
+          <a-col :sm="24" :xs="24" :md="12" :lg="12">
+          </a-col>
+          <a-col :sm="24" :xs="24" :md="12" :lg="12">
+            <div class="banner-text">Swap the furniture to</div>
+    <div class="banner-text">match your vision</div>
+          </a-col>
+        </a-row> -->
+      </div>
+    </swiper-slide>
+  </swiper>
           
         </div>
       </div>
-
 
 
 
@@ -352,18 +406,234 @@ Drag & drop Image
         </a-col>
 
     </a-row>
+
+    <br><br>
+    
+<br><br>
+<div style="background:#f2f2f2;">
+
+
+<div style="max-width:1200px;margin:auto;">
+     <div style="padding:40px 10px;text-align:center;overflow:hidden;position:relative;">
+
+    <h1 style="font-size:28px;font-weight:700;margin-bottom:40px;">See What Customers Love About Us</h1>
+    
+    <swiper
+      style="margin-top:20px;padding-bottom:50px;overflow:visible;cursor:pointer"
+      :modules="modules"
+      :slides-per-view="slidesPerView"
+      :space-between="30"
+      :centered-slides="true"
+      navigation
+      :pagination="{ clickable: true }"
+      @swiper="onSwiper"
+      @slideChange="onSlideChange"
+    >
+      <swiper-slide v-for="(review, index) in reviews" :key="index">
+        <div style="padding:20px;border-radius:12px;text-align:left;width:100%;max-width:280px;margin:auto;">
+          <div style="display:flex;align-items:center;margin-bottom:15px;">
+            <img :src="review.avatar" alt="" style="width:40px;height:40px;border-radius:50%;object-fit:cover;margin-right:10px;">
+            <div>
+              <h3 style="margin:0;font-size:16px;font-weight:600;color:#111;">{{ review.name }}</h3>
+              <p style="margin:0;font-size:13px;color:#666;">{{ review.role }}</p>
+            </div>
+          </div>
+          <p style="font-size:14px;line-height:1.5;color:#333;margin:0;">“{{ review.text }}”</p>
+        </div>
+      </swiper-slide>
+    </swiper>
+
+    <!-- Fade effect overlays -->
+    <div style="position:absolute;top:0;left:0;width:200px;height:100%;background:linear-gradient(to right,#f3f3f3,transparent);z-index:5;pointer-events:none;"></div>
+    <div style="position:absolute;top:0;right:0;width:200px;height:100%;background:linear-gradient(to left,#f3f3f3,transparent);z-index:5;pointer-events:none;"></div>
+      </div>
+  </div>
+</div>
+
+
+<div style="padding:10px;max-width:1200px;margin:auto;">
+  <br><br><br>
+  <h1 style="text-align:center">Got questions? We have answers</h1><br>
+  <div style="margin:50px auto;padding:0 20px;">
+    <a-collapse
+      v-model:activeKey="expand_faq"
+      accordion
+      style="background:#fff;border:none;font-size:18px;"
+    >
+      <a-collapse-panel key="1" header="What is virtual staging?" > 
+        <p style="margin:0;font-size:15px;line-height:1.6;color:#444;">
+          Virtual staging is a process of using computer technology to furnish and decorate real estate photos digitally.
+        </p>
+      </a-collapse-panel>
+
+      <a-collapse-panel key="2" header="Why should I pick virtual staging over physical staging?">
+        <p style="margin:0;font-size:15px;line-height:1.6;color:#444;">
+          Virtual staging offers several advantages over physical staging. It’s more cost-effective, as it eliminates the need for furniture rentals and setup. It’s also faster, allowing for quicker turnaround times and adjustments to suit different buyer preferences. Additionally, virtual staging is highly flexible, enabling you to create multiple design styles and settings without the physical limitations of a space.
+        </p>
+      </a-collapse-panel>
+
+      <a-collapse-panel key="3" header="What is AI virtual staging?">
+        <p style="margin:0;font-size:15px;line-height:1.6;color:#444;">
+          AI virtual staging uses artificial intelligence models to automatically place furniture and décor in photos, saving time while creating realistic results.
+        </p>
+      </a-collapse-panel>
+
+      <a-collapse-panel key="4" header="What kind of photos do you support?">
+        <p style="margin:0;font-size:15px;line-height:1.6;color:#444;">
+          We support wide-angle interior property photos such as living rooms, bedrooms, dining areas, and more.
+        </p>
+      </a-collapse-panel>
+
+      <a-collapse-panel key="5" header="How long does it take to virtually stage by AI?">
+        <p style="margin:0;font-size:15px;line-height:1.6;color:#444;">
+          AI staging usually takes just a few minutes, depending on the complexity of the design and processing load.
+        </p>
+      </a-collapse-panel>
+    </a-collapse>
+  </div>
+</div>
+
+<br><br>
+<div>
+  <div style="text-align:center">
+    <h1>Feel free to contact us</h1>
+    <h3>Revolutionizing Interior Design with Virtual Technology & AI</h3>
+
+<br>
+      <div style="display:flex;justify-content:center;align-items:center;">
+    <div
+      style="background:#fff;padding:40px;border-radius:12px;box-shadow:0 20px 60px rgba(59,130,246,0.4);
+             max-width:450px;width:100%;border-top:3px solid #3b82f6;">
+      
+      <form @submit.prevent="submitForm" style="display:flex;flex-direction:column;gap:20px;">
+        <div style="display:flex;gap:15px;">
+          <input
+            type="text"
+            placeholder="Enter name"
+            v-model="form.name"
+            style="flex:1;padding:12px 14px;border:1px solid #ddd;border-radius:6px;font-size:14px;outline:none;"
+          />
+          <input
+            type="email"
+            placeholder="Your email"
+            v-model="form.email"
+            style="flex:1;padding:12px 14px;border:1px solid #ddd;border-radius:6px;font-size:14px;outline:none;"
+          />
+        </div>
+
+        <textarea
+          placeholder="Your text"
+          v-model="form.message"
+          style="width:100%;min-height:120px;padding:12px 14px;border:1px solid #ddd;border-radius:6px;
+                 font-size:14px;resize:vertical;outline:none;"
+        ></textarea>
+
+        <button
+          type="submit"
+          style="background:#3b82f6;color:#fff;padding:14px;border:none;border-radius:6px;
+                 font-size:16px;font-weight:600;cursor:pointer;transition:0.3s;width:100%;"
+        >
+          Send now
+        </button>
+      </form>
+    </div>
+  </div>
+  <br><br>
+  <br><br>
+
+  </div>
+</div>
+<br><br>
   </div>
 </template>
 
 <script>
 import bannerImage from '@/assets/home_main_banner.jpg'
 
+import swiper_bg from '@/assets/bg-swiper.jpg'
+
+// import Swiper core and required modules
+import { Navigation, Pagination, Scrollbar, A11y,Autoplay } from 'swiper/modules';
+
+// Import Swiper Vue.js components
+import { Swiper, SwiperSlide } from 'swiper/vue';
+
+// Import Swiper styles
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import 'swiper/css/scrollbar';
+
+
 export default {
   name: "Home",
   data() {
     return {
-      bannerImage
+      bannerImage,
+            swiper_bg,
+            expand_faq:'1',
+            slidesPerView : window.innerWidth <= 768 ? 1 : 4,
+            
+            form :{
+                name: "",
+            email: "",
+            message: ""},
+                reviews :[
+                {
+                    name: "Amy Lang",
+                    role: "Home Stager",
+                    text: "Even those who are not design-savvy can easily create realistic and inviting virtually staged spaces that attract potential buyers regularly.",
+                    avatar: "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png"
+                },
+                {
+                    name: "Troy Sinclair",
+                    role: "Real Estate Photographer",
+                    text: "It has taken our real estate marketing to the next level! Our buyers love the virtual staging.",
+                    avatar: "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png"
+                },
+                {
+                    name: "John Doe",
+                    role: "Interior Designer",
+                    text: "This tool made it so easy to stage homes and present them to clients with realistic visuals.",
+                    avatar: "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png"
+                },
+                {
+                    name: "Sarah Lee",
+                    role: "Realtor",
+                    text: "My listings now stand out. Clients are impressed with how professional everything looks.",
+                    avatar: "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png"
+                },
+                {
+                    name: "David Kim",
+                    role: "Architect",
+                    text: "An incredible platform for showcasing designs and spaces realistically.",
+                    avatar: "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png"
+                }
+            ]
     }
+  },
+   setup() {
+      const onSwiper = (swiper) => {
+        console.log(swiper);
+      };
+      const onSlideChange = () => {
+        console.log('slide change');
+      };
+      return {
+        onSwiper,
+        onSlideChange,
+        modules: [Navigation, Pagination, Scrollbar, A11y,Autoplay],
+      };
+    },
+  components:{
+         Swiper,
+      SwiperSlide,
+  },
+  methods:{
+     submitForm() {
+  console.log("Form submitted:", form);
+  alert("Message sent!");
+}
   }
 }
 </script>

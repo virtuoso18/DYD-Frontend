@@ -29,7 +29,8 @@ import community_dashboard from '@/components/dashboard/business/comunity.vue'
 import generate_banner from '@/components/dashboard/business/generate_banner.vue'
 import manage_subscription from '@/components/dashboard/business/manage_subscription.vue'
 
-
+import add_furniture from '@/components/dashboard/business/my_products/add_new_product/add_furniture.vue'
+import add_light from '@/components/dashboard/business/my_products/add_new_product/add_light_ceiling_3d.vue'
 // Import individual dashboard components for professional users
 import profesional_user_profile from '@/components/dashboard/professional/user_profile.vue'
 import profesional_my_designs from '@/components/dashboard/professional/my_designs.vue'
@@ -94,6 +95,17 @@ const router = createRouter({
       component: dashboard_manager,
     },
     
+        {
+          path: '/my-products/add-new-furniture',
+          name: 'business_my_products_add_new_furniture',
+          component: add_furniture,
+        },
+        
+        {
+          path: '/my-products/add-new-light',
+          name: 'business_my_products_add_new_light',
+          component: add_light,
+        },
      // Business User Dashboard Routes
     {
       path: '/business-dashboard',

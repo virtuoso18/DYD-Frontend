@@ -1,4 +1,317 @@
 <template>
+  
+<!-- Multi-View Queue Modal -->
+<a-modal 
+  v-model:open="openMultiViewQueueModal" 
+  width="80%" 
+  :footer="null"
+  :closable="true"
+  centered
+  title="Add Multi-View Item to Queue"
+  class="multiview-queue-modal"
+>
+  <div class="multiview-queue-content">
+    <!-- Multi-View Images Grid -->
+    <div class="multiview-queue-grid">
+      <a-row :gutter="[16, 16]">
+        <a-col :span="12" v-for="(view, index) in multiViewQueueImages" :key="index">
+          <div 
+            class="multiview-queue-upload-area"
+            :class="{ 
+              'has-image': view.image, 
+              'processing': multiViewQueueProcessingBg && view.image,
+              'required': view.required && !view.image 
+            }"
+            @click="!multiViewQueueProcessingBg && triggerMultiViewQueueInput(index)"
+          >
+            <div v-if="!view.image && !view.uploading" class="multiview-queue-placeholder">
+              <div class="view-label">
+                {{ view.label }}
+                <span v-if="view.required" class="required-indicator">*</span>
+              </div>
+              <PlusOutlined />
+            </div>
+            
+            <div v-if="view.uploading" class="uploading">
+              <a-spin size="small" />
+              <small>Uploading...</small>
+            </div>
+            
+            <div v-if="view.image" class="multiview-queue-image">
+              <img :src="view.image" :alt="view.label" />
+              
+              <!-- Background removal loading overlay -->
+              <div v-if="multiViewQueueProcessingBg" class="bg-processing-overlay small">
+                <a-spin size="small" />
+                <small>Processing...</small>
+              </div>
+              
+              <div class="multiview-queue-actions" v-if="!multiViewQueueProcessingBg">
+                <a-button 
+                  type="primary" 
+                  size="small" 
+                  shape="circle" 
+                  @click.stop="editMultiViewQueueImage(index)"
+                >
+                  <template #icon>
+                    <EditOutlined />
+                  </template>
+                </a-button>
+                <a-button 
+                  type="primary" 
+                  :danger="true" 
+                  size="small"
+                  shape="circle" 
+                  @click.stop="removeMultiViewQueueImage(index)"
+                >
+                  <template #icon>
+                    <DeleteOutlined />
+                  </template>
+                </a-button>
+              </div>
+            </div>
+          </div>
+        </a-col>
+      </a-row>
+    </div>
+
+    <!-- Image Count Info -->
+    <div class="multiview-queue-info">
+      <a-alert 
+        :message="`${multiViewQueueImageCount} image(s) uploaded. Front view is required.`"
+        :type="hasValidMultiViewQueue ? 'success' : 'warning'"
+        show-icon
+      />
+    </div>
+
+    <!-- Remove Background Button -->
+    <div v-if="multiViewQueueImageCount > 0" class="multiview-queue-bg-section">
+      <a-button 
+        block 
+        @click="removeMultiViewQueueBackground" 
+        :loading="multiViewQueueProcessingBg" 
+        :disabled="multiViewQueueProcessingBg"
+      >
+        <template #icon v-if="!multiViewQueueProcessingBg">
+          <ScissorOutlined />
+        </template>
+        {{ multiViewQueueProcessingBg ? 'Removing Background...' : 'Remove Background from All Images' }}
+      </a-button>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="multiview-queue-modal-actions">
+      <a-row :gutter="16">
+        <a-col :span="12">
+          <a-button block @click="closeMultiViewQueueModal">
+            Cancel
+          </a-button>
+        </a-col>
+        <a-col :span="12">
+          <a-button 
+            type="primary" 
+            block 
+            @click="addMultiViewToQueue"
+            :disabled="!hasValidMultiViewQueue"
+          >
+            Add to Queue
+          </a-button>
+        </a-col>
+      </a-row>
+    </div>
+  </div>
+</a-modal>
+
+<!-- Queue Status Modal -->
+<a-modal 
+  v-model:open="openQueueModal" 
+  width="80%" 
+  :footer="null"
+  :closable="true"
+  centered
+  title="Render Queue Status"
+  class="queue-modal"
+>
+  <div class="queue-content">
+    <div class="queue-header">
+      <a-row :gutter="16">
+        <a-col :span="6">
+          <a-statistic title="Total Items" :value="queueItemsCount" />
+        </a-col>
+        <a-col :span="6">
+          <a-statistic title="Processing" :value="processingQueueItems.length" />
+        </a-col>
+        <a-col :span="6">
+          <a-statistic title="Pending" :value="pendingQueueItems.length" />
+        </a-col>
+        <a-col :span="6">
+          <a-button type="primary" @click="showAddToQueueModal" :disabled="!canAddToQueue">
+            Add to Queue
+          </a-button>
+        </a-col>
+      </a-row>
+    </div>
+
+    <div class="queue-list">
+      <a-list :data-source="queueItems" item-layout="horizontal">
+        <template #renderItem="{ item }">
+          
+          <a-list-item>
+            <template #actions>
+              <a-button 
+                v-if="item.status === 'pending'" 
+                type="link" 
+                danger 
+                @click="removeFromQueue(item.id)"
+              >
+                Remove
+              </a-button>
+              <a-button 
+                v-if="item.status === 'completed' && item.generated_model_id" 
+                type="link"
+              >
+                View Result
+              </a-button>
+            </template>
+            
+            <a-list-item-meta>
+              <template #title>
+                <div class="queue-item-title">
+                  <a-tag :color="getQueueStatusColor(item.status)">
+                    {{ getQueueStatusText(item.status) }}
+                  </a-tag>
+                  <span>Position: {{ item.queue_position }}</span>
+                  <span style="margin-left: 16px;">{{ item.model_mode }}</span>
+                </div>
+              </template>
+              <template #description>
+                <div style="display:flex;gap:20px;">
+
+                  <div>
+                    
+                    <!-- {{item.images_preview[0]}}  -->
+                    <img 
+                    :src="item.images_preview[0]" 
+                    alt="Preview" 
+                    style="max-width: 100px; max-height: 100px;" 
+                    />
+
+                  </div>
+                  <div>
+                  <p style="margin:0">Created: {{ formatQueueTime(item.created_at) }}</p>
+                  <p v-if="item.started_at" style="margin:0">Started: {{ formatQueueTime(item.started_at) }}</p>
+                  <p v-if="item.completed_at" style="margin:0">Completed: {{ formatQueueTime(item.completed_at) }}</p>
+                  <p v-if="item.error_message"  style="margin:0"class="error-msg">Error: {{ item.error_message }}</p>
+                </div>
+                </div>
+              </template>
+            </a-list-item-meta>
+          </a-list-item>
+        </template>
+      </a-list>
+      
+      <div v-if="queueItems.length === 0" class="empty-queue">
+        <a-empty description="No items in queue" />
+      </div>
+    </div>
+  </div>
+</a-modal>
+
+<a-modal 
+  v-model:open="openAddToQueueModal" 
+  width="60%" 
+  :footer="null"
+  :closable="true"
+  centered
+  title="Add Item to Render Queue"
+  class="add-queue-modal"
+>
+  <div class="add-queue-content">
+    <!-- Image Upload Section -->
+    <div class="queue-upload-section">
+      <div 
+        class="queue-upload-area" 
+        :class="{ 'has-image': queueImageUpload, 'processing': queueImageProcessingBg }"
+        @click="!queueImageProcessingBg && triggerQueueImageInput()"
+      >
+        <div v-if="!queueImageUpload && !queueImageUploading" class="upload-placeholder">
+          <div class="upload-icon">
+            <PlusOutlined />
+          </div>
+          <div class="upload-text">
+            <p>Click to upload image for 3D generation</p>
+            <small>Support format: png, jpeg</small>
+          </div>
+        </div>
+        
+        <div v-if="queueImageUploading" class="uploading">
+          <a-spin />
+          <p>Uploading...</p>
+        </div>
+        
+        <div v-if="queueImageUpload" class="image-preview">
+          <img :src="queueImageUpload" alt="Queue image" />
+          
+          <!-- Background removal loading overlay -->
+          <div v-if="queueImageProcessingBg" class="bg-processing-overlay">
+            <a-spin />
+            <p>Removing background...</p>
+          </div>
+          
+          <div class="image-actions" v-if="!queueImageProcessingBg">
+            <a-button type="primary" shape="circle" @click.stop="editQueueImage()">
+              <template #icon>
+                <EditOutlined />
+              </template>
+            </a-button>
+            <a-button type="primary" :danger="true" shape="circle" @click.stop="queueImageUpload = null">
+              <template #icon>
+                <DeleteOutlined />
+              </template>
+            </a-button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Remove Background Button -->
+      <div v-if="queueImageUpload" class="queue-action-section">
+        <a-button 
+          block 
+          @click="removeQueueImageBackground" 
+          :loading="queueImageProcessingBg" 
+          :disabled="queueImageProcessingBg"
+        >
+          <template #icon v-if="!queueImageProcessingBg">
+            <ScissorOutlined />
+          </template>
+          {{ queueImageProcessingBg ? 'Removing Background...' : 'Remove Background' }}
+        </a-button>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="queue-modal-actions">
+      <a-row :gutter="16">
+        <a-col :span="12">
+          <a-button block @click="closeAddToQueueModal">
+            Cancel
+          </a-button>
+        </a-col>
+        <a-col :span="12">
+          <a-button 
+            type="primary" 
+            block 
+            @click="addToQueue"
+            :disabled="!queueImageUpload"
+          >
+            Add to Queue
+          </a-button>
+        </a-col>
+      </a-row>
+    </div>
+  </div>
+</a-modal>
+
   <div class="image-to-3d-container">
     <!-- Edit Image Modal -->
     <a-modal 
@@ -149,12 +462,38 @@
         </div>
 
         <!-- Upload More Images -->
-        <div class="more-images-section">
-          <p>Upload more images</p>
-          <div class="more-images-upload" @click="triggerFileInput('more')">
-            <CameraOutlined />
-          </div>
-        </div>
+       
+<!-- Update your existing "Upload more images" section to show queue info -->
+<div class="more-images-section">
+    <div class="section-header" style="padding:0 10px">
+
+    <p>Upload more images</p>
+    <a-badge :count="queueItemsCount" :offset="[10, 0]">
+      <a-button type="link" @click="showQueueModal" style="padding: 0;">
+        View Queue
+      </a-button>
+    </a-badge>
+  </div>
+  <!-- <div class="more-images-upload" @click="showAddToQueueModal">
+    <CameraOutlined />
+  </div> -->
+  <div class="upload-option" @click="showAddToQueueModal">
+      <CameraOutlined />
+      <small>Single View</small>
+    </div>
+  
+  <!-- Queue status indicator -->
+  <div v-if="queueItemsCount > 0" class="queue-status-indicator">
+    <div class="queue-stats">
+      <span class="queue-stat">
+        <a-tag color="orange">{{ pendingQueueItems.length }} Pending</a-tag>
+      </span>
+      <span class="queue-stat">
+        <a-tag color="blue">{{ processingQueueItems.length }} Processing</a-tag>
+      </span>
+    </div>
+  </div>
+</div>
       </div>
 
       <!-- Multi View Mode -->
@@ -221,6 +560,44 @@
             <PlusOutlined />
           </div>
         </div>
+
+        
+<!-- Update the existing "Upload more images" section to include multi-view option -->
+<div class="more-images-section">
+  <div class="section-header" style="padding:0 10px 0 0">
+    <p>Upload more images</p>
+    <a-badge :count="queueItemsCount" :offset="[10, 0]">
+      <a-button type="link" @click="showQueueModal" style="padding: 0;">
+        
+        View Queue
+      </a-button>
+    </a-badge>
+  </div>
+  
+  <div class="upload-options">
+    
+    <div class="upload-option" @click="showMultiViewQueueModal">
+      <div class="multi-view-icon">
+        <CameraOutlined />
+        <CameraOutlined />
+      </div>
+      <small>Multi View</small>
+    </div>
+  </div>
+  
+  <!-- Queue status indicator -->
+  <div v-if="queueItemsCount > 0" class="queue-status-indicator">
+    <div class="queue-stats">
+      <span class="queue-stat">
+        <a-tag color="orange">{{ pendingQueueItems.length }} Pending</a-tag>
+      </span>
+      <span class="queue-stat">
+        <a-tag color="blue">{{ processingQueueItems.length }} Processing</a-tag>
+      </span>
+    </div>
+  </div>
+</div>
+
       </div>
     </div>
 
@@ -252,6 +629,36 @@
     </div>
 
     <!-- Hidden File Inputs -->
+     
+<!-- Add hidden file inputs for multi-view queue -->
+<input
+  ref="fileInput-mv-queue-0"
+  type="file"
+  accept="image/png,image/jpeg,image/jpg"
+  style="display: none"
+  @change="handleMultiViewQueueUpload($event, 0)"
+/>
+<input
+  ref="fileInput-mv-queue-1"
+  type="file"
+  accept="image/png,image/jpeg,image/jpg"
+  style="display: none"
+  @change="handleMultiViewQueueUpload($event, 1)"
+/>
+<input
+  ref="fileInput-mv-queue-2"
+  type="file"
+  accept="image/png,image/jpeg,image/jpg"
+  style="display: none"
+  @change="handleMultiViewQueueUpload($event, 2)"
+/>
+<input
+  ref="fileInput-mv-queue-3"
+  type="file"
+  accept="image/png,image/jpeg,image/jpg"
+  style="display: none"
+  @change="handleMultiViewQueueUpload($event, 3)"
+/>
     <input
       ref="fileInput-main"
       type="file"
@@ -287,6 +694,13 @@
       style="display: none"
       @change="handleFileSelect($event, 1)"
     />
+    <input
+  ref="fileInput-queue"
+  type="file"
+  accept="image/png,image/jpeg,image/jpg"
+  style="display: none"
+  @change="handleQueueImageUpload"
+/>
     <input
       ref="fileInput-2"
       type="file"
@@ -375,13 +789,78 @@ export default {
       brushSize: 20,
       brushMode: 'erase', // 'erase' or 'restore'
       canvas: null,
-      ctx: null
+      ctx: null,
+
+        // Queue-related properties
+    openQueueModal: false,
+    openAddToQueueModal: false,
+    queueItems: [],
+    queuePollingInterval: null,
+    
+    // Modal for adding items to queue
+    queueImageUpload: null,
+    queueImageUploading: false,
+    queueImageProcessingBg: false,
+    
+    // Canvas for queue modal editing (reuse existing canvas variables)
+    queueCanvasWidth: 800,
+    queueCanvasHeight: 600,
+
+
+
+    // multiview renderer :
+
+    openMultiViewQueueModal: false,
+    multiViewQueueImages: [
+      { label: 'Front side', image: null, uploading: false, required: true },
+      { label: 'Back side', image: null, uploading: false, required: false },
+      { label: 'Left side', image: null, uploading: false, required: false },
+      { label: 'Right side', image: null, uploading: false, required: false }
+    ],
+    multiViewQueueProcessingBg: false,
     }
   },
+  
+// Add these lifecycle hooks:
+mounted() {
+  // Start queue polling when component mounts
+  this.startQueuePolling()
+},
+
+beforeUnmount() {
+  // Clean up polling when component unmounts
+  this.stopQueuePolling()
+},
   computed: {
+    
+  hasValidMultiViewQueue() {
+    // At minimum, front view is required
+    return this.multiViewQueueImages[0].image !== null
+  },
+  
+  multiViewQueueImageCount() {
+    return this.multiViewQueueImages.filter(view => view.image).length
+  },
     hasAnyImage() {
       return this.views.some(view => view.image) || this.extraViews.some(view => view.image)
-    }
+    },
+    queueItemsCount() {
+    return this.queueItems.length
+  },
+  
+  pendingQueueItems() {
+    return this.queueItems.filter(item => item.status === 'pending')
+  },
+  
+  processingQueueItems() {
+    return this.queueItems.filter(item => item.status === 'processing')
+  },
+  
+  canAddToQueue() {
+    return this.queueItems.filter(item => 
+      item.status === 'pending' || item.status === 'processing'
+    ).length < 4
+  }
   },
   methods: {
     goBack() {
@@ -413,6 +892,367 @@ export default {
       })
     },
     
+  // Multi-View Queue Methods
+  showMultiViewQueueModal() {
+    if (!this.canAddToQueue) {
+      this.$message.warning('Queue is full. Maximum 4 items allowed.')
+      return
+    }
+    this.openMultiViewQueueModal = true
+    this.resetMultiViewQueueImages()
+  },
+
+  closeMultiViewQueueModal() {
+    this.openMultiViewQueueModal = false
+    this.resetMultiViewQueueImages()
+    this.multiViewQueueProcessingBg = false
+  },
+
+  resetMultiViewQueueImages() {
+    this.multiViewQueueImages.forEach(view => {
+      view.image = null
+      view.uploading = false
+    })
+  },
+
+  triggerMultiViewQueueInput(index) {
+    const refName = `fileInput-mv-queue-${index}`
+    const input = this.$refs[refName]
+    if (input) {
+      input.click()
+    }
+  },
+
+  async handleMultiViewQueueUpload(event, index) {
+    const file = event.target.files[0]
+    if (!file) return
+
+    this.multiViewQueueImages[index].uploading = true
+    
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      setTimeout(() => {
+        this.multiViewQueueImages[index].image = e.target.result
+        this.multiViewQueueImages[index].uploading = false
+        this.$forceUpdate()
+      }, 1000)
+    }
+    reader.readAsDataURL(file)
+  },
+
+  removeMultiViewQueueImage(index) {
+    this.multiViewQueueImages[index].image = null
+    this.$forceUpdate()
+  },
+
+  editMultiViewQueueImage(index) {
+    if (!this.multiViewQueueImages[index].image) return
+    
+    this.currentEditingImage = this.multiViewQueueImages[index].image
+    this.currentEditingKey = `mv-queue-${index}`
+    this.openEditImage_modal = true
+    
+    this.$nextTick(() => {
+      this.setupCanvas()
+    })
+  },
+
+  async removeMultiViewQueueBackground() {
+    const imagesToProcess = []
+    
+    this.multiViewQueueImages.forEach((view, index) => {
+      if (view.image) {
+        imagesToProcess.push({ type: `view-${index}`, data: view.image })
+      }
+    })
+    
+    if (imagesToProcess.length === 0) {
+      this.$message.warning('Please upload at least one image')
+      return
+    }
+
+    this.multiViewQueueProcessingBg = true
+    
+    try {
+      const payload = {
+        images: imagesToProcess,
+        multiView: true
+      }
+
+      const response = await fetch(this.$store.state.root_api + 'engine/remove-images-bg/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      })
+
+      if (response.ok) {
+        const result = await response.json()
+        if (!result.error && result.data && result.data.images) {
+          result.data.images.forEach(processedImage => {
+            if (processedImage.data_removed_bg && processedImage.type.startsWith('view-')) {
+              const viewIndex = parseInt(processedImage.type.split('-')[1])
+              if (this.multiViewQueueImages[viewIndex]) {
+                this.multiViewQueueImages[viewIndex].image = processedImage.data_removed_bg
+              }
+            }
+          })
+          
+          this.$forceUpdate()
+          this.$message.success('Background removed successfully!')
+        }
+      } else {
+        const errorData = await response.json()
+        throw new Error(errorData.msg || 'Background removal failed')
+      }
+    } catch (error) {
+      console.error('Background removal error:', error)
+      this.$message.error(error.message || 'Failed to remove background')
+    } finally {
+      this.multiViewQueueProcessingBg = false
+    }
+  },
+
+  async addMultiViewToQueue() {
+    if (!this.hasValidMultiViewQueue) {
+      this.$message.warning('Please upload at least the front view image')
+      return
+    }
+
+    try {
+      const imagesToUpload = []
+      
+      this.multiViewQueueImages.forEach((view, index) => {
+        if (view.image) {
+          imagesToUpload.push({ type: `view-${index}`, data: view.image })
+        }
+      })
+
+      const payload = {
+        images: imagesToUpload,
+        multiView: true,
+        room_id: this.$route.params.id
+      }
+
+    const token = localStorage.getItem('token')
+      const response = await fetch(this.$store.state.root_api + 'engine/hy-2.0-mv-3D-gen/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+                  'Authorization': `Token ${token}`,
+        },
+        body: JSON.stringify(payload)
+      })
+
+      if (response.ok) {
+        const result = await response.json()
+        this.$message.success('Multi-view item added to queue successfully!')
+        this.closeMultiViewQueueModal()
+        this.fetchQueueStatus()
+      } else {
+        const error = await response.json()
+        throw new Error(error.msg || 'Failed to add to queue')
+      }
+    } catch (error) {
+      console.error('Add multi-view to queue error:', error)
+      this.$message.error(error.message || 'Failed to add multi-view item to queue')
+    }
+  },
+
+    async fetchQueueStatus() {
+    try {
+      
+             const token = localStorage.getItem('token')
+      const response = await fetch(`${this.$store.state.root_api}engine/queue-status/?room_id=${this.$route.params.id}`,
+        {method:"GET",
+          headers: {
+          'Content-Type': 'application/json',
+                  'Authorization': `Token ${token}`,
+        },}
+      )
+      if (response.ok) {
+        const result = await response.json()
+        this.queueItems = result.queue || []
+      }
+    } catch (error) {
+      console.error('Failed to fetch queue status:', error)
+    }
+  },
+
+  startQueuePolling() {
+    this.fetchQueueStatus()
+    this.queuePollingInterval = setInterval(() => {
+      this.fetchQueueStatus()
+    }, 3000) // Poll every 3 seconds
+  },
+  stopQueuePolling() {
+    if (this.queuePollingInterval) {
+      clearInterval(this.queuePollingInterval)
+      this.queuePollingInterval = null
+    }
+  },
+
+  showQueueModal() {
+    this.openQueueModal = true
+    this.startQueuePolling()
+  },
+
+  closeQueueModal() {
+    this.openQueueModal = false
+    this.stopQueuePolling()
+  },
+
+  showAddToQueueModal() {
+    if (!this.canAddToQueue) {
+      this.$message.warning('Queue is full. Maximum 4 items allowed.')
+      return
+    }
+    this.openAddToQueueModal = true
+    this.queueImageUpload = null
+  },
+
+  closeAddToQueueModal() {
+    this.openAddToQueueModal = false
+    this.queueImageUpload = null
+    this.queueImageUploading = false
+    this.queueImageProcessingBg = false
+  },
+
+  async handleQueueImageUpload(event) {
+    const file = event.target.files[0]
+    if (!file) return
+
+    this.queueImageUploading = true
+    
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      setTimeout(() => {
+        this.queueImageUpload = e.target.result
+        this.queueImageUploading = false
+      }, 1000)
+    }
+    reader.readAsDataURL(file)
+  },
+
+  triggerQueueImageInput() {
+    const input = this.$refs['fileInput-queue']
+    if (input) {
+      input.click()
+    }
+  },
+
+  async removeQueueImageBackground() {
+    if (!this.queueImageUpload) return
+
+    this.queueImageProcessingBg = true
+    
+    try {
+      const payload = {
+        images: [{ type: 'main', data: this.queueImageUpload }],
+        multiView: false
+      }
+ const token = localStorage.getItem('token')
+      const response = await fetch(this.$store.state.root_api + 'engine/remove-images-bg/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+                  'Authorization': `Token ${token}`,
+          
+        },
+        body: JSON.stringify(payload)
+      })
+
+      if (response.ok) {
+        const result = await response.json()
+        if (!result.error && result.data && result.data.images) {
+          const processedImage = result.data.images.find(img => img.type === 'main')
+          if (processedImage && processedImage.data_removed_bg) {
+            this.queueImageUpload = processedImage.data_removed_bg
+            this.$message.success('Background removed successfully!')
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Background removal error:', error)
+      this.$message.error('Failed to remove background')
+    } finally {
+      this.queueImageProcessingBg = false
+    }
+  },
+
+  async addToQueue() {
+    if (!this.queueImageUpload) {
+      this.$message.warning('Please upload an image first')
+      return
+    }
+
+    try {
+      const payload = {
+        images: [{ type: 'main', data: this.queueImageUpload }],
+        multiView: false,
+        room_id: this.$route.params.id
+      }
+    const token = localStorage.getItem('token')
+      const response = await fetch(this.$store.state.root_api + 'engine/hy-2.0-sv-3D-gen/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'  ,
+                'Authorization': `Token ${token}`,
+        },
+        body: JSON.stringify(payload)
+      })
+
+      if (response.ok) {
+        const result = await response.json()
+        this.$message.success('Item added to queue successfully!')
+        this.closeAddToQueueModal()
+        this.fetchQueueStatus()
+      } else {
+        const error = await response.json()
+        throw new Error(error.msg || 'Failed to add to queue')
+      }
+    } catch (error) {
+      console.error('Add to queue error:', error)
+      this.$message.error(error.message || 'Failed to add item to queue')
+    }
+  },
+
+  async removeFromQueue(queueId) {
+    try {
+          const token = localStorage.getItem('token')
+      const response = await fetch(this.$store.state.root_api + 'engine/queue-status/', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+                  'Authorization': `Token ${token}`,
+        },
+        body: JSON.stringify({ queue_id: queueId })
+      })
+
+      if (response.ok) {
+        this.$message.success('Item removed from queue')
+        this.fetchQueueStatus()
+      } else {
+        const error = await response.json()
+        throw new Error(error.msg || 'Failed to remove from queue')
+      }
+    } catch (error) {
+      console.error('Remove from queue error:', error)
+      this.$message.error(error.message || 'Failed to remove item from queue')
+    }
+  },
+
+  editQueueImage() {
+    if (!this.queueImageUpload) return
+    
+    this.currentEditingImage = this.queueImageUpload
+    this.openEditImage_modal = true
+    
+    this.$nextTick(() => {
+      this.setupCanvas()
+    })
+  },
     setupCanvas() {
       const canvas = this.$refs.editCanvas
       if (!canvas) return
@@ -561,23 +1401,27 @@ export default {
       this.ctx.putImageData(this.originalImageData, 0, 0)
     },
     
-    saveEditedImage() {
-      if (!this.canvas) return
-      
-      // Convert canvas to data URL
-      const editedImageData = this.canvas.toDataURL('image/png')
-      
-      // Update the appropriate image
-      if (this.currentEditingKey === 'main') {
-        this.mainImage = editedImageData
-      } else if (typeof this.currentEditingKey === 'number') {
-        this.views[this.currentEditingKey].image = editedImageData
-        this.$forceUpdate()
-      }
-      
-      this.closeEditModal()
-      this.$message.success('Image edited successfully!')
-    },
+   saveEditedImage() {
+    if (!this.canvas) return
+    
+    // Convert canvas to data URL
+    const editedImageData = this.canvas.toDataURL('image/png')
+    
+    // Update the appropriate image
+    if (this.currentEditingKey === 'main') {
+      this.mainImage = editedImageData
+    } else if (typeof this.currentEditingKey === 'number') {
+      this.views[this.currentEditingKey].image = editedImageData
+      this.$forceUpdate()
+    } else if (this.currentEditingKey && this.currentEditingKey.startsWith('mv-queue-')) {
+      const index = parseInt(this.currentEditingKey.split('-')[2])
+      this.multiViewQueueImages[index].image = editedImageData
+      this.$forceUpdate()
+    }
+    
+    this.closeEditModal()
+    this.$message.success('Image edited successfully!')
+  },
     
     closeEditModal() {
       this.openEditImage_modal = false
@@ -696,10 +1540,12 @@ export default {
           credits: this.credits
         }
 
+    const token = localStorage.getItem('token')
         const response = await fetch(this.$store.state.root_api + 'engine/remove-images-bg/', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+                    'Authorization': `Token ${token}`,
           },
           body: JSON.stringify(payload)
         })
@@ -753,81 +1599,123 @@ export default {
         this.isProcessingBg = false
       }
     },
-
-    async generateObject() {
-      this.isGenerating = true
-      this.$emit('processing-generate', true)
-      
-      try {
-        const imagesToUpload = []
-        
-        if (!this.multiView && this.mainImage) {
-          imagesToUpload.push({ type: 'main', data: this.mainImage })
-        }
-        
-        if (this.multiView) {
-          this.views.forEach((view, index) => {
-            if (view.image) {
-              imagesToUpload.push({ type: `view-${index}`, data: view.image })
-            }
-          })
-          
-          this.extraViews.forEach((view, index) => {
-            if (view.image) {
-              imagesToUpload.push({ type: `extra-view-${index}`, data: view.image })
-            }
-          })
-        }
-
-        if (imagesToUpload.length === 0) {
-          this.$message.warning('Please upload at least one image')
-          return
-        }
-
-        const payload = {
-          images: imagesToUpload,
-          multiView: this.multiView,
-          credits: this.credits,
-          room_id: this.$route.params.id
-        }
-
-        console.log(payload)
-        let response = null
-
-        if (this.multiView) {
-          response = await fetch(this.$store.state.root_api + 'engine/hy-2.0-mv-3D-gen/', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
-          })
-        } else {
-          response = await fetch(this.$store.state.root_api + 'engine/hy-2.0-sv-3D-gen/', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
-          })
-        }
-        
-        if (response.ok) {
-          const result = await response.json()
-          console.log(result)
-          this.$message.success('3D object generated successfully!')
-          this.$emit('generated', result)
-        } else {
-          throw new Error('Generation failed')
-        }
-      } catch (error) {
-        console.error('Generation error:', error)
-        this.$message.error('Failed to generate 3D object')
-      } finally {
-        this.isGenerating = false
-        this.$emit('processing-generate', false)
-      }
+getQueueStatusColor(status) {
+    const colors = {
+      'pending': '#faad14',
+      'processing': '#1890ff', 
+      'completed': '#52c41a',
+      'failed': '#f5222d'
     }
+    return colors[status] || '#d9d9d9'
+  },
+
+  getQueueStatusText(status) {
+    const texts = {
+      'pending': 'Pending',
+      'processing': 'Processing...',
+      'completed': 'Completed',
+      'failed': 'Failed'
+    }
+    return texts[status] || status
+  },
+
+  formatQueueTime(timeString) {
+    if (!timeString) return 'N/A'
+    return new Date(timeString).toLocaleTimeString()
+  },
+   async generateObject() {
+    // If in multi-view mode and no images, show multi-view queue modal
+    if (this.multiView && !this.hasAnyImage) {
+      this.showMultiViewQueueModal()
+      return
+    }
+    
+    // If in single-view mode and no main image, show single view queue modal
+    if (!this.multiView && !this.mainImage) {
+      this.showAddToQueueModal()
+      return
+    }
+    
+    // Continue with existing immediate generation logic
+    this.isGenerating = true
+    this.$emit('processing-generate', true)
+    
+    try {
+      const imagesToUpload = []
+      
+      if (!this.multiView && this.mainImage) {
+        imagesToUpload.push({ type: 'main', data: this.mainImage })
+      }
+      
+      if (this.multiView) {
+        this.views.forEach((view, index) => {
+          if (view.image) {
+            imagesToUpload.push({ type: `view-${index}`, data: view.image })
+          }
+        })
+        
+        this.extraViews.forEach((view, index) => {
+          if (view.image) {
+            imagesToUpload.push({ type: `extra-view-${index}`, data: view.image })
+          }
+        })
+      }
+
+      if (imagesToUpload.length === 0) {
+        this.$message.warning('Please upload at least one image')
+        return
+      }
+
+      const payload = {
+        images: imagesToUpload,
+        multiView: this.multiView,
+        credits: this.credits,
+        room_id: this.$route.params.id
+      }
+
+      console.log(payload)
+      let response = null
+    const token = localStorage.getItem('token')
+    
+    if (this.multiView) {
+      response = await fetch(this.$store.state.root_api + 'engine/hy-2.0-mv-3D-gen/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Token ${token}`,
+          },
+          body: JSON.stringify(payload)
+        })
+      } else {
+        response = await fetch(this.$store.state.root_api + 'engine/hy-2.0-sv-3D-gen/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          'Authorization': `Token ${token}`,
+
+          },
+          body: JSON.stringify(payload)
+        })
+      }
+      
+      if (response.ok) {
+        const result = await response.json()
+        console.log(result)
+        this.$message.success('Item added to queue successfully!')
+        this.fetchQueueStatus()
+        this.$emit('generated', result)
+      } else {
+        const errorData = await response.json()
+        throw new Error(errorData.msg || 'Generation failed')
+      }
+    } catch (error) {
+      console.error('Generation error:', error)
+      this.$message.error(error.message || 'Failed to add to queue')
+    } finally {
+      this.isGenerating = false
+      this.$emit('processing-generate', false)
+    }
+  },
   }
 }
 </script>
@@ -1190,4 +2078,513 @@ export default {
     flex-direction: column;
   }
 }
-</style>
+
+
+
+
+
+
+
+/* Queue Modal Styles */
+.queue-modal .ant-modal-body {
+  padding: 24px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.queue-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.queue-header {
+  padding: 16px;
+  background: #fafafa;
+  border-radius: 8px;
+  border: 1px solid #e8e8e8;
+}
+
+.queue-list {
+  min-height: 300px;
+}
+
+.queue-item-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.error-msg {
+  color: #f5222d;
+  margin: 0;
+  font-size: 12px;
+}
+
+.empty-queue {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+/* Add to Queue Modal Styles */
+.add-queue-modal .ant-modal-body {
+  padding: 24px;
+}
+
+.add-queue-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.queue-upload-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.queue-upload-area {
+  border: 2px dashed #d9d9d9;
+  border-radius: 8px;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color 0.3s;
+  position: relative;
+}
+
+.queue-upload-area:hover {
+  border-color: #1890ff;
+}
+
+.queue-upload-area.has-image {
+  border-color: #1890ff;
+  padding: 0;
+}
+
+.queue-upload-area.processing {
+  cursor: not-allowed;
+}
+
+.queue-action-section {
+  margin: 16px 0;
+}
+
+.queue-modal-actions {
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
+}
+
+/* Updated More Images Section */
+.more-images-section {
+  margin: 16px 0;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.section-header p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.queue-status-indicator {
+  margin-top: 8px;
+  padding: 8px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
+}
+
+.queue-stats {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.queue-stat {
+  display: inline-block;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .queue-modal {
+    width: 95% !important;
+  }
+  
+  .add-queue-modal {
+    width: 95% !important;
+  }
+  
+  .queue-header .ant-row {
+    gap: 8px;
+  }
+  
+  .queue-item-title {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .queue-stats {
+    justify-content: center;
+  }
+}
+
+/* Loading states */
+.queue-upload-area .uploading,
+.queue-upload-area .bg-processing-overlay {
+  text-align: center;
+}
+
+.queue-upload-area .uploading p,
+.queue-upload-area .bg-processing-overlay p {
+  margin: 8px 0 0;
+  color: #666;
+}
+
+/* Image preview in queue modal */
+.queue-upload-area .image-preview {
+  width: 100%;
+  height: 100%;
+  max-height: 190px;
+  position: relative;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.queue-upload-area .image-preview img {
+  width: 100%;
+  height: 100%;
+  max-height: 190px;
+  object-fit: contain;
+}
+
+/* Queue list item animations */
+.ant-list-item {
+  transition: background-color 0.3s ease;
+}
+
+.ant-list-item:hover {
+  background-color: #fafafa;
+  border-radius: 6px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Multi-View Queue Modal Styles */
+.multiview-queue-modal .ant-modal-body {
+  padding: 24px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.multiview-queue-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.multiview-queue-grid {
+  margin-bottom: 16px;
+}
+
+.multiview-queue-upload-area {
+  border: 2px dashed #d9d9d9;
+  border-radius: 8px;
+  height: 150px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  background: #fafafa;
+}
+
+.multiview-queue-upload-area:hover {
+  border-color: #1890ff;
+  background: #f0f8ff;
+}
+
+.multiview-queue-upload-area.has-image {
+  border-color: #1890ff;
+  padding: 0;
+  background: white;
+}
+
+.multiview-queue-upload-area.processing {
+  cursor: not-allowed;
+}
+
+.multiview-queue-upload-area.required {
+  border-color: #faad14;
+  background: #fffbf0;
+}
+
+.multiview-queue-placeholder {
+  text-align: center;
+  color: #666;
+}
+
+.view-label {
+  font-size: 12px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.required-indicator {
+  color: #ff4d4f;
+  font-weight: bold;
+  margin-left: 2px;
+}
+
+.multiview-queue-placeholder .anticon {
+  font-size: 24px;
+  color: #1890ff;
+}
+
+.multiview-queue-image {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.multiview-queue-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.multiview-queue-actions {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  gap: 4px;
+}
+
+.multiview-queue-info {
+  margin: 16px 0;
+}
+
+.multiview-queue-bg-section {
+  margin: 16px 0;
+}
+
+.multiview-queue-modal-actions {
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
+}
+
+/* Updated More Images Section with Options */
+.upload-options {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.upload-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px;
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 80px;
+  width:100%;
+  background: #fafafa;
+}
+
+.upload-option:hover {
+  border-color: #1890ff;
+  color: #1890ff;
+  background: #f0f8ff;
+}
+
+.upload-option small {
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.multi-view-icon {
+  position: relative;
+  display: inline-block;
+}
+
+.multi-view-icon .anticon:first-child {
+  position: relative;
+  z-index: 2;
+}
+
+.multi-view-icon .anticon:last-child {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  z-index: 1;
+  opacity: 0.6;
+}
+
+/* Background processing overlay for multi-view */
+.multiview-queue-upload-area .bg-processing-overlay.small {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  z-index: 10;
+}
+
+.multiview-queue-upload-area .bg-processing-overlay.small small {
+  margin: 4px 0 0;
+  font-size: 10px;
+}
+
+/* Loading states for multi-view queue */
+.multiview-queue-upload-area .uploading {
+  text-align: center;
+  color: #666;
+}
+
+.multiview-queue-upload-area .uploading small {
+  margin: 4px 0 0;
+  font-size: 11px;
+}
+
+/* Responsive Design for Multi-View Queue */
+@media (max-width: 768px) {
+  .multiview-queue-modal {
+    width: 95% !important;
+  }
+  
+  .multiview-queue-upload-area {
+    height: 120px;
+  }
+  
+  .view-label {
+    font-size: 11px;
+  }
+  
+  .multiview-queue-placeholder .anticon {
+    font-size: 20px;
+  }
+  
+  .upload-options {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .upload-option {
+    min-width: auto;
+    width: 100%;
+  }
+  
+  .multiview-queue-actions {
+    top: 4px;
+    right: 4px;
+    gap: 2px;
+  }
+  
+  .multiview-queue-actions .ant-btn {
+    font-size: 12px;
+    height: 28px;
+    width: 28px;
+  }
+}
+
+@media (max-width: 576px) {
+  .multiview-queue-grid .ant-col {
+    span: 24 !important;
+    margin-bottom: 12px;
+  }
+  
+  .multiview-queue-upload-area {
+    height: 100px;
+  }
+}
+
+/* Enhanced Queue Status Display */
+.queue-status-indicator {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Alert styling for multi-view info */
+.multiview-queue-info .ant-alert {
+  border-radius: 6px;
+}
+
+.multiview-queue-info .ant-alert-success {
+  background: #f6ffed;
+  border-color: #b7eb8f;
+}
+
+.multiview-queue-info .ant-alert-warning {
+  background: #fffbe6;
+  border-color: #ffe58f;
+}
+
+/* Improved button styling */
+.multiview-queue-bg-section .ant-btn {
+  height: 40px;
+  font-weight: 500;
+}
+
+.multiview-queue-modal-actions .ant-btn {
+  height: 40px;
+  font-weight: 500;
+}</style>

@@ -360,9 +360,9 @@ Switch Furniture</a-button>
               />
               <!-- @redetect-objects-room="fetch_redetect_ObjectsBinary_Masks" -->
 <!-- ceiling light renderer -->
- 
+            <img :src="this.base_image_url" style="width:100%;height:100%;object-fit:contain" alt="" v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Lights' && selected_light_type===''">
             <canvas_lights_render 
-              v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Lights' && selected_light_type==='strip'" 
+              v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Lights' && selected_light_type==='sunk'" 
               :baseImage="base_image_url"
               :isLoading="canvasLoading"
               :depthMask="depthMask"
@@ -370,7 +370,7 @@ Switch Furniture</a-button>
               @magentic-lights-added="magneticLightsMearjed"
             />
             <canvas_unsunk_lights_render
-              v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Lights' && selected_light_type==='unsunk-strip'" 
+              v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Lights' && selected_light_type==='unsunk'" 
               :baseImage="base_image_url"
               :isLoading="canvasLoading"
               :depthMask="depthMask"
@@ -562,7 +562,7 @@ export default {
       current_tab: 'image',
       active_tab_image: 'item_replacement',
       searchText: '',
-      selected_light_type:'strip',
+      selected_light_type:'',
       model_3d_url:'',
       item_replacement_renderer_3d_model_url:'',
       selected_3d_product_model:'',
@@ -803,7 +803,7 @@ this.home_design_images=e
       console.log(e)
       const selectedlightuuid =e['uuid']
       this.selected_light_type=e['type']
-      this.model_3d_url = e['model_3d_url'] 
+      this.model_3d_url = this.$store.state.root_api+e['model_3d_url'] 
 
     },
     // itemreplacerenderer

@@ -4,7 +4,7 @@
     <div>
 
       <h1>
-        unsung light 
+        Un-sunk light 
       </h1>
       <p>pending developement </p>
     </div>

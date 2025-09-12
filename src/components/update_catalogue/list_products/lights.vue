@@ -1,4 +1,5 @@
 <template>
+  <!-- {{ catalogItems }} -->
   <div class="ai-catalog-section">
     <!-- Fixed Header -->
     <div class="ai-catalog-header">
@@ -46,55 +47,70 @@
 
       <!-- Product Grid/List -->
       <div v-if="!loading" class="product-container" :class="{ 'grid-view': showGrid, 'list-view': !showGrid }">
-         <div v-for="(item, index) in filteredItems" :key="index" @click="updateItemRendering(item.id,item.type,item.model_3d_url)" style="
-  background: #ffffff;
-  border: none;
-  border-radius: 4px;
-  padding:2px;
-  border:1px solid rgba(128, 128, 128, 0.14);"
-  :style="selected_light===item.id ? 'border:1px solid blue': ''">
-          <div  class="product-item">
-
-          <div class="product-image">
-            <img :src="item.image" :alt="item.title" />
-            <!-- <img :src="this.$store.state.root_api+item.texture_image" :alt="item.title" /> -->
-            <!-- <div class="product-tag">Ad</div> -->
-          </div>
-          <div class="product-info">
-            <div style="display:flex;justify-content: space-between;" class="">
-              <div style="background-color: grey;color :white;border-radius:5px;padding-left:5px;padding-right:5px;padding-top:1px;height:22px;font-size:12px">
-                Modern Floor
-              </div>
-              <div style="padding:3px;border:1px solid grey;border-radius:5px;padding-left:5px;padding-right:5px;padding-top:1px;height:22px;font-size:12px">AR</div>
-            </div>
-            <div class="product-name">{{ item.title }}</div>
-            <div class="product-subtitle">Brown melody'</div>
-            <div class="product-details">
-              <span class="product-color">Color {{ item.color }}</span>
-              <div class="color-dot" :style="{ backgroundColor: 'red' }"></div>
-            </div>
-            <div class="product-price">Price <span style="font-weight: 600;">$399</span></div>
-          </div>
-          <!-- <div class="product-actions">
-            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 20 20" fill="none" class="heart-icon">
-              <path d="M17.5 6.25C17.5 3.625 15.375 1.5 12.75 1.5C11.25 1.5 9.9375 2.25 9.125 3.375H9.125C8.6875 4 8.375 4.75 8.25 5.5625C8.125 4.75 7.8125 4 7.375 3.375C6.5625 2.25 5.25 1.5 3.75 1.5C1.125 1.5 -1 3.625 -1 6.25C-1 9.125 1.625 11.75 5.25 15L9.125 18.5L13 15C16.625 11.75 19.25 9.125 17.5 6.25Z" stroke="#666" stroke-width="1.5"/>
-            </svg>
-          </div> -->
-          </div>
-
-          <a-row>
-          <a-col :span="20" style="padding-right:5px">
-            <button block type="primary" class="btn-prod-details" >
-              Product Detail
-            </button>
-          </a-col>
-          <a-col :span="4" style="">
-            <button block type="primary"  class="btn-prod-details">
-              <HeartOutlined />
-            </button>
-          </a-col>
-        </a-row>
+      
+          <div v-for="(item, index) in filteredItems" :key="index" @click="updateItemRendering(item.id,item.light_type,item['3d_model'])" style="
+background: #ffffff;
+border: none;
+border-radius: 4px;
+padding:2px;
+border:1px solid rgba(128, 128, 128, 0.14);"
+:style="selected_light===item.id ? 'border:1px solid blue': ''">
+  <div class="product-item">
+    <div class="product-image">
+      <img :src="this.$store.state.root_api + item.primary_image" :alt="item.name" />
+      <!-- <div v-if="!item.stock.is_in_stock" class="product-tag" style="background: #ff4d4f;">Out of Stock</div>
+      <div v-else-if="item.stock.is_low_stock" class="product-tag" style="background: #faad14;">Low Stock</div> -->
+    </div>
+    <div class="product-info">
+      <div style="display:flex;justify-content: space-between;" class="">
+        <div style="background-color: grey;color :white;border-radius:5px;padding-left:5px;padding-right:5px;padding-top:1px;height:22px;font-size:12px">
+          {{ item.furniture_type }}
         </div>
+        <div v-if="item['3d_model']" style="padding:3px;border:1px solid grey;border-radius:5px;padding-left:5px;padding-right:5px;padding-top:1px;height:22px;font-size:12px">AR</div>
+      </div>
+      <div class="product-name">{{ truncateText( item.name || 'No description available', 5) }}</div>
+      <div class="product-subtitle">{{ truncateText( item.description || 'No description available', 5) }}</div>
+                                                  
+
+      <div class="product-details">
+  <span class="product-color">Colors Available</span>
+  <div style="display: flex; gap: 4px; align-items: center; margin-left: 8px;">
+    <div v-for="color in item.colors_available.slice(0, 3)" :key="color.id" class="color-dot" :style="{ backgroundColor: color.color }"></div>
+    <span v-if="item.colors_available.length > 3" style="font-size: 14px; color: #666;">...</span>
+  </div>
+</div>
+      <div class="product-price" >
+        <span v-if="item.pricing.is_on_sale">
+          Price 
+          <span style="text-decoration: line-through; color: #999; margin-left: 8px;">${{ item.pricing.price }}</span>
+        </span>
+        <span v-else style="font-weight:700 ;display: flex;justify-content: space-between;width:100%">
+          Price <span style="font-weight: 700;">${{ item.pricing.current_price }}</span>
+        </span>
+      </div>
+    </div>
+    <!-- <div class="product-actions">
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 20 20" fill="none" class="heart-icon">
+        <path d="M17.5 6.25C17.5 3.625 15.375 1.5 12.75 1.5C11.25 1.5 9.9375 2.25 9.125 3.375H9.125C8.6875 4 8.375 4.75 8.25 5.5625C8.125 4.75 7.8125 4 7.375 3.375C6.5625 2.25 5.25 1.5 3.75 1.5C1.125 1.5 -1 3.625 -1 6.25C-1 9.125 1.625 11.75 5.25 15L9.125 18.5L13 15C16.625 11.75 19.25 9.125 17.5 6.25Z" stroke="#666" stroke-width="1.5"/>
+      </svg>
+    </div> -->
+  </div>
+
+  <a-row>
+    <a-col :span="20" style="padding-right:5px">
+      <button block type="primary" class="btn-prod-details">
+        Product Detail
+      </button>
+    </a-col>
+    <a-col :span="4" style="">
+      <button block type="primary" class="btn-prod-details">
+        <HeartOutlined />
+      </button>
+    </a-col>
+  </a-row>
+</div>
+
+
       </div>
     </div>
 
@@ -117,42 +133,7 @@ export default {
       selected_light:'',
       loading: false,
       error: null,
-      catalogItems: [
-        { id:"abc",
-          image:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSCRxeS2S5i8SPy_5IojY8t8Fotgzc8t8sPYA&s',
-          title:"Magnetic Light",
-          type:'strip'
-          // color:"pink"
-        },
-        { id:"bcd",
-          image:'https://image.made-in-china.com/202f0j00PhioLGqdfwbD/Magnetic-Light-System-Recessed-Suction-Lamp-60cm-Magnetic-LED-Track-Lighting.webp',
-            title:"Magnetic strip",
-          type:'unsunk-strip',
-          // color:"pink"
-        },
-        
-        { id:"def",
-          image:'https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcTdn2k770G_o_V7FzU2UNXP990TerRgVajYa3_TxG1jG_bqXu_Ba-2MYwf9jHwDlExEb2Z9ioEXoWQKWPWkA0D67vm0JzmBkTfikj-oDJmGENJDZTvogQywgg',
-            title:"Plate light",
-          type:'hanging',
-          model_3d_url:'http://127.0.0.1:8000/media/products/lamp_hanger.glb'+ '?t=' + new Date().getTime()
-          // color:"pink"
-        },
-         { id:"efg",
-          image:'https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcTdn2k770G_o_V7FzU2UNXP990TerRgVajYa3_TxG1jG_bqXu_Ba-2MYwf9jHwDlExEb2Z9ioEXoWQKWPWkA0D67vm0JzmBkTfikj-oDJmGENJDZTvogQywgg',
-            title:"hanging light light",
-          type:'hanging',
-          model_3d_url:'http://127.0.0.1:8000/media/products/ceiling_lamp_disk.glb'+ '?t=' + new Date().getTime()
-          // color:"pink"
-        },{ id:"def",
-          image:'https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcTdn2k770G_o_V7FzU2UNXP990TerRgVajYa3_TxG1jG_bqXu_Ba-2MYwf9jHwDlExEb2Z9ioEXoWQKWPWkA0D67vm0JzmBkTfikj-oDJmGENJDZTvogQywgg',
-            title:"hanged  light",
-          type:'hanging',
-          model_3d_url:'http://127.0.0.1:8000/media/products/hanged-lighte.glb'+ '?t=' + new Date().getTime()
-          // color:"pink"
-        },
-
-      ],
+      catalogItems: [],
       showGrid: false, // true for grid, false for list
       // Mock data
       productItems:[]
@@ -171,13 +152,13 @@ export default {
     }
   },
   mounted() {
-    // this.fetchCatalogItems();
+    this.fetchLights();
   },
   methods: {
-    async fetchCatalogItems() {
+    async fetchLights() {
       this.loading = true;
       try {
-        const url = `${this.$store.state.root_api}room/api/floors/`;
+        const url = `${this.$store.state.root_api}/product/api/lights/`;
         const response = await fetch(url);
         const data = await response.json();
         console.log(data)
@@ -193,7 +174,14 @@ export default {
     seeAllClicked(){
       this.$emit('light-see-all', true);
     },
+     truncateText(text, wordLimit) {
+  if (!text) return '';
+  const words = text.split(' ');
+  if (words.length <= wordLimit) return text;
+  return words.slice(0, wordLimit).join(' ') + '...';
+},
 updateItemRendering(uuid, type,model_3d_url){
+  
   this.selected_light=uuid
       this.$emit('light-selected', {'uuid':uuid,'type':type,'model_3d_url':model_3d_url});
 

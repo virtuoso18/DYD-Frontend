@@ -62,17 +62,25 @@
           <div class="product-info">
             <div style="display:flex;justify-content: space-between;" class="">
               <div style="background-color: grey;color :white;border-radius:5px;padding-left:5px;padding-right:5px;padding-top:1px;height:22px;font-size:12px">
-                Modern Floor
+                Wall Texture
               </div>
               <div style="padding:3px;border:1px solid grey;border-radius:5px;padding-left:5px;padding-right:5px;padding-top:1px;height:22px;font-size:12px">AR</div>
             </div>
-            <div class="product-name">{{ item.title }}</div>
-            <div class="product-subtitle">Brown melody'</div>
-            <div class="product-details">
+            <div class="product-name">{{ truncateText( item.title || 'No description available', 3) }}</div>
+            <div class="product-subtitle">{{ truncateText( item.description || 'No description available', 5) }}</div>
+            
+            <!-- <div class="product-details">
               <span class="product-color">Color {{ item.color }}</span>
               <div class="color-dot" :style="{ backgroundColor: 'red' }"></div>
-            </div>
-            <div class="product-price">Price <span style="font-weight: 600;">$399</span></div>
+            </div> -->
+                  <div class="product-details">
+  <span class="product-color">Colors Available</span>
+  <div style="display: flex; gap: 4px; align-items: center; margin-left: 8px;">
+    <div v-for="color in item.colors_available.slice(0, 3)" :key="color.id" class="color-dot" :style="{ backgroundColor: color.color_hex }"></div>
+    <span v-if="item.colors_available.length > 3" style="font-size: 14px; color: #666;">...</span>
+  </div>
+</div>
+            <div class="product-price">Price <span style="font-weight: 600;">$ {{ item.sale_price_per_sqm }}</span></div>
           </div>
           <!-- <div class="product-actions">
             <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 20 20" fill="none" class="heart-icon">
@@ -153,7 +161,12 @@ export default {
         this.loading = false;
       }
     },
-    
+     truncateText(text, wordLimit) {
+  if (!text) return '';
+  const words = text.split(' ');
+  if (words.length <= wordLimit) return text;
+  return words.slice(0, wordLimit).join(' ') + '...';
+},
     seeAllClicked(){
       this.$emit('walls-see-all', true);
     },

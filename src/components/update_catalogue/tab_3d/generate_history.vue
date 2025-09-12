@@ -1,5 +1,5 @@
 <template>
-  <div style="background: white;height:90vh;padding:10px;">
+  <div style="background: white;height:90vh;padding:10px;overflow-y: scroll;">
     <h4>Generate History</h4>
     
     <div v-if="loading_generated_models_history" style="text-align:center;padding:50px;">
