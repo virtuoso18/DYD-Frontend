@@ -7,8 +7,8 @@
 
           <!-- Header with Furniture Image -->
           <div class="header-banner" :style="backgroundImage ? 
-              `background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(${this.$store.state.root_api}${businessInfo.business_picture}) center/cover no-repeat` : 
-              `background: url(${this.$store.state.root_api}${businessInfo.business_picture}) center/cover no-repeat;`">
+              `background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(${this.$store.state.root_media_api}${businessInfo.business_picture}) center/cover no-repeat` : 
+              `background: url(${this.$store.state.root_media_api}${businessInfo.business_picture}) center/cover no-repeat;`">
             
             <!-- Background upload button (only show when editing) -->
             <a-upload
@@ -31,7 +31,7 @@
             
             <div class="profile-section">
               <div class="profile-avatar">
-                <img :src="avatarPreview || (this.$store.state.root_api + businessInfo.avatar)" alt="Business Avatar" />
+                <img :src="avatarPreview || (this.$store.state.root_media_api + businessInfo.avatar)" alt="Business Avatar" />
                 <a-upload
                   v-if="isEditMode"
                   :show-upload-list="false"
@@ -362,7 +362,7 @@ export default {
         name: this.buisness_info.name || "",
         email: this.buisness_info.email,
         phone: this.buisness_info.phone_number,
-        avatar: this.$store.state.root_api + this.buisness_info.banner_picture,
+        avatar: this.$store.state.root_media_api + this.buisness_info.banner_picture,
         description: this.buisness_info.description,
         services: this.buisness_info.services,
         whatsapp: 'https://wa.me/' + this.buisness_info.whatsapp_number,
@@ -540,7 +540,7 @@ export default {
       try {
         const token = localStorage.getItem('token');
         
-        const response = await fetch(`${this.$store.state.root_api}/Auth/api/business-profile/`, {
+        const response = await fetch(`${this.$store.state.root_api}Auth/api/business-profile/`, {
           method: 'GET',
           headers: {
             'Authorization': `Token ${token}`,
@@ -617,7 +617,7 @@ export default {
 
         const token = localStorage.getItem('token');
 
-        const response = await fetch(`${this.$store.state.root_api}/Auth/api/business-profile/`, {
+        const response = await fetch(`${this.$store.state.root_api}Auth/api/business-profile/`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

@@ -13,7 +13,21 @@
 
 <script >
 export default {
-  name: "unsung-light"
+  name: "unsung-light",
+  props:{
+      baseImage: {
+      type: String,
+      required: true,
+    },
+    selectedlightuuid:{
+      type: String,
+      required: true,
+    },
+    depthMask: {
+      type: String,
+      default: null,
+    },
+  }
 }
 </script>
 

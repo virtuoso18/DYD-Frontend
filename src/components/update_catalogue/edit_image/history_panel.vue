@@ -18,6 +18,7 @@
         <div style="font-size:14px;color:#666;margin-bottom:8px;font-weight:500;">
           {{ item.date }}
         </div>
+        <!-- {{ item }} -->
 
         <!-- Single Image Entry -->
         <!-- <div v-if="item.images.length === 1" style="margin-bottom:16px;">
@@ -29,15 +30,21 @@
         <!-- Multiple Images Entry -->
         <div  style="margin-bottom:16px;">
             <!-- main_image -->
-        <img :src="item.input_image" style="width:100%;height:100%;object-fit:cover;width:76px;height:76px;border-radius:6px;overflow:hidden;margin-bottom:10px;;" />
+        <!-- <img :src="this.$store.state.root_api+item.input_image" @click="clicked_history(item.images)" style="width:100%;height:100%;object-fit:cover;width:76px;height:76px;border-radius:6px;overflow:hidden;margin-bottom:10px;;" class="main-image"/> -->
+        <img 
+  :src="`${$store.state.root_media_api}${item.input_image}?t=${Date.now()}&id=${index}`"
+  @click="clicked_history(item)" 
+  style="width:76px;height:76px;object-fit:cover;border-radius:6px;overflow:hidden;margin-bottom:10px;" 
+  class="main-image"
+/>
 
           <!-- Image Grid -->
           <div style="background-color: #f2f2f2;padding:10px;border-radius:10px">
               <div style="display: flex;justify-content: space-between;"><b>Generate</b> {{ item.images.length }}</div>
-              <div style="display:grid;grid-template-columns:repeat(3,76px);gap:4px;">
-                <div v-for="(image, imgIndex) in item.images.slice(0, 3)" :key="imgIndex" 
-                     style="width:76px;height:76px;border-radius:6px;overflow:hidden;">
-                  <img :src="image" style="width:100%;height:100%;object-fit:cover;" />
+              <div style="display:grid;grid-template-columns:repeat(4,60px);gap:4px;">
+                <div v-for="(image, imgIndex) in item.images.slice(0, 4)" :key="imgIndex" 
+                     style="width:60px;height:60px;border-radius:6px;overflow:hidden;">
+                  <img :src="this.$store.state.root_media_api+image" style="width:100%;height:100%;object-fit:cover;" />
                 </div>
 
             </div>
@@ -56,42 +63,119 @@
     </div>
 </div>
 </template>
-
 <script>
 export default {
-    name:"history_panel",
+    name: "history_panel",
     data() {
         return {
-            historyList: [
-                {
-                    date: 'Sat Jul 19',
-                    input_image:'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=200&h=200&fit=crop',
-                    images: [
-                        'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=200&h=200&fit=crop'
-                    ]
-                },
-                {
-                    date: 'Sat Jul 23',
-                    input_image:'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=200&h=200&fit=crop',
-                    images: [
-                        'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=200&h=200&fit=crop',
-                        // 'https://images.unsplash.com/photo-1567767292278-a4f21aa2d36e?w=200&h=200&fit=crop',
-                        // 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=200&h=200&fit=crop'
-                    ]
-                },
-                {
-                    date:'Sat Jul 13',
-                    input_image:'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=200&h=200&fit=crop',
-                    images: [
-                        'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=200&h=200&fit=crop',
-                        // 'https://images.unsplash.com/photo-1567767292278-a4f21aa2d36e?w=200&h=200&fit=crop'
-                    ]
+            historyList: [],
+            loading: false,
+            error: null,
+            roomId: null // This should be set based on your app's current room
+        }
+    },
+    
+    mounted() {
+        // Initialize roomId - you might get this from route params, props, or store
+        this.roomId = this.$route.params.id
+        
+        if (this.roomId) {
+            this.fetchGenerateHistory();
+        }
+    },
+    
+    methods: {
+      clicked_history(item){
+        this.$emit('product-mockup-history-clicked',item)
+      },
+        async fetchGenerateHistory() {
+            if (!this.roomId) {
+                this.error = 'Room ID is required';
+                return;
+            }
+
+            this.loading = true;
+            this.error = null;
+            
+            try {
+                const payload = {
+                    room_id: this.$route.params.id
                 }
-            ]
+
+                const response = await fetch(this.$store.state.root_api + 'engine/get-product-mockup-history/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        // Add authorization header if needed
+                        'Authorization': `Token ${localStorage.getItem('token')}`,
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                // Check if response is ok
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json(); // Added 'await' here
+                console.log(result);
+
+                if (result.success) { // Changed from result.data.success to result.success
+                    this.historyList = result.data;
+                } else {
+                    this.error = result.message || 'Failed to fetch history';
+                    console.error('API Error:', result.message);
+                }
+                
+            } catch (error) {
+                console.error('Error fetching history:', error);
+                
+                // Handle different types of errors for fetch API
+                if (error.name === 'TypeError') {
+                    // Network error
+                    this.error = 'Network error - please check your connection';
+                } else if (error.message.includes('HTTP error')) {
+                    // HTTP status error
+                    this.error = `Server error: ${error.message}`;
+                } else {
+                    // Other errors
+                    this.error = 'An unexpected error occurred';
+                }
+            } finally {
+                this.loading = false;
+            }
+        },
+        
+        // Method to refresh history (can be called from parent component or on user action)
+        refreshHistory() {
+            this.fetchGenerateHistory();
+        },
+        
+        // Method to update room ID and fetch new history
+        updateRoom(newRoomId) {
+            this.roomId = newRoomId;
+            this.fetchGenerateHistory();
+        }
+    },
+    
+    watch: {
+        // Watch for room ID changes (if it comes from props or route)
+        '$route.params.id'(newRoomId) { // Changed from roomId to id to match your route param
+            if (newRoomId && newRoomId !== this.roomId) {
+                this.updateRoom(newRoomId);
+            }
         }
     }
 }
-</script>
+</script> 
 
 <style scoped>
+.main-image{
+cursor: pointer;
+padding:1px;
+}
+.main-image:hover{
+  border:1px solid blue ;
+  
+}
 </style>

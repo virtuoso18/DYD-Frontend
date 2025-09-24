@@ -23,7 +23,7 @@
         <!-- Main Texture Image -->
         <div style="position: relative; padding: 10px;">
           <img 
-            :src="$store.state.root_api+mainImageSrc"
+            :src="$store.state.root_media_api+mainImageSrc"
             :alt="selectedTexture.title"
             style="width: 100%; max-height: 500px; height: 400px; border-radius: 10px; object-fit: cover; border: 1px solid #e9ecef;"
           />
@@ -49,7 +49,7 @@
               @click="selectMainImage(img.image)"
             >
               <img 
-                :src="$store.state.root_api +img.image"
+                :src="$store.state.root_media_api +img.image"
                 :alt="img.alt_text"
                 style="width: 80px; height: 80px; border-radius: 8px; object-fit: cover; border: 1px solid #d9d9d9;"
               />
@@ -330,7 +330,7 @@ export default {
 
     const deleteTexture = () => {
       // emit('delete-texture', props.selectedTexture.id);
-      emit('delete_texture', props.selectedTexture.id)
+      emit('delete_product', {"product_id":props.selectedTexture.id})
     };
 
     return {

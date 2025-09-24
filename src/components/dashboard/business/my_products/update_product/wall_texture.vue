@@ -61,7 +61,7 @@
         <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 24px;">
           <!-- Existing Images -->
           <div v-for="img in selectedTexture.product_images" :key="img.id" style="position: relative;">
-            <img :src="$store.state.root_api + img.image" @click="togglePrimaryImage(img.id)"
+            <img :src="$store.state.root_media_api + img.image" @click="togglePrimaryImage(img.id)"
               style="width: 72px; height: 72px; border-radius: 8px; object-fit: cover; cursor: pointer;"
               :style="{ border: img.is_primary ? '3px solid #10b981' : '2px solid #e5e7eb' }"
             />
@@ -560,11 +560,11 @@ export default {
       // Find primary image from existing images
       const primaryImg = this.selectedTexture.product_images?.find(img => img.is_primary);
       if (primaryImg) {
-        return { url: this.$store.state.root_api + primaryImg.image };
+        return { url: this.$store.state.root_media_api + primaryImg.image };
       }
       // Fallback to texture_image if available
       if (this.selectedTexture.texture_image) {
-        return { url: this.$store.state.root_api + this.selectedTexture.texture_image };
+        return { url: this.$store.state.root_media_api + this.selectedTexture.texture_image };
       }
       return null;
     }
@@ -709,7 +709,7 @@ export default {
     async togglePrimaryImage(imageId) {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch(`${this.$store.state.root_api}/room/api-owner/wall/${this.selectedTexture.id}/images/${imageId}/set-primary/`, {
+        const response = await fetch(`${this.$store.state.root_api}room/api-owner/wall/${this.selectedTexture.id}/images/${imageId}/set-primary/`, {
           method: 'PATCH',
           headers: { 'Authorization': `Token ${token}` }
         });
@@ -739,7 +739,7 @@ export default {
     
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${this.$store.state.root_api}/room/api-owner/wall/${this.selectedTexture.id}/colors/`, {
+      const response = await fetch(`${this.$store.state.root_api}room/api-owner/wall/${this.selectedTexture.id}/colors/`, {
         method: 'POST',
         headers: { 
           'Authorization': `Token ${token}`, 
@@ -776,7 +776,7 @@ export default {
         onOk: async () => {
           try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`${this.$store.state.root_api}/room/api-owner/wall/${this.selectedTexture.id}/colors/${colorId}/`, {
+            const response = await fetch(`${this.$store.state.root_api}room/api-owner/wall/${this.selectedTexture.id}/colors/${colorId}/`, {
               method: 'DELETE',
               headers: { 'Authorization': `Token ${token}` }
             });
@@ -809,7 +809,7 @@ export default {
         onOk: async () => {
           try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`${this.$store.state.root_api}/room/api-owner/wall/${this.selectedTexture.id}/images/${imageId}/`, {
+            const response = await fetch(`${this.$store.state.root_api}room/api-owner/wall/${this.selectedTexture.id}/images/${imageId}/`, {
               method: 'DELETE',
               headers: { 'Authorization': `Token ${token}` }
             });
@@ -887,7 +887,7 @@ export default {
             preview.uploading = true;
           });
 
-          const imageResponse = await fetch(`${this.$store.state.root_api}/room/api-owner/wall/${this.selectedTexture.id}/images/`, {
+          const imageResponse = await fetch(`${this.$store.state.root_api}room/api-owner/wall/${this.selectedTexture.id}/images/`, {
             method: 'POST',
             headers: { 'Authorization': `Token ${token}` },
             body: formData
@@ -911,7 +911,7 @@ export default {
           }
         });
 
-        const response = await fetch(`${this.$store.state.root_api}/room/api-owner/walls/${this.selectedTexture.id}/`, {
+        const response = await fetch(`${this.$store.state.root_api}room/api-owner/walls/${this.selectedTexture.id}/`, {
           method: 'PUT',
           headers: { 'Authorization': `Token ${token}` },
           body: textureData

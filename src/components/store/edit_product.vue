@@ -74,7 +74,7 @@
         <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 24px;">
           <!-- Existing Images -->
           <div v-for="img in selectedProduct.images" :key="img.id" style="position: relative;">
-            <img :src="$store.state.root_api + img.image" @click="togglePrimaryImage(img.id)"
+            <img :src="$store.state.root_media_api + img.image" @click="togglePrimaryImage(img.id)"
               style="width: 72px; height: 72px; border-radius: 8px; object-fit: cover; cursor: pointer;"
               :style="{ border: img.is_primary ? '3px solid #10b981' : '2px solid #e5e7eb' }"
             />
@@ -216,7 +216,7 @@
               <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
                 <!-- Existing Textures -->
                 <div v-for="texture in selectedProduct.textures" :key="texture.id" style="position: relative;">
-                  <div @click="selectTexture(texture.id)" :style="{ width: '48px', height: '36px', borderRadius: '8px', backgroundImage: `url(${$store.state.root_api + texture.texture})`, backgroundSize: 'cover', backgroundPosition: 'center', border: selectedTexture === texture.id ? '3px solid #3b82f6' : '2px solid #e5e7eb', cursor: 'pointer' }"></div>
+                  <div @click="selectTexture(texture.id)" :style="{ width: '48px', height: '36px', borderRadius: '8px', backgroundImage: `url(${$store.state.root_media_api + texture.texture})`, backgroundSize: 'cover', backgroundPosition: 'center', border: selectedTexture === texture.id ? '3px solid #3b82f6' : '2px solid #e5e7eb', cursor: 'pointer' }"></div>
                   <a-button type="text" danger size="small" @click.stop="deleteTexture(texture.id)"
                     style="position: absolute; top: -8px; right: -8px; background: #ef4444; color: white; border-radius: 50%; width: 16px; height: 16px; padding: 0;">
                     <template #icon>
@@ -321,7 +321,7 @@ export default {
     },
 
     get3DModelUrl() {
-      return this.pending3DModel ? URL.createObjectURL(this.pending3DModel) : this.$store.state.root_api + this.selectedProduct['3d_model'];
+      return this.pending3DModel ? URL.createObjectURL(this.pending3DModel) : this.$store.state.root_media_api + this.selectedProduct['3d_model'];
     },
 
     handleBeforeUnload(e) {
@@ -471,7 +471,7 @@ export default {
     async togglePrimaryImage(imageId) {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch(`${this.$store.state.root_api}/product/api-product-owner/products/${this.selectedProduct.id}/images/${imageId}/set-primary/`, {
+        const response = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/images/${imageId}/set-primary/`, {
           method: 'PATCH',
           headers: { 'Authorization': `Token ${token}` }
         });
@@ -501,7 +501,7 @@ export default {
       
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch(`${this.$store.state.root_api}/product/api-product-owner/products/${this.selectedProduct.id}/colors/`, {
+        const response = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/colors/`, {
           method: 'POST', headers: { 'Authorization': `Token ${token}`, 'Content-Type': 'application/json' },
           body: JSON.stringify({ color: colorHex })
         });
@@ -526,7 +526,7 @@ export default {
         const formData = new FormData();
         formData.append('texture', textureFile);
 
-        const response = await fetch(`${this.$store.state.root_api}/product/api-product-owner/products/${this.selectedProduct.id}/textures/`, {
+        const response = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/textures/`, {
           method: 'POST', headers: { 'Authorization': `Token ${token}` }, body: formData
         });
 
@@ -551,7 +551,7 @@ export default {
         onOk: async () => {
           try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`${this.$store.state.root_api}/product/api-product-owner/products/${this.selectedProduct.id}/images/${imageId}/`, {
+            const response = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/images/${imageId}/`, {
               method: 'DELETE', headers: { 'Authorization': `Token ${token}` }
             });
 
@@ -578,7 +578,7 @@ export default {
         onOk: async () => {
           try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`${this.$store.state.root_api}/product/api-product-owner/products/${this.selectedProduct.id}/colors/${colorId}/`, {
+            const response = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/colors/${colorId}/`, {
               method: 'DELETE', headers: { 'Authorization': `Token ${token}` }
             });
 
@@ -605,7 +605,7 @@ export default {
         onOk: async () => {
           try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`${this.$store.state.root_api}/product/api-product-owner/products/${this.selectedProduct.id}/textures/${textureId}/`, {
+            const response = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/textures/${textureId}/`, {
               method: 'DELETE', headers: { 'Authorization': `Token ${token}` }
             });
 
@@ -679,7 +679,7 @@ export default {
             preview.uploading = true;
           });
 
-          const imageResponse = await fetch(`${this.$store.state.root_api}/product/api-product-owner/products/${this.selectedProduct.id}/images/`, {
+          const imageResponse = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/images/`, {
             method: 'POST', headers: { 'Authorization': `Token ${token}` }, body: formData
           });
 
@@ -717,7 +717,7 @@ export default {
           productData.append('model_file', this.pending3DModel);
         }
 
-        const response = await fetch(`${this.$store.state.root_api}/product/api-product-owner/products/${this.selectedProduct.id}/`, {
+        const response = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/`, {
           method: 'PUT', headers: { 'Authorization': `Token ${token}` }, body: productData
         });
 

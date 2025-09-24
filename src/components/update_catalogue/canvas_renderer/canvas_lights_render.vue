@@ -138,7 +138,7 @@
       </div>
     
     
- <a-button 
+ <!-- <a-button 
         @click="saveRoom" 
         type="primary"
         size="large"
@@ -146,6 +146,15 @@
         :disabled="lights.length === 0"
       >
         Save 
+      </a-button> -->
+      
+ <a-button 
+        @click="$emit('Apply-Changes', 'sunk-magnetic-light-Renerer')" 
+        type="primary"
+        size="large"
+        style="margin:0;margin-top: 5px;margin-left: 16px;color:white"
+      >
+        Apply Changes
       </a-button>
     </a-col>
     </a-row>
@@ -262,6 +271,10 @@ const store=useStore();
 // Props
 const props = defineProps({
   baseImage: {
+    type: String,
+    required: true,
+  },
+  selectedlightuuid:{
     type: String,
     required: true,
   },
@@ -416,13 +429,16 @@ async function saveRoom() {
     const base64Data = exportCanvas.toDataURL('image/png');
     
     // Send to server via POST request
-    const response = await fetch(store.state.root_api+'/engine/mearj-room-lights/', {
+    const response = await fetch(store.state.root_api+'engine/mearj-room-lights/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+          'Authorization': `Token ${localStorage.getItem('token')}`
+
       },
       body: JSON.stringify({
         image: base64Data,
+        product_id:props.selectedlightuuid,
         room_id: route.params.id,
         timestamp: Date.now(),
         // Add any additional metadata you want to send
@@ -1389,6 +1405,10 @@ function redrawDepthCanvas() {
   
   depthCtx.value.restore();
 }
+
+defineExpose({
+  saveRoom
+});
 </script>
 
 <style scoped>

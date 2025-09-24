@@ -40,7 +40,7 @@
           <div style="position: relative; padding:10px;;">
 
             <canvas_3d_model_renderer 
-            :glbModelUrl="this.$store.state.root_api + modelDetails['model_file']"
+            :glbModelUrl="this.$store.state.root_media_api + modelDetails['model_file']"
             :Model_instance_id="rendered_modal_3D_id"
             :isLoading="false"
             style="width: 100%; max-height:250px; height: 100%;border-radius: 10px"
@@ -63,7 +63,7 @@
             <div style="display: flex; flex-wrap: wrap; gap: 8px;">
 <img 
 v-if="modelDetails['image_0']"
-                  :src="this.$store.state.root_api+ modelDetails['image_0']" 
+                  :src="this.$store.state.root_media_api+ modelDetails['image_0']" 
                   :style="{
                     width: '60px',
                     height: '60px',
@@ -75,7 +75,7 @@ v-if="modelDetails['image_0']"
                 />
                 <img 
                 v-if="modelDetails['image_1']"
-                  :src="this.$store.state.root_api+ modelDetails['image_1']" 
+                  :src="this.$store.state.root_media_api+ modelDetails['image_1']" 
                   :style="{
                     width: '60px',
                     height: '60px',
@@ -87,7 +87,7 @@ v-if="modelDetails['image_0']"
                 />
                 <img 
                 v-if="modelDetails['image_2']"
-                  :src="this.$store.state.root_api+ modelDetails['image_2']" 
+                  :src="this.$store.state.root_media_api+ modelDetails['image_2']" 
                   :style="{
                     width: '60px',
                     height: '60px',
@@ -99,7 +99,7 @@ v-if="modelDetails['image_0']"
                 />
                 <img 
                 v-if="modelDetails['image_3']"
-                  :src="this.$store.state.root_api+ modelDetails['image_3']" 
+                  :src="this.$store.state.root_media_api+ modelDetails['image_3']" 
                   :style="{
                     width: '60px',
                     height: '60px',

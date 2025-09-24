@@ -7,9 +7,9 @@
         :rendered_modal_3D_id="model_instance_id"
     />
   <a-row>
-    <a-col :span="6">
+    <a-col :span="6" style="background-color: white;color:black;">
       <!-- @processing-generate="processinggenerate_loading" -->
-<sidepanel_3d_tab
+<sidepanel_3d_tab 
 
           @generated="new3DModelGenerated"
           @queue-updated="get_3d_rendered_model_details"
@@ -90,7 +90,7 @@ this.$router.push('/business-dashboard/my-products')
 
 clicked_history_model(e){
   this.processing_generate_is_Loading=false
-  this.generated3dModel_url=this.$store.state.root_api+ e.media_url
+  this.generated3dModel_url=this.$store.state.root_media_api+ e.media_url
   this.model_instance_id=e.new3d_model_instance
 
 },
@@ -172,7 +172,7 @@ async get_3d_rendered_model_details(generated_3d_model_id) {
     
     if (responseData) {
       
-      this.generated3dModel_url=this.$store.state.root_api+ responseData.new_model.model_file_url
+      this.generated3dModel_url=this.$store.state.root_media_api+ responseData.new_model.model_file_url
       this.model_instance_id=responseData.new_model.id
       this.processing_generate_is_Loading=false
       

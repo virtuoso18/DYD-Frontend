@@ -163,7 +163,7 @@
 </div>
       </div>
       <div style="padding-top:10px;">
-        <a-button type="primary" class="toolbar-btn primary-btn" @click="reset_entire_room" :disabled="isLoading">
+        <a-button type="primary" class="toolbar-btn primary-btn" @click="$emit('Apply-Changes', 'Walls-Renerer')" :disabled="isLoading">
           Apply Changes
         </a-button>
       </div>

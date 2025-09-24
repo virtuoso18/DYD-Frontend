@@ -56,7 +56,7 @@
 </div>
       </div>
       <div style="padding-top:10px;">
-        <a-button type="primary"  @click="reset_entire_room" :disabled="isLoading">
+        <a-button type="primary"  @click="$emit('Apply-Changes', 'item-replacement-3d-renderer')" :disabled="isLoading">
           Apply Changes
         </a-button>
       </div>

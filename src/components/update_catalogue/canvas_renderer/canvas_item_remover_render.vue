@@ -116,7 +116,7 @@
     </div>
     
     <div style="padding-top:10px;">
-      <a-button type="primary" class="toolbar-btn primary-btn" @click="" :disabled="isLoading">
+      <a-button type="primary" class="toolbar-btn primary-btn"   @click="$emit('Apply-Changes', 'all-tab')" :disabled="isLoading">
         Apply Changes
       </a-button>
     </div>

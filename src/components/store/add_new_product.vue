@@ -492,7 +492,7 @@ export default {
           formData.append('textures', texture.file);
         });
 
-        const response = await fetch(`${this.$store.state.root_api}/product/api-product-owner/products/`, {
+        const response = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/`, {
           method: 'POST',
           headers: { 'Authorization': `Token ${token}` },
           body: formData

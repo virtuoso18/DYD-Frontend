@@ -19,7 +19,7 @@
     background: linear-gradient(
       rgba(0,0,0,0.3), 
       rgba(0,0,0,0.3)
-    ), url(${this.$store.state.root_api}${editData.business_picture}) center/cover no-repeat;
+    ), url(${this.$store.state.root_media_api}${editData.business_picture}) center/cover no-repeat;
     height:200px;
     display:flex;
     justify-content:center;
@@ -31,7 +31,7 @@
         <div style="text-align:center">
             <!-- <div>{{business_info.name}}</div> -->
             <div style="position: relative; display: inline-block;">
-                <img :src="this.$store.state.root_api+editData.banner_picture" style="width:70px;height:70px" alt="">
+                <img :src="this.$store.state.root_media_api+editData.banner_picture" style="width:70px;height:70px" alt="">
                 <a-button v-if="isEditing" 
                     type="primary" 
                     shape="circle" 
@@ -287,7 +287,7 @@ export default {
             // Get auth token from localStorage
             const token = localStorage.getItem('token');
 
-            const response = await fetch(`${this.$store.state.root_api}/Auth/api/business-profile/`, {
+            const response = await fetch(`${this.$store.state.root_api}Auth/api/business-profile/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -326,7 +326,7 @@ export default {
         try {
             const token = localStorage.getItem('token');
             
-            const response = await fetch(`${this.$store.state.root_api}/Auth/api/business-profile/`, {
+            const response = await fetch(`${this.$store.state.root_api}Auth/api/business-profile/`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Token ${token}`

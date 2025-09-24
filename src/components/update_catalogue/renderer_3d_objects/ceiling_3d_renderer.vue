@@ -45,7 +45,7 @@
         type="range"
         v-model:value="modelSizeScale"
         :min="0.5"
-        :max="2.0"
+        :max="4.0"
         :step="0.1"
         :tooltip-formatter="value => `${value}°`"
         style="width:120px;height:10px"
@@ -75,7 +75,11 @@
 </div>
       </div>
       <div >
-        <a-button type="primary" class="toolbar-btn primary-btn" @click="downloadCurrentSceneImage" :disabled="isLoading">
+        <!-- <a-button type="primary" class="toolbar-btn primary-btn" @click="downloadCurrentSceneImage" :disabled="isLoading">
+          Apply Changes
+        </a-button> -->
+        <a-button type="primary" class="toolbar-btn primary-btn" @click="$emit('Apply-Changes', '3d-ceiling-light-Renerer')" 
+ :disabled="isLoading">
           Apply Changes
         </a-button>
       </div>
@@ -102,6 +106,10 @@ const props = defineProps({
   glbUrl: { type: String, required: true },
   baseImageUrl: { type: String, required: true },
   ceilingMaskUrl: { type: String, required: true }, // Changed from floorMaskUrl
+  selectedlightuuid:{
+      type: String,
+      required: true,
+    },
   roll: { type: Number, default: 0 },
   pitch: { type: Number, default: 0 },
   yaw: { type: Number, default: 0 },
@@ -653,14 +661,16 @@ async function downloadCurrentSceneImage() {
     });
 
     // Step 5: Send to server via POST request
-    const response = await fetch(store.state.root_api + '/engine/added-3d-light-to-room/', {
+    const response = await fetch(store.state.root_api + 'engine/added-3d-light-to-room/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Token ${localStorage.getItem('token')}`
       },
       body: JSON.stringify({
         image: finalDataURL,
         room_id: route.params.id,
+      product_id:props.selectedlightuuid,
         timestamp: Date.now(),
         // Add any additional metadata you want to send
         metadata: {
@@ -1491,6 +1501,10 @@ onBeforeUnmount(() => {
   if (renderer) {
     renderer.dispose();
   }
+});
+
+defineExpose({
+  downloadCurrentSceneImage
 });
 </script>
 <style scoped>

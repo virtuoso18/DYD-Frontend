@@ -13,10 +13,10 @@
 
       <!-- Navigation Links -->
       <div class="navbar-nav">
-        <a href="#" class="nav-link">DYD Business</a>
-        <a href="#" class="nav-link">Community</a>
-        <a href="#" class="nav-link">Pricing</a>
-        <a href="#" class="nav-link">Contact us</a>
+        <a href="/" class="nav-link">DYD Business</a>
+        <a href="/comunity" class="nav-link">Community</a>
+        <a href="/pricing" class="nav-link">Pricing</a>
+        <a href="/contact-us" class="nav-link">Contact us</a>
       </div>
 
       <!-- Right Side Actions -->
@@ -74,7 +74,7 @@
           </button>
         </div>
         <div class="user-avatar" @click="this.$router.push({name:'dashboard'})">
-          <img :src="this.$store.state.root_api+profile.profile_picture"
+          <img :src="this.$store.state.root_media_api+profile.profile_picture"
             alt="User" />
         </div>
       </div>
@@ -172,7 +172,7 @@
           </button>
         </div>
         <div class="user-avatar" @click="this.$router.push({name:'dashboard'})">
-          <img :src="this.$store.state.root_api+profile.profile_picture"
+          <img :src="this.$store.state.root_media_api+profile.profile_picture"
             alt="User" />
         </div>
       </div>

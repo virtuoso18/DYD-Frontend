@@ -30,7 +30,13 @@
         <!-- Multiple Images Entry -->
         <div  style="margin-bottom:16px;">
             <!-- main_image -->
-        <img :src="this.$store.state.root_api+item.input_image" @click="clicked_history(item.images)" style="width:100%;height:100%;object-fit:cover;width:76px;height:76px;border-radius:6px;overflow:hidden;margin-bottom:10px;;" class="main-image"/>
+        <!-- <img :src="this.$store.state.root_api+item.input_image" @click="clicked_history(item.images)" style="width:100%;height:100%;object-fit:cover;width:76px;height:76px;border-radius:6px;overflow:hidden;margin-bottom:10px;;" class="main-image"/> -->
+         <img 
+  :src="`${$store.state.root_media_api}${item.input_image}?t=${Date.now()}&id=${index}`"
+  @click="clicked_history(item.images)" 
+  style="width:76px;height:76px;object-fit:cover;border-radius:6px;overflow:hidden;margin-bottom:10px;" 
+  class="main-image"
+/>
 
           <!-- Image Grid -->
           <div style="background-color: #f2f2f2;padding:10px;border-radius:10px">
@@ -38,7 +44,7 @@
               <div style="display:grid;grid-template-columns:repeat(4,60px);gap:4px;">
                 <div v-for="(image, imgIndex) in item.images.slice(0, 4)" :key="imgIndex" 
                      style="width:60px;height:60px;border-radius:6px;overflow:hidden;">
-                  <img :src="this.$store.state.root_api+image" style="width:100%;height:100%;object-fit:cover;" />
+                  <img :src="this.$store.state.root_media_api+image" style="width:100%;height:100%;object-fit:cover;" />
                 </div>
 
             </div>

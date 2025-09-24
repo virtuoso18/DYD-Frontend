@@ -55,7 +55,7 @@
             :style="selected_item===item.id ? 'border:1px solid blue': ''">
           <div  class="product-item">
           <div class="product-image">
-            <img :src="this.$store.state.root_api+item.primary_image" :alt="item.name" />
+            <img :src="this.$store.state.root_media_api+item.primary_image" :alt="item.name" />
             <!-- <div class="product-tag">Ad</div> -->
           </div>
           <div class="product-info">

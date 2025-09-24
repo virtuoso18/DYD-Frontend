@@ -20,7 +20,10 @@
           <p>You will get 10 credits daily to generate image or create<br>3d models & edit image</p>
         </div>
         <div class="credits-badge">
-          <span class="credits-icon">⚡</span>
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M10 0C4.477 0 0 4.477 0 10C0 15.523 4.477 20 10 20C15.523 20 20 15.523 20 10C20 4.477 15.523 0 10 0ZM10 1C10 3.38695 9.05179 5.67613 7.36396 7.36396C5.67613 9.05179 3.38695 10 1 10C3.38695 10 5.67613 10.9482 7.36396 12.636C9.05179 14.3239 10 16.6131 10 19C10 16.6131 10.9482 14.3239 12.636 12.636C14.3239 10.9482 16.6131 10 19 10C16.6131 10 14.3239 9.05179 12.636 7.36396C10.9482 5.67613 10 3.38695 10 1Z" fill="#3B63FB"/>
+</svg>
+&nbsp;
           <span class="credits-number">10</span>
         </div>
       </div>
@@ -38,7 +41,7 @@
             <span class="price">45</span>
             <p class="billing-period">1000 credits / month</p>
           </div>
-          <button class="get-started-btn basic-btn">Get Started</button>
+          <button class="get-started-btn basic-btn" @click="this.$router.push('/make-payment/'+'basic')">Get Started</button>
           <div class="features-list">
             <div class="feature-item">
               <span class="checkmark">✓</span>
@@ -74,7 +77,7 @@
             <span class="price">75</span>
             <p class="billing-period">4000 credits / month</p>
           </div>
-          <button class="get-started-btn pro-btn">Get Started</button>
+          <button class="get-started-btn pro-btn" @click="this.$router.push('/make-payment/'+'pro')">Get Started</button>
           <div class="features-list">
             <div class="feature-item">
               <span class="checkmark">✓</span>
@@ -110,7 +113,7 @@
             <span class="price">90</span>
             <p class="billing-period">Customizable credit / month</p>
           </div>
-          <button class="get-started-btn enterprise-btn">Get Started</button>
+          <button class="get-started-btn enterprise-btn" @click="this.$router.push('/make-payment/'+'enterprice')">Get Started</button>
           <div class="features-list">
             <div class="feature-item">
               <span class="checkmark">✓</span>
@@ -136,21 +139,33 @@
         </div>
       </div>
 
+            <br><br>
+
       <!-- Credit Top Up Section -->
       <div class="credit-topup-section">
         <div class="topup-info">
-          <div class="topup-icon">💳</div>
+          
+          
+          <svg width="40" height="40" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M10 0C4.477 0 0 4.477 0 10C0 15.523 4.477 20 10 20C15.523 20 20 15.523 20 10C20 4.477 15.523 0 10 0ZM10 1C10 3.38695 9.05179 5.67613 7.36396 7.36396C5.67613 9.05179 3.38695 10 1 10C3.38695 10 5.67613 10.9482 7.36396 12.636C9.05179 14.3239 10 16.6131 10 19C10 16.6131 10.9482 14.3239 12.636 12.636C14.3239 10.9482 16.6131 10 19 10C16.6131 10 14.3239 9.05179 12.636 7.36396C10.9482 5.67613 10 3.38695 10 1Z" fill="#3B63FB"/>
+</svg>
           <div class="topup-text">
+            
             <h3>Credit top up</h3>
             <p>This will not affect your monthly subscription plan and<br>will only be used after your monthly quota is exhausted</p>
           </div>
         </div>
         <div class="topup-offer">
           <div class="credits-amount">1,000 <span class="credits-label">credits</span></div>
-          <button class="buy-btn">$50 Buy</button>
+          <a-button type="primary" size="medium" block>$50 Buy</a-button>
         </div>
+        
       </div>
+
+      <br><br>
     </div>
+      <br><br>
+
   </div>
 </template>
 
@@ -222,21 +237,20 @@ export default {
   padding: 0 20px 0px;
   max-width: 1200px;
   margin: 0 auto;
-  position: relative;
-  top: -60px;
+  margin-top:20px;
 }
 
 /* Free Credits Banner */
 .free-credits-banner {
   background: white;
   border-radius: 16px;
-  padding: 32px;
+  padding: 20px;
   margin-bottom: 40px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  /* box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); */
+  border: 2px solid rgba(0, 0, 0, 0.1);
 }
 
 .credits-info h3 {
@@ -255,9 +269,11 @@ export default {
 .credits-badge {
   display: flex;
   align-items: center;
-  background: #4F46E5;
-  color: white;
-  padding: 12px 20px;
+  /* background: #4F46E5; */
+  color: blue;
+  /* padding: 10px; */
+  padding-left: 10px;
+  padding-right: 10px;
   border-radius: 50px;
   font-weight: 600;
 }
@@ -451,17 +467,21 @@ export default {
 .credit-topup-section {
   background: white;
   border-radius: 16px;
-  padding: 32px;
+  /* padding: 32px; */
+  padding-left: 32px;
+  padding-right: 32px;
+  padding-bottom: 20px;
+  padding-top: 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  
+  border: 2px solid rgba(0, 0, 0, 0.1);
   margin-bottom: 60px;
 }
 
 .topup-info {
-  display: flex;
+  display: flex;gap:20px;
   align-items: center;
 }
 
@@ -471,7 +491,7 @@ export default {
   background: #4F46E5;
   color: white;
   width: 50px;
-  height: 50px;
+  height: 100px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -508,21 +528,7 @@ export default {
   color: #6b7280;
 }
 
-.buy-btn {
-  background: #4F46E5;
-  color: white;
-  border: none;
-  padding: 12px 32px;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
 
-.buy-btn:hover {
-  background: #4338CA;
-}
 
 /* Responsive Design */
 @media (max-width: 768px) {

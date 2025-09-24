@@ -7,7 +7,7 @@
         <div class="sidebar">
           <div class="user-info">
             <div class="user-avatar">
-               <img :src="this.$store.state.root_api+profile.profile_picture" alt="John Doe" />
+               <img :src="this.$store.state.root_media_api+profile.profile_picture" alt="John Doe" />
             </div>
             <h3>{{ user?.full_name || 'John Doe' }}</h3>
             <p class="user-email">{{ user?.email || 'johndoe@gmail.com' }}</p>

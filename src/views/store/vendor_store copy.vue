@@ -13,7 +13,7 @@
     background: linear-gradient(
       rgba(0,0,0,0.3), 
       rgba(0,0,0,0.3)
-    ), url(${this.$store.state.root_api}${business_info.business_picture}) center/cover no-repeat;
+    ), url(${this.$store.state.root_media_api}${business_info.business_picture}) center/cover no-repeat;
     height:200px;
     display:flex;
     justify-content:center;
@@ -23,7 +23,7 @@
             
         <div style="text-align:center">
             <!-- <div>{{business_info.name}}</div> -->
-            <div><img :src="this.$store.state.root_api+business_info.banner_picture" style="width:70px;height:70px" alt=""></div>
+            <div><img :src="this.$store.state.root_media_api+business_info.banner_picture" style="width:70px;height:70px" alt=""></div>
             <div style="font-size:16px;font-weight:700;color:white">Hi Ashish,</div>
              <div style="font-size:16px;font-weight:700;color:white">Here is What Happening Your Buisness Today</div>
         </div>
@@ -48,11 +48,7 @@ With 14 years of experience in the industry, we offer a wide range of unique and
                     <li>Personalized Professional Consultation – Our expert team will help you find the perfect lighting for your needs and design style.</li>
                     <li>Smart Lighting & Advanced Solutions – Integrating cutting-edge technologies to illuminate your space with style and efficiency</li>
                 </ul>
-                    
-                    
-                    
-                    
-
+                   
                 </div>
             </div>
         </div>

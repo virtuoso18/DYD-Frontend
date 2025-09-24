@@ -65,6 +65,61 @@ Switch Furniture</a-button>
     
   </a-drawer>
 
+   <a-drawer
+    title="Change Room  "
+    :placement="'bottom'"
+    :closable="true"
+    :open="openSeeAll_ChangeRoom"
+    height="90%"
+    style="
+  border-top-left-radius: 20px;;
+  border-top-right-radius: 20px;;
+"
+    @close="onClose_drawer_modal"
+    >
+    <template #extra> <div class="head-section">
+          <!-- <a-button type="primary"> <svg width="16" height="15" viewBox="0 0 16 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M4.25 14.2288C3.35489 14.2288 2.49645 13.893 1.86351 13.2952C1.23058 12.6975 0.875 11.8867 0.875 11.0413C0.875 10.196 1.23058 9.38521 1.86351 8.78744C2.49645 8.18967 3.35489 7.85384 4.25 7.85384C5.14511 7.85384 6.00355 8.18967 6.63649 8.78744C7.26942 9.38521 7.625 10.196 7.625 11.0413C7.625 11.8867 7.26942 12.6975 6.63649 13.2952C6.00355 13.893 5.14511 14.2288 4.25 14.2288ZM11.75 7.14551C11.3068 7.14551 10.8679 7.06306 10.4584 6.90287C10.049 6.74269 9.67691 6.5079 9.36351 6.21191C9.05012 5.91592 8.80152 5.56454 8.63191 5.17781C8.4623 4.79109 8.375 4.3766 8.375 3.95801C8.375 3.53942 8.4623 3.12493 8.63191 2.7382C8.80152 2.35148 9.05012 2.00009 9.36351 1.7041C9.67691 1.40812 10.049 1.17333 10.4584 1.01314C10.8679 0.852955 11.3068 0.770508 11.75 0.770508C12.6451 0.770508 13.5035 1.10633 14.1365 1.7041C14.7694 2.30188 15.125 3.11263 15.125 3.95801C15.125 4.80339 14.7694 5.61414 14.1365 6.21191C13.5035 6.80968 12.6451 7.14551 11.75 7.14551ZM1.25 4.66634C1.25 3.72703 1.64509 2.8262 2.34835 2.162C3.05161 1.49781 4.00544 1.12467 5 1.12467H7.25V2.54134H5C4.40326 2.54134 3.83097 2.76522 3.40901 3.16374C2.98705 3.56225 2.75 4.10276 2.75 4.66634V6.79134H1.25V4.66634ZM13.25 8.20801V10.333C13.25 10.8966 13.0129 11.4371 12.591 11.8356C12.169 12.2341 11.5967 12.458 11 12.458H8.75V13.8747H11C11.9946 13.8747 12.9484 13.5015 13.6517 12.8373C14.3549 12.1732 14.75 11.2723 14.75 10.333V8.20801H13.25Z" fill="white"/>
+</svg>
+&nbsp;
+Switch Furniture</a-button> -->
+    </div>
+    </template>
+    
+    
+      <!-- Examples -->
+      <p class="history-label">Your History </p>
+      <div class="example-images">
+        <a-row>
+        <a-col span="8" v-for="histry_card in your_history_change_room" :key="id" style="padding:5px;">
+          <!-- <router-link :to="'/update-catalogue/'+histry_card.id"> -->
+            <img   @click="goToCatalogue(histry_card.id)"  :src="this.$store.state.root_media_api+histry_card.image" class="example-image" />
+          <!-- </router-link> -->
+          </a-col>
+        </a-row>
+        </div>
+
+      <!-- Examples -->
+      <p class="history-label">Use an example room</p>
+      <div class="example-images">
+        <a-row>
+
+          <a-col span="8" v-for="example in exampleImages_changeRoom" :key="id" style="padding:5px;">
+            
+              <img  @click="startTestRoom(example.id)" :src="this.$store.state.root_media_api+example.image" class="example-image" />
+          </a-col>
+        </a-row>
+      </div>
+
+  </a-drawer>
+
+  <add_new_furniture 
+        v-model:visible="showAddProduct"
+        :types="['Modern','Scandinavian','Classic','Minimalist','Industrial','Rustic','Boho','other',]"
+        @product-created="onProductCreated"
+        @cancel="onCancel"
+        :rendered_modal_3D_id="model_instance_id"
+    />
 
   <div>
     <div class="main_panel">
@@ -173,6 +228,7 @@ Switch Furniture</a-button>
                  <lights v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Lights'"
                  @light-selected="lightSelected"
                  @light-see-all="lightsSeeAll"
+                 @Apply_Light="Apply_ceiling_light"
                  >
                  </lights>
                 </div>
@@ -193,8 +249,8 @@ Switch Furniture</a-button>
 
         <a-col :span="6" class="middle-panel" v-if="current_tab=='3d'" >
           <sidepanel_3d_tab
+          @queue-updated="get_3d_rendered_model_details"
               @processing-generate="processinggenerate_loading"
-
           @generated="new3DModelGenerated"
           />
           <!-- <div class="tab-content-placeholder">
@@ -204,7 +260,8 @@ Switch Furniture</a-button>
         </a-col>
 
         <a-col :span="6" class="middle-panel" v-if="current_tab=='edit_image'" >
-              <side_panel_edit_image/>
+              <side_panel_edit_image :base_image_url="''"
+              @product-mockup-generation-complete="new_product_mockup_generated"/>
           
           <!-- <div class="tab-content-placeholder">
             <h3>Edit Image</h3>
@@ -284,12 +341,12 @@ Switch Furniture</a-button>
 </svg>
  Download
     </a-button>
-    <a-button style="border:none;background:#f9f9f9;padding:5px 12px;border-radius:6px;cursor:pointer;
+    <a-button @click="Change_Room_SeeAll()"  style="border:none;background:#f9f9f9;padding:5px 12px;border-radius:6px;cursor:pointer;
                    color:#2a5afc;display:flex;align-items:center;gap:6px;font-size:16px;">
       <svg width="19" height="20" viewBox="0 0 19 20" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M16.625 15.5417V10.2114C16.625 9.78192 16.5376 9.35689 16.3682 8.9622C16.1987 8.56752 15.9508 8.21143 15.6394 7.9156L10.5909 3.12048C10.2967 2.84093 9.90627 2.68506 9.5004 2.68506C9.09452 2.68506 8.70414 2.84093 8.40988 3.12048L3.36062 7.9156C3.04922 8.21143 2.80126 8.56752 2.63182 8.9622C2.46238 9.35689 2.375 9.78192 2.375 10.2114V15.5417C2.375 15.9617 2.54181 16.3644 2.83875 16.6613C3.13568 16.9582 3.53841 17.1251 3.95833 17.1251H15.0417C15.4616 17.1251 15.8643 16.9582 16.1613 16.6613C16.4582 16.3644 16.625 15.9617 16.625 15.5417Z" stroke="#3B63FB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
- Change Room
+ Change Room 
     </a-button>
   </div>
 
@@ -340,6 +397,8 @@ Switch Furniture</a-button>
               :baseImage="base_image_url"
               :isLoading="canvasLoading"
               :key="canvasKey"
+
+              @Apply-Changes="ApplyChanges"
             />
             <canvas_item_remover_render 
               v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='All'"
@@ -357,6 +416,7 @@ Switch Furniture</a-button>
               @processing-complete="onProcessingComplete"
               @make-room-empty="makeRoomEmpty"
               @reset-entire-room="resetChangesinBaseImage"
+              @Apply-Changes="ApplyChanges"
               />
               <!-- @redetect-objects-room="fetch_redetect_ObjectsBinary_Masks" -->
 <!-- ceiling light renderer -->
@@ -365,23 +425,31 @@ Switch Furniture</a-button>
               v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Lights' && selected_light_type==='sunk'" 
               :baseImage="base_image_url"
               :isLoading="canvasLoading"
+              :selectedlightuuid="selectedlightuuid"
               :depthMask="depthMask"
               :key="canvasKey"
               @magentic-lights-added="magneticLightsMearjed"
+              @Apply-Changes="ApplyChanges"
+              ref="canvas_sunk_magnetic_lights_render"
+
             />
             <canvas_unsunk_lights_render
               v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Lights' && selected_light_type==='unsunk'" 
               :baseImage="base_image_url"
               :isLoading="canvasLoading"
+              :selectedlightuuid="selectedlightuuid"
               :depthMask="depthMask"
               :key="canvasKey"
               @magentic-lights-added="magneticLightsMearjed"
+              @Apply-Changes="ApplyChanges"
+
             />
 
             <!-- glbUrl="http://127.0.0.1:8000/media/products/ceiling_lamp_disk.glb" -->
   <ceiling_3d_object_renderer 
               v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Lights' && selected_light_type==='hanging'" 
                   :glbUrl="model_3d_url"
+                  :selectedlightuuid="selectedlightuuid"
   :baseImageUrl=base_image_url
   :floorMaskUrl=depthMask
 
@@ -389,6 +457,9 @@ Switch Furniture</a-button>
   :pitch="ceiling_pitch"
   :yaw="ceiling_yaw"
   @model-3d-light-added="magneticLightsMearjed"
+@Apply-Changes="ApplyChanges"
+ref="canvas_ceiling_3d_object_light_renderer"
+
   />
 
 <!-- ceiling light renderer -->
@@ -404,6 +475,8 @@ Switch Furniture</a-button>
               @update:selectedMasks="selected_wall_masks"
               @rescale-room-layout="rescaleWallMask"
               :key="canvasKey"
+              @Apply-Changes="ApplyChanges"
+
             />
             
 
@@ -419,9 +492,11 @@ Switch Furniture</a-button>
   :yaw="floor_yaw"
   ref="floor_item_3d_renderer"
   @rendered-comfyui-workflow="updateBaskeImageURL_CANVAS"
+              @Apply-Changes="ApplyChanges"
+
   />
 
-  <!-- :glbModelUrl="this.$store.state.root_api+'/media/3d-Rendered-Models/temp/8a36f84a-39e3-40f3-a194-05c5a46c0c2d/HY-2.0-3D-Textured-model_00023_.glb '" -->
+  <!-- :glbModelUrl="this.$store.state.root_media_api+'/media/3d-Rendered-Models/temp/8a36f84a-39e3-40f3-a194-05c5a46c0c2d/HY-2.0-3D-Textured-model_00023_.glb '" -->
   <a-row v-if="current_tab=='3d'">
     <a-col :sm="0" :xs="0" :md="16" :lg="16" >
 
@@ -429,6 +504,7 @@ Switch Furniture</a-button>
   :glbModelUrl="generated3dModel_url"
   :isLoading="processing_generate_is_Loading"
   :Model_instance_id="model_instance_id"
+  @clicked-add-product="add_new_product"
   />
     </a-col>
     
@@ -467,18 +543,17 @@ Switch Furniture</a-button>
     <a-col :sm="0" :xs="0" :md="16" :lg="16" >
 
   <main_panel_edit_image v-if="current_tab=='edit_image'"
-  :glbModelUrl="generated3dModel_url"
-  :isLoading="processing_generate_is_Loading"
-  :Model_instance_id="model_instance_id"
+  :product_mockup_images="product_mockup_images"
+  :selected_product_mockups_group="selected_product_mockups_group"
   />
     </a-col>
     
     <a-col :sm="0" :xs="0" :md="8" :lg="8" >
   <history_panel_edit_image v-if="current_tab=='edit_image'"
-  :list_history_generated_3d_models="list_history_generated_3d_models"
-  :loading_generated_models_history="loading_generated_models_history"
-  @clicked-model="new3DModelGenerated"
+  @product-mockup-history-clicked="product_mockup_history_clicked"
+  ref="product_mockup_history"
   />
+   
 
     </a-col>
 
@@ -519,7 +594,7 @@ Switch Furniture</a-button>
 
 
 <script>
-import { BulbOutlined } from '@ant-design/icons-vue';
+import { BulbOutlined, FacebookFilled } from '@ant-design/icons-vue';
 import canvas_floor_render from '@/components/update_catalogue/canvas_renderer/canvas_floor_render.vue'
 import canvas_item_remover_render from '@/components/update_catalogue/canvas_renderer/canvas_item_remover_render.vue'
 import canvas_lights_render from '@/components/update_catalogue/canvas_renderer/canvas_lights_render.vue'
@@ -528,6 +603,8 @@ import canvas_walls_render from '@/components/update_catalogue/canvas_renderer/c
 import items_replacement_renderer from '@/components/update_catalogue/item_replacement/items_replacement_3d_model_renderer.vue'
 
 // 3d Panel Tab 
+import add_new_furniture from '@/components/dashboard/business/my_products/add_new_product/add_furniture_modal.vue'
+
 import sidepanel_3d_tab from '@/components/update_catalogue/tab_3d/side_panel_3d.vue'
 import object_viewer_3d_tab from '@/components/update_catalogue/tab_3d/canvas_renderer.vue'
 import models_3d_generate_history from '@/components/update_catalogue/tab_3d/generate_history.vue'
@@ -563,6 +640,7 @@ export default {
       active_tab_image: 'item_replacement',
       searchText: '',
       selected_light_type:'',
+      selectedlightuuid:'', //used in celinlg, floor & 3d hanging light to the ceiling 
       model_3d_url:'',
       item_replacement_renderer_3d_model_url:'',
       selected_3d_product_model:'',
@@ -592,6 +670,12 @@ export default {
 
       openSeeAll_Walls:false,
       openSeeAll_Floor:false,
+      openSeeAll_ChangeRoom:false,
+
+      // change Room Modal 
+      your_history_change_room:[],
+      exampleImages_changeRoom:[],
+
       closeShareMenu:true,
       // Binary Masks Data
       binaryMaskList: [],
@@ -625,6 +709,7 @@ export default {
       is_rendered_objects_mask: false,
       is_ready: false,
       
+      showAddProduct:false,
       // Room loading specific states
       roomRetryCount: 0,
       roomLoadingMessage: 'Initializing room data...',
@@ -633,6 +718,8 @@ export default {
       roomPollingInterval: null, // Store polling interval
       
       home_design_images:null,
+      product_mockup_images:null,
+      selected_product_mockups_group:null,
       // Loading States
       loading: {
         room: false,
@@ -753,6 +840,114 @@ computed: {
   },
 
   methods: {
+      add_new_product(e){
+      console.log(e)
+      this.showAddProduct=true
+  },
+   onProductCreated(e){
+     const userData = localStorage.getItem('user')
+      let user = JSON.parse(userData)
+      console.log(user)
+  // Check user flags in priority order
+      if (user.is_business) {
+        this.$router.push('/business-dashboard/my-products')  
+      }
+      if (user.is_professional) {
+        this.$router.push('/professional-dashboard/my-products')
+      } 
+      // if user is buisness user if he is professional then redirect to professional user dashboard there
+  },
+    ApplyChanges(){
+      console.log("Apply Changes CLicked ")
+      this.$router.push('/update-catalogue/render-results/' + this.$route.params.id );
+    },
+     async fetchExampleRooms() {
+      this.loading = true;
+      try {
+        const url = `${this.$store.state.root_api}room/api/example-rooms/`;
+        const response = await fetch(url, {
+        method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Token ${localStorage.getItem('token')}`
+            },
+          }, 
+        );
+        const data = await response.json();
+        console.log(data)
+        if (data && data.data) {
+          this.exampleImages_changeRoom = data.data;
+        }
+      } catch (error) {
+        console.error("Failed to fetch:", error);
+      } finally {
+        this.loading = false;
+      }
+    },
+     async startTestRoom(room_id) {
+      console.log(room_id)
+      this.loading = true;
+      try {
+        const url = `${this.$store.state.root_api}room/api/start-example-room/${room_id}`;
+        const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Token ${localStorage.getItem('token')}`
+        },
+      }, );
+        const data = await response.json();
+        console.log(data)
+        if (data && data.data) {
+          this.exampleImages = data.data;
+        this.$router.push({
+          name: 'update_catelogue',
+          params: { id: this.exampleImages.id },
+          query: { t: Date.now() } // avoid caching
+        }).then(() => {
+          this.$router.go(0); // force page refresh
+        });
+        }
+      } catch (error) {
+        console.error("Failed to fetch:", error);
+      } finally {
+        this.loading = false;
+      }
+    },
+      goToCatalogue(id) {
+        this.openSeeAll_ChangeRoom=false
+      this.$router.push({
+        path: `/update-catalogue/${id}`,
+        query: { t: Date.now() } // forces route change
+      }).then(() => {
+        // force reload if really needed
+        this.$router.go(0);
+      });
+    },
+  async fetchUserHistoryRooms() {
+      this.loading = true;
+      try {
+        const url = `${this.$store.state.root_api}room/api/user-history-rooms/`;
+        const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${localStorage.getItem('token')}`
+        },
+      }, );
+        const data = await response.json();
+        console.log(data)
+        if (data && data.data) {
+          this.your_history_change_room = data.data;
+        }
+      } catch (error) {
+        console.error("Failed to fetch:", error);
+      } finally {
+        this.loading = false;
+      }
+    },
+
+
     home_design_history_clicked(e){
       // since the input image is 0th index of this list remove that 
       const images=e
@@ -772,10 +967,33 @@ computed: {
 }
 
     },
+    product_mockup_history_clicked(e){
+      // since the input image is 0th index of this list remove that 
+      const images=e
+      // images.splice(0, 1)
+      console.log(e)
+      // console.log(e['input_image'])
+    // this.home_design_images={'image_paths':e['images'],'images':e['images']}
+    this.selected_product_mockups_group=images
+    this.product_mockup_images={
+    "error": false,
+    "home_design_id": null,
+    "prompt_id": null,
+    "generated_count": images.images.length,
+    "images": images.images,
+    "image_paths": images.images,
+    "msg": "Home design variations changed successfully"
+}
+
+    },
     newhome_designes_generated(e){
 this.home_design_images=e
   this.$refs.home_design_history.fetchGenerateHistory();
 
+    },
+    new_product_mockup_generated(e){
+      this.product_mockup_images=e
+      this.$refs.product_mockup_history.fetchGenerateHistory();
     },
     wallsSeeAll(e){
       console.log(e)
@@ -787,6 +1005,27 @@ this.home_design_images=e
       console.log("clicked")
       this.openSeeAll_Floor=true
     },
+     Change_Room_SeeAll(e){
+      this.fetchExampleRooms()
+ this.fetchUserHistoryRooms()
+      console.log(e)
+      console.log("clicked")
+      this.openSeeAll_ChangeRoom=true
+    },
+    Apply_ceiling_light(e){
+
+      // ?making the calls to the child methods to make the final image which is there already apply the changes 
+      if  (this.select_replace==='Lights' && this.selected_light_type==='sunk'){
+        this.$refs.canvas_sunk_magnetic_lights_render.saveRoom();
+      }
+      if (this.select_replace==='Lights' && this.selected_light_type==='hanging'){
+        this.$refs.canvas_ceiling_3d_object_light_renderer.downloadCurrentSceneImage();
+      }
+
+  
+      
+    },
+
     lightsSeeAll(e){
       console.log(e)
       console.log("Light See All clicked")
@@ -801,9 +1040,9 @@ this.home_design_images=e
     },
     lightSelected(e){
       console.log(e)
-      const selectedlightuuid =e['uuid']
+      this.selectedlightuuid =e['uuid']
       this.selected_light_type=e['type']
-      this.model_3d_url = this.$store.state.root_api+e['model_3d_url'] 
+      this.model_3d_url = this.$store.state.root_media_api+e['model_3d_url'] 
 
     },
     // itemreplacerenderer
@@ -817,6 +1056,49 @@ execute3DRederer(e){
 processinggenerate_loading(e){
 this.processing_generate_is_Loading=e
 },
+
+// 3. Enhanced fetch3d Models History  method with immediate update the History 
+async get_3d_rendered_model_details(generated_3d_model_id) {
+  this.loading_generated_models_history= true;
+
+  try {
+    const roomId = this.$route.params.id;
+    
+    const url = `${this.$store.state.root_api}engine/generated-3d-models-history/${roomId}`;
+    const payload = {
+          'model_3d_id': generated_3d_model_id,
+        }
+    console.log('📡 Fetching generated 3d models hisrtory ...');
+    const responseData = await this.makeApiRequest(url, { 
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Token ${localStorage.getItem('token')}`
+      },
+    body: JSON.stringify(payload)
+    }, 'fetch_generated_3d_models');
+    
+    if (responseData) {
+      
+      this.generated3dModel_url=this.$store.state.root_media_api+ responseData.new_model.model_file_url
+      this.model_instance_id=responseData.new_model.id
+      this.processing_generate_is_Loading=false
+      
+      // Process wall masks first
+      const generated_models = responseData.models || [];
+      console.log(generated_models)
+      this.list_history_generated_3d_models = generated_models;
+      
+    }
+  } catch (error) {
+    console.error("❌ Failed to fetch history generated 3d Models :", error);
+    this.error.general = error.message;
+    this.showError('Failed to fetch history generated 3d Models', error.message, () => this.fetch3d_models_generated_by_room());
+  } finally {
+    this.loading_generated_models_history = false;
+  }
+},
+
 changeCurrentTab(e){
   this.current_tab=e
   this.generated3dModel_url=""
@@ -824,7 +1106,7 @@ this.processing_generate_is_Loading=false
 this.model_instance_id=""
 },
 async magneticLightsMearjed(e){
-  this.base_image_url= this.$store.state.root_api+ e['image_url']
+  this.base_image_url= this.$store.state.root_media_api+ e['image_url']
   this.forceCanvasUpdate();
 
 },
@@ -844,7 +1126,7 @@ await this.fetch3d_models_generated_by_room()
 
 },
 async change3dModel(e){
-this.item_replacement_renderer_3d_model_url=this.$store.state.root_api + e['model_url']
+this.item_replacement_renderer_3d_model_url=this.$store.state.root_media_api + e['model_url']
 this.selected_3d_product_model= e['model_uuid']
 // model_uuid
 // model_url
@@ -852,7 +1134,7 @@ this.selected_3d_product_model= e['model_uuid']
     updateBaskeImageURL_CANVAS(e){
       console.log(e)
       // Update the base image
-          this.base_image_url = this.$store.state.root_api + e
+          this.base_image_url = this.$store.state.root_media_api + e
           // Force canvas to update with new image
           this.forceCanvasUpdate();
 
@@ -862,6 +1144,7 @@ this.selected_3d_product_model= e['model_uuid']
       this.openSeeAll_Walls=false
       this.openSeeAll_Floor=false
       this.closeShareMenu=false
+      this.openSeeAll_ChangeRoom=false
     },
     // ==========================================
     // INITIALIZATION METHODS
@@ -997,8 +1280,8 @@ this.selected_3d_product_model= e['model_uuid']
           } else {
             // Room is ready!
             console.log('✅ Room is ready!');
-            this.base_image_url = this.$store.state.root_api + responseData.data.image;
-            this.depthMask= this.$store.state.root_api + responseData.data.depth_mask;
+            this.base_image_url = this.$store.state.root_media_api + responseData.data.image;
+            this.depthMask= this.$store.state.root_media_api + responseData.data.depth_mask;
             this.roomLoadingMessage = 'Room loaded successfully!';
             this.roomLoadingProgress = 100;
             
@@ -1126,7 +1409,7 @@ this.selected_3d_product_model= e['model_uuid']
 
         if (responseData && responseData.final_output) {
           // Update the base image
-          this.base_image_url = this.$store.state.root_api + responseData.final_output;
+          this.base_image_url = this.$store.state.root_media_api + responseData.final_output;
           
           await this.fetchBinaryWallMasks(); // This will refresh object masks too
           // this.forceCanvasUpdate();
@@ -1168,7 +1451,7 @@ this.selected_3d_product_model= e['model_uuid']
 
         if (responseData && responseData.final_output) {
           // Update the base image
-          this.base_image_url = this.$store.state.root_api + responseData.final_output;
+          this.base_image_url = this.$store.state.root_media_api + responseData.final_output;
           
           await this.fetchBinaryWallMasks(); // This will refresh object masks too
           // this.forceCanvasUpdate();
@@ -1214,7 +1497,7 @@ async fetchBinaryWallMasks() {
       this.binaryMask_List_media = binary_masks;
       
       // CRITICAL: Create new array references to trigger reactivity
-      this.binaryMaskList = binary_masks.map(path => `${this.$store.state.root_api}${path}`);
+      this.binaryMaskList = binary_masks.map(path => `${this.$store.state.root_media_api}${path}`);
       this.selectedMasks = Array.from({ length: this.binaryMaskList.length }, (_, i) => i);
 
       // Store object masks data
@@ -1438,7 +1721,7 @@ async fetch3d_models_generated_by_room() {
 
     async loadAndCacheObjectMask(objectKey, maskPath) {
       try {
-        const fullUrl = `${this.$store.state.root_api}${maskPath}`;
+        const fullUrl = `${this.$store.state.root_media_api}${maskPath}`;
         const img = await this.loadImageWithTimeout(fullUrl, 8000);
 
         // Cache both the URL and the actual Image object
@@ -1850,7 +2133,7 @@ forceCanvasUpdate() {
       if (!result.error) {
         // Update the binary masks with new data
         this.binaryMasks_objects_detected = result.objects_detected_masks || {};
-        this.base_image_url = this.$store.state.root_api + result.final_output ;
+        this.base_image_url = this.$store.state.root_media_api + result.final_output ;
         
         // Force canvas refresh
         this.forceCanvasUpdate();
@@ -2007,7 +2290,7 @@ async wallTextureSelected(texture_id) {
 
     if (responseData && responseData.final_output) {
       // Update the base image with cache buster
-      this.base_image_url = this.$store.state.root_api + responseData.final_output + '?t=' + Date.now();
+      this.base_image_url = this.$store.state.root_media_api + responseData.final_output + '?t=' + Date.now();
       
       // Force canvas to update with new image
       this.forceCanvasUpdate();
@@ -2055,7 +2338,7 @@ async floorTextureSelected(texture_id) {
 
     if (responseData && responseData.final_output) {
       // Update the base image with cache buster
-      this.base_image_url = this.$store.state.root_api + responseData.final_output + '?t=' + Date.now();
+      this.base_image_url = this.$store.state.root_media_api + responseData.final_output + '?t=' + Date.now();
       
       // Force canvas to update with new image
       this.forceCanvasUpdate();
@@ -2234,12 +2517,46 @@ history_panel_edit_image,
 // 3d tab 
 sidepanel_3d_tab,
 object_viewer_3d_tab,
+add_new_furniture,
 models_3d_generate_history
   }
 }
 </script>
 
 <style scoped>
+
+/* Example Images */
+.history-label {
+  font-size: 18px;
+  margin-bottom: 20px;
+  text-align:start;
+  font-weight: 700;
+  color: #444;
+}
+.example-images {
+  display: grid;
+  
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  padding: 0 20px;
+  max-width: 1300px;
+  margin: auto;
+}
+
+.example-image {
+  width: 100%;
+  height: 230px;
+  object-fit: cover;
+  border-radius: 10px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+  cursor: pointer;
+}
+
+.example-image:hover {
+  transform: scale(1.05);
+}
+
 .main_panel {
   height: 90vh;
   background: #f5f5f5;

@@ -56,7 +56,7 @@
           <div  class="product-item">
 
           <div class="product-image">
-            <img :src="this.$store.state.root_api+item.texture_image" :alt="item.title" />
+            <img :src="this.$store.state.root_media_api+item.texture_image" :alt="item.title" />
             <!-- <div class="product-tag">Ad</div> -->
           </div>
           <div class="product-info">

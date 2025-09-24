@@ -57,7 +57,7 @@ border:1px solid rgba(128, 128, 128, 0.14);"
 :style="selected_light===item.id ? 'border:1px solid blue': ''">
   <div class="product-item">
     <div class="product-image">
-      <img :src="this.$store.state.root_api + item.primary_image" :alt="item.name" />
+      <img :src="this.$store.state.root_media_api + item.primary_image" :alt="item.name" />
       <!-- <div v-if="!item.stock.is_in_stock" class="product-tag" style="background: #ff4d4f;">Out of Stock</div>
       <div v-else-if="item.stock.is_low_stock" class="product-tag" style="background: #faad14;">Low Stock</div> -->
     </div>
@@ -68,8 +68,8 @@ border:1px solid rgba(128, 128, 128, 0.14);"
         </div>
         <div v-if="item['3d_model']" style="padding:3px;border:1px solid grey;border-radius:5px;padding-left:5px;padding-right:5px;padding-top:1px;height:22px;font-size:12px">AR</div>
       </div>
-      <div class="product-name">{{ truncateText( item.name || 'No description available', 5) }}</div>
-      <div class="product-subtitle">{{ truncateText( item.description || 'No description available', 5) }}</div>
+      <div class="product-name">{{ truncateText( item.name || 'No name Available', 3) }}</div>
+      <div class="product-subtitle">{{ truncateText( item.description || 'No description available', 4) }}</div>
                                                   
 
       <div class="product-details">
@@ -116,7 +116,8 @@ border:1px solid rgba(128, 128, 128, 0.14);"
 
     <!-- Fixed Apply Button -->
     <div class="apply-section">
-      <a-button type="primary" size="large" block class="apply-button">
+      <a-button type="primary" size="large" block class="apply-button"         @click="$emit('Apply_Light', 'magnetic-light-Renerer-apply')" 
+>
         Apply
       </a-button>
     </div>
@@ -158,7 +159,7 @@ export default {
     async fetchLights() {
       this.loading = true;
       try {
-        const url = `${this.$store.state.root_api}/product/api/lights/`;
+        const url = `${this.$store.state.root_api}product/api/lights/`;
         const response = await fetch(url);
         const data = await response.json();
         console.log(data)

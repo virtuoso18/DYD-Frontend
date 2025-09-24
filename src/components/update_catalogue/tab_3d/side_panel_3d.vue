@@ -169,6 +169,8 @@
               <a-button 
                 v-if="item.status === 'completed' && item.generated_model_id" 
                 type="link"
+            @click="view_result(item.generated_model_id)"
+
               >
                 View Result
               </a-button>
@@ -1074,6 +1076,7 @@ beforeUnmount() {
       if (response.ok) {
         const result = await response.json()
         this.queueItems = result.queue || []
+        // this.$emit('queue-updated', item.generated_model_id)
       }
     } catch (error) {
       console.error('Failed to fetch queue status:', error)
@@ -1423,6 +1426,11 @@ beforeUnmount() {
     this.$message.success('Image edited successfully!')
   },
     
+  
+view_result(generated_model_id){
+  this.$emit('queue-updated',generated_model_id) 
+  this.openQueueModal=false
+},
     closeEditModal() {
       this.openEditImage_modal = false
       this.currentEditingKey = null

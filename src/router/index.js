@@ -2,13 +2,14 @@ import { createRouter, createWebHistory } from 'vue-router'
 import home from '@/views/home/HomeView.vue'
 import authentication from '@/views/auth/authenticaition.vue'
 import pricing from '@/views/pages/pricing.vue'
+import make_payment from '@/views/pages/make_payment.vue'
 import comunity from '@/views/pages/comunity.vue'
 import contactus from '@/views/pages/contactus.vue'
 import dashboard_manager from '@/views/user/dashboard.vue'
  
 import start_new_catalogue from '@/views/catalogue/start_new_catalogue.vue'
 import update_catelogue from '@/views/catalogue/update_catelogue.vue'
-
+import render_catelogue from '@/views/catalogue/render_catelogue.vue'
 // my_store
 import my_store from '@/views/store/store_manager.vue'
 import analytics from '@/views/store/pages/analytics.vue'
@@ -28,6 +29,7 @@ import my_products from '@/components/dashboard/business/my_products.vue'
 import community_dashboard from '@/components/dashboard/business/comunity.vue'
 import generate_banner from '@/components/dashboard/business/generate_banner.vue'
 import manage_subscription from '@/components/dashboard/business/manage_subscription.vue'
+import my_transactions from '@/components/dashboard/business/my_transactions.vue'
 
 import add_furniture from '@/components/dashboard/business/my_products/add_new_product/add_furniture.vue'
 import add_light from '@/components/dashboard/business/my_products/add_new_product/add_light_ceiling_3d.vue'
@@ -42,10 +44,11 @@ import profesional_manage_subscription from '@/components/dashboard/professional
 // Import individual dashboard components for professional users
 import normal_user_profile from '@/components/dashboard/user/user_profile.vue'
 import normal_my_designs from '@/components/dashboard/user/my_designs.vue'
-import normal_my_products from '@/components/dashboard/user/my_products.vue'
-import normal_community_dashboard from '@/components/dashboard/user/comunity.vue'
-import normal_generate_banner from '@/components/dashboard/user/generate_banner.vue'
-import normal_manage_subscription from '@/components/dashboard/user/manage_subscription.vue'
+import normal_my_requests from '@/components/dashboard/user/my_requests.vue'
+import normal_my_messages from '@/components/dashboard/user/my_messages.vue'
+import normal_my_transactions from '@/components/dashboard/user/my_transactions.vue'
+import normal_manage_my_subscription from '@/components/dashboard/user/manage_subscription.vue'
+import normal_my_settings from '@/components/dashboard/user/my_settings.vue'
 
 import buisness_page from '@/views/store/vendor_store.vue'
 
@@ -61,6 +64,12 @@ const router = createRouter({
       path: '/pricing',
       name: 'pricing',
       component: pricing,
+    },
+    
+    {
+      path: '/make-payment/:plan_type',
+      name: 'make_payment',
+      component: make_payment,
     },
     {
       path: '/comunity',
@@ -87,6 +96,11 @@ const router = createRouter({
       path: '/update-catalogue/:id?',
       name: 'update_catelogue',
       component: update_catelogue,
+    },
+    {
+      path: '/update-catalogue/render-results/:id?',
+      name: 'render_catelogue',
+      component: render_catelogue,
     },
     
     {
@@ -149,6 +163,12 @@ const router = createRouter({
           path: 'manage-subscription',
           name: 'business_manage_subscription',
           component: manage_subscription,
+        },
+        
+        {
+          path: 'my-transactions',
+          name: 'my_transactions',
+          component: my_transactions,
         },
       ]
     },
@@ -260,24 +280,29 @@ const router = createRouter({
           component: normal_my_designs,
         },
         {
-          path: 'my-products',
-          name: 'user_my_products',
-          component: normal_my_products,
+          path: 'my-requests',
+          name: 'user_my_requests',
+          component: normal_my_requests,
         },
         {
-          path: 'comunity',
-          name: 'user_dashboard_community',
-          component: normal_community_dashboard,
+          path: 'my-messages',
+          name: 'user_my_messages',
+          component: normal_my_messages,
         },
         {
-          path: 'generate-banner',
-          name: 'user_generate_banner',
-          component: normal_generate_banner,
+          path: 'my-transactions',
+          name: 'user_my_transactions',
+          component: normal_my_transactions,
         },
         {
           path: 'manage-subscription',
           name: 'user_manage_subscription',
-          component: normal_manage_subscription,
+          component: normal_manage_my_subscription,
+        },
+        {
+          path: 'my-settings',
+          name: 'user_settings',
+          component: normal_my_settings,
         },
       ]
     },

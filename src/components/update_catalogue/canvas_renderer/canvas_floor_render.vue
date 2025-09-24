@@ -44,7 +44,7 @@
        </a-button>
       </div>
       <div style="padding-top:10px;">
-        <a-button :disabled="isLoading" type="primary" class="toolbar-btn primary-btn" @click="reset_entire_room">
+        <a-button :disabled="isLoading" type="primary" class="toolbar-btn primary-btn"   @click="$emit('Apply-Changes', 'floor-Renerer')">
           Apply Changes
         </a-button>
       </div>

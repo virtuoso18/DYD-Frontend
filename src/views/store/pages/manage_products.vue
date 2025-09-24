@@ -42,7 +42,7 @@
                     <template v-if="column.key === 'product'">
                         <div @click="viewProduct(record)"
                             style="display: flex; gap: 12px; align-items: center; cursor: pointer;">
-                            <img :src="this.$store.state.root_api + record.primary_image"
+                            <img :src="this.$store.state.root_media_api + record.primary_image"
                                 style="width: 60px; height: 60px; border-radius: 8px; object-fit: cover;">
                             <div>
                                 <div style="font-weight: 600; color: #333; margin-bottom: 4px;">{{ record.name }}</div>
@@ -236,7 +236,7 @@ export default {
             try {
                 const token = localStorage.getItem('token');
 
-                const response = await fetch(`${this.$store.state.root_api}/product/api-product-owner/products/`, {
+                const response = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Token ${token}`
@@ -262,7 +262,7 @@ export default {
             try {
                 const token = localStorage.getItem('token');
 
-                const response = await fetch(`${this.$store.state.root_api}/product/api-product-owner/products/${product_id}`, {
+                const response = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/${product_id}`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Token ${token}`

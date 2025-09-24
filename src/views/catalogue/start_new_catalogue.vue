@@ -6,7 +6,7 @@
   muted
   loop
   playsinline class="video-element">
-        <source src="C:\Users\adminay\Documents\AI-Applications\002 webapp - ComfyUI\comfyui_api_backend\media\graphics\video\GettyImages-1285221354.mp4" type="video/mp4" />
+        <source src="../../assets/GettyImages-1285221354.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
     </div>
@@ -53,7 +53,7 @@
         <a-row>
         <a-col span="8" v-for="histry_card in your_history" :key="id" style="padding:5px;">
           <router-link :to="'/update-catalogue/'+histry_card.id">
-            <img  @click="" :src="this.$store.state.root_api+histry_card.image" class="example-image" />
+            <img  @click="" :src="this.$store.state.root_media_api+histry_card.image" class="example-image" />
           </router-link>
           </a-col>
         </a-row>
@@ -66,7 +66,7 @@
 
           <a-col span="8" v-for="example in exampleImages" :key="id" style="padding:5px;">
             
-              <img  @click="startTestRoom(example.id)" :src="this.$store.state.root_api+example.image" class="example-image" />
+              <img  @click="startTestRoom(example.id)" :src="this.$store.state.root_media_api+example.image" class="example-image" />
           </a-col>
         </a-row>
       </div>

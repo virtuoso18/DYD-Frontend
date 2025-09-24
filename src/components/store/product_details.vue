@@ -19,7 +19,7 @@
          <div style="position: relative; padding:10px;;">
 
             <canvas_3d_model_renderer 
-            :glbModelUrl="$store.state.root_api + selectedProduct['3d_model']"
+            :glbModelUrl="$store.state.root_media_api + selectedProduct['3d_model']"
             :Model_instance_id="selectedProduct.id"
             :isLoading="false"
             style="width: 100%; max-height:500px; height: 100%;border-radius: 10px"
@@ -142,7 +142,7 @@
                 <img 
                   v-for="texture in selectedProduct.textures" 
                   :key="texture" 
-                  :src="$store.state.root_api + texture.texture" 
+                  :src="$store.state.root_media_api + texture.texture" 
                   alt="" 
                   style="width: 40px; height: 40px; border-radius: 4px; border: 1px solid #d9d9d9; object-fit: cover;"
                 />

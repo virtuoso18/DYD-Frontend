@@ -8,7 +8,7 @@
           <div class="user-info">
             <div class="user-avatar">
               <!-- {{ business_info }} -->
-               <img :src="this.$store.state.root_api+business_info.banner_picture" alt="John Doe" />
+               <img :src="this.$store.state.root_media_api+business_info.banner_picture" alt="John Doe" />
             </div>
             <h3>{{ business_info?.name || 'John Doe' }}</h3>
             <p class="user-email">{{ business_info?.email || 'johndoe@gmail.com' }}</p>

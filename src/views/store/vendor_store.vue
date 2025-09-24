@@ -1,4 +1,10 @@
 <template>
+<RequestCreateRoom 
+      ref="roomModal"
+      @close="handleClose"
+      @submit="handleSubmit"
+    />
+
     <div style="padding:10px">
         <!-- Loading State -->
         <div v-if="loading" style="text-align: center; padding: 50px;">
@@ -33,7 +39,7 @@
                     background: linear-gradient(
                         rgba(0,0,0,0.3), 
                         rgba(0,0,0,0.3)
-                    ), url(${this.$store.state.root_api}${business_info.business_picture}) center/cover no-repeat;
+                    ), url(${this.$store.state.root_media_api}${business_info.business_picture}) center/cover no-repeat;
                     height:200px;
                     display:flex;
                     justify-content:center;
@@ -212,18 +218,24 @@
 </template>
 
 <script>
+import RequestCreateRoom from '@/components/general_user/buisness_page/create_rewquest_modal.vue'
 export default {
     name: 'business_page',
+    components:{
+         RequestCreateRoom
+    },
     data() {
         return {
             activeKey: 'Visualization',
             business_info: {},
             loading: true,
-            error: null
+            error: null,
+            modal_create_request_to_buisness:true
         }
     },
     async mounted() {
         await this.loadBusinessData();
+        this.showModal()
     },
     watch: {
         '$route'() {
@@ -232,6 +244,18 @@ export default {
         }
     },
     methods: {
+        showModal() {
+            this.$refs.roomModal.openModal()
+        },
+        handleClose() {
+            console.log('Modal closed')
+        },
+        handleSubmit(formData) {
+            console.log('Form submitted:', formData)
+        // Handle the submitted data (email, message, roomPhoto file)
+        },
+
+
         async loadBusinessData() {
             try {
                 this.loading = true;
@@ -241,7 +265,7 @@ export default {
                 
             const token = localStorage.getItem('token');
                 
-                const response = await fetch(`${this.$store.state.root_api}/Auth/api/business/public/${businessName}`, {
+                const response = await fetch(`${this.$store.state.root_api}Auth/api/business/public/${businessName}`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Token ${token}`,

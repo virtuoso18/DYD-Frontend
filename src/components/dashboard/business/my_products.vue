@@ -163,7 +163,7 @@
                                         <div class="product">
                                             <div class="product-image-container" @click="viewProduct(product)">
                                                 <img 
-                                                    :src="$store.state.root_api + product.primary_image" 
+                                                    :src="$store.state.root_media_api + product.primary_image" 
                                                     :alt="product.name"
                                                     class="product-image"
                                                 />
@@ -240,7 +240,7 @@
 
                                 <div class="product-image-container" @click="viewProduct(product)">
                                                 <img 
-                                                :src="$store.state.root_api + (product.product_images.length > 0 
+                                                :src="$store.state.root_media_api + (product.product_images.length > 0 
                                         ? product.product_images[0].image 
                                         : product.texture_image)"
                                     :alt="product.title"
@@ -323,7 +323,7 @@
                                 <!-- Product image container -->
                                 <div class="product-image-container" @click="viewProduct(product)">
                                                 <img 
-                                                :src="$store.state.root_api + (product.product_images.length > 0 
+                                                :src="$store.state.root_media_api + (product.product_images.length > 0 
                                         ? product.product_images[0].image 
                                         : product.texture_image)"
                                     :alt="product.title"
@@ -403,7 +403,7 @@
                                         <div class="product">
                                             <div class="product-image-container" @click="viewProduct(product)">
                                                 <img 
-                                                    :src="$store.state.root_api + product.primary_image" 
+                                                    :src="$store.state.root_media_api + product.primary_image" 
                                                     :alt="product.name"
                                                     class="product-image"
                                                 />
@@ -411,7 +411,9 @@
                                                 <div class="ar-badge">AR</div>
                                             </div>
                                             <a-row>
-                                                <a-col span="24"><b>{{product.name}}</b></a-col>
+                                            <!-- {{ truncateText(product.description || 'No description available', 8) }} -->
+
+                                                <a-col span="24"><b>{{truncateText(product.name || 'No Name available', 3)}}</b></a-col>
                                                 <a-col span="18">Color</a-col>
                                                 <a-col span="6" style="display: flex;justify-content: end;">
                                                     <div v-for="(color, index) in product.colors.slice(0, 2)" 
@@ -463,7 +465,7 @@
                             <template v-if="column.key === 'product'">
                                 <div @click="viewProduct(record)"
                                     style="display: flex; gap: 12px; align-items: center; cursor: pointer;">
-                                    <img :src="$store.state.root_api + record.primary_image"
+                                    <img :src="$store.state.root_media_api + record.primary_image"
                                         style="width: 60px; height: 60px; border-radius: 8px; object-fit: cover;">
                                     <div>
                                         <div style="font-weight: 600; color: #333; margin-bottom: 4px;">{{ record.name }}</div>
@@ -567,7 +569,7 @@
                                     <template v-if="column.key === 'product'">
                                     <div @click="viewProduct(record)" style="display: flex; gap: 12px; align-items: center; cursor: pointer;">
                                         <img 
-                                        :src="$store.state.root_api + (record.product_images.length > 0 ? record.product_images[0].image : record.texture_image)" 
+                                        :src="$store.state.root_media_api + (record.product_images.length > 0 ? record.product_images[0].image : record.texture_image)" 
                                         style="width: 60px; height: 60px; border-radius: 8px; object-fit: cover;"
                                         >
                                         <div>
@@ -688,7 +690,7 @@
                                         <template v-if="column.key === 'product'">
                                         <div @click="viewProduct(record)" style="display: flex; gap: 12px; align-items: center; cursor: pointer;">
                                             <img 
-                                            :src="$store.state.root_api + (record.product_images?.length ? record.product_images[0].image : record.texture_image)" 
+                                            :src="$store.state.root_media_api + (record.product_images?.length ? record.product_images[0].image : record.texture_image)" 
                                             style="width: 60px; height: 60px; border-radius: 8px; object-fit: cover;"
                                             >
                                             <div>
@@ -804,7 +806,7 @@
                             <template v-if="column.key === 'product'">
                                 <div @click="viewProduct(record)"
                                     style="display: flex; gap: 12px; align-items: center; cursor: pointer;">
-                                    <img :src="$store.state.root_api + record.primary_image"
+                                    <img :src="$store.state.root_media_api + record.primary_image"
                                         style="width: 60px; height: 60px; border-radius: 8px; object-fit: cover;">
                                     <div>
                                         <div style="font-weight: 600; color: #333; margin-bottom: 4px;">{{ record.name }}</div>
@@ -885,23 +887,35 @@
                     
                 </div>
             </div>
+            <!-- {{ selectedProduct.category }} -->
 
         <!-- Product Details View -->
         <div v-if="currentView === 'details'" style="max-width: 1200px;">
             <show_floorTexture_product  :selectedTexture="selectedProduct" v-if="active_tab=== 'Floor' && selectedProduct" @edit_texture="editProduct" @delete_texture="delete_product" @back_product_list="backToList" />
             <show_wallTexture_product  :selectedTexture="selectedProduct" v-if="active_tab=== 'Wall' && selectedProduct" @edit_texture="editProduct" @delete_texture="delete_product" @back_product_list="backToList" />
-            <show_Light_product  :selectedProduct="selectedProduct" v-if="active_tab===  'Lights' && selectedProduct" @edit_product="editProduct" @delete_product="delete_product" @back_product_list="backToList" />
+            <!-- <show_Light_product  :selectedProduct="selectedProduct" v-if="active_tab===  'Lights' && selectedProduct" @edit_product="editProduct" @delete_product="delete_product" @back_product_list="backToList" /> -->
             <show_furniture_product  :selectedProduct="selectedProduct" v-if="active_tab=== 'Furniture' && selectedProduct" @edit_product="editProduct" @delete_product="delete_product" @back_product_list="backToList" />
             <!-- <product_details :selectedProduct="selectedProduct" v-if="selectedProduct" @edit_product="editProduct" @delete_product="delete_product" @back_product_list="backToList"/> -->
+
+            <!-- 3 Types of Light Products 3d='hanging', 'sunk', 'unsunk'  -->
+            <show_Light_product_3D  :selectedProduct="selectedProduct" v-if="active_tab===  'Lights' && selectedProduct && selectedProduct.category.name=='Light' &&  selectedProduct.light_type=='hanging' " @edit_product="editProduct" @delete_product="delete_product" @back_product_list="backToList" />
+            <show_Light_product_sunk  :selectedProduct="selectedProduct" v-if="active_tab===  'Lights' && selectedProduct && selectedProduct.category.name=='Light' &&  selectedProduct.light_type=='sunk'" @edit_product="editProduct" @delete_product="delete_product" @back_product_list="backToList" />
+            <show_Light_product_unsunk  :selectedProduct="selectedProduct" v-if="active_tab===  'Lights' && selectedProduct && selectedProduct.category.name=='Light' &&  selectedProduct.light_type=='unsunk'" @edit_product="editProduct" @delete_product="delete_product" @back_product_list="backToList" />
+
         </div>
 
         <!-- Edit Product View -->
         <div v-if="currentView === 'edit'" style="max-width: 1200px;">
             <edit_floorTexture  :selectedTexture="selectedProduct" v-if="active_tab=== 'Floor' &&  selectedProduct" :categories_available="categories_available" :types="types" @cancel_edit_back_product_list="backToList" />
             <edit_wallTexture   :selectedTexture="selectedProduct" v-if="active_tab=== 'Wall' && selectedProduct" :categories_available="categories_available" :types="types" @cancel_edit_back_product_list="backToList"/>
-            <edit_Light :selectedProduct="selectedProduct" v-if="active_tab===  'Lights' && selectedProduct" :categories_available="categories_available" :types="types" @cancel_edit_back_product_list="backToList" />
             <edit_furniture  :selectedProduct="selectedProduct" v-if="active_tab=== 'Furniture' && selectedProduct" :categories_available="categories_available" :types="types" @cancel_edit_back_product_list="backToList" />
             <!-- <edit_furniture :selectedProduct="selectedProduct" v-if="selectedProduct" :categories_available="categories_available" :types="types" @cancel_edit_back_product_list="backToList" /> -->
+            
+            <!-- <edit_Light :selectedProduct="selectedProduct" v-if="active_tab===  'Lights' && selectedProduct" :categories_available="categories_available" :types="types" @cancel_edit_back_product_list="backToList" /> -->
+            
+            <edit_Light_hanging_3d :selectedProduct="selectedProduct" v-if="active_tab===  'Lights' && selectedProduct && selectedProduct.category.name=='Light' &&  selectedProduct.light_type=='hanging'" :categories_available="categories_available" :types="types" @cancel_edit_back_product_list="backToList"/>
+            <edit_Light_sunk :selectedProduct="selectedProduct" v-if="active_tab===  'Lights' && selectedProduct && selectedProduct.category.name=='Light' &&  selectedProduct.light_type=='sunk'" :categories_available="categories_available" :types="types" @cancel_edit_back_product_list="backToList" />
+            <edit_Light_unsunk :selectedProduct="selectedProduct" v-if="active_tab===  'Lights' && selectedProduct && selectedProduct.category.name=='Light' &&  selectedProduct.light_type=='unsunk'" :categories_available="categories_available" :types="types" @cancel_edit_back_product_list="backToList" />
         </div>
 
         <!-- Hidden file inputs for image uploads -->
@@ -930,15 +944,22 @@ import add_new_furniture from '@/components/dashboard/business/my_products/add_n
 // update_existing
 import edit_floorTexture from '@/components/dashboard/business/my_products/update_product/floor_texture.vue' 
 import edit_wallTexture from '@/components/dashboard/business/my_products/update_product/wall_texture.vue'
-import edit_Light from '@/components/dashboard/business/my_products/update_product/light.vue'
 import edit_furniture from '@/components/dashboard/business/my_products/update_product/furniture.vue'
 
+import edit_Light from '@/components/dashboard/business/my_products/update_product/light.vue'
+import edit_Light_hanging_3d from '@/components/dashboard/business/my_products/update_product/light_hanging_3d.vue'
+import edit_Light_sunk from '@/components/dashboard/business/my_products/update_product/light_sunk.vue'
+import edit_Light_unsunk from '@/components/dashboard/business/my_products/update_product/light_unsunk.vue'
 
 // show existing
 import show_floorTexture_product from '@/components/dashboard/business/my_products/product_details/floor_texture.vue' 
 import show_wallTexture_product from '@/components/dashboard/business/my_products/product_details/wall_texture.vue'
-import show_Light_product from '@/components/dashboard/business/my_products/product_details/light_product.vue'
 import show_furniture_product from '@/components/dashboard/business/my_products/product_details/furniture_product.vue'
+
+// differentt Light Products Details Component 
+import show_Light_product_sunk from '@/components/dashboard/business/my_products/product_details/light_product_sunk.vue'
+import show_Light_product_unsunk from '@/components/dashboard/business/my_products/product_details/light_product_ununk.vue'
+import show_Light_product_3D from '@/components/dashboard/business/my_products/product_details/light_product_3d.vue'
 
 export default {
     name: 'UnifiedProducts',
@@ -963,8 +984,18 @@ export default {
         // show_product_details
         show_floorTexture_product,
         show_wallTexture_product,
-        show_Light_product,
         show_furniture_product,
+
+
+        // show_Light_product,
+        show_Light_product_sunk,
+        show_Light_product_unsunk,
+        show_Light_product_3D,
+
+        // update_Light_product,
+        edit_Light_hanging_3d,
+        edit_Light_sunk,
+        edit_Light_unsunk,
     },
     data() {
         return {
@@ -1051,6 +1082,60 @@ export default {
         this.fetchMyFloorTextureProducts()
     },
     methods: {
+
+        delete_product(e){
+            if (e['product_type'] =='wall'){
+                this.deleteWallTexture(e['product_id'])
+            }
+            if (e ['product_type']=='Floor'){
+                this.deleteFloorTexture(e['product_id'])
+            }
+            if (e['product_type'] =='Light'){
+                this.deleteLight(e['product_id'])
+            }
+            if (e['product_type'] =='Furniture'){
+                this.deleteFurniture(e['product_id'])
+            }
+        },
+
+       async deleteWallTexture(product_id){
+        console.log("clicked Delete Product")
+        //     try {
+        //         let url_delete_product=`${this.$store.state.root_api}room/api-owner/walls/${product_id}`
+
+        //         const token = localStorage.getItem('token');
+        //         const response = await fetch(`${url_delete_product}`, {
+        //             method: 'DELETE',
+        //             headers: {
+        //                 'Authorization': `Token ${token}`
+        //             }
+        //         });
+        //         const result = await response.json();
+        //         if (result.success) {
+        //             this.currentView= 'list'
+        //             this.selectedProduct=null
+        //             this.fetchMyWallTextureProducts()
+        // //          this.fetchMyProducts()
+        // //          this.fetchMyLights()
+        // //          this.fetchMyFloorTextureProducts()
+        //         }
+        //     } catch (error) {
+        //         console.error('Error loading business profile:', error);
+        //     }
+        },
+
+        deleteFloorTexture(product_id){
+            console.log("clicked on delete FloorTexture")
+        },
+
+        deleteLight(product_id){
+            console.log("clicked on delete Light")
+        },
+
+        deleteFurniture(product_id){
+            console.log("clicked on delete Furniture")
+        },
+
         clicked_cancel_add_new_light(){
             this.show_add_new_light=false
         },
@@ -1074,7 +1159,7 @@ export default {
         async fetchMyProducts() {
             try {
                 const token = localStorage.getItem('token');
-                const response = await fetch(`${this.$store.state.root_api}/product/api-product-owner/products/`, {
+                const response = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Token ${token}`
@@ -1092,7 +1177,7 @@ export default {
          async fetchMyLights() {
             try {
                 const token = localStorage.getItem('token');
-                const response = await fetch(`${this.$store.state.root_api}/product/api-product-owner/lights/`, {
+                const response = await fetch(`${this.$store.state.root_api}product/api-product-owner/lights/`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Token ${token}`

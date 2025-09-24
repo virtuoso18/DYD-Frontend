@@ -209,12 +209,14 @@ export default {
     showModalSunkUnsunk(LightType){
       this.light_type=LightType
       this.sunk_unsunk_light_modal= !this.sunk_unsunk_light_modal
-      this.visible=false
+      this.$emit('cancel');
+      // this.visible=false
     },
     cancelClicked(){
       this.light_type=''
       this.sunk_unsunk_light_modal= !this.sunk_unsunk_light_modal
-      this.visible=true
+      this.$emit('cancel');
+      // this.visible=true
     },
     handleCancel() {
       this.$emit('cancel');

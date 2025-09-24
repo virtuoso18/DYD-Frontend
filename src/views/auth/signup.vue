@@ -2,7 +2,7 @@
 <template>
   <div class="signup-container">
     <!-- Back Button -->
-    <div v-if="currentStep > 1" class="back-button" @click="goBack" style=" margin-top:10px; ">
+    <div v-if="shouldShowBackButton" class="back-button" @click="goBack" style=" margin-top:10px; ">
       <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
         <path d="M19 12H5m0 0l7 7m-7-7l7-7" stroke="currentColor" stroke-width="2"/>
       </svg>
@@ -102,6 +102,9 @@
             size="large"
             class="custom-input"
           />
+          <div v-if="personalInfo.password && !isPasswordValid" class="password-feedback password-error">
+            {{ passwordErrorMessage }}
+          </div>
         </div>
 
         <div class="input-group">
@@ -112,6 +115,9 @@
             size="large"
             class="custom-input"
           />
+          <div v-if="personalInfo.confirmPassword && personalInfo.password !== personalInfo.confirmPassword" class="password-feedback password-error">
+            Passwords do not match
+          </div>
         </div>
 
         <div class="checkbox-group">
@@ -125,10 +131,11 @@
           size="large" 
           class="continue-btn" 
           block
-          :disabled="!isPersonalInfoValid"
+          :loading="loading"
+          :disabled="!isPersonalInfoValid || loading"
           @click="nextStep"
         >
-          Continue
+          {{ loading ? 'Processing...' : 'Continue' }}
         </a-button>
       </div>
     </div>
@@ -159,30 +166,36 @@
         </div>
 
         <div class="input-group">
-          <label>Email</label>
+          <label>Business Email</label>
           <a-input 
             v-model:value="businessInfo.email"
-            placeholder="Email"
+            placeholder="Business Email"
             size="large"
             class="custom-input"
           />
+          <div v-if="businessInfo.email && !validateEmail(businessInfo.email)" class="password-feedback password-error">
+            Please enter a valid email address
+          </div>
         </div>
 
         <div class="input-group">
           <label>Phone Number</label>
           <a-input 
             v-model:value="businessInfo.phone"
-            placeholder="+91 Enter phone address"
+            placeholder="+91 Enter phone number"
             size="large"
             class="custom-input"
           />
+          <div v-if="businessInfo.phone && !validatePhone(businessInfo.phone)" class="password-feedback password-error">
+            Please enter a valid phone number
+          </div>
         </div>
 
         <div class="input-group">
           <label>License</label>
           <a-input 
             v-model:value="businessInfo.license"
-            placeholder="License"
+            placeholder="License (Optional)"
             size="large"
             class="custom-input"
           />
@@ -202,103 +215,17 @@
           size="large" 
           class="continue-btn" 
           block
-          @click="nextStep"
+          :loading="loading"
+          :disabled="!isBusinessInfoValid || loading"
+          @click="completeSignup"
         >
-          Submit
+          {{ loading ? 'Creating Account...' : 'Submit' }}
         </a-button>
       </div>
     </div>
 
-    <!-- Step 3: Professional Upload (if professional selected) -->
-    <div v-if="currentStep === 3 && selectedType === 'professional'" class="step-content professional-upload">
-      <div class="step-header">
-        <h2>Hi Professional</h2>
-        <p>Upload your certificate or diploma document</p>
-      </div>
-
-      <div class="form-container">
-        <div class="upload-container">
-          <div v-if="!uploadedFile" class="upload-area" @click="triggerFileUpload">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#3B63FB" stroke-width="2">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-              <polyline points="7,10 12,15 17,10"></polyline>
-              <line x1="12" y1="15" x2="12" y2="3"></line>
-            </svg>
-            <p>Upload or certificate or drag and drop</p>
-          </div>
-
-          <div v-else class="uploaded-file">
-            <div class="certificate-preview">
-              <img 
-                :src="certificatePreviewUrl" 
-                alt="Certificate" 
-                class="certificate-image"
-                v-if="certificatePreviewUrl"
-              />
-              <div class="certificate-placeholder" v-else>
-                <svg width="200" height="140" viewBox="0 0 400 280" class="certificate-svg">
-                  <!-- Certificate Border -->
-                  <rect x="10" y="10" width="380" height="260" fill="#f5f5f5" stroke="#d9d9d9" stroke-width="2" rx="8"/>
-                  <rect x="20" y="20" width="360" height="240" fill="white" stroke="#bfbfbf" stroke-width="1" rx="4"/>
-                  
-                  <!-- Decorative Border -->
-                  <rect x="30" y="30" width="340" height="220" fill="none" stroke="#8c8c8c" stroke-width="2" rx="4"/>
-                  <rect x="35" y="35" width="330" height="210" fill="none" stroke="#d4d4d4" stroke-width="1"/>
-                  
-                  <!-- Certificate Content -->
-                  <text x="200" y="80" text-anchor="middle" font-family="serif" font-size="24" font-weight="bold" fill="#2c2c2c">CERTIFICATE</text>
-                  <text x="200" y="105" text-anchor="middle" font-family="serif" font-size="12" fill="#666">SUCCESSFUL COMPLETION</text>
-                  
-                  <text x="200" y="135" text-anchor="middle" font-family="serif" font-size="16" font-weight="bold" fill="#1890ff">John Doe</text>
-                  
-                  <text x="200" y="165" text-anchor="middle" font-family="serif" font-size="14" font-weight="bold" fill="#2c2c2c">IBM LEAN ENTERPRISE ARCHITECT™</text>
-                  
-                  <!-- Decorative elements -->
-                  <circle cx="200" cy="185" r="15" fill="#1890ff" opacity="0.1"/>
-                  <text x="200" y="190" text-anchor="middle" font-family="serif" font-size="12" font-weight="bold" fill="#1890ff">A</text>
-                  
-                  <!-- Signatures -->
-                  <line x1="120" y1="220" x2="180" y2="220" stroke="#bfbfbf" stroke-width="1"/>
-                  <line x1="220" y1="220" x2="280" y2="220" stroke="#bfbfbf" stroke-width="1"/>
-                </svg>
-              </div>
-              <div class="file-actions">
-                <button class="delete-btn" @click="removeFile">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ff4d4f" stroke-width="2">
-                    <polyline points="3,6 5,6 21,6"></polyline>
-                    <path d="m19,6v14a2,2 0 0,1 -2,2H7a2,2 0 0,1 -2,-2V6m3,0V4a2,2 0 0,1 2,-2h4a2,2 0 0,1 2,2v2"></path>
-                    <line x1="10" y1="11" x2="10" y2="17"></line>
-                    <line x1="14" y1="11" x2="14" y2="17"></line>
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <input 
-            ref="fileInput" 
-            type="file" 
-            accept="image/*,.pdf" 
-            style="display: none" 
-            @change="handleFileUpload"
-          />
-        </div>
-
-        <a-button 
-          type="primary" 
-          size="large" 
-          class="continue-btn" 
-          block
-          :disabled="!uploadedFile"
-          @click="nextStep"
-        >
-          Continue
-        </a-button>
-      </div>
-    </div>
-
-    <!-- Step 4: Final Approval -->
-    <div v-if="currentStep === 4" class="step-content">
+    <!-- Step 3: Final Approval (if professional selected) -->
+    <div v-if="currentStep === 3 && selectedType === 'professional'" class="step-content">
       <div class="step-header">
         <h2>Final Approval</h2>
       </div>
@@ -323,16 +250,17 @@
           size="large" 
           class="continue-btn" 
           block
-          :disabled="!isFinalApprovalValid"
+          :loading="loading"
+          :disabled="!isFinalApprovalValid || loading"
           @click="completeSignup"
         >
-          Continue
+          {{ loading ? 'Creating Account...' : 'Continue' }}
         </a-button>
       </div>
     </div>
 
     <!-- Success Step -->
-    <div v-if="currentStep === 5" class="step-content success-content">
+    <div v-if="currentStep === 4" class="step-content success-content">
       <div class="success-icon">
         <svg width="64" height="64" viewBox="0 0 24 24" fill="#52c41a">
           <path d="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M11,16.5L18,9.5L16.59,8.09L11,13.67L7.41,10.09L6,11.5L11,16.5Z"/>
@@ -361,7 +289,8 @@ export default {
   data() {
     return {
       currentStep: 1,
-      selectedType: 'user',
+      selectedType: null,
+      loading: false,
       personalInfo: {
         firstName: '',
         lastName: '',
@@ -380,23 +309,41 @@ export default {
         contactApproval: false,
         accountApproval: false
       },
-      agreedToTerms: false,
-      uploadedFile: null,
-      certificatePreviewUrl: null
+      agreedToTerms: false
     }
   },
   computed: {
+    isPasswordValid() {
+      const validation = this.validatePassword(this.personalInfo.password);
+      return validation.valid;
+    },
+    passwordErrorMessage() {
+      const validation = this.validatePassword(this.personalInfo.password);
+      return validation.message;
+    },
     isPersonalInfoValid() {
-      return this.personalInfo.firstName && 
-             this.personalInfo.lastName && 
-             this.personalInfo.email && 
+      return this.personalInfo.firstName.trim() && 
+             this.personalInfo.lastName.trim() && 
+             this.personalInfo.email.trim() && 
+             this.validateEmail(this.personalInfo.email) &&
              this.personalInfo.password && 
              this.personalInfo.confirmPassword && 
              this.personalInfo.password === this.personalInfo.confirmPassword &&
+             this.isPasswordValid &&
              this.agreedToTerms;
+    },
+    isBusinessInfoValid() {
+      return this.businessInfo.businessName.trim() && 
+             this.businessInfo.email.trim() && 
+             this.validateEmail(this.businessInfo.email) &&
+             this.businessInfo.phone.trim(); // &&
+            //  this.validatePhone(this.businessInfo.phone);
     },
     isFinalApprovalValid() {
       return this.finalApproval.contactApproval && this.finalApproval.accountApproval;
+    },
+    shouldShowBackButton() {
+      return this.currentStep > 1 && this.currentStep !== 4;
     }
   },
   methods: {
@@ -404,24 +351,30 @@ export default {
       this.selectedType = type;
     },
     nextStep() {
+      // For user type, skip to account creation after personal info
       if (this.selectedType === 'user') {
-        // Skip business/professional steps for user
         if (this.currentStep === 1) {
           this.currentStep = 2;
         } else if (this.currentStep === 2) {
-          this.currentStep = 4; // Skip to final approval
-        } else {
-          this.currentStep++;
+          this.completeSignup();
         }
-      } else {
-        this.currentStep++;
+      } 
+      // For business and professional, go to step 3
+      else if (this.selectedType === 'business' || this.selectedType === 'professional') {
+        if (this.currentStep === 1) {
+          this.currentStep = 2;
+        } else if (this.currentStep === 2) {
+          this.currentStep = 3;
+        }
       }
     },
     goBack() {
-      if (this.selectedType === 'user' && this.currentStep === 4) {
-        this.currentStep = 2; // Go back to personal info for user
-      } else {
+      if (this.currentStep > 1) {
         this.currentStep--;
+        
+        if (this.currentStep === 1) {
+          this.selectedType = null;
+        }
       }
     },
     toggleCategory(category) {
@@ -432,48 +385,136 @@ export default {
         this.businessInfo.categories.push(category);
       }
     },
-    triggerFileUpload() {
-      this.$refs.fileInput.click();
+    async completeSignup() {
+      await this.registerUser();
     },
-    handleFileUpload(event) {
-      const file = event.target.files[0];
-      if (file) {
-        this.uploadedFile = file;
-        
-        // Create preview URL for images
-        if (file.type.startsWith('image/')) {
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            this.certificatePreviewUrl = e.target.result;
-          };
-          reader.readAsDataURL(file);
-        } else {
-          this.certificatePreviewUrl = null;
+    
+    async registerUser() {
+      this.loading = true;
+
+      try {
+        const requestData = this.prepareRegistrationData();
+
+        const response = await fetch(this.$store.state.root_api + "Auth/api/register/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(requestData)
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          this.$notification.error({
+            message: "Registration Failed",
+            description: data.message || "Registration failed. Please try again.",
+            placement: 'bottomRight'
+          });
+          return;
         }
+
+        if (!data.error) {
+          this.$notification.success({
+            message: "Registration Successful",
+            description: data.message || "Account created successfully. Please check your email to activate.",
+            placement: 'bottomRight'
+          });
+
+          this.currentStep = 4;
+        } else {
+          this.$notification.error({
+            message: "Registration Failed",
+            description: data.message || "Registration failed. Please try again.",
+            placement: 'bottomRight'
+          });
+        }
+      } catch (error) {
+        console.error("Registration error:", error);
+        this.$notification.error({
+          message: "Server Error",
+          description: "Something went wrong. Please try again.",
+          placement: 'bottomRight'
+        });
+      } finally {
+        this.loading = false;
       }
     },
-    removeFile() {
-      this.uploadedFile = null;
-      this.certificatePreviewUrl = null;
-      this.$refs.fileInput.value = '';
+
+    prepareRegistrationData() {
+      const baseData = {
+        firstName: this.personalInfo.firstName.trim(),
+        lastName: this.personalInfo.lastName.trim(),
+        email: this.personalInfo.email.trim(),
+        password: this.personalInfo.password,
+        userType: this.selectedType,
+        username: this.personalInfo.email.split("@")[0],
+      };
+
+      if (this.selectedType === 'business') {
+        return {
+          ...baseData,
+          businessName: this.businessInfo.businessName.trim(),
+          businessEmail: this.businessInfo.email.trim(),
+          phoneNumber: this.businessInfo.phone.trim(),
+          businessDescription: '',
+          businessCategory: this.businessInfo.categories.join(', '),
+          servicesOffered: '',
+        };
+      } else if (this.selectedType === 'professional') {
+        return {
+          ...baseData,
+          termsAgreed: this.finalApproval.contactApproval && this.finalApproval.accountApproval,
+          professionalDescription: '',
+        };
+      } else {
+        return baseData;
+      }
     },
-    completeSignup() {
-      // Handle signup completion
-      console.log('Signup completed', {
-        type: this.selectedType,
-        personalInfo: this.personalInfo,
-        businessInfo: this.businessInfo,
-        uploadedFile: this.uploadedFile,
-        finalApproval: this.finalApproval
-      });
-      this.currentStep = 5;
-    },
+    
     goToLogin() {
-      // Emit event to parent or navigate to login
       this.$emit('switch-to-login');
+    },
+    
+    validateEmail(email) {
+      if (!email) return false;
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email.trim());
+    },
+    
+    validatePassword(password) {
+      // if (!password || password.length < 8) {
+      //   return { valid: false, message: "Password must be at least 8 characters long." };
+      // }
+      
+      // if (/^\d+$/.test(password)) {
+      //   return { valid: false, message: "Password cannot be entirely numeric." };
+      // }
+      
+      // const commonPasswords = ['password', '12345678', 'qwerty123', 'password123', '123456789'];
+      // if (commonPasswords.includes(password.toLowerCase())) {
+      //   return { valid: false, message: "Password is too common." };
+      // }
+      
+      // const firstName = this.personalInfo.firstName.toLowerCase();
+      // const lastName = this.personalInfo.lastName.toLowerCase();
+      // const email = this.personalInfo.email.toLowerCase().split('@')[0];
+      
+      // if (firstName && password.toLowerCase().includes(firstName) || 
+      //     lastName && password.toLowerCase().includes(lastName) || 
+      //     email && password.toLowerCase().includes(email)) {
+      //   return { valid: false, message: "Password cannot be too similar to your personal information." };
+      // }
+      
+      return { valid: true, message: "" };
+    },
+    
+    validatePhone(phone) {
+      if (!phone) return false;
+      const phoneRegex = /^(\+91|91)?[6-9]\d{9}$/;
+      return phoneRegex.test(phone.replace(/\s+/g, ''));
     }
-  },
-  components: {}
+  }
 }
 </script>
 
