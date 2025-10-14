@@ -89,17 +89,18 @@
             </svg>
           </div> -->
           </div>
-
+<!-- {{ item.business_slug }} -->
+<!-- this.$router.push(this.$route.params.buisness_name+'/'+product.type+'/'+product.product_id) -->
           <a-row>
           <a-col :span="20" style="padding-right:5px">
-            <button block type="primary" class="btn-prod-details" >
+            <a-button block type="default" @click="this.$router.push('/'+item.business_slug+'/'+'floor'+'/'+item.id)" >
               Product Detail
-            </button>
+            </a-button>
           </a-col>
           <a-col :span="4" style="">
-            <button block type="primary"  class="btn-prod-details">
+            <a-button block  type="default" >
               <HeartOutlined />
-            </button>
+            </a-button>
           </a-col>
         </a-row>
         </div>
@@ -174,6 +175,7 @@ export default {
     },
     
 selectTexture(uuid){
+  console.log(uuid)
       this.selected_texture=uuid
 },
 updateItemRendering(){

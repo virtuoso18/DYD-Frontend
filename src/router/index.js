@@ -30,6 +30,7 @@ import community_dashboard from '@/components/dashboard/business/comunity.vue'
 import generate_banner from '@/components/dashboard/business/generate_banner.vue'
 import manage_subscription from '@/components/dashboard/business/manage_subscription.vue'
 import my_transactions from '@/components/dashboard/business/my_transactions.vue'
+// import store_messages from '@/components/messages/store_messages.vue'
 
 import add_furniture from '@/components/dashboard/business/my_products/add_new_product/add_furniture.vue'
 import add_light from '@/components/dashboard/business/my_products/add_new_product/add_light_ceiling_3d.vue'
@@ -45,16 +46,32 @@ import profesional_manage_subscription from '@/components/dashboard/professional
 import normal_user_profile from '@/components/dashboard/user/user_profile.vue'
 import normal_my_designs from '@/components/dashboard/user/my_designs.vue'
 import normal_my_requests from '@/components/dashboard/user/my_requests.vue'
-import normal_my_messages from '@/components/dashboard/user/my_messages.vue'
+import normal_my_messages from '@/components/messages/user_messages.vue'
 import normal_my_transactions from '@/components/dashboard/user/my_transactions.vue'
 import normal_manage_my_subscription from '@/components/dashboard/user/manage_subscription.vue'
 import normal_my_settings from '@/components/dashboard/user/my_settings.vue'
 
+import manage_access from '@/components/store/manage_access.vue'
 import buisness_page from '@/views/store/vendor_store.vue'
+import buisness_product from '@/views/store/buisness_product.vue'
 
+
+import Generate_Banner_Admin from '@/views/Platform_Admin_Access_Only/generate_banner_catalog.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    
+    // =========================================== 
+    // Temporary urlsa for testing 
+    
+    {
+      path: '/admin-generate-banner',
+      name: 'admin_generate_banner',
+      component: Generate_Banner_Admin,
+    },
+    
+    // =========================================== 
+
     {
       path: '/',
       name: 'home',
@@ -90,6 +107,11 @@ const router = createRouter({
       path: '/:buisness_name',
       name: 'buisness_name',
       component: buisness_page,
+    },
+     {
+      path: '/:buisness_name/:product_type/:product_id',
+      name: 'buisness_product',
+      component: buisness_product,
     },
     
     {
@@ -164,7 +186,6 @@ const router = createRouter({
           name: 'business_manage_subscription',
           component: manage_subscription,
         },
-        
         {
           path: 'my-transactions',
           name: 'my_transactions',
@@ -233,10 +254,21 @@ const router = createRouter({
           name:'customers',
           component: customers,
         },
+        
+        // {
+        //   path: 'messages',
+        //   name:'messages',
+        //   component: store_messages,
+        // },
         {
           path: 'manage-products',
           name:'manage_products',
           component: manage_products,
+        },
+        {
+          path: 'manage-access',
+          name: 'manage_access',
+          component: manage_access,
         },
         {
           path: 'manage-sites',

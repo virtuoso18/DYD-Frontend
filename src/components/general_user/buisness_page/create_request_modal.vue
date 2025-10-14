@@ -39,7 +39,7 @@
             <a-col :sm="24" :xs="24" :md="12" :lg="12">
                 
       <!-- Email Input Section -->
-      <div class="form-section">
+      <div class="form-section" v-if="!hasToken" style="padding-bottom:5px;">
         <h4>Enter Email</h4>
         <a-input 
           v-model:value="formData.email" 
@@ -51,12 +51,12 @@
       </div>
 
       <!-- Message Section -->
-      <div class="form-section">
+      <div class="form-section" style="padding-top:0px;">
         <h4>Write a message</h4>
         <a-textarea 
           v-model:value="formData.message" 
-          placeholder="Write a message"
-          :rows="4"
+          placeholder="Describe how you’d like your room to look and which furniture you’d like to add."
+          :rows="6"
           :max-length="500"
           show-count
         />
@@ -88,11 +88,17 @@ export default defineComponent({
   components: {
     InboxOutlined
   },
+   computed: {
+        hasToken() {
+        return localStorage.getItem("token") !== null;
+        }
+    },
   props: {
     request_create_room: {
       type: Object,
       default: () => ({})
-    }
+    },
+    canMessageBusiness: {type: Object}
   },
   emits: ['close', 'submit'],
   setup(props, { emit }) {
@@ -220,8 +226,11 @@ export default defineComponent({
 
 .upload-section,
 .form-section {
-    padding:10px;
-  margin-bottom: 24px;
+    padding-left:10px;
+    /* padding-bottom:10px; */
+    padding-right:10px;
+    padding-top:10px;
+  /* margin-bottom: 24px; */
 }
 
 .upload-section h4,

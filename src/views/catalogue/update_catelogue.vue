@@ -64,6 +64,39 @@ Switch Furniture</a-button>
     </a-row>
     
   </a-drawer>
+ <a-drawer
+    title="AI All Products"
+    :placement="'bottom'"
+    :closable="true"
+    :open="openSeeAll_products"
+    height="90%"
+    style="
+  border-top-left-radius: 20px;;
+  border-top-right-radius: 20px;;
+"
+    @close="onClose_drawer_modal"
+    >
+    <template #extra> <div class="head-section">
+          <a-button type="primary"> <svg width="16" height="15" viewBox="0 0 16 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M4.25 14.2288C3.35489 14.2288 2.49645 13.893 1.86351 13.2952C1.23058 12.6975 0.875 11.8867 0.875 11.0413C0.875 10.196 1.23058 9.38521 1.86351 8.78744C2.49645 8.18967 3.35489 7.85384 4.25 7.85384C5.14511 7.85384 6.00355 8.18967 6.63649 8.78744C7.26942 9.38521 7.625 10.196 7.625 11.0413C7.625 11.8867 7.26942 12.6975 6.63649 13.2952C6.00355 13.893 5.14511 14.2288 4.25 14.2288ZM11.75 7.14551C11.3068 7.14551 10.8679 7.06306 10.4584 6.90287C10.049 6.74269 9.67691 6.5079 9.36351 6.21191C9.05012 5.91592 8.80152 5.56454 8.63191 5.17781C8.4623 4.79109 8.375 4.3766 8.375 3.95801C8.375 3.53942 8.4623 3.12493 8.63191 2.7382C8.80152 2.35148 9.05012 2.00009 9.36351 1.7041C9.67691 1.40812 10.049 1.17333 10.4584 1.01314C10.8679 0.852955 11.3068 0.770508 11.75 0.770508C12.6451 0.770508 13.5035 1.10633 14.1365 1.7041C14.7694 2.30188 15.125 3.11263 15.125 3.95801C15.125 4.80339 14.7694 5.61414 14.1365 6.21191C13.5035 6.80968 12.6451 7.14551 11.75 7.14551ZM1.25 4.66634C1.25 3.72703 1.64509 2.8262 2.34835 2.162C3.05161 1.49781 4.00544 1.12467 5 1.12467H7.25V2.54134H5C4.40326 2.54134 3.83097 2.76522 3.40901 3.16374C2.98705 3.56225 2.75 4.10276 2.75 4.66634V6.79134H1.25V4.66634ZM13.25 8.20801V10.333C13.25 10.8966 13.0129 11.4371 12.591 11.8356C12.169 12.2341 11.5967 12.458 11 12.458H8.75V13.8747H11C11.9946 13.8747 12.9484 13.5015 13.6517 12.8373C14.3549 12.1732 14.75 11.2723 14.75 10.333V8.20801H13.25Z" fill="white"/>
+</svg>
+&nbsp;
+Switch Furniture</a-button>
+    </div>
+    </template>
+    <a-row>
+      <a-col :span="4">
+        
+    <p>Some contents...</p>
+    <p>Some contents...</p>
+    <p>Some contents...</p>
+      </a-col>
+      <a-col :span="20">
+        <floor_textures_bottom_drawer_menu/>
+      </a-col>
+    </a-row>
+    
+  </a-drawer>
 
    <a-drawer
     title="Change Room  "
@@ -210,23 +243,31 @@ Switch Furniture</a-button> -->
                  v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Furniture'"
                  @products-see-all=seeAllProductsClicked
                  @trigger-render-3d-object="execute3DRederer"
-     @change-3d-model=change3dModel
-     />
+                 ref="furniture_products_list"
+              @change-3d-model=change3dModel
+              />
                  <floor v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Floor'"
                  @texture-selected="floorTextureSelected"
+                ref="floor_products_list"
+
                  @floor-see-all="floorSeeAll"
                  ></floor>
                  <walls v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Wall'"
                  @texture-selected="wallTextureSelected"
+                ref="wall_products_list"
+
                  @walls-see-all="wallsSeeAll"
                  ></walls>
                  <fernitures v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='All'"
-                 @furniture-selected="furnitureSelected"
-                 @furniture-see-all="furnitureSeeAll"
+                   @product-selected="product_selected_all_tabs_section"
+
+                 @see-all-products="SeeAllProducts"
                  >
                  </fernitures>
                  <lights v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Lights'"
                  @light-selected="lightSelected"
+                ref="lights_list"
+
                  @light-see-all="lightsSeeAll"
                  @Apply_Light="Apply_ceiling_light"
                  >
@@ -417,6 +458,8 @@ Switch Furniture</a-button> -->
               @make-room-empty="makeRoomEmpty"
               @reset-entire-room="resetChangesinBaseImage"
               @Apply-Changes="ApplyChanges"
+              @handle_removal_completed="fetchRoom()"
+              
               />
               <!-- @redetect-objects-room="fetch_redetect_ObjectsBinary_Masks" -->
 <!-- ceiling light renderer -->
@@ -481,18 +524,24 @@ ref="canvas_ceiling_3d_object_light_renderer"
             
 
             <!-- glbUrl="http://127.0.0.1:8000/media/products/3d_models/046-cp7.glb" -->
+             <!-- {{ floor_3d_model_grid }} -->
             <items_replacement_renderer 
                   v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Furniture'" 
                   :glbUrl="item_replacement_renderer_3d_model_url"
                   :product_id="selected_3d_product_model"
+                  :modelDimensions="{ width: selected_model_width, height: selected_model_height, depth: selected_model_depth }"
   :baseImageUrl=base_image_url
-  :floorMaskUrl=depthMask
+  :floorData="floor_3d_model_grid"
+  :depthMaskUrl=depthMask
+  :floorMaskUrl=floor_Mask
   :roll="floor_roll"
   :pitch="floor_pitch"
   :yaw="floor_yaw"
   ref="floor_item_3d_renderer"
   @rendered-comfyui-workflow="updateBaskeImageURL_CANVAS"
               @Apply-Changes="ApplyChanges"
+
+              
 
   />
 
@@ -594,97 +643,95 @@ ref="canvas_ceiling_3d_object_light_renderer"
 
 
 <script>
-import { BulbOutlined, FacebookFilled } from '@ant-design/icons-vue';
+import { BulbOutlined } from '@ant-design/icons-vue';
 import canvas_floor_render from '@/components/update_catalogue/canvas_renderer/canvas_floor_render.vue'
 import canvas_item_remover_render from '@/components/update_catalogue/canvas_renderer/canvas_item_remover_render.vue'
 import canvas_lights_render from '@/components/update_catalogue/canvas_renderer/canvas_lights_render.vue'
 import canvas_unsunk_lights_render from '@/components/update_catalogue/canvas_renderer/canvas_unsunk_lights_render.vue'
 import canvas_walls_render from '@/components/update_catalogue/canvas_renderer/canvas_walls_render.vue'
 import items_replacement_renderer from '@/components/update_catalogue/item_replacement/items_replacement_3d_model_renderer.vue'
-
-// 3d Panel Tab 
 import add_new_furniture from '@/components/dashboard/business/my_products/add_new_product/add_furniture_modal.vue'
-
 import sidepanel_3d_tab from '@/components/update_catalogue/tab_3d/side_panel_3d.vue'
 import object_viewer_3d_tab from '@/components/update_catalogue/tab_3d/canvas_renderer.vue'
 import models_3d_generate_history from '@/components/update_catalogue/tab_3d/generate_history.vue'
-// listings of items here 
-import fernitures from '@/components/update_catalogue/list_products/fernitures.vue' 
-import walls from '@/components/update_catalogue/list_products/walls.vue' 
-import floor from '@/components/update_catalogue/list_products/floor.vue' 
+import fernitures from '@/components/update_catalogue/list_products/fernitures.vue'
+import walls from '@/components/update_catalogue/list_products/walls.vue'
+import floor from '@/components/update_catalogue/list_products/floor.vue'
 import lights from '@/components/update_catalogue/list_products/lights.vue'
-
-// home-design_panel
 import side_panel_home_design from '@/components/update_catalogue/home_design/side_panel.vue'
 import main_panel_home_design from '@/components/update_catalogue/home_design/main_panel.vue'
 import history_panel_home_design from '@/components/update_catalogue/home_design/history_panel.vue'
-
-// edit image Panel 
 import side_panel_edit_image from '@/components/update_catalogue/edit_image/side_panel.vue'
 import main_panel_edit_image from '@/components/update_catalogue/edit_image/main_panel.vue'
 import history_panel_edit_image from '@/components/update_catalogue/edit_image/history_panel.vue'
-// 3d object renderer
-import ceiling_3d_object_renderer from '@/components/update_catalogue/renderer_3d_objects/ceiling_3d_renderer.vue' 
-// imports for bottom drawer products
+import ceiling_3d_object_renderer from '@/components/update_catalogue/renderer_3d_objects/ceiling_3d_renderer.vue'
 import wall_textures_bottom_drawer_menu from '@/components/update_catalogue/bottom_drawer_item_components/wall_textures.vue'
 import floor_textures_bottom_drawer_menu from '@/components/update_catalogue/bottom_drawer_item_components/floor_textures.vue'
-
 import ai_catalog_item_replacement_3d_products from '@/components/update_catalogue/list_products/item_replacement_3d_products.vue'
+
 export default {
   name: "update_catelogue",
+  
   data() {
     return {
       // UI State
       select_replace: 'All',
       current_tab: 'image',
       active_tab_image: 'item_replacement',
-      searchText: '',
-      selected_light_type:'',
-      selectedlightuuid:'', //used in celinlg, floor & 3d hanging light to the ceiling 
-      model_3d_url:'',
-      item_replacement_renderer_3d_model_url:'',
-      selected_3d_product_model:'',
-       maskUpdateTrigger: 0,
+      selectedlightuuid: '',
+      selected_light_type: '',
+      model_3d_url: '',
+      item_replacement_renderer_3d_model_url: '',
+      selected_3d_product_model: '',
+      maskUpdateTrigger: 0,
       
-      //  3dTab 
+      // selected 3d model width,height,depth
+      selected_model_width:0,
+      selected_model_height:0,
+      selected_model_depth:0,
+      
+      // 3D Tab
       generated3dModel_url: '',
-      model_instance_id:'',
-      processing_generate_is_Loading:false,
-      list_history_generated_3d_models:[],
-      loading_generated_models_history:false,
-
-      // 3d room Floor Cordinates       
-      floor_roll:0,
-      floor_pitch:0,
-      floor_yaw:0,
-
-      ceiling_roll:0,
-      ceiling_pitch:0,
-      ceiling_yaw:0,
+      model_instance_id: '',
+      processing_generate_is_Loading: false,
+      list_history_generated_3d_models: [],
+      loading_generated_models_history: false,
+      
+      // 3D Room Coordinates
+      floor_roll: 0,
+      floor_pitch: 0,
+      floor_yaw: 0,
+      ceiling_roll: 0,
+      ceiling_pitch: 0,
+      ceiling_yaw: 0,
+      
 
       // Room Data
       base_image_url: '',
-      depthMask:'',
+      depthMask: '',
+      floor_Mask:'',
+      floor_3d_model_grid:null,
       
-      applyingTexture: null, // Track which texture is being applied
-
-      openSeeAll_Walls:false,
-      openSeeAll_Floor:false,
-      openSeeAll_ChangeRoom:false,
-
-      // change Room Modal 
-      your_history_change_room:[],
-      exampleImages_changeRoom:[],
-
-      closeShareMenu:true,
-      // Binary Masks Data
+      // Modals
+      openSeeAll_products:false,
+      openSeeAll_Walls: false,
+      openSeeAll_Floor: false,
+      openSeeAll_ChangeRoom: false,
+      closeShareMenu: true,
+      showAddProduct: false,
+      
+      // Change Room
+      your_history_change_room: [],
+      exampleImages_changeRoom: [],
+      
+      // Binary Masks
       binaryMaskList: [],
       binaryMask_List_media: [],
       selectedMasks: [],
       allWallsBinaryMasks: [],
-      selected_binarymasks_walls:[],
+      selected_binarymasks_walls: [],
       
-      // Object Detection Data
+      // Object Detection
       binaryMasks_objects_detected: {},
       allObjectsBinaryMasks: [],
       selected_objects_binary_masks: [],
@@ -703,23 +750,22 @@ export default {
       objectMaskLoadingTotal: 0,
       preloadingStarted: false,
       cacheInitializationPromise: null,
-
-      // room states
+      
+      // Room States
       is_rendered_walls_mask: false,
       is_rendered_objects_mask: false,
       is_ready: false,
-      
-      showAddProduct:false,
-      // Room loading specific states
       roomRetryCount: 0,
       roomLoadingMessage: 'Initializing room data...',
       roomLoadingProgress: 0,
-      maxRetryAttempts: 200, // Maximum retry attempts
-      roomPollingInterval: null, // Store polling interval
+      maxRetryAttempts: 200,
+      roomPollingInterval: null,
       
-      home_design_images:null,
-      product_mockup_images:null,
-      selected_product_mockups_group:null,
+      // Home Design & Product Mockup
+      home_design_images: null,
+      product_mockup_images: null,
+      selected_product_mockups_group: null,
+      
       // Loading States
       loading: {
         room: false,
@@ -735,16 +781,14 @@ export default {
         binaryMasks: null,
         objectMasks: null
       },
-      
-      // Error Modal
       showErrorModal: false,
       modalError: {
         title: '',
         description: '',
         retry: null
       },
-
-      // API request tracking
+      
+      // API Tracking
       abortControllers: new Map(),
       
       // Processing States
@@ -755,71 +799,49 @@ export default {
     }
   },
 
-// Also add these computed properties if not already present:
-computed: {
-  // ... existing computed properties ...
-
-  objectMasksLoadingStatus() {
-    if (!this.binaryMasks_objects_detected || Object.keys(this.binaryMasks_objects_detected).length === 0) {
-      return { loaded: 0, total: 0, percentage: 100, isEmpty: true };
-    }
-    
-    const total = Object.keys(this.binaryMasks_objects_detected).length;
-    const loaded = this.cachedObjectImages?.size || 0;
-    const percentage = total > 0 ? Math.round((loaded / total) * 100) : 0;
-    
-    return { loaded, total, percentage, isEmpty: false };
-  },
-
-// ==========================================================
-/// Objects Detection 
-// ==========================================================
-
-  canShowItemReplacement() {
-    return this.current_tab === 'image' && 
-           this.active_tab_image === 'item_replacement' && 
-           this.is_ready && 
-           !this.isLoading;
-  },
-
-  itemReplacementStatus() {
-    const status = this.objectMasksLoadingStatus;
-    
-    if (status.isEmpty) {
-      return {
-        message: 'No objects detected in the room',
-        type: 'info',
-        showCanvas: true
-      };
-    } else if (!this.objectMaskCacheReady) {
-      return {
-        message: `Loading object detection... ${status.percentage}%`,
-        type: 'loading',
-        showCanvas: false
-      };
-    } else {
-      return {
-        message: `${status.total} objects ready for selection`,
-        type: 'success',
-        showCanvas: true
-      };
-    }
-  },
-// ==========================================================
-/// Objects Detection 
-// ==========================================================
-
-    // objectMasksLoadingStatus() {
-    //   if (!this.binaryMasks_objects_detected || Object.keys(this.binaryMasks_objects_detected).length === 0) {
-    //     return { loaded: 0, total: 0, percentage: 100 };
-    //   }
+  computed: {
+    objectMasksLoadingStatus() {
+      if (!this.binaryMasks_objects_detected || Object.keys(this.binaryMasks_objects_detected).length === 0) {
+        return { loaded: 0, total: 0, percentage: 100, isEmpty: true };
+      }
       
-    //   const total = Object.keys(this.binaryMasks_objects_detected).length;
-    //   const loaded = this.cachedObjectImages.size;
-    //   const percentage = total > 0 ? Math.round((loaded / total) * 100) : 0;
+      const total = Object.keys(this.binaryMasks_objects_detected).length;
+      const loaded = this.cachedObjectImages?.size || 0;
+      const percentage = total > 0 ? Math.round((loaded / total) * 100) : 0;
       
-    //   return { loaded, total, percentage };
-    // }
+      return { loaded, total, percentage, isEmpty: false };
+    },
+
+    canShowItemReplacement() {
+      return this.current_tab === 'image' && 
+             this.active_tab_image === 'item_replacement' && 
+             this.is_ready && 
+             !this.canvasLoading;
+    },
+
+    itemReplacementStatus() {
+      const status = this.objectMasksLoadingStatus;
+      
+      if (status.isEmpty) {
+        return {
+          message: 'No objects detected in the room',
+          type: 'info',
+          showCanvas: true
+        };
+      } else if (!this.objectMaskCacheReady) {
+        return {
+          message: `Loading object detection... ${status.percentage}%`,
+          type: 'loading',
+          showCanvas: false
+        };
+      } else {
+        return {
+          message: `${status.total} objects ready for selection`,
+          type: 'success',
+          showCanvas: true
+        };
+      }
+    }
   },
 
   async mounted() {
@@ -827,358 +849,40 @@ computed: {
   },
 
   beforeUnmount() {
-    // Clear polling interval
     if (this.roomPollingInterval) {
       clearInterval(this.roomPollingInterval);
     }
-    
-    // Cancel all pending requests
     this.abortControllers.forEach(controller => controller.abort());
-    
-    // Clear caches
-    this.clearAllObjectMaskState();
+    this.clearAllCaches();
   },
 
   methods: {
-      add_new_product(e){
-      console.log(e)
-      this.showAddProduct=true
-  },
-   onProductCreated(e){
-     const userData = localStorage.getItem('user')
-      let user = JSON.parse(userData)
-      console.log(user)
-  // Check user flags in priority order
-      if (user.is_business) {
-        this.$router.push('/business-dashboard/my-products')  
-      }
-      if (user.is_professional) {
-        this.$router.push('/professional-dashboard/my-products')
-      } 
-      // if user is buisness user if he is professional then redirect to professional user dashboard there
-  },
-    ApplyChanges(){
-      console.log("Apply Changes CLicked ")
-      this.$router.push('/update-catalogue/render-results/' + this.$route.params.id );
-    },
-     async fetchExampleRooms() {
-      this.loading = true;
-      try {
-        const url = `${this.$store.state.root_api}room/api/example-rooms/`;
-        const response = await fetch(url, {
-        method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Token ${localStorage.getItem('token')}`
-            },
-          }, 
-        );
-        const data = await response.json();
-        console.log(data)
-        if (data && data.data) {
-          this.exampleImages_changeRoom = data.data;
-        }
-      } catch (error) {
-        console.error("Failed to fetch:", error);
-      } finally {
-        this.loading = false;
-      }
-    },
-     async startTestRoom(room_id) {
-      console.log(room_id)
-      this.loading = true;
-      try {
-        const url = `${this.$store.state.root_api}room/api/start-example-room/${room_id}`;
-        const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Token ${localStorage.getItem('token')}`
-        },
-      }, );
-        const data = await response.json();
-        console.log(data)
-        if (data && data.data) {
-          this.exampleImages = data.data;
-        this.$router.push({
-          name: 'update_catelogue',
-          params: { id: this.exampleImages.id },
-          query: { t: Date.now() } // avoid caching
-        }).then(() => {
-          this.$router.go(0); // force page refresh
-        });
-        }
-      } catch (error) {
-        console.error("Failed to fetch:", error);
-      } finally {
-        this.loading = false;
-      }
-    },
-      goToCatalogue(id) {
-        this.openSeeAll_ChangeRoom=false
-      this.$router.push({
-        path: `/update-catalogue/${id}`,
-        query: { t: Date.now() } // forces route change
-      }).then(() => {
-        // force reload if really needed
-        this.$router.go(0);
-      });
-    },
-  async fetchUserHistoryRooms() {
-      this.loading = true;
-      try {
-        const url = `${this.$store.state.root_api}room/api/user-history-rooms/`;
-        const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Token ${localStorage.getItem('token')}`
-        },
-      }, );
-        const data = await response.json();
-        console.log(data)
-        if (data && data.data) {
-          this.your_history_change_room = data.data;
-        }
-      } catch (error) {
-        console.error("Failed to fetch:", error);
-      } finally {
-        this.loading = false;
-      }
-    },
-
-
-    home_design_history_clicked(e){
-      // since the input image is 0th index of this list remove that 
-      const images=e
-      // images.splice(0, 1)
-      console.log(e)
-      // console.log(e['input_image'])
-    // this.home_design_images={'image_paths':e['images'],'images':e['images']}
-
-    this.home_design_images={
-    "error": false,
-    "home_design_id": null,
-    "prompt_id": null,
-    "generated_count": images.length,
-    "images": images,
-    "image_paths": images,
-    "msg": "Home design variations changed successfully"
-}
-
-    },
-    product_mockup_history_clicked(e){
-      // since the input image is 0th index of this list remove that 
-      const images=e
-      // images.splice(0, 1)
-      console.log(e)
-      // console.log(e['input_image'])
-    // this.home_design_images={'image_paths':e['images'],'images':e['images']}
-    this.selected_product_mockups_group=images
-    this.product_mockup_images={
-    "error": false,
-    "home_design_id": null,
-    "prompt_id": null,
-    "generated_count": images.images.length,
-    "images": images.images,
-    "image_paths": images.images,
-    "msg": "Home design variations changed successfully"
-}
-
-    },
-    newhome_designes_generated(e){
-this.home_design_images=e
-  this.$refs.home_design_history.fetchGenerateHistory();
-
-    },
-    new_product_mockup_generated(e){
-      this.product_mockup_images=e
-      this.$refs.product_mockup_history.fetchGenerateHistory();
-    },
-    wallsSeeAll(e){
-      console.log(e)
-      console.log("clicked")
-      this.openSeeAll_Walls=true
-    },
-    floorSeeAll(e){
-      console.log(e)
-      console.log("clicked")
-      this.openSeeAll_Floor=true
-    },
-     Change_Room_SeeAll(e){
-      this.fetchExampleRooms()
- this.fetchUserHistoryRooms()
-      console.log(e)
-      console.log("clicked")
-      this.openSeeAll_ChangeRoom=true
-    },
-    Apply_ceiling_light(e){
-
-      // ?making the calls to the child methods to make the final image which is there already apply the changes 
-      if  (this.select_replace==='Lights' && this.selected_light_type==='sunk'){
-        this.$refs.canvas_sunk_magnetic_lights_render.saveRoom();
-      }
-      if (this.select_replace==='Lights' && this.selected_light_type==='hanging'){
-        this.$refs.canvas_ceiling_3d_object_light_renderer.downloadCurrentSceneImage();
-      }
-
-  
-      
-    },
-
-    lightsSeeAll(e){
-      console.log(e)
-      console.log("Light See All clicked")
-    },
-    furnitureSeeAll(e){
-      console.log(e)
-      console.log("Furniture See All clicked")
-    },
-    furnitureSelected(e){
-      console.log(e)
-      console.log("Furniture See All clicked")
-    },
-    lightSelected(e){
-      console.log(e)
-      this.selectedlightuuid =e['uuid']
-      this.selected_light_type=e['type']
-      this.model_3d_url = this.$store.state.root_media_api+e['model_3d_url'] 
-
-    },
-    // itemreplacerenderer
-seeAllProductsClicked(e){
-
-      this.openSeeAll_Products=true
-},
-execute3DRederer(e){
-  this.$refs.floor_item_3d_renderer.renderItem();
-},
-processinggenerate_loading(e){
-this.processing_generate_is_Loading=e
-},
-
-// 3. Enhanced fetch3d Models History  method with immediate update the History 
-async get_3d_rendered_model_details(generated_3d_model_id) {
-  this.loading_generated_models_history= true;
-
-  try {
-    const roomId = this.$route.params.id;
-    
-    const url = `${this.$store.state.root_api}engine/generated-3d-models-history/${roomId}`;
-    const payload = {
-          'model_3d_id': generated_3d_model_id,
-        }
-    console.log('📡 Fetching generated 3d models hisrtory ...');
-    const responseData = await this.makeApiRequest(url, { 
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Token ${localStorage.getItem('token')}`
-      },
-    body: JSON.stringify(payload)
-    }, 'fetch_generated_3d_models');
-    
-    if (responseData) {
-      
-      this.generated3dModel_url=this.$store.state.root_media_api+ responseData.new_model.model_file_url
-      this.model_instance_id=responseData.new_model.id
-      this.processing_generate_is_Loading=false
-      
-      // Process wall masks first
-      const generated_models = responseData.models || [];
-      console.log(generated_models)
-      this.list_history_generated_3d_models = generated_models;
-      
-    }
-  } catch (error) {
-    console.error("❌ Failed to fetch history generated 3d Models :", error);
-    this.error.general = error.message;
-    this.showError('Failed to fetch history generated 3d Models', error.message, () => this.fetch3d_models_generated_by_room());
-  } finally {
-    this.loading_generated_models_history = false;
-  }
-},
-
-changeCurrentTab(e){
-  this.current_tab=e
-  this.generated3dModel_url=""
-this.processing_generate_is_Loading=false
-this.model_instance_id=""
-},
-async magneticLightsMearjed(e){
-  this.base_image_url= this.$store.state.root_media_api+ e['image_url']
-  this.forceCanvasUpdate();
-
-},
-async new3DModelGenerated(e){
-//   {
-//     "error": false,
-//     "msg": "3D model generation successful",
-//     "output_path": "C:\\Users\\adminay\\Documents\\AI-Applications\\002 webapp - ComfyUI\\comfyui_api_backend\\media\\3d-Rendered-Models/e25444e1-a6f5-4423-b573-dc9f4a90c52d\\Hy3D_00076_.glb",
-//     "media_url": "/media/3d-Rendered-Models/e25444e1-a6f5-4423-b573-dc9f4a90c52d/Hy3D_00076_.glb",
-//     "model_id": "e25444e1-a6f5-4423-b573-dc9f4a90c52d"
-// }
-
-  this.generated3dModel_url=this.$store.state.root_api+ e.media_url
-  this.model_instance_id=e.new3d_model_instance
-
-await this.fetch3d_models_generated_by_room()
-
-},
-async change3dModel(e){
-this.item_replacement_renderer_3d_model_url=this.$store.state.root_media_api + e['model_url']
-this.selected_3d_product_model= e['model_uuid']
-// model_uuid
-// model_url
-},
-    updateBaskeImageURL_CANVAS(e){
-      console.log(e)
-      // Update the base image
-          this.base_image_url = this.$store.state.root_media_api + e
-          // Force canvas to update with new image
-          this.forceCanvasUpdate();
-
-    },
-
-    onClose_drawer_modal(){
-      this.openSeeAll_Walls=false
-      this.openSeeAll_Floor=false
-      this.closeShareMenu=false
-      this.openSeeAll_ChangeRoom=false
-    },
     // ==========================================
-    // INITIALIZATION METHODS
+    // INITIALIZATION
     // ==========================================
-    
     async initializeComponent() {
-      console.log('🚀 Initializing Update Catalogue Component...');
+      console.log('🚀 Initializing component...');
       
-      // Set initial loading state
       this.canvasLoading = true;
       this.loading.canvas = true;
       this.roomLoadingMessage = 'Loading room data...';
       
       try {
-        // Step 1: Fetch room data first (this will handle polling if not ready)
         await this.fetchRoom();
-        // await this.fetchRoom_floor_3d_cords();
-        // Step 2: Only proceed if room is ready
+        
         if (this.is_ready) {
           this.roomLoadingMessage = 'Loading room configurations...';
-          await this.fetchBinaryWallMasks();
-          await this.fetchRoom_floor_3d_cords();
-          await this.fetch3d_models_generated_by_room();
-          
-
-          console.log('✅ Component initialization completed');
+          await Promise.all([
+            this.fetchBinaryWallMasks(),
+            this.fetchRoom_floor_3d_cords(),
+            this.fetch3d_models_generated_by_room()
+          ]);
+          console.log('✅ Component initialized');
         }
-        
       } catch (error) {
-        console.error('❌ Failed to initialize component:', error);
-        this.error.general = 'Failed to load component data. Please try again.';
+        console.error('❌ Initialization failed:', error);
         this.showError('Initialization Failed', error.message, () => this.initializeComponent());
       } finally {
-        // Only set loading to false if room is ready
         if (this.is_ready) {
           this.loading.canvas = false;
           this.canvasLoading = false;
@@ -1186,18 +890,10 @@ this.selected_3d_product_model= e['model_uuid']
       }
     },
 
-    async retryAllApis() {
-      this.error.general = null;
-      this.roomRetryCount = 0;
-      await this.initializeComponent();
-    },
-
     // ==========================================
     // API UTILITIES
     // ==========================================
-    
     createAbortController(key) {
-      // Cancel existing request if any
       if (this.abortControllers.has(key)) {
         this.abortControllers.get(key).abort();
       }
@@ -1227,83 +923,67 @@ this.selected_3d_product_model= e['model_uuid']
         this.abortControllers.delete(requestKey);
         
         if (error.name === 'AbortError') {
-          console.log(`Request ${requestKey} was cancelled`);
+          console.log(`Request ${requestKey} cancelled`);
           return null;
         }
-        
         throw error;
       }
     },
 
     // ==========================================
-    // DATA FETCHING METHODS
+    // ROOM DATA FETCHING
     // ==========================================
-    
     async fetchRoom() {
-      console.log('📡 Fetching room data...');
+      console.log('📡 Fetching room...');
       
       try {
         const roomId = this.$route.params.id;
         const url = `${this.$store.state.root_api}room/api/room/${roomId}`;
 
-        const responseData = await this.makeApiRequest(url, { method: 'GET' 
-        ,headers: {
-          'Content-Type': 'application/json',
-              'Authorization': `Token ${localStorage.getItem('token')}`
-
-        },
+        const responseData = await this.makeApiRequest(url, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${localStorage.getItem('token')}`
+          }
         }, 'room');
 
-        if (responseData && responseData.data) {
+        if (responseData?.data) {
           this.is_rendered_walls_mask = responseData.data.is_rendered_walls_mask;
           this.is_rendered_objects_mask = responseData.data.is_rendered_objects_mask;
           this.is_ready = responseData.data.is_ready;
 
           if (!this.is_ready) {
-            console.warn("⚠️ Room not ready yet... will retry in 3s");
-            
-            // Increment retry count
             this.roomRetryCount++;
             
-            // Check if we've exceeded max retries
             if (this.roomRetryCount >= this.maxRetryAttempts) {
-              throw new Error(`Room failed to become ready after ${this.maxRetryAttempts} attempts. Please try again later.`);
+              throw new Error(`Room not ready after ${this.maxRetryAttempts} attempts`);
             }
             
-            // Update loading message with progress
-            this.roomLoadingMessage = `Room is being prepared... (${this.roomRetryCount}/${this.maxRetryAttempts})`;
+            this.roomLoadingMessage = `Preparing room... (${this.roomRetryCount}/${this.maxRetryAttempts})`;
             this.roomLoadingProgress = Math.round((this.roomRetryCount / this.maxRetryAttempts) * 100);
-            
-            // Use polling approach instead of recursive calls
             this.startRoomPolling();
-            
           } else {
-            // Room is ready!
-            console.log('✅ Room is ready!');
+            console.log( responseData.data)
             this.base_image_url = this.$store.state.root_media_api + responseData.data.image;
-            this.depthMask= this.$store.state.root_media_api + responseData.data.depth_mask;
-            this.roomLoadingMessage = 'Room loaded successfully!';
-            this.roomLoadingProgress = 100;
+            this.depthMask = this.$store.state.root_media_api + responseData.data.depth_mask;
+            this.floor_Mask= this.$store.state.root_media_api + responseData.data.floor_mask;
             
-            // Clear any existing polling
+            this.roomLoadingProgress = 100;
+            this.load_the_fileData(this.$store.state.root_media_api + responseData.data.floor_3d_model_grid)
+            
             if (this.roomPollingInterval) {
               clearInterval(this.roomPollingInterval);
               this.roomPollingInterval = null;
             }
-            
-            console.log('✅ Room data loaded:', this.base_image_url);
           }
         }
       } catch (error) {
-        console.error("❌ Failed to fetch room:", error);
-        this.error.room = error.message;
-        
-        // Clear polling if error occurs
+        console.error('❌ Room fetch failed:', error);
         if (this.roomPollingInterval) {
           clearInterval(this.roomPollingInterval);
           this.roomPollingInterval = null;
         }
-        
         this.showError('Failed to Load Room', error.message, () => {
           this.roomRetryCount = 0;
           this.fetchRoom();
@@ -1312,353 +992,164 @@ this.selected_3d_product_model= e['model_uuid']
     },
 
     
-    async fetchRoom_floor_3d_cords() {
-      console.log('📡 ---------------------------------...');
-      
-      try {
-        const roomId = this.$route.params.id;
-        const url = `${this.$store.state.root_api}engine/get-room-floor-3d-cords/${roomId}`;
+    async load_the_fileData(floor_3d_model_grid_url){
+        this.isLoading = true;
+  
+  try {
+    const response = await fetch(floor_3d_model_grid_url)
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+    
+    this.floor_3d_model_grid = await response.json()
+    // console.log("--------------------------------------------")
+    // console.log(this.floor_3d_model_grid)
+  } catch (error) {
+    console.error('Error loading floor data:', error)
+  }
+      this.isLoading = false;
 
-        const responseData = await this.makeApiRequest(url, { method: 'GET' 
-        ,headers: {
-          'Content-Type': 'application/json',
-              'Authorization': `Token ${localStorage.getItem('token')}`
-
-        },
-        }, 'room');
-
-        if (responseData && responseData.data_floor && responseData.data_ceiling) {
-            console.log(responseData.data_floor)
-            this.floor_roll=responseData.data_floor.roll
-            this.floor_pitch=responseData.data_floor.pitch
-            this.floor_yaw=responseData.data_floor.yaw
-
-            
-            console.log(responseData.data_ceiling)
-            this.ceiling_roll=responseData.data_ceiling.roll
-            this.ceiling_pitch=responseData.data_ceiling.pitch
-            this.ceiling_yaw=responseData.data_ceiling.yaw
-        }
-      } catch (error) {
-        console.error("❌ Failed to fetch room:", error);
-        this.error.room = error.message;
-        
-        // Clear polling if error occurs
-        if (this.roomPollingInterval) {
-          clearInterval(this.roomPollingInterval);
-          this.roomPollingInterval = null;
-        }
-        
-        this.showError('Failed to Load Room', error.message, () => {
-          this.roomRetryCount = 0;
-          this.fetchRoom();
-        });
-      }
-    },
+},
 
     startRoomPolling() {
-      // Clear existing polling first
       if (this.roomPollingInterval) {
         clearInterval(this.roomPollingInterval);
       }
       
-      // Start new polling
       this.roomPollingInterval = setInterval(async () => {
-        console.log('🔄 Polling room status...');
         await this.fetchRoom();
         
-        // If room becomes ready or we hit max retries, the fetchRoom method will handle cleanup
         if (this.is_ready || this.roomRetryCount >= this.maxRetryAttempts) {
           clearInterval(this.roomPollingInterval);
           this.roomPollingInterval = null;
           
-          // If room became ready, continue with initialization
           if (this.is_ready) {
-            this.roomLoadingMessage = 'Loading room configurations...';
             await this.fetchBinaryWallMasks();
-            
-            // Mark as ready
             this.loading.canvas = false;
             this.canvasLoading = false;
             this.forceCanvasUpdate();
           }
         }
-      }, 3000); // Poll every 3 seconds
+      }, 3000);
     },
 
-    async makeRoomEmpty(){
-      this.canvasLoading = true;
-
+    async fetchRoom_floor_3d_cords() {
       try {
-        const url = `${this.$store.state.root_api}engine/make-room-empty/`;
-        const requestBody = {
-          room_id: this.$route.params.id,
-        };
+        const roomId = this.$route.params.id;
+        const url = `${this.$store.state.root_api}engine/get-room-floor-3d-cords/${roomId}`;
 
-        const responseData = await this.makeApiRequest(
-          url,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Token ${localStorage.getItem('token')}`
-            },
-            body: JSON.stringify(requestBody)
-          },
-        );
+        const responseData = await this.makeApiRequest(url, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${localStorage.getItem('token')}`
+          }
+        }, 'floor_3d_cords');
 
-        if (responseData && responseData.final_output) {
-          // Update the base image
-          this.base_image_url = this.$store.state.root_media_api + responseData.final_output;
-          
-          await this.fetchBinaryWallMasks(); // This will refresh object masks too
-          // this.forceCanvasUpdate();
-          // Force canvas to update with new image
-          this.forceCanvasUpdate();
-
-          this.$message.success('Room image reseted changes successfully !');
-        } else {
-          throw new Error('No final output received from server');
+        if (responseData?.data_floor && responseData.data_ceiling) {
+          this.floor_roll = responseData.data_floor.roll;
+          this.floor_pitch = responseData.data_floor.pitch;
+          this.floor_yaw = responseData.data_floor.yaw;
+          this.ceiling_roll = responseData.data_ceiling.roll;
+          this.ceiling_pitch = responseData.data_ceiling.pitch;
+          this.ceiling_yaw = responseData.data_ceiling.yaw;
         }
       } catch (error) {
-        console.error("Failed to Reset Room Changes:", error);
-      } finally {
-        this.canvasLoading = false;
+        console.error('❌ Failed to fetch 3D coords:', error);
       }
-
     },
-      async resetChangesinBaseImage() {
-      this.canvasLoading = true;
+
+    // ==========================================
+    // BINARY MASKS FETCHING
+    // ==========================================
+    async fetchBinaryWallMasks() {
+      this.loading.binaryMasks = true;
 
       try {
-        const url = `${this.$store.state.root_api}engine/reset-room/`;
-        const requestBody = {
-          room_id: this.$route.params.id,
-        };
+        const roomId = this.$route.params.id;
+        const url = `${this.$store.state.root_api}engine/new-room/?room_id=${roomId}`;
+        
+        const responseData = await this.makeApiRequest(url, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${localStorage.getItem('token')}`
+          }
+        }, 'binaryMasks');
+        
+        if (responseData) {
+          const binary_masks = responseData.binary_masks || [];
+          this.allWallsBinaryMasks = binary_masks;
+          this.binaryMask_List_media = binary_masks;
+          this.binaryMaskList = binary_masks.map(path => `${this.$store.state.root_media_api}${path}`);
+          this.selectedMasks = Array.from({ length: this.binaryMaskList.length }, (_, i) => i);
 
-        const responseData = await this.makeApiRequest(
-          url,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Token ${localStorage.getItem('token')}`
-
-            },
-            body: JSON.stringify(requestBody)
-          },
-        );
-
-        if (responseData && responseData.final_output) {
-          // Update the base image
-          this.base_image_url = this.$store.state.root_media_api + responseData.final_output;
+          this.binaryMasks_objects_detected = { ...responseData.objects_detected_masks } || {};
+          this.allObjectsBinaryMasks = { ...this.binaryMasks_objects_detected };
           
-          await this.fetchBinaryWallMasks(); // This will refresh object masks too
-          // this.forceCanvasUpdate();
+          this.maskUpdateTrigger += 1;
           
-          // Force canvas to update with new image
-          this.forceCanvasUpdate();
-          
+          this.$nextTick(() => {
+            this.forceCanvasUpdate();
+            setTimeout(() => this.forceCanvasUpdate(), 100);
+          });
 
-          this.$message.success('Room image reseted changes successfully !');
-        } else {
-          throw new Error('No final output received from server');
+          if (Object.keys(this.binaryMasks_objects_detected).length > 0) {
+            this.initializeObjectMaskCache();
+          } else {
+            this.objectMaskCacheReady = true;
+          }
         }
       } catch (error) {
-        console.error("Failed to Reset Room Changes:", error);
+        console.error('❌ Failed to fetch masks:', error);
+        this.showError('Failed to Load Masks', error.message, () => this.fetchBinaryWallMasks());
       } finally {
-        this.canvasLoading = false;
+        this.loading.binaryMasks = false;
       }
     },
 
-    
-// 2. Enhanced fetchBinaryWallMasks method with immediate update
-async fetchBinaryWallMasks() {
-  this.loading.binaryMasks = true;
-  this.error.binaryMasks = null;
+    async fetch3d_models_generated_by_room() {
+      this.loading_generated_models_history = true;
 
-  try {
-    const roomId = this.$route.params.id;
-    const url = `${this.$store.state.root_api}engine/new-room/?room_id=${roomId}`;
-    
-    console.log('📡 Fetching binary masks...');
-    const responseData = await this.makeApiRequest(url, { 
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Token ${localStorage.getItem('token')}`
-      },
-    }, 'binaryMasks');
-    
-    if (responseData) {
-      // Process wall masks first
-      const binary_masks = responseData.binary_masks || [];
-      this.allWallsBinaryMasks = binary_masks;
-      this.binaryMask_List_media = binary_masks;
-      
-      // CRITICAL: Create new array references to trigger reactivity
-      this.binaryMaskList = binary_masks.map(path => `${this.$store.state.root_media_api}${path}`);
-      this.selectedMasks = Array.from({ length: this.binaryMaskList.length }, (_, i) => i);
-
-      // Store object masks data
-      this.binaryMasks_objects_detected = { ...responseData.objects_detected_masks } || {};
-      this.allObjectsBinaryMasks = { ...this.binaryMasks_objects_detected };
-      
-      console.log('✅ Wall masks loaded:', this.binaryMaskList.length, 'masks');
-      console.log('📦 Object masks found:', Object.keys(this.binaryMasks_objects_detected).length, 'objects');
-
-      // IMMEDIATE UPDATE TRIGGER
-      this.maskUpdateTrigger += 1; // This will force child component to react
-      
-      // Force canvas update immediately
-      this.$nextTick(() => {
-        this.forceCanvasUpdate();
+      try {
+        const roomId = this.$route.params.id;
+        const url = `${this.$store.state.root_api}engine/generated-3d-models-history/${roomId}`;
         
-        // Additional force update after a short delay to ensure rendering
-        setTimeout(() => {
-          this.forceCanvasUpdate();
-        }, 100);
-      });
-
-      // Handle object mask caching
-      if (Object.keys(this.binaryMasks_objects_detected).length > 0) {
-        this.initializeObjectMaskCacheImmediate();
-      } else {
-        this.objectMaskCacheReady = true;
-        console.log('📭 No object masks to preload');
+        const responseData = await this.makeApiRequest(url, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${localStorage.getItem('token')}`
+          }
+        }, 'fetch_generated_3d_models');
+        
+        if (responseData) {
+          this.list_history_generated_3d_models = responseData.models || [];
+        }
+      } catch (error) {
+        console.error('❌ Failed to fetch 3D models:', error);
+      } finally {
+        this.loading_generated_models_history = false;
       }
-    }
-  } catch (error) {
-    console.error("❌ Failed to fetch binary wall masks:", error);
-    this.error.binaryMasks = error.message;
-    this.showError('Failed to Load Wall Masks', error.message, () => this.fetchBinaryWallMasks());
-  } finally {
-    this.loading.binaryMasks = false;
-  }
-},
+    },
 
-
-// 3. Enhanced fetch3d Models History  method with immediate update the History 
-async fetch3d_models_generated_by_room() {
-  this.loading_generated_models_history= true;
-
-  try {
-    const roomId = this.$route.params.id;
-    const url = `${this.$store.state.root_api}engine/generated-3d-models-history/${roomId}`;
-    
-    console.log('📡 Fetching generated 3d models hisrtory ...');
-    const responseData = await this.makeApiRequest(url, { 
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Token ${localStorage.getItem('token')}`
-      },
-    }, 'fetch_generated_3d_models');
-    
-    if (responseData) {
-      // Process wall masks first
-      const generated_models = responseData.models || [];
-      this.list_history_generated_3d_models = generated_models;
-      
-    }
-  } catch (error) {
-    console.error("❌ Failed to fetch history generated 3d Models :", error);
-    this.error.general = error.message;
-    this.showError('Failed to fetch history generated 3d Models', error.message, () => this.fetch3d_models_generated_by_room());
-  } finally {
-    this.loading_generated_models_history = false;
-  }
-},
-
-  
-// 4. Redetect the binary masks which is got detected 
-// async fetch_redetect_ObjectsBinary_Masks(e) {
-//   this.loading.binaryMasks = true;
-//   this.error.binaryMasks = null;
-
-//   try {
-//     const roomId = this.$route.params.id;
-//     const url = `${this.$store.state.root_api}engine/redetect-room-ferniture/${roomId}`;
-    
-//     console.log('📡 Fetching binary masks...');
-//     const responseData = await this.makeApiRequest(url, { 
-//       method: 'GET',
-//       headers: {
-//         'Content-Type': 'application/json',
-//         'Authorization': `Token ${localStorage.getItem('token')}`
-//       },
-//     }, 'objects_binary_masks');
-    
-//     if (responseData) {
-//       // Process wall masks first
-//       const binary_masks = responseData.binary_masks || [];
-//       this.allWallsBinaryMasks = binary_masks;
-//       this.binaryMask_List_media = binary_masks;
-      
-//       // CRITICAL: Create new array references to trigger reactivity
-//       this.binaryMaskList = binary_masks.map(path => `${this.$store.state.root_api}${path}`);
-//       this.selectedMasks = Array.from({ length: this.binaryMaskList.length }, (_, i) => i);
-
-//       // Store object masks data
-//       this.binaryMasks_objects_detected = { ...responseData.objects_detected_masks } || {};
-//       this.allObjectsBinaryMasks = { ...this.binaryMasks_objects_detected };
-      
-//       console.log('✅ Wall masks loaded:', this.binaryMaskList.length, 'masks');
-//       console.log('📦 Object masks found:', Object.keys(this.binaryMasks_objects_detected).length, 'objects');
-
-//       // IMMEDIATE UPDATE TRIGGER
-//       this.maskUpdateTrigger += 1; // This will force child component to react
-      
-//       // Force canvas update immediately
-//       this.$nextTick(() => {
-//         this.forceCanvasUpdate();
-        
-//         // Additional force update after a short delay to ensure rendering
-//         setTimeout(() => {
-//           this.forceCanvasUpdate();
-//         }, 100);
-//       });
-
-//       // Handle object mask caching
-//       if (Object.keys(this.binaryMasks_objects_detected).length > 0) {
-//         this.initializeObjectMaskCacheImmediate();
-//       } else {
-//         this.objectMaskCacheReady = true;
-//         console.log('📭 No object masks to preload');
-//       }
-//     }
-//   } catch (error) {
-//     console.error("❌ Failed to fetch binary wall masks:", error);
-//     this.error.binaryMasks = error.message;
-//     this.showError('Failed to Load Wall Masks', error.message, () => this.fetchBinaryWallMasks());
-//   } finally {
-//     this.loading.binaryMasks = false;
-//   }
-// },
     // ==========================================
-    // OBJECT MASK CACHING SYSTEM
+    // OBJECT MASK CACHING
     // ==========================================
-    
-    async initializeObjectMaskCacheImmediate() {
-      // Prevent multiple initializations
+    async initializeObjectMaskCache() {
       if (this.preloadingStarted) {
         return this.cacheInitializationPromise;
       }
 
       this.preloadingStarted = true;
-      console.log('🚀 Starting immediate object mask preloading...');
+      console.log('🚀 Starting object mask caching...');
 
-      // Create a single promise for the entire initialization
       this.cacheInitializationPromise = this.performObjectMaskCaching();
       
-      // Don't await - let it run in background
       this.cacheInitializationPromise
-        .then(() => {
-          console.log('✅ Object mask preloading completed successfully');
-        })
-        .catch((error) => {
-          console.error('❌ Object mask preloading failed:', error);
-        });
+        .then(() => console.log('✅ Caching completed'))
+        .catch(error => console.error('❌ Caching failed:', error));
 
       return this.cacheInitializationPromise;
     },
@@ -1668,53 +1159,38 @@ async fetch3d_models_generated_by_room() {
       this.objectMaskLoadingTotal = objectEntries.length;
       this.objectMaskLoadingProgress = 0;
 
-      console.log(`📦 Caching ${this.objectMaskLoadingTotal} object masks...`);
-
-      // Clear existing cache
       this.objectMaskCache.clear();
       this.cachedObjectImages.clear();
 
-      // Process in smaller chunks to prevent UI blocking
       const CHUNK_SIZE = 2;
       const chunks = this.createChunks(objectEntries, CHUNK_SIZE);
-      
       let processedCount = 0;
 
       try {
         for (let chunkIndex = 0; chunkIndex < chunks.length; chunkIndex++) {
           const chunk = chunks[chunkIndex];
           
-          // Process chunk with Promise.allSettled to handle failures gracefully
-          const chunkResults = await Promise.allSettled(
+          await Promise.allSettled(
             chunk.map(([objectKey, maskPath]) => 
               this.loadAndCacheObjectMask(objectKey, maskPath)
             )
           );
 
-          // Update progress
           processedCount += chunk.length;
           this.objectMaskLoadingProgress = Math.round((processedCount / this.objectMaskLoadingTotal) * 100);
 
-          // Log progress
-          console.log(`📊 Progress: ${this.objectMaskLoadingProgress}% (${processedCount}/${this.objectMaskLoadingTotal})`);
-
-          // Small delay between chunks to keep UI responsive
           if (chunkIndex < chunks.length - 1) {
             await this.delay(25);
           }
         }
 
-        // Mark as ready
         this.objectMaskCacheReady = true;
-        console.log('🎉 All object masks cached and ready!');
-
-        // Notify if currently in furniture mode
+        
         if (this.select_replace === 'All') {
           this.$message?.success('Furniture detection ready!', 2);
         }
-
       } catch (error) {
-        console.error('Failed during object mask caching:', error);
+        console.error('Caching error:', error);
         throw error;
       }
     },
@@ -1724,7 +1200,6 @@ async fetch3d_models_generated_by_room() {
         const fullUrl = `${this.$store.state.root_media_api}${maskPath}`;
         const img = await this.loadImageWithTimeout(fullUrl, 8000);
 
-        // Cache both the URL and the actual Image object
         const cacheData = {
           image: img,
           url: fullUrl,
@@ -1735,17 +1210,16 @@ async fetch3d_models_generated_by_room() {
         };
 
         this.objectMaskCache.set(objectKey, cacheData);
-        this.cachedObjectImages.set(objectKey, img); // Direct image access
+        this.cachedObjectImages.set(objectKey, img);
 
         return cacheData;
       } catch (error) {
-        console.warn(`Failed to cache mask for ${objectKey}:`, error.message);
+        console.warn(`Failed to cache ${objectKey}:`, error.message);
         
         const errorData = {
           image: null,
           url: fullUrl,
           objectKey: objectKey,
-          maskPath: maskPath,
           loaded: false,
           error: error.message
         };
@@ -1755,26 +1229,12 @@ async fetch3d_models_generated_by_room() {
       }
     },
 
-    // ==========================================
-    // UTILITY METHODS
-    // ==========================================
-    
-    createChunks(array, chunkSize) {
-      const chunks = [];
-      for (let i = 0; i < array.length; i += chunkSize) {
-        chunks.push(array.slice(i, i + chunkSize));
-      }
-      return chunks;
-    },
-
     loadImageWithTimeout(src, timeout = 8000) {
       return new Promise((resolve, reject) => {
         const img = new Image();
         img.crossOrigin = 'anonymous';
         
-        const timeoutId = setTimeout(() => {
-          reject(new Error(`Timeout: ${src}`));
-        }, timeout);
+        const timeoutId = setTimeout(() => reject(new Error(`Timeout: ${src}`)), timeout);
         
         img.onload = () => {
           clearTimeout(timeoutId);
@@ -1790,95 +1250,283 @@ async fetch3d_models_generated_by_room() {
       });
     },
 
-    delay(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
+    // ==========================================
+    // OBJECT REMOVAL (canvas_item_remover_render)
+    // ==========================================
+    onObjectSelectionChanged(selectionData) {
+      this.selected_objects_binary_masks = selectionData.selectedObjects;
+      
+      if (selectionData.selectedObjects.length > 0) {
+        this.$message?.success(`Selected ${selectionData.selectedObjects.length} objects`, 2);
+      }
+    },
+
+    async onObjectsSelectedForRemoval(removalData) {
+      console.log('🗑️ Removing objects:', removalData);
+      
+      try {
+        this.canvasLoading = true;
+        
+        const result = await this.removeObjectsFromRoom(removalData);
+        
+        if (!result.error) {
+          this.binaryMasks_objects_detected = result.objects_detected_masks || {};
+          this.base_image_url = this.$store.state.root_media_api + result.final_output;
+          
+          this.forceCanvasUpdate();
+          this.$message?.success(`Removed ${removalData.selectedObjects.length} objects!`, 3);
+          
+          if (Object.keys(this.binaryMasks_objects_detected).length > 0) {
+            await this.refreshObjectMaskCache();
+          }
+        } else {
+          throw new Error(result.message || 'Failed to remove objects');
+        }
+      } catch (error) {
+        console.error('❌ Object removal failed:', error);
+        this.$message?.error(`Failed: ${error.message}`, 4);
+        this.showError('Object Removal Failed', error.message);
+      } finally {
+        this.canvasLoading = false;
+      }
+    },
+
+    async removeObjectsFromRoom(removalData) {
+      const roomId = this.$route.params.id;
+      const url = `${this.$store.state.root_api}engine/room-remove-object/`;
+      
+      const requestData = {
+        room_id: roomId,
+        binary_mask_key: removalData.selectedObjects,
+        object_masks: removalData.objectMasks,
+        canvas_dimensions: removalData.canvasDimensions
+      };
+
+      return await this.makeApiRequest(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Token ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify(requestData)
+      }, 'removeObjects');
+    },
+
+    async makeRoomEmpty() {
+      this.canvasLoading = true;
+
+      try {
+        const url = `${this.$store.state.root_api}engine/make-room-empty/`;
+        const requestBody = { room_id: this.$route.params.id };
+
+        const responseData = await this.makeApiRequest(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${localStorage.getItem('token')}`
+          },
+          body: JSON.stringify(requestBody)
+        });
+
+        if (responseData?.final_output) {
+          this.base_image_url = this.$store.state.root_media_api + responseData.final_output;
+          await this.fetchBinaryWallMasks();
+          this.forceCanvasUpdate();
+          this.$message.success('Room emptied successfully!');
+        }
+      } catch (error) {
+        console.error('❌ Failed to empty room:', error);
+      } finally {
+        this.canvasLoading = false;
+      }
+    },
+
+    async resetChangesinBaseImage() {
+      this.canvasLoading = true;
+
+      try {
+        const url = `${this.$store.state.root_api}engine/reset-room/`;
+        const requestBody = { room_id: this.$route.params.id };
+
+        const responseData = await this.makeApiRequest(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${localStorage.getItem('token')}`
+          },
+          body: JSON.stringify(requestBody)
+        });
+
+        if (responseData?.final_output) {
+          this.base_image_url = this.$store.state.root_media_api + responseData.final_output;
+          await this.fetchBinaryWallMasks();
+          this.forceCanvasUpdate();
+          this.$message.success('Room reset successfully!');
+        }
+      } catch (error) {
+        console.error('❌ Reset failed:', error);
+      } finally {
+        this.canvasLoading = false;
+      }
+    },
+
+    async refreshObjectMaskCache() {
+      console.log('🔄 Refreshing cache...');
+      
+      try {
+        this.clearAllCaches();
+        
+        if (Object.keys(this.binaryMasks_objects_detected).length > 0) {
+          await this.initializeObjectMaskCache();
+        }
+      } catch (error) {
+        console.error('Cache refresh failed:', error);
+      }
     },
 
     // ==========================================
-    // UI INTERACTION METHODS
+    // WALL & FLOOR TEXTURES
     // ==========================================
-    
+    selected_wall_masks(masks) {
+      this.selected_binarymasks_walls = masks;
+    },
+
+    async wallTextureSelected(texture_id) {
+      if (this.selected_binarymasks_walls.length === 0) {
+        this.$message.warning('Please select at least one wall');
+        return;
+      }
+
+      this.canvasLoading = true;
+
+      try {
+        const url = `${this.$store.state.root_api}engine/room-wall-apply-mask-texture/`;
+        const requestBody = {
+          texture_id: texture_id,
+          selectedMasks: this.selected_binarymasks_walls,
+          room_id: this.$route.params.id,
+          binaryMask_List_media: this.binaryMask_List_media
+        };
+
+        const responseData = await this.makeApiRequest(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${localStorage.getItem('token')}`
+          },
+          body: JSON.stringify(requestBody)
+        }, 'applyWallTexture');
+
+        if (responseData?.final_output) {
+          this.base_image_url = this.$store.state.root_media_api + responseData.final_output + '?t=' + Date.now();
+          this.forceCanvasUpdate();
+          this.$message.success('Wall texture applied!');
+        }
+      } catch (error) {
+        console.error('❌ Wall texture failed:', error);
+        this.showError('Failed to Apply Wall Texture', error.message);
+      } finally {
+        this.canvasLoading = false;
+      }
+    },
+
+    async floorTextureSelected(texture_id) {
+      this.canvasLoading = true;
+
+      try {
+        const url = `${this.$store.state.root_api}engine/room-floor-changer/`;
+        const requestBody = {
+          texture_id: texture_id,
+          room_id: this.$route.params.id
+        };
+
+        const responseData = await this.makeApiRequest(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${localStorage.getItem('token')}`
+          },
+          body: JSON.stringify(requestBody)
+        }, 'applyFloorTexture');
+
+        if (responseData?.final_output) {
+          this.base_image_url = this.$store.state.root_media_api + responseData.final_output + '?t=' + Date.now();
+          this.forceCanvasUpdate();
+          this.$message.success('Floor texture applied!');
+        }
+      } catch (error) {
+        console.error('❌ Floor texture failed:', error);
+        this.showError('Failed to Apply Floor Texture', error.message);
+      } finally {
+        this.canvasLoading = false;
+      }
+    },
+
+    // ==========================================
+    // UI METHODS
+    // ==========================================
+    changeCurrentTab(tab) {
+      this.current_tab = tab;
+      this.generated3dModel_url = '';
+      this.processing_generate_is_Loading = false;
+      this.model_instance_id = '';
+    },
+
     selectActiveTab(tabName) {
       this.active_tab_image = tabName;
       
       if (tabName === 'item_replacement') {
-        // Handle item replacement mode
         this.showSelectionButtons = false;
         this.selectedMasks = [];
         this.selected_objects_binary_masks = [];
-        this.updateCanvasGeneral();
-      } else if (tabName === 'home_design') {
-        // Handle home design mode - maintain current category
-        this.selectCategory(this.select_replace);
       }
       
       this.forceCanvasUpdate();
     },
 
     selectCategory(category) {
-      console.log('🎯 Selecting category:', category);
       this.select_replace = category;
       
       if (category === 'All') {
         this.showSelectionButtons = false;
         this.selectedMasks = [];
         
-        // Check cache status for immediate switching
         if (this.objectMaskCacheReady && this.cachedObjectImages.size > 0) {
-          console.log('✨ Using cached masks (instant switch!)');
           this.switchToFurnitureModeWithCache();
         } else if (this.preloadingStarted && this.cacheInitializationPromise) {
-          console.log('⏳ Cache loading in progress...');
           this.showFurnitureLoadingState();
           this.waitForCacheAndSwitch();
         } else {
-          console.log('🔄 Starting cache initialization...');
           this.showFurnitureLoadingState();
-          this.initializeObjectMaskCacheImmediate().then(() => {
-            if (this.select_replace === 'ALL') {
+          this.initializeObjectMaskCache().then(() => {
+            if (this.select_replace === 'All') {
               this.switchToFurnitureModeWithCache();
             }
           });
         }
-        
       } else if (category === 'Wall') {
         this.showSelectionButtons = true;
         this.selected_objects_binary_masks = [];
-        this.updateCanvasForWalls();
-        
       } else if (category === 'Floor') {
         this.showSelectionButtons = false;
         this.selectedMasks = [];
         this.selected_objects_binary_masks = [];
-        this.updateCanvasForFloor();
-        
       } else if (category === 'Lights') {
         this.showSelectionButtons = false;
         this.selectedMasks = [];
         this.selected_objects_binary_masks = [];
-        this.updateCanvasForLights();
       }
       
       this.forceCanvasUpdate();
     },
 
-    // ==========================================
-    // CANVAS UPDATE METHODS
-    // ==========================================
-    
     switchToFurnitureModeWithCache() {
       this.$nextTick(() => {
-        console.log('🪑 Switching to furniture mode with cached data...');
-        
         if (this.cachedObjectImages && this.cachedObjectImages.size > 0) {
           this.$message?.destroy();
           this.$message?.success(`Furniture mode ready! (${this.cachedObjectImages.size} items)`, 2);
         } else if (Object.keys(this.binaryMasks_objects_detected).length === 0) {
-          console.log('📭 No furniture objects detected - showing empty furniture mode');
-          this.$message?.info('No furniture objects detected in the room', 2);
-        } else {
-          console.log('🔄 Cache not ready, falling back to regular furniture mode...');
-          this.showFurnitureLoadingState();
+          this.$message?.info('No furniture objects detected', 2);
         }
         
         this.forceCanvasUpdate();
@@ -1899,118 +1547,25 @@ async fetch3d_models_generated_by_room() {
       } catch (error) {
         this.$message?.destroy();
         this.$message?.error('Failed to load furniture detection', 3);
-        console.error('Cache initialization failed:', error);
       }
     },
 
-    updateCanvasForWalls() {
-      console.log('🧱 Updating canvas for walls mode');
-      // Canvas component will receive updated props automatically
-    },
-
-    updateCanvasForFloor() {
-      console.log('🏢 Updating canvas for floor mode');
-      // Canvas component will receive updated props automatically
-    },
-
-    updateCanvasForLights() {
-      console.log('💡 Updating canvas for lights mode');
-      // Canvas component will receive updated props automatically
-    },
-
-    updateCanvasGeneral() {
-      console.log('⚙️ Updating canvas for general mode');
-      // Canvas component will receive updated props automatically
-    },
-
-    // forceCanvasUpdate() {
-    //   console.log('🔄 Force updating canvas...');
+    forceCanvasUpdate() {
+      this.canvasKey += 1;
+      this.maskUpdateTrigger += 1;
       
-    //   // Increment key to force canvas component re-render
-    //   this.canvasKey += 1;
-      
-    //   // Wait for next tick to ensure props are updated
-    //   this.$nextTick(() => {
-    //     console.log('✅ Canvas update completed');
-    //   });
-    // },
-    
-// 3. Enhanced forceCanvasUpdate method
-forceCanvasUpdate() {
-  console.log('🔄 Force updating canvas...');
-  
-  // Increment key to force canvas component re-render
-  this.canvasKey += 1;
-  
-  // Also increment mask update trigger
-  this.maskUpdateTrigger += 1;
-  
-  // Ensure child components receive the updates
-  this.$nextTick(() => {
-    console.log('✅ Canvas update completed');
-    
-    // Emit an event to child components if needed
-    this.$emit('masks-updated', {
-      binaryMasks: this.binaryMaskList,
-      selectedMasks: this.selectedMasks,
-      timestamp: Date.now()
-    });
-  });
-},
-
-    // ==========================================
-    // CACHE MANAGEMENT METHODS
-    // ==========================================
-    
-    clearAllObjectMaskState() {
-      console.log('🗑️ Clearing ALL object mask state...');
-      
-      // Clear parent component cache
-      if (this.objectMaskCache) {
-        this.objectMaskCache.clear();
-      }
-      if (this.cachedObjectImages) {
-        this.cachedObjectImages.clear();
-      }
-      
-      // Reset ALL cache flags
-      this.objectMaskCacheReady = false;
-      this.preloadingStarted = false;
-      this.cacheInitializationPromise = null;
+      this.$nextTick(() => {
+        this.$emit('masks-updated', {
+          binaryMasks: this.binaryMaskList,
+          selectedMasks: this.selectedMasks,
+          timestamp: Date.now()
+        });
+      });
     },
 
-    getCacheStatistics() {
-      return {
-        total: this.objectMaskLoadingTotal,
-        loaded: this.cachedObjectImages.size,
-        ready: this.objectMaskCacheReady,
-        progress: this.objectMaskLoadingProgress,
-        preloadingStarted: this.preloadingStarted
-      };
-    },
-
-    getCachedObjectMask(objectKey) {
-      const cached = this.objectMaskCache.get(objectKey);
-      if (cached && cached.loaded) {
-        return cached.image;
-      }
-      return null;
-    },
-
-    isObjectMaskCached(objectKey) {
-      const cached = this.objectMaskCache.get(objectKey);
-      return cached && cached.loaded;
-    },
-
-    // ==========================================
-    // EVENT HANDLERS
-    // ==========================================
-    
     onProcessingProgress(progress) {
       this.processingCurrent = progress.current;
       this.processingTotal = progress.total;
-      
-      // Calculate percentage
       this.processingProgress = this.processingTotal > 0 
         ? Math.round((this.processingCurrent / this.processingTotal) * 100)
         : 0;
@@ -2021,419 +1576,347 @@ forceCanvasUpdate() {
       this.processingCurrent = 0;
       this.processingTotal = 0;
       this.processingProgress = 0;
-      
-      console.log('🎉 Object processing completed!');
+      this.$message?.success('Processing completed!', 2);
     },
 
-    onSelectionChanged(selectionData) {
-      this.selectedMasks = selectionData.selectedMasks;
-      
-      if (this.selectedMasks.length > 0) {
-        this.processSelectedWalls(selectionData);
+    // ==========================================
+    // DRAWER MODALS
+    // ==========================================
+    wallsSeeAll() {
+      this.openSeeAll_Walls = true;
+    },
+
+    floorSeeAll() {
+      this.openSeeAll_Floor = true;
+    },
+    
+    product_selected_all_tabs_section(e) {
+  // console.log("product tabs selections")
+  // console.log(e)
+
+  if (e.type === 'floor') {
+    this.selectCategory('Floor')
+    this.$nextTick(() => {
+      if (this.select_replace === 'Floor' && this.$refs.floor_products_list) {
+        this.$refs.floor_products_list.selectTexture(e.id)
+      }
+    })
+  }
+  
+  if (e.type === 'product') {
+    this.selectCategory('Furniture')
+    console.log("------------------------------------------")
+    this.selected_model_width=e.width
+    this.selected_model_height=e.height
+    this.selected_model_depth=e.depth
+    console.log(e)
+    console.log(this.selected_model_width)
+    console.log(this.selected_model_height)
+    console.log(this.selected_model_depth)
+    this.$nextTick(() => {
+      if (this.select_replace === 'Furniture' && this.$refs.furniture_products_list) {
+        this.$refs.furniture_products_list.updateItemRendering(e.id, e.model_url,e.width,e.height,e.depth)
+      }
+    })
+  }
+  
+  if (e.type === 'wall') {
+    this.selectCategory('Wall')
+    this.$nextTick(() => {
+      if (this.current_tab === 'image' && 
+          this.active_tab_image === 'item_replacement' && 
+          this.select_replace === 'Wall' && 
+          this.$refs.wall_products_list) {
+        // console.log(this.$refs)
+        this.$refs.wall_products_list.selectTexture(e.id)
+      }
+    })
+  }
+  
+  if (e.type === 'light') {
+    this.selectCategory('Lights')
+    this.$nextTick(() => {
+      if (this.select_replace === 'Lights' && this.$refs.lights_list) {
+        this.$refs.lights_list.updateItemRendering(e.id, e.light_type, e.model_url)
+      }
+    })
+  }
+},
+
+    SeeAllProducts(e) {
+      console.log(e)
+      this.openSeeAll_products = true;
+    },
+
+
+    async Change_Room_SeeAll() {
+      await Promise.all([
+        this.fetchExampleRooms(),
+        this.fetchUserHistoryRooms()
+      ]);
+      this.openSeeAll_ChangeRoom = true;
+    },
+
+    onClose_drawer_modal() {
+      this.openSeeAll_Walls = false;
+      this.openSeeAll_Floor = false;
+      this.closeShareMenu = false;
+      this.openSeeAll_products=false;
+      this.openSeeAll_ChangeRoom = false;
+    },
+
+    async fetchExampleRooms() {
+      try {
+        const url = `${this.$store.state.root_api}room/api/example-rooms/`;
+        const response = await this.makeApiRequest(url, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${localStorage.getItem('token')}`
+          }
+        }, 'exampleRooms');
+
+        if (response?.data) {
+          this.exampleImages_changeRoom = response.data;
+        }
+      } catch (error) {
+        console.error('Failed to fetch example rooms:', error);
       }
     },
 
-    onObjectSelectionChanged(selectionData) {
-      this.selected_objects_binary_masks = selectionData.selectedObjects;
-      
-      if (this.selected_objects_binary_masks.length > 0) {
-        this.processSelectedObjects(selectionData);
+    async fetchUserHistoryRooms() {
+      try {
+        const url = `${this.$store.state.root_api}room/api/user-history-rooms/`;
+        const response = await this.makeApiRequest(url, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${localStorage.getItem('token')}`
+          }
+        }, 'historyRooms');
+
+        if (response?.data) {
+          this.your_history_change_room = response.data;
+        }
+      } catch (error) {
+        console.error('Failed to fetch history rooms:', error);
       }
     },
 
-    processSelectedWalls(selectionData) {
-      console.log('🧱 Processing selected walls:', selectionData.selectedMasks);
-      // Add your wall processing logic here
-    },
-
-    processSelectedObjects(selectionData) {
-      console.log('🪑 Processing selected objects:', selectionData.selectedObjects);
-      // Add your object processing logic here
-    },
-
-    // ==========================================
-    // ERROR HANDLING
-    // ==========================================
-    
-    showError(title, description, retryFunction = null) {
-      this.modalError = {
-        title,
-        description,
-        retry: retryFunction
-      };
-      this.showErrorModal = true;
-    },
-
-    handleImageError(event) {
-      console.error('Image failed to load:', event.target.src);
-      event.target.src = '/path/to/fallback-image.jpg'; // Add fallback image
-    },
-
-    // ==========================================
-    // DEBUGGING METHODS
-    // ==========================================
-    
-    debugCurrentState() {
-      console.log('🐛 DEBUG: Current component state:', {
-        current_tab: this.current_tab,
-        active_tab_image: this.active_tab_image,
-        select_replace: this.select_replace,
-        base_image_url: this.base_image_url,
-        is_ready: this.is_ready,
-        roomRetryCount: this.roomRetryCount,
-        binaryMaskList_count: this.binaryMaskList.length,
-        binaryMasks_objects_detected_count: Object.keys(this.binaryMasks_objects_detected).length,
-        objectMaskCacheReady: this.objectMaskCacheReady,
-        cachedObjectImages_size: this.cachedObjectImages?.size || 0,
-        selectedMasks: this.selectedMasks,
-        selected_objects_binary_masks: this.selected_objects_binary_masks,
-        canvasLoading: this.canvasLoading,
-        loading: this.loading,
-        error: this.error
+    goToCatalogue(id) {
+      this.openSeeAll_ChangeRoom = false;
+      this.$router.push({
+        path: `/update-catalogue/${id}`,
+        query: { t: Date.now() }
+      }).then(() => {
+        this.$router.go(0);
       });
     },
 
-    debugCacheStatus() {
-      const stats = this.getCacheStatistics();
-      console.log('🐛 Cache Status:', stats);
-      return stats;
-    },
-    
-// ==========================================================
-/// Objects Detection 
-// ==========================================================
+    async startTestRoom(room_id) {
+      try {
+        const url = `${this.$store.state.root_api}room/api/start-example-room/${room_id}`;
+        const response = await this.makeApiRequest(url, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${localStorage.getItem('token')}`
+          }
+        }, 'startTestRoom');
 
-// Enhanced object selection handler
-  onObjectSelectionChanged(selectionData) {
-    console.log('🪑 Object selection changed:', selectionData);
-    this.selected_objects_binary_masks = selectionData.selectedObjects;
-    
-    // Optional: Show selection feedback
-    if (selectionData.selectedObjects.length > 0) {
-      this.$message?.success(`Selected ${selectionData.selectedObjects.length} objects`, 2);
-    }
-  },
-
-  // Handle object removal requests
-  async onObjectsSelectedForRemoval(removalData) {
-    console.log('🗑️ Objects selected for removal:', removalData);
-    
-    try {
-      // Show loading state
-      this.canvasLoading = true;
-      
-      // Call your removal API
-      const result = await this.removeObjectsFromRoom(removalData);
-      console.log(" Old Binary MAsks ==========================================")
-      console.log(this.binaryMasks_objects_detected)
-      console.log(" Result Recieved ==========================================")
-      console.log(result)
-      console.log(" New  Binary MAsks ==========================================")
-      console.log(result.objects_detected_masks)
-      if (!result.error) {
-        // Update the binary masks with new data
-        this.binaryMasks_objects_detected = result.objects_detected_masks || {};
-        this.base_image_url = this.$store.state.root_media_api + result.final_output ;
-        
-        // Force canvas refresh
-        this.forceCanvasUpdate();
-        
-        // Show success message
-        this.$message?.success(`Successfully removed ${removalData.selectedObjects.length} objects!`, 3);
-        
-        // Optional: Refresh object mask cache if needed
-        if (Object.keys(this.binaryMasks_objects_detected).length > 0) {
-          await this.refreshObjectMaskCache();
+        if (response?.data) {
+          this.$router.push({
+            name: 'update_catelogue',
+            params: { id: response.data.id },
+            query: { t: Date.now() }
+          }).then(() => {
+            this.$router.go(0);
+          });
         }
-        
-      } else {
-        throw new Error(result.message || 'Failed to remove objects');
+      } catch (error) {
+        console.error('Failed to start test room:', error);
       }
-      
-    } catch (error) {
-      console.error('❌ Failed to remove objects:', error);
-      this.$message?.error(`Failed to remove objects: ${error.message}`, 4);
-      this.showError('Object Removal Failed', error.message);
-    } finally {
-      this.canvasLoading = false;
-    }
-  },
-  
+    },
 
-  // API call to remove objects from room
-  async removeObjectsFromRoom(removalData) {
-    const roomId = this.$route.params.id;
-    const url = `${this.$store.state.root_api}engine/room-remove-object/`;
-    
-    const requestData = {
-      room_id: roomId,
-      binary_mask_key: removalData.selectedObjects,
-      object_masks: removalData.objectMasks,
-      canvas_dimensions: removalData.canvasDimensions
-    };
-    console.log(requestData)
+    // ==========================================
+    // 3D MODEL METHODS
+    // ==========================================
+    async new3DModelGenerated(e) {
+      this.generated3dModel_url = this.$store.state.root_media_api + e.media_url;
+      this.model_instance_id = e.new3d_model_instance;
+      await this.fetch3d_models_generated_by_room();
+    },
 
-    try {
-      const response = await this.makeApiRequest(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-              'Authorization': `Token ${localStorage.getItem('token')}`
+    async get_3d_rendered_model_details(generated_3d_model_id) {
+      this.loading_generated_models_history = true;
 
-        },
-        body: JSON.stringify(requestData)
-      }, 'removeObjects');
+      try {
+        const roomId = this.$route.params.id;
+        const url = `${this.$store.state.root_api}engine/generated-3d-models-history/${roomId}`;
+        const payload = { model_3d_id: generated_3d_model_id };
 
-      return response;
-    } catch (error) {
-      console.error('API call failed:', error);
-      throw error;
-    }
-  },
-// =====================================================  =====================================================
-// API CALLS To Update Operation as per the bbinary masks & texturing the area  Emmit & emit
-// =====================================================  =====================================================
-  // wallTextureSelected(e){
-  //   console.log(e)
-  // },
-  selected_wall_masks(e){
-    console.log(e)
-    this.selected_binarymasks_walls=e
-  },
-async  rescaleWallMask(e){
+        const responseData = await this.makeApiRequest(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${localStorage.getItem('token')}`
+          },
+          body: JSON.stringify(payload)
+        }, 'get_3d_model_details');
 
-// 2. FLOOR TEXTURE METHOD (corrected)
-  this.canvasLoading = true;
-
-  try {
-    const url = `${this.$store.state.root_api}engine/rescale-room-layout/`;
-    const requestBody = {
-      room_id: this.$route.params.id,
-    };
-
-    const responseData = await this.makeApiRequest(
-      url,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Token ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify(requestBody)
-      },
-      'rescale-room-walls-layout'
-    );
-
-    if (responseData) {
-      
-      await this.fetchBinaryWallMasks(); // This will refresh object masks too
-      this.forceCanvasUpdate();
-
-      this.$message.success('Floor texture applied successfully!');
-    } else {
-      throw new Error('No final output received from server');
-    }
-  } catch (error) {
-    console.error("Failed to apply floor texture:", error);
-    this.showError(
-      'Failed to Apply Floor Texture', 
-      error.message || 'An error occurred while applying the floor texture.', 
-      () => this.floorTextureSelected(texture_id)
-    );
-  } finally {
-    this.canvasLoading = false;
-  }
-},
-
-  // floorTextureSelected(e){
-  //   console.log(e)
-  // },
-
-
-// 1. WALL TEXTURE METHOD (corrected)
-async wallTextureSelected(texture_id) {
-  // Validation check
-  if (this.selected_binarymasks_walls.length === 0) {
-    this.$message.warning('Please select at least one wall before applying texture.');
-    return;
-  }
-
-  if (this.applyingTexture !== null) {
-    this.$message.warning('Please wait for the current texture application to complete.');
-    return;
-  }
-
-  this.applyingTexture = texture_id;
-  this.canvasLoading = true;
-
-  try {
-    const url = `${this.$store.state.root_api}engine/room-wall-apply-mask-texture/`;
-    const requestBody = {
-      texture_id: texture_id,
-      selectedMasks: this.selected_binarymasks_walls,
-      room_id: this.$route.params.id,
-      binaryMask_List_media: this.binaryMask_List_media,
-    };
-
-    const responseData = await this.makeApiRequest(
-      url,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Token ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify(requestBody)
-      },
-      'applyWallTexture'
-    );
-
-    if (responseData && responseData.final_output) {
-      // Update the base image with cache buster
-      this.base_image_url = this.$store.state.root_media_api + responseData.final_output + '?t=' + Date.now();
-      
-      // Force canvas to update with new image
-      this.forceCanvasUpdate();
-      
-      this.$message.success('Wall texture applied successfully!');
-    } else {
-      throw new Error('No final output received from server');
-    }
-  } catch (error) {
-    console.error("Failed to apply wall texture:", error);
-    this.showError(
-      'Failed to Apply Wall Texture', 
-      error.message || 'An error occurred while applying the wall texture.', 
-      () => this.wallTextureSelected(texture_id)
-    );
-  } finally {
-    this.applyingTexture = null;
-    this.canvasLoading = false;
-  }
-},
-
-// 2. FLOOR TEXTURE METHOD (corrected)
-async floorTextureSelected(texture_id) {
-  this.canvasLoading = true;
-
-  try {
-    const url = `${this.$store.state.root_api}engine/room-floor-changer/`;
-    const requestBody = {
-      texture_id: texture_id,
-      room_id: this.$route.params.id,
-    };
-
-    const responseData = await this.makeApiRequest(
-      url,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Token ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify(requestBody)
-      },
-      'applyFloorTexture'
-    );
-
-    if (responseData && responseData.final_output) {
-      // Update the base image with cache buster
-      this.base_image_url = this.$store.state.root_media_api + responseData.final_output + '?t=' + Date.now();
-      
-      // Force canvas to update with new image
-      this.forceCanvasUpdate();
-      
-      console.log("Floor texture applied:", responseData.final_output);
-      this.$message.success('Floor texture applied successfully!');
-    } else {
-      throw new Error('No final output received from server');
-    }
-  } catch (error) {
-    console.error("Failed to apply floor texture:", error);
-    this.showError(
-      'Failed to Apply Floor Texture', 
-      error.message || 'An error occurred while applying the floor texture.', 
-      () => this.floorTextureSelected(texture_id)
-    );
-  } finally {
-    this.canvasLoading = false;
-  }
-},
-
-
-
-  // Refresh object mask cache after removal
-  async refreshObjectMaskCache() {
-    console.log('🔄 Refreshing object mask cache after removal...');
-    
-    try {
-      // Clear existing cache
-      this.clearAllObjectMaskState();
-      
-      // Reinitialize if we have new objects
-      if (Object.keys(this.binaryMasks_objects_detected).length > 0) {
-        await this.initializeObjectMaskCacheImmediate();
+        if (responseData?.new_model) {
+          this.generated3dModel_url = this.$store.state.root_media_api + responseData.new_model.model_file_url;
+          this.model_instance_id = responseData.new_model.id;
+          this.processing_generate_is_Loading = false;
+          this.list_history_generated_3d_models = responseData.models || [];
+        }
+      } catch (error) {
+        console.error('Failed to fetch 3D model details:', error);
+      } finally {
+        this.loading_generated_models_history = false;
       }
+    },
+
+    processinggenerate_loading(isLoading) {
+      this.processing_generate_is_Loading = isLoading;
+    },
+
+    change3dModel(e) {
+      // console.log("-------------------")
+      // console.log(e)
+      this.item_replacement_renderer_3d_model_url = this.$store.state.root_media_api + e.model_url;
+      this.selected_3d_product_model = e.model_uuid;
+      this.selected_model_width=e.width
+      this.selected_model_height=e.height
+      this.selected_model_depth=e.depth
+    },
+
+    execute3DRederer() {
+      this.$refs.floor_item_3d_renderer.renderItem();
+    },
+
+    // ==========================================
+    // LIGHTS METHODS
+    // ==========================================
+    lightSelected(e) {
+      this.selectedlightuuid = e.uuid;
+      this.selected_light_type = e.type;
+      this.model_3d_url = this.$store.state.root_media_api + e.model_3d_url;
+    },
+
+    Apply_ceiling_light() {
+      if (this.select_replace === 'Lights' && this.selected_light_type === 'sunk') {
+        this.$refs.canvas_sunk_magnetic_lights_render.saveRoom();
+      }
+      if (this.select_replace === 'Lights' && this.selected_light_type === 'hanging') {
+        this.$refs.canvas_ceiling_3d_object_light_renderer.downloadCurrentSceneImage();
+      }
+    },
+
+    async magneticLightsMearjed(e) {
+      this.base_image_url = this.$store.state.root_media_api + e.image_url;
+      this.forceCanvasUpdate();
+    },
+
+    // ==========================================
+    // HOME DESIGN METHODS
+    // ==========================================
+    home_design_history_clicked(images) {
+      this.home_design_images = {
+        error: false,
+        home_design_id: null,
+        prompt_id: null,
+        generated_count: images.length,
+        images: images,
+        image_paths: images,
+        msg: 'Home design variations changed successfully'
+      };
+    },
+
+    newhome_designes_generated(e) {
+      this.home_design_images = e;
+      this.$refs.home_design_history.fetchGenerateHistory();
+    },
+
+    // ==========================================
+    // PRODUCT MOCKUP METHODS
+    // ==========================================
+    product_mockup_history_clicked(images) {
+      this.selected_product_mockups_group = images;
+      this.product_mockup_images = {
+        error: false,
+        home_design_id: null,
+        prompt_id: null,
+        generated_count: images.images.length,
+        images: images.images,
+        image_paths: images.images,
+        msg: 'Product mockup changed successfully'
+      };
+    },
+
+    new_product_mockup_generated(e) {
+      this.product_mockup_images = e;
+      this.$refs.product_mockup_history.fetchGenerateHistory();
+    },
+
+    // ==========================================
+    // PRODUCT METHODS
+    // ==========================================
+    add_new_product() {
+      this.showAddProduct = true;
+    },
+
+    onProductCreated() {
+      const userData = localStorage.getItem('user');
+      const user = JSON.parse(userData);
       
-    } catch (error) {
-      console.error('Failed to refresh object mask cache:', error);
-    }
-  },
+      if (user.is_business) {
+        this.$router.push('/business-dashboard/my-products');
+      } else if (user.is_professional) {
+        this.$router.push('/professional-dashboard/my-products');
+      }
+    },
 
-  // Enhanced processing progress handler
-  onProcessingProgress(progress) {
-    this.processingCurrent = progress.current;
-    this.processingTotal = progress.total;
-    this.processingProgress = this.processingTotal > 0 
-      ? Math.round((this.processingCurrent / this.processingTotal) * 100)
-      : 0;
-      
-    console.log(`📊 Object processing: ${this.processingProgress}% (${this.processingCurrent}/${this.processingTotal})`);
-  },
+    updateBaskeImageURL_CANVAS(imageUrl) {
+      this.base_image_url = this.$store.state.root_media_api + imageUrl;
+      this.forceCanvasUpdate();
+    },
 
-  // Enhanced processing complete handler
-  onProcessingComplete() {
-    this.processingObjects = false;
-    this.processingCurrent = 0;
-    this.processingTotal = 0;
-    this.processingProgress = 0;
-    
-    console.log('🎉 Object processing completed successfully!');
-    
-    // Optional: Show completion message
-    this.$message?.success('Object detection processing completed!', 2);
-  },
+    // ==========================================
+    // UTILITY METHODS
+    // ==========================================
+    createChunks(array, chunkSize) {
+      const chunks = [];
+      for (let i = 0; i < array.length; i += chunkSize) {
+        chunks.push(array.slice(i, i + chunkSize));
+      }
+      return chunks;
+    },
 
-  // Additional helper methods for better integration
+    delay(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    },
 
-  // Get current object selection status
-  getCurrentObjectSelectionStatus() {
-    return {
-      totalObjects: Object.keys(this.binaryMasks_objects_detected).length,
-      selectedObjects: this.selected_objects_binary_masks.length,
-      cacheReady: this.objectMaskCacheReady,
-      isProcessing: this.processingObjects
-    };
-  },
+    clearAllCaches() {
+      if (this.objectMaskCache) {
+        this.objectMaskCache.clear();
+      }
+      if (this.cachedObjectImages) {
+        this.cachedObjectImages.clear();
+      }
+      this.objectMaskCacheReady = false;
+      this.preloadingStarted = false;
+      this.cacheInitializationPromise = null;
+    },
 
-  // Force update canvas after object removal
-  forceCanvasUpdate() {
-    console.log('🔄 Force updating canvas after object removal...');
-    this.canvasKey += 1;
-    
-    this.$nextTick(() => {
-      console.log('✅ Canvas forced update completed');
-    });
-  },
-
-  async downloadImage() {
+    async downloadImage() {
       const response = await fetch(this.base_image_url);
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
 
-      const link = document.createElement("a");
+      const link = document.createElement('a');
       link.href = url;
-      link.download = "downloaded-image.jpg"; // filename
+      link.download = 'room-design.jpg';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -2441,39 +1924,21 @@ async floorTextureSelected(texture_id) {
       window.URL.revokeObjectURL(url);
     },
 
-  // Debug method for object mask status
-  debugObjectMaskStatus() {
-    const status = {
-      objectMasksDetected: Object.keys(this.binaryMasks_objects_detected).length,
-      cachedObjectImages: this.cachedObjectImages?.size || 0,
-      selectedObjects: this.selected_objects_binary_masks.length,
-      cacheReady: this.objectMaskCacheReady,
-      canvasLoading: this.canvasLoading,
-      currentTab: this.current_tab,
-      activeTabImage: this.active_tab_image
-    };
-    
-    console.log('🐛 Object Mask Debug Status:', status);
-    return status;
-  },
+    ApplyChanges() {
+      this.$router.push('/update-catalogue/render-results/' + this.$route.params.id);
+    },
 
-  // Method to manually trigger object mask refresh (for debugging)
-  async manualRefreshObjectMasks() {
-    console.log('🔧 Manual object mask refresh triggered');
-    
-    try {
-      this.canvasLoading = true;
-      await this.fetchBinaryWallMasks(); // This will refresh object masks too
-      this.forceCanvasUpdate();
-      
-      this.$message?.success('Object masks refreshed successfully!', 2);
-    } catch (error) {
-      console.error('Manual refresh failed:', error);
-      this.$message?.error('Failed to refresh object masks', 3);
-    } finally {
-      this.canvasLoading = false;
+    // ==========================================
+    // ERROR HANDLING
+    // ==========================================
+    showError(title, description, retryFunction = null) {
+      this.modalError = {
+        title,
+        description,
+        retry: retryFunction
+      };
+      this.showErrorModal = true;
     }
-  },
   },
 
   components: {
@@ -2483,42 +1948,25 @@ async floorTextureSelected(texture_id) {
     canvas_lights_render,
     canvas_unsunk_lights_render,
     canvas_walls_render,
-    
-    // 3d model renderer
     items_replacement_renderer,
-
-    // product listings 
     fernitures,
     walls,
     floor,
     lights,
     ai_catalog_item_replacement_3d_products,
-
-
-    // bottom drawer Menu
     wall_textures_bottom_drawer_menu,
-floor_textures_bottom_drawer_menu,
-
-// 3d floor rendering 
-ceiling_3d_object_renderer,
-
-
-// home_design_panel
-side_panel_home_design,
-main_panel_home_design,
-history_panel_home_design,
-
-// edit_image
-side_panel_edit_image,
-main_panel_edit_image,
-history_panel_edit_image,
-
-
-// 3d tab 
-sidepanel_3d_tab,
-object_viewer_3d_tab,
-add_new_furniture,
-models_3d_generate_history
+    floor_textures_bottom_drawer_menu,
+    ceiling_3d_object_renderer,
+    side_panel_home_design,
+    main_panel_home_design,
+    history_panel_home_design,
+    side_panel_edit_image,
+    main_panel_edit_image,
+    history_panel_edit_image,
+    sidepanel_3d_tab,
+    object_viewer_3d_tab,
+    add_new_furniture,
+    models_3d_generate_history
   }
 }
 </script>

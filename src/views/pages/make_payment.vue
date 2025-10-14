@@ -1,32 +1,32 @@
 <template>
-    <div style="display:flex;justify-content: center;align-items: center;padding:20px">
-        <div style="max-width:900px;background:white;border-radius:12px;;overflow:hidden">
+    <div style="display:flex;justify-content: center;align-items: center;padding:20px" v-if="plan_details">
+        <div style="max-width:900px;background:white;border-radius:12px;overflow:hidden">
             <a-row>
                 <a-col :sm="24" :xs="24" :md="12" :lg="12" style="padding:40px;border-right:1px solid #f0f0f0">
                     <p style="color:#666;margin-bottom:8px;font-size:16px">Subscribe to Pro Yearly</p>
-                    <h1 style="font-size:32px;font-weight:600;margin:0;color:#333">$900.00 <span style="font-size:18px;font-weight:400;color:#666">/year</span></h1>
-                    <p style="color:#999;margin-top:8px;font-size:14px">$75.00 / month billed annually</p>
+                    <h1 style="font-size:32px;font-weight:600;margin:0;color:#333">${{plan_details.yearly_charges}} <span style="font-size:18px;font-weight:400;color:#666">/year</span></h1>
+                    <p style="color:#999;margin-top:8px;font-size:14px">${{plan_details.monthly_charges}} / month billed annually</p>
                     
                     <div style="margin-top:40px;padding-top:30px;border-top:1px solid #f0f0f0">
                         <div style="display:flex;justify-content:space-between;margin-bottom:15px">
                             <span style="color:#666">Pro</span>
-                            <span style="color:#333;font-weight:500">$900.00</span>
+                            <span style="color:#333;font-weight:500">${{plan_details.yearly_charges}}</span>
                         </div>
                         <p style="color:#999;font-size:12px;margin:0">Billed annually</p>
                         
                         <div style="display:flex;justify-content:space-between;margin:20px 0 8px 0;padding-top:15px;border-top:1px solid #f0f0f0">
                             <span style="color:#666">Subtotal</span>
-                            <span style="color:#333;font-weight:500">$900.00</span>
+                            <span style="color:#333;font-weight:500">${{plan_details.yearly_charges}}</span>
                         </div>
                         
                         <div style="display:flex;justify-content:space-between;margin-bottom:20px">
                             <span style="color:#666">Tax</span>
-                            <span style="color:#333;font-weight:500">$0.00</span>
+                            <span style="color:#333;font-weight:500">$0</span>
                         </div>
                         
                         <div style="display:flex;justify-content:space-between;padding-top:15px;border-top:1px solid #f0f0f0">
                             <span style="color:#333;font-weight:600;font-size:16px">Total due today</span>
-                            <span style="color:#333;font-weight:600;font-size:16px">$900.00</span>
+                            <span style="color:#333;font-weight:600;font-size:16px">${{plan_details.yearly_charges}}</span>
                         </div>
                     </div>
                 </a-col>
@@ -84,7 +84,7 @@
                             <span style="color:#333;font-weight:500;font-size:16px">Total</span>
                             <div style="text-align:right">
                                 <div style="color:#666;font-size:14px;margin-bottom:2px">Amount to pay</div>
-                                <div style="color:#333;font-weight:600;font-size:18px">$900.00</div>
+                                <div style="color:#333;font-weight:600;font-size:18px">${{plan_details.yearly_charges}}</div>
                             </div>
                         </div>
                     </div>
@@ -96,12 +96,63 @@
                         </label>
                     </div>
                     
-                    <a-button @click="subscribe" size="large" type="primary" :disabled="!agreeTerms" style="width:100%;border:none;border-radius:8px;font-size:16px;font-weight:500;cursor:pointer;opacity:" :style="{opacity: agreeTerms ? '1' : '0.5'}">
-                        Subscribe
+                    <a-button 
+                        @click="subscribe" 
+                        size="large" 
+                        type="primary" 
+                        :disabled="!agreeTerms || loading" 
+                        :loading="loading"
+                        style="width:100%;border:none;border-radius:8px;font-size:16px;font-weight:500;cursor:pointer;" 
+                        :style="{opacity: agreeTerms && !loading ? '1' : '0.5'}"
+                    >
+                        {{ loading ? 'Processing...' : 'Subscribe' }}
                     </a-button>
                 </a-col>
             </a-row>
         </div>
+
+        <!-- Success Modal -->
+        <a-modal
+            v-model:visible="successModalVisible"
+            :footer="null"
+            :closable="false"
+            centered
+            width="450px"
+        >
+            <div style="text-align:center;padding:30px 20px">
+                <div style="width:80px;height:80px;background:#52c41a;border-radius:50%;margin:0 auto 20px;display:flex;align-items:center;justify-content:center">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                </div>
+                <h2 style="color:#333;font-size:24px;font-weight:600;margin-bottom:12px">Payment Successful!</h2>
+                <p style="color:#666;font-size:16px;margin-bottom:30px">
+                    Your subscription has been activated successfully.
+                </p>
+                <div v-if="purchase_successfull" style="background:#f8f9fa;padding:20px;border-radius:8px;margin-bottom:30px;text-align:left">
+                    <div style="display:flex;justify-content:space-between;margin-bottom:10px">
+                        <span style="color:#666">Plan:</span>
+                        <span style="color:#333;font-weight:500">Pro Yearly</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;margin-bottom:10px">
+                        <span style="color:#666">Amount:</span>
+                        <span style="color:#333;font-weight:500">${{plan_details.yearly_charges}}</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between">
+                        <span style="color:#666">Email:</span>
+                        <span style="color:#333;font-weight:500">{{email}}</span>
+                    </div>
+                </div>
+                <a-button 
+                    type="primary" 
+                    size="large" 
+                    @click="closeSuccessModal"
+                    style="width:100%;border-radius:8px;font-size:16px;font-weight:500"
+                >
+                    Continue
+                </a-button>
+            </div>
+        </a-modal>
     </div>
 </template>
 
@@ -110,19 +161,114 @@ export default {
     name: "make-payment",
     data() {
         return {
-            email: '',
+            currentUser: JSON.parse(localStorage.getItem('user') ),
+            
+            email: '',            
             paymentMethod: 'card',
             cardNumber: '',
             validUntil: '',
             ccv: '',
-            agreeTerms: false
+            agreeTerms: false,
+            plan_details: null,
+            purchase_successfull: null,
+            successModalVisible: false,
+            loading: false
         }
     },
+    mounted() {
+        this.fetchPricingPlan_details()
+    },
     methods: {
-        subscribe() {
-            if (this.agreeTerms) {
-                alert('Subscription initiated!');
+        async subscribe() {
+            if (!this.agreeTerms) {
+                this.$message.warning('Please agree to the terms and conditions');
+                return;
             }
+
+            if (!this.email) {
+                this.$message.warning('Please enter your email');
+                return;
+            }
+
+            if (this.paymentMethod === 'card') {
+                if (!this.cardNumber || !this.validUntil || !this.ccv) {
+                    this.$message.warning('Please fill in all card details');
+                    return;
+                }
+            }
+
+            this.loading = true;
+
+            try {
+                const response = await fetch(`${this.$store.state.root_api}subscription/api/get-plan-details/${this.$route.params.plan_type}/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        plan_type: this.$route.params.plan_type,
+                        email: this.email,
+                        paymentMethod: this.paymentMethod,
+                        cardNumber: this.cardNumber,
+                        validUntil: this.validUntil,
+                        ccv: this.ccv,
+                        agreeTerms: this.agreeTerms,
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    this.purchase_successfull = result.data;
+                    this.successModalVisible = true;
+                     if (this.currentUser.user_type === 'User') {
+                        this.$router.push({
+                            path: '/user-dashboard/my-messages',
+                        })
+                        }
+
+                        if (this.currentUser.user_type === 'Business' ) {
+                        this.$router.push({
+                            path: '/business-dashboard/manage-subscription',
+                        })
+                        if (this.currentUser.user_type === 'Professional') {
+                        this.$router.push({
+                            path: '/professional-dashboard/manage-subscription',
+                        })
+                    }
+                }
+
+                } else {
+                    this.$message.error(result.message || 'Payment failed. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error processing payment:', error);
+                this.$message.error('An error occurred while processing your payment. Please try again.');
+            } finally {
+                this.loading = false;
+            }
+        },
+        
+        async fetchPricingPlan_details() {
+            try {
+                const response = await fetch(`${this.$store.state.root_api}subscription/api/get-plan-details/${this.$route.params.plan_type}`, {
+                    method: 'GET',
+                });
+                const result = await response.json();
+                if (result.success) {
+                    this.plan_details = result.data;
+                }
+            } catch (error) {
+                console.error('Error loading plan details:', error);
+                this.$message.error('Failed to load plan details');
+            }
+        },
+
+        closeSuccessModal() {
+            this.$router.push('')
+            this.successModalVisible = false;
+            // Optionally redirect to dashboard or another page
+            // this.$router.push('/dashboard');
         }
     }
 }

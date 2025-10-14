@@ -1,5 +1,6 @@
 <template>
   <div v-if="!hideNavbarCompletely">
+    <!-- {{this.$store.state.token}} -->
     <navbar_1 v-if="!userAuthenticated"/>
     <navbar_2 v-else/>
   </div>

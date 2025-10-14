@@ -1,9 +1,4 @@
 <template>
-<a-modal v-model:open="modal_create_request_to_buisness" @close="CloseModal" title="Basic Modal" @ok="handleOk">
-      <p>Some contents...</p>
-      <p>Some contents...</p>
-      <p>Some contents...</p>
-    </a-modal>
     <div style="padding:10px">
         <!-- Loading State -->
         <div v-if="loading" style="text-align: center; padding: 50px;">
@@ -224,8 +219,7 @@ export default {
             activeKey: 'Visualization',
             business_info: {},
             loading: true,
-            error: null,
-            modal_create_request_to_buisness:true
+            error: null
         }
     },
     async mounted() {
@@ -238,9 +232,6 @@ export default {
         }
     },
     methods: {
-        CloseModal(){
-            this.modal_create_request_to_buisness=false
-        },
         async loadBusinessData() {
             try {
                 this.loading = true;

@@ -17,7 +17,6 @@
           />
         </a-col>
       </a-row>
-
       <!-- Table Section -->
       <a-row>
         <a-col span="24">
@@ -35,11 +34,10 @@
                 <!-- Custom columns -->
                 <template #bodyCell="{ column, record }">
                   <template v-if="column.key === 'id'">
-                    <span style="font-weight: 500; color: #262626;">{{ record.id }}</span>
+                    <span style="font-weight: 500; color: #262626;">{{  record.id.slice(-8) }}</span>
                   </template>
-                  
                   <template v-if="column.key === 'date'">
-                    <span style="color: #595959;">{{ record.date }}</span>
+                    <span style="color: #595959;">{{ formatDate(record.date) }}</span>
                   </template>
                   
                   <template v-if="column.key === 'payment'">
@@ -70,10 +68,10 @@
                 <a-row justify="space-between" align="top" style="margin-bottom: 12px;">
                   <a-col span="12">
                     <div style="font-weight: 600; color: #262626; font-size: 16px;">
-                      ID: {{ record.id }}
+                      ID: {{ record.id.slice(0,-4) }}
                     </div>
                     <div style="color: #8c8c8c; font-size: 14px; margin-top: 4px;">
-                      {{ record.date }}
+                      {{ formatDate(record.date) }}
                     </div>
                   </a-col>
                   <a-col span="12" style="text-align: right;">
@@ -202,10 +200,11 @@ export default {
           amount: 45,
           status: 'Successful',
         },
-      ]
+      ],
     }
   },
   mounted() {
+    this.fetch_my_transactions()
     this.handleResize();
     window.addEventListener('resize', this.handleResize);
   },
@@ -213,6 +212,46 @@ export default {
     window.removeEventListener('resize', this.handleResize);
   },
   methods: {
+    formatDate(dateStr) {
+    const date = new Date(dateStr); 
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric"
+    });
+  },
+    async fetch_my_transactions(){
+       try {
+                this.loading = true;
+                this.error = null;
+
+            const token = localStorage.getItem('token');
+                
+            const response = await fetch(`${this.$store.state.root_api}subscription/api/get-my-transactions-history/`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Token ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                    });
+                  const result = await response.json();
+                  // console.log(result)
+                if (result) {
+                    this.tableData = result;
+                } else {
+                    this.error = result.message || 'Business not found';
+                }
+              } catch (error) {
+                console.error('Error loading business data:', error);
+                if (error.response?.status === 404) {
+                    this.error = 'Business not found';
+                } else {
+                    this.error = 'Failed to load business information';
+                }
+            } finally {
+                this.loading = false;
+            }
+    },
     handleResize() {
       const isMobile = window.innerWidth <= 768;
       const desktopTable = document.querySelector('.desktop-table');

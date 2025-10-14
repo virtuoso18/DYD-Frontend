@@ -768,6 +768,11 @@ export default {
       credits: 10,
       isProcessingBg: false,
       isGenerating: false,
+
+      completedItemsCount: 0,
+    completedItemIds: [],
+    isInitialLoad: true,
+
       uploading: {
         main: false
       },
@@ -825,6 +830,8 @@ export default {
   
 // Add these lifecycle hooks:
 mounted() {
+   // Initialize completed count on first load
+  this.initializeCompletedCount()
   // Start queue polling when component mounts
   this.startQueuePolling()
 },
@@ -868,7 +875,37 @@ beforeUnmount() {
     goBack() {
       this.$emit('back')
     },
+    // Update your initializeCompletedCount method:
+async initializeCompletedCount() {
+  try {
+    const token = localStorage.getItem('token')
+    const response = await fetch(`${this.$store.state.root_api}engine/queue-status/?room_id=${this.$route.params.id}`, {
+      method:'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Token ${token}`,
+      },
+    })
     
+    if (response.ok) {
+      const result = await response.json()
+      const queueItems = result.queue || []
+      const completedItems = queueItems.filter(item => 
+        item.status === 'completed' && item.generated_model_id
+      )
+      
+      this.completedItemsCount = completedItems.length
+      this.completedItemIds = completedItems.map(item => item.id)
+      
+      // Set flag to false after initialization is complete
+      this.isInitialLoad = false
+    }
+  } catch (error) {
+    console.error('Failed to initialize completed count:', error)
+    // Still set flag to false even on error
+    this.isInitialLoad = false
+  }
+},
     editImage(key) {
       this.currentEditingKey = key
       
@@ -1062,26 +1099,71 @@ beforeUnmount() {
     }
   },
 
-    async fetchQueueStatus() {
-    try {
+  //   async fetchQueueStatus() {
+  //   try {
       
-             const token = localStorage.getItem('token')
-      const response = await fetch(`${this.$store.state.root_api}engine/queue-status/?room_id=${this.$route.params.id}`,
-        {method:"GET",
-          headers: {
-          'Content-Type': 'application/json',
-                  'Authorization': `Token ${token}`,
-        },}
+  //            const token = localStorage.getItem('token')
+  //     const response = await fetch(`${this.$store.state.root_api}engine/queue-status/?room_id=${this.$route.params.id}`,
+  //       {method:"GET",
+  //         headers: {
+  //         'Content-Type': 'application/json',
+  //                 'Authorization': `Token ${token}`,
+  //       },}
+  //     )
+  //     if (response.ok) {
+  //       const result = await response.json()
+  //       this.queueItems = result.queue || []
+  //       // this.$emit('queue-updated', item.generated_model_id)
+  //     }
+  //   } catch (error) {
+  //     console.error('Failed to fetch queue status:', error)
+  //   }
+  // },
+
+  async fetchQueueStatus() {
+  try {
+    const token = localStorage.getItem('token')
+    const response = await fetch(`${this.$store.state.root_api}engine/queue-status/?room_id=${this.$route.params.id}`,{
+      method:'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Token ${token}`,
+      },
+    })
+    
+    if (response.ok) {
+      const result = await response.json()
+      this.queueItems = result.queue || []
+      
+      // Get current completed items with generated_model_id
+      const currentCompletedItems = this.queueItems.filter(item => 
+        item.status === 'completed' && item.generated_model_id
       )
-      if (response.ok) {
-        const result = await response.json()
-        this.queueItems = result.queue || []
-        // this.$emit('queue-updated', item.generated_model_id)
+      
+      // Only check for newly completed items if not initial load
+      if (!this.isInitialLoad) {
+        // Find newly completed items by comparing with previous IDs
+        const newlyCompletedItems = currentCompletedItems.filter(item => 
+          !this.completedItemIds.includes(item.id)
+        )
+        
+        // Emit for each newly completed item
+        if (newlyCompletedItems.length > 0) {
+          newlyCompletedItems.forEach(item => {
+            this.$emit('queue-updated', item.generated_model_id)
+            console.log(`New completed item: Model ID: ${item.generated_model_id}`)
+          })
+        }
       }
-    } catch (error) {
-      console.error('Failed to fetch queue status:', error)
+      
+      // Update tracking
+      this.completedItemsCount = currentCompletedItems.length
+      this.completedItemIds = currentCompletedItems.map(item => item.id)
     }
-  },
+  } catch (error) {
+    console.error('Failed to fetch queue status:', error)
+  }
+},
 
   startQueuePolling() {
     this.fetchQueueStatus()

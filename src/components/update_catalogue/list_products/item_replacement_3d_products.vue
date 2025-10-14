@@ -46,13 +46,15 @@
 
       <!-- Product Grid/List -->
       <div v-if="!loading" class="product-container" :class="{ 'grid-view': showGrid, 'list-view': !showGrid }">
-         <div v-for="(item, index) in filteredItems" :key="index" @click="updateItemRendering(item['id'],item['3d_model'])" style="
+         <div v-for="(item, index) in filteredItems" :key="index" @click="updateItemRendering(item['id'],item['3d_model'],item['dimensions']['width'],item['dimensions']['height'],item['dimensions']['length'],
+         )" style="
             background: #ffffff;
             border: none;
             border-radius: 4px;
             padding:2px;
             border:1px solid rgba(128, 128, 128, 0.14);"
             :style="selected_item===item.id ? 'border:1px solid blue': ''">
+            
           <div  class="product-item">
           <div class="product-image">
             <img :src="this.$store.state.root_media_api+item.primary_image" :alt="item.name" />
@@ -88,16 +90,20 @@
           </div> -->
           </div>
 
+          <!-- {{ item.business_slug }} -->
           <a-row>
           <a-col :span="20" style="padding-right:5px">
-            <button block type="primary" class="btn-prod-details" >
+            <!-- <button block type="primary" class="btn-prod-details" >
               Product Detail
-            </button>
+            </button> -->
+             <a-button block type="default" @click="this.$router.push('/'+item.business_slug+'/'+'product'+'/'+item.id)" >
+              Product Detail
+            </a-button>
           </a-col>
           <a-col :span="4" style="">
-            <button block type="primary"  class="btn-prod-details">
+            <a-button block type="default" >
               <HeartOutlined />
-            </button>
+            </a-button>
           </a-col>
         </a-row>
         </div>
@@ -170,9 +176,10 @@ export default {
     seeAllClicked(){
       this.$emit('products-see-all', true);
     },
-updateItemRendering(model_id,model_url){
+    updateItemRendering(model_id,model_url,width,height,depth){
       this.selected_item=model_id
-      this.$emit('change-3d-model', {'model_uuid':model_id ,'model_url':model_url});
+      this.$emit('change-3d-model', {'model_uuid':model_id ,'model_url':model_url,'width':width,'height':height,'depth':depth});
+
 
 }
   }

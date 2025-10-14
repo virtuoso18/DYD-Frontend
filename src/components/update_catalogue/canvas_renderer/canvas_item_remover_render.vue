@@ -1,4 +1,14 @@
 <template>
+   <DrawRemovalModal 
+  :visible="draw_removal_modal"
+  :baseImage="baseImage"
+  :roomId="this.$route.params.id"
+  @update:visible="draw_removal_modal = $event"
+  @submit-removal="handleDrawnAreaRemoval"
+  @removal-success="handleRemovalSuccess"
+  @cancel="draw_removal_modal = false"
+/>
+
   <div class="canvas-container" ref="canvasContainer">
     <!-- Loading Overlay -->
     <div v-if="isLoading || objectMasksLoading" class="scanning-loading-overlay">
@@ -89,6 +99,18 @@
   
   <div  class="" style="display:flex;justify-content: space-between;background: white;padding-left:10px;padding-right:10px;">
     <div style="display:flex;gap:5px;padding-top:5px;">
+      <a-button 
+        @click="DrawRemoval_model" 
+      style="display:flex;gap:5px;gap:10px;"
+        
+      >
+       <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M13.6273 8.3374C15.6172 4.66839 14.7102 2.1779 11.3058 2C8.83147 2.04724 6.27908 3.38042 4.24174 5.44289C2.53199 7.17373 0.848545 9.65267 1.46654 12.012C1.603 12.5329 1.86906 12.8879 2.28937 13.2219C3.41888 14.1194 4.52754 14.1984 6.66281 13.6742C8.8252 13.0171 10.1658 12.0272 11.2962 11.0145M11.2962 11.0145C11.2973 11.0134 11.2985 11.0123 11.2997 11.0113C11.3019 11.0094 11.3005 11.0058 11.2976 11.0058C11.2955 11.0058 11.2939 11.008 11.2947 11.01C11.2952 11.0115 11.2957 11.013 11.2962 11.0145ZM11.2962 11.0145C11.5431 11.7446 11.3867 12.3963 10.9616 13.6742" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      
+      Draw removal
+      </a-button>
+
       <a-button
         @click="toggleSelection"
         class="control-btn"
@@ -124,6 +146,7 @@
 </template>
 
 <script>
+import  DrawRemovalModal from '@/components/update_catalogue/canvas_renderer/draw_removal_area_room.vue'
 export default {
   name: 'item_remove_renderer',
   props: {
@@ -157,9 +180,13 @@ export default {
       default: false
     }
   },
+  components:{
+    DrawRemovalModal
+  },
 
   data() {
     return {
+      draw_removal_modal:false,
       canvas: null,
       ctx: null,
       overlayCanvas: null,
@@ -294,6 +321,9 @@ export default {
   },
   
   methods: {
+    handleRemovalSuccess (){
+      this.$emit('handle_removal_completed',true)
+    },
     // ===================
     // OBJECT MASKS CHANGE HANDLING
     // ===================
@@ -343,6 +373,10 @@ export default {
     // SELECTION CONTROLS
     // ===================
     
+    DrawRemoval_model(){
+      // draw removal Modal 
+      this.draw_removal_modal=true
+    },
     toggleSelection() {
       if (this.selectedObjects.length === this.objectMaskRegions.length) {
         this.clearSelections();

@@ -98,14 +98,18 @@ border:1px solid rgba(128, 128, 128, 0.14);"
 
   <a-row>
     <a-col :span="20" style="padding-right:5px">
-      <button block type="primary" class="btn-prod-details">
+      <!-- <button block type="primary" class="btn-prod-details">
         Product Detail
-      </button>
+      </button> -->
+       
+            <a-button block type="default" @click="this.$router.push('/'+item.business_slug+'/'+'product'+'/'+item.id)" >
+              Product Detail
+            </a-button>
     </a-col>
     <a-col :span="4" style="">
-      <button block type="primary" class="btn-prod-details">
+      <a-button block type="default">
         <HeartOutlined />
-      </button>
+      </a-button>
     </a-col>
   </a-row>
 </div>

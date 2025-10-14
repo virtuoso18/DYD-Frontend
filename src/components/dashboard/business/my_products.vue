@@ -1,18 +1,165 @@
 <template>
   <div>
-    <br>
-   
+    <br><a-modal
+  v-model:open="open_add_newProductModal"
+  title="Select how you wanted to add product"
+  @ok="handleOk"
+  centered
+  :width="480"
+>
+  <div style="display:flex; flex-direction:column; gap:16px; margin-top:20px;">
+    <!-- AI Generation Option -->
+    <a-button
+      type="default"
+      block
+      size="large"
+      @click="add_Product_For('DYD_AI')"
+      style="height: auto; padding: 16px; display: flex; align-items: center; gap: 12px;"
+    >
+      <svg width="40" height="40" viewBox="0 0 100 100" style="flex-shrink: 0;">
+        <!-- AI Brain Icon with Animation -->
+        <defs>
+          <linearGradient id="aiGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+          </linearGradient>
+        </defs>
+        
+        <!-- Brain outline -->
+        <path d="M50 20 C35 20 25 30 25 40 C25 45 27 50 30 53 L30 70 C30 75 35 80 40 80 L60 80 C65 80 70 75 70 70 L70 53 C73 50 75 45 75 40 C75 30 65 20 50 20 Z" 
+              fill="url(#aiGradient)" opacity="0.3"/>
+        
+        <!-- Neural connections -->
+        <circle cx="40" cy="40" r="3" fill="#fff">
+          <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="50" cy="35" r="3" fill="#fff">
+          <animate attributeName="opacity" values="1;0.3;1" dur="2s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="60" cy="40" r="3" fill="#fff">
+          <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="45" cy="50" r="3" fill="#fff">
+          <animate attributeName="opacity" values="0.7;0.3;0.7" dur="2s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="55" cy="50" r="3" fill="#fff">
+          <animate attributeName="opacity" values="0.3;0.8;0.3" dur="2s" repeatCount="indefinite"/>
+        </circle>
+        
+        <!-- Connecting lines -->
+        <line x1="40" y1="40" x2="50" y2="35" stroke="#fff" stroke-width="1" opacity="0.6">
+          <animate attributeName="opacity" values="0.3;0.8;0.3" dur="2s" repeatCount="indefinite"/>
+        </line>
+        <line x1="50" y1="35" x2="60" y2="40" stroke="#fff" stroke-width="1" opacity="0.6">
+          <animate attributeName="opacity" values="0.6;0.3;0.6" dur="2s" repeatCount="indefinite"/>
+        </line>
+        <line x1="40" y1="40" x2="45" y2="50" stroke="#fff" stroke-width="1" opacity="0.6">
+          <animate attributeName="opacity" values="0.4;0.9;0.4" dur="2s" repeatCount="indefinite"/>
+        </line>
+        <line x1="60" y1="40" x2="55" y2="50" stroke="#fff" stroke-width="1" opacity="0.6">
+          <animate attributeName="opacity" values="0.8;0.4;0.8" dur="2s" repeatCount="indefinite"/>
+        </line>
+        
+        <!-- Sparkle effect -->
+        <circle cx="35" cy="30" r="2" fill="#fff">
+          <animate attributeName="r" values="0;2;0" dur="3s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0;1;0" dur="3s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="65" cy="35" r="2" fill="#fff">
+          <animate attributeName="r" values="0;2;0" dur="3s" begin="1.5s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0;1;0" dur="3s" begin="1.5s" repeatCount="indefinite"/>
+        </circle>
+      </svg>
+      <span style="flex: 1; text-align: left; font-size: 15px;">Generate 3D Model with DYD AI</span>
+    </a-button>
+
+    <!-- Local Upload Option -->
+    <a-button
+      type="default"
+      block
+      size="large"
+      @click="add_Product_For('local_system')"
+      style="height: auto; padding: 16px; display: flex; align-items: center; gap: 12px;"
+    >
+      <svg width="40" height="40" viewBox="0 0 100 100" style="flex-shrink: 0;">
+        <!-- Upload Icon with Animation -->
+        <defs>
+          <linearGradient id="uploadGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" style="stop-color:#48bb78;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#38a169;stop-opacity:1" />
+          </linearGradient>
+        </defs>
+        
+        <!-- Folder -->
+        <path d="M20 35 L20 75 C20 78 22 80 25 80 L75 80 C78 80 80 78 80 75 L80 40 C80 37 78 35 75 35 L55 35 L50 30 L25 30 C22 30 20 32 20 35 Z" 
+              fill="url(#uploadGradient)" opacity="0.3" stroke="#48bb78" stroke-width="2"/>
+        
+        <!-- Upload Arrow -->
+        <g transform="translate(50, 55)">
+          <!-- Arrow shaft -->
+          <rect x="-3" y="-15" width="6" height="25" fill="#48bb78" rx="2">
+            <animateTransform
+              attributeName="transform"
+              type="translate"
+              values="0,5; 0,-2; 0,5"
+              dur="1.5s"
+              repeatCount="indefinite"/>
+            <animate attributeName="opacity" values="0.4;1;0.4" dur="1.5s" repeatCount="indefinite"/>
+          </rect>
+          
+          <!-- Arrow head -->
+          <path d="M0,-20 L-8,-10 L8,-10 Z" fill="#48bb78">
+            <animateTransform
+              attributeName="transform"
+              type="translate"
+              values="0,5; 0,-2; 0,5"
+              dur="1.5s"
+              repeatCount="indefinite"/>
+            <animate attributeName="opacity" values="0.4;1;0.4" dur="1.5s" repeatCount="indefinite"/>
+          </path>
+        </g>
+        
+        <!-- Document icon inside folder -->
+        <rect x="35" y="55" width="12" height="15" fill="#fff" opacity="0.6" rx="1"/>
+        <line x1="37" y1="59" x2="45" y2="59" stroke="#48bb78" stroke-width="1" opacity="0.8"/>
+        <line x1="37" y1="62" x2="45" y2="62" stroke="#48bb78" stroke-width="1" opacity="0.8"/>
+        <line x1="37" y1="65" x2="43" y2="65" stroke="#48bb78" stroke-width="1" opacity="0.8"/>
+      </svg>
+      <span style="flex: 1; text-align: left; font-size: 15px;">Upload 3D Model from Local System</span>
+    </a-button>
+  </div>
+  
+  <template #footer></template>
+</a-modal>
+<add_furniture_modal_local_3d_model v-model:visible="show_add_new_product_locally_3d_model" 
+        :types="['Modern','Scandinavian','Classic','Minimalist','Industrial','Rustic','Boho','other',]"
+        @product-created="onProductCreated"
+        @cancel="onCancel"
+        :rendered_modal_3D_id="model_instance_id"
+        />
+
+        <!-- this.fetchMyProducts() -->
+        
+        
+        
+
     <add_new_floorTexture
         v-model:visible="show_add_new_floor_texture"
+        @product-created="this.fetchMyFloorTextureProducts()"
     />
     
      <add_new_wallTexture
         v-model:visible="show_add_new_wall_texture"
+        @product-created="this.fetchMyWallTextureProducts()"
+
     />
      <add_new_Light
         v-model:visible="show_add_new_light"
         @cancel="clicked_cancel_add_new_light"
+        @product-created="this.fetchMyLights()"
     />
+    
+    
     <div style="padding:10px;background:white;border-radius:10px;border: 1px solid rgba(0,0,0,0.1)">
             <!-- Product List/Grid View -->
             <div v-if="currentView === 'list'">
@@ -131,7 +278,7 @@
 </a-button>
 
 <!-- Add Product Button -->
-<a-button @click="addProduct" type="primary" style="display: flex; align-items: center; gap: 8px;">
+<a-button @click="addProduct()" type="primary" style="display: flex; align-items: center; gap: 8px;">
     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
         <line x1="3" y1="6" x2="21" y2="6"/>
@@ -960,6 +1107,7 @@ import show_furniture_product from '@/components/dashboard/business/my_products/
 import show_Light_product_sunk from '@/components/dashboard/business/my_products/product_details/light_product_sunk.vue'
 import show_Light_product_unsunk from '@/components/dashboard/business/my_products/product_details/light_product_ununk.vue'
 import show_Light_product_3D from '@/components/dashboard/business/my_products/product_details/light_product_3d.vue'
+import add_furniture_modal_local_3d_model from '@/components/dashboard/business/my_products/add_new_product/add_furniture_modal_local_3d_model.vue'
 
 export default {
     name: 'UnifiedProducts',
@@ -974,6 +1122,7 @@ export default {
         add_new_wallTexture,
         add_new_Light,
         add_new_furniture,
+        add_furniture_modal_local_3d_model,
 
         // edit_update
         edit_floorTexture,
@@ -1004,6 +1153,11 @@ export default {
             active_tab: "Furniture",
             searchQuery: '',
             selectedProduct: null,
+
+            // popup for the add new product where user will need to choose the local 3d model or the DYD generated 3d model there
+            open_add_newProductModal:false,
+            show_add_new_product_locally_3d_model:false,
+
             editingProduct: null,
             originalProduct: null,
             showAddProduct: false,
@@ -1308,11 +1462,19 @@ export default {
             }
         },
         addProduct() {
+        this.open_add_newProductModal=true
             // this.showAddProduct = !this.showAddProduct
-
-this.$router.push("/my-products/add-new-furniture");
-
+        
+        // this.$router.push("/my-products/add-new-furniture");
             
+        },
+        add_Product_For(selected_add_newProductModal){
+            if (selected_add_newProductModal ==='DYD_AI'){
+            this.$router.push("/my-products/add-new-furniture");}
+        else{
+            this.show_add_new_product_locally_3d_model=true
+            console.log(selected_add_newProductModal)
+        }
         },
         // Event handlers from add_new_product component
         onProductCreated(newProduct) {

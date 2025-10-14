@@ -31,7 +31,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 17 17" fill="none">
                   <path fill-rule="evenodd" clip-rule="evenodd" d="M8.49935 1.41699C4.58722 1.41699 1.41602 4.5882 1.41602 8.50033C1.41602 12.4124 4.58722 15.5837 8.49935 15.5837C12.4115 15.5837 15.5827 12.4124 15.5827 8.50033C15.5827 4.5882 12.4115 1.41699 8.49935 1.41699ZM8.49935 2.12533C8.49935 3.81608 7.8277 5.43759 6.63215 6.63313C5.43661 7.82868 3.8151 8.50033 2.12435 8.50033C3.8151 8.50033 5.43661 9.17198 6.63215 10.3675C7.8277 11.5631 8.49935 13.1846 8.49935 14.8753C8.49935 13.1846 9.171 11.5631 10.3665 10.3675C11.5621 9.17198 13.1836 8.50033 14.8743 8.50033C13.1836 8.50033 11.5621 7.82868 10.3665 6.63313C9.171 5.43759 8.49935 3.81608 8.49935 2.12533Z" fill="currentColor"/>
                 </svg>
-                <span class="credits-number">1500</span>
+                <span class="credits-number">{{liveCredits}}</span>
               </div>
               <a-button type="primary" size="small">Buy</a-button>
             </div>
@@ -46,7 +46,8 @@
               <circle cx="20" cy="6" r="2.5" fill="#3B63FB" stroke="white" />
             </svg>
           </button> -->
-          <a-button type="primary" @click="this.$router.push({name:'my-store'})">
+
+          <a-button type="primary" @click="this.$router.push({name:'my-store'})" v-if="user.user_type !=='User' ">
             <div style="display:flex;gap:5px">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 17" fill="none">
 <path d="M1.97754 7.49756V10.8321C1.97754 12.7184 1.97754 13.6616 2.56333 14.2476C3.14911 14.8336 4.09192 14.8336 5.97754 14.8336H9.97754C11.8631 14.8336 12.8059 14.8336 13.3917 14.2476C13.9775 13.6616 13.9775 12.7184 13.9775 10.8321V7.49756" stroke="white" stroke-linecap="round"/>
@@ -138,7 +139,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 17 17" fill="none">
                   <path fill-rule="evenodd" clip-rule="evenodd" d="M8.49935 1.41699C4.58722 1.41699 1.41602 4.5882 1.41602 8.50033C1.41602 12.4124 4.58722 15.5837 8.49935 15.5837C12.4115 15.5837 15.5827 12.4124 15.5827 8.50033C15.5827 4.5882 12.4115 1.41699 8.49935 1.41699ZM8.49935 2.12533C8.49935 3.81608 7.8277 5.43759 6.63215 6.63313C5.43661 7.82868 3.8151 8.50033 2.12435 8.50033C3.8151 8.50033 5.43661 9.17198 6.63215 10.3675C7.8277 11.5631 8.49935 13.1846 8.49935 14.8753C8.49935 13.1846 9.171 11.5631 10.3665 10.3675C11.5621 9.17198 13.1836 8.50033 14.8743 8.50033C13.1836 8.50033 11.5621 7.82868 10.3665 6.63313C9.171 5.43759 8.49935 3.81608 8.49935 2.12533Z" fill="currentColor"/>
                 </svg>
-                <span class="credits-number">1500</span>
+                <span class="credits-number">{{liveCredits}}</span>
               </div>
               <a-button type="primary" size="small">Buy</a-button>
             </div>
@@ -196,16 +197,169 @@ export default {
       user: JSON.parse(localStorage.getItem('user') ),
       profile: JSON.parse(localStorage.getItem('profile') ),
       business_info: JSON.parse(localStorage.getItem('business_profile') || '{}'),
-openMobileDrawer:false
+      openMobileDrawer: false,
 
+      // keeping the live credits track
+      liveCredits: 0,
+      ws: null,
+      token: null,
+      reconnectInterval: null,
+      reconnectAttempts: 0,
+      maxReconnectAttempts: 5
+    }
+  },
+  mounted() {
+    this.fetch_current_credits_of_user()
+    // Get token from localStorage
+    this.token = localStorage.getItem('token');
+    
+    if (this.token) {
+      this.connectWebSocket();
+    } else {
+      console.error("No token found. User must be authenticated.");
+    }
+  },
+  beforeUnmount() {
+    // Clean up WebSocket connection when component is destroyed
+    this.closeWebSocket();
+    
+    // Clear reconnect interval if exists
+    if (this.reconnectInterval) {
+      clearTimeout(this.reconnectInterval);
     }
   },
   methods: {
-showDrawer(){
-  this.openMobileDrawer = !this.openMobileDrawer
-},
+
+    async fetch_current_credits_of_user(){
+       try {
+                this.loading = true;
+                this.error = null;
+
+            const token = localStorage.getItem('token');
+                
+                const response = await fetch(`${this.$store.state.root_api}subscription/api/get-my-credits-count/`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Token ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                    });
+        const result = await response.json();
+console.log(result)
+                if (result.success) {
+                    this.liveCredits = result.credits_count;
+                } else {
+                    this.error = result.message || 'Business not found';
+                }
+            } catch (error) {
+                console.error('Error loading business data:', error);
+                if (error.response?.status === 404) {
+                    this.error = 'Business not found';
+                } else {
+                    this.error = 'Failed to load business information';
+                }
+            } finally {
+                this.loading = false;
+            }
+    },
+    showDrawer(){
+      this.openMobileDrawer = !this.openMobileDrawer
+    },
+    
     handleChange(e) {
       this.language_selected = e
+    },
+
+    connectWebSocket() {
+      // Close existing connection if any
+      if (this.ws) {
+        this.ws.close();
+      }
+
+      if (!this.token) {
+        console.error("Cannot connect: No token available");
+        return;
+      }
+
+      // Establish new WebSocket connection with token as query parameter
+      const wsUrl = `ws://localhost:8000/ws/credits/?token=${this.token}`;
+      this.ws = new WebSocket(wsUrl);
+
+      this.ws.onopen = () => {
+        console.log("WebSocket connected successfully");
+        this.reconnectAttempts = 0; // Reset reconnect attempts on successful connection
+      };
+
+      this.ws.onclose = (event) => {
+        console.log("WebSocket disconnected", event.code, event.reason);
+        
+        // Handle different close codes
+        if (event.code === 4001) {
+          console.error("Authentication failed. Invalid or missing token.");
+          // Don't attempt to reconnect on auth failure
+          return;
+        }
+        
+        // Attempt to reconnect for other disconnections
+        this.attemptReconnect();
+      };
+
+      this.ws.onmessage = (e) => {
+        const data = JSON.parse(e.data);
+        console.log("Received credit update:", data);
+        
+        // Handle different message types
+        if (data.action === 'credit_update') {
+          this.liveCredits = data.credits_count;
+        } else if (data.action === 'error') {
+          console.error("WebSocket error message:", data.message);
+        } else {
+          // Backward compatibility with old format
+          if (data.credits_count !== undefined) {
+            this.liveCredits = data.credits_count;
+          }
+        }
+      };
+
+      this.ws.onerror = (error) => {
+        console.error("WebSocket error:", error);
+      };
+    },
+
+    closeWebSocket() {
+      if (this.ws) {
+        this.ws.close();
+        this.ws = null;
+      }
+    },
+
+    // Method to reconnect with exponential backoff
+    attemptReconnect() {
+      if (this.reconnectAttempts >= this.maxReconnectAttempts) {
+        console.error("Max reconnection attempts reached. Please refresh the page.");
+        return;
+      }
+
+      this.reconnectAttempts++;
+      const delay = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 30000); // Max 30 seconds
+      
+      console.log(`Attempting to reconnect in ${delay}ms (attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts})`);
+      
+      this.reconnectInterval = setTimeout(() => {
+        if (this.token) {
+          this.connectWebSocket();
+        }
+      }, delay);
+    },
+
+    // Method to manually reconnect if needed
+    reconnectWebSocket() {
+      this.reconnectAttempts = 0; // Reset attempts for manual reconnect
+      if (this.token) {
+        this.connectWebSocket();
+      } else {
+        console.error("Cannot reconnect: No token available");
+      }
     }
   }
 }

@@ -126,15 +126,127 @@
             
             <!-- Tabs -->
             <a-tabs v-model:activeKey="activeTab" style="margin-bottom: 0;">
-              <a-tab-pane key="subscription" tab="Subscription" />
-              <a-tab-pane key="credits" tab="Credits" />
-            </a-tabs>
+              <a-tab-pane key="subscription" tab="Subscription" >
 
-            <!-- Desktop Table -->
+<!-- Desktop Table -->
             <div style="overflow-x: auto; display: block;" class="desktop-table">
               <a-table 
                 :columns="columns" 
-                :data-source="tableData" 
+                :data-source="tableData_subscriptions" 
+                :pagination="false"
+                :show-header="true"
+                size="middle"
+                :scroll="{ x: 800 }"
+              >
+                <!-- Custom columns -->
+                <template #bodyCell="{ column, record }">
+                  <template v-if="column.key === 'plan'">
+                    <span style="font-weight: 500; color: #262626;">{{ record.plan }}</span>
+                  </template>
+                  <template v-if="column.key === 'date'">
+                    <span style="font-weight: 500; color: #262626;">{{ formatDate(record.date)  }}</span>
+                  </template>
+                   <template v-if="column.key === 'expireDate'">
+                    <span style="font-weight: 500; color: #262626;">{{ formatDate(record.expireDate)  }}</span>
+                  </template>
+                  <template v-if="column.key === 'payment'">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='16' viewBox='0 0 24 16'%3E%3Crect width='24' height='16' rx='2' fill='%231A1F71'/%3E%3Cpath d='M8.5 4.5h7v7h-7z' fill='%23fff'/%3E%3C/svg%3E" alt="Visa" style="width: 20px; height: 14px;" />
+                      <span style="color: #8c8c8c; font-size: 14px;">Debit Card</span>
+                    </div>
+                  </template>
+                  
+                  <template v-if="column.key === 'price'">
+                    <span style="color: #1890ff; font-weight: 600;">${{ record.price }}</span>
+                  </template>
+                  
+                  <template v-if="column.key === 'action'">
+                    <a-button 
+                      type="link" 
+                      style="padding: 0; color: #1890ff; font-size: 14px;" 
+                      @click="downloadInvoice(record.innovice)">
+                      Download invoice
+                    </a-button>
+
+                  </template>
+                  
+                  <template v-if="column.key === 'status'">
+                    <span style="color: #52c41a; font-weight: 500;">{{ record.status }}</span>
+                  </template>
+                </template>
+              </a-table>
+            </div>
+
+            <!-- Mobile Cards -->
+            <div style="display: none; padding: 0;" class="mobile-cards">
+              <div 
+                v-for="record in tableData_subscriptions" 
+                :key="record.key"
+                style="background: #fafafa; border-radius: 12px; padding: 16px; margin-bottom: 16px; border: 1px solid #f0f0f0;"
+              >
+                <a-row justify="space-between" align="top" style="margin-bottom: 12px;">
+                  <a-col span="12">
+                    <div style="font-weight: 600; color: #262626; font-size: 16px;">
+                      {{ record.plan }}
+                    </div>
+                    <div style="color: #8c8c8c; font-size: 12px; margin-top: 4px;">
+                      {{ formatDate(record.date) }}
+                    </div>
+                    <div style="color: #8c8c8c; font-size: 12px; margin-top: 2px;">
+                      Exp: {{ formatDate(record.expireDate) }}
+                    </div>
+                  </a-col>
+                  <a-col span="12" style="text-align: right;">
+                    <div style="color: #1890ff; font-weight: 600; font-size: 18px;">
+                      ${{ record.price }}
+                    </div>
+                    <div style="color: #52c41a; font-weight: 500; margin-top: 4px; font-size: 14px;">
+                      {{ record.status }}
+                    </div>
+                  </a-col>
+                  <a-col>
+                    <a-button 
+  type="link" 
+  style="padding: 0; color: #1890ff; font-size: 14px;" 
+  @click="downloadInvoice(record.innovice)">
+   Download invoice
+</a-button>
+                  </a-col>
+                </a-row>
+                
+                <a-row align="middle" style="margin-bottom: 12px;">
+                  <a-col span="12">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='16' viewBox='0 0 24 16'%3E%3Crect width='24' height='16' rx='2' fill='%231A1F71'/%3E%3Cpath d='M8.5 4.5h7v7h-7z' fill='%23fff'/%3E%3C/svg%3E" alt="Visa" style="width: 20px; height: 14px;" />
+                      <span style="color: #595959; font-size: 12px;">Debit Card</span>
+                    </div>
+                  </a-col>
+                  <a-col span="12" style="text-align: right;">
+                    <span style="color: #8c8c8c; font-size: 12px;">{{ record.billed }}</span>
+                  </a-col>
+                </a-row>
+
+                <a-row>
+                  <a-col span="24">
+                    <a-button 
+  type="link" 
+  style="padding: 0; color: #1890ff; font-size: 14px;" 
+  @click="downloadInvoice(record.innovice)">
+   Download invoice
+</a-button>
+                  </a-col>
+                </a-row>
+              </div>
+            </div>
+
+              </a-tab-pane>
+              <a-tab-pane key="credits" tab="Credits" >
+
+                <!-- Desktop Table -->
+            <div style="overflow-x: auto; display: block;" class="desktop-table">
+              <a-table 
+                :columns="columns_credits_table" 
+                :data-source="tableData_credits" 
                 :pagination="false"
                 :show-header="true"
                 size="middle"
@@ -152,17 +264,26 @@
                       <span style="color: #8c8c8c; font-size: 14px;">Debit Card</span>
                     </div>
                   </template>
-                  
+                  <template v-if="column.key === 'purchase_date'">
+                    <span style="font-weight: 500; color: #262626;">{{ formatDate(record.date)  }}</span>
+                  </template>
+                   <template v-if="column.key === 'purchased_credits'">
+                    <span style="font-weight: 500; color: #262626;text-align:center;width:100%">{{record.purchased_credits }}</span>
+                  </template>
                   <template v-if="column.key === 'price'">
                     <span style="color: #1890ff; font-weight: 600;">${{ record.price }}</span>
                   </template>
                   
                   <template v-if="column.key === 'action'">
-                    <a-button type="link" style="padding: 0; color: #1890ff; font-size: 14px;">
-                      👁 View invoice
-                    </a-button>
+                    <a-button 
+  type="link" 
+  style="padding: 0; color: #1890ff; font-size: 14px;" 
+  @click="downloadInvoice(record.innovice)">
+   Download invoice
+</a-button>
+
                   </template>
-                  
+
                   <template v-if="column.key === 'status'">
                     <span style="color: #52c41a; font-weight: 500;">{{ record.status }}</span>
                   </template>
@@ -173,7 +294,7 @@
             <!-- Mobile Cards -->
             <div style="display: none; padding: 0;" class="mobile-cards">
               <div 
-                v-for="record in tableData" 
+                v-for="record in tableData_credits" 
                 :key="record.key"
                 style="background: #fafafa; border-radius: 12px; padding: 16px; margin-bottom: 16px; border: 1px solid #f0f0f0;"
               >
@@ -183,11 +304,9 @@
                       {{ record.plan }}
                     </div>
                     <div style="color: #8c8c8c; font-size: 12px; margin-top: 4px;">
-                      {{ record.date }}
+                      {{ formatDate(record.date) }}
                     </div>
-                    <div style="color: #8c8c8c; font-size: 12px; margin-top: 2px;">
-                      Exp: {{ record.expireDate }}
-                    </div>
+
                   </a-col>
                   <a-col span="12" style="text-align: right;">
                     <div style="color: #1890ff; font-weight: 600; font-size: 18px;">
@@ -213,13 +332,23 @@
 
                 <a-row>
                   <a-col span="24">
-                    <a-button type="link" style="padding: 0; color: #1890ff; font-size: 14px;">
-                      👁 View invoice
-                    </a-button>
+                    
+                    <a-button 
+  type="link" 
+  style="padding: 0; color: #1890ff; font-size: 14px;" 
+  @click="downloadInvoice(record.innovice)">
+   Download invoice
+</a-button>
+
+                  
                   </a-col>
                 </a-row>
               </div>
             </div>
+              </a-tab-pane>
+            </a-tabs>
+
+            
           </div>
         </a-col>
       </a-row>
@@ -283,6 +412,38 @@ export default {
           width: 100,
         },
       ],
+        columns_credits_table: [
+        {
+          title: 'Purchase date',
+          dataIndex: 'purchase_date',
+          key: 'purchase_date',
+          width: 100,
+        },
+        {
+          title: 'Purchase Credits',
+          dataIndex: 'purchased_credits',
+          key: 'purchased_credits',
+          width: 120,
+        },
+        {
+          title: 'Price',
+          dataIndex: 'price',
+          key: 'price',
+          width: 80,
+        },
+        {
+          title: 'Action',
+          dataIndex: 'action',
+          key: 'action',
+          width: 120,
+        },
+        {
+          title: 'Status',
+          dataIndex: 'status',
+          key: 'status',
+          width: 100,
+        },
+      ],
       tableData: [
         {
           key: '1',
@@ -317,10 +478,15 @@ export default {
           action: 'view',
           status: 'Successful',
         },
-      ]
+      ],
+      tableData_subscriptions:[],
+      tableData_credits:[],
     }
   },
   mounted() {
+    this.fetch_my_subscriptions()
+    this.fetch_my_credits()
+    
     this.handleResize();
     window.addEventListener('resize', this.handleResize);
   },
@@ -328,6 +494,88 @@ export default {
     window.removeEventListener('resize', this.handleResize);
   },
   methods: {
+     downloadInvoice(invoicePath) {
+    const url = this.$store.state.root_media_api + invoicePath;
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = url.split("/").pop(); // file name from url
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  },
+    formatDate(dateStr) {
+    const date = new Date(dateStr); 
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric"
+    });
+  },
+    async fetch_my_subscriptions(){
+       try {
+                this.loading = true;
+                this.error = null;
+
+            const token = localStorage.getItem('token');
+                
+            const response = await fetch(`${this.$store.state.root_api}subscription/api/get-my-subscriptions-history/`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Token ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                    });
+                  const result = await response.json();
+                  // console.log(result)
+                if (result) {
+                    this.tableData_subscriptions = result;
+                } else {
+                    this.error = result.message || 'Business not found';
+                }
+              } catch (error) {
+                console.error('Error loading business data:', error);
+                if (error.response?.status === 404) {
+                    this.error = 'Business not found';
+                } else {
+                    this.error = 'Failed to load business information';
+                }
+            } finally {
+                this.loading = false;
+            }
+    },
+    
+    async fetch_my_credits(){
+       try {
+                this.loading = true;
+                this.error = null;
+
+            const token = localStorage.getItem('token');
+                
+            const response = await fetch(`${this.$store.state.root_api}subscription/api/get-my-credits-history/`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Token ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                    });
+                  const result = await response.json();
+                  // console.log(result)
+                if (result) {
+                    this.tableData_credits = result;
+                } else {
+                    this.error = result.message || 'Business not found';
+                }
+              } catch (error) {
+                console.error('Error loading business data:', error);
+                if (error.response?.status === 404) {
+                    this.error = 'Business not found';
+                } else {
+                    this.error = 'Failed to load business information';
+                }
+            } finally {
+                this.loading = false;
+            }
+    },
     handleResize() {
       const isMobile = window.innerWidth <= 768;
       

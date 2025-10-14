@@ -1,4 +1,5 @@
 <template>
+  
   <div class="pricing-container">
     <!-- Header Section -->
     <div class="header-section">
@@ -29,7 +30,7 @@
       </div>
 
       <!-- Pricing Cards -->
-      <div class="pricing-cards">
+      <div class="pricing-cards" v-if="data !== null">
         <!-- Basic Plan -->
         <div class="pricing-card basic-card">
           <div class="card-header">
@@ -38,8 +39,8 @@
           </div>
           <div class="price-section">
             <span class="currency">$</span>
-            <span class="price">45</span>
-            <p class="billing-period">1000 credits / month</p>
+            <span class="price">{{ data.basic.monthly_charges }}</span>
+            <p class="billing-period">{{data.basic.plan_credits}} credits / month</p>
           </div>
           <button class="get-started-btn basic-btn" @click="this.$router.push('/make-payment/'+'basic')">Get Started</button>
           <div class="features-list">
@@ -74,8 +75,8 @@
           </div>
           <div class="price-section">
             <span class="currency">$</span>
-            <span class="price">75</span>
-            <p class="billing-period">4000 credits / month</p>
+            <span class="price">{{ data.pro.monthly_charges }}</span>
+            <p class="billing-period">{{data.pro.plan_credits}} credits / month</p>
           </div>
           <button class="get-started-btn pro-btn" @click="this.$router.push('/make-payment/'+'pro')">Get Started</button>
           <div class="features-list">
@@ -110,8 +111,8 @@
           </div>
           <div class="price-section">
             <span class="currency">$</span>
-            <span class="price">90</span>
-            <p class="billing-period">Customizable credit / month</p>
+            <span class="price">{{ data.enterprice.monthly_charges }}</span>
+            <p class="billing-period">{{data.enterprice.plan_credits}} Customizable credit / month</p>
           </div>
           <button class="get-started-btn enterprise-btn" @click="this.$router.push('/make-payment/'+'enterprice')">Get Started</button>
           <div class="features-list">
@@ -171,7 +172,33 @@
 
 <script>
 export default {
-  name: 'pricing'
+  name: 'pricing',
+  data(){ return {
+    data:null
+  }},
+  mounted(){
+    this.fetchPricingPlans()
+  }, methods:{
+    async fetchPricingPlans(){
+      
+      try {
+          // const token = localStorage.getItem('token');
+          const response = await fetch(`${this.$store.state.root_api}subscription/api/get-all-plans/`, {
+              method: 'GET',
+              // headers: {
+              //     'Authorization': `Token ${token}`
+              // }
+          });
+          const result = await response.json();
+          if (result.success) {
+              this.data = result.data;
+          }
+      } catch (error) {
+          console.error('Error loading business profile:', error);
+      }
+      }
+
+  }
 }
 </script>
 

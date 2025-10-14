@@ -82,7 +82,7 @@
 </div>
 
 
-<div class="main-panel" :style="{ minHeight: panelHeight }">
+<div class="main-panel" :style="{ minHeight: panelHeight }" style="max-height:70vh">
             <div class="image-grid" :class="gridClass">
 
       <div 

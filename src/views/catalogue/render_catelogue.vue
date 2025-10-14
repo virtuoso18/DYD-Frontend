@@ -690,7 +690,7 @@
       </div>
     </div>
   </div>
-  <div v-else style="background-color: #f3f3f3;">
+  <div v-else style="background-color: #f3f3f3;height:90.5vh;">
     <a-row>
       <a-col
         :lg="18"
@@ -783,7 +783,7 @@
         </div>
       </a-col>
 
-      <a-col :lg="6" :md="6" :sm="24" :xs="24" style="background-color: white;padding:10px;">
+      <a-col :lg="6" :md="6" :sm="24" :xs="24" style="background-color: white;padding:10px;" v-if="is_client_requested_room === false">
         <div>
           <h3 style="text-align:center">
             Congratulation!<br/>
@@ -1016,6 +1016,119 @@
           </div>
         </div>
       </a-col>
+      
+      <a-col :lg="6" :md="6" :sm="24" :xs="24" style="background-color: white;padding:10px;" v-else>
+        <div style="display: flex;flex-direction: column;justify-content: space-between;height:87vh;">
+          <div>
+
+            <h3 style="text-align:center">
+              Congratulation!<br/>
+              Your photo already set.
+            </h3>
+            
+            <div
+            style="
+              
+              border-radius: 10px;
+              padding: 10px;
+              margin-bottom:10px;
+              "
+          >
+          <div style="display: flex; gap: 15px; font-size: 14px; color: #666;">
+            <div>
+                <strong>Style:</strong> 
+                <a-select v-model:value="room_design_type_select">
+                  <a-option-select value="Modern">Modern</a-option-select>
+                  <a-option-select value="Classic">Classic</a-option-select>
+                  <a-option-select value="Rustic">Rustic</a-option-select>
+                  <a-option-select value="Industrial">Industrial</a-option-select>
+                  <a-option-select value="Minimalist">Minimalist</a-option-select>
+                  <a-option-select value="Traditional">Traditional</a-option-select>
+                  <a-option-select value="Contemporary">Contemporary</a-option-select>
+                  <a-option-select value="Vintage">Vintage</a-option-select>
+                </a-select>
+                <!-- {{ room_type || 'Living Room' }} -->
+              
+
+              </div>
+              <div>
+
+                <strong>Room Type:</strong> 
+                <a-select v-model:value="room_type_select">
+                  <a-option-select value="Living Room">Living Room</a-option-select>
+                  <a-option-select value="Dinning Room">Dinning Room</a-option-select>
+                  <a-option-select value="Kitchen">Kitchen</a-option-select>
+                  <a-option-select value="Home Office">Home Office</a-option-select>
+                  <a-option-select value="Bedroom">Bedroom</a-option-select>
+                  <a-option-select value="Office">Office</a-option-select>
+                  <a-option-select value="Rest Room">Rest Room</a-option-select>
+                </a-select>
+                <!-- {{ room_design_type || 'Modern' }} -->
+              </div>
+              <div v-if="products_used"><strong>Products:</strong> <div>{{ products_used.length }} items</div></div>
+            </div>
+            <br>
+          <a-label>
+            Add Description
+          </a-label>
+          <a-textarea :rows="5" v-model:value="description_room" placeholder="describe the room here "></a-textarea>
+          <a-button  :disabled="!description_room.trim()" block type="primary" size="large" style="margin-top:10px;padding: 8px 16px;" @click="Submit_Client_request()">Submit Request</a-button>
+        </div>
+      </div>
+          
+
+
+          <div
+          >
+          <a-row style="margin-bottom: 10px;">
+            <a-col :span="20">
+                <a-button type="primary" @click="open_SaveToMyDesignes=true" style="
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 8px;
+                padding: 8px 16px;
+                height: auto;
+                border-radius: 8px;" block>
+                    Save To My Design
+                </a-button>
+            </a-col>
+            <a-col :span="4" style="padding-left:5px">
+                <a-button style="
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 8px;
+                padding: 8px 16px;
+                height: auto;
+                border-radius: 8px;" >
+                    <svg width="22" height="22" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M14.2518 24.4363C11.1484 22.2025 5 17.0956 5 12.5C5 9.46241 7.31579 7 10.5 7C12.15 7 13.8 7.52941 16 9.64704C18.2 7.52941 19.85 7 21.5 7C24.6842 7 27 9.46241 27 12.5C27 17.0956 20.8517 22.2025 17.7482 24.4363C16.7039 25.1879 15.2961 25.1879 14.2518 24.4363Z" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </a-button>
+            </a-col>
+            <!-- <a-col>
+            </a-col> -->
+        </a-row>
+
+        <a-button type="default" block style="
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 8px;
+                padding: 8px 16px;
+                height: auto;
+                border-radius: 8px;">
+
+            <svg width="21" height="21" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 14.5V4.5M12 14.5C11.2998 14.5 9.99153 12.5057 9.5 12M12 14.5C12.7002 14.5 14.0085 12.5057 14.5 12" stroke="currentcolor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M20 16.5C20 18.982 19.482 19.5 17 19.5H7C4.518 19.5 4 18.982 4 16.5" stroke="currentcolor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Download Raw Files
+        </a-button>
+          </div>
+        </div>
+      </a-col>
     </a-row>
   </div>
 </template>
@@ -1060,6 +1173,8 @@ export default {
       loading: false,
       downloading: false,
       open_RenderNowModal: false,
+
+      is_client_requested_room:false,
       
       error: {
         room: null,
@@ -1582,6 +1697,61 @@ computed: {
       }
     },
 
+    
+    async Submit_Client_request(){
+      console.log("📡 Fetching room data...");
+      if (this.description_room.trim()===""){
+        return this.$message?.error('Please add some description to describe the room.', 3);
+      }
+      this.loading = true;
+      this.error.room = null;
+
+      try {
+        const roomId = this.$route.params.id;
+        const url = `${this.$store.state.root_api}engine/render-final-result/${roomId}`;
+
+        const responseData = await this.makeApiRequest(
+          url,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Token ${localStorage.getItem("token")}`,
+            },
+            body: JSON.stringify({
+              request:'submit_client_request',
+              description_room:this.description_room,
+              room_design_type_select:this.room_design_type_select,
+              room_type_select:this.room_type_select,
+              // tags_room:this.tags_room,
+            })
+          },
+          "room"
+        );
+
+        if (responseData ) {
+          if (this.is_ready) {
+                this.$router.push('/business-dashboard/my-designs');
+
+          } else {
+            this.error.room = "Room is not ready yet. Please try again later.";
+          }
+        } else {
+          this.error.room = "No room data found";
+        }
+      } catch (error) {
+        console.error("❌ Failed to fetch room:", error);
+        this.error.room = error.message;
+
+        this.showError("Failed to Load Room", error.message, () => {
+          this.roomRetryCount = 0;
+          this.fetchRoom();
+        });
+      } finally {
+        this.loading = false;
+      }
+    },
+
     async fetchRoom() {
       console.log("📡 Fetching room data...");
 
@@ -1612,6 +1782,8 @@ computed: {
               this.$store.state.root_media_api + responseData.data.image;
             this.main_image =
               this.$store.state.root_media_api + responseData.data.main_image;
+
+              this.is_client_requested_room=responseData.data.is_client_requested_room
 
             console.log("✅ Room data loaded:", this.base_image_url);
           } else {
