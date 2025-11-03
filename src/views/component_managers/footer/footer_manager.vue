@@ -1,15 +1,15 @@
 <template>
   <div v-if="!hideFooterCompletely">
-    <footer/>
+    <footer_component/>
   </div>
 </template>
 
 <script>
-import footer from '@/components/Includes/footer.vue'
+import footer_component from '@/components/Includes/footer.vue'
 
 export default {
   name: "navbar_manager",
-  components: { footer },
+  components:{footer_component},
   data() {
     return {
       hideFooterUrls: ['/login', '/signup'],

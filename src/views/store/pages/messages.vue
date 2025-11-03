@@ -161,7 +161,8 @@ export default {
             onlineUsers: [],
             searchQuery: '',
             websocket: null,
-            API_BASE: 'http://127.0.0.1:8000/chat'
+            // API_BASE: 'http://127.0.0.1:8000/chat'
+             API_BASE: this.$store.state.root_api+'chat'
         };
     },
     

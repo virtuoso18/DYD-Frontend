@@ -12,6 +12,7 @@ export default createStore({
 
     isLoading: false,
     primary_color: '',
+    websockets_address:'ws://localhost:8000',
     root_api: 'http://127.0.0.1:8000/',
     root_media_api: 'http://127.0.0.1:8000',
   },

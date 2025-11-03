@@ -23,7 +23,7 @@
 
             <a-row>
               <a-col :span="24" style="padding-top:10px;">
-                <b>{{ truncateText(product.product_title || 'No title available', 3) }}</b>
+                <b>{{ truncateText(product.product_title || 'No title available', 22) }}</b>
 
               </a-col>
 
@@ -87,12 +87,18 @@ export default {
     }
   },
   methods: {
-    truncateText(text, wordLimit) {
-  if (!text) return '';
-  const words = text.split(' ');
-  if (words.length <= wordLimit) return text;
-  return words.slice(0, wordLimit).join(' ') + '...';
-},
+//     truncateText(text, wordLimit) {
+//   if (!text) return '';
+//   const words = text.split(' ');
+//   if (words.length <= wordLimit) return text;
+//   return words.slice(0, wordLimit).join(' ') + '...';
+// },
+
+truncateText(text, charLimit = 7) {
+            if (!text) return '';
+            if (text.length <= charLimit) return text;
+            return text.slice(0, charLimit) + '...';
+        },
     handleAddProduct() {
       console.log('Add product clicked');
       // Handle add product functionality

@@ -309,7 +309,8 @@ export default {
     };
 
     const deleteProduct = () => {
-      emit('delete_product', props.selectedProduct.id)
+      emit('delete_product', {"product_id":props.selectedProduct.id,"product_type":"Light"})
+
     };
 
     return {

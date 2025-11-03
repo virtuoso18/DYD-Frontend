@@ -874,7 +874,7 @@ export default {
           this.roomLoadingMessage = 'Loading room configurations...';
           await Promise.all([
             this.fetchBinaryWallMasks(),
-            this.fetchRoom_floor_3d_cords(),
+            // this.fetchRoom_floor_3d_cords(),
             this.fetch3d_models_generated_by_room()
           ]);
           console.log('✅ Component initialized');

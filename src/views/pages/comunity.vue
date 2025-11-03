@@ -75,12 +75,14 @@
       
       <!-- Designs Grid -->
       <div v-else class="designs-grid">
-        <div class="design-card" v-for="design in designs" :key="design.id" @click="openDesignDetail(design)">
-          <div class="design-image-container">
+        <a-row>
+
+        <a-col :sm="12" :xs="12" :md="8" :lg="6" style="border:1px solid rgba(0,0,0,0.1);border-radius:10px" v-for="design in designs" :key="design.id" @click="openDesignDetail(design)">
+          <div >
             <img 
               :src="getImageUrl(design.image)" 
               :alt="design.title" 
-              class="design-image" 
+             style="width:100%;border-radius:10px;max-height:220px;object-fit: cover;"
             />
             <div class="design-tags">
               <span class="design-tag" v-for="tag in design.tags.slice(0, 2)" :key="tag">{{ tag }}</span>
@@ -101,7 +103,7 @@
               </div>
             </div>
           </div>
-          <div class="design-footer">
+          <div style="display: flex;justify-content: space-between;padding-left:10px;padding-right:10px;padding-top:5px;padding-bottom:5px">
             <div class="designer-info">
               <div class="designer-avatar">
                 <img :src="getImageUrl(design.designer.avatar)" :alt="design.designer.name" />
@@ -125,10 +127,12 @@
                 :stroke="design.liked ? '#ef4444' : 'currentColor'" 
                 stroke-width="2"/>
               </svg>
+              
               <span class="like-count">{{ design.likes }}</span>
             </div>
           </div>
-        </div>
+        </a-col>
+        </a-row>
       </div>
 
       <!-- Load More Button -->
@@ -147,14 +151,146 @@
         <p v-else>No designs available at the moment. Check back later!</p>
       </div>
     </div>
+
+
+
+    
+<div style="max-width:100%;margin:auto;">
+     <div style="padding:40px 10px;text-align:center;overflow:hidden;position:relative;">
+
+    <h1 style="font-size:28px;font-weight:700;margin-bottom:40px;">Our Happy Customers</h1>
+    
+    <swiper
+      style="margin-top:20px;padding-bottom:50px;overflow:visible;cursor:pointer"
+      :modules="modules"
+      :slides-per-view="slidesPerView"
+      :space-between="30"
+      :centered-slides="true"
+      navigation
+            :initial-slide="2"
+
+      :pagination="{ clickable: true }"
+      @swiper="onSwiper"
+      @slideChange="onSlideChange"
+    >
+      <swiper-slide v-for="(review, index) in reviews" :key="index">
+        <div style="padding:20px;border-radius:12px;text-align:left;width:100%;max-width:280px;margin:auto;">
+          <div style="display: flex;justify-content: center;flex-direction: column;align-items: center;">
+
+            <img :src="review.avatar" alt="" style="width:80px;height:80px;margin-bottom:-40px;background: white;border-radius:100%;border:1px solid grey ;">
+            <div style="border:1px solid rgba(0,0,0,0.2);border-radius:20px;padding:10px;padding-top:40px;height:240px;text-align:center">
+              <h3 style="margin:0;font-size:16px;font-weight:600;color:#111;">{{ review.name }}</h3>
+              <p style="margin:0;font-size:13px;color:#666;">{{ review.role }}</p>
+              <!-- <div style="display:flex;align-items:center;margin-bottom:15px;">
+                <div>
+                </div>
+              </div> -->
+              <a-rate :value="review.rating"></a-rate>
+              <p style="font-size:14px;line-height:1.5;color:#333;margin:0;text-align:center">“{{ review.text }}”</p>
+            </div>
+          </div>
+        </div>
+      </swiper-slide>
+    </swiper>
+
+    <!-- Fade effect overlays -->
+    <div style="position:absolute;top:0;left:0;width:200px;height:100%;background:linear-gradient(to right,#f3f3f3,transparent);z-index:5;pointer-events:none;"></div>
+    <div style="position:absolute;top:0;right:0;width:200px;height:100%;background:linear-gradient(to left,#f3f3f3,transparent);z-index:5;pointer-events:none;"></div>
+      </div>
+  </div>
+
+  <br>
+<div style="text-align:center">
+
+  <h1>Top Businesses</h1>
+  <br>
+  <a-row>
+    <a-col :sm="12" :xs="12" :md="8" :lg="6" style="padding:4px" v-for="(business, index) in businesses" :key="index" >
+      <div style="border:1px solid rgba(0,0,0,0.2);border-radius:10px;padding:10px;height:90px;text-align:center">
+      
+      <a-row>
+        <a-col :span="7">
+            <img :src="business.logo" alt="" style="width:60px;height:60px;margin-bottom:-40px;background: white;border-radius:100%;border:1px solid rgba(0,0,0,0.2) ;">
+
+        </a-col>
+        <a-col :span="17" style="text-align: start;padding-top:10px;">
+          <h3>{{business.name}}</h3>
+          <p style="display: flex;justify-content: space-between;font-size:16px;">Simulations: <span style="color:#3B63FB;font-weight:700;font-size:20px;">{{business.simulations}}</span></p>
+        </a-col>
+
+      </a-row> 
+      
+      </div>
+    </a-col>
+  </a-row>
+</div>
+<br>
+<br>
+
+
+  <div style="padding:40px 10px;text-align:center;overflow:hidden;position:relative;background-color: #f3f3f3;">
+
+    <h1 style="font-size:28px;font-weight:700;margin-bottom:40px;">Top Designers</h1>
+    
+    <swiper
+      style="margin-top:20px;padding-bottom:50px;overflow:visible;cursor:pointer"
+      :modules="modules"
+      :slides-per-view="designers_slidesPerView"
+      :space-between="30"
+      :centered-slides="true"
+      navigation
+            :initial-slide="3"
+
+      :pagination="{ clickable: true }"
+      @swiper="onSwiper"
+      @slideChange="onSlideChange"
+    >
+      <swiper-slide v-for="(business, index) in designers" :key="index" style="border:1px solid rgba(0,0,0,0.2);border-radius:10px;padding:15px">
+        <img :src="business.logo" :alt="business.name" style="width:60px;height:60px;background: white;border-radius:100%;border:1px solid grey ;margin-bottom:10px;">
+          <h4 >{{ business.name }}</h4>
+      </swiper-slide>
+    </swiper>
+
+    <!-- Fade effect overlays -->
+    <div style="position:absolute;top:0;left:0;width:200px;height:100%;background:linear-gradient(to right,#f3f3f3,transparent);z-index:5;pointer-events:none;"></div>
+    <div style="position:absolute;top:0;right:0;width:200px;height:100%;background:linear-gradient(to left,#f3f3f3,transparent);z-index:5;pointer-events:none;"></div>
+      </div>
+
+
+
   </div>
 </template>
 
 <script>
+import logo1 from '../../assets/business-logos/logo1.png'
+import logo2 from '../../assets/business-logos/logo2.png'
+import logo3 from '../../assets/business-logos/logo3.png'
+import logo4 from '../../assets/business-logos/logo4.png'
+import logo5 from '../../assets/business-logos/logo5.png'
+import logo6 from '../../assets/business-logos/logo6.png'
+import logo7 from '../../assets/business-logos/logo7.png'
+import logo8 from '../../assets/business-logos/logo8.png'
+
+
+import swiper_bg from '@/assets/bg-swiper.jpg'
+
+// import Swiper core and required modules
+import { Navigation, Pagination, Scrollbar, A11y,Autoplay } from 'swiper/modules';
+
+// Import Swiper Vue.js components
+import { Swiper, SwiperSlide } from 'swiper/vue';
+
+// Import Swiper styles
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import 'swiper/css/scrollbar';
+           
 export default {
   name: 'InteriorDesignCommunityPage',
   data() {
     return {
+      
       // Search and filter data
       selectedCategory: '',
       selectedCategoryText: 'Interior Design',
@@ -162,6 +298,144 @@ export default {
       searchQuery: '',
       showDropdown: false,
       
+
+
+       swiper_bg,
+slidesPerView : window.innerWidth <= 768 ? 1 : 5,
+designers_slidesPerView : window.innerWidth <= 768 ? 3 : 8,
+            
+   reviews :[
+                {
+                    name: "Amy Lang",
+                    role: "Home Stager",
+                    rating:4.5,
+                    text: "Even those who are not design-savvy can easily create realistic and inviting virtually staged spaces that attract potential buyers regularly.",
+                    avatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTi2haw1278i40sszGwCvy7LKP3j2KqLTnPJg&s"
+                },
+                {
+                    name: "Troy Sinclair",
+                    role: "Real Estate Photographer",
+                    rating:4.5,
+                    text: "It has taken our real estate marketing to the next level! Our buyers love the virtual staging.",
+                    avatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTi2haw1278i40sszGwCvy7LKP3j2KqLTnPJg&s"
+                },
+                {
+                    name: "John Doe",
+                    role: "Interior Designer",
+                    rating:4.5,
+                    text: "This tool made it so easy to stage homes and present them to clients with realistic visuals.",
+                    avatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTi2haw1278i40sszGwCvy7LKP3j2KqLTnPJg&s"
+                },
+                {
+                    name: "Sarah Lee",
+                    role: "Realtor",
+                    rating:4.5,
+                    text: "My listings now stand out. Clients are impressed with how professional everything looks.",
+                    avatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTi2haw1278i40sszGwCvy7LKP3j2KqLTnPJg&s"
+                },
+                {
+                    name: "David Kim",
+                    role: "Architect",
+                    rating:4.5,
+                    text: "An incredible platform for showcasing designs and spaces realistically.",
+                    avatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTi2haw1278i40sszGwCvy7LKP3j2KqLTnPJg&s"
+                }
+            ],
+ businesses: [
+        {
+          id: 1,
+          name: 'Business name',
+          logo: logo1,
+          simulations: 65748
+        },
+        {
+          id: 2,
+          name: 'Business name',
+          logo: logo2,
+          simulations: 65748
+        },
+        {
+          id: 3,
+          name: 'Business name',
+          logo: logo3,
+          simulations: 65748
+        },
+        {
+          id: 4,
+          name: 'Business name',
+          logo: logo4,
+          simulations: 65748
+        },
+        {
+          id: 5,
+          name: 'Business name',
+          logo: logo5,
+          simulations: 65748
+        },
+        {
+          id: 6,
+          name: 'Business name',
+          logo: logo6,
+          simulations: 65748
+        },
+        {
+          id: 7,
+          name: 'Business name',
+          logo: logo7,
+          simulations: 65748
+        },
+        {
+          id: 8,
+          name: 'Business name',
+          logo: logo8,
+          simulations: 65748
+        }
+      ],
+      
+designers: [
+        {
+          id: 1,
+          name: 'Designer Name1',
+          logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTi2haw1278i40sszGwCvy7LKP3j2KqLTnPJg&s',
+          simulations: 65748
+        },
+        {
+          id: 2,
+          name: 'Designer Name2',
+          logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTi2haw1278i40sszGwCvy7LKP3j2KqLTnPJg&s',
+          simulations: 65748
+        },
+        {
+          id: 3,
+          name: 'Designer Name3',
+          logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTi2haw1278i40sszGwCvy7LKP3j2KqLTnPJg&s',
+          simulations: 65748
+        },
+        {
+          id: 4,
+          name: 'Designer Name4',
+          logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTi2haw1278i40sszGwCvy7LKP3j2KqLTnPJg&s',
+          simulations: 65748
+        },
+        {
+          id: 5,
+          name: 'Designer Name5',
+          logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTi2haw1278i40sszGwCvy7LKP3j2KqLTnPJg&s',
+          simulations: 65748
+        },
+        {
+          id: 6,
+          name: 'Designer Name6',
+          logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTi2haw1278i40sszGwCvy7LKP3j2KqLTnPJg&s',
+          simulations: 65748
+        },
+        {
+          id: 7,
+          name: 'Designer Name7',
+          logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTi2haw1278i40sszGwCvy7LKP3j2KqLTnPJg&s',
+          simulations: 65748
+        }
+      ],
       // Category options
       categoryOptions: [
         { value: 'interior', text: 'Interior Design' },
@@ -192,7 +466,27 @@ export default {
       pageSize: 12
     }
   },
+  components:{
+         Swiper,
+      SwiperSlide,
+  },
+    setup() {
+      const onSwiper = (swiper) => {
+        console.log(swiper);
+      };
+      const onSlideChange = () => {
+        console.log('slide change');
+      };
+      return {
+        onSwiper,
+        onSlideChange,
+        modules: [Navigation, Pagination, Scrollbar, A11y,Autoplay],
+      };
+    },
   methods: {
+     formatNumber(num) {
+      return num.toLocaleString();
+    },
     // Dropdown methods
     toggleDropdown() {
       this.showDropdown = !this.showDropdown;
@@ -381,7 +675,7 @@ export default {
   z-index: 0;
 }
 
-/* Decorative curved lines on blue background */
+/* Decorative curved lines on #3B63FB background */
 .design-page::after {
   content: '';  
   position: absolute;
@@ -756,6 +1050,7 @@ export default {
 .designer-avatar {
   width: 40px;
   height: 40px;
+  border:1px solid rgba(0,0,0,0.1);
   border-radius: 50%;
   overflow: hidden;
 }

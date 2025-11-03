@@ -282,7 +282,7 @@ console.log(result)
       }
 
       // Establish new WebSocket connection with token as query parameter
-      const wsUrl = `ws://localhost:8000/ws/credits/?token=${this.token}`;
+      const wsUrl = `${this.$store.state.websockets_address}/ws/credits/?token=${this.token}`;
       this.ws = new WebSocket(wsUrl);
 
       this.ws.onopen = () => {

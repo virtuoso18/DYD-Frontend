@@ -330,7 +330,7 @@ export default {
 
     const deleteTexture = () => {
       // emit('delete-texture', props.selectedTexture.id);
-      emit('delete_texture', props.selectedTexture.id)
+      emit('delete_texture',{"product_id":props.selectedTexture.id,"product_type":"wall"} )
 
     };
 

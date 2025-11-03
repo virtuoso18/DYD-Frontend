@@ -291,7 +291,7 @@ Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac tu
                       placeholder="100"
                       style="width: 100%; border-radius: 4px; background: #f3f4f6; border: 1px solid #e5e7eb; font-size: 13px;"
                     />
-                    <span style="margin-left: 6px; color: #9ca3af; font-size: 12px;">cm</span>
+                    <span style="margin-left: 6px; color: #9ca3af; font-size: 12px;">meter</span>
                   </div>
                 </a-col>
                 <a-col :span="8">
@@ -304,7 +304,7 @@ Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac tu
                       placeholder="30"
                       style="width: 100%; border-radius: 4px; background: #f3f4f6; border: 1px solid #e5e7eb; font-size: 13px;"
                     />
-                    <span style="margin-left: 6px; color: #9ca3af; font-size: 12px;">cm</span>
+                    <span style="margin-left: 6px; color: #9ca3af; font-size: 12px;">meter</span>
                   </div>
                 </a-col>
                 <a-col :span="8">
@@ -317,7 +317,7 @@ Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac tu
                       placeholder="30"
                       style="width: 100%; border-radius: 4px; background: #f3f4f6; border: 1px solid #e5e7eb; font-size: 13px;"
                     />
-                    <span style="margin-left: 6px; color: #9ca3af; font-size: 12px;">cm</span>
+                    <span style="margin-left: 6px; color: #9ca3af; font-size: 12px;">meter</span>
                   </div>
                 </a-col>
               </a-row>

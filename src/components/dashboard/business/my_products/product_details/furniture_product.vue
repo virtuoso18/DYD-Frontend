@@ -90,31 +90,31 @@
               v-if="selectedProduct.dimensions.width" 
               label="Width"
             >
-              {{ selectedProduct.dimensions.width }}
+              {{ selectedProduct.dimensions.width }} meter
             </a-descriptions-item>
             <a-descriptions-item 
               v-if="selectedProduct.dimensions.height" 
               label="Height"
             >
-              {{ selectedProduct.dimensions.height }}
+              {{ selectedProduct.dimensions.height }} meter
             </a-descriptions-item>
             <a-descriptions-item 
               v-if="selectedProduct.dimensions.length" 
               label="Length"
             >
-              {{ selectedProduct.dimensions.length }}
+              {{ selectedProduct.dimensions.length }} meter
             </a-descriptions-item>
             <a-descriptions-item 
               v-if="selectedProduct.dimensions.depth" 
               label="Depth"
             >
-              {{ selectedProduct.dimensions.depth }}
+              {{ selectedProduct.dimensions.depth }} meter
             </a-descriptions-item>
             <a-descriptions-item 
               v-if="selectedProduct.dimensions.weight" 
               label="Weight"
             >
-              {{ selectedProduct.dimensions.weight }}
+              {{ selectedProduct.dimensions.weight }} meter
             </a-descriptions-item>
           </a-descriptions>
 
@@ -233,7 +233,8 @@ export default {
       this.$emit('edit_product', this.selectedProduct.id)
     },
     deleteProduct() {
-      this.$emit('delete_product', this.selectedProduct.id)
+      this.$emit('delete_product', {"product_id":this.selectedProduct.id,"product_type":"Furniture"})
+
     },
     back_product_list() {
       this.$emit('back_product_list', this.selectedProduct.id)

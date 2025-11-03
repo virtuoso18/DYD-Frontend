@@ -38,13 +38,13 @@
         <a-row >
         <a-col :sm="12" :xs="12" :md="4" :lg="4" style="border-radius:10px;height:150px;width:100%; padding:10px">
            <div style="background-color: #f2f2f2;width:100%;height:100%;border-radius:10px;display: flex;flex-direction: column; align-items: center;justify-content: center">
-               <h1 style="font-size:28px;margin:0;color:blue;font-weight:700">95%</h1>
+               <h1 style="font-size:28px;margin:0;color:#3B63FB;font-weight:700">95%</h1>
                <p style="font-size:16px">Cheaper</p>
             </div>
             </a-col>
         <a-col :sm="12" :xs="12" :md="4" :lg="4" style="border-radius:10px;height:150px;width:100%;padding:10px;">
             <div style="background-color: #f2f2f2;width:100%;height:100%;border-radius:10px;display: flex;flex-direction: column; align-items: center;justify-content: center">
-                <h1 style="font-size:28px;margin:0;color:blue;font-weight:700">10,000+</h1>
+                <h1 style="font-size:28px;margin:0;color:#3B63FB;font-weight:700">10,000+</h1>
                 <p style="font-size:16px">Users</p>
             </div> 
             </a-col>
@@ -95,8 +95,8 @@
     <a-row  style="padding-left:10px;;padding-right:10px">
         <a-col :span="24" style="font-size:24px;font-weight:bold;margin:auto;width:100%;text-align: center;">
             <div class="banner-text">Unlock the potential of</div>
-            <div class="banner-text"><span style="background-color: blue;color:white;border-radius:10px;padding-left:10px;padding-right:10px;font-weight:bold;position:relative">DYD
-                <span style="color:blue;position:absolute;bottom:15px;left:-20px;font-size:20px">✦</span>
+            <div class="banner-text"><span style="background-color: #3B63FB;color:white;border-radius:10px;padding-left:10px;padding-right:10px;font-weight:bold;position:relative">DYD
+                <span style="color:#3B63FB;position:absolute;bottom:15px;left:-20px;font-size:20px">✦</span>
                 <span style="color:black;position:absolute;bottom:-20px;left:-15px;font-size:35px">✦</span>
             </span> for your needs.</div>
 <br>
@@ -176,7 +176,7 @@ Drag & drop Image
 
     
     <br>
-    <a-row style="background:blue;height:200px;">
+    <a-row style="background:#3B63FB;height:200px;">
         <a-col :sm="12" :xs="12" :md="6" :lg="6" style="color:white;display:flex;justify-content: center;align-items: center;flex-direction: column;">
             <div  class="banner-text" style="color:white">
                 30+
@@ -413,7 +413,7 @@ Drag & drop Image
 <div style="background:#f2f2f2;">
 
 
-<div style="max-width:1200px;margin:auto;">
+<div style="max-width:1300px;margin:auto;">
      <div style="padding:40px 10px;text-align:center;overflow:hidden;position:relative;">
 
     <h1 style="font-size:28px;font-weight:700;margin-bottom:40px;">See What Customers Love About Us</h1>
@@ -424,6 +424,8 @@ Drag & drop Image
       :slides-per-view="slidesPerView"
       :space-between="30"
       :centered-slides="true"
+            :initial-slide="2"
+
       navigation
       :pagination="{ clickable: true }"
       @swiper="onSwiper"

@@ -46,7 +46,7 @@
       
       <div class="light-options-grid">
         <!-- Ceiling Hanging 3D Light -->
-        <div class="light-option-card" @click="this.$router.push('/my-products/add-new-light')">
+        <div class="light-option-card" @click="add3DLightProductClicked()">
           <div class="light-image-container">
             <div class="light-illustration ceiling-light">
               <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
@@ -187,7 +187,7 @@ export default {
     categories_available: { type: Array, default: () => [] },
     types: { type: Array, default: () => [] }
   },
-  emits: ['update:visible', 'product-created', 'cancel'],
+  emits: ['update:visible', 'product-created', 'cancel','add-3d-light'],
   data() {
     return {
       isSaving: false,
@@ -210,6 +210,9 @@ export default {
     product_created_sunk_unsunk_light(){
       this.$emit('product-created',true);
 
+    },
+    add3DLightProductClicked(){
+      this.$emit('add-3d-light',true);      
     },
     showModalSunkUnsunk(LightType){
       this.light_type=LightType

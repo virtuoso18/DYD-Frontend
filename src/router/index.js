@@ -34,6 +34,8 @@ import my_transactions from '@/components/dashboard/business/my_transactions.vue
 
 import add_furniture from '@/components/dashboard/business/my_products/add_new_product/add_furniture.vue'
 import add_light from '@/components/dashboard/business/my_products/add_new_product/add_light_ceiling_3d.vue'
+
+
 // Import individual dashboard components for professional users
 import profesional_user_profile from '@/components/dashboard/professional/user_profile.vue'
 import profesional_my_designs from '@/components/dashboard/professional/my_designs.vue'
@@ -55,6 +57,14 @@ import manage_access from '@/components/store/manage_access.vue'
 import buisness_page from '@/views/store/vendor_store.vue'
 import buisness_product from '@/views/store/buisness_product.vue'
 
+import access_manager from '@/views/access_engine/access_manager.vue'
+import access_overview from '@/views/access_engine/access_overview.vue'
+import access_manage_products from '@/views/access_engine/product/access_manage_products.vue'
+import access_manage_site from '@/views/access_engine/business_site/access_manage_site.vue'
+import access_manage_community_post from '@/views/access_engine/community_post/access_manage_community_post.vue'
+import access_manage_customer_requests from '@/views/access_engine/customer_request/access_manage_customer_requests.vue'
+import access_create_furniture_product_3d_model_add_product from '@/views/access_engine/product/my_products/add_new_product/add_furniture.vue'
+import access_create_light_product_3d_model_add_light from  '@/views/access_engine/product/my_products/add_new_product/add_light_ceiling_3d.vue'
 
 import Generate_Banner_Admin from '@/views/Platform_Admin_Access_Only/generate_banner_catalog.vue'
 const router = createRouter({
@@ -338,6 +348,121 @@ const router = createRouter({
         },
       ]
     },
+
+    
+// ==========================================
+// Access Management Engine 
+// ==========================================
+
+    // ============================================================================================================================
+    // Synchronised APIS FOR diduction of credits to create 3d model by business granted access  credits available
+    // ============================================================================================================================
+        
+    //    Refferance-API
+    //    {
+    //       path: '/my-products/add-new-furniture',
+    //       name: 'business_my_products_add_new_furniture',
+    //       component: add_furniture,
+    //     }, 
+        {
+          path: '/access-business/create-furniture-product-3d-model-add-product',
+          name: 'create-furniture-product-3d-model-add-product',
+          component: access_create_furniture_product_3d_model_add_product, // Create a new component for overview content
+        },
+    //    Referance-API
+    //    {
+    //      path: '/my-products/add-new-light',
+    //      name: 'business_my_products_add_new_light',
+    //      component: add_light,
+    //    },
+        {
+          path: '/access-business/create-light-product-3d-model-add-light',
+          name: 'create-light-product-3d-model-add-light',
+          component: access_create_light_product_3d_model_add_light, // Create a new component for overview content
+        },
+    // ============================================================================================================================
+    // Synchronised APIS FOR diduction of credits to create 3d model by business granted access  credits available
+    // ============================================================================================================================
+    
+
+// ==========================================
+// Access Management Engine 
+// ==========================================
+{
+  path: '/access-business',
+  component: access_manager, // This acts as the layout
+  children: [
+    {
+      path: '',
+      redirect:'/access-business/overview'
+    },
+    {
+      path: 'overview',
+      name: 'business-overview',
+      component: access_overview, // Create a new component for overview content
+    },
+    
+    
+    {
+      path: 'manage-products',
+      name: 'manage-products',
+      component: access_manage_products,
+    },
+    {
+      path: 'manage-site',
+      name: 'manage-site',
+      component: access_manage_site,
+    },
+    {
+      path: 'manage-community-post',
+      name: 'manage-community-post',
+      component: access_manage_community_post,
+    },
+    {
+      path: 'manage-customer-requests',
+      name: 'manage-customer-requests',
+      component: access_manage_customer_requests,
+    },
+  ],
+},
+// {
+//   path: '/access-business/:business_id',
+//   component: access_manager, // This acts as the layout
+//   children: [
+//     {
+//       path: '',
+//       redirect: to => {
+//         const { business_id } = to.params;
+//         return `/access-business/${business_id}/overview`;
+//       },
+//     },
+//     {
+//       path: 'overview',
+//       name: 'business-overview',
+//       component: access_overview, // Create a new component for overview content
+//     },
+//     {
+//       path: 'manage-products',
+//       name: 'manage-products',
+//       component: access_manage_products,
+//     },
+//     {
+//       path: 'manage-site',
+//       name: 'manage-site',
+//       component: access_manage_site,
+//     },
+//     {
+//       path: 'manage-community-post',
+//       name: 'manage-community-post',
+//       component: access_manage_community_post,
+//     },
+//     {
+//       path: 'manage-customer-requests',
+//       name: 'manage-customer-requests',
+//       component: access_manage_customer_requests,
+//     },
+//   ],
+// },
 
     {
       path: '/login',

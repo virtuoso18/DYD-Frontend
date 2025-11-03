@@ -170,9 +170,9 @@ export default defineComponent({
     }
 
     const handleSubmit = () => {
-      if (!validateForm()) {
-        return
-      }
+      // if (!validateForm()) {
+      //   return
+      // }
 
       const submitData = {
         email: formData.email,

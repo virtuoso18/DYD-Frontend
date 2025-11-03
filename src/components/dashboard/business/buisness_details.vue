@@ -1,5 +1,117 @@
 <template>
-  <div class="business-details-container">
+<a-modal
+  v-model:visible="verifyModalVisible"
+  title="Verify Your Email"
+  :footer="null"
+  width="400px"
+  @cancel="closeVerifyModal"
+>
+  <!-- Step 1: Confirmation -->
+  <div v-if="verificationStep === 1">
+    <p style="text-align: center; font-size: 14px; color: #666; margin-bottom: 10px;">
+      A verification code will be sent to
+    </p>
+    <p style="text-align: center; font-weight: 600; font-size: 14px; color: #000; margin-bottom: 30px;">
+      {{ businessInfo.email }}
+    </p>
+
+    <div style="display: flex; gap: 12px;">
+      <a-button @click="closeVerifyModal" style="flex: 1;">
+        Cancel
+      </a-button>
+      <a-button 
+        type="primary" 
+        @click="startVerification"
+        :loading="verificationLoading"
+        style="flex: 1;"
+      >
+        Send Code
+      </a-button>
+    </div>
+  </div>
+
+  <!-- Step 2: OTP Verification -->
+  <div v-else-if="verificationStep === 2">
+    <p style="text-align: center; font-size: 14px; color: #666; margin-bottom: 20px;">
+      We sent a 6-digit code to {{ businessInfo.email }}
+    </p>
+
+    <a-input
+      v-model:value="otpCode"
+      placeholder="000000"
+      maxlength="6"
+      size="large"
+      @keyup.enter="verifyOTP"
+      style="text-align: center; font-size: 24px; font-weight: bold; letter-spacing: 8px; font-family: 'Courier New', monospace; margin-bottom: 20px;"
+    />
+
+    <div style="text-align: center; margin-bottom: 15px;">
+      <span style="color: #666; font-size: 13px;">Expires in: </span>
+      <span style="color: #ef4444; font-weight: 600; font-size: 14px;">{{ otpTimeRemaining }}s</span>
+    </div>
+
+    <a-progress
+      :percent="otpProgress"
+      :show-info="false"
+      style="margin-bottom: 15px;"
+    />
+
+    <div style="text-align: center; margin-bottom: 20px;">
+      <a-button 
+        type="link" 
+        :disabled="otpTimeRemaining > 0"
+        @click="resendOTP"
+        style="padding: 0; font-size: 14px;"
+      >
+        {{ otpTimeRemaining > 0 ? `Resend in ${otpTimeRemaining}s` : 'Resend Code' }}
+      </a-button>
+    </div>
+
+    <a-alert
+      v-if="otpError"
+      type="error"
+      :message="otpError"
+      show-icon
+      closable
+      style="margin-bottom: 20px;"
+      @close="otpError = ''"
+    />
+
+    <div style="display: flex; gap: 12px;">
+      <a-button @click="goBackToStep1" style="flex: 1;">
+        Back
+      </a-button>
+      <a-button 
+        type="primary" 
+        @click="verifyOTP"
+        :loading="verifyingOTP"
+        :disabled="otpCode.length !== 6"
+        style="flex: 1;"
+      >
+        Verify
+      </a-button>
+    </div>
+  </div>
+
+  <!-- Step 3: Verification Complete -->
+  <div v-else-if="verificationStep === 3">
+    <div style="text-align: center; margin-bottom: 20px;">
+      <p style="font-size: 14px; color: #10b981; font-weight: 600;">✓ Verified</p>
+    </div>
+    <p style="text-align: center; font-size: 14px; color: #666; margin-bottom: 25px;">
+      Your email has been successfully verified
+    </p>
+
+    <a-button 
+      type="primary" 
+      @click="closeVerifyModal"
+      style="width: 100%;"
+    >
+      Done
+    </a-button>
+  </div>
+</a-modal>
+<div class="business-details-container">
     <a-row class="main-content">
       <a-col :xs="24" :sm="24" :md="24" :lg="24" class="content-area">
         <div class="content-wrapper">
@@ -184,7 +296,7 @@
                 </a-col>
 
                 <!-- Email Field -->
-                <a-col :xs="24" :sm="24" :md="24" :lg="24">
+                <!-- <a-col :xs="24" :sm="24" :md="24" :lg="24">
                   <a-form-item label="Email">
                     <a-input 
                       v-model:value="businessInfo.email"
@@ -193,6 +305,21 @@
                       class="form-input"
                     />
                   </a-form-item>
+                </a-col> -->
+            
+
+                <a-col :xs="24" :sm="24" :md="24" :lg="24">
+                  <a-form-item label="Email">
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                      <a-input v-model:value="businessInfo.email" :disabled="!isEditMode || businessInfo.isEmailVerified" placeholder="john@example.com" style="flex: 1; padding: 10px 12px; border: 1px solid #d9d9d9; border-radius: 6px; font-size: 14px;" />
+                      <a-button v-if="!businessInfo.isEmailVerified && !isEditMode" type="primary" danger @click="openVerifyModal" style="min-width: 120px; white-space: nowrap;">Verify Email</a-button>
+                      <a-tag v-else-if="businessInfo.isEmailVerified" color="green" style="margin: 0; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: 500;">✓ Verified</a-tag>
+                    </div>
+                  </a-form-item>
+                  <div v-if="!businessInfo.isEmailVerified && !isEditMode" style="margin-top: 12px; padding: 12px; background: #fffbe6; border-left: 4px solid #faad14; border-radius: 4px; font-size: 13px; color: #8b6914;">
+                    <p style="margin: 0 0 6px 0; font-weight: 600;">Email Not Verified</p>
+                    <p style="margin: 0; line-height: 1.5;">Please verify your business email to ensure secure communication with your customers. After verification, your email cannot be modified.</p>
+                  </div>
                 </a-col>
 
                 <!-- Phone Number Field -->
@@ -359,6 +486,8 @@ export default {
       backgroundImage: null,
       slug:'',
       businessInfo: {
+        isEmailVerified: false,
+
         name: this.buisness_info.name || "",
         email: this.buisness_info.email,
         phone: this.buisness_info.phone_number,
@@ -371,6 +500,18 @@ export default {
         website: 'https://' + this.buisness_info.website_url,
         cartLink: 'https://',
       },
+      // Verification modal data
+    verifyModalVisible: false,
+    verificationStep: 1,
+    verificationLoading: false,
+    otpCode: '',
+    verifyingOTP: false,
+    otpError: '',
+    otpTimeRemaining: 600,
+    otpTimer: null,
+    otpProgress: 100,
+
+
       editServices: false,
       editData: {
         servicesTitle: 'what do we offer ?',
@@ -395,6 +536,185 @@ export default {
   },
 
   methods: {
+    openVerifyModal() {
+  this.verifyModalVisible = true;
+  this.verificationStep = 1;
+  this.otpCode = '';
+  this.otpError = '';
+},
+
+closeVerifyModal() {
+  this.verifyModalVisible = false;
+  this.verificationStep = 1;
+  this.otpCode = '';
+  this.otpError = '';
+  if (this.otpTimer) {
+    clearInterval(this.otpTimer);
+  }
+},
+
+async startVerification() {
+  try {
+    this.verificationLoading = true;
+    const token = localStorage.getItem('token');
+
+    const response = await fetch(`${this.$store.state.root_api}Auth/api/send-business-email-otp/`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Token ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    const result = await response.json();
+    
+    if (result.success) {
+      this.verificationStep = 2;
+      this.otpTimeRemaining = 600;
+      this.otpProgress = 100;
+      this.startOTPTimer();
+      this.$message.success('OTP sent to your email');
+    } else {
+      this.$message.error(result.message || 'Failed to send OTP');
+    }
+  } catch (error) {
+    console.error('Error sending OTP:', error);
+    this.$message.error('Failed to send OTP');
+  } finally {
+    this.verificationLoading = false;
+  }
+},
+
+startOTPTimer() {
+  if (this.otpTimer) {
+    clearInterval(this.otpTimer);
+  }
+
+  this.otpTimer = setInterval(() => {
+    this.otpTimeRemaining--;
+    this.otpProgress = (this.otpTimeRemaining / 600) * 100;
+
+    if (this.otpTimeRemaining <= 0) {
+      clearInterval(this.otpTimer);
+      this.otpError = 'OTP has expired. Please request a new one.';
+      this.goBackToStep1();
+    }
+  }, 1000);
+},
+
+async verifyOTP() {
+  if (this.otpCode.length !== 6) {
+    this.$message.error('Please enter a valid 6-digit OTP');
+    return;
+  }
+
+  try {
+    this.verifyingOTP = true;
+    this.otpError = '';
+    const token = localStorage.getItem('token');
+
+    const response = await fetch(`${this.$store.state.root_api}Auth/api/verify-business-email-otp/`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Token ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        otp: this.otpCode
+      })
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      this.businessInfo.isEmailVerified = true;
+
+      // Update localStorage with verified status
+      const businessProfile = JSON.parse(localStorage.getItem('business_profile') || '{}');
+      businessProfile.is_email_verified = true;
+      localStorage.setItem('business_profile', JSON.stringify(businessProfile));
+      
+
+      this.verificationStep = 3;
+      if (this.otpTimer) {
+        clearInterval(this.otpTimer);
+      }
+      this.$message.success('Email verified successfully!');
+    } else {
+      this.otpError = result.message || 'Invalid OTP';
+      this.$message.error(this.otpError);
+    }
+  } catch (error) {
+    console.error('Error verifying OTP:', error);
+    this.otpError = 'Verification failed. Please try again.';
+    this.$message.error(this.otpError);
+  } finally {
+    this.verifyingOTP = false;
+  }
+},
+
+async resendOTP() {
+  try {
+    this.verificationLoading = true;
+    const token = localStorage.getItem('token');
+
+    const response = await fetch(`${this.$store.state.root_api}Auth/api/resend-business-email-otp/`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Token ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      this.otpCode = '';
+      this.otpError = '';
+      this.otpTimeRemaining = 600;
+      this.otpProgress = 100;
+      this.startOTPTimer();
+      this.$message.success('OTP resent to your email');
+    } else {
+      this.$message.error(result.message || 'Failed to resend OTP');
+    }
+  } catch (error) {
+    console.error('Error resending OTP:', error);
+    this.$message.error('Failed to resend OTP');
+  } finally {
+    this.verificationLoading = false;
+  }
+},
+
+goBackToStep1() {
+  if (this.otpTimer) {
+    clearInterval(this.otpTimer);
+  }
+  this.verificationStep = 1;
+  this.otpCode = '';
+  this.otpError = '';
+},
+
+async checkVerificationStatus() {
+  try {
+    const token = localStorage.getItem('token');
+    
+    const response = await fetch(`${this.$store.state.root_api}Auth/api/business-email-status/`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Token ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    const result = await response.json();
+    if (result.success) {
+      this.businessInfo.isEmailVerified = result.data.is_verified;
+    }
+  } catch (error) {
+    console.error('Error checking verification status:', error);
+  }
+},
     full_url() {
       if (typeof window !== 'undefined') {
         return `${window.location.origin}/${this.slug}`;
@@ -560,6 +880,7 @@ export default {
             business_picture: data.business_picture || "",
             description: data.description || "",
             services: data.buisness_info || "",
+            isEmailVerified:data.is_email_verified||false,
             whatsapp: data.whatsapp_number ? `https://wa.me/${data.whatsapp_number}` : "",
             instagram: data.instagram_url ? `https://instagram.com/${data.instagram_url}` : "",
             facebook: data.facebook_url ? `https://facebook.com/${data.facebook_url}` : "",
@@ -1031,4 +1352,7 @@ export default {
   border: none;
   box-shadow: none;
 }
+:deep(.ant-progress-text) {
+  font-size: 12px !important;
+} 
 </style>

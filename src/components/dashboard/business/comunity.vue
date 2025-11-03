@@ -125,12 +125,13 @@
                                 width: 40px;
                                 height: 40px;
                                 border-radius: 100%;
+                                border:1px solid rgba(0,0,0,0.2)
                               "
                               alt=""
                             />
-                            <b style="font-size: 16px">{{
+                            <span style="font-size: 16px;font-weight:600">{{
                               truncateText(post.post_by, 15)
-                            }}</b>
+                            }}</span>
                           </a-col>
                           <a-col :span="10" style="display: flex">
                             <!-- Post Stats -->

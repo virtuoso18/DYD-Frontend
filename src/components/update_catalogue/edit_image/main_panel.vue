@@ -100,7 +100,7 @@
         class="image-container"
         :class="getImageClass(index)"
       >
-        <a-image :src="this.$store.state.root_media_api+'/'+image" :alt="`Generated image ${index + 1}`" />
+        <a-image :src="this.$store.state.root_media_api+image" :alt="`Generated image ${index + 1}`" />
         <!-- <a-image :src="this.$store.state.root_media_api+'/'+image" :alt="`Generated image ${index + 1}`" /> -->
       </div>
     </div>

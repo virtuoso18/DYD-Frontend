@@ -213,7 +213,7 @@
             <h4 style="margin-bottom: 16px; font-weight: 500; font-size: 14px; color: #1f2937;">Dimensions</h4>
             <a-row :gutter="16">
               <a-col :span="8" v-for="dim in ['height', 'length', 'width']" :key="dim">
-                <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 13px; color: #6b7280; text-transform: capitalize;">{{ dim }}<span style="margin-left: 8px; color: #9ca3af; font-size: 13px; min-width: 20px;">( cm )</span></label>
+                <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 13px; color: #6b7280; text-transform: capitalize;">{{ dim }}<span style="margin-left: 8px; color: #9ca3af; font-size: 13px; min-width: 20px;">( meter )</span></label>
                 <div style="display: flex; align-items: center;">
                   <a-input v-model:value="productForm.dimensions[dim]" :placeholder="dim === 'height' ? '100' : '30'" style="border-radius: 6px;" />
                   
@@ -293,7 +293,7 @@
 </template>
 
 <script>
-import canvas_3d_model_renderer from "@/components/store/canvas_3d_model_renderer.vue"
+import canvas_3d_model_renderer from "@/components/dashboard/business/my_products/canvas_3d_model_renderer_light.vue";
 
 export default {
   name: "edit_product_details_light_product_update_hanging_3D",

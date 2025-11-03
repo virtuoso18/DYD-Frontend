@@ -2,26 +2,38 @@
 <div class="main">
     <!-- {{ my_designes }} -->
     
+     
     <a-row v-if="view_type=='all'">
     <a-col :span="24"><h2>My Designes</h2></a-col>
-    <a-col :lg="8" :md="8" :xs="24" :sm="24" style="padding:5px;" v-for="design in my_designes" :key="design.id">
-        
+
+    <!-- Empty State -->
+    <a-col :span="24" v-if="my_designes.length === 0" style="display:flex;justify-content:center;align-items:center;height:80vh;text-align: center; padding: 60px 20px;">
+        <a-empty description="No designs available yet">
+            <template #description>
+                <p style="color: #666; font-size: 16px;">You haven't created any designs yet.</p>
+                <p style="color: #999; font-size: 14px;">Start creating your first design!</p>
+            </template>
+        </a-empty>
+    </a-col>
+
+    <!-- Designs List -->
+    <a-col :lg="8" :md="8" :xs="24" :sm="24" style="padding:5px;" v-for="design in my_designes" :key="design.id" v-if="my_designes.length > 0">
         <div style="border:1px solid rgba(0,0,0,0.1);padding: 5px;border-radius:10px;">
-            <img :src="this.$store.state.root_media_api+design.generated_image" style="width:100%;border-radius:10px;max-height:200px;object-fit:cover" alt="" @click="show_design_details(design.id)">
+            <img :src="this.$store.state.root_media_api+design.image" style="width:100%;border-radius:10px;max-height:200px;object-fit:cover" alt="" @click="show_design_details(design.id)">
             <a-row style="padding-top:5px">
-                    <a-col :span="22" >
-                        <a-tag>Room : {{  design.room_type }}</a-tag>
-                        <a-tag>Style : {{ design.room_design_type }}</a-tag>
-                    </a-col>
-                    <a-col :span="2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="15px" height="15px" viewBox="0 0 16 16" fill="#000000" class="bi bi-three-dots-vertical">
-                            <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
-                        </svg>
-                    </a-col>
-                </a-row>
-            </div>
-        </a-col>
-    </a-row>
+                <a-col :span="22" >
+                    <a-tag>Room : {{  design.room_type }}</a-tag>
+                    <a-tag>Style : {{ design.room_design_type }}</a-tag>
+                </a-col>
+                <a-col :span="2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15px" height="15px" viewBox="0 0 16 16" fill="#000000" class="bi bi-three-dots-vertical">
+                        <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
+                    </svg>
+                </a-col>
+            </a-row>
+        </div>
+    </a-col>
+</a-row>
 
     <a-row v-if="view_type=='details' && selected_design">
     

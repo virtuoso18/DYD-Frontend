@@ -242,11 +242,21 @@ export default {
   border-radius: 20px;
   padding: 24px;
   border: 1px solid #e9ecef;
+  
+  /* Make it sticky */
+  position: sticky;
+  top: 10px;
+  max-height: calc(100vh - 20px);
+  overflow-y: auto;
+  
+  /* Smooth scrolling */
+  scroll-behavior: smooth;
 }
 
 .user-info {
   text-align: center;
   margin-bottom: 30px;
+  flex-shrink: 0;
 }
 
 .user-avatar {
@@ -254,6 +264,7 @@ export default {
   height: 100px;
   margin: auto;
   position: relative;
+  flex-shrink: 0;
 }
 
 .user-avatar img {
@@ -265,7 +276,7 @@ export default {
 }
 
 .user-info h3 {
-  margin: 0 0 4px;
+  margin: 15px 0 4px;
   font-size: 18px;
   font-weight: 600;
   color: #1a1a1a;
@@ -278,9 +289,8 @@ export default {
 }
 
 .completion-badge {
-  position: absolute;
-  top: 10px;
-  right: 10px;
+  position: relative;
+  margin: 10px 0;
 }
 
 .completion-circle {
@@ -299,6 +309,7 @@ export default {
 
 .package-info {
   margin-bottom: 20px;
+  flex-shrink: 0;
 }
 
 .package-header {
@@ -329,12 +340,11 @@ export default {
   background: #f8f9fa;
   border: 1px solid #e9ecef;
   border-radius: 12px;
-  padding: 5px;
-  padding-left: 15px;
-  padding-right: 15px;
+  padding: 12px 15px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 8px;
 }
 
 .package-type {
@@ -345,6 +355,9 @@ export default {
 
 .package-icon {
   color: #6b7280;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .dashboard-nav {
@@ -365,6 +378,8 @@ export default {
   font-weight: 500;
   font-size: 14px;
   transition: all 0.2s ease;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .nav-item:hover {
@@ -388,6 +403,7 @@ export default {
   justify-content: center;
   width: 20px;
   height: 20px;
+  flex-shrink: 0;
 }
 
 .nav-icon {
@@ -397,5 +413,37 @@ export default {
 
 .content-area {
   padding: 0;
+}
+
+/* Custom scrollbar for sidebar */
+.sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Firefox scrollbar */
+.sidebar {
+  scrollbar-color: #888 #f1f1f1;
+  scrollbar-width: thin;
+}
+
+/* For smaller screens, adjust sticky behavior */
+@media (max-width: 1200px) {
+  .sidebar {
+    max-height: calc(100vh - 20px);
+  }
 }
 </style>

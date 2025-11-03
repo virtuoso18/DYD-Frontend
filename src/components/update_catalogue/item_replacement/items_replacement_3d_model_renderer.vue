@@ -64,7 +64,7 @@ export default {
       loadingText: 'Initializing...',
       modelLoaded: false,
       viewerInitialized: false,
-      showGrid: true,
+      showGrid: false,
       floorShadow_area_opacity:0.0,
       showRotationRing: true,
       isDragging: false,
@@ -167,102 +167,276 @@ export default {
   }
 },
 
-    async renderItem() {
-      if (!this.model || !this.currentBackgroundTexture) {
-        console.warn("Model or background not loaded");
-        return;
-      }
+// // Replace your existing renderItem method with this:
+// async renderItem() {
+//   if (!this.model || !this.currentBackgroundTexture) {
+//     console.warn("Model or background not loaded");
+//     return;
+//   }
 
-      try {
-        this.isLoading = true;
-        this.loadingText = 'Rendering Item...';
+//   try {
+//     this.isLoading = true;
+//     this.loadingText = 'Rendering Item...';
 
-        const roomId = this.$route.params.id;
-        const prod_id = this.product_id;
-        const url = `${this.$store.state.root_api}engine/inpaint-item-ref/`;
+//     const roomId = this.$route.params.id;
+//     const prod_id = this.product_id;
+//     const url = `${this.$store.state.root_api}engine/inpaint-item-ref/`;
 
-        const bgWidth = this.currentBackgroundTexture.image.width;
-        const bgHeight = this.currentBackgroundTexture.image.height;
+//     // Use original background image dimensions
+//     const bgWidth = this.currentBackgroundTexture.image.width;
+//     const bgHeight = this.currentBackgroundTexture.image.height;
 
-        // Create binary mask
-        const blob = await this.createBinaryMaskBlob(bgWidth, bgHeight);
+//     console.log(`Rendering at dimensions: ${bgWidth}x${bgHeight}`);
 
-        // Prepare form data
-        const formData = new FormData();
-        formData.append('binary_mask', blob, 'binary_mask.png');
-        formData.append('room_id', roomId);
-        formData.append('prod_id', prod_id);
+//     this.loadingText = 'Creating composite image...';
+//     // Create composite by rendering 3D object and blending with background
+//     const compositeBlob = await this.createCompositeImageBlob(bgWidth, bgHeight);
 
-        this.loadingText = 'Adding Product to Your Room...';
+//     this.loadingText = 'Creating binary mask...';
+//     // Create binary mask at same resolution
+//     const maskBlob = await this.createBinaryMaskBlob(bgWidth, bgHeight);
 
-        const response = await fetch(url, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Token ${localStorage.getItem('token')}`,
-          },
-          body: formData
-        });
+//     // Prepare form data with BOTH images
+//     const formData = new FormData();
+//     formData.append('composite_image', compositeBlob, 'composite_image.png');
+//     formData.append('binary_mask', maskBlob, 'binary_mask.png');
+//     formData.append('room_id', roomId);
+//     formData.append('prod_id', prod_id);
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+//     this.loadingText = 'Adding Product to Your Room...';
 
-        const result = await response.json();
-        this.$emit('rendered-comfyui-workflow', result.final_output);
-        
-        console.log('Binary mask sent successfully:', result);
-        console.log(`Binary mask generated with dimensions: ${bgWidth}x${bgHeight}`);
-        
-        return result;
+//     const response = await fetch(url, {
+//       method: 'POST',
+//       headers: {
+//         'Authorization': `Token ${localStorage.getItem('token')}`,
+//       },
+//       body: formData
+//     });
 
-      } catch (error) {
-        console.error('Error rendering item:', error);
-        throw error;
-      } finally {
-        this.isLoading = false;
-      }
-    },
-    async createBinaryMaskBlob(bgWidth, bgHeight) {
-      const tempCanvas = document.createElement('canvas');
-      tempCanvas.width = bgWidth;
-      tempCanvas.height = bgHeight;
-      
-      const tempRenderer = new THREE.WebGLRenderer({ 
-        canvas: tempCanvas, 
-        antialias: true, 
-        preserveDrawingBuffer: true 
-      });
-      tempRenderer.setSize(bgWidth, bgHeight);
-      tempRenderer.setClearColor(0x000000, 1);
+//     if (!response.ok) {
+//       throw new Error(`HTTP error! status: ${response.status}`);
+//     }
 
-      const tempScene = new THREE.Scene();
-      const modelClone = this.model.clone();
-      tempScene.add(modelClone);
+//     const result = await response.json();
+//     this.$emit('rendered-comfyui-workflow', result.final_output);
+    
+//     console.log('Composite image and binary mask sent successfully:', result);
+//     console.log(`Images generated with dimensions: ${bgWidth}x${bgHeight}`);
+    
+//     return result;
 
-      tempScene.add(new THREE.HemisphereLight(0xffffff, 0xffffff, 1.0));
-      const dirLight = new THREE.DirectionalLight(0xffffff, 1.0);
-      dirLight.position.set(10, 15, 5);
-      tempScene.add(dirLight);
+//   } catch (error) {
+//     console.error('Error rendering item:', error);
+//     throw error;
+//   } finally {
+//     this.isLoading = false;
+//   }
+// },
 
-      const tempCamera = this.camera.clone();
-      tempCamera.aspect = bgWidth / bgHeight;
-      tempCamera.updateProjectionMatrix();
+// Replace your existing renderItem method with this:
+async renderItem() {
+  if (!this.model || !this.currentBackgroundTexture) {
+    console.warn("Model or background not loaded");
+    return;
+  }
 
-      modelClone.traverse((child) => {
-        if (child.isMesh) {
-          child.material = new THREE.MeshBasicMaterial({ color: 0xffffff });
-        }
-      });
+  try {
+    this.isLoading = true;
+    this.loadingText = 'Rendering Item...';
 
-      tempRenderer.render(tempScene, tempCamera);
+    const roomId = this.$route.params.id;
+    const prod_id = this.product_id;
+    const url = `${this.$store.state.root_api}engine/inpaint-item-ref/`;
 
-      const blob = await new Promise(resolve => {
-        tempCanvas.toBlob(resolve, 'image/png');
-      });
+    // Use original background image dimensions
+    const bgWidth = this.currentBackgroundTexture.image.width;
+    const bgHeight = this.currentBackgroundTexture.image.height;
 
-      tempRenderer.dispose();
-      return blob;
-    },
+    console.log(`Rendering at dimensions: ${bgWidth}x${bgHeight}`);
+
+    this.loadingText = 'Creating composite image...';
+    // Create composite by rendering 3D object and blending with background
+    const compositeBlob = await this.createCompositeImageBlob(bgWidth, bgHeight);
+
+    this.loadingText = 'Creating binary mask...';
+    // Create binary mask at same resolution
+    const maskBlob = await this.createBinaryMaskBlob(bgWidth, bgHeight);
+
+    // Prepare form data with BOTH images
+    const formData = new FormData();
+    formData.append('composite_image', compositeBlob, 'composite_image.png');
+    formData.append('binary_mask', maskBlob, 'binary_mask.png');
+    formData.append('room_id', roomId);
+    formData.append('prod_id', prod_id);
+
+    this.loadingText = 'Adding Product to Your Room...';
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Token ${localStorage.getItem('token')}`,
+      },
+      body: formData
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    this.$emit('rendered-comfyui-workflow', result.final_output);
+    
+    console.log('Composite image and binary mask sent successfully:', result);
+    console.log(`Images generated with dimensions: ${bgWidth}x${bgHeight}`);
+    
+    return result;
+
+  } catch (error) {
+    console.error('Error rendering item:', error);
+    throw error;
+  } finally {
+    this.isLoading = false;
+  }
+},
+
+
+
+// NEW METHOD: Create composite with 3D object and transparent background
+async createCompositeImageBlob(bgWidth, bgHeight) {
+  // Create canvas for 3D object rendering (transparent background)
+  const objectCanvas = document.createElement('canvas');
+  objectCanvas.width = bgWidth;
+  objectCanvas.height = bgHeight;
+  
+  const objectRenderer = new THREE.WebGLRenderer({ 
+    canvas: objectCanvas, 
+    antialias: true, 
+    preserveDrawingBuffer: true,
+    alpha: true,
+    precision: 'highp'  // Better quality
+  });
+  objectRenderer.setSize(bgWidth, bgHeight);
+  objectRenderer.setPixelRatio(1);
+  objectRenderer.outputColorSpace = THREE.SRGBColorSpace;
+  objectRenderer.setClearColor(0x000000, 0);  // Transparent background
+  objectRenderer.shadowMap.enabled = true;
+  objectRenderer.shadowMap.type = THREE.PCFShadowMap;
+  
+  // Create scene with only the 3D model
+  const objectScene = new THREE.Scene();
+  
+  // Clone the model
+  const modelClone = this.model.clone();
+  objectScene.add(modelClone);
+  
+  // Enhanced lighting for more brightness and clarity (matching initializeLighting)
+  const hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1.9);
+  objectScene.add(hemisphereLight);
+  
+  // Main directional light - BRIGHTER
+  const dirLight = new THREE.DirectionalLight(0xffffff, 9);
+  dirLight.position.set(10, 15, 5);
+  dirLight.castShadow = true;
+  dirLight.shadow.mapSize.width = 4096;
+  dirLight.shadow.mapSize.height = 4096;
+  dirLight.shadow.camera.near = 0.1;
+  dirLight.shadow.camera.far = 50;
+  dirLight.shadow.camera.left = -30;
+  dirLight.shadow.camera.right = 30;
+  dirLight.shadow.camera.top = 30;
+  dirLight.shadow.camera.bottom = -30;
+  objectScene.add(dirLight);
+  
+  // Fill light - BRIGHTER
+  const fillLight = new THREE.DirectionalLight(0xffffff, 1.8);
+  fillLight.position.set(-10, 5, -5);
+  objectScene.add(fillLight);
+  
+  // Key light from different angle - BRIGHTER
+  const keyLight = new THREE.DirectionalLight(0xffffff, 1.8);
+  keyLight.position.set(5, 10, 10);
+  objectScene.add(keyLight);
+  
+  // Rim light for edge definition - BRIGHTER
+  const rimLight = new THREE.DirectionalLight(0xffffff, 1.4);
+  rimLight.position.set(-5, 5, -10);
+  objectScene.add(rimLight);
+  
+  // Additional bright fill light for extra brightness
+  const extraFillLight = new THREE.DirectionalLight(0xffffff, 1.2);
+  extraFillLight.position.set(8, 8, 8);
+  objectScene.add(extraFillLight);
+  
+  // Point light for close-range illumination
+  const pointLight = new THREE.PointLight(0xffffff, 1.5, 150);
+  pointLight.position.set(12, 12, 12);
+  objectScene.add(pointLight);
+  
+  // Use exact camera from viewer
+  const objectCamera = this.camera.clone();
+  objectCamera.aspect = bgWidth / bgHeight;
+  objectCamera.updateProjectionMatrix();
+  
+  // Render the 3D object with transparent background
+  objectRenderer.render(objectScene, objectCamera);
+  
+  // Get image data and convert to PNG blob directly
+  const blob = await new Promise(resolve => {
+    objectCanvas.toBlob(resolve, 'image/png');
+  });
+  
+  objectRenderer.dispose();
+  return blob;
+},
+
+// UPDATED: Create binary mask at original dimensions
+async createBinaryMaskBlob(bgWidth, bgHeight) {
+  const tempCanvas = document.createElement('canvas');
+  tempCanvas.width = bgWidth;
+  tempCanvas.height = bgHeight;
+  
+  const tempRenderer = new THREE.WebGLRenderer({ 
+    canvas: tempCanvas, 
+    antialias: true, 
+    preserveDrawingBuffer: true 
+  });
+  tempRenderer.setSize(bgWidth, bgHeight);
+  tempRenderer.setPixelRatio(1);  // Don't use device pixel ratio
+  tempRenderer.setClearColor(0x000000, 1);  // Black background
+
+  const tempScene = new THREE.Scene();
+  
+  // Clone the model for mask
+  const modelClone = this.model.clone();
+  tempScene.add(modelClone);
+
+  // Add basic lighting
+  tempScene.add(new THREE.HemisphereLight(0xffffff, 0xffffff, 1.0));
+  const dirLight = new THREE.DirectionalLight(0xffffff, 1.0);
+  dirLight.position.set(10, 15, 5);
+  tempScene.add(dirLight);
+
+  // Create white material for all meshes
+  modelClone.traverse((child) => {
+    if (child.isMesh) {
+      child.material = new THREE.MeshBasicMaterial({ color: 0xffffff });
+    }
+  });
+
+  // Use same camera
+  const tempCamera = this.camera.clone();
+  tempCamera.aspect = bgWidth / bgHeight;
+  tempCamera.updateProjectionMatrix();
+
+  tempRenderer.render(tempScene, tempCamera);
+
+  const blob = await new Promise(resolve => {
+    tempCanvas.toBlob(resolve, 'image/png');
+  });
+
+  tempRenderer.dispose();
+  return blob;
+},
     async handleGlbUrlChange() {
       try {
         this.resetComponentState();
@@ -453,10 +627,10 @@ export default {
 
     initializeLighting() {
   // Ambient light for overall brightness
-  this.scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 0.9));
+  this.scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 1.9));
 
   // Main directional light
-  const dirLight = new THREE.DirectionalLight(0xffffff, 8);
+  const dirLight = new THREE.DirectionalLight(0xffffff, 9);
   dirLight.position.set(10, 15, 5);
   dirLight.castShadow = true;
   dirLight.shadow.mapSize.width = 2048;
@@ -470,17 +644,17 @@ export default {
   this.scene.add(dirLight);
 
   // Fill light
-  const fillLight = new THREE.DirectionalLight(0xffffff, 0.8);
+  const fillLight = new THREE.DirectionalLight(0xffffff, 1.8);
   fillLight.position.set(-10, 5, -5);
   this.scene.add(fillLight);
 
   // Key light from different angle
-  const keyLight = new THREE.DirectionalLight(0xffffff, 0.8);
+  const keyLight = new THREE.DirectionalLight(0xffffff, 1.8);
   keyLight.position.set(5, 10, 10);
   this.scene.add(keyLight);
 
   // Rim light for edge definition
-  const rimLight = new THREE.DirectionalLight(0xffffff, 0.4);
+  const rimLight = new THREE.DirectionalLight(0xffffff, 1.4);
   rimLight.position.set(-5, 5, -10);
   this.scene.add(rimLight);
 },

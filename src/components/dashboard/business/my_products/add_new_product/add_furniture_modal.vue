@@ -288,23 +288,23 @@ Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac tu
                       v-model:value="productForm.dimensions.height" 
                       :min="0"
                       :step="0.01"
-                      placeholder="100"
+                      placeholder="0.8"
                       style="width: 100%; border-radius: 4px; background: #f3f4f6; border: 1px solid #e5e7eb; font-size: 13px;"
                     />
-                    <span style="margin-left: 6px; color: #9ca3af; font-size: 12px;">cm</span>
+                    <span style="margin-left: 6px; color: #9ca3af; font-size: 12px;">meter</span>
                   </div>
                 </a-col>
                 <a-col :span="8">
-                  <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Length</label>
+                  <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Length/Depth</label>
                   <div style="display: flex; align-items: center;">
                     <a-input-number
                       v-model:value="productForm.dimensions.length" 
                       :min="0"
                       :step="0.01"
-                      placeholder="30"
+                      placeholder="0.5"
                       style="width: 100%; border-radius: 4px; background: #f3f4f6; border: 1px solid #e5e7eb; font-size: 13px;"
                     />
-                    <span style="margin-left: 6px; color: #9ca3af; font-size: 12px;">cm</span>
+                    <span style="margin-left: 6px; color: #9ca3af; font-size: 12px;">meter</span>
                   </div>
                 </a-col>
                 <a-col :span="8">
@@ -314,10 +314,10 @@ Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac tu
                       v-model:value="productForm.dimensions.width" 
                       :min="0"
                       :step="0.01"
-                      placeholder="30"
+                      placeholder="1.8"
                       style="width: 100%; border-radius: 4px; background: #f3f4f6; border: 1px solid #e5e7eb; font-size: 13px;"
                     />
-                    <span style="margin-left: 6px; color: #9ca3af; font-size: 12px;">cm</span>
+                    <span style="margin-left: 6px; color: #9ca3af; font-size: 12px;">meter</span>
                   </div>
                 </a-col>
               </a-row>

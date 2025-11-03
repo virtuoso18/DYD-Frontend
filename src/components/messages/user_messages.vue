@@ -161,7 +161,8 @@ export default {
             onlineUsers: [],
             searchQuery: '',
             websocket: null,
-            API_BASE: 'http://127.0.0.1:8000/chat'
+            // API_BASE: 'http://127.0.0.1:8000/chat'
+             API_BASE: this.$store.state.root_api+'chat'
         };
     },
     
@@ -437,7 +438,8 @@ export default {
         return;
     }
     
-    const wsUrl = `ws://localhost:8000/ws/users/${this.currentUser.id}/chat/?token=${token}`;
+    const wsUrl = `${this.$store.state.websockets_address}/ws/users/${this.currentUser.id}/chat/?token=${token}`;
+    
     console.log('Connecting with token:', wsUrl.substring(0, 60) + '...');
     
     this.websocket = new WebSocket(wsUrl);

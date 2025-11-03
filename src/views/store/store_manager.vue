@@ -1,7 +1,9 @@
 <template>
+  
   <div class="dashboard-container">
     <!-- Main Dashboard Content -->
     <a-row class="dashboard-content">
+      
       <!-- Sidebar -->
       <a-col :xs="0" :sm="0" :md="6" :lg="6" class="sidebar-col">
         <div class="sidebar">
@@ -181,9 +183,20 @@
       
       <!-- Content Area -->
       <a-col :xs="24" :sm="24" :md="18" :lg="18" class="content-area">
-        
-          <!-- This router-view will render the active child route component -->
-          <router-view :user="user" :profile="profile" :business_info="business_info" />
+        <!-- This router-view will render the active child route component -->
+        <router-view v-if="business_info.is_email_verified" :user="user" :profile="profile" :business_info="business_info" />
+        <div v-else style="margin-top:10px;background: white;border-radius:15px;height:90vh;padding:10px;border:1px solid rgba(0,0,0,0.1);display: flex;justify-content: center;align-items: center;" >
+          <div style="text-align:center">
+            <img src="../../assets/emailverify.jpg" style="max-width:200px;max-height:400px" alt=""><br>
+            Your Business email Is not verified yet please verify to access the store features. <br><br>
+
+          <router-link to="/business-dashboard/business-details">
+            <a-button type="primary">
+              Verify now 
+            </a-button>
+          </router-link>
+          </div>
+        </div>
         
       </a-col>
     </a-row>
@@ -228,9 +241,17 @@ export default {
 .sidebar {
   background: white;
   border-radius: 20px;
-  padding: 2px;
-  /* box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); */
+  padding: 20px;
   border: 1px solid #e9ecef;
+  
+  /* Make it sticky */
+  position: sticky;
+  top: 10px;
+  max-height: calc(100vh - 20px);
+  overflow-y: auto;
+  
+  /* Smooth scrolling */
+  scroll-behavior: smooth;
 }
 
 .user-info {
@@ -241,8 +262,9 @@ export default {
 .user-avatar {
   width: 100px;
   height: 100px;
-  margin:  auto ;
+  margin: auto;
   position: relative;
+  flex-shrink: 0;
 }
 
 .user-avatar img {
@@ -254,7 +276,7 @@ export default {
 }
 
 .user-info h3 {
-  margin: 0 0 4px;
+  margin: 15px 0 4px;
   font-size: 18px;
   font-weight: 600;
   color: #1a1a1a;
@@ -264,77 +286,6 @@ export default {
   margin: 0 0 16px;
   color: #6b7280;
   font-size: 14px;
-}
-
-.completion-badge {
-  position:absolute;
-  top: 10px;
-  right:10px
-}
-
-.completion-circle {
-  display: inline-block;
-  /* background: linear-gradient(135deg, #3b82f6, #1d4ed8); */
-  color: #3b82f6;
-  padding: 8px 16px;
-  /* border-radius: 20px; */
-  font-size: 14px;
-  font-weight: 600;
-}
-.completion-text{
-  display: flex;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.package-info {
-  margin-bottom: 20px;
-}
-
-.package-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.package-label {
-  font-size: 12px;
-  color: #6b7280;
-  font-weight: 500;
-}
-
-.upgrade-link {
-  color: #3b82f6;
-  text-decoration: none;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.upgrade-link:hover {
-  color: #1d4ed8;
-}
-
-.package-card {
-  background: #f8f9fa;
-  border: 1px solid #e9ecef;
-  border-radius: 12px;
-  padding: 5px;
-  padding-left: 15px;
-  padding-right: 15px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.package-type {
-  font-weight: 600;
-  color: #1a1a1a;
-  font-size: 15px;
-}
-
-.package-icon {
-  color: #6b7280;
 }
 
 .dashboard-nav {
@@ -354,6 +305,7 @@ export default {
   font-weight: 500;
   font-size: 14px;
   transition: all 0.2s ease;
+  flex-shrink: 0;
 }
 
 .nav-item:hover {
@@ -377,6 +329,7 @@ export default {
   justify-content: center;
   width: 20px;
   height: 20px;
+  flex-shrink: 0;
 }
 
 .nav-icon {
@@ -385,7 +338,7 @@ export default {
 }
 
 .content-area {
-  width:100%
+  width: 100%;
 }
 
 .content-wrapper {
@@ -398,68 +351,28 @@ export default {
   overflow: hidden;
 }
 
-.wavy-header {
-  position: relative;
-  height: 200px;
-  overflow: hidden;
-  background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 50%, #a5b4fc 100%);
+/* Custom scrollbar for sidebar */
+.sidebar::-webkit-scrollbar {
+  width: 6px;
 }
 
-.wave-svg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+.sidebar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
 }
 
-.header-profile {
-  position: absolute;
-  bottom: -40px;
-  left: 40px;
-  z-index: 10;
+.sidebar::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
 }
 
-.header-avatar {
-  position: relative;
-  width: 80px;
-  height: 80px;
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 
-.header-avatar img {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 4px solid white;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+/* Firefox scrollbar */
+.sidebar {
+  scrollbar-color: #888 #f1f1f1;
+  scrollbar-width: thin;
 }
-
-.camera-icon {
-  position: absolute;
-  bottom: 2px;
-  right: 2px;
-  background: #374151;
-  border: 2px solid white;
-  border-radius: 50%;
-  width: 28px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  cursor: pointer;
-}
-
-.personal-info-section {
-  padding: 60px 40px 40px;
-}
-
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 30px;
-}
-
-</style>  
+</style>
