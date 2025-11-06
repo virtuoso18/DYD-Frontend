@@ -1,5 +1,7 @@
+
 <template>
-  <div class="canvas-container" ref="canvasContainer">
+
+<div class="canvas-container" ref="canvasContainer">
     <!-- Loading Overlay -->
     
 <div v-if="isLoading" class="scanning-loading-overlay">
@@ -144,7 +146,7 @@
         </svg>
         Clear
       </a-button>
-      <a-button type='primary' :disabled="isLoading" @click="rescaleRoomLayout"> 
+      <a-button type='primary' :disabled="isLoading" @click="rescaleRoomLayout()"> 
         Rescale Room layout
       </a-button>
 

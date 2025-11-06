@@ -516,7 +516,7 @@ ref="canvas_ceiling_3d_object_light_renderer"
               :isLoading="canvasLoading"
               :maskUpdateTrigger="maskUpdateTrigger"
               @update:selectedMasks="selected_wall_masks"
-              @rescale-room-layout="rescaleWallMask"
+              @rescale-room-layout="rescaleWallMask()"
               :key="canvasKey"
               @Apply-Changes="ApplyChanges"
 
@@ -530,20 +530,17 @@ ref="canvas_ceiling_3d_object_light_renderer"
                   :glbUrl="item_replacement_renderer_3d_model_url"
                   :product_id="selected_3d_product_model"
                   :modelDimensions="{ width: selected_model_width, height: selected_model_height, depth: selected_model_depth }"
-  :baseImageUrl=base_image_url
-  :floorData="floor_3d_model_grid"
-  :depthMaskUrl=depthMask
-  :floorMaskUrl=floor_Mask
-  :roll="floor_roll"
-  :pitch="floor_pitch"
-  :yaw="floor_yaw"
-  ref="floor_item_3d_renderer"
-  @rendered-comfyui-workflow="updateBaskeImageURL_CANVAS"
-              @Apply-Changes="ApplyChanges"
-
-              
-
-  />
+                  :baseImageUrl=base_image_url
+                  :floorData="floor_3d_model_grid"
+                  :depthMaskUrl=depthMask
+                  :floorMaskUrl=floor_Mask
+                  :roll="floor_roll"
+                  :pitch="floor_pitch"
+                  :yaw="floor_yaw"
+                  ref="floor_item_3d_renderer"
+                  @rendered-comfyui-workflow="updateBaskeImageURL_CANVAS"
+                              @Apply-Changes="ApplyChanges"
+             />
 
   <!-- :glbModelUrl="this.$store.state.root_media_api+'/media/3d-Rendered-Models/temp/8a36f84a-39e3-40f3-a194-05c5a46c0c2d/HY-2.0-3D-Textured-model_00023_.glb '" -->
   <a-row v-if="current_tab=='3d'">
@@ -857,6 +854,51 @@ export default {
   },
 
   methods: {
+    
+// async  rescaleWallMask(e){
+
+// // 2. FLOOR TEXTURE METHOD (corrected)
+//   this.canvasLoading = true;
+
+//   try {
+//     const url = `${this.$store.state.root_api}engine/rescale-room-layout/`;
+//     const requestBody = {
+//       room_id: this.$route.params.id,
+//     };
+
+//     const responseData = await this.makeApiRequest(
+//       url,
+//       {
+//         method: 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//           'Authorization': `Token ${localStorage.getItem('token')}`
+//         },
+//         body: JSON.stringify(requestBody)
+//       },
+//       'rescale-room-walls-layout'
+//     );
+
+//     if (responseData) {
+      
+//       await this.fetchBinaryWallMasks(); // This will refresh object masks too
+//       this.forceCanvasUpdate();
+
+//       this.$message.success('Floor texture applied successfully!');
+//     } else {
+//       throw new Error('No final output received from server');
+//     }
+//   } catch (error) {
+//     console.error("Failed to apply floor texture:", error);
+//     this.showError(
+//       'Failed to Apply Floor Texture', 
+//       error.message || 'An error occurred while applying the floor texture.', 
+//       () => this.floorTextureSelected(texture_id)
+//     );
+//   } finally {
+//     this.canvasLoading = false;
+//   }
+// },
     // ==========================================
     // INITIALIZATION
     // ==========================================
@@ -1643,8 +1685,11 @@ export default {
   }
 },
 
+    fetchAllBusinessProducts(){
+
+    },
     SeeAllProducts(e) {
-      console.log(e)
+      // console.log(e)
       this.openSeeAll_products = true;
     },
 

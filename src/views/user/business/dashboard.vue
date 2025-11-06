@@ -3,7 +3,7 @@
     <!-- Main Dashboard Content -->
     <a-row class="dashboard-content">
       <!-- Sidebar -->
-      <a-col :xs="0" :sm="0" :md="6" :lg="6" class="sidebar-col">
+      <a-col :xs="menu_view_mobile ? 0:24" :sm="menu_view_mobile ? 0:24" :md="6" :lg="6" class="sidebar-col" >
         <div class="sidebar">
           <div class="user-info">
             <div class="user-avatar">
@@ -171,8 +171,11 @@
       </a-col>
       
       <!-- Content Area -->
-      <a-col :xs="24" :sm="24" :md="18" :lg="18" class="content-area">
+      <a-col :xs="menu_view_mobile ? 0:24" :sm="menu_view_mobile ? 0:24" :md="18" :lg="18" class="content-area">
         <!-- This router-view will render the active child route component -->
+        <a-col :xs="24" :sm="24" :md="0" :lg="0" >
+          <a-button @click="menu_view_mobile=true">Back</a-button>
+        </a-col> 
         <router-view :user="user" :profile="profile" :buisness_info="business_info" />
       </a-col>
     </a-row>
@@ -190,6 +193,7 @@ export default {
       user: JSON.parse(localStorage.getItem('user') || '{}'),
       profile: JSON.parse(localStorage.getItem('profile') || '{}'),
       business_info: JSON.parse(localStorage.getItem('business_profile') || '{}'),
+      menu_view_mobile:true,
     }
   },
   methods:{

@@ -254,7 +254,7 @@ Regererate </a-button>
     controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.1;
-    controls.maxPolarAngle = Math.PI * 0.48;
+    controls.maxPolarAngle = Math.PI;// * 0.48;
     controls.minDistance = 1;
     controls.maxDistance = 20;
     

@@ -67,6 +67,11 @@ import access_create_furniture_product_3d_model_add_product from '@/views/access
 import access_create_light_product_3d_model_add_light from  '@/views/access_engine/product/my_products/add_new_product/add_light_ceiling_3d.vue'
 
 import Generate_Banner_Admin from '@/views/Platform_Admin_Access_Only/generate_banner_catalog.vue'
+
+import notifications from '@/views/user/notifications.vue'
+import cart from '@/views/user/cart.vue'
+import ai_catalog from '@/views/pages/ai_catalog.vue'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -93,6 +98,22 @@ const router = createRouter({
       component: pricing,
     },
     
+    {
+      path: '/notifications',
+      name: 'notifications',
+      component: notifications,
+    },
+    {
+      path: '/cart',
+      name: 'cart',
+      component: cart,
+    },
+    {
+      path: '/ai-catalog',
+      name: 'ai_catalog',
+      component: ai_catalog,
+    },
+
     {
       path: '/make-payment/:plan_type',
       name: 'make_payment',
