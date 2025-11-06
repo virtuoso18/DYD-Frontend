@@ -15,7 +15,7 @@ export default {
   components: { navbar_1, navbar_2 },
   data() {
     return {
-      hideNavUrls: ['/login', '/signup'],
+      hideNavUrls: ['/login', '/signup','/forget-password'],
       userAuthenticated :false
     }
   },

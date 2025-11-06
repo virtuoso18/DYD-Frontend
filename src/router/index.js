@@ -67,6 +67,7 @@ import access_create_furniture_product_3d_model_add_product from '@/views/access
 import access_create_light_product_3d_model_add_light from  '@/views/access_engine/product/my_products/add_new_product/add_light_ceiling_3d.vue'
 
 import Generate_Banner_Admin from '@/views/Platform_Admin_Access_Only/generate_banner_catalog.vue'
+import ForgetPassword from '@/views/auth/forgetpassword/ForgetPassword.vue';
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -473,6 +474,11 @@ const router = createRouter({
       path: '/signup',
       name: 'signup',
       component: authentication,
+    },
+     {
+      path: '/forget-password',
+      name: 'forget_password',
+      component: ForgetPassword,
     },
   ],
 })
