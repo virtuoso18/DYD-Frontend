@@ -1,4 +1,5 @@
 <template>
+
   <div>
 <!-- main banner section -->
     <a-row>
@@ -10,7 +11,7 @@
   backgroundPosition: 'center 60%',
   backgroundSize: 'cover',
   backgroundRepeat: 'no-repeat',
-  height: '600px',
+  height: '800px',
   width: '100%',
   display: 'flex',
   justifyContent: 'center',
@@ -19,76 +20,141 @@
 
       >
         <div style="text-align: center;">
-          <!-- <div>{{ business_info.name }}</div> -->
-            <div class="banner-text">Transforming spaces using</div>
-    <div class="banner-text">stunning Virtual Staging with</div>
-    <a-button type="primary" size="large"
-    style="position:relative">
-    <span style="position:absolute;left:-10px;font-size:20px">✦</span>
+  <div class="banner-text" style="border-radius:10px;font-weight:900; padding-top:20px; margin-bottom:24px;">
+    <div>Transforming spaces using</div>
+    <div>stunning Virtual Staging with</div>
+  </div>
+
+  <a-button type="primary" size="large"
+    style="position:relative; width:210px; height:64px; font-size:28px;"
+  >
+    <span style="position:absolute;left:-10px;bottom:-10px;font-size:23px">✦</span>
     <span style="position:absolute;top:0px;right:-5px;font-size:15px">✦</span>
     <span style="position:absolute;top:15px;right:5px;font-size:30px">✦</span>
-        DYD AI Technologies</a-button>
-        <br>
-        
-          <div style="font-size:14px;font-weight:500;color:black">Click Try Demo</div>
+    Join Us
+  </a-button>
+
+  <br>
+
+<div style="font-size:16px;font-weight:500;color:#111827;text-decoration:underline;transform: translateY(260px);">
+  Click Try Demo
+</div>
         </div>
       </div>
         </a-col>
-        <a-col :sm="24" :xs="24" :md="24" :lg="24">
-        <a-row >
-        <a-col :sm="12" :xs="12" :md="4" :lg="4" style="border-radius:10px;height:150px;width:100%; padding:10px">
-           <div style="background-color: #f2f2f2;width:100%;height:100%;border-radius:10px;display: flex;flex-direction: column; align-items: center;justify-content: center">
-               <h1 style="font-size:28px;margin:0;color:#3B63FB;font-weight:700">95%</h1>
-               <p style="font-size:16px">Cheaper</p>
-            </div>
-            </a-col>
-        <a-col :sm="12" :xs="12" :md="4" :lg="4" style="border-radius:10px;height:150px;width:100%;padding:10px;">
-            <div style="background-color: #f2f2f2;width:100%;height:100%;border-radius:10px;display: flex;flex-direction: column; align-items: center;justify-content: center">
-                <h1 style="font-size:28px;margin:0;color:#3B63FB;font-weight:700">10,000+</h1>
-                <p style="font-size:16px">Users</p>
-            </div> 
-            </a-col>
-        <a-col :sm="24" :xs="24" :md="16" :lg="16" style="border-radius:10px;height:150px;width:100%;padding:10px;">
-            <a-row style="background-color: #f2f2f2;width:100%;height:100%;border-radius:10px;">
-                <a-col span="8">
-            <div style="display: flex;flex-direction: column; align-items: center;justify-content: center;height:130px;">
-                <svg width="43" height="54" viewBox="0 0 43 54" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M17.7727 19.6367L19.0089 22.977C20.6295 27.3571 21.4401 29.5471 23.0377 31.1447C24.6353 32.7423 26.825 33.5527 31.2052 35.1734L34.5455 36.4094L31.2052 37.6455C26.825 39.2662 24.6353 40.0766 23.0377 41.6742C21.4401 43.2718 20.6295 45.4618 19.0089 49.8419L17.7727 53.1822L16.5366 49.8419C14.9159 45.4618 14.1054 43.2718 12.5078 41.6742C10.9102 40.0766 8.72049 39.2662 4.34029 37.6455L1 36.4094L4.34029 35.1734C8.72049 33.5527 10.9102 32.7423 12.5078 31.1447C14.1054 29.5471 14.9159 27.3571 16.5366 22.977L17.7727 19.6367Z" fill="black" stroke="white" stroke-linejoin="round"/>
-<path d="M31.4355 0.5C31.648 0.5 31.837 0.634412 31.9072 0.834961L32.6855 3.06152C33.7211 6.02498 34.199 7.36003 35.1143 8.3291C36.0256 9.29383 37.2756 9.79574 40.0752 10.8926L42.1787 11.7158C42.3702 11.7909 42.496 11.976 42.4961 12.1816C42.4961 12.3874 42.3702 12.5724 42.1787 12.6475L40.0752 13.4717C37.2754 14.5686 36.0256 15.0703 35.1143 16.0352C34.199 17.0042 33.7211 18.3383 32.6855 21.3018L31.9072 23.5283C31.8371 23.729 31.6481 23.8633 31.4355 23.8633C31.223 23.8633 31.034 23.729 30.9639 23.5283L30.1855 21.3018C29.15 18.3383 28.6721 17.0042 27.7568 16.0352C26.8455 15.0703 25.5957 14.5686 22.7959 13.4717L20.6924 12.6475C20.5009 12.5724 20.375 12.3873 20.375 12.1816C20.3751 11.976 20.5009 11.7909 20.6924 11.7158L22.7959 10.8926C25.5955 9.79574 26.8455 9.2938 27.7568 8.3291C28.6721 7.36003 29.15 6.02498 30.1855 3.06152L30.9639 0.834961L30.9951 0.762695C31.0813 0.602674 31.2497 0.500022 31.4355 0.5Z" fill="#3B63FB"/>
-</svg>
+       <a-col :sm="24" :xs="24" :md="24" :lg="24">
+  <a-row 
+    :gutter="[20, 20]"
+    style="width:100%;"
+  >       
+    <!-- First Card - 95% Cheaper -->
+    <a-col :xs="12" :sm="12" :md="4" :lg="4" style="border-radius:10px; padding-top:20px">
+      <div
+        style="
+          background-color:#F9F9F9;
+          width:100%;
+          height:223px;
+          border:1px solid #CCCCCC;
+          border-radius:10px;
+          display:flex;
+          flex-direction:column;
+          align-items:center;
+          justify-content:center;
+        "
+      >
+        <h1 class="card-number" style="font-size:48px; margin:0; font-weight:600;">95%</h1>
+        <p class="card-label" style="font-size:16px; margin:8px 0 0 0;">Cheaper</p>
+      </div>
+    </a-col>
+    
+    <!-- Second Card - 10,000+ Users -->
+    <a-col :xs="12" :sm="12" :md="4" :lg="4" style="border-radius:10px; padding-top:20px">
+      <div
+        style="
+          background-color:#F9F9F9;
+          width:100%;
+          height:223px;
+          border:1px solid #CCCCCC;
+          border-radius:10px;
+          display:flex;
+          flex-direction:column;
+          align-items:center;
+          justify-content:center;
+        "
+      >
+        <h1 class="card-number" style="font-size:48px; margin:0; font-weight:600;">10,000+</h1>
+        <p class="card-label" style="font-size:16px; margin:8px 0 0 0;">Users</p>
+      </div>
+    </a-col>
+    
+    <!-- Third Card - Features -->
+    <a-col :xs="24" :sm="24" :md="16" :lg="16" style="border-radius:10px; padding-top:20px; padding-bottom:40px">
+      <div
+        style="
+          width:100%;
+          height:223px;
+          background:#F9F9F9;
+          border:1px solid #CCCCCC;
+          border-radius:10px;
+          display:flex;
+          justify-content:space-around;
+          align-items:center;
+          padding:20px;
+        "
+      >
+        <!-- Feature 1 -->
+        <div style="
+          display:flex;
+          flex-direction:column;
+          align-items:center;
+          justify-content:center;
+          text-align:center;
+          gap:12px;
+        ">
+          <svg width="43" height="54" viewBox="0 0 43 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M17.7727 19.6367L19.0089 22.977C20.6295 27.3571 21.4401 29.5471 23.0377 31.1447C24.6353 32.7423 26.825 33.5527 31.2052 35.1734L34.5455 36.4094L31.2052 37.6455C26.825 39.2662 24.6353 40.0766 23.0377 41.6742C21.4401 43.2718 20.6295 45.4618 19.0089 49.8419L17.7727 53.1822L16.5366 49.8419C14.9159 45.4618 14.1054 43.2718 12.5078 41.6742C10.9102 40.0766 8.72049 39.2662 4.34029 37.6455L1 36.4094L4.34029 35.1734C8.72049 33.5527 10.9102 32.7423 12.5078 31.1447C14.1054 29.5471 14.9159 27.3571 16.5366 22.977L17.7727 19.6367Z" fill="black" stroke="white" stroke-linejoin="round"/>
+            <path d="M31.4355 0.5C31.648 0.5 31.837 0.634412 31.9072 0.834961L32.6855 3.06152C33.7211 6.02498 34.199 7.36003 35.1143 8.3291C36.0256 9.29383 37.2756 9.79574 40.0752 10.8926L42.1787 11.7158C42.3702 11.7909 42.496 11.976 42.4961 12.1816C42.4961 12.3874 42.3702 12.5724 42.1787 12.6475L40.0752 13.4717C37.2754 14.5686 36.0256 15.0703 35.1143 16.0352C34.199 17.0042 33.7211 18.3383 32.6855 21.3018L31.9072 23.5283C31.8371 23.729 31.6481 23.8633 31.4355 23.8633C31.223 23.8633 31.034 23.729 30.9639 23.5283L30.1855 21.3018C29.15 18.3383 28.6721 17.0042 27.7568 16.0352C26.8455 15.0703 25.5957 14.5686 22.7959 13.4717L20.6924 12.6475C20.5009 12.5724 20.375 12.3873 20.375 12.1816C20.3751 11.976 20.5009 11.7909 20.6924 11.7158L22.7959 10.8926C25.5955 9.79574 26.8455 9.2938 27.7568 8.3291C28.6721 7.36003 29.15 6.02498 30.1855 3.06152L30.9639 0.834961L30.9951 0.762695C31.0813 0.602674 31.2497 0.500022 31.4355 0.5Z" fill="#3B63FB"/>
+          </svg>
+          <span style="font-size:14px; font-weight:500;">Instant results</span>
+        </div>
 
-                Instant results
-            </div>
-            </a-col>
-            <a-col span="8">
+        <!-- Feature 2 -->
+        <div style="
+          display:flex;
+          flex-direction:column;
+          align-items:center;
+          justify-content:center;
+          text-align:center;
+          gap:12px;
+        ">
+          <svg width="58" height="66" viewBox="0 0 58 66" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M29 23.7732L57 38L29 52.2268L0.999995 38L29 23.7732Z" fill="white" stroke="black" stroke-width="2" stroke-linejoin="round"/>
+            <path d="M29 13.7732L57 28L29 42.2268L0.999995 28L29 13.7732Z" fill="white" stroke="black" stroke-width="2" stroke-linejoin="round"/>
+            <path d="M28.6562 2.83419C28.9151 2.73946 29.2042 2.75559 29.4531 2.88204L57.4531 17.1086C57.7886 17.2791 57.9998 17.6239 58 18.0002C58 18.3766 57.7886 18.7212 57.4531 18.8918L29.4531 33.1184C29.1685 33.263 28.8315 33.263 28.5469 33.1184L0.546875 18.8918C0.211422 18.7212 -2.03761e-08 18.3765 0 18.0002C0.000174813 17.6239 0.211404 17.2791 0.546875 17.1086L28.5469 2.88204L28.6562 2.83419Z" fill="#3B63FB"/>
+          </svg>
+          <span style="font-size:14px; font-weight:500;">Multi-view staging</span>
+        </div>
 
-            
-            <div style="display: flex;flex-direction: column; align-items: center;justify-content: center;height:130px;">
-                <svg width="58" height="66" viewBox="0 0 58 66" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M29 23.7732L57 38L29 52.2268L0.999995 38L29 23.7732Z" fill="white" stroke="black" stroke-width="2" stroke-linejoin="round"/>
-<path d="M29 13.7732L57 28L29 42.2268L0.999995 28L29 13.7732Z" fill="white" stroke="black" stroke-width="2" stroke-linejoin="round"/>
-<path d="M28.6562 2.83419C28.9151 2.73946 29.2042 2.75559 29.4531 2.88204L57.4531 17.1086C57.7886 17.2791 57.9998 17.6239 58 18.0002C58 18.3766 57.7886 18.7212 57.4531 18.8918L29.4531 33.1184C29.1685 33.263 28.8315 33.263 28.5469 33.1184L0.546875 18.8918C0.211422 18.7212 -2.03761e-08 18.3765 0 18.0002C0.000174813 17.6239 0.211404 17.2791 0.546875 17.1086L28.5469 2.88204L28.6562 2.83419Z" fill="#3B63FB"/>
-</svg>
-
-                Multi-view staging</div>
-                </a-col>
-                <a-col span="8">
-
-                
-                <div style="display: flex;flex-direction: column; align-items: center;justify-content: center;height:130px;">
-                    <svg width="65" height="46" viewBox="0 0 65 46" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M12.5742 41.8577H52.5971C55.5259 41.8577 58.3347 40.6802 60.4057 38.5843C62.4766 36.4884 63.6401 33.6458 63.6401 30.6817V23.0006C63.6401 21.3335 62.9857 19.7347 61.821 18.5559C60.6562 17.3771 59.0764 16.7148 57.4292 16.7148C55.782 16.7148 54.2022 17.3771 53.0374 18.5559C51.8727 19.7347 51.2183 21.3335 51.2183 23.0006V26.772C51.2183 27.4388 50.9566 28.0783 50.4907 28.5499C50.0248 29.0214 49.3929 29.2863 48.734 29.2863H16.4374C15.7785 29.2863 15.1466 29.0214 14.6807 28.5499C14.2148 28.0783 13.953 27.4388 13.953 26.772V23.0006C13.953 21.3335 13.2987 19.7347 12.1339 18.5559C10.9691 17.3771 9.38936 16.7148 7.74213 16.7148C6.09491 16.7148 4.51514 17.3771 3.35038 18.5559C2.18561 19.7347 1.53125 21.3335 1.53125 23.0006V30.6817C1.53125 33.6458 2.6947 36.4884 4.76566 38.5843C6.83661 40.6802 9.64543 41.8577 12.5742 41.8577Z" stroke="black" stroke-width="2"/>
-<path d="M57.4293 16.7143C57.4293 13.7914 57.4293 12.3331 57.1901 11.12C56.7109 8.68116 55.5278 6.44093 53.7905 4.68264C52.0531 2.92436 49.8395 1.727 47.4297 1.242C46.231 1 44.7901 1 41.9021 1H23.2694C20.3813 1 18.9404 1 17.7417 1.242C15.3319 1.727 13.1183 2.92436 11.381 4.68264C9.64364 6.44093 8.46053 8.68116 7.98131 11.12C7.74219 12.3331 7.74219 13.7914 7.74219 16.7143" stroke="black" stroke-width="2"/>
-<path d="M57.4293 45.0022V41.8594M7.74219 45.0022V41.8594" stroke="black" stroke-width="2" stroke-linecap="round"/>
-</svg>
-
-                    Furniture removal
-                </div>
-                </a-col>
-                </a-row>
-            </a-col>
-        </a-row>
-        </a-col>
+        <!-- Feature 3 -->
+        <div style="
+          display:flex;
+          flex-direction:column;
+          align-items:center;
+          justify-content:center;
+          text-align:center;
+          gap:12px;
+        ">
+          <svg width="65" height="46" viewBox="0 0 65 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12.5742 41.8577H52.5971C55.5259 41.8577 58.3347 40.6802 60.4057 38.5843C62.4766 36.4884 63.6401 33.6458 63.6401 30.6817V23.0006C63.6401 21.3335 62.9857 19.7347 61.821 18.5559C60.6562 17.3771 59.0764 16.7148 57.4292 16.7148C55.782 16.7148 54.2022 17.3771 53.0374 18.5559C51.8727 19.7347 51.2183 21.3335 51.2183 23.0006V26.772C51.2183 27.4388 50.9566 28.0783 50.4907 28.5499C50.0248 29.0214 49.3929 29.2863 48.734 29.2863H16.4374C15.7785 29.2863 15.1466 29.0214 14.6807 28.5499C14.2148 28.0783 13.953 27.4388 13.953 26.772V23.0006C13.953 21.3335 13.2987 19.7347 12.1339 18.5559C10.9691 17.3771 9.38936 16.7148 7.74213 16.7148C6.09491 16.7148 4.51514 17.3771 3.35038 18.5559C2.18561 19.7347 1.53125 21.3335 1.53125 23.0006V30.6817C1.53125 33.6458 2.6947 36.4884 4.76566 38.5843C6.83661 40.6802 9.64543 41.8577 12.5742 41.8577Z" stroke="black" stroke-width="2"/>
+            <path d="M57.4293 16.7143C57.4293 13.7914 57.4293 12.3331 57.1901 11.12C56.7109 8.68116 55.5278 6.44093 53.7905 4.68264C52.0531 2.92436 49.8395 1.727 47.4297 1.242C46.231 1 44.7901 1 41.9021 1H23.2694C20.3813 1 18.9404 1 17.7417 1.242C15.3319 1.727 13.1183 2.92436 11.381 4.68264C9.64364 6.44093 8.46053 8.68116 7.98131 11.12C7.74219 12.3331 7.74219 13.7914 7.74219 16.7143" stroke="black" stroke-width="2"/>
+            <path d="M57.4293 45.0022V41.8594M7.74219 45.0022V41.8594" stroke="black" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <span style="font-size:14px; font-weight:500;">Furniture removal</span>
+        </div>
+      </div>
+    </a-col>
+  </a-row>
+</a-col>
     </a-row>
 
 <!-- Unlock the potential section -->
@@ -102,8 +168,25 @@
 <br>
             <div style="position:relative">
                 <img src="../../assets/home_main_banner.jpg" style="max-width:900px;width:100%;border-radius:20px;max-height:600px;" alt="" />
-                <a-button type="primary" style="position:absolute;bottom:10px;left:48%">Process photo ✦</a-button>
-            </div>
+<a-button 
+  type="primary" 
+  style="
+    position:absolute;
+    bottom:30px;
+    left:50%;
+    transform: translateX(-50%);
+    width:309px;
+    background:#3B63FB;
+    border-color:#3B63FB;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+  "
+>
+  Process photo 
+  <img src="/ai-generative.svg" alt="Share" />
+</a-button>            </div>
             <br>
         </a-col>
     </a-row>
@@ -146,10 +229,10 @@ Drag & drop Image
                     </div>
                 </a-col>
                 <a-col :sm="24" :xs="24" :md="12" :lg="12">
-                   <div style="border-radius:20px;height:400px;max-width:340px;width:90%;margin:auto;display:flex;flex-direction:column;justify-content: center;align-items: center;font-size:18px;padding:20px;">
+                   <div style="border-radius:20px;height:400px;max-width:450px;width:90%;margin:auto;display:flex;flex-direction:column;justify-content: center;align-items: center;font-size:18px;padding:20px;">
                         
                         <p>or use an example image</p>
-                        <a-space style="overflow-x: auto;max-width:340px;">
+                        <a-space  class="no-scrollbar" style="overflow-x: auto;max-width:340px;">
                             <a-button>Living Room</a-button>
                             <a-button>Kitchen</a-button>
                             <a-button>Bedroom</a-button>
@@ -229,48 +312,103 @@ Drag & drop Image
 
     <br>
     
-    <a-row style="background-color: white;max-width:1200px;margin:auto;padding-left:10px;padding-right:10px">
-         <a-col :span="24" style="text-align:center">
-            <h1>Get listing-ready results in seconds</h1>
-            <p style="margin:0">Turn your property photos into stunning visuals in three simple</p>
-                <p style="margin:0;margin-bottom:20px">steps to attract buyers and enhance your listings.</p>
-        </a-col>
+   <div>
+     <div class="header">
+        <h1 class="header-title">
+          Get listing-ready results in seconds
+        </h1>
+        <p class="header-text">Turn your property photos into stunning visuals in three simple</p>
+        <p class="header-text">steps to attract buyers and enhance your listings.</p>
+      </div>
+    <div class="section-container">
+      
+      <!-- Header -->
+     
 
-        <a-col :sm="24" :xs="24" :md="12" :lg="12" style="display:flex;justify-content: center;align-items: center;flex-direction:column">
-            <h1>Upload</h1>
-            <p style="margin:0">We support both furnished </p>
-<p style="margin:0">and unfurnished photos.</p>
-        </a-col>
-        <a-col :sm="24" :xs="24" :md="12" :lg="12">
-            <div style="width:100%;height:200px;background-color:#f2f2f2">
-                img_here
-            </div>
-        </a-col>
-
-
+      <!-- Steps Wrapper -->
+      <div class="steps-wrapper">
         
-        <a-col :sm="24" :xs="24" :md="12" :lg="12">
-            <div style="width:100%;height:200px;background-color:#f2f2f2">
-                img_here
-            </div>
-        </a-col>
-         <a-col :sm="24" :xs="24" :md="12" :lg="12" style="display:flex;justify-content: center;align-items: center;flex-direction:column">
-            <h1>AI Finished</h1>
-            <p style="margin:0">Our AI redesigns your space </p>
-<p style="margin:0">in 15 seconds.</p>
-        </a-col>
+        <!-- Step 1 Text -->
+        <div class="step-text-container">
+          <div class="step-content">
+            <h2 class="step-title">Upload</h2>
+            <p class="step-description">We support both furnished</p>
+            <p class="step-description">and unfurnished photos.</p>
+          </div>
+        </div>
 
-         <a-col :sm="24" :xs="24" :md="12" :lg="12" style="display:flex;justify-content: center;align-items: center;flex-direction:column">
-            <h1>Download & Share</h1>
-            <p style="margin:0">Download the staged photo</p>
-<p style="margin:0">and share it anywhere.</p>
-        </a-col>
-        <a-col :sm="24" :xs="24" :md="12" :lg="12">
-            <div style="width:100%;height:200px;background-color:#f2f2f2">
-                img_here
+        <!-- Step 1 Image -->
+        <div class="step-image-container">
+          <div class="image-box step1-box">
+            <!-- Step Number on Top Left -->
+            <span class="step-number step1-number"><img src="/01 (1).svg" alt="Share"  /></span>
+            <img src="/upload-04.svg" alt="Share"  />
+            <span class="drag-text">Drag and drop</span>
+            <div class="overlay-box"></div>
+          </div>
+        </div>
+
+        <!-- SVG Line 1 -->
+        <div class="svg-line line1">
+          <img src="/firstline.svg" alt="line" class="line-image" />
+        </div>
+
+        <!-- Step 2 Image -->
+        <div class="step-image-container step2-image">
+          <div class="image-box step2-box">
+            <!-- Step Number on Top Right -->
+            <span class="step-number step2-number"><img src="/02.svg" alt="Share"  /></span>
+            <div class="ai-badge">
+              <span><img src="/addingfurniture.svg" alt="Share"  /></span> Adding furniture..
             </div>
-        </a-col>
-    </a-row>
+          </div>
+        </div>
+
+        <!-- Step 2 Text -->
+        <div class="step-text-container step2-text">
+          <div class="step-content">
+            <div class="step2-content-inner">
+              <h2 class="step-title">AI Finished</h2>
+              <p class="step-description">Our AI redesigns your space</p>
+              <p class="step-description">in 15 seconds.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- SVG Line 2 -->
+        <div class="svg-line line2">
+          <img src="/secondline.svg" alt="line" class="line-image" />
+        </div>
+
+        <!-- Step 3 Text -->
+        <div class="step-text-container step3-text">
+          <div class="step-content">
+            <h2 class="step-title " style="font-size:32px; font-weight:500;">Download & Share</h2>
+            <p class="step-description">Download the staged photo</p>
+            <p class="step-description">and share it anywhere.</p>
+          </div>
+        </div>
+
+        <!-- Step 3 Image -->
+        <div class="step-image-container step3-image">
+          <div class="image-box step3-box">
+            <!-- 03 Number -->
+            <span class="step-number step3-number"><img src="/03.svg" alt="Share"  /></span>
+            <!-- Buttons half inside / half outside -->
+             <div class="action-buttons">
+                <button class="action-btn">
+                   <img src="/download.svg" alt="Download"  />
+                    </button>
+                    <button class="action-btn">
+                   <img src="/share.svg" alt="Share"/>
+                </button>
+              </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
     <br>
 
 
@@ -642,6 +780,323 @@ export default {
 
 <style scoped>
 
+@import url('https://fonts.googleapis.com/css2?family=Proza+Libre:wght@400;500;600;700;800;900&display=swap');
+
+.banner-text {
+  font-family: "Proza Libre", sans-serif !important;
+  font-size: 26px;
+  line-height: 1.2;
+  font-weight: 900; /* Use 800 or 900 as needed */
+}
+
+/* Tablet */
+@media (min-width: 768px) {
+  .banner-text {
+    font-size: 36px;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .banner-text {
+    font-size: 44px;
+  }
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;700&family=Poppins:wght@400;700&display=swap');
+
+/* Example class for number (95%) */
+.card-number {
+  font-family: "Public Sans", sans-serif !important;
+  font-weight: 700;
+  font-size: 48px;
+  line-height: 52px;
+  letter-spacing: -2%;
+  color: #3B63FB;
+  margin: 0;
+  text-align: center;
+}
+
+/* Example class for text (Cheaper) */
+.card-label {
+  font-family: "Poppins", sans-serif !important;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 28px;
+  letter-spacing: -2%;
+  color: #000;
+  margin: 4px 0 0 0;
+  text-align: center;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap');
+
+.icon-text {
+  font-family: "Poppins", sans-serif !important;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 24px;
+  margin-top: 10px;
+  text-align: center;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Proza+Libre:wght@400;600;700&family=Rubik:wght@500&display=swap');
+
+.section-container {
+  background-color: white;
+  max-width: 1200px;
+  margin: 0 ;
+  padding: 40px 12px;
+  position: relative;
+  font-family: 'Proza Libre', sans-serif;
+}
+
+/* Header Styles */
+.header {
+  text-align: center;
+  margin-bottom: 64px;
+  
+
+}
+
+.header-title {
+  font-size: 42px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  margin: 0 auto;/* centers the h1 */
+  text-align: center; /* ensures text stays centered */
+}
+.header-text {
+  font-size: 16px;
+  color: #6b7280;
+}
+
+/* Steps Wrapper */
+.steps-wrapper {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: start;
+}
+
+/* Step Text Container */
+.step-text-container {
+  width: 50%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 10;
+}
+
+.step-content {
+  position: relative;
+}
+
+.step-title {
+  font-size: 32px;
+  font-weight: 600;
+  margin-bottom: 8px;
+   margin-top: 80px;
+  color: #000; 
+}
+
+.step-description {
+  color: #6b7280;
+  line-height: 1.2;
+}
+
+/* Step Image Container */
+.step-image-container {
+  width: 50%;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Image Box */
+.image-box {
+  width: 415px;
+  height: 275px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* Step 1 Specific */
+.step1-box {
+  background-color: black;
+  border-radius: 26px; 
+}
+
+.step1-number {
+  font-size: 125px;
+  font-weight: 300;
+  color: #d1d5db;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translate(-50%, -50%);
+}
+
+.drag-text {
+  color: #9ca3af;
+  font-size: 14px;
+}
+
+.overlay-box {
+  position: absolute;
+  top: 64px;
+  left: 320px;
+  width: 274px;
+  height: 213px;
+ background-image: url("/thirdcardbg.svg");
+  border-radius: 16px;
+  transform: translateY(24px);
+  overflow: visible;
+}
+
+/* SVG Lines */
+.svg-line {
+  position: absolute;
+  width: 260px;
+  height: 320px;
+  display: flex;
+  justify-content: center;
+  z-index: 0;
+}
+
+.line1 {
+  left: 50%;
+  transform: translate(8%, 80px);
+}
+
+.line2 {
+  left: 50%;
+  top: 760px;
+  transform: translate(10%, -75%);
+}
+
+.line-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Step 2 Specific */
+.step2-image {
+  transform: translateX(320px);
+  margin-top: 120px;
+}
+
+.step2-box {
+ background-image: url("/thirdcardbg.svg");
+}
+
+.step2-number {
+  font-size: 125px;
+  color: #4b5563;
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform: translate(50%, -50%);
+}
+
+.ai-badge {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translate(-50%, 50%);
+  background-color: #4F6EF7;
+  color: white;
+  padding: 10px 18px;
+  border-radius: 6px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 600;
+  z-index: 10;
+}
+
+.step2-text {
+  transform: translateX(40px);
+  margin-top: 80px;
+}
+
+.step2-content-inner {
+  transform: translateX(160px);
+}
+
+/* Step 3 Specific */
+.step3-text {
+  margin-top: 120px;
+}
+
+.step3-bg-number {
+  font-size: 80px;
+  font-weight: 300;
+  color: #d1d5db;
+  position: absolute;
+  top: -40px;
+  left: -20px;
+  z-index: -10;
+}
+
+.step3-image {
+  margin-top: 144px;
+}
+
+.step3-box {
+ background-image: url("/thirdcardbg.svg");
+ height: 274px;
+}
+
+.step3-number {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translate(-50%, -50%);
+  font-size: 110px;
+  font-weight: 500;
+  color: #4b5563;
+  line-height: 1;
+  font-family: 'Rubik', sans-serif;
+}
+
+.action-buttons {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translate(-50%, 50%);
+  display: flex;
+  gap: 10px;
+}
+
+.action-btn {
+  background: transparent !important;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+
+
+/* Step Number */
+.step-number {
+  position: absolute;
+}
+
+.no-scrollbar { -ms-overflow-style: none; /* IE and Edge */ scrollbar-width: none; /* Firefox */ }
 
         .dyad-button {
             position: relative;
