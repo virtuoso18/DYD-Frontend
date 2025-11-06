@@ -1,4 +1,4 @@
-<!-- BasicNavbar.vue -->
+
 <template>
   <a-row>
     <a-col :sm="0" :xs="0" :md="24" :lg="24">
@@ -17,6 +17,7 @@
         <a href="/comunity" class="nav-link">Community</a>
         <a href="/pricing" class="nav-link">Pricing</a>
         <a href="/contact-us" class="nav-link">Contact us</a>
+        <a href="/ai-catalog" class="nav-link">AI Catalog</a>
       </div>
 
       <!-- Right Side Actions -->
@@ -35,19 +36,7 @@
               </div>
               <a-button type="primary" size="small">Buy</a-button>
             </div>
-          
-
-        <div class="icon-actions">
-          <!-- <button class="icon-btn">
-            <svg xmlns="http://www.w3.org/2000/svg" width="23" height="22" viewBox="0 0 23 22" fill="none">
-              <path
-                d="M1 1H4.63636L7.07273 13.7524C7.15586 14.1909 7.38355 14.5847 7.71595 14.865C8.04835 15.1454 8.46427 15.2943 8.89091 15.2857H17.7273C18.1539 15.2943 18.5698 15.1454 18.9022 14.865C19.2346 14.5847 19.4623 14.1909 19.5455 13.7524L21 5.7619H5.54545M9.18182 20.0476C9.18182 20.5736 8.7748 21 8.27273 21C7.77065 21 7.36364 20.5736 7.36364 20.0476C7.36364 19.5216 7.77065 19.0952 8.27273 19.0952C8.7748 19.0952 9.18182 19.5216 9.18182 20.0476ZM19.1818 20.0476C19.1818 20.5736 18.7748 21 18.2727 21C17.7707 21 17.3636 20.5736 17.3636 20.0476C17.3636 19.5216 17.7707 19.0952 18.2727 19.0952C18.7748 19.0952 19.1818 19.5216 19.1818 20.0476Z"
-                stroke="#333333" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-              <circle cx="20" cy="6" r="2.5" fill="#3B63FB" stroke="white" />
-            </svg>
-          </button> -->
-
-          <a-button type="primary" @click="this.$router.push({name:'my-store'})" v-if="user.user_type !=='User' ">
+   <a-button type="primary" @click="this.$router.push({name:'my-store'})" v-if="user.user_type !=='User' ">
             <div style="display:flex;gap:5px">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 17" fill="none">
 <path d="M1.97754 7.49756V10.8321C1.97754 12.7184 1.97754 13.6616 2.56333 14.2476C3.14911 14.8336 4.09192 14.8336 5.97754 14.8336H9.97754C11.8631 14.8336 12.8059 14.8336 13.3917 14.2476C13.9775 13.6616 13.9775 12.7184 13.9775 10.8321V7.49756" stroke="white" stroke-linecap="round"/>
@@ -57,6 +46,25 @@
 <span>My Store</span>
             </div>
 </a-button>
+        <div class="icon-actions">
+          <!-- Notifications Bell Icon with Counter -->
+          <div class="notification-bell" @click="openNotificationsPanel">
+            <button class="icon-btn">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
+                <path
+                  d="M1.53001 13.77C1.31701 15.164 2.26801 16.131 3.43201 16.613C7.89501 18.463 14.105 18.463 18.568 16.613C19.732 16.131 20.683 15.163 20.47 13.77C20.34 12.913 19.693 12.2 19.214 11.503C18.587 10.579 18.525 9.572 18.524 8.5C18.525 4.358 15.157 1 11 1C6.843 1 3.47501 4.358 3.47501 8.5C3.47501 9.572 3.41301 10.58 2.78501 11.503C2.30701 12.2 1.66101 12.913 1.53001 13.77Z"
+                  stroke="#333333" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M7 18C7.458 19.725 9.076 21 11 21C12.925 21 14.541 19.725 15 18" stroke="#333333"
+                  stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
+            <!-- Red Badge for Unread Notifications -->
+            <span v-if="unreadNotificationsCount > 0" class="notification-badge">
+              {{ unreadNotificationsCount > 99 ? '99+' : unreadNotificationsCount }}
+            </span>
+          </div>
+
+          <!-- Other icon buttons -->
           <button class="icon-btn">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
               <path
@@ -64,16 +72,8 @@
                 stroke="#333333" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
           </button>
-          <button class="icon-btn">
-            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
-              <path
-                d="M1.53001 13.77C1.31701 15.164 2.26801 16.131 3.43201 16.613C7.89501 18.463 14.105 18.463 18.568 16.613C19.732 16.131 20.683 15.163 20.47 13.77C20.34 12.913 19.693 12.2 19.214 11.503C18.587 10.579 18.525 9.572 18.524 8.5C18.525 4.358 15.157 1 11 1C6.843 1 3.47501 4.358 3.47501 8.5C3.47501 9.572 3.41301 10.58 2.78501 11.503C2.30701 12.2 1.66101 12.913 1.53001 13.77Z"
-                stroke="#333333" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-              <path d="M7 18C7.458 19.725 9.076 21 11 21C12.925 21 14.541 19.725 15 18" stroke="#333333"
-                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
-          </button>
         </div>
+
         <div class="user-avatar" @click="this.$router.push({name:'dashboard'})">
           <img :src="this.$store.state.root_media_api+profile.profile_picture"
             alt="User" />
@@ -82,6 +82,8 @@
     </div>
   </nav>
     </a-col>
+
+    <!-- Mobile View -->
     <a-col :sm="24" :xs="24" :md="0" :lg="0">
 <a-drawer
     :placement="'left'"
@@ -110,9 +112,7 @@
             </div>
 </a-button>
 
-
     <p>Some contents...</p>
-    
     <p>Some contents...</p>
     <p>Some contents...</p>
   </a-drawer>
@@ -128,12 +128,8 @@
         </div>
       </div>
 
-      
-
       <!-- Right Side Actions -->
       <div class="navbar-actions">
-        
-
             <div class="btn-input_credits" style="height:35px;">
               <div class="credits-content">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 17 17" fill="none">
@@ -143,33 +139,30 @@
               </div>
               <a-button type="primary" size="small">Buy</a-button>
             </div>
-          
 
         <div class="icon-actions">
-          <!-- <button class="icon-btn">
-            <svg xmlns="http://www.w3.org/2000/svg" width="23" height="22" viewBox="0 0 23 22" fill="none">
-              <path
-                d="M1 1H4.63636L7.07273 13.7524C7.15586 14.1909 7.38355 14.5847 7.71595 14.865C8.04835 15.1454 8.46427 15.2943 8.89091 15.2857H17.7273C18.1539 15.2943 18.5698 15.1454 18.9022 14.865C19.2346 14.5847 19.4623 14.1909 19.5455 13.7524L21 5.7619H5.54545M9.18182 20.0476C9.18182 20.5736 8.7748 21 8.27273 21C7.77065 21 7.36364 20.5736 7.36364 20.0476C7.36364 19.5216 7.77065 19.0952 8.27273 19.0952C8.7748 19.0952 9.18182 19.5216 9.18182 20.0476ZM19.1818 20.0476C19.1818 20.5736 18.7748 21 18.2727 21C17.7707 21 17.3636 20.5736 17.3636 20.0476C17.3636 19.5216 17.7707 19.0952 18.2727 19.0952C18.7748 19.0952 19.1818 19.5216 19.1818 20.0476Z"
-                stroke="#333333" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-              <circle cx="20" cy="6" r="2.5" fill="#3B63FB" stroke="white" />
-            </svg>
-          </button> -->
+          <!-- Mobile Notifications Bell Icon with Counter -->
+          <div class="notification-bell" @click="openNotificationsPanel">
+            <button class="icon-btn">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
+                <path
+                  d="M1.53001 13.77C1.31701 15.164 2.26801 16.131 3.43201 16.613C7.89501 18.463 14.105 18.463 18.568 16.613C19.732 16.131 20.683 15.163 20.47 13.77C20.34 12.913 19.693 12.2 19.214 11.503C18.587 10.579 18.525 9.572 18.524 8.5C18.525 4.358 15.157 1 11 1C6.843 1 3.47501 4.358 3.47501 8.5C3.47501 9.572 3.41301 10.58 2.78501 11.503C2.30701 12.2 1.66101 12.913 1.53001 13.77Z"
+                  stroke="#333333" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M7 18C7.458 19.725 9.076 21 11 21C12.925 21 14.541 19.725 15 18" stroke="#333333"
+                  stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
+            <!-- Red Badge for Unread Notifications Mobile -->
+            <span v-if="unreadNotificationsCount > 0" class="notification-badge">
+              {{ unreadNotificationsCount > 99 ? '99+' : unreadNotificationsCount }}
+            </span>
+          </div>
           
           <button class="icon-btn">
             <svg width="23" height="22" viewBox="0 0 23 22" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M1 1H4.63636L7.07273 13.7524C7.15586 14.1909 7.38355 14.5847 7.71595 14.865C8.04835 15.1454 8.46427 15.2943 8.89091 15.2857H17.7273C18.1539 15.2943 18.5698 15.1454 18.9022 14.865C19.2346 14.5847 19.4623 14.1909 19.5455 13.7524L21 5.7619H5.54545M9.18182 20.0476C9.18182 20.5736 8.7748 21 8.27273 21C7.77065 21 7.36364 20.5736 7.36364 20.0476C7.36364 19.5216 7.77065 19.0952 8.27273 19.0952C8.7748 19.0952 9.18182 19.5216 9.18182 20.0476ZM19.1818 20.0476C19.1818 20.5736 18.7748 21 18.2727 21C17.7707 21 17.3636 20.5736 17.3636 20.0476C17.3636 19.5216 17.7707 19.0952 18.2727 19.0952C18.7748 19.0952 19.1818 19.5216 19.1818 20.0476Z" stroke="#333333" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 <circle cx="20" cy="6" r="2.5" fill="#3B63FB" stroke="white"/>
 </svg>
-
-          </button>
-          <button class="icon-btn">
-            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
-              <path
-                d="M1.53001 13.77C1.31701 15.164 2.26801 16.131 3.43201 16.613C7.89501 18.463 14.105 18.463 18.568 16.613C19.732 16.131 20.683 15.163 20.47 13.77C20.34 12.913 19.693 12.2 19.214 11.503C18.587 10.579 18.525 9.572 18.524 8.5C18.525 4.358 15.157 1 11 1C6.843 1 3.47501 4.358 3.47501 8.5C3.47501 9.572 3.41301 10.58 2.78501 11.503C2.30701 12.2 1.66101 12.913 1.53001 13.77Z"
-                stroke="#333333" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-              <path d="M7 18C7.458 19.725 9.076 21 11 21C12.925 21 14.541 19.725 15 18" stroke="#333333"
-                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
           </button>
         </div>
         <div class="user-avatar" @click="this.$router.push({name:'dashboard'})">
@@ -182,27 +175,40 @@
     </a-col>
   </a-row>
 
+<!-- BasicNavbar.vue - Complete Updated Script Section -->
 </template>
 
+
 <script>
-import {MenuOutlined } from '@ant-design/icons-vue';
+import { MenuOutlined } from '@ant-design/icons-vue';
+import { notification } from 'ant-design-vue'; // ✅ Import at top level
+
 export default {
   name: 'BasicNavbar',
-  components:{
+  components: {
     MenuOutlined
   },
   data() {
     return {
       language_selected: 'EN',
-      user: JSON.parse(localStorage.getItem('user') ),
-      profile: JSON.parse(localStorage.getItem('profile') ),
+      user: JSON.parse(localStorage.getItem('user')),
+      profile: JSON.parse(localStorage.getItem('profile')),
       business_info: JSON.parse(localStorage.getItem('business_profile') || '{}'),
       openMobileDrawer: false,
 
-      // keeping the live credits track
+      // Credits tracking
       liveCredits: 0,
-      ws: null,
+
+      // Notifications tracking
+      unreadNotificationsCount: 0,
+      notifications: [],
+
+      // WebSocket connections
+      creditsWs: null,
+      notificationsWs: null,
       token: null,
+
+      // Reconnection settings
       reconnectInterval: null,
       reconnectAttempts: 0,
       maxReconnectAttempts: 5
@@ -210,70 +216,50 @@ export default {
   },
   mounted() {
     this.fetch_current_credits_of_user()
-    // Get token from localStorage
+    this.fetch_unread_notifications_count()
+    
     this.token = localStorage.getItem('token');
     
     if (this.token) {
-      this.connectWebSocket();
+      this.connectCreditsWebSocket();
+      this.connectNotificationsWebSocket();
     } else {
       console.error("No token found. User must be authenticated.");
     }
   },
   beforeUnmount() {
-    // Clean up WebSocket connection when component is destroyed
-    this.closeWebSocket();
+    this.closeWebSockets();
     
-    // Clear reconnect interval if exists
     if (this.reconnectInterval) {
       clearTimeout(this.reconnectInterval);
     }
   },
   methods: {
 
+    // ============ CREDITS METHODS ============
     async fetch_current_credits_of_user(){
        try {
-                this.loading = true;
-                this.error = null;
-
             const token = localStorage.getItem('token');
                 
-                const response = await fetch(`${this.$store.state.root_api}subscription/api/get-my-credits-count/`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Token ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                    });
-        const result = await response.json();
-console.log(result)
-                if (result.success) {
-                    this.liveCredits = result.credits_count;
-                } else {
-                    this.error = result.message || 'Business not found';
+            const response = await fetch(`${this.$store.state.root_api}subscription/api/get-my-credits-count/`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Token ${token}`,
+                    'Content-Type': 'application/json'
                 }
-            } catch (error) {
-                console.error('Error loading business data:', error);
-                if (error.response?.status === 404) {
-                    this.error = 'Business not found';
-                } else {
-                    this.error = 'Failed to load business information';
-                }
-            } finally {
-                this.loading = false;
+            });
+            const result = await response.json();
+            if (result.success) {
+                this.liveCredits = result.credits_count;
             }
-    },
-    showDrawer(){
-      this.openMobileDrawer = !this.openMobileDrawer
-    },
-    
-    handleChange(e) {
-      this.language_selected = e
+       } catch (error) {
+            console.error('Error loading credits:', error);
+       }
     },
 
-    connectWebSocket() {
-      // Close existing connection if any
-      if (this.ws) {
-        this.ws.close();
+    connectCreditsWebSocket() {
+      if (this.creditsWs) {
+        this.creditsWs.close();
       }
 
       if (!this.token) {
@@ -281,89 +267,210 @@ console.log(result)
         return;
       }
 
-      // Establish new WebSocket connection with token as query parameter
       const wsUrl = `${this.$store.state.websockets_address}/ws/credits/?token=${this.token}`;
-      this.ws = new WebSocket(wsUrl);
+      this.creditsWs = new WebSocket(wsUrl);
 
-      this.ws.onopen = () => {
-        console.log("WebSocket connected successfully");
-        this.reconnectAttempts = 0; // Reset reconnect attempts on successful connection
+      this.creditsWs.onopen = () => {
+        console.log("✅ Credits WebSocket connected");
       };
 
-      this.ws.onclose = (event) => {
-        console.log("WebSocket disconnected", event.code, event.reason);
-        
-        // Handle different close codes
-        if (event.code === 4001) {
-          console.error("Authentication failed. Invalid or missing token.");
-          // Don't attempt to reconnect on auth failure
-          return;
-        }
-        
-        // Attempt to reconnect for other disconnections
-        this.attemptReconnect();
-      };
-
-      this.ws.onmessage = (e) => {
+      this.creditsWs.onmessage = (e) => {
         const data = JSON.parse(e.data);
-        console.log("Received credit update:", data);
-        
-        // Handle different message types
         if (data.action === 'credit_update') {
           this.liveCredits = data.credits_count;
-        } else if (data.action === 'error') {
-          console.error("WebSocket error message:", data.message);
-        } else {
-          // Backward compatibility with old format
-          if (data.credits_count !== undefined) {
-            this.liveCredits = data.credits_count;
-          }
+        } else if (data.credits_count !== undefined) {
+          this.liveCredits = data.credits_count;
         }
       };
 
-      this.ws.onerror = (error) => {
-        console.error("WebSocket error:", error);
+      this.creditsWs.onerror = (error) => {
+        console.error("Credits WebSocket error:", error);
+      };
+
+      this.creditsWs.onclose = () => {
+        console.log("Credits WebSocket disconnected");
       };
     },
 
-    closeWebSocket() {
-      if (this.ws) {
-        this.ws.close();
-        this.ws = null;
+    // ============ NOTIFICATIONS METHODS ============
+    async fetch_unread_notifications_count() {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(
+          `${this.$store.state.root_api}notifications/api/get-unread-notifications-count/`,
+          {
+            method: 'GET',
+            headers: {
+              'Authorization': `Token ${token}`,
+              'Content-Type': 'application/json'
+            }
+          }
+        );
+        const result = await response.json();
+        if (result.success) {
+          this.unreadNotificationsCount = result.unread_count;
+          console.log(`📬 Initial unread count: ${result.unread_count}`);
+        }
+      } catch (error) {
+        console.error('Error loading unread notifications count:', error);
       }
     },
 
-    // Method to reconnect with exponential backoff
-    attemptReconnect() {
+    connectNotificationsWebSocket() {
+      if (this.notificationsWs) {
+        this.notificationsWs.close();
+      }
+
+      if (!this.token) {
+        console.error("Cannot connect: No token available");
+        return;
+      }
+
+      const userId = this.user?.id;
+      if (!userId) {
+        console.error("User ID not found");
+        return;
+      }
+
+      const wsUrl = `${this.$store.state.websockets_address}/ws/notifications/${userId}/?token=${this.token}`;
+      this.notificationsWs = new WebSocket(wsUrl);
+
+      this.notificationsWs.onopen = () => {
+        console.log("✅ Notifications WebSocket connected");
+        this.reconnectAttempts = 0;
+      };
+
+      this.notificationsWs.onmessage = (e) => {
+        try {
+          const data = JSON.parse(e.data);
+          console.log("📬 WebSocket message received:", data);
+          
+          // ✅ HANDLE NEW NOTIFICATION
+          if (data.action === 'notification_received') {
+            const notificationData = data.notification;
+            const unreadCount = data.unread_count;
+            
+            console.log("📨 New Notification:", notificationData);
+            console.log("📊 Unread Count:", unreadCount);
+            
+            // Add notification to list
+            this.notifications.unshift(notificationData);
+            
+            // Update unread count
+            this.unreadNotificationsCount = unreadCount;
+            
+            // ✅ Show Ant Design notification popup
+            this.showAntNotification(notificationData);
+          }
+          
+          // ✅ HANDLE UNREAD COUNT UPDATE (from API marking as seen)
+          else if (data.action === 'unread_count_updated') {
+            const newUnreadCount = data.unread_count;
+            
+            console.log("🔄 Unread count updated via API:", newUnreadCount);
+            
+            // Update the badge count in real-time
+            this.unreadNotificationsCount = newUnreadCount;
+            
+            // Show success message
+            if (newUnreadCount === 0) {
+              console.log("✅ All notifications marked as seen!");
+              notification.success({
+                message: 'All Notifications Seen',
+                description: 'You have marked all notifications as seen',
+                duration: 2,
+                placement: 'bottomRight'
+              });
+            }
+          }
+        } catch (error) {
+          console.error("Error parsing WebSocket message:", error);
+        }
+      };
+
+      this.notificationsWs.onerror = (error) => {
+        console.error("Notifications WebSocket error:", error);
+      };
+
+      this.notificationsWs.onclose = () => {
+        console.log("Notifications WebSocket disconnected");
+        this.attemptReconnectNotifications();
+      };
+    },
+
+    // ✅ FIXED: Show Ant Design notification popup
+    showAntNotification(notificationData) {
+      // Map notification type to Ant Design type
+      const typeMap = {
+        'success': 'success',
+        'info': 'info',
+        'warning': 'warning',
+        'error': 'error',
+        'danger': 'error',
+        'default': 'info'
+      };
+
+      const notificationType = typeMap[notificationData.type] || typeMap['default'];
+
+      console.log(`🔔 Showing ${notificationType} notification:`, notificationData.title);
+      
+      // ✅ Use imported notification directly
+      notification[notificationType]({
+        message: notificationData.title || 'New Notification',
+        description: notificationData.description || '',
+        duration: 4.5,
+        top: '24px',
+        style: {
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+        },
+        placement: 'bottomRight'
+      });
+    },
+
+    attemptReconnectNotifications() {
       if (this.reconnectAttempts >= this.maxReconnectAttempts) {
-        console.error("Max reconnection attempts reached. Please refresh the page.");
+        console.error("Max reconnection attempts reached for notifications");
         return;
       }
 
       this.reconnectAttempts++;
-      const delay = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 30000); // Max 30 seconds
+      const delay = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 30000);
       
-      console.log(`Attempting to reconnect in ${delay}ms (attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts})`);
+      console.log(`Attempting to reconnect notifications in ${delay}ms`);
       
       this.reconnectInterval = setTimeout(() => {
         if (this.token) {
-          this.connectWebSocket();
+          this.connectNotificationsWebSocket();
         }
       }, delay);
     },
 
-    // Method to manually reconnect if needed
-    reconnectWebSocket() {
-      this.reconnectAttempts = 0; // Reset attempts for manual reconnect
-      if (this.token) {
-        this.connectWebSocket();
-      } else {
-        console.error("Cannot reconnect: No token available");
+    openNotificationsPanel() {
+      this.$router.push('/notifications')
+    },
+
+    closeWebSockets() {
+      if (this.creditsWs) {
+        this.creditsWs.close();
+        this.creditsWs = null;
       }
+      if (this.notificationsWs) {
+        this.notificationsWs.close();
+        this.notificationsWs = null;
+      }
+    },
+
+    showDrawer(){
+      this.openMobileDrawer = !this.openMobileDrawer
+    },
+    
+    handleChange(e) {
+      this.language_selected = e
     }
   }
 }
 </script>
+
 <style scoped>
 /* Global Navbar Styles */
 .navbar {
@@ -377,7 +484,6 @@ console.log(result)
 }
 
 .navbar-container {
-  /* max-width: 1200px; */
   margin: 0 auto;
   display: flex;
   align-items: center;
@@ -400,32 +506,13 @@ console.log(result)
   align-items: center;
   justify-content: center;
   color: white;
-}
-
-.brand-text {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.brand-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #1f2937;
-  line-height: 1;
-}
-
-.brand-subtitle {
-  font-size: 12px;
-  color: #6b7280;
-  line-height: 1;
+  cursor: pointer;
 }
 
 .navbar-nav {
   display: flex;
   align-items: center;
   gap: 32px;
-
   margin-left: 20px;
   margin-right: auto;
 }
@@ -449,50 +536,11 @@ console.log(result)
   gap: 12px;
 }
 
-.language-selector {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  color: #6b7280;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  padding: 6px 8px;
-  border-radius: 6px;
-  transition: background-color 0.2s ease;
-}
-
-.language-selector:hover {
-  background-color: #f3f4f6;
-}
-
-.btn-primary {
-  background: #3B63FB;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 8px 16px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-}
-
-.btn-primary:hover {
-  background: #2c4fd6;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(59, 99, 251, 0.25);
-}
-
-
 .btn-input_credits {
   display: flex;
   gap: 5px;
-  background: transparent;
-  color: #3B63FB;
-  border: 1px solid #2f2f2f2d;
   background: rgba(128, 128, 128, 0.093);
+  border: 1px solid #2f2f2f2d;
   border-radius: 8px;
   padding: 5px;
   font-size: 14px;
@@ -503,41 +551,16 @@ console.log(result)
   height: 40px;
 }
 
-.btn-outline {
-  background: transparent;
-  color: #3B63FB;
-  border: 1px solid #3B63FB;
-  border-radius: 8px;
-  padding: 8px 16px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-}
-
-.btn-outline:hover {
-  background: #3B63FB;
-  color: white;
-  transform: translateY(-1px);
-}
-
-.btn-icon {
-  background: transparent;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  padding: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
+.credits-content {
   display: flex;
   align-items: center;
-  justify-content: center;
-  color: #6b7280;
+  gap: 6px;
+  color: #3B63FB;
 }
 
-.btn-icon:hover {
-  border-color: #3B63FB;
-  color: #3B63FB;
+.credits-number {
+  font-size: 16px;
+  font-weight: 500;
 }
 
 .icon-actions {
@@ -564,6 +587,40 @@ console.log(result)
   color: #3B63FB;
 }
 
+/* Notification Bell with Badge */
+.notification-bell {
+  position: relative;
+  display: inline-block;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #ef4444;
+  color: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+  animation: badgePulse 2s infinite;
+}
+
+@keyframes badgePulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
 .user-avatar {
   width: 42px;
   height: 42px;
@@ -584,50 +641,6 @@ console.log(result)
   object-fit: cover;
 }
 
-
-/* Credits Section */
-.btn-input_credits {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(128, 128, 128, 0.08);
-  border: 1px solid rgba(47, 47, 47, 0.1);
-  border-radius: 8px;
-  padding: 6px 8px;
-  font-size: 14px;
-  font-weight: 400;
-  font-family: 'Poppins', sans-serif;
-}
-
-.credits-content {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: #3B63FB;
-}
-
-.credits-number {
-  font-size: 16px;
-  font-weight: 500;
-}
-
-.btn-buy {
-  background: #3B63FB;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 6px 12px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-}
-
-.btn-buy:hover {
-  background: #2c4fd6;
-  transform: translateY(-1px);
-}
 /* Responsive Design */
 @media (max-width: 768px) {
   .navbar-container {
@@ -642,33 +655,11 @@ console.log(result)
   .navbar-actions {
     gap: 8px;
   }
-
-  .btn-primary,
-  .btn-outline {
-    padding: 6px 12px;
-    font-size: 13px;
-  }
-
-  .brand-title {
-    font-size: 14px;
-  }
-
-  .brand-subtitle {
-    font-size: 11px;
-  }
 }
 
 @media (max-width: 480px) {
-  .navbar-actions .btn-outline {
-    display: none;
-  }
-
-  .icon-actions {
+  .navbar-actions {
     gap: 4px;
-  }
-
-  .language-selector {
-    display: none;
   }
 }
 </style>
