@@ -72,6 +72,7 @@ import notifications from '@/views/user/notifications.vue'
 import cart from '@/views/user/cart.vue'
 import ai_catalog from '@/views/pages/ai_catalog.vue'
 
+import ForgetPassword from '@/views/auth/forgetpassword/ForgetPassword.vue';
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -494,6 +495,11 @@ const router = createRouter({
       path: '/signup',
       name: 'signup',
       component: authentication,
+    },
+     {
+      path: '/forget-password',
+      name: 'forget_password',
+      component: ForgetPassword,
     },
   ],
 })
