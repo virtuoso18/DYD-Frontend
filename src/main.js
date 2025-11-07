@@ -9,9 +9,21 @@ import Antd from 'ant-design-vue'
 // use css from antjs
 import 'ant-design-vue/dist/reset.css'
 
+import { createI18n } from 'vue-i18n'
+import en from './locales/en.json'
+import he from './locales/he.json'
+
+const i18n = createI18n({
+  legacy: false,          // composition API style
+  locale: 'en',           // default language
+  fallbackLocale: 'en',
+  messages: { en, he },
+})
+
 const app = createApp(App)
 
-app.use(router).use(Antd).use(store)
+// ⚠️ FIX: Add .use(i18n) here!
+app.use(router).use(Antd).use(store).use(i18n)
 
 app.mount('#app')
 

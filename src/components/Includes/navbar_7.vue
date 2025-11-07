@@ -22,10 +22,14 @@
 
       <!-- Right Side Actions -->
       <div class="navbar-actions">
-        <a-select ref="select" v-model:value="language_selected" @focus="focus" @change="handleChange">
-          <a-select-option value="jack">EN</a-select-option>
-          <a-select-option value="lucy">HB</a-select-option>
-        </a-select>
+        <a-select
+  v-model:value="language_selected"
+  @change="handleChange"
+  style="width: 80px;"
+>
+  <a-select-option value="en">EN</a-select-option>
+  <a-select-option value="he">HB</a-select-option>
+</a-select>
 
             <div class="btn-input_credits">
               <div class="credits-content">
@@ -182,12 +186,18 @@
 <script>
 import { MenuOutlined } from '@ant-design/icons-vue';
 import { notification } from 'ant-design-vue'; // ✅ Import at top level
+import { useI18n } from 'vue-i18n'
+
 
 export default {
   name: 'BasicNavbar',
   components: {
     MenuOutlined
   },
+  setup() {
+  const { t, locale } = useI18n() // get translator & locale controller
+  return { t, locale }
+},
   data() {
     return {
       language_selected: 'EN',
@@ -226,7 +236,15 @@ export default {
     } else {
       console.error("No token found. User must be authenticated.");
     }
+
+    const savedLang = localStorage.getItem('preferred_language');
+if (savedLang) {
+  this.language_selected = savedLang;
+  this.locale.value = savedLang;
+  document.dir = savedLang === 'he' ? 'rtl' : 'ltr';
+}
   },
+  
   beforeUnmount() {
     this.closeWebSockets();
     
@@ -234,6 +252,7 @@ export default {
       clearTimeout(this.reconnectInterval);
     }
   },
+  
   methods: {
 
     // ============ CREDITS METHODS ============
@@ -464,9 +483,18 @@ export default {
       this.openMobileDrawer = !this.openMobileDrawer
     },
     
-    handleChange(e) {
-      this.language_selected = e
-    }
+    handleChange(value) {
+  this.language_selected = value;
+  this.locale = value; // ✅ switch Vue i18n language
+
+  // ✅ Optional: switch layout direction
+  document.dir = value === 'he' ? 'rtl' : 'ltr';
+
+  // ✅ Save preference to localStorage
+  localStorage.setItem('preferred_language', value);
+
+  console.log(`🌐 Language changed to: ${value}`);
+}
   }
 }
 </script>

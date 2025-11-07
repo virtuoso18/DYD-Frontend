@@ -19,10 +19,18 @@
 }"
 
       >
+
+      
         <div style="text-align: center;">
   <div class="banner-text" style="border-radius:10px;font-weight:900; padding-top:20px; margin-bottom:24px;">
-    <div>Transforming spaces using</div>
-    <div>stunning Virtual Staging with</div>
+    <div >
+   <div class="text-2xl  font-semibold text-gray-600 my-2">
+  {{ t('line1') }}
+</div>
+<div class="text-center text-2xl text-gray-600 my-2">
+  {{ t('line2') }}
+</div>
+  </div>
   </div>
 
   <a-button type="primary" size="large"
@@ -689,6 +697,7 @@ Drag & drop Image
 
 <script>
 import bannerImage from '@/assets/home_main_banner.jpg'
+import { useI18n } from 'vue-i18n'
 
 import swiper_bg from '@/assets/bg-swiper.jpg'
 
@@ -707,6 +716,20 @@ import 'swiper/css/scrollbar';
 
 export default {
   name: "Home",
+  setup() {
+    // ✅ initialize vue-i18n for translations
+    const { t } = useI18n()
+
+    const onSwiper = (swiper) => console.log(swiper)
+    const onSlideChange = () => console.log('slide change')
+
+    return {
+      t, // ✅ expose translation function to template
+      onSwiper,
+      onSlideChange,
+      modules: [Navigation, Pagination, Scrollbar, A11y, Autoplay],
+    }
+  },
   data() {
     return {
       bannerImage,
@@ -752,19 +775,7 @@ export default {
             ]
     }
   },
-   setup() {
-      const onSwiper = (swiper) => {
-        console.log(swiper);
-      };
-      const onSlideChange = () => {
-        console.log('slide change');
-      };
-      return {
-        onSwiper,
-        onSlideChange,
-        modules: [Navigation, Pagination, Scrollbar, A11y,Autoplay],
-      };
-    },
+ 
   components:{
          Swiper,
       SwiperSlide,

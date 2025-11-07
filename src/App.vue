@@ -1,4 +1,14 @@
 <script setup>
+
+import { useI18n } from 'vue-i18n'
+import { watch } from 'vue'
+
+const { locale } = useI18n()
+
+watch(locale, (newLang) => {
+  document.dir = newLang === 'he' ? 'rtl' : 'ltr'
+})
+
 import { RouterLink, RouterView } from 'vue-router'
 import navbar_manager from '@/views/component_managers/navbar/navbar.vue'
 import footer_manager from '@/views/component_managers/footer/footer_manager.vue'
@@ -22,6 +32,8 @@ import footer_manager from '@/views/component_managers/footer/footer_manager.vue
   <footer_manager/>
 
 </template>
+
+
 
 <style scoped>
 header {
