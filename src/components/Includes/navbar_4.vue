@@ -51,9 +51,18 @@ export default {
     language_selected:'EN'
   }},
   methods:{
-    handleChange(e){
-      this.language_selected=e
-    }
+      handleChange(value) {
+  this.language_selected = value;
+  this.locale = value; // ✅ switch Vue i18n language
+
+  // ✅ Optional: switch layout direction
+  document.dir = value === 'he' ? 'rtl' : 'ltr';
+
+  // ✅ Save preference to localStorage
+  localStorage.setItem('preferred_language', value);
+
+  console.log(`🌐 Language changed to: ${value}`);
+}
   }
 }
 </script>
