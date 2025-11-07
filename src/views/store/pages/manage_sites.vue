@@ -162,17 +162,99 @@
         
         </div>
 <br>
-        <div style="padding:10px;background-color: white;border-radius:10px;border:2px solid rgba(128, 128, 128, 0.16);">
-            <h1>My Products</h1>
-             <div v-if="our_products.length==0" style="text-align: center;">
-
-    <a-empty description="Business product catalogue is empty."></a-empty>
-    <router-link to="/my-store/manage-products">
-        <a-button type="primary">Add Product</a-button>
-    </router-link>
-</div>
-              <buisnes_products_sailing :products="our_products" v-else/> 
+        <!-- My Products Section -->
+<div style="padding:10px;padding-top:0;background-color: white;border-radius:10px;border:2px solid rgba(128, 128, 128, 0.16);">
+  <a-row>
+    <a-col :span="18" style="padding-top:20px">      
+      <b><h2>My Products</h2></b>
+      </a-col>
+      <a-col :span="6">
+        <!-- Add Product Button -->
+                <div style="margin-top: 20px;">
+                    <router-link to="/my-store/manage-products">
+                        <a-button type="primary" style="width: 100%;">
+                            <template #icon>+&nbsp;</template>
+                            Add More Products
+                        </a-button>
+                    </router-link>
+                </div>
+      </a-col>
+    </a-row>
+    <div style="padding: 10px;">
+        <!-- Loading Spinner on First Load -->
+        <div v-if="loading && productsPage === 1" style="text-align: center; padding: 40px;">
+            <a-spin size="large" />
+            <p style="margin-top: 15px; color: #666;">Loading products...</p>
         </div>
+
+        <!-- Empty State (no products and not loading) -->
+        <div v-else-if="our_products.length === 0 && !loading && productsPage === 1" style="text-align: center; padding: 60px 20px;">
+            <a-empty 
+                description="Business product catalogue is empty."
+                style="margin: 20px 0;"
+            />
+            <router-link to="/my-store/manage-products">
+                <a-button type="primary">Add Product</a-button>
+            </router-link>
+        </div>
+
+        <!-- Products Loaded Successfully -->
+        <div v-else style="width: 100%;">
+            <!-- Debug Info (optional - remove in production) -->
+            <div v-if="our_products.length > 0" style="background: #f9f9f9; border: 1px solid #e8e8e8; padding: 12px; margin-bottom: 15px; border-radius: 6px; font-size: 12px; color: #666;">
+                <strong>Products Status:</strong> Showing {{ our_products.length }} of {{ totalProducts }} | Page {{ productsPage }} | More Available: {{ hasMoreProducts ? 'Yes' : 'No' }}
+            </div>
+
+            <!-- Products Grid Component -->
+            <div v-if="our_products.length > 0">
+                <buisnes_products_sailing 
+                    :products="our_products"
+                />
+            </div>
+
+            <!-- Fallback - List products if component doesn't render -->
+            <div v-else-if="our_products.length === 0" style="text-align: center; padding: 30px;">
+                <p style="color: #999;">No products to display on this page</p>
+            </div>
+
+            <!-- Load More Section -->
+            <div v-if="our_products.length > 0" style="margin-top: 30px; text-align: center;">
+                <!-- More Products Button -->
+                <transition name="fade">
+                    <div v-if="hasMoreProducts" style="margin-bottom: 20px;">
+                        <a-button
+                            type="primary"
+                            size="large"
+                            @click="loadMoreProducts"
+                            :loading="isLoadingMoreProducts"
+                            :disabled="isLoadingMoreProducts"
+                            >
+                            <!-- style="padding: 12px 50px; border-radius: 8px; font-weight: 600; font-size: 15px;" -->
+                            <span v-if="!isLoadingMoreProducts">
+                                Show More Products ({{ totalProducts - our_products.length }} remaining)
+                            </span>
+                            <span v-else>
+                                Loading...
+                            </span>
+                        </a-button>
+                    </div>
+                </transition>
+
+                <!-- Pagination Info -->
+                <div style="color: #888; font-size: 13px; margin-top: 12px; line-height: 1.6;">
+                    <p v-if="hasMoreProducts">
+                        📊 Showing {{ our_products.length }} of {{ totalProducts }} products
+                    </p>
+                    <p v-else style="color: #aaa;">
+                        ✅ All {{ totalProducts }} products loaded
+                    </p>
+                </div>
+
+                
+            </div>
+        </div>
+    </div>
+</div>
         <br>
         <div style="padding:10px;background-color: white;border-radius:10px;border:2px solid rgba(128, 128, 128, 0.16);">
             <div style="padding:10px;background: #f2f2f3;;border-radius:10px">
@@ -404,6 +486,7 @@
         <input ref="bannerImageInput" type="file" accept="image/*" style="display: none" @change="handleBannerImageChange">
     </div>
 </template>
+
 <script>
 
 import {
@@ -422,48 +505,64 @@ import {
 
 import manage_products from '@/components/store/manage_products.vue'
 import buisnes_products_sailing from '@/components/store/products_sailing.vue'
+
 export default {
     name:'manage_sites',
     components:{
-  EyeOutlined,
-  HeartOutlined,
-  HeartFilled,
-  MessageOutlined,
-  ShareAltOutlined,
-  MoreOutlined,
-  EditOutlined,
-  DeleteOutlined,
-  PushpinOutlined,
-  ArrowLeftOutlined,
-  CloseOutlined,
+        EyeOutlined,
+        HeartOutlined,
+        HeartFilled,
+        MessageOutlined,
+        ShareAltOutlined,
+        MoreOutlined,
+        EditOutlined,
+        DeleteOutlined,
+        PushpinOutlined,
+        ArrowLeftOutlined,
+        CloseOutlined,
         manage_products,
-                 buisnes_products_sailing,
+        buisnes_products_sailing,
     },
-    data(){ return {
-        activeKey:'Visualization',
-        user_generated_content:false,
-        business_info: JSON.parse(localStorage.getItem('business_profile') || '{}'),
-        isEditing: false,
-        editStoreDescription: false,
-        editServices: false,
-        originalData: {},
-        our_products:[],
-        community_posts_virtualisations:[],
-        editData: {
-            business_picture: '',
-            banner_picture: '',
-            welcomeMessage: 'Here is What Happening Your Business Today',
-            storeTitle: 'Your Lightning Store for perfect design',
-            storeDescription: 'Welcome to ALUMA, your go-to lighting store specializing in advanced lighting solutions for homes and businesses. With 14 years of experience in the industry, we offer a wide range of unique and stylish lighting fixtures, along with professional consultation services to bring your design vision to life.',
-            servicesTitle: 'what do we offer ?',
-            services: [
-                'Architectural and Designer Lighting – A selection of modern, classic, and innovative lighting fixtures for every space',
-                'Advanced 3D Visualizations – See how your chosen lighting will look in your home with state-of-the-art visualization technology.',
-                'Personalized Professional Consultation – Our expert team will help you find the perfect lighting for your needs and design style.',
-                'Smart Lighting & Advanced Solutions – Integrating cutting-edge technologies to illuminate your space with style and efficiency'
-            ]
+    data(){ 
+        return {
+            activeKey:'Visualization',
+            user_generated_content:false,
+            business_info: JSON.parse(localStorage.getItem('business_profile') || '{}'),
+            isEditing: false,
+            editStoreDescription: false,
+            editServices: false,
+            originalData: {},
+            
+            // Products and pagination states
+            our_products:[],
+            community_posts_virtualisations:[],
+            
+            // Pagination states for products
+            productsPage: 1,
+            productsPerPage: 10,
+            totalProducts: 0,
+            totalPagesProducts: 0,
+            isLoadingMoreProducts: false,
+            hasMoreProducts: false,
+            loading: false,
+            error: null,
+            
+            editData: {
+                business_picture: '',
+                banner_picture: '',
+                welcomeMessage: 'Here is What Happening Your Business Today',
+                storeTitle: 'Your Lightning Store for perfect design',
+                storeDescription: 'Welcome to ALUMA, your go-to lighting store specializing in advanced lighting solutions for homes and businesses. With 14 years of experience in the industry, we offer a wide range of unique and stylish lighting fixtures, along with professional consultation services to bring your design vision to life.',
+                servicesTitle: 'what do we offer ?',
+                services: [
+                    'Architectural and Designer Lighting – A selection of modern, classic, and innovative lighting fixtures for every space',
+                    'Advanced 3D Visualizations – See how your chosen lighting will look in your home with state-of-the-art visualization technology.',
+                    'Personalized Professional Consultation – Our expert team will help you find the perfect lighting for your needs and design style.',
+                    'Smart Lighting & Advanced Solutions – Integrating cutting-edge technologies to illuminate your space with style and efficiency'
+                ]
+            }
         }
-    }},
+    },
     mounted() {
         // Initialize editData with business_info
         if (this.business_info) {
@@ -471,205 +570,305 @@ export default {
                 ...this.editData,
                 business_picture: this.business_info.business_picture || this.editData.business_picture,
                 banner_picture: this.business_info.banner_picture || this.editData.banner_picture,
-                // Add other business_info fields as needed
             }
         }
-        this.loadBusinessProfile()
-        this.loadBusinessProducts()
-        this.loadPosts()
+        this.loadBusinessProfile();
+        this.loadBusinessProducts(1); // Load first page
+        this.loadPosts();
     },
     methods: {
-        
+        // Utility methods
+        formatNumber(num) {
+            if (!num || num === 0) return "0";
+            if (num >= 1000000) return (num / 1000000).toFixed(1) + "M";
+            if (num >= 1000) return (num / 1000).toFixed(1) + "K";
+            return num.toString();
+        },
 
-    // Utility methods
-    formatNumber(num) {
-      if (!num || num === 0) return "0";
-      if (num >= 1000000) return (num / 1000000).toFixed(1) + "M";
-      if (num >= 1000) return (num / 1000).toFixed(1) + "K";
-      return num.toString();
-    },
+        formatDate(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffTime = Math.abs(now - date);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-    formatDate(dateString) {
-      const date = new Date(dateString);
-      const now = new Date();
-      const diffTime = Math.abs(now - date);
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            if (diffDays === 1) return "Yesterday";
+            if (diffDays <= 7) return `${diffDays} days ago`;
+            if (diffDays <= 30) return `${Math.ceil(diffDays / 7)} weeks ago`;
+            return date.toLocaleDateString();
+        },
 
-      if (diffDays === 1) return "Yesterday";
-      if (diffDays <= 7) return `${diffDays} days ago`;
-      if (diffDays <= 30) return `${Math.ceil(diffDays / 7)} weeks ago`;
-      return date.toLocaleDateString();
-    },
+        truncateText(text, length) {
+            if (!text || text.length <= length) return text;
+            return text.substring(0, length) + "...";
+        },
 
-    truncateText(text, length) {
-      if (!text || text.length <= length) return text;
-      return text.substring(0, length) + "...";
-    },
-    async loadPosts() {
-      try {
-        const response = await fetch(
-          `${this.$store.state.root_api}community/api/my-posts/`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Token ${localStorage.getItem("token")}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        const data = await response.json();
-
-        if (data.success) {
-          // Process posts data to match backend structure
-          this.community_posts_virtualisations = data.data.map((post) => ({
-            ...post,
-            isLiked: false, // You'll need to check user's likes separately
-            tags: post.tags || [], // Backend returns string array
-            like_count: post.like_count || 0,
-            comment_count: post.comment_count || 0,
-            share_count: post.share_count || 0,
-            view_count: post.view_count || 0,
-          }));
-
-          // No pagination in MyPostsAPI currently
-          this.hasMore = false;
-        } else {
-          throw new Error(data.message || "Failed to load posts");
-        }
-      } catch (error) {
-        console.error("Failed to load posts:", error);
-        this.$message.error("Failed to load posts");
-      } finally {
-        this.loading = false;
-      }
-    },
-
-        async loadBusinessProducts() {
+        async loadPosts() {
             try {
-                this.loading = true;
-                this.error = null;
-                
-                const businessName = this.business_info.slug;
-                
-            const token = localStorage.getItem('token');
-                
-                const response = await fetch(`${this.$store.state.root_api}Auth/api/business/products-sold/${businessName}`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Token ${token}`,
-                        'Content-Type': 'application/json'
+                const response = await fetch(
+                    `${this.$store.state.root_api}community/api/my-posts/`,
+                    {
+                        method: "GET",
+                        headers: {
+                            Authorization: `Token ${localStorage.getItem("token")}`,
+                            "Content-Type": "application/json",
+                        },
                     }
-                    });
-        const result = await response.json();
+                );
 
-                if (result.success) {
-                    // console.log(result)
-                    this.our_products = result.data;
+                const data = await response.json();
+
+                if (data.success) {
+                    this.community_posts_virtualisations = data.data.map((post) => ({
+                        ...post,
+                        isLiked: false,
+                        tags: post.tags || [],
+                        like_count: post.like_count || 0,
+                        comment_count: post.comment_count || 0,
+                        share_count: post.share_count || 0,
+                        view_count: post.view_count || 0,
+                    }));
+
+                    this.hasMore = false;
                 } else {
-                    this.error = result.message || 'Business not found';
+                    throw new Error(data.message || "Failed to load posts");
                 }
             } catch (error) {
-                console.error('Error loading business data:', error);
-                if (error.response?.status === 404) {
-                    this.error = 'Business not found';
-                } else {
-                    this.error = 'Failed to load business information';
-                }
+                console.error("Failed to load posts:", error);
+                this.$message.error("Failed to load posts");
             } finally {
                 this.loading = false;
             }
         },
-        
-    async saveChanges() {
-        try {
-            // Prepare data for API
-            const payload = {
-                storeTitle: this.editData.storeTitle,
-                storeDescription: this.editData.storeDescription,
-                welcomeMessage: this.editData.welcomeMessage,
-                services: this.editData.services,
-                business_picture: this.editData.business_picture,
-                banner_picture: this.editData.banner_picture
-            };
 
-            // Get auth token from localStorage
-            const token = localStorage.getItem('token');
-
-            const response = await fetch(`${this.$store.state.root_api}Auth/api/business-profile/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Token ${token}`
-                },
-                body: JSON.stringify(payload)
-            });
-
-            const result = await response.json();
-
-            if (result.success) {
-                this.$message.success('Changes saved successfully!');
-                this.isEditing = false;
-                this.editStoreDescription = false;
-                this.editServices = false;
-                
-                // Update localStorage
-                const updatedBusinessInfo = {
-                    ...this.business_info,
-                    ...payload
-                };
-                localStorage.setItem('business_profile', JSON.stringify(updatedBusinessInfo));
-                this.business_info = updatedBusinessInfo;
-                
-            } else {
-                this.$message.error(result.message || 'Failed to save changes');
-            }
-            
-        } catch (error) {
-            this.$message.error('Network error. Please try again.');
-            console.error('Error saving changes:', error);
-        }
-    },
-
-    async loadBusinessProfile() {
-        try {
-            const token = localStorage.getItem('token');
-            
-            const response = await fetch(`${this.$store.state.root_api}Auth/api/business-profile/`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Token ${token}`
+        async loadBusinessProducts(pageNumber = 1) {
+            try {
+                if (pageNumber === 1) {
+                    this.loading = true;
+                    this.error = null;
+                    this.our_products = [];
+                } else {
+                    this.isLoadingMoreProducts = true;
                 }
+
+                const businessName = this.business_info.slug;
+                const token = localStorage.getItem('token');
+
+                const response = await fetch(
+                    `${this.$store.state.root_api}Auth/api/business/products-sold/${businessName}?page=${pageNumber}&page_size=10`,
+                    {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Token ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                );
+
+                if (!response.ok) {
+                    throw new Error(`API Error: ${response.status}`);
+                }
+
+                const result = await response.json();
+                console.log('Products API Response:', result);
+
+                // Extract products data
+                let productsData = [];
+                let totalCount = 0;
+                let hasNextPage = false;
+
+                // Check for nested results with success/data structure (YOUR API FORMAT)
+                if (result.results && result.results.data && Array.isArray(result.results.data)) {
+                    console.log('✅ Using nested Django REST + success format');
+                    productsData = result.results.data;
+                    totalCount = result.count || 0;
+                    hasNextPage = result.next !== null && result.next !== undefined;
+                }
+                // Check Django REST Pagination format (results as array)
+                else if (result.results && Array.isArray(result.results)) {
+                    console.log('✅ Using Django REST format');
+                    productsData = result.results;
+                    totalCount = result.count || 0;
+                    hasNextPage = result.next !== null && result.next !== undefined;
+                } 
+                // Fallback to success + data format
+                else if (result.success && result.data && Array.isArray(result.data)) {
+                    console.log('✅ Using success + data format');
+                    productsData = result.data;
+                    totalCount = result.total || result.data.length;
+                    hasNextPage = false;
+                }
+                // Direct array in data
+                else if (Array.isArray(result.data)) {
+                    console.log('✅ Using direct data array format');
+                    productsData = result.data;
+                    totalCount = result.data.length;
+                    hasNextPage = false;
+                }
+                // Direct array response
+                else if (Array.isArray(result)) {
+                    console.log('✅ Using direct array format');
+                    productsData = result;
+                    totalCount = result.length;
+                    hasNextPage = false;
+                }
+
+                console.log('Extracted data:', { 
+                    productsCount: productsData.length, 
+                    totalCount, 
+                    hasNextPage,
+                    currentPage: pageNumber 
+                });
+
+                if (productsData.length > 0) {
+                    // Append products to existing list
+                    if (pageNumber === 1) {
+                        this.our_products = productsData;
+                    } else {
+                        this.our_products = [...this.our_products, ...productsData];
+                    }
+
+                    // Update pagination state
+                    this.totalProducts = totalCount;
+                    this.totalPagesProducts = Math.ceil(totalCount / 10);
+                    this.productsPage = pageNumber;
+
+                    // Determine if there are more products
+                    if (hasNextPage) {
+                        this.hasMoreProducts = true;
+                    } else if (productsData.length < 10) {
+                        this.hasMoreProducts = false;
+                    } else {
+                        this.hasMoreProducts = true;
+                    }
+
+                    console.log('✅ Products loaded:', {
+                        displayed: this.our_products.length,
+                        total: this.totalProducts,
+                        hasMore: this.hasMoreProducts
+                    });
+
+                } else {
+                    console.warn('⚠️ No products in response');
+                    if (pageNumber === 1) {
+                        this.our_products = [];
+                        this.totalProducts = 0;
+                        this.hasMoreProducts = false;
+                    }
+                }
+
+            } catch (error) {
+                console.error('❌ Error loading products:', error);
+                if (pageNumber === 1) {
+                    this.error = `Failed to load products: ${error.message}`;
+                    this.our_products = [];
+                    this.totalProducts = 0;
+                }
+                this.hasMoreProducts = false;
+
+            } finally {
+                this.loading = false;
+                this.isLoadingMoreProducts = false;
+            }
+        },
+
+        async loadMoreProducts() {
+            console.log('Load More clicked:', {
+                isLoading: this.isLoadingMoreProducts,
+                hasMore: this.hasMoreProducts,
+                currentPage: this.productsPage
             });
 
-            const result = await response.json();
+            if (!this.isLoadingMoreProducts && this.hasMoreProducts) {
+                await this.loadBusinessProducts(this.productsPage + 1);
+            } else {
+                console.warn('⚠️ Cannot load more - isLoading:', this.isLoadingMoreProducts, 'hasMore:', this.hasMoreProducts);
+            }
+        },
 
-            if (result.success) {
-                const data = result.data;
-                console.log(data)
-                this.editData = {
-                    ...this.editData,
-                    business_picture: data.business_picture || this.editData.business_picture,
-                    banner_picture: data.banner_picture || this.editData.banner_picture,
-                    welcomeMessage: data.description || this.editData.welcomeMessage,
-                    storeTitle: data.buisness_info_title || this.editData.storeTitle,
-                    storeDescription: data.buisness_info || this.editData.storeDescription,
-                    services: data.services_offered || this.editData.services
+        async saveChanges() {
+            try {
+                const payload = {
+                    storeTitle: this.editData.storeTitle,
+                    storeDescription: this.editData.storeDescription,
+                    welcomeMessage: this.editData.welcomeMessage,
+                    services: this.editData.services,
+                    business_picture: this.editData.business_picture,
+                    banner_picture: this.editData.banner_picture
                 };
 
-                // Update localStorage
-                localStorage.setItem('business_profile', JSON.stringify(data));
-                this.business_info = data;
+                const token = localStorage.getItem('token');
+
+                const response = await fetch(`${this.$store.state.root_api}Auth/api/business-profile/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Token ${token}`
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    this.$message.success('Changes saved successfully!');
+                    this.isEditing = false;
+                    this.editStoreDescription = false;
+                    this.editServices = false;
+                    
+                    const updatedBusinessInfo = {
+                        ...this.business_info,
+                        ...payload
+                    };
+                    localStorage.setItem('business_profile', JSON.stringify(updatedBusinessInfo));
+                    this.business_info = updatedBusinessInfo;
+                    
+                } else {
+                    this.$message.error(result.message || 'Failed to save changes');
+                }
+                
+            } catch (error) {
+                this.$message.error('Network error. Please try again.');
+                console.error('Error saving changes:', error);
             }
-            
-        } catch (error) {
-            console.error('Error loading business profile:', error);
-        }
-    },
+        },
+
+        async loadBusinessProfile() {
+            try {
+                const token = localStorage.getItem('token');
+                
+                const response = await fetch(`${this.$store.state.root_api}Auth/api/business-profile/`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Token ${token}`
+                    }
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    const data = result.data;
+                    console.log(data);
+                    this.editData = {
+                        ...this.editData,
+                        business_picture: data.business_picture || this.editData.business_picture,
+                        banner_picture: data.banner_picture || this.editData.banner_picture,
+                        welcomeMessage: data.description || this.editData.welcomeMessage,
+                        storeTitle: data.buisness_info_title || this.editData.storeTitle,
+                        storeDescription: data.buisness_info || this.editData.storeDescription,
+                        services: data.services_offered || this.editData.services
+                    };
+
+                    localStorage.setItem('business_profile', JSON.stringify(data));
+                    this.business_info = data;
+                }
+                
+            } catch (error) {
+                console.error('Error loading business profile:', error);
+            }
+        },
 
         enableEdit() {
             this.isEditing = true;
-            // Create a deep copy of current data for restoration if needed
             this.originalData = JSON.parse(JSON.stringify(this.editData));
         },
         
@@ -677,39 +876,8 @@ export default {
             this.isEditing = false;
             this.editStoreDescription = false;
             this.editServices = false;
-            // Restore original data
             this.editData = JSON.parse(JSON.stringify(this.originalData));
         },
-        
-        // async saveChanges() {
-        //     try {
-        //         // Here you would typically make an API call to save the data
-        //         // For now, we'll just update localStorage and show success message
-                
-        //         // Update business_info with new data
-        //         const updatedBusinessInfo = {
-        //             ...this.business_info,
-        //             business_picture: this.editData.business_picture,
-        //             banner_picture: this.editData.banner_picture,
-        //             // Add other fields as needed
-        //         };
-                
-        //         localStorage.setItem('business_profile', JSON.stringify(updatedBusinessInfo));
-        //         this.business_info = updatedBusinessInfo;
-                
-        //         // You can add your API call here
-        //         // await this.updateBusinessProfile(this.editData);
-                
-        //         this.$message.success('Changes saved successfully!');
-        //         this.isEditing = false;
-        //         this.editStoreDescription = false;
-        //         this.editServices = false;
-                
-        //     } catch (error) {
-        //         this.$message.error('Failed to save changes. Please try again.');
-        //         console.error('Error saving changes:', error);
-        //     }
-        // },
         
         changeBackgroundImage() {
             this.$refs.backgroundImageInput.click();

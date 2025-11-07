@@ -267,6 +267,7 @@
       </a-form-item>
     </a-form>
   </a-modal>
+
   <!-- Edit Employee Modal -->
   <a-modal
     v-if="this.staff_details"
@@ -390,6 +391,64 @@
     </div>
   </a-modal>
 
+<a-modal
+  v-model:open="openCreateNewtaskModal"
+  centered
+  title="Create New Task"
+  @ok="handleCreateTask"
+  okText="Create Task"
+  cancelText="Cancel"
+>
+  <a-form layout="vertical" @submit.prevent="handleCreateTask">
+    <!-- Task Title -->
+    <a-form-item label="Task Title" required>
+      <a-input
+        v-model:value="newTaskForm.title"
+        placeholder="Enter task title"
+        size="large"
+      />
+    </a-form-item>
+
+    <!-- Task Description -->
+    <a-form-item label="Task Description" required>
+      <a-textarea
+        v-model:value="newTaskForm.description"
+        placeholder="Describe what needs to be done..."
+        :rows="5"
+        size="large"
+      />
+    </a-form-item>
+
+    <!-- Priority -->
+    <a-form-item label="Priority" required>
+      <a-select v-model:value="newTaskForm.priority" size="large">
+        <a-select-option value="low">
+          <a-tag color="green">Low</a-tag>
+        </a-select-option>
+        <a-select-option value="medium">
+          <a-tag color="blue">Medium</a-tag>
+        </a-select-option>
+        <a-select-option value="high">
+          <a-tag color="orange">High</a-tag>
+        </a-select-option>
+        <a-select-option value="urgent">
+          <a-tag color="red">Urgent</a-tag>
+        </a-select-option>
+      </a-select>
+    </a-form-item>
+
+    <!-- Due Date -->
+    <a-form-item label="Due Date">
+      <a-date-picker
+        v-model:value="newTaskForm.due_date"
+        show-time
+        format="YYYY-MM-DD HH:mm"
+        style="width: 100%;"
+        size="large"
+      />
+    </a-form-item>
+  </a-form>
+</a-modal>
 
   <div
     style="margin-top:10px;border-radius:15px;background-color:white;
