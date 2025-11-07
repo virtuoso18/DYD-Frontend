@@ -497,7 +497,7 @@ const router = createRouter({
       component: authentication,
     },
      {
-      path: '/forget-password',
+      path: '/forgot-password',
       name: 'forget_password',
       component: ForgetPassword,
     },

@@ -552,7 +552,7 @@
         <a-col>
           <a-space>
             <a-button type="primary" @click="showStaffDetails(this.staff_details.email)"><RedoOutlined />Refresh</a-button>
-            <a-button type="primary" @click="showCreateNewtaskModal(this.staff_details.email)"><RedoOutlined />Create New Task</a-button>
+            <a-button type="primary" @click="showCreateNewtaskModal()"><RedoOutlined />Create New Task</a-button>
           </a-space>
         </a-col>
         <a-col :span="24">
@@ -1113,7 +1113,7 @@ components:{EditOutlined,DeleteOutlined ,LeftOutlined,  PhoneOutlined,MailOutlin
       this.openAssignTaskModal = !this.openAssignTaskModal;
     },
 
-      showCreateNewtaskModal(email){
+      showCreateNewtaskModal(){
         this.openCreateNewtaskModal=true
       },
 
