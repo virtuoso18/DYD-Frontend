@@ -24,45 +24,68 @@
 
       <!-- Right Side Actions -->
       <div class="navbar-actions">
-         <a-select
-      ref="select"
-      v-model:value="language_selected"
-      style="width: 100%"
-      @focus="focus"
-      @change="handleChange"
-    >
-      <a-select-option value="jack">EN</a-select-option>
-      <a-select-option value="lucy">HB</a-select-option>
-    </a-select>
-    
+        <a-select
+          ref="select"
+          v-model:value="language_selected"
+          style="width: 100px"
+          @change="handleChange"
+        >
+          <a-select-option value="en">EN</a-select-option>
+          <a-select-option value="he">HB</a-select-option>
+        </a-select>
         
-        <router-link :to="'/signup'"><button class="btn-primary">Signup for free</button></router-link>
-        <router-link :to="'/login'"><button class="btn-primary">Login</button></router-link>
-        <!-- <button class="btn-outline">Login</button> -->
+        <router-link :to="'/signup'">
+          <button class="btn-primary">Signup for free</button>
+        </router-link>
+        <router-link :to="'/login'">
+          <button class="btn-primary">Login</button>
+        </router-link>
       </div>
     </div>
   </nav>
 </template>
 
 <script>
+import { useI18n } from 'vue-i18n'
+
 export default {
   name: 'GeneralNavbar',
-  data(){return {
-    language_selected:'EN'
-  }},
-  methods:{
-      handleChange(value) {
-  this.language_selected = value;
-  this.locale = value; // ✅ switch Vue i18n language
-
-  // ✅ Optional: switch layout direction
-  document.dir = value === 'he' ? 'rtl' : 'ltr';
-
-  // ✅ Save preference to localStorage
-  localStorage.setItem('preferred_language', value);
-
-  console.log(`🌐 Language changed to: ${value}`);
-}
+  setup() {
+    const { locale } = useI18n()
+    return { locale }
+  },
+  data() {
+    return {
+      language_selected: 'en'
+    }
+  },
+  mounted() {
+    // Load saved language preference on mount
+    const savedLang = localStorage.getItem('preferred_language')
+    if (savedLang) {
+      this.language_selected = savedLang
+      this.locale = savedLang
+      document.dir = savedLang === 'he' ? 'rtl' : 'ltr'
+    }
+  },
+  methods: {
+    handleChange(value) {
+      console.log("Language changing to:", value)
+      
+      // Update local state
+      this.language_selected = value
+      
+      // ✅ Update Vue i18n locale
+      this.locale = value
+      
+      // ✅ Switch layout direction
+      document.dir = value === 'he' ? 'rtl' : 'ltr'
+      
+      // ✅ Save preference to localStorage
+      localStorage.setItem('preferred_language', value)
+      
+      console.log(`🌐 Language changed to: ${value}`)
+    }
   }
 }
 </script>

@@ -24,10 +24,10 @@
         <div style="text-align: center;">
   <div class="banner-text" style="border-radius:10px;font-weight:900; padding-top:20px; margin-bottom:24px;">
     <div >
-   <div class="text-6xl  font-semibold text-red-800 my-2">
+   <div class="text-2xl  font-semibold text-gray-600 my-2">
   {{ t('line1') }}
 </div>
-<div class="text-center text-lg text-gray-600 my-2">
+<div class="text-center text-2xl text-gray-600 my-2">
   {{ t('line2') }}
 </div>
   </div>
