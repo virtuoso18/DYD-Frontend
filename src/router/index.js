@@ -81,6 +81,8 @@ import Partner from '@/views/pages/partner.vue'
 import Tutorial from '@/views/pages/tutorial.vue'
 import Api from '@/views/pages/api.vue'
 import Earnphoto from '@/views/pages/earnphoto.vue'
+import AffiliateProgram from '@/views/pages/AffiliateProgram.vue'
+import Blogs from '@/views/pages/blogs.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -146,10 +148,22 @@ const router = createRouter({
       component: contactus,
     },
 
+    {
+      path: '/blogs',
+      name: 'blogs',
+      component: Blogs,
+    },
+
      {
       path: '/sechdulemeeting',
       name: 'sechdule meeting',
       component: Sechdulemeeting,
+    },
+
+     {
+      path: '/affiliateprogram',
+      name: 'affiliateprogram',
+      component: AffiliateProgram,
     },
 
      {
@@ -181,6 +195,8 @@ const router = createRouter({
       name: 'earnphoto',
       component: Earnphoto,
     },
+
+    
     {
       path: '/start-new-catalogue',
       name: 'new_catelogue',
