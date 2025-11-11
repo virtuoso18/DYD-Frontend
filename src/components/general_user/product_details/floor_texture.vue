@@ -187,10 +187,33 @@
               </div>
               <br>
               <a-row>
-                <a-col :span="12">
+                <a-col :span="12" style="padding-left:10px;padding-right:10px">
                   <a-button type="primary" block > Check in your room</a-button>
                 </a-col>
-                <a-col :span="12">
+                 <a-col :span="12" style="padding-left:10px;padding-right:10px">
+                    <!-- Simple Add to Cart Button -->
+                    <a-button 
+                      type="primary" 
+                      block
+                      @click="addToCart"
+                      :loading="cartLoading"
+                    >
+                    <div style="display:flex;gap:20px">
+
+                      <!-- <template #icon> -->
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <circle cx="9" cy="21" r="1"/>
+                          <circle cx="20" cy="21" r="1"/>
+                          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                        </svg>
+                      <!-- </template> -->
+                      Add to Cart
+                    </div>
+                    </a-button>
+                </a-col>
+
+                <a-col :span="14" style="padding-left:10px;padding-right:10px">
+                  <br>
                   <a-button type="text" block >
                     <a-row>
                 <a-col :span="4">
@@ -204,7 +227,9 @@
             </a-button>
 
                 </a-col>
+               
               </a-row>
+          
 
         </a-card>
       </a-col>
@@ -227,6 +252,11 @@ export default {
     selectedTexture: {
       type: Object,
       required: true
+    }
+  },
+  data() {
+    return {
+      cartLoading: false
     }
   },
   setup(props, { emit }) {
@@ -280,24 +310,19 @@ export default {
 
     // Select main image
     const selectMainImage = (imagePath) => {
-      // You can implement logic to update the main displayed image
-      // This would typically update a reactive ref that controls the main image display
       console.log('Selected image:', imagePath);
     };
 
     // Navigation and actions
     const back_texture_list = () => {
-      // emit('back-to-list');
       emit('back_product_list', props.selectedTexture.id)
     };
 
     const editTexture = () => {
-      // emit('edit-texture', props.selectedTexture);
       emit('edit_texture', props.selectedTexture.id)
     };
 
     const deleteTexture = () => {
-      // emit('delete-texture', props.selectedTexture.id);
       emit('delete_product', {"product_id":props.selectedTexture.id})
     };
 
@@ -310,10 +335,56 @@ export default {
       editTexture,
       deleteTexture
     };
+  },
+  methods: {
+    async addToCart() {
+      if (!this.selectedTexture || !this.selectedTexture.id) {
+        this.$message.error('Texture not found');
+        return;
+      }
+
+      this.cartLoading = true;
+      
+      try {
+        const token = localStorage.getItem('token');
+        
+        // Determine texture type (wall or floor)
+        // const productType = this.selectedTexture.type === 'floor' ? 'floor_texture' : 'wall_texture';
+        const productType = 'floor_texture';
+        
+        const response = await fetch(
+          `${this.$store.state.root_api}cart/add/`,
+          {
+            method: 'POST',
+            headers: {
+              'Authorization': `Token ${token}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              product_type: productType,
+              product_id: this.selectedTexture.id,
+              quantity: 1
+            })
+          }
+        );
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+          this.$message.success('Added to cart!');
+        } else {
+          this.$message.error(result.error || 'Failed to add to cart');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        this.$message.error('Error adding to cart');
+      } finally {
+        this.cartLoading = false;
+      }
+    }
   }
 };
 </script>
-
 
 <style scoped>
 .ant-descriptions-item-label {

@@ -14,7 +14,7 @@ export default {
   components: { navbar_1, navbar_2 },
   data() {
     return {
-      hideNavUrls: ['/login', '/signup','/forget-password']
+      hideNavUrls: ['/login', '/signup','/forgot-password']
     }
   },
   beforeCreate() {

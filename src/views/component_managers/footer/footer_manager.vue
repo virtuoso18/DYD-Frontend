@@ -12,7 +12,7 @@ export default {
   components:{footer_component},
   data() {
     return {
-      hideFooterUrls: ['/login', '/signup','/forget-password'],
+      hideFooterUrls: ['/login', '/signup','/forgot-password'],
     }
   },
   computed: {

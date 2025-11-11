@@ -1,4 +1,6 @@
 <template>
+{{ brand }}<br>
+{{ access_recieved }}
   <div v-if="!access_recieved?.read" class="access-denied">
     <a-result
       status="403"
@@ -327,6 +329,7 @@ export default {
       rejectReason: '',
       rejecting: false,
       reasonError: '',
+      brand:this.$route.query.brand,
       
       columns: [
         {
@@ -462,7 +465,7 @@ export default {
 
       try {
         this.processingIds.push(request.id)
-        const response = await fetch(`${this.$store.state.root_api}engine/new-room-client-requested/`, {
+        const response = await fetch(`${this.$store.state.root_api}engine/new-room-client-requested/?brand=${this.brand}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -477,7 +480,13 @@ export default {
           message.success('Photo processing started successfully')
           const responseData = await response.json()
           this.$emit('upload-success', responseData)
-          this.$router.push({ name: 'update_catelogue', params: { id: responseData.room_id } })
+          this.$router.push({ name: 'update_catelogue', params: { id: responseData.room_id } ,
+        query: {
+    brand: this.brand,
+    client_request: 'true',
+    business_staff:'true'
+    
+  }})
         } else {
           throw new Error('Failed to process photo')
         }

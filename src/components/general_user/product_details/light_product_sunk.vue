@@ -178,11 +178,34 @@
                 </div>
               </div>
               <br>
-              <a-row>
-                <a-col :span="12">
+               <a-row>
+                <a-col :span="12" style="padding-left:10px;padding-right:10px">
                   <a-button type="primary" block > Check in your room</a-button>
                 </a-col>
-                <a-col :span="12">
+                 <a-col :span="12" style="padding-left:10px;padding-right:10px">
+                    <!-- Simple Add to Cart Button -->
+                    <a-button 
+                      type="primary" 
+                      block
+                      @click="addToCart"
+                      :loading="cartLoading"
+                    >
+                    <div style="display:flex;gap:20px">
+
+                      <!-- <template #icon> -->
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <circle cx="9" cy="21" r="1"/>
+                          <circle cx="20" cy="21" r="1"/>
+                          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                        </svg>
+                      <!-- </template> -->
+                      Add to Cart
+                    </div>
+                    </a-button>
+                </a-col>
+
+                <a-col :span="14" style="padding-left:10px;padding-right:10px">
+                  <br>
                   <a-button type="text" block >
                     <a-row>
                 <a-col :span="4">
@@ -196,7 +219,9 @@
             </a-button>
 
                 </a-col>
+               
               </a-row>
+
           
         </a-card>
       </a-col>
@@ -307,6 +332,53 @@ export default {
       editProduct,
       deleteProduct
     };
+  },
+  methods: {
+    async addToCart() {
+      if (!this.selectedProduct || !this.selectedProduct.id) {
+        this.$message.error('Texture not found');
+        return;
+      }
+
+      this.cartLoading = true;
+      
+      try {
+        const token = localStorage.getItem('token');
+        
+        // Determine texture type (wall or floor)
+        // const productType = this.selectedTexture.type === 'floor' ? 'floor_texture' : 'wall_texture';
+        const productType = 'light';
+        
+        const response = await fetch(
+          `${this.$store.state.root_api}cart/add/`,
+          {
+            method: 'POST',
+            headers: {
+              'Authorization': `Token ${token}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              product_type: productType,
+              product_id: this.selectedProduct.id,
+              quantity: 1
+            })
+          }
+        );
+        
+        const result = await response.json();
+          console.log(result)
+        if (response.ok) {
+          this.$message.success('Added to cart!');
+        } else {
+          this.$message.error(result.error || 'Failed to add to cart');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        this.$message.error('Error adding to cart');
+      } finally {
+        this.cartLoading = false;
+      }
+    }
   }
 };
 </script>

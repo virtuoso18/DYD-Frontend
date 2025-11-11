@@ -1,8 +1,4 @@
-
-<!-- ============================================================================ -->
-<!-- UpdatePassword.vue - Step 3: Update Password -->
-<!-- ============================================================================ -->
-
+<!-- UpdatePassword.vue - Step 3: Update Password - FIXED v2 -->
 <template>
   <div class="update-password-header-section">
     <div style="display: flex; align-items: baseline;">
@@ -90,10 +86,23 @@ export default {
     },
   },
   mounted() {
-    this.$root.$on('passwordReset:otpVerified', (data) => {
-      this.email = data.email;
-      this.otp = data.otp;
-    });
+    // ✅ FIXED: Get email and OTP from sessionStorage
+    this.email = sessionStorage.getItem('passwordResetEmail') || '';
+    this.otp = sessionStorage.getItem('passwordResetOTP') || '';
+    
+    console.log('📧 Email from sessionStorage:', this.email);
+    console.log('🔐 OTP from sessionStorage:', this.otp);
+
+    // Fallback: Listen for event
+    const handleOtpVerified = (event) => {
+      this.email = event.detail.email;
+      this.otp = event.detail.otp;
+      sessionStorage.setItem('passwordResetEmail', this.email);
+      sessionStorage.setItem('passwordResetOTP', this.otp);
+    };
+
+    window.addEventListener('passwordReset:otpVerified', handleOtpVerified);
+    this._otpVerifiedHandler = handleOtpVerified;
   },
   methods: {
     async updatePassword() {
@@ -102,7 +111,7 @@ export default {
         notification.error({
           message: 'Validation Error',
           description: 'Please fill in both password fields.',
-          placement: 'topRight',
+          placement: 'bottomRight',
         });
         return;
       }
@@ -111,7 +120,7 @@ export default {
         notification.error({
           message: 'Weak Password',
           description: 'Password must be at least 8 characters long.',
-          placement: 'topRight',
+          placement: 'bottomRight',
         });
         return;
       }
@@ -120,7 +129,17 @@ export default {
         notification.error({
           message: 'Passwords Mismatch',
           description: 'Passwords do not match!',
-          placement: 'topRight',
+          placement: 'bottomRight',
+        });
+        return;
+      }
+
+      // ✅ FIXED: Validate email and OTP exist
+      if (!this.email || !this.otp) {
+        notification.error({
+          message: 'Error',
+          description: 'Session expired. Please restart the process.',
+          placement: 'bottomRight',
         });
         return;
       }
@@ -128,6 +147,11 @@ export default {
       this.loading = true;
 
       try {
+        console.log('📤 Sending password reset with:', {
+          email: this.email,
+          otp: this.otp,
+        });
+
         const response = await fetch(
           this.$store.state.root_api +
             'Auth/api/reset-password-with-otp/',
@@ -151,7 +175,7 @@ export default {
           notification.error({
             message: 'Reset Failed',
             description: data.message || 'Failed to reset password',
-            placement: 'topRight',
+            placement: 'bottomRight',
           });
           return;
         }
@@ -160,19 +184,25 @@ export default {
           message: 'Success!',
           description:
             'Password reset successfully! Redirecting to login...',
-          placement: 'topRight',
+          placement: 'bottomRight',
         });
 
+        // ✅ Clear sessionStorage on success
+        sessionStorage.removeItem('passwordResetEmail');
+        sessionStorage.removeItem('passwordResetOTP');
+        
+        this.$router.push({ name: 'login' });
+
         // Redirect to signin after 2 seconds
-        setTimeout(() => {
-          this.$router.push({ name: 'signin' });
-        }, 2000);
+        // setTimeout(() => {
+          
+        // }, 2000);
       } catch (error) {
         console.error('Password reset error:', error);
         notification.error({
           message: 'Server Error',
           description: 'Something went wrong. Please try again.',
-          placement: 'topRight',
+          placement: 'bottomRight',
         });
       } finally {
         this.loading = false;
@@ -180,11 +210,11 @@ export default {
     },
 
     goBack() {
-      this.onStepChange(2); // ✅ Use callback instead of $parent
+      this.onStepChange(2);
     },
   },
   beforeUnmount() {
-    this.$root.$off('passwordReset:otpVerified');
+    window.removeEventListener('passwordReset:otpVerified', this._otpVerifiedHandler);
   },
 };
 </script>

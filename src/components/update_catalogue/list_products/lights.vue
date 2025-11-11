@@ -157,13 +157,29 @@ export default {
     }
   },
   mounted() {
-    this.fetchLights();
+    const route = this.$route
+    
+    this.brand = route.query.brand
+
+    // Conditional logic
+    if (this.brand) {
+      console.log('Loading catalogue for brand:', this.brand)
+      this.fetchLights(this.brand)
+    } else {
+      console.log('Loading self products')
+      this.fetchLights();
+    }
   },
   methods: {
-    async fetchLights() {
+    async fetchLights(brand=null) {
       this.loading = true;
       try {
-        const url = `${this.$store.state.root_api}product/api/lights/`;
+        let url = `${this.$store.state.root_api}product/api/lights/`;
+         if (brand){
+           url = `${this.$store.state.root_api}product/api/load-brand-products/lights/` +brand ;
+
+        }
+
         const response = await fetch(url);
         const data = await response.json();
         console.log(data)

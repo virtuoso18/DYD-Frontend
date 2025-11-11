@@ -267,7 +267,6 @@
       </a-form-item>
     </a-form>
   </a-modal>
-
   <!-- Edit Employee Modal -->
   <a-modal
     v-if="this.staff_details"
@@ -285,8 +284,8 @@
         <div style="display: flex; align-items: center; gap: 20px;">
           <div>
             <img
-              v-if="editEmployeeForm.avatar"
-              :src="editEmployeeForm.avatar"
+              v-if="editEmployeeForm.profile_picture"
+              :src="editEmployeeForm.profile_picture"
               alt="Employee Avatar"
               style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid #d9d9d9;"
             />
@@ -313,7 +312,7 @@
               Upload Image
             </a-button>
             <a-button
-              v-if="editEmployeeForm.avatar"
+              v-if="editEmployeeForm.profile_picture"
               danger
               @click="removeAvatar"
               style="width: 100%;"
@@ -418,42 +417,13 @@
         size="large"
       />
     </a-form-item>
-
-    <!-- Priority -->
-    <a-form-item label="Priority" required>
-      <a-select v-model:value="newTaskForm.priority" size="large">
-        <a-select-option value="low">
-          <a-tag color="green">Low</a-tag>
-        </a-select-option>
-        <a-select-option value="medium">
-          <a-tag color="blue">Medium</a-tag>
-        </a-select-option>
-        <a-select-option value="high">
-          <a-tag color="orange">High</a-tag>
-        </a-select-option>
-        <a-select-option value="urgent">
-          <a-tag color="red">Urgent</a-tag>
-        </a-select-option>
-      </a-select>
-    </a-form-item>
-
-    <!-- Due Date -->
-    <a-form-item label="Due Date">
-      <a-date-picker
-        v-model:value="newTaskForm.due_date"
-        show-time
-        format="YYYY-MM-DD HH:mm"
-        style="width: 100%;"
-        size="large"
-      />
-    </a-form-item>
   </a-form>
 </a-modal>
-
   <div
     style="margin-top:10px;border-radius:15px;background-color:white;
-           border:1px solid rgba(0,0,0,0.1);padding:14px;height:90vh;"
+           border:1px solid rgba(0,0,0,0.1);padding:14px;min-height:90vh;"
   >
+  
 
   <div v-if="view=='all_staff_view'">
     <!-- Header -->
@@ -539,7 +509,7 @@
 
 
     <div v-if="view=='staff_details_view'">
-      
+      <!-- {{this.staff_details.tasks}} -->
 <!-- Header -->
     <div class="page-header">
       <a-row type="flex" justify="space-between" align="middle">
@@ -552,7 +522,7 @@
         <a-col>
           <a-space>
             <a-button type="primary" @click="showStaffDetails(this.staff_details.email)"><RedoOutlined />Refresh</a-button>
-            <a-button type="primary" @click="showCreateNewtaskModal()"><RedoOutlined />Create New Task</a-button>
+            <a-button type="primary" @click="showCreateNewtaskModal(this.staff_details)"><RedoOutlined />Create New Task</a-button>
           </a-space>
         </a-col>
         <a-col :span="24">
@@ -813,9 +783,12 @@
 
               </a-tab-pane>
               <a-tab-pane key="tasks" tab="Tasks Assigned">
+
                 <task_List :tasks="staff_details.tasks"/>
               </a-tab-pane>
               <a-tab-pane key="access-logs" tab="Access Logs">
+                <div >
+
                     <div 
                       v-for="log in staff_details.access_logs" 
                       :key="log.id"
@@ -841,6 +814,7 @@
                         User Agent: {{ log.user_agent }}
                       </div>
                     </div>
+                </div>
               </a-tab-pane>
             </a-tabs>
           </a-col>
@@ -849,7 +823,6 @@
               <div style="background:#3B63F6;padding:10px;border-radius:15px;min-height:200px">
                   <div style="background:white;padding:10px;border-radius:15px;min-height:200px;display:flex;justify-content:center;align-items: center;">
                     <div style="display:flex;justify-content:center;align-items: center;flex-direction: column;">
-
                       <img style="border:1px solid rgba(0,0,0,0.1);border-radius:100%;width:100px;height:100px" :src="this.$store.state.root_media_api+staff_details.avatar" alt="">
                       <p>{{staff_details.email}}</p>
                     </div>  
@@ -890,7 +863,7 @@
 </template>
 
 <script>
-import { EditOutlined,DeleteOutlined ,LeftOutlined,  PhoneOutlined,MailOutlined} from '@ant-design/icons-vue';
+import { EditOutlined,DeleteOutlined ,LeftOutlined,  PhoneOutlined,MailOutlined,RedoOutlined} from '@ant-design/icons-vue';
 
 import task_List from '@/components/store/tasks_assigned_list.vue'
 export default {
@@ -948,10 +921,16 @@ export default {
         name: '',
         email: '',
         phone: '',
-        avatar: '',
+        profile_picture: '',
         date_joined: '',
         last_login: ''
       },
+
+      newTaskForm: {
+      title: '',
+      description: '',
+      assigned_to: null  // Add this field to store user ID
+    },
       
       deleteConfirmation: '',
       // permissions
@@ -974,12 +953,76 @@ export default {
       manage_user_request_process: false,
     };
   },
-components:{EditOutlined,DeleteOutlined ,LeftOutlined,  PhoneOutlined,MailOutlined,task_List},
+components:{EditOutlined,DeleteOutlined ,LeftOutlined,  PhoneOutlined,MailOutlined,RedoOutlined,task_List},
   methods: {
     show_Phone_employee_modal(){this.open_Phone_employee_modal= !this.open_Phone_employee_modal},
     show_Mail_employee_modal(){this.open_Mail_employee_modal= !this.open_Mail_employee_modal},
     show_Edit_employee_modal(){this.open_Edit_employee_modal= !this.open_Edit_employee_modal},
     show_Delete_employee_modal(){this.open_Delete_employee_modal= !this.open_Delete_employee_modal},
+
+
+    async handleCreateTask() {
+        // Validate form
+        console.log('Staff details (full object):------>', JSON.parse(JSON.stringify(this.staff_details)));
+        if (!this.newTaskForm.title || !this.newTaskForm.description) {
+          this.$message.error('Please fill in title and description');
+          return;
+        }
+        
+        if (!this.staff_details) {
+          this.$message.error('No staff member selected');
+          
+          return;
+        }
+        console.log('Staff details:', this.staff_details);
+        
+        try {
+          const payload = {
+            title: this.newTaskForm.title,
+            description: this.newTaskForm.description,
+            assigned_to: this.staff_details.email  // Use the staff member's ID
+          };
+          
+          const response = await fetch(
+            `${this.$store.state.root_api}access-engine/api/tasks/create/`,
+            {
+              method: 'POST',
+              headers: {
+                'Authorization': `Token ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(payload)
+            }
+          );
+          
+          const data = await response.json();
+          
+          if (response.ok && !data.error) {
+            this.$message.success('Task created successfully');
+            this.openCreateNewtaskModal = false;
+            
+            // Reset form
+            this.newTaskForm = {
+              title: '',
+              description: '',
+              assigned_to: null
+            };
+            
+            // Refresh staff details to show the new task
+            await this.fetchStaff(this.staff_details);
+          } else {
+            this.$message.error(data.message || 'Failed to create task');
+          }
+        } catch (error) {
+          console.error('Error creating task:', error);
+          this.$message.error('An error occurred while creating the task');
+        }
+      },
+
+    // showCreateNewtaskModal(email) {
+    //   console.log('Opening create task modal for:', email);
+    //   this.openCreateNewtaskModal = true;
+    // },
 
     // Phone Modal Methods
     makeCall() {
@@ -1018,7 +1061,7 @@ components:{EditOutlined,DeleteOutlined ,LeftOutlined,  PhoneOutlined,MailOutlin
         name: employee.name || '',
         email: employee.email || '',
         phone: employee.phone || '',
-        avatar: employee.avatar || '',
+        profile_picture: employee.profile_picture || '',
         date_joined: employee.date_joined || '',
         last_login: employee.last_login || ''
       };
@@ -1043,7 +1086,7 @@ components:{EditOutlined,DeleteOutlined ,LeftOutlined,  PhoneOutlined,MailOutlin
       // Convert to base64 or file URL
       const reader = new FileReader();
       reader.onload = (e) => {
-        this.editEmployeeForm.avatar = e.target.result;
+        this.editEmployeeForm.profile_picture = e.target.result;
         this.$message.success('Image uploaded successfully');
       };
       reader.readAsDataURL(file);
@@ -1051,20 +1094,73 @@ components:{EditOutlined,DeleteOutlined ,LeftOutlined,  PhoneOutlined,MailOutlin
   },
 
   removeAvatar() {
-    this.editEmployeeForm.avatar = '';
+    this.editEmployeeForm.profile_picture = '';
     this.$message.info('Image removed');
   },
 
-  saveEmployeeChanges() {
-    if (!this.editEmployeeForm.name.trim() || !this.editEmployeeForm.email.trim()) {
-      this.$message.error('Name and email are required');
-      return;
-    }
+    async saveEmployeeChanges() {
+      console.log('Form data:', this.editEmployeeForm);
+      
+      // if (!this.editEmployeeForm.name.trim() || !this.editEmployeeForm.email.trim()) {
+      //     this.$message.error('Name and email are required');
+      //     return;
+      // }
 
-    // Send to backend
-    console.log('Employee updated:', this.editEmployeeForm);
-    this.$message.success('Employee updated successfully');
-    this.open_Edit_employee_modal = false;
+      try {
+          // Get authentication token (adjust based on your storage method)
+          const token = localStorage.getItem('token');
+          
+          // Prepare the data for API call
+          const formData = new FormData();
+          
+          // Append all form fields to FormData
+          Object.keys(this.editEmployeeForm).forEach(key => {
+              // Handle file uploads separately
+              if (key === 'profile_picture' && this.editEmployeeForm[key] instanceof File) {
+                  formData.append(key, this.editEmployeeForm[key]);
+              } else if (key === 'background_picture' && this.editEmployeeForm[key] instanceof File) {
+                  formData.append(key, this.editEmployeeForm[key]);
+              } else {
+                  // Append other fields
+                  formData.append(key, this.editEmployeeForm[key]);
+              }
+          });
+
+          // Make API call
+          const response = await fetch(`${this.$store.state.root_api}Auth/api/edit-profile/`, { // Adjust API endpoint as needed
+              method: 'POST',
+              headers: {
+                'Authorization': `Token ${localStorage.getItem('token')}`,
+
+              },
+              body: formData
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+              throw new Error(data.message || 'Failed to update employee');
+          }
+
+          if (data.error) {
+              this.$message.error(data.message || 'Error updating employee');
+              return;
+          }
+
+          // Success case
+          this.$message.success('Employee updated successfully');
+          console.log('Updated employee data:', data);
+          
+          // Close modal
+          this.open_Edit_employee_modal = false;
+          
+          // Optionally: Refresh employee list or update local state
+          this.$emit('employee-updated', data);
+          
+      } catch (error) {
+          console.error('Error updating employee:', error);
+          this.$message.error(error.message || 'Failed to update employee');
+      }
   },
     
     // Delete Employee Methods
@@ -1113,7 +1209,8 @@ components:{EditOutlined,DeleteOutlined ,LeftOutlined,  PhoneOutlined,MailOutlin
       this.openAssignTaskModal = !this.openAssignTaskModal;
     },
 
-      showCreateNewtaskModal(){
+      showCreateNewtaskModal(staff_details){
+        console.log('-->',JSON.parse(JSON.stringify(staff_details)))
         this.openCreateNewtaskModal=true
       },
 
@@ -1141,10 +1238,10 @@ components:{EditOutlined,DeleteOutlined ,LeftOutlined,  PhoneOutlined,MailOutlin
      * fetch the staff here 
      */
     
-    async fetchStaff(email){
+    async fetchStaff(record){
       try {
         const response = await fetch(
-          `${this.$store.state.root_api}access-engine/api/staff-access-given/${email}`,
+          `${this.$store.state.root_api}access-engine/api/staff-access-given/${record.email}`,
           {
             headers: { Authorization: `Token ${localStorage.getItem('token')}` },
           }
@@ -1153,6 +1250,8 @@ components:{EditOutlined,DeleteOutlined ,LeftOutlined,  PhoneOutlined,MailOutlin
         const data = await response.json();
         if (!data.error) {
           this.staff_details = data.staff_user;
+
+          console.log('staff_details after assignment:', this.staff_details);
 
           // Reset unsaved changes flag when loading fresh data
           this.hasUnsavedChanges = false;
@@ -1434,13 +1533,15 @@ components:{EditOutlined,DeleteOutlined ,LeftOutlined,  PhoneOutlined,MailOutlin
     },
 
     customRow(record) {
+      console.log('result',record);
       return {
-        onClick: () => this.showStaffDetails(record.email),
+        onClick: () => this.showStaffDetails(record),
         style: { cursor: 'pointer' }
       };
     },
 
     onEdit(record) {
+
       console.log('edit', record);
     },
 
@@ -1448,9 +1549,9 @@ components:{EditOutlined,DeleteOutlined ,LeftOutlined,  PhoneOutlined,MailOutlin
       console.log('delete', record);
     },
 
-    showStaffDetails(email) {
-      console.log(email);
-      this.fetchStaff(email);
+    showStaffDetails(record) {
+      console.log('id--->',record.id);
+      this.fetchStaff(record);
       this.view = "staff_details_view";
     },
 

@@ -158,27 +158,75 @@ export default {
     };
   },
   mounted() {
-    this.fetchData();
+    // Access the route
+    const route = this.$route
+
+    // Extract params and query
+    this.catalogueId = route.params.id
+    this.brand = route.query.brand
+
+    // Conditional logic
+    if (this.brand) {
+      console.log('Loading catalogue for brand:', this.brand)
+      this.fetchData(this.brand)
+    } else {
+      console.log('Loading self products')
+      this.fetchData();
+    }
+    
   },
   methods: {
-    async fetchData() {
-      const endpoints = [
-        { key: 'floors', url: 'room/api/floors/' },
-        { key: 'walls', url: 'room/api/walls/' },
-        { key: 'furniture_products', url: 'product/api/3d-products/' },
-        { key: 'lights', url: 'product/api/lights/' }
-      ];
-      
-      endpoints.forEach(async ({key, url}) => {
-        try {
-          const res = await fetch(`${this.$store.state.root_api}${url}`);
-          const data = await res.json();
-          if (data?.data) this[key] = data.data;
-        } catch (e) {
-          console.error(`Failed to fetch ${key}:`, e);
-        }
-      });
+    async fetchData(brand=null) {
+      if (brand){
+
+        console.log("brand catalogue here ")
+        console.log(brand)
+        const endpoints = [
+          // /load-brand-products/3d-products/<str:business_id>'
+          // /load-brand-products/lights/<str:business_id>'
+
+          // load-brand-products/3d-products/<str:business_slug>/
+          // load-brand-products/lights/<str:business_slug>/
+          // load-brand-products/walls/<str:business_slug>/
+          // load-brand-products/floors/<str:business_slug>/
+          
+          { key: 'floors', url: 'room/api/load-brand-products/floors/' +brand },
+          { key: 'walls', url: 'room/api/load-brand-products/walls/' +brand },
+          { key: 'furniture_products', url: 'product/api/load-brand-products/3d-products/'+brand },
+          { key: 'lights', url: 'product/api/load-brand-products/lights/'+brand }
+        ];
+        
+        endpoints.forEach(async ({key, url}) => {
+          try {
+            const res = await fetch(`${this.$store.state.root_api}${url}`);
+            const data = await res.json();
+            if (data?.data) this[key] = data.data;
+          } catch (e) {
+            console.error(`Failed to fetch ${key}:`, e);
+          }
+        });
+      }
+      else {
+
+        const endpoints = [
+          { key: 'floors', url: 'room/api/floors/' },
+          { key: 'walls', url: 'room/api/walls/' },
+          { key: 'furniture_products', url: 'product/api/3d-products/' },
+          { key: 'lights', url: 'product/api/lights/' }
+        ];
+        
+        endpoints.forEach(async ({key, url}) => {
+          try {
+            const res = await fetch(`${this.$store.state.root_api}${url}`);
+            const data = await res.json();
+            if (data?.data) this[key] = data.data;
+          } catch (e) {
+            console.error(`Failed to fetch ${key}:`, e);
+          }
+        });
+      }
     },
+
     filterItems(items, field = 'title') {
       if (!this.searchText) return items;
       const s = this.searchText.toLowerCase();

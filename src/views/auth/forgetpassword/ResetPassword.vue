@@ -1,7 +1,4 @@
-<!-- ============================================================================ -->
-<!-- ResetPassword.vue - Step 1: Email Verification -->
-<!-- ============================================================================ -->
-
+<!-- ResetPassword.vue - Step 1: Email Verification - FIXED v2 -->
 <template>
   <div class="reset-password-header-section">
     <div style="display: flex; align-items: baseline;">
@@ -40,8 +37,8 @@
 
       <p style="text-align: center; font-size: 14px; color: #666; margin-top: 16px;">
         Remember your password?
-        <router-link to="/signin" style="color: #3b63fb; text-decoration: none;">
-          Sign In
+        <router-link to="/login" style="color: #3b63fb; text-decoration: none;">
+          Login
         </router-link>
       </p>
     </div>
@@ -80,7 +77,7 @@ export default {
         notification.error({
           message: 'Validation Error',
           description: 'Please enter your email address.',
-          placement: 'topRight',
+          placement: 'bottomRight',
         });
         return;
       }
@@ -90,7 +87,7 @@ export default {
         notification.error({
           message: 'Invalid Email',
           description: 'Please enter a valid email address.',
-          placement: 'topRight',
+          placement: 'bottomRight',
         });
         return;
       }
@@ -118,7 +115,7 @@ export default {
           notification.error({
             message: 'Error',
             description: data.message || 'Failed to send OTP',
-            placement: 'topRight',
+            placement: 'bottomRight',
           });
           return;
         }
@@ -126,19 +123,27 @@ export default {
         notification.success({
           message: 'Success',
           description: 'OTP sent to your email address!',
-          placement: 'topRight',
+          placement: 'bottomRight',
         });
 
-        // Emit event and move to next step
-        this.$root.$emit('passwordReset:emailVerified', this.email);
-        this.onStepChange(2); // ✅ Call parent function to update step
+        // ✅ FIXED: Store email in sessionStorage before step change
+        sessionStorage.setItem('passwordResetEmail', this.email);
+        
+        // Emit event as backup
+        window.dispatchEvent(
+          new CustomEvent('passwordReset:emailVerified', {
+            detail: this.email,
+          })
+        );
+
+        this.onStepChange(2);
       } catch (error) {
         console.error('Password reset request error:', error);
         this.emailError = 'Something went wrong. Please try again.';
         notification.error({
           message: 'Server Error',
           description: 'Something went wrong. Please try again.',
-          placement: 'topRight',
+          placement: 'bottomRight',
         });
       } finally {
         this.loading = false;

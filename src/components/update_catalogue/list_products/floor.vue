@@ -74,13 +74,13 @@
               <span class="product-color">Color {{ item.color }}</span>
               <div class="color-dot" :style="{ backgroundColor: 'red' }"></div>
             </div> -->
-                  <div class="product-details">
-  <span class="product-color">Colors Available</span>
-  <div style="display: flex; gap: 4px; align-items: center; margin-left: 8px;">
-    <div v-for="color in item.colors_available.slice(0, 3)" :key="color.id" class="color-dot" :style="{ backgroundColor: color.color_hex }"></div>
-    <span v-if="item.colors_available.length > 3" style="font-size: 14px; color: #666;">...</span>
-  </div>
-</div>
+                <div class="product-details">
+                  <span class="product-color">Colors Available</span>
+                  <div style="display: flex; gap: 4px; align-items: center; margin-left: 8px;">
+                    <div v-for="color in item.colors_available.slice(0, 3)" :key="color.id" class="color-dot" :style="{ backgroundColor: color.color_hex }"></div>
+                    <span v-if="item.colors_available.length > 3" style="font-size: 14px; color: #666;">...</span>
+                  </div>
+                </div>
             <div class="product-price">Price <span style="font-weight: 600;">$ {{ item.sale_price_per_sqm || 0 }}</span></div>
           </div>
           <!-- <div class="product-actions">
@@ -145,13 +145,29 @@ export default {
     }
   },
   mounted() {
-    this.fetchCatalogItems();
+    const route = this.$route
+
+    this.brand = route.query.brand
+
+    // Conditional logic
+    if (this.brand) {
+      console.log('Loading catalogue for brand:', this.brand)
+      this.fetchCatalogItems(this.brand)
+    } else {
+      console.log('Loading self products')
+      this.fetchCatalogItems();
+    }
+    
   },
   methods: {
-    async fetchCatalogItems() {
+    async fetchCatalogItems(brand=null) {
       this.loading = true;
       try {
-        const url = `${this.$store.state.root_api}room/api/floors/`;
+        let url = `${this.$store.state.root_api}room/api/floors/`;
+        if (brand){
+           url = `${this.$store.state.root_api}room/api/load-brand-products/floors/` +brand ;
+        }
+
         const response = await fetch(url);
         const data = await response.json();
         console.log(data)
@@ -164,24 +180,26 @@ export default {
         this.loading = false;
       }
     },
-     truncateText(text, wordLimit) {
+    
+    truncateText(text, wordLimit) {
   if (!text) return '';
   const words = text.split(' ');
   if (words.length <= wordLimit) return text;
   return words.slice(0, wordLimit).join(' ') + '...';
-},
+    },
+    
     seeAllClicked(){
       this.$emit('floor-see-all', true);
     },
     
-selectTexture(uuid){
-  console.log(uuid)
-      this.selected_texture=uuid
-},
-updateItemRendering(){
-      this.$emit('texture-selected', this.selected_texture);
-
-}
+    selectTexture(uuid){
+      console.log(uuid)
+          this.selected_texture=uuid
+    },
+    
+    updateItemRendering(){
+          this.$emit('texture-selected', this.selected_texture);
+    }
   }
 };
 </script>

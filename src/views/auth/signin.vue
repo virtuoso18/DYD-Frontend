@@ -21,7 +21,7 @@
           <br>
         <div class="input-group">
           <label>Password</label>
-          <a-input 
+          <a-input-password
             v-model:value="password"
             placeholder="Password Here" 
             size="large"

@@ -1,4 +1,4 @@
-<!-- OtpVerify.vue - Step 2: Verify OTP - Vue 3 Fixed -->
+<!-- OtpVerify.vue - Step 2: Verify OTP - FIXED v2 -->
 <template>
   <div class="otpverify-header-section">
     <div style="display: flex; align-items: baseline;">
@@ -92,45 +92,46 @@ export default {
     };
   },
   mounted() {
-    // ✅ Vue 3: Use window event listener instead of $root.$on
-    window.addEventListener('passwordReset:emailVerified', this.handleEmailVerified);
+    // ✅ FIXED: Get email from sessionStorage first
+    this.email = sessionStorage.getItem('passwordResetEmail') || '';
+    console.log('📧 Email from sessionStorage:', this.email);
+
+    // Fallback: Listen for event in case it fires after mount
+    const handleEmailVerified = (event) => {
+      this.email = event.detail;
+      console.log('📧 Email from event listener:', this.email);
+      sessionStorage.setItem('passwordResetEmail', this.email);
+    };
+
+    window.addEventListener('passwordReset:emailVerified', handleEmailVerified);
+    
+    // Store reference to remove later
+    this._emailVerifiedHandler = handleEmailVerified;
 
     // Focus on first OTP input
     this.$nextTick(() => {
       this.$refs.otpInput0?.[0]?.focus();
     });
   },
-  methods: {
-    // ✅ Handle email verified event
-    handleEmailVerified(event) {
-      this.email = event.detail;
-      console.log('📧 Email received for OTP:', this.email);
-    },
 
+  methods: {
     getOtpValue() {
       return this.otp.join('');
     },
 
     handleInput(e, index) {
       const value = e.target.value.replace(/[^0-9]/g, '');
-
-      // Only take the last digit if multiple are pasted
       const singleDigit = value.slice(-1);
 
-      // ✅ Vue 3: Direct assignment instead of $set
       this.otp[index] = singleDigit;
-
-      // Clear error message when user types
       this.errorMessage = '';
 
-      // Auto-focus to next input if digit is entered
       if (singleDigit && index < 5) {
         this.$nextTick(() => {
           this.$refs[`otpInput${index + 1}`]?.[0]?.focus();
         });
       }
 
-      // Auto-submit when all 6 digits are entered
       if (this.getOtpValue().length === 6) {
         this.$nextTick(() => {
           this.verifyOtp();
@@ -139,13 +140,11 @@ export default {
     },
 
     handleBackspace(e, index) {
-      // If current field is empty and user presses backspace, go to previous field
       if (!this.otp[index] && index > 0) {
         this.$nextTick(() => {
           this.$refs[`otpInput${index - 1}`]?.[0]?.focus();
         });
       } else if (this.otp[index]) {
-        // ✅ Vue 3: Direct assignment instead of $set
         this.otp[index] = '';
       }
     },
@@ -153,12 +152,23 @@ export default {
     async verifyOtp() {
       const otpValue = this.getOtpValue();
 
+      // ✅ FIXED: Validate email exists
+      if (!this.email || this.email.trim() === '') {
+        this.errorMessage = 'Email is missing. Please go back and try again.';
+        notification.error({
+          message: 'Error',
+          description: 'Email is missing. Please restart the process.',
+          placement: 'bottomRight',
+        });
+        return;
+      }
+
       if (otpValue.length !== 6) {
         this.errorMessage = 'Please enter all 6 digits';
         notification.error({
           message: 'Invalid OTP',
           description: 'Please enter all 6 digits.',
-          placement: 'topRight',
+          placement: 'bottomRight',
         });
         return;
       }
@@ -167,7 +177,8 @@ export default {
       this.errorMessage = '';
 
       try {
-        // ✅ CORRECTED: Removed /api/ from URL path
+        console.log('📤 Sending OTP verification with email:', this.email);
+
         const response = await fetch(
           this.$store.state.root_api + 'Auth/api/verify-password-reset-otp/',
           {
@@ -189,7 +200,7 @@ export default {
           notification.error({
             message: 'OTP Verification Failed',
             description: data.message || 'Invalid or expired OTP',
-            placement: 'topRight',
+            placement: 'bottomRight',
           });
           return;
         }
@@ -197,10 +208,12 @@ export default {
         notification.success({
           message: 'Success',
           description: 'OTP verified successfully!',
-          placement: 'topRight',
+          placement: 'bottomRight',
         });
 
-        // ✅ Vue 3: Emit custom event instead of $root.$emit
+        // ✅ Store OTP for next step
+        sessionStorage.setItem('passwordResetOTP', otpValue);
+
         window.dispatchEvent(
           new CustomEvent('passwordReset:otpVerified', {
             detail: {
@@ -210,7 +223,6 @@ export default {
           })
         );
 
-        // Move to password reset step using parent callback
         this.onStepChange(3);
       } catch (error) {
         console.error('❌ OTP verification error:', error);
@@ -218,7 +230,7 @@ export default {
         notification.error({
           message: 'Server Error',
           description: 'Something went wrong. Please try again.',
-          placement: 'topRight',
+          placement: 'bottomRight',
         });
       } finally {
         this.loading = false;
@@ -230,7 +242,7 @@ export default {
         notification.error({
           message: 'Error',
           description: 'Email is required',
-          placement: 'topRight',
+          placement: 'bottomRight',
         });
         return;
       }
@@ -239,7 +251,6 @@ export default {
       this.errorMessage = '';
 
       try {
-        // ✅ CORRECTED: Removed /api/ from URL path
         const response = await fetch(
           this.$store.state.root_api + 'Auth/api/resend-password-reset-otp/',
           {
@@ -259,19 +270,17 @@ export default {
           notification.error({
             message: 'Error',
             description: data.message || 'Failed to resend OTP',
-            placement: 'topRight',
+            placement: 'bottomRight',
           });
           return;
         }
 
-        // Reset OTP inputs
         this.otp = ['', '', '', '', '', ''];
 
         this.$nextTick(() => {
           this.$refs.otpInput0?.[0]?.focus();
         });
 
-        // Start countdown
         this.countdown = 60;
         if (this.resendInterval) {
           clearInterval(this.resendInterval);
@@ -288,14 +297,14 @@ export default {
         notification.success({
           message: 'Success',
           description: 'New OTP sent to your email',
-          placement: 'topRight',
+          placement: 'bottomRight',
         });
       } catch (error) {
         console.error('❌ Resend OTP error:', error);
         notification.error({
           message: 'Server Error',
           description: 'Something went wrong. Please try again.',
-          placement: 'topRight',
+          placement: 'bottomRight',
         });
       } finally {
         this.resendLoading = false;
@@ -313,8 +322,7 @@ export default {
     },
   },
   beforeUnmount() {
-    // ✅ Vue 3: Remove event listener
-    window.removeEventListener('passwordReset:emailVerified', this.handleEmailVerified);
+    window.removeEventListener('passwordReset:emailVerified', this._emailVerifiedHandler);
 
     if (this.resendInterval) {
       clearInterval(this.resendInterval);

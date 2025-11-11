@@ -148,13 +148,30 @@ export default {
     }
   },
   mounted() {
-    this.fetchCatalogItems();
+    const route = this.$route
+
+    this.brand = route.query.brand
+
+    // Conditional logic
+    if (this.brand) {
+      console.log('Loading catalogue for brand:', this.brand)
+      this.fetchCatalogItems(this.brand)
+    } else {
+      console.log('Loading self products')
+      this.fetchCatalogItems();
+    }
+    
   },
   methods: {
-    async fetchCatalogItems() {
+    async fetchCatalogItems(brand=null) {
       this.loading = true;
       try {
-        const url = `${this.$store.state.root_api}product/api/3d-products/`;
+        let url = `${this.$store.state.root_api}product/api/3d-products/`;
+        // const url = `${this.$store.state.root_api}room/api/floors/`;
+        if (brand){
+          url = `${this.$store.state.root_api}product/api/load-brand-products/3d-products/` +brand ;
+        }
+        
         const response = await fetch(url);
         const data = await response.json();
         console.log(data)

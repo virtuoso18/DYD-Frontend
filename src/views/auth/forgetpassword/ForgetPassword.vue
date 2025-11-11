@@ -8,8 +8,8 @@
             :src="getImageSrc"
             style="
               width: 100%;
-              height: 98vh;
-              object-fit: fill;
+              height: 100vh;
+              object-fit: cover;
               border-radius: 20px;
             "
             alt=""
@@ -92,9 +92,9 @@ export default {
 }
 
 .image-section {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  /* display: flex; */
+  /* align-items: center; */
+  /* justify-content: center; */
 }
 
 .background-image {
@@ -105,7 +105,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  /* padding: 20px; */
 }
 
 @media (max-width: 768px) {

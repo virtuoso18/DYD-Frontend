@@ -547,14 +547,15 @@ Switch Furniture</a-button> -->
               <p>Item Replacement tools will be displayed here</p>
             </div> -->
               </div>
-            </div>
+      </div>
   </a-col>
   <a-col :sm="0" :xs="0" :md="24" :lg="24">
     <div>
+      <!-- {{ user }} -->
       <div class="main_panel">
         <a-row class="full-height">
           <!-- Left Sidebar - Tool Icons -->
-          <a-col :span="1" class="left-sidebar">
+          <a-col :span="(user?.user_type !=='User')? 1 :0" class="left-sidebar">
             <div class="tool-icons">
               <div :class="current_tab==='image' ?'tool-item active' :'tool-item '" @click="changeCurrentTab('image')">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none">
@@ -707,7 +708,7 @@ Switch Furniture</a-button> -->
           </a-col>
   
           <!-- Right Panel - Canvas -->
-          <a-col :span="17" class="canvas-panel">
+          <a-col :span="(user?.user_type !=='User')? 17 :18" class="canvas-panel">
             
             <div style="background:white;display:flex;align-items:center;justify-content:space-between;padding:5px 10px;height:40px;;background-color: #f3f3f6;" v-if=" (current_tab ==='image' &&  closeShareMenu ) && !(current_tab ==='image' && active_tab_image === 'home_design'  )">
     
@@ -1069,6 +1070,11 @@ export default {
   
   data() {
     return {
+      
+      user: JSON.parse(localStorage.getItem('user')),
+      // profile: JSON.parse(localStorage.getItem('profile')),
+      // business_info: JSON.parse(localStorage.getItem('business_profile') || '{}'),
+      
       // UI State
       select_replace: 'All',
       current_tab: 'image',
@@ -2368,7 +2374,22 @@ export default {
     },
 
     ApplyChanges() {
-      this.$router.push('/update-catalogue/render-results/' + this.$route.params.id);
+            console.log("======================================================")
+            console.log(this.$route.query.client_request ==='true')
+      // this.$router.push('/update-catalogue/render-results/' + this.$route.params.id+'?brand='+this.$route.query.brand+((this.$route.query.client_request ==='true')?'&client_request=true':"") );
+      this.$router.push({
+  name: 'render_catelogue', // Use route name, not path
+  params: {
+    id: this.$route.params.id
+  },
+  query: {
+        brand: this.$route.query.brand,
+        // Only add client_request if it's 'true'
+        ...(this.$route.query.client_request === 'true' && { client_request: 'true' }),
+        ...(this.$route.query.business_staff === 'true' && { business_staff: 'true' }),
+      }
+    });
+
     },
 
     // ==========================================
