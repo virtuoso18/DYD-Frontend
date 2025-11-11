@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import home from '@/views/home/HomeView.vue'
+import NewHome from '@/views/newhome/Home.vue'
+
 import authentication from '@/views/auth/authenticaition.vue'
 import pricing from '@/views/pages/pricing.vue'
 import make_payment from '@/views/pages/make_payment.vue'
@@ -73,6 +75,12 @@ import cart from '@/views/user/cart.vue'
 import ai_catalog from '@/views/pages/ai_catalog.vue'
 
 import ForgetPassword from '@/views/auth/forgetpassword/ForgetPassword.vue';
+import Sechdulemeeting from '@/views/pages/sechdulemeeting.vue'
+import Mlspartnership from '@/views/pages/mlspartnership.vue'
+import Partner from '@/views/pages/partner.vue'
+import Tutorial from '@/views/pages/tutorial.vue'
+import Api from '@/views/pages/api.vue'
+import Earnphoto from '@/views/pages/earnphoto.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -93,6 +101,13 @@ const router = createRouter({
       name: 'home',
       component: home,
     },
+
+     {
+      path: '/new-home',
+      name: 'New home',
+      component: NewHome,
+    },
+    
     {
       path: '/pricing',
       name: 'pricing',
@@ -129,6 +144,42 @@ const router = createRouter({
       path: '/contact-us',
       name: 'contactus',
       component: contactus,
+    },
+
+     {
+      path: '/sechdulemeeting',
+      name: 'sechdule meeting',
+      component: Sechdulemeeting,
+    },
+
+     {
+      path: '/mlspartnership',
+      name: 'mlspartnership',
+      component: Mlspartnership,
+    },
+
+      {
+      path: '/partner',
+      name: 'partner',
+      component: Partner,
+    },
+
+      {
+      path: '/tutorial',
+      name: 'tutorial',
+      component: Tutorial,
+    },
+
+      {
+      path: '/api',
+      name: 'api',
+      component: Api,
+    },
+
+     {
+      path: '/earnphoto',
+      name: 'earnphoto',
+      component: Earnphoto,
     },
     {
       path: '/start-new-catalogue',
