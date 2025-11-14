@@ -116,7 +116,7 @@
                       <div style="padding: 5px">
                         <!-- Actions Row -->
                         <a-row style="align-items: center">
-                          <a-col :span="14">
+                          <a-col :span="14" style="display:flex;gap:10px;justify-content: start;align-items: center;">
                             <img
                               :src="
                                 this.$store.state.root_media_api + post.user_profile

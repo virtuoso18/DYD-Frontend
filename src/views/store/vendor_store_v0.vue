@@ -926,38 +926,18 @@ export default {
                 this.loading = true;
                 this.error = null;
                 
-                // const businessName = this.$route.params.buisness_name;
-                // const token_available = localStorage.getItem('token') ? true:false
-                // const response = await fetch(`${this.$store.state.root_api}Auth/api/business/public/${businessName}`, {
-                //     method: 'GET',
-                //     headers: {
-                //         'Content-Type': 'application/json',
-                //         token_available ?  'Authorization': 'Token ' + localStorage.getItem('token')
-                        
-                //     }
-                // });
                 const businessName = this.$route.params.buisness_name;
-                const token = localStorage.getItem('token');
-
-                const headers = {
-                  'Content-Type': 'application/json',
-                };
-
-                // If token exists, add Authorization header
-                if (token) {
-                  headers['Authorization'] = `Token ${token}`;
-                }
-
-                const response = await fetch(
-                  `${this.$store.state.root_api}Auth/api/business/public/${businessName}`,
-                  {
+                
+                const response = await fetch(`${this.$store.state.root_api}Auth/api/business/public/${businessName}`, {
                     method: 'GET',
-                    headers: headers,
-                  }
-                );
+                    headers: {
+                        'Content-Type': 'application/json'
+                        
+                    }
+                });
 
                 const result = await response.json();
-                this.userProfile = result.data?.user_id_buisness_owner;
+                this.userProfile = result.data.user_id_buisness_owner;
 
                 if (result.success) {
                     this.business_info = result.data;

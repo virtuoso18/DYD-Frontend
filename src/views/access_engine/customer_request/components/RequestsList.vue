@@ -527,6 +527,7 @@ export default {
         })
 
         if (response.ok) {
+          this.rejecting = false
           message.success('Request rejected successfully')
           this.closeRejectModal()
           this.$emit('refresh')

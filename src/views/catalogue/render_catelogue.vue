@@ -1842,7 +1842,7 @@ showError(title, message, retryCallback) {
               Authorization: `Token ${localStorage.getItem("token")}`,
             },
             body: JSON.stringify({
-              request:'businmness_staff_submit_client_request',
+              request:'business_staff_submit_client_request',
               description_room:this.description_room,
               room_design_type_select:this.room_design_type_select,
               room_type_select:this.room_type_select,

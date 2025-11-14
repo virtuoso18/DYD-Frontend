@@ -198,7 +198,11 @@ export default {
         
         endpoints.forEach(async ({key, url}) => {
           try {
-            const res = await fetch(`${this.$store.state.root_api}${url}`);
+            const res = await fetch(`${this.$store.state.root_api}${url}`,{
+          headers: {
+              'Authorization': `Token ${localStorage.getItem('token')}`
+            }
+        });
             const data = await res.json();
             if (data?.data) this[key] = data.data;
           } catch (e) {
@@ -217,7 +221,9 @@ export default {
         
         endpoints.forEach(async ({key, url}) => {
           try {
-            const res = await fetch(`${this.$store.state.root_api}${url}`);
+            const res = await fetch(`${this.$store.state.root_api}${url}`, {headers: {
+              'Authorization': `Token ${localStorage.getItem('token')}`
+            }});
             const data = await res.json();
             if (data?.data) this[key] = data.data;
           } catch (e) {

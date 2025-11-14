@@ -5,31 +5,25 @@
       <a-col :xs="24" :sm="12" :md="6">
         <div class="stat-card total-products">
           <div class="stat-label">Total Products</div>
-          <div class="stat-value">4,520</div>
+          <div class="stat-value">{{ analyticsData ? analyticsData.total_products : '...' }}</div>
         </div>
       </a-col>
       <a-col :xs="24" :sm="12" :md="6">
         <div class="stat-card total-clicks">
           <div class="stat-label">Total Clicks</div>
-          <div class="stat-value">658,463</div>
-          <div class="stat-change positive">
-            <a-icon type="arrow-up" /> 5.7%
-          </div>
+          <div class="stat-value">{{ analyticsData ? formatNumber(analyticsData.total_clicks) : '...' }}</div>
         </div>
       </a-col>
       <a-col :xs="24" :sm="12" :md="6">
         <div class="stat-card total-simulations">
           <div class="stat-label">Total Simulations</div>
-          <div class="stat-value">4,529,896</div>
-          <div class="stat-change negative">
-            <a-icon type="arrow-down" /> 8.2%
-          </div>
+          <div class="stat-value">0</div>
         </div>
       </a-col>
       <a-col :xs="24" :sm="12" :md="6">
         <div class="stat-card balance-credits">
           <div class="stat-label">Balance Credits</div>
-          <div class="stat-value">6,000</div>
+          <div class="stat-value">{{ analyticsData ? formatNumber(analyticsData.credits) : '...' }}</div>
         </div>
       </a-col>
     </a-row>
@@ -43,16 +37,6 @@
             <div class="date-range">1 June - 1 July, 2025</div>
           </div>
           
-          <!-- Filters -->
-          <div class="chart-filters">
-            <a-button size="small" class="filter-btn">
-              <a-icon type="filter" /> Filter by
-            </a-button>
-            <a-button size="small" class="filter-btn">Color</a-button>
-            <a-button size="small" class="filter-btn">Simulation</a-button>
-            <a-button size="small" class="filter-btn active">Favorite product</a-button>
-          </div>
-
           <!-- Chart -->
           <div class="chart-container">
             <canvas ref="chartCanvas" style="max-height: 300px;"></canvas>
@@ -76,6 +60,7 @@
             :dataSource="productsData" 
             :columns="tableColumns" 
             :pagination="false"
+            :loading="loading"
             size="middle"
             :scroll="{ x: 800 }"
           >
@@ -102,6 +87,10 @@
             
             <template slot="price" slot-scope="price">
               <span class="price">${{ price }}</span>
+            </template>
+            
+            <template slot="usageCount" slot-scope="count">
+              <span class="usage-count">{{ count }}</span>
             </template>
             
             <template slot="ar-vr" slot-scope="record">
@@ -133,6 +122,8 @@ export default {
   data() {
     return {
       chart: null,
+      loading: false,
+      analyticsData: null,
       chartData: [
         5, 8, 6, 12, 10, 8, 14, 16, 18, 25, 28, 32, 35, 38, 42, 45, 43, 40, 35, 32, 28, 25, 22, 20, 18, 16, 18, 20, 25, 28, 22
       ],
@@ -163,16 +154,12 @@ export default {
           width: 120
         },
         {
-          title: 'Create date',
-          dataIndex: 'createDate',
-          key: 'createDate',
-          width: 120
-        },
-        {
-          title: 'Size',
-          dataIndex: 'size',
-          key: 'size',
-          width: 120
+          title: 'Usage Count',
+          key: 'usageCount',
+          dataIndex: 'usageCount',
+          scopedSlots: { customRender: 'usageCount' },
+          width: 100,
+          align: 'center'
         },
         {
           title: 'Color',
@@ -182,13 +169,6 @@ export default {
           align: 'center'
         },
         {
-          title: 'Price',
-          key: 'price',
-          scopedSlots: { customRender: 'price' },
-          width: 80,
-          align: 'right'
-        },
-        {
           title: 'AR/VR',
           key: 'ar-vr',
           scopedSlots: { customRender: 'ar-vr' },
@@ -196,50 +176,12 @@ export default {
           align: 'center'
         }
       ],
-      productsData: [
-        {
-          key: '1',
-          id: 1,
-          name: 'Decaly Coral',
-          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed...',
-          category: 'Chair',
-          type: 'Modern',
-          createDate: 'June 10, 2025',
-          size: '24 in W x 24 in D x 30 in H',
-          image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iOCIgZmlsbD0iI0Y4RkFGQyIvPgo8cGF0aCBkPSJNMTIgMTZIMjhWMjRIMTJWMTZaIiBmaWxsPSIjRTJFOEYwIi8+CjxwYXRoIGQ9Ik0xNiAxMkgyNFYyOEgxNlYxMloiIGZpbGw9IiNDQkQzRTAiLz4KPC9zdmc+',
-          colors: ['#10b981', '#f59e0b', '#ef4444'],
-          price: 660
-        },
-        {
-          key: '2',
-          id: 2,
-          name: 'Ocean Blue',
-          description: 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua...',
-          category: 'Table',
-          type: 'Contemporary',
-          createDate: 'May 15, 2025',
-          size: '60 in W x 30 in D x 29 in H',
-          image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iOCIgZmlsbD0iI0Y4RkFGQyIvPgo8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSI4IiBmaWxsPSIjMzMzNEVBIi8+Cjwvc3ZnPg==',
-          colors: ['#10b981', '#f59e0b', '#ef4444'],
-          price: 1200
-        },
-        {
-          key: '3',
-          id: 3,
-          name: 'Sunset Orange',
-          description: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...',
-          category: 'Sofa',
-          type: 'Transitional',
-          createDate: 'August 22, 2025',
-          size: '78 in W x 34 in D x 32 in H',
-          image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iOCIgZmlsbD0iI0Y4RkFGQyIvPgo8ZWxsaXBzZSBjeD0iMjAiIGN5PSIyMCIgcng9IjEyIiByeT0iNiIgZmlsbD0iI0Y5NzMxNiIvPgo8L3N2Zz4=',
-          colors: ['#10b981', '#f59e0b', '#ef4444'],
-          price: 850
-        }
-      ]
+      productsData: []
     }
   },
   mounted() {
+    this.fetchAnalytics()
+    this.fetchTopProducts()
     this.initChart()
   },
   beforeUnmount() {
@@ -248,6 +190,98 @@ export default {
     }
   },
   methods: {
+    async fetchAnalytics() {
+      this.loading = true
+      try {
+        const response = await fetch(
+          `${this.$store.state.root_api}Auth/api/business-analytics/`,
+          {
+            headers: {
+              'Authorization': `Token ${localStorage.getItem('token')}`
+            }
+          }
+        )
+
+        const data = await response.json()
+        console.log('Analytics API Response:', data)
+
+        if (response.ok && data.success) {
+          this.analyticsData = data.data
+          this.$message.success('Analytics data loaded successfully')
+        } else {
+          this.$message.error(data.message || 'Failed to fetch analytics')
+        }
+      } catch (error) {
+        console.error('Error fetching analytics:', error)
+        this.$message.error('An error occurred while fetching analytics')
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async fetchTopProducts() {
+      this.loading = true
+      try {
+        const response = await fetch(
+          `${this.$store.state.root_api}Auth/api/business-top-products/`,
+          {
+            headers: {
+              'Authorization': `Token ${localStorage.getItem('token')}`
+            }
+          }
+        )
+
+        const data = await response.json()
+        console.log('Top Products API Response:', data)
+
+        if (response.ok && data.success) {
+          // Transform API data to table format
+          this.productsData = data.data.map((item, index) => ({
+            key: item.id,
+            id: index + 1,
+            name: item.name,
+            description: item.brand ? `Brand: ${item.brand}` : `Type: ${item.type}`,
+            category: this.getItemCategory(item.type),
+            type: item.style || item.brand || '-',
+            createDate: '-',
+            size: '-',
+            image: this.getDefaultImage(item.type),
+            colors: ['#10b981', '#f59e0b', '#ef4444'],
+            price: 0,
+            usageCount: item.count
+          }))
+          
+          this.$message.success('Top products loaded successfully')
+        } else {
+          this.$message.error(data.message || 'Failed to fetch top products')
+        }
+      } catch (error) {
+        console.error('Error fetching top products:', error)
+        this.$message.error('An error occurred while fetching top products')
+      } finally {
+        this.loading = false
+      }
+    },
+
+    getItemCategory(type) {
+      const categoryMap = {
+        'product': 'Product',
+        'texturewall': 'Wall Texture',
+        'texturefloor': 'Floor Texture'
+      }
+      return categoryMap[type] || type
+    },
+
+    getDefaultImage(type) {
+      // Return different placeholder images based on type
+      const imageMap = {
+        'product': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iOCIgZmlsbD0iIzRGNDZFNSIvPgo8cGF0aCBkPSJNMTIgMTZIMjhWMjRIMTJWMTZaIiBmaWxsPSIjN0MzQUVEIi8+CjxwYXRoIGQ9Ik0xNiAxMkgyNFYyOEgxNlYxMloiIGZpbGw9IiM2MzY2RjEiLz4KPC9zdmc+',
+        'texturewall': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iOCIgZmlsbD0iIzEwYjk4MSIvPgo8cmVjdCB4PSI4IiB5PSIxMCIgd2lkdGg9IjI0IiBoZWlnaHQ9IjIwIiBmaWxsPSIjMzRkMzk5Ii8+Cjwvc3ZnPg==',
+        'texturefloor': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iOCIgZmlsbD0iI2Y1OWUwYiIvPgo8cmVjdCB4PSI4IiB5PSI4IiB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIGZpbGw9IiNmYmJmMjQiLz4KPHJlY3QgeD0iMjIiIHk9IjgiIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCIgZmlsbD0iI2ZiYmYyNCIvPgo8cmVjdCB4PSI4IiB5PSIyMiIgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIiBmaWxsPSIjZmJiZjI0Ii8+CjxyZWN0IHg9IjIyIiB5PSIyMiIgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIiBmaWxsPSIjZmJiZjI0Ii8+Cjwvc3ZnPg=='
+      }
+      return imageMap[type] || imageMap['product']
+    },
+
     initChart() {
       const ctx = this.$refs.chartCanvas.getContext('2d')
       
@@ -359,6 +393,11 @@ export default {
           }
         }
       })
+    },
+    
+    formatNumber(num) {
+      if (!num) return '0'
+      return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
     }
   }
 }
@@ -555,6 +594,13 @@ export default {
 .price {
   font-weight: 600;
   color: #1e293b;
+}
+
+/* Usage Count */
+.usage-count {
+  font-weight: 600;
+  color: #4f46e5;
+  font-size: 16px;
 }
 
 /* AR/VR Buttons */

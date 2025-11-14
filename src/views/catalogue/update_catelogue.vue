@@ -2407,26 +2407,37 @@ export default {
 
   components: {
     BulbOutlined,
+
+    // canvas Renderer
     canvas_floor_render,
-    canvas_item_remover_render,
-    canvas_lights_render,
-    canvas_unsunk_lights_render,
-    canvas_walls_render,
-    items_replacement_renderer,
+    canvas_item_remover_render, // All 
+    canvas_lights_render, // 3d Light 
+    canvas_unsunk_lights_render, // unsunk Light 
+    canvas_walls_render, // walls
+    items_replacement_renderer, // all 
+
+    // List Views 
     fernitures,
     walls,
     floor,
     lights,
     ai_catalog_item_replacement_3d_products,
+    //  Bottom Drawer Menues 
     wall_textures_bottom_drawer_menu,
     floor_textures_bottom_drawer_menu,
     ceiling_3d_object_renderer,
+    
+    // Home Design 
     side_panel_home_design,
     main_panel_home_design,
     history_panel_home_design,
+    
+    // Edit Image Create Mockup 
     side_panel_edit_image,
     main_panel_edit_image,
     history_panel_edit_image,
+    
+    // 3d Tab 
     sidepanel_3d_tab,
     object_viewer_3d_tab,
     add_new_furniture,

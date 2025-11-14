@@ -145,7 +145,7 @@ const router = createRouter({
       name: 'contactus',
       component: contactus,
     },
-
+// =================================================== UI Pages ========================================
      {
       path: '/sechdulemeeting',
       name: 'sechdule meeting',
@@ -181,6 +181,8 @@ const router = createRouter({
       name: 'earnphoto',
       component: Earnphoto,
     },
+// =================================================== UI Pages ========================================
+
     {
       path: '/start-new-catalogue',
       name: 'new_catelogue',

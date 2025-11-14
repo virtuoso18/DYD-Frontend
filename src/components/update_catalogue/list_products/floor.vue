@@ -127,7 +127,7 @@ export default {
       loading: false,
       error: null,
       catalogItems: [],
-      showGrid: false, // true for grid, false for list
+      showGrid: true, // true for grid, false for list
       // Mock data
       productItems:[]
     };
@@ -168,7 +168,11 @@ export default {
            url = `${this.$store.state.root_api}room/api/load-brand-products/floors/` +brand ;
         }
 
-        const response = await fetch(url);
+        const response = await fetch(url,{
+          headers: {
+              'Authorization': `Token ${localStorage.getItem('token')}`
+            }
+        });
         const data = await response.json();
         console.log(data)
         if (data && data.data) {
