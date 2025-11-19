@@ -1,5 +1,13 @@
 <template>
-    <!-- {{business_info}} -->
+<a-modal :open="get_businesss_location_map_modal"   @close="get_businesss_location_map_modal=false" >
+   <MapLocationSelector 
+      @location-confirmed="handleLocationConfirmed"
+      @location-cancelled="get_businesss_location_map_modal=false"
+    />
+    <template #footer>
+    </template>
+</a-modal>
+<!-- {{business_info}} -->
     <div style=" padding:10px">
     
         <div style="background-color: white; padding:10px;border-radius:10px; border:2px solid rgba(128, 128, 128, 0.16); ">
@@ -152,9 +160,37 @@
                     </a-row>
                 </a-col>
                 
-                <a-col :sm="24" :xs="24" :md="12" :lg="12" style="padding:10px;">
-                    <img style="border-radius:10px;width:100%;height:200px;object-fit:cover" src="https://developers.google.com/static/maps/images/landing/hero_maps_static_api.png" alt="">
-                </a-col>
+               
+<a-col :sm="24" :xs="24" :md="12" :lg="12" style="padding:10px;">
+  <!-- shape="circle"  -->
+  <a-button 
+    type="primary" 
+    size="medium" 
+    @click="get_businesss_location_map_modal=true"
+    style="position: absolute; bottom: 20px; right: 20px; z-index: 5;"
+  >
+  <div style="display:flex;gap:10px;justify-content: center;align-items: center;">
+
+    <EnvironmentOutlined /> <div>Update Location</div>
+  </div>
+  </a-button>
+  
+  <!-- Display Business Location Map -->
+  <div v-if="businessLocationReady" style="border-radius:10px; width:100%; height:200px; overflow: hidden;">
+    <MapLocationViewer 
+      :latitude="businessLocation.latitude" 
+      :longitude="businessLocation.longitude"
+      :address="businessLocation.address"
+      :readOnly="true"
+    />
+  </div>
+  
+  <!-- Loading State -->
+  <div v-else style="border-radius:10px; width:100%; height:200px; display: flex; align-items: center; justify-content: center; background: #f0f0f0;">
+    <a-spin size="large" />
+  </div>
+</a-col>
+
             </a-row>
         </div>
         <br>
@@ -360,7 +396,7 @@
                       <div style="padding: 5px">
                         <!-- Actions Row -->
                         <a-row style="align-items: center">
-                          <a-col :span="14">
+                          <a-col :span="14" style="display:flex;gap:10px;">
                             <img
                               :src="
                                 this.$store.state.root_media_api + post.user_profile
@@ -405,42 +441,7 @@
                               </div>
                             </div>
                             <!-- More Actions Dropdown -->
-                            <a-dropdown
-                              :trigger="['click']"
-                              placement="bottomRight"
-                            >
-                              <a-button
-                                type="text"
-                                size="small"
-                                style="padding: 2px"
-                              >
-                                <MoreOutlined
-                                  style="font-size: 16px; color: #666"
-                                />
-                              </a-button>
-                              <template #overlay>
-                                <a-menu>
-                                  <a-menu-item @click="editPost(post)">
-                                    <EditOutlined style="margin-right: 8px" />
-                                    Edit Post
-                                  </a-menu-item>
-                                  <a-menu-item @click="sharePost(post)">
-                                    <ShareAltOutlined
-                                      style="margin-right: 8px"
-                                    />
-                                    Share
-                                  </a-menu-item>
-                                  <a-menu-divider />
-                                  <a-menu-item
-                                    @click="confirmDelete(post)"
-                                    style="color: #ff4d4f"
-                                  >
-                                    <DeleteOutlined style="margin-right: 8px" />
-                                    Delete Post
-                                  </a-menu-item>
-                                </a-menu>
-                              </template>
-                            </a-dropdown>
+                            
                           </a-col>
                         </a-row>
                       </div>
@@ -500,11 +501,14 @@ import {
   DeleteOutlined,
   PushpinOutlined,
   ArrowLeftOutlined,
+  EnvironmentOutlined,
   CloseOutlined,
 } from "@ant-design/icons-vue";
 
 import manage_products from '@/components/store/manage_products.vue'
 import buisnes_products_sailing from '@/components/store/products_sailing.vue'
+import MapLocationSelector from '@/components/store/map_business_location.vue'
+import MapLocationViewer from '@/components/store/map_location_viewer.vue'
 
 export default {
     name:'manage_sites',
@@ -519,9 +523,12 @@ export default {
         DeleteOutlined,
         PushpinOutlined,
         ArrowLeftOutlined,
+        EnvironmentOutlined,
         CloseOutlined,
         manage_products,
         buisnes_products_sailing,
+        MapLocationSelector,
+        MapLocationViewer,
     },
     data(){ 
         return {
@@ -546,7 +553,16 @@ export default {
             hasMoreProducts: false,
             loading: false,
             error: null,
+            get_businesss_location_map_modal:false,
             
+            businessLocation: {
+                latitude: 0,
+                longitude: 0,
+                address: 'Business Location'
+            },
+            businessLocationReady: false,
+
+
             editData: {
                 business_picture: '',
                 banner_picture: '',
@@ -575,8 +591,95 @@ export default {
         this.loadBusinessProfile();
         this.loadBusinessProducts(1); // Load first page
         this.loadPosts();
+        this.loadBusinessLocation()
     },
     methods: {
+      // Add this new method to load business location from database
+        async loadBusinessLocation() {
+            try {
+                const token = localStorage.getItem('token')
+                const response = await fetch(
+                    `${this.$store.state.root_api}Auth/api/change-business-profile-location/`,
+                    {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Token ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                )
+
+                const result = await response.json()
+
+                if (result.success && result.data) {
+                    const data = result.data
+                    console.log(data)
+                    // Set business location
+                    this.businessLocation = {
+                        latitude: data.latitude || 40.7128,
+                        longitude: data.longitude || -74.0060,
+                        address: data.business_address || `${data.latitude}, ${data.longitude}` || 'Business Location'
+                    }
+                    
+                    this.businessLocationReady = true
+                    console.log('Business location loaded:', this.businessLocation)
+                }
+            } catch (error) {
+                console.error('Error loading business location:', error)
+                this.businessLocationReady = true // Show map anyway with default location
+            }
+        },
+
+     async handleLocationConfirmed(locationData) {
+            console.log('Location Confirmed:', locationData)
+            
+            // Update business location
+            this.businessLocation = {
+                latitude: locationData.latitude,
+                longitude: locationData.longitude,
+                address: locationData.address
+            }
+            
+            // Close modal
+            this.get_businesss_location_map_modal = false
+            
+            try {
+                const token = localStorage.getItem('token')
+                const response = await fetch(
+                    `${this.$store.state.root_api}Auth/api/change-business-profile-location/`,
+                    {
+                        method: 'POST',
+                        body:JSON.stringify(this.businessLocation),
+                        headers: {
+                            'Authorization': `Token ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                )
+
+                const result = await response.json()
+
+                if (result.success && result.data) {
+                    const data = result.data
+                    
+                    // Set business location
+                    this.businessLocation = {
+                        latitude: data.latitude || 40.7128,
+                        longitude: data.longitude || -74.0060,
+                        address: data.business_address || `${data.latitude}, ${data.longitude}` || 'Business Location'
+                    }
+                    
+                    this.businessLocationReady = true
+                    console.log('Business location loaded:', this.businessLocation)
+                }
+            } catch (error) {
+                console.error('Error loading business location:', error)
+                this.businessLocationReady = true // Show map anyway with default location
+            }
+
+            // Show success message
+            this.$message.success('Business location updated successfully!')
+        },
         // Utility methods
         formatNumber(num) {
             if (!num || num === 0) return "0";

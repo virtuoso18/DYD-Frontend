@@ -1,4 +1,5 @@
 <template>
+  {{ access_recieved.community }}
   <div>
     <h1>Manage Community Post Requests</h1>
 
@@ -22,16 +23,9 @@
                   <div style="position: relative; cursor: pointer" @click="showPostDetail(post)">
                     <img
                       :src="$store.state.root_media_api + post.post_image"
-                      style="
-                        width: 100%;
-                        height: 200px;
-                        object-fit: cover;
-                        border-radius: 10px;
-                        padding: 5px;
-                      "
+                      style="width: 100%; height: 200px; object-fit: cover; border-radius: 10px; padding: 5px"
                       :alt="post.title"
                     />
-
                     <!-- Tags -->
                     <div class="tags-overlay">
                       <template v-if="post.tags && post.tags.length > 0">
@@ -45,26 +39,17 @@
                         </a-tag>
                         <a-tag
                           v-if="post.tags.length > 3"
-                          style="
-                            margin: 2px;
-                            border-radius: 12px;
-                            font-size: 11px;
-                            background: rgba(0, 0, 0, 0.6);
-                            color: white;
-                            border: none;
-                          "
+                          style="margin: 2px; border-radius: 12px; font-size: 11px; background: rgba(0, 0, 0, 0.6); color: white; border: none"
                         >
                           +{{ post.tags.length - 3 }}
                         </a-tag>
                       </template>
                     </div>
-
                     <!-- View Count -->
                     <div class="view-count-overlay">
                       <EyeOutlined style="margin-right: 4px" />
                       {{ formatNumber(post.view_count) }}
                     </div>
-
                     <!-- Pinned Badge -->
                     <div v-if="post.is_pinned" class="pinned-badge">
                       <PushpinOutlined />
@@ -74,7 +59,6 @@
 
                   <!-- Post Content -->
                   <div style="padding: 5px">
-                    <!-- User Info & Actions -->
                     <a-row style="align-items: center">
                       <a-col :span="14" style="display: flex; gap: 10px; justify-content: start; align-items: center">
                         <img
@@ -89,21 +73,22 @@
                       <a-col :span="10" style="display: flex">
                         <!-- Stats -->
                         <div class="post-stats">
-                          <div class="stat-item">
-                            <HeartOutlined />
+                          <div class="stat-item" @click="toggleLike(post)">
+                            <HeartFilled v-if="post.isLiked" style="color: #ff4d4f" />
+                            <HeartOutlined v-else />
                             <span>{{ formatNumber(post.like_count) }}</span>
                           </div>
-                          <div class="stat-item">
+                          <div class="stat-item" @click="openCommentsModal(post)">
                             <MessageOutlined />
                             <span>{{ formatNumber(post.comment_count) }}</span>
                           </div>
-                          <div class="stat-item">
+                          <div class="stat-item" @click="sharePost(post)">
                             <ShareAltOutlined />
                             <span>{{ formatNumber(post.share_count) }}</span>
                           </div>
                         </div>
                         <!-- Dropdown Menu -->
-                        <a-dropdown :trigger="['click']" placement="bottomRight">
+                        <!-- <a-dropdown :trigger="['click']" placement="bottomRight">
                           <a-button type="text" size="small" style="padding: 2px">
                             <MoreOutlined style="font-size: 16px; color: #666" />
                           </a-button>
@@ -124,7 +109,7 @@
                               </a-menu-item>
                             </a-menu>
                           </template>
-                        </a-dropdown>
+                        </a-dropdown> -->
                       </a-col>
                     </a-row>
                   </div>
@@ -189,7 +174,7 @@
               <b>Back</b>
             </a-button>
             <div>
-              <a-button @click="editPost(selectedPostDetail)" type="default" style="margin-right: 8px">
+              <a-button @click="editPost(selectedPostDetail)" type="default" style="margin-right: 8px" v-if="access_recieved.community.update">
                 <EditOutlined /> Edit
               </a-button>
               <a-popconfirm
@@ -199,7 +184,7 @@
                 cancel-text="No"
                 @confirm="confirmDeletePost"
               >
-                <a-button type="text" danger>
+                <a-button type="text" danger  v-if="access_recieved.community.delete">
                   <DeleteOutlined /> Delete
                 </a-button>
               </a-popconfirm>
@@ -216,6 +201,7 @@
               :alt="selectedPostDetail.title"
               style="width: 100%; border-radius: 12px; max-height: 500px; object-fit: cover"
             />
+            <!-- {{selectedPostDetail}} -->
             <!-- Tags -->
             <div style="position: absolute; top: 12px; left: 12px; display: flex; flex-wrap: wrap; gap: 6px">
               <a-tag
@@ -234,14 +220,11 @@
             </div>
           </div>
 
-          <!-- Post Title and Description -->
+          <!-- Post Title -->
           <div style="margin-bottom: 24px">
             <h2 style="margin: 0 0 12px 0; font-size: 28px; font-weight: 600">
               {{ selectedPostDetail.title }}
             </h2>
-            <!-- <p style="color: #666; font-size: 16px; line-height: 1.6; margin: 0">
-              {{ selectedPostDetail.content || 'No description provided' }}
-            </p> -->
           </div>
 
           <!-- Post Metadata -->
@@ -267,41 +250,12 @@
           <!-- Engagement Stats Row -->
           <div style="display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap">
             <div
-              style="
-                flex: 1;
-                min-width: 100px;
-                padding: 16px;
-                background: #f8f9fa;
-                border-radius: 8px;
-                text-align: center;
-                cursor: pointer;
-                transition: all 0.3s ease;
-              "
-              @mouseenter="(e) => (e.currentTarget.style.background = '#e6f7ff')"
-              @mouseleave="(e) => (e.currentTarget.style.background = '#f8f9fa')"
+              class="engagement-stat"
+              @click="toggleLike(selectedPostDetail)"
+              style="cursor: pointer"
             >
-              <EyeOutlined style="font-size: 24px; color: #1890ff; display: block; margin-bottom: 8px" />
-              <p style="font-weight: 600; font-size: 18px; margin: 0">
-                {{ formatNumber(selectedPostDetail.view_count) }}
-              </p>
-              <p style="font-size: 12px; color: #666; margin: 0">Views</p>
-            </div>
-
-            <div
-              style="
-                flex: 1;
-                min-width: 100px;
-                padding: 16px;
-                background: #f8f9fa;
-                border-radius: 8px;
-                text-align: center;
-                cursor: pointer;
-                transition: all 0.3s ease;
-              "
-              @mouseenter="(e) => (e.currentTarget.style.background = '#fff1f0')"
-              @mouseleave="(e) => (e.currentTarget.style.background = '#f8f9fa')"
-            >
-              <HeartOutlined style="font-size: 24px; color: #ff4d4f; display: block; margin-bottom: 8px" />
+              <HeartFilled v-if="selectedPostDetail.isLiked" style="font-size: 24px; color: #ff4d4f; display: block; margin-bottom: 8px" />
+              <HeartOutlined v-else style="font-size: 24px; color: #1890ff; display: block; margin-bottom: 8px" />
               <p style="font-weight: 600; font-size: 18px; margin: 0">
                 {{ formatNumber(selectedPostDetail.like_count) }}
               </p>
@@ -309,18 +263,9 @@
             </div>
 
             <div
-              style="
-                flex: 1;
-                min-width: 100px;
-                padding: 16px;
-                background: #f8f9fa;
-                border-radius: 8px;
-                text-align: center;
-                cursor: pointer;
-                transition: all 0.3s ease;
-              "
-              @mouseenter="(e) => (e.currentTarget.style.background = '#fffbe6')"
-              @mouseleave="(e) => (e.currentTarget.style.background = '#f8f9fa')"
+              class="engagement-stat"
+              @click="scrollToComments"
+              style="cursor: pointer"
             >
               <MessageOutlined style="font-size: 24px; color: #faad14; display: block; margin-bottom: 8px" />
               <p style="font-weight: 600; font-size: 18px; margin: 0">
@@ -330,24 +275,23 @@
             </div>
 
             <div
-              style="
-                flex: 1;
-                min-width: 100px;
-                padding: 16px;
-                background: #f8f9fa;
-                border-radius: 8px;
-                text-align: center;
-                cursor: pointer;
-                transition: all 0.3s ease;
-              "
-              @mouseenter="(e) => (e.currentTarget.style.background = '#f6ffed')"
-              @mouseleave="(e) => (e.currentTarget.style.background = '#f8f9fa')"
+              class="engagement-stat"
+              @click="sharePost(selectedPostDetail)"
+              style="cursor: pointer"
             >
               <ShareAltOutlined style="font-size: 24px; color: #52c41a; display: block; margin-bottom: 8px" />
               <p style="font-weight: 600; font-size: 18px; margin: 0">
                 {{ formatNumber(selectedPostDetail.share_count) }}
               </p>
               <p style="font-size: 12px; color: #666; margin: 0">Shares</p>
+            </div>
+
+            <div class="engagement-stat">
+              <EyeOutlined style="font-size: 24px; color: #1890ff; display: block; margin-bottom: 8px" />
+              <p style="font-weight: 600; font-size: 18px; margin: 0">
+                {{ formatNumber(selectedPostDetail.view_count) }}
+              </p>
+              <p style="font-size: 12px; color: #666; margin: 0">Views</p>
             </div>
           </div>
 
@@ -356,104 +300,116 @@
             <h3 style="margin-bottom: 16px; font-size: 20px; font-weight: 600">Products Used to Create Room</h3>
             <a-empty v-if="!postsProducts || postsProducts.length === 0" description="No products available" style="padding: 40px 0" />
             <a-row v-else :gutter="[16, 16]">
-              <a-col
-                v-for="product in postsProducts"
-                :key="product.product_id"
-                :lg="8"
-                :md="12"
-                :xs="24"
-                class="product-responsive"
-              >
-                <div class="product">
-                  <div class="product-image-container">
-                    <img
-                      :src="$store.state.root_media_api + product.product_image"
-                      :alt="product.product_title"
-                      class="product-image"
-                    />
-                    <div class="category-badge">{{ product.category_name }}</div>
-                    <div class="ar-badge">AR</div>
-                  </div>
-
-                  <div style="padding: 12px">
-                    <p style="font-weight: 600; margin: 0 0 8px 0; font-size: 14px">
-                      {{ product.product_title }}
-                    </p>
-
-                    <!-- Colors -->
-                    <div style="margin-bottom: 8px; display: flex; align-items: center; gap: 6px">
-                      <span style="font-size: 12px; color: #666">Colors:</span>
-                      <div style="display: flex; gap: 4px">
-                        <div
-                          v-for="(color, idx) in product.product_colors.slice(0, 2)"
-                          :key="idx"
-                          style="
-                            width: 18px;
-                            height: 18px;
-                            border-radius: 50%;
-                            border: 1px solid #ddd;
-                          "
-                          :style="'background: ' + (color.color_hex || color.color)"
-                        />
-                        <span v-if="product.product_colors.length > 2" style="font-size: 12px; color: #999">
-                          +{{ product.product_colors.length - 2 }}
-                        </span>
-                      </div>
-                    </div>
-
-                    <!-- Price and Button -->
-                    <a-row :gutter="8">
-                      <a-col :span="12">
-                        <p style="font-weight: 600; color: #1890ff; font-size: 16px; margin: 0">
-                          ${{ product.product_price }}
-                        </p>
-                      </a-col>
-                      <a-col :span="12">
-                        <a-button type="primary" size="small" block>
-                          Details
-                        </a-button>
-                      </a-col>
-                    </a-row>
-                  </div>
+             <a-col
+              v-for="product in postsProducts"
+              :key="product.id"
+              class="product-responsive"
+              style="padding: 5px"
+            >
+              <!-- {{product.product_colors}} -->
+              <div class="product">
+                <div
+                  class="product-image-container"
+                  @click="viewProduct(product)"
+                >
+                  <img
+                    :src="$store.state.root_media_api + product.product_image"
+                    :alt="product.product_title"
+                    class="product-image"
+                  />
+                  <!-- Category Badge -->
+                  <div class="category-badge">{{ product.category_name }}</div>
+                  <!-- AR Badge -->
+                  <div class="ar-badge">AR</div>
                 </div>
-              </a-col>
+                <!-- {{ truncateText(product.description || 'No description available', 8) }} -->
+
+                <a-row>
+                  <a-col span="24">
+                    <b>{{ product.product_title }}</b>
+                  </a-col>
+
+                  <a-col span="18"> Color </a-col>
+
+                  <a-col span="6" style="display: flex; justify-content: end">
+                    <div
+                      v-for="(color, index) in product.product_colors.slice(
+                        0,
+                        2
+                      )"
+                      :key="index"
+                      style="
+                        width: 20px;
+                        height: 20px;
+                        border-radius: 20px;
+                        margin-left: 2px;
+                      "
+                      :style="
+                        'background:' +
+                        (color.color_hex ? color.color_hex : color.color)
+                      "
+                    >
+                      <!-- {{ color }} -->
+                    </div>
+                  </a-col>
+
+                  <a-col span="12"> Price </a-col>
+
+                  <a-col
+                    span="12"
+                    style="
+                      display: flex;
+                      justify-content: end;
+                      font-weight: 700;
+                    "
+                  >
+                    <!-- <del style="font-size: 10px;">${{ product.pricing.price }}</del> -->
+                    ${{ product.product_price }}
+                  </a-col>
+
+                  <a-col span="17">
+                    <a-button block @click="viewProduct(product)"
+                      >Product Details</a-button
+                    >
+                  </a-col>
+
+                  <a-col span="1"></a-col>
+                  <a-col span="4">
+                    <a-button><HeartOutlined /></a-button>
+                  </a-col>
+                </a-row>
+              </div>
+            </a-col>
+            
             </a-row>
           </div>
         </a-col>
 
-        <!-- Right Side - Comments (Empty for now) -->
+        <!-- Right Side - Comments -->
         <a-col :lg="8" :md="24" :xs="24">
-          {{selectedPostDetail.comment_count  }}
-          <div style="padding: 16px; background: #f8f9fa; border-radius: 8px">
+          <div class="comments-section" ref="commentsSection">
             <h4 style="margin: 0 0 16px 0; font-size: 16px; font-weight: 600">
               Comments ({{ selectedPostDetail.comment_count }})
             </h4>
-            
-                <div v-if="!comments.length" style="display: flex;justify-content: center;align-items: center;min-height:300px">
-                <div>
-                    <a-empty description="No Comments Available"></a-empty>
-                    
-                </div>
+
+            <!-- Empty State -->
+            <div v-if="!comments.length && !loadingComments" style="display: flex; justify-content: center; align-items: center; min-height: 300px">
+              <a-empty description="No Comments Available"></a-empty>
+            </div>
+
+            <!-- Loading State -->
+            <div v-else-if="loadingComments && comments.length === 0" style="display: flex; justify-content: center; align-items: center; min-height: 300px">
+              <a-spin size="large" />
             </div>
 
             <!-- Comments List -->
-            <div class="comments-list" v-else>
-              <div
-                v-for="comment in comments"
-                :key="comment.id"
-                class="comment-item"
-              >
+            <div v-else class="comments-list">
+              <div v-for="comment in comments" :key="comment.id" class="comment-item">
                 <a-avatar
                   :size="32"
-                  style="border: 1px solid rgb(0, 0, 0, 0.1); margin-right: 8px"
-                  :src="
-                    this.$store.state.root_media_api +
-                    comment.comment_owner.user_profile
-                  "
-                >
-                  <!-- {{ comment.comment_owner?.username?.charAt(0).toUpperCase() || 'U' }} -->
-                  <!-- {{ comment.comment_owner?.username?.charAt(0).toUpperCase()}} -->
-                </a-avatar>
+                  style="border: 1px solid rgb(0, 0, 0, 0.1); margin-right: 8px; flex-shrink: 0"
+                  :src="$store.state.root_media_api + comment.comment_owner.user_profile"
+                ></a-avatar>
 
                 <div class="comment-content">
                   <div class="comment-header">
@@ -478,7 +434,7 @@
                     >
                       <a-avatar
                         :size="24"
-                        style="background-color: #52c41a; margin-right: 6px"
+                        style="background-color: #52c41a; margin-right: 6px; flex-shrink: 0"
                       >
                         {{
                           reply.comment_owner?.username
@@ -496,25 +452,12 @@
                         <p class="reply-text">{{ reply.content }}</p>
                       </div>
                     </div>
-                    <a-button
-                      v-if="comment.reply_count > comment.replies.length"
-                      type="link"
-                      size="small"
-                      @click="loadMoreReplies(comment)"
-                    >
-                      View
-                      {{ comment.reply_count - comment.replies.length }} more
-                      replies
-                    </a-button>
                   </div>
                 </div>
               </div>
 
               <!-- Load More Comments -->
-              <div
-                v-if="hasMoreComments"
-                style="text-align: center; margin-top: 16px"
-              >
+              <div v-if="hasMoreComments" style="text-align: center; margin-top: 16px">
                 <a-button
                   type="link"
                   @click="loadMoreComments"
@@ -524,158 +467,362 @@
                 </a-button>
               </div>
             </div>
-            <!-- Add Comment -->
-            <div class="add-comment">
-              <a-row>
-                <a-col :span="24">
-                  <a-space>
-                    <a-textarea
-                      v-model:value="newComment"
-                      placeholder="Add a comment..."
-                      :rows="2"
-                      :cols="100"
-                      style="height: 40px; margin-bottom: 8px"
-                    />
-                    <a-button
-                      type="primary"
-                      size="medium"
-                      shapr="circle"
-                      @click="addComment"
-                      :loading="addingComment"
-                      :disabled="!newComment.trim()"
-                    >
-                      <svg
-                        width="14"
-                        height="14"
-                        viewBox="0 0 16 16"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M3.721 7.63038L5.2073 8.12581C6.18973 8.45258 6.67989 8.61702 7.03196 8.96909C7.38403 9.32117 7.54847 9.81238 7.87525 10.7927L8.37068 12.279C9.1971 14.7604 9.61031 16 10.3703 16C11.1293 16 11.5435 14.7604 12.37 12.279L15.3615 3.30642C15.9434 1.56082 16.2343 0.688014 15.7737 0.227368C15.313 -0.233277 14.4402 0.0576566 12.6957 0.638471L3.71995 3.63214C1.24174 4.45751 0 4.87072 0 5.63073C0 6.39074 1.24069 6.80395 3.721 7.63038Z"
-                          fill="currentColor"
-                        />
-                        <path
-                          d="M3.721 7.63038L5.2073 8.12581C6.18973 8.45258 6.67989 8.61702 7.03196 8.96909C7.38403 9.32117 7.54847 9.81238 7.87525 10.7927L8.37068 12.279C9.1971 14.7604 9.61031 16 10.3703 16C11.1293 16 11.5435 14.7604 12.37 12.279L15.3615 3.30642C15.9434 1.56082 16.2343 0.688014 15.7737 0.227368C15.313 -0.233277 14.4402 0.0576566 12.6957 0.638471L3.71995 3.63214C1.24174 4.45751 0 4.87072 0 5.63073C0 6.39074 1.24069 6.80395 3.721 7.63038Z"
-                          fill="currentColor"
-                        />
-                        <path
-                          d="M5.65441 9.68062L3.48084 8.95644C3.32874 8.90574 3.16709 8.8904 3.00817 8.91159C2.84925 8.93278 2.69726 8.98994 2.56376 9.07872L1.41478 9.844C1.27877 9.93462 1.17202 10.0628 1.10752 10.213C1.04302 10.3631 1.02354 10.5288 1.05146 10.6898C1.07938 10.8509 1.15349 11.0003 1.26477 11.12C1.37606 11.2397 1.51973 11.3245 1.67831 11.364L3.73909 11.8784C3.83183 11.9016 3.91653 11.9495 3.98411 12.0171C4.0517 12.0847 4.09964 12.1694 4.12279 12.2621L4.63719 14.3229C4.67674 14.4815 4.76151 14.6252 4.8812 14.7364C5.00089 14.8477 5.15034 14.9218 5.31137 14.9498C5.47241 14.9777 5.63808 14.9582 5.78825 14.8937C5.93841 14.8292 6.0666 14.7225 6.15722 14.5864L6.9225 13.4375C7.01128 13.304 7.06844 13.152 7.08963 12.9931C7.11082 12.8341 7.09548 12.6725 7.04478 12.5204L6.32061 10.3468C6.26884 10.1917 6.1817 10.0508 6.06608 9.93514C5.95045 9.81952 5.80952 9.73238 5.65441 9.68062Z"
-                          fill="currentColor"
-                        />
-                      </svg>
-                    </a-button>
-                  </a-space>
-                </a-col>
-              </a-row>
-            </div>
-            
+
+        <!-- Add Comment -->
+<div class="add-comment" v-if="selectedPostDetail" style="background: white; border-radius: 8px;  border: 1px solid #f0f0f0;">
+  <div style="display: flex; flex-direction: column; gap: 12px;">
+    <textarea
+      v-model="newComment"
+      placeholder="Add a comment..."
+      style="width: 100%; padding: 10px 12px; border: 1px solid #d9d9d9; border-radius: 6px; font-size: 13px; font-family: inherit; resize: vertical; min-height: 60px; outline: none; transition: all 0.2s;"
+      @focus="$event.target.style.borderColor = '#1890ff'; $event.target.style.boxShadow = '0 0 0 2px rgba(24, 144, 255, 0.1)'"
+      @blur="$event.target.style.borderColor = '#d9d9d9'; $event.target.style.boxShadow = 'none'"
+    ></textarea>
+    <button
+      @click="addComment"
+      :disabled="!newComment.trim() || addingComment"
+      style="padding: 10px 16px; background-color: #1890ff; color: white; border: none; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; transition: all 0.2s;"
+      :style="(!newComment.trim() || addingComment) ? 'background-color: #d9d9d9; cursor: not-allowed;' : 'background-color: #1890ff; hover: {background-color: #0050b3}'"
+    >
+      <svg
+        v-if="!addingComment"
+        width="14"
+        height="14"
+        viewBox="0 0 16 16"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M3.721 7.63038L5.2073 8.12581C6.18973 8.45258 6.67989 8.61702 7.03196 8.96909C7.38403 9.32117 7.54847 9.81238 7.87525 10.7927L8.37068 12.279C9.1971 14.7604 9.61031 16 10.3703 16C11.1293 16 11.5435 14.7604 12.37 12.279L15.3615 3.30642C15.9434 1.56082 16.2343 0.688014 15.7737 0.227368C15.313 -0.233277 14.4402 0.0576566 12.6957 0.638471L3.71995 3.63214C1.24174 4.45751 0 4.87072 0 5.63073C0 6.39074 1.24069 6.80395 3.721 7.63038Z"
+          fill="currentColor"
+        />
+      </svg>
+      <span>{{ addingComment ? 'Posting...' : 'Post Comment' }}</span>
+    </button>
+  </div>
+</div>
           </div>
         </a-col>
       </a-row>
     </div>
 
-    <!-- ========== DESIGN DETAIL VIEW ========== -->
-    <div v-if="selectedDesignDetail && !selectedPostDetail">
-      <a-row :gutter="24">
-        <!-- Header with Back Button -->
-        <a-col :span="24">
-          <div style="display: flex; justify-content: space-between; margin-bottom: 20px">
-            <a-button @click="closeDesignDetail" type="text" size="large">
-              <ArrowLeftOutlined style="margin-right: 8px" />
-              <b>Back</b>
-            </a-button>
-            <div>
-              <a-button @click="handlePostDesign(selectedDesignDetail)" type="primary" style="margin-right: 8px">
-                <UploadOutlined /> Post to Community
-              </a-button>
-              <a-popconfirm
-                title="Delete Design"
-                description="Are you sure you want to delete this design?"
-                ok-text="Yes"
-                cancel-text="No"
-                @confirm="handleDeleteDesignConfirm"
-              >
-                <a-button type="text" danger>
-                  <DeleteOutlined /> Delete
-                </a-button>
-              </a-popconfirm>
-            </div>
-          </div>
-        </a-col>
+<!-- ========== DESIGN DETAIL VIEW WITH EDIT PANEL ========== -->
+<div v-if="selectedDesignDetail && !selectedPostDetail">
+  <a-row :gutter="24">
+    <!-- Header with Back Button -->
+  
+    <a-col :span="24">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px">
+    <a-button @click="closeDesignDetail" type="text" size="large">
+      <ArrowLeftOutlined style="margin-right: 8px" />
+      <b>Back</b>
+    </a-button>
+    <div style="display: flex; gap: 8px; flex-wrap: wrap">
+      <!-- Edit Design Button (Show when not editing) -->
+      <a-button 
+        v-if="access_recieved.community.update &&  !isEditingDesign" 
+        @click="toggleEditDesign" 
+        type="default" 
+      >
+        <EditOutlined /> Edit Design
+      </a-button>
 
-        <!-- Left Side - Design Image -->
-        <a-col :lg="14" :md="24" :xs="24">
-          <div style="margin-bottom: 20px">
-            <img
-              :src="$store.state.root_media_api + selectedDesignDetail.image"
-              :alt="selectedDesignDetail.room_type"
-              style="width: 100%; border-radius: 12px; max-height: 500px; object-fit: cover"
-            />
-          </div>
+      <!-- Save Changes Button (Show in edit mode) -->
+      <a-button 
+        v-if="isEditingDesign"
+        @click="saveDesignChanges" 
+        type="primary" 
+        :loading="savingDesign"
+      >
+        <SaveOutlined /> Save Changes
+      </a-button>
 
-          <!-- Design Description -->
-          <div style="margin-bottom: 20px">
-            <!-- {{ selectedDesignDetail }} -->
-            <h2 style="margin: 0 0 12px 0">{{ selectedDesignDetail.room_type }} - {{ selectedDesignDetail.room_design_type }}</h2>
-            <p style="color: #666; font-size: 16px; line-height: 1.6">
-              {{ selectedDesignDetail.description || 'No description available' }}
-            </p>
-          </div>
+      <!-- Cancel Button (Show in edit mode) -->
+      <a-button 
+        v-if="isEditingDesign"
+        @click="cancelEditDesign" 
+        type="default"
+      >
+        <CloseOutlined /> Cancel
+      </a-button>
 
-          <!-- Design Info -->
-          <div style="padding: 16px; background: #f5f5f5; border-radius: 8px; margin-bottom: 20px">
-            <div style="font-size: 14px; color: #666">
-              <p>
-                <strong>Room Type:</strong> {{ selectedDesignDetail.room_type }}
-              </p>
-              <p>
-                <strong>Design Style:</strong> {{ selectedDesignDetail.room_design_type }}
-              </p>
-              <p>
-                <strong>Created:</strong> {{ formatDate(selectedDesignDetail.created_at) }}
-              </p>
-              <p v-if="selectedDesignDetail.updated_at !== selectedDesignDetail.created_at">
-                <strong>Updated:</strong> {{ formatDate(selectedDesignDetail.updated_at) }}
-              </p>
-            </div>
-          </div>
-        </a-col>
+      <!-- Post to Community Button (Show when not editing and design is complete) -->
+      <a-button 
+        v-if="access_recieved.community.create && !isEditingDesign"
+        @click="handlePostDesign(selectedDesignDetail)" 
+        type="primary"
+        style="background-color: #52c41a; border-color: #52c41a"
+      >
+        <UploadOutlined /> Publish post to Community
+      </a-button>
 
-        <!-- Right Side - Products Used in Design -->
-        <a-col :lg="10" :md="24" :xs="24">
-          <h3 style="margin-bottom: 16px">Products Used in Design</h3>
-          <a-empty v-if="!designProducts || designProducts.length === 0" description="No products available" />
-          <a-row v-else :gutter="[12, 12]">
-            <a-col :span="24" v-for="product in designProducts" :key="product.product_id" style="padding: 12px; border: 1px solid #f0f0f0; border-radius: 8px">
-              <a-row :gutter="12">
-                <a-col :span="6">
-                  <img :src="$store.state.root_media_api + product.product_image" style="width: 100%; border-radius: 8px; object-fit: cover" />
-                </a-col>
-                <a-col :span="18">
-                  <p style="font-weight: 600; margin: 0 0 4px 0">{{ product.product_title }}</p>
-                  <p style="font-size: 12px; color: #666; margin: 0 0 4px 0">{{ product.category_name }}</p>
-                  <div style="display: flex; gap: 4px; margin-bottom: 4px">
+      <!-- Post to Community Button - Disabled State -->
+      <!-- <a-button 
+        v-if="!isEditingDesign && !canPostDesign()"
+        disabled
+        type="primary"
+        style="background-color: #d9d9d9; border-color: #d9d9d9"
+        title="Complete all design details before posting"
+      >
+        <UploadOutlined /> Post to Community
+      </a-button> -->
+
+      <!-- Delete Button -->
+      <a-popconfirm
+        title="Delete Design"
+        description="Are you sure you want to delete this design?"
+        ok-text="Yes"
+        cancel-text="No"
+        @confirm="handleDeleteDesignConfirm"
+      >
+        <a-button type="text" v-if="access_recieved.community.delete " danger>
+          <DeleteOutlined /> Delete
+        </a-button>
+      </a-popconfirm>
+    </div>
+  </div>
+</a-col>
+
+    <!-- Left Side - Design Image -->
+    <a-col :lg="14" :md="24" :xs="24">
+      <img
+        :src="$store.state.root_media_api + selectedDesignDetail.image"
+        :alt="selectedDesignDetail.room_type"
+        style="width: 100%; border-radius: 12px; max-height: 500px; object-fit: cover; margin-bottom: 20px"
+      />
+
+      <!-- Products Used Section -->
+      <div>
+        <h3 style="margin-bottom: 16px; font-size: 20px; font-weight: 600">Products Used in Design</h3>
+        <a-empty v-if="!designProducts || designProducts.length === 0" description="No products available" />
+        <a-row v-else :gutter="[16, 16]">
+             <a-col
+              v-for="product in designProducts"
+              :key="product.id"
+              class="product-responsive"
+              style="padding: 5px"
+            >
+              <!-- {{product.product_colors}} -->
+              <div class="product">
+                <div
+                  class="product-image-container"
+                  @click="viewProduct(product)"
+                >
+                  <img
+                    :src="$store.state.root_media_api + product.product_image"
+                    :alt="product.product_title"
+                    class="product-image"
+                  />
+                  <!-- Category Badge -->
+                  <div class="category-badge">{{ product.category_name }}</div>
+                  <!-- AR Badge -->
+                  <div class="ar-badge">AR</div>
+                </div>
+                <!-- {{ truncateText(product.description || 'No description available', 8) }} -->
+
+                <a-row>
+                  <a-col span="24">
+                    <b>{{ product.product_title }}</b>
+                  </a-col>
+
+                  <a-col span="18"> Color </a-col>
+
+                  <a-col span="6" style="display: flex; justify-content: end">
                     <div
-                      v-for="(color, idx) in product.product_colors.slice(0, 3)"
-                      :key="idx"
+                      v-for="(color, index) in product.product_colors.slice(
+                        0,
+                        2
+                      )"
+                      :key="index"
                       style="
                         width: 20px;
                         height: 20px;
-                        border-radius: 50%;
-                        border: 1px solid #ddd;
+                        border-radius: 20px;
+                        margin-left: 2px;
                       "
-                      :style="'background: ' + (color.color_hex || color.color)"
-                    />
-                  </div>
-                  <p style="font-weight: 600; color: #1890ff; margin: 0">${{ product.product_price }}</p>
-                </a-col>
-              </a-row>
+                      :style="
+                        'background:' +
+                        (color.color_hex ? color.color_hex : color.color)
+                      "
+                    >
+                      <!-- {{ color }} -->
+                    </div>
+                  </a-col>
+
+                  <a-col span="12"> Price </a-col>
+
+                  <a-col
+                    span="12"
+                    style="
+                      display: flex;
+                      justify-content: end;
+                      font-weight: 700;
+                    "
+                  >
+                    <!-- <del style="font-size: 10px;">${{ product.pricing.price }}</del> -->
+                    ${{ product.product_price }}
+                  </a-col>
+
+                  <a-col span="17">
+                    <a-button block @click="viewProduct(product)"
+                      >Product Details</a-button
+                    >
+                  </a-col>
+
+                  <a-col span="1"></a-col>
+                  <a-col span="4">
+                    <a-button><HeartOutlined /></a-button>
+                  </a-col>
+                </a-row>
+              </div>
             </a-col>
-          </a-row>
-        </a-col>
-      </a-row>
-    </div>
+        </a-row>
+      </div>
+    </a-col>
+
+    <!-- Right Side - Design Details / Edit Panel -->
+    <a-col :lg="10" :md="24" :xs="24">
+      <!-- VIEW MODE -->
+       <!-- {{ selectedDesignDetail }} -->
+      <div v-if="!isEditingDesign" style="padding: 20px; background: #f8f9fa; border-radius: 12px">
+        <div style="margin-bottom: 24px">
+          <h2 style="margin: 0 0 12px 0">{{ selectedDesignDetail.room_type }} - {{ selectedDesignDetail.room_design_type }}</h2>
+          <p style="color: #666; font-size: 14px; line-height: 1.6; margin: 0">
+            {{ selectedDesignDetail.description || 'No description available' }}
+          </p>
+        </div>
+
+        <div style="padding: 16px; background: white; border-radius: 8px; margin-bottom: 16px">
+          <div style="font-size: 14px; color: #666">
+            <p style="margin-bottom: 12px">
+              <strong style="color: #333">Room Type:</strong> 
+              <span>{{ selectedDesignDetail.room_type }}</span>
+            </p>
+            <p style="margin-bottom: 12px">
+              <strong style="color: #333">Design Style:</strong> 
+              <span>{{ selectedDesignDetail.room_design_type }}</span>
+            </p>
+            <p style="margin-bottom: 12px">
+              <strong style="color: #333">Created:</strong> 
+              <span>{{ formatDate(selectedDesignDetail.created_at) }}</span>
+            </p>
+            <p v-if="selectedDesignDetail.updated_at !== selectedDesignDetail.created_at" style="margin: 0">
+              <strong style="color: #333">Updated:</strong> 
+              <span>{{ formatDate(selectedDesignDetail.updated_at) }}</span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- EDIT MODE -->
+      <div v-else style="padding: 20px; background: white; border-radius: 12px; border: 2px solid #1890ff">
+        <h3 style="margin-bottom: 16px; color: #1890ff">Edit Design Details</h3>
+
+        <!-- Description -->
+        <div style="margin-bottom: 16px">
+          <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #333">
+            Describe Room <span style="color: red">*</span>
+          </label>
+          <a-textarea
+            v-model:value="designEditForm.description"
+            placeholder="Give your design an attractive description here..."
+            size="large"
+            :rows="4"
+            :maxlength="500"
+            show-count
+            style="border-radius: 8px"
+          />
+        </div>
+
+        <!-- Room Type -->
+        <div style="margin-bottom: 16px">
+          <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #333">
+            Room Type <span style="color: red">*</span>
+          </label>
+          <a-select 
+            v-model:value="designEditForm.room_type"
+            placeholder="Select room type..."
+            style="width: 100%"
+          >
+            <a-select-option value="Living Room">Living Room</a-select-option>
+            <a-select-option value="Dining Room">Dining Room</a-select-option>
+            <a-select-option value="Kitchen">Kitchen</a-select-option>
+            <a-select-option value="Home Office">Home Office</a-select-option>
+            <a-select-option value="Bedroom">Bedroom</a-select-option>
+            <a-select-option value="Office">Office</a-select-option>
+            <a-select-option value="Rest Room">Rest Room</a-select-option>
+          </a-select>
+        </div>
+
+        <!-- Design Style -->
+        <div style="margin-bottom: 16px">
+          <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #333">
+            Design Style <span style="color: red">*</span>
+          </label>
+          <a-select 
+            v-model:value="designEditForm.room_design_type"
+            placeholder="Select design style..."
+            style="width: 100%"
+          >
+            <a-select-option value="Modern">Modern</a-select-option>
+            <a-select-option value="Classic">Classic</a-select-option>
+            <a-select-option value="Rustic">Rustic</a-select-option>
+            <a-select-option value="Industrial">Industrial</a-select-option>
+            <a-select-option value="Minimalist">Minimalist</a-select-option>
+            <a-select-option value="Traditional">Traditional</a-select-option>
+            <a-select-option value="Contemporary">Contemporary</a-select-option>
+            <a-select-option value="Vintage">Vintage</a-select-option>
+          </a-select>
+        </div>
+
+        <!-- Info Alert -->
+        <a-alert
+          message="Save your changes to update the design details"
+          type="info"
+          show-icon
+          style="margin-top: 12px"
+        />
+      </div>
+    </a-col>
+  </a-row>
+</div>
+
+    <!-- ========== EDIT POST MODAL ========== -->
+    <a-modal
+      v-model:open="editModalVisible"
+      title="Edit Post"
+      width="600px"
+      @ok="updatePost"
+      :confirm-loading="updating"
+    >
+      <img
+        :src="$store.state.root_media_api + editForm.post_image"
+        alt=""
+        style="width: 100%; border-radius: 10px; margin-bottom: 16px"
+      />
+      <div>
+        <div style="margin-bottom: 16px">
+          <label style="display: block; margin-bottom: 8px; font-weight: 500">Title</label>
+          <a-input
+            v-model:value="editForm.title"
+            placeholder="Post title..."
+            :maxlength="200"
+            show-count
+          />
+        </div>
+        <div>
+          <label style="display: block; margin-bottom: 8px; font-weight: 500">Tags</label>
+          <a-select
+            v-model:value="editForm.tags"
+            mode="tags"
+            placeholder="Select or create tags..."
+            style="width: 100%"
+            :options="availableTags"
+          />
+        </div>
+      </div>
+    </a-modal>
+    
   </div>
 </template>
 
@@ -686,11 +833,14 @@ import {
   UploadOutlined,
   EyeOutlined,
   HeartOutlined,
+  HeartFilled,
   MessageOutlined,
   ShareAltOutlined,
   MoreOutlined,
   ArrowLeftOutlined,
   PushpinOutlined,
+  SaveOutlined,
+  CloseOutlined,
 } from '@ant-design/icons-vue';
 
 export default {
@@ -701,11 +851,14 @@ export default {
     UploadOutlined,
     EyeOutlined,
     HeartOutlined,
+    HeartFilled,
     MessageOutlined,
     ShareAltOutlined,
     MoreOutlined,
     ArrowLeftOutlined,
     PushpinOutlined,
+    SaveOutlined,
+    CloseOutlined,
   },
   props: {
     access_recieved: Object,
@@ -719,43 +872,180 @@ export default {
       selectedDesignDetail: null,
       postsProducts: [],
       designProducts: [],
+      
+      // Comments Management
+      comments: [],
+      newComment: '',
+      addingComment: false,
+      loadingComments: false,
+      hasMoreComments: false,
+      commentsPage: 1,
+      
+      // Post Edit Modal
+      editModalVisible: false,
+      editingPost: null,
+      updating: false,
+      editForm: {
+        post_image: '',
+        title: '',
+        tags: [],
+      },
+      availableTags: [],
+      
+      // Design Edit Mode
+      isEditingDesign: false,
+      savingDesign: false,
+      designEditForm: {
+        id: null,
+        image: '',
+        description: '',
+        room_type: '',
+        room_design_type: '',
+      },
     };
   },
+  
   mounted() {
     this.fetchBusinessDesignes();
     this.fetchCommunityDesignes();
+    this.loadTags();
   },
+  
   methods: {
-  // Open comments modal (replace the viewPost call in comment icon click)
-    async openCommentsModal(post) {
-      this.selectedPostForComments = { ...post };
-      this.modalComments = [];
-      this.modalCommentsPage = 1;
-      this.hasMoreModalComments = false;
-      this.commentsModalVisible = true;
-
-      // Load comments for modal
-      await this.loadModalComments(post.id);
+    // ========== DESIGN EDIT METHODS ==========
+    
+    /**
+     * Toggle between view and edit mode for design
+     */
+    toggleEditDesign() {
+      if (!this.isEditingDesign) {
+        this.startEditDesign(this.selectedDesignDetail);
+      }
     },
 
-    // Close comments modal
-    closeCommentsModal() {
-      this.commentsModalVisible = false;
-      this.selectedPostForComments = null;
-      this.modalComments = [];
-      this.newModalComment = "";
+    /**
+     * Start editing the selected design
+     */
+    startEditDesign(design) {
+      this.isEditingDesign = true;
+      this.designEditForm = {
+        id: design.id,
+        image: design.image,
+        description: design.description || design.room_description || '',
+        room_type: design.room_type || '',
+        room_design_type: design.room_design_type || '',
+      };
     },
-    // Load comments for modal
-    async loadModalComments(postId, page = 1) {
+
+    /**
+     * Cancel edit mode without saving
+     */
+    cancelEditDesign() {
+      this.isEditingDesign = false;
+      this.designEditForm = {
+        id: null,
+        image: '',
+        description: '',
+        room_type: '',
+        room_design_type: '',
+      };
+    },
+
+    /**
+     * Save design changes to backend
+     */
+    async saveDesignChanges() {
+      // Validation
+      if (!this.designEditForm.description.trim()) {
+        this.$message.error('Please provide a room description');
+        return;
+      }
+
+      if (!this.designEditForm.room_type) {
+        this.$message.error('Please select a room type');
+        return;
+      }
+
+      if (!this.designEditForm.room_design_type) {
+        this.$message.error('Please select a design style');
+        return;
+      }
+
+      this.savingDesign = true;
+
       try {
-        this.loadingModalComments = true;
+        const token = localStorage.getItem('token');
+        const response = await fetch(
+          `${this.$store.state.root_api}access-engine/api/business-community-posts/business-designes-apis/`,
+          {
+            method: 'POST',
+            headers: {
+              'Authorization': `Token ${token}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              type: 'save_design_details',
+              design_id: this.designEditForm.id,
+              description_room: this.designEditForm.description.trim(),
+              room_design_type_select: this.designEditForm.room_design_type,
+              room_type_select: this.designEditForm.room_type,
+            }),
+          }
+        );
+
+        const data = await response.json();
+
+        if (data.success || data.status === 'success') {
+          // Update the selected design with new values
+          this.selectedDesignDetail = {
+            ...this.selectedDesignDetail,
+            description: this.designEditForm.description,
+            room_description: this.designEditForm.description,
+            room_type: this.designEditForm.room_type,
+            room_design_type: this.designEditForm.room_design_type,
+          };
+
+          // Update in the unposted designs list if it exists
+          const designIndex = this.business_designes.data?.findIndex(
+            (d) => d.id === this.designEditForm.id
+          );
+
+          if (designIndex !== -1 && designIndex !== undefined) {
+            this.business_designes.data[designIndex] = {
+              ...this.business_designes.data[designIndex],
+              description: this.designEditForm.description,
+              room_description: this.designEditForm.description,
+              room_type: this.designEditForm.room_type,
+              room_design_type: this.designEditForm.room_design_type,
+            };
+          }
+
+          this.isEditingDesign = false;
+          this.$message.success('Design updated successfully!');
+        } else {
+          throw new Error(data.message || 'Failed to update design');
+        }
+      } catch (error) {
+        console.error('Failed to save design:', error);
+        this.$message.error(error.message || 'Failed to save design changes');
+      } finally {
+        this.savingDesign = false;
+      }
+    },
+
+    // ========== COMMENTS METHODS ==========
+    
+    async loadComments(postId, page = 1) {
+      try {
+        this.loadingComments = true;
+        const token = localStorage.getItem('token');
         const response = await fetch(
           `${this.$store.state.root_api}community/api/comments/?post_id=${postId}&page=${page}`,
           {
-            method: "GET",
+            method: 'GET',
             headers: {
-              Authorization: `Token ${localStorage.getItem("token")}`,
-              "Content-Type": "application/json",
+              'Authorization': `Token ${token}`,
+              'Content-Type': 'application/json',
             },
           }
         );
@@ -763,147 +1053,114 @@ export default {
         const data = await response.json();
         if (data.success) {
           if (page === 1) {
-            this.modalComments = data.data;
+            this.comments = data.data || [];
           } else {
-            this.modalComments.push(...data.data);
+            this.comments.push(...(data.data || []));
           }
-          this.hasMoreModalComments = page < data.total_pages;
-          this.modalCommentsPage = page;
+          this.hasMoreComments = page < data.total_pages;
+          this.commentsPage = page;
         }
       } catch (error) {
-        console.error("Failed to load comments:", error);
+        console.error('Failed to load comments:', error);
+        this.$message.error('Failed to load comments');
       } finally {
-        this.loadingModalComments = false;
+        this.loadingComments = false;
       }
     },
 
-    // Load more comments in modal
-    async loadMoreModalComments() {
-      if (this.selectedPostForComments) {
-        await this.loadModalComments(
-          this.selectedPostForComments.id,
-          this.modalCommentsPage + 1
-        );
+    async loadMoreComments() {
+      if (this.selectedPostDetail) {
+        await this.loadComments(this.selectedPostDetail.id, this.commentsPage + 1);
       }
     },
-    async fetchBusinessDesignes() {
-      try {
-        const token = localStorage.getItem('token');
-        const response = await fetch(
-          `${this.$store.state.root_api}access-engine/api/business-community-posts/business-designes-apis/`,
-          {
-            method: 'GET',
-            headers: {
-              'Authorization': `Token ${token}`,
-              'Content-Type': 'application/json',
-            },
-          }
-        );
-        const responseData = await response.json();
-        this.business_designes = responseData;
-      } catch (error) {
-        console.error('Error fetching business designs:', error);
-        this.$message.error('Failed to load business designs');
-      }
-    },
-    async fetchCommunityDesignes() {
-      try {
-        const token = localStorage.getItem('token');
-        const response = await fetch(
-          `${this.$store.state.root_api}access-engine/api/business-community-posts/business-posts/`,
-          {
-            method: 'GET',
-            headers: {
-              'Authorization': `Token ${token}`,
-              'Content-Type': 'application/json',
-            },
-          }
-        );
-        const responseData = await response.json();
-        this.community_posted_designes = responseData;
-      } catch (error) {
-        console.error('Error fetching community designs:', error);
-        this.$message.error('Failed to load community posts');
-      }
-    },
-    
-    // Add comment in modal
-    async addModalComment() {
-      if (!this.newModalComment.trim() || !this.selectedPostForComments) return;
+
+    async addComment() {
+      if (!this.newComment.trim() || !this.selectedPostDetail) return;
 
       try {
-        this.addingModalComment = true;
+        this.addingComment = true;
+        const token = localStorage.getItem('token');
         const response = await fetch(
           `${this.$store.state.root_api}community/api/comments/`,
           {
-            method: "POST",
+            method: 'POST',
             headers: {
-              Authorization: `Token ${localStorage.getItem("token")}`,
-              "Content-Type": "application/json",
+              'Authorization': `Token ${token}`,
+              'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              post_id: this.selectedPostForComments.id,
-              content: this.newModalComment.trim(),
+              post_id: this.selectedPostDetail.id,
+              content: this.newComment.trim(),
             }),
           }
         );
 
         const data = await response.json();
         if (data.success) {
-          // Clear input
-          this.newModalComment = "";
-
-          // Reload comments
-          await this.loadModalComments(this.selectedPostForComments.id);
-
-          // Update comment count in the main list
-          this.selectedPostForComments.comment_count += 1;
-          const postIndex = this.posts.findIndex(
-            (p) => p.id === this.selectedPostForComments.id
-          );
-          if (postIndex !== -1) {
-            this.posts[postIndex].comment_count =
-              this.selectedPostForComments.comment_count;
-          }
-
-          this.$message.success("Comment added successfully!");
+          this.newComment = '';
+          await this.loadComments(this.selectedPostDetail.id);
+          this.selectedPostDetail.comment_count += 1;
+          this.$message.success('Comment added successfully!');
         }
       } catch (error) {
-        console.error("Failed to add comment:", error);
-        this.$message.error("Failed to add comment");
+        console.error('Failed to add comment:', error);
+        this.$message.error('Failed to add comment');
       } finally {
-        this.addingModalComment = false;
+        this.addingComment = false;
       }
     },
 
+    async loadMoreReplies(comment) {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(
+          `${this.$store.state.root_api}community/api/comments/${comment.id}/replies/`,
+          {
+            method: 'GET',
+            headers: {
+              'Authorization': `Token ${token}`,
+              'Content-Type': 'application/json',
+            },
+          }
+        );
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-    // POST DETAIL METHODS
-    async showPostDetail(post) {
-      this.selectedPostDetail = post;
-      await this.loadPostProducts(post.id);
+        const data = await response.json();
+        if (data.success) {
+          comment.replies = data.data || [];
+        }
+      } catch (error) {
+        console.error('Failed to load replies:', error);
+      }
     },
+
+    // ========== POST DETAIL METHODS ==========
+    
+    async showPostDetail(post) {
+      this.selectedPostDetail = { ...post, isLiked: false };
+      this.comments = [];
+      this.commentsPage = 1;
+      this.hasMoreComments = false;
+      this.newComment = '';
+      
+      await this.loadPostProducts(post.id);
+      await this.loadComments(post.id);
+    },
+
     closePostDetail() {
       this.selectedPostDetail = null;
       this.postsProducts = [];
+      this.comments = [];
+      this.newComment = '';
     },
+
+    scrollToComments() {
+      this.$nextTick(() => {
+        if (this.$refs.commentsSection) {
+          this.$refs.commentsSection.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    },
+
     async loadPostProducts(postId) {
       try {
         const token = localStorage.getItem('token');
@@ -925,6 +1182,157 @@ export default {
         console.error('Error loading post products:', error);
       }
     },
+
+    // ========== LIKE/SHARE METHODS ==========
+    
+    async toggleLike(post) {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(
+          `${this.$store.state.root_api}community/api/posts/like/`,
+          {
+            method: 'POST',
+            headers: {
+              'Authorization': `Token ${token}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              post_id: post.id,
+            }),
+          }
+        );
+
+        const data = await response.json();
+        if (data.success) {
+          post.isLiked = data.data.action === 'liked';
+          post.like_count = data.data.like_count;
+
+          if (this.selectedPostDetail && this.selectedPostDetail.id === post.id) {
+            this.selectedPostDetail.isLiked = post.isLiked;
+            this.selectedPostDetail.like_count = post.like_count;
+          }
+
+          this.$message.success(`Post ${data.data.action}!`);
+        }
+      } catch (error) {
+        console.error('Failed to toggle like:', error);
+        this.$message.error('Failed to update like');
+      }
+    },
+
+    async sharePost(post) {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(
+          `${this.$store.state.root_api}community/api/posts/share/`,
+          {
+            method: 'POST',
+            headers: {
+              'Authorization': `Token ${token}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              post_id: post.id,
+            }),
+          }
+        );
+
+        const data = await response.json();
+        if (data.success) {
+          post.share_count = data.data.share_count;
+
+          if (this.selectedPostDetail && this.selectedPostDetail.id === post.id) {
+            this.selectedPostDetail.share_count = post.share_count;
+          }
+
+          this.$message.success('Post shared successfully!');
+          const shareUrl = `${window.location.origin}/community/post/${post.id}`;
+          navigator.clipboard.writeText(shareUrl);
+          this.$message.info('Post link copied to clipboard!');
+        }
+      } catch (error) {
+        console.error('Failed to share post:', error);
+        this.$message.error('Failed to share post');
+      }
+    },
+
+    // ========== POST EDIT/DELETE METHODS ==========
+    
+    editPost(post) {
+      this.editingPost = post;
+      this.editForm = {
+        post_image: post.post_image,
+        title: post.title,
+        tags: post.tags || [],
+      };
+      this.editModalVisible = true;
+    },
+
+    async updatePost() {
+      if (!this.editForm.title.trim()) {
+        this.$message.error('Title is required');
+        return;
+      }
+
+      this.updating = true;
+
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(
+          `${this.$store.state.root_api}access-engine/api/business-community-posts/posts/`,
+          {
+            method: 'PUT',
+            headers: {
+              'Authorization': `Token ${token}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              post_id: this.editingPost.id,
+              title: this.editForm.title,
+              tags: this.editForm.tags,
+            }),
+          }
+        );
+
+        const data = await response.json();
+        if (data.success) {
+          const postIndex = this.community_posted_designes.data.findIndex(
+            (p) => p.id === this.editingPost.id
+          );
+          if (postIndex !== -1) {
+            this.community_posted_designes.data[postIndex].title = data.data.title;
+            this.community_posted_designes.data[postIndex].tags = data.data.tags;
+          }
+
+          if (this.selectedPostDetail && this.selectedPostDetail.id === this.editingPost.id) {
+            this.selectedPostDetail.title = data.data.title;
+            this.selectedPostDetail.tags = data.data.tags;
+          }
+
+          this.editModalVisible = false;
+          this.$message.success('Post updated successfully!');
+        }
+      } catch (error) {
+        console.error('Failed to update post:', error);
+        this.$message.error('Failed to update post');
+      } finally {
+        this.updating = false;
+      }
+    },
+
+    confirmDelete(post) {
+      this.$confirm({
+        title: 'Delete Post',
+        content: 'Are you sure you want to delete this post?',
+        okText: 'Yes',
+        cancelText: 'No',
+        onOk: async () => {
+          this.selectedPostDetail = post;
+          await this.confirmDeletePost();
+        },
+      });
+    },
+
     async confirmDeletePost() {
       try {
         const token = localStorage.getItem('token');
@@ -951,15 +1359,41 @@ export default {
       }
     },
 
-    // DESIGN DETAIL METHODS
+    openCommentsModal(post) {
+      this.showPostDetail(post);
+    },
+
+    // ========== DESIGN DETAIL METHODS ==========
+    
     async showDesignDetail(design) {
       this.selectedDesignDetail = design;
+      this.isEditingDesign = false;
       await this.loadDesignProducts(design.id);
     },
+
     closeDesignDetail() {
       this.selectedDesignDetail = null;
       this.designProducts = [];
+      this.isEditingDesign = false;
+      this.designEditForm = {
+        id: null,
+        image: '',
+        description: '',
+        room_type: '',
+        room_design_type: '',
+      };
     },
+
+    /**
+     * Check if design can be posted (has all required fields)
+     */
+    canPostDesign() {
+      return this.selectedDesignDetail && 
+             this.selectedDesignDetail.room_type && 
+             this.selectedDesignDetail.room_design_type && 
+             (this.selectedDesignDetail.description || this.selectedDesignDetail.room_description);
+    },
+
     async loadDesignProducts(designId) {
       try {
         const token = localStorage.getItem('token');
@@ -985,17 +1419,7 @@ export default {
         console.error('Error loading design products:', error);
       }
     },
-    async handleDeleteDesign(design) {
-      this.$confirm({
-        title: 'Delete Design',
-        content: 'Are you sure you want to delete this design?',
-        okText: 'Yes',
-        cancelText: 'No',
-        onOk: async () => {
-          await this.handleDeleteDesignConfirm();
-        },
-      });
-    },
+
     async handleDeleteDesignConfirm() {
       try {
         const token = localStorage.getItem('token');
@@ -1024,6 +1448,7 @@ export default {
         this.$message.error('Failed to delete design');
       }
     },
+
     async handlePostDesign(design) {
       this.$message.loading({
         content: 'Posting design to community...',
@@ -1032,7 +1457,7 @@ export default {
       try {
         const token = localStorage.getItem('token');
         const response = await fetch(
-          `${this.$store.state.root_api}access-engine/api/business-community-posts/posts/`,
+          `${this.$store.state.root_api}access-engine/api/business-community-posts/staff-publish-community-post/`,
           {
             method: 'POST',
             headers: {
@@ -1042,7 +1467,7 @@ export default {
             body: JSON.stringify({
               room_id: design.id,
               title: design.room_type,
-              content: design.description || '',
+              content: design.description || design.room_description || '',
               tag_ids: [],
             }),
           }
@@ -1060,26 +1485,91 @@ export default {
       }
     },
 
-    // UTILITY METHODS
-    editPost(post) {
-      this.$message.info('Edit functionality - implement as needed');
-    },
-    sharePost(post) {
-      this.$message.info('Post link copied to clipboard');
-    },
-    confirmDelete(post) {
+    handleDeleteDesign(design) {
       this.$confirm({
-        title: 'Delete Post',
-        content: 'Are you sure you want to delete this post?',
+        title: 'Delete Design',
+        content: 'Are you sure you want to delete this design?',
         okText: 'Yes',
         cancelText: 'No',
         onOk: async () => {
-          this.selectedPostDetail = post;
-          await this.confirmDeletePost();
+          this.selectedDesignDetail = design;
+          await this.handleDeleteDesignConfirm();
         },
       });
     },
 
+    // ========== FETCH METHODS ==========
+    
+    async fetchBusinessDesignes() {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(
+          `${this.$store.state.root_api}access-engine/api/business-community-posts/business-designes-apis/`,
+          {
+            method: 'GET',
+            headers: {
+              'Authorization': `Token ${token}`,
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+        const responseData = await response.json();
+        this.business_designes = responseData;
+      } catch (error) {
+        console.error('Error fetching business designs:', error);
+        this.$message.error('Failed to load business designs');
+      }
+    },
+
+    async fetchCommunityDesignes() {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(
+          `${this.$store.state.root_api}access-engine/api/business-community-posts/business-posts/`,
+          {
+            method: 'GET',
+            headers: {
+              'Authorization': `Token ${token}`,
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+        const responseData = await response.json();
+        this.community_posted_designes = responseData;
+      } catch (error) {
+        console.error('Error fetching community designs:', error);
+        this.$message.error('Failed to load community posts');
+      }
+    },
+
+    async loadTags() {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(
+          `${this.$store.state.root_api}community/api/tags/`,
+          {
+            method: 'GET',
+            headers: {
+              'Authorization': `Token ${token}`,
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+
+        const data = await response.json();
+        if (data.success) {
+          this.availableTags = data.data.map((tag) => ({
+            label: tag.name,
+            value: tag.id,
+          }));
+        }
+      } catch (error) {
+        console.error('Failed to load tags:', error);
+      }
+    },
+
+    // ========== UTILITY METHODS ==========
+    
     formatNumber(num) {
       if (!num || num === 0) return '0';
       if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
@@ -1088,11 +1578,13 @@ export default {
     },
 
     formatDate(dateString) {
+      if (!dateString) return '';
       const date = new Date(dateString);
       const now = new Date();
       const diffTime = Math.abs(now - date);
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
+      if (diffDays === 0) return 'Today';
       if (diffDays === 1) return 'Yesterday';
       if (diffDays <= 7) return `${diffDays} days ago`;
       if (diffDays <= 30) return `${Math.ceil(diffDays / 7)} weeks ago`;
@@ -1106,6 +1598,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 .post-card {
@@ -1189,9 +1682,117 @@ export default {
   font-weight: 500;
 }
 
-.product {
-  padding: 0;
+.engagement-stat {
+  flex: 1;
+  min-width: 100px;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+/* Comments Section Styles */
+.comments-section {
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  min-height: 300px;
+  max-height: 700px;
+  overflow-y: auto;
+}
+
+.comments-list {
   margin-bottom: 16px;
+}
+
+.comment-item {
+  display: flex;
+  margin-bottom: 16px;
+  padding: 12px;
+  background: white;
+  border-radius: 8px;
+  border-left: 3px solid #1890ff;
+}
+
+.comment-content {
+  flex: 1;
+}
+
+.comment-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.comment-author {
+  font-weight: 600;
+  font-size: 14px;
+  color: #262626;
+}
+
+.comment-date {
+  font-size: 12px;
+  color: #8c8c8c;
+}
+
+.comment-text {
+  font-size: 13px;
+  color: #595959;
+  line-height: 1.5;
+  margin: 0;
+  word-break: break-word;
+}
+
+.replies-section {
+  margin-top: 12px;
+  padding-left: 16px;
+  border-left: 2px solid #e9ecef;
+}
+
+.reply-item {
+  display: flex;
+  margin-bottom: 12px;
+  padding: 8px;
+  background: #f5f5f5;
+  border-radius: 6px;
+}
+
+.reply-content {
+  flex: 1;
+}
+
+.reply-author {
+  font-weight: 600;
+  font-size: 12px;
+  color: #262626;
+}
+
+.reply-date {
+  font-size: 11px;
+  color: #8c8c8c;
+  margin-left: 8px;
+}
+
+.reply-text {
+  font-size: 12px;
+  color: #595959;
+  margin: 4px 0 0 0;
+  word-break: break-word;
+}
+
+.add-comment {
+  padding: 12px;
+  background: white;
+  border-radius: 8px;
+  border-top: 1px solid #e9ecef;
+  margin-top: 12px;
+}
+
+/* Products Section */
+.product {
+  padding: 5px;
   border-radius: 8px;
   background: white;
   border: 1px solid #f0f0f0;
@@ -1207,6 +1808,7 @@ export default {
   position: relative;
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
   height: 180px;
+  border-radius:5px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1268,6 +1870,10 @@ export default {
     width: 100%;
     flex: 0 0 100%;
   }
+
+  .comments-section {
+    max-height: 500px;
+  }
 }
 
 .ant-tag {
@@ -1276,5 +1882,24 @@ export default {
   border-radius: 12px !important;
   border: none !important;
   font-weight: 500 !important;
+}
+
+/* Custom scrollbar */
+.comments-section::-webkit-scrollbar {
+  width: 6px;
+}
+
+.comments-section::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.comments-section::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.comments-section::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
 }
 </style>

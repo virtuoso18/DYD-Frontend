@@ -203,9 +203,10 @@ Switch Furniture</div></a-button>
   <div class="divider"></div>
 
   <!-- Submit Controls - Vertical -->
+  <!-- @click="submitDrawnMask" -->
   <div class="submit-actions">
     <button 
-      @click="submitDrawnMask"
+      @click="openSelectFurnitureModel"
       :disabled="switchingInProgress"
       class="drawing-btn submit-btn"
     >
@@ -575,7 +576,8 @@ canShowSwitchButton() {
       method: 'POST',
       body: formData,
       headers: {
-        'Authorization': `Bearer ${this.$store.state.authToken}`
+          'Authorization': `Token ${localStorage.getItem('token')}`
+
       }
     });
     

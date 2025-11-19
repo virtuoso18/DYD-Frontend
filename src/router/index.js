@@ -32,6 +32,7 @@ import community_dashboard from '@/components/dashboard/business/comunity.vue'
 import generate_banner from '@/components/dashboard/business/generate_banner.vue'
 import manage_subscription from '@/components/dashboard/business/manage_subscription.vue'
 import my_transactions from '@/components/dashboard/business/my_transactions.vue'
+import my_likes from '@/components/dashboard/business/my_likes.vue'
 // import store_messages from '@/components/messages/store_messages.vue'
 
 import add_furniture from '@/components/dashboard/business/my_products/add_new_product/add_furniture.vue'
@@ -58,7 +59,7 @@ import normal_my_settings from '@/components/dashboard/user/my_settings.vue'
 import manage_access from '@/components/store/manage_access.vue'
 import buisness_page from '@/views/store/vendor_store.vue'
 import buisness_product from '@/views/store/buisness_product.vue'
-
+import ar_product from '@/views/store/AR.vue'
 import access_manager from '@/views/access_engine/access_manager.vue'
 import access_overview from '@/views/access_engine/access_overview.vue'
 import access_manage_products from '@/views/access_engine/product/access_manage_products.vue'
@@ -81,6 +82,10 @@ import Partner from '@/views/pages/partner.vue'
 import Tutorial from '@/views/pages/tutorial.vue'
 import Api from '@/views/pages/api.vue'
 import Earnphoto from '@/views/pages/earnphoto.vue'
+
+
+import ProductARView from "@/views/ProductAR/ProductAR.vue"
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -162,7 +167,7 @@ const router = createRouter({
       path: '/partner',
       name: 'partner',
       component: Partner,
-    },
+     },
 
       {
       path: '/tutorial',
@@ -199,6 +204,12 @@ const router = createRouter({
       component: buisness_product,
     },
     
+    {
+      path: '/ar-product/:product_id',
+      name: 'ar_product',
+      component: ar_product,
+    },
+
     {
       path: '/update-catalogue/:id?',
       name: 'update_catelogue',
@@ -250,6 +261,11 @@ const router = createRouter({
           path: 'my-designs',
           name: 'business_my_designs',
           component: my_designs,
+        },
+        {
+          path: 'my-likes',
+          name: 'business_my_likes',
+          component: my_likes,
         },
         {
           path: 'my-products',
@@ -553,6 +569,11 @@ const router = createRouter({
       path: '/forgot-password',
       name: 'forget_password',
       component: ForgetPassword,
+    },
+     {
+      path: "/product-ar-view",
+      name: "ARView",
+      component: ProductARView,
     },
   ],
 })

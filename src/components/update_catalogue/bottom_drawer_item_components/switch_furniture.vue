@@ -200,7 +200,13 @@ switchFurniture() {
           url = `${this.$store.state.root_api}product/api/load-brand-products/3d-products/${brand}`
         }
         
-        const response = await fetch(url)
+        const response = await fetch(url, {
+      method: 'GET',
+      // body: formData,
+      headers: {
+        'Authorization': `Token ${localStorage.getItem('token')}`
+      }
+    })
         const data = await response.json()
         console.log('Furniture Data:', data)
         
@@ -219,7 +225,14 @@ switchFurniture() {
           url = `${this.$store.state.root_api}product/api/load-brand-products/lights/${brand}`
         }
 
-        const response = await fetch(url)
+        const response = await fetch(url, {
+      method: 'GET',
+      // body: formData,
+      headers: {
+          'Authorization': `Token ${localStorage.getItem('token')}`
+
+      }
+    })
         const data = await response.json()
         console.log('Lights Data:', data)
         

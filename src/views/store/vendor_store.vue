@@ -49,7 +49,7 @@
                 `"
             >
                 <div style="text-align:center">
-                    <div>
+                    <div style="display:flex;justify-content: center;">
                         <img 
                         :src="this.$store.state.root_media_api + business_info.banner_picture" 
                         style="width:70px;height:70px;border-radius:50%" 
@@ -183,11 +183,21 @@
                     </a-col>
                     
                     <a-col :sm="24" :xs="24" :md="12" :lg="12" style="padding:10px;">
-                        <img 
-                            style="border-radius:10px;width:100%;height:200px;object-fit:cover" 
-                            src="https://developers.google.com/static/maps/images/landing/hero_maps_static_api.png" 
-                            alt="Location Map"
-                        >
+                        
+  <!-- Display Business Location Map -->
+  <div v-if="businessLocationReady" style="border-radius:10px; width:100%; height:200px; overflow: hidden;">
+    <MapLocationViewer 
+      :latitude="businessLocation.latitude" 
+      :longitude="businessLocation.longitude"
+      :address="businessLocation.address"
+      :readOnly="true"
+    />
+  </div>
+  
+  <!-- Loading State -->
+  <div v-else style="border-radius:10px; width:100%; height:200px; display: flex; align-items: center; justify-content: center; background: #f0f0f0;">
+    <a-spin size="large" />
+  </div>
                     </a-col>
                 </a-row>
             </div>
@@ -518,6 +528,7 @@ import {
   CloseOutlined,
 } from '@ant-design/icons-vue'
 
+import MapLocationViewer from '@/components/store/map_location_viewer.vue'
 export default {
     name: 'business_page',
     components: {
@@ -534,6 +545,7 @@ export default {
         CloseOutlined,
         RequestCreateRoom,
         buisnes_products_sailing,
+                MapLocationViewer,
     },
     computed: {
         hasToken() {
@@ -562,6 +574,13 @@ export default {
             totalPagesProducts: 0,
             isLoadingMoreProducts: false,
             hasMoreProducts: false,
+            
+            businessLocation: {
+                latitude: 0,
+                longitude: 0,
+                address: 'Business Location'
+            },
+            businessLocationReady: false,
             
             loading: true,
             error: null,
@@ -961,6 +980,15 @@ export default {
 
                 if (result.success) {
                     this.business_info = result.data;
+                    
+                    // Set business location
+                    this.businessLocation = {
+                        latitude: result.data.lattitude || 40.7128,
+                        longitude: result.data.longitude || -74.0060,
+                        address: result.data.address || `${result.data.latitude}, ${result.data.longitude}` || 'Business Location'
+                    }
+                    
+                    this.businessLocationReady = true
                 } else {
                     this.error = result.message || 'Business not found';
                 }

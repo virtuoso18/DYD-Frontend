@@ -8,18 +8,18 @@
             <div class="product-image-container">
               <img 
                 :src="getProductImage(product)" 
-                :alt="product.title"
+                :alt="product.name"
                 class="product-image"
               />
               <!-- Category Badge -->
-              <div class="category-badge">{{ product.texture_style || 'Wall' }}</div>
+              <div class="category-badge">{{ getCategoryName(product) }}</div>
               <!-- AR Badge -->
               <div class="ar-badge">AR</div>
             </div>
 
             <a-row>
               <a-col span="24">
-                <b>{{ product.title }}</b>
+                <b>{{ product.name }}</b>
               </a-col>
               
               <a-col span="18">
@@ -31,13 +31,13 @@
                   v-for="color in product.colors_available" 
                   :key="color.id"
                   style="width:20px; height:20px; border-radius:20px; border: 1px solid #ddd;" 
-                  :style="{ backgroundColor: color.color_hex }"
-                  :title="color.title"
+                  :style="{ backgroundColor: color.color }"
+                  :title="`Color ${color.color}`"
                 ></div>
               </a-col>
 
               <a-col span="12">
-                Price per Sq.m
+                Price
               </a-col>
               
               <a-col span="12" style="text-align: right;">
@@ -45,7 +45,7 @@
               </a-col>
 
               <a-col span="24" style="font-size: 11px; color: #666; margin-bottom: 4px;">
-                Size: {{ product.size_width }}x{{ product.size_height }}cm
+                Dimensions: {{ getDimensions(product) }}
               </a-col>
 
               <a-col span="17">
@@ -73,7 +73,7 @@
 import { HeartOutlined } from '@ant-design/icons-vue'
 
 export default {
-  name: 'WallProducts',
+  name: 'FurnitureProducts',
   components: {
     HeartOutlined
   },
@@ -93,23 +93,56 @@ export default {
      * Get the proper image URL from product
      */
     getProductImage(product) {
-      if (product.texture_image) {
+      if (product.primary_image) {
         // If it's a relative path, prepend the API URL
-        if (product.texture_image.startsWith('/')) {
-          return `${this.$store.state.root_media_api}${product.texture_image}`
+        if (product.primary_image.startsWith('/')) {
+          return `${this.$store.state.root_media_api}${product.primary_image}`
         }
-        return product.texture_image
+        return product.primary_image
       }
       // Fallback placeholder image
       return 'https://via.placeholder.com/300x300?text=No+Image'
     },
 
     /**
+     * Get category name from product
+     */
+    getCategoryName(product) {
+      if (product.category && product.category.name) {
+        return product.category.name
+      }
+      if (product.furniture_type) {
+        return product.furniture_type
+      }
+      return 'Furniture'
+    },
+
+    /**
      * Get formatted price
      */
     getPrice(product) {
-      const price = product.sale_price_per_sqm || product.price_per_sqm || 0
-      return parseInt(price).toLocaleString('en-IN')
+      if (product.pricing) {
+        const price = product.pricing.current_price || product.pricing.price || 0
+        return parseInt(price).toLocaleString('en-IN')
+      }
+      return '0'
+    },
+
+    /**
+     * Get dimensions string
+     */
+    getDimensions(product) {
+      if (!product.dimensions) return 'N/A'
+      
+      const dims = product.dimensions
+      const parts = []
+      
+      if (dims.width) parts.push(`W: ${dims.width}m`)
+      if (dims.height) parts.push(`H: ${dims.height}m`)
+      if (dims.depth) parts.push(`D: ${dims.depth}m`)
+      if (dims.length) parts.push(`L: ${dims.length}m`)
+      
+      return parts.length > 0 ? parts.join(' | ') : 'N/A'
     },
 
     /**
@@ -149,7 +182,6 @@ export default {
   border-radius: 20px;
   background: white;
   border: 2px solid rgba(128, 128, 128, 0.16);
-  margin-top: 10px;
   margin-bottom: 10px;
 }
 

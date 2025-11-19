@@ -77,7 +77,8 @@
       <div v-else class="designs-grid">
         <a-row>
 
-        <a-col :sm="12" :xs="12" :md="8" :lg="6" style="border:1px solid rgba(0,0,0,0.1);border-radius:10px" v-for="design in designs" :key="design.id" @click="openDesignDetail(design)">
+        <a-col :sm="12" :xs="12" :md="8" :lg="6" v-for="design in designs" :key="design.id" @click="openDesignDetail(design)" style="padding:5px">
+          <div style="border:1px solid rgba(0,0,0,0.1);border-radius:10px;" >
           <div >
             <img 
               :src="getImageUrl(design.image)" 
@@ -130,6 +131,7 @@
               
               <span class="like-count">{{ design.likes }}</span>
             </div>
+          </div>
           </div>
         </a-col>
         </a-row>

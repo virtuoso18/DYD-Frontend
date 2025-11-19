@@ -1,4 +1,8 @@
 <template>
+  <!-- {{floors}} -->
+<!-- {{walls}} -->
+<!-- {{furniture_products}} -->
+<!-- {{lights}} -->
   <div>
     <!-- Header -->
     <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px; background: white; border-bottom: 1px solid #f0f0f0;">
@@ -35,7 +39,7 @@
     <div style="height: calc(76vh - 120px); overflow-y: auto; padding: 5px; background: #fafafa;">
       
       <!-- Floors -->
-      <a-collapse v-model:activeKey="floorsActiveKey" style="margin-bottom: 12px;">
+      <a-collapse v-model:activeKey="floorsActiveKey" style="margin-bottom: 12px;" v-if="floors.length>0">
         <a-collapse-panel key="floors">
           <template #header>
             <div style="display: flex; justify-content: space-between; width: 100%;">
@@ -59,7 +63,7 @@
       </a-collapse>
 
       <!-- Walls -->
-      <a-collapse v-model:activeKey="wallsActiveKey" style="margin-bottom: 12px;">
+      <a-collapse v-model:activeKey="wallsActiveKey" style="margin-bottom: 12px;" v-if="walls.length>0">
         <a-collapse-panel key="walls">
           <template #header>
             <div style="display: flex; justify-content: space-between; width: 100%;">
@@ -83,7 +87,7 @@
       </a-collapse>
 
       <!-- Furniture -->
-      <a-collapse v-model:activeKey="productsActiveKey" style="margin-bottom: 12px;">
+      <a-collapse v-model:activeKey="productsActiveKey" style="margin-bottom: 12px;"  v-if="furniture_products.length>0">
         <a-collapse-panel key="products">
           <template #header>
             <div style="display: flex; justify-content: space-between; width: 100%;">
@@ -109,7 +113,7 @@
       </a-collapse>
 
       <!-- Lights -->
-      <a-collapse v-model:activeKey="lightsActiveKey">
+      <a-collapse v-model:activeKey="lightsActiveKey" v-if="lights.length>0">
         <a-collapse-panel key="lights">
           <template #header>
             <div style="display: flex; justify-content: space-between; width: 100%;">
@@ -176,62 +180,59 @@ export default {
     
   },
   methods: {
-    async fetchData(brand=null) {
-      if (brand){
+    async fetchData(brand = null) {
+  let endpoints = [];
 
-        console.log("brand catalogue here ")
-        console.log(brand)
-        const endpoints = [
-          // /load-brand-products/3d-products/<str:business_id>'
-          // /load-brand-products/lights/<str:business_id>'
+  if (brand) {
+    endpoints = [
+      { key: 'floors', url: 'room/api/load-brand-products/floors/' + brand },
+      { key: 'walls', url: 'room/api/load-brand-products/walls/' + brand },
+      { key: 'furniture_products', url: 'product/api/load-brand-products/3d-products/' + brand },
+      { key: 'lights', url: 'product/api/load-brand-products/lights/' + brand }
+    ];
+  } else {
+    endpoints = [
+      { key: 'floors', url: 'room/api/floors/' },
+      { key: 'walls', url: 'room/api/walls/' },
+      { key: 'furniture_products', url: 'product/api/3d-products/' },
+      { key: 'lights', url: 'product/api/lights/' }
+    ];
+  }
 
-          // load-brand-products/3d-products/<str:business_slug>/
-          // load-brand-products/lights/<str:business_slug>/
-          // load-brand-products/walls/<str:business_slug>/
-          // load-brand-products/floors/<str:business_slug>/
-          
-          { key: 'floors', url: 'room/api/load-brand-products/floors/' +brand },
-          { key: 'walls', url: 'room/api/load-brand-products/walls/' +brand },
-          { key: 'furniture_products', url: 'product/api/load-brand-products/3d-products/'+brand },
-          { key: 'lights', url: 'product/api/load-brand-products/lights/'+brand }
-        ];
-        
-        endpoints.forEach(async ({key, url}) => {
-          try {
-            const res = await fetch(`${this.$store.state.root_api}${url}`,{
-          headers: {
-              'Authorization': `Token ${localStorage.getItem('token')}`
-            }
-        });
-            const data = await res.json();
-            if (data?.data) this[key] = data.data;
-          } catch (e) {
-            console.error(`Failed to fetch ${key}:`, e);
-          }
-        });
+  // Use Promise.all to wait for all requests to complete
+  const requests = endpoints.map(async ({ key, url }) => {
+    try {
+      const res = await fetch(`${this.$store.state.root_api}${url}`, {
+        headers: {
+          'Authorization': `Token ${localStorage.getItem('token')}`
+        }
+      });
+      const data = await res.json();
+      
+      if (data?.data) {
+        this[key] = data.data;
       }
-      else {
+    } catch (e) {
+      console.error(`Failed to fetch ${key}:`, e);
+    }
+  });
 
-        const endpoints = [
-          { key: 'floors', url: 'room/api/floors/' },
-          { key: 'walls', url: 'room/api/walls/' },
-          { key: 'furniture_products', url: 'product/api/3d-products/' },
-          { key: 'lights', url: 'product/api/lights/' }
-        ];
-        
-        endpoints.forEach(async ({key, url}) => {
-          try {
-            const res = await fetch(`${this.$store.state.root_api}${url}`, {headers: {
-              'Authorization': `Token ${localStorage.getItem('token')}`
-            }});
-            const data = await res.json();
-            if (data?.data) this[key] = data.data;
-          } catch (e) {
-            console.error(`Failed to fetch ${key}:`, e);
-          }
-        });
-      }
-    },
+  // Wait for all requests to complete
+  await Promise.all(requests);
+
+  // Now emit after all data is loaded
+  this.$emit('brand-products', {
+    'floors': this.floors,
+    'walls': this.walls,
+    'furniture_products': this.furniture_products,
+    'lights': this.lights
+  });
+
+  // console.log('Data loaded - floors:', this.floors.length);
+  // console.log('Data loaded - walls:', this.walls.length);
+  // console.log('Data loaded - furniture_products:', this.furniture_products.length);
+  // console.log('Data loaded - lights:', this.lights.length);
+},
 
     filterItems(items, field = 'title') {
       if (!this.searchText) return items;

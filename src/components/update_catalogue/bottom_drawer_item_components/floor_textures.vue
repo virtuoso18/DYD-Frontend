@@ -3,53 +3,70 @@
    
     <div class="products-list">
         <a-row >
-<a-col v-for="product in products" :key="product.id" 
-       class="product-responsive" style="padding:5px;">
-                <div  class="product">
+            <a-col v-for="product in products" :key="product.id" 
+                   class="product-responsive" style="padding:5px;">
+                <div class="product">
                    <div class="product-image-container">
-              <img 
-                :src="product.image" 
-                :alt="product.name"
-                class="product-image"
-              />
-              <!-- Category Badge -->
-              <div class="category-badge">{{ product.category }}</div>
-              <!-- AR Badge -->
-              <div class="ar-badge">AR</div>
-            </div>
+                      <img 
+                        :src="getProductImage(product)" 
+                        :alt="product.title"
+                        class="product-image"
+                      />
+                      <!-- Category Badge -->
+                      <div class="category-badge">{{ getProductType(product) }}</div>
+                      <!-- AR Badge -->
+                      <div class="ar-badge">AR</div>
+                    </div>
 
-                <a-row>
+                    <a-row>
+                        <a-col span="24">
+                            <b>{{ product.title }}</b>
+                        </a-col>
+                        
+                        <a-col span="18">
+                            Colors
+                        </a-col>
+                        
+                        <a-col span="6" style="display: flex; justify-content: end; gap: 6px;">
+                            <div 
+                                v-for="color in product.colors_available" 
+                                :key="color.id"
+                                style="width:20px; height:20px; border-radius:20px; border: 1px solid #ddd;" 
+                                :style="{ backgroundColor: color.color_hex }"
+                                :title="color.title"
+                            ></div>
+                        </a-col>
 
-                    <a-col span="24">
-<b>{{product.name}}</b>
-                    </a-col>
-                    
-                    <a-col span="18">
-Color
-                    </a-col>
-                    
-                    <a-col span="6" style="display: flex;justify-content: end;">
-<div style="width:20px;height:20px;;border-radius:20px;" :style="'background:'+product.color"></div>
-<div style="width:20px;height:20px;;border-radius:20px;" :style="'background:pink'"></div>
-                    </a-col>
-                    <a-col span="12">
-Price
-                    </a-col>
-                    
-                    <a-col span="12">
-{{product.price}}
-                    </a-col>
+                        <a-col span="12">
+                            Price per Sq.m
+                        </a-col>
+                        
+                        <a-col span="12" style="text-align: right;">
+                            ₹{{ formatPrice(product.sale_price_per_sqm) }}
+                        </a-col>
 
-                     <a-col span="17">
-<a-button  block>Product Details</a-button>
-                    </a-col>
-                    
-                    <a-col span="1"></a-col>
-                    <a-col span="4">
-<a-button ><HeartOutlined /></a-button>
+                        <a-col v-if="product.size_width && product.size_height" span="12">
+                            Size: {{ product.size_width }}x{{ product.size_height }}cm
+                        </a-col>
 
-                    </a-col>
-                </a-row>
+                        <a-col v-if="product.columns && product.rows" span="12" style="text-align: right;">
+                            Grid: {{ product.columns }}x{{ product.rows }}
+                        </a-col>
+
+                        <a-col span="17">
+                            <a-button block @click="handleProductDetail(product)">Product Details</a-button>
+                        </a-col>
+                        
+                        <a-col span="1"></a-col>
+                        <a-col span="4">
+                            <a-button 
+                                :type="isWishlisted(product.id) ? 'primary' : 'default'"
+                                @click="toggleWishlist(product)"
+                            >
+                                <HeartOutlined />
+                            </a-button>
+                        </a-col>
+                    </a-row>
                 </div>
 
             </a-col>
@@ -62,185 +79,94 @@ Price
 
 
 <script>
-import {HeartOutlined} from '@ant-design/icons-vue'
+import { HeartOutlined } from '@ant-design/icons-vue'
+
 export default {
   name: 'MyProducts',
   components:{
     HeartOutlined
   },
+  props :{
+    products: {
+      type: Array,
+      default: () => []
+    }
+  },
   data() {
     return {
-      products: [
-        {
-          id: 1,
-          name: 'Chamaro Sky',
-          category: 'Modern Chair',
-          price: 660,
-          color: '#6B7280',
-          image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-          brandLogo: 'https://via.placeholder.com/60x30/FFB800/FFFFFF?text=LOGO',
-          brand: 'Brand',
-          isWishlisted: false
-        },
-        {
-          id: 2,
-          name: 'Chamaro Sky',
-          category: 'Modern Chair',
-          price: 660,
-          color: '#6B7280',
-          image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-          brandLogo: 'https://via.placeholder.com/60x30/FFB800/FFFFFF?text=LOGO',
-          brand: 'Brand',
-          isWishlisted: false
-        },
-        {
-          id: 3,
-          name: 'Chamaro Sky',
-          category: 'Modern Chair',
-          price: 660,
-          color: '#6B7280',
-          image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-          brandLogo: 'https://via.placeholder.com/60x30/FFB800/FFFFFF?text=LOGO',
-          brand: 'Brand',
-          isWishlisted: false
-        },
-        {
-          id: 4,
-          name: 'Chamaro Sky',
-          category: 'Modern Chair',
-          price: 660,
-          color: '#6B7280',
-          image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-          brandLogo: 'https://via.placeholder.com/60x30/FFB800/FFFFFF?text=LOGO',
-          brand: 'Brand',
-          isWishlisted: true
-        },
-        {
-          id: 3,
-          name: 'Chamaro Sky',
-          category: 'Modern Chair',
-          price: 660,
-          color: '#6B7280',
-          image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-          brandLogo: 'https://via.placeholder.com/60x30/FFB800/FFFFFF?text=LOGO',
-          brand: 'Brand',
-          isWishlisted: false
-        },
-        {
-          id: 4,
-          name: 'Chamaro Sky',
-          category: 'Modern Chair',
-          price: 660,
-          color: '#6B7280',
-          image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-          brandLogo: 'https://via.placeholder.com/60x30/FFB800/FFFFFF?text=LOGO',
-          brand: 'Brand',
-          isWishlisted: true
-        },
-        {
-          id: 3,
-          name: 'Chamaro Sky',
-          category: 'Modern Chair',
-          price: 660,
-          color: '#6B7280',
-          image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-          brandLogo: 'https://via.placeholder.com/60x30/FFB800/FFFFFF?text=LOGO',
-          brand: 'Brand',
-          isWishlisted: false
-        },
-        {
-          id: 4,
-          name: 'Chamaro Sky',
-          category: 'Modern Chair',
-          price: 660,
-          color: '#6B7280',
-          image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-          brandLogo: 'https://via.placeholder.com/60x30/FFB800/FFFFFF?text=LOGO',
-          brand: 'Brand',
-          isWishlisted: true
-        },
-        {
-          id: 5,
-          name: 'Chamaro Sky',
-          category: 'Modern Chair',
-          price: 660,
-          color: '#6B7280',
-          image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-          brandLogo: 'https://via.placeholder.com/60x30/FFB800/FFFFFF?text=LOGO',
-          brand: 'Brand',
-          isWishlisted: false
-        },
-        {
-          id: 6,
-          name: 'Chamaro Sky',
-          category: 'Modern Chair',
-          price: 660,
-          color: '#6B7280',
-          image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-          brandLogo: 'https://via.placeholder.com/60x30/FFB800/FFFFFF?text=LOGO',
-          brand: 'Brand',
-          isWishlisted: false
-        },
-        {
-          id: 7,
-          name: 'Chamaro Sky',
-          category: 'Modern Chair',
-          price: 660,
-          color: '#6B7280',
-          image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-          brandLogo: 'https://via.placeholder.com/60x30/FFB800/FFFFFF?text=LOGO',
-          brand: 'Brand',
-          isWishlisted: false
-        },
-        {
-          id: 8,
-          name: 'Chamaro Sky',
-          category: 'Modern Chair',
-          price: 660,
-          color: '#6B7280',
-          image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-          brandLogo: 'https://via.placeholder.com/60x30/FFB800/FFFFFF?text=LOGO',
-          brand: 'Brand',
-          isWishlisted: false
-        },
-        {
-          id: 9,
-          name: 'Chamaro Sky',
-          category: 'Modern Chair',
-          price: 660,
-          color: '#6B7280',
-          image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-          brandLogo: 'https://via.placeholder.com/60x30/FFB800/FFFFFF?text=LOGO',
-          brand: 'Brand',
-          isWishlisted: false
-        },
-        {
-          id: 10,
-          name: 'Chamaro Sky',
-          category: 'Modern Chair',
-          price: 660,
-          color: '#6B7280',
-          image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-          brandLogo: 'https://via.placeholder.com/60x30/FFB800/FFFFFF?text=LOGO',
-          brand: 'Brand',
-          isWishlisted: false
-        }
-      ]
+      wishlisted: new Set()
     }
   },
   methods: {
-    handleAddProduct() {
-      console.log('Add product clicked');
-      // Handle add product functionality
+    /**
+     * Get the proper image URL from product
+     */
+    getProductImage(product) {
+      if (product.texture_image) {
+        // If it's a relative path, prepend the API URL
+        if (product.texture_image.startsWith('/')) {
+          return `${this.$store.state.root_media_api}${product.texture_image}`
+        }
+        return product.texture_image
+      }
+      // Fallback placeholder image
+      return 'https://via.placeholder.com/300x300?text=No+Image'
     },
-    handleProductDetail(product) {
-      console.log('Product detail clicked:', product);
-      // Handle product detail navigation
+
+    /**
+     * Determine product type from the object structure
+     */
+    getProductType(product) {
+      // Check if it has floor-specific fields
+      if (product.size_height) {
+        return 'Floor'
+      }
+      // Check if it has wall-specific fields
+      if (product.texture_wall_id) {
+        return 'Wall'
+      }
+      // Check if it's a 3D product (furniture)
+      if (product.model_3d_url) {
+        return 'Furniture'
+      }
+      // Check if it's a light
+      if (product.light_type) {
+        return 'Light'
+      }
+      return 'Product'
     },
+
+    /**
+     * Format price with proper decimal places
+     */
+    formatPrice(price) {
+      if (!price) return '0'
+      return parseInt(price).toLocaleString('en-IN')
+    },
+
+    /**
+     * Check if product is wishlisted
+     */
+    isWishlisted(productId) {
+      return this.wishlisted.has(productId)
+    },
+
+    /**
+     * Toggle wishlist status
+     */
     toggleWishlist(product) {
-      product.isWishlisted = !product.isWishlisted;
-      const message = product.isWishlisted ? 'Added to wishlist' : 'Removed from wishlist';
-      this.$message.success(message);
+      if (this.wishlisted.has(product.id)) {
+        this.wishlisted.delete(product.id)
+        this.$message.success('Removed from wishlist')
+      } else {
+        this.wishlisted.add(product.id)
+        this.$message.success('Added to wishlist')
+      }
+    },
+
+    handleProductDetail(product) {
+      console.log('Product detail clicked:', product)
+      this.$emit('product-selected', product)
     }
   }
 }
@@ -251,27 +177,27 @@ export default {
 .main{
     padding:10px;
     border-radius:20px;
-    /* height: 100vh; */
-
     background: white;
     border:2px solid rgba(128, 128, 128, 0.16);
-    
     margin-bottom:10px;
 }
+
 .head-section{
     display:flex;
     justify-content: space-between;
 }
+
 .product{
     padding:10px;
     margin-bottom:10px;
     border-radius:10px;
     background:#f3f2f4;
 }
+
 .products-list{
     padding-bottom:20px;
-    
 }
+
 .product-image-container {
   position: relative;
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
@@ -279,7 +205,6 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  /* padding: 16px; */
 }
 
 .product-image {
@@ -316,8 +241,9 @@ export default {
   font-weight: 700;
   letter-spacing: 0.5px;
 }
+
 .product-responsive {
-  width:50%;
+  width: 50%;
   flex: 0 0 50%;
 }
 

@@ -501,7 +501,16 @@
                                                 
                                                 <a-col span="1"></a-col>
                                                 <a-col span="4">
-                                                    <a-button><HeartOutlined /></a-button>
+                                                    <!-- {{product,is_favorited}} -->
+                                                    <!-- <a-button><HeartOutlined /></a-button> -->
+                                                     <a-button @click="toggleFavorite(product,'product')">
+                                                                    <template v-if="product.is_favorited">
+                                                                    <HeartFilled style="color: red" />
+                                                                    </template>
+                                                                    <template v-else>
+                                                                    <HeartOutlined />
+                                                                    </template>
+                                                </a-button>
                                                 </a-col>
                                             </a-row>
                                         </div>
@@ -602,7 +611,16 @@
                                 
                                 <a-col span="1"></a-col>
                                 <a-col span="4">
-                                    <a-button><HeartOutlined /></a-button>
+                                    <!-- <a-button><HeartOutlined /></a-button> -->
+                                     
+                                                     <a-button @click="toggleFavorite(product,'wall_texture')">
+                                                                    <template v-if="product.is_favorited">
+                                                                    <HeartFilled style="color: red" />
+                                                                    </template>
+                                                                    <template v-else>
+                                                                    <HeartOutlined />
+                                                                    </template>
+                                                </a-button>
                                 </a-col>
                                 </a-row>
                             </div>
@@ -699,7 +717,16 @@
                                                 
                                                 <a-col span="1"></a-col>
                                                 <a-col span="4">
-                                                    <a-button><HeartOutlined /></a-button>
+                                                    <!-- <a-button><HeartOutlined /></a-button> -->
+                                                     
+                                                     <a-button @click="toggleFavorite(product,'floor_texture')">
+                                                                    <template v-if="product.is_favorited">
+                                                                    <HeartFilled style="color: red" />
+                                                                    </template>
+                                                                    <template v-else>
+                                                                    <HeartOutlined />
+                                                                    </template>
+                                                </a-button>
                                                 </a-col>
                                 </a-row>
                             </div>
@@ -768,7 +795,16 @@
                                                 </a-col>
                                                 <a-col span="1"></a-col>
                                                 <a-col span="4">
-                                                    <a-button><HeartOutlined /></a-button>
+                                                    <!-- <a-button><HeartOutlined /></a-button> -->
+                                                   
+                                                     <a-button @click="toggleFavorite(product,'product')">
+                                                                    <template v-if="product.is_favorited">
+                                                                    <HeartFilled style="color: red" />
+                                                                    </template>
+                                                                    <template v-else>
+                                                                    <HeartOutlined />
+                                                                    </template>
+                                                </a-button>
                                                 </a-col>
                                             </a-row>
                                         </div>
@@ -1456,7 +1492,7 @@
 </template>
 
 <script>
-import {HeartOutlined,ExclamationCircleOutlined} from '@ant-design/icons-vue'
+import {HeartOutlined,HeartFilled,ExclamationCircleOutlined} from '@ant-design/icons-vue'
 import product_details from '@/components/store/product_details.vue'
 // import edit_product from '@/components/store/edit_product.vue'
 // import add_new_product from '@/components/store/add_new_product.vue'
@@ -1498,6 +1534,7 @@ export default {
     name: 'UnifiedProducts',
     components:{
         HeartOutlined,
+        HeartFilled,
         ExclamationCircleOutlined,
         product_details,
         // edit_product,
@@ -1660,6 +1697,34 @@ export default {
         this.fetchMyFloorTextureProducts()
     },
     methods: {
+async toggleFavorite(product,product_type) {
+        try {
+            const token = localStorage.getItem('token');
+            console.log(product)
+            const response = await fetch(
+                
+            `${this.$store.state.root_api}likes/favorites/toggle/`,
+            {
+                method: "POST",
+                headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Token ${token}`,
+                },
+                body: JSON.stringify({
+                id: product.id,
+                type: product_type,
+                }),
+            }
+            );
+
+            const data = await response.json();
+
+            product.is_favorited = data.favorited;
+
+        } catch (error) {
+            console.error("Favorite toggle failed", error);
+        }
+        },
 
           delete_product(e){
             console.log('clicked delete')

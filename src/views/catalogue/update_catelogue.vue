@@ -1,4 +1,5 @@
 <template>
+  <!-- Walls Drawer -->
 <a-drawer
     title="AI Catalog Walls Textures"
     :placement="'bottom'"
@@ -26,11 +27,25 @@ Switch Furniture</a-button>
     <p>Some contents...</p>
       </a-col>
       <a-col :span="20">
-
-        <wall_textures_bottom_drawer_menu/>
+ <!-- seeAll_products
+        {{seeAll_products}}
+        <br>
+        seeAll_furnitures
+{{seeAll_furnitures}}
+<br>
+seeAll_Walls
+{{seeAll_Walls}}
+<br>
+seeAll_Floor
+{{seeAll_Floor}}
+<br>
+seeAll_Lights
+{{seeAll_Lights}} -->
+        <wall_textures_bottom_drawer_menu :products="seeAll_Walls"/>
       </a-col>
     </a-row>
   </a-drawer>
+  <!-- Floor Drawer -->
   <a-drawer
     title="AI Catalog Floor Textures"
     :placement="'bottom'"
@@ -59,24 +74,26 @@ Switch Furniture</a-button>
     <p>Some contents...</p>
       </a-col>
       <a-col :span="20">
-        <floor_textures_bottom_drawer_menu/>
+        <!-- {{ seeAll_Floor }} -->
+        
+        <floor_textures_bottom_drawer_menu :products="seeAll_Floor"/>
       </a-col>
     </a-row>
     
   </a-drawer>
- <a-drawer
-    title="AI All Products"
+  <!-- Furniture Drawer -->
+<a-drawer
+    title="AI Catalog Furnitures Textures"
     :placement="'bottom'"
     :closable="true"
-    :open="openSeeAll_products"
+    :open="openSeeAll_furnitures"
     height="90%"
     style="
   border-top-left-radius: 20px;;
   border-top-right-radius: 20px;;
 "
     @close="onClose_drawer_modal"
-    >
-    <template #extra> <div class="head-section">
+    > <template #extra> <div class="head-section">
           <a-button type="primary"> <svg width="16" height="15" viewBox="0 0 16 15" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M4.25 14.2288C3.35489 14.2288 2.49645 13.893 1.86351 13.2952C1.23058 12.6975 0.875 11.8867 0.875 11.0413C0.875 10.196 1.23058 9.38521 1.86351 8.78744C2.49645 8.18967 3.35489 7.85384 4.25 7.85384C5.14511 7.85384 6.00355 8.18967 6.63649 8.78744C7.26942 9.38521 7.625 10.196 7.625 11.0413C7.625 11.8867 7.26942 12.6975 6.63649 13.2952C6.00355 13.893 5.14511 14.2288 4.25 14.2288ZM11.75 7.14551C11.3068 7.14551 10.8679 7.06306 10.4584 6.90287C10.049 6.74269 9.67691 6.5079 9.36351 6.21191C9.05012 5.91592 8.80152 5.56454 8.63191 5.17781C8.4623 4.79109 8.375 4.3766 8.375 3.95801C8.375 3.53942 8.4623 3.12493 8.63191 2.7382C8.80152 2.35148 9.05012 2.00009 9.36351 1.7041C9.67691 1.40812 10.049 1.17333 10.4584 1.01314C10.8679 0.852955 11.3068 0.770508 11.75 0.770508C12.6451 0.770508 13.5035 1.10633 14.1365 1.7041C14.7694 2.30188 15.125 3.11263 15.125 3.95801C15.125 4.80339 14.7694 5.61414 14.1365 6.21191C13.5035 6.80968 12.6451 7.14551 11.75 7.14551ZM1.25 4.66634C1.25 3.72703 1.64509 2.8262 2.34835 2.162C3.05161 1.49781 4.00544 1.12467 5 1.12467H7.25V2.54134H5C4.40326 2.54134 3.83097 2.76522 3.40901 3.16374C2.98705 3.56225 2.75 4.10276 2.75 4.66634V6.79134H1.25V4.66634ZM13.25 8.20801V10.333C13.25 10.8966 13.0129 11.4371 12.591 11.8356C12.169 12.2341 11.5967 12.458 11 12.458H8.75V13.8747H11C11.9946 13.8747 12.9484 13.5015 13.6517 12.8373C14.3549 12.1732 14.75 11.2723 14.75 10.333V8.20801H13.25Z" fill="white"/>
 </svg>
@@ -92,11 +109,55 @@ Switch Furniture</a-button>
     <p>Some contents...</p>
       </a-col>
       <a-col :span="20">
-        <floor_textures_bottom_drawer_menu/>
+
+        <furnitures_bottom_drawer_menu :products="seeAll_furnitures"/>
       </a-col>
     </a-row>
-    
   </a-drawer>
+  <!-- Lights Drawerr -->
+<a-drawer
+    title="AI Catalog Lights Textures"
+    :placement="'bottom'"
+    :closable="true"
+    :open="openSeeAll_Lights"
+    height="90%"
+    style="
+  border-top-left-radius: 20px;;
+  border-top-right-radius: 20px;;
+"
+    @close="onClose_drawer_modal"
+    > <template #extra> <div class="head-section">
+          <a-button type="primary"> <svg width="16" height="15" viewBox="0 0 16 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M4.25 14.2288C3.35489 14.2288 2.49645 13.893 1.86351 13.2952C1.23058 12.6975 0.875 11.8867 0.875 11.0413C0.875 10.196 1.23058 9.38521 1.86351 8.78744C2.49645 8.18967 3.35489 7.85384 4.25 7.85384C5.14511 7.85384 6.00355 8.18967 6.63649 8.78744C7.26942 9.38521 7.625 10.196 7.625 11.0413C7.625 11.8867 7.26942 12.6975 6.63649 13.2952C6.00355 13.893 5.14511 14.2288 4.25 14.2288ZM11.75 7.14551C11.3068 7.14551 10.8679 7.06306 10.4584 6.90287C10.049 6.74269 9.67691 6.5079 9.36351 6.21191C9.05012 5.91592 8.80152 5.56454 8.63191 5.17781C8.4623 4.79109 8.375 4.3766 8.375 3.95801C8.375 3.53942 8.4623 3.12493 8.63191 2.7382C8.80152 2.35148 9.05012 2.00009 9.36351 1.7041C9.67691 1.40812 10.049 1.17333 10.4584 1.01314C10.8679 0.852955 11.3068 0.770508 11.75 0.770508C12.6451 0.770508 13.5035 1.10633 14.1365 1.7041C14.7694 2.30188 15.125 3.11263 15.125 3.95801C15.125 4.80339 14.7694 5.61414 14.1365 6.21191C13.5035 6.80968 12.6451 7.14551 11.75 7.14551ZM1.25 4.66634C1.25 3.72703 1.64509 2.8262 2.34835 2.162C3.05161 1.49781 4.00544 1.12467 5 1.12467H7.25V2.54134H5C4.40326 2.54134 3.83097 2.76522 3.40901 3.16374C2.98705 3.56225 2.75 4.10276 2.75 4.66634V6.79134H1.25V4.66634ZM13.25 8.20801V10.333C13.25 10.8966 13.0129 11.4371 12.591 11.8356C12.169 12.2341 11.5967 12.458 11 12.458H8.75V13.8747H11C11.9946 13.8747 12.9484 13.5015 13.6517 12.8373C14.3549 12.1732 14.75 11.2723 14.75 10.333V8.20801H13.25Z" fill="white"/>
+</svg>
+&nbsp;
+Switch Lights</a-button>
+    </div>
+    </template>
+    <a-row>
+      <a-col :span="4">
+        
+    <p>Some contents...</p>
+    <p>Some contents...</p>
+    <p>Some contents...</p>
+      </a-col>
+      <a-col :span="20">
+
+        <light_items_bottom_drawer_menu :products="seeAll_Lights"/>
+      </a-col>
+    </a-row>
+  </a-drawer>
+
+  <!-- Fetch All Drawer  -->
+ <fetch_all_drawer_component
+  :openSeeAll_products="openSeeAll_products"
+  :seeAll_Floor="seeAll_Floor"
+  :seeAll_Walls="seeAll_Walls"
+  :seeAll_furnitures="seeAll_furnitures"
+  :seeAll_Lights="seeAll_Lights"
+  @close="onClose_drawer_modal"
+/>
+
 
    <a-drawer
     title="Change Room  "
@@ -608,16 +669,20 @@ Switch Furniture</a-button> -->
   
               <!-- Category Tabs -->
               <div class="category-section" v-if="active_tab_image === 'item_replacement'">
+                <!-- {{brand_floors}}
+                {{brand_walls}}
+                {{brand_furniture_products}}
+                {{brand_lights}} -->
                 <div class="category-tabs">
-                  <div :class="select_replace === 'All' ? 'category-tab active' : 'category-tab'" @click="selectCategory('All')">
+                  <div :class="select_replace === 'All' ? 'category-tab active' : 'category-tab'" @click="selectCategory('All')"  >
                    <svg width="1.875em" height="1.5em" viewBox="13 1 38 30" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M32 3L43.5 9.5L43.5 23L32 29L20.5 23L20.5 9.5L32 3ZM32 3V16.5" stroke="currentColor" stroke-linejoin="round"></path><path d="M32 16.5L43.5 23L32 29L20.5 23L32 16.5Z" fill="url(#paint0_linear_1_56)" stroke="currentColor" stroke-linejoin="round"></path><defs><linearGradient id="paint0_linear_1_56" x1="32" y1="16.5" x2="32" y2="29" gradientUnits="userSpaceOnUse"><stop stop-color="#00000033" stop-opacity="0"></stop><stop offset="1" stop-color="#00000033"></stop></linearGradient></defs></svg>
                     All
                   </div>
-                  <div :class="select_replace === 'Floor' ? 'category-tab active' : 'category-tab'" @click="selectCategory('Floor')">
+                  <div :class="select_replace === 'Floor' ? 'category-tab active' : 'category-tab'" @click="selectCategory('Floor')" v-if="brand_floors.length>0">
                    <svg width="1.875em" height="1.5em" viewBox="13 1 38 30" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M32 3L43.5 9.5L43.5 23L32 29L20.5 23L20.5 9.5L32 3ZM32 3V16.5" stroke="currentColor" stroke-linejoin="round"></path><path d="M32 16.5L43.5 23L32 29L20.5 23L32 16.5Z" fill="url(#paint0_linear_1_56)" stroke="currentColor" stroke-linejoin="round"></path><defs><linearGradient id="paint0_linear_1_56" x1="32" y1="16.5" x2="32" y2="29" gradientUnits="userSpaceOnUse"><stop stop-color="#00000033" stop-opacity="0"></stop><stop offset="1" stop-color="#00000033"></stop></linearGradient></defs></svg>
                     Floor
                   </div>
-                  <div :class="select_replace === 'Furniture' ? 'category-tab active' : 'category-tab'" @click="selectCategory('Furniture')">
+                  <div :class="select_replace === 'Furniture' ? 'category-tab active' : 'category-tab'" @click="selectCategory('Furniture')" v-if="brand_furniture_products.length>0">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
                     <path d="M4.59 13.83V16.13M13.79 13.83V16.13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                     <path d="M15.32 7.70C15.32 6.27 15.32 5.55 15.01 5.02C14.81 4.67 14.52 4.38 14.17 4.18C13.64 3.87 12.92 3.87 11.49 3.87H6.89C5.46 3.87 4.74 3.87 4.21 4.18C3.86 4.38 3.57 4.67 3.37 5.02C3.06 5.55 3.06 6.27 3.06 7.70" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
@@ -625,11 +690,34 @@ Switch Furniture</a-button> -->
                   </svg>
                   Furniture
                   </div>
-                  <div :class="select_replace === 'Wall' ? 'category-tab active' : 'category-tab'" @click="selectCategory('Wall')">
+                  <div :class="select_replace === 'Wall' ? 'category-tab active' : 'category-tab'" @click="selectCategory('Wall')" v-if="brand_walls.length>0">
                    <svg width="1.875em" height="1.5em" viewBox="13 1 38 30" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M32 29L43.5 23L43.5 9.5L32 3L20.5 9.5L20.5 23L32 29Z" stroke="currentColor" stroke-linejoin="round"></path><path d="M43.5 9.5L32 3V16.25L43.5 23L43.5 9.5Z" fill="url(#paint0_linear_2_147)" stroke="currentColor" stroke-linejoin="round"></path><path d="M32 3L20.5 9.5L20.5 23L32 16.25L32 3Z" fill="url(#paint1_linear_2_147)" stroke="currentColor" stroke-linejoin="round"></path><defs><linearGradient id="paint0_linear_2_147" x1="43.5" y1="13" x2="32" y2="13" gradientUnits="userSpaceOnUse"><stop stop-color="#00000033"></stop><stop offset="1" stop-color="#00000033" stop-opacity="0"></stop></linearGradient><linearGradient id="paint1_linear_2_147" x1="20.5" y1="14.5" x2="32" y2="14.5" gradientUnits="userSpaceOnUse"><stop stop-color="#00000033"></stop><stop offset="1" stop-color="#00000033" stop-opacity="0"></stop></linearGradient></defs></svg> 
                    Wall
                   </div>
-                  <div :class="select_replace === 'Lights' ? 'category-tab active' : 'category-tab'" @click="selectCategory('Lights')">
+                  <div :class="select_replace === 'Lights' ? 'category-tab active' : 'category-tab'" @click="selectCategory('Lights')" v-if="brand_lights.length>0">
+                  <BulbOutlined style="font-size: 14px;" />  Lights
+                  </div>
+
+
+
+
+                  <div :class="'category-tab deactive'"  v-if="brand_floors.length === 0">
+                   <svg width="1.875em" height="1.5em" viewBox="13 1 38 30" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M32 3L43.5 9.5L43.5 23L32 29L20.5 23L20.5 9.5L32 3ZM32 3V16.5" stroke="currentColor" stroke-linejoin="round"></path><path d="M32 16.5L43.5 23L32 29L20.5 23L32 16.5Z" fill="url(#paint0_linear_1_56)" stroke="currentColor" stroke-linejoin="round"></path><defs><linearGradient id="paint0_linear_1_56" x1="32" y1="16.5" x2="32" y2="29" gradientUnits="userSpaceOnUse"><stop stop-color="#00000033" stop-opacity="0"></stop><stop offset="1" stop-color="#00000033"></stop></linearGradient></defs></svg>
+                    Floor
+                  </div>
+                  <div :class="'category-tab deactive'" v-if="brand_furniture_products.length === 0">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M4.59 13.83V16.13M13.79 13.83V16.13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    <path d="M15.32 7.70C15.32 6.27 15.32 5.55 15.01 5.02C14.81 4.67 14.52 4.38 14.17 4.18C13.64 3.87 12.92 3.87 11.49 3.87H6.89C5.46 3.87 4.74 3.87 4.21 4.18C3.86 4.38 3.57 4.67 3.37 5.02C3.06 5.55 3.06 6.27 3.06 7.70" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    <path d="M15.32 7.70C14.48 7.70 13.79 8.39 13.79 9.23V10.77C13.79 11.40 13.66 11.53 13.03 11.53H5.36C4.73 11.53 4.59 11.40 4.59 10.77V9.23C4.59 8.39 3.91 7.70 3.06 7.70C2.21 7.70 1.53 8.39 1.53 9.23C1.53 9.80 1.84 10.30 2.29 10.56V10.77C2.29 12.21 2.29 12.93 2.74 13.38C3.19 13.83 3.92 13.83 5.36 13.83H13.03C14.47 13.83 15.19 13.83 15.64 13.38C16.09 12.93 16.09 12.21 16.09 10.77V10.56C16.55 10.30 16.86 9.80 16.86 9.23C16.86 8.39 16.17 7.70 15.32 7.70Z" stroke="currentColor" stroke-width="1.5"/>
+                  </svg>
+                  Furniture
+                  </div>
+                  <div :class="'category-tab deactive'"  v-if="brand_walls.length === 0">
+                   <svg width="1.875em" height="1.5em" viewBox="13 1 38 30" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M32 29L43.5 23L43.5 9.5L32 3L20.5 9.5L20.5 23L32 29Z" stroke="currentColor" stroke-linejoin="round"></path><path d="M43.5 9.5L32 3V16.25L43.5 23L43.5 9.5Z" fill="url(#paint0_linear_2_147)" stroke="currentColor" stroke-linejoin="round"></path><path d="M32 3L20.5 9.5L20.5 23L32 16.25L32 3Z" fill="url(#paint1_linear_2_147)" stroke="currentColor" stroke-linejoin="round"></path><defs><linearGradient id="paint0_linear_2_147" x1="43.5" y1="13" x2="32" y2="13" gradientUnits="userSpaceOnUse"><stop stop-color="#00000033"></stop><stop offset="1" stop-color="#00000033" stop-opacity="0"></stop></linearGradient><linearGradient id="paint1_linear_2_147" x1="20.5" y1="14.5" x2="32" y2="14.5" gradientUnits="userSpaceOnUse"><stop stop-color="#00000033"></stop><stop offset="1" stop-color="#00000033" stop-opacity="0"></stop></linearGradient></defs></svg> 
+                   Wall
+                  </div>
+                  <div :class="'category-tab deactive'" v-if="brand_lights.length === 0">
                   <BulbOutlined style="font-size: 14px;" />  Lights
                   </div>
                 </div>
@@ -638,7 +726,7 @@ Switch Furniture</a-button> -->
                 <div style="">
                    <ai_catalog_item_replacement_3d_products
                    v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Furniture'"
-                   @products-see-all=seeAllProductsClicked
+                   @products-see-all="furnituresSeeAll"
                    @trigger-render-3d-object="execute3DRederer"
                    ref="furniture_products_list"
                 @change-3d-model=change3dModel
@@ -657,12 +745,13 @@ Switch Furniture</a-button> -->
                    ></walls>
                    <fernitures v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='All'"
                      @product-selected="product_selected_all_tabs_section"
-  
+                    @brand-products="get_all_products_tabs_available"
                    @see-all-products="SeeAllProducts"
                    >
                    </fernitures>
                    <lights v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Lights'"
                    @light-selected="lightSelected"
+                   @products-see-all="lightsSeeAll"
                   ref="lights_list"
   
                    @light-see-all="lightsSeeAll"
@@ -1061,8 +1150,13 @@ import side_panel_edit_image from '@/components/update_catalogue/edit_image/side
 import main_panel_edit_image from '@/components/update_catalogue/edit_image/main_panel.vue'
 import history_panel_edit_image from '@/components/update_catalogue/edit_image/history_panel.vue'
 import ceiling_3d_object_renderer from '@/components/update_catalogue/renderer_3d_objects/ceiling_3d_renderer.vue'
+
 import wall_textures_bottom_drawer_menu from '@/components/update_catalogue/bottom_drawer_item_components/wall_textures.vue'
 import floor_textures_bottom_drawer_menu from '@/components/update_catalogue/bottom_drawer_item_components/floor_textures.vue'
+import furnitures_bottom_drawer_menu from '@/components/update_catalogue/bottom_drawer_item_components/furnitures.vue'
+import light_items_bottom_drawer_menu from '@/components/update_catalogue/bottom_drawer_item_components/light_items.vue'
+import fetch_all_drawer_component from '@/components/update_catalogue/bottom_drawer_item_components/fetchAllDrawer.vue'
+
 import ai_catalog_item_replacement_3d_products from '@/components/update_catalogue/list_products/item_replacement_3d_products.vue'
 
 export default {
@@ -1097,7 +1191,17 @@ export default {
       processing_generate_is_Loading: false,
       list_history_generated_3d_models: [],
       loading_generated_models_history: false,
-      
+
+
+
+      // Brand Products
+      brand_floors:[],
+      brand_walls:[],
+      brand_furniture_products:[],
+      brand_lights:[],
+
+
+
       // 3D Room Coordinates
       floor_roll: 0,
       floor_pitch: 0,
@@ -1113,10 +1217,22 @@ export default {
       floor_Mask:'',
       floor_3d_model_grid:null,
       
-      // Modals
+      // Modals See All
       openSeeAll_products:false,
+      seeAll_products:[],
+      openSeeAll_furnitures:false,
+      seeAll_furnitures:[],
       openSeeAll_Walls: false,
+      seeAll_Walls:[],
       openSeeAll_Floor: false,
+      seeAll_Floor:[],
+      openSeeAll_Lights: false,
+      seeAll_Lights:[],
+
+
+      
+      
+      
       openSeeAll_ChangeRoom: false,
       closeShareMenu: true,
       showAddProduct: false,
@@ -1247,6 +1363,7 @@ export default {
 
   async mounted() {
     await this.initializeComponent();
+    
   },
 
   beforeUnmount() {
@@ -1259,6 +1376,19 @@ export default {
 
   methods: {
     
+    
+    get_all_products_tabs_available(e){
+      // console.log("==========================================")
+      // console.log("==========================================")
+      // console.log("==========================================")
+      // console.log("==========================================")
+      // console.log(e)
+
+      this.brand_floors= e.floors;
+      this.brand_walls= e.walls;
+      this.brand_furniture_products= e.furniture_products;
+      this.brand_lights= e.lights;
+    },
 // async  rescaleWallMask(e){
 
 // // 2. FLOOR TEXTURE METHOD (corrected)
@@ -2028,14 +2158,128 @@ export default {
     // ==========================================
     // DRAWER MODALS
     // ==========================================
-    wallsSeeAll() {
-      this.openSeeAll_Walls = true;
-    },
-
-    floorSeeAll() {
-      this.openSeeAll_Floor = true;
-    },
     
+    SeeAllProducts(e) {
+  this.openSeeAll_products = true;
+  this.fetchData('all', 'seeAll_products');
+},
+
+furnituresSeeAll(e) {
+  this.openSeeAll_furnitures = true;
+  this.fetchData('furniture_products', 'seeAll_furnitures');
+},
+
+wallsSeeAll() {
+  this.openSeeAll_Walls = true;
+  this.fetchData('walls', 'seeAll_Walls');
+},
+
+floorSeeAll() {
+  this.openSeeAll_Floor = true;
+  this.fetchData('floors', 'seeAll_Floor');
+},
+
+lightsSeeAll() {
+  this.openSeeAll_Lights = true;
+  this.fetchData('lights', 'seeAll_Lights');
+},
+
+async fetchData(product_type, dataKey) {
+  const brand = this.$route.query.brand;
+
+  // Endpoint mapping for different product types
+  const endpointMap = {
+    floors: {
+      branded: `room/api/load-brand-products/floors/${brand}`,
+      all: 'room/api/floors/'
+    },
+    walls: {
+      branded: `room/api/load-brand-products/walls/${brand}`,
+      all: 'room/api/walls/'
+    },
+    furniture_products: {
+      branded: `product/api/load-brand-products/3d-products/${brand}`,
+      all: 'product/api/3d-products/'
+    },
+    lights: {
+      branded: `product/api/load-brand-products/lights/${brand}`,
+      all: 'product/api/lights/'
+    }
+  };
+
+  // If product_type is 'all', fetch all product types
+  if (product_type === 'all') {
+    const endpoints = [
+      { key: 'floors', dataKey: 'seeAll_Floor' },
+      { key: 'walls', dataKey: 'seeAll_Walls' },
+      { key: 'furniture_products', dataKey: 'seeAll_furnitures' },
+      { key: 'lights', dataKey: 'seeAll_Lights' }
+    ];
+
+    const requests = endpoints.map(({ key, dataKey }) => 
+      this.fetchSingleProductType(key, dataKey, brand, endpointMap)
+    );
+    
+    await Promise.all(requests);
+  } else {
+    // Fetch only the specific product type
+    await this.fetchSingleProductType(product_type, dataKey, brand, endpointMap);
+  }
+},
+
+async fetchSingleProductType(productType, dataKey, brand, endpointMap) {
+  try {
+    // Determine which URL to use (branded or all)
+    const urlKey = brand ? 'branded' : 'all';
+    const endpoint = endpointMap[productType]?.[urlKey];
+
+    if (!endpoint) {
+      console.warn(`Unknown product type: ${productType}`);
+      return;
+    }
+
+    // Build the full URL
+    const url = `${this.$store.state.root_api}${endpoint}`;
+
+    console.log(`📡 Fetching ${productType}:`, url);
+
+    // Make the API request
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Token ${localStorage.getItem('token')}`
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    // Handle different response formats
+    if (data?.data && Array.isArray(data.data)) {
+      this[dataKey] = data.data;
+      console.log(`✅ Loaded ${dataKey}:`, data.data.length, 'products');
+    } else if (Array.isArray(data)) {
+      // Direct array response
+      this[dataKey] = data;
+      console.log(`✅ Loaded ${dataKey}:`, data.length, 'products');
+    } else if (data?.results && Array.isArray(data.results)) {
+      // Django REST pagination format
+      this[dataKey] = data.results;
+      console.log(`✅ Loaded ${dataKey}:`, data.results.length, 'products');
+    } else {
+      console.warn(`Unexpected data format for ${dataKey}:`, data);
+      this[dataKey] = [];
+    }
+  } catch (error) {
+    console.error(`❌ Failed to fetch ${dataKey}:`, error);
+    this[dataKey] = [];
+    this.$message?.error(`Failed to load ${dataKey}`);
+  }
+},
     product_selected_all_tabs_section(e) {
   // console.log("product tabs selections")
   // console.log(e)
@@ -2092,10 +2336,6 @@ export default {
     fetchAllBusinessProducts(){
 
     },
-    SeeAllProducts(e) {
-      // console.log(e)
-      this.openSeeAll_products = true;
-    },
 
 
     async Change_Room_SeeAll() {
@@ -2112,6 +2352,8 @@ export default {
       this.closeShareMenu = false;
       this.openSeeAll_products=false;
       this.openSeeAll_ChangeRoom = false;
+      this.openSeeAll_furnitures = false;
+      this.openSeeAll_Lights = false;
     },
 
     async fetchExampleRooms() {
@@ -2425,6 +2667,10 @@ export default {
     //  Bottom Drawer Menues 
     wall_textures_bottom_drawer_menu,
     floor_textures_bottom_drawer_menu,
+    furnitures_bottom_drawer_menu,
+    light_items_bottom_drawer_menu,
+    fetch_all_drawer_component,
+
     ceiling_3d_object_renderer,
     
     // Home Design 
@@ -2614,6 +2860,17 @@ export default {
   background: #3B63FB;
   /* border-bottom: 2px solid #3B63FB; */
 }
+
+.category-tab.deactive {
+  color: #6b7280;          /* soft grey text */
+  background: #f3f4f6;     /* light neutral background */
+  border: 1px solid #d1d5db;
+  cursor: not-allowed;
+  opacity: 0.75;
+  border-radius: 6px;
+  transition: all 0.2s ease-in-out;
+}
+
 
 /* AI Catalog Section */
 .ai-catalog-section {

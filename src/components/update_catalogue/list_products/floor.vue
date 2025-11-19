@@ -58,7 +58,7 @@
 
           <div class="product-image">
             <img :src="this.$store.state.root_media_api+item.texture_image" :alt="item.title" />
-            <!-- <div class="product-tag">Ad</div> -->
+            
           </div>
           <div class="product-info">
             <div style="display:flex;justify-content: space-between;" class="">
@@ -68,17 +68,17 @@
               <div style="padding:3px;border:1px solid grey;border-radius:5px;padding-left:5px;padding-right:5px;padding-top:1px;height:22px;font-size:12px">AR</div>
             </div>
             <div class="product-name">{{ truncateText( item.title || 'No description available', 3) }}</div>
-            <div class="product-subtitle">{{ truncateText( item.description || 'No description available', 5) }}</div>
+            <!-- <div class="product-subtitle">{{ truncateText( item.description || 'No description available', 5) }}</div> -->
             
             <!-- <div class="product-details">
               <span class="product-color">Color {{ item.color }}</span>
               <div class="color-dot" :style="{ backgroundColor: 'red' }"></div>
             </div> -->
-                <div class="product-details">
-                  <span class="product-color">Colors Available</span>
+                <div class="product-details" style="display:flex;justify-content: space-between;">
+                  <span class="product-color">Colors </span>
                   <div style="display: flex; gap: 4px; align-items: center; margin-left: 8px;">
                     <div v-for="color in item.colors_available.slice(0, 3)" :key="color.id" class="color-dot" :style="{ backgroundColor: color.color_hex }"></div>
-                    <span v-if="item.colors_available.length > 3" style="font-size: 14px; color: #666;">...</span>
+                    <!-- <span v-if="item.colors_available.length > 3" style="font-size: 14px; color: #666;">...</span> -->
                   </div>
                 </div>
             <div class="product-price">Price <span style="font-weight: 600;">$ {{ item.sale_price_per_sqm || 0 }}</span></div>
@@ -92,14 +92,14 @@
 <!-- {{ item.business_slug }} -->
 <!-- this.$router.push(this.$route.params.buisness_name+'/'+product.type+'/'+product.product_id) -->
           <a-row>
-          <a-col :span="20" style="padding-right:5px">
+          <a-col :span="18" style="padding-right:5px">
             <a-button block type="default" @click="this.$router.push('/'+item.business_slug+'/'+'floor'+'/'+item.id)" >
               Product Detail
             </a-button>
           </a-col>
-          <a-col :span="4" style="">
-            <a-button block  type="default" >
-              <HeartOutlined />
+          <a-col :span="6" style="">
+            <a-button block type="default" style="padding:0;display: flex;justify-content: center;align-items: center;">
+                <HeartOutlined />
             </a-button>
           </a-col>
         </a-row>
