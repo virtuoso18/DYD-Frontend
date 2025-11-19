@@ -82,6 +82,8 @@ import Partner from '@/views/pages/partner.vue'
 import Tutorial from '@/views/pages/tutorial.vue'
 import Api from '@/views/pages/api.vue'
 import Earnphoto from '@/views/pages/earnphoto.vue'
+import blogs from '@/views/pages/blogs.vue'
+import affiliateprogram from '@/views/pages/AffiliateProgram.vue'
 
 
 import ProductARView from "@/views/ProductAR/ProductAR.vue"
@@ -185,6 +187,17 @@ const router = createRouter({
       path: '/earnphoto',
       name: 'earnphoto',
       component: Earnphoto,
+    },
+    
+     {
+      path: '/blogs',
+      name: 'blogs',
+      component: blogs,
+    },
+    {
+      path: '/affiliateprogram',
+      name: 'affiliateprogram',
+      component: affiliateprogram,
     },
 // =================================================== UI Pages ========================================
 

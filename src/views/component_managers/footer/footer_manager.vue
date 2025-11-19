@@ -3,26 +3,34 @@
     <footer_component/>
   </div>
 </template>
-
 <script>
 import footer_component from '@/components/Includes/footer.vue'
-
 export default {
   name: "navbar_manager",
   components:{footer_component},
   data() {
     return {
-      hideFooterUrls: ['/login', '/signup','/forgot-password','/product-ar-view','/ar-product/975e2029-7501-4209-86f8-3ac8ce286989'],
+      hideFooterUrls: ['/login', '/signup', '/forgot-password', '/product-ar-view'],
     }
   },
   computed: {
     hideFooterCompletely() {
-      // hide if current route is in the list
-      return this.hideFooterUrls.includes(this.$route.path)
+      const path = this.$route.path
+      
+      // Check exact matches
+      if (this.hideFooterUrls.includes(path)) {
+        return true
+      }
+      
+      // Check if path starts with /ar-product/ (handles any product_id)
+      if (path.startsWith('/ar-product/')) {
+        return true
+      }
+      
+      return false
     }
   },
   watch: {
-    // recompute on route change
     '$route.path'() {
       // triggers computed re-eval automatically
     }

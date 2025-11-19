@@ -264,7 +264,7 @@ export default {
   methods: {
     async fetchProductDetails() {
             try {
-                let url_product_details=`${this.$store.state.root_api}product/api/product-details/${this.product_id}/`
+                let url_product_details=`${this.$store.state.root_api}product/api/product-details/${this.$router.params.product_id}/`
                 
                 const token = localStorage.getItem('token');
                 const response = await fetch(`${url_product_details}`, {

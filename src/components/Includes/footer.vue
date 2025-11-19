@@ -110,39 +110,76 @@
             margin: '0'
           }">
             <li :style="{ marginBottom: '12px' }">
-              <a href="#/" :style="{
+              <a href="/start-new-catalogue" :style="{
                 color: '#666',
                 textDecoration: 'none',
                 fontSize: '15px'
-              }">Virtual Staging</a>
+              }">Start New Catalogue</a>
             </li>
             <li :style="{ marginBottom: '12px' }">
-              <a href="#/" :style="{
+              <a href="/earnphoto" :style="{
                 color: '#666',
                 textDecoration: 'none',
                 fontSize: '15px'
-              }">Community</a>
+              }">Earn Photo</a>
             </li>
             <li :style="{ marginBottom: '12px' }">
-              <a href="#/" :style="{
+              <a href="/api" :style="{
                 color: '#666',
                 textDecoration: 'none',
                 fontSize: '15px'
-              }">Pricing</a>
+              }">API</a>
             </li>
             <li :style="{ marginBottom: '12px' }">
-              <a href="#/" :style="{
+              <a href="/tutorial" :style="{
                 color: '#666',
                 textDecoration: 'none',
                 fontSize: '15px'
-              }">Store</a>
+              }">Tutorial</a>
+            </li>
+            <div>
+              <li :style="{ marginBottom: '12px' }">
+              <a href="/partner" :style="{
+                color: '#666',
+                textDecoration: 'none',
+                fontSize: '15px'
+              }">Partner</a>
             </li>
             <li :style="{ marginBottom: '12px' }">
-              <a href="#/" :style="{
+              <a href="/affiliateprogram" :style="{
                 color: '#666',
                 textDecoration: 'none',
                 fontSize: '15px'
-              }">Log in</a>
+              }">Affiliateprogram</a>
+            </li>
+            <li :style="{ marginBottom: '12px' }">
+              <a href="/sechdulemeeting" :style="{
+                color: '#666',
+                textDecoration: 'none',
+                fontSize: '15px'
+              }">Sechdulemeeting</a>
+            </li>
+            </div>
+            <li :style="{ marginBottom: '12px' }">
+              <a href="/blogs" :style="{
+                color: '#666',
+                textDecoration: 'none',
+                fontSize: '15px'
+              }">Blogs</a>
+            </li>
+            <li :style="{ marginBottom: '12px' }">
+              <a href="/comunity" :style="{
+                color: '#666',
+                textDecoration: 'none',
+                fontSize: '15px'
+              }">Comunity</a>
+            </li>
+             <li :style="{ marginBottom: '12px' }">
+              <a href="/mlspartnership" :style="{
+                color: '#666',
+                textDecoration: 'none',
+                fontSize: '15px'
+              }">Mlspartnership</a>
             </li>
           </ul>
         </div>
@@ -198,6 +235,13 @@
                 textDecoration: 'none',
                 fontSize: '15px'
               }">Careers</a>
+            </li>
+            <li :style="{ marginBottom: '12px' }">
+              <a href="/contact-us" :style="{
+                color: '#666',
+                textDecoration: 'none',
+                fontSize: '15px'
+              }">Contact Us</a>
             </li>
           </ul>
         </div>
