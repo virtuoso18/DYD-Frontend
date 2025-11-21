@@ -976,7 +976,7 @@ export default {
       try {
         const token = localStorage.getItem('token');
         const response = await fetch(
-          `${this.$store.state.root_api}access-engine/api/business-community-posts/business-designes-apis/`,
+          `${this.$store.state.root_api}access-engine/api/business-community-posts/business-designes-apis/?access-id=`+this.$route.query.access_id,
           {
             method: 'POST',
             headers: {
@@ -1040,7 +1040,7 @@ export default {
         this.loadingComments = true;
         const token = localStorage.getItem('token');
         const response = await fetch(
-          `${this.$store.state.root_api}community/api/comments/?post_id=${postId}&page=${page}`,
+          `${this.$store.state.root_api}community/api/comments/?post_id=${postId}&page=${page}&access-id=${this.$route.query.access_id}`,
           {
             method: 'GET',
             headers: {
@@ -1081,7 +1081,7 @@ export default {
         this.addingComment = true;
         const token = localStorage.getItem('token');
         const response = await fetch(
-          `${this.$store.state.root_api}community/api/comments/`,
+          `${this.$store.state.root_api}community/api/comments/?access-id=`+this.$route.query.access_id,
           {
             method: 'POST',
             headers: {
@@ -1114,7 +1114,7 @@ export default {
       try {
         const token = localStorage.getItem('token');
         const response = await fetch(
-          `${this.$store.state.root_api}community/api/comments/${comment.id}/replies/`,
+          `${this.$store.state.root_api}community/api/comments/${comment.id}/replies/?access-id=`+this.$route.query.access_id,
           {
             method: 'GET',
             headers: {
@@ -1165,7 +1165,7 @@ export default {
       try {
         const token = localStorage.getItem('token');
         const response = await fetch(
-          `${this.$store.state.root_api}access-engine/api/business-community-posts/products-used-in-post/?post_id=${postId}`,
+          `${this.$store.state.root_api}access-engine/api/business-community-posts/products-used-in-post/?post_id=${postId}&access-id=${this.$route.query.access_id}`,
           {
             method: 'GET',
             headers: {
@@ -1189,7 +1189,7 @@ export default {
       try {
         const token = localStorage.getItem('token');
         const response = await fetch(
-          `${this.$store.state.root_api}community/api/posts/like/`,
+          `${this.$store.state.root_api}community/api/posts/like/?access-id=`+this.$route.query.access_id,
           {
             method: 'POST',
             headers: {
@@ -1224,7 +1224,7 @@ export default {
       try {
         const token = localStorage.getItem('token');
         const response = await fetch(
-          `${this.$store.state.root_api}community/api/posts/share/`,
+          `${this.$store.state.root_api}community/api/posts/share/?access-id=`+this.$route.query.access_id,
           {
             method: 'POST',
             headers: {
@@ -1279,7 +1279,7 @@ export default {
       try {
         const token = localStorage.getItem('token');
         const response = await fetch(
-          `${this.$store.state.root_api}access-engine/api/business-community-posts/posts/`,
+          `${this.$store.state.root_api}access-engine/api/business-community-posts/posts/?access-id=`+this.$route.query.access_id,
           {
             method: 'PUT',
             headers: {
@@ -1337,7 +1337,7 @@ export default {
       try {
         const token = localStorage.getItem('token');
         const response = await fetch(
-          `${this.$store.state.root_api}access-engine/api/business-community-posts/posts/`,
+          `${this.$store.state.root_api}access-engine/api/business-community-posts/posts/?access-id=`+this.$route.query.access_id,
           {
             method: 'DELETE',
             headers: {
@@ -1398,7 +1398,7 @@ export default {
       try {
         const token = localStorage.getItem('token');
         const response = await fetch(
-          `${this.$store.state.root_api}access-engine/api/business-community-posts/business-designes-apis/`,
+          `${this.$store.state.root_api}access-engine/api/business-community-posts/business-designes-apis/?access-id=`+this.$route.query.access_id,
           {
             method: 'POST',
             headers: {
@@ -1424,7 +1424,7 @@ export default {
       try {
         const token = localStorage.getItem('token');
         const response = await fetch(
-          `${this.$store.state.root_api}access-engine/api/business-community-posts/business-designes-apis/`,
+          `${this.$store.state.root_api}access-engine/api/business-community-posts/business-designes-apis/?access-id=`+this.$route.query.access_id,
           {
             method: 'POST',
             headers: {
@@ -1457,7 +1457,7 @@ export default {
       try {
         const token = localStorage.getItem('token');
         const response = await fetch(
-          `${this.$store.state.root_api}access-engine/api/business-community-posts/staff-publish-community-post/`,
+          `${this.$store.state.root_api}access-engine/api/business-community-posts/staff-publish-community-post/?access-id=`+this.$route.query.access_id,
           {
             method: 'POST',
             headers: {
@@ -1504,7 +1504,7 @@ export default {
       try {
         const token = localStorage.getItem('token');
         const response = await fetch(
-          `${this.$store.state.root_api}access-engine/api/business-community-posts/business-designes-apis/`,
+          `${this.$store.state.root_api}access-engine/api/business-community-posts/business-designes-apis/?access-id=`+this.$route.query.access_id,
           {
             method: 'GET',
             headers: {
@@ -1525,7 +1525,7 @@ export default {
       try {
         const token = localStorage.getItem('token');
         const response = await fetch(
-          `${this.$store.state.root_api}access-engine/api/business-community-posts/business-posts/`,
+          `${this.$store.state.root_api}access-engine/api/business-community-posts/business-posts/?access-id=`+this.$route.query.access_id,
           {
             method: 'GET',
             headers: {
@@ -1546,7 +1546,7 @@ export default {
       try {
         const token = localStorage.getItem('token');
         const response = await fetch(
-          `${this.$store.state.root_api}community/api/tags/`,
+          `${this.$store.state.root_api}community/api/tags/?access-id=`+this.$route.query.access_id,
           {
             method: 'GET',
             headers: {

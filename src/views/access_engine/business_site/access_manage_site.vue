@@ -611,7 +611,7 @@ MapLocationViewer
             try {
                 const token = localStorage.getItem('token')
                 const response = await fetch(
-                    `${this.$store.state.root_api}access-engine/api/business-site/change-business-profile-location/?brand=`+this.$route.query.brand,
+                    `${this.$store.state.root_api}access-engine/api/business-site/change-business-profile-location/?access-id=`+this.$route.query.access_id,
                     {
                         method: 'GET',
                         headers: {
@@ -658,7 +658,7 @@ MapLocationViewer
             try {
                 const token = localStorage.getItem('token')
                 const response = await fetch(
-                    `${this.$store.state.root_api}access-engine/api/business-site/change-business-profile-location/?brand=`+this.$route.query.brand,
+                    `${this.$store.state.root_api}access-engine/api/business-site/change-business-profile-location/?access-id=`+this.$route.query.access_id,
                     {
                         method: 'POST',
                         body:JSON.stringify(this.businessLocation),
@@ -720,8 +720,8 @@ MapLocationViewer
             try {
                 const response = await fetch(
                     // `${this.$store.state.root_api}community/api/my-posts/`,
-                    `${this.$store.state.root_api}access-engine/api/business-community-posts/business-posts/`,
-                    {
+                    `${this.$store.state.root_api}access-engine/api/business-community-posts/business-posts/?access-id=`+this.$route.query.access_id,
+                                        {
                         method: "GET",
                         headers: {
                             Authorization: `Token ${localStorage.getItem("token")}`,
@@ -769,7 +769,7 @@ MapLocationViewer
                 const token = localStorage.getItem('token');
 
                 const response = await fetch(
-                    `${this.$store.state.root_api}Auth/api/business/products-sold/${businessName}?page=${pageNumber}&page_size=10`,
+                    `${this.$store.state.root_api}Auth/api/business/products-sold/${businessName}?page=${pageNumber}&page_size=10&access-id=${this.$route.query.access_id}`,
                     {
                         method: 'GET',
                         headers: {
@@ -915,7 +915,7 @@ MapLocationViewer
             // Get auth token from localStorage
             const token = localStorage.getItem('token');
 
-            const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-site/business-profile/`, {
+            const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-site/business-profile/?access-id=`+this.$route.query.access_id, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -954,7 +954,7 @@ MapLocationViewer
         try {
             const token = localStorage.getItem('token');
             
-            const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-site/business-profile/`, {
+            const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-site/business-profile/?access-id=`+this.$route.query.access_id, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Token ${token}`

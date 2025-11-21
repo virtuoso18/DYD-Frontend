@@ -521,7 +521,7 @@ Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac tu
 import { computed, ref, watch, onMounted } from 'vue';
 
 import { useStore } from 'vuex';
-import { useRouter } from 'vue-router';
+import { useRouter,useRoute } from 'vue-router';
 import canvas_3d_model_renderer from "@/components/store/canvas_3d_model_renderer.vue"
 
 export default {
@@ -541,7 +541,9 @@ export default {
     const tempColor = ref('#000000');
     
     const store = useStore();
+    
     const router = useRouter();
+    const route = useRoute();
 // 2. Add these refs in setup function (after existing refs):
 const loading3dModelDetails = ref(false);
 const modelDetails = ref(null);
@@ -610,7 +612,7 @@ const get3dRenderedModelDetails = async (generated3dModelId) => {
       throw new Error('No rendered modal 3D ID provided');
     }
 
-    const url = `${store.state.root_api}access-engine/api/business-products/business-access-get-rendered-3d-model-details/${renderedModal3dId}/`;
+    const url = `${store.state.root_api}access-engine/api/business-products/business-access-get-rendered-3d-model-details/${renderedModal3dId}/?access-id=`+route.query.access_id;
     
     console.log('📡 Fetching generated 3d models history...', { generated3dModelId, renderedModal3dId });
     
@@ -991,7 +993,7 @@ const uploadTexture = () => {
       pbr_files_count: selectedPbrFiles.value.length
     });
 
-    const response = await fetch(`${store.state.root_api}access-engine/api/business-products/add-product-furniture/`, {
+    const response = await fetch(`${store.state.root_api}access-engine/api/business-products/add-product-furniture/?access-id=`+route.query.access_id, {
       method: 'POST',
       headers: { 
         'Authorization': `Token ${token}` 

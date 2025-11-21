@@ -47,6 +47,12 @@ import profesional_community_dashboard from '@/components/dashboard/professional
 import profesional_generate_banner from '@/components/dashboard/professional/generate_banner.vue'
 import profesional_manage_subscription from '@/components/dashboard/professional/manage_subscription.vue'
 
+// profesional user manage access pages  
+import professional_user_access_manager from "@/views/manage_access_professional_user/manager.vue"
+import manage_access_analytics from "@/views/manage_access_professional_user/manage_access_analytics.vue"
+import manage_access_all_business from "@/views/manage_access_professional_user/manage_access_all_business.vue"
+import manage_access_all_tasks from "@/views/manage_access_professional_user/manage_access_all_tasks.vue"
+
 // Import individual dashboard components for professional users
 import normal_user_profile from '@/components/dashboard/user/user_profile.vue'
 import normal_my_designs from '@/components/dashboard/user/my_designs.vue'
@@ -406,6 +412,8 @@ const router = createRouter({
         }
       ]
     },
+
+
     // Regular User Dashboard Routes
     {
       path: '/user-dashboard',
@@ -453,7 +461,34 @@ const router = createRouter({
       ]
     },
 
-    
+       
+{
+  path:'/manage-access',
+  component: professional_user_access_manager,
+  children: [
+    {
+      path: '',
+      name:'manage-access',
+      redirect: '/manage-access/manage-business-analytics', // Changed from '/manage-access/analytics'
+    },
+    {
+      path: 'manage-business-analytics',
+      name:'manage_business_analytics',
+      component: manage_access_analytics,
+    },
+    {
+      path: 'manage-business-access',
+      name:'manage_business_access',
+      component: manage_access_all_business,
+    },
+    {
+      path: 'manage-business-tasks',
+      name:'manage_access_all_tasks',
+      component: manage_access_all_tasks,
+    },
+  ]
+},
+
 // ==========================================
 // Access Management Engine 
 // ==========================================
@@ -505,7 +540,6 @@ const router = createRouter({
       name: 'business-overview',
       component: access_overview, // Create a new component for overview content
     },
-    
     
     {
       path: 'manage-products',

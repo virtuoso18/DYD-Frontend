@@ -894,7 +894,7 @@ view_result(generated_model_id){
 async initializeCompletedCount() {
   try {
     const token = localStorage.getItem('token')
-    const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/business-access-queue-status-add-new-product/`, {
+    const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/business-access-queue-status-add-new-product/?access-id=`+this.$route.query.access_id, {
       method:'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -1035,7 +1035,7 @@ async initializeCompletedCount() {
       }
         const token = localStorage.getItem('token');
 
-      const response = await fetch(this.$store.state.root_api + 'access-engine/api/business-products/business-access-remove-images-bg/', {
+      const response = await fetch(this.$store.state.root_api + 'access-engine/api/business-products/business-access-remove-images-bg/?access-id='+this.$route.query.access_id, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -1094,7 +1094,7 @@ async initializeCompletedCount() {
       }
         const token = localStorage.getItem('token');
 
-      const response = await fetch(this.$store.state.root_api + 'access-engine/api/business-products/business-access-hy-2.0-mv-3D-gen-add-new-product/', {
+      const response = await fetch(this.$store.state.root_api + 'access-engine/api/business-products/business-access-hy-2.0-mv-3D-gen-add-new-product/?access-id='+this.$route.query.access_id, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -1125,7 +1125,7 @@ async initializeCompletedCount() {
 async fetchQueueStatus() {
   try {
     const token = localStorage.getItem('token')
-    const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/business-access-queue-status-add-new-product/`, {
+    const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/business-access-queue-status-add-new-product/?access-id=`+this.$route.query.access_id, {
       method:'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -1242,7 +1242,7 @@ async fetchQueueStatus() {
         const token = localStorage.getItem('token');
 
         
-        const response = await fetch(this.$store.state.root_api + 'access-engine/api/business-products/business-access-remove-images-bg/', {
+        const response = await fetch(this.$store.state.root_api + 'access-engine/api/business-products/business-access-remove-images-bg/?access-id='+this.$route.query.access_id, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1284,7 +1284,7 @@ async fetchQueueStatus() {
 
         const token = localStorage.getItem('token');
         
-      const response = await fetch(this.$store.state.root_api +  'access-engine/api/business-products/business-access-hy-2.0-sv-3D-gen-add-new-product/', {
+      const response = await fetch(this.$store.state.root_api +  'access-engine/api/business-products/business-access-hy-2.0-sv-3D-gen-add-new-product/?access-id='+this.$route.query.access_id, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -1311,7 +1311,7 @@ async fetchQueueStatus() {
 async removeFromQueue(queueId) {
   try {
     const token = localStorage.getItem('token');
-    const response = await fetch(this.$store.state.root_api + 'access-engine/api/business-products/business-access-queue-status-add-new-product/', {
+    const response = await fetch(this.$store.state.root_api + 'access-engine/api/business-products/business-access-queue-status-add-new-product/?access-id='+this.$route.query.access_id, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -1632,7 +1632,7 @@ async removeFromQueue(queueId) {
 
     const token = localStorage.getItem('token');
         // const response = await fetch(this.$store.state.root_api + 'access-engine/api/business-products/business-access-queue-status-add-new-product/', {
-        const response = await fetch(this.$store.state.root_api + 'access-engine/api/business-products/business-access-remove-images-bg/', {
+        const response = await fetch(this.$store.state.root_api + 'access-engine/api/business-products/business-access-remove-images-bg/?access-id='+this.$route.query.access_id, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1769,7 +1769,7 @@ getQueueStatusColor(status) {
       let response = null
 
       if (this.multiView) {
-        response = await fetch(this.$store.state.root_api + 'access-engine/api/business-products/business-access-hy-2.0-mv-3D-gen-add-new-product/', {
+        response = await fetch(this.$store.state.root_api + 'access-engine/api/business-products/business-access-hy-2.0-mv-3D-gen-add-new-product/?access-id='+this.$route.query.access_id, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1779,7 +1779,7 @@ getQueueStatusColor(status) {
           body: JSON.stringify(payload)
         })
       } else {
-        response = await fetch(this.$store.state.root_api + 'access-engine/api/business-products/business-access-hy-2.0-sv-3D-gen-add-new-product/', {
+        response = await fetch(this.$store.state.root_api + 'access-engine/api/business-products/business-access-hy-2.0-sv-3D-gen-add-new-product/?access-id='+this.$route.query.access_id, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

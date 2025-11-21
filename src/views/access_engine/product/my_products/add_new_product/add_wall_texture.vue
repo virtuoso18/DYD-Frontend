@@ -525,7 +525,7 @@
 import { defineComponent, ref, watch, reactive, computed } from 'vue';
 import { message } from 'ant-design-vue';
 import { useStore } from 'vuex';
-import { useRouter } from 'vue-router';
+import { useRouter,useRoute } from 'vue-router';
 
 export default defineComponent({
   name: "AddNewWallTexture",
@@ -539,6 +539,7 @@ export default defineComponent({
     
     const store = useStore();
     const router = useRouter();
+    const route = useRoute();
     
     // Streamlined form state with only active fields
     const form = reactive({
@@ -722,7 +723,7 @@ export default defineComponent({
         });
         
         // API call for wall texture
-        const response = await fetch(`${store.state.root_api}access-engine/api/business-products/add-product-wall-texture/`, {
+        const response = await fetch(`${store.state.root_api}access-engine/api/business-products/add-product-wall-texture/?access-id=`+route.query.access_id, {
           method: 'POST',
           headers: {
             'Authorization': `Token ${token}`,

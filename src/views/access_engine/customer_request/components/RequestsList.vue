@@ -330,6 +330,7 @@ export default {
       rejecting: false,
       reasonError: '',
       brand:this.$route.query.brand,
+      access_id:this.$route.query.access_id,
       
       columns: [
         {
@@ -465,7 +466,7 @@ export default {
 
       try {
         this.processingIds.push(request.id)
-        const response = await fetch(`${this.$store.state.root_api}engine/new-room-client-requested/?brand=${this.brand}`, {
+        const response = await fetch(`${this.$store.state.root_api}engine/new-room-client-requested/?access-id=`+this.$route.query.access_id,{
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -483,6 +484,7 @@ export default {
           this.$router.push({ name: 'update_catelogue', params: { id: responseData.room_id } ,
         query: {
     brand: this.brand,
+    access_id:this.access_id,
     client_request: 'true',
     business_staff:'true'
     
@@ -514,7 +516,7 @@ export default {
         this.rejectingIds.push(this.selectedRequest.id)
         
         const token = localStorage.getItem('token')
-        const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-customer-requests/reject-room-requests-recieved/`, {
+        const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-customer-requests/reject-room-requests-recieved/?access-id=`+this.$route.query.access_id, {
           method: 'POST',
           headers: {
             'Authorization': `Token ${token}`,

@@ -15,9 +15,9 @@ export default createStore({
     websockets_address:'ws://localhost:8000',
     root_api: 'http://127.0.0.1:8000/',
     root_media_api: 'http://127.0.0.1:8000',
-    // websockets_address:'wss://t1txx785anloo0-8000.proxy.runpod.net',
-    // root_api: 'https://t1txx785anloo0-8000.proxy.runpod.net/',
-    // root_media_api: 'https://t1txx785anloo0-8000.proxy.runpod.net',
+    // websockets_address:'wss://2c9w73ww5eusmi-8000.proxy.runpod.net',
+    // root_api: 'https://2c9w73ww5eusmi-8000.proxy.runpod.net/',
+    // root_media_api: 'https://2c9w73ww5eusmi-8000.proxy.runpod.net',
   },
 
   getters: {

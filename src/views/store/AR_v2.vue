@@ -1,5 +1,5 @@
 <template>
-  <div class="ar-app" ref="containerRef" @mousedown="handleMouseDown" @mousemove="handleMouseMove" @mouseup="handleMouseUp">
+  <div class="ar-app">
     <!-- Loading State -->
     <div v-show="isLoading" class="loading-container">
       <div class="spinner"></div>
@@ -17,12 +17,6 @@
       <!-- Status Indicators -->
       <div class="ar-status">{{ arStatus }}</div>
       <div class="floor-detection">{{ floorDetection }}</div>
-
-      <!-- Fullscreen Button -->
-      <button @click="toggleFullscreen" class="fullscreen-btn">
-        <span v-if="!isFullscreen">⛶ Fullscreen</span>
-        <span v-else>⊡ Exit</span>
-      </button>
 
       <!-- Size Control Panel -->
       <div class="size-control">
@@ -43,64 +37,9 @@
 
       <!-- Render Button -->
       <div class="render-section">
-        <button class="render-btn" @click="toggleMenu">
-          🎯 {{ showMenu ? 'Close Menu' : 'Place Model' }}
+        <button class="render-btn" @click="placeModel">
+          🎯 Place Model
         </button>
-      </div>
-
-      <!-- Control Menu (Rotation & Movement) -->
-      <div v-if="showMenu" class="control-menu">
-        <!-- Mode Selection -->
-        <div class="mode-selection">
-          <p class="mode-label">Control Mode:</p>
-          <div class="mode-buttons">
-            <button
-              @click="dragMode = 'rotate'"
-              :class="['mode-btn', { active: dragMode === 'rotate' }]"
-            >
-              🔄 Rotate
-            </button>
-            <button
-              @click="dragMode = 'move'"
-              :class="['mode-btn', { active: dragMode === 'move' }]"
-            >
-              ➡️ Move
-            </button>
-          </div>
-        </div>
-
-        <!-- Reset Buttons -->
-        <div class="reset-buttons">
-          <button @click="resetRotation" class="reset-btn reset-rotation">
-            Reset Rotation
-          </button>
-          <button @click="resetPosition" class="reset-btn reset-position">
-            Reset Position
-          </button>
-        </div>
-
-        <!-- Current Values Display -->
-        <div class="values-display">
-          <div class="value-item">Rotation Y: {{ modelRotation.toFixed(1) }}°</div>
-          <div class="value-item">Position X: {{ modelPosition.x.toFixed(2) }}</div>
-          <div class="value-item">Position Z: {{ modelPosition.z.toFixed(2) }}</div>
-        </div>
-
-        <!-- Instructions -->
-        <div class="instructions">
-          <p class="instructions-title">💡 Instructions:</p>
-          <ul>
-            <li v-if="dragMode === 'rotate'">Drag the model LEFT/RIGHT to rotate</li>
-            <li v-else>Drag the model to move on floor</li>
-            <li>Use Reset buttons to restore defaults</li>
-            <li>Close menu to stop controls</li>
-          </ul>
-        </div>
-
-        <!-- Drag Hint -->
-        <div class="drag-hint">
-          {{ dragMode === 'rotate' ? 'Drag horizontally to rotate' : 'Drag to move model' }}
-        </div>
       </div>
 
       <!-- Error Message -->
@@ -115,7 +54,7 @@
 <script>
 export default {
   name: 'ARSpinosaurs',
-  data() {
+        data() {
     return {
       isLoading: true,
       loadingMessage: 'Initializing AR...',
@@ -131,30 +70,25 @@ export default {
         { label: 'Medium (0.5x)', value: 0.5 },
         { label: 'Small (0.0625x)', value: 0.0625 }
       ],
-      diamensions: { width: 2.06, height: 1.4, depth: 0.7 },
+      diamensions: {width:2.06,height:1.4,depth:0.7},
       modelUrl: 'https://cdn.glitch.com/324a5290-5aa7-4efc-92d6-ae0736433b12%2Fspinosaurus.glb',
       light: null,
       sceneInitialized: false,
       modelPlaced: false,
       fixedModelPosition: null,
-      
-      // New properties for drag & rotate
-      showMenu: false,
-      dragMode: 'rotate', // 'rotate' or 'move'
-      modelRotation: 0,
-      modelPosition: { x: 0, z: 0 },
-      isDragging: false,
-      dragStart: { x: 0, y: 0 },
-      isFullscreen: false,
-
-      // Reticle JSON data
+      // Reticle JSON data with bin reference
       reticleJSON: {
         "asset": {
           "generator": "Khronos glTF Blender I/O v1.0.5",
           "version": "2.0"
         },
         "scene": 0,
-        "scenes": [{ "name": "Scene", "nodes": [0, 1, 2] }],
+        "scenes": [
+          {
+            "name": "Scene",
+            "nodes": [0, 1, 2]
+          }
+        ],
         "nodes": [
           {
             "name": "Light",
@@ -166,7 +100,11 @@ export default {
             "rotation": [0.483536034822464, 0.33687159419059753, -0.20870360732078552, 0.7804827094078064],
             "translation": [7.358891487121582, 4.958309173583984, 6.925790786743164]
           },
-          { "mesh": 0, "name": "Torus", "scale": [0.7128448486328125, 0.7128448486328125, 0.7128448486328125] }
+          {
+            "mesh": 0,
+            "name": "Torus",
+            "scale": [0.7128448486328125, 0.7128448486328125, 0.7128448486328125]
+          }
         ],
         "materials": [
           {
@@ -185,7 +123,11 @@ export default {
             "name": "Torus",
             "primitives": [
               {
-                "attributes": { "POSITION": 0, "NORMAL": 1, "TEXCOORD_0": 2 },
+                "attributes": {
+                  "POSITION": 0,
+                  "NORMAL": 1,
+                  "TEXCOORD_0": 2
+                },
                 "indices": 3,
                 "material": 0
               }
@@ -193,32 +135,76 @@ export default {
           }
         ],
         "accessors": [
-          { "bufferView": 0, "componentType": 5126, "count": 150, "max": [0.1961740255355835, 0.020665571093559265, 0.1961740255355835], "min": [-0.1961740255355835, 0.0008523659780621529, -0.1961740255355835], "type": "VEC3" },
-          { "bufferView": 1, "componentType": 5126, "count": 150, "type": "VEC3" },
-          { "bufferView": 2, "componentType": 5126, "count": 150, "type": "VEC2" },
-          { "bufferView": 3, "componentType": 5123, "count": 282, "type": "SCALAR" }
+          {
+            "bufferView": 0,
+            "componentType": 5126,
+            "count": 150,
+            "max": [0.1961740255355835, 0.020665571093559265, 0.1961740255355835],
+            "min": [-0.1961740255355835, 0.0008523659780621529, -0.1961740255355835],
+            "type": "VEC3"
+          },
+          {
+            "bufferView": 1,
+            "componentType": 5126,
+            "count": 150,
+            "type": "VEC3"
+          },
+          {
+            "bufferView": 2,
+            "componentType": 5126,
+            "count": 150,
+            "type": "VEC2"
+          },
+          {
+            "bufferView": 3,
+            "componentType": 5123,
+            "count": 282,
+            "type": "SCALAR"
+          }
         ],
         "bufferViews": [
-          { "buffer": 0, "byteLength": 1800, "byteOffset": 0 },
-          { "buffer": 0, "byteLength": 1800, "byteOffset": 1800 },
-          { "buffer": 0, "byteLength": 1200, "byteOffset": 3600 },
-          { "buffer": 0, "byteLength": 564, "byteOffset": 4800 }
+          {
+            "buffer": 0,
+            "byteLength": 1800,
+            "byteOffset": 0
+          },
+          {
+            "buffer": 0,
+            "byteLength": 1800,
+            "byteOffset": 1800
+          },
+          {
+            "buffer": 0,
+            "byteLength": 1200,
+            "byteOffset": 3600
+          },
+          {
+            "buffer": 0,
+            "byteLength": 564,
+            "byteOffset": 4800
+          }
         ],
-        "buffers": [{ "byteLength": 5364, "uri": "/assets/reticle.bin" }]
+        "buffers": [
+          {
+            "byteLength": 5364,
+            "uri": "/assets/reticle.bin"  // Points to your assets/reticle.bin file
+          }
+        ]
       }
-    };
+    }
   },
-
   mounted() {
-    this.debugStatus = 'Mounted, loading product...';
-    this.fetchProductDetails().then(() => {
-      console.log('✅ Product loaded, model URL ready:', this.modelUrl);
-      this.waitForAFrame();
-    }).catch((err) => {
-      console.error('❌ Failed to fetch product:', err);
-      this.isLoading = false;
-    });
-  },
+  this.debugStatus = 'Mounted, loading product...';
+  // Load product FIRST, then wait for A-Frame
+  this.fetchProductDetails().then(() => {
+    console.log('✅ Product loaded, model URL ready:', this.modelUrl);
+    this.waitForAFrame();
+  }).catch((err) => {
+    console.error('❌ Failed to fetch product:', err);
+    this.isLoading = false;
+  });
+},
+
 
   beforeUnmount() {
     if (this.scene) {
@@ -227,132 +213,117 @@ export default {
   },
 
   methods: {
-    handleMouseDown(e) {
-      if (!this.showMenu) return;
-      this.isDragging = true;
-      this.dragStart = { x: e.clientX, y: e.clientY };
-    },
 
-    handleMouseMove(e) {
-      if (!this.isDragging || !this.showMenu) return;
+waitForAFrame() {
+  let attempts = 0;
+  const maxAttempts = 50;
 
-      const deltaX = e.clientX - this.dragStart.x;
-      const deltaY = e.clientY - this.dragStart.y;
+  const checkAFrame = setInterval(() => {
+    attempts++;
+    this.debugStatus = `Checking A-Frame (${attempts}/${maxAttempts})...`;
 
-      if (this.dragMode === 'rotate') {
-        this.modelRotation += deltaX * 0.5;
-      } else if (this.dragMode === 'move') {
-        this.modelPosition.x += deltaX * 0.01;
-        this.modelPosition.z -= deltaY * 0.01;
-      }
+    if (window.AFRAME && window.AFRAME.version) {
+      clearInterval(checkAFrame);
+      this.debugStatus = 'A-Frame loaded!';
+      console.log('✓ A-Frame loaded:', window.AFRAME.version);
+      
+      this.registerAFrameComponents();
+      this.checkARSupport();
+      
+      setTimeout(() => {
+        console.log('🎯 Creating scene with model URL:', this.modelUrl);
+        this.createScene();
+      }, 300);
+    }
 
-      this.dragStart = { x: e.clientX, y: e.clientY };
-    },
+    if (attempts >= maxAttempts) {
+      clearInterval(checkAFrame);
+      this.error = 'A-Frame failed to load. Make sure it is in index.html';
+      this.isLoading = false;
+      this.debugStatus = 'ERROR: A-Frame not loaded';
+      console.error('A-Frame not available');
+    }
+  }, 100);
+},
+async fetchProductDetails() {
+  try {
+    const productId = this.$route.params.product_id;
+    
+    if (!productId) {
+      throw new Error('Product ID not found in route parameters');
+    }
 
-    handleMouseUp() {
-      this.isDragging = false;
-    },
+    let token = localStorage.getItem('token');
+    const apiUrl = `${this.$store.state.root_api}product/api/product-details/${productId}/`;
+    
+    console.log('📡 Fetching from:', apiUrl);
 
-    toggleMenu() {
-      this.showMenu = !this.showMenu;
-    },
+    const headers = {
+      'Content-Type': 'application/json'
+    };
 
-    resetRotation() {
-      this.modelRotation = 0;
-    },
+    if (token) {
+      headers['Authorization'] = `Token ${token}`;
+    }
 
-    resetPosition() {
-      this.modelPosition = { x: 0, z: 0 };
-    },
+    const response = await fetch(apiUrl, {
+      method: 'GET',
+      headers: headers,
+      credentials: 'omit'
+    });
 
-    async toggleFullscreen() {
-      if (!document.fullscreenElement) {
-        try {
-          await this.$refs.containerRef.requestFullscreen();
-          this.isFullscreen = true;
-        } catch (err) {
-          console.error('Fullscreen request failed:', err);
-        }
-      } else {
-        try {
-          await document.exitFullscreen();
-          this.isFullscreen = false;
-        } catch (err) {
-          console.error('Exit fullscreen failed:', err);
-        }
-      }
-    },
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
 
-    async fetchProductDetails() {
-      try {
-        const productId = this.$route.params.product_id;
-        if (!productId) {
-          throw new Error('Product ID not found in route parameters');
-        }
+    const result = await response.json();
+    console.log(result);
 
-        let token = localStorage.getItem('token');
-        const apiUrl = `${this.$store.state.root_api}product/api/product-details/${productId}/`;
-        
-        console.log('📡 Fetching from:', apiUrl);
+    if (!result.success || !result.data) {
+      throw new Error(result.message || 'Failed to fetch product details');
+    }
 
-        const headers = { 'Content-Type': 'application/json' };
-        if (token) {
-          headers['Authorization'] = `Token ${token}`;
-        }
+    // Extract dimensions
+    const dimensions = result.data.dimensions || {};
+    
+    this.diamensions = {
+      width: parseFloat(dimensions.width) || 0.7,
+      height: parseFloat(dimensions.height) || 1.2,
+      depth: parseFloat(dimensions.depth || dimensions.length) || 0.6
+    };
 
-        const response = await fetch(apiUrl, {
-          method: 'GET',
-          headers: headers,
-          credentials: 'omit'
-        });
+    console.log('✅ Product Dimensions (meters):', this.diamensions);
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+    // Extract 3D model URL
+    let modelUrl = null;
+    
+    if (result.data['3d_model']) {
+      modelUrl = `${this.$store.state.root_media_api}${result.data['3d_model']}`;
+    } else if (result.data.model_file) {
+      modelUrl = `${this.$store.state.root_media_api}${result.data.model_file}`;
+    } else if (result.data.glb_file) {
+      modelUrl = result.data.glb_file;
+    } else if (result.data.model_url) {
+      modelUrl = result.data.model_url;
+    } else if (result.data.file) {
+      modelUrl = result.data.file;
+    }
 
-        const result = await response.json();
-        console.log(result);
+    if (!modelUrl) {
+      console.error('Available fields in result.data:', Object.keys(result.data));
+      throw new Error('No 3D model URL found in product data');
+    }
 
-        if (!result.success || !result.data) {
-          throw new Error(result.message || 'Failed to fetch product details');
-        }
+    this.modelUrl = modelUrl;
 
-        const dimensions = result.data.dimensions || {};
-        this.diamensions = {
-          width: parseFloat(dimensions.width) || 0.7,
-          height: parseFloat(dimensions.height) || 1.2,
-          depth: parseFloat(dimensions.depth || dimensions.length) || 0.6
-        };
+    console.log('✅ Model URL:', this.modelUrl);
+    console.log('✅ Product Data Loaded');
 
-        console.log('✅ Product Dimensions (meters):', this.diamensions);
-
-        let modelUrl = null;
-        if (result.data['3d_model']) {
-          modelUrl = `${this.$store.state.root_media_api}${result.data['3d_model']}`;
-        } else if (result.data.model_file) {
-          modelUrl = `${this.$store.state.root_media_api}${result.data.model_file}`;
-        } else if (result.data.glb_file) {
-          modelUrl = result.data.glb_file;
-        } else if (result.data.model_url) {
-          modelUrl = result.data.model_url;
-        } else if (result.data.file) {
-          modelUrl = result.data.file;
-        }
-
-        if (!modelUrl) {
-          console.error('Available fields in result.data:', Object.keys(result.data));
-          throw new Error('No 3D model URL found in product data');
-        }
-
-        this.modelUrl = modelUrl;
-        console.log('✅ Model URL:', this.modelUrl);
-        console.log('✅ Product Data Loaded');
-      } catch (error) {
-        console.error('❌ Error loading product details:', error);
-        this.error = error.message || 'Failed to load product. Please try again.';
-      }
-    },
-
+  } catch (error) {
+    console.error('❌ Error loading product details:', error);
+    this.error = error.message || 'Failed to load product. Please try again.';
+  }
+},
     waitForAFrame() {
       let attempts = 0;
       const maxAttempts = 50;
@@ -370,7 +341,6 @@ export default {
           this.checkARSupport();
           
           setTimeout(() => {
-            console.log('🎯 Creating scene with model URL:', this.modelUrl);
             this.createScene();
           }, 300);
         }
@@ -409,6 +379,7 @@ export default {
 
     registerAFrameComponents() {
       if (!window.AFRAME) return;
+
       const self = this;
 
       if (!AFRAME.components['stable-floor-plane']) {
@@ -450,11 +421,15 @@ export default {
                   let dino = document.getElementById('dino');
                   let light = document.getElementById('light');
                   
+                  console.log('Placing model at:', reticlePos);
+                  
+                  // Fix model position and store it
                   self.fixedModelPosition = { ...reticlePos };
                   self.modelPlaced = true;
                   
                   if (dino) {
                     dino.setAttribute('position', reticlePos);
+                    console.log('Model FIXED at position:', reticlePos);
                   }
                   
                   if (light) {
@@ -470,6 +445,7 @@ export default {
                                         '\nZ: ' + reticlePos.z.toFixed(2) + 
                                         '\n\n[Tap again to reset]';
                 } else {
+                  // Reset model placement
                   self.modelPlaced = false;
                   self.fixedModelPosition = null;
                   self.floorDetection = 'Scanning for floor...\nPoint at a flat surface';
@@ -507,6 +483,7 @@ export default {
 
           tick: function () {
             if (this.el.sceneEl.is('ar-mode')) {
+              // If model is already placed, stop moving reticle
               if (self.modelPlaced) {
                 return;
               }
@@ -535,10 +512,12 @@ export default {
 
                   position.y = Math.max(position.y, 0.01);
                   
+                  // Ensure reticle is visible and positioned
                   this.el.setAttribute('position', position);
                   this.el.setAttribute('visible', 'true');
                   this.lastValidPosition = position.clone();
 
+                  console.log('Reticle positioned at:', position);
                   self.floorDetection = 
                     'Floor detected ✓\nX: ' + position.x.toFixed(2) + 
                     ' Y: ' + position.y.toFixed(2) + 
@@ -546,6 +525,7 @@ export default {
                     '\n\n[Tap to place model]';
                 } else {
                   self.floorDetection = 'Scanning for floor...\nPoint at a flat surface';
+                  // Show reticle even when not on floor (for debugging)
                   this.el.setAttribute('position', { x: 0, y: -0.5, z: -2 });
                   this.el.setAttribute('visible', 'true');
                 }
@@ -571,49 +551,152 @@ export default {
     createSceneInContainer(container) {
       this.debugStatus = 'Creating A-Frame scene...';
       this.loadingMessage = 'Creating 3D scene...';
+      console.log('Container found, creating scene');
+      console.log('Reticle JSON loaded:', JSON.stringify(this.reticleJSON).substring(0, 100));
       console.log('Model URL:', this.modelUrl);
 
+      // Update bin path to absolute URL
       const reticleJSONUpdated = JSON.parse(JSON.stringify(this.reticleJSON));
       reticleJSONUpdated.buffers[0].uri = window.location.origin + '/assets/reticle.bin';
       
+      console.log('Updated bin URI:', reticleJSONUpdated.buffers[0].uri);
+      
+      // Create data URL for reticle JSON with correct bin path
       const reticleJsonString = JSON.stringify(reticleJSONUpdated);
       const reticleDataUrl = 'data:application/json;base64,' + btoa(reticleJsonString);
 
       const sceneHTML = `
-        <a-scene webxr="requiredFeatures: hit-test,local-floor;" renderer="colorManagement: true; physicallyCorrectLights: true;">
+        <a-scene 
+          webxr="requiredFeatures: hit-test,local-floor;"
+          renderer="colorManagement: true; physicallyCorrectLights: true;"
+        >
           <a-assets>
-            <a-asset-item id="spinosaurus" src="${this.modelUrl}" response-type="arraybuffer" crossorigin="anonymous"></a-asset-item>
-            <a-asset-item id="reticle" src="${reticleDataUrl}" response-type="json" crossorigin="anonymous"></a-asset-item>
+            <!-- Dinosaur Model -->
+            <a-asset-item 
+              id="spinosaurus" 
+              src="${this.modelUrl}" 
+              response-type="arraybuffer"
+              crossorigin="anonymous">
+            </a-asset-item>
+            
+            <!-- Reticle Model (from JSON data URL with bin reference) -->
+            <a-asset-item 
+              id="reticle" 
+              src="${reticleDataUrl}" 
+              response-type="json"
+              crossorigin="anonymous">
+            </a-asset-item>
           </a-assets>
 
           <a-camera position="0 1.2 0"></a-camera>
 
-          <a-entity id="reticle-marker" position="0 -0.5 -2" gltf-model="#reticle" scale="0.5 0.5 0.5" enhanced-ar-hit-test visible="true" shadow="cast: false; receive: false" rotation="0 0 0">
-            <a-plane position="0 0 0" rotation="-90 0 0" width="0.5" height="0.5" material="color: cyan; opacity: 0.3; transparent: true;"></a-plane>
+          <!-- Reticle: Moves with floor detection -->
+          <a-entity 
+            id="reticle-marker"
+            position="0 -0.5 -2"
+            gltf-model="#reticle" 
+            scale="0.5 0.5 0.5"
+            enhanced-ar-hit-test
+            visible="true"
+            shadow="cast: false; receive: false"
+            rotation="0 0 0">
+            <!-- Debug plane to show position -->
+            <a-plane 
+              position="0 0 0"
+              rotation="-90 0 0"
+              width="0.5"
+              height="0.5"
+              material="color: cyan; opacity: 0.3; transparent: true;">
+            </a-plane>
           </a-entity>
 
+          <!-- Model: Fixed in world space -->
           <a-entity id="dino" position="0 0 -5" scale="1 1 1">
-            <a-entity position="0 0 0" rotation="0 0 0" gltf-model="#spinosaurus" animation-mixer shadow="cast: true; receive: false"></a-entity>
+            <a-entity 
+              position="0 0 0" 
+              rotation="0 0 0"
+              gltf-model="#spinosaurus"
+              animation-mixer
+              shadow="cast: true; receive: false">
+            </a-entity>
           </a-entity>
 
-          <a-plane id="shadowPlane" height="100" width="100" rotation="-90 0 0" position="0 0 0" shadow="receive: true; cast: false" material="color: #ffffff; transparent: true; opacity: 0.001;"></a-plane>
+          <!-- Shadow receiver plane -->
+          <a-plane 
+            id="shadowPlane"
+            height="100" 
+            width="100" 
+            rotation="-90 0 0"
+            position="0 0 0"
+            shadow="receive: true; cast: false"
+            material="color: #ffffff; transparent: true; opacity: 0.001;">
+          </a-plane>
 
-          <a-light type="hemisphere" intensity="1.2" color="#ffffff"></a-light>
+          <!-- Hemisphere light for ambient -->
+          <a-light 
+            type="hemisphere" 
+            intensity="1.2"
+            color="#ffffff">
+          </a-light>
 
-          <a-light type="directional" id="light" target="dino" position="5 8 5" intensity="1.5" light="castShadow: true; shadowMapHeight: 2048; shadowMapWidth: 2048; shadowCameraLeft: -15; shadowCameraRight: 15; shadowCameraBottom: -15; shadowCameraTop: 15; shadowCameraFar: 30; shadowCameraNear: 0.1; shadowBias: -0.0001;"></a-light>
+          <!-- Directional light for shadows -->
+          <a-light 
+            type="directional" 
+            id="light"
+            target="dino" 
+            position="5 8 5"
+            intensity="1.5"
+            light="
+              castShadow: true;
+              shadowMapHeight: 2048;
+              shadowMapWidth: 2048;
+              shadowCameraLeft: -15;
+              shadowCameraRight: 15;
+              shadowCameraBottom: -15;
+              shadowCameraTop: 15;
+              shadowCameraFar: 30;
+              shadowCameraNear: 0.1;
+              shadowBias: -0.0001;">
+          </a-light>
 
-          <a-light type="directional" position="-5 6 -3" intensity="0.6"></a-light>
+          <!-- Fill light -->
+          <a-light 
+            type="directional"
+            position="-5 6 -3"
+            intensity="0.6">
+          </a-light>
         </a-scene>
       `;
 
       try {
+        console.log('Injecting scene HTML');
         container.innerHTML = sceneHTML;
+        console.log('Scene HTML injected');
         this.sceneInitialized = true;
 
         setTimeout(() => {
           this.scene = document.querySelector('a-scene');
           this.dino = document.getElementById('dino');
           this.light = document.getElementById('light');
+          this.shadowPlane = document.getElementById('shadowPlane');
+          this.reticleMarker = document.getElementById('reticle-marker');
+
+          const reticleAsset = document.getElementById('reticle');
+          const dinoAsset = document.getElementById('spinosaurus');
+
+          if (reticleAsset) {
+            reticleAsset.addEventListener('error', (e) => {
+              console.error('Failed to load reticle:', e);
+              this.error = `Failed to load reticle. Check that /assets/reticle.bin exists.`;
+            });
+          }
+
+          if (dinoAsset) {
+            dinoAsset.addEventListener('error', (e) => {
+              console.error('Failed to load dinosaur:', e);
+              this.error = 'Failed to load dinosaur model';
+            });
+          }
 
           if (this.scene && this.scene.renderer) {
             this.scene.renderer.shadowMap.enabled = true;
@@ -627,6 +710,8 @@ export default {
             this.arStatus = '✓ AR Ready';
             this.floorDetection = 'Point camera at floor...';
             console.log('✓ AR Scene initialized successfully');
+          } else {
+            throw new Error('Scene element not found after injection');
           }
         }, 2000);
       } catch (err) {
@@ -636,6 +721,28 @@ export default {
       }
     },
 
+    toggleAR() {
+      if (!this.scene) {
+        this.error = 'AR scene not initialized yet';
+        return;
+      }
+
+      try {
+        if (this.scene.enterAR) {
+          this.scene.enterAR();
+        } else {
+          this.error = 'Cannot enter AR mode. Use a mobile device with WebXR support.';
+        }
+      } catch (err) {
+        this.error = 'Failed to enter AR: ' + err.message;
+        console.error('AR Error:', err);
+      }
+    },
+
+    placeModel() {
+      this.toggleAR();
+    },
+
     setSize(scale) {
       this.modelScale = scale;
       if (this.dino) {
@@ -643,7 +750,7 @@ export default {
       }
     }
   }
-};
+}
 </script>
 
 <style scoped>
@@ -655,33 +762,6 @@ export default {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-}
-
-.ar-app.fullscreen {
-  height: 100vh;
-}
-
-.loading-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: #000;
-}
-
-.spinner {
-  width: 50px;
-  height: 50px;
-  border: 4px solid #2563eb;
-  border-top: 4px solid transparent;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 20px;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
 }
 
 .ar-container {
@@ -725,26 +805,6 @@ export default {
   z-index: 100;
   white-space: pre-line;
   pointer-events: none;
-}
-
-.fullscreen-btn {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  background: #2563eb;
-  color: white;
-  padding: 8px 12px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 600;
-  z-index: 100;
-  transition: all 0.2s;
-}
-
-.fullscreen-btn:hover {
-  background: #1d4ed8;
 }
 
 .size-control {
@@ -822,156 +882,6 @@ export default {
   background: #1d4ed8;
 }
 
-.control-menu {
-  background: #f9fafb;
-  border-top: 2px solid #e5e7eb;
-  padding: 16px;
-  z-index: 50;
-  width: 100%;
-  flex-shrink: 0;
-  max-height: 50vh;
-  overflow-y: auto;
-  space: 12px;
-}
-
-.mode-selection {
-  margin-bottom: 12px;
-}
-
-.mode-label {
-  font-size: 12px;
-  font-weight: 600;
-  color: #333;
-  margin: 0 0 8px 0;
-}
-
-.mode-buttons {
-  display: flex;
-  gap: 8px;
-}
-
-.mode-btn {
-  flex: 1;
-  padding: 10px 12px;
-  border: 2px solid #d1d5db;
-  border-radius: 6px;
-  background: white;
-  color: #333;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.mode-btn:hover {
-  border-color: #2563eb;
-  background: #eff6ff;
-}
-
-.mode-btn.active {
-  background: #2563eb;
-  color: white;
-  border-color: #2563eb;
-}
-
-.reset-buttons {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 12px;
-}
-
-.reset-btn {
-  flex: 1;
-  padding: 10px 12px;
-  border: none;
-  border-radius: 6px;
-  color: white;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.reset-rotation {
-  background: #f97316;
-}
-
-.reset-rotation:hover {
-  background: #ea580c;
-}
-
-.reset-position {
-  background: #a855f7;
-}
-
-.reset-position:hover {
-  background: #9333ea;
-}
-
-.values-display {
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
-  padding: 12px;
-  margin-bottom: 12px;
-  font-family: 'Courier New', monospace;
-  font-size: 12px;
-  color: #333;
-  line-height: 1.6;
-}
-
-.value-item {
-  margin: 4px 0;
-}
-
-.instructions {
-  background: #eff6ff;
-  border: 1px solid #bfdbfe;
-  border-radius: 6px;
-  padding: 12px;
-  margin-bottom: 12px;
-}
-
-.instructions-title {
-  font-weight: 600;
-  color: #1e40af;
-  margin: 0 0 8px 0;
-  font-size: 12px;
-}
-
-.instructions ul {
-  margin: 0;
-  padding-left: 20px;
-  font-size: 12px;
-  color: #1e3a8a;
-}
-
-.instructions li {
-  margin: 4px 0;
-}
-
-.drag-hint {
-  background: #2563eb;
-  color: white;
-  padding: 12px;
-  border-radius: 6px;
-  text-align: center;
-  font-size: 13px;
-  font-weight: 600;
-  animation: fadeIn 0.3s ease-in;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 .error-message {
   position: absolute;
   top: 20px;
@@ -1004,10 +914,5 @@ export default {
   font-size: 24px;
   cursor: pointer;
   float: right;
-  padding: 0;
-}
-
-.close-error:hover {
-  opacity: 0.8;
 }
 </style>

@@ -257,7 +257,14 @@
             </a-button>
 
                 </a-col>
-               
+                <a-col :span="14" style="padding-left:10px;padding-right:10px">
+                 
+<a-qrcode
+  error-level="H"
+  :value="windowLocation + '/ar-product/' + selectedProduct.id"
+/>
+                    <!-- icon="https://www.antdv.com/assets/logo.1ef800a8.svg" -->
+                </a-col>
               </a-row>
           
           
@@ -276,7 +283,9 @@ export default {
   data() {
   return {
     activeView: '3d',        // Track current view: '3d' or 'image'
-    activeImageIndex: null   // Track which image is selected
+    activeImageIndex: null  , // Track which image is selected
+        windowLocation: window.location.origin  // Add this line
+
   }
 },
   components: {

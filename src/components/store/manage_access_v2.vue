@@ -197,44 +197,7 @@
       </a-form>
   </a-modal>
   
-  <a-modal
-  v-model:open="openGrantProfessionalAccessModal"
-  centered
-  title="Grant Access to Professional"
-  width="500px"
-  @ok="handleGrantProfessionalAccess"
-  okText="Send Request"
-  cancelText="Cancel"
-  :confirmLoading="sendingProfessionalAccessRequest"
->
-  <a-form layout="vertical">
-    <a-form-item label="Professional Email" required>
-      <a-input
-        v-model:value="professionalAccessForm.professional_email"
-        placeholder="Enter professional user email"
-        size="large"
-        type="email"
-      />
-    </a-form-item>
-    
-    <a-form-item label="Request Message" required>
-      <a-textarea
-        v-model:value="professionalAccessForm.request_message"
-        placeholder="Explain why you need this professional's access..."
-        :rows="4"
-        size="large"
-      />
-    </a-form-item>
-
-    <a-alert
-      message="Information"
-      type="info"
-      show-icon
-      description="An access request will be sent to the professional user. They will need to accept it before they appear in your staff list."
-      style="margin-bottom: 12px;"
-    />
-  </a-form>
-</a-modal>
+  
  <!-- Phone Modal -->
   <a-modal
   v-if="this.staff_details"
@@ -477,130 +440,67 @@
             <a-icon type="plus" />
             Assign New Task
           </a-button>
-          <a-button type="default" size="large" @click="showGrantProfessionalAccessModal">
-  <a-icon type="user-add" />
-  Grant Professional Access
-</a-button>
         </a-col>
       </a-row>
     </div>
 
     <!-- Tabs -->
-    {{ all_staff }}
-     <!-- {"error": false, "count": 1, "data": [ { "id": "2b7b4e47-664e-45be-a91e-731e8db82a90", "professional_user": { "id": 4, "email": "ashishwaykar@sdlccorp.com", "full_name": "Ashish Professional", "phone": "", "profile_picture": "/media/default/default-user.jpg" }, "access_request_accepted": true, "is_active": true, "created_at": "2025-11-20T07:34:49.960787+00:00", "updated_at": "2025-11-20T07:41:14.187668+00:00", "assigned_tasks": [], "task_count": 0 } ] } -->
     <a-tabs v-model:activeKey="activeTab">
       <a-tab-pane key="all-staff" tab="All Staff">
         <!-- Staff Table -->
-    
-         <a-table
-    :columns="columns"
-    :data-source="transformedData"
-    row-key="id"
-    :pagination="{ pageSize: 10 }"
-    :customRow="customRow"
-  >
-    <template #bodyCell="{ column, record }">
-      <!-- Avatar + Name column -->
-      <template v-if="column.dataIndex === 'name'">
-        <div style="display:flex;align-items:center;gap:8px;">
-          <img
-            :src="this.$store.state.root_media_api + record.avatar"
-            alt="avatar"
-            style="width:40px;height:40px;border-radius:50%;object-fit:cover;"
-          />
-          <span>{{ record.name }}</span>
-        </div>
-      </template>
+      <a-table
+  :columns="columns"
+  :data-source="all_staff"
+  row-key="id"
+  :pagination="{ pageSize: 10 }"
+  :customRow="customRow"
+>
+  <template #bodyCell="{ column, record }">
+    <!-- Avatar + Name column -->
+    <template v-if="column.dataIndex === 'name'">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <img
+          :src="this.$store.state.root_media_api + record.avatar"
+          alt="avatar"
+          style="width:40px;height:40px;border-radius:50%;object-fit:cover;"
+        />
+        <span>{{ record.name }}</span>
+      </div>
+    </template>
 
-      <!-- Email column -->
-      <template v-else-if="column.dataIndex === 'email'">
-        <span>{{ record.email }}</span>
-      </template>
+    <!-- Email column -->
+    <template v-else-if="column.dataIndex === 'email'">
+      <span>{{ record.email }}</span>
+    </template>
 
-      <!-- Status column -->
-      <template v-else-if="column.dataIndex === 'status'">
-        <a-tag :color="record.is_active ? 'green' : 'red'">
-          {{ record.is_active ? 'Active' : 'Inactive' }}
-        </a-tag>
+    <!-- Permissions column -->
+    <template v-else-if="column.dataIndex === 'access_permissions'">
+      <template v-if="Array.isArray(record.access_permissions) && record.access_permissions.length">
+        <a-space>
+          <a-tag v-for="(perm, idx) in record.access_permissions" :key="idx">{{ perm }}</a-tag>
+        </a-space>
       </template>
-
-      <!-- Tasks column -->
-      <template v-else-if="column.dataIndex === 'task_count'">
-        <a-badge :count="record.task_count" :show-zero="true" />
-      </template>
-
-      <!-- Action column -->
-      <template v-else-if="column.dataIndex === 'actions'">
-        <div style="display:flex;gap:6px;justify-content:center;">
-          <a-button type="primary" shape="circle" @click.stop="onEdit(record)">
-            <EditOutlined />
-          </a-button>
-          <a-button type="primary" danger shape="circle" @click.stop="onDelete(record)">
-            <DeleteOutlined />
-          </a-button>
-        </div>
+      <template v-else>
+        <a-tag>Staff</a-tag>
       </template>
     </template>
-  </a-table>
+
+    <!-- Action column -->
+    <template v-else-if="column.dataIndex === 'actions'">
+      <div style="display:flex;gap:6px;justify-content:center;">
+        <a-button type="primary" shape="circle" @click.stop="onEdit(record)">
+          <EditOutlined />
+        </a-button>
+        <a-button type="primary" danger shape="circle" @click.stop="onDelete(record)">
+          <DeleteOutlined />
+        </a-button>
+      </div>
+    </template>
+  </template>
+</a-table>
 
       </a-tab-pane>
 
-<a-tab-pane key="pending-professionals" tab="Pending Professional Access">
-  <a-empty v-if="pendingProfessionalAccess.length === 0" 
-    description="No pending professional access requests" 
-    style="margin: 50px 0;"
-  />
-  
-  <a-row :gutter="16">
-    <a-col 
-      v-for="prof in pendingProfessionalAccess" 
-      :key="prof.id" 
-      :xs="24" 
-      :sm="12" 
-      :md="8"
-    >
-      <a-card hoverable style="margin-bottom: 16px;">
-        <template #cover>
-          <div style="text-align: center; padding: 20px; background: #f0f2f5;">
-            <a-avatar 
-              :src="prof.professional_user.profile_picture" 
-              :size="64"
-              icon="user"
-            />
-          </div>
-        </template>
-        
-        <a-card-meta>
-          <template #title>
-            {{ prof.professional_user.full_name }}
-          </template>
-          <template #description>
-            {{ prof.professional_user.email }}
-          </template>
-        </a-card-meta>
-
-        <div style="margin-top: 12px;">
-          <p><strong>Status:</strong> <a-tag color="orange">Pending Acceptance</a-tag></p>
-          <p><strong>Requested:</strong> {{ new Date(prof.created_at).toLocaleDateString() }}</p>
-        </div>
-
-        <div style="display: flex; gap: 8px; margin-top: 16px;">
-          <a-button type="default" style="flex: 1;" disabled>
-            Awaiting Response
-          </a-button>
-          <a-button 
-            type="primary" 
-            danger 
-            @click="revokeProfessionalAccess(prof.id)"
-            style="flex: 1;"
-          >
-            Cancel Request
-          </a-button>
-        </div>
-      </a-card>
-    </a-col>
-  </a-row>
-</a-tab-pane>
       <a-tab-pane key="all-tasks" tab="All Tasks">
         <task_List />
       </a-tab-pane>
@@ -968,38 +868,8 @@ import { EditOutlined,DeleteOutlined ,LeftOutlined,  PhoneOutlined,MailOutlined,
 import task_List from '@/components/store/tasks_assigned_list.vue'
 export default {
   name: 'manage_access',
-  computed: {
-    transformedData() {
-      return this.all_staff.map(item => ({
-        id: item.id,
-        name: item.professional_user.full_name,
-        email: item.professional_user.email,
-        avatar: item.professional_user.profile_picture,
-        phone: item.professional_user.phone,
-        is_active: item.is_active,
-        task_count: item.task_count,
-        access_request_accepted: item.access_request_accepted,
-        created_at: item.created_at,
-        updated_at: item.updated_at,
-        assigned_tasks: item.assigned_tasks,
-        // Keep original nested data for reference
-        _original: item,
-      }));
-    },
-  },
   data() {
     return {
-      openGrantProfessionalAccessModal: false,
-    sendingProfessionalAccessRequest: false,
-    
-    professionalAccessForm: {
-      professional_email: '',
-      request_message: ''
-    },
-    
-    // Store pending professional access requests
-    pendingProfessionalAccess: [],
-
       openAssignTaskModal: false,
       openCreateNewtaskModal: false,
       
@@ -1015,7 +885,7 @@ export default {
       staff_details:null,
       hasUnsavedChanges: false,
 
-     columns: [
+      columns: [
         {
           title: 'Name',
           dataIndex: 'name',
@@ -1027,16 +897,9 @@ export default {
           key: 'email',
         },
         {
-          title: 'Status',
-          dataIndex: 'status',
-          key: 'status',
-          align: 'center',
-        },
-        {
-          title: 'Assigned Tasks',
-          dataIndex: 'task_count',
-          key: 'task_count',
-          align: 'center',
+          title: 'Access Permisions',
+          dataIndex: 'access_permissions',
+          key: 'access_permissions',
         },
         {
           title: 'Actions',
@@ -1045,6 +908,7 @@ export default {
           align: 'center',
         },
       ],
+
 
       
       mailForm: {
@@ -1091,169 +955,6 @@ export default {
   },
 components:{EditOutlined,DeleteOutlined ,LeftOutlined,  PhoneOutlined,MailOutlined,RedoOutlined,task_List},
   methods: {
-  customRow(record) {
-      return {
-        onClick: () => {
-          // Handle row click if needed
-        },
-      };
-    },
-    onEdit(record) {
-      console.log('Edit:', record);
-      // Your edit logic here
-    },
-    
-    onDelete(record) {
-      console.log('Delete:', record);
-
-      // Your delete logic here
-    },
-  
-  /**
-   * Show the grant professional access modal
-   */
-  showGrantProfessionalAccessModal() {
-    this.openGrantProfessionalAccessModal = true;
-    this.professionalAccessForm = {
-      professional_email: '',
-      request_message: ''
-    };
-  },
-
-  /**
-   * Handle granting professional access
-   */
-  async handleGrantProfessionalAccess() {
-    // Validate form
-    if (!this.professionalAccessForm.professional_email.trim()) {
-      this.$message.error('Professional email is required');
-      return;
-    }
-
-    if (!this.professionalAccessForm.request_message.trim()) {
-      this.$message.error('Request message is required');
-      return;
-    }
-
-    // Basic email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(this.professionalAccessForm.professional_email)) {
-      this.$message.error('Please enter a valid email address');
-      return;
-    }
-
-    this.sendingProfessionalAccessRequest = true;
-
-    try {
-      const payload = {
-        professional_email: this.professionalAccessForm.professional_email.toLowerCase(),
-        // Optional: add request_message if your API supports it
-      };
-
-      const response = await fetch(
-        `${this.$store.state.root_api}access-engine/api/professional-access/grant-access/`,
-        {
-          method: 'POST',
-          headers: {
-            'Authorization': `Token ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(payload)
-        }
-      );
-
-      const data = await response.json();
-
-      if (response.ok && !data.error) {
-        this.$message.success('Access request sent to professional successfully!');
-        
-        // Close modal
-        this.openGrantProfessionalAccessModal = false;
-
-        // Reset form
-        this.professionalAccessForm = {
-          professional_email: '',
-          request_message: ''
-        };
-
-        // Refresh staff list to show pending professional
-        await this.fetchAllStaff();
-
-        // Show info message
-        this.$message.info('The professional user will need to accept the request to appear in your staff list.');
-      } else {
-        this.$message.error(data.message || 'Failed to send access request');
-      }
-    } catch (error) {
-      console.error('Error granting professional access:', error);
-      this.$message.error('An error occurred while sending the access request');
-    } finally {
-      this.sendingProfessionalAccessRequest = false;
-    }
-  },
-
-  /**
-   * Get professional access requests (for admin/business dashboard)
-   */
-  async fetchProfessionalAccessRequests() {
-    try {
-      const response = await fetch(
-        `${this.$store.state.root_api}access-engine/api/professional-access/my-professionals/`,
-        {
-          headers: { Authorization: `Token ${localStorage.getItem('token')}` },
-        }
-      );
-
-      const data = await response.json();
-      if (!data.error) {
-        this.pendingProfessionalAccess = data.data.filter(p => !p.access_request_accepted);
-        console.log('Pending professional access requests:', this.pendingProfessionalAccess);
-      }
-    } catch (error) {
-      console.error('Error fetching professional access requests:', error);
-    }
-  },
-
-  /**
-   * Revoke professional access
-   */
-  async revokeProfessionalAccess(accessId) {
-    this.$confirm({
-      title: 'Revoke Professional Access?',
-      content: 'Are you sure you want to revoke access from this professional?',
-      okText: 'Yes, Revoke',
-      okType: 'danger',
-      cancelText: 'Cancel',
-      onOk: async () => {
-        try {
-          const response = await fetch(
-            `${this.$store.state.root_api}access-engine/api/professional-access/revoke-access/${accessId}/`,
-            {
-              method: 'POST',
-              headers: {
-                'Authorization': `Token ${localStorage.getItem('token')}`,
-                'Content-Type': 'application/json'
-              }
-            }
-          );
-
-          const data = await response.json();
-
-          if (!data.error) {
-            this.$message.success('Professional access revoked successfully');
-            await this.fetchAllStaff();
-            await this.fetchProfessionalAccessRequests();
-          } else {
-            this.$message.error(data.message || 'Failed to revoke access');
-          }
-        } catch (error) {
-          console.error('Error revoking professional access:', error);
-          this.$message.error('An error occurred while revoking access');
-        }
-      }
-    });
-  },
-
     show_Phone_employee_modal(){this.open_Phone_employee_modal= !this.open_Phone_employee_modal},
     show_Mail_employee_modal(){this.open_Mail_employee_modal= !this.open_Mail_employee_modal},
     show_Edit_employee_modal(){this.open_Edit_employee_modal= !this.open_Edit_employee_modal},
@@ -1514,38 +1215,18 @@ components:{EditOutlined,DeleteOutlined ,LeftOutlined,  PhoneOutlined,MailOutlin
       },
 
 
-    // async fetchAllStaff() {
-    //   try {
-    //     const response = await fetch(
-    //       `${this.$store.state.root_api}access-engine/api/all-staff-users/`,
-    //       {
-    //         headers: { Authorization: `Token ${localStorage.getItem('token')}` },
-    //       }
-    //     );
-
-    //     const data = await response.json();
-    //     if (!data.error) {
-    //       this.all_staff = data.staff_users;
-    //     }
-    //   } catch (error) {
-    //     console.error('Error fetching staff:', error);
-    //   }
-    // },
-    
-    
     async fetchAllStaff() {
       try {
         const response = await fetch(
-          `${this.$store.state.root_api}access-engine/api/professional-access/my-professionals/`,
+          `${this.$store.state.root_api}access-engine/api/all-staff-users/`,
           {
             headers: { Authorization: `Token ${localStorage.getItem('token')}` },
           }
         );
 
         const data = await response.json();
-        console.log(data)
         if (!data.error) {
-          this.all_staff = data.data;
+          this.all_staff = data.staff_users;
         }
       } catch (error) {
         console.error('Error fetching staff:', error);
@@ -1865,11 +1546,7 @@ components:{EditOutlined,DeleteOutlined ,LeftOutlined,  PhoneOutlined,MailOutlin
     },
 
     onDelete(record) {
-      this.selectedEmployee = record;
-      this.deleteConfirmation = '';
-      this.open_Delete_employee_modal = true;
       console.log('delete', record);
-
     },
 
     showStaffDetails(record) {
@@ -1886,7 +1563,6 @@ components:{EditOutlined,DeleteOutlined ,LeftOutlined,  PhoneOutlined,MailOutlin
 
   mounted() {
     this.fetchAllStaff();
-    
   }
 };
 </script>

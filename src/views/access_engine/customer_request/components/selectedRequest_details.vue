@@ -151,7 +151,7 @@ export default {
       try {
         this.loadingProductsUsed = true;
         const response = await fetch(
-          `${this.$store.state.root_api}room_request/api/get-products-used-in-room-request/${this.selected_request.id}/`,
+          `${this.$store.state.root_api}room_request/api/get-products-used-in-room-request/${this.selected_request.id}/?access-id=`+this.$route.query.access_id,
           {
             method: "GET",
             headers: {
