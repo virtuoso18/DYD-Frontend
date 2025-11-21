@@ -41,11 +41,11 @@ import add_light from '@/components/dashboard/business/my_products/add_new_produ
 
 // Import individual dashboard components for professional users
 import profesional_user_profile from '@/components/dashboard/professional/user_profile.vue'
-import profesional_my_designs from '@/components/dashboard/professional/my_designs.vue'
-import profesional_my_products from '@/components/dashboard/professional/my_products.vue'
-import profesional_community_dashboard from '@/components/dashboard/professional/comunity.vue'
-import profesional_generate_banner from '@/components/dashboard/professional/generate_banner.vue'
+import profesional_my_requests from '@/components/dashboard/professional/my_requests.vue'
+import profesional_my_likes from '@/components/dashboard/professional/my_likes.vue'
+import profesional_transactions from '@/components/dashboard/professional/my_transactions.vue'
 import profesional_manage_subscription from '@/components/dashboard/professional/manage_subscription.vue'
+
 
 // profesional user manage access pages  
 import professional_user_access_manager from "@/views/manage_access_professional_user/manager.vue"
@@ -74,6 +74,10 @@ import access_manage_community_post from '@/views/access_engine/community_post/a
 import access_manage_customer_requests from '@/views/access_engine/customer_request/access_manage_customer_requests.vue'
 import access_create_furniture_product_3d_model_add_product from '@/views/access_engine/product/my_products/add_new_product/add_furniture.vue'
 import access_create_light_product_3d_model_add_light from  '@/views/access_engine/product/my_products/add_new_product/add_light_ceiling_3d.vue'
+
+import access_manage_customer from '@/views/access_engine/customers/business_customers.vue'
+import access_manage_generate_banner from '@/views/access_engine/generate_banner/generate_banner.vue'
+import access_manage_customer_messages from '@/views/access_engine/messages/message_customer.vue'
 
 import Generate_Banner_Admin from '@/views/Platform_Admin_Access_Only/generate_banner_catalog.vue'
 
@@ -329,24 +333,24 @@ const router = createRouter({
           component: profesional_user_profile,
         },
         {
-          path: 'my-designs',
-          name: 'professional_my_designs',
-          component: profesional_my_designs,
+          path: 'access-requests',
+          name: 'professional_my_requests',
+          component: profesional_my_requests,
         },
         {
-          path: 'my-products',
-          name: 'professional_my_products',
-          component: profesional_my_products,
+          path: 'my-likes',
+          name: 'professional_my_likes',
+          component: profesional_my_likes,
         },
         {
-          path: 'comunity',
-          name: 'professional_dashboard_community',
-          component: profesional_community_dashboard,
+          path: 'my-messages',
+          name: 'professional_messages',
+          component: normal_my_messages,
         },
         {
-          path: 'generate-banner',
-          name: 'professional_generate_banner',
-          component: profesional_generate_banner,
+          path: 'my-transactions',
+          name: 'professional_transactions',
+          component: profesional_transactions,
         },
         {
           path: 'manage-subscription',
@@ -561,6 +565,25 @@ const router = createRouter({
       name: 'manage-customer-requests',
       component: access_manage_customer_requests,
     },
+    
+    {
+      path: 'manage-customers',
+      name: 'manage-customers',
+      component: access_manage_customer,
+    },
+    
+    {
+      path: 'manage-generate-banner',
+      name: 'manage-generate-banner',
+      component: access_manage_generate_banner,
+    },
+    
+    {
+      path: 'manage-customer-messages',
+      name: 'manage-customer-messages',
+      component: access_manage_customer_messages,
+    },
+
   ],
 },
 // {

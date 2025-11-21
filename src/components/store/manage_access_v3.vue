@@ -841,142 +841,6 @@
                       </div>
                     </div>
                   </a-col>
-                  
-<!-- Customer Messages Card -->
-<a-col :span="12" style="padding:5px;">
-  <div style="background: white; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); margin-bottom: 12px; overflow: hidden; transition: box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 3px 10px rgba(0,0,0,0.12)'" onmouseout="this.style.boxShadow='0 1px 3px rgba(0,0,0,0.08)'">
-    <div style="background: linear-gradient(90deg, #fce7f3 0%, #fbcfe8 100%); padding: 12px 16px; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; gap: 10px;">
-      <div style="padding: 6px; background: white; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-        <svg style="width: 16px; height: 16px; color: #db2777;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-        </svg>
-      </div>
-      <h3 style="margin: 0; font-size: 14px; font-weight: 600; color: #1f2937;">Customer Messages</h3>
-    </div>
-    <div style="padding: 12px 16px; display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px;">
-      <div style="display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 6px; background: #f9fafb; transition: background 0.2s;" onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='#f9fafb'">
-        <a-switch 
-          v-model:checked="customer_messages_read" 
-          size="small"
-          @change="(checked) => handlePermissionChange('customer_messages', 'read', checked)"
-        />
-        <label style="font-size: 13px; font-weight: 500; color: #374151; cursor: pointer;">Read</label>
-      </div>
-      <div style="display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 6px; background: #f9fafb; transition: background 0.2s;" onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='#f9fafb'">
-        <a-switch 
-          v-model:checked="customer_messages_respond" 
-          size="small"
-          @change="(checked) => handlePermissionChange('customer_messages', 'respond', checked)"
-        />
-        <label style="font-size: 13px; font-weight: 500; color: #374151; cursor: pointer;">Respond</label>
-      </div>
-      <div style="display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 6px; background: #f9fafb; transition: background 0.2s;" onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='#f9fafb'">
-        <a-switch 
-          v-model:checked="customer_messages_report" 
-          size="small"
-          @change="(checked) => handlePermissionChange('customer_messages', 'report', checked)"
-        />
-        <label style="font-size: 13px; font-weight: 500; color: #374151; cursor: pointer;">Report</label>
-      </div>
-      <div style="display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 6px; background: #f9fafb; transition: background 0.2s;" onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='#f9fafb'">
-        <a-switch 
-          v-model:checked="customer_messages_delete" 
-          size="small"
-          @change="(checked) => handlePermissionChange('customer_messages', 'delete', checked)"
-        />
-        <label style="font-size: 13px; font-weight: 500; color: #374151; cursor: pointer;">Delete</label>
-      </div>
-    </div>
-  </div>
-</a-col>
-
-<!-- Generate Banner Card -->
-<a-col :span="12" style="padding:5px;">
-  <div style="background: white; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); margin-bottom: 12px; overflow: hidden; transition: box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 3px 10px rgba(0,0,0,0.12)'" onmouseout="this.style.boxShadow='0 1px 3px rgba(0,0,0,0.08)'">
-    <div style="background: linear-gradient(90deg, #fef3c7 0%, #fde68a 100%); padding: 12px 16px; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; gap: 10px;">
-      <div style="padding: 6px; background: white; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-        <svg style="width: 16px; height: 16px; color: #ca8a04;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
-        </svg>
-      </div>
-      <h3 style="margin: 0; font-size: 14px; font-weight: 600; color: #1f2937;">Generate Banner</h3>
-    </div>
-    <div style="padding: 12px 16px; display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px;">
-      <div style="display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 6px; background: #f9fafb; transition: background 0.2s;" onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='#f9fafb'">
-        <a-switch 
-          v-model:checked="generate_banner_read" 
-          size="small"
-          @change="(checked) => handlePermissionChange('generate_banner', 'read', checked)"
-        />
-        <label style="font-size: 13px; font-weight: 500; color: #374151; cursor: pointer;">Read</label>
-      </div>
-      <div style="display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 6px; background: #f9fafb; transition: background 0.2s;" onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='#f9fafb'">
-        <a-switch 
-          v-model:checked="generate_banner_create" 
-          size="small"
-          @change="(checked) => handlePermissionChange('generate_banner', 'create', checked)"
-        />
-        <label style="font-size: 13px; font-weight: 500; color: #374151; cursor: pointer;">Create</label>
-      </div>
-      <div style="display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 6px; background: #f9fafb; transition: background 0.2s;" onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='#f9fafb'">
-        <a-switch 
-          v-model:checked="generate_banner_download" 
-          size="small"
-          @change="(checked) => handlePermissionChange('generate_banner', 'download', checked)"
-        />
-        <label style="font-size: 13px; font-weight: 500; color: #374151; cursor: pointer;">Download</label>
-      </div>
-      <div style="display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 6px; background: #f9fafb; transition: background 0.2s;" onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='#f9fafb'">
-        <a-switch 
-          v-model:checked="generate_banner_share" 
-          size="small"
-          @change="(checked) => handlePermissionChange('generate_banner', 'share', checked)"
-        />
-        <label style="font-size: 13px; font-weight: 500; color: #374151; cursor: pointer;">Share</label>
-      </div>
-      <div style="display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 6px; background: #f9fafb; transition: background 0.2s;" onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='#f9fafb'">
-        <a-switch 
-          v-model:checked="generate_banner_delete" 
-          size="small"
-          @change="(checked) => handlePermissionChange('generate_banner', 'delete', checked)"
-        />
-        <label style="font-size: 13px; font-weight: 500; color: #374151; cursor: pointer;">Delete</label>
-      </div>
-    </div>
-  </div>
-</a-col>
-
-<!-- Business Customers Card -->
-<a-col :span="12" style="padding:5px;">
-  <div style="background: white; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); margin-bottom: 12px; overflow: hidden; transition: box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 3px 10px rgba(0,0,0,0.12)'" onmouseout="this.style.boxShadow='0 1px 3px rgba(0,0,0,0.08)'">
-    <div style="background: linear-gradient(90deg, #dbeafe 0%, #bfdbfe 100%); padding: 12px 16px; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; gap: 10px;">
-      <div style="padding: 6px; background: white; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-        <svg style="width: 16px; height: 16px; color: #0284c7;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.856-1.487M15 10a3 3 0 11-6 0 3 3 0 016 0zM6 20a9 9 0 0118 0v2h2v-2a11 11 0 00-20 0v2h2z"/>
-        </svg>
-      </div>
-      <h3 style="margin: 0; font-size: 14px; font-weight: 600; color: #1f2937;">Business Customers</h3>
-    </div>
-    <div style="padding: 12px 16px; display: flex; gap: 10px; flex-wrap: wrap;">
-      <div style="display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 6px; background: #f9fafb; flex: 1; min-width: 150px; transition: background 0.2s;" onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='#f9fafb'">
-        <a-switch 
-          v-model:checked="business_customers_read" 
-          size="small"
-          @change="(checked) => handlePermissionChange('business_customers', 'read', checked)"
-        />
-        <label style="font-size: 13px; font-weight: 500; color: #374151; cursor: pointer; flex: 1;">Read</label>
-      </div>
-      <div style="display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 6px; background: #f9fafb; flex: 1; min-width: 150px; transition: background 0.2s;" onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='#f9fafb'">
-        <a-switch 
-          v-model:checked="business_customers_delete" 
-          size="small"
-          @change="(checked) => handlePermissionChange('business_customers', 'delete', checked)"
-        />
-        <label style="font-size: 13px; font-weight: 500; color: #374151; cursor: pointer; flex: 1;">Delete</label>
-      </div>
-    </div>
-  </div>
-</a-col>
                 </a-row>
 
                 <div style="margin-top: 20px; display: flex; justify-content: flex-end; gap: 10px; align-items: center;">
@@ -1097,6 +961,7 @@
 
   </div>
 </template>
+
 <script>
 import { EditOutlined,DeleteOutlined ,LeftOutlined,  PhoneOutlined,MailOutlined,RedoOutlined} from '@ant-design/icons-vue';
 
@@ -1125,15 +990,15 @@ export default {
   data() {
     return {
       openGrantProfessionalAccessModal: false,
-      sendingProfessionalAccessRequest: false,
-      
-      professionalAccessForm: {
-        professional_email: '',
-        request_message: ''
-      },
-      
-      // Store pending professional access requests
-      pendingProfessionalAccess: [],
+    sendingProfessionalAccessRequest: false,
+    
+    professionalAccessForm: {
+      professional_email: '',
+      request_message: ''
+    },
+    
+    // Store pending professional access requests
+    pendingProfessionalAccess: [],
 
       openAssignTaskModal: false,
       openCreateNewtaskModal: false,
@@ -1149,11 +1014,8 @@ export default {
       all_staff: [],
       staff_details:null,
       hasUnsavedChanges: false,
-      selectedEmployee: null,
-      loadingUsers: false,
-      availableUsers: [],
 
-      columns: [
+     columns: [
         {
           title: 'Name',
           dataIndex: 'name',
@@ -1184,6 +1046,7 @@ export default {
         },
       ],
 
+      
       mailForm: {
         to: '',
         subject: '',
@@ -1200,25 +1063,13 @@ export default {
       },
 
       newTaskForm: {
-        title: '',
-        description: '',
-        assigned_to: null
-      },
-
-      taskForm: {
-        assignment_type: 'internal_staff',
-        assigned_to_email: '',
-        title: '',
-        description: '',
-        priority: 'medium',
-        estimated_hours: 0,
-        due_date: null
-      },
-
-      savingData: false,
-      deleteConfirmation: '',
+      title: '',
+      description: '',
+      assigned_to: null  // Add this field to store user ID
+    },
       
-      // permissions - existing
+      deleteConfirmation: '',
+      // permissions
       business_site_read: false,
       business_site_update: false,
       
@@ -1236,279 +1087,243 @@ export default {
       manage_user_request_update: false,
       manage_user_request_reject: false,
       manage_user_request_process: false,
-
-      // New permission toggles for customer_messages
-      customer_messages_read: false,
-      customer_messages_respond: false,
-      customer_messages_report: false,
-      customer_messages_delete: false,
-      
-      // New permission toggles for generate_banner
-      generate_banner_read: false,
-      generate_banner_create: false,
-      generate_banner_download: false,
-      generate_banner_share: false,
-      generate_banner_delete: false,
-      
-      // New permission toggles for business_customers
-      business_customers_read: false,
-      business_customers_delete: false,
     };
   },
-  components:{EditOutlined,DeleteOutlined ,LeftOutlined,  PhoneOutlined,MailOutlined,RedoOutlined,task_List},
+components:{EditOutlined,DeleteOutlined ,LeftOutlined,  PhoneOutlined,MailOutlined,RedoOutlined,task_List},
   methods: {
-    /**
-     * Updated customRow method to properly pass record and handle clicks
-     * This returns an object with click handler and styling for table rows
-     */
-    customRow(record) {
-      console.log('Row clicked:', record);
+  customRow(record) {
       return {
-        onClick: () => this.showStaffDetails(record),
-        style: { cursor: 'pointer' }
+        onClick: () => {
+          // Handle row click if needed
+        },
       };
     },
-
     onEdit(record) {
       console.log('Edit:', record);
-      this.openEditModal(record);
+      // Your edit logic here
     },
     
     onDelete(record) {
       console.log('Delete:', record);
-      this.selectedEmployee = record;
-      this.deleteConfirmation = '';
-      this.open_Delete_employee_modal = true;
+
+      // Your delete logic here
     },
   
-    /**
-     * Show the grant professional access modal
-     */
-    showGrantProfessionalAccessModal() {
-      this.openGrantProfessionalAccessModal = true;
-      this.professionalAccessForm = {
-        professional_email: '',
-        request_message: ''
+  /**
+   * Show the grant professional access modal
+   */
+  showGrantProfessionalAccessModal() {
+    this.openGrantProfessionalAccessModal = true;
+    this.professionalAccessForm = {
+      professional_email: '',
+      request_message: ''
+    };
+  },
+
+  /**
+   * Handle granting professional access
+   */
+  async handleGrantProfessionalAccess() {
+    // Validate form
+    if (!this.professionalAccessForm.professional_email.trim()) {
+      this.$message.error('Professional email is required');
+      return;
+    }
+
+    if (!this.professionalAccessForm.request_message.trim()) {
+      this.$message.error('Request message is required');
+      return;
+    }
+
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(this.professionalAccessForm.professional_email)) {
+      this.$message.error('Please enter a valid email address');
+      return;
+    }
+
+    this.sendingProfessionalAccessRequest = true;
+
+    try {
+      const payload = {
+        professional_email: this.professionalAccessForm.professional_email.toLowerCase(),
+        // Optional: add request_message if your API supports it
       };
-    },
 
-    /**
-     * Handle granting professional access
-     */
-    async handleGrantProfessionalAccess() {
-      if (!this.professionalAccessForm.professional_email.trim()) {
-        this.$message.error('Professional email is required');
-        return;
-      }
+      const response = await fetch(
+        `${this.$store.state.root_api}access-engine/api/professional-access/grant-access/`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Token ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        }
+      );
 
-      if (!this.professionalAccessForm.request_message.trim()) {
-        this.$message.error('Request message is required');
-        return;
-      }
+      const data = await response.json();
 
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(this.professionalAccessForm.professional_email)) {
-        this.$message.error('Please enter a valid email address');
-        return;
-      }
+      if (response.ok && !data.error) {
+        this.$message.success('Access request sent to professional successfully!');
+        
+        // Close modal
+        this.openGrantProfessionalAccessModal = false;
 
-      this.sendingProfessionalAccessRequest = true;
-
-      try {
-        const payload = {
-          professional_email: this.professionalAccessForm.professional_email.toLowerCase(),
+        // Reset form
+        this.professionalAccessForm = {
+          professional_email: '',
+          request_message: ''
         };
 
-        const response = await fetch(
-          `${this.$store.state.root_api}access-engine/api/professional-access/grant-access/`,
-          {
-            method: 'POST',
-            headers: {
-              'Authorization': `Token ${localStorage.getItem('token')}`,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
-          }
-        );
+        // Refresh staff list to show pending professional
+        await this.fetchAllStaff();
 
-        const data = await response.json();
-
-        if (response.ok && !data.error) {
-          this.$message.success('Access request sent to professional successfully!');
-          this.openGrantProfessionalAccessModal = false;
-          this.professionalAccessForm = {
-            professional_email: '',
-            request_message: ''
-          };
-          await this.fetchAllStaff();
-          this.$message.info('The professional user will need to accept the request to appear in your staff list.');
-        } else {
-          this.$message.error(data.message || 'Failed to send access request');
-        }
-      } catch (error) {
-        console.error('Error granting professional access:', error);
-        this.$message.error('An error occurred while sending the access request');
-      } finally {
-        this.sendingProfessionalAccessRequest = false;
+        // Show info message
+        this.$message.info('The professional user will need to accept the request to appear in your staff list.');
+      } else {
+        this.$message.error(data.message || 'Failed to send access request');
       }
-    },
+    } catch (error) {
+      console.error('Error granting professional access:', error);
+      this.$message.error('An error occurred while sending the access request');
+    } finally {
+      this.sendingProfessionalAccessRequest = false;
+    }
+  },
 
-    /**
-     * Get professional access requests
-     */
-    async fetchProfessionalAccessRequests() {
-      try {
-        const response = await fetch(
-          `${this.$store.state.root_api}access-engine/api/professional-access/my-professionals/`,
-          {
-            headers: { Authorization: `Token ${localStorage.getItem('token')}` },
-          }
-        );
-
-        const data = await response.json();
-        if (!data.error) {
-          this.pendingProfessionalAccess = data.data.filter(p => !p.access_request_accepted);
-          console.log('Pending professional access requests:', this.pendingProfessionalAccess);
+  /**
+   * Get professional access requests (for admin/business dashboard)
+   */
+  async fetchProfessionalAccessRequests() {
+    try {
+      const response = await fetch(
+        `${this.$store.state.root_api}access-engine/api/professional-access/my-professionals/`,
+        {
+          headers: { Authorization: `Token ${localStorage.getItem('token')}` },
         }
-      } catch (error) {
-        console.error('Error fetching professional access requests:', error);
-      }
-    },
+      );
 
-    /**
-     * Revoke professional access
-     */
-    async revokeProfessionalAccess(accessId) {
-      this.$confirm({
-        title: 'Revoke Professional Access?',
-        content: 'Are you sure you want to revoke access from this professional?',
-        okText: 'Yes, Revoke',
-        okType: 'danger',
-        cancelText: 'Cancel',
-        onOk: async () => {
-          try {
-            const response = await fetch(
-              `${this.$store.state.root_api}access-engine/api/professional-access/revoke-access/${accessId}/`,
-              {
-                method: 'POST',
-                headers: {
-                  'Authorization': `Token ${localStorage.getItem('token')}`,
-                  'Content-Type': 'application/json'
-                }
+      const data = await response.json();
+      if (!data.error) {
+        this.pendingProfessionalAccess = data.data.filter(p => !p.access_request_accepted);
+        console.log('Pending professional access requests:', this.pendingProfessionalAccess);
+      }
+    } catch (error) {
+      console.error('Error fetching professional access requests:', error);
+    }
+  },
+
+  /**
+   * Revoke professional access
+   */
+  async revokeProfessionalAccess(accessId) {
+    this.$confirm({
+      title: 'Revoke Professional Access?',
+      content: 'Are you sure you want to revoke access from this professional?',
+      okText: 'Yes, Revoke',
+      okType: 'danger',
+      cancelText: 'Cancel',
+      onOk: async () => {
+        try {
+          const response = await fetch(
+            `${this.$store.state.root_api}access-engine/api/professional-access/revoke-access/${accessId}/`,
+            {
+              method: 'POST',
+              headers: {
+                'Authorization': `Token ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
               }
-            );
-
-            const data = await response.json();
-
-            if (!data.error) {
-              this.$message.success('Professional access revoked successfully');
-              await this.fetchAllStaff();
-              await this.fetchProfessionalAccessRequests();
-            } else {
-              this.$message.error(data.message || 'Failed to revoke access');
             }
-          } catch (error) {
-            console.error('Error revoking professional access:', error);
-            this.$message.error('An error occurred while revoking access');
+          );
+
+          const data = await response.json();
+
+          if (!data.error) {
+            this.$message.success('Professional access revoked successfully');
+            await this.fetchAllStaff();
+            await this.fetchProfessionalAccessRequests();
+          } else {
+            this.$message.error(data.message || 'Failed to revoke access');
           }
+        } catch (error) {
+          console.error('Error revoking professional access:', error);
+          this.$message.error('An error occurred while revoking access');
         }
-      });
-    },
+      }
+    });
+  },
 
     show_Phone_employee_modal(){this.open_Phone_employee_modal= !this.open_Phone_employee_modal},
     show_Mail_employee_modal(){this.open_Mail_employee_modal= !this.open_Mail_employee_modal},
     show_Edit_employee_modal(){this.open_Edit_employee_modal= !this.open_Edit_employee_modal},
     show_Delete_employee_modal(){this.open_Delete_employee_modal= !this.open_Delete_employee_modal},
 
-    handleAssignmentTypeChange(value) {
-      console.log('Assignment type changed to:', value);
-    },
-
-    handleStaffSearch(searchValue) {
-      console.log('Searching for staff:', searchValue);
-    },
-
-    disabledDate(current) {
-      return current && current < new Date();
-    },
-
-    closeAssignTaskModal() {
-      this.openAssignTaskModal = false;
-      this.taskForm = {
-        assignment_type: 'internal_staff',
-        assigned_to_email: '',
-        title: '',
-        description: '',
-        priority: 'medium',
-        estimated_hours: 0,
-        due_date: null
-      };
-    },
-
-    async handleAssignTask() {
-      console.log('Assigning task:', this.taskForm);
-      this.$message.success('Task assigned successfully');
-      this.closeAssignTaskModal();
-    },
-
-    async handleOk() {
-      await this.handleAssignTask();
-    },
 
     async handleCreateTask() {
-      console.log('Staff details (full object):------>', JSON.parse(JSON.stringify(this.staff_details)));
-      if (!this.newTaskForm.title || !this.newTaskForm.description) {
-        this.$message.error('Please fill in title and description');
-        return;
-      }
-      
-      if (!this.staff_details) {
-        this.$message.error('No staff member selected');
-        return;
-      }
-      console.log('Staff details:', this.staff_details);
-      
-      try {
-        const payload = {
-          title: this.newTaskForm.title,
-          description: this.newTaskForm.description,
-          assigned_to: this.staff_details.email
-        };
+        // Validate form
+        console.log('Staff details (full object):------>', JSON.parse(JSON.stringify(this.staff_details)));
+        if (!this.newTaskForm.title || !this.newTaskForm.description) {
+          this.$message.error('Please fill in title and description');
+          return;
+        }
         
-        const response = await fetch(
-          `${this.$store.state.root_api}access-engine/api/tasks/create/`,
-          {
-            method: 'POST',
-            headers: {
-              'Authorization': `Token ${localStorage.getItem('token')}`,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
-          }
-        );
-        
-        const data = await response.json();
-        
-        if (response.ok && !data.error) {
-          this.$message.success('Task created successfully');
-          this.openCreateNewtaskModal = false;
+        if (!this.staff_details) {
+          this.$message.error('No staff member selected');
           
-          this.newTaskForm = {
-            title: '',
-            description: '',
-            assigned_to: null
+          return;
+        }
+        console.log('Staff details:', this.staff_details);
+        
+        try {
+          const payload = {
+            title: this.newTaskForm.title,
+            description: this.newTaskForm.description,
+            assigned_to: this.staff_details.email  // Use the staff member's ID
           };
           
-          await this.fetchStaff(this.staff_details.email);
-        } else {
-          this.$message.error(data.message || 'Failed to create task');
+          const response = await fetch(
+            `${this.$store.state.root_api}access-engine/api/tasks/create/`,
+            {
+              method: 'POST',
+              headers: {
+                'Authorization': `Token ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(payload)
+            }
+          );
+          
+          const data = await response.json();
+          
+          if (response.ok && !data.error) {
+            this.$message.success('Task created successfully');
+            this.openCreateNewtaskModal = false;
+            
+            // Reset form
+            this.newTaskForm = {
+              title: '',
+              description: '',
+              assigned_to: null
+            };
+            
+            // Refresh staff details to show the new task
+            await this.fetchStaff(this.staff_details);
+          } else {
+            this.$message.error(data.message || 'Failed to create task');
+          }
+        } catch (error) {
+          console.error('Error creating task:', error);
+          this.$message.error('An error occurred while creating the task');
         }
-      } catch (error) {
-        console.error('Error creating task:', error);
-        this.$message.error('An error occurred while creating the task');
-      }
-    },
+      },
 
+    // showCreateNewtaskModal(email) {
+    //   console.log('Opening create task modal for:', email);
+    //   this.openCreateNewtaskModal = true;
+    // },
+
+    // Phone Modal Methods
     makeCall() {
       const phone = this.selectedEmployee?.phone;
       if (phone) {
@@ -1524,106 +1339,130 @@ export default {
       }
     },
     
+    // Mail Modal Methods
     sendEmail() {
       if (!this.mailForm.subject.trim() || !this.mailForm.message.trim()) {
         this.$message.error('Subject and message are required');
         return;
       }
       
+      // Send email logic here
       console.log('Email sent:', this.mailForm);
       this.$message.success('Email sent successfully');
       this.open_Mail_employee_modal = false;
       this.resetMailForm();
     },
     
+    // Edit Employee Methods
     openEditModal(employee) {
       this.selectedEmployee = employee;
       this.editEmployeeForm = {
         name: employee.name || '',
         email: employee.email || '',
         phone: employee.phone || '',
-        profile_picture: employee.avatar || '',
+        profile_picture: employee.profile_picture || '',
         date_joined: employee.date_joined || '',
         last_login: employee.last_login || ''
       };
       this.open_Edit_employee_modal = true;
     },
     
-    handleAvatarUpload(event) {
-      const file = event.target.files[0];
-      if (file) {
-        if (file.size > 5 * 1024 * 1024) {
-          this.$message.error('Image size must be less than 5MB');
-          return;
-        }
-
-        if (!file.type.startsWith('image/')) {
-          this.$message.error('Please upload a valid image file');
-          return;
-        }
-
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          this.editEmployeeForm.profile_picture = e.target.result;
-          this.$message.success('Image uploaded successfully');
-        };
-        reader.readAsDataURL(file);
+  handleAvatarUpload(event) {
+    const file = event.target.files[0];
+    if (file) {
+      // Check file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        this.$message.error('Image size must be less than 5MB');
+        return;
       }
-    },
 
-    removeAvatar() {
-      this.editEmployeeForm.profile_picture = '';
-      this.$message.info('Image removed');
-    },
+      // Check file type
+      if (!file.type.startsWith('image/')) {
+        this.$message.error('Please upload a valid image file');
+        return;
+      }
+
+      // Convert to base64 or file URL
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.editEmployeeForm.profile_picture = e.target.result;
+        this.$message.success('Image uploaded successfully');
+      };
+      reader.readAsDataURL(file);
+    }
+  },
+
+  removeAvatar() {
+    this.editEmployeeForm.profile_picture = '';
+    this.$message.info('Image removed');
+  },
 
     async saveEmployeeChanges() {
       console.log('Form data:', this.editEmployeeForm);
       
+      // if (!this.editEmployeeForm.name.trim() || !this.editEmployeeForm.email.trim()) {
+      //     this.$message.error('Name and email are required');
+      //     return;
+      // }
+
       try {
-        const token = localStorage.getItem('token');
-        const formData = new FormData();
-        
-        Object.keys(this.editEmployeeForm).forEach(key => {
-          if (key === 'profile_picture' && this.editEmployeeForm[key] instanceof File) {
-            formData.append(key, this.editEmployeeForm[key]);
-          } else if (key === 'background_picture' && this.editEmployeeForm[key] instanceof File) {
-            formData.append(key, this.editEmployeeForm[key]);
-          } else {
-            formData.append(key, this.editEmployeeForm[key]);
+          // Get authentication token (adjust based on your storage method)
+          const token = localStorage.getItem('token');
+          
+          // Prepare the data for API call
+          const formData = new FormData();
+          
+          // Append all form fields to FormData
+          Object.keys(this.editEmployeeForm).forEach(key => {
+              // Handle file uploads separately
+              if (key === 'profile_picture' && this.editEmployeeForm[key] instanceof File) {
+                  formData.append(key, this.editEmployeeForm[key]);
+              } else if (key === 'background_picture' && this.editEmployeeForm[key] instanceof File) {
+                  formData.append(key, this.editEmployeeForm[key]);
+              } else {
+                  // Append other fields
+                  formData.append(key, this.editEmployeeForm[key]);
+              }
+          });
+
+          // Make API call
+          const response = await fetch(`${this.$store.state.root_api}Auth/api/edit-profile/`, { // Adjust API endpoint as needed
+              method: 'POST',
+              headers: {
+                'Authorization': `Token ${localStorage.getItem('token')}`,
+
+              },
+              body: formData
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+              throw new Error(data.message || 'Failed to update employee');
           }
-        });
 
-        const response = await fetch(`${this.$store.state.root_api}Auth/api/edit-profile/`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Token ${token}`,
-          },
-          body: formData
-        });
+          if (data.error) {
+              this.$message.error(data.message || 'Error updating employee');
+              return;
+          }
 
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.message || 'Failed to update employee');
-        }
-
-        if (data.error) {
-          this.$message.error(data.message || 'Error updating employee');
-          return;
-        }
-
-        this.$message.success('Employee updated successfully');
-        console.log('Updated employee data:', data);
-        
-        this.open_Edit_employee_modal = false;
-        this.$emit('employee-updated', data);
-        
+          // Success case
+          this.$message.success('Employee updated successfully');
+          console.log('Updated employee data:', data);
+          
+          // Close modal
+          this.open_Edit_employee_modal = false;
+          
+          // Optionally: Refresh employee list or update local state
+          this.$emit('employee-updated', data);
+          
       } catch (error) {
-        console.error('Error updating employee:', error);
-        this.$message.error(error.message || 'Failed to update employee');
+          console.error('Error updating employee:', error);
+          this.$message.error(error.message || 'Failed to update employee');
       }
-    },
+  },
     
+    // Delete Employee Methods
     openDeleteModal(employee) {
       this.selectedEmployee = employee;
       this.deleteConfirmation = '';
@@ -1636,12 +1475,14 @@ export default {
         return;
       }
       
+      // Delete employee logic here
       console.log('Employee deleted:', this.selectedEmployee);
       this.$message.success('Employee deleted successfully');
       this.open_Delete_employee_modal = false;
       this.deleteConfirmation = '';
     },
     
+    // Utility Methods
     resetMailForm() {
       this.mailForm = {
         to: '',
@@ -1650,6 +1491,7 @@ export default {
       };
     },
     
+    // Call these methods from parent to open modals
     openPhoneModal(employee) {
       this.selectedEmployee = employee;
       this.open_Phone_employee_modal = true;
@@ -1661,15 +1503,36 @@ export default {
       this.open_Mail_employee_modal = true;
     },
 
+
     showAssignTaskModal() {
       this.openAssignTaskModal = !this.openAssignTaskModal;
     },
 
-    showCreateNewtaskModal(staff_details){
-      console.log('-->',JSON.parse(JSON.stringify(staff_details)))
-      this.openCreateNewtaskModal=true
-    },
+      showCreateNewtaskModal(staff_details){
+        console.log('-->',JSON.parse(JSON.stringify(staff_details)))
+        this.openCreateNewtaskModal=true
+      },
 
+
+    // async fetchAllStaff() {
+    //   try {
+    //     const response = await fetch(
+    //       `${this.$store.state.root_api}access-engine/api/all-staff-users/`,
+    //       {
+    //         headers: { Authorization: `Token ${localStorage.getItem('token')}` },
+    //       }
+    //     );
+
+    //     const data = await response.json();
+    //     if (!data.error) {
+    //       this.all_staff = data.staff_users;
+    //     }
+    //   } catch (error) {
+    //     console.error('Error fetching staff:', error);
+    //   }
+    // },
+    
+    
     async fetchAllStaff() {
       try {
         const response = await fetch(
@@ -1688,97 +1551,51 @@ export default {
         console.error('Error fetching staff:', error);
       }
     },
+    
 
     /**
-     * Fetch staff details by email or record object
-     * Handles different input types: string (email), object with email property, or full staff object
+     * fetch the staff here 
      */
-    async fetchStaff(record) {
-      let email;
-      
-      if (typeof record === 'string') {
-        email = record;
-      } else if (record && record.email) {
-        email = record.email;
-      } else if (record && record.professional_user && record.professional_user.email) {
-        email = record.professional_user.email;
-      } else {
-        console.error('Invalid record parameter:', record);
-        this.$message.error('Invalid staff member data');
-        return;
-      }
-
+    
+    async fetchStaff(record){
       try {
         const response = await fetch(
-          `${this.$store.state.root_api}access-engine/api/staff-access-given/${email}`,
+          `${this.$store.state.root_api}access-engine/api/staff-access-given/${record.email}`,
           {
             headers: { Authorization: `Token ${localStorage.getItem('token')}` },
           }
         );
 
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: Failed to fetch staff details`);
-        }
-
         const data = await response.json();
-        
-        if (data.error) {
-          throw new Error(data.message || 'Failed to fetch staff details');
+        if (!data.error) {
+          this.staff_details = data.staff_user;
+
+          console.log('staff_details after assignment:', this.staff_details);
+
+          // Reset unsaved changes flag when loading fresh data
+          this.hasUnsavedChanges = false;
+
+          // Set the toggles on/off
+          this.business_site_read = this.staff_details.access_received.business.read;
+          this.business_site_update = this.staff_details.access_received.business.update;
+
+          this.product_management_create = this.staff_details.access_received.product.create;
+          this.product_management_update = this.staff_details.access_received.product.update;
+          this.product_management_read = this.staff_details.access_received.product.read;
+          this.product_management_delete = this.staff_details.access_received.product.delete;
+          
+          this.community_post_create = this.staff_details.access_received.community.create;
+          this.community_post_post_update = this.staff_details.access_received.community.update;
+          this.community_post_read = this.staff_details.access_received.community.read;
+          this.community_post_delete = this.staff_details.access_received.community.delete;
+          
+          this.manage_user_request_read = this.staff_details.access_received.user_room_request.read;
+          this.manage_user_request_update = this.staff_details.access_received.user_room_request.update;
+          this.manage_user_request_reject = this.staff_details.access_received.user_room_request.reject;
+          this.manage_user_request_process = this.staff_details.access_received.user_room_request.process;
         }
-
-        if (!data.staff_user) {
-          throw new Error('No staff user data returned from API');
-        }
-
-        this.staff_details = data.staff_user;
-        console.log('staff_details after assignment:', this.staff_details);
-
-        this.hasUnsavedChanges = false;
-
-        const accessReceived = this.staff_details.access_received || {};
-        
-        // Set existing toggles
-        this.business_site_read = accessReceived.business?.read ?? false;
-        this.business_site_update = accessReceived.business?.update ?? false;
-
-        this.product_management_create = accessReceived.product?.create ?? false;
-        this.product_management_update = accessReceived.product?.update ?? false;
-        this.product_management_read = accessReceived.product?.read ?? false;
-        this.product_management_delete = accessReceived.product?.delete ?? false;
-        
-        this.community_post_create = accessReceived.community?.create ?? false;
-        this.community_post_post_update = accessReceived.community?.update ?? false;
-        this.community_post_read = accessReceived.community?.read ?? false;
-        this.community_post_delete = accessReceived.community?.delete ?? false;
-        
-        this.manage_user_request_read = accessReceived.user_room_request?.read ?? false;
-        this.manage_user_request_update = accessReceived.user_room_request?.update ?? false;
-        this.manage_user_request_reject = accessReceived.user_room_request?.reject ?? false;
-        this.manage_user_request_process = accessReceived.user_room_request?.process ?? false;
-
-        // Set new toggles for customer_messages
-        this.customer_messages_read = accessReceived.customer_messages?.read ?? false;
-        this.customer_messages_respond = accessReceived.customer_messages?.respond ?? false;
-        this.customer_messages_report = accessReceived.customer_messages?.report ?? false;
-        this.customer_messages_delete = accessReceived.customer_messages?.delete ?? false;
-
-        // Set new toggles for generate_banner
-        this.generate_banner_read = accessReceived.generate_banner?.read ?? false;
-        this.generate_banner_create = accessReceived.generate_banner?.create ?? false;
-        this.generate_banner_download = accessReceived.generate_banner?.download ?? false;
-        this.generate_banner_share = accessReceived.generate_banner?.share ?? false;
-        this.generate_banner_delete = accessReceived.generate_banner?.delete ?? false;
-
-        // Set new toggles for business_customers
-        this.business_customers_read = accessReceived.business_customers?.read ?? false;
-        this.business_customers_delete = accessReceived.business_customers?.delete ?? false;
-
       } catch (error) {
-        console.error('Error fetching staff:', error.message);
-        this.$message.error(`Failed to load staff details: ${error.message}`);
-        
-        this.staff_details = null;
-        this.hasUnsavedChanges = false;
+        console.error('Error fetching staff:', error);
       }
     },
 
@@ -1822,23 +1639,6 @@ export default {
             update: this.manage_user_request_update,
             reject: this.manage_user_request_reject,
             process: this.manage_user_request_process
-          },
-          customer_messages: {
-            read: this.customer_messages_read,
-            respond: this.customer_messages_respond,
-            report: this.customer_messages_report,
-            delete: this.customer_messages_delete
-          },
-          generate_banner: {
-            read: this.generate_banner_read,
-            create: this.generate_banner_create,
-            download: this.generate_banner_download,
-            share: this.generate_banner_share,
-            delete: this.generate_banner_delete
-          },
-          business_customers: {
-            read: this.business_customers_read,
-            delete: this.business_customers_delete
           }
         };
 
@@ -1861,8 +1661,11 @@ export default {
 
         if (!data.error) {
           this.$message.success('Permissions updated successfully');
+          
+          // Reset unsaved changes flag
           this.hasUnsavedChanges = false;
           
+          // Show detailed results in console
           if (data.results.granted.length > 0) {
             console.log('Granted:', data.results.granted);
           }
@@ -1870,6 +1673,7 @@ export default {
             console.log('Revoked:', data.results.revoked);
           }
           
+          // Refresh staff details
           await this.fetchStaff(this.staff_details.email);
         } else {
           this.$message.error(data.message || 'Failed to update permissions');
@@ -1910,6 +1714,7 @@ export default {
         if (!data.error) {
           this.$message.success('All permissions granted successfully');
           
+          // Update local state
           this.business_site_read = true;
           this.business_site_update = true;
           
@@ -1928,22 +1733,10 @@ export default {
           this.manage_user_request_reject = true;
           this.manage_user_request_process = true;
 
-          this.customer_messages_read = true;
-          this.customer_messages_respond = true;
-          this.customer_messages_report = true;
-          this.customer_messages_delete = true;
-
-          this.generate_banner_read = true;
-          this.generate_banner_create = true;
-          this.generate_banner_download = true;
-          this.generate_banner_share = true;
-          this.generate_banner_delete = true;
-
-          this.business_customers_read = true;
-          this.business_customers_delete = true;
-
+          // Reset unsaved changes flag
           this.hasUnsavedChanges = false;
           
+          // Refresh staff details
           await this.fetchStaff(this.staff_details.email);
         } else {
           this.$message.error(data.message || 'Failed to grant permissions');
@@ -1963,6 +1756,7 @@ export default {
         return;
       }
 
+      // Show confirmation using Ant Design Modal
       this.$confirm({
         title: 'Revoke All Permissions?',
         content: `Are you sure you want to revoke all permissions from ${this.staff_details.name}? This action will remove all their access rights.`,
@@ -1991,6 +1785,7 @@ export default {
             if (!data.error) {
               this.$message.success('All permissions revoked successfully');
               
+              // Update local state
               this.business_site_read = false;
               this.business_site_update = false;
               
@@ -2009,22 +1804,10 @@ export default {
               this.manage_user_request_reject = false;
               this.manage_user_request_process = false;
 
-              this.customer_messages_read = false;
-              this.customer_messages_respond = false;
-              this.customer_messages_report = false;
-              this.customer_messages_delete = false;
-
-              this.generate_banner_read = false;
-              this.generate_banner_create = false;
-              this.generate_banner_download = false;
-              this.generate_banner_share = false;
-              this.generate_banner_delete = false;
-
-              this.business_customers_read = false;
-              this.business_customers_delete = false;
-
+              // Reset unsaved changes flag
               this.hasUnsavedChanges = false;
               
+              // Refresh staff details
               await this.fetchStaff(this.staff_details.email);
             } else {
               this.$message.error(data.message || 'Failed to revoke permissions');
@@ -2038,79 +1821,63 @@ export default {
     },
 
     /**
-     * Cancel changes and revert to original permissions with safe access
+     * Cancel changes and revert to original permissions
      */
     cancelPermissionChanges() {
-      if (!this.staff_details) {
-        this.$message.warning('No staff member selected');
-        return;
-      }
+      if (!this.staff_details) return;
+      
+      // Revert to original values from staff_details
+      this.business_site_read = this.staff_details.access_received.business.read;
+      this.business_site_update = this.staff_details.access_received.business.update;
 
-      try {
-        const accessReceived = this.staff_details.access_received || {};
-
-        // Revert existing permissions with safe access
-        this.business_site_read = accessReceived.business?.read ?? false;
-        this.business_site_update = accessReceived.business?.update ?? false;
-
-        this.product_management_create = accessReceived.product?.create ?? false;
-        this.product_management_update = accessReceived.product?.update ?? false;
-        this.product_management_read = accessReceived.product?.read ?? false;
-        this.product_management_delete = accessReceived.product?.delete ?? false;
-        
-        this.community_post_create = accessReceived.community?.create ?? false;
-        this.community_post_post_update = accessReceived.community?.update ?? false;
-        this.community_post_read = accessReceived.community?.read ?? false;
-        this.community_post_delete = accessReceived.community?.delete ?? false;
-        
-        this.manage_user_request_read = accessReceived.user_room_request?.read ?? false;
-        this.manage_user_request_update = accessReceived.user_room_request?.update ?? false;
-        this.manage_user_request_reject = accessReceived.user_room_request?.reject ?? false;
-        this.manage_user_request_process = accessReceived.user_room_request?.process ?? false;
-
-        // Revert new permissions with safe access
-        this.customer_messages_read = accessReceived.customer_messages?.read ?? false;
-        this.customer_messages_respond = accessReceived.customer_messages?.respond ?? false;
-        this.customer_messages_report = accessReceived.customer_messages?.report ?? false;
-        this.customer_messages_delete = accessReceived.customer_messages?.delete ?? false;
-
-        this.generate_banner_read = accessReceived.generate_banner?.read ?? false;
-        this.generate_banner_create = accessReceived.generate_banner?.create ?? false;
-        this.generate_banner_download = accessReceived.generate_banner?.download ?? false;
-        this.generate_banner_share = accessReceived.generate_banner?.share ?? false;
-        this.generate_banner_delete = accessReceived.generate_banner?.delete ?? false;
-
-        this.business_customers_read = accessReceived.business_customers?.read ?? false;
-        this.business_customers_delete = accessReceived.business_customers?.delete ?? false;
-        
-        this.hasUnsavedChanges = false;
-        
-        this.$message.info('Changes cancelled and reverted to original state');
-      } catch (error) {
-        console.error('Error cancelling changes:', error);
-        this.$message.error('Failed to cancel changes');
-      }
+      this.product_management_create = this.staff_details.access_received.product.create;
+      this.product_management_update = this.staff_details.access_received.product.update;
+      this.product_management_read = this.staff_details.access_received.product.read;
+      this.product_management_delete = this.staff_details.access_received.product.delete;
+      
+      this.community_post_create = this.staff_details.access_received.community.create;
+      this.community_post_post_update = this.staff_details.access_received.community.update;
+      this.community_post_read = this.staff_details.access_received.community.read;
+      this.community_post_delete = this.staff_details.access_received.community.delete;
+      
+      this.manage_user_request_read = this.staff_details.access_received.user_room_request.read;
+      this.manage_user_request_update = this.staff_details.access_received.user_room_request.update;
+      this.manage_user_request_reject = this.staff_details.access_received.user_room_request.reject;
+      this.manage_user_request_process = this.staff_details.access_received.user_room_request.process;
+      
+      // Reset unsaved changes flag
+      this.hasUnsavedChanges = false;
+      
+      this.$message.info('Changes cancelled');
     },
 
-    /**
-     * Show staff details view
-     * Passes record to fetchStaff which handles different input types
-     */
-    showStaffDetails(record) {
-      console.log('Showing staff details for:', record);
-      
-      if (!record) {
-        this.$message.error('Invalid staff record');
-        return;
-      }
+    customRow(record) {
+      console.log('result',record);
+      return {
+        onClick: () => this.showStaffDetails(record),
+        style: { cursor: 'pointer' }
+      };
+    },
 
+    onEdit(record) {
+
+      console.log('edit', record);
+    },
+
+    onDelete(record) {
+      this.selectedEmployee = record;
+      this.deleteConfirmation = '';
+      this.open_Delete_employee_modal = true;
+      console.log('delete', record);
+
+    },
+
+    showStaffDetails(record) {
+      console.log('id--->',record.id);
       this.fetchStaff(record);
       this.view = "staff_details_view";
     },
 
-    /**
-     * Go back to manage access view
-     */
     backToManageAccess() {
       this.view = "all_staff_view";
       this.hasUnsavedChanges = false;
@@ -2119,6 +1886,7 @@ export default {
 
   mounted() {
     this.fetchAllStaff();
+    
   }
 };
 </script>

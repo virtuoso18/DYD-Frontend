@@ -1,4 +1,5 @@
 <template>
+  {{ access_recieved }}
   <div>
     <div class="page-header" style="margin-bottom: 20px;">
       <a-row type="flex" justify="space-between" align="middle">

@@ -1,392 +1,445 @@
+
 <template>
-    <div style="border-radius:15px;background-color:white;border:1px solid rgba(0,0,0,0.1);height:100vh;padding:10px;margin-top:10px">
-
-<div style="padding: 20px;">
-      <div class="page-header">
-        <a-row type="flex" justify="space-between" align="middle">
-          <a-col>
-            <h2>Professional Dashboard</h2>
-            <p style="color: #999; margin-top: 5px;">Manage business access requests and view your assigned tasks</p>
-          </a-col>
-        </a-row>
-      </div>
-
-      <a-tabs v-model:activeKey="activeTab" style="margin-top: 20px;">
-        
-       
-        <!-- Accepted Businesses Tab -->
-        <a-tab-pane key="accepted-businesses" tab="Accepted Businesses" :tab-key="'accepted'">
-          <a-spin :spinning="loadingAccepted">
-            <a-empty 
-              v-if="acceptedBusinesses.length === 0" 
-              description="No accepted access yet" 
-              style="margin: 50px 0;"
-            />
-            
-            <a-row :gutter="16" v-else>
-              <a-col 
-                v-for="business in acceptedBusinesses" 
-                :key="business.id" 
-                :xs="24" 
-                :sm="12" 
-                :md="8"
-              >
-                <a-card hoverable style="margin-bottom: 16px;">
-                  <div style="text-align: center; margin-bottom: 16px;display:flex;justify-content:center;align-items:center;flex-direction: column;">
-                    <img :src="this.$store.state.root_media_api+business.business.banner_picture" style="border-radius:100%;width:100px;height:100px;border:1px solid rgba(0,0,0,0.2)" alt="">
-                    <h3 style="margin: 0 0 8px 0;">{{ business.business.business_name }}</h3>
-                    <p style="margin: 0; color: #999; font-size: 12px;">{{ business.business.owner_email }}</p>
-                  </div>
-                  
-
-                  <!-- <div style="margin-bottom: 16px;">
-                    <p><strong>Owner:</strong> {{ business.business.owner_name }}</p>
-                    <p><strong>Accepted:</strong> {{ new Date(business.created_at).toLocaleDateString() }}</p>
-                    <p v-if="business.task_count > 0" style="color: #1890ff;">
-                      <a-icon type="check-circle" /> {{ business.task_count }} task(s) assigned
-                    </p>
-                  </div> -->
-
-                  <!-- <a-divider style="margin: 12px 0;" /> -->
-
-                  <div style="display: flex; gap: 8px;">
-                    <!-- <a-button 
-                      type="default" 
-                      style="flex: 1;"
-                    >
-                      View Tasks
-                    </a-button>
-                    <a-button 
-                      type="default" 
-                      danger
-                      @click="handleRevokeAccess(business.id)"
-                      style="flex: 1;"
-                    >
-                      Revoke
-                    </a-button> -->
-                    
-                    <!-- :to="{ name: 'access-business', params: { business } }"  -->
-<router-link 
-              
-              :to="{ name: 'business-overview', query: { access_id: business.id }  }" 
-
-              style="display:flex;justify-content: center;width:100%;"
-
->
-
-              <a-button block type="primary"> Access Business</a-button>
-            </router-link>
-                  </div>
-                </a-card>
-              </a-col>
+    <div style="border-radius:15px;background-color:white;border:1px solid rgba(0,0,0,0.1);padding:20px;margin-top:10px;min-height:100vh">
+        <div class="page-header">
+            <a-row type="flex" justify="space-between" align="middle">
+                <a-col>
+                    <h2>My Businesses</h2>
+                    <p style="color: #999; margin-top: 5px;">View all businesses you have access to</p>
+                </a-col>
+                <a-col>
+                    <a-input-search
+                        v-model:value="searchText"
+                        placeholder="Search by business name or email"
+                        style="width: 300px"
+                        @search="handleSearch"
+                    />
+                </a-col>
             </a-row>
-          </a-spin>
-        </a-tab-pane>
- <!-- Pending Requests Tab -->
-        <a-tab-pane key="pending-requests" tab="Pending Requests" :tab-key="'pending'">
-          <a-spin :spinning="loadingPending">
-            <a-empty 
-              v-if="pendingRequests.length === 0" 
-              description="No pending access requests" 
-              style="margin: 50px 0;"
-            />
-            
-            <a-row :gutter="16" v-else>
-              <a-col 
-                v-for="request in pendingRequests" 
-                :key="request.id" 
-                :xs="24" 
-                :sm="12" 
-                :md="8"
-              >
-                <a-card hoverable style="margin-bottom: 16px; border-left: 4px solid #ff7a45;">
-                  <div style="text-align: center; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #f0f0f0;">
-                    <h3 style="margin: 0 0 8px 0;">{{ request.business.business_name }}</h3>
-                    <p style="margin: 0; color: #999; font-size: 12px;">{{ request.business.owner_email }}</p>
-                  </div>
-
-                  <div style="margin-bottom: 16px;">
-                    <p><strong>Owner:</strong> {{ request.business.owner_name }}</p>
-                    <p><strong>Requested:</strong> {{ new Date(request.created_at).toLocaleDateString() }}</p>
-                  </div>
-
-                  <a-divider style="margin: 12px 0;" />
-
-                  <div style="display: flex; gap: 8px;">
-                    <a-button 
-                      type="primary" 
-                      style="flex: 1;"
-                      @click="openAcceptModal(request)"
-                    >
-                      Accept
-                    </a-button>
-                    <a-button 
-                      type="default" 
-                      danger
-                      style="flex: 1;"
-                      @click="handleRejectRequest(request.id)"
-                    >
-                      Reject
-                    </a-button>
-                  </div>
-                </a-card>
-              </a-col>
-            </a-row>
-          </a-spin>
-        </a-tab-pane>
-
-      </a-tabs>
-
-      <!-- Accept Confirmation Modal -->
-      <a-modal
-        v-model:open="showAcceptModal"
-        centered
-        title="Accept Access Request"
-        width="500px"
-        @ok="handleAcceptRequest"
-        okText="Accept"
-        cancelText="Cancel"
-        :confirmLoading="processingAccess"
-      >
-        <div v-if="selectedRequest">
-          <p style="margin-bottom: 16px;">
-            <strong>{{ selectedRequest.business.business_name }}</strong> is requesting access for you to work as a professional.
-          </p>
-          
-          <a-form-item label="Response Message (Optional)">
-            <a-textarea
-              v-model:value="acceptanceMessage"
-              placeholder="Add any message or notes..."
-              :rows="3"
-            />
-          </a-form-item>
-
-          <a-alert
-            message="After accepting, you will be able to view tasks and work details from this business."
-            type="info"
-            show-icon
-            style="margin-top: 12px;"
-          />
         </div>
-      </a-modal>
-    </div>
 
-</div>
+        <a-spin :spinning="loadingAccepted">
+          <!-- {{filteredAcceptedBusinesses}} -->
+                    <a-empty 
+                        v-if="filteredAcceptedBusinesses.length === 0 && !loadingAccepted" 
+                        description="No accepted businesses"
+                        style="margin: 50px 0;"
+                        />
+                    <a-table
+                        v-else
+                        :columns="acceptedColumns"
+                        :data-source="filteredAcceptedBusinesses"
+                        :pagination="acceptedPagination"
+                        :loading="loadingAccepted"
+                        rowKey="id"
+                        size="middle"
+                        :scroll="{ x: 1200 }"
+                        @change="handleTableChange('accepted', arguments[0])"
+                        :custom-row="customRowClick"
+                    >
+                        <template #bodyCell="{ column, record }">
+                            <template v-if="column.key === 'business_name'">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <img 
+                                        v-if="record && record.business && record.business.banner_picture"
+                                        :src="$store.state.root_media_api + record.business.banner_picture" 
+                                        style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;"
+                                        alt="Business"
+                                    />
+                                    <span v-if="record && record.business">
+                                        <strong>{{ record.business.business_name }}</strong>
+                                        <br/>
+                                        <small style="color: #999;">{{ record.business.owner_email }}</small>
+                                    </span>
+                                </div>
+                            </template>
+
+                            <template v-else-if="column.key === 'owner_name'">
+                                {{ record && record.business ? record.business.owner_name : '-' }}
+                            </template>
+
+                            <template v-else-if="column.key === 'created_at'">
+                                {{ record && record.created_at ? formatDate(record.created_at) : '-' }}
+                            </template>
+
+                            <template v-else-if="column.key === 'task_count'">
+                                <a-tag v-if="record && record.task_count > 0" color="blue">
+                                    {{ record.task_count }} task(s)
+                                </a-tag>
+                                <span v-else style="color: #999;">No tasks</span>
+                            </template>
+
+                            <template v-else-if="column.key === 'actions'">
+                                <a-space v-if="record">
+                                    <router-link 
+                                        :to="{ name: 'business-overview', query: { access_id: record.id } }"
+                                    >
+                                        <a-button
+                                            type="primary"
+                                            size="small"
+                                        >
+                                            Access Business
+                                        </a-button>
+                                    </router-link>
+                                    <!-- <a-button
+                                        type="primary"
+                                        danger
+                                        size="small"
+                                        @click="handleRevoke(record.id)"
+                                    >
+                                        Revoke
+                                    </a-button> -->
+                                </a-space>
+                            </template>
+                        </template>
+                    </a-table>
+                </a-spin>
+
+    </div>
 </template>
+
 <script>
 export default {
-    name:"profesional_user_all_businesses",
+    name: 'profesional_user_all_businesses',
     data() {
-    return {
-      activeTab: 'accepted-businesses', // "pending-requests"
-      
-      pendingRequests: [],
-      acceptedBusinesses: [],
-      
-      loadingPending: false,
-      loadingAccepted: false,
-      processingAccess: false,
-      
-      showAcceptModal: false,
-      selectedRequest: null,
-      acceptanceMessage: ''
-    };
-  },
-  
-  mounted() {
-    this.fetchPendingRequests();
-    this.fetchAcceptedBusinesses();
-  },
+        return {
+            activeTab: 'accepted',
+            
+            acceptedBusinesses: [],
+            pendingBusinesses: [],
+            
+            loadingAccepted: false,
+            loadingPending: false,
+            processingAccess: false,
+            
+            searchText: '',
+            
+            showAcceptModal: false,
+            selectedBusiness: null,
+            acceptanceMessage: '',
 
-  methods: {
-    /**
-     * Fetch pending access requests (not yet accepted)
-     */
-    async fetchPendingRequests() {
-      this.loadingPending = true;
-      try {
-        const response = await fetch(
-          `${this.$store.state.root_api}access-engine/api/professional-access/pending-requests/`,
-          {
-            headers: { Authorization: `Token ${localStorage.getItem('token')}` },
-          }
-        );
+            // Table columns for accepted businesses
+            acceptedColumns: [
+                {
+                    title: 'Business Name',
+                    dataIndex: ['business', 'business_name'],
+                    key: 'business_name',
+                    width: '20%'
+                },
+                {
+                    title: 'Total Simu.',
+                    // dataIndex: ['business', 'owner_name'],
+                    dataIndex:'total_simulations_count',
+                    key: 'total_simulations_count',
+                    width: '7%'
+                },
+                {
+                    title: 'Total Products',
+                    dataIndex: 'total_products_count',
+                    key: 'total_products_count',
+                    width: '10%',
+                    sorter: (a, b) => (a.total_products_count || 0) - (b.total_products_count || 0)
 
-        const data = await response.json();
-        console.log(data)
-        if (!data.error) {
-          this.pendingRequests = data.data;
-          console.log('Pending requests:', this.pendingRequests);
-        }
-      } catch (error) {
-        console.error('Error fetching pending requests:', error);
-        this.$message.error('Failed to load pending requests');
-      } finally {
-        this.loadingPending = false;
-      }
-    },
+                },
+                {
+                    title: 'Tasks',
+                    dataIndex: 'task_count',
+                    key: 'task_count',
+                    width: '15%',
+                    sorter: (a, b) => (a.task_count || 0) - (b.task_count || 0)
+                },
+                {
+                    title: 'Completed Tasks',
+                    dataIndex: 'completed_tasks_count',
+                    key: 'completed_tasks_count',
+                    width: '15%',
+                    sorter: (a, b) => (a.completed_tasks_count || 0) - (b.completed_tasks_count || 0)
+                },
+                 {
+                    title: 'Pending Tasks',
+                    dataIndex: 'pending_tasks_count',
+                    key: 'pending_tasks_count',
+                    width: '15%',
+                    sorter: (a, b) => (a.pending_tasks_count || 0) - (b.pending_tasks_count || 0)
+                },
+                {
+                    title: 'Actions',
+                    dataIndex: 'actions',
+                    key: 'actions',
+                    width: '10%',
+                    fixed: 'right'
+                }
+            ],
 
-    /**
-     * Fetch accepted businesses (already accepted requests)
-     */
-    async fetchAcceptedBusinesses() {
-      this.loadingAccepted = true;
-      try {
-        const response = await fetch(
-          `${this.$store.state.root_api}access-engine/api/professional-access/my-businesses/`,
-          {
-            headers: { Authorization: `Token ${localStorage.getItem('token')}` },
-          }
-        );
+            // Table columns for pending businesses
+            pendingColumns: [
+                {
+                    title: 'Business Name',
+                    dataIndex: ['business', 'business_name'],
+                    key: 'business_name',
+                    width: '30%'
+                },
+                {
+                    title: 'Owner',
+                    dataIndex: ['business', 'owner_name'],
+                    key: 'owner_name',
+                    width: '20%'
+                },
+                {
+                    title: 'Requested Date',
+                    dataIndex: 'created_at',
+                    key: 'created_at',
+                    width: '15%',
+                    sorter: (a, b) => new Date(a.created_at) - new Date(b.created_at)
+                },
+                {
+                    title: 'Status',
+                    dataIndex: 'status',
+                    key: 'status',
+                    width: '15%'
+                },
+                {
+                    title: 'Actions',
+                    dataIndex: 'actions',
+                    key: 'actions',
+                    width: '20%',
+                    fixed: 'right'
+                }
+            ],
 
-        const data = await response.json();
-        if (!data.error) {
-          this.acceptedBusinesses = data.data;
-          console.log('Accepted businesses:', this.acceptedBusinesses);
-        }
-      } catch (error) {
-        console.error('Error fetching accepted businesses:', error);
-        this.$message.error('Failed to load accepted businesses');
-      } finally {
-        this.loadingAccepted = false;
-      }
-    },
-
-    /**
-     * Open accept confirmation modal
-     */
-    openAcceptModal(request) {
-      this.selectedRequest = request;
-      this.acceptanceMessage = '';
-      this.showAcceptModal = true;
-    },
-
-    /**
-     * Accept access request
-     */
-    async handleAcceptRequest() {
-      if (!this.selectedRequest) return;
-
-      this.processingAccess = true;
-
-      try {
-        const response = await fetch(
-          `${this.$store.state.root_api}access-engine/api/professional-access/accept-access/${this.selectedRequest.id}/`,
-          {
-            method: 'POST',
-            headers: {
-              'Authorization': `Token ${localStorage.getItem('token')}`,
-              'Content-Type': 'application/json'
+            acceptedPagination: {
+                current: 1,
+                pageSize: 10,
+                total: 0,
+                showSizeChanger: true,
+                pageSizeOptions: ['10', '20', '50'],
+                showTotal: total => `Total ${total} businesses`
             },
-            body: JSON.stringify({
-              response_message: this.acceptanceMessage
+
+            pendingPagination: {
+                current: 1,
+                pageSize: 10,
+                total: 0,
+                showSizeChanger: true,
+                pageSizeOptions: ['10', '20', '50'],
+                showTotal: total => `Total ${total} requests`
+            }
+        };
+    },
+    
+    computed: {
+        filteredAcceptedBusinesses() {
+            if (!this.searchText) {
+                return this.acceptedBusinesses;
+            }
+            const search = this.searchText.toLowerCase();
+            return this.acceptedBusinesses.filter(item => {
+                if (!item.business) return false;
+                return (
+                    item.business.business_name.toLowerCase().includes(search) ||
+                    item.business.owner_email.toLowerCase().includes(search)
+                );
+            });
+        },
+
+        filteredPendingBusinesses() {
+            if (!this.searchText) {
+                return this.pendingBusinesses;
+            }
+            const search = this.searchText.toLowerCase();
+            return this.pendingBusinesses.filter(item => {
+                if (!item.business) return false;
+                return (
+                    item.business.business_name.toLowerCase().includes(search) ||
+                    item.business.owner_email.toLowerCase().includes(search)
+                );
+            });
+        }
+    },
+    
+    mounted() {
+        this.fetchAcceptedBusinesses();
+        
+    },
+
+    methods: {
+      customRowClick(record) {
+    return {
+        onClick: () => {
+            this.$router.push({
+                name: 'business-overview',
+                query: { access_id: record.id }
             })
-          }
-        );
-
-        const data = await response.json();
-
-        if (!data.error) {
-          this.$message.success('Access accepted successfully!');
-          
-          // Close modal
-          this.showAcceptModal = false;
-          
-          // Refresh both lists
-          await this.fetchPendingRequests();
-          await this.fetchAcceptedBusinesses();
-          
-          this.selectedRequest = null;
-          this.acceptanceMessage = '';
-        } else {
-          this.$message.error(data.message || 'Failed to accept request');
+        },
+        style: {
+            cursor: 'pointer'
         }
-      } catch (error) {
-        console.error('Error accepting request:', error);
-        this.$message.error('An error occurred while accepting the request');
-      } finally {
-        this.processingAccess = false;
-      }
-    },
-
-    /**
-     * Reject access request
-     */
-    async handleRejectRequest(requestId) {
-      this.$confirm({
-        title: 'Reject Access Request?',
-        content: 'Are you sure you want to reject this access request?',
-        okText: 'Yes, Reject',
-        okType: 'danger',
-        cancelText: 'Cancel',
-        onOk: async () => {
-          try {
-            const response = await fetch(
-              `${this.$store.state.root_api}access-engine/api/professional-access/reject-access/${requestId}/`,
-              {
-                method: 'POST',
-                headers: {
-                  'Authorization': `Token ${localStorage.getItem('token')}`,
-                  'Content-Type': 'application/json'
-                }
-              }
-            );
-
-            const data = await response.json();
-
-            if (!data.error) {
-              this.$message.success('Request rejected successfully');
-              await this.fetchPendingRequests();
-            } else {
-              this.$message.error(data.message || 'Failed to reject request');
-            }
-          } catch (error) {
-            console.error('Error rejecting request:', error);
-            this.$message.error('An error occurred while rejecting the request');
-          }
-        }
-      });
-    },
-
-    /**
-     * Revoke accepted access
-     */
-    async handleRevokeAccess(accessId) {
-      this.$confirm({
-        title: 'Revoke Access?',
-        content: 'Are you sure you want to revoke access to this business?',
-        okText: 'Yes, Revoke',
-        okType: 'danger',
-        cancelText: 'Cancel',
-        onOk: async () => {
-          try {
-            const response = await fetch(
-              `${this.$store.state.root_api}access-engine/api/professional-access/reject-access/${accessId}/`,
-              {
-                method: 'POST',
-                headers: {
-                  'Authorization': `Token ${localStorage.getItem('token')}`,
-                  'Content-Type': 'application/json'
-                }
-              }
-            );
-
-            const data = await response.json();
-
-            if (!data.error) {
-              this.$message.success('Access revoked successfully');
-              await this.fetchAcceptedBusinesses();
-            } else {
-              this.$message.error(data.message || 'Failed to revoke access');
-            }
-          } catch (error) {
-            console.error('Error revoking access:', error);
-            this.$message.error('An error occurred while revoking access');
-          }
-        }
-      });
     }
-  },
+},
+        async fetchAcceptedBusinesses() {
+            this.loadingAccepted = true;
+            try {
+                const response = await fetch(
+                    `${this.$store.state.root_api}access-engine/api/professional-access/my-businesses/`,
+                    {
+                        headers: { Authorization: `Token ${localStorage.getItem('token')}` },
+                    }
+                );
 
-}
+                const data = await response.json();
+                if (!data.error && data.data) {
+                    this.acceptedBusinesses = Array.isArray(data.data) ? data.data : [];
+                    this.acceptedPagination.total = this.acceptedBusinesses.length;
+                } else {
+                    this.acceptedBusinesses = [];
+                }
+            } catch (error) {
+                console.error('Error fetching accepted businesses:', error);
+                this.$message.error('Failed to load accepted businesses');
+                this.acceptedBusinesses = [];
+            } finally {
+                this.loadingAccepted = false;
+            }
+        },
+
+
+        openAcceptModal(business) {
+            this.selectedBusiness = business;
+            this.acceptanceMessage = '';
+            this.showAcceptModal = true;
+        },
+
+        async handleAccept() {
+            if (!this.selectedBusiness) return;
+
+            this.processingAccess = true;
+
+            try {
+                const response = await fetch(
+                    `${this.$store.state.root_api}access-engine/api/professional-access/accept-access/${this.selectedBusiness.id}/`,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Token ${localStorage.getItem('token')}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            response_message: this.acceptanceMessage
+                        })
+                    }
+                );
+
+                const data = await response.json();
+
+                if (!data.error) {
+                    this.$message.success('Access accepted successfully!');
+                    this.showAcceptModal = false;
+                    
+                    await this.fetchPendingBusinesses();
+                    await this.fetchAcceptedBusinesses();
+                    
+                    this.selectedBusiness = null;
+                    this.acceptanceMessage = '';
+                } else {
+                    this.$message.error(data.message || 'Failed to accept request');
+                }
+            } catch (error) {
+                console.error('Error accepting request:', error);
+                this.$message.error('An error occurred while accepting the request');
+            } finally {
+                this.processingAccess = false;
+            }
+        },
+
+        handleReject(requestId) {
+            this.$confirm({
+                title: 'Reject Access Request?',
+                content: 'Are you sure you want to reject this access request?',
+                okText: 'Yes, Reject',
+                okType: 'danger',
+                cancelText: 'Cancel',
+                onOk: async () => {
+                    try {
+                        const response = await fetch(
+                            `${this.$store.state.root_api}access-engine/api/professional-access/reject-access/${requestId}/`,
+                            {
+                                method: 'POST',
+                                headers: {
+                                    'Authorization': `Token ${localStorage.getItem('token')}`,
+                                    'Content-Type': 'application/json'
+                                }
+                            }
+                        );
+
+                        const data = await response.json();
+
+                        if (!data.error) {
+                            this.$message.success('Request rejected successfully');
+                            await this.fetchPendingBusinesses();
+                        } else {
+                            this.$message.error(data.message || 'Failed to reject request');
+                        }
+                    } catch (error) {
+                        console.error('Error rejecting request:', error);
+                        this.$message.error('An error occurred while rejecting the request');
+                    }
+                }
+            });
+        },
+
+        handleRevoke(accessId) {
+            this.$confirm({
+                title: 'Revoke Access?',
+                content: 'Are you sure you want to revoke access to this business? You will no longer be able to view tasks and details from this business.',
+                okText: 'Yes, Revoke',
+                okType: 'danger',
+                cancelText: 'Cancel',
+                onOk: async () => {
+                    try {
+                        const response = await fetch(
+                            `${this.$store.state.root_api}access-engine/api/professional-access/reject-access/${accessId}/`,
+                            {
+                                method: 'POST',
+                                headers: {
+                                    'Authorization': `Token ${localStorage.getItem('token')}`,
+                                    'Content-Type': 'application/json'
+                                }
+                            }
+                        );
+
+                        const data = await response.json();
+
+                        if (!data.error) {
+                            this.$message.success('Access revoked successfully');
+                            await this.fetchAcceptedBusinesses();
+                        } else {
+                            this.$message.error(data.message || 'Failed to revoke access');
+                        }
+                    } catch (error) {
+                        console.error('Error revoking access:', error);
+                        this.$message.error('An error occurred while revoking access');
+                    }
+                }
+            });
+        },
+
+        handleSearch() {
+            this.acceptedPagination.current = 1;
+            this.pendingPagination.current = 1;
+        },
+
+        handleTableChange(type, pagination) {
+            if (type === 'accepted') {
+                this.acceptedPagination = { ...this.acceptedPagination, ...pagination };
+            } else {
+                this.pendingPagination = { ...this.pendingPagination, ...pagination };
+            }
+        },
+
+        formatDate(dateString) {
+            if (!dateString) return '-';
+            return new Date(dateString).toLocaleDateString();
+        }
+    }
+};
 </script>

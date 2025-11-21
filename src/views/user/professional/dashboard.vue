@@ -46,7 +46,7 @@
               to="/professional-dashboard/my-profile" 
               class="nav-item"
               
-              :class="{ active: $route.name === 'my_profile' }"
+              :class="{ active: $route.name === 'professional_my_profile' }"
             >
               <div class="nav-icon-wrapper">
                 <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -58,9 +58,9 @@
             </router-link>
             
                <router-link 
-              to="/user-dashboard/my-requests" 
+              to="/professional-dashboard/access-requests" 
               class="nav-item"
-              :class="{ active: $route.name === 'user_my_requests' }"
+              :class="{ active: $route.name === 'professional_my_requests' }"
             >
               <div class="nav-icon-wrapper">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -72,11 +72,34 @@
               </div>
               <span class="nav-text">Requests</span>
             </router-link>
+            <router-link 
+  to="/professional-dashboard/my-likes" 
+  class="nav-item flex items-center justify-between"
+  :class="{ active: $route.name === 'professional_my_likes' }"
+  @click="menu_view_mobile = true"
+>
+
+  <!-- LEFT SIDE: ICON + TEXT -->
+  <div class="flex items-center gap-3">
+    <div class="nav-icon-wrapper">
+      <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M7.90304 15.1577C5.7611 13.556 1.51758 9.89416 1.51758 6.59893C1.51758 4.42091 3.11591 2.65527 5.31361 2.65527C6.45242 2.65527 7.59123 3.03488 9.10965 4.55329C10.6281 3.03488 11.7669 2.65527 12.9057 2.65527C15.1034 2.65527 16.7017 4.42091 16.7017 6.59893C16.7017 9.89416 12.4582 13.556 10.3163 15.1577C9.59546 15.6966 8.62383 15.6966 7.90304 15.1577Z" stroke="currentcolor" stroke-width="1.13881" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+
+    </div>
+
+    <span class="nav-text">My Likes</span>
+  </div>
+
+  <!-- RIGHT SIDE: ARROW -->
+  <img src="/openfile.svg" alt="arrow" class="w-4 h-4 md:hidden block" />
+
+</router-link>
             
             <router-link 
-              to="/user-dashboard/my-messages" 
+              to="/professional-dashboard/my-messages" 
               class="nav-item"
-              :class="{ active: $route.name === 'user_my_messages' }"
+              :class="{ active: $route.name === 'professional_messages' }"
             >
               <div class="nav-icon-wrapper">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -89,7 +112,7 @@
             <router-link 
               to="/professional-dashboard/manage-subscription" 
               class="nav-item"
-              :class="{ active: $route.name === 'manage_subscription' }"
+              :class="{ active: $route.name === 'professional_manage_subscription' }"
             >
               <div class="nav-icon-wrapper">
                 <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -99,16 +122,29 @@
               <span class="nav-text">Manage Subscription</span>
             </router-link>
              
-             <div class="nav-item" @click="logout_user">
+            <router-link 
+              to="/professional-dashboard/my-transactions" 
+              class="nav-item"
+              :class="{ active: $route.name === 'professional_transactions' }"
+            >
               <div class="nav-icon-wrapper">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M1.81818 16C1.31818 16 0.890303 15.8261 0.534545 15.4782C0.178788 15.1304 0.000606061 14.7117 0 14.2222V1.77778C0 1.28889 0.178182 0.870518 0.534545 0.522666C0.890909 0.174815 1.31879 0.000592592 1.81818 0H7.27273C7.5303 0 7.74636 0.0853334 7.92091 0.256C8.09545 0.426666 8.18242 0.637629 8.18182 0.888888C8.18121 1.14015 8.09394 1.35141 7.92 1.52267C7.74606 1.69392 7.5303 1.77896 7.27273 1.77778H1.81818V14.2222H7.27273C7.5303 14.2222 7.74636 14.3075 7.92091 14.4782C8.09545 14.6489 8.18242 14.8598 8.18182 15.1111C8.18121 15.3624 8.09394 15.5736 7.92 15.7449C7.74606 15.9161 7.5303 16.0012 7.27273 16H1.81818ZM12.8864 8.88888H6.36364C6.10606 8.88888 5.8903 8.80355 5.71636 8.63288C5.54242 8.46222 5.45515 8.25125 5.45455 7.99999C5.45394 7.74873 5.54121 7.53777 5.71636 7.36711C5.89152 7.19644 6.10727 7.11111 6.36364 7.11111H12.8864L11.1818 5.44444C11.0152 5.28148 10.9318 5.08148 10.9318 4.84444C10.9318 4.6074 11.0152 4.4 11.1818 4.22222C11.3485 4.04444 11.5606 3.9517 11.8182 3.944C12.0758 3.93629 12.2955 4.02163 12.4773 4.2L15.7273 7.37777C15.9091 7.55555 16 7.76296 16 7.99999C16 8.23703 15.9091 8.44444 15.7273 8.62222L12.4773 11.8C12.2955 11.9778 12.0797 12.0631 11.83 12.056C11.5803 12.0489 11.3642 11.9561 11.1818 11.7778C11.0152 11.6 10.9358 11.389 10.9436 11.1449C10.9515 10.9007 11.0385 10.6969 11.2045 10.5333L12.8864 8.88888Z" fill="currentColor"/>
-</svg>
-
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20 10H4L9.5 4M4 14H20L14.5 20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
               </div>
-              <span class="nav-text" style="font-size: medium;color:orangered;font-weight:600">Logout</span>
-              
-            </div>
+              <span class="nav-text">Transactions</span>
+            </router-link>
+
+              <div class="nav-item" @click="logout_user">
+                <div class="nav-icon-wrapper">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M1.81818 16C1.31818 16 0.890303 15.8261 0.534545 15.4782C0.178788 15.1304 0.000606061 14.7117 0 14.2222V1.77778C0 1.28889 0.178182 0.870518 0.534545 0.522666C0.890909 0.174815 1.31879 0.000592592 1.81818 0H7.27273C7.5303 0 7.74636 0.0853334 7.92091 0.256C8.09545 0.426666 8.18242 0.637629 8.18182 0.888888C8.18121 1.14015 8.09394 1.35141 7.92 1.52267C7.74606 1.69392 7.5303 1.77896 7.27273 1.77778H1.81818V14.2222H7.27273C7.5303 14.2222 7.74636 14.3075 7.92091 14.4782C8.09545 14.6489 8.18242 14.8598 8.18182 15.1111C8.18121 15.3624 8.09394 15.5736 7.92 15.7449C7.74606 15.9161 7.5303 16.0012 7.27273 16H1.81818ZM12.8864 8.88888H6.36364C6.10606 8.88888 5.8903 8.80355 5.71636 8.63288C5.54242 8.46222 5.45515 8.25125 5.45455 7.99999C5.45394 7.74873 5.54121 7.53777 5.71636 7.36711C5.89152 7.19644 6.10727 7.11111 6.36364 7.11111H12.8864L11.1818 5.44444C11.0152 5.28148 10.9318 5.08148 10.9318 4.84444C10.9318 4.6074 11.0152 4.4 11.1818 4.22222C11.3485 4.04444 11.5606 3.9517 11.8182 3.944C12.0758 3.93629 12.2955 4.02163 12.4773 4.2L15.7273 7.37777C15.9091 7.55555 16 7.76296 16 7.99999C16 8.23703 15.9091 8.44444 15.7273 8.62222L12.4773 11.8C12.2955 11.9778 12.0797 12.0631 11.83 12.056C11.5803 12.0489 11.3642 11.9561 11.1818 11.7778C11.0152 11.6 10.9358 11.389 10.9436 11.1449C10.9515 10.9007 11.0385 10.6969 11.2045 10.5333L12.8864 8.88888Z" fill="currentColor"/>
+  </svg>
+
+                </div>
+                <span class="nav-text" style="font-size: medium;color:orangered;font-weight:600">Logout</span>
+                
+              </div>
           </nav>
         </div>
       </a-col>
