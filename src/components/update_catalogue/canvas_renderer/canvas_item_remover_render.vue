@@ -542,7 +542,7 @@ canShowSwitchButton() {
     const selectedFurniture = this.$refs.switchFurnitureRef.selected_furniture
     console.log('Selected furniture:', selectedFurniture)
     this.openSelectFurnitureModel()
-    renderFurnitureSwitching(selectedFurniture)
+    this.renderFurnitureSwitching(selectedFurniture)
     // Use the selected furniture as needed
   },
   // render the furniture switching 
@@ -558,6 +558,7 @@ canShowSwitchButton() {
       throw new Error('Failed to create merged mask');
     }
     
+    this.$emit('furniture-switching-started',true);
     const formData = new FormData();
     formData.append('mask', mergedMaskBlob, 'refined-mask.png');
     formData.append('product_selected', product_selected.id);
@@ -572,7 +573,7 @@ canShowSwitchButton() {
     ));
     formData.append('canvas_dimensions', JSON.stringify(this.getCanvasDimensions()));
     
-    const response = await fetch(`${this.$store.state.root_api}engine/furniture-switch`, {
+    const response = await fetch(`${this.$store.state.root_api}engine/furniture-switch/`, {
       method: 'POST',
       body: formData,
       headers: {

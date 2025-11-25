@@ -1,9 +1,9 @@
 
 <template>
-
+<!-- {{ access_recieved }} -->
     <div class="main">
         <div v-if="view === 'list'" class="customers-page">
-             <h3>Customers</h3>
+             <h3>Business Customers</h3>
 
             <!-- Loading State -->
             <a-spin v-if="loading" size="large" class="loading-spinner" />
@@ -96,9 +96,11 @@
           :requests="customer_requests" 
           :loading="loading"
           :view-mode="viewMode" 
+          :access_recieved="access_recieved.user_room_request"
           @record-clicked="recordClicked"
           @refresh="refreshRequests"
-        />
+          />
+          <!-- :access_recieved= -->
         </div>
         <div  v-if="view === 'selected_request'" class="customers-page">
             <selectedRequest :selected_request="selected_request" @back-button-clicked="backButtonClicked"/>
@@ -108,14 +110,18 @@
     </div>
 </template>
 <script>
-import RequestsList from '@/components/store/RequestsList.vue'
-import selectedRequest from '@/components/store/selectedRequest_details.vue'
+import RequestsList from '@/views/access_engine/customers/components/RequestsList.vue'
+import selectedRequest from '@/views/access_engine/customers/components/selectedRequest_details.vue'
 
 export default {
     name:'customers',
     components: {
       RequestsList,
       selectedRequest
+    },
+    props:{
+        access_recieved:Object,
+        business:Object
     },
     data(){return {
         view:'list',
@@ -202,7 +208,7 @@ getInitials  (name)  {
                 }
 
                 const response = await fetch(
-                    this.$store.state.root_api + 'access-engine/api/business-customers/all-customers/',
+                    this.$store.state.root_api + 'access-engine/api/business-customers/all-customers/?access-id='+this.$route.query['access_id'],
                     {
                         method: 'GET',
                         headers: {
@@ -216,7 +222,10 @@ getInitials  (name)  {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
 
+
                 const data = await response.json();
+                console.log("------------------==================-------------------------")
+                console.log(data)
                 this.customers = data.customers ;
 
             } catch (err) {
@@ -235,7 +244,7 @@ getInitials  (name)  {
                 const token = localStorage.getItem('token');
                 
                 const response = await fetch(
-                    this.$store.state.root_api + 'access-engine/api/business-customers/all-customers/',
+                    this.$store.state.root_api + 'access-engine/api/business-customers/all-customers/?access-id='+this.$route.query['access_id'],
                     {
                         method: 'POST',
                         headers: {
@@ -305,12 +314,12 @@ getInitials  (name)  {
 }
 </script>
 <style scoped>
-.main{
+/* .main{
     margin-top:15px;
     border:1px solid rgba(0,0,0,0.1);
     height:100%;
     padding:10px;
     background-color: white;
     border-radius:15px;
-}
+} */
 </style>

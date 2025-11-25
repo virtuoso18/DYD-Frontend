@@ -281,7 +281,7 @@
             </div>
 
             <!-- View Count -->
-           
+            
           </div>
 
           <!-- Stats Row - Likes, Comments, Shares -->
@@ -606,31 +606,19 @@
             :maxlength="200"
             show-count
           />
-
         </div>
         <div>
-            <a-input
-            v-model:value="editForm.content"
-            placeholder="Update Content"
-            :maxlength="600"
-            show-count
+          <label style="display: block; margin-bottom: 8px; font-weight: 500"
+            >Tags</label
+          >
+          <a-select
+            v-model:value="editForm.tag_ids"
+            mode="tags"
+            placeholder="Select or create tags..."
+            style="width: 100%"
+            :options="availableTags"
           />
         </div>
-        <!-- Tags -->
-      <div>
-        <label style="display: block; margin-bottom: 8px; font-weight: 500">
-          Tags
-        </label>
-        <a-select
-          v-model:value="editForm.tag_ids"
-          mode="tags"
-          placeholder="Select or create tags..."
-          style="width: 100%"
-          :options="availableTags"
-          :filter-option="filterTags"
-          show-search
-        />
-      </div>
       </div>
     </a-modal>
 
@@ -952,7 +940,6 @@ export default {
       editForm: {
         img_src: "",
         title: "",
-        content:"",
         tag_ids: [],
       },
 
@@ -1421,7 +1408,6 @@ export default {
       this.editForm = {
         img_src: post.post_image,
         title: post.title,
-        content: post.content,
         tag_ids: post.tags,
       };
       // You'll need to find the actual tag IDs from your availableTags
@@ -1578,10 +1564,6 @@ export default {
       if (!text || text.length <= length) return text;
       return text.substring(0, length) + "...";
     },
-    filterTags(inputValue, option) {
-      // Case-insensitive substring match
-      return option.label.toLowerCase().includes(inputValue.toLowerCase());
-    },
   },
 };
 </script>
@@ -1592,7 +1574,7 @@ export default {
   border-radius: 20px;
   border: 1px solid rgba(128, 128, 128, 0.167);
   padding: 20px;
-  /* min-height: 100vh; */
+  min-height: 100vh;
   background-color: white;
 }
 

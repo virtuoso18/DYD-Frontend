@@ -412,7 +412,8 @@ Switch Furniture</a-button> -->
                 @reset-entire-room="resetChangesinBaseImage"
                 @Apply-Changes="ApplyChanges"
                 @handle_removal_completed="fetchRoom()"
-                
+                @furniture-switching-started="furniture_Switching_started"
+                @furniture-switched="furniture_Switched"
                 />
                 <!-- @redetect-objects-room="fetch_redetect_ObjectsBinary_Masks" -->
   <!-- ceiling light renderer -->
@@ -946,6 +947,8 @@ Switch Furniture</a-button> -->
                 @Apply-Changes="ApplyChanges"
                 @handle_removal_completed="fetchRoom()"
                 
+                @furniture-switching-started="furniture_Switching_started"
+                @furniture-switched="furniture_Switched"
                 />
                 <!-- @redetect-objects-room="fetch_redetect_ObjectsBinary_Masks" -->
   <!-- ceiling light renderer -->
@@ -1376,6 +1379,44 @@ export default {
 
   methods: {
     
+    async onObjectsSelectedForRemoval(removalData) {
+      console.log('🗑️ Removing objects:', removalData);
+      
+      try {
+        this.canvasLoading = true;
+        
+        const result = await this.removeObjectsFromRoom(removalData);
+        
+        if (!result.error) {
+          
+          if (Object.keys(this.binaryMasks_objects_detected).length > 0) {
+            await this.refreshObjectMaskCache();
+          }
+        } else {
+          throw new Error(result.message || 'Failed to remove objects');
+        }
+      } catch (error) {
+        console.error('❌ Object removal failed:', error);
+        this.$message?.error(`Failed: ${error.message}`, 4);
+        this.showError('Object Removal Failed', error.message);
+      } finally {
+        this.canvasLoading = false;
+      }
+    },
+    furniture_Switching_started(e){
+    
+      this.canvasLoading = true;
+    },
+    furniture_Switched(e){
+
+      this.canvasLoading = false;
+      this.binaryMasks_objects_detected = e.result.objects_detected_masks || {};
+      this.base_image_url = this.$store.state.root_media_api + e.result.final_output;
+      
+      this.forceCanvasUpdate();
+      this.$message?.success(`Room Objects Switched !`);
+      
+    },
     
     get_all_products_tabs_available(e){
       // console.log("==========================================")

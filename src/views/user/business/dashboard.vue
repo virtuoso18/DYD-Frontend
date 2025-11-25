@@ -143,15 +143,43 @@
   {{ user?.email || 'johndoe@gmail.com' }}
 </p>
             
-            <div class="completion-badge">
-              <div class="completion-circle">
-                <span class="completion-text">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="22px" height="22px" viewBox="0 0 24 24" fill="none">
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12ZM12 17.75C12.4142 17.75 12.75 17.4142 12.75 17V11C12.75 10.5858 12.4142 10.25 12 10.25C11.5858 10.25 11.25 10.5858 11.25 11V17C11.25 17.4142 11.5858 17.75 12 17.75ZM12 7C12.5523 7 13 7.44772 13 8C13 8.55228 12.5523 9 12 9C11.4477 9 11 8.55228 11 8C11 7.44772 11.4477 7 12 7Z" fill="currentcolor"/>
-                  </svg> &nbsp;90% completed
-                </span>
-              </div>
-            </div> 
+           <div class="your-parent-component">
+    
+    <!-- Completion Badge (Clickable) -->
+    <div 
+      class="completion-badge"
+      @click="showCompletionModal = true"
+    >
+      <div class="completion-circle">
+        <span class="completion-text">
+          <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            width="22px" 
+            height="22px" 
+            viewBox="0 0 24 24" 
+            fill="none"
+          >
+            <path 
+              fill-rule="evenodd" 
+              clip-rule="evenodd" 
+              d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12ZM12 17.75C12.4142 17.75 12.75 17.4142 12.75 17V11C12.75 10.5858 12.4142 10.25 12 10.25C11.5858 10.25 11.25 10.5858 11.25 11V17C11.25 17.4142 11.5858 17.75 12 17.75ZM12 7C12.5523 7 13 7.44772 13 8C13 8.55228 12.5523 9 12 9C11.4477 9 11 8.55228 11 8C11 7.44772 11.4477 7 12 7Z" 
+              fill="currentcolor"
+            />
+          </svg>
+          &nbsp;{{ completionPercentage }}% completed
+        </span>
+      </div>
+    </div>
+
+    <!-- Profile Completion Modal -->
+    <ProfileCompletionModal 
+      :isOpen="showCompletionModal"
+      :initialSteps="profileSteps"
+      @close="showCompletionModal = false"
+      @complete="handleProfileComplete"
+    />
+
+  </div>
             
             <div class="package-info">
               <div class="package-header">
@@ -448,9 +476,14 @@
 
 <script>
 import { notification } from "ant-design-vue";
+import ProfileCompletionModal from "./ProfileCompletionModal.vue";
 
 export default {
   name: 'DashboardManager_business_user',
+
+  components: {
+    ProfileCompletionModal
+  },
   
   data() {
     return {
@@ -460,63 +493,200 @@ export default {
       menu_view_mobile: false,
       mobileMenuOpen: false,
       isMobile: false,
+      
+      // Profile Completion Modal
+      showCompletionModal: false,
+      profileSteps: [
+        {
+          id: 1,
+          title: 'Personal details',
+          description: 'Please fill in your personal details accurately to ensure a smooth process.',
+          completed: false
+        },
+        {
+          id: 2,
+          title: 'Business details',
+          description: 'Please fill in your Business details accurately.',
+          completed: false
+        },
+        {
+          id: 3,
+          title: 'Add at least 3 products',
+          description: 'Please add at least three products to proceed with the process.',
+          completed: false
+        },
+        {
+          id: 4,
+          title: 'Create a AI Catalog',
+          description: 'Create your personalized AI catalog by selecting and organizing products that meet your needs.',
+          completed: false
+        }
+      ]
     }
   },
-  methods:{
-    toggleMobileMenu() {
-    this.mobileMenuOpen = !this.mobileMenuOpen;
-  },
-  closeMobileMenu() {
-    this.mobileMenuOpen = false;
-  },
-  goBack() {
-    this.menu_view_mobile = false;
-  },
-  checkScreenSize() {
-    this.isMobile = window.innerWidth < 768;
-  },
-  logoutAndClose() {
-    this.closeMobileMenu();
-    this.logout_user();
-  },
-    logout_user() {
-    this.$store.dispatch('logout')
-    localStorage.removeItem('profile')
-    localStorage.removeItem('business_profile')
-    this.$router.push('/login') // optional redirect
 
-    notification.success({
-               message: "Logout Successful",
-               placement:'bottomRight'
-             });
-  }
-
-  },
-  mounted() {
-  this.checkScreenSize();
-  window.addEventListener('resize', this.checkScreenSize);
-},
-beforeDestroy() {
-  window.removeEventListener('resize', this.checkScreenSize);
-},
   computed: {
-  currentRouteName() {
-    return this.$route.name
+    currentRouteName() {
+      return this.$route.name
+    },
+    
+    currentPageTitle() {
+      const titles = {
+        'business_my_profile': 'Profile',
+        'business_business_details': 'Business Detail',
+        'business_my_designs': 'My Designs',
+        'business_my_products': 'My Products',
+        'business_dashboard_community': 'Community',
+        'business_generate_banner': 'Generate Banner',
+        'business_manage_subscription': 'Manage Subscription',
+        'my_transactions': 'Transactions',
+      };
+      return titles[this.$route.name] || 'Dashboard';
+    },
+
+    completionPercentage() {
+      const completed = this.profileSteps.filter(step => step.completed).length;
+      return Math.round((completed / this.profileSteps.length) * 100);
+    },
+
+    isProfileComplete() {
+      return this.profileSteps.every(step => step.completed);
+    }
   },
-  currentPageTitle() {
-    const titles = {
-      'business_my_profile': 'Profile',
-      'business_business_details': 'Business Detail',
-      'business_my_designs': 'My Designs',
-      'business_my_products': 'My Products',
-      'business_dashboard_community': 'Community',
-      'business_generate_banner': 'Generate Banner',
-      'business_manage_subscription': 'Manage Subscription',
-      'my_transactions': 'Transactions',
-    };
-    return titles[this.$route.name] || 'Dashboard';
-  }
-},
+  
+  methods: {
+    toggleMobileMenu() {
+      this.mobileMenuOpen = !this.mobileMenuOpen;
+    },
+
+    closeMobileMenu() {
+      this.mobileMenuOpen = false;
+    },
+
+    goBack() {
+      this.menu_view_mobile = false;
+    },
+
+    checkScreenSize() {
+      this.isMobile = window.innerWidth < 768;
+    },
+
+    logoutAndClose() {
+      this.closeMobileMenu();
+      this.logout_user();
+    },
+
+    logout_user() {
+      this.$store.dispatch('logout')
+      localStorage.removeItem('profile')
+      localStorage.removeItem('business_profile')
+      this.$router.push('/login')
+
+      notification.success({
+        message: "Logout Successful",
+        placement: 'bottomRight'
+      });
+    },
+
+    // Profile Completion Methods
+    openCompletionModal() {
+      this.showCompletionModal = true;
+    },
+
+    closeCompletionModal() {
+      this.showCompletionModal = false;
+    },
+
+    handleProfileComplete() {
+      this.showCompletionModal = false;
+      
+      notification.success({
+        message: "Profile Completed!",
+        description: "Your profile setup is now complete. You can start using all features.",
+        placement: 'bottomRight'
+      });
+
+      // Optional: Reload profile data or redirect
+      this.fetchProfileStatus();
+    },
+
+    async fetchProfileStatus() {
+      try {
+        // Check personal details completion
+        const hasPersonalDetails = this.profile && 
+          this.profile.full_name && 
+          this.profile.email && 
+          this.profile.phone;
+        
+        // Check business details completion
+        const hasBusinessDetails = this.business_info && 
+          this.business_info.business_name && 
+          this.business_info.business_type;
+
+        // Update step 1 (Personal details)
+        this.profileSteps[0].completed = hasPersonalDetails;
+
+        // Update step 2 (Business details)
+        this.profileSteps[1].completed = hasBusinessDetails;
+
+        // Fetch products count from API
+        const response = await fetch(`${this.$store.state.root_api}products/count`, {
+          headers: {
+            'Authorization': `Token ${localStorage.getItem('token')}`
+          }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          // Update step 3 (Add at least 3 products)
+          this.profileSteps[2].completed = data.count >= 3;
+        }
+
+        // Check if AI catalog exists
+        const catalogResponse = await fetch(`${this.$store.state.root_api}catalog/check`, {
+          headers: {
+            'Authorization': `Token ${localStorage.getItem('token')}`
+          }
+        });
+        
+        if (catalogResponse.ok) {
+          const catalogData = await catalogResponse.json();
+          // Update step 4 (Create AI Catalog)
+          this.profileSteps[3].completed = catalogData.exists;
+        }
+
+      } catch (error) {
+        console.error('Failed to fetch profile status:', error);
+      }
+    },
+
+    updateStepCompletion(stepId, completed) {
+      const step = this.profileSteps.find(s => s.id === stepId);
+      if (step) {
+        step.completed = completed;
+      }
+    }
+  },
+
+  async mounted() {
+    this.checkScreenSize();
+    window.addEventListener('resize', this.checkScreenSize);
+    
+    // Fetch profile completion status on mount
+    await this.fetchProfileStatus();
+
+    // Optional: Show modal automatically if profile is incomplete
+    if (!this.isProfileComplete && this.completionPercentage < 100) {
+      // Show modal after a short delay
+      setTimeout(() => {
+        this.showCompletionModal = true;
+      }, 2000);
+    }
+  },
+
+  beforeDestroy() {
+    window.removeEventListener('resize', this.checkScreenSize);
+  },
   
   created() {
     // Debug: Log current route information
@@ -528,6 +698,60 @@ beforeDestroy() {
 </script>
 
 <style scoped>
+
+/* Completion Badge Styles */
+.completion-badge {
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.completion-badge:hover {
+  transform: translateY(-2px);
+}
+
+.completion-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50px;
+  padding: 10px 20px;
+  transition: all 0.3s ease;
+}
+
+.completion-badge:hover .completion-circle {
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+  transform: scale(1.05);
+}
+
+.completion-text {
+  display: flex;
+  align-items: center;
+  color: blue;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.completion-text svg {
+  flex-shrink: 0;
+}
+
+/* Responsive styles */
+@media (max-width: 640px) {
+  .completion-circle {
+    padding: 8px 16px;
+  }
+
+  .completion-text {
+    font-size: 12px;
+  }
+
+  .completion-text svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
 .dashboard-container {
   min-height: 100vh;
   background: #f8f9fa;

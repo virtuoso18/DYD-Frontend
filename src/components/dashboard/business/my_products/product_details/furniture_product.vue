@@ -189,26 +189,26 @@
               </div>
             </a-col>
             <a-col :span="12">
-  <div style="margin-bottom: 8px; font-weight: 500;">Textures:</div>
-  <div style="display: flex; gap: 6px;">
-    <img 
-      v-for="(texture, index) in selectedProduct.textures" 
-      :key="index"
-      @click="activeTextureView = index"
-      :src="$store.state.root_media_api + texture.texture" 
-      alt="" 
-      :style="{
-        width: '40px', 
-        height: '40px', 
-        borderRadius: '4px',
-        border: activeTextureView === index ? '3px solid #1890ff' : '1px solid #d9d9d9',
-        cursor: 'pointer',
-        objectFit: 'cover',
-        transition: 'all 0.3s ease'
-      }"
-    />
-  </div>
-</a-col>
+              <div style="margin-bottom: 8px; font-weight: 500;">Textures:</div>
+              <div style="display: flex; gap: 6px;">
+                <img 
+                  v-for="(texture, index) in selectedProduct.textures" 
+                  :key="index"
+                  @click.stop="openTextureModal(index)"
+                  :src="$store.state.root_media_api + texture.texture" 
+                  alt="" 
+                  :style="{
+                    width: '40px', 
+                    height: '40px', 
+                    borderRadius: '4px',
+                    border: activeTextureView === index ? '3px solid #1890ff' : '1px solid #d9d9d9',
+                    cursor: 'pointer',
+                    objectFit: 'cover',
+                    transition: 'all 0.3s ease'
+                  }"
+                />
+              </div>
+            </a-col>
           </a-row>
 
           <!-- Price Section -->
@@ -274,40 +274,122 @@
         </a-card>
       </a-col>
     </a-row>
+     <!-- Texture Modal -->
+    <TextureModal 
+      :isOpen="showTextureModal"
+      :textures="formattedTextures"
+      :initialIndex="selectedTextureIndex"
+      @close="closeTextureModal"
+      @apply="applyTexture"
+    />
   </div>
 </template>
 
 <script>
 import canvas_3d_model_renderer from "@/components/store/canvas_3d_model_renderer.vue"
 import {DeleteOutlined ,EditOutlined ,ClockCircleOutlined } from '@ant-design/icons-vue';
+import TextureModal from "./TextureModal.vue";
 export default {
   name: "product_details_store_page_buisness_user",
   components: {
-    canvas_3d_model_renderer,
+    canvas_3d_model_renderer,TextureModal,
     DeleteOutlined ,EditOutlined ,ClockCircleOutlined
   },
-  props: {
-    selectedProduct: Object
+   props: {
+    selectedProduct: {
+      type: Object,
+      required: true
+    }
   },
-  data() {
-  return {
-    activeImageIndex: null,  // Track which texture is selected
-    activeView: '3d'          // Add this too for consistency
-  }
-},
-  methods: {
 
+  data() {
+    return {
+      activeImageIndex: null,
+      activeTextureView: null,
+      activeView: '3d',
+      showTextureModal: false,
+      selectedTextureIndex: 0
+    }
+  },
+
+  computed: {
+    formattedTextures() {
+      if (!this.selectedProduct.textures || this.selectedProduct.textures.length === 0) {
+        return [];
+      }
+      
+      return this.selectedProduct.textures.map(texture => ({
+        image: this.$store.state.root_media_api + texture.texture,
+        name: texture.name || 'Texture',
+        composition: texture.composition || '100% Polyester',
+        origin: texture.origin || 'Made in Italy',
+        colors: texture.colors || [
+          { hex: '#D4A574' },
+          { hex: '#3F5E6B' },
+          { hex: '#4A4A4A' }
+        ]
+      }));
+    }
+  },
+
+ methods: {
     handleImageClick(index) {
-  this.activeView = 'image';
-  this.activeImageIndex = index;
-},
+      this.activeView = 'image';
+      this.activeImageIndex = index;
+      this.activeTextureView = null;
+    },
+
+
+    openTextureModal(index) {
+      console.log('Opening texture modal, index:', index);
+      console.log('Textures available:', this.selectedProduct.textures);
+      console.log('Formatted textures:', this.formattedTextures);
+      
+      this.selectedTextureIndex = index;
+      
+      // Use nextTick to ensure DOM updates before showing modal
+      this.$nextTick(() => {
+        this.showTextureModal = true;
+        console.log('Modal state set to:', this.showTextureModal);
+      });
+    },
+
+
+    closeTextureModal() {
+      this.showTextureModal = false;
+    },
+
+
+    applyTexture(data) {
+      console.log('Applied texture:', data);
+      this.activeTextureView = data.index;
+      this.activeView = null;
+      this.activeImageIndex = null;
+      
+      // Emit to parent or save to API
+      this.$emit('texture-changed', {
+        productId: this.selectedProduct.id,
+        textureIndex: data.index,
+        selectedColor: data.color
+      });
+      
+      this.closeTextureModal();
+    },
+
+
     editProduct() {
       this.$emit('edit_product', this.selectedProduct.id)
     },
-    deleteProduct() {
-      this.$emit('delete_product', {"product_id":this.selectedProduct.id,"product_type":"Furniture"})
 
+
+    deleteProduct() {
+      this.$emit('delete_product', {
+        "product_id": this.selectedProduct.id,
+        "product_type": "Furniture"
+      })
     },
+
+
     back_product_list() {
       this.$emit('back_product_list', this.selectedProduct.id)
     }

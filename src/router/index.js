@@ -45,7 +45,7 @@ import profesional_my_requests from '@/components/dashboard/professional/my_requ
 import profesional_my_likes from '@/components/dashboard/professional/my_likes.vue'
 import profesional_transactions from '@/components/dashboard/professional/my_transactions.vue'
 import profesional_manage_subscription from '@/components/dashboard/professional/manage_subscription.vue'
-
+import professional_settings from '@/components/dashboard/professional/settings.vue'
 
 // profesional user manage access pages  
 import professional_user_access_manager from "@/views/manage_access_professional_user/manager.vue"
@@ -97,6 +97,14 @@ import affiliateprogram from '@/views/pages/AffiliateProgram.vue'
 
 
 import ProductARView from "@/views/ProductAR/ProductAR.vue"
+
+import InteriorMaterialSupplier from '@/views/pages/interiorMaterialSupplier.vue'
+import DesignCompany from '@/views/pages/DesignCompany.vue'
+import Furnitureretail from '@/views/pages/furnitureretail.vue'
+import RealEstateBrokrage from '@/views/pages/realEstateBrokrage.vue'
+import HomeOwner from '@/views/pages/HomeOwner.vue'
+import Interiordesigner from '@/views/pages/interiordesigner.vue'
+import Realestateagent from '@/views/pages/realestateagent.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -209,6 +217,39 @@ const router = createRouter({
       name: 'affiliateprogram',
       component: affiliateprogram,
     },
+
+    {
+      path: '/interiorMaterialSupplier',
+      name: 'interiorMaterialSupplier',
+      component: InteriorMaterialSupplier,
+    },
+    {
+      path: '/designcompany',
+      name: 'designcompany',
+      component: DesignCompany,
+    },
+     {
+      path: '/furnitureretail',
+      name: 'furnitureretail',
+      component: Furnitureretail,
+    },
+     {
+      path: '/realestatebrokrage',
+      name: 'realestatebrokrage',
+      component: RealEstateBrokrage,
+    },
+     {
+      path: '/homeowner',
+      name: 'homeowner',
+      component: HomeOwner,
+    },
+      {
+      path: '/interiordesigner',
+      name: 'interiordesigner',
+      component: Interiordesigner,
+    },
+    
+    
 // =================================================== UI Pages ========================================
 
     {
@@ -357,6 +398,12 @@ const router = createRouter({
           name: 'professional_manage_subscription',
           component: profesional_manage_subscription,
         },
+        
+        {
+          path: 'settings',
+          name:'professional_settings',
+          component: professional_settings,
+        }
       ]
     },
     {

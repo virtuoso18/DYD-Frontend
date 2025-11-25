@@ -61,8 +61,8 @@
             <!-- Manage Site -->
             <!-- :to="{ name: 'manage-site',  query: { brand: employee_owner_business_data.slug }}"  -->
             <router-link 
-              v-if="access_recieved.business.update"
-              :to="{ name: 'manage-site',  query: { access_id: this.$route.query.access_id }}" 
+              v-if="access_recieved.business.read"
+              :to="{ name: 'manage-site',  query: { access_id: this.$route.query.access_id, brand: employee_owner_business_data.slug }}" 
               class="nav-item"
               :class="{ active: $route.name === 'manage-site' }"
             >
@@ -78,8 +78,8 @@
 
 
             <router-link 
-              v-if="access_recieved.business.update"
-              :to="{ name: 'manage-customers',  query: { access_id: this.$route.query.access_id }}" 
+              v-if="access_recieved.business_customers.read"
+              :to="{ name: 'manage-customers',  query: { access_id: this.$route.query.access_id, brand: employee_owner_business_data.slug }}" 
               class="nav-item"
               :class="{ active: $route.name === 'manage-customers' }"
             >
@@ -94,8 +94,8 @@
             </router-link>
 
             <router-link 
-              v-if="access_recieved.business.update"
-              :to="{ name: 'manage-generate-banner',  query: { access_id: this.$route.query.access_id }}" 
+              v-if="access_recieved.generate_banner.read"
+              :to="{ name: 'manage-generate-banner',  query: { access_id: this.$route.query.access_id , brand: employee_owner_business_data.slug }}" 
               class="nav-item"
               :class="{ active: $route.name === 'manage-generate-banner' }"
             >
@@ -110,7 +110,7 @@
             </router-link>
 
             <router-link 
-              v-if="access_recieved.business.update"
+              v-if="access_recieved.customer_messages.read"
               :to="{ name: 'manage-customer-messages',  query: { access_id: this.$route.query.access_id }}" 
               class="nav-item"
               :class="{ active: $route.name === 'manage-customer-messages' }"

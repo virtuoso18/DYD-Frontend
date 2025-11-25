@@ -31,7 +31,7 @@
   <div class="sm:hidden block">
     
     <!-- Left Image Card -->
-    <div class=" z-30 translate-y-50 -translate-x-36
+    <div class=" z-30 translate-y-20 -translate-x-26
                  rounded-2xl p-1 shadow-[0_20px_40px_rgba(0,0,0,0.1)]
                 transition-transform duration-300 hover:scale-105">
       <img 
@@ -42,7 +42,7 @@
     </div>
 
     <!-- Right Image Card -->
-    <div class=" translate-x-30 z-20
+    <div class=" translate-x-30 -translate-y-36 z-20
                  rounded-2xl p-1 shadow-[0_20px_40px_rgba(0,0,0,0.1)]
                 transition-transform duration-300 hover:scale-105">
       <img 
@@ -59,7 +59,7 @@
     </div>
     
     <!-- White Section with Search -->
-    <div class="white-section">
+    <div class="white-section z-100 -translate-y-20 sm:translate-y-0">
       <div class="search-section">
         <div class="search-container">
           <!-- Custom Dropdown -->
@@ -202,38 +202,63 @@
       <h1 class="text-4xl font-semibold text-center !py-10">Community</h1>
 
       <!-- Tabs -->
-      <div class="flex gap-6 justify-center pb-8">
-        <button
-          v-for="(tab, index) in tabs"
-          :key="index"
-          @click="changeTab(tab)"
-          class="text-sm font-medium"
-          :class="[
-            activeTab === tab
-              ? 'text-blue-600 border-b-2  border-blue-600'
-              : 'text-gray-500'
-          ]"
-        >
-          {{ tab }}
-        </button>
-      </div>
+     <div class="flex gap-6 justify-center pb-8">
+  <button
+    v-for="(tab, index) in tabs"
+    :key="index"
+    @click="changeTab(tab)"
+    class="tab-text tab-btn"
+    :class="activeTab === tab ? 'tab-active' : 'tab-inactive'"
+  >
+    {{ tab }}
+  </button>
+</div>
 
-      <!-- Grid of Cards -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 !pt-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 !px-4 gap-x-10 gap-6 community-section">
-        <DesignCard
-          v-for="(card, index) in paginatedCards"
-          :key="`card-${page}-${index}`"
-          :image="card.image"
-          :avatar="card.avatar"
-          :tags="card.tags"
-          :views="card.views"
-          :name="card.name"
-          :likes="card.likes"
-          :comments="card.comments"
-          width="328px"
-          height="270px"
-        />
-      </div>
+     <!-- Desktop Grid -->
+<div class="grid grid-cols-4 sm:grid-cols-4 !pt-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 hidden sm:grid place-items-center !px-4 gap-x-10 gap-6 community-section">
+  <DesignCard
+    v-for="(card, index) in paginatedCards"
+    :key="`card-${page}-${index}`"
+    :image="card.image"
+    :avatar="card.avatar"
+    :tags="card.tags"
+    :views="card.views"
+    :name="card.name"
+    :likes="card.likes"
+    :comments="card.comments"
+    width="328px"
+    height="270px"
+    @click.stop="openCommentsModal(card)"
+    
+  />
+</div>
+
+<!-- Mobile Grid -->
+<div class="grid grid-cols-2 gap-8 sm:grid-cols-2 !pt-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 sm:hidden block place-items-center !px-4 gap-x-10 gap-6 community-section">
+  <DesignCard
+    v-for="(card, index) in paginatedCards"
+    :key="`card-${page}-${index}`"
+    :image="card.image"
+    :avatar="card.avatar"
+    :tags="card.tags"
+    :views="card.views"
+    :name="card.name"
+    :likes="card.likes"
+    :comments="card.comments"
+    width="178px"
+    height="190px"
+    imageWidth="178px"
+    imageHeight="145px"
+    @click.stop="openCommentsModal(card)"
+  />
+</div>
+
+<!-- Comments Modal -->
+    <CommentsModal 
+      :isOpen="showCommentsModal" 
+      :post="selectedPost"
+      @close="showCommentsModal = false"
+    />
 
       <!-- Empty State -->
       <div v-if="paginatedCards.length === 0" class="text-center !py-12">
@@ -319,19 +344,41 @@
           @swiper="onSwiper"
           @slideChange="onSlideChange"
         >
-          <swiper-slide v-for="(review, index) in reviews" :key="index">
-            <div style="padding:20px;border-radius:12px;text-align:left;width:100%;max-width:280px;margin:auto;">
-              <div style="display: flex;justify-content: center;flex-direction: column;align-items: center;">
-                <img :src="review.avatar" alt="" style="width:80px;height:80px;margin-bottom:-40px;z-index:10;background: white;border-radius:100%;border:1px solid grey ;">
-                <div style="border:1px solid rgba(0,0,0,0.2);border-radius:20px;padding:10px;padding-top:40px;height:240px;text-align:center">
-                  <h3 style="margin:0;font-size:16px;font-weight:600;color:#111;">{{ review.name }}</h3>
-                  <p style="margin:0;font-size:13px;color:#666;">{{ review.role }}</p>
-                  <a-rate :value="review.rating"></a-rate>
-                  <p style="font-size:14px;line-height:1.5;color:#333;margin:0;text-align:center">"{{ review.text }}"</p>
-                </div>
-              </div>
-            </div>
-          </swiper-slide>
+         <swiper-slide
+    v-for="(review, index) in reviews"
+    :key="index"
+    class="!w-auto flex-shrink-0 px-3"
+  >
+    <div
+      class="p-5 rounded-xl text-left w-full max-w-[280px] mx-auto"
+    >
+      <div class="flex justify-center flex-col items-center">
+        
+        <img 
+          :src="review.avatar" 
+          alt="" 
+          class="w-[80px] h-[80px] !mb-[-40px] z-10 bg-white rounded-full border border-gray-300"
+        />
+
+        <div
+          class="border border-black/20 rounded-2xl !pt-10  h-[240px] text-center"
+        >
+          <h3 class="m-0 text-[16px] font-semibold text-[#111]">
+            {{ review.name }}
+          </h3>
+          <p class="m-0 text-[13px] text-[#666]">
+            {{ review.role }}
+          </p>
+
+          <a-rate :value="review.rating"></a-rate>
+
+          <p class="text-[14px] leading-[1.5] text-[#333] m-0 text-center">
+            "{{ review.text }}"
+          </p>
+        </div>
+      </div>
+    </div>
+  </swiper-slide>
         </swiper>
 
         <div style="position:absolute;top:0;left:0;width:200px;height:100%;background:linear-gradient(to right,#f3f3f3,transparent);z-index:5;pointer-events:none;"></div>
@@ -377,10 +424,21 @@
         @swiper="onSwiper"
         @slideChange="onSlideChange"
       >
-        <swiper-slide v-for="(business, index) in designers" :key="index" style="padding:15px">
-          <img :src="business.logo" :alt="business.name" style="width:60px;height:60px;background: white;margin-bottom:10px;">
-          <h4 className="flex item-start -translate-x-4" >{{ business.name }}</h4>
-        </swiper-slide>
+         <swiper-slide
+    v-for="(business, index) in designers"
+    :key="index"
+    class="!w-auto flex-shrink-0 px-4"
+  >
+    <div class="flex flex-col items-center">
+      <img
+        :src="business.logo"
+        :alt="business.name"
+        class="w-[60px] h-[60px] bg-white mb-2"
+      />
+
+      <h4 class="text-center">{{ business.name }}</h4>
+    </div>
+  </swiper-slide>
       </swiper>
 
       <div style="position:absolute;top:0;left:0;width:200px;height:100%;background:linear-gradient(to right,#f3f3f3,transparent);z-index:5;pointer-events:none;"></div>
@@ -410,6 +468,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/scrollbar';
 import DesignCard from '@/components/Includes/DesignCard.vue'
+import CommentsModal from './CommentsModal.vue'
            
 export default {
   name: 'InteriorDesignCommunityPage',
@@ -417,6 +476,7 @@ export default {
     Swiper,
     SwiperSlide,
     DesignCard,
+     CommentsModal,
   },
   data() {
     return {
@@ -425,6 +485,8 @@ export default {
       selectedCategoryIcon: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=50&q=80',
       searchQuery: '',
       showDropdown: false,
+      showCommentsModal: false,  // ADD THIS
+    selectedPost: null,        // ADD THIS
       swiper_bg: swiper_bg,
       slidesPerView: window.innerWidth <= 768 ? 1 : 5,
       designers_slidesPerView: window.innerWidth <= 768 ? 3 : 8,
@@ -808,6 +870,20 @@ designers: [
     }
   },
   methods: {
+
+
+     openCommentsModal(card) {
+      this.selectedPost = {
+        userName: card.name,
+        userAvatar: card.avatar,
+        image: card.image,
+        views: card.views,
+        likes: card.likes,
+        description: 'Vorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Curabitur tempus urna at turpis condimentum lobortis.',
+        tags: card.tags
+      };
+      this.showCommentsModal = true;
+    },
     changeTab(tab) {
       this.activeTab = tab;
       this.page = 1;
@@ -1483,7 +1559,40 @@ designers: [
     align-items: center;
   }
 
- 
+ /* base: 8px (important to ensure it wins when needed) */
+.tab-text {
+  font-family: inherit;
+  font-weight: 400;
+  font-size: 8px !important;      /* base size = 8px */
+  line-height: 1 !important;
+  text-align: center;
+}
+
+/* from sm (640px) and up => text-lg (1.125rem ≈ 18px) */
+@media (min-width: 640px) {
+  .tab-text {
+    font-size: 1.125rem !important;   /* same as Tailwind text-lg */
+    line-height: 1.25 !important;     /* adjust if needed */
+  }
+}
+
+/* optional styling for active/inactive states */
+.tab-btn {
+  padding-bottom: 0.5rem; /* keep space for border-bottom */
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.tab-active {
+  color: #2563eb; /* blue-600 */
+  border-bottom: 2px solid #2563eb;
+}
+
+.tab-inactive {
+  color: #6b7280; /* gray-500 */
+}
+
 
   
 

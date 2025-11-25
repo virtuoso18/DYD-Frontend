@@ -1,6 +1,6 @@
 <template>
-{{ brand }}<br>
-{{ access_recieved }}
+<!-- {{ brand }}<br>
+{{ access_recieved }} -->
   <div v-if="!access_recieved?.read" class="access-denied">
     <a-result
       status="403"

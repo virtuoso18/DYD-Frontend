@@ -5,15 +5,18 @@
   >
 
     <!-- Image + tags -->
-    <div class="relative w-[328px] h-[218px] h-[95%]  rounded-xl overflow-hidden">
+<div 
+  class="relative rounded-xl overflow-hidden"
+  :style="{ width: imageWidth, height: imageHeight }"
+>
       <img :src="image" class="w-full h-full object-cover" />
 
       <!-- Tags -->
-      <div class="absolute top-3 left-3 flex gap-2">
+      <div class="absolute top-3 left-3 flex gap-1 sm:gap-2">
         <span 
           v-for="(tag, index) in tags"
           :key="index"
-          class="bg-black/60 text-white px-2 py-1 text-xs rounded-md"
+          class="bg-black/60 text-white px-1 sm:px-2 py-1 text-[7px] sm:text-xs rounded-md"
         >
           {{ tag }}
         </span>
@@ -22,7 +25,7 @@
       <!-- View Count -->
       <div 
   v-if="views !== null && views !== undefined"
-  class="absolute top-3 right-3 flex items-center  text-white px-2 py-1 text-sm rounded-md"
+  class="absolute top-3 right-3 flex items-center  text-white px-1 sm:px-2 py-1 sm:text-sm text-[10px] rounded-md"
 >
   <svg width="24" height="20" viewBox="0 0 24 20" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g filter="url(#filter0_d_9924_32849)">
@@ -57,13 +60,13 @@
           :src="avatar" 
           class="w-6 h-6 rounded-full border"
         />
-<span class="!font-poppins font-normal !text-[14px] leading-[20px] tracking-normal text-center text-gray-600">
+<span class="!font-poppins font-normal text-[7px] sm:text-[14px] leading-[20px] tracking-normal text-center text-gray-600">
   {{ name }}
 </span>
       </div>
 
       <!-- Likes & Comments -->
-      <div class="flex items-center gap-4 text-gray-700 text-sm">
+      <div class="flex items-center gap-1 sm:gap-4 text-gray-700 text-[8px] sm:text-sm">
 
         <!-- Comments -->
         <div 
@@ -108,7 +111,9 @@ export default {
     likes: Number,
     comments: Number,
     width: { type: String, default: "100%" },
-    height: { type: String, default: "280px" }
+    height: { type: String, default: "280px" },
+    imageWidth: { type: String, default: "328px" },
+  imageHeight: { type: String, default: "218px" }
   },
 
   methods: {
