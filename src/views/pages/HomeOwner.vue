@@ -2,125 +2,26 @@
   
     <!-- Main Banner Section -->
     <HeroBanner
-  bgImage="/furnitureretail.svg"
-  heading1="Creating Innovative Designs That 
+  bgImage="/homeowner.svg"
+  heading1="Transforming Spaces into Stunning, 
+
+
 
 "
-  heading2="Inspire and Transform Spaces "
+  heading2="Personalized Interiors  "
   buttonText="Join Us"
 />
     
-   <div
-      class="flex flex justify-center md:justify-between pt-12 gap-6 overflow-x-auto pb-6"
-    >
-      <img
-        src="../../assets/card11.png"
-        alt="Card 1"
-        class="w-[242px] h-[130px] object-cover rounded-xl  flex-shrink-0 hover:scale-105 transition-transform duration-300"
-      />
-      <img
-        src="../../assets/card2.png"
-        alt="Card 2"
-        class="w-[242px] h-[130px] object-cover rounded-xl  flex-shrink-0 hover:scale-105 transition-transform duration-300"
-      />
-      <img
-        src="../../assets/card3.png"
-        alt="Card 3"
-        class="w-[242px] h-[130px] object-cover rounded-xl  flex-shrink-0 hover:scale-105 transition-transform duration-300"
-      />
-      <img
-        src="../../assets/card4.png"
-        alt="Card 4"
-        class="w-[242px] h-[130px] object-cover rounded-xl flex-shrink-0 hover:scale-105 transition-transform duration-300"
-      />
-      <img
-        src="../../assets/card5.png"
-        alt="Card 5"
-        class="w-[242px] h-[130px] object-cover rounded-xl  flex-shrink-0 hover:scale-105 transition-transform duration-300"
-      />
-    </div>
+  <StatsCards/>  
 
-     <h3
-  class="text-center pt-12 text-black"
-  style="
-    font-family: 'Proza Libre';
-    font-weight: 700;
-    font-style: bold;
-    font-size: 48px;
-    line-height: 52px;
-    letter-spacing: -0.02em;
-  "
->
-Trusted by 10,000 Agents from Top Brokerages</h3>
-
-   <div class="bg-[#F9FAFB] py-12 ">
-    <!-- 5 Static Cards -->
-    <div
-      class="flex  justify-center md:justify-between gap-6 overflow-x-auto pb-6"
-    >
-      <img
-        src="../../assets/card11.png"
-        alt="Card 1"
-        class="w-[242px] h-[130px] object-cover rounded-xl  flex-shrink-0 hover:scale-105 transition-transform duration-300"
-      />
-      <img
-        src="../../assets/card2.png"
-        alt="Card 2"
-        class="w-[242px] h-[130px] object-cover rounded-xl  flex-shrink-0 hover:scale-105 transition-transform duration-300"
-      />
-      <img
-        src="../../assets/card3.png"
-        alt="Card 3"
-        class="w-[242px] h-[130px] object-cover rounded-xl  flex-shrink-0 hover:scale-105 transition-transform duration-300"
-      />
-      <img
-        src="../../assets/card4.png"
-        alt="Card 4"
-        class="w-[242px] h-[130px] object-cover rounded-xl flex-shrink-0 hover:scale-105 transition-transform duration-300"
-      />
-      <img
-        src="../../assets/card5.png"
-        alt="Card 5"
-        class="w-[242px] h-[130px] object-cover rounded-xl  flex-shrink-0 hover:scale-105 transition-transform duration-300"
-      />
-    </div>
-    <div
-      class="flex flex pt-6 justify-center md:justify-between gap-6 overflow-x-auto pb-6"
-    >
-      <img
-        src="../../assets/card6.png"
-        alt="Card 1"
-        class="w-[242px] h-[130px] object-cover rounded-xl  flex-shrink-0 hover:scale-105 transition-transform duration-300"
-      />
-      <img
-        src="../../assets/card7.png"
-        alt="Card 2"
-        class="w-[242px] h-[130px] object-cover rounded-xl  flex-shrink-0 hover:scale-105 transition-transform duration-300"
-      />
-      <img
-        src="../../assets/card8.png"
-        alt="Card 3"
-        class="w-[242px] h-[130px] object-cover rounded-xl  flex-shrink-0 hover:scale-105 transition-transform duration-300"
-      />
-      <img
-        src="../../assets/card9.png"
-        alt="Card 4"
-        class="w-[242px] h-[130px] object-cover rounded-xl flex-shrink-0 hover:scale-105 transition-transform duration-300"
-      />
-      <img
-        src="../../assets/card10.png"
-        alt="Card 5"
-        class="w-[242px] h-[130px] object-cover rounded-xl  flex-shrink-0 hover:scale-105 transition-transform duration-300"
-      />
-    </div>
+  <TrustedSection/>
 
     
-  </div>   
-
-    <CompanyStats />
     <SmartPlatform /> 
      
+<CompanyStats />
 
+<ServicesShowcase/>
     
   
   
@@ -177,6 +78,7 @@ import SmartPlatform from '../newhome/SmartPlatform.vue';
 import StatsCards from '../newhome/StatsCards.vue';
 import Swapingcards from '../newhome/swapingcards.vue';
 import TopBrokrage from '../newhome/TopBrokrage.vue';
+import TrustedSection from '../newhome/TrustedSection.vue';
 import UnlockPotential from '../newhome/UnlockPotential.vue';
 
 
@@ -190,6 +92,7 @@ export default {
     TopBrokrage,
     Accelerateyoursuccess,
     UnlockPotential,
+    TrustedSection,
     SmartPlatform,
     CompanyStats,
     GetResults,

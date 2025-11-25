@@ -12,6 +12,8 @@
 />
     
   <StatsCards/>  
+  
+  <TrustedSection/>
 
     
     <SmartPlatform /> 
@@ -75,6 +77,7 @@ import SmartPlatform from '../newhome/SmartPlatform.vue';
 import StatsCards from '../newhome/StatsCards.vue';
 import Swapingcards from '../newhome/swapingcards.vue';
 import TopBrokrage from '../newhome/TopBrokrage.vue';
+import TrustedSection from '../newhome/TrustedSection.vue';
 import UnlockPotential from '../newhome/UnlockPotential.vue';
 
 
@@ -89,6 +92,7 @@ export default {
     Accelerateyoursuccess,
     UnlockPotential,
     SmartPlatform,
+    TrustedSection,
     CompanyStats,
     GetResults,
     FurnitureSwiper,
