@@ -306,7 +306,7 @@
     />
     
     
-    <div style="padding:10px;background:white;border-radius:10px;border: 1px solid rgba(0,0,0,0.1)">
+<div class="p-[10px] -translate-y-[1%] min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh] bg-white rounded-2xl border border-black/10">
             <!-- Product List/Grid View -->
             <div v-if="currentView === 'list'">
                 <!-- Header Section -->

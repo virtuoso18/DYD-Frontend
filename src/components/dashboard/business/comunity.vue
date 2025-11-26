@@ -1,5 +1,5 @@
 <template>
-  <div class="main ">
+  <div class="main min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh] ">
     <!-- Loading State -->
     <div v-if="loading" style="text-align: center; padding: 40px">
       <a-spin size="large" />
@@ -1571,10 +1571,10 @@ export default {
 <style scoped>
 .main {
   margin-top: 10px;
+  margin-bottom: 10px;
   border-radius: 20px;
   border: 1px solid rgba(128, 128, 128, 0.167);
   padding: 20px;
-  min-height: 100vh;
   background-color: white;
 }
 

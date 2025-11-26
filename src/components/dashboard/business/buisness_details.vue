@@ -111,8 +111,8 @@
     </a-button>
   </div>
 </a-modal>
-<div class="business-details-container">
-    <a-row class="main-content">
+<div class="business-details-container !py-3 !pr-2 ">
+    <a-row class="main-content shadow-sm rounded-xl ">
       <a-col :xs="24" :sm="24" :md="24" :lg="24" class="content-area">
         <div class="content-wrapper">
           <!-- {{ businessInfo.business_picture }} -->
@@ -1012,7 +1012,7 @@ async checkVerificationStatus() {
 .business-details-container {
   min-height: 100vh;
   border:1px soild rgba(128, 128, 128, 0.997);
-  padding: 20px;
+  padding: 0px;
 }
 
 .main-content {

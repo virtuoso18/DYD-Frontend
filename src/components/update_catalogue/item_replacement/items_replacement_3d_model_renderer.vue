@@ -1,8 +1,13 @@
 <template>
   <div v-if="!glbUrl || glbUrl === ''" >
-    <div style="text-align:center;color:#666;">
-      <img :src="this.baseImageUrl" alt="" style="max-width:850px;max-height:540px;margin:auto">
-    </div>
+    <div class="text-center flex items-center justify-center text-gray-600">
+  <img 
+    :src="this.baseImageUrl" 
+    alt="" 
+    class="max-w-full max-h-[520px] mx-auto"
+  >
+</div>
+
   </div>
   <div v-else style="display: flex;justify-content: center;align-items: center;">
 <!-- {{ modelDimensions }} -->
@@ -22,19 +27,61 @@
     </div>
   </div>
   
-  <div class="action-buttons" style="display:flex;justify-content: space-between;padding-left:10px;padding-right:10px;background: white;">
-    <div style="padding-top:5px;"></div>
-    <div>
-      <div style="padding-top:5px;display:flex;gap:10px;">
-        <a-button @click="reset_entire_room" :disabled="isLoading">Reset</a-button>
-      </div>
+  <div class="flex justify-between items-center py-4 px-2 bg-white w-full">
+  
+  <!-- Left: Reset -->
+  <button 
+  className="bg-gray-300 px-6 py-1 rounded-md"
+  @click="reset_entire_room" 
+  :disabled="isLoading"
+  style="
+    font-family: Poppins;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: 0%;
+    text-align: center;
+  "
+>
+  Reset
+</button>
+
+
+  <!-- Right: Apply Changes -->
+  <button 
+  className="pt-[10px] !text-white px-2  bg-blue-500 rounded-md py-1"
+  type="primary" 
+  @click="$emit('Apply-Changes', 'item-replacement-3d-renderer')" 
+  :disabled="isLoading"
+  style="
+    font-family: Poppins;
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 20px;
+    letter-spacing: 0%;
+    text-align: center;
+  "
+>
+  Apply Changes
+</button>
+
+
+</div>
+
+<div class="apply-section md:hidden ">
+      <a-button 
+  type="primary" 
+  size="large" 
+  block  
+  @click="$emit('trigger-render-3d-object')"
+  style="font-family: Poppins; font-weight: 500; font-size: 14px; line-height: 20px; letter-spacing: 0%; text-align: center;"
+>
+  Apply
+</a-button>
+
     </div>
-    <div style="padding-top:10px;">
-      <a-button type="primary" @click="$emit('Apply-Changes', 'item-replacement-3d-renderer')" :disabled="isLoading">
-        Apply Changes
-      </a-button>
-    </div>
-  </div>
+
+
 </template>
 
 <script>

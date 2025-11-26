@@ -25,15 +25,15 @@
 
       </div>
   </div>
-  <div class="p-4 bg-white min-h-[90vh] mt-0  border-black/10 rounded-[20px] mt-[15px]">
+  <div class="p-4 bg-white min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh] !my-3 !mr-2 shadow-sm   rounded-[20px] ">
     
-    <div class="max-w-[1200px] mx-auto">
+    <div class="max-w-[1200px]  mx-auto">
 
 
       <!-- Header -->
 
       
-      <div class="hidden md:flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-3">
+      <div class="hidden md:flex flex-col md:flex-row md:justify-between md:items-center  mb-6 gap-3">
         <h2 class="m-0 text-[#262626] text-[clamp(18px,4vw,24px)] font-semibold">
           Manage Subscription
         </h2>

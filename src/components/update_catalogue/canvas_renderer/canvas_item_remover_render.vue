@@ -262,47 +262,203 @@ Switch Furniture</div></a-button>
       <div v-if="drawingMode">Drawing Mode: Active</div>
     </div>
   </div>
+  <div className="hidden md:block">
+
+    <div class="bottom-toolbar" style="display:flex;justify-content: space-between;background: white;padding-left:10px;padding-right:10px;">
+      <div style="display:flex;gap:5px;padding-top:5px;">
+        <a-button 
+          @click="DrawRemoval_model" 
+          style="display:flex;gap:5px;gap:10px;"
+        >
+          <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M13.6273 8.3374C15.6172 4.66839 14.7102 2.1779 11.3058 2C8.83147 2.04724 6.27908 3.38042 4.24174 5.44289C2.53199 7.17373 0.848545 9.65267 1.46654 12.012C1.603 12.5329 1.86906 12.8879 2.28937 13.2219C3.41888 14.1194 4.52754 14.1984 6.66281 13.6742C8.8252 13.0171 10.1658 12.0272 11.2962 11.0145M11.2962 11.0145C11.2973 11.0134 11.2985 11.0123 11.2997 11.0113C11.3019 11.0094 11.3005 11.0058 11.2976 11.0058C11.2955 11.0058 11.2939 11.008 11.2947 11.01C11.2952 11.0115 11.2957 11.013 11.2962 11.0145ZM11.2962 11.0145C11.5431 11.7446 11.3867 12.3963 10.9616 13.6742" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Draw removal
+        </a-button>
   
-  <div class="bottom-toolbar" style="display:flex;justify-content: space-between;background: white;padding-left:10px;padding-right:10px;">
-    <div style="display:flex;gap:5px;padding-top:5px;">
-      <a-button 
-        @click="DrawRemoval_model" 
-        style="display:flex;gap:5px;gap:10px;"
-      >
-        <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M13.6273 8.3374C15.6172 4.66839 14.7102 2.1779 11.3058 2C8.83147 2.04724 6.27908 3.38042 4.24174 5.44289C2.53199 7.17373 0.848545 9.65267 1.46654 12.012C1.603 12.5329 1.86906 12.8879 2.28937 13.2219C3.41888 14.1194 4.52754 14.1984 6.66281 13.6742C8.8252 13.0171 10.1658 12.0272 11.2962 11.0145M11.2962 11.0145C11.2973 11.0134 11.2985 11.0123 11.2997 11.0113C11.3019 11.0094 11.3005 11.0058 11.2976 11.0058C11.2955 11.0058 11.2939 11.008 11.2947 11.01C11.2952 11.0115 11.2957 11.013 11.2962 11.0145ZM11.2962 11.0145C11.5431 11.7446 11.3867 12.3963 10.9616 13.6742" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        Draw removal
-      </a-button>
-
-      <a-button
-        @click="toggleSelection"
-        class="control-btn"
-        :disabled="objectMaskRegions.length === 0 || drawingMode"
-      >
-        {{ selectedObjects.length === objectMaskRegions.length ? 'Clear Selection'+`(${selectedObjects.length})` : 'Select All' }}
-      </a-button>
-
-      <a-button 
-        @click="removeSelectedObjects" 
-        class="control-btn remove"
-        :disabled="selectedObjects.length === 0 || drawingMode"
-      >
-        Remove Selected ({{ selectedObjects.length }})
-      </a-button>
+        <a-button
+          @click="toggleSelection"
+          class="control-btn"
+          :disabled="objectMaskRegions.length === 0 || drawingMode"
+        >
+          {{ selectedObjects.length === objectMaskRegions.length ? 'Clear Selection'+`(${selectedObjects.length})` : 'Select All' }}
+        </a-button>
+  
+        <a-button 
+          @click="removeSelectedObjects" 
+          class="control-btn remove"
+          :disabled="selectedObjects.length === 0 || drawingMode"
+        >
+          Remove Selected ({{ selectedObjects.length }})
+        </a-button>
+        
+        <a-button type="primary" class="toolbar-btn primary-btn" @click="reset_entire_room" 
+        :disabled="isLoading || drawingMode">
+          Reset room
+        </a-button>
+      </div>
       
-      <a-button type="primary" class="toolbar-btn primary-btn" @click="reset_entire_room" 
-      :disabled="isLoading || drawingMode">
-        Reset room
-      </a-button>
-    </div>
-    
-    <div style="padding-top:10px;">
-      <a-button type="primary" class="toolbar-btn primary-btn" @click="$emit('Apply-Changes', 'all-tab')" :disabled="isLoading || drawingMode">
-        Apply Changes
-      </a-button>
+      <div style="padding-top:10px;">
+        <a-button type="primary" class="toolbar-btn primary-btn" @click="$emit('Apply-Changes', 'all-tab')" :disabled="isLoading || drawingMode">
+          Apply Changes
+        </a-button>
+      </div>
     </div>
   </div>
+  <div class="flex md:hidden  bg-white px-3 py-2 w-full justify-center">
+  <!-- Left Buttons -->
+  <div class="flex flex-col gap-2 pt-1">
+    <div className="flex flex-row gap-24 justify-center">
+
+      <button 
+        @click="DrawRemoval_model"
+        className="flex items-center gap-2 !whitespace-nowrap"
+      >
+       <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_8010_87804)">
+<path d="M0.625 7.86037C1.411 6.76037 3.795 3.63537 6.587 1.87837C8.686 0.556372 10.667 2.30137 9.13 4.05837C7.627 5.77637 5.612 8.14137 4.751 9.31537C3.859 10.5324 5.386 12.0054 6.914 10.6034C7.934 9.66737 8.999 8.59037 10.08 7.79437C11.54 6.72037 12.792 7.66837 12.155 8.87937C11.695 9.75437 11.36 10.1404 10.975 10.8774C10.591 11.6134 10.998 12.4964 11.581 12.5724C12.303 12.6654 12.76 12.1484 13.377 11.3414" stroke="#1A1A1A" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+<defs>
+<clipPath id="clip0_8010_87804">
+<rect width="14" height="14" fill="white"/>
+</clipPath>
+</defs>
+</svg>
+
+        Draw removal
+      </button>
+  
+      <!-- Select All / Clear -->
+     <button
+  @click="toggleSelection"
+  class="whitespace-nowrap  rounded-md p-2 flex items-center gap-2"
+  :disabled="objectMaskRegions.length === 0 || drawingMode"
+>
+  <svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M9.64601 0.975971L1.02587 9.19354M9.64601 9.19354L1.02587 0.975971" stroke="#1A1A1A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+
+  {{ 
+    selectedObjects.length === objectMaskRegions.length 
+      ? 'Clear Selection' + `(${selectedObjects.length})` 
+      : 'Select All' 
+  }}
+</button>
+
+    </div>
+    
+    <!-- Draw Removal -->
+
+    <!-- Remove Selected -->
+     <div className="flex w-full flex-row gap-28 justify-between">
+      
+       <button 
+         @click="removeSelectedObjects"
+         className=" !text-red-600  rounded-md p-2 whitespace-nowrap"
+         :disabled="selectedObjects.length === 0 || drawingMode"
+       >
+         Remove Selected ({{ selectedObjects.length }})
+       </button>
+   
+       <!-- Reset Room -->
+       <button 
+         type="primary" 
+         className="!text-blue-700 -translate-x-10 rounded-md p-2 whitespace-nowrap "
+         @click="reset_entire_room"
+         :disabled="isLoading || drawingMode"
+       >
+         Reset room
+       </button>
+     </div>
+
+     <!-- Add above the Apply Changes button section -->
+<div class="flex items-center space-x-6 mb-4 justify-center">
+<span 
+  style="
+    font-family: Poppins;
+    font-weight: 500;
+    font-size: 10px;
+    line-height: 20px;
+    letter-spacing: 0%;
+    text-align: center;
+    color: #4B5563; /* text-gray-600 */
+  "
+>
+  Add Lights:
+</span>
+  
+   <div className="flex flex-row pl-2 gap-4">
+
+     <button
+       class="flex items-center bg-white rounded-xl px-5 py-2 shadow-sm  hover:shadow transition"
+       :class="{ 'ring-2 ring-blue-400': selectedLight === 'rectangle' }"
+       @click="selectedLight = 'rectangle'"
+       type="button"
+     >
+       <span class="w-4 h-4  bg-[#27B2F8]  rounded-md"></span>
+       <span className="pl-2" 
+  style="
+    font-family: Poppins;
+    font-weight: 500;
+    font-size: 10px;
+    line-height: 20px;
+    letter-spacing: 0%;
+    text-align: center;
+    color: #4B5563; /* text-gray-600 */
+  "
+>Rectangle</span>
+     </button>
+   
+     <button
+       class="flex items-center bg-white rounded-xl px-5 py-2 shadow-sm space-x-3 hover:shadow transition"
+       :class="{ 'ring-2 ring-blue-400': selectedLight === 'circular' }"
+       @click="selectedLight = 'circular'"
+       type="button"
+     >
+       <span class="w-4 h-4 bg-[#27B2F8] rounded-full"></span>
+       <span  className="pl-2" 
+  style="
+    font-family: Poppins;
+    font-weight: 500;
+    font-size: 10px;
+    line-height: 20px;
+    letter-spacing: 0%;
+    text-align: center;
+    color: #4B5563; /* text-gray-600 */
+  "
+>Circular</span>
+     </button>
+   </div>
+</div>
+
+
+     <div>
+     <button 
+  type="primary"
+  style="
+    font-family: Poppins;
+    font-weight: 500;
+    font-size: 10px;
+    line-height: 20px;
+    letter-spacing: 0%;
+    text-align: center;
+    color: white;
+  "
+  class="!bg-blue-500 rounded-md w-full py-2 whitespace-nowrap"
+  @click="$emit('Apply-Changes', 'all-tab')"
+  :disabled="isLoading || drawingMode"
+>
+  Apply Changes
+</button>
+
+     </div>
+
+  </div>
+
+  <!-- Apply Changes -->
+  
+</div>
+
 </template>
 
 <script>
