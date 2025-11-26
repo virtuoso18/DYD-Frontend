@@ -5,31 +5,25 @@
       <a-col :xs="24" :sm="12" :md="6">
         <div class="stat-card total-products">
           <div class="stat-label">Total Products</div>
-          <div class="stat-value">4,520</div>
+          <div class="stat-value">{{ analyticsData ? analyticsData.total_products : '...' }}</div>
         </div>
       </a-col>
       <a-col :xs="24" :sm="12" :md="6">
         <div class="stat-card total-clicks">
           <div class="stat-label">Total Clicks</div>
-          <div class="stat-value">658,463</div>
-          <div class="stat-change positive">
-            <a-icon type="arrow-up" /> 5.7%
-          </div>
+          <div class="stat-value">{{ analyticsData ? formatNumber(analyticsData.total_clicks) : '...' }}</div>
         </div>
       </a-col>
       <a-col :xs="24" :sm="12" :md="6">
         <div class="stat-card total-simulations">
           <div class="stat-label">Total Simulations</div>
-          <div class="stat-value">4,529,896</div>
-          <div class="stat-change negative">
-            <a-icon type="arrow-down" /> 8.2%
-          </div>
+          <div class="stat-value">0</div>
         </div>
       </a-col>
       <a-col :xs="24" :sm="12" :md="6">
         <div class="stat-card balance-credits">
           <div class="stat-label">Balance Credits</div>
-          <div class="stat-value">6,000</div>
+          <div class="stat-value">{{ analyticsData ? formatNumber(analyticsData.credits) : '...' }}</div>
         </div>
       </a-col>
     </a-row>
@@ -43,16 +37,6 @@
             <div class="date-range">1 June - 1 July, 2025</div>
           </div>
           
-          <!-- Filters -->
-          <div class="chart-filters">
-            <a-button size="small" class="filter-btn">
-              <a-icon type="filter" /> Filter by
-            </a-button>
-            <a-button size="small" class="filter-btn">Color</a-button>
-            <a-button size="small" class="filter-btn">Simulation</a-button>
-            <a-button size="small" class="filter-btn active">Favorite product</a-button>
-          </div>
-
           <!-- Chart -->
           <div class="chart-container">
             <canvas ref="chartCanvas" style="max-height: 300px;"></canvas>
@@ -61,59 +45,96 @@
       </a-col>
     </a-row>
 
-    <!-- Products Table -->
+    <!-- Products Table - Updated to match your list view -->
     <a-row :gutter="[16, 16]">
       <a-col :span="24">
         <div class="table-card">
           <div class="table-header">
             <h3>Top simulation products</h3>
-            <a-button type="link" class="view-all-btn">
-              View all <a-icon type="right" />
-            </a-button>
           </div>
           
           <a-table 
-            :dataSource="productsData" 
             :columns="tableColumns" 
+            :data-source="productsData" 
+            row-key="id" 
             :pagination="false"
-            size="middle"
             :scroll="{ x: 800 }"
+            :loading="loading"
+            style="background: white; border-radius: 8px; overflow: hidden; cursor:pointer"
           >
-            <template slot="product" slot-scope="record">
-              <div class="product-info">
-                <img :src="record.image" :alt="record.name" class="product-image" />
-                <div class="product-details">
-                  <div class="product-name">{{ record.name }}</div>
-                  <div class="product-description">{{ record.description }}</div>
+            <template #bodyCell="{ column, record, index }">
+              <template v-if="column.key === 'serial'">
+                <span style="font-weight: 600; color: #666;">{{ index + 1 }}</span>
+              </template>
+
+              <template v-if="column.key === 'product'">
+                <div style="display: flex; gap: 12px; align-items: center; cursor: pointer;">
+                  <img 
+                    :src="getImageUrl(record.image)"
+                    style="width: 60px; height: 60px; border-radius: 8px; object-fit: cover;"
+                  >
+                  <div>
+                    <div style="font-weight: 600; color: #333; margin-bottom: 4px;">
+                      {{ truncateText(record.name || 'No title available', 13) }}
+                    </div>
+                    <div style="font-size: 12px; color: #666; margin-top: 2px;">
+                      {{ truncateText(record.description || 'No description available', 19) }}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </template>
-            
-            <template slot="color" slot-scope="colors">
-              <div class="color-dots">
-                <span 
-                  v-for="color in colors" 
-                  :key="color"
-                  class="color-dot" 
-                  :style="{ backgroundColor: color }"
-                ></span>
-              </div>
-            </template>
-            
-            <template slot="price" slot-scope="price">
-              <span class="price">${{ price }}</span>
-            </template>
-            
-            <template slot="ar-vr" slot-scope="record">
-              <div class="ar-vr-buttons">
-                <a-button size="small" class="ar-btn">AR</a-button>
-                <a-button size="small" class="vr-btn" type="primary">
-                  <a-icon type="eye" />
-                </a-button>
-                <a-button size="small" class="share-btn" type="danger">
-                  <a-icon type="share-alt" />
-                </a-button>
-              </div>
+              </template>
+
+              <template v-if="column.key === 'category'">
+                <span>{{ record.category || '-' }}</span>
+              </template>
+
+              <template v-if="column.key === 'type'">
+                <span>{{ record.type || '-' }}</span>
+              </template>
+
+              <template v-if="column.key === 'createDate'">
+                <span>{{ formatDate(record.createDate) }}</span>
+              </template>
+
+              <template v-if="column.key === 'dimensions'">
+                <span style="font-size: 12px;">{{ record.dimensions || '-' }}</span>
+              </template>
+
+              <template v-if="column.key === 'colors'">
+                <div style="display: flex; align-items: center; gap: 6px;">
+                  <div
+                    v-for="(color, colorIndex) in (record.colors || []).slice(0, 3)"
+                    :key="colorIndex"
+                    :style="{ 
+                      width: '16px', 
+                      height: '16px', 
+                      borderRadius: '50%', 
+                      backgroundColor: color 
+                    }"
+                  ></div>
+                  <span v-if="record.colors && record.colors.length > 3">...</span>
+                </div>
+              </template>
+
+              <template v-if="column.key === 'price'">
+                <span style="font-weight: 600; color: #333;">
+                  ${{ record.price || '0.00' }}
+                </span>
+              </template>
+
+              <template v-if="column.key === 'usageCount'">
+                <span style="font-weight: 600; color: #4F46E5;">
+                  {{ record.usageCount || 0 }}
+                </span>
+              </template>
+
+              <template v-if="column.key === 'actions'">
+                <div style="display: flex; gap: 5px;">
+                  <button
+                    style="background: #f1f5f9; border: 1px solid #cbd5e1; color: #64748b; padding: 4px 8px; border-radius: 4px; font-size: 12px; cursor: pointer;"
+                  >AR</button>
+                </div>
+              </template>
             </template>
           </a-table>
         </div>
@@ -133,113 +154,69 @@ export default {
   data() {
     return {
       chart: null,
+      loading: false,
+      analyticsData: null,
       chartData: [
-        5, 8, 6, 12, 10, 8, 14, 16, 18, 25, 28, 32, 35, 38, 42, 45, 43, 40, 35, 32, 28, 25, 22, 20, 18, 16, 18, 20, 25, 28, 22
+        5, 8, 6, 12,60
       ],
       tableColumns: [
         {
-          title: '#',
-          dataIndex: 'id',
-          key: 'id',
-          width: 50,
-          align: 'center'
+          title: '',
+          key: 'serial',
+          width: 40,
         },
         {
           title: 'Product',
           key: 'product',
-          scopedSlots: { customRender: 'product' },
-          width: 300
+          width: 200,
         },
         {
           title: 'Category',
-          dataIndex: 'category',
           key: 'category',
-          width: 100
+          width: 70,
         },
         {
           title: 'Type',
-          dataIndex: 'type',
           key: 'type',
-          width: 120
+          width: 70,
         },
         {
           title: 'Create date',
-          dataIndex: 'createDate',
           key: 'createDate',
-          width: 120
+          width: 120,
         },
         {
           title: 'Size',
-          dataIndex: 'size',
-          key: 'size',
-          width: 120
+          key: 'dimensions',
+          width: 100,
         },
         {
           title: 'Color',
-          key: 'color',
-          scopedSlots: { customRender: 'color' },
+          key: 'colors',
           width: 80,
-          align: 'center'
         },
         {
           title: 'Price',
           key: 'price',
-          scopedSlots: { customRender: 'price' },
-          width: 80,
-          align: 'right'
+          width: 40,
+        },
+        {
+          title: 'Usage',
+          key: 'usageCount',
+          width: 60,
         },
         {
           title: 'AR/VR',
-          key: 'ar-vr',
-          scopedSlots: { customRender: 'ar-vr' },
-          width: 120,
-          align: 'center'
-        }
+          key: 'actions',
+          width: 80,
+        },
       ],
-      productsData: [
-        {
-          key: '1',
-          id: 1,
-          name: 'Decaly Coral',
-          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed...',
-          category: 'Chair',
-          type: 'Modern',
-          createDate: 'June 10, 2025',
-          size: '24 in W x 24 in D x 30 in H',
-          image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iOCIgZmlsbD0iI0Y4RkFGQyIvPgo8cGF0aCBkPSJNMTIgMTZIMjhWMjRIMTJWMTZaIiBmaWxsPSIjRTJFOEYwIi8+CjxwYXRoIGQ9Ik0xNiAxMkgyNFYyOEgxNlYxMloiIGZpbGw9IiNDQkQzRTAiLz4KPC9zdmc+',
-          colors: ['#10b981', '#f59e0b', '#ef4444'],
-          price: 660
-        },
-        {
-          key: '2',
-          id: 2,
-          name: 'Ocean Blue',
-          description: 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua...',
-          category: 'Table',
-          type: 'Contemporary',
-          createDate: 'May 15, 2025',
-          size: '60 in W x 30 in D x 29 in H',
-          image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iOCIgZmlsbD0iI0Y4RkFGQyIvPgo8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSI4IiBmaWxsPSIjMzMzNEVBIi8+Cjwvc3ZnPg==',
-          colors: ['#10b981', '#f59e0b', '#ef4444'],
-          price: 1200
-        },
-        {
-          key: '3',
-          id: 3,
-          name: 'Sunset Orange',
-          description: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...',
-          category: 'Sofa',
-          type: 'Transitional',
-          createDate: 'August 22, 2025',
-          size: '78 in W x 34 in D x 32 in H',
-          image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iOCIgZmlsbD0iI0Y4RkFGQyIvPgo8ZWxsaXBzZSBjeD0iMjAiIGN5PSIyMCIgcng9IjEyIiByeT0iNiIgZmlsbD0iI0Y5NzMxNiIvPgo8L3N2Zz4=',
-          colors: ['#10b981', '#f59e0b', '#ef4444'],
-          price: 850
-        }
-      ]
+      productsData: []
     }
   },
   mounted() {
+    this.fetchAnalytics()
+    this.fetchTopProducts()
     this.initChart()
   },
   beforeUnmount() {
@@ -248,6 +225,124 @@ export default {
     }
   },
   methods: {
+    truncateText(text, charLimit = 13) {
+      if (!text) return ''
+      if (text.length <= charLimit) return text
+      return text.slice(0, charLimit) + '...'
+    },
+
+    async fetchAnalytics() {
+      this.loading = true
+      try {
+        const response = await fetch(
+          `${this.$store.state.root_api}Auth/api/business-analytics/`,
+          {
+            headers: {
+              'Authorization': `Token ${localStorage.getItem('token')}`
+            }
+          }
+        )
+
+        const data = await response.json()
+        console.log('Analytics API Response:', data)
+
+        if (response.ok && data.success) {
+          this.analyticsData = data.data
+          this.$message.success('Analytics data loaded successfully')
+        } else {
+          this.$message.error(data.message || 'Failed to fetch analytics')
+        }
+      } catch (error) {
+        console.error('Error fetching analytics:', error)
+        this.$message.error('An error occurred while fetching analytics')
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async fetchTopProducts() {
+      this.loading = true
+      try {
+        const response = await fetch(
+          `${this.$store.state.root_api}Auth/api/business-top-products/`,
+          {
+            headers: {
+              'Authorization': `Token ${localStorage.getItem('token')}`
+            }
+          }
+        )
+
+        const data = await response.json()
+        console.log('Top Products API Response:', data)
+
+        if (response.ok && data.success) {
+          // Transform API data to table format matching your list view
+          this.productsData = data.data.map((item, index) => {
+            // Ensure colors is always an array
+            let colors = item.colors || []
+            if (typeof colors === 'string') {
+              try {
+                colors = JSON.parse(colors)
+              } catch (e) {
+                colors = [colors]
+              }
+            }
+            
+            return {
+              key: item.id || `product-${index}`,
+              id: item.id || index + 1,
+              name: item.name || 'Unnamed Product',
+              description: item.description || 'N/A',
+              category: item.category || '-',
+              type: item.furniture_type || item.light_type || '-',
+              createDate: item.created_date || item.created_at,
+              dimensions: item.dimensions || item.diamenstions || '-',
+              image: item.image || item.primary_image,
+              colors: colors,
+              price: item.price || 0,
+              priceUnit: item.price_unit || null,
+              usageCount: item.count || 0
+            }
+          })
+          
+          console.log('Final productsData:', this.productsData)
+          this.$message.success('Top products loaded successfully')
+        } else {
+          this.$message.error(data.message || 'Failed to fetch top products')
+        }
+      } catch (error) {
+        console.error('Error fetching top products:', error)
+        this.$message.error('An error occurred while fetching top products')
+      } finally {
+        this.loading = false
+      }
+    },
+
+    formatDate(dateString) {
+      if (!dateString) return '-'
+      const date = new Date(dateString)
+      return date.toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      })
+    },
+
+    getImageUrl(imagePath) {
+      if (!imagePath) return this.getDefaultImage('product')
+      // If it's already a full URL, return it
+      if (imagePath.startsWith('http')) return imagePath
+      // If it's a relative path, prepend the API base URL
+      if (imagePath.startsWith('/media/')) {
+        return `${this.$store.state.root_media_api}${imagePath}`
+      }
+      return `${this.$store.state.root_media_api}${imagePath}`
+    },
+
+    getDefaultImage(type) {
+      return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iOCIgZmlsbD0iIzRGNDZFNSIvPgo8cGF0aCBkPSJNMTIgMTZIMjhWMjRIMTJWMTZaIiBmaWxsPSIjN0MzQUVEIi8+CjxwYXRoIGQ9Ik0xNiAxMkgyNFYyOEgxNlYxMloiIGZpbGw9IiM2MzY2RjEiLz4KPC9zdmc+'
+    },
+
     initChart() {
       const ctx = this.$refs.chartCanvas.getContext('2d')
       
@@ -259,7 +354,7 @@ export default {
       this.chart = new Chart(ctx, {
         type: 'line',
         data: {
-          labels: Array.from({length: 31}, (_, i) => i + 1),
+          labels: Array.from({ length: this.chartData.length }, (_, i) => i + 1),
           datasets: [{
             label: 'Favorite Product',
             data: this.chartData,
@@ -299,7 +394,7 @@ export default {
               displayColors: false,
               callbacks: {
                 title: function(context) {
-                  return 'Day ' + context[0].label
+                  return 'Day ----- ' + context[0].label
                 },
                 label: function(context) {
                   return context.parsed.y + 'k'
@@ -359,6 +454,11 @@ export default {
           }
         }
       })
+    },
+    
+    formatNumber(num) {
+      if (!num) return '0'
+      return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
     }
   }
 }
@@ -409,26 +509,6 @@ export default {
   line-height: 1;
 }
 
-.stat-change {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 4px 8px;
-  border-radius: 6px;
-}
-
-.stat-change.positive {
-  background-color: #dcfce7;
-  color: #16a34a;
-}
-
-.stat-change.negative {
-  background-color: #fef2f2;
-  color: #dc2626;
-}
-
 /* Chart Card */
 .chart-card {
   background: white;
@@ -454,26 +534,6 @@ export default {
 .date-range {
   color: #64748b;
   font-size: 14px;
-}
-
-.chart-filters {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 24px;
-  flex-wrap: wrap;
-}
-
-.filter-btn {
-  border-radius: 6px;
-  border: 1px solid #e2e8f0;
-  color: #64748b;
-  font-size: 12px;
-}
-
-.filter-btn.active {
-  background-color: #4f46e5;
-  color: white;
-  border-color: #4f46e5;
 }
 
 .chart-container {
@@ -503,108 +563,14 @@ export default {
   color: #1e293b;
 }
 
-.view-all-btn {
-  color: #4f46e5;
-  padding: 0;
-}
-
-/* Product Info */
-.product-info {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.product-image {
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
-  object-fit: cover;
-  background-color: #f1f5f9;
-}
-
-.product-name {
-  font-weight: 600;
-  color: #1e293b;
-  margin-bottom: 4px;
-}
-
-.product-description {
-  font-size: 12px;
-  color: #64748b;
-  max-width: 200px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* Color Dots */
-.color-dots {
-  display: flex;
-  gap: 4px;
-}
-
-.color-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  border: 1px solid #e2e8f0;
-}
-
-/* Price */
-.price {
-  font-weight: 600;
-  color: #1e293b;
-}
-
-/* AR/VR Buttons */
-.ar-vr-buttons {
-  display: flex;
-  gap: 4px;
-}
-
-.ar-btn, .vr-btn, .share-btn {
-  min-width: 32px;
-  height: 28px;
-  border-radius: 4px;
-  font-size: 11px;
-}
-
-.ar-btn {
-  background-color: #f1f5f9;
-  border-color: #e2e8f0;
-  color: #64748b;
-}
-
 /* Responsive Adjustments */
 @media (max-width: 768px) {
   .analytics-dashboard {
     padding: 16px;
   }
   
-  .chart-filters {
-    justify-content: flex-start;
-  }
-  
-  .table-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-  }
-  
   .stat-value {
     font-size: 24px;
-  }
-}
-
-@media (max-width: 576px) {
-  .product-description {
-    max-width: 150px;
-  }
-  
-  .ar-vr-buttons {
-    flex-direction: column;
-    gap: 2px;
   }
 }
 </style>

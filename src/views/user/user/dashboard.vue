@@ -132,11 +132,19 @@
               <span class="nav-text">Transactions</span>
             </router-link>
 
-             <router-link 
-              to="/access-business" 
+             <!-- <router-link 
+              :to="'/access-business'+'?access-id='+employee_owner_business_access_id" 
               class="nav-item"
 
-              v-if="employee_user"
+              v-if="employee_owner_business_slug"
+            > -->
+            <div 
+              class="nav-item"
+              @click="this.$router.push({
+                name: 'business-overview',
+                query: { access_id: employee_owner_business_access_id}
+            })"
+              v-if="employee_owner_business_slug"
             >
               <div class="nav-icon-wrapper">
                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#000000" height="800px" width="800px" version="1.1" id="Layer_1" viewBox="0 0 512 512" xml:space="preserve">
@@ -155,7 +163,7 @@
 
               </div>
               <span class="nav-text">Access Business</span>
-            </router-link>
+            </div>
 
 
             <router-link 
@@ -205,8 +213,8 @@ export default {
   
   data() {
     return {
-      employee_owner_business_data:null,
-      employee_user:false,
+      employee_owner_business_slug:null,
+      employee_owner_business_access_id:null,
       user: JSON.parse(localStorage.getItem('user') ),
       profile: JSON.parse(localStorage.getItem('profile') )
     }
@@ -233,7 +241,8 @@ export default {
         const data = await response.json();
         if (data.success) {
           this.employee_user=data.success
-          this.employee_owner_business_data=data.data
+          this.employee_owner_business_slug=data.data.slug
+          this.employee_owner_business_access_id=data.data.Access_granted_id
           console.log(this.employee_owner_business_data)
         }
       } catch (error) {
@@ -395,6 +404,7 @@ export default {
   display: flex;
   align-items: center;
   gap: 12px;
+  cursor: pointer;
   padding: 12px 16px;
   border-radius: 10px;
   text-decoration: none;

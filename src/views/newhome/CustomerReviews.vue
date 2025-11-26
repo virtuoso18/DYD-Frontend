@@ -1,105 +1,158 @@
 <template>
-  <div class="bg-[#f2f2f2]">
-    <div class="max-w-[1300px] mx-auto">
-      <div class="py-10 px-2.5 text-center overflow-hidden relative">
-        <h1 class="text-[28px] font-bold mb-10">See What Customers Love About Us</h1>
+  <div class="py-20 bg-[#F2F2F2] relative">
+    <div class="max-w-full px-4 relative">
 
-        <swiper
-          class="mt-5 pb-12 overflow-visible cursor-pointer"
-          :modules="modules"
-          :slides-per-view="slidesPerView"
-          :space-between="30"
-          :centered-slides="true"
-          :initial-slide="2"
-          navigation
-          :pagination="{ clickable: true }"
-          @swiper="onSwiper"
-          @slideChange="onSlideChange"
+      <!-- Heading -->
+      <h1
+        class="text-center mb-10"
+        style="
+          font-family: 'Proza Libre';
+          font-weight: 700;
+          font-size: 48px;
+          line-height: 52px;
+          letter-spacing: -0.02em;
+        "
+      >
+        See What Customers Love About Us
+      </h1>
+
+      <!-- Container with gradient mask wrapper -->
+      <div class="relative">
+        
+        <!-- Scroll wrapper with gradient masks -->
+        <div
+          ref="scrollContainer"
+          class="overflow-x-auto scrollbar-hide scroll-smooth relative fade-edges"
         >
-          <swiper-slide v-for="(review, index) in reviews" :key="index">
-            <div class="p-5 rounded-xl text-left w-full max-w-[280px] mx-auto">
+          <div class="flex gap-6 snap-x snap-mandatory pb-6 px-1">
+
+            <!-- Card -->
+            <div
+              v-for="(review, index) in reviews"
+              :key="index"
+              class="min-w-[250px] max-w-[260px]  rounded-xl p-5 snap-center  hover:shadow-md transition-shadow"
+            >
               <div class="flex items-center mb-4">
-                <img 
-                  :src="review.avatar" 
-                  alt="" 
-                  class="w-10 h-10 rounded-full object-cover mr-2.5" 
+                <img
+                  :src="review.avatar"
+                  class="w-10 h-10 rounded-full mr-3 object-cover"
+                  alt=""
                 />
                 <div>
-                  <h3 class="m-0 text-base font-semibold text-gray-900">{{ review.name }}</h3>
-                  <p class="m-0 text-[13px] text-gray-600">{{ review.role }}</p>
+                  <h3 class="font-semibold text-gray-900 text-base">
+                    {{ review.name }}
+                  </h3>
+                  <p class="text-xs text-gray-600">{{ review.role }}</p>
                 </div>
               </div>
-              <p class="text-sm leading-relaxed text-gray-700 m-0">"{{ review.text }}"</p>
-            </div>
-          </swiper-slide>
-        </swiper>
 
-        <!-- Fade overlays -->
-        <div class="absolute top-0 left-0 w-[200px] h-full bg-gradient-to-r from-[#f3f3f3] to-transparent z-[5] pointer-events-none"></div>
-        <div class="absolute top-0 right-0 w-[200px] h-full bg-gradient-to-l from-[#f3f3f3] to-transparent z-[5] pointer-events-none"></div>
+              <p class="text-sm text-gray-700 leading-relaxed">
+                "{{ review.text }}"
+              </p>
+            </div>
+
+          </div>
+        </div>
+
       </div>
+
     </div>
   </div>
 </template>
 
 <script>
-import { Navigation, Pagination, Autoplay } from 'swiper/modules'
-import { Swiper, SwiperSlide } from 'swiper/vue'
-import 'swiper/css'
-import 'swiper/css/navigation'
-import 'swiper/css/pagination'
-
 export default {
-  name: 'CustomerReviews',
-  components: {
-    Swiper,
-    SwiperSlide
-  },
+  name: "CustomerReviews",
   data() {
     return {
-      slidesPerView: window.innerWidth <= 768 ? 1 : 4,
-      modules: [Navigation, Pagination, Autoplay],
       reviews: [
         {
           name: "Amy Lang",
           role: "Home Stager",
-          text: "Even those who are not design-savvy can easily create realistic and inviting virtually staged spaces that attract potential buyers regularly.",
+          text: "Even those who are not design-savvy can easily create realistic spaces.",
           avatar: "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png"
         },
         {
           name: "Troy Sinclair",
           role: "Real Estate Photographer",
-          text: "It has taken our real estate marketing to the next level! Our buyers love the virtual staging.",
+          text: "It has taken our real estate marketing to the next level!",
           avatar: "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png"
         },
         {
           name: "John Doe",
           role: "Interior Designer",
-          text: "This tool made it so easy to stage homes and present them to clients with realistic visuals.",
+          text: "This tool made staging homes so easy and realistic.",
+          avatar: "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png"
+        },
+        {
+          name: "John Doe",
+          role: "Interior Designer",
+          text: "This tool made staging homes so easy and realistic.",
+          avatar: "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png"
+        },
+        {
+          name: "John Doe",
+          role: "Interior Designer",
+          text: "This tool made staging homes so easy and realistic.",
           avatar: "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png"
         },
         {
           name: "Sarah Lee",
           role: "Realtor",
-          text: "My listings now stand out. Clients are impressed with how professional everything looks.",
+          text: "My listings now stand out. Clients are impressed.",
           avatar: "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png"
         },
         {
           name: "David Kim",
           role: "Architect",
-          text: "An incredible platform for showcasing designs and spaces realistically.",
+          text: "An incredible platform for showcasing spaces realistically.",
           avatar: "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png"
         }
       ]
-    }
+    };
   },
+
   methods: {
-    onSwiper(swiper) {
-      console.log(swiper)
+    scrollLeft() {
+      this.$refs.scrollContainer.scrollBy({
+        left: -300,
+        behavior: "smooth"
+      });
     },
-    onSlideChange() {
-      console.log('slide change')
+    scrollRight() {
+      this.$refs.scrollContainer.scrollBy({
+        left: 300,
+        behavior: "smooth"
+      });
     }
   }
-}
+};
 </script>
+
+<style scoped>
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Fade edges effect using CSS mask */
+.fade-edges {
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 35%,
+    black 40%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 35%,
+    black 50%,
+    transparent 100%
+  );
+}
+</style>

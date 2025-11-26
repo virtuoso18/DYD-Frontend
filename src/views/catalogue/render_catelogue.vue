@@ -690,7 +690,7 @@
       </div>
     </div>
   </div>
-  <div v-else style="background-color: #f3f3f3;height:90.5vh;">
+  <div v-else style="background-color: #f3f3f3;min-height:90.5vh;">
     <a-row>
       <a-col
         :lg="18"
@@ -783,7 +783,7 @@
         </div>
       </a-col>
 
-      <a-col :lg="6" :md="6" :sm="24" :xs="24" style="background-color: white;padding:10px;" v-if="is_client_requested_room === false">
+      <a-col :lg="6" :md="6" :sm="24" :xs="24" style="background-color: white;padding:10px;" v-if="is_client_requested_room === false && !this.$route.query.business_staff">
         <div>
           <h3 style="text-align:center">
             Congratulation!<br/>
@@ -822,6 +822,7 @@
                 height: auto;
                 border-radius: 8px;
               "
+              
             >
               <svg
                 width="20"
@@ -896,7 +897,7 @@
       Product
     </p>
 
-    <a-row align="middle" style="margin-bottom: 10px;">
+    <a-row align="middle" style="margin-bottom: 10px;" v-if="products_used.length">
       <a-col :span="4">
         <img
           :src="$store.state.root_media_api + products_used[0].product_image"
@@ -915,6 +916,12 @@
           Product Detail
         </a>
       </a-col>
+    </a-row>
+    <a-row align="middle" style="margin-bottom: 10px;" v-else>
+      <a-col :span="24">
+      <a-empty description="No Products Used In room."></a-empty>  
+      </a-col>
+      
     </a-row>
   </div>
 
@@ -1017,6 +1024,66 @@
         </div>
       </a-col>
       
+      <a-col :lg="6" :md="6" :sm="24" :xs="24" style="background-color: white;padding:10px;" v-else-if="is_client_requested_room === false && this.$route.query.business_staff">
+         <div style="display: flex;flex-direction: column;justify-content: space-between;height:87vh;">
+          <div>
+
+            <h3 style="text-align:center">
+              Congratulation!<br/>
+              Your photo already set.
+            </h3>
+            
+            <div
+            style="
+              
+              border-radius: 10px;
+              padding: 10px;
+              margin-bottom:10px;
+              "
+          >
+          <div style="display: flex; gap: 15px; font-size: 14px; color: #666;">
+            <div>
+                <strong>Style:</strong> 
+                <a-select v-model:value="room_design_type_select">
+                  <a-option-select value="Modern">Modern</a-option-select>
+                  <a-option-select value="Classic">Classic</a-option-select>
+                  <a-option-select value="Rustic">Rustic</a-option-select>
+                  <a-option-select value="Industrial">Industrial</a-option-select>
+                  <a-option-select value="Minimalist">Minimalist</a-option-select>
+                  <a-option-select value="Traditional">Traditional</a-option-select>
+                  <a-option-select value="Contemporary">Contemporary</a-option-select>
+                  <a-option-select value="Vintage">Vintage</a-option-select>
+                </a-select>
+                <!-- {{ room_type || 'Living Room' }} -->
+              
+
+              </div>
+              <div>
+
+                <strong>Room Type:</strong> 
+                <a-select v-model:value="room_type_select">
+                  <a-option-select value="Living Room">Living Room</a-option-select>
+                  <a-option-select value="Dinning Room">Dinning Room</a-option-select>
+                  <a-option-select value="Kitchen">Kitchen</a-option-select>
+                  <a-option-select value="Home Office">Home Office</a-option-select>
+                  <a-option-select value="Bedroom">Bedroom</a-option-select>
+                  <a-option-select value="Office">Office</a-option-select>
+                  <a-option-select value="Rest Room">Rest Room</a-option-select>
+                </a-select>
+                <!-- {{ room_design_type || 'Modern' }} -->
+              </div>
+              <div v-if="products_used"><strong>Products:</strong> <div>{{ products_used.length }} items</div></div>
+            </div>
+            <br>
+          <a-label>
+            Add Description
+          </a-label>
+          <a-textarea :rows="5" v-model:value="description_room" placeholder="describe the room here "></a-textarea>
+          <a-button  :disabled="!description_room.trim()" block type="primary" size="large" style="margin-top:10px;padding: 8px 16px;" @click="Business_staff_Submit_Client_request()">Submit Request</a-button>
+        </div>
+      </div>
+        </div>
+      </a-col>
       <a-col :lg="6" :md="6" :sm="24" :xs="24" style="background-color: white;padding:10px;" v-else>
         <div style="display: flex;flex-direction: column;justify-content: space-between;height:87vh;">
           <div>
@@ -1129,6 +1196,8 @@
           </div>
         </div>
       </a-col>
+      
+      
     </a-row>
   </div>
 </template>
@@ -1537,23 +1606,21 @@ computed: {
     handleImageLoad() {
       console.log("✅ Image loaded successfully");
     },
-
-    showError(title, message, retryCallback) {
-      this.$notification.error({
-        message: title,
-        description: message,
-        duration: 0,
-        btn: (h) =>
-          h(
-            "a-button",
-            {
-              props: { type: "primary", size: "small" },
-              on: { click: retryCallback },
-            },
-            "Retry"
-          ),
-      });
-    },
+showError(title, message, retryCallback) {
+  this.$notification.error({
+    message: title,
+    description: message,
+    duration: 0,
+    btn: () => this.$createElement(
+      'a-button',
+      {
+        props: { type: 'primary', size: 'small' },
+        on: { click: retryCallback },
+      },
+      'Retry'
+    ),
+  });
+},
 
     createAbortController(key) {
       // Cancel existing request if any
@@ -1732,6 +1799,62 @@ computed: {
         if (responseData ) {
           if (this.is_ready) {
                 this.$router.push('/business-dashboard/my-designs');
+
+          } else {
+            this.error.room = "Room is not ready yet. Please try again later.";
+          }
+        } else {
+          this.error.room = "No room data found";
+        }
+      } catch (error) {
+        console.error("❌ Failed to fetch room:", error);
+        this.error.room = error.message;
+
+        this.showError("Failed to Load Room", error.message, () => {
+          this.roomRetryCount = 0;
+          this.fetchRoom();
+        });
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    
+    
+    async Business_staff_Submit_Client_request(){
+      console.log("📡 Fetching room data...");
+      if (this.description_room.trim()===""){
+        return this.$message?.error('Please add some description to describe the room.', 3);
+      }
+      this.loading = true;
+      this.error.room = null;
+
+      try {
+        const roomId = this.$route.params.id;
+        const url = `${this.$store.state.root_api}engine/render-final-result/${roomId}`;
+
+        const responseData = await this.makeApiRequest(
+          url,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Token ${localStorage.getItem("token")}`,
+            },
+            body: JSON.stringify({
+              request:'business_staff_submit_client_request',
+              description_room:this.description_room,
+              room_design_type_select:this.room_design_type_select,
+              room_type_select:this.room_type_select,
+              // tags_room:this.tags_room,
+            })
+          },
+          "room"
+        );
+
+        if (responseData ) {
+          if (this.is_ready) {
+                this.$router.push('/access-business/manage-customer-requests?brand='+this.$route.query.brand);
 
           } else {
             this.error.room = "Room is not ready yet. Please try again later.";

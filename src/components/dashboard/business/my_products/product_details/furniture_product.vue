@@ -16,7 +16,7 @@
       <!-- Left Column - 3D Model and Images -->
       <a-col :xs="24" :md="12">
         <!-- 3D Model Card -->
-         <div style="position: relative; padding:10px;;">
+         <div style="position: relative; padding:10px;;"  v-if="activeView === '3d'">
 
             <canvas_3d_model_renderer 
             :glbModelUrl="$store.state.root_media_api + selectedProduct['3d_model']"
@@ -36,23 +36,75 @@
     </svg>
     3D View
 </div>
-</div>
 
+</div>
+<!-- Texture Preview Card -->
+<a-card 
+  v-if="activeTextureView !== null && selectedProduct.textures[activeTextureView]" 
+  title="Texture Preview" 
+  style="margin-bottom: 24px;"
+>
+  <div style="width: 100%; max-height: 300px; display: flex; align-items: center; justify-content: center; background: #f5f5f5; border-radius: 8px;">
+    <img 
+      :src="$store.state.root_media_api + selectedProduct.textures[activeTextureView].texture"
+      style="width: 100%; height: 100%; object-fit: contain; border-radius: 8px;"
+    />
+  </div>
+</a-card>
+<div 
+  v-else-if="activeView === 'image' && activeImageIndex !== null"
+  style="width: 100%; max-height:500px; height: 100%; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #f5f5f5;">
+  <img 
+    :src="$store.state.root_media_api + selectedProduct.images[activeImageIndex].image"
+    style="width: 100%; height: 100%; object-fit: contain; border-radius: 10px;"
+  />
+</div>
         <!-- Images Section -->
         <a-card title="Product Images" style="margin-top: 16px;">
           <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+
+                   <div 
+  @click="activeView = '3d'"
+  :style="{
+    height:'80px',
+    width:'80px',
+    border: activeView === '3d' ? '3px solid #1890ff' : '1px solid rgba(0,0,0,0.1)',
+    borderRadius:'10px',
+    display:'flex',
+    flexDirection: 'center',
+    justifyContent: 'center',
+    alignItems:'center',
+    fontSize:'30px',
+    fontWeight:'700',
+    color: activeView === '3d' ? '#1890ff' : 'grey',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease'
+  }"
+>
+  3D
+</div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
               <img 
-              v-for="img in selectedProduct.images" 
-              :key="img" 
-              :src="$store.state.root_media_api + img.image"
-              style="width: 80px; height: 80px; border-radius: 8px; object-fit: cover; border: 1px solid #d9d9d9;"
-              />
+  v-for="(img, index) in selectedProduct.images" 
+  @click="handleImageClick(index)"
+  :key="index" 
+  :src="$store.state.root_media_api + img.image"
+  :style="{
+    width: '80px', 
+    height: '80px', 
+    borderRadius: '8px', 
+    objectFit: 'cover',
+    border: activeView === 'image' && activeImageIndex === index ? '3px solid #1890ff' : '1px solid #d9d9d9',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease'
+  }"
+/>
               <!-- <div 
                 style="width: 80px; height: 80px; border: 2px dashed #d9d9d9; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; background: #fafafa;"
               >
                 <a-icon type="plus" style="color: #bfbfbf;" />
               </div> -->
-          </div>
+          </div></div>
         </a-card>
       </a-col>
 
@@ -140,11 +192,20 @@
               <div style="margin-bottom: 8px; font-weight: 500;">Textures:</div>
               <div style="display: flex; gap: 6px;">
                 <img 
-                  v-for="texture in selectedProduct.textures" 
-                  :key="texture" 
+                  v-for="(texture, index) in selectedProduct.textures" 
+                  :key="index"
+                  @click.stop="openTextureModal(index)"
                   :src="$store.state.root_media_api + texture.texture" 
                   alt="" 
-                  style="width: 40px; height: 40px; border-radius: 4px; border: 1px solid #d9d9d9; object-fit: cover;"
+                  :style="{
+                    width: '40px', 
+                    height: '40px', 
+                    borderRadius: '4px',
+                    border: activeTextureView === index ? '3px solid #1890ff' : '1px solid #d9d9d9',
+                    cursor: 'pointer',
+                    objectFit: 'cover',
+                    transition: 'all 0.3s ease'
+                  }"
                 />
               </div>
             </a-col>
@@ -213,29 +274,122 @@
         </a-card>
       </a-col>
     </a-row>
+     <!-- Texture Modal -->
+    <TextureModal 
+      :isOpen="showTextureModal"
+      :textures="formattedTextures"
+      :initialIndex="selectedTextureIndex"
+      @close="closeTextureModal"
+      @apply="applyTexture"
+    />
   </div>
 </template>
 
 <script>
 import canvas_3d_model_renderer from "@/components/store/canvas_3d_model_renderer.vue"
 import {DeleteOutlined ,EditOutlined ,ClockCircleOutlined } from '@ant-design/icons-vue';
+import TextureModal from "./TextureModal.vue";
 export default {
   name: "product_details_store_page_buisness_user",
   components: {
-    canvas_3d_model_renderer,
+    canvas_3d_model_renderer,TextureModal,
     DeleteOutlined ,EditOutlined ,ClockCircleOutlined
   },
-  props: {
-    selectedProduct: Object
+   props: {
+    selectedProduct: {
+      type: Object,
+      required: true
+    }
   },
-  methods: {
+
+  data() {
+    return {
+      activeImageIndex: null,
+      activeTextureView: null,
+      activeView: '3d',
+      showTextureModal: false,
+      selectedTextureIndex: 0
+    }
+  },
+
+  computed: {
+    formattedTextures() {
+      if (!this.selectedProduct.textures || this.selectedProduct.textures.length === 0) {
+        return [];
+      }
+      
+      return this.selectedProduct.textures.map(texture => ({
+        image: this.$store.state.root_media_api + texture.texture,
+        name: texture.name || 'Texture',
+        composition: texture.composition || '100% Polyester',
+        origin: texture.origin || 'Made in Italy',
+        colors: texture.colors || [
+          { hex: '#D4A574' },
+          { hex: '#3F5E6B' },
+          { hex: '#4A4A4A' }
+        ]
+      }));
+    }
+  },
+
+ methods: {
+    handleImageClick(index) {
+      this.activeView = 'image';
+      this.activeImageIndex = index;
+      this.activeTextureView = null;
+    },
+
+
+    openTextureModal(index) {
+      console.log('Opening texture modal, index:', index);
+      console.log('Textures available:', this.selectedProduct.textures);
+      console.log('Formatted textures:', this.formattedTextures);
+      
+      this.selectedTextureIndex = index;
+      
+      // Use nextTick to ensure DOM updates before showing modal
+      this.$nextTick(() => {
+        this.showTextureModal = true;
+        console.log('Modal state set to:', this.showTextureModal);
+      });
+    },
+
+
+    closeTextureModal() {
+      this.showTextureModal = false;
+    },
+
+
+    applyTexture(data) {
+      console.log('Applied texture:', data);
+      this.activeTextureView = data.index;
+      this.activeView = null;
+      this.activeImageIndex = null;
+      
+      // Emit to parent or save to API
+      this.$emit('texture-changed', {
+        productId: this.selectedProduct.id,
+        textureIndex: data.index,
+        selectedColor: data.color
+      });
+      
+      this.closeTextureModal();
+    },
+
+
     editProduct() {
       this.$emit('edit_product', this.selectedProduct.id)
     },
-    deleteProduct() {
-      this.$emit('delete_product', {"product_id":this.selectedProduct.id,"product_type":"Furniture"})
 
+
+    deleteProduct() {
+      this.$emit('delete_product', {
+        "product_id": this.selectedProduct.id,
+        "product_type": "Furniture"
+      })
     },
+
+
     back_product_list() {
       this.$emit('back_product_list', this.selectedProduct.id)
     }

@@ -1,4 +1,5 @@
 <template>
+  
 <RequestCreateRoom 
       ref="roomModal"
       :canMessageBusiness="canMessageBusiness"
@@ -48,7 +49,7 @@
                 `"
             >
                 <div style="text-align:center">
-                    <div>
+                    <div style="display:flex;justify-content: center;">
                         <img 
                         :src="this.$store.state.root_media_api + business_info.banner_picture" 
                         style="width:70px;height:70px;border-radius:50%" 
@@ -182,11 +183,21 @@
                     </a-col>
                     
                     <a-col :sm="24" :xs="24" :md="12" :lg="12" style="padding:10px;">
-                        <img 
-                            style="border-radius:10px;width:100%;height:200px;object-fit:cover" 
-                            src="https://developers.google.com/static/maps/images/landing/hero_maps_static_api.png" 
-                            alt="Location Map"
-                        >
+                        
+  <!-- Display Business Location Map -->
+  <div v-if="businessLocationReady" style="border-radius:10px; width:100%; height:200px; overflow: hidden;">
+    <MapLocationViewer 
+      :latitude="businessLocation.latitude" 
+      :longitude="businessLocation.longitude"
+      :address="businessLocation.address"
+      :readOnly="true"
+    />
+  </div>
+  
+  <!-- Loading State -->
+  <div v-else style="border-radius:10px; width:100%; height:200px; display: flex; align-items: center; justify-content: center; background: #f0f0f0;">
+    <a-spin size="large" />
+  </div>
                     </a-col>
                 </a-row>
             </div>
@@ -194,17 +205,86 @@
             <br>
 
             <!-- Products Section -->
-            <div style="padding:10px;background-color: white;border-radius:10px;border:2px solid rgba(128, 128, 128, 0.16);">
-                <h1>Our Products</h1>
-                <!-- You can add products component here if needed -->
-                <div style="text-align: center; padding: 0px;">
-                    <!-- <p>Products will be displayed here</p> -->
-                     <div v-if="our_products.length==0">
-    <a-empty description="Business product catalogue is empty."></a-empty>
-</div>
-                   <buisnes_products_sailing :products="our_products" v-else/> 
+            <!-- Replace the Products Section in your template with this -->
+<!-- Products Section -->
+<div style="padding:10px;background-color: white;border-radius:10px;border:2px solid rgba(128, 128, 128, 0.16);">
+    <h1>Our Products</h1>
+    
+    <div style="text-align: center; padding: 10px;">
+        <!-- Loading State for first page -->
+        <div v-if="loading && productsPage === 1" style="text-align: center; padding: 30px;">
+            <a-spin size="large" />
+            <p style="margin-top: 10px;">Loading products...</p>
+        </div>
+
+        <!-- Error State -->
+        <div v-else-if="error && productsPage === 1" style="padding: 20px;">
+            <a-alert 
+                :message="error" 
+                type="error" 
+                show-icon
+                closable
+            />
+        </div>
+
+        <!-- Empty State -->
+        <div v-else-if="our_products.length === 0 && !loading" style="padding: 40px;">
+            <a-empty 
+                description="No products available"
+                style="margin: 20px 0;"
+            />
+        </div>
+
+        <!-- Products Display -->
+        <div v-else>
+            <!-- Debug info (remove in production) -->
+            <!-- <div style="background: #f0f0f0; padding: 10px; margin-bottom: 10px; border-radius: 5px; text-align: left; font-size: 12px;">
+                <p>Total Products: {{ our_products.length }} | Page: {{ productsPage }} | Has More: {{ hasMoreProducts }}</p>
+            </div> -->
+
+            <!-- Products Grid Component -->
+            <buisnes_products_sailing 
+                v-if="our_products.length > 0"
+                :products="our_products"
+            />
+
+            <!-- Fallback: Display products as list if component fails -->
+            <div v-if="our_products.length === 0" style="padding: 20px;">
+                <p>No products to display</p>
+            </div>
+
+            <!-- Load More Button -->
+            <div v-if="our_products.length > 0" style="margin-top: 30px; text-align: center;">
+                <div v-if="hasMoreProducts" style="margin-bottom: 20px;">
+                    <a-button
+                        type="primary"
+                        size="large"
+                        @click="loadMoreProducts"
+                        :loading="isLoadingMoreProducts"
+                        >
+                        <!-- style="padding: 10px 40px; border-radius: 8px; font-weight: 600;" -->
+                        <span v-if="!isLoadingMoreProducts">
+                            Show More Products ({{ totalProducts - our_products.length }} remaining)
+                        </span>
+                        <span v-else>
+                            Loading...
+                        </span>
+                    </a-button>
+                </div>
+
+                <!-- Pagination Info -->
+                <div style="color: #666; font-size: 14px; margin-top: 10px;">
+                    <p v-if="hasMoreProducts">
+                        Showing {{ our_products.length }} of {{ totalProducts }} products
+                    </p>
+                    <p v-else style="color: #999;">
+                        <a-icon type="check-circle" /> All {{ totalProducts }} products loaded
+                    </p>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
 
             <br>
 
@@ -430,12 +510,12 @@
         </div>
     </div>
 </template>
-
 <script>
 
 import RequestCreateRoom from '@/components/general_user/buisness_page/create_request_modal.vue'
 import buisnes_products_sailing from '@/components/general_user/buisness_page/products_sailing.vue'
-import {   EyeOutlined,
+import {   
+  EyeOutlined,
   HeartOutlined,
   HeartFilled,
   MessageOutlined,
@@ -446,34 +526,36 @@ import {   EyeOutlined,
   PushpinOutlined,
   ArrowLeftOutlined,
   CloseOutlined,
-  } from '@ant-design/icons-vue';
+} from '@ant-design/icons-vue'
+
+import MapLocationViewer from '@/components/store/map_location_viewer.vue'
 export default {
     name: 'business_page',
-    components:{
-         EyeOutlined,
-  HeartOutlined,
-  HeartFilled,
-  MessageOutlined,
-  ShareAltOutlined,
-  MoreOutlined,
-  EditOutlined,
-  DeleteOutlined,
-  PushpinOutlined,
-  ArrowLeftOutlined,
-  CloseOutlined,
-         RequestCreateRoom,
-         buisnes_products_sailing,
-         MessageOutlined
+    components: {
+        EyeOutlined,
+        HeartOutlined,
+        HeartFilled,
+        MessageOutlined,
+        ShareAltOutlined,
+        MoreOutlined,
+        EditOutlined,
+        DeleteOutlined,
+        PushpinOutlined,
+        ArrowLeftOutlined,
+        CloseOutlined,
+        RequestCreateRoom,
+        buisnes_products_sailing,
+                MapLocationViewer,
     },
-   computed: {
+    computed: {
         hasToken() {
-        return localStorage.getItem("token") !== null;
+            return localStorage.getItem("token") !== null;
         },
         canMessageBusiness() {
-        return (
-            this.hasToken &&
-            this.userProfile?.id !== this.currentUser?.id
-        );
+            return (
+                this.hasToken &&
+                this.userProfile?.id !== this.currentUser?.id
+            );
         }
     },
     data() {
@@ -481,234 +563,206 @@ export default {
             userProfile: null,
             activeKey: 'Visualization',
             business_info: {},
-            our_products:[],
-        community_posts_virtualisations:[],
-            currentUser: JSON.parse(localStorage.getItem('user') ),
+            our_products: [],
+            community_posts_virtualisations: [],
+            currentUser: JSON.parse(localStorage.getItem('user') || '{}'),
 
+            // Pagination states
+            productsPage: 1,
+            productsPerPage: 10,
+            totalProducts: 0,
+            totalPagesProducts: 0,
+            isLoadingMoreProducts: false,
+            hasMoreProducts: false,
+            
+            businessLocation: {
+                latitude: 0,
+                longitude: 0,
+                address: 'Business Location'
+            },
+            businessLocationReady: false,
+            
             loading: true,
             error: null,
-            modal_create_request_to_buisness:true
+            modal_create_request_to_buisness: true
         }
     },
     async mounted() {
-        await this.loadBusinessData();
-        await this.loadBusinessProducts();
-        this.showModal()
-        this.loadPosts()
+        try {
+            await this.loadBusinessData();
+            await this.loadBusinessProducts(1);
+            this.showModal();
+            this.loadPosts();
+        } catch (error) {
+            console.error('Error in mounted:', error);
+            this.error = 'Failed to load page data';
+        }
     },
     watch: {
         '$route'() {
-            // Reload data when route changes
+            this.productsPage = 1;
+            this.hasMoreProducts = false;
+            this.our_products = [];
             this.loadBusinessData();
+            this.loadBusinessProducts(1);
         }
     },
     methods: {
-        
-    // Utility methods
-    formatNumber(num) {
-      if (!num || num === 0) return "0";
-      if (num >= 1000000) return (num / 1000000).toFixed(1) + "M";
-      if (num >= 1000) return (num / 1000).toFixed(1) + "K";
-      return num.toString();
-    },
+        // Utility methods
+        formatNumber(num) {
+            if (!num || num === 0) return "0";
+            if (num >= 1000000) return (num / 1000000).toFixed(1) + "M";
+            if (num >= 1000) return (num / 1000).toFixed(1) + "K";
+            return num.toString();
+        },
 
-    formatDate(dateString) {
-      const date = new Date(dateString);
-      const now = new Date();
-      const diffTime = Math.abs(now - date);
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        formatDate(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffTime = Math.abs(now - date);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-      if (diffDays === 1) return "Yesterday";
-      if (diffDays <= 7) return `${diffDays} days ago`;
-      if (diffDays <= 30) return `${Math.ceil(diffDays / 7)} weeks ago`;
-      return date.toLocaleDateString();
-    },
+            if (diffDays === 1) return "Yesterday";
+            if (diffDays <= 7) return `${diffDays} days ago`;
+            if (diffDays <= 30) return `${Math.ceil(diffDays / 7)} weeks ago`;
+            return date.toLocaleDateString();
+        },
 
-    truncateText(text, length) {
-      if (!text || text.length <= length) return text;
-      return text.substring(0, length) + "...";
-    },
-    async loadPosts() {
-      try {
-        const businessName = this.$route.params.buisness_name;
+        truncateText(text, length) {
+            if (!text || text.length <= length) return text;
+            return text.substring(0, length) + "...";
+        },
 
-        const response = await fetch(
-          `${this.$store.state.root_api}community/api/business-community-posts/${businessName}`,
-          {
-            method: "GET",
-            headers: {
-            //   Authorization: `Token ${localStorage.getItem("token")}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        async loadPosts() {
+            try {
+                const businessName = this.$route.params.buisness_name;
 
-        const data = await response.json();
+                const response = await fetch(
+                    `${this.$store.state.root_api}community/api/business-community-posts/${businessName}`,
+                    {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                    }
+                );
 
-        if (data.success) {
-          // Process posts data to match backend structure
-          this.community_posts_virtualisations = data.data.map((post) => ({
-            ...post,
-            isLiked: false, // You'll need to check user's likes separately
-            tags: post.tags || [], // Backend returns string array
-            like_count: post.like_count || 0,
-            comment_count: post.comment_count || 0,
-            share_count: post.share_count || 0,
-            view_count: post.view_count || 0,
-          }));
+                const data = await response.json();
 
-          // No pagination in MyPostsAPI currently
-          this.hasMore = false;
-        } else {
-          throw new Error(data.message || "Failed to load posts");
-        }
-      } catch (error) {
-        console.error("Failed to load posts:", error);
-        this.$message.error("Failed to load posts");
-      } finally {
-        this.loading = false;
-      }
-    },
+                if (data.success) {
+                    this.community_posts_virtualisations = data.data.map((post) => ({
+                        ...post,
+                        isLiked: false,
+                        tags: post.tags || [],
+                        like_count: post.like_count || 0,
+                        comment_count: post.comment_count || 0,
+                        share_count: post.share_count || 0,
+                        view_count: post.view_count || 0,
+                    }));
 
-         async startchat_with_buisness_user() {
-        const selectedUser = this.userProfile
+                    this.hasMore = false;
+                } else {
+                    throw new Error(data.message || "Failed to load posts");
+                }
+            } catch (error) {
+                console.error("Failed to load posts:", error);
+                this.$message.error("Failed to load posts");
+            } finally {
+                this.loading = false;
+            }
+        },
 
-      // const selectedUser = this.allUsers.find((user) => user.id == this.selectedUserId)
-      // if (!selectedUser) {
-      //   console.error('Selected user not found')
-      //   return
-      // }
-      const payload = JSON.stringify({
-        type: 'DM',
-        members: [this.currentUser.id, parseInt(selectedUser.id)],
-        name: `${this.currentUser.first_name} & ${selectedUser.first_name}`,
-      })
-      try {
-        const response = await fetch(`${this.$store.state.root_api}chat/chats`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Token ' + localStorage.getItem('token'),
-          },
-          body: payload,
-        })
+        async startchat_with_buisness_user() {
+            const selectedUser = this.userProfile
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
-        }
+            const payload = JSON.stringify({
+                type: 'DM',
+                members: [this.currentUser.id, parseInt(selectedUser.id)],
+                name: `${this.currentUser.first_name} & ${selectedUser.first_name}`,
+            })
+            try {
+                const response = await fetch(`${this.$store.state.root_api}chat/chats`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: 'Token ' + localStorage.getItem('token'),
+                    },
+                    body: payload,
+                })
 
-        const data = await response.json()
-        const room = data.room || data
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`)
+                }
 
-        if (this.currentUser.user_type === 'User') {
-        this.$router.push({
-            path: '/user-dashboard/my-messages',
-            query: { chatId: data.room_id }  // Pass the room ID in query
-        })
-        }
+                const data = await response.json()
+                const room = data.room || data
 
-        if (this.currentUser.user_type === 'Business' || this.currentUser.user_type === 'Professional') {
-        this.$router.push({
-            path: '/my-store/messages',
-            query: { chatId: data.room_id }  // Pass the room ID in query
-        })
-        }
+                if (this.currentUser.user_type === 'User') {
+                    this.$router.push({
+                        path: '/user-dashboard/my-messages',
+                        query: { chatId: data.room_id }
+                    })
+                }
 
+                if (this.currentUser.user_type === 'Business' || this.currentUser.user_type === 'Professional') {
+                    this.$router.push({
+                        path: '/my-store/messages',
+                        query: { chatId: data.room_id }
+                    })
+                }
 
-        // Add to rooms list if newly created
-        // if (data.created) {
-        //   this.userRooms.push(room)
-        // }
+            } catch (error) {
+                console.error('Error creating/finding room:', error)
+            }
+        },
 
-        // // Select the room
-        // this.selectRoom(room.id, room.name)
-
-        // // Join websocket room
-        // if (this.websocket && this.websocket.readyState === WebSocket.OPEN) {
-        //   this.websocket.send(
-        //     JSON.stringify({
-        //       action: 'join_room',
-        //       roomId: room.id,
-        //     }),
-        //   )
-        // }
-
-        // this.selectedUserId = ''
-      } catch (error) {
-        console.error('Error creating/finding room:', error)
-      }
-    },
         showModal() {
             this.$refs.roomModal.openModal()
         },
-        handleClose() {
-            // this.$refs.roomModal.CloseModal()
 
+        handleClose() {
+            // Modal close handler
         },
+
         async handleSubmit(formData) {
             console.log('Form submitted:', formData)
             
             try {
-                // Show loading state (if using Ant Design)
                 const loadingMessage = this.$message.loading('Submitting room request...', 0)
                 
-                // Create FormData object for file upload
                 const apiFormData = new FormData()
-                
-                // Append form fields to FormData
                 apiFormData.append('email', formData.email)
                 apiFormData.append('message', formData.message || '')
                 apiFormData.append('buisess_name_slug', this.$route.params.buisness_name || '')
                 apiFormData.append('room_image', formData.roomPhoto)
                 
-                // Optional: Add business_id if you have it
-                // apiFormData.append('business_id', formData.business_id)
-                
-                // Make API request
                 const response = await fetch(this.$store.state.root_api + 'room_request/api/room-request/', {
                     method: 'POST',
                     body: apiFormData,
                     headers: {
-                        // Don't set Content-Type header - let browser set it with boundary for FormData
-                        // 'Content-Type': 'multipart/form-data', // DON'T SET THIS
-
-                        // Add authentication token if required
                         ...(localStorage.getItem('token') && {
                             'Authorization': `Token ${localStorage.getItem('token')}`
                         })
                     }
                 })
                 
-                // Parse response
                 const result = await response.json()
-                
-                // Hide loading message
                 loadingMessage()
                 
                 if (response.ok && result.success) {
-                    // Success response
                     console.log('Room request created successfully:', result.data)
-                    
-                    // Show success message
                     this.$message.success(result.message || 'Room request submitted successfully!')
                     
-                    // Optional: Store request ID for tracking
                     if (result.data && result.data.request_id) {
-                        // You can store this in localStorage or vuex store for tracking
                         localStorage.setItem('latest_room_request_id', result.data.request_id)
                     }
-                    
-                    // Close modal or redirect user
-                    // this.handleClose() // Assuming you have this method
                     
                     return result.data
                     
                 } else {
-                    // Handle API errors
                     console.error('API Error:', result)
                     
                     if (result.errors) {
-                        // Handle validation errors
                         let errorMessages = []
                         Object.keys(result.errors).forEach(field => {
                             if (Array.isArray(result.errors[field])) {
@@ -728,11 +782,8 @@ export default {
                 
             } catch (error) {
                 console.error('Network Error:', error)
-                
-                // Hide loading if it exists
                 this.$message.destroy()
                 
-                // Handle network errors
                 if (error.name === 'TypeError' && error.message.includes('fetch')) {
                     this.$message.error('Network error. Please check your connection and try again.')
                 } else if (error.name === 'AbortError') {
@@ -745,60 +796,199 @@ export default {
             }
         },
 
-        async loadBusinessProducts() {
+        async loadBusinessProducts(pageNumber = 1) {
             try {
-                this.loading = true;
-                this.error = null;
-                
-                const businessName = this.$route.params.buisness_name;
-                
-            const token = localStorage.getItem('token');
-                
-                const response = await fetch(`${this.$store.state.root_api}Auth/api/business/products-sold/${businessName}`, {
-                    method: 'GET',
-                    headers: {
-                        // 'Authorization': `Token ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                    });
-        const result = await response.json();
+                if (pageNumber === 1) {
+                    this.loading = true;
+                    this.error = null;
+                    this.our_products = [];
+                } else {
+                    this.isLoadingMoreProducts = true;
+                }
 
-                if (result.success) {
-                    this.our_products = result.data;
-                } else {
-                    this.error = result.message || 'Business not found';
+                const businessName = this.$route.params.buisness_name;
+
+                const response = await fetch(
+                    `${this.$store.state.root_api}Auth/api/business/products-sold/${businessName}?page=${pageNumber}&page_size=10`,
+                    {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                );
+
+                if (!response.ok) {
+                    throw new Error(`API Error: ${response.status}`);
                 }
+
+                const result = await response.json();
+                console.log('Products API Response:', result);
+
+                // Extract products data
+                let productsData = [];
+                let totalCount = 0;
+                let hasNextPage = false;
+
+                // Check for nested results with success/data structure (YOUR API FORMAT)
+                if (result.results && result.results.data && Array.isArray(result.results.data)) {
+                    console.log('✅ Using nested Django REST + success format');
+                    productsData = result.results.data;
+                    totalCount = result.count || 0;
+                    hasNextPage = result.next !== null && result.next !== undefined;
+                }
+                // Check Django REST Pagination format (results as array)
+                else if (result.results && Array.isArray(result.results)) {
+                    console.log('✅ Using Django REST format');
+                    productsData = result.results;
+                    totalCount = result.count || 0;
+                    hasNextPage = result.next !== null && result.next !== undefined;
+                } 
+                // Fallback to success + data format
+                else if (result.success && result.data && Array.isArray(result.data)) {
+                    console.log('✅ Using success + data format');
+                    productsData = result.data;
+                    totalCount = result.total || result.data.length;
+                    hasNextPage = false;
+                }
+                // Direct array in data
+                else if (Array.isArray(result.data)) {
+                    console.log('✅ Using direct data array format');
+                    productsData = result.data;
+                    totalCount = result.data.length;
+                    hasNextPage = false;
+                }
+                // Direct array response
+                else if (Array.isArray(result)) {
+                    console.log('✅ Using direct array format');
+                    productsData = result;
+                    totalCount = result.length;
+                    hasNextPage = false;
+                }
+
+                console.log('Extracted data:', { 
+                    productsCount: productsData.length, 
+                    totalCount, 
+                    hasNextPage,
+                    currentPage: pageNumber 
+                });
+
+                if (productsData.length > 0) {
+                    // Append products to existing list
+                    if (pageNumber === 1) {
+                        this.our_products = productsData;
+                    } else {
+                        this.our_products = [...this.our_products, ...productsData];
+                    }
+
+                    // Update pagination state
+                    this.totalProducts = totalCount;
+                    this.totalPagesProducts = Math.ceil(totalCount / 10);
+                    this.productsPage = pageNumber;
+
+                    // Determine if there are more products
+                    if (hasNextPage) {
+                        this.hasMoreProducts = true;
+                    } else if (productsData.length < 10) {
+                        this.hasMoreProducts = false;
+                    } else {
+                        this.hasMoreProducts = true;
+                    }
+
+                    this.error = null;
+                    console.log('✅ Products loaded:', {
+                        displayed: this.our_products.length,
+                        total: this.totalProducts,
+                        hasMore: this.hasMoreProducts
+                    });
+
+                } else {
+                    console.warn('⚠️ No products in response');
+                    if (pageNumber === 1) {
+                        this.our_products = [];
+                        this.totalProducts = 0;
+                        this.hasMoreProducts = false;
+                    }
+                }
+
             } catch (error) {
-                console.error('Error loading business data:', error);
-                if (error.response?.status === 404) {
-                    this.error = 'Business not found';
-                } else {
-                    this.error = 'Failed to load business information';
+                console.error('❌ Error loading products:', error);
+                if (pageNumber === 1) {
+                    this.error = `Failed to load products: ${error.message}`;
+                    this.our_products = [];
+                    this.totalProducts = 0;
                 }
+                this.hasMoreProducts = false;
+
             } finally {
                 this.loading = false;
+                this.isLoadingMoreProducts = false;
             }
         },
+
+        async loadMoreProducts() {
+            console.log('Load More clicked:', {
+                isLoading: this.isLoadingMoreProducts,
+                hasMore: this.hasMoreProducts,
+                currentPage: this.productsPage
+            });
+
+            if (!this.isLoadingMoreProducts && this.hasMoreProducts) {
+                await this.loadBusinessProducts(this.productsPage + 1);
+            } else {
+                console.warn('⚠️ Cannot load more - isLoading:', this.isLoadingMoreProducts, 'hasMore:', this.hasMoreProducts);
+            }
+        },
+
         async loadBusinessData() {
             try {
                 this.loading = true;
                 this.error = null;
                 
+                // const businessName = this.$route.params.buisness_name;
+                // const token_available = localStorage.getItem('token') ? true:false
+                // const response = await fetch(`${this.$store.state.root_api}Auth/api/business/public/${businessName}`, {
+                //     method: 'GET',
+                //     headers: {
+                //         'Content-Type': 'application/json',
+                //         token_available ?  'Authorization': 'Token ' + localStorage.getItem('token')
+                        
+                //     }
+                // });
                 const businessName = this.$route.params.buisness_name;
-                
-            const token = localStorage.getItem('token');
-                
-                const response = await fetch(`${this.$store.state.root_api}Auth/api/business/public/${businessName}`, {
+                const token = localStorage.getItem('token');
+
+                const headers = {
+                  'Content-Type': 'application/json',
+                };
+
+                // If token exists, add Authorization header
+                if (token) {
+                  headers['Authorization'] = `Token ${token}`;
+                }
+
+                const response = await fetch(
+                  `${this.$store.state.root_api}Auth/api/business/public/${businessName}`,
+                  {
                     method: 'GET',
-                    headers: {
-                        'Authorization': `Token ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                    });
-        const result = await response.json();
-                this.userProfile=result.data.user_id_buisness_owner
+                    headers: headers,
+                  }
+                );
+
+                const result = await response.json();
+                this.userProfile = result.data?.user_id_buisness_owner;
+
                 if (result.success) {
                     this.business_info = result.data;
+                    
+                    // Set business location
+                    this.businessLocation = {
+                        latitude: result.data.lattitude || 40.7128,
+                        longitude: result.data.longitude || -74.0060,
+                        address: result.data.address || `${result.data.latitude}, ${result.data.longitude}` || 'Business Location'
+                    }
+                    
+                    this.businessLocationReady = true
                 } else {
                     this.error = result.message || 'Business not found';
                 }
@@ -816,7 +1006,6 @@ export default {
     }
 }
 </script>
-
 
 <style scoped>
 

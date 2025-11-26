@@ -1,3 +1,4 @@
+<!-- ForgetPassword.vue - Parent Component -->
 <template>
   <div class="forget-password" style="padding: 10px;">
     <a-row style="background: white; min-width: 350px">
@@ -7,8 +8,8 @@
             :src="getImageSrc"
             style="
               width: 100%;
-              height: 98vh;
-              object-fit: fill;
+              height: 100vh;
+              object-fit: cover;
               border-radius: 20px;
             "
             alt=""
@@ -17,9 +18,23 @@
       </a-col>
 
       <a-col span="8" :xs="24" :sm="24" :md="8" class="form-section">
-        <ResetPassword v-if="currentStep === 1" />
-        <OtpVerify v-if="currentStep === 2" />
-        <UpdatePassword v-if="currentStep === 3" />
+        <!-- Step 1: Email Verification -->
+        <ResetPassword 
+          v-if="currentStep === 1" 
+          :onStepChange="changeStep"
+        />
+
+        <!-- Step 2: OTP Verification -->
+        <OtpVerify 
+          v-if="currentStep === 2" 
+          :onStepChange="changeStep"
+        />
+
+        <!-- Step 3: Update Password -->
+        <UpdatePassword 
+          v-if="currentStep === 3" 
+          :onStepChange="changeStep"
+        />
       </a-col>
     </a-row>
   </div>
@@ -31,7 +46,7 @@ import ResetPassword from './ResetPassword.vue';
 import UpdatePassword from './UpdatePassword.vue';
 
 export default {
-  name: "ForgetPassword",
+  name: 'ForgetPassword',
 
   components: {
     ResetPassword,
@@ -41,7 +56,7 @@ export default {
 
   data() {
     return {
-      currentStep: 3,
+      currentStep: 1, // ✅ Starts at Step 1: Email Verification
     };
   },
 
@@ -59,7 +74,43 @@ export default {
       }
     },
   },
+
+  methods: {
+    // ✅ Centralized step management
+    changeStep(step) {
+      console.log(`📍 Changing step from ${this.currentStep} to ${step}`);
+      this.currentStep = step;
+    },
+  },
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.forget-password {
+  width: 100%;
+  height: 100vh;
+}
+
+.image-section {
+  /* display: flex; */
+  /* align-items: center; */
+  /* justify-content: center; */
+}
+
+.background-image {
+  width: 100%;
+}
+
+.form-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* padding: 20px; */
+}
+
+@media (max-width: 768px) {
+  .form-section {
+    padding: 10px;
+  }
+}
+</style>

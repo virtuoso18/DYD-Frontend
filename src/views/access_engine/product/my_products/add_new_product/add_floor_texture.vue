@@ -545,7 +545,7 @@
 import { defineComponent, ref, watch, reactive, computed } from 'vue';
 import { message } from 'ant-design-vue';
 import { useStore } from 'vuex';
-import { useRouter } from 'vue-router';
+import { useRouter,useRoute } from 'vue-router';
 
 export default defineComponent({
   name: "AddNewFloorTexture",
@@ -558,7 +558,9 @@ export default defineComponent({
     const tempColor = ref('#000000');
     
     const store = useStore();
+    
     const router = useRouter();
+    const route = useRoute();
     
     // Streamlined form state with only active fields
     const form = reactive({
@@ -746,7 +748,7 @@ export default defineComponent({
         });
         
         // API call
-        const response = await fetch(`${store.state.root_api}access-engine/api/business-products/add-product-floor-tile/`, {
+        const response = await fetch(`${store.state.root_api}access-engine/api/business-products/add-product-floor-tile/?access-id=`+route.query.access_id, {
           method: 'POST',
           headers: {
             'Authorization': `Token ${token}`,

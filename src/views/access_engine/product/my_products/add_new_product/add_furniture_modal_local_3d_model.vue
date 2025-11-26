@@ -534,7 +534,7 @@ Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac tu
 <script>
 import { computed, ref, watch, onMounted } from 'vue';
 import { useStore } from 'vuex';
-import { useRouter } from 'vue-router';
+import { useRouter,useRoute } from 'vue-router';
 import canvas_3d_model_renderer from "@/components/store/canvas_3d_model_renderer.vue"
 
 export default {
@@ -554,7 +554,9 @@ export default {
     const tempColor = ref('#000000');
     
     const store = useStore();
+    
     const router = useRouter();
+    const route = useRoute();
 
     // 3D Model upload refs
     const modelInput = ref(null);
@@ -1013,7 +1015,7 @@ export default {
           pbr_files_count: selectedPbrFiles.value.length
         });
 
-        const response = await fetch(`${store.state.root_api}access-engine/api/business-products/add-product-furniture/`, {
+        const response = await fetch(`${store.state.root_api}access-engine/api/business-products/add-product-furniture/?access-id=`+route.query.access_id, {
           method: 'POST',
           headers: { 
             'Authorization': `Token ${token}` 

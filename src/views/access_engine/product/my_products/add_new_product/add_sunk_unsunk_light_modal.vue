@@ -381,6 +381,7 @@ import { defineComponent, ref, computed, reactive, watch } from 'vue';
 import { message } from 'ant-design-vue';
 import { useStore } from 'vuex';
 
+import { useRouter,useRoute } from 'vue-router';
 export default defineComponent({
   name: "Add-Sunk-Unsunk-Light",
   props: {
@@ -392,6 +393,9 @@ export default defineComponent({
     const isSaving = ref(false);
     const tempColor = ref('#000000');
     const store = useStore();
+    
+    const router = useRouter();
+    const route = useRoute();
 
     // Form data that matches your Django API expectations
     const form = reactive({
@@ -621,7 +625,7 @@ export default defineComponent({
         });
         
         // Make API call to your lights endpoint
-        const response = await fetch(`${store.state.root_api}access-engine/api/business-products/add-product-sunk-unsunk-light/`, {
+        const response = await fetch(`${store.state.root_api}access-engine/api/business-products/add-product-sunk-unsunk-light/?access-id=`+route.query.access_id, {
           method: 'POST',
           headers: {
             'Authorization': `Token ${token}`,

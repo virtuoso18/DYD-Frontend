@@ -1,6 +1,5 @@
 <template>
   <div v-if="!hideNavbarCompletely">
-    <!-- {{this.$store.state.token}} -->
     <navbar_1 v-if="!userAuthenticated"/>
     <navbar_2 v-else/>
   </div>
@@ -15,28 +14,27 @@ export default {
   components: { navbar_1, navbar_2 },
   data() {
     return {
-      hideNavUrls: ['/login', '/signup','/forget-password'],
-      userAuthenticated :false
+      hideNavUrls: ['/login', '/signup','/forgot-password','/product-ar-view']
     }
   },
   beforeCreate() {
     this.$store.commit('initializeStore')
   },
-  mounted() {
-    if (this.$store.state.token) {
-      this.userAuthenticated = true
-    }
-  },
   computed: {
+    userAuthenticated() {
+      // Check both store AND localStorage to be safe
+      const hasToken = !!this.$store.state.token
+      const hasLocalToken = !!localStorage.getItem('token')
+      return hasToken || hasLocalToken
+    },
     hideNavbarCompletely() {
-      // hide if current route is in the list
       return this.hideNavUrls.includes(this.$route.path)
     }
   },
   watch: {
-    // recompute on route change
     '$route.path'() {
-      // triggers computed re-eval automatically
+      // After route change (like after login redirect), update store
+      this.$store.commit('initializeStore')
     }
   }
 }

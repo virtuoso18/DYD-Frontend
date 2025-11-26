@@ -9,7 +9,7 @@
         <div class="sidebar">
           <div class="user-info">
             <div class="business-logo">
-              <img :src="this.$store.state.root_media_api+employee_owner_business_data.banner_picture" alt="Business Logo" />
+              <img :src="this.$store.state.root_media_api+employee_owner_business_data?.banner_picture" alt="Business Logo" />
               <!-- <div class="logo-placeholder">
                 <svg width="60" height="60" viewBox="0 0 24 24" fill="none">
                   <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -17,15 +17,15 @@
                 </svg>
               </div> -->
             </div>
-            <h3>{{ employee_owner_business_data.name }}</h3>
-            <p class="business-id">ID: {{ employee_owner_business_data.email }}</p>
+            <h3>{{ employee_owner_business_data?.name }}</h3>
+            <p class="business-id">ID: {{ employee_owner_business_data?.email }}</p>
           </div>
 
           <!-- Navigation Menu -->
           <nav class="dashboard-nav">
             <!-- Overview -->
             <router-link 
-              :to="{ name: 'business-overview', params: { business_id } }" 
+              :to="{ name: 'business-overview',   query: { access_id: this.$route.query.access_id, brand: employee_owner_business_data.slug }}" 
               class="nav-item"
               :class="{ active: $route.name === 'business-overview' }"
             >
@@ -41,9 +41,10 @@
             </router-link>
 
             <!-- Manage Products -->
+            <!-- :to="{ name: 'manage-products',  query: { brand: employee_owner_business_data.slug } }"  -->
             <router-link 
               v-if="access_recieved.product.read"
-              :to="{ name: 'manage-products', params: { business_id } }" 
+              :to="{ name: 'manage-products',query: { access_id: this.$route.query.access_id, brand: employee_owner_business_data.slug }}" 
               class="nav-item"
               :class="{ active: $route.name === 'manage-products' }"
             >
@@ -58,9 +59,10 @@
             </router-link>
 
             <!-- Manage Site -->
+            <!-- :to="{ name: 'manage-site',  query: { brand: employee_owner_business_data.slug }}"  -->
             <router-link 
-              v-if="access_recieved.business.update"
-              :to="{ name: 'manage-site', params: { business_id } }" 
+              v-if="access_recieved.business.read"
+              :to="{ name: 'manage-site',  query: { access_id: this.$route.query.access_id, brand: employee_owner_business_data.slug }}" 
               class="nav-item"
               :class="{ active: $route.name === 'manage-site' }"
             >
@@ -74,10 +76,59 @@
               <span class="nav-text">Manage Site</span>
             </router-link>
 
-            <!-- Manage Community Posts -->
+
             <router-link 
-              v-if="access_recieved.community.read"
-              :to="{ name: 'manage-community-post', params: { business_id } }" 
+              v-if="access_recieved.business_customers.read"
+              :to="{ name: 'manage-customers',  query: { access_id: this.$route.query.access_id, brand: employee_owner_business_data.slug }}" 
+              class="nav-item"
+              :class="{ active: $route.name === 'manage-customers' }"
+            >
+              <div class="nav-icon-wrapper">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                  <path d="M2 12H22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  <path d="M12 2C14.5013 4.73835 15.9228 8.29203 16 12C15.9228 15.708 14.5013 19.2616 12 22C9.49872 19.2616 8.07725 15.708 8 12C8.07725 8.29203 9.49872 4.73835 12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <span class="nav-text">manage-customers</span>
+            </router-link>
+
+            <router-link 
+              v-if="access_recieved.generate_banner.read"
+              :to="{ name: 'manage-generate-banner',  query: { access_id: this.$route.query.access_id , brand: employee_owner_business_data.slug }}" 
+              class="nav-item"
+              :class="{ active: $route.name === 'manage-generate-banner' }"
+            >
+              <div class="nav-icon-wrapper">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                  <path d="M2 12H22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  <path d="M12 2C14.5013 4.73835 15.9228 8.29203 16 12C15.9228 15.708 14.5013 19.2616 12 22C9.49872 19.2616 8.07725 15.708 8 12C8.07725 8.29203 9.49872 4.73835 12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <span class="nav-text">manage-generate-banner</span>
+            </router-link>
+
+            <router-link 
+              v-if="access_recieved.customer_messages.read"
+              :to="{ name: 'manage-customer-messages',  query: { access_id: this.$route.query.access_id }}" 
+              class="nav-item"
+              :class="{ active: $route.name === 'manage-customer-messages' }"
+            >
+              <div class="nav-icon-wrapper">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                  <path d="M2 12H22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  <path d="M12 2C14.5013 4.73835 15.9228 8.29203 16 12C15.9228 15.708 14.5013 19.2616 12 22C9.49872 19.2616 8.07725 15.708 8 12C8.07725 8.29203 9.49872 4.73835 12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <span class="nav-text">manage-customer-messages</span>
+            </router-link>
+            <!-- Manage Community Posts -->
+            <!-- :to="{ name: 'manage-community-post',   query: { brand: employee_owner_business_data.slug } }"  -->
+            <router-link 
+            v-if="access_recieved.community.read"
+            :to="{ name: 'manage-community-post',   query: { access_id: this.$route.query.access_id, brand: employee_owner_business_data.slug }}"  
               class="nav-item"
               :class="{ active: $route.name === 'manage-community-post' }"
             >
@@ -90,9 +141,11 @@
             </router-link>
 
             <!-- Manage Customer Requests -->
+             
+            <!-- :to="{ name: 'manage-customer-requests', query: { brand: employee_owner_business_data.slug }}"  -->
             <router-link 
               v-if="access_recieved.user_room_request.read"
-              :to="{ name: 'manage-customer-requests', params: { business_id } }" 
+              :to="{ name: 'manage-customer-requests',    query: { access_id: this.$route.query.access_id, brand: employee_owner_business_data.slug }}"  
               class="nav-item"
               :class="{ active: $route.name === 'manage-customer-requests' }"
             >
@@ -106,8 +159,23 @@
               </div>
               <span class="nav-text">Customer Requests</span>
             </router-link>
+
+            <div class="nav-item" @click="this.$router.push('/manage-access/manage-business-analytics')">
+              <div class="nav-icon-wrapper">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M1.81818 16C1.31818 16 0.890303 15.8261 0.534545 15.4782C0.178788 15.1304 0.000606061 14.7117 0 14.2222V1.77778C0 1.28889 0.178182 0.870518 0.534545 0.522666C0.890909 0.174815 1.31879 0.000592592 1.81818 0H7.27273C7.5303 0 7.74636 0.0853334 7.92091 0.256C8.09545 0.426666 8.18242 0.637629 8.18182 0.888888C8.18121 1.14015 8.09394 1.35141 7.92 1.52267C7.74606 1.69392 7.5303 1.77896 7.27273 1.77778H1.81818V14.2222H7.27273C7.5303 14.2222 7.74636 14.3075 7.92091 14.4782C8.09545 14.6489 8.18242 14.8598 8.18182 15.1111C8.18121 15.3624 8.09394 15.5736 7.92 15.7449C7.74606 15.9161 7.5303 16.0012 7.27273 16H1.81818ZM12.8864 8.88888H6.36364C6.10606 8.88888 5.8903 8.80355 5.71636 8.63288C5.54242 8.46222 5.45515 8.25125 5.45455 7.99999C5.45394 7.74873 5.54121 7.53777 5.71636 7.36711C5.89152 7.19644 6.10727 7.11111 6.36364 7.11111H12.8864L11.1818 5.44444C11.0152 5.28148 10.9318 5.08148 10.9318 4.84444C10.9318 4.6074 11.0152 4.4 11.1818 4.22222C11.3485 4.04444 11.5606 3.9517 11.8182 3.944C12.0758 3.93629 12.2955 4.02163 12.4773 4.2L15.7273 7.37777C15.9091 7.55555 16 7.76296 16 7.99999C16 8.23703 15.9091 8.44444 15.7273 8.62222L12.4773 11.8C12.2955 11.9778 12.0797 12.0631 11.83 12.056C11.5803 12.0489 11.3642 11.9561 11.1818 11.7778C11.0152 11.6 10.9358 11.389 10.9436 11.1449C10.9515 10.9007 11.0385 10.6969 11.2045 10.5333L12.8864 8.88888Z" fill="currentColor"/>
+</svg>
+
+              </div>
+              <span class="nav-text" style="font-size: medium;color:orangered;font-weight:600">EXIT Business</span>
+              
+            </div>
+
+
           </nav>
         </div>
+        
+          
       </a-col>
 
       <!-- Content Area -->
@@ -158,7 +226,7 @@ export default {
   methods: {
      async checkUserhaveAnyBusinessAccess(){
        try {
-        const response = await fetch(`${this.$store.state.root_api}access-engine/api/check-employee-user/`, {
+        const response = await fetch(`${this.$store.state.root_api}access-engine/api/check-employee-user/?access-id=${this.$route.query['access_id']}`, {
           method: 'GET',
           headers: {
             'Authorization': `Token ${localStorage.getItem('token')}`,
@@ -200,13 +268,14 @@ export default {
     async fetchStaffAccess_granted(){
       try {
         const response = await fetch(
-          `${this.$store.state.root_api}access-engine/api/staff-access-recieved/`,
+          `${this.$store.state.root_api}access-engine/api/staff-access-recieved/?access-id=${this.$route.query['access_id']}`,
           {
             headers: { Authorization: `Token ${localStorage.getItem('token')}` },
           }
         );
 
         const data = await response.json();
+        console.log(data)
         if (!data.error) {
           console.log("====================================")
           console.log(data)

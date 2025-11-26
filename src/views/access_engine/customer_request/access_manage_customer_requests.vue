@@ -1,5 +1,6 @@
 <template>
-{{ access_recieved.user_room_request }}
+<!-- {{ access_recieved.user_room_request }} -->
+{{business}}
 <div class="main" v-if="page_view === 'list_all_requests'">
     <div class="header">
       <h2>Requests</h2>
@@ -93,7 +94,8 @@ export default {
     selectedRequest
   },
    props:{
-        access_recieved:Object
+        access_recieved:Object,
+        business:Object
     },
   data() {
     return {
@@ -165,7 +167,7 @@ export default {
     
       try {
         const token = localStorage.getItem('token')
-        const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-customer-requests/room-requests-recieved/`, {
+        const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-customer-requests/room-requests-recieved/?access-id=`+this.$route.query.access_id, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

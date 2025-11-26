@@ -1580,7 +1580,7 @@ handleFloorPageChange(page) {
                 cancelText: 'Cancel',
                 onOk: async () => {
                     try {
-                        let url_delete_product = `${this.$store.state.root_api}access-engine/api/business-products/delete-product-wall-texture/${product_id}/`
+                        let url_delete_product = `${this.$store.state.root_api}access-engine/api/business-products/delete-product-wall-texture/${product_id}/?access-id=`+this.$route.query.access_id
 
                         const token = localStorage.getItem('token');
                         const response = await fetch(`${url_delete_product}`, {
@@ -1622,7 +1622,7 @@ handleFloorPageChange(page) {
                 onOk: async () => {
                     try {
                         
-                        let url_delete_product = `${this.$store.state.root_api}access-engine/api/business-products/delete-product-floor-tile/${product_id}/`
+                        let url_delete_product = `${this.$store.state.root_api}access-engine/api/business-products/delete-product-floor-tile/${product_id}/?access-id=`+this.$route.query.access_id
 
                         const token = localStorage.getItem('token');
                         const response = await fetch(`${url_delete_product}`, {
@@ -1663,7 +1663,7 @@ handleFloorPageChange(page) {
                 onOk: async () => {
                     try {
                         
-                        let url_delete_product = `${this.$store.state.root_api}access-engine/api/business-products/delete-product-light/${product_id}/`
+                        let url_delete_product = `${this.$store.state.root_api}access-engine/api/business-products/delete-product-light/${product_id}/?access-id=`+this.$route.query.access_id
 
                         const token = localStorage.getItem('token');
                         const response = await fetch(`${url_delete_product}`, {
@@ -1703,7 +1703,7 @@ handleFloorPageChange(page) {
                 cancelText: 'Cancel',
                 onOk: async () => {
                     try {
-                        let url_delete_product = `${this.$store.state.root_api}access-engine/api/business-products/delete-product-furniture/${product_id}/`
+                        let url_delete_product = `${this.$store.state.root_api}access-engine/api/business-products/delete-product-furniture/${product_id}/?access-id=`+this.$route.query.access_id
 
                         const token = localStorage.getItem('token');
                         const response = await fetch(`${url_delete_product}`, {
@@ -1782,7 +1782,7 @@ truncateText(text, charLimit = 7) {
     try {
         const token = localStorage.getItem('token');
         const response = await fetch(
-            `${this.$store.state.root_api}access-engine/api/business-products/read-product-furniture/?page=${page}&page_size=${this.productsPagination.pageSize}`,
+            `${this.$store.state.root_api}access-engine/api/business-products/read-product-furniture/?page=${page}&page_size=${this.productsPagination.pageSize}&access-id=${this.$route.query.access_id}`,
             {
                 method: 'GET',
                 headers: {
@@ -1825,7 +1825,7 @@ truncateText(text, charLimit = 7) {
     try {
         const token = localStorage.getItem('token');
         const response = await fetch(
-            `${this.$store.state.root_api}access-engine/api/business-products/read-product-light/?page=${page}&page_size=${this.lightsPagination.pageSize}`,
+            `${this.$store.state.root_api}access-engine/api/business-products/read-product-light/?page=${page}&page_size=${this.lightsPagination.pageSize}&access-id=${this.$route.query.access_id}`,
             {
                 method: 'GET',
                 headers: {
@@ -1869,7 +1869,7 @@ truncateText(text, charLimit = 7) {
     try {
         const token = localStorage.getItem('token');
         const response = await fetch(
-            `${this.$store.state.root_api}access-engine/api/business-products/read-product-wall-texture/?page=${page}&page_size=${this.wallPagination.pageSize}`,
+            `${this.$store.state.root_api}access-engine/api/business-products/read-product-wall-texture/?page=${page}&page_size=${this.wallPagination.pageSize}&access-id=${this.$route.query.access_id}`,
             {
                 method: 'GET',
                 headers: {
@@ -1911,7 +1911,7 @@ truncateText(text, charLimit = 7) {
     try {
         const token = localStorage.getItem('token');
         const response = await fetch(
-            `${this.$store.state.root_api}access-engine/api/business-products/read-product-floor-tile/?page=${page}&page_size=${this.floorPagination.pageSize}`,
+            `${this.$store.state.root_api}access-engine/api/business-products/read-product-floor-tile/?page=${page}&page_size=${this.floorPagination.pageSize}&access-id=${this.$route.query.access_id}`,
             {
                 method: 'GET',
                 headers: {
@@ -1933,15 +1933,15 @@ truncateText(text, charLimit = 7) {
 },
         async fetchProductDetails(product_id) {
              try {
-                let url_product_details=`${this.$store.state.root_api}access-engine/api/business-products/read-product-furniture/${product_id}`
+                let url_product_details=`${this.$store.state.root_api}access-engine/api/business-products/read-product-furniture/${product_id}?access-id=`+this.$route.query.access_id
                 if (this.active_tab === 'Wall'){
-                    url_product_details=`${this.$store.state.root_api}access-engine/api/business-products/read-product-wall-texture/${product_id}`
+                    url_product_details=`${this.$store.state.root_api}access-engine/api/business-products/read-product-wall-texture/${product_id}?access-id=`+this.$route.query.access_id
                 }
                 if (this.active_tab === 'Floor'){
-                    url_product_details=`${this.$store.state.root_api}access-engine/api/business-products/read-product-floor-tile/${product_id}`
+                    url_product_details=`${this.$store.state.root_api}access-engine/api/business-products/read-product-floor-tile/${product_id}?access-id=`+this.$route.query.access_id
                 }
                 if (this.active_tab === 'Light'){
-                    url_product_details=`${this.$store.state.root_api}access-engine/api/business-products/read-product-light/${product_id}`
+                    url_product_details=`${this.$store.state.root_api}access-engine/api/business-products/read-product-light/${product_id}?access-id=`+this.$route.query.access_id
                 }
                 const token = localStorage.getItem('token');
                 const response = await fetch(`${url_product_details}`, {

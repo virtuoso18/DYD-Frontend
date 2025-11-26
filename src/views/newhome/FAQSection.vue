@@ -1,7 +1,19 @@
 <template>
-  <div class="p-2.5 max-w-[1200px] mx-auto">
+  <div class="p-2.5 max-w-full mx-auto">
     <br /><br /><br />
-    <h1 class="text-center">Got questions? We have answers</h1>
+<h1
+  class="text-center"
+  style="
+    font-family: 'Proza Libre';
+    font-weight: 700;
+    font-size: 48px;
+    line-height: 52px;
+    letter-spacing: -0.02em;
+    color: #000;
+  "
+>
+  Got questions? We have answers
+</h1>
     <br />
     <div class="my-12 px-5">
       <a-collapse

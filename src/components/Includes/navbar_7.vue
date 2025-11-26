@@ -40,7 +40,7 @@
               </div>
               <a-button type="primary" size="small">Buy</a-button>
             </div>
-   <a-button type="primary" @click="this.$router.push({name:'my-store'})" v-if="user.user_type !=='User' ">
+   <a-button type="primary" @click="this.$router.push({name:'my-store'})" v-if="user.user_type ==='Business' ">
             <div style="display:flex;gap:5px">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 17" fill="none">
 <path d="M1.97754 7.49756V10.8321C1.97754 12.7184 1.97754 13.6616 2.56333 14.2476C3.14911 14.8336 4.09192 14.8336 5.97754 14.8336H9.97754C11.8631 14.8336 12.8059 14.8336 13.3917 14.2476C13.9775 13.6616 13.9775 12.7184 13.9775 10.8321V7.49756" stroke="white" stroke-linecap="round"/>
@@ -50,7 +50,27 @@
 <span>My Store</span>
             </div>
 </a-button>
+<a-button type="primary" @click="this.$router.push({name:'manage-access'})" v-if="user.user_type ==='Professional' ">
+            <div style="display:flex;gap:5px">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 17" fill="none">
+<path d="M1.97754 7.49756V10.8321C1.97754 12.7184 1.97754 13.6616 2.56333 14.2476C3.14911 14.8336 4.09192 14.8336 5.97754 14.8336H9.97754C11.8631 14.8336 12.8059 14.8336 13.3917 14.2476C13.9775 13.6616 13.9775 12.7184 13.9775 10.8321V7.49756" stroke="white" stroke-linecap="round"/>
+<path d="M4.64453 12.4946H7.3112" stroke="white" stroke-linecap="round"/>
+<path d="M6.73554 6.11184C6.54755 6.79077 5.86386 7.96195 4.56485 8.13169C3.41789 8.28155 2.54798 7.78089 2.32578 7.57156C2.08079 7.40182 1.52245 6.85866 1.38571 6.51919C1.24897 6.17973 1.4085 5.44421 1.52245 5.14435L1.97796 3.82543C2.08916 3.49415 2.34947 2.71062 2.61635 2.4456C2.88323 2.18058 3.42355 2.16905 3.64594 2.16905H8.31627C9.51841 2.18603 12.1469 2.15833 12.6665 2.16905C13.1861 2.17977 13.4984 2.61533 13.5895 2.80203C14.3648 4.67991 14.6663 5.75539 14.6663 6.21367C14.5651 6.70255 14.1463 7.62436 12.6665 8.02982C11.1285 8.45122 10.2566 7.63162 9.98307 7.31695M6.10315 7.31695C6.31965 7.58282 6.99881 8.11809 7.98327 8.13169C8.96781 8.14522 9.81787 7.45836 10.1198 7.11326C10.2053 7.01142 10.3899 6.7093 10.5813 6.11184" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+<span>My Access</span>
+            </div>
+</a-button>
+
         <div class="icon-actions">
+          <router-link :to="'/cart'">
+
+            <button class="icon-btn">
+              <svg width="23" height="22" viewBox="0 0 23 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1 1H4.63636L7.07273 13.7524C7.15586 14.1909 7.38355 14.5847 7.71595 14.865C8.04835 15.1454 8.46427 15.2943 8.89091 15.2857H17.7273C18.1539 15.2943 18.5698 15.1454 18.9022 14.865C19.2346 14.5847 19.4623 14.1909 19.5455 13.7524L21 5.7619H5.54545M9.18182 20.0476C9.18182 20.5736 8.7748 21 8.27273 21C7.77065 21 7.36364 20.5736 7.36364 20.0476C7.36364 19.5216 7.77065 19.0952 8.27273 19.0952C8.7748 19.0952 9.18182 19.5216 9.18182 20.0476ZM19.1818 20.0476C19.1818 20.5736 18.7748 21 18.2727 21C17.7707 21 17.3636 20.5736 17.3636 20.0476C17.3636 19.5216 17.7707 19.0952 18.2727 19.0952C18.7748 19.0952 19.1818 19.5216 19.1818 20.0476Z" stroke="#333333" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="20" cy="6" r="2.5" fill="#3B63FB" stroke="white"/>
+              </svg>
+            </button>
+          </router-link>
           <!-- Notifications Bell Icon with Counter -->
           <div class="notification-bell" @click="openNotificationsPanel">
             <button class="icon-btn">
@@ -240,7 +260,7 @@ export default {
     const savedLang = localStorage.getItem('preferred_language');
 if (savedLang) {
   this.language_selected = savedLang;
-  this.locale.value = savedLang;
+  this.locale = savedLang;
   document.dir = savedLang === 'he' ? 'rtl' : 'ltr';
 }
   },

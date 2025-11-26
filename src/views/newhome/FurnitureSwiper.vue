@@ -7,6 +7,7 @@
       backgroundRepeat: 'no-repeat'
     }"
     class="h-[700px] w-full flex justify-end items-end"
+    
   >
     <div class="text-center w-full pt-[100px]">
       <div class="font-black text-[26px] md:text-4xl lg:text-[44px] leading-tight">
@@ -18,6 +19,7 @@
 
       <swiper
         class="mt-12"
+        
         :modules="modules"
         :slides-per-view="1"
         :space-between="50"
@@ -27,19 +29,19 @@
         @swiper="onSwiper"
         @slideChange="onSlideChange"
       >
-        <swiper-slide>
+        <swiper-slide >
           <div class="w-full">
-            <img src="../../assets/ch_1_home_page.png" class="max-w-[450px] w-full object-contain" alt="" />
+            <img src="../../assets/ch_1_home_page.png" class="max-w-[450px] w-full object-contain" alt="" style="margin:auto"/>
           </div>
         </swiper-slide>
-        <swiper-slide>
+        <swiper-slide >
           <div class="w-full">
-            <img src="../../assets/ch_2_home_page.png" class="max-w-[350px] w-full object-contain" alt="" />
+            <img src="../../assets/ch_2_home_page.png" class="max-w-[350px] w-full object-contain" alt="" style="margin:auto" />
           </div>
         </swiper-slide>
-        <swiper-slide>
+        <swiper-slide >
           <div class="w-full">
-            <img src="../../assets/ch_3_home_page.png" class="max-w-[400px] w-full object-contain" alt="" />
+            <img src="../../assets/ch_3_home_page.png" class="max-w-[400px] w-full object-contain" alt="" style="margin:auto" />
           </div>
         </swiper-slide>
       </swiper>

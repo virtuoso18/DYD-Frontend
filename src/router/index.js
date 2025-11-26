@@ -32,6 +32,7 @@ import community_dashboard from '@/components/dashboard/business/comunity.vue'
 import generate_banner from '@/components/dashboard/business/generate_banner.vue'
 import manage_subscription from '@/components/dashboard/business/manage_subscription.vue'
 import my_transactions from '@/components/dashboard/business/my_transactions.vue'
+import my_likes from '@/components/dashboard/business/my_likes.vue'
 // import store_messages from '@/components/messages/store_messages.vue'
 
 import add_furniture from '@/components/dashboard/business/my_products/add_new_product/add_furniture.vue'
@@ -40,11 +41,17 @@ import add_light from '@/components/dashboard/business/my_products/add_new_produ
 
 // Import individual dashboard components for professional users
 import profesional_user_profile from '@/components/dashboard/professional/user_profile.vue'
-import profesional_my_designs from '@/components/dashboard/professional/my_designs.vue'
-import profesional_my_products from '@/components/dashboard/professional/my_products.vue'
-import profesional_community_dashboard from '@/components/dashboard/professional/comunity.vue'
-import profesional_generate_banner from '@/components/dashboard/professional/generate_banner.vue'
+import profesional_my_requests from '@/components/dashboard/professional/my_requests.vue'
+import profesional_my_likes from '@/components/dashboard/professional/my_likes.vue'
+import profesional_transactions from '@/components/dashboard/professional/my_transactions.vue'
 import profesional_manage_subscription from '@/components/dashboard/professional/manage_subscription.vue'
+import professional_settings from '@/components/dashboard/professional/settings.vue'
+
+// profesional user manage access pages  
+import professional_user_access_manager from "@/views/manage_access_professional_user/manager.vue"
+import manage_access_analytics from "@/views/manage_access_professional_user/manage_access_analytics.vue"
+import manage_access_all_business from "@/views/manage_access_professional_user/manage_access_all_business.vue"
+import manage_access_all_tasks from "@/views/manage_access_professional_user/manage_access_all_tasks.vue"
 
 // Import individual dashboard components for professional users
 import normal_user_profile from '@/components/dashboard/user/user_profile.vue'
@@ -58,7 +65,7 @@ import normal_my_settings from '@/components/dashboard/user/my_settings.vue'
 import manage_access from '@/components/store/manage_access.vue'
 import buisness_page from '@/views/store/vendor_store.vue'
 import buisness_product from '@/views/store/buisness_product.vue'
-
+import ar_product from '@/views/store/AR.vue'
 import access_manager from '@/views/access_engine/access_manager.vue'
 import access_overview from '@/views/access_engine/access_overview.vue'
 import access_manage_products from '@/views/access_engine/product/access_manage_products.vue'
@@ -67,6 +74,10 @@ import access_manage_community_post from '@/views/access_engine/community_post/a
 import access_manage_customer_requests from '@/views/access_engine/customer_request/access_manage_customer_requests.vue'
 import access_create_furniture_product_3d_model_add_product from '@/views/access_engine/product/my_products/add_new_product/add_furniture.vue'
 import access_create_light_product_3d_model_add_light from  '@/views/access_engine/product/my_products/add_new_product/add_light_ceiling_3d.vue'
+
+import access_manage_customer from '@/views/access_engine/customers/business_customers.vue'
+import access_manage_generate_banner from '@/views/access_engine/generate_banner/generate_banner.vue'
+import access_manage_customer_messages from '@/views/access_engine/messages/message_customer.vue'
 
 import Generate_Banner_Admin from '@/views/Platform_Admin_Access_Only/generate_banner_catalog.vue'
 
@@ -81,8 +92,20 @@ import Partner from '@/views/pages/partner.vue'
 import Tutorial from '@/views/pages/tutorial.vue'
 import Api from '@/views/pages/api.vue'
 import Earnphoto from '@/views/pages/earnphoto.vue'
-import AffiliateProgram from '@/views/pages/AffiliateProgram.vue'
-import Blogs from '@/views/pages/blogs.vue'
+import blogs from '@/views/pages/blogs.vue'
+import affiliateprogram from '@/views/pages/AffiliateProgram.vue'
+
+
+import ProductARView from "@/views/ProductAR/ProductAR.vue"
+
+import InteriorMaterialSupplier from '@/views/pages/interiorMaterialSupplier.vue'
+import DesignCompany from '@/views/pages/DesignCompany.vue'
+import Furnitureretail from '@/views/pages/furnitureretail.vue'
+import RealEstateBrokrage from '@/views/pages/realEstateBrokrage.vue'
+import HomeOwner from '@/views/pages/HomeOwner.vue'
+import Interiordesigner from '@/views/pages/interiordesigner.vue'
+import Realestateagent from '@/views/pages/realestateagent.vue'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -176,7 +199,7 @@ const router = createRouter({
       path: '/partner',
       name: 'partner',
       component: Partner,
-    },
+     },
 
       {
       path: '/tutorial',
@@ -195,8 +218,52 @@ const router = createRouter({
       name: 'earnphoto',
       component: Earnphoto,
     },
-
     
+     {
+      path: '/blogs',
+      name: 'blogs',
+      component: blogs,
+    },
+    {
+      path: '/affiliateprogram',
+      name: 'affiliateprogram',
+      component: affiliateprogram,
+    },
+
+    {
+      path: '/interiorMaterialSupplier',
+      name: 'interiorMaterialSupplier',
+      component: InteriorMaterialSupplier,
+    },
+    {
+      path: '/designcompany',
+      name: 'designcompany',
+      component: DesignCompany,
+    },
+     {
+      path: '/furnitureretail',
+      name: 'furnitureretail',
+      component: Furnitureretail,
+    },
+     {
+      path: '/realestatebrokrage',
+      name: 'realestatebrokrage',
+      component: RealEstateBrokrage,
+    },
+     {
+      path: '/homeowner',
+      name: 'homeowner',
+      component: HomeOwner,
+    },
+      {
+      path: '/interiordesigner',
+      name: 'interiordesigner',
+      component: Interiordesigner,
+    },
+    
+    
+// =================================================== UI Pages ========================================
+
     {
       path: '/start-new-catalogue',
       name: 'new_catelogue',
@@ -213,6 +280,12 @@ const router = createRouter({
       component: buisness_product,
     },
     
+    {
+      path: '/ar-product/:product_id',
+      name: 'ar_product',
+      component: ar_product,
+    },
+
     {
       path: '/update-catalogue/:id?',
       name: 'update_catelogue',
@@ -266,6 +339,11 @@ const router = createRouter({
           component: my_designs,
         },
         {
+          path: 'my-likes',
+          name: 'business_my_likes',
+          component: my_likes,
+        },
+        {
           path: 'my-products',
           name: 'business_my_products',
           component: my_products,
@@ -308,30 +386,36 @@ const router = createRouter({
           component: profesional_user_profile,
         },
         {
-          path: 'my-designs',
-          name: 'professional_my_designs',
-          component: profesional_my_designs,
+          path: 'access-requests',
+          name: 'professional_my_requests',
+          component: profesional_my_requests,
         },
         {
-          path: 'my-products',
-          name: 'professional_my_products',
-          component: profesional_my_products,
+          path: 'my-likes',
+          name: 'professional_my_likes',
+          component: profesional_my_likes,
         },
         {
-          path: 'comunity',
-          name: 'professional_dashboard_community',
-          component: profesional_community_dashboard,
+          path: 'my-messages',
+          name: 'professional_messages',
+          component: normal_my_messages,
         },
         {
-          path: 'generate-banner',
-          name: 'professional_generate_banner',
-          component: profesional_generate_banner,
+          path: 'my-transactions',
+          name: 'professional_transactions',
+          component: profesional_transactions,
         },
         {
           path: 'manage-subscription',
           name: 'professional_manage_subscription',
           component: profesional_manage_subscription,
         },
+        
+        {
+          path: 'settings',
+          name:'professional_settings',
+          component: professional_settings,
+        }
       ]
     },
     {
@@ -391,6 +475,8 @@ const router = createRouter({
         }
       ]
     },
+
+
     // Regular User Dashboard Routes
     {
       path: '/user-dashboard',
@@ -438,7 +524,34 @@ const router = createRouter({
       ]
     },
 
-    
+       
+{
+  path:'/manage-access',
+  component: professional_user_access_manager,
+  children: [
+    {
+      path: '',
+      name:'manage-access',
+      redirect: '/manage-access/manage-business-analytics', // Changed from '/manage-access/analytics'
+    },
+    {
+      path: 'manage-business-analytics',
+      name:'manage_business_analytics',
+      component: manage_access_analytics,
+    },
+    {
+      path: 'manage-business-access',
+      name:'manage_business_access',
+      component: manage_access_all_business,
+    },
+    {
+      path: 'manage-business-tasks',
+      name:'manage_access_all_tasks',
+      component: manage_access_all_tasks,
+    },
+  ]
+},
+
 // ==========================================
 // Access Management Engine 
 // ==========================================
@@ -491,7 +604,6 @@ const router = createRouter({
       component: access_overview, // Create a new component for overview content
     },
     
-    
     {
       path: 'manage-products',
       name: 'manage-products',
@@ -512,6 +624,25 @@ const router = createRouter({
       name: 'manage-customer-requests',
       component: access_manage_customer_requests,
     },
+    
+    {
+      path: 'manage-customers',
+      name: 'manage-customers',
+      component: access_manage_customer,
+    },
+    
+    {
+      path: 'manage-generate-banner',
+      name: 'manage-generate-banner',
+      component: access_manage_generate_banner,
+    },
+    
+    {
+      path: 'manage-customer-messages',
+      name: 'manage-customer-messages',
+      component: access_manage_customer_messages,
+    },
+
   ],
 },
 // {
@@ -564,9 +695,14 @@ const router = createRouter({
       component: authentication,
     },
      {
-      path: '/forget-password',
+      path: '/forgot-password',
       name: 'forget_password',
       component: ForgetPassword,
+    },
+     {
+      path: "/product-ar-view",
+      name: "ARView",
+      component: ProductARView,
     },
   ],
 })

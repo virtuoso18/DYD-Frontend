@@ -481,7 +481,7 @@ export default {
     async togglePrimaryImage(imageId) {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/images/${imageId}/set-primary/`, {
+        const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/images/${imageId}/set-primary/?access-id=`+this.$route.query.access_id, {
           method: 'PATCH',
           headers: { 'Authorization': `Token ${token}` }
         });
@@ -511,7 +511,7 @@ export default {
       
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/colors/`, {
+        const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/colors/?access-id=`+this.$route.query.access_id, {
           method: 'POST',
           headers: { 
             'Authorization': `Token ${token}`, 
@@ -554,7 +554,7 @@ export default {
         onOk: async () => {
           try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/colors/${colorId}/`, {
+            const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/colors/${colorId}/?access-id=`+this.$route.query.access_id, {
               method: 'DELETE',
               headers: { 'Authorization': `Token ${token}` }
             });
@@ -587,7 +587,7 @@ export default {
         onOk: async () => {
           try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/images/${imageId}/`, {
+            const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/images/${imageId}/?access-id=`+this.$route.query.access_id, {
               method: 'DELETE',
               headers: { 'Authorization': `Token ${token}` }
             });
@@ -664,7 +664,7 @@ export default {
             preview.uploading = true;
           });
 
-          const imageResponse = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/images/`, {
+          const imageResponse = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/images/?access-id=`+this.$route.query.access_id, {
             method: 'POST',
             headers: { 'Authorization': `Token ${token}` },
             body: formData
@@ -700,7 +700,7 @@ export default {
           }
         });
 
-        const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/`, {
+        const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/?access-id=`+this.$route.query.access_id, {
           method: 'PUT',
           headers: { 'Authorization': `Token ${token}` },
           body: productData

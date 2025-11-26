@@ -18,10 +18,10 @@
             class="custom-input"
           />
         </div>
-
+          <br>
         <div class="input-group">
           <label>Password</label>
-          <a-input 
+          <a-input-password
             v-model:value="password"
             placeholder="Password Here" 
             size="large"
@@ -29,6 +29,7 @@
             type="password"
           />
         </div>
+        <router-link to='/forgot-password' style="display:flex;justify-content : end;"><a-button type="text">Forgot Password</a-button></router-link>
         <!-- <div class="input-group">
           <label>Referral Code</label>
           <a-input 
@@ -38,6 +39,8 @@
             class="custom-input"
           />
         </div> -->
+          <br>
+          <br>
 
         <a-button type="primary" size="large" class="continue-btn" block @click="Submit_Login">
           Continue
@@ -212,7 +215,7 @@ export default {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  /* gap: 24px; */
 }
 
 .input-group {

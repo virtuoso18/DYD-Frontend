@@ -56,24 +56,61 @@
             :style="selected_item===item.id ? 'border:1px solid blue': ''">
             
           <div  class="product-item">
-          <div class="product-image">
-            <img :src="this.$store.state.root_media_api+item.primary_image" :alt="item.name" />
-            <!-- <div class="product-tag">Ad</div> -->
-          </div>
+          <div class="product-image" style="position:relative;">
+  <img :src="this.$store.state.root_media_api + item.primary_image"
+       :alt="item.name" />
+
+  <!-- Tags -->
+  <div style="
+       position:absolute;
+       top:10px;
+       left:0;
+       right:0;
+       display:flex;
+       justify-content:space-between;
+       padding:0 10px;
+       pointer-events:none;
+  ">
+    <div style="
+         background-color:#f2f2f2;
+         color:black;
+         border-radius:6px;
+         padding:2px 8px;
+         font-size:12px;
+         height:22px;
+         display:flex;
+         align-items:center;
+    ">
+      {{ item.category.name }}
+    </div>
+
+    <div style="
+         background-color:#f2f2f2;
+         
+         border-radius:6px;
+         /* padding:2px 8px; */
+         font-size:12px;
+         height:22px;
+         display:flex;
+         align-items:center;
+    ">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M10.8307 2.5H9.16406C5.62853 2.5 3.86076 2.5 2.76241 3.59835C1.66406 4.6967 1.66406 6.46447 1.66406 10C1.66406 13.5355 1.66406 15.3033 2.76241 16.4017C3.86076 17.5 5.62853 17.5 9.16406 17.5H10.8307C14.3662 17.5 16.1341 17.5 17.2324 16.4017C18.3307 15.3033 18.3307 13.5355 18.3307 10C18.3307 6.46447 18.3307 4.6967 17.2324 3.59835C16.1341 2.5 14.3662 2.5 10.8307 2.5Z" stroke="#666666" stroke-linecap="round"/>
+<path d="M5 11.6667L6.4622 8.40642C6.73323 7.80215 6.86874 7.5 7.08333 7.5C7.29792 7.5 7.43344 7.80215 7.70447 8.40642L9.16667 11.6667M11.6667 11.6667V10M11.6667 10V8.5C11.6667 8.02859 11.6667 7.79289 11.8131 7.64645C11.9596 7.5 12.1952 7.5 12.6667 7.5H13.75C14.4403 7.5 15 8.05964 15 8.75C15 9.44033 14.4403 10 13.75 10M11.6667 10H13.75M13.75 10L14.5833 11.6667" stroke="#666666" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+
+    </div>
+  </div>
+</div>
+
           <div class="product-info">
-            <div style="display:flex;justify-content: space-between;" class="">
-              <div style="background-color: grey;color :white;border-radius:5px;padding-left:5px;padding-right:5px;padding-top:1px;height:22px;font-size:12px">
-                {{item.category.name}}
-              </div>
-              <div style="padding:3px;border:1px solid grey;border-radius:5px;padding-left:5px;padding-right:5px;padding-top:1px;height:22px;font-size:12px">AR</div>
-            </div>
             <div class="product-name">{{ truncateText( item.name || 'No Name available', 3) }}</div>
-            <div class="product-subtitle">{{ truncateText( item.description || 'No description available', 5) }}</div>
-            <div class="product-details">
-  <span class="product-color">Colors Available</span>
+            <!-- <div class="product-subtitle">{{ truncateText( item.description || 'No description available', 5) }}</div> -->
+            <div class="product-details" style="display:flex;justify-content: space-between;">
+  <span class="product-color">Colors </span>
   <div style="display: flex; gap: 4px; align-items: center; margin-left: 8px;">
-    <div v-for="color in item.colors_available.slice(0, 3)" :key="color.id" class="color-dot" :style="{ backgroundColor: color.color }"></div>
-    <span v-if="item.colors_available.length > 3" style="font-size: 14px; color: #666;">...</span>
+    <div v-for="color in item.colors_available.slice(0, 2)" :key="color.id" class="color-dot" :style="{ backgroundColor: color.color }"></div>
+    <!-- <span v-if="item.colors_available.length > 3" style="font-size: 14px; color: #666;">...</span> -->
   </div>
 </div>
             <!-- <div class="product-details">
@@ -92,7 +129,7 @@
 
           <!-- {{ item.business_slug }} -->
           <a-row>
-          <a-col :span="20" style="padding-right:5px">
+          <a-col :span="18" style="padding-right:5px">
             <!-- <button block type="primary" class="btn-prod-details" >
               Product Detail
             </button> -->
@@ -100,9 +137,9 @@
               Product Detail
             </a-button>
           </a-col>
-          <a-col :span="4" style="">
-            <a-button block type="default" >
-              <HeartOutlined />
+          <a-col :span="6" style="">
+            <a-button block type="default" style="padding:0;display: flex;justify-content: center;align-items: center;">
+                <HeartOutlined />
             </a-button>
           </a-col>
         </a-row>
@@ -130,7 +167,7 @@ export default {
       loading: false,
       error: null,
       catalogItems: [],
-      showGrid: false, // true for grid, false for list
+      showGrid: true, // true for grid, false for list
       // Mock data
       productItems:[]
     };
@@ -148,14 +185,35 @@ export default {
     }
   },
   mounted() {
-    this.fetchCatalogItems();
+    const route = this.$route
+
+    this.brand = route.query.brand
+
+    // Conditional logic
+    if (this.brand) {
+      console.log('Loading catalogue for brand:', this.brand)
+      this.fetchCatalogItems(this.brand)
+    } else {
+      console.log('Loading self products')
+      this.fetchCatalogItems();
+    }
+    
   },
   methods: {
-    async fetchCatalogItems() {
+    async fetchCatalogItems(brand=null) {
       this.loading = true;
       try {
-        const url = `${this.$store.state.root_api}product/api/3d-products/`;
-        const response = await fetch(url);
+        let url = `${this.$store.state.root_api}product/api/3d-products/`;
+        // const url = `${this.$store.state.root_api}room/api/floors/`;
+        if (brand){
+          url = `${this.$store.state.root_api}product/api/load-brand-products/3d-products/` +brand ;
+        }
+        
+        const response = await fetch(url,{
+          headers: {
+              'Authorization': `Token ${localStorage.getItem('token')}`
+            }
+        });
         const data = await response.json();
         console.log(data)
         if (data && data.data) {

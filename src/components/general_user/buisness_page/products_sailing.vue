@@ -53,7 +53,7 @@
 
               <a-col span="17">
                 
-<a-button block @click="this.$router.push(this.$route.params.buisness_name+'/'+product.type+'/'+product.product_id)">Product Details</a-button>
+<a-button block @click="this.$router.push('/'+this.$route.params.buisness_name+'/'+product.type+'/'+product.product_id)">Product Details</a-button>
               </a-col>
 
               <a-col span="1"></a-col>
@@ -86,6 +86,11 @@ export default {
     return {
     }
   },
+ watch: {
+  '$route.params.product_id'(newVal, oldVal) {
+    this.fetchProductDetails(); // reload page data
+  }
+},
   methods: {
 //     truncateText(text, wordLimit) {
 //   if (!text) return '';

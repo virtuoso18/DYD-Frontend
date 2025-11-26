@@ -164,7 +164,7 @@
   </a-row>
 </a-col>
     </a-row>
-
+<catalog/>
 <!-- Unlock the potential section -->
     <a-row  style="padding-left:10px;;padding-right:10px">
         <a-col :span="24" style="font-size:24px;font-weight:bold;margin:auto;width:100%;text-align: center;">
@@ -174,8 +174,8 @@
                 <span style="color:black;position:absolute;bottom:-20px;left:-15px;font-size:35px">✦</span>
             </span> for your needs.</div>
 <br>
-            <div style="position:relative">
-                <img src="../../assets/home_main_banner.jpg" style="max-width:900px;width:100%;border-radius:20px;max-height:600px;" alt="" />
+            <div style="position:relative;display: flex;justify-items: center;">
+                <img src="../../assets/home_main_banner.jpg" style="max-width:900px;width:100%;border-radius:20px;max-height:600px;margin:auto" alt="" />
 <a-button 
   type="primary" 
   style="
@@ -267,7 +267,7 @@ Drag & drop Image
 
     
     <br>
-    <a-row style="background:#3B63FB;height:200px;">
+    <a-row style="background:#3B63FB;height:300px;">
         <a-col :sm="12" :xs="12" :md="6" :lg="6" style="color:white;display:flex;justify-content: center;align-items: center;flex-direction: column;">
             <div  class="banner-text" style="color:white">
                 30+
@@ -320,7 +320,7 @@ Drag & drop Image
 
     <br>
     
-   <div>
+   <div className="hidden lg:block">
      <div class="header">
         <h1 class="header-title">
           Get listing-ready results in seconds
@@ -419,6 +419,196 @@ Drag & drop Image
   </div>
     <br>
 
+    <div class="lg:hidden w-full bg-white py-12 px-4 sm:px-6 lg:px-8">
+    <!-- Header Section -->
+    <div class="text-center mb-16">
+      <h1 class="!font-proza-libre font-black text-3xl sm:text-4xl lg:text-5xl text-black mb-5">
+        Get listing-ready results in seconds
+      </h1>
+      <p class="!font-poppins text-base text-gray-500 leading-relaxed">
+        Turn your property photos into stunning visuals in three simple
+      </p>
+      <p class="font-poppins text-base text-gray-500 leading-relaxed">
+        steps to attract buyers and enhance your listings.
+      </p>
+    </div>
+
+    <!-- Steps Container -->
+    <div class="max-w-6xl mx-auto px-3 sm:px-6 relative">
+      
+      <!-- Step 1: Upload -->
+      <div class="flex flex-col lg:flex-row items-center gap-8 mb-24 lg:mb-32">
+        
+        <!-- Step 1 Text -->
+       <div class="flex w-full justify-between pt-12 items-start">
+
+  <!-- LEFT SIDE -->
+  <div>
+    <h2 class="!font-proza-libre font-semibold text-3xl sm:text-4xl text-black mb-2 mt-20 lg:mt-0">
+      Upload
+    </h2>
+    <p class="font-poppins text-gray-500 leading-snug">
+      We support both furnished
+    </p>
+    <p class="font-poppins text-gray-500 leading-snug">
+      and unfurnished photos.
+    </p>
+  </div>
+
+  <!-- RIGHT SIDE -->
+  <div>
+    <img 
+      src="/01 (1).svg" 
+      alt="Step 1" 
+      class="w-20 h-20 sm:w-24 sm:h-24"
+    />
+  </div>
+
+</div>
+
+
+        <!-- Step 1 Image -->
+       <div class="w-full lg:w-1/2 flex justify-center">
+  <div class="relative w-full max-w-md">
+    
+    <!-- Image Box -->
+    <div class="bg-black rounded-3xl w-full aspect-video sm:aspect-auto h-64 flex flex-col items-center justify-center relative ">
+      <img src="/upload-04.svg" alt="Upload" class="w-6 h-6 -translate-x-18" />
+      <span class="text-gray-400 text-sm -translate-x-18 font-poppins">Drag and drop</span>
+      
+      <!-- Overlay Box Positioned Bottom Right -->
+      <div 
+        class="absolute -bottom-8 -right-8 w-2/3 h-48 rounded-2xl bg-cover bg-no-repeat bg-bottom pointer-events-none"
+        style="background-image: url('/thirdcardbg.svg');"
+      ></div>
+    </div>
+
+  </div>
+</div>
+
+      </div>
+
+      
+
+      <!-- Step 2: AI Finished -->
+      <div class="flex flex-col lg:flex-row-reverse items-center gap-8 pt-24 relative z-10">
+        
+        <!-- Step 2 Text -->
+           <div class="flex w-full justify-between pt-12 items-start">
+
+  <!-- LEFT SIDE -->
+  <div>
+    <h2 class="!font-proza-libre font-semibold text-3xl sm:text-4xl text-black mb-2 mt-20 lg:mt-0">
+                    AI Finished
+
+    </h2>
+    <p class="font-poppins text-gray-500 leading-snug">
+              Our AI redesigns your space
+    </p>
+    <p class="font-poppins text-gray-500 leading-snug">
+              in 15 seconds.
+    </p>
+  </div>
+
+  <!-- RIGHT SIDE -->
+  <div>
+    <img 
+      src="/02.svg" 
+      alt="Step 1" 
+      class="w-20 h-20 sm:w-24 sm:h-24"
+    />
+  </div>
+
+</div>
+
+        <!-- Step 2 Image -->
+        <div class="w-full lg:w-1/2 flex justify-center lg:justify-end">
+          <div class="relative w-full max-w-sm">
+            <!-- Step Number -->
+            
+            
+            <!-- Image Box -->
+            <div 
+              class="rounded-2xl w-full aspect-video sm:aspect-auto sm:h-64 flex items-center justify-center relative bg-cover bg-center"
+              style="background-image: url('/thirdcardbg.svg');"
+            >
+              <!-- AI Badge -->
+              <div class="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 font-poppins text-sm font-semibold shadow-lg z-30">
+                <img src="/addingfurniture.svg" alt="Adding" class="w-4 h-4" />
+                <span>Adding furniture..</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      
+
+      <!-- Step 3: Download & Share -->
+      <div class="flex flex-col lg:flex-row items-center pt-14 gap-8 relative z-10">
+        
+        <!-- Step 3 Text -->
+              <div class="flex w-full justify-between pt-12 items-start">
+
+  <!-- LEFT SIDE -->
+  <div>
+    <h2 class="!font-proza-libre font-semibold text-3xl sm:text-4xl text-black mb-2 mt-20 lg:mt-0">
+              Download & Share
+
+    </h2>
+    <p class="font-poppins text-gray-500 leading-snug">
+              Download the staged photo
+    </p>
+    <p class="font-poppins text-gray-500 leading-snug">
+              and share it anywhere.
+    </p>
+  </div>
+
+  <!-- RIGHT SIDE -->
+  <div>
+    <img 
+      src="/03.svg" 
+      alt="Step 1" 
+      class="w-20 h-20 sm:w-24 sm:h-24"
+    />
+  </div>
+
+</div>
+
+        <!-- Step 3 Image -->
+        <div class="w-full lg:w-1/2 flex justify-center lg:justify-start">
+          <div class="relative w-full max-w-sm">
+            <!-- Step Number -->
+           
+            
+            <!-- Image Box -->
+            <div 
+              class="rounded-2xl w-full aspect-video sm:aspect-auto sm:h-64 flex items-center justify-center relative bg-cover bg-center"
+              style="background-image: url('/thirdcardbg.svg');"
+            >
+              <!-- Action Buttons -->
+              <div class="absolute -bottom-8 left-1/2 transform -translate-x-1/2 flex gap-3 z-30">
+                <button 
+                  class="bg-transparent border-0 cursor-pointer p-0 flex items-center justify-center hover:scale-110 transition-transform"
+                  aria-label="Download"
+                >
+                  <img src="/download.svg" alt="Download" class="w-10 h-10 sm:w-12 sm:h-12" />
+                </button>
+                <button 
+                  class="bg-transparent border-0 cursor-pointer p-0 flex items-center justify-center hover:scale-110 transition-transform"
+                  aria-label="Share"
+                >
+                  <img src="/share.svg" alt="Share" class="w-10 h-10 sm:w-12 sm:h-12" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
 
     
     <div
@@ -454,7 +644,7 @@ Drag & drop Image
     @slideChange="onSlideChange"
   >
  <swiper-slide>
-  <div style="width:100%;">
+  <div style="width:100%; display:flex;justify-content: center;align-items: center;">
     <img src="../../assets/ch_1_home_page.png" style="max-width:450px;width:100%;object-fit: contain;" alt="">
     <!-- <a-row>
       <a-col :sm="24" :xs="24" :md="12" :lg="12">
@@ -467,7 +657,7 @@ Drag & drop Image
   </div>
  </swiper-slide>
     <swiper-slide>
-      <div style="width:100%;">
+      <div  style="width:100%; display:flex;justify-content: center;align-items: center;">
         <img src="../../assets/ch_2_home_page.png" style="max-width:350px;width:100%;object-fit: contain;" alt="">
         <!-- <a-row>
           <a-col :sm="24" :xs="24" :md="12" :lg="12">
@@ -480,7 +670,7 @@ Drag & drop Image
       </div>
     </swiper-slide>
     <swiper-slide>
-      <div style="width:100%;">
+      <div style="width:100%; display:flex;justify-content: center;align-items: center;">
         <img src="../../assets/ch_3_home_page.png" style="max-width:400px;width:100%;object-fit: contain;" alt="">
         <!-- <a-row>
           <a-col :sm="24" :xs="24" :md="12" :lg="12">
@@ -511,15 +701,18 @@ Drag & drop Image
 <p style="margin:0">digital previews of spaces, providing a cost-effective solution </p>
 <p style="margin:0">for real estate and design.</p>
 <br>
-<a-button type="primary">
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M9.28387 8.51768L7.85167 7.08548C7.65647 6.89028 7.55887 6.79268 7.45353 6.74048C7.2532 6.64119 7.018 6.64119 6.8176 6.74048C6.71233 6.79268 6.61471 6.89028 6.41949 7.08548C6.22425 7.28075 6.12664 7.37835 6.07446 7.48361C5.97518 7.68401 5.97518 7.91921 6.07446 8.11955C6.12664 8.22488 6.22425 8.32248 6.41949 8.51768L7.85167 9.94988M9.28387 8.51768L13.5805 12.8143C13.7757 13.0095 13.8733 13.1071 13.9255 13.2125C14.0248 13.4128 14.0248 13.648 13.9255 13.8484C13.8733 13.9537 13.7757 14.0513 13.5805 14.2465C13.3853 14.4417 13.2877 14.5393 13.1824 14.5915C12.982 14.6908 12.7468 14.6908 12.5465 14.5915C12.4411 14.5393 12.3435 14.4417 12.1483 14.2465L7.85167 9.94988M9.28387 8.51768L7.85167 9.94988" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M11.3385 1.33398L11.5351 1.86505C11.7927 2.56143 11.9216 2.90962 12.1756 3.16362C12.4296 3.41762 12.7777 3.54646 13.4741 3.80414L14.0052 4.00065L13.4741 4.19716C12.7777 4.45484 12.4296 4.58369 12.1756 4.83768C11.9216 5.09168 11.7927 5.43987 11.5351 6.13625L11.3385 6.66732L11.142 6.13625C10.8843 5.43988 10.7555 5.09168 10.5015 4.83768C10.2475 4.58368 9.89934 4.45484 9.20294 4.19716L8.67188 4.00065L9.20294 3.80414C9.89934 3.54646 10.2475 3.41762 10.5015 3.16362C10.7555 2.90962 10.8843 2.56143 11.142 1.86505L11.3385 1.33398Z" stroke="white" stroke-linejoin="round"/>
-<path d="M4 2.66602L4.14739 3.06432C4.34065 3.5866 4.43728 3.84774 4.62778 4.03824C4.81827 4.22874 5.07942 4.32537 5.6017 4.51863L6 4.66602L5.6017 4.8134C5.07942 5.00666 4.81827 5.1033 4.62777 5.2938C4.43728 5.48429 4.34065 5.74544 4.14739 6.26772L4 6.66602L3.85261 6.26772C3.65935 5.74544 3.56272 5.48429 3.37222 5.2938C3.18173 5.1033 2.92058 5.00666 2.3983 4.8134L2 4.66602L2.3983 4.51863C2.92058 4.32537 3.18173 4.22874 3.37222 4.03824C3.56272 3.84774 3.65935 3.5866 3.85261 3.06432L4 2.66602Z" stroke="white" stroke-linejoin="round"/>
-</svg>
+<div className="pb-4">
 
-
-    Try Virtual Staging</a-button>
+  <a-button type="primary" style="display:inline-flex;align-items:center;gap:8px;white-space:nowrap;">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M9.28387 8.51768L7.85167 7.08548C7.65647 6.89028 7.55887 6.79268 7.45353 6.74048C7.2532 6.64119 7.018 6.64119 6.8176 6.74048C6.71233 6.79268 6.61471 6.89028 6.41949 7.08548C6.22425 7.28075 6.12664 7.37835 6.07446 7.48361C5.97518 7.68401 5.97518 7.91921 6.07446 8.11955C6.12664 8.22488 6.22425 8.32248 6.41949 8.51768L7.85167 9.94988M9.28387 8.51768L13.5805 12.8143C13.7757 13.0095 13.8733 13.1071 13.9255 13.2125C14.0248 13.4128 14.0248 13.648 13.9255 13.8484C13.8733 13.9537 13.7757 14.0513 13.5805 14.2465C13.3853 14.4417 13.2877 14.5393 13.1824 14.5915C12.982 14.6908 12.7468 14.6908 12.5465 14.5915C12.4411 14.5393 12.3435 14.4417 12.1483 14.2465L7.85167 9.94988M9.28387 8.51768L7.85167 9.94988" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M11.3385 1.33398L11.5351 1.86505C11.7927 2.56143 11.9216 2.90962 12.1756 3.16362C12.4296 3.41762 12.7777 3.54646 13.4741 3.80414L14.0052 4.00065L13.4741 4.19716C12.7777 4.45484 12.4296 4.58369 12.1756 4.83768C11.9216 5.09168 11.7927 5.43987 11.5351 6.13625L11.3385 6.66732L11.142 6.13625C10.8843 5.43988 10.7555 5.09168 10.5015 4.83768C10.2475 4.58368 9.89934 4.45484 9.20294 4.19716L8.67188 4.00065L9.20294 3.80414C9.89934 3.54646 10.2475 3.41762 10.5015 3.16362C10.7555 2.90962 10.8843 2.56143 11.142 1.86505L11.3385 1.33398Z" stroke="white" stroke-linejoin="round"/>
+  <path d="M4 2.66602L4.14739 3.06432C4.34065 3.5866 4.43728 3.84774 4.62778 4.03824C4.81827 4.22874 5.07942 4.32537 5.6017 4.51863L6 4.66602L5.6017 4.8134C5.07942 5.00666 4.81827 5.1033 4.62777 5.2938C4.43728 5.48429 4.34065 5.74544 4.14739 6.26772L4 6.66602L3.85261 6.26772C3.65935 5.74544 3.56272 5.48429 3.37222 5.2938C3.18173 5.1033 2.92058 5.00666 2.3983 4.8134L2 4.66602L2.3983 4.51863C2.92058 4.32537 3.18173 4.22874 3.37222 4.03824C3.56272 3.84774 3.65935 3.5866 3.85261 3.06432L4 2.66602Z" stroke="white" stroke-linejoin="round"/>
+  </svg>
+  
+  
+      Try Virtual Staging</a-button>
+</div>
         </a-col>
         <a-col :sm="24" :xs="24" :md="15" :lg="15">
             <div style="width:100%;height:300px;border-radius:10px;;background-color:#f2f2f2">
@@ -540,7 +733,7 @@ Drag & drop Image
 <p style="margin:0">furniture by transforming 3D models into realistic,</p>
 <p style="margin:0">detailed images using advanced software.</p>
 <br>
-<a-button type="primary">
+<a-button type="primary" style="display:inline-flex;align-items:center;gap:8px;white-space:nowrap;">
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M9.28387 8.51768L7.85167 7.08548C7.65647 6.89028 7.55887 6.79268 7.45353 6.74048C7.2532 6.64119 7.018 6.64119 6.8176 6.74048C6.71233 6.79268 6.61471 6.89028 6.41949 7.08548C6.22425 7.28075 6.12664 7.37835 6.07446 7.48361C5.97518 7.68401 5.97518 7.91921 6.07446 8.11955C6.12664 8.22488 6.22425 8.32248 6.41949 8.51768L7.85167 9.94988M9.28387 8.51768L13.5805 12.8143C13.7757 13.0095 13.8733 13.1071 13.9255 13.2125C14.0248 13.4128 14.0248 13.648 13.9255 13.8484C13.8733 13.9537 13.7757 14.0513 13.5805 14.2465C13.3853 14.4417 13.2877 14.5393 13.1824 14.5915C12.982 14.6908 12.7468 14.6908 12.5465 14.5915C12.4411 14.5393 12.3435 14.4417 12.1483 14.2465L7.85167 9.94988M9.28387 8.51768L7.85167 9.94988" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
 <path d="M11.3385 1.33398L11.5351 1.86505C11.7927 2.56143 11.9216 2.90962 12.1756 3.16362C12.4296 3.41762 12.7777 3.54646 13.4741 3.80414L14.0052 4.00065L13.4741 4.19716C12.7777 4.45484 12.4296 4.58369 12.1756 4.83768C11.9216 5.09168 11.7927 5.43987 11.5351 6.13625L11.3385 6.66732L11.142 6.13625C10.8843 5.43988 10.7555 5.09168 10.5015 4.83768C10.2475 4.58368 9.89934 4.45484 9.20294 4.19716L8.67188 4.00065L9.20294 3.80414C9.89934 3.54646 10.2475 3.41762 10.5015 3.16362C10.7555 2.90962 10.8843 2.56143 11.142 1.86505L11.3385 1.33398Z" stroke="white" stroke-linejoin="round"/>
@@ -556,7 +749,7 @@ Drag & drop Image
     <br><br>
     
 <br><br>
-<div style="background:#f2f2f2;">
+<div className="hidden sm:block" style="background:#f2f2f2;">
 
 
 <div style="max-width:1300px;margin:auto;">
@@ -597,6 +790,95 @@ Drag & drop Image
       </div>
   </div>
 </div>
+
+ <div class="block sm:hidden w-full bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-6xl mx-auto">
+      <!-- Header -->
+      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-center text-gray-900 mb-12">
+        See What Customers Love About Us
+      </h1>
+
+      <!-- Testimonials Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-2 gap-6 sm:gap-8">
+        
+        <!-- Testimonial Card 1 -->
+        <div class="bg-white rounded-lg p-6 sm:p-8 shadow-sm hover:shadow-md transition-shadow">
+          <div class="flex items-center gap-4 mb-6">
+            <img 
+              src="https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png" 
+              alt="Amy Lang"
+              class="w-12 h-12 sm:w-14 sm:h-14 rounded-full object-cover"
+            />
+            <div>
+<h3 class="font-poppins font-semibold text-gray-900 [font-size:14px!important] [line-height:20px!important] [letter-spacing:0!important]">
+  Amy Lang
+</h3>
+              <p class="text-gray-600 text-xs sm:text-sm">Home Stager</p>
+            </div>
+          </div>
+          <p class="!font-poppins !font-normal !text-[14px] leading-[20px] tracking-[0px] text-gray-700">
+  "Even those who are not design-savvy can easily create realistic and inviting virtually staged spaces that attract potential buyers regularly."
+</p>
+
+        </div>
+
+        <!-- Testimonial Card 2 -->
+        <div class="bg-white rounded-lg p-6 sm:p-8 shadow-sm hover:shadow-md transition-shadow">
+          <div class="flex items-center gap-4 mb-6">
+            <img 
+              src="https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png" 
+              alt="Troy Sinclair"
+              class="w-12 h-12 sm:w-14 sm:h-14 rounded-full object-cover"
+            />
+            <div>
+              <h3 class="font-semibold text-gray-900 text-sm sm:text-base">Troy Sinclair</h3>
+              <p class="text-gray-600 text-xs sm:text-sm">Real Estate Photographer</p>
+            </div>
+          </div>
+          <p class="text-gray-700 text-sm sm:text-base leading-relaxed">
+            "Even those who are not design-savvy can easily create realistic and inviting virtually staged spaces that attract potential buyers regularly. It has taken our real estate marketing to the next level!"
+          </p>
+        </div>
+
+        <!-- Testimonial Card 3 -->
+        <div class="bg-white rounded-lg p-6 sm:p-8 shadow-sm hover:shadow-md transition-shadow">
+          <div class="flex items-center gap-4 mb-6">
+            <img 
+              src="https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png" 
+              alt="Amy Lang"
+              class="w-12 h-12 sm:w-14 sm:h-14 rounded-full object-cover"
+            />
+            <div>
+              <h3 class="font-semibold text-gray-900 text-sm sm:text-base">Amy Lang</h3>
+              <p class="text-gray-600 text-xs sm:text-sm">Home Stager</p>
+            </div>
+          </div>
+          <p class="text-gray-700 text-sm sm:text-base leading-relaxed">
+            "Even those who are not design-savvy can easily create realistic and inviting virtually staged spaces that attract potential buyers regularly."
+          </p>
+        </div>
+
+        <!-- Testimonial Card 4 -->
+        <div class="bg-white rounded-lg p-6 sm:p-8 shadow-sm hover:shadow-md transition-shadow">
+          <div class="flex items-center gap-4 mb-6">
+            <img 
+              src="https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png" 
+              alt="Amy Lang"
+              class="w-12 h-12 sm:w-14 sm:h-14 rounded-full object-cover"
+            />
+            <div>
+              <h3 class="font-semibold text-gray-900 text-sm sm:text-base">Amy Lang</h3>
+              <p class="text-gray-600 text-xs sm:text-sm">Home Stager</p>
+            </div>
+          </div>
+          <p class="text-gray-700 text-sm sm:text-base leading-relaxed">
+            "Even those who are not design-savvy can easily create realistic and inviting virtually staged spaces that attract potential buyers regularly."
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </div>
 
 
 <div style="padding:10px;max-width:1200px;margin:auto;">
@@ -640,58 +922,44 @@ Drag & drop Image
     </a-collapse>
   </div>
 </div>
+<div class="flex justify-center items-center">
+        <div class="bg-white p-6 sm:p-6 rounded-xl shadow-[0_20px_60px_rgba(59,130,246,0.4)] max-w-[450px] w-full border-t-[3px] border-blue-500">
+          <form @submit.prevent="submitForm" class="flex flex-col gap-5 ">
+            <div class="flex gap-2 sm:gap-4">
+              <input
+                type="text"
+                placeholder="Enter name"
+                v-model="form.name"
+                class="flex-1 py-3 px-1 sm:px-3.5 border border-gray-300 rounded-md text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                style="width:100%"
+              />
+              <input
+                type="email"
+                placeholder="Your email"
+                v-model="form.email"
+                class="flex-1 py-3 px-1 sm:px-3.5 border border-gray-300 rounded-md text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                style="width:100%"
+              />
+            </div>
 
-<br><br>
-<div>
-  <div style="text-align:center">
-    <h1>Feel free to contact us</h1>
-    <h3>Revolutionizing Interior Design with Virtual Technology & AI</h3>
+            <textarea
+              placeholder="Your text"
+              v-model="form.message"
+              class="w-full min-h-[120px] py-3 px-3.5 border border-gray-300 rounded-md text-sm resize-y outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+            ></textarea>
 
-<br>
-      <div style="display:flex;justify-content:center;align-items:center;">
-    <div
-      style="background:#fff;padding:40px;border-radius:12px;box-shadow:0 20px 60px rgba(59,130,246,0.4);
-             max-width:450px;width:100%;border-top:3px solid #3b82f6;">
-      
-      <form @submit.prevent="submitForm" style="display:flex;flex-direction:column;gap:20px;">
-        <div style="display:flex;gap:15px;">
-          <input
-            type="text"
-            placeholder="Enter name"
-            v-model="form.name"
-            style="flex:1;padding:12px 14px;border:1px solid #ddd;border-radius:6px;font-size:14px;outline:none;"
-          />
-          <input
-            type="email"
-            placeholder="Your email"
-            v-model="form.email"
-            style="flex:1;padding:12px 14px;border:1px solid #ddd;border-radius:6px;font-size:14px;outline:none;"
-          />
+            <button
+              type="submit"
+              class="bg-blue-500 text-white py-3.5 border-none rounded-md text-base font-semibold cursor-pointer transition-all duration-300 w-full hover:bg-blue-600 active:scale-95"
+            >
+              Send now
+            </button>
+          </form>
         </div>
-
-        <textarea
-          placeholder="Your text"
-          v-model="form.message"
-          style="width:100%;min-height:120px;padding:12px 14px;border:1px solid #ddd;border-radius:6px;
-                 font-size:14px;resize:vertical;outline:none;"
-        ></textarea>
-
-        <button
-          type="submit"
-          style="background:#3b82f6;color:#fff;padding:14px;border:none;border-radius:6px;
-                 font-size:16px;font-weight:600;cursor:pointer;transition:0.3s;width:100%;"
-        >
-          Send now
-        </button>
-      </form>
-    </div>
-  </div>
-  <br><br>
-  <br><br>
-
-  </div>
-</div>
-<br><br>
+      </div>
+      <br>
+      <br>
+      <br>
   </div>
 </template>
 
@@ -713,7 +981,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/scrollbar';
 
-
+import catalog from "@/views/newhome/catalog.vue"
 export default {
   name: "Home",
   setup() {
@@ -779,6 +1047,7 @@ export default {
   components:{
          Swiper,
       SwiperSlide,
+      catalog
   },
   methods:{
      submitForm() {

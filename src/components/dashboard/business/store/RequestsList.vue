@@ -385,6 +385,7 @@ export default {
         if (response.ok) {
           message.success('Photo processing started successfully')
           const responseData = await response.json();
+          console.log(responseData)
           // Emit event to parent component if needed
           this.$emit('upload-success', responseData);
           this.$router.push({ name: 'update_catelogue', params: { id: responseData.room_id } });

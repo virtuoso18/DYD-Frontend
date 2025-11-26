@@ -69,14 +69,14 @@ border:1px solid rgba(128, 128, 128, 0.14);"
         <div v-if="item['3d_model']" style="padding:3px;border:1px solid grey;border-radius:5px;padding-left:5px;padding-right:5px;padding-top:1px;height:22px;font-size:12px">AR</div>
       </div>
       <div class="product-name">{{ truncateText( item.name || 'No name Available', 3) }}</div>
-      <div class="product-subtitle">{{ truncateText( item.description || 'No description available', 4) }}</div>
+      <!-- <div class="product-subtitle">{{ truncateText( item.description || 'No description available', 4) }}</div> -->
                                                   
 
-      <div class="product-details">
-  <span class="product-color">Colors Available</span>
+      <div class="product-details" style="display:flex;justify-content: space-between;">
+  <span class="product-color">Colors</span>
   <div style="display: flex; gap: 4px; align-items: center; margin-left: 8px;">
-    <div v-for="color in item.colors_available.slice(0, 3)" :key="color.id" class="color-dot" :style="{ backgroundColor: color.color }"></div>
-    <span v-if="item.colors_available.length > 3" style="font-size: 14px; color: #666;">...</span>
+    <div v-for="color in item.colors_available.slice(0, 2)" :key="color.id" class="color-dot" :style="{ backgroundColor: color.color }"></div>
+    <!-- <span v-if="item.colors_available.length > 3" style="font-size: 14px; color: #666;">...</span> -->
   </div>
 </div>
       <div class="product-price" >
@@ -97,7 +97,7 @@ border:1px solid rgba(128, 128, 128, 0.14);"
   </div>
 
   <a-row>
-    <a-col :span="20" style="padding-right:5px">
+    <a-col :span="18" style="padding-right:5px">
       <!-- <button block type="primary" class="btn-prod-details">
         Product Detail
       </button> -->
@@ -106,9 +106,9 @@ border:1px solid rgba(128, 128, 128, 0.14);"
               Product Detail
             </a-button>
     </a-col>
-    <a-col :span="4" style="">
-      <a-button block type="default">
-        <HeartOutlined />
+    <a-col :span="6" style="">
+      <a-button block type="default" style="padding:0;display: flex;justify-content: center;align-items: center;">
+          <HeartOutlined />
       </a-button>
     </a-col>
   </a-row>
@@ -139,7 +139,7 @@ export default {
       loading: false,
       error: null,
       catalogItems: [],
-      showGrid: false, // true for grid, false for list
+      showGrid: true, // true for grid, false for list
       // Mock data
       productItems:[]
     };
@@ -157,14 +157,34 @@ export default {
     }
   },
   mounted() {
-    this.fetchLights();
+    const route = this.$route
+    
+    this.brand = route.query.brand
+
+    // Conditional logic
+    if (this.brand) {
+      console.log('Loading catalogue for brand:', this.brand)
+      this.fetchLights(this.brand)
+    } else {
+      console.log('Loading self products')
+      this.fetchLights();
+    }
   },
   methods: {
-    async fetchLights() {
+    async fetchLights(brand=null) {
       this.loading = true;
       try {
-        const url = `${this.$store.state.root_api}product/api/lights/`;
-        const response = await fetch(url);
+        let url = `${this.$store.state.root_api}product/api/lights/`;
+         if (brand){
+           url = `${this.$store.state.root_api}product/api/load-brand-products/lights/` +brand ;
+
+        }
+
+        const response = await fetch(url,
+           {headers: {
+              'Authorization': `Token ${localStorage.getItem('token')}`
+            }}
+        );
         const data = await response.json();
         console.log(data)
         if (data && data.data) {

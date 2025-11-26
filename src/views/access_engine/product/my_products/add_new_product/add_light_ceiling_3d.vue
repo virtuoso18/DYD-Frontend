@@ -156,7 +156,7 @@ async get_3d_rendered_model_details(generated_3d_model_id) {
   this.loading_generated_models_history= true;
 
   try {
-    const url = `${this.$store.state.root_api}access-engine/api/business-products/business-access-generated-3d-models-business-history/`;
+    const url = `${this.$store.state.root_api}access-engine/api/business-products/business-access-generated-3d-models-business-history/?access-id=`+this.$route.query.access_id;
     const payload = {
           'model_3d_id': generated_3d_model_id,
 
@@ -199,7 +199,7 @@ async fetch3d_models_generated_by_user() {
   this.loading_generated_models_history= true;
 
   try {
-    const url = `${this.$store.state.root_api}access-engine/api/business-products/business-access-generated-3d-models-business-history/`;
+    const url = `${this.$store.state.root_api}access-engine/api/business-products/business-access-generated-3d-models-business-history/?access-id=`+this.$route.query.access_id;
     
     console.log('📡 Fetching generated 3d models hisrtory ...');
     const responseData = await this.makeApiRequest(url, { 

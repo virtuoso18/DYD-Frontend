@@ -37,15 +37,42 @@
                 :Model_instance_id="selectedProduct.id"
                 style="width: 100%; max-height: 500px; height: 100%; border-radius: 10px"
               />
-              <a-button type="text" danger @click="remove3DModel"
-                style="position: absolute; top: 12px; right: 12px; background: rgba(255,255,255,0.9); box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-radius: 6px; width: 32px; height: 32px; padding: 0;">
-                <template #icon>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                  </svg>
-                </template>
-              </a-button>
+              <a-button 
+  type="text" 
+  danger 
+  @click="remove3DModel"
+  style="
+    position: absolute; 
+    top: 12px; 
+    right: 12px;
+    background: rgba(255,255,255,0.9); 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-radius: 6px; 
+    width: 30px; 
+    height: 30px; 
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  "
+>
+  <template #icon>
+    <svg 
+      width="14" 
+      height="14" 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="currentColor" 
+      stroke-width="2"
+      style="display: block;"
+    >
+      <line x1="18" y1="6" x2="6" y2="18"></line>
+      <line x1="6" y1="6" x2="18" y2="18"></line>
+    </svg>
+  </template>
+</a-button>
+
             </div>
             
             <!-- Upload 3D Model Area -->
@@ -82,15 +109,44 @@
             <!-- Primary Badge -->
             <div v-if="img.is_primary" style="position: absolute; top: -6px; left: -6px; background: #10b981; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 10px;">★</div>
             <!-- Delete Button -->
-            <a-button type="text" danger size="small" @click.stop="deleteImage(img.id)"
-              style="position: absolute; top: -6px; right: -6px; background: #ef4444; color: white; border-radius: 50%; width: 20px; height: 20px; padding: 0; min-width: 20px;">
-              <template #icon>
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-              </template>
-            </a-button>
+            <a-button
+  type="text"
+  danger
+  size="small"
+  @click.stop="deleteImage(img.id)"
+  style="
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: #ef4444;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    min-width: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  "
+>
+  <template #icon>
+    <svg 
+      width="10" 
+      height="10" 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="currentColor" 
+      stroke-width="2"
+      style="display: block;"
+    >
+      <line x1="18" y1="6" x2="6" y2="18"></line>
+      <line x1="6" y1="6" x2="18" y2="18"></line>
+    </svg>
+  </template>
+</a-button>
+
           </div>
 
           <!-- Preview Images (Not yet saved) -->
@@ -209,18 +265,52 @@
           </a-row> -->
 
           <!-- Dimensions -->
-          <div style="margin-bottom: 24px;">
-            <h4 style="margin-bottom: 16px; font-weight: 500; font-size: 14px; color: #1f2937;">Dimensions</h4>
-            <a-row :gutter="16">
-              <a-col :span="8" v-for="dim in ['height', 'length', 'width']" :key="dim">
-                <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 13px; color: #6b7280; text-transform: capitalize;">{{ dim }}<span style="margin-left: 8px; color: #9ca3af; font-size: 13px; min-width: 20px;">( meter )</span></label>
-                <div style="display: flex; align-items: center;">
-                  <a-input v-model:value="productForm.dimensions[dim]" :placeholder="dim === 'height' ? '100' : '30'" style="border-radius: 6px;" />
-                  
-                </div>
-              </a-col>
-            </a-row>
-          </div>
+         <div style="margin-bottom: 24px;">
+  <h4 style="margin-bottom: 16px; font-weight: 500; font-size: 14px; color: #1f2937;">
+    Dimensions
+  </h4>
+
+  <a-row :gutter="16">
+    <a-col :span="8" v-for="dim in ['height', 'length', 'width']" :key="dim">
+
+      <label
+        style="
+          display: block;
+          margin-bottom: 6px;
+          font-weight: 500;
+          font-size: 13px;
+          color: #6b7280;
+          text-transform: capitalize;
+        "
+      >
+        {{ dim }}
+        <span
+          style="
+            margin-left: 8px;
+            color: #9ca3af;
+            font-size: 13px;
+            min-width: 20px;
+          "
+        >
+          ( meter )
+        </span>
+      </label>
+
+      <div style="display: flex; align-items: center;">
+        <a-input
+          type="text"
+          inputmode="decimal"
+          oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+          v-model:value="productForm.dimensions[dim]"
+          :placeholder="dim === 'height' ? '100' : '30'"
+          style="border-radius: 6px;"
+        />
+      </div>
+
+    </a-col>
+  </a-row>
+</div>
+
 
           <!-- Colors & Textures -->
           <a-row :gutter="24">
@@ -228,18 +318,54 @@
               <h4 style="margin-bottom: 16px; font-weight: 500; font-size: 14px; color: #1f2937;">Colors</h4>
               <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 12px;">
                 <!-- Existing Colors -->
-                <div v-for="color in selectedProduct.colors.available_colors" :key="color.id" style="position: relative;">
-                  <div @click="selectColor(color.color)" :style="{ width: '36px', height: '36px', borderRadius: '8px', backgroundColor: color.color, cursor: 'pointer', border: productForm.colors.primary_color === color.color ? '3px solid #3b82f6' : '2px solid #e5e7eb' }"></div>
-                  <a-button type="text" danger size="small" @click.stop="deleteColor(color.id)"
-                    style="position: absolute; top: -8px; right: -8px; background: #ef4444; color: white; border-radius: 50%; width: 16px; height: 16px; padding: 0;">
-                    <template #icon>
-                      <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                      </svg>
-                    </template>
-                  </a-button>
-                </div>
+                <div 
+  v-for="color in selectedProduct.colors.available_colors" 
+  :key="color.id" 
+  style="position: relative; width: 36px; height: 36px; margin-right: 10px;"
+>
+
+  <!-- Color Box -->
+  <div
+    @click="selectColor(color.color)"
+    :style="{
+      width: '36px',
+      height: '36px',
+      borderRadius: '8px',
+      backgroundColor: color.color,
+      cursor: 'pointer',
+      border: productForm.colors.primary_color === color.color 
+        ? '3px solid #3b82f6' 
+        : '2px solid #e5e7eb'
+    }"
+  ></div>
+
+  <!-- Perfect Center X -->
+  <div 
+    @click.stop="deleteColor(color.id)"
+    style="
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      background: #ef4444;
+      color: #fff;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 14px;
+      font-weight: bold;
+      line-height: 1; /* IMPORTANT for centering */
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    "
+  >
+    ×
+  </div>
+
+</div>
+
                 
                 <!-- Add Color -->
                 <div style="position: relative;">
@@ -258,18 +384,56 @@
               <h4 style="margin-bottom: 16px; font-weight: 500; font-size: 14px; color: #1f2937;">Textures</h4>
               <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
                 <!-- Existing Textures -->
-                <div v-for="texture in selectedProduct.textures" :key="texture.id" style="position: relative;">
-                  <div @click="selectTexture(texture.id)" :style="{ width: '48px', height: '36px', borderRadius: '8px', backgroundImage: `url(${$store.state.root_media_api + texture.texture})`, backgroundSize: 'cover', backgroundPosition: 'center', border: selectedTexture === texture.id ? '3px solid #3b82f6' : '2px solid #e5e7eb', cursor: 'pointer' }"></div>
-                  <a-button type="text" danger size="small" @click.stop="deleteTexture(texture.id)"
-                    style="position: absolute; top: -8px; right: -8px; background: #ef4444; color: white; border-radius: 50%; width: 16px; height: 16px; padding: 0;">
-                    <template #icon>
-                      <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                      </svg>
-                    </template>
-                  </a-button>
-                </div>
+                <div 
+  v-for="texture in selectedProduct.textures" 
+  :key="texture.id" 
+  style="position: relative; width: 48px; height: 36px; margin-right: 10px;"
+>
+
+  <!-- Texture Box -->
+  <div
+    @click="selectTexture(texture.id)"
+    :style="{
+      width: '48px',
+      height: '36px',
+      borderRadius: '8px',
+      backgroundImage: `url(${$store.state.root_media_api + texture.texture})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      border: selectedTexture === texture.id 
+        ? '3px solid #3b82f6' 
+        : '2px solid #e5e7eb',
+      cursor: 'pointer'
+    }"
+  ></div>
+
+  <!-- Perfect Center X -->
+  <div 
+    @click.stop="deleteTexture(texture.id)"
+    style="
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      background: #ef4444;
+      color: #fff;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 14px;
+      font-weight: bold;
+      line-height: 1; /* keeps X centered */
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    "
+  >
+    ×
+  </div>
+
+</div>
+
 
                 <!-- Add Texture -->
                 <div @click="uploadTexture" style="width: 48px; height: 36px; border-radius: 8px; border: 2px dashed #d1d5db; display: flex; align-items: center; justify-content: center; cursor: pointer; background: #f9fafb;">
