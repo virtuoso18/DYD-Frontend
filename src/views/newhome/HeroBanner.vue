@@ -14,22 +14,46 @@
 
           <!-- Heading Text -->
           <div class="rounded-lg font-black pt-5 mb-6 p-12">
-            <div
-  class="font-[--font-family-proza] font-bold text-center text-gray-900 my-2
-         text-[28px] sm:text-[36px] md:text-[44px] leading-[1.2] tracking-[-0.02em]"
+           <div
+  style="
+    font-family: 'Proza Libre', sans-serif !important;
+    font-weight: 700;
+    font-style: bold;
+    font-size: 44px;
+    line-height: 52px;
+    letter-spacing: -0.02em;
+    text-align: center;
+    color: #111827;
+    margin-top: 8px;
+    margin-bottom: 8px;
+  "
 >
   {{ heading1 }}
 </div>
 
 
-            <div class="font-[--font-family-proza] !font-extrabold text-[44px] leading-[52px] tracking-[-0.02em] text-center text-gray-900 my-2">
-              {{ heading2 }}
-            </div>
+           <div
+  style="
+    font-family: 'Proza Libre', sans-serif !important;
+    font-weight: 800;
+    font-style: normal;
+    font-size: 44px;
+    line-height: 52px;
+    letter-spacing: -0.02em;
+    text-align: center;
+    color: #111827;
+    margin-top: 8px;
+    margin-bottom: 8px;
+  "
+>
+  {{ heading2 }}
+</div>
+
           </div>
 
           <!-- Button -->
           <div
-            class="relative w-[210px] h-16 text-[28px] rounded-xl opacity-100 translate-x-24 sm:translate-x-60 text-white pt-2 bg-[#3B63FB] mt-8"
+            class="relative w-[210px] h-16 text-[28px] rounded-xl opacity-100 translate-x-24 sm:translate-x-80 text-white pt-2 bg-[#3B63FB] mt-8"
           >
             <span class="absolute left-[-10px] bottom-[-10px] text-[23px]">✦</span>
             <span class="absolute top-0 right-[-5px] text-[15px]">✦</span>

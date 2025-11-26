@@ -170,11 +170,23 @@ const router = createRouter({
       name: 'contactus',
       component: contactus,
     },
-// =================================================== UI Pages ========================================
+
+    {
+      path: '/blogs',
+      name: 'blogs',
+      component: Blogs,
+    },
+
      {
       path: '/sechdulemeeting',
       name: 'sechdule meeting',
       component: Sechdulemeeting,
+    },
+
+     {
+      path: '/affiliateprogram',
+      name: 'affiliateprogram',
+      component: AffiliateProgram,
     },
 
      {

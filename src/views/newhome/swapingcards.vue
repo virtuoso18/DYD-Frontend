@@ -1,4 +1,37 @@
 <template>
+
+  <div
+  style="
+    font-family: 'Proza Libre', sans-serif !important;
+    font-weight: 700;
+    font-style: normal;
+    font-size: 48px;
+    line-height: 52px;
+    letter-spacing: -0.02em;
+    text-align: center;
+    color: #000;
+  "
+>
+  Your AI, Your Catalog
+</div>
+
+<div
+  style="
+    font-family: 'Poppins', sans-serif !important;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 20px;
+    line-height: 28px;
+    letter-spacing: -0.02em;
+    text-align: center;
+    color: #6b7280;
+  "
+>
+  Effortlessly integrate an AI visualizer into your website and showcase
+  your catalog like never before
+</div>
+
+
   <div class="w-full max-w-8xl  px-12  py-12">
     <!-- Carousel Container -->
     <div class="relative">

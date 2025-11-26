@@ -36,7 +36,9 @@
     </div>
 
     <!-- Scrollable Content -->
-    <div style="height: calc(76vh - 120px); overflow-y: auto; padding: 5px; background: #fafafa;">
+<div 
+  class="overflow-y-auto p-[5px] bg-[#fafafa] md:h-[calc(76vh-120px)]"
+>
       
       <!-- Floors -->
       <a-collapse v-model:activeKey="floorsActiveKey" style="margin-bottom: 12px;" v-if="floors.length>0">

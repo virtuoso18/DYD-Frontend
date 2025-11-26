@@ -1,7 +1,7 @@
 <template>
 
-<div style="padding: 10px;">
-    <div style="padding:10px;border-radius:15px;background-color:white;border:1px solid rgba(0,0,0,0.1);min-height:100vh">
+<div class="main min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh]">    
+    <div style="padding:10px;border-radius:15px;min-height:100vh">
         <h3>Liked Products & Rooms </h3>
             <a-tabs v-model:activeKey="active_tab">
                 <a-tab-pane key="Furniture" tab="Furniture" >
@@ -306,7 +306,6 @@ async toggleFavorite(product) {
     padding:10px;
     border-radius:20px;
     /* height: 100vh; */
-  min-height:85vh;
     background: white;
     border:2px solid rgba(128, 128, 128, 0.16);
     margin-top:10px;
