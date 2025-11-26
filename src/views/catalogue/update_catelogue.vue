@@ -19,31 +19,9 @@
 Switch Furniture</a-button>
     </div>
     </template>
-    <a-row>
-      <a-col :span="4">
-        
-    <p>Some contents...</p>
-    <p>Some contents...</p>
-    <p>Some contents...</p>
-      </a-col>
-      <a-col :span="20">
- <!-- seeAll_products
-        {{seeAll_products}}
-        <br>
-        seeAll_furnitures
-{{seeAll_furnitures}}
-<br>
-seeAll_Walls
-{{seeAll_Walls}}
-<br>
-seeAll_Floor
-{{seeAll_Floor}}
-<br>
-seeAll_Lights
-{{seeAll_Lights}} -->
+    
         <wall_textures_bottom_drawer_menu :products="seeAll_Walls"/>
-      </a-col>
-    </a-row>
+   
   </a-drawer>
   <!-- Floor Drawer -->
   <a-drawer

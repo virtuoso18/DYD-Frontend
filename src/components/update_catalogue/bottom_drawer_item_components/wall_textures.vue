@@ -1,6 +1,51 @@
 <template>
   <div class="main">
-    <div class="products-list">
+
+   <a-row>
+    <a-col :span="4">
+  <!-- Price Filter -->
+  <div style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #f0f0f0;">
+    <h4 style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600;">Price</h4>
+    <a-slider :min="0" :max="500" :default-value="[0, 500]" range />
+    <p style="margin-top: 8px; font-size: 12px; color: #666;">₹0 - ₹500</p>
+  </div>
+
+  <!-- Texture Style Filter -->
+  <div style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #f0f0f0;">
+    <h4 style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600;">Style</h4>
+    <a-checkbox>Modern</a-checkbox><br/>
+    <a-checkbox>Classic</a-checkbox><br/>
+    <a-checkbox>Minimal</a-checkbox>
+  </div>
+
+  <!-- Colors Filter -->
+  <div style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #f0f0f0;">
+    <h4 style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600;">Colors</h4>
+    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+      <div style="width: 30px; height: 30px; border-radius: 50%; background: #FFA500; border: 2px solid #ddd; cursor: pointer;"></div>
+      <div style="width: 30px; height: 30px; border-radius: 50%; background: #DEB887; border: 2px solid #ddd; cursor: pointer;"></div>
+      <div style="width: 30px; height: 30px; border-radius: 50%; background: #A52A2A; border: 2px solid #ddd; cursor: pointer;"></div>
+      <div style="width: 30px; height: 30px; border-radius: 50%; background: #FF0000; border: 2px solid #ddd; cursor: pointer;"></div>
+      <div style="width: 30px; height: 30px; border-radius: 50%; background: #98FB98; border: 2px solid #ddd; cursor: pointer;"></div>
+      <div style="width: 30px; height: 30px; border-radius: 50%; background: #DDA0DD; border: 2px solid #ddd; cursor: pointer;"></div>
+    </div>
+  </div>
+
+  <!-- Size Filter -->
+  <div style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #f0f0f0;">
+    <h4 style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600;">Size</h4>
+    <a-radio-group>
+      <a-radio value="small">Small (10x10)</a-radio><br/>
+      <a-radio value="medium">Medium (20x20)</a-radio><br/>
+      <a-radio value="large">Large (30x30)</a-radio>
+    </a-radio-group>
+  </div>
+
+  <!-- Clear Button -->
+  <a-button block type="primary">Clear Filters</a-button>
+</a-col>
+      <a-col :span="20">
+          <div class="products-list">
       <a-row>
         <a-col v-for="product in products" :key="product.id" 
                class="product-responsive" style="padding:5px;">
@@ -66,6 +111,9 @@
         </a-col>
       </a-row>
     </div>
+      </a-col>
+    </a-row>
+  
   </div>
 </template>
 

@@ -1443,24 +1443,25 @@
             @back_product_list="backToList" 
         />
         
+        
         <!-- Different Light Products Details Component -->
         <show_Light_product_3D  
             :selectedProduct="selectedProduct" 
-            v-if="active_tab === 'Lights' && selectedProduct && selectedProduct.category.name == 'Light' && selectedProduct.light_type == 'hanging'" 
+            v-if="active_tab === 'Lights' && selectedProduct && selectedProduct.is_ceiling_light_product && selectedProduct.light_type == 'hanging'" 
             @edit_product="editProduct" 
             @delete_product="delete_product" 
             @back_product_list="backToList" 
         />
         <show_Light_product_sunk  
             :selectedProduct="selectedProduct" 
-            v-if="active_tab === 'Lights' && selectedProduct && selectedProduct.category.name == 'Light' && selectedProduct.light_type == 'sunk'" 
+            v-if="active_tab === 'Lights' && selectedProduct && selectedProduct.is_ceiling_light_product && selectedProduct.light_type == 'sunk'" 
             @edit_product="editProduct" 
             @delete_product="delete_product" 
             @back_product_list="backToList" 
         />
         <show_Light_product_unsunk  
             :selectedProduct="selectedProduct" 
-            v-if="active_tab === 'Lights' && selectedProduct && selectedProduct.category.name == 'Light' && selectedProduct.light_type == 'unsunk'" 
+            v-if="active_tab === 'Lights' && selectedProduct && selectedProduct.is_ceiling_light_product && selectedProduct.light_type == 'unsunk'" 
             @edit_product="editProduct" 
             @delete_product="delete_product" 
             @back_product_list="backToList" 
@@ -1477,9 +1478,9 @@
             
             <!-- <edit_Light :selectedProduct="selectedProduct" v-if="active_tab===  'Lights' && selectedProduct" :categories_available="categories_available" :types="types" @cancel_edit_back_product_list="backToList" /> -->
             
-            <edit_Light_hanging_3d :selectedProduct="selectedProduct" v-if="active_tab===  'Lights' && selectedProduct && selectedProduct.category.name=='Light' &&  selectedProduct.light_type=='hanging'" :categories_available="categories_available" :types="types" @cancel_edit_back_product_list="backToList"/>
-            <edit_Light_sunk :selectedProduct="selectedProduct" v-if="active_tab===  'Lights' && selectedProduct && selectedProduct.category.name=='Light' &&  selectedProduct.light_type=='sunk'" :categories_available="categories_available" :types="types" @cancel_edit_back_product_list="backToList" />
-            <edit_Light_unsunk :selectedProduct="selectedProduct" v-if="active_tab===  'Lights' && selectedProduct && selectedProduct.category.name=='Light' &&  selectedProduct.light_type=='unsunk'" :categories_available="categories_available" :types="types" @cancel_edit_back_product_list="backToList" />
+            <edit_Light_hanging_3d :selectedProduct="selectedProduct" v-if="active_tab===  'Lights' && selectedProduct && selectedProduct.is_ceiling_light_product &&  selectedProduct.light_type=='hanging'" :categories_available="categories_available" :types="types" @cancel_edit_back_product_list="backToList"/>
+            <edit_Light_sunk :selectedProduct="selectedProduct" v-if="active_tab===  'Lights' && selectedProduct && selectedProduct.is_ceiling_light_product &&  selectedProduct.light_type=='sunk'" :categories_available="categories_available" :types="types" @cancel_edit_back_product_list="backToList" />
+            <edit_Light_unsunk :selectedProduct="selectedProduct" v-if="active_tab===  'Lights' && selectedProduct && selectedProduct.is_ceiling_light_product &&  selectedProduct.light_type=='unsunk'" :categories_available="categories_available" :types="types" @cancel_edit_back_product_list="backToList" />
         </div>
 
         <!-- Hidden file inputs for image uploads -->

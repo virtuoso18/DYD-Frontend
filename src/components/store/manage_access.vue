@@ -486,7 +486,7 @@
     </div>
 
     <!-- Tabs -->
-    {{ all_staff }}
+    <!-- {{ all_staff }} -->
      <!-- {"error": false, "count": 1, "data": [ { "id": "2b7b4e47-664e-45be-a91e-731e8db82a90", "professional_user": { "id": 4, "email": "ashishwaykar@sdlccorp.com", "full_name": "Ashish Professional", "phone": "", "profile_picture": "/media/default/default-user.jpg" }, "access_request_accepted": true, "is_active": true, "created_at": "2025-11-20T07:34:49.960787+00:00", "updated_at": "2025-11-20T07:41:14.187668+00:00", "assigned_tasks": [], "task_count": 0 } ] } -->
     <a-tabs v-model:activeKey="activeTab">
       <a-tab-pane key="all-staff" tab="All Staff">

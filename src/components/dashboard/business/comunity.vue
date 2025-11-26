@@ -116,7 +116,7 @@
                       <div style="padding: 5px">
                         <!-- Actions Row -->
                         <a-row style="align-items: center">
-                          <a-col :span="14" style="display:flex;gap:10px;justify-content: start;align-items: center;">
+                          <a-col :span="16" style="display:flex;gap:10px;justify-content: start;align-items: center;">
                             <img
                               :src="
                                 this.$store.state.root_media_api + post.user_profile
@@ -133,7 +133,7 @@
                               truncateText(post.post_by, 15)
                             }}</span>
                           </a-col>
-                          <a-col :span="10" style="display: flex">
+                          <a-col :span="8" style="display: flex">
                             <!-- Post Stats -->
                             <div class="post-stats">
                               <div class="stat-item" @click="toggleLike(post)">
@@ -153,12 +153,12 @@
                                   formatNumber(post.comment_count)
                                 }}</span>
                               </div>
-                              <div class="stat-item" @click="sharePost(post)">
+                              <!-- <div class="stat-item" @click="sharePost(post)">
                                 <ShareAltOutlined />
                                 <span>{{
                                   formatNumber(post.share_count)
                                 }}</span>
-                              </div>
+                              </div> -->
                             </div>
                             <!-- More Actions Dropdown -->
                             <a-dropdown
@@ -180,12 +180,12 @@
                                     <EditOutlined style="margin-right: 8px" />
                                     Edit Post
                                   </a-menu-item>
-                                  <a-menu-item @click="sharePost(post)">
+                                  <!-- <a-menu-item @click="sharePost(post)">
                                     <ShareAltOutlined
                                       style="margin-right: 8px"
                                     />
                                     Share
-                                  </a-menu-item>
+                                  </a-menu-item> -->
                                   <a-menu-divider />
                                   <a-menu-item
                                     @click="confirmDelete(post)"

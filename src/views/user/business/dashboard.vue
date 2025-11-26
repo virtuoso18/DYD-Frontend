@@ -679,7 +679,7 @@ export default {
     if (!this.isProfileComplete && this.completionPercentage < 100) {
       // Show modal after a short delay
       setTimeout(() => {
-        this.showCompletionModal = true;
+        this.showCompletionModal = false;
       }, 2000);
     }
   },
