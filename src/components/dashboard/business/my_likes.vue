@@ -1,6 +1,6 @@
 <template>
 
-<div class="main min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh]">    
+<div class="sm:main min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh]">    
     <div style="padding:10px;border-radius:15px;min-height:100vh">
         <h3>Liked Products & Rooms </h3>
             <a-tabs v-model:activeKey="active_tab">

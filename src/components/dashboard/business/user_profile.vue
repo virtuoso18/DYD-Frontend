@@ -1,7 +1,7 @@
 <template>
-  <div class="dashboard-container">
+<div class="main py-3 min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh]">    
     <!-- Main Dashboard Content -->
-    <a-row class="dashboard-content">
+    <a-row class="dashboard-content ">
       <!-- Content Area -->
       <a-col :xs="24" :sm="24" :md="24" :lg="24" class="content-area">
         <div class="content-wrapper">
@@ -31,7 +31,7 @@
           </div>
           
           <!-- Personal Information Section -->
-          <div class="personal-info-section">
+          <div class="personal-info-section ">
             <div class="section-header">
               <h2>Personal Information</h2>
               <button class="edit-btn" @click="toggleEdit" :disabled="loading">
@@ -361,19 +361,15 @@ export default {
   min-height: 100vh;
 }
 
-.content-area {
-  padding: 10px;
-}
 
-.content-wrapper {
-  background: white;
-  min-height: 93vh;
-
-  border-radius: 24px;
-  /* margin: 20px; */
-  /* box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1); */
-  border: 1px solid #e9ecef;
-  overflow: hidden;
+@media (min-width: 768px) {
+  .content-wrapper {
+    background: white;
+    min-height: 93vh;
+    border-radius: 24px;
+    border: 1px solid #e9ecef;
+    overflow: hidden;
+  }
 }
 .wavy-header {
   position: relative;

@@ -1,7 +1,7 @@
 <template>
   <div className="pt-3">
 
-    <div class=" bg-white min-h-screen border rounded-2xl p-4  border-black/10 mt-4">
+    <div class=" bg-white min-h-screen sm:border rounded-2xl p-4  border-black/10 mt-4">
       <div class="max-w-6xl mx-auto">
         <!-- Header Section -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">

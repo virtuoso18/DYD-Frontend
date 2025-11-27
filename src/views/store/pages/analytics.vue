@@ -524,6 +524,8 @@ export default {
   margin-bottom: 20px;
 }
 
+
+
 .chart-header h3 {
   margin: 0;
   font-size: 18px;

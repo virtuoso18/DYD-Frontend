@@ -1,5 +1,10 @@
 <template>
-  <div class="ai-catalog-section">
+  <div class="ai-catalog-section !pt-4 sm:!pt-0">
+    <div class="apply-section">
+      <a-button type="primary" size="large" block class="apply-button" @click=updateItemRendering()>
+        Apply
+      </a-button>
+    </div>
     <!-- Fixed Header -->
     <div class="ai-catalog-header">
       <span>AI Catalog</span>
@@ -109,11 +114,7 @@
     </div>
 
     <!-- Fixed Apply Button -->
-    <div class="apply-section">
-      <a-button type="primary" size="large" block class="apply-button" @click=updateItemRendering()>
-        Apply
-      </a-button>
-    </div>
+    
   </div>
 </template>
 
@@ -208,10 +209,12 @@ updateItemRendering(){
 
 
 <style scoped>
-.ai-catalog-section {
-  display: flex;
-  flex-direction: column;
-  height: 77vh; 
+@media (min-width: 768px) {
+  .ai-catalog-section {
+    height: 77vh; /* or your updated value */
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 .ai-catalog-header {
@@ -325,7 +328,7 @@ updateItemRendering(){
   display: flex;
   align-items: stretch;
   padding: 0;
-  min-height: 120px;
+  min-height: 180px;
 }
 
 .list-view .product-image {

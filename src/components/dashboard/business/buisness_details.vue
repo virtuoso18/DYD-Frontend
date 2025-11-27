@@ -111,8 +111,8 @@
     </a-button>
   </div>
 </a-modal>
-<div class="business-details-container !py-3 !pr-2 ">
-    <a-row class="main-content shadow-sm rounded-xl ">
+<div class="!sm:business-details-container sm:!py-3 !sm:!pr-2 ">
+    <a-row class="main-content shadow-sm !sm:rounded-xl ">
       <a-col :xs="24" :sm="24" :md="24" :lg="24" class="content-area">
         <div class="content-wrapper">
           <!-- {{ businessInfo.business_picture }} -->

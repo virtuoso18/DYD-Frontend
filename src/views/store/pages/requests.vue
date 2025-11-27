@@ -1,73 +1,146 @@
 <template>
   <div class="main" v-if="page_view === 'list_all_requests'">
-    <div class="header">
-      <h2>Requests</h2>
-      <div class="view-controls">
-        <div class="">
-      <a-input 
-        v-model:value="searchQuery"
-        placeholder="Search Product"
-        @input="handleSearch"
-      >
-        <template #suffix>
-          <search-outlined />
-        </template>
-      </a-input>
-    </div>&nbsp;
-        <a-button 
-          :type="viewMode === 'grid' ? 'primary' : 'default'"
-          @click="setViewMode('grid')"
-          :class="{ active: viewMode === 'grid' }"
+    <div className="hidden sm:block">
+
+      <div class="header ">
+        <h2>Requests</h2>
+        <div class="view-controls ">
+          <div class="">
+        <a-input 
+          v-model:value="searchQuery"
+          placeholder="Search Product"
+          @input="handleSearch"
         >
-          Grid
-        </a-button>
-        <a-button 
-          :type="viewMode === 'list' ? 'primary' : 'default'"
-          @click="setViewMode('list')"
-          :class="{ active: viewMode === 'list' }"
-        >
-          List
-        </a-button>
+          <template #suffix>
+            <search-outlined />
+          </template>
+        </a-input>
+      </div>&nbsp;
+          <a-button 
+            :type="viewMode === 'grid' ? 'primary' : 'default'"
+            @click="setViewMode('grid')"
+            :class="{ active: viewMode === 'grid' }"
+          >
+            Grid
+          </a-button>
+          <a-button 
+            :type="viewMode === 'list' ? 'primary' : 'default'"
+            @click="setViewMode('list')"
+            :class="{ active: viewMode === 'list' }"
+          >
+            List
+          </a-button>
+        </div>
       </div>
     </div>
-    <a-tabs v-model:activeKey="activeKey" @change="handleTabChange">
-      <a-tab-pane key="all" tab="All Request">
-        <RequestsList 
-          :requests="filteredRequests" 
-          :loading="loading"
-          :view-mode="viewMode"
-          @record-clicked="recordClicked"
-          @refresh="refreshRequests"
-        />
-      </a-tab-pane>
-      <a-tab-pane key="Pending" tab="Pending">
-        <RequestsList 
-          :requests="filteredRequests" 
-          :loading="loading"
-          :view-mode="viewMode"
-          @record-clicked="recordClicked"
-          @refresh="refreshRequests"
-        />
-      </a-tab-pane>
-      <a-tab-pane key="Completed" tab="Completed">
-        <RequestsList 
-          :requests="filteredRequests" 
-          :loading="loading"
-          :view-mode="viewMode"
-          @record-clicked="recordClicked"
-          @refresh="refreshRequests"
-        />
-      </a-tab-pane>
-      <a-tab-pane key="Rejected" tab="Rejected">
-        <RequestsList 
-          :requests="filteredRequests" 
-          :loading="loading"
-          :view-mode="viewMode"
-          @record-clicked="recordClicked"
-          @refresh="refreshRequests"
-        />
-      </a-tab-pane>
-    </a-tabs>
+
+    <div className="sm:hidden">
+      <div class=" !py-2 bg-white rounded-2xl ">
+
+  <!-- HEADER -->
+  <div class="header flex justify-between items-center">
+    
+    <!-- TITLE -->
+    <h2 class="m-0 font-semibold !text-[18px] pr-2">
+      Requests
+    </h2>
+
+    <!-- VIEW CONTROLS -->
+    <div class=" flex border border-[#d9d9d9] rounded-md overflow-hidden">
+
+      <!-- Search Box -->
+      <div class="border-r border-[#d9d9d9]">
+        <div class="relative">
+          <input
+            v-model="searchQuery"
+            @input="handleSearch"
+            placeholder="Search Product"
+            class="px-3 py-2 pl-9 w-30  border-none focus:ring-0 outline-none !text-[14px]"
+          />
+          <!-- Search icon -->
+          <svg
+            class="absolute left-2 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+        </div>
+      </div>
+
+      <!-- GRID BUTTON -->
+      <button
+        @click="setViewMode('grid')"
+        :class="viewMode === 'grid' 
+          ? '!bg-blue-500 text-white' 
+          : 'bg-white text-gray-700'"
+        class="px-2 py-2 text-sm font-medium border-none focus:outline-none"
+      >
+        Grid
+      </button>
+
+      <!-- LIST BUTTON -->
+      <button
+        @click="setViewMode('list')"
+        :class="viewMode === 'list' 
+          ? 'bg-blue-500 text-white' 
+          : 'bg-white text-gray-700'"
+        class="px-2 py-2 text-sm font-medium border-none focus:outline-none border-l border-[#d9d9d9]"
+      >
+        List
+      </button>
+
+    </div>
+  </div>
+
+</div>
+
+
+    </div>
+    <div className="pt-4">
+
+      <a-tabs v-model:activeKey="activeKey" @change="handleTabChange">
+        <a-tab-pane key="all" tab="All Request">
+          <RequestsList 
+            :requests="filteredRequests" 
+            :loading="loading"
+            :view-mode="viewMode"
+            @record-clicked="recordClicked"
+            @refresh="refreshRequests"
+          />
+        </a-tab-pane>
+        <a-tab-pane key="Pending" tab="Pending">
+          <RequestsList 
+            :requests="filteredRequests" 
+            :loading="loading"
+            :view-mode="viewMode"
+            @record-clicked="recordClicked"
+            @refresh="refreshRequests"
+          />
+        </a-tab-pane>
+        <a-tab-pane key="Completed" tab="Completed">
+          <RequestsList 
+            :requests="filteredRequests" 
+            :loading="loading"
+            :view-mode="viewMode"
+            @record-clicked="recordClicked"
+            @refresh="refreshRequests"
+          />
+        </a-tab-pane>
+        <a-tab-pane key="Rejected" tab="Rejected">
+          <RequestsList 
+            :requests="filteredRequests" 
+            :loading="loading"
+            :view-mode="viewMode"
+            @record-clicked="recordClicked"
+            @refresh="refreshRequests"
+          />
+        </a-tab-pane>
+      </a-tabs>
+    </div>
   </div>
   <div v-if="page_view==='request_details'">
 <selectedRequest :selected_request="selected_request" @back-button-clicked="backButtonClicked"/>
@@ -199,9 +272,17 @@ export default {
 
 .header h2 {
   margin: 0;
-  font-size: 24px;
+  font-size: 24px; /* default for desktop */
   font-weight: 600;
 }
+
+/* Apply when screen is BELOW sm (max-width: 639px) */
+@media (max-width: 639px) {
+  .header h2 {
+    font-size: 16px !important;
+  }
+}
+
 
 .view-controls {
   display: flex;
