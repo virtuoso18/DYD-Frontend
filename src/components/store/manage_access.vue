@@ -1341,7 +1341,7 @@ export default {
             request_message: ''
           };
           await this.fetchAllStaff();
-          this.$message.info('The professional user will need to accept the request to appear in your staff list.');
+          // this.$message.info('The professional user will need to accept the request to appear in your staff list.');
         } else {
           this.$message.error(data.message || 'Failed to send access request');
         }
@@ -1403,7 +1403,7 @@ export default {
             if (!data.error) {
               this.$message.success('Professional access revoked successfully');
               await this.fetchAllStaff();
-              await this.fetchProfessionalAccessRequests();
+              // await this.fetchProfessionalAccessRequests();
             } else {
               this.$message.error(data.message || 'Failed to revoke access');
             }

@@ -1,6 +1,15 @@
 <template>
 <div class="main">
-   
+   <a-row>
+      <a-col :span="4">
+        
+    <p>Some contents...</p>
+    <p>Some contents...</p>
+    <p>Some contents...</p>
+      </a-col>
+      <a-col :span="20">
+        <!-- {{ seeAll_Floor }} -->
+        
     <div class="products-list">
         <a-row >
             <a-col v-for="product in products" :key="product.id" 
@@ -72,6 +81,9 @@
             </a-col>
         </a-row>
     </div>
+    </a-col>
+    </a-row>
+    
 </div>
 </template>
 

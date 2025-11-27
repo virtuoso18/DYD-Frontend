@@ -1,146 +1,102 @@
 <template>
-  <a-row class="ai-catalog-container" style="min-height: 100vh; margin: 0; background-color: #f5f5f5;">
-    <!-- Sidebar -->
-    <a-col :xs="0" :sm="0" :md="6" :lg="6" style="background: #fff; border-right: 1px solid #f0f0f0; padding: 24px; overflow-y: auto; max-height: 100vh;">
-      <div style="padding-right: 8px;">
-        <h1 style="font-size: 24px; font-weight: 700; color: #000; margin-bottom: 24px; margin-top: 0;">AI Catalog</h1>
+  <div class="business-profiles-container">
+    <h2>All Business Accounts Here</h2>
+    
+    <!-- Business Profiles List -->
+    <div class="profiles-list">
+      <div v-if="all_businesses.length > 0" class="profiles-grid">
+        <div v-for="business in all_businesses" :key="business.id" class="business-card">
+          <!-- Your business card content here -->
+          <!-- Background image covering 100% width of card with centered overlay image -->
+<div 
+  :style="{
+    backgroundImage: `url(${this.$store.state.root_media_api}/media/${business.business_picture})`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+    height: '150px',
+    borderRadius: '10px',
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative'
+  }"
+>
+  <!-- Centered banner picture with negative margin -->
+  <img 
+    :src="`${this.$store.state.root_media_api}/media/${business.banner_picture}`" 
+    style="width: 70px; height: 70px;border:1px solid rgba(0,0,0,0.2); margin-bottom: -45%;margin-left: -75%; position: relative; z-index: 10; border-radius: 50%; object-fit: cover;"
+    alt="Business Banner"
+  >
+</div>
+           <!-- {{business.business_picture}} -->
+<!-- <br><br> -->
+ <div>
+<a-row>
+  <a-col :span="6"></a-col>
+  <a-col :span="18">
 
-        <!-- Select Suppliers -->
-        <div style="margin-bottom: 24px;">
-          <h3 style="font-size: 13px; font-weight: 600; color: #262626; margin-bottom: 5px; margin-top: 0;">Select Suppliers</h3>
-          <a-select
-            v-model:value="selectedSupplier"
-            placeholder="Choose a supplier"
-            style="width: 100%"
-          >
-            <a-select-option v-for="supplier in suppliers" :key="supplier" :value="supplier">
-              {{ supplier }}
-            </a-select-option>
-          </a-select>
-        </div>
+    <h3 style="color:black">{{ business.name }}</h3>
+    <!-- {{ business.slug }} -->
 
-        <!-- Select Country -->
-        <div style="margin-bottom: 24px;">
-          <h3 style="font-size: 13px; font-weight: 600; color: #262626; margin-bottom: 5px; margin-top: 0;">Select Country</h3>
-          <a-select
-            v-model:value="selectedCountry"
-            placeholder="Choose a country"
-            style="width: 100%"
-          >
-            <a-select-option v-for="country in countries" :key="country" :value="country">
-              {{ country }}
-            </a-select-option>
-          </a-select>
-        </div>
-
-        <!-- Select Store Categories -->
-        <div style="margin-bottom: 24px;">
-          <h3 style="font-size: 13px; font-weight: 600; color: #262626; margin-bottom: 5px; margin-top: 0;">Select Store Categories</h3>
-          <a-select
-            v-model:value="selectedCategory"
-            placeholder="Choose a category"
-            style="width: 100%"
-          >
-            <a-select-option v-for="category in categories" :key="category" :value="category">
-              {{ category }}
-            </a-select-option>
-          </a-select>
-        </div>
-
-        <!-- Divider -->
-        <a-divider />
-
-        <!-- Checkboxes Filter -->
-        <div style="margin-bottom: 24px;">
-          <h3 style="font-size: 13px; font-weight: 600; color: #262626; margin-bottom: 12px; margin-top: 0;">Filter Categories</h3>
-          <a-checkbox-group v-model:value="selectedFilters" style="width: 100%; display: flex; flex-direction: column; gap: 12px">
-            <a-checkbox v-for="category in categories" :key="category" :value="category">
-              {{ category }}
-            </a-checkbox>
-          </a-checkbox-group>
+    <a-button @click="$router.push('/explore-business-cataloges/'+business.slug)" type="primary" block >Show Products </a-button>
+  </a-col>
+</a-row>
+ </div>
         </div>
       </div>
-    </a-col>
-
-    <!-- Main Content -->
-    <a-col :xs="24" :sm="24" :md="18" :lg="18" style="padding: 0; overflow-y: auto; max-height: 100vh;">
-      <div style="padding: 24px; background-color: #f5f5f5;">
-        <!-- Header with Search -->
-        <div style="margin-bottom: 32px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; gap: 16px;">
-            <h2 style="font-size: 28px; font-weight: 700; color: #000; margin: 0;">Products</h2>
-            <a-input-search
-              v-model:value="searchQuery"
-              placeholder="Search Product"
-              allow-clear
-              style="width: 300px"
-              @search="onSearch"
-            />
-          </div>
-        </div>
-
-        <!-- Products Grid -->
-        <a-row :gutter="[24, 24]" style="margin: 0;">
-          <a-col
-            v-for="product in filteredProducts"
-            :key="product.id"
-            :xs="24"
-            :sm="12"
-            :md="8"
-            :lg="6"
-          >
-            <a-card
-              :bordered="false"
-              style="border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); transition: all 0.3s ease; background: #fff; cursor: pointer;"
-              :body-style="{ padding: '0' }"
-              @mouseenter="$event.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.12)'"
-              @mouseleave="$event.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.08)'"
-            >
-              <!-- Product Image -->
-              <div style="position: relative; width: 100%; height: 200px; background: linear-gradient(135deg, #8b6239 0%, #5c3d1f 100%); display: flex; align-items: center; justify-content: center; overflow: hidden;">
-                <div style="position: absolute; width: 100%; height: 100%; background: repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(0, 0, 0, 0.05) 2px, rgba(0, 0, 0, 0.05) 4px), repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(255, 255, 255, 0.03) 1px, rgba(255, 255, 255, 0.03) 2px);"></div>
-                <span style="position: absolute; top: 12px; left: 12px; background: #fff; color: #262626; padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: 600; z-index: 2;">{{ product.type }}</span>
-                <span style="position: absolute; bottom: 12px; left: 12px; background: #fff; color: #262626; padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: 700; z-index: 2;">{{ product.code }}</span>
-              </div>
-
-              <!-- Product Details -->
-              <div style="padding: 16px;">
-                <h4 style="font-size: 14px; font-weight: 600; color: #262626; margin: 0 0 12px 0;">{{ product.name }}</h4>
-
-                <!-- Color and Price -->
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                  <div style="display: flex; align-items: center; gap: 8px;">
-                    <span style="font-size: 11px; color: #8a8a8a;">Color</span>
-                    <div style="width: 16px; height: 16px; border-radius: 50%; border: 1px solid #d9d9d9; background-color: #3e2723;"></div>
-                  </div>
-                  <span style="font-size: 14px; font-weight: 700; color: #0066cc;">{{ product.price }}</span>
-                </div>
-
-                <!-- Action Buttons -->
-                <div style="display: flex; gap: 8px;">
-                  <a-button type="default" style="flex: 1;">
-                    Product Detail
-                  </a-button>
-                  <a-button
-                    :type="favorites.includes(product.id) ? 'primary' : 'default'"
-                    danger
-                    @click="toggleFavorite(product.id)"
-                    style="flex: 1;"
-                  >
-                    <HeartOutlined v-if="!favorites.includes(product.id)" />
-                    <HeartFilled v-else />
-                  </a-button>
-                </div>
-              </div>
-            </a-card>
-          </a-col>
-        </a-row>
-
-        <!-- Empty State -->
-        <a-empty v-if="filteredProducts.length === 0" description="No products found" style="margin-top: 48px" />
+      <div v-else class="no-data">
+        <p>No business profiles found</p>
       </div>
-    </a-col>
-  </a-row>
+    </div>
+
+    <!-- Pagination Controls -->
+    <div class="pagination-container" v-if="total_pages > 1">
+      <button 
+        @click="previous_page" 
+        :disabled="current_page === 1"
+        class="btn btn-prev"
+      >
+        Previous
+      </button>
+      
+      <div class="page-info">
+        <span>Page {{ current_page }} of {{ total_pages }}</span>
+        <select v-model.number="current_page" @change="fetch_All_Business_Accounts" class="page-select">
+          <option v-for="page in total_pages" :key="page" :value="page">
+            Go to page {{ page }}
+          </option>
+        </select>
+      </div>
+
+      <button 
+        @click="next_page" 
+        :disabled="current_page === total_pages"
+        class="btn btn-next"
+      >
+        Next
+      </button>
+    </div>
+
+    <!-- Items per page selector -->
+    <div class="items-per-page">
+      <label for="items-select">Items per page:</label>
+      <select 
+        id="items-select"
+        v-model.number="items_per_page" 
+        @change="reset_and_fetch"
+        class="items-select"
+      >
+        <option value="10">10</option>
+        <option value="20">20</option>
+        <option value="50">50</option>
+        <option value="100">100</option>
+      </select>
+    </div>
+
+    <div v-if="loading" class="loading">Loading...</div>
+  </div>
 </template>
 
 <script>
@@ -154,64 +110,191 @@ export default {
   },
   data() {
     return {
-      selectedSupplier: 'Aluma Design',
-      selectedCountry: 'India',
-      selectedCategory: 'Floor',
-      selectedFilters: [],
-      searchQuery: '',
-      favorites: [],
-      suppliers: ['Aluma Design', 'Supplier 2', 'Supplier 3', 'Supplier 4'],
-      countries: ['India', 'USA', 'UK', 'Canada', 'Australia'],
-      categories: [
-        'Floor',
-        'Sofa Sets',
-        'Sole',
-        'Beds',
-        'Dining Sets',
-        'Armchairs / TV Chairs',
-        'Youth Sofasice',
-        'Sofa Beds',
-        'Kids & Youth',
-        'Mattresses',
-        'Wardrobes',
-        'Coffee Tables & Sideboards',
-        'Rugs',
-        'Accent Furniture',
-      ],
-      products: [
-        { id: 1, name: 'Rich Walnut Laminate', type: 'Modern Floor', price: '$660', color: 'Walnut', colorHex: '#3e2723', code: '3HD7' },
-        { id: 2, name: 'Rich Walnut Laminate', type: 'Modern Floor', price: '$660', color: 'Walnut', colorHex: '#3e2723', code: '3HD7' },
-        { id: 3, name: 'Rich Walnut Laminate', type: 'Modern Floor', price: '$660', color: 'Walnut', colorHex: '#3e2723', code: '3HD7' },
-        { id: 4, name: 'Rich Walnut Laminate', type: 'Modern Floor', price: '$660', color: 'Walnut', colorHex: '#3e2723', code: '3HD7' },
-        { id: 5, name: 'Rich Walnut Laminate', type: 'Modern Floor', price: '$660', color: 'Walnut', colorHex: '#3e2723', code: '3HD7' },
-        { id: 6, name: 'Rich Walnut Laminate', type: 'Modern Floor', price: '$660', color: 'Walnut', colorHex: '#3e2723', code: '3HD7' },
-        { id: 7, name: 'Rich Walnut Laminate', type: 'Modern Floor', price: '$660', color: 'Walnut', colorHex: '#3e2723', code: '3HD7' },
-        { id: 8, name: 'Rich Walnut Laminate', type: 'Modern Floor', price: '$660', color: 'Walnut', colorHex: '#3e2723', code: '3HD7' },
-        { id: 9, name: 'Rich Walnut Laminate', type: 'Modern Floor', price: '$660', color: 'Walnut', colorHex: '#3e2723', code: '3HD7' },
-        { id: 10, name: 'Rich Walnut Laminate', type: 'Modern Floor', price: '$660', color: 'Walnut', colorHex: '#3e2723', code: '3HD7' },
-      ],
+      all_businesses: [],
+      current_page: 1,
+      total_pages: 1,
+      items_per_page: 10,
+      total_count: 0,
+      loading: false,
     };
   },
-  computed: {
-    filteredProducts() {
-      return this.products.filter(product => {
-        const matchesSearch = product.name.toLowerCase().includes(this.searchQuery.toLowerCase());
-        return matchesSearch;
-      });
-    },
+  mounted() {
+    this.fetch_All_Business_Accounts();
   },
+  computed: {},
   methods: {
-    toggleFavorite(id) {
-      const index = this.favorites.indexOf(id);
-      if (index > -1) {
-        this.favorites.splice(index, 1);
-      } else {
-        this.favorites.push(id);
+    async fetch_All_Business_Accounts() {
+      try {
+        this.loading = true;
+        const response = await fetch(
+          `${this.$store.state.root_api}Auth/api/fetch-all-busines-profiles/?page=${this.current_page}&page_size=${this.items_per_page}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Token ${localStorage.getItem("token")}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        const data = await response.json();
+        console.log(data);
+        
+        if (data.success) {
+          this.all_businesses = data.data;
+          this.total_count = data.total_count;
+          this.total_pages = data.total_pages;
+          this.current_page = data.current_page;
+        }
+      } catch (error) {
+        console.error("Failed to load business profiles:", error);
+      } finally {
+        this.loading = false;
       }
     },
-    onSearch(value) {
-      this.searchQuery = value;
+
+    next_page() {
+      if (this.current_page < this.total_pages) {
+        this.current_page++;
+        this.fetch_All_Business_Accounts();
+      }
+    },
+
+    previous_page() {
+      if (this.current_page > 1) {
+        this.current_page--;
+        this.fetch_All_Business_Accounts();
+      }
+    },
+
+    reset_and_fetch() {
+      this.current_page = 1;
+      this.fetch_All_Business_Accounts();
     },
   },
 };
 </script>
+
+<style scoped>
+.business-profiles-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+h2 {
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: #333;
+}
+
+.profiles-list {
+  margin-bottom: 30px;
+}
+
+.profiles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.business-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+}
+
+.business-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.business-card h3 {
+  margin: 0 0 10px 0;
+  font-size: 18px;
+  color: #1890ff;
+}
+
+.business-card p {
+  margin: 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.no-data {
+  text-align: center;
+  padding: 40px;
+  color: #999;
+}
+
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin: 30px 0;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 8px 16px;
+  border: 1px solid #1890ff;
+  background-color: white;
+  color: #1890ff;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+.btn:hover:not(:disabled) {
+  background-color: #1890ff;
+  color: white;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  border-color: #ddd;
+  color: #ddd;
+}
+
+.page-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.page-select {
+  padding: 6px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.items-per-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.items-select {
+  padding: 6px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.loading {
+  text-align: center;
+  padding: 20px;
+  color: #1890ff;
+  font-size: 16px;
+}
+</style>

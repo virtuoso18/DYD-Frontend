@@ -1203,6 +1203,8 @@
 </template>
 
 <script>
+
+
 import {
   LeftOutlined,
   QuestionCircleOutlined,
@@ -1606,18 +1608,21 @@ computed: {
     handleImageLoad() {
       console.log("✅ Image loaded successfully");
     },
+    
+// TO this:
 showError(title, message, retryCallback) {
   this.$notification.error({
     message: title,
     description: message,
     duration: 0,
-    btn: () => this.$createElement(
+    btn: h(
       'a-button',
       {
-        props: { type: 'primary', size: 'small' },
-        on: { click: retryCallback },
+        type: 'primary',
+        size: 'small',
+        onClick: retryCallback,
       },
-      'Retry'
+      { default: () => 'Retry' }
     ),
   });
 },
@@ -1928,53 +1933,39 @@ showError(title, message, retryCallback) {
       }
     },
 
-    
     async FetchFinalResults() {
-      console.log("📡 Fetching room data...");
+  console.log("📡 Fetching final results...");
+  this.loading = true;
+  this.error.room = null;
 
-      this.loading = true;
-      this.error.room = null;
+  try {
+    const roomId = this.$route.params.id;
+    const url = `${this.$store.state.root_api}engine/render-final-result/${roomId}`;
 
-      try {
-        const roomId = this.$route.params.id;
-        const url = `${this.$store.state.root_api}engine/render-final-result/${roomId}`;
+    const responseData = await this.makeApiRequest(
+      url,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Token ${localStorage.getItem("token")}`,
+        },
+      },
+      "room_data"
+    );
 
-        const responseData = await this.makeApiRequest(
-          url,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Token ${localStorage.getItem("token")}`,
-            },
-          },
-          "room_data"
-        );
-
-        if (responseData ) {
-          if (this.is_ready) {
-            // Room is ready!
-            console.log("✅ Room is ready!");
-            this.products_used=responseData.products_used;
-
-          } else {
-            this.error.room = "Room is not ready yet. Please try again later.";
-          }
-        } else {
-          this.error.room = "No room data found";
-        }
-      } catch (error) {
-        console.error("❌ Failed to fetch room data:", error);
-        this.error.room = error.message;
-
-        this.showError("Failed to Load Room", error.message, () => {
-          this.roomRetryCount = 0;
-          this.fetchRoom();
-        });
-      } finally {
-        this.loading = false;
-      }
-    },
+    if (responseData && responseData.data) {  // Add null check
+      this.products_used = responseData.data.products_used || [];
+      this.room_type = responseData.data.room_type || '';
+      this.room_design_type = responseData.data.room_design_type || '';
+    }
+  } catch (error) {
+    console.warn("⚠️ Could not fetch final results:", error.message);
+    // Don't show error notification for optional data
+  } finally {
+    this.loading = false;
+  }
+},
   },
 };
 </script>

@@ -50,7 +50,7 @@
 <span>My Store</span>
             </div>
 </a-button>
-<a-button type="primary" @click="this.$router.push({name:'manage-access'})" v-if="user.user_type ==='Professional' ">
+<!-- <a-button type="primary" @click="this.$router.push({name:'manage-access'})" v-if="user.user_type ==='Professional' ">
             <div style="display:flex;gap:5px">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 17" fill="none">
 <path d="M1.97754 7.49756V10.8321C1.97754 12.7184 1.97754 13.6616 2.56333 14.2476C3.14911 14.8336 4.09192 14.8336 5.97754 14.8336H9.97754C11.8631 14.8336 12.8059 14.8336 13.3917 14.2476C13.9775 13.6616 13.9775 12.7184 13.9775 10.8321V7.49756" stroke="white" stroke-linecap="round"/>
@@ -59,7 +59,7 @@
 </svg>
 <span>My Access</span>
             </div>
-</a-button>
+</a-button> -->
 
         <div class="icon-actions">
           <router-link :to="'/cart'">

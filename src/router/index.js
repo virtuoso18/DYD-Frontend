@@ -38,6 +38,9 @@ import my_likes from '@/components/dashboard/business/my_likes.vue'
 import add_furniture from '@/components/dashboard/business/my_products/add_new_product/add_furniture.vue'
 import add_light from '@/components/dashboard/business/my_products/add_new_product/add_light_ceiling_3d.vue'
 
+import profesional_buisness_details from '@/components/dashboard/professional/buisness_details.vue'
+
+
 
 // Import individual dashboard components for professional users
 import profesional_user_profile from '@/components/dashboard/professional/user_profile.vue'
@@ -46,12 +49,6 @@ import profesional_my_likes from '@/components/dashboard/professional/my_likes.v
 import profesional_transactions from '@/components/dashboard/professional/my_transactions.vue'
 import profesional_manage_subscription from '@/components/dashboard/professional/manage_subscription.vue'
 import professional_settings from '@/components/dashboard/professional/settings.vue'
-
-// profesional user manage access pages  
-import professional_user_access_manager from "@/views/manage_access_professional_user/manager.vue"
-import manage_access_analytics from "@/views/manage_access_professional_user/manage_access_analytics.vue"
-import manage_access_all_business from "@/views/manage_access_professional_user/manage_access_all_business.vue"
-import manage_access_all_tasks from "@/views/manage_access_professional_user/manage_access_all_tasks.vue"
 
 // Import individual dashboard components for professional users
 import normal_user_profile from '@/components/dashboard/user/user_profile.vue'
@@ -84,6 +81,7 @@ import Generate_Banner_Admin from '@/views/Platform_Admin_Access_Only/generate_b
 import notifications from '@/views/user/notifications.vue'
 import cart from '@/views/user/cart.vue'
 import ai_catalog from '@/views/pages/ai_catalog.vue'
+import business_ai_catalog from '@/views/pages/business_ai_catalog.vue'
 
 import ForgetPassword from '@/views/auth/forgetpassword/ForgetPassword.vue';
 import Sechdulemeeting from '@/views/pages/sechdulemeeting.vue'
@@ -133,6 +131,12 @@ const router = createRouter({
       component: NewHome,
     },
     
+     {
+      path: '/explore-business-cataloges/:business_slug',
+      name: 'explore_business_catalogue',
+      component: business_ai_catalog,
+    },
+    
     {
       path: '/pricing',
       name: 'pricing',
@@ -174,7 +178,7 @@ const router = createRouter({
     {
       path: '/blogs',
       name: 'blogs',
-      component: Blogs,
+      component: blogs,
     },
 
      {
@@ -186,7 +190,7 @@ const router = createRouter({
      {
       path: '/affiliateprogram',
       name: 'affiliateprogram',
-      component: AffiliateProgram,
+      component: affiliateprogram,
     },
 
      {
@@ -396,6 +400,11 @@ const router = createRouter({
           component: profesional_my_likes,
         },
         {
+          path: 'business-details',
+          name: 'profesional_buisness_details',
+          component: profesional_buisness_details,
+        },
+        {
           path: 'my-messages',
           name: 'professional_messages',
           component: normal_my_messages,
@@ -525,32 +534,6 @@ const router = createRouter({
     },
 
        
-{
-  path:'/manage-access',
-  component: professional_user_access_manager,
-  children: [
-    {
-      path: '',
-      name:'manage-access',
-      redirect: '/manage-access/manage-business-analytics', // Changed from '/manage-access/analytics'
-    },
-    {
-      path: 'manage-business-analytics',
-      name:'manage_business_analytics',
-      component: manage_access_analytics,
-    },
-    {
-      path: 'manage-business-access',
-      name:'manage_business_access',
-      component: manage_access_all_business,
-    },
-    {
-      path: 'manage-business-tasks',
-      name:'manage_access_all_tasks',
-      component: manage_access_all_tasks,
-    },
-  ]
-},
 
 // ==========================================
 // Access Management Engine 

@@ -44,20 +44,9 @@ Switch Furniture</a-button>
 Switch Furniture</a-button>
     </div>
     </template>
-    <a-row>
-      <a-col :span="4">
-        
-    <p>Some contents...</p>
-    <p>Some contents...</p>
-    <p>Some contents...</p>
-      </a-col>
-      <a-col :span="20">
-        <!-- {{ seeAll_Floor }} -->
-        
-        <floor_textures_bottom_drawer_menu :products="seeAll_Floor"/>
-      </a-col>
-    </a-row>
     
+        <floor_textures_bottom_drawer_menu :products="seeAll_Floor"/>
+      
   </a-drawer>
   <!-- Furniture Drawer -->
 <a-drawer
@@ -79,18 +68,10 @@ Switch Furniture</a-button>
 Switch Furniture</a-button>
     </div>
     </template>
-    <a-row>
-      <a-col :span="4">
-        
-    <p>Some contents...</p>
-    <p>Some contents...</p>
-    <p>Some contents...</p>
-      </a-col>
-      <a-col :span="20">
+    
 
         <furnitures_bottom_drawer_menu :products="seeAll_furnitures"/>
-      </a-col>
-    </a-row>
+
   </a-drawer>
   <!-- Lights Drawerr -->
 <a-drawer
@@ -112,18 +93,10 @@ Switch Furniture</a-button>
 Switch Lights</a-button>
     </div>
     </template>
-    <a-row>
-      <a-col :span="4">
-        
-    <p>Some contents...</p>
-    <p>Some contents...</p>
-    <p>Some contents...</p>
-      </a-col>
-      <a-col :span="20">
+    
 
         <light_items_bottom_drawer_menu :products="seeAll_Lights"/>
-      </a-col>
-    </a-row>
+      
   </a-drawer>
 
   <!-- Fetch All Drawer  -->

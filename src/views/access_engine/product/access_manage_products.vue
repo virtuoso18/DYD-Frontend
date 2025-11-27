@@ -1151,6 +1151,7 @@
                                 </a-button>
                             </div>
                             <div v-else>
+                                
                                 <a-table 
                                 :columns="columns" 
                                 :data-source="myLights" 
@@ -1262,6 +1263,7 @@
 
         <!-- Product Details View -->
         <div v-if="currentView === 'details'" style="max-width: 1200px;">
+            
             <show_floorTexture_product  :product_access_recieved="product_access_recieved" :selectedTexture="selectedProduct" v-if="active_tab=== 'Floor' && selectedProduct" @edit_texture="editProduct" @delete_texture="delete_product" @back_product_list="backToList" />
             <show_wallTexture_product  :product_access_recieved="product_access_recieved"  :selectedTexture="selectedProduct" v-if="active_tab=== 'Wall' && selectedProduct" @edit_texture="editProduct" @delete_texture="delete_product" @back_product_list="backToList" />
             <!-- <show_Light_product  :selectedProduct="selectedProduct" v-if="active_tab===  'Lights' && selectedProduct" @edit_product="editProduct" @delete_product="delete_product" @back_product_list="backToList" /> -->
@@ -1269,9 +1271,10 @@
             <!-- <product_details :selectedProduct="selectedProduct" v-if="selectedProduct" @edit_product="editProduct" @delete_product="delete_product" @back_product_list="backToList"/> -->
 
             <!-- 3 Types of Light Products 3d='hanging', 'sunk', 'unsunk'  -->
-            <show_Light_product_3D  :product_access_recieved="product_access_recieved"  :selectedProduct="selectedProduct" v-if="active_tab===  'Lights' && selectedProduct && selectedProduct.category.name=='Light' &&  selectedProduct.light_type=='hanging' " @edit_product="editProduct" @delete_product="delete_product" @back_product_list="backToList" />
-            <show_Light_product_sunk  :product_access_recieved="product_access_recieved"  :selectedProduct="selectedProduct" v-if="active_tab===  'Lights' && selectedProduct && selectedProduct.category.name=='Light' &&  selectedProduct.light_type=='sunk'" @edit_product="editProduct" @delete_product="delete_product" @back_product_list="backToList" />
-            <show_Light_product_unsunk  :product_access_recieved="product_access_recieved"  :selectedProduct="selectedProduct" v-if="active_tab===  'Lights' && selectedProduct && selectedProduct.category.name=='Light' &&  selectedProduct.light_type=='unsunk'" @edit_product="editProduct" @delete_product="delete_product" @back_product_list="backToList" />
+             
+            <show_Light_product_3D  :product_access_recieved="product_access_recieved"  :selectedProduct="selectedProduct" v-if="active_tab===  'Lights' && selectedProduct && selectedProduct.is_ceiling_light_product &&  selectedProduct.light_type=='hanging' " @edit_product="editProduct" @delete_product="delete_product" @back_product_list="backToList" />
+            <show_Light_product_sunk  :product_access_recieved="product_access_recieved"  :selectedProduct="selectedProduct" v-if="active_tab===  'Lights' && selectedProduct && selectedProduct.is_ceiling_light_product &&  selectedProduct.light_type=='sunk'" @edit_product="editProduct" @delete_product="delete_product" @back_product_list="backToList" />
+            <show_Light_product_unsunk  :product_access_recieved="product_access_recieved"  :selectedProduct="selectedProduct" v-if="active_tab===  'Lights' && selectedProduct && selectedProduct.is_ceiling_light_product &&  selectedProduct.light_type=='unsunk'" @edit_product="editProduct" @delete_product="delete_product" @back_product_list="backToList" />
 
         </div>
 
@@ -1284,9 +1287,9 @@
             
             <!-- <edit_Light :selectedProduct="selectedProduct" v-if="active_tab===  'Lights' && selectedProduct" :categories_available="categories_available" :types="types" @cancel_edit_back_product_list="backToList" /> -->
             
-            <edit_Light_hanging_3d :selectedProduct="selectedProduct" v-if="active_tab===  'Lights' && selectedProduct && selectedProduct.category.name=='Light' &&  selectedProduct.light_type=='hanging'" :categories_available="categories_available" :types="types" @cancel_edit_back_product_list="backToList"/>
-            <edit_Light_sunk :selectedProduct="selectedProduct" v-if="active_tab===  'Lights' && selectedProduct && selectedProduct.category.name=='Light' &&  selectedProduct.light_type=='sunk'" :categories_available="categories_available" :types="types" @cancel_edit_back_product_list="backToList" />
-            <edit_Light_unsunk :selectedProduct="selectedProduct" v-if="active_tab===  'Lights' && selectedProduct && selectedProduct.category.name=='Light' &&  selectedProduct.light_type=='unsunk'" :categories_available="categories_available" :types="types" @cancel_edit_back_product_list="backToList" />
+            <edit_Light_hanging_3d :selectedProduct="selectedProduct" v-if="active_tab===  'Lights' && selectedProduct && selectedProduct.is_ceiling_light_product &&  selectedProduct.light_type=='hanging'" :categories_available="categories_available" :types="types" @cancel_edit_back_product_list="backToList"/>
+            <edit_Light_sunk :selectedProduct="selectedProduct" v-if="active_tab===  'Lights' && selectedProduct && selectedProduct.is_ceiling_light_product &&  selectedProduct.light_type=='sunk'" :categories_available="categories_available" :types="types" @cancel_edit_back_product_list="backToList" />
+            <edit_Light_unsunk :selectedProduct="selectedProduct" v-if="active_tab===  'Lights' && selectedProduct && selectedProduct.is_ceiling_light_product &&  selectedProduct.light_type=='unsunk'" :categories_available="categories_available" :types="types" @cancel_edit_back_product_list="backToList" />
         </div>
 
         <!-- Hidden file inputs for image uploads -->
@@ -1940,7 +1943,7 @@ truncateText(text, charLimit = 7) {
                 if (this.active_tab === 'Floor'){
                     url_product_details=`${this.$store.state.root_api}access-engine/api/business-products/read-product-floor-tile/${product_id}?access-id=`+this.$route.query.access_id
                 }
-                if (this.active_tab === 'Light'){
+                if (this.active_tab === 'Lights'){
                     url_product_details=`${this.$store.state.root_api}access-engine/api/business-products/read-product-light/${product_id}?access-id=`+this.$route.query.access_id
                 }
                 const token = localStorage.getItem('token');
@@ -1953,7 +1956,7 @@ truncateText(text, charLimit = 7) {
                 const result = await response.json();
                 if (result.success) {
                     const data = result.data;
-                    console.log(data)
+                    console.log(result)
                     this.selectedProduct = data;
                     this.categories_available = result.categories_available
                     this.types = result.types

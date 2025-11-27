@@ -97,13 +97,12 @@ export default {
           });
           return;
         }
-
         if (data.token) {
           // Save token & user details
           localStorage.setItem("token", data.token);
           localStorage.setItem("user", JSON.stringify(data.user));
           localStorage.setItem("profile", JSON.stringify(data.profile));
-          if (data.user.is_business){
+          if (data.user.is_business || data.user.is_professional ){
             localStorage.setItem("business_profile", JSON.stringify(data.business_profile));
           }
 

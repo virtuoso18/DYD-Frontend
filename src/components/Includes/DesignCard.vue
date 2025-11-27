@@ -56,9 +56,9 @@
 
       <!-- Avatar + Name -->
       <div class="flex items-center gap-2">
-        <img 
+        <img style="border:1px solid rgba(0,0,0,0.1)"
           :src="avatar" 
-          class="w-6 h-6 rounded-full border"
+          class="w-8 h-8 rounded-full border"
         />
 <span class="!font-poppins font-normal text-[7px] sm:text-[14px] leading-[20px] tracking-normal text-center text-gray-600">
   {{ name }}
@@ -81,14 +81,36 @@
 </div>
 
         <!-- Likes -->
-       <div 
+<div 
   v-if="likes !== null && likes !== undefined" 
-  class="flex items-center gap-1"
+  class="flex items-center gap-1 cursor-pointer"
+  @click="toggleLike"
 >
-  <svg width="16" height="16" fill="red">
+  <!-- Filled heart when liked -->
+  <svg 
+    v-if="is_liked" 
+    width="16" 
+    height="16" 
+    fill="red" 
+    class="transition-colors duration-200"
+  >
     <path d="M8 14s6-4.35 6-8.5A3.5 3.5 0 0 0 8 4a3.5 3.5 0 0 0-6 1.5C2 9.65 8 14 8 14z" />
   </svg>
-  {{ formatNumber(likes) }}
+  
+  <!-- Outlined heart when not liked -->
+  <svg 
+    v-else 
+    width="16" 
+    height="16" 
+    fill="none" 
+    stroke="currentColor" 
+    stroke-width="1.5"
+    class="transition-colors duration-200"
+  >
+    <path d="M8 14s6-4.35 6-8.5A3.5 3.5 0 0 0 8 4a3.5 3.5 0 0 0-6 1.5C2 9.65 8 14 8 14z" />
+  </svg>
+  
+  <span>{{ likes }}</span>
 </div>
 
 
@@ -110,6 +132,7 @@ export default {
     name: String,
     likes: Number,
     comments: Number,
+    is_liked: Boolean,
     width: { type: String, default: "100%" },
     height: { type: String, default: "280px" },
     imageWidth: { type: String, default: "328px" },
@@ -120,8 +143,10 @@ export default {
     formatNumber(num) {
       if (num >= 1000) return (num / 1000).toFixed(1) + "k";
       return num;
-    }
+    },
+  
   }
+
 }
 </script>
 

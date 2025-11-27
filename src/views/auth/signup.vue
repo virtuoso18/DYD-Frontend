@@ -248,10 +248,90 @@
 
     <!-- Step 3: Final Approval (if professional selected) -->
     <div v-if="currentStep === 3 && selectedType === 'professional'" class="step-content">
-      <div class="step-header">
+      <!-- <div class="step-header">
         <h2>Final Approval</h2>
+      </div> -->
+
+      <div class="step-header">
+        <h2 style="margin-bottom:0">Complete Business Details</h2>
       </div>
 
+      <div class="form-container">
+        <!-- <div class="upload-section">
+          <div class="upload-placeholder">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="#ccc">
+              <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1H5C3.9 1 3 1.9 3 3V21C3 22.1 3.9 23 5 23H19C20.1 23 21 22.1 21 21V9M19 9H14V4H19V9Z"/>
+            </svg>
+          </div>
+        </div> -->
+
+        <div class="input-group">
+          <label>Business Name</label>
+          <a-input 
+            v-model:value="businessInfo.businessName"
+            placeholder="Business Name"
+            size="large"
+            class="custom-input"
+            :class="{ 'input-error': errors.businessName }"
+            @blur="validateField('businessName')"
+          />
+          <span v-if="errors.businessName" class="error-message">{{ errors.businessName }}</span>
+        </div>
+
+        <div class="input-group">
+          <label>Business Email</label>
+          <a-input 
+            v-model:value="businessInfo.email"
+            placeholder="Business Email"
+            size="large"
+            class="custom-input"
+            :class="{ 'input-error': errors.businessEmail }"
+            @blur="validateField('businessEmail')"
+          />
+          <span v-if="errors.businessEmail" class="error-message">{{ errors.businessEmail }}</span>
+          <div v-if="businessInfo.email && !validateEmail(businessInfo.email) && !errors.businessEmail" class="password-feedback password-error">
+            Please enter a valid email address
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label>Phone Number</label>
+          <a-input 
+            v-model:value="businessInfo.phone"
+            placeholder="+91 Enter phone number"
+            size="large"
+            class="custom-input"
+            :class="{ 'input-error': errors.businessPhone }"
+            @blur="validateField('businessPhone')"
+          />
+          <span v-if="errors.businessPhone" class="error-message">{{ errors.businessPhone }}</span>
+          <div v-if="businessInfo.phone && !validatePhone(businessInfo.phone) && !errors.businessPhone" class="password-feedback password-error">
+            Please enter a valid phone number
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label>License</label>
+          <a-input 
+            v-model:value="businessInfo.license"
+            placeholder="License (Optional)"
+            size="large"
+            class="custom-input"
+          />
+        </div>
+
+        <div class="input-group">
+          <label>Category</label>
+          <div class="category-tags">
+            <span class="tag" :class="{ active: businessInfo.categories.includes('Architecture') }" @click="toggleCategory('Architecture')">Architecture</span>
+            <span class="tag" :class="{ active: businessInfo.categories.includes('Interior Design') }" @click="toggleCategory('Interior Design')">Interior Design</span>
+            <span class="tag" :class="{ active: businessInfo.categories.includes('Kitchen Design') }" @click="toggleCategory('Kitchen Design')">Kitchen Design</span>
+          </div>
+        </div>
+
+        
+      </div>
+   <br>
       <div class="form-container">
         <div class="approval-options">
           <div class="checkbox-group">
@@ -278,6 +358,18 @@
         >
           {{ loading ? 'Creating Account...' : 'Continue' }}
         </a-button>
+
+        <!-- <a-button 
+          type="primary" 
+          size="large" 
+          class="continue-btn" 
+          block
+          :loading="loading"
+          :disabled="!isBusinessInfoValid || loading"
+          @click="submitRegistration"
+        >
+          {{ loading ? 'Creating Account...' : 'Submit' }}
+        </a-button> -->
       </div>
     </div>
 
@@ -699,6 +791,12 @@ export default {
       } else if (this.selectedType === 'professional') {
         return {
           ...baseData,
+          businessName: this.businessInfo.businessName.trim(),
+          businessEmail: this.businessInfo.email.trim(),
+          phoneNumber: this.businessInfo.phone.trim(),
+          businessDescription: '',
+          businessCategory: this.businessInfo.categories.join(', '),
+          servicesOffered: '',
           termsAgreed: this.finalApproval.contactApproval && this.finalApproval.accountApproval,
           professionalDescription: '',
         };
@@ -1019,14 +1117,14 @@ export default {
 }
 
 .step-header {
-  margin-bottom: 32px;
+  margin-bottom: 16px;
   margin-left:60px;
   text-align: left;
 }
 
 .step-header h2 {
   color: #1a1a1a;
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 600;
   margin: 0 0 8px 0;
   letter-spacing: -0.5px;
@@ -1097,7 +1195,7 @@ export default {
 .form-container {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 10px;
   flex: 1;
 }
 

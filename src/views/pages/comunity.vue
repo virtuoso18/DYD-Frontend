@@ -136,14 +136,9 @@
 
     </div>
 
-    <div className="bg-[#F2F2F2] !py-6">
-      <span 
-        class="!font-proza-libre !font-semibold !text-[32px] !leading-[40px]  text-[#1A1A1A] !tracking-[-0.02em] text-center block"
-      >
-        Today's Top Designs
-      </span>
+    <!-- <div className="bg-[#F2F2F2] !py-6">
       
-      <div class="flex flex-row overflow-x-auto !p-4 no-scrollbar  gap-6">
+       <div class="flex flex-row overflow-x-auto !p-4 no-scrollbar  gap-6">
         <DesignCard
           image="https://kahedu.edu.in/n/wp-content/uploads/2021/07/6-SECRETS-FOR-MASTERING-THE-ART-OF-PUBLIC-SPEAKING-1-990x500.jpg"
           avatar="https://www.svgrepo.com/show/382095/female-avatar-girl-face-woman-user-4.svg"
@@ -194,72 +189,170 @@
           width="350px"
           height="270px"
         />
-      </div>
-    </div>
+      </div> 
+    </div> -->
 
     <div class="w-full mx-auto px-4">
       <!-- ==================== SECTION 1 ==================== -->
-      <h1 class="text-4xl font-semibold text-center !py-10">Community</h1>
+      <!-- <h1 class="text-4xl font-semibold text-center !py-10">Community</h1> -->
 
       <!-- Tabs -->
-     <div class="flex gap-6 justify-center pb-8">
-  <button
-    v-for="(tab, index) in tabs"
-    :key="index"
-    @click="changeTab(tab)"
-    class="tab-text tab-btn"
-    :class="activeTab === tab ? 'tab-active' : 'tab-inactive'"
-  >
-    {{ tab }}
-  </button>
-</div>
+     <!-- <div class="flex gap-6 justify-center pb-8">
+        <button
+          v-for="(tab, index) in tabs"
+          :key="index"
+          @click="changeTab(tab)"
+          class="tab-text tab-btn"
+          :class="activeTab === tab ? 'tab-active' : 'tab-inactive'"
+        >
+          {{ tab }}
+        </button>
+    </div> -->
 
      <!-- Desktop Grid -->
-<div class="grid grid-cols-4 sm:grid-cols-4 !pt-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 hidden sm:grid place-items-center !px-4 gap-x-10 gap-6 community-section">
-  <DesignCard
-    v-for="(card, index) in paginatedCards"
-    :key="`card-${page}-${index}`"
-    :image="card.image"
-    :avatar="card.avatar"
-    :tags="card.tags"
-    :views="card.views"
-    :name="card.name"
-    :likes="card.likes"
-    :comments="card.comments"
-    width="328px"
-    height="270px"
-    @click.stop="openCommentsModal(card)"
-    
-  />
-</div>
+    <!-- <div class="grid grid-cols-4 sm:grid-cols-4 !pt-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 hidden sm:grid place-items-center !px-4 gap-x-10 gap-6 community-section">
+      <DesignCard
+        v-for="(card, index) in paginatedCards"
+        :key="`card-${page}-${index}`"
+        :image="card.image"
+        :avatar="card.avatar"
+        :tags="card.tags"
+        :views="card.views"
+        :name="card.name"
+        :likes="card.likes"
+        :comments="card.comments"
+        width="328px"
+        height="270px"
+        @click.stop="openCommentsModal(card)"
+        
+      />
+    </div> -->
 
 <!-- Mobile Grid -->
-<div class="grid grid-cols-2 gap-8 sm:grid-cols-2 !pt-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 sm:hidden block place-items-center !px-4 gap-x-10 gap-6 community-section">
-  <DesignCard
-    v-for="(card, index) in paginatedCards"
-    :key="`card-${page}-${index}`"
-    :image="card.image"
-    :avatar="card.avatar"
-    :tags="card.tags"
-    :views="card.views"
-    :name="card.name"
-    :likes="card.likes"
-    :comments="card.comments"
-    width="178px"
-    height="190px"
-    imageWidth="178px"
-    imageHeight="145px"
-    @click.stop="openCommentsModal(card)"
-  />
+    <!-- <div class="grid grid-cols-2 gap-8 sm:grid-cols-2 !pt-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 sm:hidden block place-items-center !px-4 gap-x-10 gap-6 community-section">
+      <DesignCard
+        v-for="(card, index) in paginatedCards"
+        :key="`card-${page}-${index}`"
+        :image="card.image"
+        :avatar="card.avatar"
+        :tags="card.tags"
+        :views="card.views"
+        :name="card.name"
+        :likes="card.likes"
+        :comments="card.comments"
+        width="178px"
+        height="190px"
+        imageWidth="178px"
+        imageHeight="145px"
+        @click.stop="openCommentsModal(card)"
+      />
+    </div> -->
+
+<!-- Today's Top Designs Section -->
+<div className="bg-[#F2F2F2] !py-6">
+  <span 
+    class="!font-proza-libre !font-semibold !text-[32px] !leading-[40px]  text-[#1A1A1A] !tracking-[-0.02em] text-center block"
+  >
+    Today's Top Designs
+  </span>
+  
+  <div class="flex flex-row overflow-x-auto !p-4 no-scrollbar gap-6" v-if="topDesigns.length > 0">
+    <DesignCard
+      v-for="(post, index) in topDesigns"
+      :key="`top-${post.id}`"
+      :image="getPostImage(post)"
+      :avatar="getUserAvatar(post)"
+      :tags="getPostTags(post)"
+      :name="post.post_owner.username"
+      :likes="post.like_count"
+      :views="post.view_count"
+      :comments="post.comment_count"
+      :is_liked="post.is_liked"
+      width="328px"
+      height="270px"
+      @click.stop="openCommentsModal(post)"
+    />
+  </div>
 </div>
+
+<!-- Community Section -->
+<div class="w-full mx-auto px-4">
+  <h1 class="text-4xl font-semibold text-center !py-10">Community</h1>
+
+  <!-- Tabs -->
+  <div class="flex gap-6 justify-center pb-8">
+    <button
+      v-for="(tab, index) in tabs"
+      :key="index"
+      @click="changeTab(tab)"
+      class="tab-text tab-btn"
+      :class="activeTab === tab ? 'tab-active' : 'tab-inactive'"
+    >
+      {{ tab }}
+    </button>
+  </div>
+
+  <!-- Desktop Grid -->
+  <div class="grid grid-cols-4 sm:grid-cols-4 !pt-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 hidden sm:grid place-items-center !px-4 gap-x-10 gap-6 community-section" v-if="apiData.length > 0">
+    <DesignCard
+      v-for="(post, index) in paginatedCards"
+      :key="`card-${page}-${post.id}`"
+      :image="getPostImage(post)"
+      :avatar="getUserAvatar(post)"
+      :tags="getPostTags(post)"
+      :views="post.view_count"
+      :name="post.post_owner.username"
+      :likes="post.like_count"
+      :comments="post.comment_count"
+      :is_liked="post.is_liked"
+      :id="post.id"
+      width="328px"
+      height="270px"
+      @click.stop="openCommentsModal(post)"
+    />
+  </div>
+
+  <!-- Mobile Grid -->
+  <div class="grid grid-cols-2 gap-8 sm:grid-cols-2 !pt-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 sm:hidden block place-items-center !px-4 gap-x-10 gap-6 community-section" v-if="apiData.length > 0">
+    <DesignCard
+      v-for="(post, index) in paginatedCards"
+      :key="`card-${page}-${post.id}`"
+      :image="getPostImage(post)"
+      :avatar="getUserAvatar(post)"
+      :tags="getPostTags(post)"
+      :views="post.view_count"
+      :name="post.post_owner.username"
+      :likes="post.like_count"
+      :comments="post.comment_count"
+      width="178px"
+      height="190px"
+      imageWidth="178px"
+      imageHeight="145px"
+      @click.stop="openCommentsModal(post)"
+    />
+  </div>
+
+  <!-- Loading State -->
+  <!-- <div v-if="loading" class="text-center !py-12">
+    <div class="loading-spinner"></div>
+    <p class="text-gray-500 mt-4">Loading posts...</p>
+  </div> -->
+
+  <!-- Empty State -->
+  <div v-if="!loading && apiData.length === 0" class="text-center !py-12">
+    <p class="text-gray-500">No posts found.</p>
+  </div>
+</div>
+
 
 <!-- Comments Modal -->
     <CommentsModal 
-      :isOpen="showCommentsModal" 
-      :post="selectedPost"
-      @close="showCommentsModal = false"
-    />
-
+    :isOpen="showCommentsModal" 
+    :post="selectedPost"
+    @close="showCommentsModal = false"
+    @commentAdded="onCommentAddedOrLiked"
+    @likeToggled="onCommentAddedOrLiked"
+  />
       <!-- Empty State -->
       <div v-if="paginatedCards.length === 0" class="text-center !py-12">
         <p class="text-gray-500">No designs found for this category.</p>
@@ -268,23 +361,23 @@
       <!-- Pagination -->
       <div class="flex justify-center items-center gap-3 !py-10">
         <!-- Previous Button -->
-        <button 
+       <button 
           @click="prevPage"
-          :disabled="page === 1"
-          :class="page === 1 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'"
+          :disabled="currentPage === 1"
+          :class="currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'"
         >
           <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
             <circle cx="15" cy="15" r="15" fill="#F2F2F2"/>
             <path d="M18 8.4541L11 14.9999L18 21.5456" stroke="#666666" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </button>
-
+         <!-- {{pageNumbers}} -->
         <!-- Page Numbers -->
         <button 
           v-for="n in pageNumbers" 
           :key="n"
           class="w-8 h-8 rounded-full flex items-center justify-center"
-          :class="page === n ? 'bg-blue-600 !text-white' : 'border'"
+          :class="currentPage === n ? 'bg-blue-600 !text-white' : 'border'"
           @click="goToPage(n)"
         >
           {{ n }}
@@ -292,10 +385,10 @@
 
         <!-- Next Button -->
         <button 
-          @click="nextPage"
-          :disabled="page === totalPages"
-          :class="page === totalPages ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'"
-        >
+            @click="nextPage"
+            :disabled="currentPage === totalPages"
+            :class="currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'"
+          >
           <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
             <circle cx="15" cy="15" r="15" transform="matrix(-1 0 0 1 30 0)" fill="#F2F2F2"/>
             <path d="M12 8.4541L19 14.9999L12 21.5456" stroke="#666666" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -304,8 +397,8 @@
       </div>
 
       <!-- Page Info -->
-      <div class="text-center text-gray-600 text-sm !pb-2">
-        Showing {{ ((page - 1) * itemsPerPage) + 1 }} - {{ Math.min(page * itemsPerPage, filteredCards.length) }} of {{ filteredCards.length }} designs
+     <div class="text-center text-gray-600 text-sm !pb-2">
+        Showing {{ ((currentPage - 1) * itemsPerPage) + 1 }} - {{ Math.min(currentPage * itemsPerPage, totalCount) }} of {{ totalCount }} designs
       </div>
 
       <!-- Tap and Get credit -->
@@ -490,13 +583,13 @@ export default {
       swiper_bg: swiper_bg,
       slidesPerView: window.innerWidth <= 768 ? 1 : 5,
       designers_slidesPerView: window.innerWidth <= 768 ? 3 : 8,
-      tabs: [
-        "All Type", "Living Room", "Dinning Room", "Kitchen",
-        "Home Office", "Bedroom"
-      ],
+      topDesigns: [],
+    trendingTags: [],
+    statsLoading: false,
+      tabs: ["All Type"],
       activeTab: "All Type",
-      page: 1,
-      itemsPerPage: 12,
+     currentPage: 1,
+     itemsPerPage: 20,
       allCards: [
         {
           image: "https://kahedu.edu.in/n/wp-content/uploads/2021/07/6-SECRETS-FOR-MASTERING-THE-ART-OF-PUBLIC-SPEAKING-1-990x500.jpg",
@@ -833,6 +926,20 @@ designers: [
           simulations: 65748
         }
       ],
+      apiData: [],
+      loading: false,
+      totalPages: 1,
+      totalCount: 0,
+
+    // commentsModalVisible: false,
+    // selectedPostForComments: null,
+    modalComments: [],
+    modalCommentsPage: 1,
+    hasMoreModalComments: false,
+    loadingModalComments: false,
+    addingModalComment: false,
+    newModalComment: "",
+    postComments: [] 
     };
   },
   setup() {
@@ -849,63 +956,363 @@ designers: [
     };
   },
   computed: {
-    filteredCards() {
-      if (this.activeTab === "All Type") return this.allCards;
-      return this.allCards.filter((card) => card.category === this.activeTab);
-    },
-    totalPages() {
-      return Math.ceil(this.filteredCards.length / this.itemsPerPage);
-    },
-    paginatedCards() {
-      const start = (this.page - 1) * this.itemsPerPage;
-      const end = start + this.itemsPerPage;
-      return this.filteredCards.slice(start, end);
-    },
-    pageNumbers() {
-      const pages = [];
-      for (let i = 1; i <= this.totalPages; i++) {
-        pages.push(i);
-      }
-      return pages;
+    // filteredCards() {
+    //   if (this.activeTab === "All Type") return this.allCards;
+    //   return this.allCards.filter((card) => card.category === this.activeTab);
+    // },
+    // totalPages() {
+    //   return Math.ceil(this.filteredCards.length / this.itemsPerPage);
+    // },
+    // paginatedCards() {
+    //   const start = (this.page - 1) * this.itemsPerPage;
+    //   const end = start + this.itemsPerPage;
+    //   return this.filteredCards.slice(start, end);
+    // },
+    // pageNumbers() {
+    //   const pages = [];
+    //   for (let i = 1; i <= this.totalPages; i++) {
+    //     pages.push(i);
+    //   }
+    //   return pages;
+    // }
+   
+  totalPages() {
+    return Math.ceil(this.filteredCards.length / this.itemsPerPage);
+  },
+ 
+  
+ filteredCards() {
+    return this.apiData;
+  },
+  paginatedCards() {
+    return this.apiData;
+  },
+  pageNumbers() {
+    const pages = [];
+    const maxVisiblePages = 5;
+    let startPage = Math.max(1, this.currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(this.totalPages, startPage + maxVisiblePages - 1);
+    
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
     }
+    
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+    return pages;
+  }
   },
   methods: {
 
+//     data() {
+//   return {
+//     // ... your existing data properties ...
+    
+//     // Add these for comments modal functionality
+//     commentsModalVisible: false,
+//     selectedPostForComments: null,
+//     modalComments: [],
+//     modalCommentsPage: 1,
+//     hasMoreModalComments: false,
+//     loadingModalComments: false,
+//     addingModalComment: false,
+//     newModalComment: "",
+//     postComments: [] // Keep this for your existing CommentsModal if needed
+//   };
+// },
+    // methods: {
+    //   // ... your existing methods ...
 
-     openCommentsModal(card) {
-      this.selectedPost = {
-        userName: card.name,
-        userAvatar: card.avatar,
-        image: card.image,
-        views: card.views,
-        likes: card.likes,
-        description: 'Vorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Curabitur tempus urna at turpis condimentum lobortis.',
-        tags: card.tags
-      };
-      this.showCommentsModal = true;
-    },
-    changeTab(tab) {
-      this.activeTab = tab;
-      this.page = 1;
-    },
-    goToPage(pageNum) {
-      if (pageNum >= 1 && pageNum <= this.totalPages) {
-        this.page = pageNum;
-        this.scrollToCommunity();
+    //   // Comments Modal Methods - Integrated from provided logic
+    //   async openCommentsModal(post) {
+    //     this.selectedPostForComments = { ...post };
+    //     this.modalComments = [];
+    //     this.modalCommentsPage = 1;
+    //     this.hasMoreModalComments = false;
+    //     this.commentsModalVisible = true;
+
+    //     // Load comments for modal
+    //     await this.loadModalComments(post.id);
+    //   },
+
+    //   // Close comments modal
+    //   closeCommentsModal() {
+    //     this.commentsModalVisible = false;
+    //     this.selectedPostForComments = null;
+    //     this.modalComments = [];
+    //     this.newModalComment = "";
+    //   },
+
+    //   // Load comments for modal
+    //   async loadModalComments(postId, page = 1) {
+    //     try {
+    //       this.loadingModalComments = true;
+    //       const response = await fetch(
+    //         `${this.$store.state.root_api}community/api/comments/?post_id=${postId}&page=${page}`,
+    //         {
+    //           method: "GET",
+    //           headers: {
+    //             Authorization: `Token ${localStorage.getItem("token")}`,
+    //             "Content-Type": "application/json",
+    //           },
+    //         }
+    //       );
+
+    //       const data = await response.json();
+    //       if (data.success) {
+    //         if (page === 1) {
+    //           this.modalComments = data.data;
+    //         } else {
+    //           this.modalComments.push(...data.data);
+    //         }
+    //         this.hasMoreModalComments = page < data.total_pages;
+    //         this.modalCommentsPage = page;
+    //       }
+    //     } catch (error) {
+    //       console.error("Failed to load comments:", error);
+    //     } finally {
+    //       this.loadingModalComments = false;
+    //     }
+    //   },
+
+    //   // Load more comments in modal
+    //   async loadMoreModalComments() {
+    //     if (this.selectedPostForComments && this.hasMoreModalComments) {
+    //       await this.loadModalComments(
+    //         this.selectedPostForComments.id,
+    //         this.modalCommentsPage + 1
+    //       );
+    //     }
+    //   },
+
+    //   // Add comment in modal
+    //   async addModalComment() {
+    //     if (!this.newModalComment.trim() || !this.selectedPostForComments) return;
+
+    //     try {
+    //       this.addingModalComment = true;
+    //       const response = await fetch(
+    //         `${this.$store.state.root_api}community/api/comments/`,
+    //         {
+    //           method: "POST",
+    //           headers: {
+    //             Authorization: `Token ${localStorage.getItem("token")}`,
+    //             "Content-Type": "application/json",
+    //           },
+    //           body: JSON.stringify({
+    //             post_id: this.selectedPostForComments.id,
+    //             content: this.newModalComment.trim(),
+    //           }),
+    //         }
+    //       );
+
+    //       const data = await response.json();
+    //       if (data.success) {
+    //         // Clear input
+    //         this.newModalComment = "";
+
+    //         // Reload comments
+    //         await this.loadModalComments(this.selectedPostForComments.id);
+
+    //         // Update comment count in the main list
+    //         this.selectedPostForComments.comment_count += 1;
+    //         const postIndex = this.apiData.findIndex(
+    //           (p) => p.id === this.selectedPostForComments.id
+    //         );
+    //         if (postIndex !== -1) {
+    //           this.apiData[postIndex].comment_count =
+    //             this.selectedPostForComments.comment_count;
+    //         }
+
+    //         this.$message.success("Comment added successfully!");
+    //       }
+    //     } catch (error) {
+    //       console.error("Failed to add comment:", error);
+    //       this.$message.error("Failed to add comment");
+    //     } finally {
+    //       this.addingModalComment = false;
+    //     }
+    //   },
+
+    //   // Update your existing fetchPostComments to use the new structure if needed
+    //   async fetchPostComments(postId) {
+    //     try {
+    //       const response = await fetch(`http://localhost:8000/community/api/comments/?post_id=${postId}`, {
+    //         method: 'GET',
+    //         headers: {
+    //           'Authorization': `Token ${localStorage.getItem("token")}`,
+    //           'Content-Type': 'application/json',
+    //         },
+    //       });
+          
+    //       if (!response.ok) {
+    //         throw new Error('Failed to fetch comments');
+    //       }
+          
+    //       const data = await response.json();
+    //       if (data.success) {
+    //         this.postComments = data.data.map(comment => ({
+    //           id: comment.id,
+    //           name: comment.comment_owner?.username || 'Anonymous',
+    //           avatar: comment.comment_owner?.user_profile 
+    //                   ? `http://localhost:8000${comment.comment_owner.user_profile}`
+    //                   : 'https://via.placeholder.com/40',
+    //           time: comment.created_at,
+    //           text: comment.content
+    //         }));
+    //       }
+    //     } catch (error) {
+    //       console.error('Error fetching comments:', error);
+    //       this.postComments = [];
+    //     }
+    //   },
+    // },
+
+
+async fetchPosts(page = 1) {
+  this.loading = true;
+  this.currentPage = page;
+  
+  try {
+    // Build query parameters
+    const params = new URLSearchParams({
+      page: page.toString(),
+      page_size: this.itemsPerPage.toString()
+    });
+    
+    // Add tags filter only if tab is not "All Type"
+    if (this.activeTab !== "All Type") {
+      // Convert tab name to match your tag format
+      // You might need to adjust this based on your API's expected tag format
+      const tagName = this.activeTab; // or keep as is
+      params.append('tags', tagName);
+    }
+    
+    const response = await fetch(
+      `${this.$store.state.root_api}community/api/posts/?${params}`,
+      {
+        method: 'GET',
+        headers: {
+          'Authorization': `Token ${localStorage.getItem("token")}`,
+          'Content-Type': 'application/json',
+        },
       }
-    },
-    nextPage() {
-      if (this.page < this.totalPages) {
-        this.page++;
-        this.scrollToCommunity();
-      }
-    },
-    prevPage() {
-      if (this.page > 1) {
-        this.page--;
-        this.scrollToCommunity();
-      }
-    },
+    );
+    
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    
+    const data = await response.json();
+    
+    if (data.success) {
+      console.log('get api executed successfully')
+      this.apiData = data.data;
+      this.totalPages = data.total_pages;
+      this.totalCount = data.total_count;
+      console.log('Fetched posts:', this.apiData);
+      console.log('Pagination info:', {
+        currentPage: data.current_page,
+        totalPages: data.total_pages,
+        totalCount: data.total_count,
+        activeTab: this.activeTab
+      });
+    } else {
+      console.error('API returned error:', data.message);
+    }
+  } catch (error) {
+    console.error('Error fetching posts:', error);
+    // Fallback to sample data if API fails
+    this.apiData = this.getSampleDataFromAPIResponse();
+    this.totalPages = 1;
+    this.totalCount = this.apiData.length;
+  } finally {
+    this.loading = false;
+  }
+},
+
+
+  // Updated helper methods
+  getPostImage(post) {
+    return this.$store.state.root_media_api+post.post_image;
+  },
+
+  getUserAvatar(post) {
+    
+    return this.$store.state.root_media_api+post.post_owner.avatar;
+  },
+
+ getPostTags(post) {
+    if (post.tags && Array.isArray(post.tags)) {
+      return post.tags.map(tag => typeof tag === 'string' ? tag : tag.name);
+    }
+    return [];
+  },
+  
+  // Updated pagination methods
+  goToPage(pageNum) {
+    if (pageNum >= 1 && pageNum <= this.totalPages) {
+      this.fetchPosts(pageNum);
+      this.scrollToCommunity();
+    }
+  },
+  
+ nextPage() {
+  if (this.currentPage < this.totalPages) {
+    this.fetchPosts(this.currentPage + 1);
+    this.scrollToCommunity();
+  }
+},
+
+prevPage() {
+  if (this.currentPage > 1) {
+    this.fetchPosts(this.currentPage - 1);
+    this.scrollToCommunity();
+  }
+},
+  
+  changeTab(tab) {
+    this.activeTab = tab;
+    console.log('tab changes to ',this.activeTab )
+  
+    this.fetchPosts(1);
+  },
+  
+  // Update the page info display
+  getDisplayRange() {
+    const start = ((this.apiPage - 1) * this.apiPageSize) + 1;
+    const end = Math.min(this.apiPage * this.apiPageSize, this.totalCount);
+    return { start, end };
+  },
+
+  // Update the openCommentsModal to work with API data
+  async openCommentsModal(post) {
+    this.selectedPost = {
+      id: post.id,
+      userName: post.post_owner.username,
+      userAvatar: this.getUserAvatar(post),
+      image: this.getPostImage(post),
+      views: post.view_count,
+      likes: post.like_count,
+      comments: post.comment_count,
+      title: post.title,
+      content: post.content,
+      description: post.content || 'No description available.',
+      tags: this.getPostTags(post),
+      created_at: post.created_at,
+      is_liked: post.is_liked
+    };
+    // await this.fetchPostComments(post.id);
+    this.showCommentsModal = true;
+  },
+  onCommentAddedOrLiked() {
+   
+    this.fetchPosts();
+    this.fetchCommunityStats();
+  },
+  
+   
     scrollToCommunity() {
       this.$nextTick(() => {
         const communitySection = document.querySelector('.community-section');
@@ -926,65 +1333,65 @@ designers: [
       this.showDropdown = false;
       this.onCategoryChange();
     },
-    async fetchTags() {
-      try {
-        const response = await fetch(`${this.$store.state.root_api}community/api/public/tags/`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-        const data = await response.json();
-        if (data.success) {
-          this.availableTags = data.data;
-          this.popularTags = data.data.slice(0, 5);
-        }
-      } catch (error) {
-        console.error('Failed to load tags:', error);
-      }
-    },
-    async fetchDesigns(page = 1, append = false) {
-      try {
-        if (page === 1) {
-          this.loading = true;
-        } else {
-          this.loadingMore = true;
-        }
-        const params = new URLSearchParams({
-          page: page.toString(),
-          page_size: this.pageSize.toString()
-        });
-        if (this.selectedCategory) {
-          params.append('tag', this.selectedCategory);
-        }
-        const response = await fetch(
-          `${this.$store.state.root_api}community/api/public/posts/?${params}`,
-          {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          }
-        );
-        const data = await response.json();
-        if (data.success) {
-          const newDesigns = data.data;
-          if (append) {
-            this.designs = [...this.designs, ...newDesigns];
-          } else {
-            this.designs = newDesigns;
-          }
-          this.hasMore = data.pagination.has_next;
-          this.currentPage = data.pagination.current_page;
-        }
-      } catch (error) {
-        console.error('Failed to load designs:', error);
-        this.$message?.error('Failed to load designs');
-      } finally {
-        this.loading = false;
-        this.loadingMore = false;
-      }
-    },
+    // async fetchTags() {
+    //   try {
+    //     const response = await fetch(`${this.$store.state.root_api}community/api/public/tags/`, {
+    //       method: 'GET',
+    //       headers: {
+    //         'Content-Type': 'application/json',
+    //       },
+    //     });
+    //     const data = await response.json();
+    //     if (data.success) {
+    //       this.availableTags = data.data;
+    //       this.popularTags = data.data.slice(0, 5);
+    //     }
+    //   } catch (error) {
+    //     console.error('Failed to load tags:', error);
+    //   }
+    // },
+    // async fetchDesigns(page = 1, append = false) {
+    //   try {
+    //     if (page === 1) {
+    //       this.loading = true;
+    //     } else {
+    //       this.loadingMore = true;
+    //     }
+    //     const params = new URLSearchParams({
+    //       page: page.toString(),
+    //       page_size: this.pageSize.toString()
+    //     });
+    //     if (this.selectedCategory) {
+    //       params.append('tag', this.selectedCategory);
+    //     }
+    //     const response = await fetch(
+    //       `${this.$store.state.root_api}community/api/public/posts/?${params}`,
+    //       {
+    //         method: 'GET',
+    //         headers: {
+    //           'Content-Type': 'application/json',
+    //         },
+    //       }
+    //     );
+    //     const data = await response.json();
+    //     if (data.success) {
+    //       const newDesigns = data.data;
+    //       if (append) {
+    //         this.designs = [...this.designs, ...newDesigns];
+    //       } else {
+    //         this.designs = newDesigns;
+    //       }
+    //       this.hasMore = data.pagination.has_next;
+    //       this.currentPage = data.pagination.current_page;
+    //     }
+    //   } catch (error) {
+    //     console.error('Failed to load designs:', error);
+    //     this.$message?.error('Failed to load designs');
+    //   } finally {
+    //     this.loading = false;
+    //     this.loadingMore = false;
+    //   }
+    // },
     async loadMoreDesigns() {
       if (this.hasMore && !this.loadingMore) {
         await this.fetchDesigns(this.currentPage + 1, true);
@@ -996,6 +1403,7 @@ designers: [
       this.fetchDesigns();
     },
     filterByTag(tagName) {
+      this.activeTab = tagName;
       this.selectedCategory = tagName.toLowerCase().replace(/\s+/g, '');
       this.selectedCategoryText = tagName;
       this.onCategoryChange();
@@ -1038,17 +1446,77 @@ designers: [
     },
     openDesignDetail(design) {
       this.$router.push(`/design/${design.id}`);
+    },
+     async fetchCommunityStats() {
+    debugger
+    this.statsLoading = true;
+    try {
+      const response = await fetch(
+        `${this.$store.state.root_api}community/api/stats/`,
+        {
+          method: 'GET',
+          headers: {
+            'Authorization': `Token ${localStorage.getItem("token")}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch community stats');
+      }
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        // Set top designs for "Today's Top Designs" section
+        this.topDesigns = data.data.most_liked_posts;
+        
+        // Set trending tags and update tabs
+        this.trendingTags = data.data.top_tags;
+        
+        // Update tabs with tag names (keep "All Type" as first tab)
+        const tagNames = data.data.top_tags.map(tag => tag.name);
+        this.tabs = ["All Type", ...tagNames];
+        
+        console.log('Community stats loaded:', {
+          topDesigns: this.topDesigns.length,
+          trendingTags: this.trendingTags.length,
+          tabs: this.tabs
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching community stats:', error);
+      // Fallback to default tabs if API fails
+      this.tabs = [
+        "All Type", "Living Room", "Dinning Room", "Kitchen",
+        "Home Office", "Bedroom"
+      ];
+    } finally {
+      this.statsLoading = false;
     }
+  }
   },
+  
   async mounted() {
-    await this.fetchTags();
-    await this.fetchDesigns();
+
+    await this.fetchPosts();
+    await this.fetchCommunityStats();
+    // await this.fetchTags();
+    // await this.fetchDesigns();
     document.addEventListener('click', (e) => {
       if (!this.$el.querySelector('.custom-dropdown')?.contains(e.target)) {
         this.showDropdown = false;
       }
     });
-  }
+  },
+  
+  
+  // Update the trending tags section to use API data
+  getTrendingTags() {
+    return this.trendingTags.slice(0, 5); // Show top 5 tags
+  },
+
 }
 </script>
 
