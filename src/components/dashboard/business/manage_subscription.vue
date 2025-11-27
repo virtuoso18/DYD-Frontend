@@ -4,7 +4,7 @@
         <h2
   class="m-0 pl-4 flex items-center gap-2 text-[#262626] text-[clamp(18px,4vw,24px)] font-semibold"
 >
-  <svg
+  <!-- <svg
     width="18"
     height="18"
     viewBox="0 0 6 11"
@@ -18,7 +18,7 @@
       stroke-linecap="round"
       stroke-linejoin="round"
     />
-  </svg>
+  </svg> -->
 
   Manage Subscription
 </h2>

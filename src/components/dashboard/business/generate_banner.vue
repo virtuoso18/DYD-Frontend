@@ -1,5 +1,5 @@
 <template>
-<div class="bg-white rounded-[15px]  min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh] border border-black/10 !my-[10px] !mr-[10px] p-[20px]">
+<div class="bg-white sm:rounded-[15px]  min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh] sm:border border-black/10 !my-[10px] !mr-[10px] p-[20px]">
     
     <!-- Header Section --> 
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">

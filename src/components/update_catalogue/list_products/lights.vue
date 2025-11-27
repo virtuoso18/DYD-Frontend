@@ -1,9 +1,27 @@
 <template>
   <!-- {{ catalogItems }} -->
   <div class="ai-catalog-section">
+
+    <div class="apply-section">
+      <a-button type="primary" size="large" block class="apply-button"         @click="$emit('Apply_Light', 'magnetic-light-Renerer-apply')" 
+>
+        Apply
+      </a-button>
+    </div>
     <!-- Fixed Header -->
-    <div class="ai-catalog-header">
-      <span>AI Catalog</span>
+    <div class="ai-catalog-header py-4">
+<span
+  style="
+    font-family: Poppins;
+    font-weight: 500;
+    font-style: normal;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: 0;
+  "
+>
+  AI Catalog
+</span>
       <a-button size='small' type="text" class="see-all-link" @click="seeAllClicked">See all</a-button>
     </div>
     
@@ -119,12 +137,7 @@ border:1px solid rgba(128, 128, 128, 0.14);"
     </div>
 
     <!-- Fixed Apply Button -->
-    <div class="apply-section">
-      <a-button type="primary" size="large" block class="apply-button"         @click="$emit('Apply_Light', 'magnetic-light-Renerer-apply')" 
->
-        Apply
-      </a-button>
-    </div>
+    
   </div>
 </template>
 
@@ -220,8 +233,15 @@ updateItemRendering(uuid, type,model_3d_url){
 .ai-catalog-section {
   display: flex;
   flex-direction: column;
-  height: 76vh; 
 }
+
+/* Apply height ONLY above sm ( ≥ 640px ) */
+@media (min-width: 640px) {
+  .ai-catalog-section {
+    height: 76vh;
+  }
+}
+
 
 .ai-catalog-header {
   display: flex;

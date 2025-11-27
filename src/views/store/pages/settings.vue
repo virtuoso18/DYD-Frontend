@@ -66,7 +66,7 @@
                     <h4>Manage Password</h4>
                     <p>Set a new password to keep your account safe.</p>
                 </a-col>
-                <a-col :span="6" style="display: flex; justify-content: center; align-items: center;">
+                <a-col :xs="32" :sm="6" style="display: flex; justify-content: center; align-items: center;">
                     <a-button 
                         type="primary" 
                         @click="openPasswordModal"

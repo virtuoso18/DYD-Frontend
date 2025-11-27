@@ -1231,9 +1231,7 @@ export default {
     display: none;
   }
 
-  .content-area {
-    padding: 16px;
-  }
+ 
 }
 
 @media (max-width: 1200px) {

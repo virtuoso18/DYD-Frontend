@@ -1,9 +1,25 @@
 <template>
   <div class="ai-catalog-section">
+
+    <div class="apply-section">
+      <a-button type="primary" size="large" block class="apply-button" @click=updateItemRendering()>
+        Apply
+      </a-button>
+    </div>
     <!-- Fixed Header -->
-    <div class="ai-catalog-header">
-      <span>AI Catalog</span>
-      <a-button size='small' type="text" class="see-all-link" @click="seeAllClicked">See all</a-button>
+    <div class="ai-catalog-header py-3">
+<span
+  style="
+    font-family: Poppins;
+    font-weight: 500;
+    font-style: normal;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: 0;
+  "
+>
+  AI Catalog
+</span>      <a-button size='small' type="text" class="see-all-link" @click="seeAllClicked">See all</a-button>
     </div>
     
     <!-- Fixed Search Bar -->
@@ -108,11 +124,7 @@
     </div>
 
     <!-- Fixed Apply Button -->
-    <div class="apply-section">
-      <a-button type="primary" size="large" block class="apply-button" @click=updateItemRendering()>
-        Apply
-      </a-button>
-    </div>
+    
   </div>
 </template>
 
@@ -213,8 +225,15 @@ export default {
 .ai-catalog-section {
   display: flex;
   flex-direction: column;
-  height: 76vh; 
 }
+
+/* Apply height ONLY above sm ( ≥ 640px ) */
+@media (min-width: 640px) {
+  .ai-catalog-section {
+    height: 76vh;
+  }
+}
+
 
 .ai-catalog-header {
   display: flex;

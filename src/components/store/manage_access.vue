@@ -472,15 +472,26 @@
             Staff & Task Management
           </h2>
         </a-col>
-        <a-col>
-          <a-button type="primary" size="large" @click="showAssignTaskModal">
-            <a-icon type="plus" />
-            Assign New Task
-          </a-button>
-          <a-button type="default" size="large" @click="showGrantProfessionalAccessModal">
-  <a-icon type="user-add" />
-  Grant Professional Access
-</a-button>
+        <a-col class="!flex flex-row !gap-3">
+           <a-button 
+    type="primary" 
+    size="large" 
+    @click="showAssignTaskModal"
+    class="max-sm:!px-2 max-sm:!py-1 max-sm:!text-xs max-sm:!h-auto"
+  >
+    <a-icon type="plus" />
+    Assign New Task
+  </a-button>
+
+  <a-button 
+    type="default" 
+    size="large" 
+    @click="showGrantProfessionalAccessModal"
+    class="ml-3 max-sm:ml-2 max-sm:!px-2 max-sm:!py-1 max-sm:!text-xs max-sm:!h-auto"
+  >
+    <a-icon type="user-add" />
+    Grant Professional Access
+  </a-button>
         </a-col>
       </a-row>
     </div>
@@ -491,9 +502,10 @@
     <a-tabs v-model:activeKey="activeTab">
       <a-tab-pane key="all-staff" tab="All Staff">
         <!-- Staff Table -->
-    
+    <div class="w-full md:w-[80%] mx-auto">
+</div>
          <a-table
-    :columns="columns"
+ class="overflow-x-auto"    :columns="columns"
     :data-source="transformedData"
     row-key="id"
     :pagination="{ pageSize: 10 }"

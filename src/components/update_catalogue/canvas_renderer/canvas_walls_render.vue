@@ -118,58 +118,147 @@
       </div>
     </div>
   </div>
-   <div  class="" style="display:flex;justify-content: space-between;padding-left:10px;padding-right:10px;background: white;">
-     
-  <div style="padding-top:5px;">
-<div style="display:flex;gap:5px;padding-top:5px;">
-    <a-button 
-          class="control-btn"
-          :class="{ 'active': allWallsSelected }"
-          @click="toggleSelectAll"
-          :disabled="isLoading"
-          :title="allWallsSelected ? 'Deselect All' : 'Select All'"
-        >
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-            <path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16zm3.5-5L7 6.5 4.5 9 3 7.5 7 3.5 13 9.5 11.5 11z"/>
-          </svg>
-          {{ allWallsSelected ? 'Deselect All' : 'Select All' }}
-        </a-button>
-        <a-button 
-        class="control-btn clear-btn"
+  <div className="hidden md:block ">
+
+    <div  class="" style="display:flex;justify-content: space-between;padding-left:10px;padding-right:10px;background: white;">
+      
+   <div style="padding-top:5px;">
+ <div style="display:flex;gap:5px;padding-top:5px;">
+     <a-button 
+           class="control-btn"
+           :class="{ 'active': allWallsSelected }"
+           @click="toggleSelectAll"
+           :disabled="isLoading"
+           :title="allWallsSelected ? 'Deselect All' : 'Select All'"
+         >
+           <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+             <path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16zm3.5-5L7 6.5 4.5 9 3 7.5 7 3.5 13 9.5 11.5 11z"/>
+           </svg>
+           {{ allWallsSelected ? 'Deselect All' : 'Select All' }}
+         </a-button>
+         <a-button 
+         class="control-btn clear-btn"
+         @click="clearAllSelections"
+         :disabled="internalSelectedMasks.length === 0 || isLoading"
+         title="Clear Selection"
+         
+         >
+         <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+           <path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16zM4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+         </svg>
+         Clear
+       </a-button>
+       <a-button type='primary' :disabled="isLoading" @click="rescaleRoomLayout()"> 
+         Rescale Room layout
+       </a-button>
+ 
+ </div>
+ </div>
+ <div>
+   
+ <div style="padding-top:5px;display:flex;gap:10px;">
+ 
+   <a-button  class="toolbar-btn primary-btn" @click="reset_entire_room" :disabled="isLoading">
+     Before
+   </a-button>
+   <a-button type="primary" class="toolbar-btn primary-btn" @click="reset_entire_room" :disabled="isLoading">
+     After
+   </a-button>
+ </div>
+       </div>
+       <div style="padding-top:10px;">
+         <a-button type="primary" class="toolbar-btn primary-btn" @click="$emit('Apply-Changes', 'Walls-Renerer')" :disabled="isLoading">
+           Apply Changes
+         </a-button>
+       </div>
+     </div>
+  </div>
+  <div class="flex md:hidden justify-between px-3 bg-white">
+
+  <!-- LEFT SIDE -->
+  <div class="pt-1">
+    <div class="flex gap-1 pt-1 pr-1">
+
+      <!-- Select / Deselect All -->
+      <button
+  class="flex items-center gap-[3px] !px-2 !py-[0px] bg-[#4e70f9] !text-white whitespace-nowrap rounded-md btn-text-style !text-[8px]"
+  :class="{ 'active': allWallsSelected }"
+  @click="toggleSelectAll"
+  :disabled="isLoading"
+  :title="allWallsSelected ? 'Deselect All' : 'Select All'"
+>
+  <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+    <path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16zm3.5-5L7 6.5 4.5 9 3 7.5 7 3.5 13 9.5 11.5 11z"/>
+  </svg>
+
+  {{ allWallsSelected ? 'Deselect All' : 'Select All' }}
+</button>
+
+
+      <!-- Clear Button -->
+      <button
+        class="control-btn clear-btn !px-2 !py-[1px] bg-[#4e70f9] !text-red rounded-md btn-text-style  !text-[8px]"
         @click="clearAllSelections"
         :disabled="internalSelectedMasks.length === 0 || isLoading"
         title="Clear Selection"
-        
-        >
+      >
         <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
           <path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16zM4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
         </svg>
         Clear
-      </a-button>
-      <a-button type='primary' :disabled="isLoading" @click="rescaleRoomLayout()"> 
+      </button>
+
+      <!-- Rescale -->
+      <button
+        class="!px-1 !py-[1px]  bg-[#4e70f9] whitespace-nowrap !text-white rounded-md btn-text-style  !text-[8px]"
+        type="primary"
+        :disabled="isLoading"
+        @click="rescaleRoomLayout()"
+      >
         Rescale Room layout
-      </a-button>
+      </button>
 
-</div>
-</div>
-<div>
-  
-<div style="padding-top:5px;display:flex;gap:10px;">
-
-  <a-button  class="toolbar-btn primary-btn" @click="reset_entire_room" :disabled="isLoading">
-    Before
-  </a-button>
-  <a-button type="primary" class="toolbar-btn primary-btn" @click="reset_entire_room" :disabled="isLoading">
-    After
-  </a-button>
-</div>
-      </div>
-      <div style="padding-top:10px;">
-        <a-button type="primary" class="toolbar-btn primary-btn" @click="$emit('Apply-Changes', 'Walls-Renerer')" :disabled="isLoading">
-          Apply Changes
-        </a-button>
-      </div>
     </div>
+  </div>
+
+  <!-- MIDDLE -->
+  <div>
+    <div class="pt-1 flex gap-1 pt-2 pr-1">
+      <button
+        class="toolbar-btn primary-btn !px-2 !py-[0px] bg-[#4e70f9] !text-white rounded-md btn-text-style  !text-[8px]"
+        @click="reset_entire_room"
+        :disabled="isLoading"
+      >
+        Before
+      </button>
+
+      <button
+        type="primary"
+        class="toolbar-btn primary-btn !px-2 !py-[2px] bg-[#4e70f9] !text-white rounded-md btn-text-style  !text-[8px]"
+        @click="reset_entire_room"
+        :disabled="isLoading"
+      >
+        After
+      </button>
+    </div>
+  </div>
+
+  <!-- RIGHT SIDE -->
+  <div class="pt-1">
+  <button
+  type="primary"
+  class="toolbar-btn primary-btn bg-[#4e70f9] whitespace-nowrap !text-white rounded-md !px-2 !py-[3px] !text-[8px] btn-text-style"
+  @click="$emit('Apply-Changes', 'Walls-Renerer')"
+  :disabled="isLoading"
+>
+  Apply Changes
+</button>
+
+
+  </div>
+
+</div>
+
 </template>
 <script>
 export default {
@@ -1382,6 +1471,15 @@ selectAllWallsOnInit() {
   font-weight: 500;
 }
 
+.btn-text-style {
+  font-family: Poppins;
+  font-weight: 400;
+  font-style: Medium;
+  font-size: 10px;
+  line-height: 14px;
+  letter-spacing: 0%;
+}
+
 .main-canvas {
   display: block;
   transition: opacity 0.2s ease;
@@ -1845,11 +1943,7 @@ selectAllWallsOnInit() {
     font-size: 11px;
   }
   
-  .zoom-controls {
-    bottom: 10px;
-    right: 10px;
-    padding: 6px;
-  }
+  
   
   .zoom-btn {
     width: 28px;
