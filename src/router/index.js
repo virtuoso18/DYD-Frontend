@@ -389,11 +389,11 @@ const router = createRouter({
           name: 'professional_my_profile',
           component: profesional_user_profile,
         },
-        {
-          path: 'access-requests',
-          name: 'professional_my_requests',
-          component: profesional_my_requests,
-        },
+        // {
+        //   path: 'access-requests',
+        //   name: 'professional_my_requests',
+        //   component: profesional_my_requests,
+        // },
         {
           path: 'my-likes',
           name: 'professional_my_likes',

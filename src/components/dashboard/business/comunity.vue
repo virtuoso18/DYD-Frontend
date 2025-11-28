@@ -8,16 +8,11 @@
 
     <!-- Posts Grid View -->
     <a-row v-if="selectedPost == null" :gutter="[16, 16]">
-      <a-col :span="24">
-        <a-tabs v-model:activeKey="active_tab">
-          <a-tab-pane key="My Community">
-            <template #tab>
-              <span>
-                <!-- <apple-outlined /> -->
-                My Community
-              </span>
-            </template>
-            <div>
+      <a-col :span="24" >
+        <div style="background-color: white;border-radius: 12px;padding:10px;margin-top:15px;border:1px solid rgba(0,0,0,0.1);">
+
+        <h3>My Community</h3>
+        <div> 
               <!-- Empty State -->
               <div
                 v-if="posts.length === 0 && !loading"
@@ -205,37 +200,8 @@
                 </a-col>
               </a-row>
             </div>
-          </a-tab-pane>
-          <a-tab-pane key="User Generated content">
-            <template #tab>
-              <span>
-                <!-- <android-outlined /> -->
-                User Generated content
-              </span>
-            </template>
-            <div>
-              <!-- Empty State -->
-              <div style="text-align: center; padding: 60px 20px">
-                <div
-                  style="font-size: 64px; color: #d9d9d9; margin-bottom: 16px"
-                >
-                  📝
-                </div>
-                <h3 style="color: #666; margin-bottom: 8px">No posts yet</h3>
-                <p style="color: #999">
-                  Start sharing your amazing designs with the community!
-                </p>
-                <a-button
-                  type="primary"
-                  style="margin-top: 16px"
-                  @click="$router.push('/designs')"
-                >
-                  Create Your First Design
-                </a-button>
-              </div>
-            </div>
-          </a-tab-pane>
-        </a-tabs>
+        </div>
+
       </a-col>
     </a-row>
 

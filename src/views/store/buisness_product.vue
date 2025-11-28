@@ -126,6 +126,7 @@ export default {
                     }
                 });
                 const result = await response.json();
+                console.log(result)
                 if (result.success) {
                     const data = result.data;
                     this.selectedProduct = data;

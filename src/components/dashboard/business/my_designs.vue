@@ -1,5 +1,5 @@
 <template>
-<div class="sm:main min-h-[100vh] md:min-h-[136vh]  sm:border  p-4 rounded-xl border-gray-200 xl:min-h-[170vh] 2xl:min-h-[150vh]">    
+<div class="sm:main sm:border border-gray-300 sm:translate-y-3 sm:rounded-xl min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh]">
     <a-row v-if="view_type=='all'">
     <a-col :span="24"><h2 className="p-2 sm:p-0">My Designes</h2></a-col>
 

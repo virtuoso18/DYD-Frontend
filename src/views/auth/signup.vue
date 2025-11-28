@@ -54,6 +54,10 @@
       >
         Continue
       </a-button>
+      <div style="text-align:center">
+
+        <h3>Already have a account, <router-link :to="'/login'"> Login</router-link></h3>
+</div>
     </div>
 
     <!-- Step 2: Personal Info -->

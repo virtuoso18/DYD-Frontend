@@ -57,7 +57,7 @@
               <span class="nav-text">Profile</span>
             </router-link>
             
-               <router-link 
+               <!-- <router-link 
               to="/professional-dashboard/access-requests" 
               class="nav-item"
               :class="{ active: $route.name === 'professional_my_requests' }"
@@ -71,7 +71,7 @@
 
               </div>
               <span class="nav-text">Requests</span>
-            </router-link>
+            </router-link> -->
             <router-link 
   to="/professional-dashboard/my-likes" 
   class="nav-item flex items-center justify-between"

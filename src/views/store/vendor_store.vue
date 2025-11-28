@@ -153,7 +153,7 @@
             <!-- Reviews Section (Static for now) -->
             <div>
                 <a-row>
-                    <a-col :sm="24" :xs="24" :md="12" :lg="12">
+                    <a-col :sm="24" :xs="24" :md="12" :lg="12" v-if="!this.business_info.is_profesional_user_site">
                         <a-row style="padding-top:50px">
                             <a-col :sm="12" :xs="12" :md="12" :lg="12" style="border-right: 2px solid rgba(0,0,0,0.3);display: flex;justify-content: center;align-items: center;padding-top:20px">
                                 <div style="display: flex;flex-direction: column;justify-content: center;align-items: center">
@@ -182,7 +182,7 @@
                         </a-row>
                     </a-col>
                     
-                    <a-col :sm="24" :xs="24" :md="12" :lg="12" style="padding:10px;">
+                    <a-col :sm="24" :xs="24" :md="this.business_info.is_profesional_user_site ? 24:12" :lg="this.business_info.is_profesional_user_site ? 24:12" style="padding:10px;" >
                         
   <!-- Display Business Location Map -->
   <div v-if="businessLocationReady" style="border-radius:10px; width:100%; height:200px; overflow: hidden;">
@@ -207,7 +207,7 @@
             <!-- Products Section -->
             <!-- Replace the Products Section in your template with this -->
 <!-- Products Section -->
-<div style="padding:10px;background-color: white;border-radius:10px;border:2px solid rgba(128, 128, 128, 0.16);">
+<div style="padding:10px;background-color: white;border-radius:10px;border:2px solid rgba(128, 128, 128, 0.16);" v-if="!this.business_info.is_profesional_user_site">
     <h1>Our Products</h1>
     
     <div style="text-align: center; padding: 10px;">
@@ -290,20 +290,20 @@
 
             <!-- User Generated Content -->
             <div style="padding:10px;background-color: white;border-radius:10px;border:2px solid rgba(128, 128, 128, 0.16);">
-                <div style="padding:10px;background: #f2f2f3;border-radius:10px">
+                <!-- <div style="padding:10px;background: #f2f2f3;border-radius:10px">
                     <h3>Gallery</h3>
                     <p>Business showcase and user content</p>
-                </div>
+                </div> -->
                 
-                      
-  <a-tabs v-model:activeKey="activeKey">
-    <a-tab-pane key="Visualization">
-      <template #tab>
-        <span>
+    
+                
+                
+      
+        <h3>
           <!-- <apple-outlined /> -->
           Community Post Visualizations
-        </span>
-      </template>
+        </h3>
+      
        <!-- <a-col :lg="8" :md="8" :xs="24" :sm="24" style="padding:5px;"> -->
         <!-- {{community_posts_virtualisations}} -->
 <div v-if="community_posts_virtualisations.length==0">
@@ -385,8 +385,8 @@
                       <!-- Post Content -->
                       <div style="padding: 5px">
                         <!-- Actions Row -->
-                        <a-row style="align-items: center">
-                          <a-col :span="14">
+                        <a-row style="align-items: center;">
+                          <a-col :span="14" style="display:flex;align-items: center;justify-content: start;gap:10px;">
                             <img
                               :src="
                                 this.$store.state.root_media_api + post.user_profile
@@ -399,11 +399,11 @@
                               "
                               alt=""
                             />
-                            <span style="font-size: 16px;font-weight:600">{{
+                            <span style="font-size: 18px;font-weight:600">{{
                               truncateText(post.post_by, 15)
                             }}</span>
                           </a-col>
-                          <a-col :span="10" style="display: flex">
+                          <a-col :span="10" style="display: flex;justify-content: end;">
                             <!-- Post Stats -->
                             <div class="post-stats">
                               <div class="stat-item" @click="toggleLike(post)">
@@ -423,50 +423,10 @@
                                   formatNumber(post.comment_count)
                                 }}</span>
                               </div>
-                              <div class="stat-item" @click="sharePost(post)">
-                                <ShareAltOutlined />
-                                <span>{{
-                                  formatNumber(post.share_count)
-                                }}</span>
-                              </div>
+                              
                             </div>
                             <!-- More Actions Dropdown -->
-                            <a-dropdown
-                              :trigger="['click']"
-                              placement="bottomRight"
-                            >
-                              <a-button
-                                type="text"
-                                size="small"
-                                style="padding: 2px"
-                              >
-                                <MoreOutlined
-                                  style="font-size: 16px; color: #666"
-                                />
-                              </a-button>
-                              <template #overlay>
-                                <a-menu>
-                                  <a-menu-item @click="editPost(post)">
-                                    <EditOutlined style="margin-right: 8px" />
-                                    Edit Post
-                                  </a-menu-item>
-                                  <a-menu-item @click="sharePost(post)">
-                                    <ShareAltOutlined
-                                      style="margin-right: 8px"
-                                    />
-                                    Share
-                                  </a-menu-item>
-                                  <a-menu-divider />
-                                  <a-menu-item
-                                    @click="confirmDelete(post)"
-                                    style="color: #ff4d4f"
-                                  >
-                                    <DeleteOutlined style="margin-right: 8px" />
-                                    Delete Post
-                                  </a-menu-item>
-                                </a-menu>
-                              </template>
-                            </a-dropdown>
+                            
                           </a-col>
                         </a-row>
                       </div>
@@ -492,18 +452,7 @@
                 
             </div> -->
         <!-- </a-col> -->
-    </a-tab-pane>
-    <a-tab-pane key="User generated content">
-      <template #tab>
-        <span>
-          <!-- <android-outlined /> -->
-          User generated content
-        </span>
-      </template>
-        User_generated_content_here
-
-    </a-tab-pane>
-  </a-tabs>
+    
 
             </div>
         </div>
@@ -590,8 +539,6 @@ export default {
     async mounted() {
         try {
             await this.loadBusinessData();
-            await this.loadBusinessProducts(1);
-            this.showModal();
             this.loadPosts();
         } catch (error) {
             console.error('Error in mounted:', error);
@@ -977,10 +924,16 @@ export default {
 
                 const result = await response.json();
                 this.userProfile = result.data?.user_id_buisness_owner;
-
+                  console.log(result)
                 if (result.success) {
                     this.business_info = result.data;
-                    
+                    if (this.business_info.is_profesional_user_site){
+                     console.log('theProfesionalUserSiteHere')
+                    }
+                    else{
+                      await this.loadBusinessProducts(1);
+                      this.showModal();
+                    }
                     // Set business location
                     this.businessLocation = {
                         latitude: result.data.lattitude || 40.7128,

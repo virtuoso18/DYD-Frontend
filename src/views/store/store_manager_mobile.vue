@@ -28,7 +28,7 @@
     v-for="item in navItems"
     :key="item.name"
     @click="navigateTo(item.route)"
-    class="nav-item flex items-center justify-between gap-2 px-4 py-3 rounded-lg font-medium max-w-full whitespace-nowrap md:bg-gradient-to-r shadow-sm from-[#3B63FB] to-[#5E7BFF] md:!text-white"
+    class="nav-item flex items-center justify-between gap-2 px-4 py-3 rounded-lg font-medium max-w-full whitespace-nowrap md:bg-gradient-to-r from-[#3B63FB] to-[#5E7BFF] md:!text-white"
   >
     <!-- Left side -->
     <div class="flex items-center gap-2">

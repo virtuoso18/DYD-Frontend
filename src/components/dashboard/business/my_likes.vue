@@ -1,6 +1,7 @@
 <template>
 
-<div class="sm:main min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh]">    
+<div class="sm:main sm:border border-gray-300 sm:translate-y-3 sm:rounded-xl min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh]">
+   
     <div style="padding:10px;border-radius:15px;min-height:100vh">
         <h3>Liked Products & Rooms </h3>
             <a-tabs v-model:activeKey="active_tab">
@@ -131,18 +132,247 @@ show-total
                         />
                 </div>
                 </a-tab-pane>
+                  <a-tab-pane key="community-posts" tab="Community Posts" >
+              
+
+                    <a-row>
+  <a-col
+    v-for="post in community_posts"
+    :key="post.id"
+    :lg="8"
+    :md="8"
+    :xs="24"
+    :sm="24"
+  >
+    <div style="padding: 2px">
+      <div class="post-card" style="
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        padding: 0px;
+        border-radius: 12px;
+        background: white;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 0px 0px rgba(0, 0, 0, 0);
+        transition: all 0.3s ease;
+      "
+      @mouseenter="$event.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)'"
+      @mouseleave="$event.currentTarget.style.boxShadow = '0 0px 0px rgba(0, 0, 0, 0)'"
+      >
+        <!-- Post Image -->
+        <div style="position: relative">
+          <img
+            :src="
+              $store.state.root_media_api + post.post_image ||
+              require('../../../assets/home_main_banner.jpg')
+            "
+            style="
+              width: 100%;
+              height: 200px;
+              object-fit: cover;
+              border-radius: 10px;
+              padding: 5px;
+              cursor: pointer;
+              transition: transform 0.3s ease;
+            "
+            :alt="post.title"
+            @click="viewPost(post)"
+            @mouseenter="$event.currentTarget.style.transform = 'scale(1.01)'"
+            @mouseleave="$event.currentTarget.style.transform = 'scale(1)'"
+          />
+
+          <!-- Tags - Fixed for string array -->
+          <div style="
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            max-width: 70%;
+            z-index: 2;
+          ">
+            <template v-if="post.tags && post.tags.length > 0">
+              <a-tag
+                v-for="(tag, index) in post.tags.slice(0, 3)"
+                :key="index"
+                color="blue"
+                style="
+                  margin: 2px;
+                  border-radius: 12px;
+                  font-size: 11px;
+                  padding: 2px 8px;
+                  border: none;
+                  font-weight: 500;
+                "
+              >
+                {{ tag }}
+              </a-tag>
+              <a-tag
+                v-if="post.tags.length > 3"
+                style="
+                  margin: 2px;
+                  border-radius: 12px;
+                  font-size: 11px;
+                  background: rgba(0, 0, 0, 0.6);
+                  color: white;
+                  border: none;
+                  padding: 2px 8px;
+                  font-weight: 500;
+                "
+              >
+                +{{ post.tags.length - 3 }}
+              </a-tag>
+            </template>
+          </div>
+
+          <!-- View Count Overlay -->
+          <div style="
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            z-index: 2;
+            gap: 4px;
+          ">
+            <EyeOutlined style="margin-right: 4px" />
+            {{ formatNumber(post.view_count) }}
+          </div>
+
+          <!-- Pinned Badge -->
+          <div v-if="post.is_pinned" style="
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: #1890ff;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            z-index: 2;
+          ">
+            <PushpinOutlined />
+            Pinned
+          </div>
+        </div>
+
+        <!-- Post Content -->
+        <div style="padding: 5px">
+          <!-- Actions Row -->
+          <a-row style="align-items: center">
+            <a-col :span="16" style="display: flex; gap: 10px; justify-content: start; align-items: center;">
+              <img
+                :src="$store.state.root_media_api + post.user_profile"
+                style="
+                  width: 40px;
+                  height: 40px;
+                  border-radius: 100%;
+                  border: 1px solid rgba(0, 0, 0, 0.1);
+                "
+                alt=""
+              />
+              <span style="font-size: 16px; font-weight: 600;">
+                {{ truncateText(post.post_by, 15) }}
+              </span>
+            </a-col>
+            <a-col :span="8" style="display: flex;">
+              <!-- Post Stats -->
+              <div style="display: flex;">
+                <div 
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    cursor: pointer;
+                    padding: 4px 8px;
+                    border-radius: 16px;
+                    transition: background-color 0.2s ease;
+                    font-size: 14px;
+                    color: #666;
+                  "
+                  @click="toggleLike(post)"
+                  @mouseenter="$event.currentTarget.style.backgroundColor = '#f5f5f5'"
+                  @mouseleave="$event.currentTarget.style.backgroundColor = 'transparent'"
+                >
+                  <HeartFilled v-if="post.isLiked" style="color: #ff4d4f" />
+                  <HeartOutlined v-else />
+                  <span style="font-size: 13px; font-weight: 500;">
+                    {{ formatNumber(post.like_count) }}
+                  </span>
+                </div>
+                <div 
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    cursor: pointer;
+                    padding: 4px 8px;
+                    border-radius: 16px;
+                    transition: background-color 0.2s ease;
+                    font-size: 14px;
+                    color: #666;
+                  "
+                  @click="openCommentsModal(post)"
+                  @mouseenter="$event.currentTarget.style.backgroundColor = '#f5f5f5'"
+                  @mouseleave="$event.currentTarget.style.backgroundColor = 'transparent'"
+                >
+                  <MessageOutlined />
+                  <span style="font-size: 13px; font-weight: 500;">
+                    {{ formatNumber(post.comment_count) }}
+                  </span>
+                </div>
+              </div>
+            </a-col>
+          </a-row>
+        </div>
+      </div>
+    </div>
+  </a-col>
+</a-row>
+                <div v-if="filteredProducts?.length > 0" style="display: flex; justify-content: center; margin-top: 20px; margin-bottom: 20px;">
+<a-pagination 
+v-model:current="productsPagination.currentPage"
+:total="productsPagination.totalCount"
+:page-size="productsPagination.pageSize"
+@change="handleProductsPageChange"
+show-total
+:show-size-changer="false"
+/>
+</div>
+                </a-tab-pane>
             </a-tabs>
     </div>
 </div>
 </template>
 <script>
-import {HeartOutlined,ExclamationCircleOutlined,HeartFilled} from '@ant-design/icons-vue'
+import {ExclamationCircleOutlined,EyeOutlined,
+    HeartOutlined,
+    HeartFilled,
+    MessageOutlined,
+    ShareAltOutlined,
+    MoreOutlined,
+    EditOutlined,
+    DeleteOutlined,
+    PushpinOutlined,
+    ArrowLeftOutlined,
+    CloseOutlined,
+  } from '@ant-design/icons-vue'
 
 export default {
     name:'likes',
     data(){ return {
                     products: [],
                     rooms:[],
+                    community_posts:[],
         // Pagination states for Products
         productsPagination: {
             currentPage: 1,
@@ -160,7 +390,17 @@ export default {
         
     }},
     components:{
-        HeartOutlined,ExclamationCircleOutlined,HeartFilled
+        ExclamationCircleOutlined,EyeOutlined,
+    HeartOutlined,
+    HeartFilled,
+    MessageOutlined,
+    ShareAltOutlined,
+    MoreOutlined,
+    EditOutlined,
+    DeleteOutlined,
+    PushpinOutlined,
+    ArrowLeftOutlined,
+    CloseOutlined,
     },
     computed: {
         filteredProducts() {
@@ -184,10 +424,19 @@ export default {
     mounted(){
         this.fetchMyProducts()
         this.fetchMyRooms()
+        this.fetchMyLikes()
 
     },
     methods:{
         
+    // Utility methods
+    formatNumber(num) {
+      if (!num || num === 0) return "0";
+      if (num >= 1000000) return (num / 1000000).toFixed(1) + "M";
+      if (num >= 1000) return (num / 1000).toFixed(1) + "K";
+      return num.toString();
+    },
+
         truncateText(text, charLimit = 7) {
                     if (!text) return '';
                     if (text.length <= charLimit) return text;
@@ -249,6 +498,29 @@ export default {
         this.$message.error('Error loading room ');
     }
 },
+async fetchMyLikes(page = 1) {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(
+            
+            `${this.$store.state.root_api}community/api/my-likes/?page=${page}&page_size=${this.roomPagination.pageSize}&item_type=room`,
+
+            {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Token ${token}`
+                }
+            }
+        );
+        const result = await response.json();
+        if (result.success) {
+            this.community_posts=result.data
+        }
+    } catch (error) {
+        console.error('Error loading room ', error);
+        this.$message.error('Error loading room ');
+    }
+},
 async toggleFavorite(product) {
   try {
     const token = localStorage.getItem('token');
@@ -298,18 +570,15 @@ async toggleFavorite(product) {
 }
 </script>
 
-
-
-
 <style scoped>
-.main{
-    padding:10px;
-    border-radius:20px;
-    /* height: 100vh; */
-    background: white;
-    border:2px solid rgba(128, 128, 128, 0.16);
-    margin-top:10px;
-    margin-bottom:10px;
+
+.main {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  border-radius: 20px;
+  border: 1px solid rgba(128, 128, 128, 0.167);
+  padding: 20px;
+  background-color: white;
 }
 .head-section{
     display:flex;
@@ -378,4 +647,6 @@ async toggleFavorite(product) {
 @media (min-width: 768px) { .product-responsive { width: 33.333%; flex: 0 0 33.333%; } }
 @media (min-width: 992px) { .product-responsive { width: 25%; flex: 0 0 25%; } }
 @media (min-width: 1200px) { .product-responsive { width: 20%; flex: 0 0 20%; } }
+
+
 </style>

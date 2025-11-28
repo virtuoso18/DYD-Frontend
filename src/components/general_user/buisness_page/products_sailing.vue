@@ -53,7 +53,7 @@
 
               <a-col span="17">
                 
-<a-button block @click="this.$router.push('/'+this.$route.params.buisness_name+'/'+product.type+'/'+product.product_id)">Product Details</a-button>
+<a-button block  @click="goto_product_Route(product)">Product Details</a-button>
               </a-col>
 
               <a-col span="1"></a-col>
@@ -86,12 +86,27 @@ export default {
     return {
     }
   },
- watch: {
+  watch: {
   '$route.params.product_id'(newVal, oldVal) {
-    this.fetchProductDetails(); // reload page data
-  }
-},
+    if (newVal !== oldVal) {
+      window.location.reload()
+    }
+  },
+  },
+
+
   methods: {
+    goto_product_Route(product){
+      this.$router.push({
+      name: 'buisness_product',
+      params: {
+        buisness_name: this.$route.params.buisness_name,
+        product_type: product.type,
+        product_id: product.product_id
+      }
+    })
+  
+    },
 //     truncateText(text, wordLimit) {
 //   if (!text) return '';
 //   const words = text.split(' ');

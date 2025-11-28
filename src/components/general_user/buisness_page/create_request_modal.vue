@@ -10,117 +10,113 @@
     :cancel-text="'Cancel'"
     width="900px"
   >
-    <!-- <div class="upload-form"> -->
-        <a-row>
-            <a-col :sm="24" :xs="24" :md="12" :lg="12" style="padding-top:10px" >
-                <!-- Room Photo Upload Section -->
-      <div class=""  >
-        <h4>Upload Room Photo</h4>
-        <a-upload-dragger
-          v-model:fileList="fileList"
-          name="roomPhoto"
-          :multiple="false"
-          :before-upload="beforeUpload"
-          @change="handleFileChange"
-          accept=".png,.jpg,.jpeg"
-          :max-count="1"
-        >
-          <p class="ant-upload-drag-icon">
-            <inbox-outlined />
-          </p>
-          <p class="ant-upload-text">Drag and drop file here or click to upload</p>
-          <p class="ant-upload-hint">
-            Supported file format: png, jpeg<br>
-            file size: 50MB
-          </p>
-        </a-upload-dragger>
-      </div>
-            </a-col>
-            <a-col :sm="24" :xs="24" :md="12" :lg="12">
-                
-      <!-- Email Input Section -->
-      <div class="form-section" v-if="!hasToken" style="padding-bottom:5px;">
-        <h4>Enter Email</h4>
-        <a-input 
-          v-model:value="formData.email" 
-          placeholder="Enter Email"
-          type="email"
-          :status="emailError ? 'error' : ''"
-        />
-        <div v-if="emailError" class="error-message">{{ emailError }}</div>
-      </div>
+    <a-row>
+      <a-col :sm="24" :xs="24" :md="12" :lg="12" style="padding-top:10px">
+        <!-- Room Photo Upload Section -->
+        <div class="">
+          <h4>Upload Room Photo</h4>
+          <a-upload-dragger
+            v-model:fileList="fileList"
+            name="roomPhoto"
+            :multiple="false"
+            :before-upload="beforeUpload"
+            @change="handleFileChange"
+            accept=".png,.jpg,.jpeg"
+            :max-count="1"
+          >
+            <p class="ant-upload-drag-icon">
+              <inbox-outlined />
+            </p>
+            <p class="ant-upload-text">Drag and drop file here or click to upload</p>
+            <p class="ant-upload-hint">
+              Supported file format: png, jpeg<br>
+              file size: 50MB
+            </p>
+          </a-upload-dragger>
+        </div>
+      </a-col>
 
-      <!-- Message Section -->
-      <div class="form-section" style="padding-top:0px;">
-        <h4>Write a message</h4>
-        <a-textarea 
-          v-model:value="formData.message" 
-          placeholder="Describe how you’d like your room to look and which furniture you’d like to add."
-          :rows="6"
-          :max-length="500"
-          show-count
-        />
-      </div>
+      <a-col :sm="24" :xs="24" :md="12" :lg="12">
+        <!-- Email Input Section -->
+        <div class="form-section" v-if="!hasToken" style="padding-bottom:5px;">
+          <h4>Enter Email</h4>
+          <a-input 
+            v-model:value="formData.email" 
+            placeholder="Enter Email"
+            type="email"
+            :status="emailError ? 'error' : ''"
+          />
+          <div v-if="emailError" class="error-message">{{ emailError }}</div>
+        </div>
 
-            </a-col>
-        </a-row>
-      
+        <!-- Message Section -->
+        <div class="form-section" style="padding-top:0px;">
+          <h4>Write a message</h4>
+          <a-textarea 
+            v-model:value="formData.message" 
+            placeholder="Describe how you'd like your room to look and which furniture you'd like to add."
+            :rows="6"
+            :max-length="500"
+            show-count
+          />
+        </div>
+      </a-col>
+    </a-row>
 
-      <!-- Note Section -->
-      <a-alert
-        message="Note: Once your room photo is completed, we will notify you via register email address."
-        description=""
-        type="warning"
-        show-icon
-        class="note-alert"
-      />
-    <!-- </div> -->
+    <!-- Note Section -->
+    <a-alert
+      message="Note: Once your room photo is completed, we will notify you via register email address."
+      description=""
+      type="warning"
+      show-icon
+      class="note-alert"
+    />
   </a-modal>
 </template>
 
 <script>
-import { defineComponent, ref, reactive, computed } from 'vue'
 import { InboxOutlined } from '@ant-design/icons-vue'
 import { message } from 'ant-design-vue'
 
-export default defineComponent({
+export default {
   name: 'RequestCreateRoom',
   components: {
     InboxOutlined
   },
-   computed: {
-        hasToken() {
-        return localStorage.getItem("token") !== null;
-        }
-    },
   props: {
     request_create_room: {
       type: Object,
       default: () => ({})
     },
-    canMessageBusiness: {type: Object}
+    canMessageBusiness: {
+      type: Object
+    }
   },
   emits: ['close', 'submit'],
-  setup(props, { emit }) {
-    const modal_create_request_to_business = ref(false)
-    const fileList = ref([])
-    
-    const formData = reactive({
-      email: '',
-      message: '',
-      roomPhoto: null
-    })
-
-    const emailError = ref('')
-
-    // Email validation
-    const validateEmail = (email) => {
+  data() {
+    return {
+      modal_create_request_to_business: false,
+      fileList: [],
+      formData: {
+        email: '',
+        message: '',
+        roomPhoto: null
+      },
+      emailError: ''
+    }
+  },
+  computed: {
+    hasToken() {
+      return localStorage.getItem("token") !== null
+    }
+  },
+  methods: {
+    validateEmail(email) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
       return emailRegex.test(email)
-    }
+    },
 
-    // File upload validation
-    const beforeUpload = (file) => {
+    beforeUpload(file) {
       const isValidType = ['image/png', 'image/jpeg', 'image/jpg'].includes(file.type)
       if (!isValidType) {
         message.error('You can only upload PNG/JPEG files!')
@@ -134,89 +130,76 @@ export default defineComponent({
       }
       
       return false // Prevent auto upload
-    }
+    },
 
-    const handleFileChange = (info) => {
+    handleFileChange(info) {
       const { fileList: newFileList } = info
-      fileList.value = newFileList.slice(-1) // Keep only the latest file
+      this.fileList = newFileList.slice(-1) // Keep only the latest file
       
       if (newFileList.length > 0) {
-        formData.roomPhoto = newFileList[0].originFileObj || newFileList[0]
+        this.formData.roomPhoto = newFileList[0].originFileObj || newFileList[0]
       }
-    }
+    },
 
-    const validateForm = () => {
+    validateForm() {
       let isValid = true
       
       // Reset errors
-      emailError.value = ''
+      this.emailError = ''
       
       // Validate email
-      if (!formData.email.trim()) {
-        emailError.value = 'Email is required'
+      if (!this.formData.email.trim()) {
+        this.emailError = 'Email is required'
         isValid = false
-      } else if (!validateEmail(formData.email)) {
-        emailError.value = 'Please enter a valid email address'
+      } else if (!this.validateEmail(this.formData.email)) {
+        this.emailError = 'Please enter a valid email address'
         isValid = false
       }
       
       // Validate file upload
-      if (!formData.roomPhoto) {
+      if (!this.formData.roomPhoto) {
         message.error('Please upload a room photo')
         isValid = false
       }
       
       return isValid
-    }
+    },
 
-    const handleSubmit = () => {
-      // if (!validateForm()) {
+    handleSubmit() {
+      // if (!this.validateForm()) {
       //   return
       // }
 
       const submitData = {
-        email: formData.email,
-        message: formData.message,
-        roomPhoto: formData.roomPhoto
+        email: this.formData.email,
+        message: this.formData.message,
+        roomPhoto: this.formData.roomPhoto
       }
 
       // Emit the form data to parent component
-      emit('submit', submitData)
+      this.$emit('submit', submitData)
       
       message.success('Room photo request submitted successfully!')
-      CloseModal()
-    }
+      this.CloseModal()
+    },
 
-    const CloseModal = () => {
+    CloseModal() {
       // Reset form
-      formData.email = ''
-      formData.message = ''
-      formData.roomPhoto = null
-      fileList.value = []
-      emailError.value = ''
+      this.formData.email = ''
+      this.formData.message = ''
+      this.formData.roomPhoto = null
+      this.fileList = []
+      this.emailError = ''
       
-      modal_create_request_to_business.value = false
-      emit('close')
-    }
+      this.modal_create_request_to_business = false
+      this.$emit('close')
+    },
 
-    // Method to open modal (can be called from parent)
-    const openModal = () => {
-      modal_create_request_to_business.value = true
-    }
-
-    return {
-      modal_create_request_to_business,
-      fileList,
-      formData,
-      emailError,
-      beforeUpload,
-      handleFileChange,
-      handleSubmit,
-      CloseModal,
-      openModal
+    openModal() {
+      this.modal_create_request_to_business = true
     }
   }
-})
+}
 </script>
 
 <style scoped>
@@ -226,11 +209,9 @@ export default defineComponent({
 
 .upload-section,
 .form-section {
-    padding-left:10px;
-    /* padding-bottom:10px; */
-    padding-right:10px;
-    padding-top:10px;
-  /* margin-bottom: 24px; */
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 10px;
 }
 
 .upload-section h4,

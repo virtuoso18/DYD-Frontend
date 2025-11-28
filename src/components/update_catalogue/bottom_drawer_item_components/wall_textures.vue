@@ -1,119 +1,249 @@
 <template>
   <div class="main">
+    <a-row>
+      <a-col :span="4">
+        <!-- Price Filter -->
+        <div style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #f0f0f0;">
+          <h4 style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600;">Price</h4>
+          <a-slider 
+            :min="0" 
+            :max="500000" 
+            v-model:value="filters.priceRange" 
+            range 
+            @change="handlePriceChange"
+          />
+          <p style="margin-top: 8px; font-size: 12px; color: #666;">
+            ₹{{ filters.priceRange[0].toLocaleString('en-IN') }} - ₹{{ filters.priceRange[1].toLocaleString('en-IN') }}
+          </p>
+        </div>
 
-   <a-row>
-    <a-col :span="4">
-  <!-- Price Filter -->
-  <div style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #f0f0f0;">
-    <h4 style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600;">Price</h4>
-    <a-slider :min="0" :max="500" :default-value="[0, 500]" range />
-    <p style="margin-top: 8px; font-size: 12px; color: #666;">₹0 - ₹500</p>
-  </div>
-
-  <!-- Texture Style Filter -->
-  <div style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #f0f0f0;">
-    <h4 style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600;">Style</h4>
-    <a-checkbox>Modern</a-checkbox><br/>
-    <a-checkbox>Classic</a-checkbox><br/>
-    <a-checkbox>Minimal</a-checkbox>
-  </div>
-
-  <!-- Colors Filter -->
-  <div style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #f0f0f0;">
-    <h4 style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600;">Colors</h4>
-    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-      <div style="width: 30px; height: 30px; border-radius: 50%; background: #FFA500; border: 2px solid #ddd; cursor: pointer;"></div>
-      <div style="width: 30px; height: 30px; border-radius: 50%; background: #DEB887; border: 2px solid #ddd; cursor: pointer;"></div>
-      <div style="width: 30px; height: 30px; border-radius: 50%; background: #A52A2A; border: 2px solid #ddd; cursor: pointer;"></div>
-      <div style="width: 30px; height: 30px; border-radius: 50%; background: #FF0000; border: 2px solid #ddd; cursor: pointer;"></div>
-      <div style="width: 30px; height: 30px; border-radius: 50%; background: #98FB98; border: 2px solid #ddd; cursor: pointer;"></div>
-      <div style="width: 30px; height: 30px; border-radius: 50%; background: #DDA0DD; border: 2px solid #ddd; cursor: pointer;"></div>
-    </div>
-  </div>
-
-  <!-- Size Filter -->
-  <div style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #f0f0f0;">
-    <h4 style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600;">Size</h4>
-    <a-radio-group>
-      <a-radio value="small">Small (10x10)</a-radio><br/>
-      <a-radio value="medium">Medium (20x20)</a-radio><br/>
-      <a-radio value="large">Large (30x30)</a-radio>
-    </a-radio-group>
-  </div>
-
-  <!-- Clear Button -->
-  <a-button block type="primary">Clear Filters</a-button>
-</a-col>
-      <a-col :span="20">
-          <div class="products-list">
-      <a-row>
-        <a-col v-for="product in products" :key="product.id" 
-               class="product-responsive" style="padding:5px;">
-          <div class="product">
-            <div class="product-image-container">
-              <img 
-                :src="getProductImage(product)" 
-                :alt="product.title"
-                class="product-image"
-              />
-              <!-- Category Badge -->
-              <div class="category-badge">{{ product.texture_style || 'Wall' }}</div>
-              <!-- AR Badge -->
-              <div class="ar-badge">AR</div>
-            </div>
-
-            <a-row>
-              <a-col span="24">
-                <b>{{ product.title }}</b>
-              </a-col>
-              
-              <a-col span="18">
-                Colors
-              </a-col>
-              
-              <a-col span="6" style="display: flex; justify-content: end; gap: 4px;">
-                <div 
-                  v-for="color in product.colors_available" 
-                  :key="color.id"
-                  style="width:20px; height:20px; border-radius:20px; border: 1px solid #ddd;" 
-                  :style="{ backgroundColor: color.color_hex }"
-                  :title="color.title"
-                ></div>
-              </a-col>
-
-              <a-col span="12">
-                Price per Sq.m
-              </a-col>
-              
-              <a-col span="12" style="text-align: right;">
-                ₹{{ getPrice(product) }}
-              </a-col>
-
-              <a-col span="24" style="font-size: 11px; color: #666; margin-bottom: 4px;">
-                Size: {{ product.size_width }}x{{ product.size_height }}cm
-              </a-col>
-
-              <a-col span="17">
-                <a-button block @click="handleProductDetail(product)">Product Details</a-button>
-              </a-col>
-              
-              <a-col span="1"></a-col>
-              <a-col span="4">
-                <a-button 
-                  :type="isWishlisted(product.id) ? 'primary' : 'default'"
-                  @click="toggleWishlist(product)"
-                >
-                  <HeartOutlined />
-                </a-button>
-              </a-col>
-            </a-row>
+        <!-- Texture Style Filter -->
+        <div style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #f0f0f0;">
+          <h4 style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600;">Style</h4>
+          <div style="max-height: 200px; overflow-y: auto; padding-right: 8px;">
+            <a-checkbox 
+              v-model:checked="filters.styles.modern"
+              @change="applyFilters"
+              style="display: flex; margin-bottom: 8px;"
+            >Modern</a-checkbox>
+            <a-checkbox 
+              v-model:checked="filters.styles.scandinavian"
+              @change="applyFilters"
+              style="display: flex; margin-bottom: 8px;"
+            >Scandinavian</a-checkbox>
+            <a-checkbox 
+              v-model:checked="filters.styles.classic"
+              @change="applyFilters"
+              style="display: flex; margin-bottom: 8px;"
+            >Classic</a-checkbox>
+            <a-checkbox 
+              v-model:checked="filters.styles.minimalist"
+              @change="applyFilters"
+              style="display: flex; margin-bottom: 8px;"
+            >Minimalist</a-checkbox>
+            <a-checkbox 
+              v-model:checked="filters.styles.industrial"
+              @change="applyFilters"
+              style="display: flex; margin-bottom: 8px;"
+            >Industrial</a-checkbox>
+            <a-checkbox 
+              v-model:checked="filters.styles.rustic"
+              @change="applyFilters"
+              style="display: flex; margin-bottom: 8px;"
+            >Rustic</a-checkbox>
+            <a-checkbox 
+              v-model:checked="filters.styles.boho"
+              @change="applyFilters"
+              style="display: flex; margin-bottom: 8px;"
+            >Boho</a-checkbox>
+            <a-checkbox 
+              v-model:checked="filters.styles.other"
+              @change="applyFilters"
+              style="display: flex; margin-bottom: 8px;"
+            >Other</a-checkbox>
           </div>
-        </a-col>
-      </a-row>
-    </div>
+        </div>
+
+        <!-- Colors Filter -->
+        <div style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #f0f0f0;">
+          <h4 style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600;">Colors</h4>
+          <div v-if="loadingColors" style="text-align: center; padding: 10px;">
+            <a-spin size="small" />
+          </div>
+          <div v-else style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <div 
+              v-for="color in availableColors" 
+              :key="color.id"
+              @click="toggleColorFilter(color.color_hex)"
+              :style="{
+                width: '30px', 
+                height: '30px', 
+                borderRadius: '50%', 
+                background: color.color_hex, 
+                border: filters.selectedColors.includes(color.color_hex) ? '3px solid #1890ff' : '2px solid #ddd',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                position: 'relative'
+              }"
+              :title="color.title"
+            >
+              <div 
+                v-if="filters.selectedColors.includes(color.color_hex)"
+                style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 16px; font-weight: bold; text-shadow: 0 0 3px rgba(0,0,0,0.5);"
+              >✓</div>
+            </div>
+            <div v-if="availableColors.length === 0" style="color: #999; font-size: 12px; width: 100%; text-align: center;">
+              No colors available
+            </div>
+          </div>
+        </div>
+
+        <!-- Size Filter (Width) -->
+        <!-- <div style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #f0f0f0;">
+          <h4 style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600;">Width (cm)</h4>
+          <a-slider 
+            :min="0" 
+            :max="200" 
+            v-model:value="filters.widthRange" 
+            range 
+            @change="handleSizeChange"
+          />
+          <p style="margin-top: 8px; font-size: 12px; color: #666;">
+            {{ filters.widthRange[0] }}cm - {{ filters.widthRange[1] }}cm
+          </p>
+        </div> -->
+
+        <!-- Size Filter (Height) -->
+        <!-- <div style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #f0f0f0; ">
+          <h4 style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600;">Height (cm)</h4>
+          <a-slider 
+            :min="0" 
+            :max="200" 
+            v-model:value="filters.heightRange" 
+            range 
+            @change="handleSizeChange"
+          />
+          <p style="margin-top: 8px; font-size: 12px; color: #666;">
+            {{ filters.heightRange[0] }}cm - {{ filters.heightRange[1] }}cm
+          </p>
+        </div> -->
+
+        <!-- Clear Button -->
+        <a-button block type="primary" @click="clearFilters">Clear Filters</a-button>
+      </a-col>
+      
+      <a-col :span="20">
+        <!-- Results Header -->
+        <div v-if="!loading" style="padding: 0 10px 15px; display: flex; justify-content: space-between; align-items: center;">
+          <div style="color: #666; font-size: 14px;">
+            Showing {{ products.length }} of {{ pagination.total_count }} wall textures
+          </div>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <span style="color: #666; font-size: 12px;">Page Size:</span>
+            <a-select 
+              v-model:value="pagination.page_size" 
+              @change="handlePageSizeChange"
+              style="width: 80px;"
+            >
+              <a-select-option :value="1">1</a-select-option>
+              <a-select-option :value="2">2</a-select-option>
+              <a-select-option :value="3">3</a-select-option>
+              <a-select-option :value="4">4</a-select-option>
+            </a-select>
+          </div>
+        </div>
+
+        <!-- Loading State -->
+        <div v-if="loading" style="text-align: center; padding: 40px;">
+          <a-spin size="large" />
+        </div>
+
+        <!-- Products List -->
+        <div v-else class="products-list">
+          <a-row>
+            <a-col v-for="product in products" :key="product.id" 
+                   class="product-responsive" style="padding:5px;">
+              <div class="product">
+                <div class="product-image-container">
+                  <img 
+                    :src="getProductImage(product)" 
+                    :alt="product.title"
+                    class="product-image"
+                  />
+                  <!-- Category Badge -->
+                  <div class="category-badge">{{ product.texture_style || 'Wall' }}</div>
+                  <!-- AR Badge -->
+                  <div class="ar-badge">AR</div>
+                </div>
+
+                <a-row>
+                  <a-col span="24">
+                    <b>{{ product.title }}</b>
+                  </a-col>
+                  
+                  <a-col span="18">
+                    Colors
+                  </a-col>
+                  
+                  <a-col span="6" style="display: flex; justify-content: end; gap: 4px;">
+                    <div 
+                      v-for="color in product.colors_available" 
+                      :key="color.id"
+                      style="width:20px; height:20px; border-radius:20px; border: 1px solid #ddd;" 
+                      :style="{ backgroundColor: color.color_hex }"
+                      :title="color.title"
+                    ></div>
+                  </a-col>
+
+                  <a-col span="12">
+                    Price per Sq.m
+                  </a-col>
+                  
+                  <a-col span="12" style="text-align: right;">
+                    ₹{{ getPrice(product) }}
+                  </a-col>
+
+                  <a-col span="24" style="font-size: 11px; color: #666; margin-bottom: 4px;">
+                    Size: {{ product.size_width }}x{{ product.size_height }}cm
+                  </a-col>
+
+                  <a-col span="17">
+                    <a-button block @click="handleProductDetail(product)">Product Details</a-button>
+                  </a-col>
+                  
+                  <a-col span="1"></a-col>
+                  <a-col span="4">
+                    <a-button 
+                      :type="isWishlisted(product.id) ? 'primary' : 'default'"
+                      @click="toggleWishlist(product)"
+                    >
+                      <HeartOutlined />
+                    </a-button>
+                  </a-col>
+                </a-row>
+              </div>
+            </a-col>
+          </a-row>
+
+          <!-- No Results -->
+          <div v-if="products.length === 0" style="text-align: center; padding: 40px; color: #999;">
+            <p>No products found matching your filters.</p>
+          </div>
+
+          <!-- Pagination -->
+          <div v-if="pagination.total_pages > 1" style="display: flex; justify-content: center; margin-top: 30px;">
+            <a-pagination
+              v-model:current="pagination.current_page"
+              v-model:page-size="pagination.page_size"
+              :total="pagination.total_count"
+              :show-size-changer="false"
+              :show-total="(total, range) => `${range[0]}-${range[1]} of ${total} items`"
+              @change="handlePageChange"
+            />
+          </div>
+        </div>
       </a-col>
     </a-row>
-  
   </div>
 </template>
 
@@ -125,30 +255,260 @@ export default {
   components: {
     HeartOutlined
   },
-  props: {
-    products: {
-      type: Array,
-      default: () => []
-    }
-  },
   data() {
     return {
-      wishlisted: new Set()
+      products: [],
+      wishlisted: new Set(),
+      loading: false,
+      loadingColors: false,
+      availableColors: [],
+      pagination: {
+        current_page: 1,
+        page_size: 20,
+        total_count: 0,
+        total_pages: 1
+      },
+      filters: {
+        priceRange: [0, 500000],
+        widthRange: [0, 200],
+        heightRange: [0, 200],
+        styles: {
+          modern: false,
+          scandinavian: false,
+          classic: false,
+          minimalist: false,
+          industrial: false,
+          rustic: false,
+          boho: false,
+          other: false
+        },
+        selectedColors: []
+      },
+      filterTimeout: null
     }
   },
+  mounted() {
+    this.loadAvailableColors()
+    this.loadProducts()
+  },
   methods: {
+    /**
+     * Load available colors from all products
+     */
+    async loadAvailableColors() {
+      try {
+        this.loadingColors = true
+        
+        const url = `${this.$store.state.root_api}room/api/walls/`
+        
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Token ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+          }
+        })
+        
+        const data = await response.json()
+        
+        if (data.success) {
+          // Extract unique colors from all products using hex codes
+          const colorMap = new Map()
+          
+          data.data.forEach(product => {
+            if (product.colors_available) {
+              product.colors_available.forEach(color => {
+                if (!colorMap.has(color.color_hex)) {
+                  colorMap.set(color.color_hex, {
+                    id: color.color_hex,
+                    title: color.title,
+                    color_hex: color.color_hex
+                  })
+                }
+              })
+            }
+          })
+          
+          this.availableColors = Array.from(colorMap.values())
+        }
+      } catch (error) {
+        console.error('Failed to load colors:', error)
+      } finally {
+        this.loadingColors = false
+      }
+    },
+
+    /**
+     * Toggle color filter selection
+     */
+    toggleColorFilter(hexCode) {
+      const index = this.filters.selectedColors.indexOf(hexCode)
+      if (index > -1) {
+        this.filters.selectedColors.splice(index, 1)
+      } else {
+        this.filters.selectedColors.push(hexCode)
+      }
+      this.applyFilters()
+    },
+
+    /**
+     * Load products with filters and pagination
+     */
+    async loadProducts() {
+      try {
+        this.loading = true
+        
+        const params = new URLSearchParams()
+        
+        // Add pagination parameters
+        params.append('page', this.pagination.current_page)
+        params.append('page_size', this.pagination.page_size)
+        
+        // Add price range
+        params.append('price_per_sqm_min', this.filters.priceRange[0])
+        params.append('price_per_sqm_max', this.filters.priceRange[1])
+        
+        // Add size ranges
+        params.append('size_width_min', this.filters.widthRange[0])
+        params.append('size_width_max', this.filters.widthRange[1])
+        params.append('size_height_min', this.filters.heightRange[0])
+        params.append('size_height_max', this.filters.heightRange[1])
+        
+        // Add texture styles
+        const selectedStyles = []
+        if (this.filters.styles.modern) selectedStyles.push('Modern')
+        if (this.filters.styles.scandinavian) selectedStyles.push('Scandinavian')
+        if (this.filters.styles.classic) selectedStyles.push('Classic')
+        if (this.filters.styles.minimalist) selectedStyles.push('Minimalist')
+        if (this.filters.styles.industrial) selectedStyles.push('Industrial')
+        if (this.filters.styles.rustic) selectedStyles.push('Rustic')
+        if (this.filters.styles.boho) selectedStyles.push('Boho')
+        if (this.filters.styles.other) selectedStyles.push('Other')
+        
+        if (selectedStyles.length > 0) {
+          params.append('texture_style', selectedStyles.join(','))
+        }
+        
+        // Add selected colors
+        if (this.filters.selectedColors.length > 0) {
+          const hexCodes = this.filters.selectedColors.join(',')
+          params.append('color_hex', hexCodes)
+        }
+        
+        const url = `${this.$store.state.root_api}room/api/walls/?${params.toString()}`
+        
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Token ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+          }
+        })
+        
+        const data = await response.json()
+        
+        if (data.success) {
+          this.products = data.data || []
+          
+          // Update pagination info from response
+          this.pagination.current_page = data.page || 1
+          this.pagination.page_size = data.page_size || 20
+          this.pagination.total_count = data.total_count || 0
+          this.pagination.total_pages = data.total_pages || 1
+          
+          // Scroll to top when page changes
+          window.scrollTo({ top: 0, behavior: 'smooth' })
+        } else {
+          this.$message.error(data.message || 'Failed to load products')
+        }
+      } catch (error) {
+        console.error('Failed to load products:', error)
+        this.$message.error('Error loading products')
+      } finally {
+        this.loading = false
+      }
+    },
+
+    /**
+     * Handle page change
+     */
+    handlePageChange(page, pageSize) {
+      this.pagination.current_page = page
+      this.pagination.page_size = pageSize
+      this.loadProducts()
+    },
+
+    /**
+     * Handle page size change
+     */
+    handlePageSizeChange(pageSize) {
+      this.pagination.page_size = pageSize
+      this.pagination.current_page = 1 // Reset to first page
+      this.loadProducts()
+    },
+
+    /**
+     * Handle price range change with debounce
+     */
+    handlePriceChange() {
+      clearTimeout(this.filterTimeout)
+      this.filterTimeout = setTimeout(() => {
+        this.applyFilters()
+      }, 500)
+    },
+
+    /**
+     * Handle size range change with debounce
+     */
+    handleSizeChange() {
+      clearTimeout(this.filterTimeout)
+      this.filterTimeout = setTimeout(() => {
+        this.applyFilters()
+      }, 500)
+    },
+
+    /**
+     * Apply all filters (reset to page 1)
+     */
+    applyFilters() {
+      this.pagination.current_page = 1 // Reset to first page when filters change
+      this.loadProducts()
+    },
+
+    /**
+     * Clear all filters
+     */
+    clearFilters() {
+      this.filters = {
+        priceRange: [0, 500000],
+        widthRange: [0, 200],
+        heightRange: [0, 200],
+        styles: {
+          modern: false,
+          scandinavian: false,
+          classic: false,
+          minimalist: false,
+          industrial: false,
+          rustic: false,
+          boho: false,
+          other: false
+        },
+        selectedColors: []
+      }
+      this.pagination.current_page = 1
+      this.loadProducts()
+    },
+
     /**
      * Get the proper image URL from product
      */
     getProductImage(product) {
       if (product.texture_image) {
-        // If it's a relative path, prepend the API URL
         if (product.texture_image.startsWith('/')) {
           return `${this.$store.state.root_media_api}${product.texture_image}`
         }
         return product.texture_image
       }
-      // Fallback placeholder image
       return 'https://via.placeholder.com/300x300?text=No+Image'
     },
 
