@@ -1,4 +1,111 @@
 <template>
+  <a-drawer
+    title="AI catalog products used in room."
+    :placement="'bottom'"
+    :closable="true"
+    :open="openSeeAll_used_products"
+    height="90%"
+    style="
+  border-top-left-radius: 20px;;
+  border-top-right-radius: 20px;;
+"
+    @close="openSeeAll_used_products=false"
+    >
+    <template #extra> <div class="head-section">
+    
+    </div>
+    </template>
+      <!-- {{ products_used }} -->
+        <!-- <floor_textures_bottom_drawer_menu :products="seeAll_Floor"/> -->
+          <a-row>
+            <a-col
+            :lg="4"
+            :md="6"
+            :sm="12"
+            :xs="12"
+              v-for="product in products_used"
+              :key="product.id"
+              class="product-responsive"
+              style="padding: 5px"
+            >
+              <!-- {{product.product_colors}} -->
+              <div class="product">
+                <div
+                  class="product-image-container"
+                  @click="viewProduct(product)"
+                >
+                  <img
+                    :src="$store.state.root_media_api + product.product_image"
+                    :alt="product.product_title"
+                    class="product-image"
+                  />
+                  <!-- Category Badge -->
+                  <div class="category-badge">{{ product.category_name }}</div>
+                  <!-- AR Badge -->
+                  <div class="ar-badge">AR</div>
+                </div>
+                <!-- {{ truncateText(product.description || 'No description available', 8) }} -->
+
+                <a-row>
+                  <a-col span="24">
+                    <b>{{ product.product_title }}</b>
+                  </a-col>
+
+                  <a-col span="18"> Color </a-col>
+
+                  <a-col span="6" style="display: flex; justify-content: end">
+                    <div
+                      v-for="(color, index) in product.product_colors.slice(
+                        0,
+                        2
+                      )"
+                      :key="index"
+                      style="
+                        width: 20px;
+                        height: 20px;
+                        border-radius: 20px;
+                        margin-left: 2px;
+                      "
+                      :style="
+                        'background:' +
+                        (color.color_hex ? color.color_hex : color.color)
+                      "
+                    >
+                      <!-- {{ color }} -->
+                    </div>
+                  </a-col>
+
+                  <a-col span="12"> Price </a-col>
+
+                  <a-col
+                    span="12"
+                    style="
+                      display: flex;
+                      justify-content: end;
+                      font-weight: 700;
+                    "
+                  >
+                    <!-- <del style="font-size: 10px;">${{ product.pricing.price }}</del> -->
+                    ${{ product.product_price }}
+                  </a-col>
+
+                  <a-col span="17">
+                    <a-button block @click="this.$router.push('/'+product.business_slug+'/'+product.type+'/'+product.product_id)"
+                      >Product Details</a-button
+                    >
+                  </a-col>
+
+                  <a-col span="1"></a-col>
+                  <a-col span="4">
+                    <a-button><HeartOutlined /></a-button>
+                  </a-col>
+                </a-row>
+              </div>
+            </a-col>
+          </a-row>
+      
+  </a-drawer>
+
   <a-modal v-model:open="open_RenderNowModal" title="" footer="" centered>
     <div
       style="display:flex;align-items:center';flex-direction:column;justify-content:center; text-align:center"
@@ -55,283 +162,283 @@
   </a-modal>
 
   <!-- Enhanced Share on Community Modal -->
-<a-modal
-  v-model:open="open_ShareOnComunity"
-  title=""
-  footer=""
-  centered
-  style="width: 100%; max-width: 900px"
-  :closable="true"
->
-  <div style="display: flex; align-items: center; flex-direction: column; justify-content: center;">
-    <div style="width: 100%; text-align: start; margin-bottom: 20px;">
-      <h3 style="margin: 0; font-size: 24px; font-weight: 600;">Share on Community</h3>
-      <p style="margin: 5px 0; color: #666;">Share your amazing design with the community!</p>
-    </div>
-    
-    <a-row style="width: 100%" :gutter="20">
-      <!-- Image Preview -->
-      <a-col :sm="24" :xs="24" :lg="10" :md="10">
-        <div style="position: relative;">
-          <img
-            :src="base_image_url"
-            style="border-radius: 12px; width: 100%; max-height: 400px; object-fit: cover; box-shadow: 0 4px 12px rgba(0,0,0,0.1);"
-            alt="Room Design"
-          />
-          <div style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.5); border-radius: 8px; padding: 5px 10px; color: white; font-size: 12px;">
-            Preview
-          </div>
-        </div>
-      </a-col>
-
-      <!-- Form Section -->
-      <a-col
-        :sm="24"
-        :xs="24"
-        :lg="14"
-        :md="14"
-        style="display: flex; justify-content: space-between; flex-direction: column; min-height: 400px;"
-      >
-        <div style="flex: 1;">
-          <!-- Title Input -->
-          <div style="margin-bottom: 20px;">
-            <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #333;">
-              Post Title <span style="color: red;">*</span>
-            </label>
-            <a-input
-              v-model:value="shareForm.title"
-              placeholder="Give your design an attractive title..."
-              size="large"
-              :maxlength="200"
-              show-count
-              style="border-radius: 8px;"
+  <a-modal
+    v-model:open="open_ShareOnComunity"
+    title=""
+    footer=""
+    centered
+    style="width: 100%; max-width: 900px"
+    :closable="true"
+  >
+    <div style="display: flex; align-items: center; flex-direction: column; justify-content: center;">
+      <div style="width: 100%; text-align: start; margin-bottom: 20px;">
+        <h3 style="margin: 0; font-size: 24px; font-weight: 600;">Share on Community</h3>
+        <p style="margin: 5px 0; color: #666;">Share your amazing design with the community!</p>
+      </div>
+      
+      <a-row style="width: 100%" :gutter="20">
+        <!-- Image Preview -->
+        <a-col :sm="24" :xs="24" :lg="10" :md="10">
+          <div style="position: relative;">
+            <img
+              :src="base_image_url"
+              style="border-radius: 12px; width: 100%; max-height: 400px; object-fit: cover; box-shadow: 0 4px 12px rgba(0,0,0,0.1);"
+              alt="Room Design"
             />
+            <div style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.5); border-radius: 8px; padding: 5px 10px; color: white; font-size: 12px;">
+              Preview
+            </div>
           </div>
+        </a-col>
 
-          <!-- Tags Section -->
-          <div style="margin-bottom: 20px;">
-            <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #333;">
-              Tags
-              <span style="color: #666; font-weight: 400; font-size: 12px;">(Help others discover your design)</span>
-            </label>
-            
-            <!-- Tag Select -->
-            <a-select
-              v-model:value="shareForm.selectedTags"
-              mode="tags"
-              placeholder="Select existing tags or create new ones..."
-              style="width: 100%; border-radius: 8px;"
-              size="large"
-              :options="availableTags"
-              :loading="tagsLoading"
-              @search="handleTagSearch"
-              @select="handleTagSelect"
-              :filter-option="false"
-              :not-found-content="tagsLoading ? 'Loading...' : 'No tags found - type to create new'"
-            >
-              <template #tagRender="{ label, value, closable, onClose, option }">
-                <a-tag
-                  :color="option?.color || getRandomTagColor()"
-                  :closable="closable"
-                  @close="onClose"
-                  style="margin: 2px; padding: 4px 8px; border-radius: 6px;"
-                >
-                  {{ label }}
-                </a-tag>
-              </template>
-            </a-select>
-            
-            <!-- Popular Tags -->
-            <div v-if="popularTags.length > 0" style="margin-top: 10px;">
-              <span style="font-size: 12px; color: #666; margin-bottom: 8px; display: block;">Popular tags:</span>
-              <div style="display: flex; flex-wrap: wrap; gap: 6px;">
-                <a-tag
-                  v-for="tag in popularTags.slice(0, 8)"
-                  :key="tag.value"
-                  :color="tag.color"
-                  style="cursor: pointer; border-radius: 12px; margin: 0;"
-                  @click="addPopularTag(tag)"
-                >
-                  {{ tag.label }}
-                </a-tag>
+        <!-- Form Section -->
+        <a-col
+          :sm="24"
+          :xs="24"
+          :lg="14"
+          :md="14"
+          style="display: flex; justify-content: space-between; flex-direction: column; min-height: 400px;"
+        >
+          <div style="flex: 1;">
+            <!-- Title Input -->
+            <div style="margin-bottom: 20px;">
+              <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #333;">
+                Post Title <span style="color: red;">*</span>
+              </label>
+              <a-input
+                v-model:value="shareForm.title"
+                placeholder="Give your design an attractive title..."
+                size="large"
+                :maxlength="200"
+                show-count
+                style="border-radius: 8px;"
+              />
+            </div>
+
+            <!-- Tags Section -->
+            <div style="margin-bottom: 20px;">
+              <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #333;">
+                Tags
+                <span style="color: #666; font-weight: 400; font-size: 12px;">(Help others discover your design)</span>
+              </label>
+              
+              <!-- Tag Select -->
+              <a-select
+                v-model:value="shareForm.selectedTags"
+                mode="tags"
+                placeholder="Select existing tags or create new ones..."
+                style="width: 100%; border-radius: 8px;"
+                size="large"
+                :options="availableTags"
+                :loading="tagsLoading"
+                @search="handleTagSearch"
+                @select="handleTagSelect"
+                :filter-option="false"
+                :not-found-content="tagsLoading ? 'Loading...' : 'No tags found - type to create new'"
+              >
+                <template #tagRender="{ label, value, closable, onClose, option }">
+                  <a-tag
+                    :color="option?.color || getRandomTagColor()"
+                    :closable="closable"
+                    @close="onClose"
+                    style="margin: 2px; padding: 4px 8px; border-radius: 6px;"
+                  >
+                    {{ label }}
+                  </a-tag>
+                </template>
+              </a-select>
+              
+              <!-- Popular Tags -->
+              <div v-if="popularTags.length > 0" style="margin-top: 10px;">
+                <span style="font-size: 12px; color: #666; margin-bottom: 8px; display: block;">Popular tags:</span>
+                <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                  <a-tag
+                    v-for="tag in popularTags.slice(0, 8)"
+                    :key="tag.value"
+                    :color="tag.color"
+                    style="cursor: pointer; border-radius: 12px; margin: 0;"
+                    @click="addPopularTag(tag)"
+                  >
+                    {{ tag.label }}
+                  </a-tag>
+                </div>
+              </div>
+            </div>
+
+            <!-- Room Info Display -->
+            <div style="background: #f8f9fa; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+              <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="#666">
+                  <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                </svg>
+                <span style="font-weight: 500; color: #333;">Room Details</span>
+              </div>
+              <div style="display: flex; gap: 15px; font-size: 14px; color: #666;">
+                <span><strong>Type:</strong> {{ room_type || 'Living Room' }}</span>
+                <span><strong>Style:</strong> {{ room_design_type || 'Modern' }}</span>
+                <span v-if="products_used"><strong>Products:</strong> {{ products_used.length }} items</span>
               </div>
             </div>
           </div>
 
-          <!-- Room Info Display -->
-          <div style="background: #f8f9fa; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
-            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="#666">
-                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+          <!-- Action Buttons -->
+          <div style="display: flex; gap: 12px; margin-top: 20px;">
+            <a-button 
+              type="default" 
+              size="large" 
+              style="flex: 1; border-radius: 8px; height: 48px;"
+              @click="closeShareModal"
+            >
+              Cancel
+            </a-button>
+            <a-button
+              type="primary"
+              size="large"
+              :loading="shareLoading"
+              :disabled="!shareForm.title.trim()"
+              @click="shareOnCommunity"
+              style="flex: 2; border-radius: 8px; height: 48px; display: flex; justify-content: center; align-items: center; gap: 8px;"
+            >
+              <svg v-if="!shareLoading" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M17.125 5.64648C17.125 6.95816 16.0617 8.02148 14.75 8.02148C13.4383 8.02148 12.375 6.95816 12.375 5.64648C12.375 4.33481 13.4383 3.27148 14.75 3.27148C16.0617 3.27148 17.125 4.33481 17.125 5.64648Z" stroke="white" stroke-width="1.5"/>
+                <path d="M7.625 10C7.625 11.3117 6.56167 12.375 5.25 12.375C3.93833 12.375 2.875 11.3117 2.875 10C2.875 8.68829 3.93833 7.625 5.25 7.625C6.56167 7.625 7.625 8.68829 7.625 10Z" stroke="white" stroke-width="1.5"/>
+                <path d="M17.125 14.3535C17.125 15.6652 16.0617 16.7285 14.75 16.7285C13.4383 16.7285 12.375 15.6652 12.375 14.3535C12.375 13.0418 13.4383 11.9785 14.75 11.9785C16.0617 11.9785 17.125 13.0418 17.125 14.3535Z" stroke="white" stroke-width="1.5"/>
+                <path d="M7.40625 9.00937L12.5521 6.63477M7.40625 10.9889L12.5521 13.3635" stroke="white" stroke-width="1.5"/>
               </svg>
-              <span style="font-weight: 500; color: #333;">Room Details</span>
-            </div>
-            <div style="display: flex; gap: 15px; font-size: 14px; color: #666;">
-              <span><strong>Type:</strong> {{ room_type || 'Living Room' }}</span>
-              <span><strong>Style:</strong> {{ room_design_type || 'Modern' }}</span>
-              <span v-if="products_used"><strong>Products:</strong> {{ products_used.length }} items</span>
-            </div>
+              {{ shareLoading ? 'Sharing...' : 'Share on Community' }}
+            </a-button>
           </div>
-        </div>
-
-        <!-- Action Buttons -->
-        <div style="display: flex; gap: 12px; margin-top: 20px;">
-          <a-button 
-            type="default" 
-            size="large" 
-            style="flex: 1; border-radius: 8px; height: 48px;"
-            @click="closeShareModal"
-          >
-            Cancel
-          </a-button>
-          <a-button
-            type="primary"
-            size="large"
-            :loading="shareLoading"
-            :disabled="!shareForm.title.trim()"
-            @click="shareOnCommunity"
-            style="flex: 2; border-radius: 8px; height: 48px; display: flex; justify-content: center; align-items: center; gap: 8px;"
-          >
-            <svg v-if="!shareLoading" width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <path d="M17.125 5.64648C17.125 6.95816 16.0617 8.02148 14.75 8.02148C13.4383 8.02148 12.375 6.95816 12.375 5.64648C12.375 4.33481 13.4383 3.27148 14.75 3.27148C16.0617 3.27148 17.125 4.33481 17.125 5.64648Z" stroke="white" stroke-width="1.5"/>
-              <path d="M7.625 10C7.625 11.3117 6.56167 12.375 5.25 12.375C3.93833 12.375 2.875 11.3117 2.875 10C2.875 8.68829 3.93833 7.625 5.25 7.625C6.56167 7.625 7.625 8.68829 7.625 10Z" stroke="white" stroke-width="1.5"/>
-              <path d="M17.125 14.3535C17.125 15.6652 16.0617 16.7285 14.75 16.7285C13.4383 16.7285 12.375 15.6652 12.375 14.3535C12.375 13.0418 13.4383 11.9785 14.75 11.9785C16.0617 11.9785 17.125 13.0418 17.125 14.3535Z" stroke="white" stroke-width="1.5"/>
-              <path d="M7.40625 9.00937L12.5521 6.63477M7.40625 10.9889L12.5521 13.3635" stroke="white" stroke-width="1.5"/>
-            </svg>
-            {{ shareLoading ? 'Sharing...' : 'Share on Community' }}
-          </a-button>
-        </div>
-      </a-col>
-    </a-row>
-  </div>
-</a-modal>
+        </a-col>
+      </a-row>
+    </div>
+  </a-modal>
 
 
 <!-- Enhanced Share on Community Modal -->
-<a-modal
-  v-model:open="open_SaveToMyDesignes"
-  title=""
-  footer=""
-  centered
-  style="width: 100%; max-width: 900px"
-  :closable="true"
->
-  <div style="display: flex; align-items: center; flex-direction: column; justify-content: center;">
-    <div style="width: 100%; text-align: start; margin-bottom: 20px;">
-      <h3 style="margin: 0; font-size: 24px; font-weight: 600;">Save To My Designes</h3>
-      <p style="margin: 5px 0; color: #666;">Save your amazing design in your my design!</p>
-    </div>
-    
-    <a-row style="width: 100%" :gutter="20">
-      <!-- Image Preview -->
-      <a-col :sm="24" :xs="24" :lg="10" :md="10">
-        <div style="position: relative;">
-          <img
-            :src="base_image_url"
-            style="border-radius: 12px; width: 100%; max-height: 400px; object-fit: cover; box-shadow: 0 4px 12px rgba(0,0,0,0.1);"
-            alt="Room Design"
-          />
-          <div style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.5); border-radius: 8px; padding: 5px 10px; color: white; font-size: 12px;">
-            Preview
-          </div>
-        </div>
-      </a-col>
-
-      <!-- Form Section -->
-      <a-col
-        :sm="24"
-        :xs="24"
-        :lg="14"
-        :md="14"
-        style="display: flex; justify-content: space-between; flex-direction: column; min-height: 400px;"
-      >
-        <div style="flex: 1;">
-          <!-- Title Input -->
-          <div style="margin-bottom: 20px;">
-            <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #333;">
-              Describe Room <span style="color: red;">*</span>
-            </label>
-            <a-input
-              v-model:value="description_room"
-              placeholder="Give your design an attractive descriptionhere ..."
-              size="large"
-              :maxlength="200"
-              show-count
-              style="border-radius: 8px;"
+  <a-modal
+    v-model:open="open_SaveToMyDesignes"
+    title=""
+    footer=""
+    centered
+    style="width: 100%; max-width: 900px"
+    :closable="true"
+  >
+    <div style="display: flex; align-items: center; flex-direction: column; justify-content: center;">
+      <div style="width: 100%; text-align: start; margin-bottom: 20px;">
+        <h3 style="margin: 0; font-size: 24px; font-weight: 600;">Save To My Designes</h3>
+        <p style="margin: 5px 0; color: #666;">Save your amazing design in your my design!</p>
+      </div>
+      
+      <a-row style="width: 100%" :gutter="20">
+        <!-- Image Preview -->
+        <a-col :sm="24" :xs="24" :lg="10" :md="10">
+          <div style="position: relative;">
+            <img
+              :src="base_image_url"
+              style="border-radius: 12px; width: 100%; max-height: 400px; object-fit: cover; box-shadow: 0 4px 12px rgba(0,0,0,0.1);"
+              alt="Room Design"
             />
+            <div style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.5); border-radius: 8px; padding: 5px 10px; color: white; font-size: 12px;">
+              Preview
+            </div>
           </div>
-          
+        </a-col>
 
-          <!-- Room Info Display -->
-          <div style="background: #f8f9fa; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
-            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="#666">
-                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+        <!-- Form Section -->
+        <a-col
+          :sm="24"
+          :xs="24"
+          :lg="14"
+          :md="14"
+          style="display: flex; justify-content: space-between; flex-direction: column; min-height: 400px;"
+        >
+          <div style="flex: 1;">
+            <!-- Title Input -->
+            <div style="margin-bottom: 20px;">
+              <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #333;">
+                Describe Room <span style="color: red;">*</span>
+              </label>
+              <a-input
+                v-model:value="description_room"
+                placeholder="Give your design an attractive descriptionhere ..."
+                size="large"
+                :maxlength="200"
+                show-count
+                style="border-radius: 8px;"
+              />
+            </div>
+            
+
+            <!-- Room Info Display -->
+            <div style="background: #f8f9fa; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+              <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="#666">
+                  <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                </svg>
+                <span style="font-weight: 500; color: #333;">Room Details</span>
+              </div>
+              <div style="display: flex; gap: 15px; font-size: 14px; color: #666;">
+                <span><strong>Style:</strong> 
+                  <a-select v-model:value="room_design_type_select">
+                    <a-option-select value="Modern">Modern</a-option-select>
+                    <a-option-select value="Classic">Classic</a-option-select>
+                    <a-option-select value="Rustic">Rustic</a-option-select>
+                    <a-option-select value="Industrial">Industrial</a-option-select>
+                    <a-option-select value="Minimalist">Minimalist</a-option-select>
+                    <a-option-select value="Traditional">Traditional</a-option-select>
+                    <a-option-select value="Contemporary">Contemporary</a-option-select>
+                    <a-option-select value="Vintage">Vintage</a-option-select>
+                  </a-select>
+                  <!-- {{ room_type || 'Living Room' }} -->
+                </span>
+                <span><strong>Room Type:</strong> 
+                  <a-select v-model:value="room_type_select">
+                    <a-option-select value="Living Room">Living Room</a-option-select>
+                    <a-option-select value="Dinning Room">Dinning Room</a-option-select>
+                    <a-option-select value="Kitchen">Kitchen</a-option-select>
+                    <a-option-select value="Home Office">Home Office</a-option-select>
+                    <a-option-select value="Bedroom">Bedroom</a-option-select>
+                    <a-option-select value="Office">Office</a-option-select>
+                    <a-option-select value="Rest Room">Rest Room</a-option-select>
+                  </a-select>
+                  <!-- {{ room_design_type || 'Modern' }} -->
+                </span>
+                <span v-if="products_used"><strong>Products:</strong> {{ products_used.length }} items</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div style="display: flex; gap: 12px; margin-top: 20px;">
+            <a-button 
+              type="default" 
+              size="large" 
+              style="flex: 1; border-radius: 8px; height: 48px;"
+              @click="closeShareModal"
+            >
+              Cancel
+            </a-button>
+            <a-button
+              type="primary"
+              size="large"
+              :loading="shareLoading"
+              :disabled="!description_room.trim()"
+              @click="SaveToMyDesignes"
+              style="flex: 2; border-radius: 8px; height: 48px; display: flex; justify-content: center; align-items: center; gap: 8px;"
+            >
+              <svg v-if="!shareLoading" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M17.125 5.64648C17.125 6.95816 16.0617 8.02148 14.75 8.02148C13.4383 8.02148 12.375 6.95816 12.375 5.64648C12.375 4.33481 13.4383 3.27148 14.75 3.27148C16.0617 3.27148 17.125 4.33481 17.125 5.64648Z" stroke="white" stroke-width="1.5"/>
+                <path d="M7.625 10C7.625 11.3117 6.56167 12.375 5.25 12.375C3.93833 12.375 2.875 11.3117 2.875 10C2.875 8.68829 3.93833 7.625 5.25 7.625C6.56167 7.625 7.625 8.68829 7.625 10Z" stroke="white" stroke-width="1.5"/>
+                <path d="M17.125 14.3535C17.125 15.6652 16.0617 16.7285 14.75 16.7285C13.4383 16.7285 12.375 15.6652 12.375 14.3535C12.375 13.0418 13.4383 11.9785 14.75 11.9785C16.0617 11.9785 17.125 13.0418 17.125 14.3535Z" stroke="white" stroke-width="1.5"/>
+                <path d="M7.40625 9.00937L12.5521 6.63477M7.40625 10.9889L12.5521 13.3635" stroke="white" stroke-width="1.5"/>
               </svg>
-              <span style="font-weight: 500; color: #333;">Room Details</span>
-            </div>
-            <div style="display: flex; gap: 15px; font-size: 14px; color: #666;">
-              <span><strong>Style:</strong> 
-                <a-select v-model:value="room_design_type_select">
-                  <a-option-select value="Modern">Modern</a-option-select>
-                  <a-option-select value="Classic">Classic</a-option-select>
-                  <a-option-select value="Rustic">Rustic</a-option-select>
-                  <a-option-select value="Industrial">Industrial</a-option-select>
-                  <a-option-select value="Minimalist">Minimalist</a-option-select>
-                  <a-option-select value="Traditional">Traditional</a-option-select>
-                  <a-option-select value="Contemporary">Contemporary</a-option-select>
-                  <a-option-select value="Vintage">Vintage</a-option-select>
-                </a-select>
-                <!-- {{ room_type || 'Living Room' }} -->
-              </span>
-              <span><strong>Room Type:</strong> 
-                <a-select v-model:value="room_type_select">
-                  <a-option-select value="Living Room">Living Room</a-option-select>
-                  <a-option-select value="Dinning Room">Dinning Room</a-option-select>
-                  <a-option-select value="Kitchen">Kitchen</a-option-select>
-                  <a-option-select value="Home Office">Home Office</a-option-select>
-                  <a-option-select value="Bedroom">Bedroom</a-option-select>
-                  <a-option-select value="Office">Office</a-option-select>
-                  <a-option-select value="Rest Room">Rest Room</a-option-select>
-                </a-select>
-                <!-- {{ room_design_type || 'Modern' }} -->
-              </span>
-              <span v-if="products_used"><strong>Products:</strong> {{ products_used.length }} items</span>
-            </div>
+              {{ shareLoading ? 'Sharing...' : 'Save To My Designes' }}
+            </a-button>
           </div>
-        </div>
-
-        <!-- Action Buttons -->
-        <div style="display: flex; gap: 12px; margin-top: 20px;">
-          <a-button 
-            type="default" 
-            size="large" 
-            style="flex: 1; border-radius: 8px; height: 48px;"
-            @click="closeShareModal"
-          >
-            Cancel
-          </a-button>
-          <a-button
-            type="primary"
-            size="large"
-            :loading="shareLoading"
-            :disabled="!description_room.trim()"
-            @click="SaveToMyDesignes"
-            style="flex: 2; border-radius: 8px; height: 48px; display: flex; justify-content: center; align-items: center; gap: 8px;"
-          >
-            <svg v-if="!shareLoading" width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <path d="M17.125 5.64648C17.125 6.95816 16.0617 8.02148 14.75 8.02148C13.4383 8.02148 12.375 6.95816 12.375 5.64648C12.375 4.33481 13.4383 3.27148 14.75 3.27148C16.0617 3.27148 17.125 4.33481 17.125 5.64648Z" stroke="white" stroke-width="1.5"/>
-              <path d="M7.625 10C7.625 11.3117 6.56167 12.375 5.25 12.375C3.93833 12.375 2.875 11.3117 2.875 10C2.875 8.68829 3.93833 7.625 5.25 7.625C6.56167 7.625 7.625 8.68829 7.625 10Z" stroke="white" stroke-width="1.5"/>
-              <path d="M17.125 14.3535C17.125 15.6652 16.0617 16.7285 14.75 16.7285C13.4383 16.7285 12.375 15.6652 12.375 14.3535C12.375 13.0418 13.4383 11.9785 14.75 11.9785C16.0617 11.9785 17.125 13.0418 17.125 14.3535Z" stroke="white" stroke-width="1.5"/>
-              <path d="M7.40625 9.00937L12.5521 6.63477M7.40625 10.9889L12.5521 13.3635" stroke="white" stroke-width="1.5"/>
-            </svg>
-            {{ shareLoading ? 'Sharing...' : 'Save To My Designes' }}
-          </a-button>
-        </div>
-      </a-col>
-    </a-row>
-  </div>
-</a-modal>
+        </a-col>
+      </a-row>
+    </div>
+  </a-modal>
 
 
   <div v-if="!rendering_started" style="background-color: #f3f3f3;">
@@ -912,6 +1019,7 @@
         <a
           href="#"
           style="font-size: 13px; color: #2563eb; text-decoration: none;"
+          @click="this.$router.push('/'+products_used[0].business_slug+'/'+products_used[0].type+'/'+products_used[0].product_id)"
         >
           Product Detail
         </a>
@@ -938,8 +1046,8 @@
         font-weight: 500;
         color: #2563eb;
         text-decoration: none;
-        
       "
+       @click="show_all_catalogue_products_used_in_room()"
     >
       See all catalog products
     </a-button>
@@ -947,7 +1055,7 @@
 
   <!-- Add to Cart -->
   <a-button
-    style="
+    style=" display:flex;justify-content: center;
       text-align: center;
       margin-top: 14px;
       font-size: 14px;
@@ -958,9 +1066,7 @@
     type="text"
     block
   >
-   <svg  style="margin-right:10px;" width="14" height="14" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M0.75 1.58008H3.38636L5.15273 10.4053C5.213 10.7087 5.37808 10.9813 5.61906 11.1753C5.86005 11.3693 6.1616 11.4724 6.47091 11.4664H12.8773C13.1866 11.4724 13.4881 11.3693 13.7291 11.1753C13.9701 10.9813 14.1352 10.7087 14.1955 10.4053L15.25 4.87553H4.04545M6.68182 14.7619C6.68182 15.1259 6.38673 15.421 6.02273 15.421C5.65872 15.421 5.36364 15.1259 5.36364 14.7619C5.36364 14.3979 5.65872 14.1028 6.02273 14.1028C6.38673 14.1028 6.68182 14.3979 6.68182 14.7619ZM13.9318 14.7619C13.9318 15.1259 13.6367 15.421 13.2727 15.421C12.9087 15.421 12.6136 15.1259 12.6136 14.7619C12.6136 14.3979 12.9087 14.1028 13.2727 14.1028C13.6367 14.1028 13.9318 14.3979 13.9318 14.7619Z" stroke="#3B63FB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
+   <ShoppingCartOutlined style="font-size:20px" />
     Add to Cart
   </a-button>
 </div>
@@ -988,17 +1094,35 @@
                 </a-button>
             </a-col>
             <a-col :span="4" style="padding-left:5px">
-                <a-button style="
+                <a-button  @click="toggleLikeRoom" style="
                 display: flex;
                 justify-content: center;
                 align-items: center;
                 gap: 8px;
                 padding: 8px 16px;
                 height: auto;
-                border-radius: 8px;" >
-                    <svg width="22" height="22" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M14.2518 24.4363C11.1484 22.2025 5 17.0956 5 12.5C5 9.46241 7.31579 7 10.5 7C12.15 7 13.8 7.52941 16 9.64704C18.2 7.52941 19.85 7 21.5 7C24.6842 7 27 9.46241 27 12.5C27 17.0956 20.8517 22.2025 17.7482 24.4363C16.7039 25.1879 15.2961 25.1879 14.2518 24.4363Z" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
+                border-radius: 8px;" 
+
+                >
+                <!-- Filled red heart when liked -->
+<svg v-if="liked_room" width="22" height="22" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M14.2518 24.4363C11.1484 22.2025 5 17.0956 5 12.5C5 9.46241 7.31579 7 10.5 7C12.15 7 13.8 7.52941 16 9.64704C18.2 7.52941 19.85 7 21.5 7C24.6842 7 27 9.46241 27 12.5C27 17.0956 20.8517 22.2025 17.7482 24.4363C16.7039 25.1879 15.2961 25.1879 14.2518 24.4363Z" 
+          fill="#ff4d4f" 
+          stroke="#ff4d4f" 
+          stroke-width="1.5" 
+          stroke-linecap="round" 
+          stroke-linejoin="round"/>
+</svg>
+
+<!-- Outline heart when not liked -->
+<svg v-else width="22" height="22" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M14.2518 24.4363C11.1484 22.2025 5 17.0956 5 12.5C5 9.46241 7.31579 7 10.5 7C12.15 7 13.8 7.52941 16 9.64704C18.2 7.52941 19.85 7 21.5 7C24.6842 7 27 9.46241 27 12.5C27 17.0956 20.8517 22.2025 17.7482 24.4363C16.7039 25.1879 15.2961 25.1879 14.2518 24.4363Z" 
+          stroke="black" 
+          stroke-width="1.5" 
+          stroke-linecap="round" 
+          stroke-linejoin="round"/>
+</svg>
+
                 </a-button>
             </a-col>
             <!-- <a-col>
@@ -1168,10 +1292,29 @@
                 gap: 8px;
                 padding: 8px 16px;
                 height: auto;
-                border-radius: 8px;" >
-                    <svg width="22" height="22" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M14.2518 24.4363C11.1484 22.2025 5 17.0956 5 12.5C5 9.46241 7.31579 7 10.5 7C12.15 7 13.8 7.52941 16 9.64704C18.2 7.52941 19.85 7 21.5 7C24.6842 7 27 9.46241 27 12.5C27 17.0956 20.8517 22.2025 17.7482 24.4363C16.7039 25.1879 15.2961 25.1879 14.2518 24.4363Z" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
+                border-radius: 8px;" 
+                                @click="toggleLikeRoom">
+                  
+                  
+                <!-- Filled red heart when liked -->
+<svg v-if="liked_room" width="22" height="22" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M14.2518 24.4363C11.1484 22.2025 5 17.0956 5 12.5C5 9.46241 7.31579 7 10.5 7C12.15 7 13.8 7.52941 16 9.64704C18.2 7.52941 19.85 7 21.5 7C24.6842 7 27 9.46241 27 12.5C27 17.0956 20.8517 22.2025 17.7482 24.4363C16.7039 25.1879 15.2961 25.1879 14.2518 24.4363Z" 
+          fill="#ff4d4f" 
+          stroke="#ff4d4f" 
+          stroke-width="1.5" 
+          stroke-linecap="round" 
+          stroke-linejoin="round"/>
+</svg>
+
+<!-- Outline heart when not liked -->
+<svg v-else width="22" height="22" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M14.2518 24.4363C11.1484 22.2025 5 17.0956 5 12.5C5 9.46241 7.31579 7 10.5 7C12.15 7 13.8 7.52941 16 9.64704C18.2 7.52941 19.85 7 21.5 7C24.6842 7 27 9.46241 27 12.5C27 17.0956 20.8517 22.2025 17.7482 24.4363C16.7039 25.1879 15.2961 25.1879 14.2518 24.4363Z" 
+          stroke="black" 
+          stroke-width="1.5" 
+          stroke-linecap="round" 
+          stroke-linejoin="round"/>
+</svg>
+
                 </a-button>
             </a-col>
             <!-- <a-col>
@@ -1203,18 +1346,18 @@
 </template>
 
 <script>
-
-
 import {
   LeftOutlined,
   QuestionCircleOutlined,
   HomeOutlined,
+  HeartOutlined,
   WhatsAppOutlined,
   InstagramOutlined,
   MailOutlined,
   DownloadOutlined,
   ThunderboltOutlined,
   LoadingOutlined,
+  ShoppingCartOutlined,
   ReloadOutlined,
 } from "@ant-design/icons-vue";
 
@@ -1226,6 +1369,8 @@ export default {
     LeftOutlined,
     QuestionCircleOutlined,
     HomeOutlined,
+    HeartOutlined,
+    ShoppingCartOutlined,
     WhatsAppOutlined,
     InstagramOutlined,
     MailOutlined,
@@ -1236,34 +1381,29 @@ export default {
   },
   data() {
     return {
+      openSeeAll_used_products:false,
+      liked_room:false,
       base_image_url: "",
       main_image: "",
       currentView: 'after',
       rendering_started: false,
-      products_used:[],
+      products_used: [],
       loading: false,
       downloading: false,
       open_RenderNowModal: false,
-
-      is_client_requested_room:false,
-      
+      is_client_requested_room: false,
       error: {
         room: null,
       },
-
-      abortControllers: new Map(),
-      is_ready: true, // Add this if missing in your logic
-      roomRetryCount: 0,
+      is_ready: true,
       notify_me_when_ready: false,
 
-
-      // sendcommunity post 
-      // Existing data
+      // Share on community post 
       open_ShareOnComunity: false,
       room_type: '',
       room_design_type: '',
       
-      // New data for sharing
+      // Share form data
       shareForm: {
         title: '',
         selectedTags: []
@@ -1277,53 +1417,50 @@ export default {
       
       // UI states
       shareLoading: false,
-
-      description_room:'',
-      tags_room:[],
-      room_design_type_select:'Modern',
-      room_type_select:'Living Room',
-      open_SaveToMyDesignes:false,
+      description_room: '',
+      tags_room: [],
+      room_design_type_select: 'Modern',
+      room_type_select: 'Living Room',
+      open_SaveToMyDesignes: false,
       
       // Tag colors for random assignment
       tagColors: [
         '#1890ff', '#52c41a', '#faad14', '#f5222d', '#722ed1',
         '#13c2c2', '#eb2f96', '#fa8c16', '#a0d911', '#2f54eb'
       ]
-
     };
   },
+  
+  computed: {
+    displayImage() {
+      return this.currentView === 'before' ? this.main_image : this.base_image_url;
+    }
+  },
+  
   mounted() {
     this.fetchRoom();
     this.FetchFinalResults();
-    this.loadAvailableTags()
-
+    this.loadAvailableTags();
   },
   
-// 2. Add this computed property:
-computed: {
-  displayImage() {
-    return this.currentView === 'before' ? this.main_image : this.base_image_url;
-  }
-},
-  beforeUnmount() {
-    // Clean up any pending requests
-    this.abortControllers.forEach((controller) => controller.abort());
-    this.abortControllers.clear();
-  },
   methods: {
-     showBefore() {
-    this.currentView = 'before';
-  },
-  
-  showAfter() {
-    this.currentView = 'after';
-  },
-  
+    show_all_catalogue_products_used_in_room(){
+      this.openSeeAll_used_products=true
+    },
+    showBefore() {
+      this.currentView = 'before';
+    },
+    
+    showAfter() {
+      this.currentView = 'after';
+    },
+    
     startRendering() {
       this.open_RenderNowModal = false;
       this.rendering_started = true;
-      this.startRendering_API_CALL()
+      this.startRendering_API_CALL();
     },
+    
     openRenderNowModal() {
       this.open_RenderNowModal = true;
     },
@@ -1331,13 +1468,12 @@ computed: {
     openShareOnComunity() {
       this.open_ShareOnComunity = true;
     },
-    // Close share modal
+    
     closeShareModal() {
       this.open_ShareOnComunity = false;
       this.resetShareForm();
     },
 
-    // Reset form data
     resetShareForm() {
       this.shareForm = {
         title: `My ${this.room_type || 'Room'} Design`,
@@ -1345,7 +1481,6 @@ computed: {
       };
     },
 
-    // Load available tags from backend
     async loadAvailableTags() {
       this.tagsLoading = true;
       try {
@@ -1367,12 +1502,10 @@ computed: {
             post_count: tag.post_count
           }));
           
-          // Set popular tags (most used)
           this.popularTags = this.availableTags
             .sort((a, b) => (b.post_count || 0) - (a.post_count || 0))
             .slice(0, 10);
             
-          // Add room-specific suggested tags
           this.addSuggestedTags();
         }
       } catch (error) {
@@ -1382,7 +1515,7 @@ computed: {
         this.tagsLoading = false;
       }
     },
-    // Add suggested tags based on room type
+    
     addSuggestedTags() {
       const suggestedTags = [];
       
@@ -1404,14 +1537,13 @@ computed: {
         });
       }
 
-      // Add to available tags if not already present
       suggestedTags.forEach(tag => {
         if (!this.availableTags.some(t => t.label === tag.label)) {
           this.availableTags.unshift(tag);
         }
       });
     },
-     // Handle tag search
+    
     handleTagSearch(value) {
       if (this.tagSearchTimeout) {
         clearTimeout(this.tagSearchTimeout);
@@ -1421,7 +1553,6 @@ computed: {
         if (value && !this.availableTags.some(tag => 
           tag.label.toLowerCase().includes(value.toLowerCase())
         )) {
-          // Add new tag option
           const newTag = {
             label: value,
             value: `new_${Date.now()}`,
@@ -1434,24 +1565,20 @@ computed: {
       }, 500);
     },
 
-    // Handle tag selection
     handleTagSelect(value, option) {
       console.log('Selected tag:', value, option);
     },
 
-    // Add popular tag to selection
     addPopularTag(tag) {
       if (!this.shareForm.selectedTags.includes(tag.value)) {
         this.shareForm.selectedTags.push(tag.value);
       }
     },
 
-    // Get random tag color
     getRandomTagColor() {
       return this.tagColors[Math.floor(Math.random() * this.tagColors.length)];
     },
 
-    // Share on community
     async shareOnCommunity() {
       if (!this.shareForm.title.trim()) {
         this.$message.error('Please enter a title for your post');
@@ -1461,10 +1588,8 @@ computed: {
       this.shareLoading = true;
 
       try {
-        // First, create any new tags
         const tagIds = await this.createNewTags();
 
-        // Create community post
         const postData = {
           title: this.shareForm.title,
           room_id: this.$route.params.id,
@@ -1485,9 +1610,6 @@ computed: {
         if (data.success) {
           this.$message.success('Your design has been shared on community!');
           this.closeShareModal();
-          
-          // Optionally redirect to community or post
-          // this.$router.push('/community');
         } else {
           throw new Error(data.message || 'Failed to share post');
         }
@@ -1500,7 +1622,6 @@ computed: {
       }
     },
 
-    // Create new tags and return all tag IDs
     async createNewTags() {
       const tagIds = [];
       
@@ -1508,10 +1629,8 @@ computed: {
         const existingTag = this.availableTags.find(t => t.value === tagValue);
         
         if (existingTag && !existingTag.isNew) {
-          // Existing tag
           tagIds.push(existingTag.value);
         } else {
-          // New tag - create it
           try {
             const tagName = existingTag ? existingTag.label : tagValue;
             const response = await fetch(`${this.$store.state.root_api}community/api/tags/`, {
@@ -1567,7 +1686,6 @@ computed: {
     },
 
     handleRenderNow() {
-      // Navigate to render page or trigger new render
       this.$router.push({ name: "render" });
     },
 
@@ -1588,7 +1706,6 @@ computed: {
           url = `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`;
           break;
         case "instagram":
-          // Instagram doesn't support direct sharing via URL
           this.$message.info("Please save the image and share it on Instagram");
           return;
         case "gmail":
@@ -1609,66 +1726,57 @@ computed: {
       console.log("✅ Image loaded successfully");
     },
     
-// TO this:
-showError(title, message, retryCallback) {
-  this.$notification.error({
-    message: title,
-    description: message,
-    duration: 0,
-    btn: h(
-      'a-button',
-      {
-        type: 'primary',
-        size: 'small',
-        onClick: retryCallback,
-      },
-      { default: () => 'Retry' }
-    ),
-  });
-},
-
-    createAbortController(key) {
-      // Cancel existing request if any
-      if (this.abortControllers.has(key)) {
-        this.abortControllers.get(key).abort();
-      }
-
-      const controller = new AbortController();
-      this.abortControllers.set(key, controller);
-      return controller;
+    showError(title, message) {
+      this.$notification.error({
+        message: title,
+        description: message,
+        duration: 5,
+      });
     },
 
-    async makeApiRequest(url, options = {}, requestKey) {
-      const controller = this.createAbortController(requestKey);
+    async startRendering_API_CALL() {
+      console.log("📡 Starting rendering...");
+      this.loading = true;
+      this.error.room = null;
 
       try {
+        const roomId = this.$route.params.id;
+        const url = `${this.$store.state.root_api}engine/render-final-result/${roomId}`;
+
         const response = await fetch(url, {
-          ...options,
-          signal: controller.signal,
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Token ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({
+            request: 'render_better_quality'
+          })
         });
 
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
 
-        const data = await response.json();
-        this.abortControllers.delete(requestKey);
-        return data;
-      } catch (error) {
-        this.abortControllers.delete(requestKey);
+        const responseData = await response.json();
 
-        if (error.name === "AbortError") {
-          console.log(`Request ${requestKey} was cancelled`);
-          return null;
+        if (responseData && this.is_ready) {
+          console.log("✅ Rendering started!");
+          this.base_image_url = this.$store.state.root_media_api + responseData.final_image_output;
+        } else {
+          this.error.room = "Room is not ready yet. Please try again later.";
         }
-
-        throw error;
+      } catch (error) {
+        console.error("❌ Failed to start rendering:", error);
+        this.error.room = error.message;
+        this.showError("Failed to Start Rendering", error.message);
+      } finally {
+        this.loading = false;
       }
     },
 
-    async startRendering_API_CALL(){
-      console.log("📡 Fetching room data...");
-
+    async SaveToMyDesignes() {
+      console.log("📡 Saving to my designs...");
       this.loading = true;
       this.error.room = null;
 
@@ -1676,105 +1784,47 @@ showError(title, message, retryCallback) {
         const roomId = this.$route.params.id;
         const url = `${this.$store.state.root_api}engine/render-final-result/${roomId}`;
 
-        const responseData = await this.makeApiRequest(
-          url,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Token ${localStorage.getItem("token")}`,
-            },
-            body: JSON.stringify({
-              request:'render_better_quality'
-            })
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Token ${localStorage.getItem("token")}`,
           },
-          "room"
-        );
+          body: JSON.stringify({
+            request: 'save_to_my_designes',
+            description_room: this.description_room,
+            room_design_type_select: this.room_design_type_select,
+            room_type_select: this.room_type_select,
+          })
+        });
 
-        if (responseData ) {
-          if (this.is_ready) {
-            // Room is ready!
-            console.log("✅ Room is ready!");
-            this.base_image_url =
-              this.$store.state.root_media_api + responseData.final_image_output;
-           
-            console.log("✅ Room data loaded:", this.base_image_url);
-          } else {
-            this.error.room = "Room is not ready yet. Please try again later.";
-          }
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const responseData = await response.json();
+
+        if (responseData && this.is_ready) {
+          this.$router.push('/business-dashboard/my-designs');
         } else {
-          this.error.room = "No room data found";
+          this.error.room = "Room is not ready yet. Please try again later.";
         }
       } catch (error) {
-        console.error("❌ Failed to fetch room:", error);
+        console.error("❌ Failed to save:", error);
         this.error.room = error.message;
-
-        this.showError("Failed to Load Room", error.message, () => {
-          this.roomRetryCount = 0;
-          this.fetchRoom();
-        });
-      } finally {
-        this.loading = false;
-      }
-    },
-    async SaveToMyDesignes(){
-      console.log("📡 Fetching room data...");
-
-      this.loading = true;
-      this.error.room = null;
-
-      try {
-        const roomId = this.$route.params.id;
-        const url = `${this.$store.state.root_api}engine/render-final-result/${roomId}`;
-
-        const responseData = await this.makeApiRequest(
-          url,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Token ${localStorage.getItem("token")}`,
-            },
-            body: JSON.stringify({
-              request:'save_to_my_designes',
-              description_room:this.description_room,
-              room_design_type_select:this.room_design_type_select,
-              room_type_select:this.room_type_select,
-              // tags_room:this.tags_room,
-            })
-          },
-          "room"
-        );
-
-        if (responseData ) {
-          if (this.is_ready) {
-                this.$router.push('/business-dashboard/my-designs');
-
-          } else {
-            this.error.room = "Room is not ready yet. Please try again later.";
-          }
-        } else {
-          this.error.room = "No room data found";
-        }
-      } catch (error) {
-        console.error("❌ Failed to fetch room:", error);
-        this.error.room = error.message;
-
-        this.showError("Failed to Load Room", error.message, () => {
-          this.roomRetryCount = 0;
-          this.fetchRoom();
-        });
+        this.showError("Failed to Save", error.message);
       } finally {
         this.loading = false;
       }
     },
 
-    
-    async Submit_Client_request(){
-      console.log("📡 Fetching room data...");
-      if (this.description_room.trim()===""){
+    async Submit_Client_request() {
+      console.log("📡 Submitting client request...");
+      
+      if (this.description_room.trim() === "") {
         return this.$message?.error('Please add some description to describe the room.', 3);
       }
+      
       this.loading = true;
       this.error.room = null;
 
@@ -1782,55 +1832,47 @@ showError(title, message, retryCallback) {
         const roomId = this.$route.params.id;
         const url = `${this.$store.state.root_api}engine/render-final-result/${roomId}`;
 
-        const responseData = await this.makeApiRequest(
-          url,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Token ${localStorage.getItem("token")}`,
-            },
-            body: JSON.stringify({
-              request:'submit_client_request',
-              description_room:this.description_room,
-              room_design_type_select:this.room_design_type_select,
-              room_type_select:this.room_type_select,
-              // tags_room:this.tags_room,
-            })
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Token ${localStorage.getItem("token")}`,
           },
-          "room"
-        );
+          body: JSON.stringify({
+            request: 'submit_client_request',
+            description_room: this.description_room,
+            room_design_type_select: this.room_design_type_select,
+            room_type_select: this.room_type_select,
+          })
+        });
 
-        if (responseData ) {
-          if (this.is_ready) {
-                this.$router.push('/business-dashboard/my-designs');
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
 
-          } else {
-            this.error.room = "Room is not ready yet. Please try again later.";
-          }
+        const responseData = await response.json();
+
+        if (responseData && this.is_ready) {
+          this.$router.push('/business-dashboard/my-designs');
         } else {
-          this.error.room = "No room data found";
+          this.error.room = "Room is not ready yet. Please try again later.";
         }
       } catch (error) {
-        console.error("❌ Failed to fetch room:", error);
+        console.error("❌ Failed to submit request:", error);
         this.error.room = error.message;
-
-        this.showError("Failed to Load Room", error.message, () => {
-          this.roomRetryCount = 0;
-          this.fetchRoom();
-        });
+        this.showError("Failed to Submit Request", error.message);
       } finally {
         this.loading = false;
       }
     },
 
-    
-    
-    async Business_staff_Submit_Client_request(){
-      console.log("📡 Fetching room data...");
-      if (this.description_room.trim()===""){
+    async Business_staff_Submit_Client_request() {
+      console.log("📡 Business staff submitting client request...");
+      
+      if (this.description_room.trim() === "") {
         return this.$message?.error('Please add some description to describe the room.', 3);
       }
+      
       this.loading = true;
       this.error.room = null;
 
@@ -1838,43 +1880,35 @@ showError(title, message, retryCallback) {
         const roomId = this.$route.params.id;
         const url = `${this.$store.state.root_api}engine/render-final-result/${roomId}`;
 
-        const responseData = await this.makeApiRequest(
-          url,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Token ${localStorage.getItem("token")}`,
-            },
-            body: JSON.stringify({
-              request:'business_staff_submit_client_request',
-              description_room:this.description_room,
-              room_design_type_select:this.room_design_type_select,
-              room_type_select:this.room_type_select,
-              // tags_room:this.tags_room,
-            })
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Token ${localStorage.getItem("token")}`,
           },
-          "room"
-        );
+          body: JSON.stringify({
+            request: 'business_staff_submit_client_request',
+            description_room: this.description_room,
+            room_design_type_select: this.room_design_type_select,
+            room_type_select: this.room_type_select,
+          })
+        });
 
-        if (responseData ) {
-          if (this.is_ready) {
-                this.$router.push('/access-business/manage-customer-requests?brand='+this.$route.query.brand);
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
 
-          } else {
-            this.error.room = "Room is not ready yet. Please try again later.";
-          }
+        const responseData = await response.json();
+
+        if (responseData && this.is_ready) {
+          this.$router.push('/access-business/manage-customer-requests?brand=' + this.$route.query.brand);
         } else {
-          this.error.room = "No room data found";
+          this.error.room = "Room is not ready yet. Please try again later.";
         }
       } catch (error) {
-        console.error("❌ Failed to fetch room:", error);
+        console.error("❌ Failed to submit request:", error);
         this.error.room = error.message;
-
-        this.showError("Failed to Load Room", error.message, () => {
-          this.roomRetryCount = 0;
-          this.fetchRoom();
-        });
+        this.showError("Failed to Submit Request", error.message);
       } finally {
         this.loading = false;
       }
@@ -1882,7 +1916,6 @@ showError(title, message, retryCallback) {
 
     async fetchRoom() {
       console.log("📡 Fetching room data...");
-
       this.loading = true;
       this.error.room = null;
 
@@ -1890,29 +1923,26 @@ showError(title, message, retryCallback) {
         const roomId = this.$route.params.id;
         const url = `${this.$store.state.root_api}room/api/room/${roomId}`;
 
-        const responseData = await this.makeApiRequest(
-          url,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Token ${localStorage.getItem("token")}`,
-            },
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Token ${localStorage.getItem("token")}`,
           },
-          "room"
-        );
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const responseData = await response.json();
 
         if (responseData && responseData.data) {
           if (this.is_ready) {
-            // Room is ready!
             console.log("✅ Room is ready!");
-            this.base_image_url =
-              this.$store.state.root_media_api + responseData.data.image;
-            this.main_image =
-              this.$store.state.root_media_api + responseData.data.main_image;
-
-              this.is_client_requested_room=responseData.data.is_client_requested_room
-
+            this.base_image_url = this.$store.state.root_media_api + responseData.data.image;
+            this.main_image = this.$store.state.root_media_api + responseData.data.main_image;
+            this.is_client_requested_room = responseData.data.is_client_requested_room;
             console.log("✅ Room data loaded:", this.base_image_url);
           } else {
             this.error.room = "Room is not ready yet. Please try again later.";
@@ -1923,49 +1953,90 @@ showError(title, message, retryCallback) {
       } catch (error) {
         console.error("❌ Failed to fetch room:", error);
         this.error.room = error.message;
-
-        this.showError("Failed to Load Room", error.message, () => {
-          this.roomRetryCount = 0;
-          this.fetchRoom();
-        });
+        this.showError("Failed to Load Room", error.message);
       } finally {
         this.loading = false;
       }
     },
+async toggleLikeRoom(){
 
+      try {
+        const roomId = this.$route.params.id;
+        const url = `${this.$store.state.root_api}likes/favorites/toggle/`;
+
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Token ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({
+            "id": roomId,
+            "type":"room",
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const responseData = await response.json();
+          console.log(" ====================  ====================  ==================== ")
+          console.log(responseData)
+          if (responseData) {
+            this.liked_room=responseData.favorited
+        }
+        // if (responseData && responseData.data) {
+        //   this.products_used = responseData.data.products_used || [];
+        //   this.room_type = responseData.data.room_type || '';
+        //   this.room_design_type = responseData.data.room_design_type || '';
+        // }
+      } catch (error) {
+        console.warn("⚠️ Could not fetch final results:", error.message);
+      } 
+          console.log(" ====================  ====================  ==================== ")
+
+    },
     async FetchFinalResults() {
-  console.log("📡 Fetching final results...");
-  this.loading = true;
-  this.error.room = null;
+      console.log("📡 Fetching final results...");
+      this.loading = true;
+      this.error.room = null;
 
-  try {
-    const roomId = this.$route.params.id;
-    const url = `${this.$store.state.root_api}engine/render-final-result/${roomId}`;
+      try {
+        const roomId = this.$route.params.id;
+        const url = `${this.$store.state.root_api}engine/render-final-result/${roomId}`;
 
-    const responseData = await this.makeApiRequest(
-      url,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Token ${localStorage.getItem("token")}`,
-        },
-      },
-      "room_data"
-    );
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Token ${localStorage.getItem("token")}`,
+          },
+        });
 
-    if (responseData && responseData.data) {  // Add null check
-      this.products_used = responseData.data.products_used || [];
-      this.room_type = responseData.data.room_type || '';
-      this.room_design_type = responseData.data.room_design_type || '';
-    }
-  } catch (error) {
-    console.warn("⚠️ Could not fetch final results:", error.message);
-    // Don't show error notification for optional data
-  } finally {
-    this.loading = false;
-  }
-},
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const responseData = await response.json();
+          // console.log(" ====================  ====================  ==================== ")
+          // console.log(responseData)
+          if (responseData) {
+          this.products_used = responseData.products_used || [];
+          this.room_type = responseData.room_type || '';
+          this.room_design_type = responseData.room_design_type || '';
+        }
+        // if (responseData && responseData.data) {
+        //   this.products_used = responseData.data.products_used || [];
+        //   this.room_type = responseData.data.room_type || '';
+        //   this.room_design_type = responseData.data.room_design_type || '';
+        // }
+      } catch (error) {
+        console.warn("⚠️ Could not fetch final results:", error.message);
+      } finally {
+        this.loading = false;
+      }
+    },
   },
 };
 </script>
@@ -2064,6 +2135,90 @@ showError(title, message, retryCallback) {
   opacity: 0.9;
   letter-spacing: 1px;
   text-transform: uppercase;
+}
+
+.product {
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  background: #f3f2f4;
+}
+.products-list {
+  padding-bottom: 20px;
+}
+.product-image-container {
+  position: relative;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* padding: 16px; */
+}
+
+.product-image {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+  border-radius: 12px;
+  transition: transform 0.3s ease;
+}
+
+.category-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(0, 0, 0, 0.75);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ar-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: #e5e7eb;
+  color: #374151;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+.product-responsive {
+  width: 50%;
+  flex: 0 0 50%;
+}
+
+@media (min-width: 576px) {
+  .product-responsive {
+    width: 50%;
+    flex: 0 0 50%;
+  }
+}
+@media (min-width: 768px) {
+  .product-responsive {
+    width: 33.333%;
+    flex: 0 0 33.333%;
+  }
+}
+@media (min-width: 992px) {
+  .product-responsive {
+    width: 25%;
+    flex: 0 0 25%;
+  }
+}
+@media (min-width: 1200px) {
+  .product-responsive {
+    width: 20%;
+    flex: 0 0 20%;
+  }
 }
 
 </style>

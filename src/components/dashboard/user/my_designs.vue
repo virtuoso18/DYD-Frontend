@@ -1,10 +1,10 @@
 <template>
-<div class="main">
+<div class="sm:main min-h-[100vh] -translate-y-17 sm:translate-y-0 md:min-h-[136vh]  sm:border border-gray-300 bg-white sm:translate-y-3 sm:rounded-xl p-4 border-gray-200 xl:min-h-[170vh] 2xl:min-h-[150vh]">    
     <!-- {{ my_designes }} -->
     
      
     <a-row v-if="view_type=='all'">
-    <a-col :span="24"><h2>My Designes</h2></a-col>
+    <a-col :span="24"><h2 className="p-2 sm:!text-lg">My Designes</h2></a-col>
 
     <!-- Empty State -->
     <a-col :span="24" v-if="my_designes.length === 0" style="display:flex;justify-content:center;align-items:center;height:80vh;text-align: center; padding: 60px 20px;">

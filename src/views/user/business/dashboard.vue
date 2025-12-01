@@ -517,8 +517,8 @@ export default {
         },
         {
           id: 4,
-          title: 'Create a AI Catalog',
-          description: 'Create your personalized AI catalog by selecting and organizing products that meet your needs.',
+          title: 'Generate Your First Simulation',
+          description: 'Create your first simulation with products that you habve in your business AI catalog.',
           completed: false
         }
       ]

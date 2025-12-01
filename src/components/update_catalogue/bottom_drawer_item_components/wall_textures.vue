@@ -13,7 +13,7 @@
             @change="handlePriceChange"
           />
           <p style="margin-top: 8px; font-size: 12px; color: #666;">
-            ₹{{ filters.priceRange[0].toLocaleString('en-IN') }} - ₹{{ filters.priceRange[1].toLocaleString('en-IN') }}
+            ${{ filters.priceRange[0].toLocaleString('en-IN') }} - ${{ filters.priceRange[1].toLocaleString('en-IN') }}
           </p>
         </div>
 
@@ -200,7 +200,7 @@
                   </a-col>
                   
                   <a-col span="12" style="text-align: right;">
-                    ₹{{ getPrice(product) }}
+                    ${{ getPrice(product) }}
                   </a-col>
 
                   <a-col span="24" style="font-size: 11px; color: #666; margin-bottom: 4px;">
@@ -545,7 +545,14 @@ export default {
      */
     handleProductDetail(product) {
       console.log('Product detail clicked:', product)
-      this.$emit('product-selected', product)
+      this.$router.push({
+        name: 'buisness_product',
+        params: {
+          buisness_name: product.business_slug,
+          product_type: 'wall',
+          product_id: product.id
+        }
+      })
     }
   }
 }

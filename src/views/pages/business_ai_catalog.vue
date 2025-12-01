@@ -31,10 +31,42 @@
     <!-- Main Container -->
     <a-row class="ai-catalog-container" style="min-height: 100vh; margin: 0; background-color: #f5f5f5;">
       <!-- Sidebar Filters -->
-      <a-col :xs="0" :sm="0" :md="6" :lg="5" style="background: #fff; border-right: 1px solid #f0f0f0; padding: 24px; overflow-y: auto; max-height: 100vh;">
+      
+       <a-col 
+    :xs="0" 
+    :sm="0" 
+    :md="6" 
+    :lg="5" 
+    style="
+      background: #fff; 
+      border-right: 1px solid #f0f0f0; 
+      padding: 24px; 
+      overflow-y: auto; 
+      height: 100vh;
+      position: sticky;
+      top: 0;
+      align-self: flex-start;
+    "
+  >
         <div style="padding-right: 8px;">
-          <h1 style="font-size: 24px; font-weight: 700; color: #000; margin-bottom: 24px; margin-top: 0;">Filters</h1>
+          <div style="display:flex;justify-content: space-between;"> 
 
+            <h1 style="font-size: 24px; font-weight: 700; color: #000; margin-bottom: 24px; margin-top: 0;">Filters</h1>
+            <!-- <router-link :to="'/start-new-catalogue'"> -->
+              
+        <a-button @click="this.$router.push({
+      name: 'new_catelogue',
+      query: {
+        brand: this.$route.params.business_slug,
+      }
+    })" size="large" type="primary" shape="circle" style="display: flex;justify-content: center;;align-items: center;">
+          <template #icon>
+            <FormatPainterOutlined style="font-size:16px"/>
+          </template>
+        </a-button>
+      <!-- </router-link> -->
+            
+          </div>
           <!-- Product Type Filter -->
           <div style="margin-bottom: 24px;">
             <h3 style="font-size: 13px; font-weight: 600; color: #262626; margin-bottom: 8px; margin-top: 0;">Product Type</h3>
@@ -51,67 +83,88 @@
             </a-select>
           </div>
 
-          <!-- Category Filter -->
+          <!-- Category Filter - Checkboxes -->
           <div style="margin-bottom: 24px;">
-            <h3 style="font-size: 13px; font-weight: 600; color: #262626; margin-bottom: 8px; margin-top: 0;">
-              Category ({{ categories.length }})
+            <h3 style="font-size: 13px; font-weight: 600; color: #262626; margin-bottom: 12px; margin-top: 0;">
+              Categories ({{ categories.length }})
             </h3>
-            <a-select
-              v-model:value="selectedCategory"
-              placeholder="All Categories"
-              style="width: 100%"
-              :loading="categoriesLoading"
+            <a-spin v-if="categoriesLoading" :spinning="categoriesLoading" />
+            <a-checkbox-group 
+              v-else
+              v-model:value="selectedCategories" 
+              style="width: 100%; display: flex; flex-direction: column; gap: 10px"
               @change="handleFilterChange"
             >
-              <a-select-option value="">All Categories</a-select-option>
-              <a-select-option v-for="cat in categories" :key="cat.slug" :value="cat.slug">
-                {{ cat.name }} ({{ cat.count }})
-              </a-select-option>
-            </a-select>
+              <a-checkbox 
+                v-for="cat in categories" 
+                :key="cat.slug" 
+                :value="cat.slug"
+              >
+                <span style="font-size: 13px;">{{ cat.name }} ({{ cat.count }})</span>
+              </a-checkbox>
+            </a-checkbox-group>
           </div>
 
           <a-divider />
 
-          <!-- Price Range Filter (Future) -->
+          <!-- Price Range Filter -->
           <div style="margin-bottom: 24px;">
             <h3 style="font-size: 13px; font-weight: 600; color: #262626; margin-bottom: 12px; margin-top: 0;">
-              Stock Status
+              Price Range
             </h3>
-            <a-checkbox-group v-model:value="stockFilters" style="width: 100%; display: flex; flex-direction: column; gap: 8px">
-              <a-checkbox value="in_stock">In Stock</a-checkbox>
-              <a-checkbox value="on_sale">On Sale</a-checkbox>
-            </a-checkbox-group>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <a-input-number
+                v-model:value="priceRange.min"
+                placeholder="Min"
+                :min="0"
+                style="width: 100%"
+                @change="handleFilterChange"
+              />
+              <span>-</span>
+              <a-input-number
+                v-model:value="priceRange.max"
+                placeholder="Max"
+                :min="0"
+                style="width: 100%"
+                @change="handleFilterChange"
+              />
+            </div>
           </div>
 
           <!-- Clear Filters Button -->
           <a-button 
-            type="default" 
+            type="primary"
+            danger
             style="width: 100%;" 
             @click="clearFilters"
           >
             Clear All Filters
           </a-button>
+          
         </div>
       </a-col>
 
       <!-- Main Content Area -->
-      <a-col :xs="24" :sm="24" :md="18" :lg="19" style="padding: 0;  min-height: 100vh;">
+      <a-col :xs="24" :sm="24" :md="18" :lg="19" style="padding: 0; min-height: 100vh;">
         <div style="padding: 24px; background-color: #f5f5f5;">
           <!-- Header with Search & Info -->
           <div style="display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 32px; flex-wrap: wrap;">
             <div>
-              <h2 style="font-size: 28px; font-weight: 700; color: #000; margin: 0;">Products</h2>
+              <h2 style="font-size: 28px; font-weight: 700; color: #000; margin: 0;">AI Catalog</h2>
               <p style="color: #8a8a8a; margin: 8px 0 0 0;">
                 Total: {{ pagination.total_items }} items
               </p>
             </div>
-            <a-input-search
+                
+
+            <a-input
               v-model:value="searchQuery"
               placeholder="Search products..."
               allow-clear
               style="width: 300px"
               :loading="productsLoading"
-              @search="handleSearch"
+              @input="handleSearch"
+              @clear="handleSearch"
             />
           </div>
 
@@ -130,94 +183,61 @@
                 :md="8"
                 :lg="6"
               >
-              <!-- {{product}} -->
-                <div
-                  style="border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); transition: all 0.3s ease; background: #fff; cursor: pointer; height: 100%;"
-                  @mouseenter="$event.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.12)'"
-                  @mouseleave="$event.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.08)'"
-                >
-                  <!-- Product Image -->
-                  <div style="position: relative; width: 100%; height: 200px; background: linear-gradient(135deg, #8b6239 0%, #5c3d1f 100%); display: flex; align-items: center; justify-content: center; overflow: hidden;">
-                    <img 
-                      v-if="product.image" 
-                      :src="this.$store.state.root_media_api+product.image" 
-                      style="width: 100%; height: 100%; object-fit: cover;"
+                <div class="product">
+                  <div class="product-image-container">
+                    <img
+                      :src="this.$store.state.root_media_api + product.image"
                       :alt="product.name"
+                      class="product-image"
                     />
-                    <div v-else style="color: rgba(255,255,255,0.5); font-size: 12px;">No image</div>
-                    
-                    <!-- Badges -->
-                    <span 
-                      v-if="product.type === 'product'"
-                      style="position: absolute; top: 12px; left: 12px; background: #fff; color: #262626; padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: 600; z-index: 2;"
-                    >
-                      {{ product.furniture_type || product.type }}
-                    </span>
-                    <span 
-                      v-else
-                      style="position: absolute; top: 12px; left: 12px; background: #fff; color: #262626; padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: 600; z-index: 2;"
-                    >
-                      {{ product.style || product.type }}
-                    </span>
-
-                    <!-- Sale Badge -->
-                    <span 
-                      v-if="product.is_on_sale"
-                      style="position: absolute; top: 12px; right: 12px; background: #ff4d4f; color: #fff; padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: 700; z-index: 2;"
-                    >
-                      SALE
-                    </span>
-
-                    <!-- Stock Badge -->
-                    <span 
-                      v-if="!product.is_in_stock"
-                      style="position: absolute; bottom: 12px; left: 12px; background: rgba(0,0,0,0.6); color: #fff; padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: 600; z-index: 2;"
-                    >
-                      Out of Stock
-                    </span>
+                    <!-- Category Badge -->
+                    <div class="category-badge">{{ product.category_name || product.category }}</div>
+                    <!-- AR Badge -->
+                    <div class="ar-badge">AR</div>
                   </div>
 
-                  <!-- Product Details -->
-                  <div style="padding: 16px;">
-                    <h4 style="font-size: 14px; font-weight: 600; color: #262626; margin: 0 0 8px 0; line-height: 1.4;">
-                      {{ product.name }}
-                    </h4>
-                    
-                    <!-- Category & Brand -->
-                    <p style="font-size: 11px; color: #8a8a8a; margin: 0 0 8px 0;">
-                      {{ product.category }}
-                      <span v-if="product.brand">• {{ product.brand }}</span>
-                    </p>
+                  <a-row>
+                    <a-col :span="24" style="padding-top: 10px">
+                      <b>{{
+                        truncateText(
+                          product.name || "No title available",
+                          22
+                        )
+                      }}</b>
+                    </a-col>
 
-                    <!-- Price -->
-                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
-                      <span style="font-size: 14px; font-weight: 700; color: #0066cc;">
-                        ${{ product.price.toFixed(2) }}
-                      </span>
-                      <span 
-                        v-if="product.sale_price && product.is_on_sale"
-                        style="font-size: 12px; color: #8a8a8a; text-decoration: line-through;"
-                      >
-                        ${{ product.sale_price.toFixed(2) }}
-                      </span>
-                    </div>
+                    <a-col :span="18"> Colors </a-col>
 
-                    <!-- Action Buttons -->
-                    <div style="display: flex; gap: 8px;">
-                      <a-button type="default" style="flex: 1; height: 32px;">
-                        Details
-                      </a-button>
-                      <a-button
-                        :type="favorites.includes(product.id) ? 'primary' : 'default'"
-                        danger
-                        @click="toggleFavorite(product.id)"
-                        style="height: 32px; width: 40px;"
+                    <a-col
+                      span="6"
+                      style="display: flex; justify-content: end; gap: 4px"
+                    >
+                      <div
+                        v-for="(c, i) in product.colors_available.slice(0, 2)"
+                        :key="i"
+                        style="width: 20px; height: 20px; border-radius: 20px"
+                        :style="{ background: c.color || c.color_hex }"
+                      ></div>
+                    </a-col>
+
+                    <a-col span="12"> Price </a-col>
+
+                    <a-col span="12" style="text-align: end">
+                      <b>${{ product.price }}</b>
+                    </a-col>
+                    <a-col :span="24"><br></br></a-col>
+                    <a-col span="20">
+                      <a-button block @click="goto_product_Route(product)"
+                        >Product Details</a-button
                       >
-                        <HeartOutlined v-if="!favorites.includes(product.id)" />
-                        <HeartFilled v-else />
+                    </a-col>
+
+                    <a-col span="4" style="display:flex;justify-content: end;">
+                      <a-button shape="circle" size="medium" style="display:flex;justify-content: center;align-items: center;">
+                        <HeartOutlined style="font-size:18px" />
                       </a-button>
-                    </div>
-                  </div>
+                    </a-col>
+                  </a-row>
                 </div>
               </a-col>
             </a-row>
@@ -247,7 +267,7 @@
 </template>
 
 <script>
-import { HeartOutlined, HeartFilled } from '@ant-design/icons-vue';
+import { HeartOutlined, HeartFilled,FormatPainterOutlined } from '@ant-design/icons-vue';
 import heroBgImage from '@/assets/profesional-user-ai-catalog.jpg';
 
 export default {
@@ -255,6 +275,7 @@ export default {
   components: {
     HeartOutlined,
     HeartFilled,
+    FormatPainterOutlined
   },
   data() {
     return {
@@ -266,8 +287,11 @@ export default {
       
       // Filters
       selectedType: '',
-      selectedCategory: '',
-      stockFilters: [],
+      selectedCategories: [],
+      priceRange: {
+        min: null,
+        max: null
+      },
       searchQuery: '',
       
       // Pagination
@@ -276,7 +300,7 @@ export default {
         current_page: 1,
         total_pages: 0,
         total_items: 0,
-        per_page: 12,
+        per_page: 20,
         has_next: false,
         has_previous: false
       },
@@ -303,6 +327,21 @@ export default {
     await this.loadProducts();
   },
   methods: {
+    truncateText(text, charLimit = 7) {
+      if (!text) return '';
+      if (text.length <= charLimit) return text;
+      return text.slice(0, charLimit) + '...';
+    },
+    goto_product_Route(product) {
+      this.$router.push({
+        name: 'buisness_product',
+        params: {
+          buisness_name: this.$route.params.business_slug,
+          product_type: product.type,
+          product_id: product.id
+        }
+      });
+    },
     async loadBusinessProfile() {
       try {
         const response = await fetch(
@@ -346,7 +385,11 @@ export default {
         
         const data = await response.json();
         if (data.success) {
-          this.categories = data.data;
+          // Deduplicate categories by slug
+          const uniqueCategories = Array.from(
+            new Map(data.data.map(cat => [cat.slug, cat])).values()
+          );
+          this.categories = uniqueCategories;
         }
       } catch (error) {
         console.error('Error loading categories:', error);
@@ -365,8 +408,21 @@ export default {
         });
 
         if (this.selectedType) params.append('type', this.selectedType);
-        if (this.selectedCategory) params.append('category', this.selectedCategory);
+        
+        // Add multiple categories
+        this.selectedCategories.forEach(cat => {
+          params.append('categories', cat);
+        });
+        
         if (this.searchQuery) params.append('search', this.searchQuery);
+        
+        // Add price range
+        if (this.priceRange.min !== null && this.priceRange.min !== undefined) {
+          params.append('price_min', this.priceRange.min);
+        }
+        if (this.priceRange.max !== null && this.priceRange.max !== undefined) {
+          params.append('price_max', this.priceRange.max);
+        }
 
         const response = await fetch(
           `${this.$store.state.root_api}Auth/api/business/${this.businessSlug}/products/?${params.toString()}`,
@@ -415,8 +471,8 @@ export default {
 
     clearFilters() {
       this.selectedType = '';
-      this.selectedCategory = '';
-      this.stockFilters = [];
+      this.selectedCategories = [];
+      this.priceRange = { min: null, max: null };
       this.searchQuery = '';
       this.currentPage = 1;
       this.loadProducts();
@@ -448,4 +504,74 @@ export default {
     font-size: 14px !important;
   }
 }
+
+.head-section {
+  display: flex;
+  justify-content: space-between;
+}
+
+.product {
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  background: #ffffff;
+}
+
+.products-list {
+  padding-bottom: 20px;
+}
+
+.product-image-container {
+  position: relative;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  height: 230px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+  transition: transform 0.3s ease;
+}
+
+.category-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(0, 0, 0, 0.75);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ar-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: #e5e7eb;
+  color: #374151;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.product-responsive {
+  width: 50%;
+  flex: 0 0 50%;
+}
+
+@media (min-width: 576px) { .product-responsive { width: 50%; flex: 0 0 50%; } }
+@media (min-width: 768px) { .product-responsive { width: 33.333%; flex: 0 0 33.333%; } }
+@media (min-width: 992px) { .product-responsive { width: 25%; flex: 0 0 25%; } }
+@media (min-width: 1200px) { .product-responsive { width: 20%; flex: 0 0 20%; } }
 </style>

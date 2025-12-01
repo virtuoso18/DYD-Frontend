@@ -94,8 +94,6 @@ import blogs from '@/views/pages/blogs.vue'
 import affiliateprogram from '@/views/pages/AffiliateProgram.vue'
 
 
-import ProductARView from "@/views/ProductAR/ProductAR.vue"
-
 import InteriorMaterialSupplier from '@/views/pages/interiorMaterialSupplier.vue'
 import DesignCompany from '@/views/pages/DesignCompany.vue'
 import Furnitureretail from '@/views/pages/furnitureretail.vue'
@@ -681,11 +679,6 @@ const router = createRouter({
       path: '/forgot-password',
       name: 'forget_password',
       component: ForgetPassword,
-    },
-     {
-      path: "/product-ar-view",
-      name: "ARView",
-      component: ProductARView,
     },
   ],
 })

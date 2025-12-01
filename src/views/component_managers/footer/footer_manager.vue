@@ -10,7 +10,7 @@ export default {
   components:{footer_component},
   data() {
     return {
-      hideFooterUrls: ['/login', '/signup', '/forgot-password', '/product-ar-view'],
+      hideFooterUrls: ['/login', '/signup', '/forgot-password'],
     }
   },
   computed: {
@@ -23,7 +23,7 @@ export default {
       }
       
       // Check if path starts with /ar-product/ (handles any product_id)
-      if (path.startsWith('/ar-product/')) {
+      if (path.startsWith('/ar-product/') ||path.startsWith('/update-catalogue/')  ) {
         return true
       }
       

@@ -1,5 +1,5 @@
 <template>
-  <div class="dashboard-container">
+  <div class="dashboard-container ">
     <!-- Main Dashboard Content -->
     <a-row class="dashboard-content">
       <!-- Content Area -->
@@ -361,19 +361,19 @@ export default {
   min-height: 100vh;
 }
 
-.content-area {
-  padding: 10px;
-}
+@media (min-width: 640px) {
+  .content-area {
+    /* You can override or keep the same padding if needed */
+    padding: 10px;
+  }
 
-.content-wrapper {
-  background: white;
-  min-height: 93vh;
-
-  border-radius: 24px;
-  /* margin: 20px; */
-  /* box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1); */
-  border: 1px solid #e9ecef;
-  overflow: hidden;
+  .content-wrapper {
+    background: white;
+    min-height: 93vh;
+    border-radius: 24px;
+    border: 1px solid #e9ecef;
+    overflow: hidden;
+  }
 }
 .wavy-header {
   position: relative;

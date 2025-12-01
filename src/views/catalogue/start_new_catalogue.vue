@@ -138,7 +138,15 @@ export default {
         console.log(data)
         if (data && data.data) {
           this.exampleImages = data.data;
-           this.$router.push({ name: 'update_catelogue', params: { id: this.exampleImages.id } });
+          
+          if (this.$route.query.brand){
+            this.$router.push({ name: 'update_catelogue', params: { id: this.exampleImages.id },query: {
+              brand: this.$route.params.brand,
+            } });
+          }else{
+
+            this.$router.push({ name: 'update_catelogue', params: { id: this.exampleImages.id } });
+          }
 
         }
       } catch (error) {
@@ -227,7 +235,14 @@ export default {
           
           // Emit event to parent component if needed
           this.$emit('upload-success', responseData);
-           this.$router.push({ name: 'update_catelogue', params: { id: responseData.room_id } });
+          //  this.$router.push({ name: 'update_catelogue', params: { id: responseData.room_id } });
+          if (this.$route.query.brand){
+            this.$router.push({ name: 'update_catelogue',  params: { id: responseData.room_id },query: {
+              brand: this.$route.params.brand,
+            } });
+          }else{
+            this.$router.push({ name: 'update_catelogue', params: { id: responseData.room_id } });
+          }
         } else {
           // Handle API error response
           const errorMsg = responseData.msg || `HTTP ${response.status}: Upload failed`;

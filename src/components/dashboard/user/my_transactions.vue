@@ -1,102 +1,126 @@
 <template>
-  <div style="padding: 24px; background: white; min-height: 100vh;border-radius:20px;border: 2px solid rgba(0,0,0,0.1); margin-top:15px;">
-    <div style="max-width: 1200px; margin: 0 auto;">
-      <!-- Header Section -->
-      <a-row justify="space-between" align="middle" style="margin-bottom: 24px;">
-        <a-col :xs="24" :sm="12" :md="12" :lg="8">
-          <h2 style="margin: 0; color: #262626; font-size: 24px; font-weight: 600;">
+  <div className="pt-3">
+
+    <div class=" bg-white min-h-screen sm:border rounded-2xl p-4  border-black/10 mt-4">
+      <div class="max-w-6xl mx-auto">
+        <!-- Header Section -->
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+          <h2 class="text-2xl font-semibold text-gray-900">
             Transactions
           </h2>
-        </a-col>
-        <a-col :xs="24" :sm="12" :md="8" :lg="6" style="text-align: right;">
-          <a-input-search 
-            placeholder="Search" 
-            style="border-radius: 20px; background: #f0f0f0;"
-            :bordered="false"
-            size="large"
-          />
-        </a-col>
-      </a-row>
-      <!-- Table Section -->
-      <a-row>
-        <a-col span="24">
-          <div style="background: white; border-radius: 12px; ; overflow: hidden;">
-            <!-- Desktop Table -->
-            <div style="display: block;" class="desktop-table">
-              <a-table 
-                :columns="columns" 
-                :data-source="tableData" 
-                :pagination="{ pageSize: 10, showSizeChanger: false, showQuickJumper: false }"
-                :show-header="true"
-                size="large"
-                style="border-radius: 12px;"
-              >
-                <!-- Custom columns -->
-                <template #bodyCell="{ column, record }">
-                  <template v-if="column.key === 'id'">
-                    <span style="font-weight: 500; color: #262626;">{{  record.id.slice(-8) }}</span>
-                  </template>
-                  <template v-if="column.key === 'date'">
-                    <span style="color: #595959;">{{ formatDate(record.date) }}</span>
-                  </template>
-                  
-                  <template v-if="column.key === 'payment'">
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='16' viewBox='0 0 24 16'%3E%3Crect width='24' height='16' rx='2' fill='%231A1F71'/%3E%3Cpath d='M8.5 4.5h7v7h-7z' fill='%23fff'/%3E%3C/svg%3E" alt="Visa" style="width: 24px; height: 16px;" />
-                      <span style="color: #595959;">Debit Card</span>
-                    </div>
-                  </template>
-                  
-                  <template v-if="column.key === 'amount'">
-                    <span style="color: #1890ff; font-weight: 600; font-size: 16px;">${{ record.amount }}</span>
-                  </template>
-                  
-                  <template v-if="column.key === 'status'">
-                    <span style="color: #52c41a; font-weight: 500;">{{ record.status }}</span>
-                  </template>
-                </template>
-              </a-table>
-            </div>
-
-            <!-- Mobile Cards -->
-            <div style="display: none; padding: 16px;" class="mobile-cards">
-              <div 
-                v-for="record in tableData" 
-                :key="record.key"
-                style="background: #fafafa; border-radius: 12px; padding: 16px; margin-bottom: 16px; border: 1px solid #f0f0f0;"
-              >
-                <a-row justify="space-between" align="top" style="margin-bottom: 12px;">
-                  <a-col span="12">
-                    <div style="font-weight: 600; color: #262626; font-size: 16px;">
-                      ID: {{ record.id.slice(0,-4) }}
-                    </div>
-                    <div style="color: #8c8c8c; font-size: 14px; margin-top: 4px;">
-                      {{ formatDate(record.date) }}
-                    </div>
-                  </a-col>
-                  <a-col span="12" style="text-align: right;">
-                    <div style="color: #1890ff; font-weight: 600; font-size: 18px;">
-                      ${{ record.amount }}
-                    </div>
-                    <div style="color: #52c41a; font-weight: 500; margin-top: 4px;">
-                      {{ record.status }}
-                    </div>
-                  </a-col>
-                </a-row>
-                
-                <a-row align="middle">
-                  <a-col span="24">
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='16' viewBox='0 0 24 16'%3E%3Crect width='24' height='16' rx='2' fill='%231A1F71'/%3E%3Cpath d='M8.5 4.5h7v7h-7z' fill='%23fff'/%3E%3C/svg%3E" alt="Visa" style="width: 24px; height: 16px;" />
-                      <span style="color: #595959; font-size: 14px;">Debit Card</span>
-                    </div>
-                  </a-col>
-                </a-row>
-              </div>
-            </div>
+          <div class="w-full sm:w-72">
+            <input
+              type="text"
+              placeholder="Search"
+              v-model="searchQuery"
+              class="w-full px-4 py-2 rounded-full bg-gray-100 border-0 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
           </div>
-        </a-col>
-      </a-row>
+        </div>
+  
+        <!-- Table (Desktop and Mobile) -->
+        <div class="overflow-x-auto bg-white rounded-xl">
+          <table class="w-full text-left text-xs md:text-sm min-w-max">
+            <!-- Table Header -->
+            <thead class="bg-gray-50 border-b border-gray-200">
+              <tr>
+                <th class="px-6 py-1 font-semibold text-gray-900  md:w-32 cursor-pointer hover:bg-gray-100" @click="sortBy('id')">
+                  <div class="flex items-center gap-1">
+                    ID
+                    <span v-if="sortField === 'id'" class="text-blue-600">
+                      {{ sortOrder === 'asc' ? '↑' : '↓' }}
+                    </span>
+                  </div>
+                </th>
+                <th class="px-6 py-4 font-semibold text-gray-900 md:w-40 cursor-pointer hover:bg-gray-100" @click="sortBy('date')">
+                  <div class="flex items-center gap-1">
+                    Date
+                    <span v-if="sortField === 'date'" class="text-blue-600">
+                      {{ sortOrder === 'asc' ? '↑' : '↓' }}
+                    </span>
+                  </div>
+                </th>
+                <th class="px-4 py-4 font-semibold text-gray-900 md:w-44">Payment Method</th>
+                <th class="px-2 py-4 font-semibold text-gray-900 text-right md:w-32 cursor-pointer hover:bg-gray-100" @click="sortBy('amount')">
+                  <div class="flex items-center justify-end gap-1">
+                    Amount
+                    <span v-if="sortField === 'amount'" class="text-blue-600">
+                      {{ sortOrder === 'asc' ? '↑' : '↓' }}
+                    </span>
+                  </div>
+                </th>
+                <th class="px-6 py-4 font-semibold text-gray-900 w-32 cursor-pointer hover:bg-gray-100" @click="sortBy('status')">
+                  <div class="flex items-center gap-1">
+                    Status
+                    <span v-if="sortField === 'status'" class="text-blue-600">
+                      {{ sortOrder === 'asc' ? '↑' : '↓' }}
+                    </span>
+                  </div>
+                </th>
+              </tr>
+            </thead>
+  
+            <!-- Table Body -->
+            <tbody class="divide-y divide-gray-200">
+              <tr 
+                v-for="transaction in sortedAndFilteredTransactions"
+                :key="transaction.key"
+                class="hover:bg-gray-50 transition-colors"
+              >
+                <!-- ID -->
+                <td class="px-2 md:px-6 py-2">
+                  <span class="font-medium text-gray-900">
+                    {{ transaction.id.slice(-8) }}
+                  </span>
+                </td>
+  
+                <!-- Date -->
+                <td class=" px-2 md:px-6 py-4">
+                  <span class="text-gray-600">
+                    {{ formatDate(transaction.date) }}
+                  </span>
+                </td>
+  
+                <!-- Payment Method -->
+                <td class="px-2 md:px-6 py-4">
+                  <div class="flex items-center gap-2">
+                    <img 
+                      src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='16' viewBox='0 0 24 16'%3E%3Crect width='24' height='16' rx='2' fill='%231A1F71'/%3E%3Cpath d='M8.5 4.5h7v7h-7z' fill='%23fff'/%3E%3C/svg%3E" 
+                      alt="Visa"
+                      class="w-6 h-4"
+                    />
+                    <span class="text-gray-600">Debit Card</span>
+                  </div>
+                </td>
+  
+                <!-- Amount -->
+                <td class="px-2 md:px-6 py-2 md:py-4 ">
+                  <span class="font-semibold text-blue-600 md:text-base">
+                    ${{ transaction.amount }}
+                  </span>
+                </td>
+  
+                <!-- Status -->
+                <td class="px-2 md:px-6 py-4">
+                  <span class="font-medium text-green-600">
+                    {{ transaction.status }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+  
+          <!-- Loading State -->
+          <div v-if="loading && sortedAndFilteredTransactions.length === 0" class="flex items-center justify-center py-12">
+            <p class="text-gray-500">Loading transactions...</p>
+          </div>
+        </div>
+  
+        <!-- Empty State -->
+        <div v-if="sortedAndFilteredTransactions.length === 0 && !loading" class="text-center py-12">
+          <p class="text-gray-500">No transactions found</p>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -106,43 +130,10 @@ export default {
   name: 'TransactionsTable',
   data() {
     return {
-      columns: [
-        {
-          title: 'ID',
-          dataIndex: 'id',
-          key: 'id',
-          width: '15%',
-          sorter: true,
-        },
-        {
-          title: 'Date',
-          dataIndex: 'date',
-          key: 'date',
-          width: '20%',
-          sorter: true,
-        },
-        {
-          title: 'Payment method',
-          dataIndex: 'payment',
-          key: 'payment',
-          width: '25%',
-        },
-        {
-          title: 'Amount',
-          dataIndex: 'amount',
-          key: 'amount',
-          width: '15%',
-          align: 'right',
-          sorter: true,
-        },
-        {
-          title: 'Status',
-          dataIndex: 'status',
-          key: 'status',
-          width: '15%',
-          sorter: true,
-        },
-      ],
+      searchQuery: '',
+      loading: false,
+      sortField: 'date',
+      sortOrder: 'desc',
       tableData: [
         {
           key: '1',
@@ -154,137 +145,134 @@ export default {
         },
         {
           key: '2',
-          id: '16355498',
-          date: 'June 10, 2025',
+          id: '16355499',
+          date: 'June 11, 2025',
           payment: 'visa',
-          amount: 45,
+          amount: 120,
           status: 'Successful',
         },
         {
           key: '3',
-          id: '16355498',
-          date: 'June 10, 2025',
+          id: '16355500',
+          date: 'June 12, 2025',
           payment: 'visa',
-          amount: 45,
+          amount: 85,
           status: 'Successful',
         },
         {
           key: '4',
-          id: '16355498',
-          date: 'June 10, 2025',
+          id: '16355501',
+          date: 'June 13, 2025',
           payment: 'visa',
-          amount: 45,
+          amount: 230,
           status: 'Successful',
         },
         {
           key: '5',
-          id: '16355498',
-          date: 'June 10, 2025',
+          id: '16355502',
+          date: 'June 14, 2025',
           payment: 'visa',
-          amount: 45,
+          amount: 65,
           status: 'Successful',
         },
         {
           key: '6',
-          id: '16355498',
-          date: 'June 10, 2025',
+          id: '16355503',
+          date: 'June 15, 2025',
           payment: 'visa',
-          amount: 45,
+          amount: 150,
           status: 'Successful',
         },
         {
           key: '7',
-          id: '16355498',
-          date: 'June 10, 2025',
+          id: '16355504',
+          date: 'June 16, 2025',
           payment: 'visa',
-          amount: 45,
+          amount: 95,
           status: 'Successful',
         },
       ],
     }
   },
+  computed: {
+    filteredTransactions() {
+      if (!this.searchQuery) return this.tableData
+      return this.tableData.filter(transaction =>
+        transaction.id.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+        transaction.date.toLowerCase().includes(this.searchQuery.toLowerCase())
+      )
+    },
+    sortedAndFilteredTransactions() {
+      const sorted = [...this.filteredTransactions].sort((a, b) => {
+        let aVal = a[this.sortField]
+        let bVal = b[this.sortField]
+
+        // Handle date comparison
+        if (this.sortField === 'date') {
+          aVal = new Date(aVal).getTime()
+          bVal = new Date(bVal).getTime()
+        }
+
+        // Handle numeric comparison
+        if (this.sortField === 'amount' || this.sortField === 'id') {
+          aVal = parseInt(aVal)
+          bVal = parseInt(bVal)
+        }
+
+        if (aVal < bVal) return this.sortOrder === 'asc' ? -1 : 1
+        if (aVal > bVal) return this.sortOrder === 'asc' ? 1 : -1
+        return 0
+      })
+
+      return sorted
+    }
+  },
   mounted() {
     this.fetch_my_transactions()
-    this.handleResize();
-    window.addEventListener('resize', this.handleResize);
-  },
-  beforeUnmount() {
-    window.removeEventListener('resize', this.handleResize);
   },
   methods: {
     formatDate(dateStr) {
-    const date = new Date(dateStr); 
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric"
-    });
-  },
-    async fetch_my_transactions(){
-       try {
-                this.loading = true;
-                this.error = null;
-
-            const token = localStorage.getItem('token');
-                
-            const response = await fetch(`${this.$store.state.root_api}subscription/api/get-my-transactions-history/`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Token ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                    });
-                  const result = await response.json();
-                  // console.log(result)
-                if (result) {
-                    this.tableData = result;
-                } else {
-                    this.error = result.message || 'Business not found';
-                }
-              } catch (error) {
-                console.error('Error loading business data:', error);
-                if (error.response?.status === 404) {
-                    this.error = 'Business not found';
-                } else {
-                    this.error = 'Failed to load business information';
-                }
-            } finally {
-                this.loading = false;
-            }
+      const date = new Date(dateStr)
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      })
     },
-    handleResize() {
-      const isMobile = window.innerWidth <= 768;
-      const desktopTable = document.querySelector('.desktop-table');
-      const mobileCards = document.querySelector('.mobile-cards');
-      
-      if (isMobile) {
-        if (desktopTable) desktopTable.style.display = 'none';
-        if (mobileCards) mobileCards.style.display = 'block';
+    sortBy(field) {
+      if (this.sortField === field) {
+        this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc'
       } else {
-        if (desktopTable) desktopTable.style.display = 'block';
-        if (mobileCards) mobileCards.style.display = 'none';
+        this.sortField = field
+        this.sortOrder = 'asc'
+      }
+    },
+    async fetch_my_transactions() {
+      try {
+        this.loading = true
+        const token = localStorage.getItem('token')
+
+        const response = await fetch(
+          `${this.$store.state.root_api}subscription/api/get-my-transactions-history/`,
+          {
+            method: 'GET',
+            headers: {
+              'Authorization': `Token ${token}`,
+              'Content-Type': 'application/json'
+            }
+          }
+        )
+        const result = await response.json()
+
+        if (result && Array.isArray(result)) {
+          this.tableData = result
+        }
+      } catch (error) {
+        console.error('Error loading transactions:', error)
+      } finally {
+        this.loading = false
       }
     }
   }
 }
 </script>
-
-<style scoped>
-@media (max-width: 768px) {
-  .desktop-table {
-    display: none !important;
-  }
-  .mobile-cards {
-    display: block !important;
-  }
-}
-
-@media (min-width: 769px) {
-  .desktop-table {
-    display: block !important;
-  }
-  .mobile-cards {
-    display: none !important;
-  }
-}
-</style>

@@ -14,7 +14,7 @@ export default {
   components: { navbar_1, navbar_2 },
   data() {
     return {
-      hideNavUrls: ['/login', '/signup','/forgot-password','/product-ar-view']
+      hideNavUrls: ['/login', '/signup', '/forgot-password']
     }
   },
   beforeCreate() {
@@ -27,8 +27,20 @@ export default {
       const hasLocalToken = !!localStorage.getItem('token')
       return hasToken || hasLocalToken
     },
+    
     hideNavbarCompletely() {
-      return this.hideNavUrls.includes(this.$route.path)
+      const path = this.$route.path
+      
+      // Check exact matches
+      if (this.hideNavUrls.includes(path)) {
+        return true
+      }
+      
+      // Check if path starts with /ar-product/ (handles any product_id)
+      if (path.startsWith('/ar-product/')) {
+        return true
+      }
+      return false
     }
   },
   watch: {
