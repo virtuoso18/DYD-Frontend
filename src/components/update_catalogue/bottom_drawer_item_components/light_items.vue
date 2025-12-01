@@ -341,8 +341,14 @@ export default {
         if (this.filters.selectedColors.length > 0) {
           params.append('color', this.filters.selectedColors.join(','))
         }
-        
-        const url = `${this.$store.state.root_api}product/api/lights/?${params.toString()}`
+        let  url="" ;
+        if(this.$route.query.brand){
+          url = `${this.$store.state.root_api}product/api/load-brand-products/lights/${this.$route.query.brand}/?${params.toString()}`
+        }
+        else{
+          url = `${this.$store.state.root_api}product/api/lights/?${params.toString()}`
+
+        }
         
         const response = await fetch(url, {
           method: 'GET',

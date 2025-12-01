@@ -6,10 +6,10 @@
       :title="selectedProduct.name" 
       @back="this.$router.back()"
     >
-      <template #extra>
+    <!--   <template #extra>
         <a-button > <template #icon> <ClockCircleOutlined/></template>Create Variation</a-button>
         <a-avatar style="background-color: #dc2626;">A</a-avatar>
-      </template>
+      </template> -->
     </a-page-header>
 
     <!-- Main Content -->

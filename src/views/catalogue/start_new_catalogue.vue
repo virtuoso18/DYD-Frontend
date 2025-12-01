@@ -52,9 +52,11 @@
       <div class="example-images">
         <a-row>
         <a-col span="8" v-for="histry_card in your_history" :key="id" style="padding:5px;">
-          <router-link :to="'/update-catalogue/'+histry_card.id">
+          {{this.$route.query.brand}}
+           <router-link :to="this.$route.query.brand ? '/update-catalogue/'+histry_card.id+'?brand='+this.$route.query.brand: '/update-catalogue/'+histry_card.id">
             <img  @click="" :src="this.$store.state.root_media_api+histry_card.image" class="example-image" />
           </router-link>
+
           </a-col>
         </a-row>
         </div>
@@ -141,7 +143,7 @@ export default {
           
           if (this.$route.query.brand){
             this.$router.push({ name: 'update_catelogue', params: { id: this.exampleImages.id },query: {
-              brand: this.$route.params.brand,
+              brand: this.$route.query.brand,
             } });
           }else{
 
@@ -238,7 +240,7 @@ export default {
           //  this.$router.push({ name: 'update_catelogue', params: { id: responseData.room_id } });
           if (this.$route.query.brand){
             this.$router.push({ name: 'update_catelogue',  params: { id: responseData.room_id },query: {
-              brand: this.$route.params.brand,
+              brand: this.$route.query.brand,
             } });
           }else{
             this.$router.push({ name: 'update_catelogue', params: { id: responseData.room_id } });

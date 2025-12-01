@@ -18,6 +18,9 @@
       <!-- {{ products_used }} -->
         <!-- <floor_textures_bottom_drawer_menu :products="seeAll_Floor"/> -->
           <a-row>
+            <a-col span="24" style="display: flex;justify-content: center;align-items: center;height:70vh;">
+              <a-empty description="You have not used any product in this room here."></a-empty>
+            </a-col>
             <a-col
             :lg="4"
             :md="6"

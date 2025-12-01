@@ -359,8 +359,17 @@ export default {
           params.append('color_hex', hexCodes)
         }
         
-        const url = `${this.$store.state.root_api}room/api/floors/?${params.toString()}`
         
+          let  url="" ;
+        if(this.$route.query.brand){
+          url = `${this.$store.state.root_api}room/api/load-brand-products/floors/${this.$route.query.brand}/?${params.toString()}`
+        }
+        else{
+          url = `${this.$store.state.root_api}room/api/floors/?${params.toString()}`
+
+        }
+
+
         const response = await fetch(url, {
           method: 'GET',
           headers: {

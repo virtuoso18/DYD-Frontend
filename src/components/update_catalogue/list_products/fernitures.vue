@@ -250,7 +250,10 @@ export default {
             }
           });
           const data = await res.json();
-          
+          console.log("=========================================================================")
+          console.log(key)
+          console.log("=========================================================================")
+          console.log(data)
           if (data?.data) {
             this[key] = data.data;
           }

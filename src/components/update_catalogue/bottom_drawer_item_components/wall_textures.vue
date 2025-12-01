@@ -394,9 +394,15 @@ export default {
           const hexCodes = this.filters.selectedColors.join(',')
           params.append('color_hex', hexCodes)
         }
-        
-        const url = `${this.$store.state.root_api}room/api/walls/?${params.toString()}`
-        
+         let  url="" ;
+        if(this.$route.query.brand){
+          url = `${this.$store.state.root_api}room/api/load-brand-products/walls/${this.$route.query.brand}/?${params.toString()}`
+        }
+        else{
+          url = `${this.$store.state.root_api}room/api/walls/?${params.toString()}`
+
+        }
+
         const response = await fetch(url, {
           method: 'GET',
           headers: {
