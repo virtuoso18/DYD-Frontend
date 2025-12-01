@@ -1,4 +1,72 @@
 <template>
+
+<!-- TEXTURE MODAL (Keep your existing modal) -->
+<a-modal 
+  v-model:open="openTextureModal" 
+  width="60%" 
+  title="Apply Texture"
+  :footer="null"
+  centered
+>
+  <div style="display: flex; flex-direction: column; gap: 16px;">
+    
+    <!-- Upload Area -->
+    <div 
+      style="
+        border: 2px dashed #d9d9d9;
+        border-radius: 8px;
+        padding: 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s;
+      "
+      :style="textureImage ? { borderColor: '#1890ff', background: '#f0f8ff' } : {}"
+      @click="triggerTextureFileInput()"
+    >
+      <!-- No texture selected -->
+      <div v-if="!textureImage">
+        <PlusOutlined style="font-size: 30px; color: #1890ff; margin-bottom: 8px; display: block;" />
+        <p style="margin: 8px 0; font-weight: 500;">Click to select texture image</p>
+        <small style="color: #999;">PNG, JPG formats supported</small>
+      </div>
+
+      <!-- Texture preview -->
+      <div v-else style="position: relative;">
+        <img 
+          :src="textureImage" 
+          alt="Texture preview" 
+          style="max-width: 100%; max-height: 150px; border-radius: 4px;"
+        />
+        <p style="margin: 8px 0; color: #666;">Texture Selected ✓</p>
+      </div>
+    </div>
+
+    <!-- Remove button -->
+    <div v-if="textureImage" style="text-align: center;">
+      <a-button danger @click="removeSelectedTexture()">
+        Change Texture
+      </a-button>
+    </div>
+
+    <!-- Apply & Cancel buttons -->
+    <div style="display: flex; gap: 8px;">
+      <a-button block @click="closeTextureModal()">
+        Cancel
+      </a-button>
+      <a-button 
+        type="primary" 
+        block 
+        @click="applyTextureToImage()"
+        :disabled="!textureImage"
+        :loading="isApplyingTexture"
+      >
+        Apply Texture
+      </a-button>
+    </div>
+
+  </div>
+</a-modal>
+
   
 <!-- Multi-View Queue Modal -->
 <a-modal 
@@ -456,12 +524,99 @@
         </div>
 
         <!-- Add Texture Section -->
-        <div class="texture-section">
-          <p>Add Texture</p>
-          <div class="texture-upload" @click="!isProcessingBg && triggerFileInput('texture')">
-            <PlusOutlined />
-          </div>
+        
+<div class="texture-section">
+  <!-- Header with Add Button -->
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+    <p style="margin: 0; font-weight: 500;">Textures ({{ textures_available.length }})</p>
+    <a-button 
+      type="primary" 
+      size="small"
+      @click="openTexturModal()"
+      :disabled="!mainImage"
+    >
+      <template #icon>
+        <PlusOutlined />
+      </template>
+      Add Texture
+    </a-button>
+  </div>
+
+  <!-- Texture List -->
+  <div v-if="textures_available.length > 0" style="display: flex; flex-direction: column; gap: 8px; max-height: 300px; overflow-y: auto;">
+    
+    <div 
+      v-for="(texture, index) in textures_available" 
+      :key="index"
+      style="
+        display: flex;
+        gap: 12px;
+        padding: 8px;
+        background: #fafafa;
+        border-radius: 6px;
+        border: 2px solid #e8e8e8;
+        transition: all 0.3s;
+      "
+      :style="texture.is_active ? { borderColor: '#52c41a', background: '#f6ffed' } : {}"
+    >
+      <!-- Texture Preview -->
+      <div 
+        style="
+          width: 50px;
+          height: 50px;
+          border-radius: 4px;
+          overflow: hidden;
+          flex-shrink: 0;
+          background: #f0f0f0;
+          border: 1px solid #d9d9d9;
+          cursor: pointer;
+        "
+        @click="activateTexture(index)"
+      >
+        <img 
+          :src="texture.main_image_texture_applied" 
+          alt="Texture result" 
+          style="width: 100%; height: 100%; object-fit: cover;"
+        />
+      </div>
+
+      <!-- Texture Info -->
+      <div style="flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+        <p style="margin: 0; font-size: 12px; font-weight: 500; color: #333;">
+          Texture {{ index + 1 }}
+          <span v-if="texture.is_active" style="color: #52c41a; margin-left: 4px;">✓ Active</span>
+        </p>
+        <div style="display: flex; gap: 8px; font-size: 12px;">
+          <a-button 
+            type="link" 
+            size="small"
+            @click="activateTexture(index)"
+            :style="{ padding: '0 4px' }"
+          >
+            {{ texture.is_active ? 'Deactivate' : 'Activate' }}
+          </a-button>
+          <a-divider type="vertical" style="margin: 0;" />
+          <a-button 
+            type="link" 
+            danger
+            size="small"
+            @click="deleteTexture(index)"
+            :style="{ padding: '0 4px' }"
+          >
+            Delete
+          </a-button>
         </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Empty State -->
+  <div v-else style="text-align: center; padding: 20px; color: #999; background: #fafafa; border-radius: 6px;">
+    <p style="margin: 0; font-size: 12px;">No textures applied yet</p>
+  </div>
+</div>
+
 
         <!-- Upload More Images -->
        
@@ -640,6 +795,15 @@
   style="display: none"
   @change="handleMultiViewQueueUpload($event, 0)"
 />
+
+<!-- Hidden file input -->
+<input
+  ref="fileInput-texture-select"
+  type="file"
+  accept="image/png,image/jpeg,image/jpg"
+  style="display: none"
+  @change="handleTextureFileSelect"
+/>
 <input
   ref="fileInput-mv-queue-1"
   type="file"
@@ -762,6 +926,20 @@ export default {
   },
   data() {
     return {
+
+         openTextureModal: false,
+    textureImage: null,
+    isApplyingTexture: false,
+    
+    // NEW: Add this texture list
+    textures_available: [
+      // {
+      //   texture_file_selected: '', // texture image file of user
+      //   main_image_texture_applied: '', // AI result from API
+      //   is_active: false, // toggle status
+      // }
+    ],
+
       openEditImage_modal: false,
       multiView: false,
       mainImage: null,
@@ -872,6 +1050,149 @@ beforeUnmount() {
   }
   },
   methods: {
+    // STEP 1: Update your data() section
+
+  
+  openTexturModal() {
+    if (!this.mainImage) {
+      this.$message.warning('Please upload a main image first')
+      return
+    }
+    this.openTextureModal = true
+  },
+
+  closeTextureModal() {
+    this.openTextureModal = false
+    this.textureImage = null
+  },
+
+  triggerTextureFileInput() {
+    this.$refs['fileInput-texture-select'].click()
+  },
+
+  handleTextureFileSelect(event) {
+    const file = event.target.files[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        this.textureImage = e.target.result
+      }
+      reader.readAsDataURL(file)
+    }
+  },
+
+  removeSelectedTexture() {
+    this.textureImage = null
+  },
+
+  // Apply texture - call backend API
+  async applyTextureToImage() {
+    if (!this.textureImage) {
+      this.$message.warning('Please select a texture image')
+      return
+    }
+
+    this.isApplyingTexture = true
+
+    try {
+      const payload = {
+        main_image: this.mainImage,
+        texture_image: this.textureImage,
+        room_id: this.$route.params.id
+      }
+
+      const token = localStorage.getItem('token')
+      const response = await fetch(
+        `${this.$store.state.root_api}engine/apply-texture/`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${token}`,
+          },
+          body: JSON.stringify(payload)
+        }
+      )
+
+      if (response.ok) {
+        const result = await response.json()
+        
+        // Add to textures_available list
+        const newTexture = {
+          texture_file_selected: this.textureImage,
+          main_image_texture_applied: result.textured_image,
+          is_active: false
+        }
+        
+        this.textures_available.push(newTexture)
+        
+        // Automatically activate the newly applied texture
+        this.activateTexture(this.textures_available.length - 1)
+        
+        this.$message.success('Texture applied successfully!')
+        this.closeTextureModal()
+      } else {
+        const error = await response.json()
+        this.$message.error(error.msg || 'Failed to apply texture')
+      }
+    } catch (error) {
+      console.error('Error:', error)
+      this.$message.error('Failed to apply texture')
+    } finally {
+      this.isApplyingTexture = false
+    }
+  },
+
+  // NEW: Activate/Deactivate texture
+  activateTexture(index) {
+    // If clicking the same texture, deactivate it
+    if (this.textures_available[index].is_active) {
+      this.textures_available[index].is_active = false
+      this.mainImage = this.getOriginalImage() // revert to original
+      this.$message.info('Texture deactivated')
+      return
+    }
+
+    // Deactivate all other textures
+    this.textures_available.forEach((texture, i) => {
+      if (i !== index) {
+        texture.is_active = false
+      }
+    })
+
+    // Activate selected texture
+    this.textures_available[index].is_active = true
+    this.mainImage = this.textures_available[index].main_image_texture_applied
+    this.$message.success('Texture activated')
+  },
+
+  // Helper: Get original main image (before any texture)
+  getOriginalImage() {
+    // If you stored original, return it
+    // Otherwise return first texture's main_image_texture_applied before any texture
+    // For now, we'll keep the current mainImage
+    return this.mainImage
+  },
+
+  // NEW: Delete texture from list
+  deleteTexture(index) {
+    const wasActive = this.textures_available[index].is_active
+    this.textures_available.splice(index, 1)
+    
+    if (wasActive && this.textures_available.length > 0) {
+      // Activate first texture if deleted one was active
+      this.activateTexture(0)
+    } else if (wasActive) {
+      // No textures left, revert to original
+      this.mainImage = this.getOriginalImage()
+    }
+    
+    this.$message.success('Texture deleted')
+  },
+  
+    openApplyTextureModel(){
+      this.openSelectTextureModel=true
+    },
     goBack() {
       this.$emit('back')
     },

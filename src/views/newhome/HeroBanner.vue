@@ -85,19 +85,19 @@ export default {
     },
     heading1: {
       type: String,
-      default: 'Default Heading 1'
+      default: ''
     },
     heading2: {
       type: String,
-      default: 'Default Heading 2'
+      default: ''
     },
     buttonText: {
       type: String,
-      default: 'Join Us'
+      default: ''
     },
     bottomText: {
       type: String,
-      default: 'Click Try Demo'
+      default: ''
     }
   }
 }

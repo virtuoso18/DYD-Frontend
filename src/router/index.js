@@ -101,6 +101,7 @@ import RealEstateBrokrage from '@/views/pages/realEstateBrokrage.vue'
 import HomeOwner from '@/views/pages/HomeOwner.vue'
 import Interiordesigner from '@/views/pages/interiordesigner.vue'
 import Realestateagent from '@/views/pages/realestateagent.vue'
+import Aivirtualtour from '@/views/pages/aivirtualtour.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -116,7 +117,11 @@ const router = createRouter({
     },
     
     // =========================================== 
-
+{
+      path: '/aivirtualtour',
+      name: 'aivirtualtour',
+      component: Aivirtualtour,
+    },
     {
       path: '/',
       name: 'home',
@@ -265,6 +270,7 @@ const router = createRouter({
     
     
 // =================================================== UI Pages ========================================
+
 
     {
       path: '/start-new-catalogue',

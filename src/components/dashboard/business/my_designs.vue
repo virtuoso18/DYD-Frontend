@@ -43,10 +43,12 @@
           <div>
             <a-button @click="edit_Design" type="default" v-if="!start_edit">
               <EditOutlined /> Edit </a-button
-            >'
+            >
+            
             <a-button @click="save_Design" type="default" v-if="start_edit">
               <SaveOutlined /> Save </a-button
-            >'
+            >
+            
             <a-button @click="close_Design" type="secondary" v-if="start_edit">
               <CloseOutlined />Close
             </a-button>

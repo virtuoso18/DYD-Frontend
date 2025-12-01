@@ -18,7 +18,7 @@
       <!-- {{ products_used }} -->
         <!-- <floor_textures_bottom_drawer_menu :products="seeAll_Floor"/> -->
           <a-row>
-            <a-col span="24" style="display: flex;justify-content: center;align-items: center;height:70vh;">
+            <a-col span="24" style="display: flex;justify-content: center;align-items: center;height:70vh;" v-if="!products_used.length">
               <a-empty description="You have not used any product in this room here."></a-empty>
             </a-col>
             <a-col
@@ -1762,7 +1762,9 @@ export default {
         }
 
         const responseData = await response.json();
-
+        // console.log("=========================== ===========================  ===========================  ===========================  =========================== ")
+        // console.log("=========================== ===========================  ===========================  ===========================  =========================== ")
+        // console.log(responseData)
         if (responseData && this.is_ready) {
           console.log("✅ Rendering started!");
           this.base_image_url = this.$store.state.root_media_api + responseData.final_image_output;

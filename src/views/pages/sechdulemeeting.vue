@@ -18,10 +18,8 @@
       </div>
     </div>
 
-    <!-- Meeting Scheduler Section -->
     <div class="bg-gray-50 py-16 px-5 ">
-      <div class="max-w-full ">
-        <!-- Title -->
+      <div class="max-w-full h-[600px] ">
         <h3
           class="text-center mb-12 text-gray-800 font-bold text-3xl md:text-5xl leading-tight tracking-tight"
           style="font-family: 'Proza Libre';"
@@ -29,9 +27,7 @@
           Redirected to google meet calender
         </h3>
 
-        <!-- Main Grid: Calendar + Booking Form -->
-        <div class="grid lg:grid-cols-2 gap-8">
-          <!-- Left: Calendar -->
+        <!-- <div class="grid lg:grid-cols-2 gap-8">
           <div class="bg-white rounded-2xl shadow-lg p-6">
             <div class="flex justify-between items-center mb-6">
               <button
@@ -57,7 +53,6 @@
               </button>
             </div>
 
-            <!-- Days of Week -->
             <div class="grid grid-cols-7 gap-2 mb-2">
               <div
                 v-for="day in daysOfWeek"
@@ -68,7 +63,6 @@
               </div>
             </div>
 
-            <!-- Calendar Days -->
             <div class="grid grid-cols-7 gap-2">
               <div
                 v-for="(day, index) in calendarDays"
@@ -101,7 +95,6 @@
               </div>
             </div>
 
-            <!-- Quick Month Navigation -->
             <div class="mt-6 grid grid-cols-4 gap-2">
               <button
                 v-for="(month, index) in monthNames"
@@ -119,11 +112,9 @@
             </div>
           </div>
 
-          <!-- Right: Booking Form -->
           <div class="bg-white rounded-2xl shadow-lg p-6">
             <h3 class="text-2xl font-bold text-gray-800 mb-6">Meeting Details</h3>
 
-            <!-- Selected Date Display -->
             <div v-if="selectedDate" class="bg-blue-50 border-l-4 border-blue-600 p-4 mb-6 rounded">
               <p class="text-sm text-gray-600 mb-1">Selected Date</p>
               <p class="text-lg font-semibold text-gray-800">
@@ -131,7 +122,6 @@
               </p>
             </div>
 
-            <!-- Time Slots -->
             <div v-if="selectedDate" class="mb-6">
               <label class="block text-sm font-semibold text-gray-700 mb-3">
                 Available Time Slots
@@ -153,7 +143,6 @@
               </div>
             </div>
 
-            <!-- Form Fields -->
             <div class="space-y-4">
               <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-2">
@@ -219,7 +208,6 @@
                 ></textarea>
               </div>
 
-              <!-- Submit Button -->
               <button
                 @click="submitBooking"
                 :disabled="!isFormValid"
@@ -241,10 +229,9 @@
               </button>
             </div>
           </div>
-        </div>
+        </div> -->
 
-        <!-- Admin View: Bookings List -->
-        <div v-if="isAdmin" class="pt-12 bg-white rounded-2xl translate-y-8  shadow-lg p-6">
+        <!-- <div v-if="isAdmin" class="pt-12 bg-white rounded-2xl translate-y-8  shadow-lg p-6">
           <div class="flex justify-between items-center mb-6">
             <h3 class="text-2xl font-bold text-gray-800">Admin: Scheduled Meetings</h3>
             <span class="bg-blue-100 text-blue-800 text-sm font-semibold px-3 py-1 rounded-full">
@@ -301,11 +288,10 @@
               </div>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
 
-    <!-- Success Modal -->
     <div
       v-if="showSuccessModal"
       class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4"

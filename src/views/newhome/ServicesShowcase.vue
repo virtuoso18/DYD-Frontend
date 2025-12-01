@@ -1,73 +1,92 @@
 <template>
-    <div className="flex items-center justify-center ">
-
-    <div class="max-w-[1200px] mx-auto px-4 md:px-6">
+  <div class="flex items-center justify-center">
+    <div class="max-w-[1200px] mx-auto px-4 md:px-6 py-16">
       
       <!-- Header -->
-         <h1
-  class="text-center pt-12 text-black"
-  style="
-    font-family: 'Proza Libre';
-    font-weight: 700;
-    font-style: normal;
-    font-size: 48px;
-    line-height: 52px;
-    letter-spacing: -0.02em;
-  "
->Our Services</h1>
+      <h1
+        class="text-center text-black mb-12"
+        style="
+          font-family: 'Proza Libre';
+          font-weight: 700;
+          font-style: normal;
+          font-size: 48px;
+          line-height: 52px;
+          letter-spacing: -0.02em;
+        "
+      >Our Services</h1>
 
       <!-- Virtual Staging Section -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-20">
         
         <!-- Image with Before/After Slider -->
         <div class="lg:col-span-6 order-2 lg:order-1">
-          <div class="relative w-full h-[350px] md:h-[400px] rounded-2xl overflow-hidden shadow-lg">
-            <!-- Before/After Image Slider Container -->
-            <div class="absolute inset-0">
-              <!-- Before Image (Left side) -->
-              <div 
-                class="absolute top-0 left-0 h-full overflow-hidden"
-                :style="{ width: sliderPosition + '%' }"
-              >
-                <img 
-                  src="https://images.pexels.com/photos/1457842/pexels-photo-1457842.jpeg?cs=srgb&dl=pexels-jvdm-1457842.jpg&fm=jpg" 
-                  alt="Before Virtual Staging"
-                  class="w-full h-full object-cover"
-                  style="width: calc(100% * 100 / var(--slider-position, 50));"
-                />
-              </div>
-
-              <!-- After Image (Right side) -->
+          <div 
+            ref="virtualStagingContainer"
+            class="relative w-full h-[350px] md:h-[400px] rounded-2xl overflow-hidden shadow-lg cursor-col-resize"
+            @mousedown="startDrag('virtualStaging', $event)"
+            @touchstart="startDrag('virtualStaging', $event)"
+          >
+            <!-- Before Image -->
+            <img 
+              :src="virtualStagingImages[0]" 
+              alt="Before Virtual Staging"
+              class="absolute inset-0 w-full h-full object-cover select-none"
+              draggable="false"
+            />
+            
+            <!-- After Image (Clipped) -->
+            <div 
+              class="absolute inset-0 overflow-hidden"
+              :style="{ clipPath: `inset(0 ${100 - virtualStagingSliderPosition}% 0 0)` }"
+            >
               <img 
-                src="https://images.pexels.com/photos/1457842/pexels-photo-1457842.jpeg?cs=srgb&dl=pexels-jvdm-1457842.jpg&fm=jpg" 
+                :src="virtualStagingImages[1]" 
                 alt="After Virtual Staging"
-                class="absolute top-0 left-0 w-full h-full object-cover"
+                class="absolute inset-0 w-full h-full object-cover select-none"
+                draggable="false"
               />
+            </div>
 
-              <!-- Slider Handle -->
-              <div 
-                class="absolute top-0 bottom-0 w-1 bg-white cursor-ew-resize z-10 shadow-lg"
-                :style="{ left: sliderPosition + '%' }"
-                @mousedown="startDragging"
-                @touchstart="startDragging"
-              >
-                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded-full shadow-xl flex items-center justify-center">
-                  <div class="flex gap-1">
-                    <svg width="8" height="16" viewBox="0 0 8 16" fill="none">
-                      <path d="M3 1L1 8L3 15" stroke="#374151" stroke-width="2" stroke-linecap="round"/>
-                    </svg>
-                    <svg width="8" height="16" viewBox="0 0 8 16" fill="none">
-                      <path d="M5 1L7 8L5 15" stroke="#374151" stroke-width="2" stroke-linecap="round"/>
-                    </svg>
-                  </div>
-                </div>
+            <!-- Slider Handle -->
+            <div 
+              class="absolute top-0 bottom-0 w-1 bg-white shadow-lg z-10 cursor-col-resize"
+              :style="{ left: virtualStagingSliderPosition + '%' }"
+            >
+              <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-white rounded-full shadow-xl flex items-center justify-center">
+                <svg class="w-4 h-4 text-gray-600 absolute left-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7" />
+                </svg>
+                <svg class="w-4 h-4 text-gray-600 absolute right-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7" />
+                </svg>
               </div>
             </div>
 
-            <!-- Placeholder if no images -->
-            <div class="absolute inset-0 flex items-center justify-center bg-gray-200 text-gray-500">
-              <span class="text-lg">Before/After Image Slider</span>
+            <!-- Navigation Arrows -->
+            <div class="absolute top-4 left-4 z-20">
+              <button 
+                @click="prevVirtualStagingImage"
+                class="bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full p-2 shadow-lg transition-all"
+              >
+                <svg class="w-5 h-5 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
             </div>
+            
+            <div class="absolute top-4 right-4 z-20">
+              <button 
+                @click="nextVirtualStagingImage"
+                class="bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full p-2 shadow-lg transition-all"
+              >
+                <svg class="w-5 h-5 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+
+            <!-- Before/After Labels -->
+            
           </div>
         </div>
 
@@ -97,9 +116,7 @@
             Try Virtual Staging
           </button>
         </div>
-
       </div>
-
 
       <!-- 3D Rendering Section -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -131,21 +148,82 @@
           </button>
         </div>
 
-        <!-- Image -->
+        <!-- Image with Before/After Slider -->
         <div class="lg:col-span-6">
-          <div class="relative w-full h-[350px] md:h-[400px] rounded-2xl overflow-hidden shadow-lg bg-gray-200">
+          <div 
+            ref="rendering3DContainer"
+            class="relative w-full h-[350px] md:h-[400px] rounded-2xl overflow-hidden shadow-lg cursor-col-resize"
+            @mousedown="startDrag('rendering3D', $event)"
+            @touchstart="startDrag('rendering3D', $event)"
+          >
+            <!-- Before Image -->
             <img 
-              src="/furnitureretail.svg" 
-              alt="3D Rendering Example"
-              class="w-full h-full object-cover"
+              :src="rendering3DImages[0]" 
+              alt="Before 3D Rendering"
+              class="absolute inset-0 w-full h-full object-cover select-none"
+              draggable="false"
             />
-            <!-- Placeholder -->
-            <div class="absolute inset-0 flex items-center justify-center bg-gray-200 text-gray-500">
-              <span class="text-lg">3D Rendering Image</span>
+            
+            <!-- After Image (Clipped) -->
+            <div 
+              class="absolute inset-0 overflow-hidden"
+              :style="{ clipPath: `inset(0 ${100 - rendering3DSliderPosition}% 0 0)` }"
+            >
+              <img 
+                :src="rendering3DImages[1]" 
+                alt="After 3D Rendering"
+                class="absolute inset-0 w-full h-full object-cover select-none"
+                draggable="false"
+              />
+            </div>
+
+            <!-- Slider Handle -->
+            <div 
+              class="absolute top-0 bottom-0 w-1 bg-white shadow-lg z-10 cursor-col-resize"
+              :style="{ left: rendering3DSliderPosition + '%' }"
+            >
+              <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-white rounded-full shadow-xl flex items-center justify-center">
+                <svg class="w-4 h-4 text-gray-600 absolute left-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7" />
+                </svg>
+                <svg class="w-4 h-4 text-gray-600 absolute right-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+            </div>
+
+            <!-- Navigation Arrows -->
+            <div class="absolute top-4 left-4 z-20">
+              <button 
+                @click="prevRendering3DImage"
+                class="bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full p-2 shadow-lg transition-all"
+              >
+                <svg class="w-5 h-5 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+            </div>
+            
+            <div class="absolute top-4 right-4 z-20">
+              <button 
+                @click="nextRendering3DImage"
+                class="bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full p-2 shadow-lg transition-all"
+              >
+                <svg class="w-5 h-5 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+
+            <!-- Before/After Labels -->
+            <div class="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-1 rounded-md text-sm font-semibold">
+              Before
+            </div>
+            <div class="absolute bottom-4 right-4 bg-black/70 text-white px-3 py-1 rounded-md text-sm font-semibold">
+              After
             </div>
           </div>
         </div>
-
       </div>
 
     </div>
@@ -158,74 +236,140 @@ export default {
   
   data() {
     return {
-      sliderPosition: 50, // Start at 50% (middle)
-      isDragging: false
+      virtualStagingSliderPosition: 50,
+      rendering3DSliderPosition: 50,
+      isDragging: null,
+      
+      // Current displayed images
+      virtualStagingImages: [
+        'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=800&q=80',
+        'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=800&q=80'
+      ],
+      
+      rendering3DImages: [
+        'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&q=80',
+        'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=800&q=80'
+      ],
+      
+      // Image sets for navigation
+      virtualStagingImageSet: [
+        ['https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=800&q=80', 'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=800&q=80'],
+        ['https://images.unsplash.com/photo-1618219878480-432e9b0e8b26?w=800&q=80', 'https://images.unsplash.com/photo-1615529182904-14819c35db37?w=800&q=80'],
+        ['https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80', 'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800&q=80']
+      ],
+      
+      rendering3DImageSet: [
+        ['https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&q=80', 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=800&q=80'],
+        ['https://images.unsplash.com/photo-1615529328331-f8917597711f?w=800&q=80', 'https://images.unsplash.com/photo-1616137466211-f939a420be84?w=800&q=80'],
+        ['https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80', 'https://images.unsplash.com/photo-1615876234886-fd9a39fda97f?w=800&q=80']
+      ],
+      
+      virtualStagingImageIndex: 0,
+      rendering3DImageIndex: 0
     }
   },
 
   methods: {
-    startDragging(event) {
-      this.isDragging = true;
-      event.preventDefault();
+    startDrag(slider, event) {
+      this.isDragging = slider
+      this.handleDrag(slider, event)
       
-      document.addEventListener('mousemove', this.onDrag);
-      document.addEventListener('mouseup', this.stopDragging);
-      document.addEventListener('touchmove', this.onDrag);
-      document.addEventListener('touchend', this.stopDragging);
+      if (event.type === 'mousedown') {
+        document.addEventListener('mousemove', this.onDrag)
+        document.addEventListener('mouseup', this.stopDrag)
+      } else {
+        document.addEventListener('touchmove', this.onDrag)
+        document.addEventListener('touchend', this.stopDrag)
+      }
     },
 
     onDrag(event) {
-      if (!this.isDragging) return;
-
-      const container = event.target.closest('.relative');
-      if (!container) return;
-
-      const rect = container.getBoundingClientRect();
-      const x = event.type.includes('mouse') 
-        ? event.clientX 
-        : event.touches[0].clientX;
-      
-      let position = ((x - rect.left) / rect.width) * 100;
-      position = Math.max(0, Math.min(100, position)); // Clamp between 0 and 100
-      
-      this.sliderPosition = position;
+      if (!this.isDragging) return
+      this.handleDrag(this.isDragging, event)
     },
 
-    stopDragging() {
-      this.isDragging = false;
-      document.removeEventListener('mousemove', this.onDrag);
-      document.removeEventListener('mouseup', this.stopDragging);
-      document.removeEventListener('touchmove', this.onDrag);
-      document.removeEventListener('touchend', this.stopDragging);
+    handleDrag(slider, event) {
+      const container = slider === 'virtualStaging' 
+        ? this.$refs.virtualStagingContainer 
+        : this.$refs.rendering3DContainer
+      
+      if (!container) return
+
+      const rect = container.getBoundingClientRect()
+      const x = event.type.includes('mouse') ? event.clientX : event.touches[0].clientX
+      const position = ((x - rect.left) / rect.width) * 100
+      
+      const clampedPosition = Math.max(0, Math.min(100, position))
+      
+      if (slider === 'virtualStaging') {
+        this.virtualStagingSliderPosition = clampedPosition
+      } else {
+        this.rendering3DSliderPosition = clampedPosition
+      }
+    },
+
+    stopDrag() {
+      this.isDragging = null
+      document.removeEventListener('mousemove', this.onDrag)
+      document.removeEventListener('mouseup', this.stopDrag)
+      document.removeEventListener('touchmove', this.onDrag)
+      document.removeEventListener('touchend', this.stopDrag)
+    },
+
+    // Virtual Staging Navigation
+    nextVirtualStagingImage() {
+      this.virtualStagingImageIndex = (this.virtualStagingImageIndex + 1) % this.virtualStagingImageSet.length
+      this.virtualStagingImages = this.virtualStagingImageSet[this.virtualStagingImageIndex]
+      this.virtualStagingSliderPosition = 50
+    },
+
+    prevVirtualStagingImage() {
+      this.virtualStagingImageIndex = this.virtualStagingImageIndex === 0 
+        ? this.virtualStagingImageSet.length - 1 
+        : this.virtualStagingImageIndex - 1
+      this.virtualStagingImages = this.virtualStagingImageSet[this.virtualStagingImageIndex]
+      this.virtualStagingSliderPosition = 50
+    },
+
+    // 3D Rendering Navigation
+    nextRendering3DImage() {
+      this.rendering3DImageIndex = (this.rendering3DImageIndex + 1) % this.rendering3DImageSet.length
+      this.rendering3DImages = this.rendering3DImageSet[this.rendering3DImageIndex]
+      this.rendering3DSliderPosition = 50
+    },
+
+    prevRendering3DImage() {
+      this.rendering3DImageIndex = this.rendering3DImageIndex === 0 
+        ? this.rendering3DImageSet.length - 1 
+        : this.rendering3DImageIndex - 1
+      this.rendering3DImages = this.rendering3DImageSet[this.rendering3DImageIndex]
+      this.rendering3DSliderPosition = 50
     },
 
     tryVirtualStaging() {
-      console.log('Try Virtual Staging clicked');
-      // Add your navigation or action here
+      console.log('Try Virtual Staging clicked')
     },
 
     try3DRendering() {
-      console.log('Try 3D Rendering clicked');
-      // Add your navigation or action here
+      console.log('Try 3D Rendering clicked')
     }
   },
 
   beforeUnmount() {
-    // Clean up event listeners
-    document.removeEventListener('mousemove', this.onDrag);
-    document.removeEventListener('mouseup', this.stopDragging);
-    document.removeEventListener('touchmove', this.onDrag);
-    document.removeEventListener('touchend', this.stopDragging);
+    this.stopDrag()
   }
 }
 </script>
 
 <style scoped>
-/* Prevent text selection while dragging */
-.cursor-ew-resize {
+.select-none {
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
+}
+
+.cursor-col-resize {
+  cursor: col-resize;
 }
 </style>

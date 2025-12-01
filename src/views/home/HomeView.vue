@@ -164,7 +164,7 @@
   </a-row>
 </a-col>
     </a-row>
-<catalog/>
+<!-- <catalog/> -->
 <!-- Unlock the potential section -->
     <a-row  style="padding-left:10px;;padding-right:10px">
         <a-col :span="24" style="font-size:24px;font-weight:bold;margin:auto;width:100%;text-align: center;">
@@ -611,13 +611,13 @@ Drag & drop Image
 
 
     
-    <div
+    <div class="pb-18"
       :style="{
   backgroundImage: `url(${swiper_bg})`,
   backgroundPosition: 'center 90%',
   backgroundSize: 'cover',
   backgroundRepeat: 'no-repeat',
-  height: '700px',
+  height: '800px',
   width: '100%',
   display: 'flex',
   justifyContent: 'end',
@@ -630,6 +630,11 @@ Drag & drop Image
           <!-- <div>{{ business_info.name }}</div> -->
             <div class="banner-text">Swap the furniture to</div>
     <div class="banner-text">match your vision</div>
+
+    
+
+
+    
           <!-- <h1>SWIPER-CHAIRS-HERE</h1> -->
           
  <swiper style="margin-top:50px;"
@@ -685,7 +690,23 @@ Drag & drop Image
   </swiper>
           
         </div>
+       
       </div>
+
+       <button class="bg-[#3B63FB] px-6 whitespace-nowrap rounded-md py-2 -translate-y-14 translate-x-[80%] sm:translate-x-[180%]  lg:translate-x-[330%] xl:translate-x-[430%]  !text-white z-9999">
+  <span class="inline-block align-middle mr-2">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+      xmlns="http://www.w3.org/2000/svg">
+      <path d="M5 6H7M12.1 19L10.08 17M12.1 19L10.08 21M12.1 19C7.05 19 2.81 17 2 15M15.131 18.771C18.602 18.231 21.266 16.79 22 15M7 3H17C18.87 3 19.804 3 20.5 3.402C20.956 3.66529 21.3347 4.04398 21.598 4.5C22 5.196 22 6.13 22 8C22 9.87 22 10.804 21.598 11.5C21.3347 11.956 20.956 12.3347 20.5 12.598C19.804 13 18.87 13 17 13H16.606C15.919 13 15.576 13 15.255 12.929C14.8248 12.8335 14.4209 12.6443 14.072 12.375C13.812 12.173 13.592 11.91 13.152 11.382C12.802 10.962 12.626 10.752 12.425 10.657C12.292 10.5946 12.1469 10.5622 12 10.5622C11.8531 10.5622 11.708 10.5946 11.575 10.657C11.374 10.751 11.199 10.961 10.848 11.382C10.408 11.91 10.188 12.173 9.928 12.375C9.57915 12.6443 9.17524 12.8335 8.745 12.929C8.425 13 8.081 13 7.394 13H7C5.13 13 4.196 13 3.5 12.598C3.04398 12.3347 2.66529 11.956 2.402 11.5C2 10.804 2 9.87 2 8C2 6.13 2 5.196 2.402 4.5C2.66529 4.04398 3.04398 3.66529 3.5 3.402C4.196 3 5.13 3 7 3Z"
+        stroke="white" stroke-width="1.5" stroke-linecap="round"
+        stroke-linejoin="round" />
+    </svg>
+  </span>
+
+  <span class="inline-block pl-2 align-middle">
+    View on AR
+  </span>
+</button>
 
 
 
@@ -694,58 +715,235 @@ Drag & drop Image
       <!-- virtual staging part  -->
 
 <br>
-    <a-row style="max-width:1200px;margin:auto;padding-left:10px;padding-right:10px">
-         <a-col :sm="24" :xs="24" :md="9" :lg="9" style="display:flex;justify-content: center;align-items: start;flex-direction:column">
-            <h1>Virtual Staging</h1>
-            <p style="margin:0">With the help of virtual staging, you can create realistic, </p>
-<p style="margin:0">digital previews of spaces, providing a cost-effective solution </p>
-<p style="margin:0">for real estate and design.</p>
-<br>
-<div className="pb-4">
+ <div class="flex items-center justify-center">
+    <div class="max-w-[1200px] mx-auto px-4 md:px-6 py-16">
+      
+      <!-- Header -->
+      <h1
+        class="text-center text-black mb-12"
+        style="
+          font-family: 'Proza Libre';
+          font-weight: 700;
+          font-style: normal;
+          font-size: 48px;
+          line-height: 52px;
+          letter-spacing: -0.02em;
+        "
+      >Our Services</h1>
 
-  <a-button type="primary" style="display:inline-flex;align-items:center;gap:8px;white-space:nowrap;">
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M9.28387 8.51768L7.85167 7.08548C7.65647 6.89028 7.55887 6.79268 7.45353 6.74048C7.2532 6.64119 7.018 6.64119 6.8176 6.74048C6.71233 6.79268 6.61471 6.89028 6.41949 7.08548C6.22425 7.28075 6.12664 7.37835 6.07446 7.48361C5.97518 7.68401 5.97518 7.91921 6.07446 8.11955C6.12664 8.22488 6.22425 8.32248 6.41949 8.51768L7.85167 9.94988M9.28387 8.51768L13.5805 12.8143C13.7757 13.0095 13.8733 13.1071 13.9255 13.2125C14.0248 13.4128 14.0248 13.648 13.9255 13.8484C13.8733 13.9537 13.7757 14.0513 13.5805 14.2465C13.3853 14.4417 13.2877 14.5393 13.1824 14.5915C12.982 14.6908 12.7468 14.6908 12.5465 14.5915C12.4411 14.5393 12.3435 14.4417 12.1483 14.2465L7.85167 9.94988M9.28387 8.51768L7.85167 9.94988" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M11.3385 1.33398L11.5351 1.86505C11.7927 2.56143 11.9216 2.90962 12.1756 3.16362C12.4296 3.41762 12.7777 3.54646 13.4741 3.80414L14.0052 4.00065L13.4741 4.19716C12.7777 4.45484 12.4296 4.58369 12.1756 4.83768C11.9216 5.09168 11.7927 5.43987 11.5351 6.13625L11.3385 6.66732L11.142 6.13625C10.8843 5.43988 10.7555 5.09168 10.5015 4.83768C10.2475 4.58368 9.89934 4.45484 9.20294 4.19716L8.67188 4.00065L9.20294 3.80414C9.89934 3.54646 10.2475 3.41762 10.5015 3.16362C10.7555 2.90962 10.8843 2.56143 11.142 1.86505L11.3385 1.33398Z" stroke="white" stroke-linejoin="round"/>
-  <path d="M4 2.66602L4.14739 3.06432C4.34065 3.5866 4.43728 3.84774 4.62778 4.03824C4.81827 4.22874 5.07942 4.32537 5.6017 4.51863L6 4.66602L5.6017 4.8134C5.07942 5.00666 4.81827 5.1033 4.62777 5.2938C4.43728 5.48429 4.34065 5.74544 4.14739 6.26772L4 6.66602L3.85261 6.26772C3.65935 5.74544 3.56272 5.48429 3.37222 5.2938C3.18173 5.1033 2.92058 5.00666 2.3983 4.8134L2 4.66602L2.3983 4.51863C2.92058 4.32537 3.18173 4.22874 3.37222 4.03824C3.56272 3.84774 3.65935 3.5866 3.85261 3.06432L4 2.66602Z" stroke="white" stroke-linejoin="round"/>
-  </svg>
-  
-  
-      Try Virtual Staging</a-button>
-</div>
-        </a-col>
-        <a-col :sm="24" :xs="24" :md="15" :lg="15">
-            <div style="width:100%;height:300px;border-radius:10px;;background-color:#f2f2f2">
-                img_here
-            </div>
-        </a-col>
-
+      <!-- Virtual Staging Section -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-20">
         
-        <a-col :sm="24" :xs="24" :md="15" :lg="15" style="margin-top:20px;">
-            <div style="width:100%;height:300px;border-radius:10px;;background-color:#f2f2f2">
-                img_here
+        <!-- Image with Before/After Slider -->
+        <div class="lg:col-span-6 order-2 lg:order-1">
+          <div 
+            ref="virtualStagingContainer"
+            class="relative w-full h-[350px] md:h-[400px] rounded-2xl overflow-hidden shadow-lg cursor-col-resize"
+            @mousedown="startDrag('virtualStaging', $event)"
+            @touchstart="startDrag('virtualStaging', $event)"
+          >
+            <!-- Before Image -->
+            <img 
+              :src="virtualStagingImages[0]" 
+              alt="Before Virtual Staging"
+              class="absolute inset-0 w-full h-full object-cover select-none"
+              draggable="false"
+            />
+            
+            <!-- After Image (Clipped) -->
+            <div 
+              class="absolute inset-0 overflow-hidden"
+              :style="{ clipPath: `inset(0 ${100 - virtualStagingSliderPosition}% 0 0)` }"
+            >
+              <img 
+                :src="virtualStagingImages[1]" 
+                alt="After Virtual Staging"
+                class="absolute inset-0 w-full h-full object-cover select-none"
+                draggable="false"
+              />
             </div>
-        </a-col>
-         <a-col :sm="24" :xs="24" :md="9" :lg="9" style="display:flex;justify-content: center;align-items: start;flex-direction:column;margin-top: 20px;padding-left:20px">
-            <h1>3D Rendering</h1>
-             
-            <p style="margin:0">We are helping you create stunning 3D renderings of </p>
-<p style="margin:0">furniture by transforming 3D models into realistic,</p>
-<p style="margin:0">detailed images using advanced software.</p>
-<br>
-<a-button type="primary" style="display:inline-flex;align-items:center;gap:8px;white-space:nowrap;">
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M9.28387 8.51768L7.85167 7.08548C7.65647 6.89028 7.55887 6.79268 7.45353 6.74048C7.2532 6.64119 7.018 6.64119 6.8176 6.74048C6.71233 6.79268 6.61471 6.89028 6.41949 7.08548C6.22425 7.28075 6.12664 7.37835 6.07446 7.48361C5.97518 7.68401 5.97518 7.91921 6.07446 8.11955C6.12664 8.22488 6.22425 8.32248 6.41949 8.51768L7.85167 9.94988M9.28387 8.51768L13.5805 12.8143C13.7757 13.0095 13.8733 13.1071 13.9255 13.2125C14.0248 13.4128 14.0248 13.648 13.9255 13.8484C13.8733 13.9537 13.7757 14.0513 13.5805 14.2465C13.3853 14.4417 13.2877 14.5393 13.1824 14.5915C12.982 14.6908 12.7468 14.6908 12.5465 14.5915C12.4411 14.5393 12.3435 14.4417 12.1483 14.2465L7.85167 9.94988M9.28387 8.51768L7.85167 9.94988" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M11.3385 1.33398L11.5351 1.86505C11.7927 2.56143 11.9216 2.90962 12.1756 3.16362C12.4296 3.41762 12.7777 3.54646 13.4741 3.80414L14.0052 4.00065L13.4741 4.19716C12.7777 4.45484 12.4296 4.58369 12.1756 4.83768C11.9216 5.09168 11.7927 5.43987 11.5351 6.13625L11.3385 6.66732L11.142 6.13625C10.8843 5.43988 10.7555 5.09168 10.5015 4.83768C10.2475 4.58368 9.89934 4.45484 9.20294 4.19716L8.67188 4.00065L9.20294 3.80414C9.89934 3.54646 10.2475 3.41762 10.5015 3.16362C10.7555 2.90962 10.8843 2.56143 11.142 1.86505L11.3385 1.33398Z" stroke="white" stroke-linejoin="round"/>
-<path d="M4 2.66602L4.14739 3.06432C4.34065 3.5866 4.43728 3.84774 4.62778 4.03824C4.81827 4.22874 5.07942 4.32537 5.6017 4.51863L6 4.66602L5.6017 4.8134C5.07942 5.00666 4.81827 5.1033 4.62777 5.2938C4.43728 5.48429 4.34065 5.74544 4.14739 6.26772L4 6.66602L3.85261 6.26772C3.65935 5.74544 3.56272 5.48429 3.37222 5.2938C3.18173 5.1033 2.92058 5.00666 2.3983 4.8134L2 4.66602L2.3983 4.51863C2.92058 4.32537 3.18173 4.22874 3.37222 4.03824C3.56272 3.84774 3.65935 3.5866 3.85261 3.06432L4 2.66602Z" stroke="white" stroke-linejoin="round"/>
-</svg>
 
+            <!-- Slider Handle -->
+            <div 
+              class="absolute top-0 bottom-0 w-1 bg-white shadow-lg z-10 cursor-col-resize"
+              :style="{ left: virtualStagingSliderPosition + '%' }"
+            >
+              <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-white rounded-full shadow-xl flex items-center justify-center">
+                <svg class="w-4 h-4 text-gray-600 absolute left-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7" />
+                </svg>
+                <svg class="w-4 h-4 text-gray-600 absolute right-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+            </div>
 
-    Try 3D Rendering</a-button>
-        </a-col>
+            <!-- Navigation Arrows -->
+            <div class="absolute top-4 left-4 z-20">
+              <button 
+                @click="prevVirtualStagingImage"
+                class="bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full p-2 shadow-lg transition-all"
+              >
+                <svg class="w-5 h-5 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+            </div>
+            
+            <div class="absolute top-4 right-4 z-20">
+              <button 
+                @click="nextVirtualStagingImage"
+                class="bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full p-2 shadow-lg transition-all"
+              >
+                <svg class="w-5 h-5 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
 
-    </a-row>
+            <!-- Before/After Labels -->
+            
+          </div>
+        </div>
 
+        <!-- Content -->
+        <div class="lg:col-span-6 order-1 lg:order-2 flex flex-col justify-center">
+          <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Virtual Staging</h2>
+          
+          <p class="text-gray-600 text-base md:text-lg leading-relaxed mb-6">
+            With the help of virtual staging, you can create realistic, digital previews of spaces, 
+            providing a cost-effective solution for real estate and design.
+          </p>
+
+          <button
+            class="w-fit bg-blue-600 !text-white px-6 py-3 rounded-lg flex items-center gap-2 hover:bg-blue-700 transition-all duration-200 shadow-md hover:shadow-lg font-medium"
+            @click="tryVirtualStaging"
+          >
+            <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9.28387 8.51768L7.85167 7.08548C7.65647 6.89028 7.55887 6.79268 7.45353 6.74048C7.2532 6.64119 7.018 
+              6.64119 6.8176 6.74048C6.71233 6.79268 6.61471 6.89028 6.41949 7.08548C6.22425 7.28075 6.12664 7.37835 
+              6.07446 7.48361C5.97518 7.68401 5.97518 7.91921 6.07446 8.11955C6.12664 8.22488 6.22425 8.32248 6.41949 
+              8.51768L7.85167 9.94988M9.28387 8.51768L13.5805 12.8143C13.7757 13.0095 13.8733 13.1071 13.9255 13.2125C14.0248 
+              13.4128 14.0248 13.648 13.9255 13.8484C13.8733 13.9537 13.7757 14.0513 13.5805 14.2465C13.3853 14.4417 
+              13.2877 14.5393 13.1824 14.5915C12.982 14.6908 12.7468 14.6908 12.5465 14.5915C12.4411 14.5393 12.3435 
+              14.4417 12.1483 14.2465L7.85167 9.94988M9.28387 8.51768L7.85167 9.94988"
+                stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Try Virtual Staging
+          </button>
+        </div>
+      </div>
+
+      <!-- 3D Rendering Section -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- Content -->
+        <div class="lg:col-span-6 flex flex-col justify-center">
+          <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">3D Rendering</h2>
+          
+          <p class="text-gray-600 text-base md:text-lg leading-relaxed mb-6">
+            We are helping you create stunning 3D renderings of furniture by transforming 3D models 
+            into realistic, detailed images using advanced software.
+          </p>
+
+          <button
+            class="w-fit bg-blue-600 !text-white px-6 py-3 rounded-lg flex items-center gap-2 hover:bg-blue-700 transition-all duration-200 shadow-md hover:shadow-lg font-medium"
+            @click="try3DRendering"
+          >
+            <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9.28387 8.51768L7.85167 7.08548C7.65647 6.89028 7.55887 6.79268 7.45353 6.74048C7.2532 6.64119 
+              7.018 6.64119 6.8176 6.74048C6.71233 6.79268 6.61471 6.89028 6.41949 7.08548C6.22425 7.28075 6.12664 
+              7.37835 6.07446 7.48361C5.97518 7.68401 5.97518 7.91921 6.07446 8.11955C6.12664 8.22488 6.22425 8.32248 
+              6.41949 8.51768L7.85167 9.94988M9.28387 8.51768L13.5805 12.8143C13.7757 13.0095 13.8733 13.1071 
+              13.9255 13.2125C14.0248 13.4128 14.0248 13.648 13.9255 13.8484C13.8733 13.9537 13.7757 14.0513 
+              13.5805 14.2465C13.3853 14.4417 13.2877 14.5393 13.1824 14.5915C12.982 14.6908 12.7468 14.6908 
+              12.5465 14.5915C12.4411 14.5393 12.3435 14.4417 12.1483 14.2465L7.85167 9.94988M9.28387 8.51768L7.85167 9.94988"
+                stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Try 3D Rendering
+          </button>
+        </div>
+
+        <!-- Image with Before/After Slider -->
+        <div class="lg:col-span-6">
+          <div 
+            ref="rendering3DContainer"
+            class="relative w-full h-[350px] md:h-[400px] rounded-2xl overflow-hidden shadow-lg cursor-col-resize"
+            @mousedown="startDrag('rendering3D', $event)"
+            @touchstart="startDrag('rendering3D', $event)"
+          >
+            <!-- Before Image -->
+            <img 
+              :src="rendering3DImages[0]" 
+              alt="Before 3D Rendering"
+              class="absolute inset-0 w-full h-full object-cover select-none"
+              draggable="false"
+            />
+            
+            <!-- After Image (Clipped) -->
+            <div 
+              class="absolute inset-0 overflow-hidden"
+              :style="{ clipPath: `inset(0 ${100 - rendering3DSliderPosition}% 0 0)` }"
+            >
+              <img 
+                :src="rendering3DImages[1]" 
+                alt="After 3D Rendering"
+                class="absolute inset-0 w-full h-full object-cover select-none"
+                draggable="false"
+              />
+            </div>
+
+            <!-- Slider Handle -->
+            <div 
+              class="absolute top-0 bottom-0 w-1 bg-white shadow-lg z-10 cursor-col-resize"
+              :style="{ left: rendering3DSliderPosition + '%' }"
+            >
+              <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-white rounded-full shadow-xl flex items-center justify-center">
+                <svg class="w-4 h-4 text-gray-600 absolute left-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7" />
+                </svg>
+                <svg class="w-4 h-4 text-gray-600 absolute right-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+            </div>
+
+            <!-- Navigation Arrows -->
+            <div class="absolute top-4 left-4 z-20">
+              <button 
+                @click="prevRendering3DImage"
+                class="bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full p-2 shadow-lg transition-all"
+              >
+                <svg class="w-5 h-5 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+            </div>
+            
+            <div class="absolute top-4 right-4 z-20">
+              <button 
+                @click="nextRendering3DImage"
+                class="bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full p-2 shadow-lg transition-all"
+              >
+                <svg class="w-5 h-5 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+
+            <!-- Before/After Labels -->
+            <div class="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-1 rounded-md text-sm font-semibold">
+              Before
+            </div>
+            <div class="absolute bottom-4 right-4 bg-black/70 text-white px-3 py-1 rounded-md text-sm font-semibold">
+              After
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
     <br><br>
     
 <br><br>
@@ -770,6 +968,7 @@ Drag & drop Image
       @swiper="onSwiper"
       @slideChange="onSlideChange"
     >
+   
       <swiper-slide v-for="(review, index) in reviews" :key="index">
         <div style="padding:20px;border-radius:12px;text-align:left;width:100%;max-width:280px;margin:auto;">
           <div style="display:flex;align-items:center;margin-bottom:15px;">
@@ -781,8 +980,11 @@ Drag & drop Image
           </div>
           <p style="font-size:14px;line-height:1.5;color:#333;margin:0;">“{{ review.text }}”</p>
         </div>
+        
       </swiper-slide>
     </swiper>
+
+    
 
     <!-- Fade effect overlays -->
     <div style="position:absolute;top:0;left:0;width:200px;height:100%;background:linear-gradient(to right,#f3f3f3,transparent);z-index:5;pointer-events:none;"></div>
@@ -970,7 +1172,7 @@ import { useI18n } from 'vue-i18n'
 import swiper_bg from '@/assets/bg-swiper.jpg'
 
 // import Swiper core and required modules
-import { Navigation, Pagination, Scrollbar, A11y,Autoplay } from 'swiper/modules';
+import { Navigation, Pagination, Scrollbar, A11y, Autoplay } from 'swiper/modules';
 
 // Import Swiper Vue.js components
 import { Swiper, SwiperSlide } from 'swiper/vue';
@@ -982,8 +1184,18 @@ import 'swiper/css/pagination';
 import 'swiper/css/scrollbar';
 
 import catalog from "@/views/newhome/catalog.vue"
+import ServicesShowcase from "@/views/newhome/ServicesShowcase.vue";
+
 export default {
   name: "Home",
+  
+  components: {
+    ServicesShowcase,
+    Swiper,
+    SwiperSlide,
+    catalog
+  },
+
   setup() {
     // ✅ initialize vue-i18n for translations
     const { t } = useI18n()
@@ -998,65 +1210,191 @@ export default {
       modules: [Navigation, Pagination, Scrollbar, A11y, Autoplay],
     }
   },
+
   data() {
     return {
       bannerImage,
-            swiper_bg,
-            expand_faq:'1',
-            slidesPerView : window.innerWidth <= 768 ? 1 : 4,
-            
-            form :{
-                name: "",
-            email: "",
-            message: ""},
-                reviews :[
-                {
-                    name: "Amy Lang",
-                    role: "Home Stager",
-                    text: "Even those who are not design-savvy can easily create realistic and inviting virtually staged spaces that attract potential buyers regularly.",
-                    avatar: "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png"
-                },
-                {
-                    name: "Troy Sinclair",
-                    role: "Real Estate Photographer",
-                    text: "It has taken our real estate marketing to the next level! Our buyers love the virtual staging.",
-                    avatar: "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png"
-                },
-                {
-                    name: "John Doe",
-                    role: "Interior Designer",
-                    text: "This tool made it so easy to stage homes and present them to clients with realistic visuals.",
-                    avatar: "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png"
-                },
-                {
-                    name: "Sarah Lee",
-                    role: "Realtor",
-                    text: "My listings now stand out. Clients are impressed with how professional everything looks.",
-                    avatar: "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png"
-                },
-                {
-                    name: "David Kim",
-                    role: "Architect",
-                    text: "An incredible platform for showcasing designs and spaces realistically.",
-                    avatar: "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png"
-                }
-            ]
+      swiper_bg,
+      expand_faq: '1',
+      slidesPerView: window.innerWidth <= 768 ? 1 : 4,
+      
+      // Form data
+      form: {
+        name: "",
+        email: "",
+        message: ""
+      },
+      
+      // Reviews data
+      reviews: [
+        {
+          name: "Amy Lang",
+          role: "Home Stager",
+          text: "Even those who are not design-savvy can easily create realistic and inviting virtually staged spaces that attract potential buyers regularly.",
+          avatar: "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png"
+        },
+        {
+          name: "Troy Sinclair",
+          role: "Real Estate Photographer",
+          text: "It has taken our real estate marketing to the next level! Our buyers love the virtual staging.",
+          avatar: "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png"
+        },
+        {
+          name: "John Doe",
+          role: "Interior Designer",
+          text: "This tool made it so easy to stage homes and present them to clients with realistic visuals.",
+          avatar: "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png"
+        },
+        {
+          name: "Sarah Lee",
+          role: "Realtor",
+          text: "My listings now stand out. Clients are impressed with how professional everything looks.",
+          avatar: "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png"
+        },
+        {
+          name: "David Kim",
+          role: "Architect",
+          text: "An incredible platform for showcasing designs and spaces realistically.",
+          avatar: "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png"
+        }
+      ],
+
+      // Image slider functionality
+      virtualStagingSliderPosition: 50,
+      rendering3DSliderPosition: 50,
+      isDragging: null,
+      
+      // Current displayed images
+      virtualStagingImages: [
+        'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=800&q=80',
+        'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=800&q=80'
+      ],
+      
+      rendering3DImages: [
+        'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&q=80',
+        'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=800&q=80'
+      ],
+      
+      // Image sets for navigation
+      virtualStagingImageSet: [
+        ['https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=800&q=80', 'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=800&q=80'],
+        ['https://images.unsplash.com/photo-1618219878480-432e9b0e8b26?w=800&q=80', 'https://images.unsplash.com/photo-1615529182904-14819c35db37?w=800&q=80'],
+        ['https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80', 'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800&q=80']
+      ],
+      
+      rendering3DImageSet: [
+        ['https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&q=80', 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=800&q=80'],
+        ['https://images.unsplash.com/photo-1615529328331-f8917597711f?w=800&q=80', 'https://images.unsplash.com/photo-1616137466211-f939a420be84?w=800&q=80'],
+        ['https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80', 'https://images.unsplash.com/photo-1615876234886-fd9a39fda97f?w=800&q=80']
+      ],
+      
+      virtualStagingImageIndex: 0,
+      rendering3DImageIndex: 0
     }
   },
- 
-  components:{
-         Swiper,
-      SwiperSlide,
-      catalog
+
+  methods: {
+    // Form submission
+    submitForm() {
+      console.log("Form submitted:", this.form);
+      alert("Message sent!");
+    },
+
+    // Image slider drag functionality
+    startDrag(slider, event) {
+      this.isDragging = slider
+      this.handleDrag(slider, event)
+      
+      if (event.type === 'mousedown') {
+        document.addEventListener('mousemove', this.onDrag)
+        document.addEventListener('mouseup', this.stopDrag)
+      } else {
+        document.addEventListener('touchmove', this.onDrag)
+        document.addEventListener('touchend', this.stopDrag)
+      }
+    },
+
+    onDrag(event) {
+      if (!this.isDragging) return
+      this.handleDrag(this.isDragging, event)
+    },
+
+    handleDrag(slider, event) {
+      const container = slider === 'virtualStaging' 
+        ? this.$refs.virtualStagingContainer 
+        : this.$refs.rendering3DContainer
+      
+      if (!container) return
+
+      const rect = container.getBoundingClientRect()
+      const x = event.type.includes('mouse') ? event.clientX : event.touches[0].clientX
+      const position = ((x - rect.left) / rect.width) * 100
+      
+      const clampedPosition = Math.max(0, Math.min(100, position))
+      
+      if (slider === 'virtualStaging') {
+        this.virtualStagingSliderPosition = clampedPosition
+      } else {
+        this.rendering3DSliderPosition = clampedPosition
+      }
+    },
+
+    stopDrag() {
+      this.isDragging = null
+      document.removeEventListener('mousemove', this.onDrag)
+      document.removeEventListener('mouseup', this.stopDrag)
+      document.removeEventListener('touchmove', this.onDrag)
+      document.removeEventListener('touchend', this.stopDrag)
+    },
+
+    // Virtual Staging Navigation
+    nextVirtualStagingImage() {
+      this.virtualStagingImageIndex = (this.virtualStagingImageIndex + 1) % this.virtualStagingImageSet.length
+      this.virtualStagingImages = this.virtualStagingImageSet[this.virtualStagingImageIndex]
+      this.virtualStagingSliderPosition = 50
+    },
+
+    prevVirtualStagingImage() {
+      this.virtualStagingImageIndex = this.virtualStagingImageIndex === 0 
+        ? this.virtualStagingImageSet.length - 1 
+        : this.virtualStagingImageIndex - 1
+      this.virtualStagingImages = this.virtualStagingImageSet[this.virtualStagingImageIndex]
+      this.virtualStagingSliderPosition = 50
+    },
+
+    // 3D Rendering Navigation
+    nextRendering3DImage() {
+      this.rendering3DImageIndex = (this.rendering3DImageIndex + 1) % this.rendering3DImageSet.length
+      this.rendering3DImages = this.rendering3DImageSet[this.rendering3DImageIndex]
+      this.rendering3DSliderPosition = 50
+    },
+
+    prevRendering3DImage() {
+      this.rendering3DImageIndex = this.rendering3DImageIndex === 0 
+        ? this.rendering3DImageSet.length - 1 
+        : this.rendering3DImageIndex - 1
+      this.rendering3DImages = this.rendering3DImageSet[this.rendering3DImageIndex]
+      this.rendering3DSliderPosition = 50
+    },
+
+    tryVirtualStaging() {
+      console.log('Try Virtual Staging clicked')
+      // Add your navigation or action here
+    },
+
+    try3DRendering() {
+      console.log('Try 3D Rendering clicked')
+      // Add your navigation or action here
+    }
   },
-  methods:{
-     submitForm() {
-  console.log("Form submitted:", form);
-  alert("Message sent!");
-}
+
+  beforeUnmount() {
+    // Clean up event listeners
+    this.stopDrag()
   }
 }
 </script>
+
 
 <style scoped>
 
