@@ -36,6 +36,9 @@ import footer_manager from '@/views/component_managers/footer/footer_manager.vue
 
 
 <style scoped>
+#app{
+  min-width: 330px;
+}
 header {
   line-height: 1.5;
   max-height: 100vh;

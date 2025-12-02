@@ -60,6 +60,8 @@ Switch Furniture</div></a-button>
       </div>
     </div>
 
+    <div class="main-canvas-sec">
+
     <!-- Main Canvas -->
     <canvas
       ref="canvas"
@@ -81,6 +83,7 @@ Switch Furniture</div></a-button>
       :class="{ 'disabled': isLoading }"
       style="position: absolute; top: 0; left: 0; z-index: 2; pointer-events: none;"
     ></canvas>
+    </div>
 
     <!-- Object Selection Indicators -->
     <div 

@@ -2800,6 +2800,7 @@ async fetchSingleProductType(productType, dataKey, brand, endpointMap) {
 
 .category-tabs {
   display: flex;
+  flex-wrap: wrap;
   padding: 5px 5px 0;
   gap: 4px;
   /* border-bottom: 1px solid #f0f0f0; */
