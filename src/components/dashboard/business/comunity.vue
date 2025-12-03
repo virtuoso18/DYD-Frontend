@@ -414,9 +414,14 @@
                     >
                       Product Details
                     </a-button>
-                    <a-button class="w-10 flex items-center justify-center">
-                      <HeartOutlined />
-                    </a-button>
+                    <a-button @click="toggleFavorite(product.product_id,product.product_type,product)">
+                                                                    <template v-if="product.is_favorited">
+                                                                    <HeartFilled style="color: red" />
+                                                                    </template>
+                                                                    <template v-else>
+                                                                    <HeartOutlined />
+                                                                    </template>
+                                                </a-button>
                   </div>
                 </div>
               </div>
@@ -1351,6 +1356,7 @@ export default {
             this.selectedPost.isLiked = post.isLiked;
             this.selectedPost.like_count = post.like_count;
           }
+          this.loadPosts()
 
           this.$message.success(`Post ${data.data.action}!`);
         }
@@ -1359,6 +1365,34 @@ export default {
         this.$message.error("Failed to update like");
       }
     },
+     async toggleFavorite(product_id,product_type,product) {
+        try {
+            const token = localStorage.getItem('token');
+            
+            const response = await fetch(
+                
+            `${this.$store.state.root_api}likes/favorites/toggle/`,
+            {
+                method: "POST",
+                headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Token ${token}`,
+                },
+                body: JSON.stringify({
+                id: product_id,
+                type: product_type,
+                }),
+            }
+            );
+
+            const data = await response.json();
+
+            product.is_favorited = data.favorited;
+
+        } catch (error) {
+            console.error("Favorite toggle failed", error);
+        }
+        },
 
     // Share post
     async sharePost(post) {

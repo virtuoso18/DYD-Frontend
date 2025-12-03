@@ -9,7 +9,7 @@
           style="padding:5px;text-align: start;"
         >
           <div class="product">
-            <div class="product-image-container">
+            <div class="product-image-container" @click="handleProductDetail(product)">
               <img
                 :src="this.$store.state.root_media_api + product.product_image"
                 :alt="product.product_title"
@@ -24,10 +24,9 @@
             <a-row>
               <a-col :span="24" style="padding-top:10px;">
                 <b>{{ truncateText(product.product_title || 'No title available', 22) }}</b>
-
               </a-col>
 
-              <a-col :span="18" >
+              <a-col :span="18">
                 Colors
               </a-col>
 
@@ -52,13 +51,33 @@
               </a-col>
 
               <a-col span="17">
-                
-<a-button block @click="this.$router.push('/'+this.$route.params.buisness_name+'/'+product.type+'/'+product.product_id)">Product Details</a-button>
+                <!-- {{ product }} -->
+                  <!-- goto_product_Route(product){
+      this.$router.push({
+      name: 'buisness_product',
+      params: {
+        buisness_name: this.$route.params.buisness_name,
+        product_type: product.type,
+        product_id: product.product_id
+      }
+    })
+  
+    }, -->
+                <a-button block @click="goto_product_Route(product)">
+                  Product Details
+                </a-button>
               </a-col>
 
               <a-col span="1"></a-col>
               <a-col span="4">
-                <a-button><HeartOutlined /></a-button>
+                <a-button @click="toggleFavorite(product.product_id, product.type, product)">
+                  <template v-if="product.is_favorited">
+                    <HeartFilled style="color: red" />
+                  </template>
+                  <template v-else>
+                    <HeartOutlined />
+                  </template>
+                </a-button>
               </a-col>
             </a-row>
           </div>
@@ -66,82 +85,125 @@
       </a-row>
     </div>
   </div>
-  
 </template>
 
-
-
-
 <script>
-import {HeartOutlined} from '@ant-design/icons-vue'
+import { HeartOutlined, HeartFilled } from '@ant-design/icons-vue'
+
 export default {
   name: 'buisnes_products_sailing',
-  components:{
-    HeartOutlined
+  components: {
+    HeartOutlined,
+    HeartFilled
   },
-  props:{
-    products:Object
+  props: {
+    products: Object
   },
   data() {
-    return {
-    }
+    return {}
   },
   methods: {
-//     truncateText(text, wordLimit) {
-//   if (!text) return '';
-//   const words = text.split(' ');
-//   if (words.length <= wordLimit) return text;
-//   return words.slice(0, wordLimit).join(' ') + '...';
-// },
-
-truncateText(text, charLimit = 18) {
-            if (!text) return '';
-            if (text.length <= charLimit) return text;
-            return text.slice(0, charLimit) + '...';
-        },
+    goto_product_Route(product){
+      this.$router.push({
+      name: 'buisness_product',
+      params: {
+        buisness_name: product.business_slug,
+        product_type: product.type,
+        product_id: product.product_id
+      }
+    })
+  
+    },
+    truncateText(text, charLimit = 18) {
+      if (!text) return '';
+      if (text.length <= charLimit) return text;
+      return text.slice(0, charLimit) + '...';
+    },
+    
     handleAddProduct() {
       console.log('Add product clicked');
       // Handle add product functionality
     },
+    
     handleProductDetail(product) {
       console.log('Product detail clicked:', product);
-      // Handle product detail navigation
+      // Navigate to product detail page
+      this.$router.push(
+        '/' + this.$route.params.buisness_name + '/' + 
+        product.product_type + '/' + product.product_id
+      );
     },
-    toggleWishlist(product) {
-      product.isWishlisted = !product.isWishlisted;
-      const message = product.isWishlisted ? 'Added to wishlist' : 'Removed from wishlist';
-      this.$message.success(message);
+    
+    async toggleFavorite(product_id, product_type, product) {
+      try {
+        const token = localStorage.getItem('token');
+        
+        // Check if user is authenticated
+        if (!token) {
+          this.$message.warning('Please login to add favorites');
+          return;
+        }
+        
+        const response = await fetch(
+          `${this.$store.state.root_api}likes/favorites/toggle/`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Token ${token}`,
+            },
+            body: JSON.stringify({
+              id: product_id,
+              type: product_type,
+            }),
+          }
+        );
+        debugger
+        const data = await response.json();
+
+        // Update the product's favorite status
+        product.is_favorited = data.favorited;
+        
+        // Show success message
+        const message = data.favorited ? 'Added to favorites' : 'Removed from favorites';
+        this.$message.success(message);
+
+      } catch (error) {
+        console.error("Favorite toggle failed", error);
+        this.$message.error('Failed to update favorite');
+      }
     }
   }
 }
 </script>
 
-
 <style scoped>
-.main{
-    /* padding:10px; */
-    border-radius:20px;
-    /* height: 100vh; */
+.main {
+  /* padding:10px; */
+  border-radius: 20px;
+  /* height: 100vh; */
+  /* background: white; */
+  /* border:2px solid rgba(128, 128, 128, 0.16); */
+  /* margin-top:10px; */
+  /* margin-bottom:10px; */
+}
 
-    /* background: white; */
-    /* border:2px solid rgba(128, 128, 128, 0.16); */
-    /* margin-top:10px; */
-    /* margin-bottom:10px; */
+.head-section {
+  display: flex;
+  justify-content: space-between;
 }
-.head-section{
-    display:flex;
-    justify-content: space-between;
+
+.product {
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  background: #f3f2f4;
 }
-.product{
-    padding:10px;
-    margin-bottom:10px;
-    border-radius:10px;
-    background:#f3f2f4;
+
+.products-list {
+  padding-bottom: 20px;
 }
-.products-list{
-    padding-bottom:20px;
-    
-}
+
 .product-image-container {
   position: relative;
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
@@ -149,6 +211,7 @@ truncateText(text, charLimit = 18) {
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
   /* padding: 16px; */
 }
 
@@ -158,6 +221,10 @@ truncateText(text, charLimit = 18) {
   object-fit: cover;
   border-radius: 12px;
   transition: transform 0.3s ease;
+}
+
+.product-image-container:hover .product-image {
+  transform: scale(1.05);
 }
 
 .category-badge {
@@ -186,13 +253,37 @@ truncateText(text, charLimit = 18) {
   font-weight: 700;
   letter-spacing: 0.5px;
 }
+
 .product-responsive {
-  width:50%;
+  width: 50%;
   flex: 0 0 50%;
 }
 
-@media (min-width: 576px) { .product-responsive { width: 50%; flex: 0 0 50%; } }
-@media (min-width: 768px) { .product-responsive { width: 33.333%; flex: 0 0 33.333%; } }
-@media (min-width: 992px) { .product-responsive { width: 25%; flex: 0 0 25%; } }
-@media (min-width: 1200px) { .product-responsive { width: 20%; flex: 0 0 20%; } }
+@media (min-width: 576px) {
+  .product-responsive {
+    width: 50%;
+    flex: 0 0 50%;
+  }
+}
+
+@media (min-width: 768px) {
+  .product-responsive {
+    width: 33.333%;
+    flex: 0 0 33.333%;
+  }
+}
+
+@media (min-width: 992px) {
+  .product-responsive {
+    width: 25%;
+    flex: 0 0 25%;
+  }
+}
+
+@media (min-width: 1200px) {
+  .product-responsive {
+    width: 20%;
+    flex: 0 0 20%;
+  }
+}
 </style>

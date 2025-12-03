@@ -418,7 +418,14 @@
 
                   <a-col span="1"></a-col>
                   <a-col span="4">
-                    <a-button><HeartOutlined /></a-button>
+                      <a-button @click="toggleFavorite(product.product_id,product.product_type,product)">
+                                                                    <template v-if="product.is_favorited">
+                                                                    <HeartFilled style="color: red" />
+                                                                    </template>
+                                                                    <template v-else>
+                                                                    <HeartOutlined />
+                                                                    </template>
+                                                </a-button>
                   </a-col>
                 </a-row>
               </div>
@@ -437,6 +444,7 @@ import {
   ArrowLeftOutlined,
   SaveOutlined,
   CloseOutlined,
+    HeartFilled,
 } from "@ant-design/icons-vue";
 
 export default {
@@ -455,6 +463,7 @@ export default {
   components: {
     HeartOutlined,
     DeleteOutlined,
+        HeartFilled,
     EditOutlined,
     ArrowLeftOutlined,
     SaveOutlined,
@@ -675,6 +684,34 @@ export default {
       this.view_type = "all";
       this.selected_design = null;
     },
+    async toggleFavorite(product_id,product_type,product) {
+        try {
+            const token = localStorage.getItem('token');
+            
+            const response = await fetch(
+                
+            `${this.$store.state.root_api}likes/favorites/toggle/`,
+            {
+                method: "POST",
+                headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Token ${token}`,
+                },
+                body: JSON.stringify({
+                id: product_id,
+                type: product_type,
+                }),
+            }
+            );
+
+            const data = await response.json();
+
+            product.is_favorited = data.favorited;
+
+        } catch (error) {
+            console.error("Favorite toggle failed", error);
+        }
+        }
   },
 };
 </script>

@@ -730,14 +730,23 @@ async createBinaryMaskBlob(bgWidth, bgHeight) {
   this.controls.update();
 },
 
-    initializeDragControls() {
+   initializeDragControls() {
       const canvas = this.renderer.domElement;
-      canvas.addEventListener('mousedown', this.onMouseDown);
-      canvas.addEventListener('mousemove', this.onMouseMove);
-      canvas.addEventListener('mouseup', this.onMouseUp);
-      canvas.addEventListener('mouseleave', this.onMouseUp);
+      // Mouse Events
+      canvas.addEventListener("mousedown", this.onMouseDown);
+      canvas.addEventListener("mousemove", this.onMouseMove);
+      canvas.addEventListener("mouseup", this.onMouseUp);
+      canvas.addEventListener("mouseleave", this.onMouseUp);
+      // Touch Events (MOBILE SUPPORT)
+      canvas.addEventListener("touchstart", this.onMouseDown, {
+        passive: false,
+      });
+      canvas.addEventListener("touchmove", this.onMouseMove, {
+        passive: false,
+      });
+      canvas.addEventListener("touchend", this.onMouseUp);
+      canvas.addEventListener("touchcancel", this.onMouseUp);
     },
-
     createFloorFromJSON() {
   this.gridGroup = new THREE.Group();
   this.scene.add(this.gridGroup);
@@ -1069,101 +1078,134 @@ screenToWorld(screenX, screenY) {
     },
 
     onMouseDown(event) {
-      event.preventDefault();
-      
-      const mouse = new THREE.Vector2();
-      const rect = this.renderer.domElement.getBoundingClientRect();
-      mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-      mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-      
-      this.raycaster.setFromCamera(mouse, this.camera);
-      
-      // Check rotation arrows first
-      if (this.rotationRing && this.showRotationRing) {
-        const arrowIntersects = this.raycaster.intersectObject(this.rotationRing, true);
-        
-        if (arrowIntersects.length > 0) {
-          const intersected = arrowIntersects[0].object;
-          if (intersected.userData.isRotationArrow) {
-            this.controls.enabled = false;
-            this.isRotatingModel = true;
-            this.isRotating = true;
-            
-            this.rotationStartMouse.copy(mouse);
-            this.rotationStartAngle = this.modelRotation.y;
-            
-            intersected.material.color.setHex(0xff6600);
-            return;
-          }
-        }
-      }
-      
-      // Check model for dragging
-      if (this.model) {
-        const intersects = this.raycaster.intersectObject(this.model, true);
-        
-        if (intersects.length > 0) {
-          this.controls.enabled = false;
-          this.isDraggingModel = true;
-          this.isDragging = true;
-          
-          this.dragStartMouse.copy(mouse);
-          this.dragStartPosition.set(this.model.position.x, this.model.position.z);
-        }
-      }
-    },
-
-   onMouseMove(event) {
-  if (!this.isDraggingModel && !this.isRotatingModel) return;
-  
   event.preventDefault();
-  
+  let clientX, clientY;
+  if (event.touches && event.touches.length > 0) {
+    clientX = event.touches[0].clientX;
+    clientY = event.touches[0].clientY;
+  } else {
+    clientX = event.clientX;
+    clientY = event.clientY;
+  }
   const mouse = new THREE.Vector2();
   const rect = this.renderer.domElement.getBoundingClientRect();
-  mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-  mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-  
-  if (this.isDraggingModel) {
-    this.raycaster.setFromCamera(mouse, this.camera);
-    
-    const intersection = new THREE.Vector3();
-    if (this.raycaster.ray.intersectPlane(this.dragPlane, intersection)) {
-      if (this.isPositionOnFloor(intersection)) {
-        // Update X and Z position
-        this.model.position.x = intersection.x;
-        this.model.position.z = intersection.z;
-        
-        // Calculate floor Y at this NEW position using plane equation
-        const { a, b, c, d } = this.planeEquation;
-        let floorY;
-        
-        if (Math.abs(b) > 0.001) {
-          floorY = -(a * intersection.x + c * intersection.z + d) / b;
-        } else {
-          floorY = this.floorData.floor_plane.height;
-        }
-        
-        // Account for current scale when calculating model bottom
-        const currentScale = this.model.scale.x / this.baseModelScale;
-        // const modelBottom = this.modelBoundingBox.min.y * currentScale;
-        const modelBottom = this.modelBoundingBox.min.y * this.baseModelScale;
-        
-        // Position model bottom on floor at this position
-        this.model.position.y = floorY - modelBottom;
-        
-        this.updateRotationRingPosition();
-        this.isOnValidFloor = true;
-      } else {
-        this.isOnValidFloor = false;
+  mouse.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+  mouse.y = -((clientY - rect.top) / rect.height) * 2 + 1;
+  this.raycaster.setFromCamera(mouse, this.camera);
+  // -----------------------------------------------
+  // ROTATION ARROWS
+  // -----------------------------------------------
+  if (this.rotationRing && this.showRotationRing) {
+    const arrowIntersects = this.raycaster.intersectObject(
+      this.rotationRing,
+      true
+    );
+    if (arrowIntersects.length > 0) {
+      const hitPoint = arrowIntersects[0].point.clone();
+      const intersected = arrowIntersects[0].object;
+      if (intersected.userData.isRotationArrow) {
+        this.controls.enabled = false;
+        this.isRotatingModel = true;
+        this.isRotating = true;
+        this.rotationStartMouse.copy(mouse);
+        this.rotationStartAngle = this.modelRotation.y;
+        intersected.material.color.setHex(0xff6600);
+        return;
       }
     }
-  } else if (this.isRotatingModel) {
+  }
+  // -----------------------------------------------
+  // MODEL DRAGGING
+  // -----------------------------------------------
+  if (this.model) {
+    const intersects = this.raycaster.intersectObject(this.model, true);
+    if (intersects.length > 0) {
+      this.controls.enabled = false;
+      this.isDraggingModel = true;
+      this.isDragging = true;
+      this.dragStartMouse.copy(mouse);
+      this.dragStartPosition.set(
+        this.model.position.x,
+        this.model.position.z
+      );
+      // -----------------------------------------------
+      // :white_check_mark: FIX: Keep pointer coordinate locked to same spot
+      // -----------------------------------------------
+      const hitPoint = intersects[0].point.clone();
+      // Ground plane for drag
+      this.dragPlane = new THREE.Plane();
+      this.dragPlane.setFromNormalAndCoplanarPoint(
+        new THREE.Vector3(0, 1, 0),
+        hitPoint
+      );
+      // Store offset between model origin & hit point
+      this.dragOffset = new THREE.Vector3().subVectors(
+        hitPoint,
+        this.model.position
+      );
+      // -----------------------------------------------
+      return;
+    }
+  }
+}
+,
+onMouseMove(event) {
+  if (!this.isDraggingModel && !this.isRotatingModel) return;
+  event.preventDefault();
+  // READ POINTER (mouse / touch)
+  let clientX, clientY;
+  if (event.touches && event.touches.length > 0) {
+    clientX = event.touches[0].clientX;
+    clientY = event.touches[0].clientY;
+  } else {
+    clientX = event.clientX;
+    clientY = event.clientY;
+  }
+  const mouse = new THREE.Vector2();
+  const rect = this.renderer.domElement.getBoundingClientRect();
+  mouse.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+  mouse.y = -((clientY - rect.top) / rect.height) * 2 + 1;
+  // MODEL DRAGGING
+  if (this.isDraggingModel) {
+    this.raycaster.setFromCamera(mouse, this.camera);
+    const worldPoint = new THREE.Vector3();
+    // Hit drag plane
+    if (this.raycaster.ray.intersectPlane(this.dragPlane, worldPoint)) {
+      // APPLY OFFSET FIX — Keeps pointer locked on model
+      // NEW POSITION = worldPoint - dragOffset
+      // ---------------------------------------------
+      worldPoint.sub(this.dragOffset);
+      // FULL SCREEN MOVEMENT FIX (X + Y movement)
+      // No restriction → allow entire floor movement
+      // ---------------------------------------------
+      this.model.position.x = worldPoint.x;
+      this.model.position.z = worldPoint.z;
+      // ---------------------------------------------
+      // FLOOR HEIGHT (same as you already had)
+      // ---------------------------------------------
+      const { a, b, c, d } = this.planeEquation;
+      let floorY;
+      if (Math.abs(b) > 0.001) {
+        floorY = -(a * worldPoint.x + c * worldPoint.z + d) / b;
+      } else {
+        floorY = this.floorData.floor_plane.height;
+      }
+      // Correct for scaled model bottom
+      const modelBottom = this.modelBoundingBox.min.y * this.baseModelScale;
+      this.model.position.y = floorY - modelBottom;
+      this.updateRotationRingPosition();
+      this.isOnValidFloor = true;
+    }
+  }
+  // ------------------------------------------------------------
+  // MODEL ROTATION
+  // ------------------------------------------------------------
+  else if (this.isRotatingModel) {
     const deltaX = mouse.x - this.rotationStartMouse.x;
-    this.modelRotation.y = this.rotationStartAngle + (deltaX * 180);
+    this.modelRotation.y = this.rotationStartAngle + deltaX * 180;
     this.model.rotation.y = THREE.MathUtils.degToRad(this.modelRotation.y);
   }
 },
-
     onMouseUp(event) {
       if (this.isDraggingModel) {
         this.controls.enabled = true;
@@ -1298,6 +1340,11 @@ screenToWorld(screenX, screenY) {
         canvas.removeEventListener('mousemove', this.onMouseMove);
         canvas.removeEventListener('mouseup', this.onMouseUp);
         canvas.removeEventListener('mouseleave', this.onMouseUp);
+
+        canvas.removeEventListener("touchstart", this.onMouseDown);
+        canvas.removeEventListener("touchmove", this.onMouseMove);
+        canvas.removeEventListener("touchend", this.onMouseUp);
+        canvas.removeEventListener("touchcancel", this.onMouseUp);
         
         this.renderer.dispose();
         

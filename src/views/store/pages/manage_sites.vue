@@ -243,6 +243,7 @@
 
             <!-- Products Grid Component -->
             <div v-if="our_products.length > 0">
+              <!-- hello world -->
                 <buisnes_products_sailing 
                     :products="our_products"
                 />
@@ -293,7 +294,7 @@
 </div>
         <br>
         <div style="padding:10px;background-color: white;border-radius:10px;border:2px solid rgba(128, 128, 128, 0.16);">
-            <div style="padding:10px;background: #f2f2f3;;border-radius:10px">
+            <!-- <div style="padding:10px;background: #f2f2f3;;border-radius:10px">
                 <a-row>
                     <a-col :sm="24" :xs="24" :md="20" :lg="20">
                         <h3>User Generated Content</h3> 
@@ -304,18 +305,12 @@
                     </a-col>
                     
                 </a-row>
-            </div>
+            </div> -->
             
-  <a-tabs v-model:activeKey="activeKey">
-    <a-tab-pane key="Visualization">
-      <template #tab>
-        <span>
-          <!-- <apple-outlined /> -->
-          Community Post Visualizations
-        </span>
-      </template>
-       <!-- <a-col :lg="8" :md="8" :xs="24" :sm="24" style="padding:5px;"> -->
+            <div>
+               <!-- <a-col :lg="8" :md="8" :xs="24" :sm="24" style="padding:5px;"> -->
         <!-- {{community_posts_virtualisations}} -->
+         <h3> Community Post Visualizations</h3>
 <div v-if="community_posts_virtualisations.length==0">
     <a-empty description="No Community Posts Available "></a-empty>
 </div>
@@ -329,7 +324,7 @@
                   :sm="24"
                   >
                   <div style="padding: 2px">
-                    <div class="post-card">
+                    <div class="post-card" @click="openCommentsModal(post)">
                       <!-- Post Image -->
                       <div style="position: relative">
                         <img
@@ -345,7 +340,7 @@
                             cursor: pointer;
                           "
                           :alt="post.title"
-                          @click="viewPost(post)"
+                         
                         />
 
                         <!-- Tags - Fixed for string array -->
@@ -416,9 +411,9 @@
                           <a-col :span="10" style="display: flex">
                             <!-- Post Stats -->
                             <div class="post-stats">
-                              <div class="stat-item" @click="toggleLike(post)">
+                              <div class="stat-item" >
                                 <HeartFilled
-                                  v-if="post.isLiked"
+                                  v-if="post.is_liked"
                                   style="color: #ff4d4f"
                                 />
                                 <HeartOutlined v-else />
@@ -426,7 +421,7 @@
                               </div>
                               <div
                                 class="stat-item"
-                                @click="openCommentsModal(post)"
+                              
                               >
                                 <MessageOutlined />
                                 <span>{{
@@ -449,36 +444,8 @@
                   </div>
                 </a-col>
               </a-row>
-        <!-- <div style="border:1px solid rgba(0,0,0,0.1);padding: 5px;border-radius:10px;">
-
-            
-            <img src="../../../assets/home_main_banner.jpg" style="width:100%;border-radius:10px" alt="">
-            <a-row style="padding-top:5px">
-                    <a-col :span="22" >
-                        <a-tag>living room </a-tag>
-                        <a-tag>modern</a-tag>
-                    </a-col>
-                    <a-col :span="2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="15px" height="15px" viewBox="0 0 16 16" fill="#000000" class="bi bi-three-dots-vertical">
-                            <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
-                        </svg>
-                    </a-col>
-                </a-row>
-                
-            </div> -->
-        <!-- </a-col> -->
-    </a-tab-pane>
-    <a-tab-pane key="User generated content">
-      <template #tab>
-        <span>
-          <!-- <android-outlined /> -->
-          User generated content
-        </span>
-      </template>
-        User_generated_content_here
-
-    </a-tab-pane>
-  </a-tabs>
+            </div>
+ 
 
         </div>
 
@@ -486,6 +453,13 @@
         <input ref="backgroundImageInput" type="file" accept="image/*" style="display: none" @change="handleBackgroundImageChange">
         <input ref="bannerImageInput" type="file" accept="image/*" style="display: none" @change="handleBannerImageChange">
     </div>
+    <CommentsModal 
+    :isOpen="showCommentsModal" 
+    :post="selectedPost"
+    @close="showCommentsModal = false"
+    @commentAdded="onCommentAdded"
+    @likeToggled="onLikeToggled"
+/>
 </template>
 
 <script>
@@ -509,7 +483,7 @@ import manage_products from '@/components/store/manage_products.vue'
 import buisnes_products_sailing from '@/components/store/products_sailing.vue'
 import MapLocationSelector from '@/components/store/map_business_location.vue'
 import MapLocationViewer from '@/components/store/map_location_viewer.vue'
-
+import CommentsModal from "@/views/pages/CommentsModal.vue";
 export default {
     name:'manage_sites',
     components:{
@@ -529,9 +503,12 @@ export default {
         buisnes_products_sailing,
         MapLocationSelector,
         MapLocationViewer,
+        CommentsModal,
     },
     data(){ 
         return {
+            showCommentsModal: false,
+            selectedPost: null,
             activeKey:'Visualization',
             user_generated_content:false,
             business_info: JSON.parse(localStorage.getItem('business_profile') || '{}'),
@@ -719,11 +696,13 @@ export default {
                 );
 
                 const data = await response.json();
+                debugger
+                console.log('data---->',data)
 
                 if (data.success) {
                     this.community_posts_virtualisations = data.data.map((post) => ({
                         ...post,
-                        isLiked: false,
+                        // is_liked: false,
                         tags: post.tags || [],
                         like_count: post.like_count || 0,
                         comment_count: post.comment_count || 0,
@@ -1018,7 +997,164 @@ export default {
         
         removeService(index) {
             this.editData.services.splice(index, 1);
+        },
+            async openCommentsModal(post) {
+        this.selectedPost = { 
+            ...post,
+            userName: post.post_by,
+            userAvatar: this.$store.state.root_media_api + post.user_profile,
+            image: this.$store.state.root_media_api + post.post_image,
+            views: post.view_count,
+            likes: post.like_count,
+            comments: post.comment_count,
+            title: post.title || 'Post',
+            content: post.content || post.description || 'No description available.',
+            description: post.content || post.description || 'No description available.',
+            tags: post.tags || [],
+            created_at: post.created_at || new Date().toISOString(),
+            is_liked: post.is_liked || false,
+            id: post.id
+        };
+        
+        this.showCommentsModal = true;
+        
+        // Load comments for this post
+        await this.loadModalComments(post.id);
+    },
+    
+    // Load comments for modal
+    async loadModalComments(postId, page = 1) {
+        try {
+            this.loadingModalComments = true;
+            const response = await fetch(
+                `${this.$store.state.root_api}community/api/comments/?post_id=${postId}&page=${page}`,
+                {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Token ${localStorage.getItem("token")}`,
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+
+            const data = await response.json();
+            if (data.success) {
+                if (page === 1) {
+                    this.modalComments = data.data;
+                } else {
+                    this.modalComments.push(...data.data);
+                }
+                this.hasMoreModalComments = page < data.total_pages;
+                this.modalCommentsPage = page;
+            }
+        } catch (error) {
+            console.error("Failed to load comments:", error);
+            this.$message.error("Failed to load comments");
+        } finally {
+            this.loadingModalComments = false;
         }
+    },
+    
+    // Load more comments in modal
+    async loadMoreModalComments() {
+        if (this.selectedPost && this.hasMoreModalComments) {
+            await this.loadModalComments(this.selectedPost.id, this.modalCommentsPage + 1);
+        }
+    },
+    
+    // Add comment in modal
+    async addModalComment() {
+        if (!this.newModalComment.trim() || !this.selectedPost) return;
+
+        try {
+            this.addingModalComment = true;
+            const response = await fetch(
+                `${this.$store.state.root_api}community/api/comments/`,
+                {
+                    method: "POST",
+                    headers: {
+                        Authorization: `Token ${localStorage.getItem("token")}`,
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        post_id: this.selectedPost.id,
+                        content: this.newModalComment.trim(),
+                    }),
+                }
+            );
+
+            const data = await response.json();
+            if (data.success) {
+                // Clear input
+                this.newModalComment = "";
+
+                // Reload comments
+                await this.loadModalComments(this.selectedPost.id);
+
+                // Update comment count in the main list
+                this.selectedPost.comments += 1;
+                const postIndex = this.community_posts_virtualisations.findIndex(
+                    (p) => p.id === this.selectedPost.id
+                );
+                if (postIndex !== -1) {
+                    this.community_posts_virtualisations[postIndex].comment_count = this.selectedPost.comments;
+                }
+
+                this.$message.success("Comment added successfully!");
+            }
+        } catch (error) {
+            console.error("Failed to add comment:", error);
+            this.$message.error("Failed to add comment");
+        } finally {
+            this.addingModalComment = false;
+        }
+    },
+    
+    // Handle comment added event
+    onCommentAdded() {
+        this.loadPosts(); // Reload posts to update comment counts
+    },
+    
+    // Handle like toggled event
+    onLikeToggled() {
+        this.loadPosts(); // Reload posts to update like counts
+    },
+    
+    // Update your existing toggleLike method to work with the modal
+    async toggleLike(post) {
+        try {
+            const response = await fetch(
+                `${this.$store.state.root_api}community/api/posts/like/`,
+                {
+                    method: "POST",
+                    headers: {
+                        Authorization: `Token ${localStorage.getItem("token")}`,
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        post_id: post.id,
+                    }),
+                }
+            );
+
+            const data = await response.json();
+            if (data.success) {
+                post.is_liked = data.data.action === 'liked';
+                post.like_count = data.data.like_count;
+                
+                // If this is the currently selected post in modal, update it too
+                if (this.selectedPost && this.selectedPost.id === post.id) {
+                    this.selectedPost.is_liked = post.is_liked;
+                    this.selectedPost.likes = post.like_count;
+                }
+                
+                this.$message.success(post.is_liked ? "Post liked!" : "Post unliked!");
+            }
+        } catch (error) {
+            console.error("Failed to toggle like:", error);
+            this.$message.error("Failed to update like");
+        }
+    },
     }
 }
 </script>

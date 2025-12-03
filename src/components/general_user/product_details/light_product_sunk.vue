@@ -1,4 +1,17 @@
 <template>
+   <a-modal
+      v-model:open="showConsentModal"
+      title="Clear Cart?"
+      :closable="false"
+      :maskClosable="false"
+    >
+      <p>Your cart contains items from a different seller. Do you want to clear the cart first in order to add this item?</p>
+      <template #footer>
+        <a-button @click="handleConsentNo" :disabled="clearingCart">No</a-button>
+        <a-button type="primary" @click="handleConsentYes" :loading="clearingCart">Yes</a-button>
+      </template>
+    </a-modal>
+    
   <div>
     <!-- Header -->
     <a-page-header 
@@ -246,6 +259,17 @@ export default {
         required: true
         }
     },
+      
+    data() {
+    return {
+      activeImageIndex: null,   // Track which image is selected
+      
+        cartLoading: false,
+        showConsentModal: false,
+        clearingCart: false,
+        pendingCartItem: null
+    }
+  },
   setup(props, { emit }) {
     // Reactive ref for current main image
     const currentMainImage = ref(null);
@@ -334,9 +358,10 @@ export default {
     };
   },
   methods: {
+  
     async addToCart() {
       if (!this.selectedProduct || !this.selectedProduct.id) {
-        this.$message.error('Texture not found');
+        this.$message.error('Product not found');
         return;
       }
 
@@ -344,11 +369,6 @@ export default {
       
       try {
         const token = localStorage.getItem('token');
-        
-        // Determine texture type (wall or floor)
-        // const productType = this.selectedTexture.type === 'floor' ? 'floor_texture' : 'wall_texture';
-        const productType = 'light';
-        
         const response = await fetch(
           `${this.$store.state.root_api}cart/add/`,
           {
@@ -358,7 +378,7 @@ export default {
               'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-              product_type: productType,
+              product_type: 'light',
               product_id: this.selectedProduct.id,
               quantity: 1
             })
@@ -366,11 +386,21 @@ export default {
         );
         
         const result = await response.json();
-          console.log(result)
+        
         if (response.ok) {
           this.$message.success('Added to cart!');
         } else {
-          this.$message.error(result.error || 'Failed to add to cart');
+          // Check if we need to show consent popup
+          if (result.show_consent_popup) {
+            this.pendingCartItem = {
+              product_type: 'light',
+              product_id: this.selectedProduct.id,
+              quantity: 1
+            };
+            this.showConsentModal = true;
+          } else {
+            this.$message.warning(result.error || result.errors?.[0]?.error || 'Failed to add to cart');
+          }
         }
       } catch (error) {
         console.error('Error:', error);
@@ -378,7 +408,71 @@ export default {
       } finally {
         this.cartLoading = false;
       }
-    }
+    },
+
+    async handleConsentYes() {
+      this.clearingCart = true;
+      
+      try {
+        const token = localStorage.getItem('token');
+        
+        // Clear the cart
+        const clearResponse = await fetch(
+          `${this.$store.state.root_api}cart/clear/`,
+          {
+            method: 'DELETE',
+            headers: {
+              'Authorization': `Token ${token}`,
+              'Content-Type': 'application/json'
+            }
+          }
+        );
+        
+        if (clearResponse.ok) {
+          // Cart cleared successfully, now add the new item
+          const addResponse = await fetch(
+            `${this.$store.state.root_api}cart/add/`,
+            {
+              method: 'POST',
+              headers: {
+                'Authorization': `Token ${token}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(this.pendingCartItem)
+            }
+          );
+          
+          const result = await addResponse.json();
+          
+          if (addResponse.ok) {
+            this.$message.success('Cart cleared and item added successfully!');
+            this.showConsentModal = false;
+            this.pendingCartItem = null;
+          } else {
+            this.$message.error(result.error || 'Failed to add item after clearing cart');
+          }
+        } else {
+          this.$message.error('Failed to clear cart');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        this.$message.error('Error clearing cart');
+      } finally {
+        this.clearingCart = false;
+      }
+    },
+
+    handleConsentNo() {
+      this.showConsentModal = false;
+      this.pendingCartItem = null;
+      this.$message.info('Item was not added to cart');
+    },
+
+    handleImageClick(index) {
+      this.activeView = 'image';
+      this.activeImageIndex = index;
+    },
+
   }
 };
 </script>
