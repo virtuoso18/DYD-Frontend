@@ -1,13 +1,13 @@
 <template>
   <div class="ai-catalog-section">
 
-    <div class="apply-section">
+    <div class="apply-section md:hidden">
       <a-button type="primary" size="large" block class="apply-button" @click="updateItemRendering()">
         Apply
       </a-button>
     </div>
     <!-- Fixed Header -->
-    <div class="ai-catalog-header py-3">
+    <div class="ai-catalog-header ">
       <span
         style="
           font-family: Poppins;
@@ -82,7 +82,7 @@ border:1px solid rgba(128, 128, 128, 0.14);" @click="selectTexture(item.id)"
                 <div style="background-color: grey;color :white;border-radius:5px;padding-left:5px;padding-right:5px;padding-top:1px;height:22px;font-size:12px">
                   Floor
                 </div>
-                <div style="padding:3px;border:1px solid grey;border-radius:5px;padding-left:5px;padding-right:5px;padding-top:1px;height:22px;font-size:12px">AR</div>
+                <div class="!text-gray-700" style="padding:3px;border:1px solid grey;border-radius:5px;padding-left:5px;padding-right:5px;padding-top:1px;height:22px;font-size:12px">AR</div>
               </div>
               <div class="product-name">{{ truncateText( item.title || 'No description available', 3) }}</div>
               
@@ -129,6 +129,11 @@ border:1px solid rgba(128, 128, 128, 0.14);" @click="selectTexture(item.id)"
       <div v-if="!loading && catalogItems.length === 0" class="no-items">
         <p>No products found</p>
       </div>
+    </div>
+    <div class="apply-section">
+      <a-button type="primary" size="large" block class="apply-button" @click="updateItemRendering()">
+        Apply
+      </a-button>
     </div>
   </div>
 </template>

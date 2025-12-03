@@ -1,13 +1,13 @@
 <template>
   <div class="ai-catalog-section">
-    <div class="apply-section">
+    <div class="apply-section  md:hidden">
       <a-button type="primary" size="large" block class="apply-button" @click="$emit('Apply_Light', 'magnetic-light-Renerer-apply')">
         Apply
       </a-button>
     </div>
 
     <!-- Fixed Header -->
-    <div class="ai-catalog-header py-4">
+    <div class="ai-catalog-header ">
       <span style="
         font-family: Poppins;
         font-weight: 500;
@@ -133,6 +133,11 @@
       <div v-if="!loading && catalogItems.length === 0" class="no-items">
         <p>No products found</p>
       </div>
+    </div>
+     <div class="apply-section">
+      <a-button type="primary" size="large" block class="apply-button" @click="updateItemRendering()">
+        Apply
+      </a-button>
     </div>
   </div>
 </template>

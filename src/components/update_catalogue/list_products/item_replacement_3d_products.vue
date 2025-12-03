@@ -2,7 +2,14 @@
   <div class="ai-catalog-section">
     <!-- Fixed Header -->
     <div class="ai-catalog-header">
-      <span>AI Catalog</span>
+      <span class="!text-gray-700"  style="
+          font-family: Poppins;
+          font-weight: 500;
+          font-style: normal;
+          font-size: 14px;
+          line-height: 20px;
+          letter-spacing: 0;
+        ">AI Catalog</span>
       <a-button size='small' type="text" class="see-all-link" @click="seeAllClicked">See all</a-button>
     </div>
     

@@ -1,5 +1,5 @@
 <template>
-  <div class="sm:main min-h-[100vh] pl-2 md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh] ">
+  <div  class="sm:main sm:border border-gray-200 bg-white !mb-5 sm:translate-y-3 sm:rounded-2xl min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh] " >
     <!-- Loading State -->
     <div v-if="loading" style="text-align: center; padding: 40px">
       <a-spin size="large" />
@@ -9,9 +9,21 @@
     <!-- Posts Grid View -->
     <a-row v-if="selectedPost == null" :gutter="[16, 16]">
       <a-col :span="24" >
-        <div style="background-color: white;border-radius: 12px;padding:10px;margin-top:15px;border:1px solid rgba(0,0,0,0.1);">
+        <div style="border-radius: 12px;padding:10px;">
 
-        <h3>My Community</h3>
+        <h2
+  className="!text-gray-700 p-2"
+  :style="{
+    fontFamily: 'Poppins',
+    fontWeight: 500,
+    fontStyle: 'normal',
+    fontSize: '16px',
+    lineHeight: '24px',
+    letterSpacing: '0%'
+  }"
+>
+  My Community
+</h2>
         <div> 
               <!-- Empty State -->
               <div
@@ -124,7 +136,7 @@
                               "
                               alt=""
                             />
-                            <span style="font-size: 16px;font-weight:600">{{
+                            <span class="!text-gray-700" style="font-size: 16px;font-weight:600">{{
                               truncateText(post.post_by, 15)
                             }}</span>
                           </a-col>
@@ -206,31 +218,48 @@
     </a-row>
 
     <!-- Post Detail View -->
-    <div v-else class="relative bg-white min-h-screen">
+    <div v-else class="relative bg-white !rounded-2xl  sm:translate-y-4">
     <!-- Header with Back Button -->
-    <div class="sticky top-0 z-10 bg-white border-b border-gray-200 px-4 md:px-6 py-4">
+    <div class=" top-0 z-10 bg-white border-b  border-gray-200 px-4 md:px-6 py-4">
       <div class="flex items-center justify-between max-w-7xl mx-auto">
-        <a-button @click="closePostDetails" type="text" size="large" class="flex items-center gap-2">
-          <ArrowLeftOutlined />
-          <span class="font-bold">Back</span>
-        </a-button>
-        <div class="flex gap-2">
-          <a-button @click="editPost(selectedPost)" type="default" class="flex items-center gap-2">
-            <EditOutlined /> Edit
-          </a-button>
-          <a-button @click="confirmDelete(selectedPost)" type="text" danger class="flex items-center gap-2">
-            <DeleteOutlined /> Delete
-          </a-button>
-        </div>
+       <button
+  @click="closePostDetails"
+  class="flex items-center gap-2 px-3 py-1.5  !text-gray-800 rounded-md hover:bg-gray-100 transition"
+>
+  <ArrowLeftOutlined class="text-[16px]" />
+  <span class="font-bold">Back</span>
+</button>
+
+    <div class="flex gap-3">
+  <!-- Edit Button -->
+  <button
+    @click="editPost(selectedPost)"
+    class="flex items-center gap-2 px-3 py-1.5 border border-gray-700 !text-gray-700 rounded-md hover:bg-gray-100 transition"
+  >
+    <EditOutlined class="text-[16px]" />
+    <span>Edit</span>
+  </button>
+
+  <!-- Delete Button -->
+  <button
+    @click="confirmDelete(selectedPost)"
+    class="flex items-center gap-2 px-3 py-1.5 border border-red-600 !text-red-600 rounded-md hover:bg-red-50 transition"
+  >
+    <DeleteOutlined class="text-[16px]" />
+    <span>Delete</span>
+  </button>
+</div>
+
+
       </div>
     </div>
 
     <!-- Main Content Area -->
-    <div class="max-w-7xl mx-auto px-4 md:px-6 py-6">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:h-[calc(100vh-140px)]">
+    <div class="max-w-7xl mx-auto px-4 md:px-6 py-6 !mb-7">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:h-full">
         
         <!-- Left Column - Post Details (Scrollable) -->
-        <div class="lg:col-span-7 overflow-y-auto lg:pr-4">
+        <div class="lg:col-span-7  lg:pr-4">
           
           <!-- Post Image -->
           <div class="relative rounded-2xl overflow-hidden mb-4">
@@ -326,17 +355,18 @@
           <div class="mt-6 pt-6 border-t border-gray-200">
             
             
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
               <div
                 v-for="product in products_used_in_post"
                 :key="product.id"
-                class="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-lg transition-shadow cursor-pointer"
+                class="bg-gray-100 border border-gray-200  rounded-xl p-4  cursor-pointer"
               >
                 <!-- Product Image -->
-                <div class="relative rounded-lg overflow-hidden mb-3 h-48" @click="viewProduct(product)">
+                <div class="relative rounded-lg overflow-hidden mb-3 h-38" @click="viewProduct(product)">
                   <img
                     :src="$store.state.root_media_api + product.product_image"
                     :alt="product.product_title"
+                    
                     class="w-full h-full object-cover"
                   />
                   
@@ -517,11 +547,13 @@
   <button
     @click="addComment"
     :disabled="!newComment.trim()"
-    class="w-10 h-10 flex items-center justify-center rounded-md disabled:opacity-30"
+    class="w-10 h-10 flex items-center justify-center rounded-md "
   >
-    <svg width="18" height="18" viewBox="0 0 16 16" fill="#3B63FB">
-      <path d="M3.721 7.63038L5.2073 8.12581C6.18973 8.45258 6.67989 8.61702 7.03196 8.96909C7.38403 9.32117 7.54847 9.81238 7.87525 10.7927L8.37068 12.279C9.1971 14.7604 9.61031 16 10.3703 16C11.1293 16 11.5435 14.7604 12.37 12.279L15.3615 3.30642C15.9434 1.56082 16.2343 0.688014 15.7737 0.227368C15.313 -0.233277 14.4402 0.0576566 12.6957 0.638471L3.71995 3.63214C1.24174 4.45751 0 4.87072 0 5.63073C0 6.39074 1.24069 6.80395 3.721 7.63038Z"/>
-    </svg>
+     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3.721 7.63038L5.2073 8.12581C6.18973 8.45258 6.67989 8.61702 7.03196 8.96909C7.38403 9.32117 7.54847 9.81238 7.87525 10.7927L8.37068 12.279C9.1971 14.7604 9.61031 16 10.3703 16C11.1293 16 11.5435 14.7604 12.37 12.279L15.3615 3.30642C15.9434 1.56082 16.2343 0.688014 15.7737 0.227368C15.313 -0.233277 14.4402 0.0576566 12.6957 0.638471L3.71995 3.63214C1.24174 4.45751 0 4.87072 0 5.63073C0 6.39074 1.24069 6.80395 3.721 7.63038Z" fill="#3B63FB"/>
+                    <path d="M3.721 7.63038L5.2073 8.12581C6.18973 8.45258 6.67989 8.61702 7.03196 8.96909C7.38403 9.32117 7.54847 9.81238 7.87525 10.7927L8.37068 12.279C9.1971 14.7604 9.61031 16 10.3703 16C11.1293 16 11.5435 14.7604 12.37 12.279L15.3615 3.30642C15.9434 1.56082 16.2343 0.688014 15.7737 0.227368C15.313 -0.233277 14.4402 0.0576566 12.6957 0.638471L3.71995 3.63214C1.24174 4.45751 0 4.87072 0 5.63073C0 6.39074 1.24069 6.80395 3.721 7.63038Z" fill="#3B63FB"/>
+                    <path d="M5.65441 9.68062L3.48084 8.95644C3.32874 8.90574 3.16709 8.8904 3.00817 8.91159C2.84925 8.93278 2.69726 8.98994 2.56376 9.07872L1.41478 9.844C1.27877 9.93462 1.17202 10.0628 1.10752 10.213C1.04302 10.3631 1.02354 10.5288 1.05146 10.6898C1.07938 10.8509 1.15349 11.0003 1.26477 11.12C1.37606 11.2397 1.51973 11.3245 1.67831 11.364L3.73909 11.8784C3.83183 11.9016 3.91653 11.9495 3.98411 12.0171C4.0517 12.0847 4.09964 12.1694 4.12279 12.2621L4.63719 14.3229C4.67674 14.4815 4.76151 14.6252 4.8812 14.7364C5.00089 14.8477 5.15034 14.9218 5.31137 14.9498C5.47241 14.9777 5.63808 14.9582 5.78825 14.8937C5.93841 14.8292 6.0666 14.7225 6.15722 14.5864L6.9225 13.4375C7.01128 13.304 7.06844 13.152 7.08963 12.9931C7.11082 12.8341 7.09548 12.6725 7.04478 12.5204L6.32061 10.3468C6.26884 10.1917 6.1817 10.0508 6.06608 9.93514C5.95045 9.81952 5.80952 9.73238 5.65441 9.68062Z" fill="#3B63FB"/>
+                  </svg>
   </button>
 
 </div>

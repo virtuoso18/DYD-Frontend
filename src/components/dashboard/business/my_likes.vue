@@ -1,9 +1,10 @@
 <template>
 
-<div class="sm:main sm:border border-gray-300 sm:translate-y-3 sm:rounded-xl min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh]">
+<div class="sm:main sm:border border-gray-200 bg-white  sm:translate-y-3 sm:rounded-2xl min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh] " >
    
-    <div style="padding:10px;border-radius:15px;min-height:100vh">
-        <h3>Liked Products & Rooms </h3>
+    <div style="padding:10px;border-radius:15px;">
+   <h3 className="!p-2 sm:p-0 !font-[Poppins] font-medium text-[16px] leading-[24px] text-gray-700 tracking-[0]" style="margin:0;padding:0">
+          Liked Products & Rooms </h3>
             <a-tabs v-model:activeKey="active_tab">
                 <a-tab-pane key="Furniture" tab="Furniture" >
                 <div v-if="!filteredProducts?.length"  style="height:70vh;gap:20px;;flex-direction:column;display: flex;justify-content: center;align-items: center;">
@@ -135,209 +136,221 @@ show-total
                   <a-tab-pane key="community-posts" tab="Community Posts" >
               
 
-                    <a-row>
-  <a-col
-    v-for="post in community_posts"
-    :key="post.id"
-    :lg="8"
-    :md="8"
-    :xs="24"
-    :sm="24"
-  >
-    <div style="padding: 2px">
-      <div class="post-card" style="
-        border: 1px solid rgba(0, 0, 0, 0.1);
-        padding: 0px;
-        border-radius: 12px;
-        background: white;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        box-shadow: 0 0px 0px rgba(0, 0, 0, 0);
-        transition: all 0.3s ease;
-      "
-      @mouseenter="$event.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)'"
-      @mouseleave="$event.currentTarget.style.boxShadow = '0 0px 0px rgba(0, 0, 0, 0)'"
+ <div>
+    <!-- Your existing grid -->
+    <a-row :gutter="[16, 16]">
+      <a-col
+        v-for="post in community_posts"
+        :key="post.id"
+        :lg="8"
+        :md="8"
+        :xs="24"
+        :sm="24"
       >
-        <!-- Post Image -->
-        <div style="position: relative">
-          <img
-            :src="
-              $store.state.root_media_api + post.post_image ||
-              require('../../../assets/home_main_banner.jpg')
-            "
-            style="
-              width: 100%;
-              height: 200px;
-              object-fit: cover;
-              border-radius: 10px;
-              padding: 5px;
-              cursor: pointer;
-              transition: transform 0.3s ease;
-            "
-            :alt="post.title"
-            @click="viewPost(post)"
-            @mouseenter="$event.currentTarget.style.transform = 'scale(1.01)'"
-            @mouseleave="$event.currentTarget.style.transform = 'scale(1)'"
-          />
-
-          <!-- Tags - Fixed for string array -->
-          <div style="
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 4px;
-            max-width: 70%;
-            z-index: 2;
-          ">
-            <template v-if="post.tags && post.tags.length > 0">
-              <a-tag
-                v-for="(tag, index) in post.tags.slice(0, 3)"
-                :key="index"
-                color="blue"
-                style="
-                  margin: 2px;
-                  border-radius: 12px;
-                  font-size: 11px;
-                  padding: 2px 8px;
-                  border: none;
-                  font-weight: 500;
-                "
-              >
-                {{ tag }}
-              </a-tag>
-              <a-tag
-                v-if="post.tags.length > 3"
-                style="
-                  margin: 2px;
-                  border-radius: 12px;
-                  font-size: 11px;
-                  background: rgba(0, 0, 0, 0.6);
-                  color: white;
-                  border: none;
-                  padding: 2px 8px;
-                  font-weight: 500;
-                "
-              >
-                +{{ post.tags.length - 3 }}
-              </a-tag>
-            </template>
-          </div>
-
-          <!-- View Count Overlay -->
-          <div style="
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 4px 8px;
+        <div style="padding: 2px">
+          <div class="post-card" style="
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 0px;
             border-radius: 12px;
-            font-size: 12px;
+            background: white;
+            height: 100%;
             display: flex;
-            align-items: center;
-            z-index: 2;
-            gap: 4px;
-          ">
-            <EyeOutlined style="margin-right: 4px" />
-            {{ formatNumber(post.view_count) }}
-          </div>
-
-          <!-- Pinned Badge -->
-          <div v-if="post.is_pinned" style="
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            background: #1890ff;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            z-index: 2;
-          ">
-            <PushpinOutlined />
-            Pinned
-          </div>
-        </div>
-
-        <!-- Post Content -->
-        <div style="padding: 5px">
-          <!-- Actions Row -->
-          <a-row style="align-items: center">
-            <a-col :span="16" style="display: flex; gap: 10px; justify-content: start; align-items: center;">
+            flex-direction: column;
+            box-shadow: 0 0px 0px rgba(0, 0, 0, 0);
+            transition: all 0.3s ease;
+          "
+          @mouseenter="$event.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)'"
+          @mouseleave="$event.currentTarget.style.boxShadow = '0 0px 0px rgba(0, 0, 0, 0)'"
+          >
+            <!-- Post Image -->
+            <div style="position: relative">
               <img
-                :src="$store.state.root_media_api + post.user_profile"
-                style="
-                  width: 40px;
-                  height: 40px;
-                  border-radius: 100%;
-                  border: 1px solid rgba(0, 0, 0, 0.1);
+                :src="
+                  $store.state.root_media_api + post.post_image ||
+                  require('../../../assets/home_main_banner.jpg')
                 "
-                alt=""
+                style="
+                  width: 100%;
+                  height: 200px;
+                  object-fit: cover;
+                  border-radius: 10px;
+                  padding: 5px;
+                  cursor: pointer;
+                  transition: transform 0.3s ease;
+                "
+                :alt="post.title"
+                @click="viewPost(post)"
+                @mouseenter="$event.currentTarget.style.transform = 'scale(1.01)'"
+                @mouseleave="$event.currentTarget.style.transform = 'scale(1)'"
               />
-              <span style="font-size: 16px; font-weight: 600;">
-                {{ truncateText(post.post_by, 15) }}
-              </span>
-            </a-col>
-            <a-col :span="8" style="display: flex;">
-              <!-- Post Stats -->
-              <div style="display: flex;">
-                <div 
-                  style="
-                    display: flex;
-                    align-items: center;
-                    gap: 6px;
-                    cursor: pointer;
-                    padding: 4px 8px;
-                    border-radius: 16px;
-                    transition: background-color 0.2s ease;
-                    font-size: 14px;
-                    color: #666;
-                  "
-                  @click="toggleLike(post)"
-                  @mouseenter="$event.currentTarget.style.backgroundColor = '#f5f5f5'"
-                  @mouseleave="$event.currentTarget.style.backgroundColor = 'transparent'"
-                >
-                  <HeartFilled v-if="post.isLiked" style="color: #ff4d4f" />
-                  <HeartOutlined v-else />
-                  <span style="font-size: 13px; font-weight: 500;">
-                    {{ formatNumber(post.like_count) }}
-                  </span>
-                </div>
-                <div 
-                  style="
-                    display: flex;
-                    align-items: center;
-                    gap: 6px;
-                    cursor: pointer;
-                    padding: 4px 8px;
-                    border-radius: 16px;
-                    transition: background-color 0.2s ease;
-                    font-size: 14px;
-                    color: #666;
-                  "
-                  @click="openCommentsModal(post)"
-                  @mouseenter="$event.currentTarget.style.backgroundColor = '#f5f5f5'"
-                  @mouseleave="$event.currentTarget.style.backgroundColor = 'transparent'"
-                >
-                  <MessageOutlined />
-                  <span style="font-size: 13px; font-weight: 500;">
-                    {{ formatNumber(post.comment_count) }}
-                  </span>
-                </div>
+
+              <!-- Tags -->
+              <div style="
+                position: absolute;
+                top: 10px;
+                left: 10px;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 4px;
+                max-width: 70%;
+                z-index: 2;
+              ">
+                <template v-if="post.tags && post.tags.length > 0">
+                  <a-tag
+                    v-for="(tag, index) in post.tags.slice(0, 3)"
+                    :key="index"
+                    color="blue"
+                    style="
+                      margin: 2px;
+                      border-radius: 12px;
+                      font-size: 11px;
+                      padding: 2px 8px;
+                      border: none;
+                      font-weight: 500;
+                    "
+                  >
+                    {{ tag }}
+                  </a-tag>
+                  <a-tag
+                    v-if="post.tags.length > 3"
+                    style="
+                      margin: 2px;
+                      border-radius: 12px;
+                      font-size: 11px;
+                      background: rgba(0, 0, 0, 0.6);
+                      color: white;
+                      border: none;
+                      padding: 2px 8px;
+                      font-weight: 500;
+                    "
+                  >
+                    +{{ post.tags.length - 3 }}
+                  </a-tag>
+                </template>
               </div>
-            </a-col>
-          </a-row>
+
+              <!-- View Count Overlay -->
+              <div style="
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                background: rgba(0, 0, 0, 0.7);
+                color: white;
+                padding: 4px 8px;
+                border-radius: 12px;
+                font-size: 12px;
+                display: flex;
+                align-items: center;
+                z-index: 2;
+                gap: 4px;
+              ">
+                <EyeOutlined style="margin-right: 4px" />
+                {{ formatNumber(post.view_count) }}
+              </div>
+
+              <!-- Pinned Badge -->
+              <div v-if="post.is_pinned" style="
+                position: absolute;
+                bottom: 10px;
+                left: 10px;
+                background: #1890ff;
+                color: white;
+                padding: 4px 8px;
+                border-radius: 12px;
+                font-size: 12px;
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                z-index: 2;
+              ">
+                <PushpinOutlined />
+                Pinned
+              </div>
+            </div>
+
+            <!-- Post Content -->
+            <div style="padding: 5px">
+              <!-- Actions Row -->
+              <a-row style="align-items: center">
+                <a-col :span="16" style="display: flex; gap: 10px; justify-content: start; align-items: center;">
+                  <img
+                    :src="$store.state.root_media_api + post.user_profile"
+                    style="
+                      width: 40px;
+                      height: 40px;
+                      border-radius: 100%;
+                      border: 1px solid rgba(0, 0, 0, 0.1);
+                    "
+                    alt=""
+                  />
+                  <span style="font-size: 16px; font-weight: 600;">
+                    {{ truncateText(post.post_by, 15) }}
+                  </span>
+                </a-col>
+                <a-col :span="8" style="display: flex;">
+                  <!-- Post Stats -->
+                  <div style="display: flex;">
+                    <div 
+                      style="
+                        display: flex;
+                        align-items: center;
+                        gap: 6px;
+                        cursor: pointer;
+                        padding: 4px 8px;
+                        border-radius: 16px;
+                        transition: background-color 0.2s ease;
+                        font-size: 14px;
+                        color: #666;
+                      "
+                      @click="toggleLike(post)"
+                      @mouseenter="$event.currentTarget.style.backgroundColor = '#f5f5f5'"
+                      @mouseleave="$event.currentTarget.style.backgroundColor = 'transparent'"
+                    >
+                      <HeartFilled v-if="post.isLiked" style="color: #ff4d4f" />
+                      <HeartOutlined v-else />
+                      <span style="font-size: 13px; font-weight: 500;">
+                        {{ formatNumber(post.like_count) }}
+                      </span>
+                    </div>
+                    <div 
+                      style="
+                        display: flex;
+                        align-items: center;
+                        gap: 6px;
+                        cursor: pointer;
+                        padding: 4px 8px;
+                        border-radius: 16px;
+                        transition: background-color 0.2s ease;
+                        font-size: 14px;
+                        color: #666;
+                      "
+                      @click="viewPost(post)"
+                      @mouseenter="$event.currentTarget.style.backgroundColor = '#f5f5f5'"
+                      @mouseleave="$event.currentTarget.style.backgroundColor = 'transparent'"
+                    >
+                      <MessageOutlined />
+                      <span style="font-size: 13px; font-weight: 500;">
+                        {{ formatNumber(post.comment_count) }}
+                      </span>
+                    </div>
+                  </div>
+                </a-col>
+              </a-row>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-  </a-col>
-</a-row>
+      </a-col>
+    </a-row>
+
+    <!-- Comments Modal -->
+    <CommentsModal
+      :isOpen="showModal"
+      :post="selectedPost || {}"
+      @close="closeModal"
+      @commentAdded="handleCommentAdded"
+      @likeToggled="handleLikeToggled"
+    />
+  </div>
                 <div v-if="filteredProducts?.length > 0" style="display: flex; justify-content: center; margin-top: 20px; margin-bottom: 20px;">
 <a-pagination 
 v-model:current="productsPagination.currentPage"
@@ -354,6 +367,7 @@ show-total
 </div>
 </template>
 <script>
+import CommentsModal from '@/views/pages/CommentsModal.vue';
 import {ExclamationCircleOutlined,EyeOutlined,
     HeartOutlined,
     HeartFilled,
@@ -373,6 +387,9 @@ export default {
                     products: [],
                     rooms:[],
                     community_posts:[],
+                     community_posts: [],
+      showModal: false,
+      selectedPost: null,
         // Pagination states for Products
         productsPagination: {
             currentPage: 1,
@@ -395,6 +412,7 @@ export default {
     HeartFilled,
     MessageOutlined,
     ShareAltOutlined,
+    CommentsModal,
     MoreOutlined,
     EditOutlined,
     DeleteOutlined,
@@ -428,7 +446,73 @@ export default {
 
     },
     methods:{
+
+      viewPost(post) {
+      // Transform your post data to match modal props
+      this.selectedPost = {
+        id: post.id,
+        image: this.$store.state.root_media_api + post.post_image,
+        userName: post.post_by,
+        userAvatar: this.$store.state.root_media_api + post.user_profile,
+        description: post.description || post.content,
+        tags: post.tags || [],
+        views: post.view_count,
+        likes: post.like_count,
+        is_liked: post.isLiked || false,
+        comment_count: post.comment_count
+      }
+      
+      this.showModal = true
+    },
+
+    closeModal() {
+      this.showModal = false
+      this.selectedPost = null
+    },
+
+    handleCommentAdded() {
+      // Refresh the post data or update comment count
+      if (this.selectedPost) {
+        const postIndex = this.community_posts.findIndex(p => p.id === this.selectedPost.id)
+        if (postIndex !== -1) {
+          this.community_posts[postIndex].comment_count++
+        }
+      }
+    },
+
+    handleLikeToggled() {
+      // Refresh the post data
+      if (this.selectedPost) {
+        const postIndex = this.community_posts.findIndex(p => p.id === this.selectedPost.id)
+        if (postIndex !== -1) {
+          // Update the post in the list
+          this.community_posts[postIndex].isLiked = this.selectedPost.is_liked
+          this.community_posts[postIndex].like_count = this.selectedPost.likes
+        }
+      }
+    },
+
+    formatNumber(num) {
+      if (!num) return 0
+      if (num >= 1000) return (num / 1000).toFixed(1) + 'k'
+      return num
+    },
+
+    truncateText(text, length) {
+      if (!text) return ''
+      return text.length > length ? text.substring(0, length) + '...' : text
+    },
+
+    toggleLike(post) {
+      // Your existing toggle like logic
+    },
+
+    openCommentsModal(post) {
+      this.viewPost(post)
+    },
         
+
+      
     // Utility methods
     formatNumber(num) {
       if (!num || num === 0) return "0";

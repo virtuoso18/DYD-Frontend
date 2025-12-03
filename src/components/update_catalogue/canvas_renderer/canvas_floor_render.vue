@@ -928,4 +928,15 @@ export default {
   text-transform: uppercase;
 }
 
+
+@media screen and (min-width:400px) and (max-width:770px){
+  .canvas-container{
+    height: 90%;
+  }
+}
+@media screen and (min-width:200px) and (max-width:400px){
+  .canvas-container{
+    height: 71%;
+  }
+}
 </style>

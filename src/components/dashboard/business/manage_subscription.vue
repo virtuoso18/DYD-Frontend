@@ -271,7 +271,7 @@
         <button
           @click="activeTab = 'subscription'"
           :class="[
-            'pb-3 px-1 text-sm font-medium border-b-2 transition-colors',
+            'pb-3 px-1 text-sm font-medium !text-gray-700 border-b-2 transition-colors',
             activeTab === 'subscription'
               ? 'border-[#3B63FB] text-[#3B63FB]'
               : 'border-transparent text-[#8c8c8c] hover:text-[#262626]'
@@ -282,7 +282,7 @@
         <button
           @click="activeTab = 'credits'"
           :class="[
-            'pb-3 px-1 text-sm font-medium border-b-2 transition-colors',
+            'pb-3 px-1 text-sm font-medium !text-gray-700 border-b-2 transition-colors',
             activeTab === 'credits'
               ? 'border-[#3B63FB] text-[#3B63FB]'
               : 'border-transparent text-[#8c8c8c] hover:text-[#262626]'

@@ -3,7 +3,7 @@
 <!-- TEXTURE MODAL (Keep your existing modal) -->
 <a-modal 
   v-model:open="openTextureModal" 
-  width="60%" 
+  width="60%"style="max-width:500px" 
   title="Apply Texture"
   :footer="null"
   centered
@@ -31,16 +31,18 @@
       </div>
 
       <!-- Texture preview -->
-      <div v-else style="position: relative;">
-        <img 
+      <div v-else style="position: relative; display: flex;justify-content: center;">
+        <div>
+
+          <img 
           :src="textureImage" 
           alt="Texture preview" 
           style="max-width: 100%; max-height: 150px; border-radius: 4px;"
-        />
-        <p style="margin: 8px 0; color: #666;">Texture Selected ✓</p>
+          />
+          <p style="margin: 8px 0; color: #666;">Texture Selected ✓</p>
+        </div>
       </div>
     </div>
-
     <!-- Remove button -->
     <div v-if="textureImage" style="text-align: center;">
       <a-button danger @click="removeSelectedTexture()">
@@ -59,8 +61,13 @@
         @click="applyTextureToImage()"
         :disabled="!textureImage"
         :loading="isApplyingTexture"
-      >
-        Apply Texture
+      ><div style="display: flex;justify-content: center;align-items: center;gap:10px;">
+ Apply Texture <span style="display: flex;justify-content: center;align-items: center;">
+
+        (&nbsp; <svg width="17" height="18" viewBox="0 0 17 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M8.5013 1.91602C4.58918 1.91602 1.41797 5.08722 1.41797 8.99935C1.41797 12.9115 4.58918 16.0827 8.5013 16.0827C12.4134 16.0827 15.5846 12.9115 15.5846 8.99935C15.5846 5.08722 12.4134 1.91602 8.5013 1.91602ZM8.5013 2.62435C8.5013 4.3151 7.82965 5.93661 6.63411 7.13215C5.43856 8.3277 3.81706 8.99935 2.1263 8.99935C3.81706 8.99935 5.43856 9.671 6.63411 10.8665C7.82965 12.0621 8.5013 13.6836 8.5013 15.3743C8.5013 13.6836 9.17295 12.0621 10.3685 10.8665C11.564 9.671 13.1855 8.99935 14.8763 8.99935C13.1855 8.99935 11.564 8.3277 10.3685 7.13215C9.17295 5.93661 8.5013 4.3151 8.5013 2.62435Z" fill="currentColor"/>
+        </svg>20 )</span>
+      </div>
       </a-button>
     </div>
 
@@ -524,12 +531,13 @@
         </div>
 
         <!-- Add Texture Section -->
-        
+     <!-- UPDATED TEXTURE SECTION -->
+
+<!-- Add Texture Section - UPDATED UI -->
 <div class="texture-section">
-  <!-- Header with Add Button -->
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
     <p style="margin: 0; font-weight: 500;">Textures ({{ textures_available.length }})</p>
-    <a-button 
+   <a-button 
       type="primary" 
       size="small"
       @click="openTexturModal()"
@@ -542,81 +550,148 @@
     </a-button>
   </div>
 
-  <!-- Texture List -->
-  <div v-if="textures_available.length > 0" style="display: flex; flex-direction: column; gap: 8px; max-height: 300px; overflow-y: auto;">
-    
-    <div 
-      v-for="(texture, index) in textures_available" 
-      :key="index"
+  <!-- Texture Grid - UPDATED LAYOUT -->
+  <div  style="">
+    <a-row>
+<!-- <a-col
+  span="4"
+
+  :class="{ disabledBox: !mainImage }"
+  @click="mainImage ? openTexturModal() : null"  style="
+    width: 80px;
+    height: 80px;
+    border: 2px solid #e8e8e8;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  "
+>
+  <div
+    style="
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 12px;
+      text-align: center;
+    "
+  >
+    <PlusOutlined style="font-size: 20px" />
+  </div>
+</a-col> -->
+
+    <a-col v-if="textures_available.length > 0" span="4" style="" v-for="(texture, index) in textures_available" 
+      :key="index">
+    <div
+      
       style="
-        display: flex;
-        gap: 12px;
-        padding: 8px;
-        background: #fafafa;
-        border-radius: 6px;
+        position: relative;
+        border-radius: 8px;
+        overflow: hidden;
         border: 2px solid #e8e8e8;
         transition: all 0.3s;
+        cursor: pointer;
+        margin-left:5px;
+          width: 80px; 
+          height: 80px; 
+        aspect-ratio: 1;
       "
-      :style="texture.is_active ? { borderColor: '#52c41a', background: '#f6ffed' } : {}"
+      :style="texture.is_active ? { borderColor: '#52c41a', boxShadow: '0 0 0 2px #f6ffed' } : {}"
+      @click="activateTexture(index)"
     >
-      <!-- Texture Preview -->
-      <div 
+      <!-- Texture Image -->
+      <img 
+        :src="texture.main_image_texture_applied" 
+        alt="Texture result" 
         style="
-          width: 50px;
-          height: 50px;
-          border-radius: 4px;
-          overflow: hidden;
-          flex-shrink: 0;
-          background: #f0f0f0;
-          border: 1px solid #d9d9d9;
-          cursor: pointer;
+          width: 100%; 
+          height: 100%; 
+          object-fit: cover;
         "
-        @click="activateTexture(index)"
+      />
+
+      <!-- Active Checkmark Overlay -->
+      <div 
+        v-if="texture.is_active"
+        @click.stop="deactivateTexture(index)"
+        style="
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(82, 196, 26, 0.2);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 32px;
+          color: #52c41a;
+        "
       >
-        <img 
-          :src="texture.main_image_texture_applied" 
-          alt="Texture result" 
-          style="width: 100%; height: 100%; object-fit: cover;"
-        />
+        ✅
       </div>
 
-      <!-- Texture Info -->
-      <div style="flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
-        <p style="margin: 0; font-size: 12px; font-weight: 500; color: #333;">
-          Texture {{ index + 1 }}
-          <span v-if="texture.is_active" style="color: #52c41a; margin-left: 4px;">✓ Active</span>
-        </p>
-        <div style="display: flex; gap: 8px; font-size: 12px;">
-          <a-button 
-            type="link" 
-            size="small"
-            @click="activateTexture(index)"
-            :style="{ padding: '0 4px' }"
-          >
-            {{ texture.is_active ? 'Deactivate' : 'Activate' }}
-          </a-button>
-          <a-divider type="vertical" style="margin: 0;" />
-          <a-button 
-            type="link" 
-            danger
-            size="small"
-            @click="deleteTexture(index)"
-            :style="{ padding: '0 4px' }"
-          >
-            Delete
-          </a-button>
-        </div>
+      <!-- Delete Button - Top Right Corner -->
+      <div 
+        style="
+          position: absolute;
+          top: 4px;
+          right: 4px;
+          z-index: 10;
+        "
+        @click.stop="deleteTexture(index)"
+      >
+        <a-button 
+          type="primary" 
+          danger
+          size="small"
+          shape="circle"
+          style="width: 28px; height: 28px; padding: 0;"
+        >
+          <template #icon>
+            <DeleteOutlined />
+          </template>
+        </a-button>
       </div>
+
+      <!-- Hover Overlay with Deactivate Button -->
+      <!-- <div 
+        v-if="texture.is_active"
+        style="
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
+          padding: 8px;
+          display: flex;
+          justify-content: center;
+          align-items: flex-end;
+        "
+      >
+        <a-button 
+          type="primary"
+          size="small"
+          @click.stop="deactivateTexture(index)"
+          style="font-size: 11px; height: 26px; padding: 0 8px;"
+        >
+          Deactivate
+        </a-button>
+      </div> -->
     </div>
+    </a-col>
+    </a-row>
 
   </div>
 
   <!-- Empty State -->
-  <div v-else style="text-align: center; padding: 20px; color: #999; background: #fafafa; border-radius: 6px;">
+  <div v-if="textures_available.length === 0" style="text-align: center; padding: 20px 20px; color: #999; background: #fafafa; border-radius: 6px;">
     <p style="margin: 0; font-size: 12px;">No textures applied yet</p>
   </div>
 </div>
-
 
         <!-- Upload More Images -->
        
@@ -711,12 +786,12 @@
         </div>
 
         <!-- Add Texture Section -->
-        <div class="texture-section">
+        <!-- <div class="texture-section">
           <p>Add Texture</p>
           <div class="texture-upload" @click="!isProcessingBg && triggerFileInput('texture')">
             <PlusOutlined />
           </div>
-        </div>
+        </div> -->
 
         
 <!-- Update the existing "Upload more images" section to include multi-view option -->
@@ -930,7 +1005,8 @@ export default {
          openTextureModal: false,
     textureImage: null,
     isApplyingTexture: false,
-    
+     originalMainImage: null,
+
     // NEW: Add this texture list
     textures_available: [
       // {
@@ -1070,25 +1146,114 @@ beforeUnmount() {
     this.$refs['fileInput-texture-select'].click()
   },
 
-  handleTextureFileSelect(event) {
-    const file = event.target.files[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        this.textureImage = e.target.result
-      }
-      reader.readAsDataURL(file)
+  
+handleTextureFileSelect(event) {
+  const file = event.target.files[0]
+  if (file) {
+    // Validate file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      this.$message.error('File size must be less than 10MB')
+      return
     }
-  },
 
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      // e.target.result already includes the data URI prefix
+      this.textureImage = e.target.result
+      console.log('Texture file loaded:', this.textureImage.substring(0, 50) + '...')
+    }
+    reader.onerror = (error) => {
+      console.error('File reading error:', error)
+      this.$message.error('Failed to read file')
+    }
+    reader.readAsDataURL(file)
+  }
+},
   removeSelectedTexture() {
     this.textureImage = null
   },
 
   // Apply texture - call backend API
-  async applyTextureToImage() {
+  // Replace your existing applyTextureToImage() method with this:
+
+// async applyTextureToImage() {
+//   if (!this.textureImage) {
+//     this.$message.warning('Please select a texture image')
+//     return
+//   }
+
+//   if (!this.mainImage) {
+//     this.$message.warning('Please upload a main image first')
+//     return
+//   }
+
+//   this.isApplyingTexture = true
+
+//   try {
+//     const payload = {
+//       main_image: this.mainImage,        // base64 string
+//       texture_image: this.textureImage,  // base64 string
+//       room_id: this.$route.params.id
+//     }
+
+//     console.log('Sending texture application request...')
+//     console.log('Main image length:', this.mainImage.length)
+//     console.log('Texture image length:', this.textureImage.length)
+//     console.log('Room ID:', payload.room_id)
+
+//     const token = localStorage.getItem('token')
+//     const response = await fetch(
+//       `${this.$store.state.root_api}engine/apply-texture/`,
+//       {
+//         method: 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//           'Authorization': `Token ${token}`,
+//         },
+//         body: JSON.stringify(payload)
+//       }
+//     )
+
+//     if (response.ok) {
+//       const result = await response.json()
+      
+//       console.log('Texture applied successfully')
+//       console.log('Response:', result)
+      
+//       // Add to textures_available list
+//       const newTexture = {
+//         texture_file_selected: this.textureImage,
+//         main_image_texture_applied: result.textured_image,  // Get base64 from response
+//         is_active: false
+//       }
+      
+//       this.textures_available.push(newTexture)
+      
+//       // Automatically activate the newly applied texture
+//       this.activateTexture(this.textures_available.length - 1)
+      
+//       this.$message.success('Texture applied successfully!')
+//       this.closeTextureModal()
+//     } else {
+//       const error = await response.json()
+//       console.error('API Error Response:', error)
+//       this.$message.error(error.msg || 'Failed to apply texture')
+//     }
+//   } catch (error) {
+//     console.error('Error applying texture:', error)
+//     this.$message.error('Failed to apply texture: ' + error.message)
+//   } finally {
+//     this.isApplyingTexture = false
+//   }
+// },
+ async applyTextureToImage() {
     if (!this.textureImage) {
       this.$message.warning('Please select a texture image')
+      return
+    }
+
+    if (!this.mainImage) {
+      this.$message.warning('Please upload a main image first')
       return
     }
 
@@ -1100,6 +1265,8 @@ beforeUnmount() {
         texture_image: this.textureImage,
         room_id: this.$route.params.id
       }
+
+      console.log('Sending texture application request...')
 
       const token = localStorage.getItem('token')
       const response = await fetch(
@@ -1117,11 +1284,14 @@ beforeUnmount() {
       if (response.ok) {
         const result = await response.json()
         
+        console.log('Texture applied successfully')
+        
         // Add to textures_available list
         const newTexture = {
           texture_file_selected: this.textureImage,
           main_image_texture_applied: result.textured_image,
-          is_active: false
+          is_active: false,
+          original_main_image: this.originalMainImage // Store reference to original
         }
         
         this.textures_available.push(newTexture)
@@ -1133,25 +1303,44 @@ beforeUnmount() {
         this.closeTextureModal()
       } else {
         const error = await response.json()
+        console.error('API Error Response:', error)
         this.$message.error(error.msg || 'Failed to apply texture')
       }
     } catch (error) {
-      console.error('Error:', error)
-      this.$message.error('Failed to apply texture')
+      console.error('Error applying texture:', error)
+      this.$message.error('Failed to apply texture: ' + error.message)
     } finally {
       this.isApplyingTexture = false
     }
   },
 
+
   // NEW: Activate/Deactivate texture
+  // activateTexture(index) {
+  //   // If clicking the same texture, deactivate it
+  //   if (this.textures_available[index].is_active) {
+  //     this.textures_available[index].is_active = false
+  //     this.mainImage = this.getOriginalImage() // revert to original
+  //     this.$message.info('Texture deactivated')
+  //     return
+  //   }
+
+  //   // Deactivate all other textures
+  //   this.textures_available.forEach((texture, i) => {
+  //     if (i !== index) {
+  //       texture.is_active = false
+  //     }
+  //   })
+
+  //   // Activate selected texture
+  //   this.textures_available[index].is_active = true
+  //   this.mainImage = this.textures_available[index].main_image_texture_applied
+  //   this.$message.success('Texture activated')
+  // },
+  
+  // UPDATED: Activate texture with green border & checkmark
   activateTexture(index) {
-    // If clicking the same texture, deactivate it
-    if (this.textures_available[index].is_active) {
-      this.textures_available[index].is_active = false
-      this.mainImage = this.getOriginalImage() // revert to original
-      this.$message.info('Texture deactivated')
-      return
-    }
+    if (!this.textures_available[index]) return
 
     // Deactivate all other textures
     this.textures_available.forEach((texture, i) => {
@@ -1163,7 +1352,27 @@ beforeUnmount() {
     // Activate selected texture
     this.textures_available[index].is_active = true
     this.mainImage = this.textures_available[index].main_image_texture_applied
+    
+    this.$forceUpdate()
     this.$message.success('Texture activated')
+  },
+  
+  // NEW: Deactivate texture and revert to original image
+  deactivateTexture(index) {
+    if (!this.textures_available[index]) return
+
+    const texture = this.textures_available[index]
+    
+    // Revert to original image
+    if (texture.original_main_image) {
+      this.mainImage = texture.original_main_image
+    }
+
+    // Mark as inactive
+    texture.is_active = false
+    
+    this.$forceUpdate()
+    this.$message.info('Texture deactivated - reverted to original image')
   },
 
   // Helper: Get original main image (before any texture)
@@ -1886,6 +2095,8 @@ view_result(generated_model_id){
         setTimeout(() => {
           if (key === 'main') {
             this.mainImage = e.target.result
+            this.originalMainImage = e.target.result // STORE ORIGINAL
+
             this.uploading.main = false
           } else if (typeof key === 'number') {
             this.views[key].image = e.target.result
@@ -2998,4 +3209,14 @@ getQueueStatusColor(status) {
 .multiview-queue-modal-actions .ant-btn {
   height: 40px;
   font-weight: 500;
-}</style>
+}
+
+
+
+.disabledBox {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: not-allowed !important;
+}
+
+</style>

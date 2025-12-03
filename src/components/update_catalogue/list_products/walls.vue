@@ -1,6 +1,6 @@
 <template>
   <div class="ai-catalog-section !pt-4 sm:!pt-0">
-    <div class="apply-section">
+    <div class="apply-section md:hidden">
       <a-button type="primary" size="large" block class="apply-button" @click="updateItemRendering()">
         Apply
       </a-button>
@@ -8,7 +8,14 @@
     
     <!-- Fixed Header -->
     <div class="ai-catalog-header">
-      <span>AI Catalog</span>
+      <span class="!text-gray-700 py-2"  style="
+          font-family: Poppins;
+          font-weight: 500;
+          font-style: normal;
+          font-size: 14px;
+          line-height: 20px;
+          letter-spacing: 0;
+        ">AI Catalog</span>
       <a-button size='small' type="text" class="see-all-link" @click="seeAllClicked">See all</a-button>
     </div>
     
@@ -60,28 +67,53 @@ border-radius: 4px;
 padding:2px;
 border:1px solid rgba(128, 128, 128, 0.14);" @click="selectTexture(item.id)"
 :style="selected_texture===item.id ? 'border:1px solid blue': ''">
-          <div class="product-item">
-            <div class="product-image">
-              <img :src="this.$store.state.root_media_api+item.texture_image" :alt="item.title" />
-            </div>
-            <div class="product-info">
-              <div style="display:flex;justify-content: space-between;" class="">
-                <div style="background-color: grey;color :white;border-radius:5px;padding-left:5px;padding-right:5px;padding-top:1px;height:22px;font-size:12px">
-                  Wall Texture
-                </div>
-                <div style="padding:3px;border:1px solid grey;border-radius:5px;padding-left:5px;padding-right:5px;padding-top:1px;height:22px;font-size:12px">AR</div>
-              </div>
-              <div class="product-name">{{ truncateText( item.title || 'No description available', 3) }}</div>
-              
-              <div class="product-details" style="display:flex;justify-content: space-between;">
-                <span class="product-color">Colors </span>
-                <div style="display: flex; gap: 4px; align-items: center; margin-left: 8px;">
-                  <div v-for="color in item.colors_available.slice(0, 2)" :key="color.id" class="color-dot" :style="{ backgroundColor: color.color_hex }"></div>
-                </div>
-              </div>
-              <div class="product-price">Price <span style="font-weight: 600;">$ {{ item.sale_price_per_sqm }}</span></div>
-            </div>
-          </div>
+         <div class="product-item relative">
+  <div class="product-image relative">
+    
+    <!-- Badges on Image -->
+    <div class="absolute top-2 left-2 z-10"
+         style="background-color: grey;color:white;border-radius:5px;
+         padding-left:5px;padding-right:5px;padding-top:1px;
+         height:22px;font-size:12px">
+      Wall Texture
+    </div>
+
+    <div class="absolute top-2  rounded-md right-2 z-10 !text-white"
+         style="padding:3px;background-color: grey;
+         padding-left:5px;padding-right:5px;padding-top:1px;
+         height:22px;font-size:12px">
+      AR
+    </div>
+
+    <img :src="this.$store.state.root_media_api+item.texture_image" :alt="item.title" />
+  </div>
+
+  <div class="product-info">
+    <div style="display:flex;justify-content: space-between;" class="">
+      <!-- (Removed old duplicate labels here) -->
+    </div>
+
+    <div class="product-name">
+      {{ truncateText(item.title || 'No description available', 3) }}
+    </div>
+
+    <div class="product-details" style="display:flex;justify-content: space-between;">
+      <span class="product-color">Colors </span>
+      <div style="display: flex; gap: 4px; align-items: center; margin-left: 8px;">
+        <div v-for="color in item.colors_available.slice(0, 2)"
+             :key="color.id"
+             class="color-dot"
+             :style="{ backgroundColor: color.color_hex }">
+        </div>
+      </div>
+    </div>
+
+    <div class="product-price">
+      Price <span style="font-weight: 600;">$ {{ item.sale_price_per_sqm }}</span>
+    </div>
+  </div>
+</div>
+
 
           <a-row>
             <a-col :span="18" style="padding-right:5px">
@@ -116,6 +148,12 @@ border:1px solid rgba(128, 128, 128, 0.14);" @click="selectTexture(item.id)"
       <div v-if="!loading && catalogItems.length === 0" class="no-items">
         <p>No products found</p>
       </div>
+    </div>
+
+     <div class="apply-section hidden md:block">
+      <a-button type="primary" size="large" block class="apply-button" @click="updateItemRendering()">
+        Apply
+      </a-button>
     </div>
   </div>
 </template>
@@ -378,10 +416,6 @@ export default {
   margin-bottom: 5px;
 }
 
-.product-item:hover {
-  /* box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12); */
-  /* transform: translateY(-2px); */
-}
 
 .list-view .product-item {
   display: flex;

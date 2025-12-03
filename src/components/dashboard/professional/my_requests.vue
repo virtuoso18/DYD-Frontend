@@ -1,630 +1,260 @@
-<!-- ===================================
-     my-requests.vue - Access Requests Table
-     ===================================
--->
 <template>
-    <div style="border-radius:15px;background-color:white;border:1px solid rgba(0,0,0,0.1);padding:20px;margin-top:10px">
-        <div class="page-header">
-            <a-row type="flex" justify="space-between" align="middle">
-                <a-col>
-                    <h2>Access Requests</h2>
-                    <p style="color: #999; margin-top: 5px;">Manage your access requests to various businesses</p>
-                </a-col>
-            </a-row>
-        </div>
-
-        <a-tabs v-model:activeKey="activeTab" style="margin-top: 20px;">
-            
-            <!-- Pending Requests Tab -->
-            <a-tab-pane key="pending" tab="Pending Requests">
-                <a-spin :spinning="loadingPending">
-                    <a-empty 
-                        v-if="pendingRequests.length === 0 && !loadingPending" 
-                        description="No pending access requests"
-                        style="margin: 50px 0;"
-                    />
-
-                    <a-table
-                        v-else
-                        :columns="pendingColumns"
-                        :data-source="pendingRequests"
-                        :pagination="pendingPagination"
-                        :loading="loadingPending"
-                        rowKey="id"
-                        size="middle"
-                        :scroll="{ x: 1000 }"
-                        @change="handleTableChange('pending', arguments[0])"
-                    >
-                        <template #bodyCell="{ column, record }">
-                            <template v-if="column.key === 'business_name'">
-                                <strong v-if="record && record.business">{{ record.business.business_name }}</strong>
-                                <span v-else>-</span>
-                            </template>
-
-                            <template v-else-if="column.key === 'owner_email'">
-                                {{ record && record.business ? record.business.owner_email : '-' }}
-                            </template>
-
-                            <template v-else-if="column.key === 'created_at'">
-                                {{ record && record.created_at ? formatDate(record.created_at) : '-' }}
-                            </template>
-
-                            <template v-else-if="column.key === 'access_type'">
-                                <a-tag color="orange">Professional Access</a-tag>
-                            </template>
-
-                            <template v-else-if="column.key === 'actions'">
-                                <a-space v-if="record">
-                                    <a-button
-                                        type="primary"
-                                        size="small"
-                                        @click="openAcceptModal(record)"
-                                    >
-                                        Accept
-                                    </a-button>
-                                    <a-button
-                                        type="primary"
-                                        danger
-                                        size="small"
-                                        @click="handleRejectRequest(record.id)"
-                                    >
-                                        Reject
-                                    </a-button>
-                                </a-space>
-                            </template>
-                        </template>
-                    </a-table>
-                </a-spin>
-            </a-tab-pane>
-
-            <!-- Accepted Requests Tab -->
-            <a-tab-pane key="accepted" tab="Accepted Requests">
-                <a-spin :spinning="loadingAccepted">
-                    <a-empty 
-                        v-if="acceptedRequests.length === 0 && !loadingAccepted" 
-                        description="No accepted requests"
-                        style="margin: 50px 0;"
-                    />
-
-                    <a-table
-                        v-else
-                        :columns="acceptedColumns"
-                        :data-source="acceptedRequests"
-                        :pagination="acceptedPagination"
-                        :loading="loadingAccepted"
-                        rowKey="id"
-                        size="middle"
-                        :scroll="{ x: 1000 }"
-                        @change="handleTableChange('accepted', arguments[0])"
-                    >
-                        <template #bodyCell="{ column, record }">
-                            <template v-if="column.key === 'business_name'">
-                                <strong v-if="record && record.business">{{ record.business.business_name }}</strong>
-                                <span v-else>-</span>
-                            </template>
-
-                            <template v-else-if="column.key === 'owner_email'">
-                                {{ record && record.business ? record.business.owner_email : '-' }}
-                            </template>
-
-                            <template v-else-if="column.key === 'created_at'">
-                                {{ record && record.created_at ? formatDate(record.created_at) : '-' }}
-                            </template>
-
-                            <template v-else-if="column.key === 'task_count'">
-                                <a-tag v-if="record && record.task_count > 0" color="blue">
-                                    {{ record.task_count }} task(s)
-                                </a-tag>
-                                <span v-else style="color: #999;">No tasks</span>
-                            </template>
-
-                            <template v-else-if="column.key === 'actions'">
-                                <a-space v-if="record">
-                                    <router-link 
-                                        :to="{ name: 'business-overview', query: { access_id: record.id } }"
-                                    >
-                                        <a-button
-                                            type="primary"
-                                            size="small"
-                                        >
-                                            View
-                                        </a-button>
-                                    </router-link>
-                                    <a-button
-                                        type="primary"
-                                        danger
-                                        size="small"
-                                        @click="handleRevokeAccess(record.id)"
-                                    >
-                                        Revoke
-                                    </a-button>
-                                </a-space>
-                            </template>
-                        </template>
-                    </a-table>
-                </a-spin>
-            </a-tab-pane>
-
-            <!-- Rejected Requests Tab -->
-            <a-tab-pane key="rejected" tab="Rejected Requests">
-                <a-spin :spinning="loadingRejected">
-                    <a-empty 
-                        v-if="rejectedRequests.length === 0 && !loadingRejected" 
-                        description="No rejected requests"
-                        style="margin: 50px 0;"
-                    />
-                    
-                    <a-table
-                        v-else
-                        :columns="rejectedColumns"
-                        :data-source="rejectedRequests"
-                        :pagination="rejectedPagination"
-                        :loading="loadingRejected"
-                        rowKey="id"
-                        size="middle"
-                        :scroll="{ x: 1000 }"
-                    >
-                        <template #bodyCell="{ column, record }">
-                            <template v-if="column.key === 'business_name'">
-                                <strong v-if="record && record.business">{{ record.business.business_name }}</strong>
-                                <span v-else>-</span>
-                            </template>
-
-                            <template v-else-if="column.key === 'owner_email'">
-                                {{ record && record.business ? record.business.owner_email : '-' }}
-                            </template>
-
-                            <template v-else-if="column.key === 'created_at'">
-                                {{ record && record.created_at ? formatDate(record.created_at) : '-' }}
-                            </template>
-
-                            <!-- <template v-else-if="column.key === 'actions'">
-                                <a-button
-                                    v-if="record"
-                                    type="primary"
-                                    size="small"
-                                    @click="handleReactivateRequest(record.id)"
-                                >
-                                    Reconsider
-                                </a-button>
-                            </template> -->
-                        </template>
-                    </a-table>
-                </a-spin>
-            </a-tab-pane>
-
-        </a-tabs>
-
-        <!-- Accept Modal -->
-        <a-modal
-            v-model:open="showAcceptModal"
-            title="Accept Access Request"
-            centered
-            width="500px"
-            :confirmLoading="processingAccess"
-            @ok="handleAcceptRequest"
+<div 
+  class="
+  -translate-y-14
+         sm:main 
+         min-h-[100vh] 
+         md:min-h-[136vh] 
+         md:border border-gray-300 
+         sm:translate-y-3 
+         sm:rounded-xl 
+         p-4 
+         bg-white
+         border-gray-200 
+         xl:min-h-[170vh] 
+         2xl:min-h-[150vh]"
+  v-if="page_view === 'list_all_requests'"
+>
+    <div class="header">
+      <h2 className="pr-2 sm:pr-0">Requests</h2>
+      <div class="view-controls">
+        <div class="">
+      <a-input 
+        v-model:value="searchQuery"
+        placeholder="Search Product"
+        @input="handleSearch"
+      >
+        <template #suffix>
+          <search-outlined />
+        </template>
+      </a-input>
+    </div>&nbsp;
+        <a-button 
+          :type="viewMode === 'grid' ? 'primary' : 'default'"
+          @click="setViewMode('grid')"
+          :class="{ active: viewMode === 'grid' }"
         >
-            <div v-if="selectedRequest && selectedRequest.business">
-                <p style="margin-bottom: 16px;">
-                    <strong>{{ selectedRequest.business.business_name }}</strong> is requesting access for you to work as a professional.
-                </p>
-                
-                <a-form-item label="Response Message (Optional)">
-                    <a-textarea
-                        v-model:value="acceptanceMessage"
-                        placeholder="Add any message or notes..."
-                        :rows="3"
-                    />
-                </a-form-item>
-
-                <a-alert
-                    message="After accepting, you will be able to view tasks and work details from this business."
-                    type="info"
-                    show-icon
-                    style="margin-top: 12px;"
-                />
-            </div>
-        </a-modal>
+          Grid
+        </a-button>
+        <a-button 
+          :type="viewMode === 'list' ? 'primary' : 'default'"
+          @click="setViewMode('list')"
+          :class="{ active: viewMode === 'list' }"
+        >
+          List
+        </a-button>
+      </div>
     </div>
+
+    
+
+    <a-tabs v-model:activeKey="activeKey" @change="handleTabChange">
+      <a-tab-pane key="all" tab="All Request">
+        <RequestsList 
+          :requests="filteredRequests" 
+          :loading="loading"
+          :view-mode="viewMode"
+          @record-clicked="recordClicked"
+
+          @refresh="refreshRequests"
+        />
+      </a-tab-pane>
+      <a-tab-pane key="Pending" tab="Pending">
+        <RequestsList 
+          :requests="filteredRequests" 
+          :loading="loading"
+          :view-mode="viewMode"
+          @record-clicked="recordClicked"
+
+          @refresh="refreshRequests"
+        />
+      </a-tab-pane>
+      <a-tab-pane key="Completed" tab="Completed">
+        <RequestsList 
+          :requests="filteredRequests" 
+          :loading="loading"
+          :view-mode="viewMode"
+          @record-clicked="recordClicked"
+
+          @refresh="refreshRequests"
+        />
+      </a-tab-pane>
+      <a-tab-pane key="Rejected" tab="Rejected">
+        <RequestsList 
+          :requests="filteredRequests" 
+          :loading="loading"
+          :view-mode="viewMode"
+          @record-clicked="recordClicked"
+
+          @refresh="refreshRequests"
+        />
+      </a-tab-pane>
+    </a-tabs>
+  </div>
+  <div v-if="page_view==='request_details'">
+<selectedRequest :selected_request="selected_request" @back-button-clicked="backButtonClicked"/>
+  </div>
 </template>
 
 <script>
+import { SearchOutlined } from '@ant-design/icons-vue'
+import RequestsList from '@/components/general_user/buisness_page/RequestsList.vue'
+import selectedRequest from '@/components/general_user/buisness_page/selectedRequest_details.vue'
+
 export default {
-    name: 'my-requests',
-    data() {
-        return {
-            activeTab: 'pending',
-            
-            pendingRequests: [],
-            acceptedRequests: [],
-            rejectedRequests: [],
-            
-            loadingPending: false,
-            loadingAccepted: false,
-            loadingRejected: false,
-            processingAccess: false,
-            
-            showAcceptModal: false,
-            selectedRequest: null,
-            acceptanceMessage: '',
+  name: 'my_requests',
+  components: {
+    SearchOutlined,
+    RequestsList,
+    selectedRequest
+  },
+  data() {
+    return {
+      page_view:'list_all_requests',
+      selected_request:null,
 
-            // Table columns
-            pendingColumns: [
-                {
-                    title: 'Business',
-                    dataIndex: ['business', 'business_name'],
-                    key: 'business_name',
-                    width: '25%'
-                },
-                {
-                    title: 'Owner Email',
-                    dataIndex: ['business', 'owner_email'],
-                    key: 'owner_email',
-                    width: '25%'
-                },
-                {
-                    title: 'Requested Date',
-                    dataIndex: 'created_at',
-                    key: 'created_at',
-                    width: '20%',
-                    sorter: (a, b) => new Date(a.created_at) - new Date(b.created_at)
-                },
-                {
-                    title: 'Type',
-                    dataIndex: 'access_type',
-                    key: 'access_type',
-                    width: '15%'
-                },
-                {
-                    title: 'Actions',
-                    dataIndex: 'actions',
-                    key: 'actions',
-                    width: '15%',
-                    fixed: 'right'
-                }
-            ],
-
-            acceptedColumns: [
-                {
-                    title: 'Business',
-                    dataIndex: ['business', 'business_name'],
-                    key: 'business_name',
-                    width: '25%'
-                },
-                {
-                    title: 'Owner Email',
-                    dataIndex: ['business', 'owner_email'],
-                    key: 'owner_email',
-                    width: '25%'
-                },
-                {
-                    title: 'Accepted Date',
-                    dataIndex: 'created_at',
-                    key: 'created_at',
-                    width: '20%',
-                    sorter: (a, b) => new Date(a.created_at) - new Date(b.created_at)
-                },
-                {
-                    title: 'Tasks',
-                    dataIndex: 'task_count',
-                    key: 'task_count',
-                    width: '15%',
-                    sorter: (a, b) => (a.task_count || 0) - (b.task_count || 0)
-                },
-                {
-                    title: 'Actions',
-                    dataIndex: 'actions',
-                    key: 'actions',
-                    width: '15%',
-                    fixed: 'right'
-                }
-            ],
-
-            rejectedColumns: [
-                {
-                    title: 'Business',
-                    dataIndex: ['business', 'business_name'],
-                    key: 'business_name',
-                    width: '30%'
-                },
-                {
-                    title: 'Owner Email',
-                    dataIndex: ['business', 'owner_email'],
-                    key: 'owner_email',
-                    width: '30%'
-                },
-                {
-                    title: 'Rejected Date',
-                    dataIndex: 'created_at',
-                    key: 'created_at',
-                    width: '25%',
-                    sorter: (a, b) => new Date(a.created_at) - new Date(b.created_at)
-                },
-                // {
-                //     title: 'Actions',
-                //     dataIndex: 'actions',
-                //     key: 'actions',
-                //     width: '15%',
-                //     fixed: 'right'
-                // }
-            ],
-
-            pendingPagination: {
-                current: 1,
-                pageSize: 10,
-                total: 0,
-                showSizeChanger: true,
-                showTotal: total => `Total ${total} requests`
-            },
-
-            acceptedPagination: {
-                current: 1,
-                pageSize: 10,
-                total: 0,
-                showSizeChanger: true,
-                showTotal: total => `Total ${total} requests`
-            },
-
-            rejectedPagination: {
-                current: 1,
-                pageSize: 10,
-                total: 0,
-                showSizeChanger: true,
-                showTotal: total => `Total ${total} requests`
-            }
-        };
+      activeKey: 'all',
+      viewMode: 'list', // 'grid' or 'list'
+      searchQuery: '',
+      requests: [],
+      loading: false
+    }
+  },
+  computed: {
+    filteredRequests() {
+      let filtered = this.requests
+      
+      // Filter by tab
+      if (this.activeKey !== 'all') {
+        filtered = filtered.filter(request => request.status === this.activeKey)
+      }
+      
+      // Filter by search
+      if (this.searchQuery) {
+        filtered = filtered.filter(request => 
+          request.email?.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          request.message?.toLowerCase().includes(this.searchQuery.toLowerCase())
+        )
+      }
+      
+      return filtered
+    }
+  },
+  
+  mounted() {
+    this.fetchRoomRequests()
+  },
+  
+  methods: {
+    
+    backButtonClicked(){
+       this.page_view='list_all_requests'
+      this.selected_request=null
+    },
+    recordClicked(e){
+      console.log(e)
+      this.page_view='request_details'
+      this.selected_request=e['record']
+    },
+    setViewMode(mode) {
+      this.viewMode = mode
+      console.log('View mode changed to:', mode)
     },
     
-    mounted() {
-        this.fetchPendingRequests();
-        this.fetchAcceptedRequests();
-        // this.fetchRejectedRequests();
+    handleTabChange(key) {
+      this.activeKey = key
     },
-
-    methods: {
-        async fetchPendingRequests() {
-            this.loadingPending = true;
-            try {
-                const response = await fetch(
-                    `${this.$store.state.root_api}access-engine/api/professional-access/pending-requests/`,
-                    {
-                        headers: { Authorization: `Token ${localStorage.getItem('token')}` },
-                    }
-                );
-
-                const data = await response.json();
-                if (!data.error && data.data) {
-                    this.pendingRequests = Array.isArray(data.data) ? data.data : [];
-                    this.rejectedRequests= Array.isArray(data.rejected_requests) ? data.rejected_requests : [];
-                    this.pendingPagination.total = this.pendingRequests.length;
-                } else {
-                    this.pendingRequests = [];
-                }
-            } catch (error) {
-                console.error('Error fetching pending requests:', error);
-                this.$message.error('Failed to load pending requests');
-                this.pendingRequests = [];
-            } finally {
-                this.loadingPending = false;
-            }
-        },
-
-        async fetchAcceptedRequests() {
-            this.loadingAccepted = true;
-            try {
-                const response = await fetch(
-                    `${this.$store.state.root_api}access-engine/api/professional-access/my-businesses/`,
-                    {
-                        headers: { Authorization: `Token ${localStorage.getItem('token')}` },
-                    }
-                );
-
-                const data = await response.json();
-                if (!data.error && data.data) {
-                    this.acceptedRequests = Array.isArray(data.data) ? data.data : [];
-
-                    this.acceptedPagination.total = this.acceptedRequests.length;
-                } else {
-                    this.acceptedRequests = [];
-                }
-            } catch (error) {
-                console.error('Error fetching accepted requests:', error);
-                this.$message.error('Failed to load accepted requests');
-                this.acceptedRequests = [];
-            } finally {
-                this.loadingAccepted = false;
-            }
-        },
-
-        // async fetchRejectedRequests() {
-        //     this.loadingRejected = true;
-        //     try {
-        //         // Placeholder for rejected requests endpoint
-        //         this.rejectedRequests = [];
-        //         this.rejectedPagination.total = 0;
-        //     } catch (error) {
-        //         console.error('Error fetching rejected requests:', error);
-        //         this.rejectedRequests = [];
-        //     } finally {
-        //         this.loadingRejected = false;
-        //     }
-        // },
-
-        openAcceptModal(request) {
-            this.selectedRequest = request;
-            this.acceptanceMessage = '';
-            this.showAcceptModal = true;
-        },
-
-        async handleAcceptRequest() {
-            if (!this.selectedRequest) return;
-
-            this.processingAccess = true;
-
-            try {
-                const response = await fetch(
-                    `${this.$store.state.root_api}access-engine/api/professional-access/accept-access/${this.selectedRequest.id}/`,
-                    {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Token ${localStorage.getItem('token')}`,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            response_message: this.acceptanceMessage
-                        })
-                    }   
-                );
-
-                const data = await response.json();
-
-                if (!data.error) {
-                    this.$message.success('Access accepted successfully!');
-                    this.showAcceptModal = false;
-                    
-                    await this.fetchPendingRequests();
-                    await this.fetchAcceptedRequests();
-                    
-                    this.selectedRequest = null;
-                    this.acceptanceMessage = '';
-                } else {
-                    this.$message.error(data.message || 'Failed to accept request');
-                }
-            } catch (error) {
-                console.error('Error accepting request:', error);
-                this.$message.error('An error occurred while accepting the request');
-            } finally {
-                this.processingAccess = false;
-            }
-        },
-
-        handleRejectRequest(requestId) {
-            this.$confirm({
-                title: 'Reject Access Request?',
-                content: 'Are you sure you want to reject this access request?',
-                okText: 'Yes, Reject',
-                okType: 'danger',
-                cancelText: 'Cancel',
-                onOk: async () => {
-                    try {
-                        const response = await fetch(
-                            `${this.$store.state.root_api}access-engine/api/professional-access/reject-access/${requestId}/`,
-                            {
-                                method: 'POST',
-                                headers: {
-                                    'Authorization': `Token ${localStorage.getItem('token')}`,
-                                    'Content-Type': 'application/json'
-                                }
-                            }
-                        );
-
-                        const data = await response.json();
-
-                        if (!data.error) {
-                            this.$message.success('Request rejected successfully');
-                            await this.fetchPendingRequests();
-                            // await this.fetchRejectedRequests();
-                        } else {
-                            this.$message.error(data.message || 'Failed to reject request');
-                        }
-                    } catch (error) {
-                        console.error('Error rejecting request:', error);
-                        this.$message.error('An error occurred while rejecting the request');
-                    }
-                }
-            });
-        },
-
-        handleRevokeAccess(accessId) {
-            this.$confirm({
-                title: 'Revoke Access?',
-                content: 'Are you sure you want to revoke access to this business?',
-                okText: 'Yes, Revoke',
-                okType: 'danger',
-                cancelText: 'Cancel',
-                onOk: async () => {
-                    try {
-                        const response = await fetch(
-                            `${this.$store.state.root_api}access-engine/api/professional-access/reject-access/${accessId}/`,
-                            {
-                                method: 'POST',
-                                headers: {
-                                    'Authorization': `Token ${localStorage.getItem('token')}`,
-                                    'Content-Type': 'application/json'
-                                }
-                            }
-                        );
-
-                        const data = await response.json();
-
-                        if (!data.error) {
-                            this.$message.success('Access revoked successfully');
-                            await this.fetchAcceptedRequests();
-                        } else {
-                            this.$message.error(data.message || 'Failed to revoke access');
-                        }
-                    } catch (error) {
-                        console.error('Error revoking access:', error);
-                        this.$message.error('An error occurred while revoking access');
-                    }
-                }
-            });
-        },
-
-        handleReactivateRequest(requestId) {
-            this.$confirm({
-                title: 'Reconsider Request?',
-                content: 'Do you want to accept this access request?',
-                okText: 'Yes, Accept',
-                cancelText: 'Cancel',
-                onOk: async () => {
-                    try {
-                        const response = await fetch(
-                            `${this.$store.state.root_api}access-engine/api/professional-access/accept-access/${requestId}/`,
-                            {
-                                method: 'POST',
-                                headers: {
-                                    'Authorization': `Token ${localStorage.getItem('token')}`,
-                                    'Content-Type': 'application/json'
-                                },
-                                body: JSON.stringify({
-                                    response_message: ''
-                                })
-                            }
-                        );
-
-                        const data = await response.json();
-
-                        if (!data.error) {
-                            this.$message.success('Request accepted successfully');
-                            // await this.fetchRejectedRequests();
-                            await this.fetchAcceptedRequests();
-                            await this.fetchPendingRequests();
-                        } else {
-                            this.$message.error(data.message || 'Failed to accept request');
-                        }
-                    } catch (error) {
-                        console.error('Error accepting request:', error);
-                        this.$message.error('An error occurred');
-                    }
-                }
-            });
-        },
-
-        handleTableChange(type, pagination) {
-            if (type === 'pending') {
-                this.pendingPagination = { ...this.pendingPagination, ...pagination };
-            } else if (type === 'accepted') {
-                this.acceptedPagination = { ...this.acceptedPagination, ...pagination };
-            } else {
-                this.rejectedPagination = { ...this.rejectedPagination, ...pagination };
-            }
-        },
-
-        formatDate(dateString) {
-            if (!dateString) return '-';
-            return new Date(dateString).toLocaleDateString();
+    
+    handleSearch() {
+      // Search is handled in computed property
+    },
+    
+    async refreshRequests() {
+      await this.fetchRoomRequests()
+    },
+    
+    async fetchRoomRequests() {
+      this.loading = true
+      
+      try {
+        const token = localStorage.getItem('token')
+        const response = await fetch(`${this.$store.state.root_api}room_request/api/room-request/`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token && { 'Authorization': `Token ${token}` })
+          }
+        })
+        
+        const result = await response.json()
+        
+        if (response.ok && result.success) {
+          this.requests = result.data || []
+        } else {
+          this.$message.error(result.message || 'Failed to fetch requests')
         }
+        
+      } catch (error) {
+        this.$message.error('Failed to load requests')
+      } finally {
+        this.loading = false
+      }
     }
-};
+  }
+}
 </script>
+
+<style scoped>
+.main {
+  padding: 20px;
+  background-color: white;
+  border-radius: 20px;
+  margin-top: 15px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* margin-bottom: 20px; */
+}
+
+.header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.view-controls {
+  display: flex;
+  gap: 0;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.view-controls .ant-btn {
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+}
+
+.view-controls .ant-btn:not(:last-child) {
+  border-right: 1px solid #d9d9d9;
+}
+
+.view-controls .ant-btn.active {
+  background-color: #1890ff;
+  color: white;
+}
+
+.search-bar {
+  margin-bottom: 20px;
+  max-width: 300px;
+  margin-left: auto;
+}
+
+.search-bar .ant-input {
+  border-radius: 8px;
+}
+</style>

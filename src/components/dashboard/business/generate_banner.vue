@@ -4,7 +4,11 @@
     <!-- Header Section --> 
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
       <div>
-        <h3 style="margin: 0; font-weight: 700; color: #1f2937;">
+        <h3 className="text-[18px]"     style="
+    font-family: var(--font-family-main);
+         color:var(--text-color)
+        "
+    >
           My Banners
         </h3>
         <p style="margin: 4px 0 0 0; color: #6b7280; font-size: 12px;">Create and manage your custom banners</p>

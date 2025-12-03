@@ -1698,19 +1698,45 @@ downloadMask(blob, filename) {
 
     // =================== EVENT LISTENERS ===================
     
-    setupEventListeners() {
-      if (!this.canvas) return;
+    // setupEventListeners() {
+    //   if (!this.canvas) return;
       
-      this.canvas.addEventListener('wheel', this.handleWheel, { passive: false });
-      this.canvas.addEventListener('mousedown', this.handleMouseDown);
-      this.canvas.addEventListener('mousemove', this.handleMouseMove);
-      this.canvas.addEventListener('mouseup', this.handleMouseUp);
-      this.canvas.addEventListener('mouseleave', this.handleMouseLeave);
-      this.canvas.addEventListener('click', this.handleObjectClick);
-      this.canvas.addEventListener('contextmenu', (e) => e.preventDefault());
-      this.canvas.addEventListener('touchstart', this.handleTouchStart, { passive: false });
-      this.canvas.addEventListener('touchmove', this.handleTouchMove, { passive: false });
-      this.canvas.addEventListener('touchend', this.handleTouchEnd);
+    //   this.canvas.addEventListener('wheel', this.handleWheel, { passive: false });
+    //   this.canvas.addEventListener('mousedown', this.handleMouseDown);
+    //   this.canvas.addEventListener('mousemove', this.handleMouseMove);
+    //   this.canvas.addEventListener('mouseup', this.handleMouseUp);
+    //   this.canvas.addEventListener('mouseleave', this.handleMouseLeave);
+    //   this.canvas.addEventListener('click', this.handleObjectClick);
+    //   this.canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+    //   this.canvas.addEventListener('touchstart', this.handleTouchStart, { passive: false });
+    //   this.canvas.addEventListener('touchmove', this.handleTouchMove, { passive: false });
+    //   this.canvas.addEventListener('touchend', this.handleTouchEnd);
+    // },
+        setupEventListeners() {
+      // console.log("g1");
+      if (!this.canvas) return;
+      // Prevent scroll/pinch on mobile
+      this.canvas.style.touchAction = "none";
+      // WHEEL (desktop zoom)
+      this.canvas.addEventListener("wheel", this.handleWheel, {
+        passive: false,
+      });
+      // :three_button_mouse: Mouse events (still keep)
+      this.canvas.addEventListener("mousedown", this.handleMouseDown);
+      this.canvas.addEventListener("mousemove", this.handleMouseMove);
+      this.canvas.addEventListener("mouseup", this.handleMouseUp);
+      this.canvas.addEventListener("mouseleave", this.handleMouseLeave);
+      this.canvas.addEventListener("click", this.handleObjectClick);
+      this.canvas.addEventListener("contextmenu", (e) => e.preventDefault());
+      // :star: POINTER EVENTS — MOBILE + DESKTOP (FULL FIX)
+      this.canvas.addEventListener("pointerdown", this.handleMouseDown);
+      this.canvas.addEventListener("pointermove", this.handleMouseMove);
+      this.canvas.addEventListener("pointerup", this.handleMouseUp);
+      this.canvas.addEventListener("pointerleave", this.handleMouseLeave);
+      // :x: REMOVE these — they break pointer events in Android
+      // this.canvas.addEventListener("touchstart", ...)
+      // this.canvas.addEventListener("touchmove", ...)
+      // this.canvas.addEventListener("touchend", ...)
     },
 
     removeEventListeners() {
@@ -3374,5 +3400,15 @@ removeObjectHighlight() {
 .mode-btn.active:hover {
   background: #40a9ff;
   border-color: #40a9ff;
+}
+@media screen and (min-width:400px) and (max-width:770px){
+  .canvas-container{
+    height: 70%;
+  }
+}
+@media screen and (min-width:200px) and (max-width:400px){
+  .canvas-container{
+    height: 71%;
+  }
 }
 </style>

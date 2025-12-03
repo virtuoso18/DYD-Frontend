@@ -1,13 +1,14 @@
 @import './base.css';
 @import "tailwindcss";
-
 @theme {
   /* Font Families */
   --font-family-proza: "Proza Libre", sans-serif;
   --font-family-public: "Public Sans", sans-serif;
   --font-family-poppins: "Poppins", sans-serif;
   --font-family-rubik: "Rubik", sans-serif;
-
+  
+  --text-color: black;
+   --font-family-main: 'Poppins', sans-serif;
   /* Custom Colors */
   --color-primary: #3B63FB;
   --color-bg-gray: #F9F9F9;

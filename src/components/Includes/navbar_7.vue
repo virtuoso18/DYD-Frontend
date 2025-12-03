@@ -125,21 +125,22 @@
         </a-select>
     </div>
   </template>
-  <a-button type="primary" @click="this.$router.push({name:'my-store'})">
-            <div style="display:flex;gap:5px">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 17" fill="none">
-<path d="M1.97754 7.49756V10.8321C1.97754 12.7184 1.97754 13.6616 2.56333 14.2476C3.14911 14.8336 4.09192 14.8336 5.97754 14.8336H9.97754C11.8631 14.8336 12.8059 14.8336 13.3917 14.2476C13.9775 13.6616 13.9775 12.7184 13.9775 10.8321V7.49756" stroke="white" stroke-linecap="round"/>
-<path d="M4.64453 12.4946H7.3112" stroke="white" stroke-linecap="round"/>
-<path d="M6.73554 6.11184C6.54755 6.79077 5.86386 7.96195 4.56485 8.13169C3.41789 8.28155 2.54798 7.78089 2.32578 7.57156C2.08079 7.40182 1.52245 6.85866 1.38571 6.51919C1.24897 6.17973 1.4085 5.44421 1.52245 5.14435L1.97796 3.82543C2.08916 3.49415 2.34947 2.71062 2.61635 2.4456C2.88323 2.18058 3.42355 2.16905 3.64594 2.16905H8.31627C9.51841 2.18603 12.1469 2.15833 12.6665 2.16905C13.1861 2.17977 13.4984 2.61533 13.5895 2.80203C14.3648 4.67991 14.6663 5.75539 14.6663 6.21367C14.5651 6.70255 14.1463 7.62436 12.6665 8.02982C11.1285 8.45122 10.2566 7.63162 9.98307 7.31695M6.10315 7.31695C6.31965 7.58282 6.99881 8.11809 7.98327 8.13169C8.96781 8.14522 9.81787 7.45836 10.1198 7.11326C10.2053 7.01142 10.3899 6.7093 10.5813 6.11184" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
-<span>My Store</span>
-            </div>
-</a-button>
+  
 
-    <p>Some contents...</p>
-    <p>Some contents...</p>
-    <p>Some contents...</p>
-  </a-drawer>
+<div v-if="user.user_type==='Business'">
+
+  <nav_mob_business/>
+</div>
+<div v-if="user.user_type==='Professional'">
+
+  <nav_mob_professional/>
+</div>
+
+<div v-if="user.user_type==='User'">
+  <nav_mob_user/>
+</div>
+
+</a-drawer>
 
         <nav class="navbar">
     <div class="navbar-container" style="padding-left:5px;padding-right:5px">
@@ -208,11 +209,17 @@ import { MenuOutlined } from '@ant-design/icons-vue';
 import { notification } from 'ant-design-vue'; // ✅ Import at top level
 import { useI18n } from 'vue-i18n'
 
+import nav_mob_business from '@/components/Includes/nav_comps/nav_mob_business.vue'
+import nav_mob_professional from '@/components/Includes/nav_comps/nav_mob_professional.vue'
+import nav_mob_user from '@/components/Includes/nav_comps/nav_mob_user.vue'
 
 export default {
   name: 'BasicNavbar',
   components: {
-    MenuOutlined
+    MenuOutlined,
+    nav_mob_business,
+    nav_mob_professional,
+    nav_mob_user
   },
   setup() {
   const { t, locale } = useI18n() // get translator & locale controller

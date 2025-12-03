@@ -1,7 +1,18 @@
 <template>
-<div class="sm:main sm:border border-gray-300 sm:translate-y-3 sm:rounded-xl min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh]">
+<div class="sm:main sm:border border-gray-200 bg-white !mb-5 sm:translate-y-3 sm:rounded-2xl min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh]">
     <a-row v-if="view_type=='all'">
-    <a-col :span="24"><h2 className="p-2 sm:p-0">My Designes</h2></a-col>
+    <a-col :span="24">
+
+
+   <h2 className="!p-4 sm:p-0 !font-[Poppins] font-medium text-[16px] leading-[24px] text-gray-700 tracking-[0]">
+  My Designes
+</h2>
+
+
+    
+    
+    
+    </a-col>
 
     <!-- Empty State -->
     <a-col :span="24" v-if="my_designes.length === 0" style="display:flex;justify-content:center;align-items:center;height:80vh;text-align: center; padding: 60px 20px;">
@@ -35,29 +46,89 @@
 
     <a-row v-if="view_type == 'details' && selected_design">
       <a-row>
-        <a-col :span="24" style="display: flex; justify-content: space-between">
-          <a-button @click="goback" type="text" size="large">
-            <ArrowLeftOutlined style="margin-right: 8px" />
-            <b>Back</b>
-          </a-button>
-          <div>
-            <a-button @click="edit_Design" type="default" v-if="!start_edit">
-              <EditOutlined /> Edit </a-button
-            >
-            
-            <a-button @click="save_Design" type="default" v-if="start_edit">
-              <SaveOutlined /> Save </a-button
-            >
-            
-            <a-button @click="close_Design" type="secondary" v-if="start_edit">
-              <CloseOutlined />Close
-            </a-button>
-            &nbsp;
-            <a-button @click="delete_Design" type="text" danger>
-              <DeleteOutlined /> Delete
-            </a-button>
-          </div>
-        </a-col>
+        <div class="w-full flex p-3 justify-between items-center">
+
+  <!-- Back Button -->
+  <button 
+    @click="goback" 
+    class="flex items-center gap-2 !text-gray-700 text-lg hover:text-black"
+  >
+    <!-- Icon -->
+    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+      <path fill-rule="evenodd" d="M10 18a1 1 0 01-.7-.3l-7-7a1 1 0 010-1.4l7-7a1 1 0 111.4 1.4L4.42 9H18a1 1 0 110 2H4.42l6.28 6.3A1 1 0 0110 18z" clip-rule="evenodd"/>
+    </svg>
+
+    <b>Back</b>
+  </button>
+
+  <!-- Right Side Buttons -->
+  <div class="flex items-center gap-3">
+
+    <!-- Edit Button -->
+    <button 
+      v-if="!start_edit"
+      @click="edit_Design"
+      class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 flex items-center gap-2 border border-gray-300"
+      style="font-family: var(--font-family-main); color: var(--text-color);"
+    >
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path d="M12 20h9"></path>
+        <path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4 12.5-12.5z"></path>
+      </svg>
+      Edit
+    </button>
+
+    <!-- Save Button -->
+    <button 
+      v-if="start_edit"
+      @click="save_Design"
+      class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2"
+      style="font-family: var(--font-family-main); color: var(--text-color);"
+    >
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path d="M5 13l4 4L19 7"></path>
+      </svg>
+      Save
+    </button>
+
+    <!-- Close Button -->
+    <button 
+      v-if="start_edit"
+      @click="close_Design"
+      class="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 flex items-center gap-2"
+      style="font-family: var(--font-family-main); color: var(--text-color);"
+    >
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
+      Close
+    </button>
+
+    <!-- Delete Button -->
+    <button 
+      @click="delete_Design"
+      class="px-4 py-2 !text-red-600 hover:text-red-700 border rounded-md flex items-center gap-2"
+    >
+    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_6921_12619)">
+<path d="M13.5938 3.75H1.40625C1.14375 3.75 0.9375 3.54375 0.9375 3.28125C0.9375 3.01875 1.14375 2.8125 1.40625 2.8125H13.5938C13.8562 2.8125 14.0625 3.01875 14.0625 3.28125C14.0625 3.54375 13.8562 3.75 13.5938 3.75Z" fill="#E33827"/>
+<path d="M10.332 3.57344L9.91953 2.20469C9.89113 2.10732 9.83192 2.02179 9.75078 1.96094C9.66964 1.90008 9.57095 1.86719 9.46953 1.86719H5.53203C5.43061 1.86719 5.33192 1.90008 5.25078 1.96094C5.16964 2.02179 5.11043 2.10732 5.08203 2.20469L4.66953 3.57344L3.76953 3.30156L4.18203 1.93281C4.36016 1.33281 4.90391 0.929688 5.53203 0.929688H9.46953C10.0977 0.929688 10.632 1.33281 10.8195 1.93281L11.232 3.30156L10.332 3.57344Z" fill="#E33827"/>
+<path d="M10.8086 14.0625H4.18984C3.43047 14.0625 2.81172 13.4625 2.78359 12.7031L2.46484 3.45L3.40234 3.42188L3.72109 12.675C3.72109 12.9281 3.93672 13.125 4.18984 13.125H10.818C11.0711 13.125 11.2773 12.9281 11.2867 12.675L11.6055 3.42188L12.543 3.45L12.2242 12.7031C12.1961 13.4625 11.5773 14.0625 10.818 14.0625H10.8086Z" fill="#E33827"/>
+<path d="M6.09375 10.8945C5.83125 10.8945 5.625 10.6883 5.625 10.4258V6.67578C5.625 6.41328 5.83125 6.20703 6.09375 6.20703C6.35625 6.20703 6.5625 6.41328 6.5625 6.67578V10.4258C6.5625 10.6883 6.35625 10.8945 6.09375 10.8945ZM8.90625 10.8945C8.64375 10.8945 8.4375 10.6883 8.4375 10.4258V6.67578C8.4375 6.41328 8.64375 6.20703 8.90625 6.20703C9.16875 6.20703 9.375 6.41328 9.375 6.67578V10.4258C9.375 10.6883 9.16875 10.8945 8.90625 10.8945Z" fill="#E33827"/>
+</g>
+<defs>
+<clipPath id="clip0_6921_12619">
+<rect width="15" height="15" fill="white"/>
+</clipPath>
+</defs>
+</svg>
+
+      Delete
+    </button>
+
+  </div>
+</div>
+
         <a-col :xs="24" :sm="24" :md="12" :lg="12" style="padding: 10px">
           <img
             :src="this.$store.state.root_media_api + selected_design.data.image"
@@ -80,7 +151,15 @@
           v-if="!start_edit"
         >
           <!-- {{ selected_design.data}} -->
-          {{ selected_design.data.room_description }}
+            <span      style="
+    font-family: var(--font-family-main);
+         color:var(--text-color)
+        "
+    >
+
+              {{ selected_design.data.room_description }}
+            </span>
+          
 
           <br /><br />
           <a-tag>{{ selected_design.data.room_type }}</a-tag>
@@ -98,6 +177,7 @@
           >
             Created From
           </p>
+          
 
           <router-link
             :to="'/' + selected_design.data.business_slug"
@@ -123,7 +203,63 @@
             <span style="font-size: 15px; font-weight: 600">{{
               selected_design.data.business_name
             }}</span>
+            
           </router-link>
+
+          <div class="w-full max-w-xl mx-auto bg-gray-100 rounded-2xl border border-gray-200 !mt-4  p-6">
+    <!-- Header -->
+    <div class="flex items-start gap-4 mb-6">
+      <!-- Image -->
+      <div class="flex-shrink-0">
+        <img 
+          :src="projectImage" 
+          alt="Project"
+          class="w-24 h-24 rounded-lg object-cover"
+        />
+      </div>
+
+      <!-- Text Content -->
+      <div class="flex-1">
+        <h2 class="text-xl font-bold text-gray-900 mb-2"
+        
+             style="
+    font-family: var(--font-family-main);
+         color:var(--text-color)
+        "
+    
+        >
+          Share your project
+        </h2>
+        <p class="text-gray-600 text-sm leading-relaxed">
+          Tell your community about the project you created
+        </p>
+      </div>
+    </div>
+
+    <!-- Share Button -->
+    <button 
+      @click="shareOnCommunity"
+      class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-4 px-6 rounded-xl flex items-center justify-center gap-3 transition-all duration-300 shadow-md hover:shadow-lg"
+    >
+      <svg 
+        class="w-5 h-5" 
+        fill="none" 
+        stroke="white" 
+        viewBox="0 0 24 24"
+      >
+        <path 
+          stroke-linecap="round" 
+          stroke-linejoin="round" 
+          stroke-width="2" 
+          d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
+        />
+      </svg>
+      <span className="text-white"      style="
+    font-family: var(--font-family-main);
+        "
+    >Share on community</span>
+    </button>
+  </div>
         </a-col>
         <a-col :xs="24" :sm="24" :md="12" :lg="12" style="padding: 10px" v-else>
           <div style="margin-bottom: 20px">
@@ -219,13 +355,25 @@
                 <!-- {{ truncateText(product.description || 'No description available', 8) }} -->
 
                 <a-row>
-                  <a-col span="24">
-                    <b>{{ product.product_title }}</b>
-                  </a-col>
+              <div
+  class="overflow-x-auto whitespace-nowrap hide-scrollbar"
+  style="max-width: 200px;"
+>
+  <b class="font-light !text-gray-700 inline-block">
+    {{ product.product_title }}
+  </b>
+</div>
 
-                  <a-col span="18"> Color </a-col>
 
-                  <a-col span="6" style="display: flex; justify-content: end">
+
+<a-col 
+  span="18"
+  
+  class="font-light !text-gray-700"
+>
+  Color
+</a-col>
+                  <a-col  span="6" style="display: flex; justify-content: end">
                     <div
                       v-for="(color, index) in product.product_colors.slice(
                         0,
@@ -247,9 +395,10 @@
                     </div>
                   </a-col>
 
-                  <a-col span="12"> Price </a-col>
+                  <a-col class="!text-gray-700" span="12"> Price </a-col>
 
                   <a-col
+                  class="!text-gray-700"
                     span="12"
                     style="
                       display: flex;
@@ -585,6 +734,16 @@ export default {
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
+
+.hide-scrollbar {
+  scrollbar-width: none;       /* Firefox */
+  -ms-overflow-style: none;    /* IE/Edge */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;               /* Chrome / Safari */
+}
+
 
 .ar-badge {
   position: absolute;
