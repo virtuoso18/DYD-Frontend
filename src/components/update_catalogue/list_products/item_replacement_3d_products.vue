@@ -156,7 +156,7 @@
     </div>
 
     <!-- Fixed Apply Button -->
-    <div class="apply-section">
+<div class="apply-section hidden md:block">
       <a-button type="primary" size="large" block  @click="$emit('trigger-render-3d-object')">
         Apply
       </a-button>

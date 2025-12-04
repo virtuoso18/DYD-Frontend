@@ -130,7 +130,7 @@ border:1px solid rgba(128, 128, 128, 0.14);" @click="selectTexture(item.id)"
         <p>No products found</p>
       </div>
     </div>
-    <div class="apply-section">
+<div class="apply-section hidden md:block">
       <a-button type="primary" size="large" block class="apply-button" @click="updateItemRendering()">
         Apply
       </a-button>

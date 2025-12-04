@@ -40,11 +40,22 @@
 
     <!-- Main Settings Container -->
     <div style="background-color: white; border-radius: 15px; border: 1px solid rgba(0,0,0,0.1); margin-top: 15px; min-height: 90vh; padding: 20px;">
-        <h2>Settings</h2>
+        <h2
+  className="!text-gray-700 p-2"
+  :style="{
+    fontFamily: 'Poppins',
+    fontWeight: 500,
+    fontStyle: 'normal',
+    fontSize: '16px',
+    lineHeight: '24px',
+    letterSpacing: '0%'
+  }"
+>
+Settings</h2>
 
         <!-- Watermark Management Section -->
         <div style="border: 1px solid rgba(0,0,0,0.2); padding: 15px; border-radius: 7px; margin-bottom: 20px;">
-            <h4>Manage Watermark</h4>
+            <h4 class="!text-gray-700" >Manage Watermark</h4>
             <a-row>
                 <a-col :span="20">
                     <p>To display your brand watermark on product images, turn on the toggle</p>
@@ -63,7 +74,7 @@
         <div style="border: 1px solid rgba(0,0,0,0.2); padding: 15px; border-radius: 7px;">
             <a-row>
                 <a-col :span="18">
-                    <h4>Manage Password</h4>
+                    <h4 class="!text-gray-700" >Manage Password</h4>
                     <p>Set a new password to keep your account safe.</p>
                 </a-col>
                 <a-col :xs="32" :sm="6" style="display: flex; justify-content: center; align-items: center;">

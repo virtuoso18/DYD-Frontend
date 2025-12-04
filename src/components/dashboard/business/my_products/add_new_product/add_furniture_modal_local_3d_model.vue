@@ -323,6 +323,8 @@ Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac tu
                   <div style="display: flex; align-items: center;">
                     <a-input-number
                       v-model:value="productForm.dimensions.height" 
+                        @keypress="allowOnlyDecimal"
+                        @paste="handlePaste"
                       :min="0"
                       :step="0.01"
                       placeholder="0.8"
@@ -335,6 +337,8 @@ Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac tu
                   <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Length/Depth</label>
                   <div style="display: flex; align-items: center;">
                     <a-input-number
+                    @keypress="allowOnlyDecimal"
+                        @paste="handlePaste"
                       v-model:value="productForm.dimensions.length" 
                       :min="0"
                       :step="0.01"
@@ -348,6 +352,8 @@ Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac tu
                   <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Width</label>
                   <div style="display: flex; align-items: center;">
                     <a-input-number
+                    @keypress="allowOnlyDecimal"
+                        @paste="handlePaste"
                       v-model:value="productForm.dimensions.width" 
                       :min="0"
                       :step="0.01"
@@ -657,6 +663,49 @@ export default {
     // Load all categories on component mount
   
     
+  // Handle paste event
+  handlePaste(e) {
+    e.preventDefault();
+    const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+    
+    // Clean the pasted text
+    let cleanValue = pastedText.replace(/[^0-9.]/g, '');
+    
+    // Ensure only one decimal point
+    const parts = cleanValue.split('.');
+    if (parts.length > 2) {
+      cleanValue = parts[0] + '.' + parts.slice(1).join('');
+    }
+    
+    // Insert cleaned value
+    const input = e.target;
+    const start = input.selectionStart;
+    const end = input.selectionEnd;
+    const currentValue = input.value;
+    
+    input.value = currentValue.substring(0, start) + cleanValue + currentValue.substring(end);
+    
+    // Trigger input event to update v-model
+    input.dispatchEvent(new Event('input'));
+  },
+  // Prevent non-numeric keys
+  allowOnlyDecimal(e) {
+    const char = String.fromCharCode(e.keyCode);
+    const value = e.target.value;
+    
+    // Allow: numbers, decimal point (only one), backspace, delete, tab, escape, enter
+    if (!/[0-9]/.test(char) && char !== '.') {
+      e.preventDefault();
+      return;
+    }
+    
+    // Prevent multiple decimal points
+    if (char === '.' && value.includes('.')) {
+      e.preventDefault();
+      return;
+    }
+  },
+
 async loadInitialCategories() {
   try {
     this.loadingCategories = true;

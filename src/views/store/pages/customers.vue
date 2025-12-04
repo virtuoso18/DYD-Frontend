@@ -2,13 +2,25 @@
 
     <div class="main">
         <div v-if="view === 'list'" class="customers-page">
-             <h3>Customers</h3>
+<h3 className="!text-gray-700 p-2"
+  style="
+    font-family: Poppins;
+    font-weight: 500;
+    font-style: normal;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: 0;
+  "
+>
+  Customers
+</h3>
+
 
             <!-- Loading State -->
             <a-spin v-if="loading" size="large" class="loading-spinner" />
 
             <!-- Customers Table -->
-              <a-table :columns="columns" :data-source="customers" :loading="loading" bordered>
+              <a-table :columns="columns" :data-source="customers" :loading="loading" bordered :pagination="false">
                 <template #bodyCell="{ column, text, record }">
                 <template v-if="column.dataIndex === 'customer_name'">
                     <div style="display: flex; align-items: center; gap: 12px;" @click="fetchCustomerRequests(record)">

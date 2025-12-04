@@ -7,7 +7,7 @@
         <p class="hero-subtitle">Explore the work of the most talented designers to inspire your work.</p>
       </div>
       <div class="lg:hidden block max-w-[1200px] sm:translate-x-10 md:translate-x-40 md:-translate-y-24 text-center relative z-10">
-  <h1 class="text-white text-2xl md:text-3xl font-semibold leading-tight mb-5 drop-shadow-md z-10">
+  <h1 class="text-white text-4xl md:text-3xl font-semibold leading-tight mb-5 drop-shadow-md z-10">
     Discover the world's top<br>interior design inspiration
   </h1>
   <p class="text-white/90 text-lg md:text-xl font-normal max-w-[500px] mx-auto relative z-10">
@@ -63,27 +63,19 @@
       <div class="search-section">
         <div class="search-container">
           <!-- Custom Dropdown -->
-        <div class="custom-dropdown" @click.stop="toggleDropdown">
-  <div class="dropdown-selected">
-    <img :src="selectedCategoryIcon" alt="Interior" class="selected-icon">
-    <span className="sm:hidden"><svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M0.53125 0.53125L4.53125 4.53125L8.53125 0.53125" stroke="#1A1A1A" stroke-width="1.5"/>
-</svg>
-</span>
-    <span class="selected-text text-gray-600">{{ selectedCategoryText }}</span>
-    <svg class="dropdown-arrow" :class="{ 'rotate-180': showDropdown }" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-    </svg>
-  </div>
-  <ul class="dropdown-options " v-show="showDropdown">
-    <li v-for="category in categoryOptions" :key="category.value" 
-        @click.stop="selectCategory(category)"
-        :data-value="category.value">
-      {{ category.text }}
-    </li>
-  </ul>
-</div>
-
+          <div class="custom-dropdown" @click="toggleDropdown">
+            <div class="dropdown-selected">
+              <img :src="selectedCategoryIcon" alt="Interior" class="selected-icon">
+              <span class="selected-text">{{ selectedCategoryText }}</span>
+            </div>
+            <ul class="dropdown-options" v-show="showDropdown">
+              <li v-for="category in categoryOptions" :key="category.value" 
+                  @click="selectCategory(category)"
+                  :data-value="category.value">
+                {{ category.text }}
+              </li>
+            </ul>
+          </div>
           
           <input 
             type="text" 
@@ -98,15 +90,15 @@
       
       <!-- Trending Section -->
       <div class="trending-section">
-  <h3 class="!font-space !font-normal !text-[18px] text-gray-800 !leading-none !tracking-[0] text-center">
+  <h3 class="!font-space !font-normal !text-[18px] !leading-none !tracking-[0] text-center">
     Trending searches
   </h3>
 
-  <div class="trending-tags text-gray-700 flex flex-wrap gap-2 justify-center mt-3">
+  <div class="trending-tags flex flex-wrap gap-2 justify-center mt-3">
 
     <!-- Button 1 -->
     <button 
-      class="bg-[#F2F2F2] !px-4 !py-1 rounded-md text-[12px]  font-[400] leading-[100%] text-center font-space"
+      class="bg-[#F2F2F2] !px-4 !py-1 rounded-md text-[12px] font-[400] leading-[100%] text-center font-space"
     >
       Modern Interior
     </button>
@@ -258,22 +250,11 @@
 
 <!-- Today's Top Designs Section -->
 <div className="bg-[#F2F2F2] !py-6">
-  <span
-  style="
-    font-family: 'Proza Libre';
-    font-weight: 600;
-    font-style: normal;
-    font-size: 32px;
-    line-height: 40px;
-    letter-spacing: -0.02em;
-    text-align: center;
-    color: #1A1A1A;
-    display: block;
-  "
->
-  Today's Top Designs
-</span>
-
+  <span 
+    class="!font-proza-libre !font-semibold !text-[32px] !leading-[40px]  text-[#1A1A1A] !tracking-[-0.02em] text-center block"
+  >
+    Today's Top Designs
+  </span>
   
   <div class="flex flex-row overflow-x-auto !p-4 no-scrollbar gap-6" v-if="topDesigns.length > 0">
     <DesignCard
@@ -296,21 +277,20 @@
 
 <!-- Community Section -->
 <div class="w-full mx-auto px-4">
-  <h1 class="text-4xl font-semibold !text-gray-700 text-center !py-10">Community</h1>
+  <h1 class="text-4xl font-semibold text-center !py-10">Community</h1>
 
   <!-- Tabs -->
-  <div class="flex gap-6 !text-gray-700 justify-center pb-8">
-  <button
-    v-for="(tab, index) in tabs"
-    :key="index"
-    @click="changeTab(tab)"
-    class="tab-text tab-btn pb-2 border-b-2 transition-all duration-300"
-    :class="activeTab === tab ? 'tab-active border-blue-600' : 'tab-inactive border-transparent'"
-  >
-    {{ tab }}
-  </button>
-</div>
-
+  <div class="flex gap-6 justify-center pb-8">
+    <button
+      v-for="(tab, index) in tabs"
+      :key="index"
+      @click="changeTab(tab)"
+      class="tab-text tab-btn"
+      :class="activeTab === tab ? 'tab-active' : 'tab-inactive'"
+    >
+      {{ tab }}
+    </button>
+  </div>
 
   <!-- Desktop Grid -->
   <div class="grid grid-cols-4 sm:grid-cols-4 !pt-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 hidden sm:grid place-items-center !px-4 gap-x-10 gap-6 community-section" v-if="apiData.length > 0">
@@ -600,34 +580,6 @@ export default {
       showDropdown: false,
       showCommentsModal: false,  // ADD THIS
     selectedPost: null,        // ADD THIS
-     categoryOptions: [
-      { 
-        value: 'interior', 
-        text: 'Interior Design',
-        icon: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=50&q=80'
-      },
-      { 
-        value: 'living-room', 
-        text: 'Living Room',
-        icon: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=50&q=80'
-      },
-      { 
-        value: 'bedroom', 
-        text: 'Bedroom',
-        icon: 'https://images.unsplash.com/photo-1616594039964-ae9021a400a0?ixlib=rb-4.0.3&auto=format&fit=crop&w=50&q=80'
-      },
-      { 
-        value: 'kitchen', 
-        text: 'Kitchen',
-        icon: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&auto=format&fit=crop&w=50&q=80'
-      },
-      { 
-        value: 'bathroom', 
-        text: 'Bathroom',
-        icon: 'https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?ixlib=rb-4.0.3&auto=format&fit=crop&w=50&q=80'
-      }
-    ],
-    
       swiper_bg: swiper_bg,
       slidesPerView: window.innerWidth <= 768 ? 1 : 5,
       designers_slidesPerView: window.innerWidth <= 768 ? 3 : 8,
@@ -1734,21 +1686,14 @@ prevPage() {
 }
 
 .dropdown-selected {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 12px;
-    background: #fff;
-    border-radius: 8px;
-    border: none; /* default: no border on mobile */
-  }
-
-  /* Add border only after sm (640px) */
-  @media (min-width: 640px) {
-    .dropdown-selected {
-      border: 1px solid #ccc;
-    }
-  }
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: #fff;
+}
 
 .dropdown-selected img {
   width: 20px;

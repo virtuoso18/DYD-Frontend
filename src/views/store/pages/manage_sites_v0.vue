@@ -12,23 +12,7 @@
     
         <div style="background-color: white; padding:10px;border-radius:10px; border:2px solid rgba(128, 128, 128, 0.16); ">
 <a-row>
-    <a-col :span="20">
-      
-<h2
-  className="!text-gray-700 p-2"
-  :style="{
-    fontFamily: 'Poppins',
-    fontWeight: 500,
-    fontStyle: 'normal',
-    fontSize: '16px',
-    lineHeight: '24px',
-    letterSpacing: '0%'
-  }"
->
-  {{ isEditing ? 'Edit Site' : 'Manage Store' }}
-</h2>
-    
-    </a-col>
+    <a-col :span="20"> <h2>{{ isEditing ? 'Edit Site' : 'Manage Store' }}</h2></a-col>
     <a-col :span="4" style="display: flex;justify-content: end;"> 
         <a-button v-if="!isEditing" type="primary" @click="enableEdit">Edit</a-button>
         <div v-else style="display: flex; gap: 10px;">
@@ -80,7 +64,7 @@
         </div>
         <br>
         <div style="padding:10px;">
-            <div class="!text-gray-700" style="background: #f3f3f3;;border-radius:10px;padding:10px;">
+            <div style="background: #f3f3f3;;border-radius:10px;padding:10px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                     <h1 v-if="!isEditing" style="font-size:18px">{{ editData.storeTitle }}</h1>
                     <a-input v-else 
@@ -102,7 +86,7 @@
             </div>
         </div>
         <br>
-         <div class="!text-gray-700"  style="padding:10px;">
+         <div style="padding:10px;">
             <div style="background: #f3f3f3;;border-radius:10px;padding:10px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                     <h1 v-if="!isEditing" style="font-size:16px">{{ editData.servicesTitle }}</h1>
@@ -143,21 +127,21 @@
         <div>
             <a-row>
                 <a-col :sm="24" :xs="24" :md="12" :lg="12" style="">
-                    <a-row class="!text-gray-700"  style="padding-top:50px">
+                    <a-row style="padding-top:50px">
                         
                             <a-col :sm="12" :xs="12" :md="12" :lg="12" style="border-right: 2px solid rgba(0,0,0,0.3) ;display: flex;justify-content: center;align-items: center;padding-top:20px">
 
                                 <div style="display: flex;flex-direction: column;justify-content: center;align-items: center">
 
-                                    <h1 class="!text-gray-700" >
+                                    <h1>
                                         4.5
                                     </h1>
                                     <a-rate :value="4"></a-rate>
-                                    <h5 class="!text-gray-700" >(25 Users)</h5>
+                                    <h5>(25 Users)</h5>
                                 </div>
                             </a-col>
                             <a-col :sm="12" :xs="12" :md="12" :lg="12" style="padding:5px">
-                                <div class="!text-gray-700"  style="display: flex;gap:5px;">
+                                <div style="display: flex;gap:5px;">
                                     5<a-progress :percent="50" size="small" status="active" />
                                 </div>
                                                                 <div style="display: flex;gap:5px;">
@@ -215,7 +199,7 @@
         </div>
 <br>
         <!-- My Products Section -->
-<div class="!text-gray-700"  style="padding:10px;padding-top:0;background-color: white;border-radius:10px;border:2px solid rgba(128, 128, 128, 0.16);">
+<div style="padding:10px;padding-top:0;background-color: white;border-radius:10px;border:2px solid rgba(128, 128, 128, 0.16);">
   <a-row>
     <a-col :span="18" style="padding-top:20px">      
       <b><h2>My Products</h2></b>
@@ -251,7 +235,7 @@
         </div>
 
         <!-- Products Loaded Successfully -->
-        <div class="!text-gray-700"  v-else style="width: 100%;">
+        <div v-else style="width: 100%;">
             <!-- Debug Info (optional - remove in production) -->
             <div v-if="our_products.length > 0" style="background: #f9f9f9; border: 1px solid #e8e8e8; padding: 12px; margin-bottom: 15px; border-radius: 6px; font-size: 12px; color: #666;">
                 <strong>Products Status:</strong> Showing {{ our_products.length }} of {{ totalProducts }} | Page {{ productsPage }} | More Available: {{ hasMoreProducts ? 'Yes' : 'No' }}

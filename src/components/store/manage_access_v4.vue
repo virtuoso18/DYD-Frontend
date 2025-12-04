@@ -467,19 +467,10 @@
     <div class="page-header">
       <a-row type="flex" justify="space-between" align="middle">
         <a-col>
-          <h2
-  className="!text-gray-700 p-2"
-  :style="{
-    fontFamily: 'Poppins',
-    fontWeight: 500,
-    fontStyle: 'normal',
-    fontSize: '16px',
-    lineHeight: '24px',
-    letterSpacing: '0%'
-  }"
->
+          <h2>
+            <a-icon type="left" class="back-icon" />
             Staff & Task Management
-</h2>
+          </h2>
         </a-col>
         <a-col class="!flex flex-row !gap-3">
            <a-button 

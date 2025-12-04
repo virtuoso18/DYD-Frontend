@@ -315,12 +315,12 @@
                 <div class="hidden md:flex justify-between items-center pt-4 mb-5">
 
   <!-- Title -->
-  <h2 class="m-0 text-lg whitespace-nowrap px-2 lg:text-2xl font-semibold">
-    My Products
+  <h3 class="flex whitespace-nowrap px-2 lg:text-lg font-semibold">
+    My Products&nbsp;
     <span class="text-gray-500 text-base">
       ({{ products.length + wall.length + floor.length + myLights.length }})
     </span>
-  </h2>
+  </h3>
 
   <!-- Right Side Buttons -->
   <div class="flex justify-between items-end sm:flex-col sm:w-full  xl:flex-row ">

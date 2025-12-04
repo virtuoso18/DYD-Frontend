@@ -195,16 +195,10 @@
   <!-- LEFT : Icon + Text -->
   <div class="flex items-center gap-3 text-gray-500">
     <div class="nav-icon-wrapper">
-      <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
-        <path 
-          d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21" 
-          stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
-        />
-        <circle 
-          cx="12" cy="7" r="4"
-          stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
-        />
-      </svg>
+      <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+ <path d="M0.5 14.5C0.5 13.4391 0.921427 12.4217 1.67157 11.6716C2.42172 10.9214 3.43913 10.5 4.5 10.5H12.5C13.5609 10.5 14.5783 10.9214 15.3284 11.6716C16.0786 12.4217 16.5 13.4391 16.5 14.5C16.5 15.0304 16.2893 15.5391 15.9142 15.9142C15.5391 16.2893 15.0304 16.5 14.5 16.5H2.5C1.96957 16.5 1.46086 16.2893 1.08579 15.9142C0.710714 15.5391 0.5 15.0304 0.5 14.5Z" stroke="white" stroke-linejoin="round"/>
+ <path d="M8.5 6.5C10.1569 6.5 11.5 5.15685 11.5 3.5C11.5 1.84315 10.1569 0.5 8.5 0.5C6.84315 0.5 5.5 1.84315 5.5 3.5C5.5 5.15685 6.84315 6.5 8.5 6.5Z" stroke="white"/>
+ </svg>
     </div>
     <span class="nav-text">Profile</span>
   </div>

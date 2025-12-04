@@ -113,8 +113,7 @@
     :placement="'left'"
     :closable="true"
     :open="openMobileDrawer"
-    :width="'70%'"
-:bodyStyle="{ padding: '8px' }"
+    :width="'80%'"
     @close="showDrawer"
   >
   <template #title>
@@ -539,9 +538,6 @@ if (savedLang) {
   z-index: 1000;
 }
 
-:deep(.ant-drawer-body) {
-  padding: 0 !important;
-}
 .navbar-container {
   margin: 0 auto;
   display: flex;

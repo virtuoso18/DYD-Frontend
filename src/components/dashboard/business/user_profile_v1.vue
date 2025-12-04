@@ -1,12 +1,12 @@
 <template>
-<div class="main sm:py-3 min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh]">    
+<div class="main py-3 min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh]">    
     <!-- Main Dashboard Content -->
     <a-row class="dashboard-content ">
       <!-- Content Area -->
       <a-col :xs="24" :sm="24" :md="24" :lg="24" class="content-area">
-        <div class="sm:content-wrapper">
+        <div class="content-wrapper">
           <!-- Wavy Background Header -->
-          <div class="wavy-header sm:rounded-t-3xl" :style="'background: url('+this.$store.state.root_media_api+profile.background_picture+') center/cover no-repeat;'">
+          <div class="wavy-header" :style="'background: url('+this.$store.state.root_media_api+profile.background_picture+') center/cover no-repeat;'">
             <!-- Background Edit Button -->
             <a-button type="primary" shape="circle" v-if="isEditing" style="top:20px;left:20px" @click="handleBackgroundClick">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -375,7 +375,8 @@ export default {
   position: relative;
   height: 200px;
   background: url("../../../assets/pricing-banner.png") center/cover no-repeat;
-  
+  border-top-left-radius: 24px;
+  border-top-right-radius: 24px;
 }
 
 .header-profile {

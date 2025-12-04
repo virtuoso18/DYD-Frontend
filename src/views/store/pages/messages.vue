@@ -12,7 +12,7 @@
         <div class="p-5 border-b border-gray-200">
           <!-- Back button for mobile -->
           <div v-if="isMobile" class="flex items-center gap-3 mb-4">
-            <button @click="goBack" class="p-2 hover:bg-gray-100 rounded-full">
+            <button @click="goBack" class="p-2 hover:bg-gray-100 !text-gray-700 rounded-full">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
               </svg>
@@ -26,7 +26,7 @@
             <input 
               type="text" 
               placeholder="Search by name" 
-              class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-3xl text-sm outline-none transition-all focus:bg-white focus:border-blue-500 focus:shadow-lg"
+              class="w-full px-4 py-3 bg-gray-50 !text-gray-800 placeholder-gray-500 border border-gray-200 rounded-3xl text-sm outline-none transition-all focus:bg-white focus:border-blue-500 focus:shadow-lg"
               v-model="searchQuery"
             >
           </div>

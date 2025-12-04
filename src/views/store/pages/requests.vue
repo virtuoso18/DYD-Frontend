@@ -3,7 +3,19 @@
     <div className="hidden sm:block">
 
       <div class="header ">
-        <h2>Requests</h2>
+       <h2
+  className="!text-gray-700 p-2"
+  :style="{
+    fontFamily: 'Poppins',
+    fontWeight: 500,
+    fontStyle: 'normal',
+    fontSize: '16px',
+    lineHeight: '24px',
+    letterSpacing: '0%'
+  }"
+>
+ Request
+</h2>
         <div class="view-controls ">
           <div class="">
         <a-input 
