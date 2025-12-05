@@ -2330,11 +2330,13 @@ getQueueStatusColor(status) {
         const errorData = await response.json()
         throw new Error(errorData.msg || 'Generation failed')
       }
+      this.isGenerating = false
     } catch (error) {
+      this.isGenerating = false
       console.error('Generation error:', error)
       this.$message.error(error.message || 'Failed to add to queue')
     } finally {
-      this.isGenerating = false
+      
       this.$emit('processing-generate', false)
     }
   },

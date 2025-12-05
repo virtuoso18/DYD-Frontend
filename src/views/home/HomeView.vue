@@ -221,7 +221,7 @@
         </a-col>
         <a-col :span="24"   style="max-width:1200px;margin:auto">
             <a-row>
-                <a-col :sm="24" :xs="24" :md="12" :lg="12">
+                <a-col :sm="24" :xs="23" :md="12" :lg="12">
                     <br>
                     <div style="border-radius:20px;;background-color: white;border:3px dotted grey ;height:350px;width:100%;;display:flex;flex-direction:column;justify-content: center;align-items: center;font-size:18px;">
                         
@@ -240,7 +240,7 @@ Drag & drop Image
                    <div style="border-radius:20px;height:400px;max-width:450px;width:90%;margin:auto;display:flex;flex-direction:column;justify-content: center;align-items: center;font-size:18px;padding:20px;">
                         
                         <p>or use an example image</p>
-                        <a-space  class="no-scrollbar" style="overflow-x: auto;max-width:340px;">
+                        <a-space  class="no-scrollbar" style="overflow-x: auto;max-width:320px;">
                             <a-button>Living Room</a-button>
                             <a-button>Kitchen</a-button>
                             <a-button>Bedroom</a-button>

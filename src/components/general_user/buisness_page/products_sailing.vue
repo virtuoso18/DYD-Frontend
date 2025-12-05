@@ -90,6 +90,14 @@ export default {
   data() {
     return {}
   },
+   watch: {
+  '$route.params.product_id'(newVal, oldVal) {
+    if (newVal !== oldVal) {
+      window.location.reload()
+    }
+  },
+  },
+
   methods: {
       goto_product_Route(product){
       this.$router.push({

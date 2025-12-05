@@ -115,7 +115,7 @@
     :open="openMobileDrawer"
     :width="'70%'"
 :bodyStyle="{ padding: '8px' }"
-    @close="showDrawer"
+    @close="closeMobileDrawer"
   >
   <template #title>
     <div style="display:flex;justify-content :space-between">
@@ -128,18 +128,15 @@
   </template>
   
 
-<div v-if="user.user_type==='Business'">
-
-  <nav_mob_business/>
-</div>
+ <div v-if="user.user_type==='Business'">
+          <nav_mob_business @close="closeMobileDrawer" />
+        </div>
 <div v-if="user.user_type==='Professional'">
 
-  <nav_mob_professional/>
-</div>
+<nav_mob_professional @close="closeMobileDrawer" /></div>
 
 <div v-if="user.user_type==='User'">
-  <nav_mob_user/>
-</div>
+<nav_mob_user @close="closeMobileDrawer" /></div>
 
 </a-drawer>
 
@@ -282,6 +279,18 @@ if (savedLang) {
   },
   
   methods: {
+
+     // ============ DRAWER METHODS ============
+    showDrawer() {
+      this.openMobileDrawer = !this.openMobileDrawer
+    },
+
+    closeMobileDrawer() {
+      window.location.href = window.location.pathname + "?p=true";
+      this.openMobileDrawer = false
+      console.log('✅ Mobile drawer closed')
+    },
+
 
     // ============ CREDITS METHODS ============
     async fetch_current_credits_of_user(){

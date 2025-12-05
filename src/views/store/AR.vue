@@ -163,7 +163,7 @@
       </a-drawer>
     </div>
     <div v-if="stage > 1 && stage < 4 && !isSessionStarted" class="stageview">
-      <StageView :currentStage="stage" />
+      <StageView :currentStage="stage" @start-ar="startARSession" />
     </div>
     <div v-else-if="stage === 1" class="stage1_sec">
       <div
@@ -223,6 +223,8 @@
                 type="primary"
                 size="large"
                 aria-label="Go Back"
+                @click="this.$router.back()"
+
                 style="display:flex;justify-content: center;align-items: center;"
               >
                 <template #icon>
@@ -252,7 +254,7 @@
             z-index: 1000;
           "
         >
-          <a-button type="primary" size="large" @click="IncreasesStage">
+          <a-button type="primary" size="large" @click="startARSession">
             Try in AR →
           </a-button>
         </div>
@@ -344,7 +346,7 @@
 <script>
 import StageView from "@/components/AR/starting_instruction_ar.vue";
 import canvas_3d_model_renderer from "@/components/AR/canvas_3d_model_renderer.vue";
-import { ArrowLeftOutlined, HeartOutlined,IssuesCloseOutlined , ShoppingCartOutlined } from "@ant-design/icons-vue";
+import { ArrowLeftOutlined, HeartOutlined, IssuesCloseOutlined, ShoppingCartOutlined } from "@ant-design/icons-vue";
 
 export default {
   name: "ARSpinosaurs",
@@ -354,153 +356,28 @@ export default {
       startY: 0,
       currentY: 0,
       dragAmount: 0,
-      isLoading: true,
+      isLoading: false,
       loadingMessage: "Initializing AR...",
       stage: 1,
-      debugStatus: "Starting...",
-      arStatus: "Checking AR support...",
-      floorDetection: "Loading...",
+      debugStatus: "Ready",
+      arStatus: "AR Ready",
       isSessionStarted: false,
       fullScreenMode: false,
       shouldShowStatus: true,
-      modelObject: null,
-      modelScale: 0.5,
-      error: null,
+      modelUrl: "",
+      ProductDetails: null,
       scene: null,
       dino: null,
-      sizes: [
-        { label: "Full (1x)", value: 1 },
-        { label: "Medium (0.5x)", value: 0.5 },
-        { label: "Small (0.0625x)", value: 0.0625 },
-      ],
-      diamensions: { width: 2.06, height: 1.4, depth: 0.7 },
-      modelUrl:"",
-      ProductDetails:null,
-        // "https://rawcdn.githack.com/KhronosGroup/glTF-Sample-Models/master/2.0/SheenChair/glTF-Binary/SheenChair.glb",
-      light: null,
-      sceneInitialized: false,
       modelPlaced: false,
       fixedModelPosition: null,
-      // New properties for drag & rotate
-      showMenu: false,
-      dragMode: "rotate",
-      modelRotation: 0,
-      modelPosition: { x: 0, z: 0 },
-      isDragging: false,
-      dragStart: { x: 0, y: 0 },
-      isFullscreen: false,
-
-      // Reticle JSON data
-      reticleJSON: {
-        asset: {
-          generator: "Khronos glTF Blender I/O v1.0.5",
-          version: "2.0",
-        },
-        scene: 0,
-        scenes: [{ name: "Scene", nodes: [0, 1, 2] }],
-        nodes: [
-          {
-            name: "Light",
-            rotation: [
-              0.16907575726509094, 0.7558803558349609, -0.27217137813568115,
-              0.570947527885437,
-            ],
-            translation: [
-              4.076245307922363, 5.903861999511719, -1.0054539442062378,
-            ],
-          },
-          {
-            name: "Camera",
-            rotation: [
-              0.483536034822464, 0.33687159419059753, -0.20870360732078552,
-              0.7804827094078064,
-            ],
-            translation: [
-              7.358891487121582, 4.958309173583984, 6.925790786743164,
-            ],
-          },
-          {
-            mesh: 0,
-            name: "Torus",
-            scale: [0.7128448486328125, 0.7128448486328125, 0.7128448486328125],
-          },
-        ],
-        materials: [
-          {
-            doubleSided: true,
-            emissiveFactor: [0.27902206778526306, 0.5199682712554932, 1],
-            name: "Material.001",
-            pbrMetallicRoughness: {
-              baseColorFactor: [
-                0.05667726323008537, 0.5679765939712524, 0.8000000715255737, 1,
-              ],
-              metallicFactor: 0,
-              roughnessFactor: 1,
-            },
-          },
-        ],
-        meshes: [
-          {
-            name: "Torus",
-            primitives: [
-              {
-                attributes: { POSITION: 0, NORMAL: 1, TEXCOORD_0: 2 },
-                indices: 3,
-                material: 0,
-              },
-            ],
-          },
-        ],
-        accessors: [
-          {
-            bufferView: 0,
-            componentType: 5126,
-            count: 150,
-            max: [0.1961740255355835, 0.020665571093559265, 0.1961740255355835],
-            min: [
-              -0.1961740255355835, 0.0008523659780621529, -0.1961740255355835,
-            ],
-            type: "VEC3",
-          },
-          { bufferView: 1, componentType: 5126, count: 150, type: "VEC3" },
-          { bufferView: 2, componentType: 5126, count: 150, type: "VEC2" },
-          { bufferView: 3, componentType: 5123, count: 282, type: "SCALAR" },
-        ],
-        bufferViews: [
-          { buffer: 0, byteLength: 1800, byteOffset: 0 },
-          { buffer: 0, byteLength: 1800, byteOffset: 1800 },
-          { buffer: 0, byteLength: 1200, byteOffset: 3600 },
-          { buffer: 0, byteLength: 564, byteOffset: 4800 },
-        ],
-        buffers: [{ byteLength: 5364, uri: "/assets/reticle.bin" }],
-      },
+      cartLoading: false,
+      error: null,
     };
   },
 
-  // watch: {
-  // '$route.params.product_id'(newVal, oldVal) {
-  //   if (newVal !== oldVal) {
-  //     window.location.reload()
-  //   }
-  // },
-  // },
   mounted() {
-    console.log("yaha tak:");
-    // this.debugStatus = "Mounted, loading product...";
-    this.fetchProductDetails()
-
-    // this.fetchProductDetails()
-    //   .then(() => {
-    //     console.log("✅ Product loaded, model URL ready:", this.modelUrl);
-    //     this.waitForAFrame();
-    //   })
-    //   .catch((err) => {
-    //     console.error("❌ Failed to fetch product:", err);
-    //     this.isLoading = false;
-    //   });
-
-    // // Wait until A-Frame scene exists before attaching listeners
-    // this.waitForSceneAndBind();
+    console.log("✓ Component mounted");
+    this.fetchProductDetails();
   },
 
   beforeUnmount() {
@@ -510,62 +387,318 @@ export default {
   },
 
   methods: {
-    goto_product_Route(product) {
-  this.$router.push({
-    name: 'buisness_product',
-    params: {
-      buisness_name: product.business_slug,
-      product_type: 'product',
-      product_id: product.id
-    }
-  }).then(() => {
-    // Reload AFTER navigation is done
-    window.location.reload();
-  }).catch(err => {
-    console.error("Navigation failed:", err);
-  });
-},
+    // ============================================
+    // 🚀 START AR SESSION
+    // ============================================
+    async startARSession() {
+      console.log("🚀 Starting AR Session...");
+      this.loadingMessage = "Loading AR...";
+      this.isLoading = true;
+      this.error = null;
 
-  async addToCart() {
-    if (!this.ProductDetails || !this.ProductDetails.id) {
-      this.$message.error('Product not found');
-      return;
-    }
+      if (!this.modelUrl) {
+        try {
+          await this.fetchProductDetails();
+        } catch (err) {
+          console.error("❌ Failed to load product:", err);
+          this.isLoading = false;
+          return;
+        }
+      }
 
-    this.cartLoading = true;
-    
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(
-        `${this.$store.state.root_api}cart/add/`,
-        {
-          method: 'POST',
+      this.stage = 3;
+
+      setTimeout(() => {
+        this.loadARFramework();
+      }, 100);
+    },
+
+    // ============================================
+    // 📦 LOAD A-FRAME
+    // ============================================
+    async loadARFramework() {
+      // Check if already loaded
+      const w = window;
+      if (w.AFRAME && w.AFRAME.version) {
+        console.log("✓ A-Frame already loaded");
+        this.setupARScene();
+        return;
+      }
+
+      // Load A-Frame script
+      const script = document.createElement("script");
+      script.src = "https://aframe.io/releases/1.4.0/aframe.min.js";
+      script.async = true;
+
+      script.onload = () => {
+        console.log("✓ A-Frame loaded");
+        setTimeout(() => this.setupARScene(), 500);
+      };
+
+      script.onerror = () => {
+        console.error("❌ Failed to load A-Frame");
+        this.isLoading = false;
+        this.error = "Failed to load AR framework";
+      };
+
+      document.head.appendChild(script);
+    },
+
+    // ============================================
+    // 🎬 SETUP AR SCENE
+    // ============================================
+    setupARScene() {
+      this.$nextTick(() => {
+        const container = document.getElementById("ar-scene-container");
+        if (!container) {
+          console.error("❌ AR container not found");
+          this.error = "AR container not found";
+          this.isLoading = false;
+          return;
+        }
+        this.createARScene(container);
+      });
+    },
+
+    // ============================================
+    // 🎨 CREATE AR SCENE
+    // ============================================
+    createARScene(container) {
+      console.log("🎨 Creating AR scene with model:", this.modelUrl);
+
+      const sceneHTML = `
+        <a-scene
+          webxr="requiredFeatures: hit-test,local-floor; optionalFeatures: dom-overlay; overlayElement: .ar-app;"
+          renderer="colorManagement: true; physicallyCorrectLights: true;"
+        >
+          <a-assets>
+            <a-asset-item id="model" src="${this.modelUrl}" response-type="arraybuffer" crossorigin="anonymous"></a-asset-item>
+          </a-assets>
+
+          <a-camera position="0 1.2 0"></a-camera>
+
+          <!-- Reticle Marker for Floor -->
+          <a-entity 
+            id="reticle-marker" 
+            position="0 -0.5 -2" 
+            visible="false"
+          >
+            <a-cylinder position="0 0 0" radius="0.15" height="0.001" color="#4CAF50" opacity="0.7"></a-cylinder>
+          </a-entity>
+
+          <!-- 3D Model Container -->
+          <a-entity 
+            id="dino" 
+            position="0 -2 -5" 
+            scale="0.8 0.8 0.8"
+            visible="false"
+          >
+            <a-entity gltf-model="#model" animation-mixer shadow="cast: true; receive: false"></a-entity>
+          </a-entity>
+
+          <!-- Shadow Plane -->
+          <a-plane 
+            id="shadowPlane" 
+            height="100" 
+            width="100" 
+            rotation="-90 0 0" 
+            position="0 0 0" 
+            shadow="receive: true; cast: false" 
+            material="color: #ffffff; transparent: true; opacity: 0.001;"
+          ></a-plane>
+
+          <!-- Lighting -->
+          <a-light type="hemisphere" intensity="1.2" color="#ffffff"></a-light>
+          <a-light 
+            type="directional" 
+            position="5 8 5" 
+            intensity="1.5" 
+            light="castShadow: true; shadowMapHeight: 2048; shadowMapWidth: 2048;"
+          ></a-light>
+          <a-light type="directional" position="-5 6 -3" intensity="0.6"></a-light>
+        </a-scene>
+      `;
+
+      try {
+        container.innerHTML = sceneHTML;
+        console.log("✓ AR Scene HTML created");
+
+        // Wait for A-Frame to initialize
+        setTimeout(() => {
+          this.scene = document.querySelector("a-scene");
+          this.dino = document.getElementById("dino");
+
+          if (this.scene) {
+            console.log("✓ A-Frame scene initialized");
+            
+            // Wait for WebXR session to start
+            this.scene.addEventListener("enter-ar", () => {
+              console.log("✓ AR session started");
+              this.isSessionStarted = true;
+              
+              // Show reticle when AR starts
+              const reticle = document.getElementById("reticle-marker");
+              if (reticle) {
+                reticle.setAttribute("visible", true);
+              }
+
+              // Handle click to place model
+              this.scene.addEventListener("click", () => {
+                if (this.dino && !this.modelPlaced) {
+                  const reticlePos = reticle?.getAttribute("position") || { x: 0, y: 0, z: -2 };
+                  this.dino.setAttribute("position", reticlePos);
+                  this.dino.setAttribute("visible", true);
+                  this.modelPlaced = true;
+                  console.log("✓ Model placed at:", reticlePos);
+                }
+              });
+            });
+
+            this.isLoading = false;
+            this.debugStatus = "AR Ready!";
+            this.arStatus = "✓ Point at floor";
+            console.log("✓ AR Ready - Point your phone at the floor");
+          }
+        }, 1500);
+      } catch (err) {
+        console.error("❌ Error creating scene:", err);
+        this.error = "Error creating AR scene: " + err.message;
+        this.isLoading = false;
+      }
+    },
+
+    // ============================================
+    // 🛑 END AR SESSION
+    // ============================================
+    async endARSession() {
+      try {
+        console.log("🛑 Ending AR Session...");
+
+        // Stop XR session
+        const scene = document.querySelector("a-scene");
+        if (scene) {
+          const w = window;
+          if (w.AFRAME && w.AFRAME.scenes && w.AFRAME.scenes.length > 0) {
+            try {
+              await scene.xrSession?.end();
+              console.log("✓ XR session ended");
+            } catch (err) {
+              console.warn("XR session end error:", err);
+            }
+          }
+        }
+
+        // Stop camera/video
+        const videoEl = document.querySelector("video");
+        if (videoEl?.srcObject) {
+          const tracks = videoEl.srcObject.getTracks();
+          tracks.forEach((track) => track.stop());
+          videoEl.srcObject = null;
+          console.log("✓ Camera stopped");
+        }
+
+        // Clear AR container
+        const container = document.getElementById("ar-scene-container");
+        if (container) {
+          container.innerHTML = "";
+        }
+
+        // Reset state
+        this.isSessionStarted = false;
+        this.stage = 1;
+        this.modelPlaced = false;
+        this.scene = null;
+        this.dino = null;
+
+        console.log("✓ AR cleanup complete");
+      } catch (error) {
+        console.error("❌ Cleanup error:", error);
+      }
+    },
+
+    // ============================================
+    // 📦 FETCH PRODUCT
+    // ============================================
+    async fetchProductDetails() {
+      try {
+        const productId = this.$route.params.product_id;
+        if (!productId) throw new Error("Product ID not found");
+
+        const token = localStorage.getItem("token");
+        const apiUrl = `${this.$store.state.root_api}product/api/product-details/${productId}/`;
+
+        const headers = { "Content-Type": "application/json" };
+        if (token) headers["Authorization"] = `Token ${token}`;
+
+        const response = await fetch(apiUrl, {
+          method: "GET",
+          headers,
+          credentials: "omit",
+        });
+
+        if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
+
+        const result = await response.json();
+        if (!result.success || !result.data) throw new Error(result.message);
+
+        this.ProductDetails = result.data;
+        this.modelUrl = `${this.$store.state.root_media_api}${result.data["3d_model"]}`;
+
+        console.log("✅ Product loaded:", this.modelUrl);
+      } catch (error) {
+        console.error("❌ Error:", error);
+        this.$message.error("Failed to load product");
+      }
+    },
+
+    // ============================================
+    // 🛒 ADD TO CART
+    // ============================================
+    async addToCart() {
+      if (!this.ProductDetails?.id) {
+        this.$message.error("Product not found");
+        return;
+      }
+
+      this.cartLoading = true;
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch(`${this.$store.state.root_api}cart/add/`, {
+          method: "POST",
           headers: {
-            'Authorization': `Token ${token}`,
-            'Content-Type': 'application/json'
+            "Authorization": `Token ${token}`,
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            product_type: this.ProductDetails.is_ceiling_light_product ? 'light' : 'furniture',
+            product_type: this.ProductDetails.is_ceiling_light_product
+              ? "light"
+              : "furniture",
             product_id: this.ProductDetails.id,
-            quantity: 1
-          })
+            quantity: 1,
+          }),
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+          this.$message.success("Added to cart!");
+        } else {
+          this.$message.error(result.error || "Failed to add to cart");
         }
-      );
-      
-      const result = await response.json();
-      
-      if (response.ok) {
-        this.$message.success('Added to cart!');
-      } else {
-        this.$message.error(result.error || 'Failed to add to cart');
+      } catch (error) {
+        this.$message.error("Error adding to cart");
+      } finally {
+        this.cartLoading = false;
       }
-    } catch (error) {
-      console.error('Error:', error);
-      this.$message.error('Error adding to cart');
-    } finally {
-      this.cartLoading = false;
-    }
-  },
+    },
+
+    // ============================================
+    // 🧭 UI UTILITIES
+    // ============================================
+    IncreasesStage() {
+      if (this.stage > 0 && this.stage < 4) {
+        this.stage = Number(this.stage) + 1;
+      }
+    },
 
     startDrag(e) {
       this.startY = e.touches[0].clientY;
@@ -575,15 +708,8 @@ export default {
       this.currentY = e.touches[0].clientY;
       this.dragAmount = this.currentY - this.startY;
 
-      // Swipe DOWN → close
-      if (this.dragAmount > 50) {
-        this.isOpen = false;
-      }
-
-      // Swipe UP → open
-      if (this.dragAmount < -50) {
-        this.isOpen = true;
-      }
+      if (this.dragAmount > 50) this.isOpen = false;
+      if (this.dragAmount < -50) this.isOpen = true;
     },
 
     endDrag() {
@@ -591,665 +717,44 @@ export default {
       this.currentY = 0;
       this.dragAmount = 0;
     },
-    //--------------
-    initARView() {
-      console.log("Startt exxxxxx");
-      this.fetchProductDetails()
-        .then(() => {
-          console.log("✅ Product loaded, model URL ready:", this.modelUrl);
-          this.waitForAFrame();
-        })
-        .catch((err) => {
-          console.error("❌ Failed to fetch product:", err);
-          this.isLoading = false;
-        });
 
-      // Wait until A-Frame scene exists before attaching listeners
-      this.waitForSceneAndBind();
-    },
-    async endARSession() {
-      try {
-        console.log("Ending AR Session...");
-
-        const scene = document.querySelector("a-scene");
-
-        // -----------------------------
-        // 1. End XR session cleanly
-        // -----------------------------
-        if (scene) {
-          const xrSystem = scene.systems?.webxr;
-          const session = xrSystem?.session;
-
-          if (session) {
-            try {
-              await session.end();
-              console.log("XR session terminated.");
-            } catch (err) {
-              console.warn("Error ending XR session:", err);
-            }
-          }
-        }
-
-        // -----------------------------
-        // 2. Stop Camera Stream
-        // -----------------------------
-        const videoEl = document.querySelector("video");
-
-        if (videoEl?.srcObject) {
-          const tracks = videoEl.srcObject.getTracks();
-
-          tracks.forEach((track) => {
-            try {
-              track.stop();
-            } catch (err) {
-              console.warn("Failed to stop track:", err);
-            }
-          });
-
-          videoEl.srcObject = null;
-          console.log("Camera stopped successfully.");
-        }
-
-        // -----------------------------
-        // 3. Remove A-SCENE completely
-        // -----------------------------
-        await new Promise((resolve) => setTimeout(resolve, 50)); // small delay
-
-        const arWrapper = document.getElementById("ar-wrapper");
-
-        if (arWrapper) {
-          arWrapper.innerHTML = ""; // removes <a-scene>, <canvas>, WebGL context
-          console.log("A-Frame scene removed from DOM.");
-        }
-
-        // -----------------------------
-        // 4. Clear WebGL Animation Loop
-        // -----------------------------
-        if (scene?.renderer?.setAnimationLoop) {
-          scene.renderer.setAnimationLoop(null);
-          console.log("Animation loop cleared.");
-        }
-
-        // -----------------------------
-        // 6. Restore body overflow & UI
-        // -----------------------------
-        document.body.style.overflow = "auto";
-
-        this.isSessionStarted = false;
-        this.stage = 1;
-        window.location.reload();
-        console.log("AR cleanup complete.");
-      } catch (error) {
-        console.error("Fatal AR cleanup error:", error);
-      }
-    },
-
-    IncreasesStage() {
-      if (this.stage > 0 && this.stage < 4) {
-        this.stage = Number(this.stage) + 1;
-      }
-      if (this.stage === 3) {
-        this.initARView();
-      }
-    },
-    DecreaseStage() {
-      if (this.stage > 2 && this.stage <= 4) {
-        this.stage += Number(this.stage) - 1;
-      }
-    },
-    bindTouchRotation() {
-      const scene = document.querySelector("a-scene");
-      // Wait until WebXR canvas exists
-      const canvas = scene?.renderer?.xr?.getSession
-        ? scene.renderer.domElement
-        : scene?.canvas;
-
-      if (!canvas) {
-        return setTimeout(() => this.bindTouchRotation(), 300);
-      }
-      canvas.addEventListener("touchstart", this.handleTouchStart, {
-        passive: false,
-      });
-      canvas.addEventListener("touchmove", this.handleTouchMove, {
-        passive: false,
-      });
-      canvas.addEventListener("touchend", this.handleTouchEnd);
-    },
-    waitForSceneAndBind() {
-      // Try immediately
-      let scene = document.querySelector("a-scene");
-
-      if (scene) {
-        console.log("📌 Scene found, waiting for load...");
-        scene.addEventListener("loaded", () => {
-          this.bindARListeners();
-        });
-        return;
-      }
-
-      // If scene not yet available, wait and retry
-      setTimeout(() => {
-        scene = document.querySelector("a-scene");
-        if (scene) {
-          scene.addEventListener("loaded", () => {
-            this.bindARListeners();
-          });
-        }
-      }, 300);
-    },
-    bindARListeners() {
-      const scene = document.querySelector("a-scene");
-      const canvas = scene?.canvas;
-
-      if (!canvas) {
-        return setTimeout(this.bindARListeners, 300);
-      }
-
-      canvas.addEventListener("touchstart", this.handleTouchStart, {
-        passive: false,
-      });
-      canvas.addEventListener("touchmove", this.handleTouchMove, {
-        passive: false,
-      });
-      canvas.addEventListener("touchend", this.handleTouchEnd);
-    },
-    enableTouchRotate() {
-      const dino = document.getElementById("dino");
-      if (!dino) return;
-
-      let lastX = 0;
-      let isDragging = false;
-
-      dino.addEventListener("touchstart", (e) => {
-        isDragging = true;
-        lastX = e.touches[0].clientX;
-      });
-
-      dino.addEventListener("touchmove", (e) => {
-        if (!isDragging) return;
-
-        const currentX = e.touches[0].clientX;
-        const deltaX = currentX - lastX;
-
-        const rotation = dino.getAttribute("rotation");
-        rotation.y += deltaX * 0.4; // adjust sensitivity
-
-        dino.setAttribute("rotation", rotation);
-        lastX = currentX;
-      });
-
-      dino.addEventListener("touchend", () => {
-        isDragging = false;
-      });
-    },
-
-    hideStartButton() {
-      // Select the button using the class you styled
-      const arButton = document.querySelector(".a-enter-ar-button");
-      if (arButton) {
-        arButton.style.setProperty("display", "none", "important");
-      }
-    },
     toggleFullscreen() {
       this.fullScreenMode = !this.fullScreenMode;
     },
-    async existFullScreen() {
+
+    existFullScreen() {
       this.fullScreenMode = false;
     },
 
-    //methods for moving models
-    handleTouchStart(e) {
-      if (!this.dino) return;
-      this.isDragging = true;
-      this.startX = e.touches[0].clientX;
-    },
-
-    handleTouchMove(e) {
-      if (!this.isDragging || !this.dino) return;
-
-      const dx = e.touches[0].clientX - this.startX;
-      this.startX = e.touches[0].clientX;
-
-      // Rotate around model's own pivot
-      this.dino.object3D.rotation.y += dx * 0.01;
-    },
-
-    handleTouchEnd() {
-      this.isDragging = false;
-    },
-
-    async fetchProductDetails() {
-      try {
-        this.isLoading=true
-        const productId = this.$route.params.product_id;
-        if (!productId) {
-          throw new Error('Product ID not found in route parameters');
-        }
-
-        let token = localStorage.getItem('token');
-        const apiUrl = `${this.$store.state.root_api}product/api/product-details/${productId}/`;
-
-        console.log('📡 Fetching from:', apiUrl);
-
-        const headers = { 'Content-Type': 'application/json' };
-        if (token) {
-          headers['Authorization'] = `Token ${token}`;
-        }
-
-        const response = await fetch(apiUrl, {
-          method: 'GET',
-          headers: headers,
-          credentials: 'omit'
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const result = await response.json();
-        console.log(result);
-
-        if (!result.success || !result.data) {
-          throw new Error(result.message || 'Failed to fetch product details');
-        }
-        this.ProductDetails=result.data
-        const dimensions = result.data.dimensions || {};
-        this.diamensions = {
-          width: parseFloat(dimensions.width) || 0.7,
-          height: parseFloat(dimensions.height) || 1.2,
-          depth: parseFloat(dimensions.depth || dimensions.length) || 0.6
-        };
-
-        console.log('✅ Product Dimensions (meters):', this.diamensions);
-
-        
-        this.modelUrl=`${this.$store.state.root_media_api}${result.data['3d_model']}`;
-        if (!this.modelUrl) {
-          console.error('Available fields in result.data:', Object.keys(result.data));
-          throw new Error('No 3D model URL found in product data');
-        }
-
-        // this.modelUrl = modelUrl;
-        // this.modelUrl = "https://y5hhig196j7rwq-8000.proxy.runpod.net/media/products/3d_models/c3.glb";
-        console.log('✅ Model URL:', this.modelUrl);
-        console.log('✅ Product Data Loaded');
-        
-      } catch (error) {
-        console.error('❌ Error loading product details:', error);
-        this.error = error.message || 'Failed to load product. Please try again.';
-      }
-      this.isLoading=false
-    },
-
-    // async fetchProductDetails() {
-    //   this.modelUrl =
-    //     "https://rawcdn.githack.com/KhronosGroup/glTF-Sample-Models/master/2.0/SheenChair/glTF-Binary/SheenChair.glb";
-    // },
-    waitForAFrame() {
-      let attempts = 0;
-      const maxAttempts = 50;
-      console.log("wait for Arame:exxxxx");
-      const checkAFrame = setInterval(() => {
-        attempts++;
-        this.debugStatus = `Checking A-Frame (${attempts}/${maxAttempts})...`;
-
-        if (window.AFRAME && window.AFRAME.version) {
-          clearInterval(checkAFrame);
-          this.debugStatus = "A-Frame loaded!";
-          console.log("✓ A-Frame loaded:", window.AFRAME.version);
-
-          this.registerAFrameComponents();
-          this.checkARSupport();
-
-          setTimeout(() => {
-            console.log("🎯 Creating scene with model URL:", this.modelUrl);
-            this.createScene();
-          }, 300);
-        }
-
-        if (attempts >= maxAttempts) {
-          clearInterval(checkAFrame);
-          this.error = "A-Frame failed to load. Make sure it is in index.html";
-          this.isLoading = false;
-          this.debugStatus = "ERROR: A-Frame not loaded";
-          console.error("A-Frame not available");
-        }
-      }, 100);
-    },
-
-    async checkARSupport() {
-      try {
-        this.debugStatus = "Checking AR support...";
-        if (navigator.xr) {
-          const supported = await navigator.xr.isSessionSupported(
-            "immersive-ar"
-          );
-          if (supported) {
-            this.arStatus = "✓ AR Supported";
-            console.log("✓ AR is supported");
-          } else {
-            this.arStatus = "⚠ AR Not Supported";
-            console.warn("AR not supported on this device");
-          }
-        } else {
-          this.arStatus = "⚠ WebXR Not Available";
-          console.warn("WebXR not available");
-        }
-      } catch (err) {
-        this.arStatus = "✗ Error checking AR";
-        console.error("AR check error:", err);
-      }
-    },
-
-    registerAFrameComponents() {
-      if (!window.AFRAME) return;
-      const self = this;
-
-      if (!AFRAME.components["stable-floor-plane"]) {
-        AFRAME.registerComponent("stable-floor-plane", {
-          schema: { opacity: { default: 0.2 } },
-          init: function () {
-            this.el.sceneEl.addEventListener("enter-vr", (ev) => {
-              if (this.el.sceneEl.is("ar-mode")) {
-                this.el.setAttribute("visible", true);
-                this.el.setAttribute("position", "0 -0.01 0");
-              }
-            });
-            this.el.sceneEl.addEventListener("exit-vr", (ev) => {
-              this.el.setAttribute("visible", false);
-            });
+    goto_product_Route(product) {
+      this.$router
+        .push({
+          name: "buisness_product",
+          params: {
+            buisness_name: product.business_slug,
+            product_type: "product",
+            product_id: product.id,
           },
+        })
+        .then(() => {
+          window.location.reload();
+        })
+        .catch((err) => {
+          console.error("Navigation failed:", err);
         });
-      }
-
-      if (!AFRAME.components["enhanced-ar-hit-test"]) {
-        AFRAME.registerComponent("enhanced-ar-hit-test", {
-          init: function () {
-            this.xrHitTestSource = null;
-            this.viewerSpace = null;
-            this.refSpace = null;
-            this.lastValidPosition = null;
-            this.smoothingFactor = 0.7;
-
-            this.el.sceneEl.renderer.xr.addEventListener(
-              "sessionstart",
-              (ev) => {
-                let session = this.el.sceneEl.renderer.xr.getSession();
-                let hitTestComponent = this;
-
-                self.floorDetection = "Initializing floor detection...";
-                self.debugStatus = "AR session started";
-                self.isSessionStarted = true;
-                self.shouldShowStatus = false;
-                self.hideStartButton();
-                session.addEventListener("select", function () {
-                  let instruction = document.getElementById("tap-instruction");
-                  if (!self.modelPlaced) {
-                    let reticlePos = document
-                      .getElementById("reticle-marker")
-                      .getAttribute("position");
-                    let dino = document.getElementById("dino");
-                    let light = document.getElementById("light");
-
-                    self.fixedModelPosition = { ...reticlePos };
-                    self.modelPlaced = true;
-
-                    if (dino) {
-                      dino.setAttribute("position", reticlePos);
-                      dino.setAttribute("visible", true);
-                      if (instruction)
-                        instruction.setAttribute("visible", false);
-                    }
-                    if (reticlePos) {
-                      reticlePos.setAttribute("visible", true);
-                    }
-
-                    if (light) {
-                      light.setAttribute("position", {
-                        x: reticlePos.x - 2,
-                        y: reticlePos.y + 4,
-                        z: reticlePos.z + 2,
-                      });
-                    }
-
-                    self.floorDetection =
-                      "✓ Model FIXED at:\nX: " +
-                      reticlePos.x.toFixed(2) +
-                      "\nY: " +
-                      reticlePos.y.toFixed(2) +
-                      "\nZ: " +
-                      reticlePos.z.toFixed(2) +
-                      "\n\n[Tap again to reset]";
-                  } else {
-                    self.modelPlaced = false;
-                    self.fixedModelPosition = null;
-                    self.floorDetection =
-                      "Scanning for floor...\nPoint at a flat surface";
-                  }
-                });
-
-                session.requestReferenceSpace("viewer").then((space) => {
-                  hitTestComponent.viewerSpace = space;
-                  session
-                    .requestHitTestSource({
-                      space: hitTestComponent.viewerSpace,
-                    })
-                    .then((hitTestSource) => {
-                      hitTestComponent.xrHitTestSource = hitTestSource;
-                      self.floorDetection = "✓ Floor detection active";
-                    })
-                    .catch((err) => {
-                      self.floorDetection = "✗ Hit test failed";
-                    });
-                });
-
-                session
-                  .requestReferenceSpace("local-floor")
-                  .then((space) => {
-                    hitTestComponent.refSpace = space;
-                  })
-                  .catch((err) => {
-                    session.requestReferenceSpace("local").then((space) => {
-                      hitTestComponent.refSpace = space;
-                    });
-                  });
-              }
-            );
-
-            this.el.sceneEl.renderer.xr.addEventListener("sessionend", (ev) => {
-              this.viewerSpace = null;
-              this.refSpace = null;
-              this.xrHitTestSource = null;
-              self.floorDetection = "AR Session Ended";
-            });
-          },
-
-          tick: function () {
-            if (this.el.sceneEl.is("ar-mode")) {
-              if (self.modelPlaced) {
-                return;
-              }
-
-              if (!this.viewerSpace || !this.refSpace) return;
-
-              let frame = this.el.sceneEl.frame;
-              let xrViewerPose = frame.getViewerPose(this.refSpace);
-
-              if (this.xrHitTestSource && xrViewerPose) {
-                let hitTestResults = frame.getHitTestResults(
-                  this.xrHitTestSource
-                );
-
-                if (hitTestResults.length > 0) {
-                  let pose = hitTestResults[0].getPose(this.refSpace);
-                  let inputMat = new THREE.Matrix4();
-                  inputMat.fromArray(pose.transform.matrix);
-
-                  let position = new THREE.Vector3();
-                  position.setFromMatrixPosition(inputMat);
-
-                  if (this.lastValidPosition) {
-                    position.x = THREE.MathUtils.lerp(
-                      this.lastValidPosition.x,
-                      position.x,
-                      1 - this.smoothingFactor
-                    );
-                    position.y = THREE.MathUtils.lerp(
-                      this.lastValidPosition.y,
-                      position.y,
-                      1 - this.smoothingFactor
-                    );
-                    position.z = THREE.MathUtils.lerp(
-                      this.lastValidPosition.z,
-                      position.z,
-                      1 - this.smoothingFactor
-                    );
-                  }
-                  const cam = this.el.sceneEl.camera;
-                  const dist = cam.position.distanceTo(position);
-
-                  position.y = Math.max(position.y, 0.01);
-
-                  this.el.setAttribute("position", position);
-                  this.el.setAttribute("visible", "true");
-                  this.lastValidPosition = position.clone();
-
-                  self.floorDetection =
-                    "Floor detected ✓\nX: " +
-                    position.x.toFixed(2) +
-                    " Y: " +
-                    position.y.toFixed(2) +
-                    " Z: " +
-                    position.z.toFixed(2) +
-                    "\n\n[Tap to place model]";
-                } else {
-                  self.floorDetection =
-                    "Scanning for floor...\nPoint at a flat surface";
-                  this.el.setAttribute("position", { x: 0, y: -0.5, z: -2 });
-                  this.el.setAttribute("visible", "true");
-                }
-              }
-            }
-          },
-        });
-      }
-    },
-
-    createScene() {
-      this.$nextTick(() => {
-        const container = document.getElementById("ar-scene-container");
-        if (!container) {
-          console.log("Container not found, retrying...");
-          setTimeout(() => this.createScene(), 500);
-          return;
-        }
-        this.createSceneInContainer(container);
-      });
-    },
-
-    createSceneInContainer(container) {
-      this.debugStatus = "Creating A-Frame scene...";
-      this.loadingMessage = "Creating 3D scene...";
-      console.log("Model URL:", this.modelUrl);
-
-      const reticleJSONUpdated = JSON.parse(JSON.stringify(this.reticleJSON));
-      reticleJSONUpdated.buffers[0].uri =
-        window.location.origin + "/assets/reticle.bin";
-
-      const reticleJsonString = JSON.stringify(reticleJSONUpdated);
-      const reticleDataUrl =
-        "data:application/json;base64," + btoa(reticleJsonString);
-
-      const sceneHTML = `
-       <a-scene
-  webxr="requiredFeatures: hit-test,local-floor; optionalFeatures: dom-overlay; overlayElement: .ar-app;"
-  renderer="colorManagement: true; physicallyCorrectLights: true;"
->
-          <a-assets>
-            <a-asset-item id="spinosaurus" src="${this.modelUrl}" response-type="arraybuffer" crossorigin="anonymous"></a-asset-item>
-            <a-asset-item id="info">Tap to place</a-asset-item>
-            <a-asset-item id="reticle" src="${reticleDataUrl}" response-type="json" crossorigin="anonymous"></a-asset-item>
-          </a-assets>
-
-          <a-camera position="0 1.2 0"></a-camera>
-
-          <a-entity id="reticle-marker" position="0 -0.5 -2" gltf-model="#reticle" scale="0.5 0.5 0.5" enhanced-ar-hit-test shadow="cast: false; receive: false" rotation="0 0 0" visible="false">
-            <a-entity id="tap-instruction"
-          position="0 1 0"
-          visible="true"
-          text="value: Tap to place; align: center; color: black; width: 2.5;"
-          geometry="primitive: plane; width: 1.2; height: 0.3; radius: 15;"
-          material="color: white; opacity: 0.85;"
-          >
-          </a-entity>
-            <a-plane position="0 0 0" rotation="-90 0 0" width="0.5" height="0.5" material="color: cyan; opacity: 0.3; transparent: true;"></a-plane>
-          </a-entity>
-
-          <a-entity id="dino" position="0 -2 -5" scale="${this.modelScale+0.5} ${this.modelScale+0.5} ${this.modelScale+0.5}" shadow="cast: true; receive: false"  visible="false">
-            <a-entity position="0 0 0" rotation="0 0 0" gltf-model="#spinosaurus" animation-mixer shadow="cast: true; receive: false"></a-entity>
-          </a-entity>
-
-          <a-plane id="shadowPlane" height="100" width="100" rotation="-90 0 0" position="0 0 0" shadow="receive: true; cast: false" material="color: #ffffff; transparent: true; opacity: 0.001;"></a-plane>
-
-          <a-light type="hemisphere" intensity="1.2" color="#ffffff"></a-light>
-
-          <a-light type="directional" id="light" target="dino" position="5 8 5" intensity="1.5" light="castShadow: true; shadowMapHeight: 2048; shadowMapWidth: 2048; shadowCameraLeft: -15; shadowCameraRight: 15; shadowCameraBottom: -15; shadowCameraTop: 15; shadowCameraFar: 30; shadowCameraNear: 0.1; shadowBias: -0.0001;"></a-light>
-
-          <a-light type="directional" position="-5 6 -3" intensity="0.6"></a-light>
-        </a-scene>
-      `;
-
-      try {
-        container.innerHTML = sceneHTML;
-        this.sceneInitialized = true;
-
-        setTimeout(() => {
-          this.scene = document.querySelector("a-scene");
-          this.modelObject = document.querySelector("#dino a-entity");
-          this.dino = document.getElementById("dino");
-          this.enableTouchRotate();
-          this.light = document.getElementById("light");
-          this.bindTouchRotation();
-
-          if (this.scene && this.scene.renderer) {
-            this.scene.renderer.shadowMap.enabled = true;
-            this.scene.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-          }
-
-          if (this.scene) {
-            this.debugStatus = "Scene ready!";
-            this.loadingMessage = "AR Ready...";
-            this.isLoading = false;
-            this.arStatus = "✓ AR Ready...";
-            // this.floorDetection = "Point camera at floor...";
-            console.log("✓ AR Scene initialized successfully");
-          }
-        }, 2000);
-      } catch (err) {
-        console.error("Error creating scene:", err);
-        this.error = "Error: " + err.message;
-        this.isLoading = false;
-      }
-    },
-
-    setSize(scale) {
-      this.modelScale = scale;
-      if (this.dino) {
-        this.dino.setAttribute("scale", { x: scale, y: scale, z: scale });
-      }
     },
   },
+
   components: {
     StageView,
     canvas_3d_model_renderer,
     ArrowLeftOutlined,
-    HeartOutlined, 
+    HeartOutlined,
     IssuesCloseOutlined,
     ShoppingCartOutlined,
   },
 };
 </script>
-
 <style scoped>
 .ar_sec_navbar {
   width: 100%;

@@ -402,7 +402,7 @@
     <button
   type="primary"
   @click="show_add_new_wall_texture = true"
-  class="flex items-center gap-2 px-3 py-2 !text-white rounded-md bg-[#3B63FB]"
+  class="flex items-center gap-2 px-3 py-2 !text-white rounded-md bg-[#3B63FB]"style="font-family: var(--font-family-main);"
 >
   <!-- Paste any SVG here -->
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -419,7 +419,7 @@
     <button
   type="primary"
   @click="show_add_new_floor_texture = true"
-  class="flex items-center gap-2 px-3 py-2 !text-white rounded-md bg-[#3B63FB]"
+  class="flex items-center gap-2 px-3 py-2 !text-white rounded-md bg-[#3B63FB]"style="font-family: var(--font-family-main);"
 >
   <svg 
     width="16" 
@@ -447,7 +447,7 @@
     <button
       type="primary"
       @click="show_add_new_light = true"
-  class="flex items-center gap-2 px-3 py-2 !text-white rounded-md bg-[#3B63FB]"
+  class="flex items-center gap-2 px-3 py-2 !text-white rounded-md bg-[#3B63FB]"style="font-family: var(--font-family-main);"
     >
        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <!-- bulb outline -->
@@ -464,7 +464,7 @@
     <button
       @click="addProduct()"
       type="primary"
-  class="flex items-center gap-2 px-3 py-2 !text-white whitespace-nowrap rounded-md bg-[#3B63FB]"
+  class="flex items-center gap-2 px-3 py-2 !text-white whitespace-nowrap rounded-md bg-[#3B63FB]"style="font-family: var(--font-family-main);"
     >
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <!-- box -->
@@ -503,6 +503,7 @@
             'flex items-center px-3 py-2 font-semibold text-xs transition',
             viewMode === 'grid' ? 'bg-blue-600 !text-white' : 'bg-white !text-gray-600'
           ]"
+          style="font-family: var(--font-family-main);"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class="mr-1">
             <rect x="3" y="3" width="7" height="7"></rect>
@@ -518,6 +519,7 @@
             'flex items-center px-3 py-2 font-semibold text-xs transition',
             viewMode === 'table' ? 'bg-blue-600 text-white' : 'bg-white text-gray-600'
           ]"
+          style="font-family: var(--font-family-main);"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="mr-1">
             <line x1="8" y1="6" x2="21" y2="6"></line>
@@ -554,12 +556,12 @@
     </div>
 
     <!-- Action Buttons -->
-    <div class="flex flex-wrap gap-2 sm:flex-col sm:w-full">
+    <div class="flex  gap-2 sm:flex-col sm:w-full">
       <!-- Wall Button -->
       <button
         type="button"
         @click="show_add_new_wall_texture = true"
-        class="flex items-center gap-2 px-3 py-2 !text-white rounded-md bg-blue-600 font-medium whitespace-nowrap w-auto sm:w-32"
+        class="flex items-center  gap-2 px-2 py-1.5 !text-white rounded-md bg-blue-600 font-medium whitespace-nowrap w-auto sm:w-32"style="font-family: var(--font-family-main);"
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <rect x="3" y="3" width="8" height="8" rx="1"/>
@@ -573,7 +575,7 @@
       <button
         type="button"
         @click="show_add_new_floor_texture = true"
-        class="flex items-center gap-2 px-3 py-2 !text-white rounded-md bg-blue-600 font-medium whitespace-nowrap w-auto sm:w-32"
+        class="flex items-center gap-2 px-2 py-1.5 !text-white rounded-md bg-blue-600 font-medium whitespace-nowrap w-auto sm:w-32"style="font-family: var(--font-family-main);"
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
@@ -588,7 +590,7 @@
       <button
         type="button"
         @click="show_add_new_light = true"
-        class="flex items-center gap-2 px-3 py-2 !text-white rounded-md bg-blue-600 font-medium whitespace-nowrap w-auto sm:w-32 "
+        class="flex items-center gap-2 px-2 py-1.5 !text-white rounded-md bg-blue-600 font-medium whitespace-nowrap w-auto sm:w-32 "style="font-family: var(--font-family-main);"
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M12 2a6 6 0 0 0-4.472 10.04c.46.5.872 1.28.872 2.16 0 1.1-.2 2.2-.6 3h6.4c-.4-.8-.6-1.9-.6-3 0-.88.41-1.66.87-2.16A6 6 0 0 0 12 2z"/>
@@ -601,7 +603,7 @@
       <button
         type="button"
         @click="addProduct()"
-        class="flex items-center gap-2 px-3 py-2 !text-white rounded-md bg-blue-600 font-medium whitespace-nowrap w-auto sm:w-32 "
+        class="flex items-center gap-2 px-2 py-1.5 !text-white rounded-md bg-blue-600 font-medium whitespace-nowrap w-auto sm:w-32 "style="font-family: var(--font-family-main);"
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M21 8v8a2 2 0 0 1-1 1.73L12 21l-8-3.27A2 2 0 0 1 3 16V8"/>
@@ -654,11 +656,12 @@
 
                                                 </a-col>
                                                 
-                                                <a-col span="18">
-                                                    Color
-                                                </a-col>
+                                                <a-col span="16" style="font-family: 'Poppins', sans-serif; font-size:13px; font-weight:400;">
+  Color
+</a-col>
+
                                                 
-                                                <a-col span="6" style="display: flex;justify-content: end;">
+                                                <a-col span="8" style="display: flex;justify-content: end;">
                                                     <div v-for="(color, index) in product.colors.slice(0, 2)" 
                                                         :key="index"
                                                         style="width:20px;height:20px;border-radius:20px;margin-left:2px;" 
@@ -666,7 +669,7 @@
                                                     </div>
                                                 </a-col>
                                                 
-                                                <a-col span="12">
+                                                <a-col span="12" style="font-family: 'Poppins', sans-serif; font-size:13px; font-weight:400;">
                                                     Price
                                                 </a-col>
                                                 
@@ -675,15 +678,23 @@
                                                     ${{ product.pricing.price }}
                                                 </a-col>
 
-                                                <a-col span="17">
-                                                    <a-button block @click="viewProduct(product)">Product Details</a-button>
-                                                </a-col>
+                                                <a-col span="16">
+  <a-button 
+    block 
+    @click="viewProduct(product)"
+    style="font-family: 'Poppins', sans-serif; font-size: 9px;"
+  >
+    Product Details
+  </a-button>
+</a-col>
+
                                                 
                                                 <a-col span="1"></a-col>
-                                                <a-col span="4">
+                                                <a-col span="6">
                                                     <!-- {{product,is_favorited}} -->
                                                     <!-- <a-button><HeartOutlined /></a-button> -->
-                                                     <a-button @click="toggleFavorite(product,'product')">
+                                                     <a-button @click="toggleFavorite(product,'product')"  style="padding: 2px 12px; display:flex; align-items:center; justify-content:center;"
+>
                                                                     <template v-if="product.is_favorited">
                                                                     <HeartFilled style="color: red" />
                                                                     </template>

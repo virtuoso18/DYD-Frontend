@@ -15,11 +15,35 @@
 
       <!-- Navigation Links -->
       <div class="navbar-nav">
-        <a href="#" class="nav-link">Business Owner</a>
-        <a href="#" class="nav-link">Interior Designer or Architecture</a>
-        <a href="/comunity" class="nav-link">Community</a>
+ <a href="/affiliateprogram" class="text-gray-600 text-sm font-medium hover:text-blue-600 transition-colors whitespace-nowrap">
+          Affiliate Program
+        </a>
+        <a href="/interiorMaterialSupplier" class="text-gray-600 text-sm font-medium hover:text-blue-600 transition-colors whitespace-nowrap">
+          Interior Supplier
+        </a>
+        <a href="/designcompany" class="text-gray-600 text-sm font-medium hover:text-blue-600 transition-colors whitespace-nowrap">
+          Design
+        </a>
+        <a href="/furnitureretail" class="text-gray-600 text-sm font-medium hover:text-blue-600 transition-colors whitespace-nowrap">
+          Furniture
+        </a>
+        <!-- <a href="/interiordesigner" class="text-gray-600 text-sm font-medium hover:text-blue-600 transition-colors whitespace-nowrap">
+          Interior Designer
+        </a> -->
+        <a href="/blogs" class="text-gray-600 text-sm font-medium hover:text-blue-600 transition-colors whitespace-nowrap">
+          Blogs
+        </a>
+        <!-- <a href="/tutorial" class="text-gray-600 text-sm font-medium hover:text-blue-600 transition-colors whitespace-nowrap">
+          Tutorial
+        </a> -->
+        <a href="/sechdulemeeting" class="text-gray-600 text-sm font-medium hover:text-blue-600 transition-colors whitespace-nowrap">
+          Schedule Meeting
+        </a>
+        <a href="/contact-us" class="text-gray-600 text-sm font-medium hover:text-blue-600 transition-colors whitespace-nowrap">
+          Contact Us
+        </a>
+         <a href="/comunity" class="nav-link">Community</a>
         <a href="/pricing" class="nav-link">Pricing</a>
-        <a href="/contact-us" class="nav-link">Contact us</a>
       </div>
 
       <!-- Right Side Actions -->
@@ -150,7 +174,7 @@ export default {
 .navbar-nav {
   display: flex;
   align-items: center;
-  gap: 32px;
+  gap: 22px;
   margin-left: 20px;
   margin-right: auto;
 }

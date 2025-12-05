@@ -1,37 +1,22 @@
 <template>
-  <!-- {{ access_recieved }} -->
+  {{ access_recieved }}
   <div>
     <div class="page-header" style="margin-bottom: 20px;">
       <a-row type="flex" justify="space-between" align="middle">
         <a-col>
-<h2 style="margin: 0; font-size: 24px; font-weight: 700; color: #1a202c; font-family: var(--font-family-main); display: flex; align-items: center; gap: 8px;">
-            <span>
-
-              <svg width="24" height="22" viewBox="0 0 19 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M0.5 7.7C0.5 4.30588 0.5 2.60883 1.55441 1.55441C2.60883 0.5 4.30588 0.5 7.7 0.5C11.0941 0.5 12.7912 0.5 13.8456 1.55441C14.9 2.60883 14.9 4.30588 14.9 7.7C14.9 11.0941 14.9 12.7912 13.8456 13.8456C12.7912 14.9 11.0941 14.9 7.7 14.9C4.30588 14.9 2.60883 14.9 1.55441 13.8456C0.5 12.7912 0.5 11.0941 0.5 7.7Z" stroke="#4D4D4D"/>
-              <path d="M3.19922 14.8992C6.27777 10.623 9.73745 4.95193 14.8992 9.20524" stroke="#4D4D4D"/>
-              <path d="M11.499 3C11.7639 3.00009 12.0185 3.10474 12.2061 3.29199C12.3936 3.47927 12.4989 3.73387 12.499 3.99902V5.08008C13.3103 5.1975 14.502 5.48053 15.5713 6.18066C16.8948 7.04729 18 8.53355 18 10.9912H17.999C18.0013 11.2003 17.9386 11.4049 17.8184 11.5762C17.6959 11.7505 17.5211 11.8812 17.3193 11.9492L17.3145 11.9512C17.1164 12.0157 16.9028 12.0166 16.7041 11.9541C16.5167 11.8951 16.352 11.7812 16.2285 11.6289V11.6299C15.7563 11.0906 15.1721 10.6605 14.5166 10.3691C13.8815 10.0869 13.1937 9.94251 12.499 9.94336V10.9932C12.4982 11.1897 12.4394 11.3817 12.3301 11.5449C12.2207 11.7082 12.0651 11.8355 11.8838 11.9111C11.7025 11.9867 11.5025 12.0077 11.3096 11.9707C11.1169 11.9336 10.9391 11.8404 10.7988 11.7031L10.7949 11.6992L7.29688 8.2041C7.20317 8.11128 7.12797 8.00164 7.07715 7.87988C7.02632 7.75805 7 7.62715 7 7.49512C7 7.3631 7.02632 7.23218 7.07715 7.11035C7.12798 6.98861 7.20219 6.87797 7.2959 6.78516H7.29688L10.7949 3.29102L10.7969 3.29004C10.9832 3.10549 11.2349 3.0011 11.4971 3H11.499Z" fill="white" stroke="#4D4D4D"/>
-              </svg>
-            </span>
+          <h2 style="margin: 0; font-size: 24px; font-weight: 700; color: #1a202c;">
+            <FileTextOutlined style="margin-right: 10px;" />
             My Tasks
           </h2>
-          <p style="margin: 4px 0 0 0; font-size: 14px; color: #718096;font-family: var(--font-family-main);">
+          <p style="margin: 4px 0 0 0; font-size: 14px; color: #718096;">
             View and manage your assigned tasks
           </p>
         </a-col>
-        <a-col class="pt-4 md:pt-0 flex justify-start">
-          <a-button 
-          
-  type="primary" 
-  @click="fetchUserTasks" 
-  :loading="loading"
-  
-  style="display: flex; align-items: center; gap: 6px; font-family: var(--font-family-main);"
->
-  <RedoOutlined />
-  <span>Refresh</span>
-</a-button>
-
+        <a-col>
+          <a-button type="primary" @click="fetchUserTasks" :loading="loading">
+            <RedoOutlined />
+            Refresh
+          </a-button>
         </a-col>
       </a-row>
     </div>
@@ -40,15 +25,15 @@
     <a-tabs v-model:activeKey="activeTab" style="margin-bottom: 20px;" @change="onTabChange">
       <a-tab-pane key="all">
         <template #tab>
-         <span style="font-family: var(--font-family-main);">
-  All Tasks ({{ pagination.total_count }})
-</span>
+          <span>
+            All Tasks ({{ pagination.total_count }})
+          </span>
         </template>
       </a-tab-pane>
       
       <a-tab-pane key="pending">
         <template #tab>
-         <span style="font-family: var(--font-family-main);">
+          <span>
             Pending ({{ pendingCount }})
           </span>
         </template>
@@ -56,7 +41,7 @@
       
       <a-tab-pane key="accepted">
         <template #tab>
-         <span style="font-family: var(--font-family-main);">
+          <span>
             Accepted ({{ userTasks.filter(t => t.status === 'Accepted').length }})
           </span>
         </template>
@@ -64,7 +49,7 @@
       
       <a-tab-pane key="inprogress">
         <template #tab>
-         <span style="font-family: var(--font-family-main);">
+          <span>
             In Progress ({{ userTasks.filter(t => t.status === 'InProgress').length }})
           </span>
         </template>
@@ -72,7 +57,7 @@
       
       <a-tab-pane key="completed">
         <template #tab>
-         <span style="font-family: var(--font-family-main);">
+          <span>
             Completed ({{ completedCount }})
           </span>
         </template>
@@ -80,7 +65,7 @@
       
       <a-tab-pane key="rejected">
         <template #tab>
-         <span style="font-family: var(--font-family-main);">
+          <span>
             Rejected ({{ rejectedCount }})
           </span>
         </template>
@@ -111,10 +96,10 @@
             <a-row type="flex" justify="space-between" align="top">
               <a-col :xs="24" :md="16">
                 <div>
-                  <h3 style="margin: 0 0 8px 0; font-size: 18px; font-weight: 600; color: #1a202c;font-family: var(--font-family-main);">
+                  <h3 style="margin: 0 0 8px 0; font-size: 18px; font-weight: 600; color: #1a202c;">
                     {{ task.title || task.name || 'Untitled Task' }}
                   </h3>
-                  <p style="margin: 0 0 12px 0; color: #718096; font-size: 14px;font-family: var(--font-family-main);">
+                  <p style="margin: 0 0 12px 0; color: #718096; font-size: 14px;">
                     {{ task.description || 'No description provided' }}
                   </p>
                   <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center;">
@@ -141,16 +126,8 @@
                     size="small"
                     @click="updateTaskStatus(task, 'Accepted')"
                     :loading="task.updating"
-style="
-        background: #10b981; 
-        border-color: #10b981; 
-        display: flex; 
-        align-items: center; 
-        justify-content: center; 
-        gap: 4px; 
-        color: white; 
-        font-family: var(--font-family-main);
-      "                  >
+                    style="background: #10b981; border-color: #10b981;"
+                  >
                     <CheckCircleOutlined />
                     Accept
                   </a-button>
@@ -162,14 +139,6 @@ style="
                     danger
                     @click="openRejectModal(task)"
                     :loading="task.updating"
-                    style="
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    color: white;
-    font-family: var(--font-family-main);
-  "
                   >
                     <CloseCircleOutlined />
                     Reject

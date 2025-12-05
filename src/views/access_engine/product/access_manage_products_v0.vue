@@ -308,295 +308,133 @@
             <!-- Product List/Grid View -->
             <div v-if="currentView === 'list'">
             <!-- Header Section -->
-             <div className="lg:block hidden">
-
-                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                     <h2 style="margin: 0; font-size: 24px; font-weight: 600;font-family: var(--font-family-main);">
-                         My Products 
-                         <span style="color: #666; font-size: 16px;">({{ products.length }})</span>
-                     </h2>
-                     <div style="display: flex; gap: 10px; align-items: center;">
-                         <!-- View Toggle Buttons -->
-                         <div style="display: flex; border: 1px solid #ddd; border-radius: 6px; overflow: hidden;">
-                             <a-button 
-                                 @click="viewMode = 'grid'"
-                                 :style="{
-                                     padding: '8px 12px',
-                                     border: 'none',
-                                     background: viewMode === 'grid' ? '#3B63FB' : 'white',
-                                     color: viewMode === 'grid' ? 'white' : '#666',
-                                     cursor: 'pointer',
-                                     fontSize: '12px',
-                                     fontWeight: '600'
-                                 }"
-                             >
-                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 4px;">
-                                     <rect x="3" y="3" width="7" height="7"></rect>
-                                     <rect x="14" y="3" width="7" height="7"></rect>
-                                     <rect x="3" y="14" width="7" height="7"></rect>
-                                     <rect x="14" y="14" width="7" height="7"></rect>
-                                 </svg>
-                                 <!-- Grid -->
-                             </a-button>
-                             <a-button 
-                                 @click="viewMode = 'table'"
-                                 :style="{
-                                     padding: '8px 12px',
-                                     border: 'none',
-                                     background: viewMode === 'table' ? '#3B63FB' : 'white',
-                                     color: viewMode === 'table' ? 'white' : '#666',
-                                     cursor: 'pointer',
-                                     fontSize: '12px',
-                                     fontWeight: '600'
-                                 }"
-                             >
-                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px;">
-                                     <line x1="8" y1="6" x2="21" y2="6"></line>
-                                     <line x1="8" y1="12" x2="21" y2="12"></line>
-                                     <line x1="8" y1="18" x2="21" y2="18"></line>
-                                     <line x1="3" y1="6" x2="3.01" y2="6"></line>
-                                     <line x1="3" y1="12" x2="3.01" y2="12"></line>
-                                     <line x1="3" y1="18" x2="3.01" y2="18"></line>
-                                 </svg>
-                                 <!-- List -->
-                             </a-button>
-                              
-                         </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="margin: 0; font-size: 24px; font-weight: 600;">
+                    My Products 
+                    <span style="color: #666; font-size: 16px;">({{ products.length }})</span>
+                </h2>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <!-- View Toggle Buttons -->
+                    <div style="display: flex; border: 1px solid #ddd; border-radius: 6px; overflow: hidden;">
+                        <a-button 
+                            @click="viewMode = 'grid'"
+                            :style="{
+                                padding: '8px 12px',
+                                border: 'none',
+                                background: viewMode === 'grid' ? '#3B63FB' : 'white',
+                                color: viewMode === 'grid' ? 'white' : '#666',
+                                cursor: 'pointer',
+                                fontSize: '12px',
+                                fontWeight: '600'
+                            }"
+                        >
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 4px;">
+                                <rect x="3" y="3" width="7" height="7"></rect>
+                                <rect x="14" y="3" width="7" height="7"></rect>
+                                <rect x="3" y="14" width="7" height="7"></rect>
+                                <rect x="14" y="14" width="7" height="7"></rect>
+                            </svg>
+                            <!-- Grid -->
+                        </a-button>
+                        <a-button 
+                            @click="viewMode = 'table'"
+                            :style="{
+                                padding: '8px 12px',
+                                border: 'none',
+                                background: viewMode === 'table' ? '#3B63FB' : 'white',
+                                color: viewMode === 'table' ? 'white' : '#666',
+                                cursor: 'pointer',
+                                fontSize: '12px',
+                                fontWeight: '600'
+                            }"
+                        >
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px;">
+                                <line x1="8" y1="6" x2="21" y2="6"></line>
+                                <line x1="8" y1="12" x2="21" y2="12"></line>
+                                <line x1="8" y1="18" x2="21" y2="18"></line>
+                                <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                                <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                                <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                            </svg>
+                            <!-- List -->
+                        </a-button>
                          
-                         <!-- Search -->
-                         <div style="position: relative;">
-                             <input type="text" placeholder="Search Product" v-model="searchQuery"
-                                 style="padding: 5px 12px 5px 35px; border: 1px solid #ddd; border-radius: 6px; width: 200px;outline:none">
-                             <svg style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: #999;"
-                                 width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                 stroke-width="2">
-                                 <circle cx="11" cy="11" r="8"></circle>
-                                 <path d="m21 21-4.35-4.35"></path>
-                             </svg>
-                         </div>
-                        
-                         <!-- Wall Texture Button -->
-     <a-button v-if="product_access_recieved.create" type="primary" @click="show_add_new_wall_texture=true" style="display: flex; align-items: center; gap: 8px;font-family: var(--font-family-main);">
-     
-         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-             <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-             <rect x="7" y="7" width="3" height="3"/>
-             <rect x="14" y="7" width="3" height="3"/>
-             <rect x="7" y="14" width="3" height="3"/>
-             <rect x="14" y="14" width="3" height="3"/>
-             <line x1="12" y1="8" x2="12" y2="12"/>
-             <line x1="10" y1="10" x2="14" y2="10"/>
-         </svg>
-         Wall
-     </a-button>
-     
-     <!-- Floor Texture Button -->
-     <a-button  v-if="product_access_recieved.create"  type="primary" @click="show_add_new_floor_texture=true" style="display: flex; align-items: center; gap: 8px;font-family: var(--font-family-main);">
-         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-             <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-             <line x1="8" y1="21" x2="16" y2="21"/>
-             <line x1="12" y1="17" x2="12" y2="21"/>
-             <rect x="6" y="7" width="4" height="3"/>
-             <rect x="14" y="7" width="4" height="3"/>
-             <rect x="6" y="11" width="4" height="3"/>
-             <rect x="14" y="11" width="4" height="3"/>
-             <line x1="12" y1="8" x2="12" y2="12"/>
-             <line x1="10" y1="10" x2="14" y2="10"/>
-         </svg>
-         Floor
-     </a-button>
-     
-     <!-- Light Button -->
-     <a-button  v-if="product_access_recieved.create"  type="primary" @click="show_add_new_light=true" style="display: flex; align-items: center; gap: 8px;font-family: var(--font-family-main);">
-         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-             <circle cx="12" cy="12" r="5"/>
-             <line x1="12" y1="1" x2="12" y2="3"/>
-             <line x1="12" y1="21" x2="12" y2="23"/>
-             <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-             <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-             <line x1="1" y1="12" x2="3" y2="12"/>
-             <line x1="21" y1="12" x2="23" y2="12"/>
-             <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-             <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-             <line x1="12" y1="8" x2="12" y2="12"/>
-             <line x1="10" y1="10" x2="14" y2="10"/>
-         </svg>
-         Light
-     </a-button>
-     
-     <!-- Add Product Button -->
-     <a-button   v-if="product_access_recieved.create"  @click="addProduct()" type="primary" style="display: flex; align-items: center; gap: 8px;font-family: var(--font-family-main);">
-         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-             <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
-             <line x1="3" y1="6" x2="21" y2="6"/>
-             <path d="M16 10a4 4 0 0 1-8 0"/>
-             <line x1="12" y1="11" x2="12" y2="15"/>
-             <line x1="10" y1="13" x2="14" y2="13"/>
-         </svg>
-         Add Product
-     </a-button>
-                     </div>
-                 </div>
-             </div>
+                    </div>
+                    
+                    <!-- Search -->
+                    <div style="position: relative;">
+                        <input type="text" placeholder="Search Product" v-model="searchQuery"
+                            style="padding: 5px 12px 5px 35px; border: 1px solid #ddd; border-radius: 6px; width: 200px;outline:none">
+                        <svg style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: #999;"
+                            width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                    </div>
+                   
+                    <!-- Wall Texture Button -->
+<a-button v-if="product_access_recieved.create" type="primary" @click="show_add_new_wall_texture=true" style="display: flex; align-items: center; gap: 8px;">
 
-                         <!-- Mobile View (hidden on lg screens) -->
-<div class="lg:hidden flex flex-col gap-3 mb-5">
-    <!-- Line 1: Title -->
-    <h2 class="text-2xl font-semibold m-0" style="font-family: var(--font-family-main);">
-        My Products 
-        <span class="text-gray-600 text-base">({{ products.length }})</span>
-    </h2>
-    
-    <!-- Line 2: View Toggle + Search -->
-    <div class="flex gap-2">
-        <!-- View Toggle Buttons -->
-        <div class="flex border border-gray-300 rounded-md overflow-hidden">
-            <a-button 
-                @click="viewMode = 'grid'"
-                :class="viewMode === 'grid' ? 'bg-[#3B63FB] text-white' : 'bg-white text-gray-600'"
-                class="px-3 py-2 border-none text-xs font-semibold"
-            >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                    <rect x="3" y="3" width="7" height="7"></rect>
-                    <rect x="14" y="3" width="7" height="7"></rect>
-                    <rect x="3" y="14" width="7" height="7"></rect>
-                    <rect x="14" y="14" width="7" height="7"></rect>
-                </svg>
-            </a-button>
-            <a-button 
-                @click="viewMode = 'table'"
-                :class="viewMode === 'table' ? 'bg-[#3B63FB] text-white' : 'bg-white text-gray-600'"
-                class="px-3 py-2 border-none text-xs font-semibold"
-            >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="8" y1="6" x2="21" y2="6"></line>
-                    <line x1="8" y1="12" x2="21" y2="12"></line>
-                    <line x1="8" y1="18" x2="21" y2="18"></line>
-                    <line x1="3" y1="6" x2="3.01" y2="6"></line>
-                    <line x1="3" y1="12" x2="3.01" y2="12"></line>
-                    <line x1="3" y1="18" x2="3.01" y2="18"></line>
-                </svg>
-            </a-button>
-        </div>
-        
-        <!-- Search -->
-        <div class="relative flex-1">
-            <input 
-                type="text" 
-                placeholder="Search Product" 
-                v-model="searchQuery"
-                class="w-full py-1.5 pl-9 pr-3 border border-gray-300 rounded-md outline-none"
-            >
-            <svg class="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="11" cy="11" r="8"></circle>
-                <path d="m21 21-4.35-4.35"></path>
-            </svg>
-        </div>
-    </div>
-    
-    <!-- Line 3: Action Buttons -->
-    <div class="flex flex-wrap gap-2">
-        <!-- Wall -->
-    <a-button
-  v-if="product_access_recieved.create"
-  type="primary"
-  @click="show_add_new_wall_texture = true"
-  class="flex items-center justify-center min-w-[100px] px-4 py-2"
-  style="font-family: var(--font-family-main);"
->
-  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="inline-block align-middle mr-2">
-    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-    <rect x="7" y="7" width="3" height="3"/>
-    <rect x="14" y="7" width="3" height="3"/>
-    <rect x="7" y="14" width="3" height="3"/>
-    <rect x="14" y="14" width="3" height="3"/>
-  </svg>
-  <span class="align-middle">Wall</span>
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+        <rect x="7" y="7" width="3" height="3"/>
+        <rect x="14" y="7" width="3" height="3"/>
+        <rect x="7" y="14" width="3" height="3"/>
+        <rect x="14" y="14" width="3" height="3"/>
+        <line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="10" y1="10" x2="14" y2="10"/>
+    </svg>
+    Wall
 </a-button>
 
-
-
-
-
-        <!-- Floor -->
-       <a-button
-  v-if="product_access_recieved.create"
-  type="primary"
-  @click="show_add_new_floor_texture = true"
-  class="flex items-center justify-center min-w-[100px] px-4 py-2"
-  style="font-family: var(--font-family-main);"
->
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="16"
-    height="16"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    stroke-width="2"
-    class="inline-block align-middle mr-2"
-  >
-    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-    <line x1="8" y1="21" x2="16" y2="21"/>
-    <line x1="12" y1="17" x2="12" y2="21"/>
-  </svg>
-  <span class="align-middle">Floor</span>
+<!-- Floor Texture Button -->
+<a-button  v-if="product_access_recieved.create"  type="primary" @click="show_add_new_floor_texture=true" style="display: flex; align-items: center; gap: 8px;">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+        <line x1="8" y1="21" x2="16" y2="21"/>
+        <line x1="12" y1="17" x2="12" y2="21"/>
+        <rect x="6" y="7" width="4" height="3"/>
+        <rect x="14" y="7" width="4" height="3"/>
+        <rect x="6" y="11" width="4" height="3"/>
+        <rect x="14" y="11" width="4" height="3"/>
+        <line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="10" y1="10" x2="14" y2="10"/>
+    </svg>
+    Floor
 </a-button>
 
-
-        <!-- Light -->
-       <a-button
-  v-if="product_access_recieved.create"
-  type="primary"
-  @click="show_add_new_light = true"
-  class="flex items-center justify-center min-w-[100px] px-4 py-2"
-  style="font-family: var(--font-family-main);"
->
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="16"
-    height="16"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    stroke-width="2"
-    class="inline-block align-middle mr-2"
-  >
-    <circle cx="12" cy="12" r="5"/>
-    <line x1="12" y1="1" x2="12" y2="3"/>
-    <line x1="12" y1="21" x2="12" y2="23"/>
-  </svg>
-  <span class="align-middle">Light</span>
+<!-- Light Button -->
+<a-button  v-if="product_access_recieved.create"  type="primary" @click="show_add_new_light=true" style="display: flex; align-items: center; gap: 8px;">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="5"/>
+        <line x1="12" y1="1" x2="12" y2="3"/>
+        <line x1="12" y1="21" x2="12" y2="23"/>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+        <line x1="1" y1="12" x2="3" y2="12"/>
+        <line x1="21" y1="12" x2="23" y2="12"/>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        <line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="10" y1="10" x2="14" y2="10"/>
+    </svg>
+    Light
 </a-button>
 
-
-        <!-- Add Product -->
-       <a-button
-  v-if="product_access_recieved.create"
-  @click="addProduct()"
-  type="primary"
-  class="flex items-center justify-center min-w-[100px] px-4 py-2"
-  style="font-family: var(--font-family-main);"
->
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="16"
-    height="16"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    stroke-width="2"
-    class="inline-block align-middle mr-2"
-  >
-    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
-    <line x1="3" y1="6" x2="21" y2="6"/>
-  </svg>
-  <span class="align-middle">Add Product</span>
+<!-- Add Product Button -->
+<a-button   v-if="product_access_recieved.create"  @click="addProduct()" type="primary" style="display: flex; align-items: center; gap: 8px;">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+        <line x1="3" y1="6" x2="21" y2="6"/>
+        <path d="M16 10a4 4 0 0 1-8 0"/>
+        <line x1="12" y1="11" x2="12" y2="15"/>
+        <line x1="10" y1="13" x2="14" y2="13"/>
+    </svg>
+    Add Product
 </a-button>
-
-    </div>
-</div>
-
+                </div>
+            </div>
 
                 <!-- Grid View -->
                 <div v-if="viewMode === 'grid'" class="main">

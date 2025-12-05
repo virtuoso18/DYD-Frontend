@@ -990,7 +990,7 @@ export default {
   position: sticky;
   top: 10px;
   /* max-height: calc(100vh - 20px); */
-  overflow-y: auto;
+  /* overflow-y: auto; */
   scroll-behavior: smooth;
 }
 
@@ -1235,9 +1235,9 @@ export default {
 }
 
 @media (max-width: 1200px) {
-  .sidebar {
+  /* .sidebar {
     max-height: calc(100vh - 20px);
-  }
+  } */
 }
 
 

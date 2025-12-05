@@ -8,65 +8,21 @@
     <template #footer>
     </template>
 </a-modal>
-<!-- {{business_access_recieved }} -->
+{{business_access_recieved }}
 <!-- {{business_info}} -->
-<div
-  style="padding:1px; font-family: 'Poppins' !important;"
-  v-if="business_access_recieved.read"
->
+    <div style=" padding:10px" v-if="business_access_recieved.read">
     
-        <div>
-<div class="grid grid-cols-12 items-center w-full pb-4">
-  <!-- Left Side (20 / 24 → ~ col-span-10) -->
-  <div class="col-span-10">
-    <h2
-  class="text-[16px] leading-[24px] tracking-[0] font-medium"
-  style="font-family: 'Poppins';"
->
-  {{ isEditing ? 'Edit Site' : 'Manage Store' }}
-</h2>
-
-  </div>
-
-  <!-- Right Side (4 / 24 → ~ col-span-2) -->
-  <div 
-    class="col-span-2 flex justify-end"
-    v-if="business_access_recieved.update"
-  >
-    <!-- If NOT Editing -->
-    <button 
-      v-if="!isEditing" 
-      @click="enableEdit"
-      class="bg-blue-600 !text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
-      style="font-family: 'Poppins';"
-    >
-      Edit
-    </button>
-
-    <!-- If Editing -->
-    <div 
-      v-else 
-      class="flex gap-3"
-    >
-      <button 
-        @click="cancelEdit"
-        class="border border-gray-300 px-4 py-2 rounded-md hover:bg-gray-100 transition"
-        style="font-family: 'Poppins';"
-      >
-        Cancel
-      </button>
-
-      <button 
-        @click="saveChanges"
-        class="bg-blue-600 !text-white whitespace-nowrap px-4 py-2 rounded-md hover:bg-blue-700 transition"
-        style="font-family: 'Poppins';"
-      >
-        Save Changes
-      </button>
-    </div>
-  </div>
-</div>
-
+        <div style="background-color: white; padding:10px;border-radius:10px; border:2px solid rgba(128, 128, 128, 0.16); ">
+<a-row>
+    <a-col :span="20"> <h2>{{ isEditing ? 'Edit Site' : 'Manage Store' }}</h2></a-col>
+    <a-col :span="4" style="display: flex;justify-content: end;" v-if="business_access_recieved.update"> 
+        <a-button v-if="!isEditing" type="primary" @click="enableEdit">Edit</a-button>
+        <div v-else style="display: flex; gap: 10px;">
+            <a-button @click="cancelEdit">Cancel</a-button>
+            <a-button type="primary" @click="saveChanges">Save Changes</a-button>
+        </div>
+    </a-col>
+</a-row>
             
             <div 
         :style="`
@@ -80,10 +36,9 @@
     align-items:center;
     position: relative;
   `"
-  style="font-family: 'Poppins';"
         >
             
-<div style="text-align:center; font-family: 'Poppins';">
+        <div style="text-align:center">
             <!-- <div>{{business_info.name}}</div> -->
             <div style="position: relative; display: inline-block;">
                 <img :src="this.$store.state.root_media_api+editData.banner_picture" style="width:70px;height:70px" alt="">
@@ -96,39 +51,24 @@
                     <template #icon><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="m18.5 2.5 a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></template>
                 </a-button>
             </div>
-            <div style="font-size:16px;font-weight:700;color:white;font-family: 'Poppins';">Hi Ashish,</div>
+            <div style="font-size:16px;font-weight:700;color:white">Hi Ashish,</div>
              <div style="font-size:16px;font-weight:700;color:white">{{ editData.welcomeMessage }}</div>
         </div>
 
         <!-- Background image edit button -->
-       <a-button 
-  v-if="isEditing"
-  @click="changeBackgroundImage"
-  style="
-    position: absolute; 
-    top: 10px; 
-    right: 10px; 
-    z-index: 10;
-    background: transparent;
-    border: none;
-    box-shadow: none;
-    padding: 4px;
-  "
->
-  <template #icon>
-    <svg width="15" height="13" viewBox="0 0 15 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path fill-rule="evenodd" clip-rule="evenodd" d="M5.8335 13H9.1665C11.5072 13 12.678 13 13.5187 12.4692C13.8816 12.2403 14.1941 11.9448 14.4382 11.5996C15 10.8052 15 9.69801 15 7.48513C15 5.27224 15 4.16508 14.4382 3.37064C14.1941 3.02541 13.8816 2.72992 13.5187 2.50108C12.9787 2.15947 12.3022 2.03742 11.2665 1.99408C10.7722 1.99408 10.347 1.6402 10.2502 1.18159C10.1763 0.845659 9.9842 0.544614 9.70639 0.329331C9.42857 0.114047 9.08209 -0.00227125 8.7255 3.36055e-05H6.2745C5.5335 3.36055e-05 4.89525 0.494755 4.74975 1.18159C4.653 1.6402 4.22775 1.99408 3.7335 1.99408C2.6985 2.03742 2.022 2.16019 1.48125 2.50108C1.11865 2.73 0.806455 3.02548 0.5625 3.37064C0 4.16508 0 5.27152 0 7.48513C0 9.69873 4.47035e-08 10.8045 0.56175 11.5996C0.80475 11.9434 1.11675 12.2388 1.48125 12.4692C2.322 13 3.49275 13 5.8335 13ZM7.5 4.53052C5.77425 4.53052 4.37475 5.85291 4.37475 7.4844C4.37475 9.1159 5.775 10.4405 7.5 10.4405C9.225 10.4405 10.6252 9.11734 10.6252 7.48585C10.6252 5.85435 9.225 4.53052 7.5 4.53052ZM7.5 5.71207C6.465 5.71207 5.625 6.5058 5.625 7.48513C5.625 8.46373 6.465 9.25745 7.5 9.25745C8.535 9.25745 9.375 8.46373 9.375 7.48513C9.375 6.50652 8.535 5.71207 7.5 5.71207ZM11.0415 5.1213C11.0415 4.79485 11.3212 4.53052 11.667 4.53052H12.4995C12.8445 4.53052 13.125 4.79485 13.125 5.1213C13.1234 5.27939 13.0567 5.43041 12.9396 5.54118C12.8224 5.65196 12.6644 5.71342 12.5002 5.71207H11.667C11.5856 5.71284 11.5049 5.69816 11.4295 5.66888C11.354 5.63961 11.2853 5.5963 11.2272 5.54144C11.1691 5.48658 11.1228 5.42124 11.0909 5.34915C11.0591 5.27707 11.0423 5.19964 11.0415 5.1213Z" fill="white"/>
-    </svg>
-  </template>
-</a-button>
-
+        <a-button v-if="isEditing" 
+            type="primary" 
+            @click="changeBackgroundImage"
+            style="position: absolute; top: 10px; right: 10px; z-index: 10;">
+            <template #icon><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="m18.5 2.5 a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></template>
+        </a-button>
 
         </div>
         <br>
         <div style="padding:10px;">
             <div style="background: #f3f3f3;;border-radius:10px;padding:10px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <h1 v-if="!isEditing" style="font-size:18px;font-family: 'Poppins';">{{ editData.storeTitle }}</h1>
+                    <h1 v-if="!isEditing" style="font-size:18px">{{ editData.storeTitle }}</h1>
                     <a-input v-else 
                         v-model:value="editData.storeTitle" 
                         style="font-size:18px; font-weight: bold; border: 1px dashed #ccc;" 
@@ -151,10 +91,10 @@
          <div style="padding:10px;">
             <div style="background: #f3f3f3;;border-radius:10px;padding:10px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <h1 v-if="!isEditing" style="font-size:16px; font-family: 'Poppins';">{{ editData.servicesTitle }}</h1>
+                    <h1 v-if="!isEditing" style="font-size:16px">{{ editData.servicesTitle }}</h1>
                     <a-input v-else 
                         v-model:value="editData.servicesTitle" 
-                        style="font-size:16px; font-weight: bold; border: 1px dashed #ccc; font-family: 'Poppins';" 
+                        style="font-size:16px; font-weight: bold; border: 1px dashed #ccc;" 
                         placeholder="Services title" />
                     <a-button v-if="isEditing" 
                         type="text" 
@@ -193,32 +133,17 @@
                         
                             <a-col :sm="12" :xs="12" :md="12" :lg="12" style="border-right: 2px solid rgba(0,0,0,0.3) ;display: flex;justify-content: center;align-items: center;padding-top:20px">
 
-                                <div style="display: flex;flex-direction: column;justify-content: center;align-items: center;font-family: 'Poppins';">
+                                <div style="display: flex;flex-direction: column;justify-content: center;align-items: center">
 
-                                   <h1
-  style="
-    font-family: Poppins;
-    font-weight: 600;
-    font-size: 20px;
-    line-height: 28px;
-    letter-spacing: 0%;
-    text-align: center;
-  "
->
-  4.5
-</h1>
-
+                                    <h1>
+                                        4.5
+                                    </h1>
                                     <a-rate :value="4"></a-rate>
-                                    <h5 className="pt-2">(25 Users)</h5>
+                                    <h5>(25 Users)</h5>
                                 </div>
                             </a-col>
-<a-col 
-  :sm="12" 
-  :xs="12" 
-  :md="12" 
-  :lg="12" 
-  style="padding:5px; font-family:'Poppins';"
->                                <div style="display: flex;gap:5px;">
+                            <a-col :sm="12" :xs="12" :md="12" :lg="12" style="padding:5px">
+                                <div style="display: flex;gap:5px;">
                                     5<a-progress :percent="50" size="small" status="active" />
                                 </div>
                                                                 <div style="display: flex;gap:5px;">
@@ -247,16 +172,7 @@
                   style="position: absolute; bottom: 20px; right: 20px; z-index: 5;"
                   >
                   <div style="display:flex;gap:10px;justify-content: center;align-items: center;">
-    <EnvironmentOutlined /> <div className="!text-white" style="
-  font-family: 'Poppins';
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 24px;
-  color: var(--text-color);
-">
-  Update Location
-</div>
-
+    <EnvironmentOutlined /> <div>Update Location</div>
   </div>
   </a-button>
   

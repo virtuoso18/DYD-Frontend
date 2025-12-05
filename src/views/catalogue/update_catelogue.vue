@@ -2431,8 +2431,8 @@ async fetchSingleProductType(productType, dataKey, brand, endpointMap) {
       }
     },
 
-    processinggenerate_loading(isLoading) {
-      this.processing_generate_is_Loading = isLoading;
+    processinggenerate_loading() {
+      this.processing_generate_is_Loading = true;
     },
 
     change3dModel(e) {
