@@ -198,7 +198,7 @@
       <!-- Overlay Box Positioned Bottom Right -->
       <div 
         class="absolute -bottom-8 -right-8 w-2/3 h-48 rounded-2xl bg-cover bg-no-repeat bg-bottom pointer-events-none"
-        style="background-image: url('/thirdcardbg.svg');"
+        style="background-image: url('/thirdcardbg.jpg');"
       ></div>
     </div>
 
@@ -249,7 +249,7 @@
             <!-- Image Box -->
             <div 
               class="rounded-2xl w-full aspect-video sm:aspect-auto sm:h-64 flex items-center justify-center relative bg-cover bg-center"
-              style="background-image: url('/thirdcardbg.svg');"
+              style="background-image: url('/thirdcardbg.jpg');"
             >
               <!-- AI Badge -->
               <div class="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 font-poppins text-sm font-semibold shadow-lg z-30">
@@ -303,7 +303,7 @@
             <!-- Image Box -->
             <div 
               class="rounded-2xl w-full aspect-video sm:aspect-auto sm:h-64 flex items-center justify-center relative bg-cover bg-center"
-              style="background-image: url('/thirdcardbg.svg');"
+              style="background-image: url('/thirdcardbg.jpg');"
             >
               <!-- Action Buttons -->
               <div class="absolute -bottom-8 left-1/2 transform -translate-x-1/2 flex gap-3 z-30">
@@ -527,7 +527,7 @@ export default {
   left: 320px;
   width: 274px;
   height: 213px;
- background-image: url("/thirdcardbg.svg");
+ background-image: url("/thirdcardbg.jpg");
   border-radius: 16px;
   transform: translateY(24px);
   overflow: visible;
@@ -567,7 +567,7 @@ export default {
 }
 
 .step2-box {
- background-image: url("/thirdcardbg.svg");
+ background-image: url("/thirdcardbg.jpg");
 }
 
 .step2-number {
@@ -625,7 +625,7 @@ export default {
 }
 
 .step3-box {
- background-image: url("/thirdcardbg.svg");
+ background-image: url("/thirdcardbg.jpg");
  height: 274px;
 }
 

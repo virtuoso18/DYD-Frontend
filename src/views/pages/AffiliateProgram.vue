@@ -252,7 +252,7 @@
     <!-- CTA Section - Swap Furniture -->
     <section class="relative py-20 px-4 overflow-hidden">
       <img 
-        src="../../assets/API8.svg" 
+        src="../../assets/api8.svg" 
         alt="Swap Furniture Background" 
         class="absolute inset-0 w-full h-full object-cover"
       />

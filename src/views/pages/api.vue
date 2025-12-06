@@ -37,7 +37,7 @@
         </h2>
         <div class="rounded-2xl overflow-hidden shadow-2xl">
           <img 
-            src="../../assets/API2.svg" 
+            src="../../assets/api2.svg" 
             alt="Kitchen Interior" 
             class="w-full h-auto"
           />
@@ -63,7 +63,7 @@
           <!-- Service Card 1 -->
           <div class="relative h-[300px] md:h-[350px] rounded-2xl overflow-hidden group cursor-pointer shadow-lg hover:shadow-2xl transition-all">
             <img 
-              src="../../assets/API3.svg" 
+              src="../../assets/api3.svg" 
               alt="Easy Integration" 
               class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />
@@ -149,7 +149,7 @@
           </div>
           <div class="order-2">
             <img 
-              src="../../assets/API8.svg" 
+              src="../../assets/api8.svg" 
               alt="Object Masking API" 
               class="w-full h-auto rounded-2xl shadow-xl"
             />
