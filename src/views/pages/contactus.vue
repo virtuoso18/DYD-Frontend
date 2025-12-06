@@ -3,7 +3,7 @@
     <!-- Banner Section -->
    <div class="relative">
   <img
-    src="../../assets/contact-us.svg"
+    src="../../assets/contact-us.jpg"
     alt="Contact Banner"
     class="w-full h-[494px] object-cover block"
   />
@@ -62,7 +62,7 @@
     <!-- Left Image Section -->
     <div class="md:w-1/2 w-full p-2 rounded-xl">
       <img
-        src="../../assets/contactform.svg"
+        src="../../assets/contactform.jpg"
         alt="Contact Us"
         class="w-full h-full object-cover  rounded-xl"
       />

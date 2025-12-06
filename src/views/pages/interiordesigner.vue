@@ -2,7 +2,7 @@
   
     <!-- Main Banner Section -->
     <HeroBanner
-  bgImage="/interiordesigner.svg"
+  bgImage="/interiordesigner.jpg"
   heading1="Turning Real Estate Dreams into Reality 
 
 

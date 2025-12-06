@@ -76,7 +76,7 @@
           <!-- Service Card 2 -->
           <div class="relative h-[300px] md:h-[350px] rounded-2xl overflow-hidden group cursor-pointer shadow-lg hover:shadow-2xl transition-all">
             <img 
-              src="../../assets/API4.svg" 
+              src="../../assets/api4.jpg" 
               alt="Host Based Real Cost Control" 
               class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />
@@ -89,7 +89,7 @@
           <!-- Service Card 3 -->
           <div class="relative h-[300px] md:h-[350px] md:col-span-2 rounded-2xl overflow-hidden group cursor-pointer shadow-lg hover:shadow-2xl transition-all">
             <img 
-              src="../../assets/API5.svg" 
+              src="../../assets/api5.jpg" 
               alt="Show Your Product Offering" 
               class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />
@@ -114,7 +114,7 @@
         <div class="grid md:grid-cols-2 gap-8 md:gap-12 items-center mb-20">
           <div class="order-2 md:order-1">
             <img 
-              src="../../assets/API7.svg" 
+              src="../../assets/api7.jpg" 
               alt="Virtual Staging API" 
               class="w-full h-auto rounded-2xl shadow-xl"
             />
@@ -162,7 +162,7 @@
    <section class="relative py-20 px-4 overflow-hidden text-center">
   <!-- Background Image -->
   <img 
-    src="../../assets/API9.svg" 
+    src="../../assets/api9.jpg" 
     alt="Get in Touch Background" 
     class="absolute inset-0 w-full h-full object-cover"
   />

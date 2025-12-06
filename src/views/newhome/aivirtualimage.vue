@@ -5,7 +5,7 @@
         
         <!-- Image -->
         <img 
-          src="/aivirtualimage.svg" 
+          src="/aivirtualimage.jpg" 
           alt="Get Started Today"
           class="w-full h-auto object-contain rounded-2xl shadow-lg"
         />

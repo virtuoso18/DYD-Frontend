@@ -2,7 +2,7 @@
   
     <!-- Main Banner Section -->
     <HeroBanner
-  bgImage="/designcompany.svg"
+  bgImage="/designcompany.jpg"
   heading1="Creating Innovative Designs That 
 
 "

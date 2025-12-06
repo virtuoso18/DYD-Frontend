@@ -2,7 +2,7 @@
   <div>
     <!-- Main Banner Section -->
     <HeroBanner
-  bgImage="/interior.svg"
+  bgImage="/interior.jpg"
   heading1="Delivering the Finest Materials to 
 "
   heading2="Transform Spaces with Style"

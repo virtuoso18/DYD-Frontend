@@ -59,7 +59,7 @@
               </div>
                <div class="relative h-full">
                 <img 
-                  src="/cardswapper.svg" 
+                  src="/cardswapper.jpg" 
                   alt="Living Room" 
                   class="w-full h-full object-cover"
                 />
@@ -77,7 +77,7 @@
               <!-- Right Side - Image -->
               <div class="relative h-full order-1 md:order-2">
                 <img 
-                  src="/cardswapper.svg" 
+                  src="/cardswapper.jpg" 
                   alt="Modern Furniture" 
                   class="w-full h-full object-cover"
                 />
@@ -112,7 +112,7 @@
               </div>
                <div class="relative h-full">
                 <img 
-                  src="/cardswapper.svg" 
+                  src="/cardswapper.jpg" 
                   alt="Minimalist Room" 
                   class="w-full h-full object-cover"
                 />

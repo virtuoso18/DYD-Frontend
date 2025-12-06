@@ -2,7 +2,7 @@
   
     <!-- Main Banner Section -->
     <HeroBanner
-  bgImage="/homeowner.svg"
+  bgImage="/homeowner.jpg"
   heading1="Transforming Spaces into Stunning, 
 
 

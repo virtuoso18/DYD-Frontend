@@ -2,7 +2,7 @@
   
     <!-- Main Banner Section -->
     <HeroBanner
-  bgImage="/furnitureretail.svg"
+  bgImage="/furnitureretail.jpg"
   heading1="Creating Innovative Designs That 
 
 "

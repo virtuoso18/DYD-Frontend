@@ -3,7 +3,7 @@
     <!-- Banner Section -->
    <div class="relative">
   <img
-    src="../../assets/mlspartner.svg"
+    src="../../assets/mlspartner.jpg"
     alt="Contact Banner"
     class="w-full h-[590px] object-cover block"
   />
@@ -90,7 +90,7 @@ MLS Members</h3>
 
       <!-- Right Side: Contact Form -->
  <img
-    src="../../assets/mlsbanner.svg"
+    src="../../assets/mlsbanner.jpg"
     alt="Contact Banner"
     class="w-full h-[446px] px-28 translate-y-7 object-cover rounded-lg"
   />

@@ -46,7 +46,7 @@
         <div class="flex items-center justify-between w-full mt-4">
           <div class="flex items-center gap-3">
             <img
-              src="../../assets/API7.svg"
+              src="../../assets/api7.jpg"
               alt="Laura Lin"
               class="w-10 h-10 rounded-full object-cover"
             />
@@ -79,7 +79,7 @@
         <div class="flex items-center justify-between w-full mt-4">
           <div class="flex items-center gap-3">
             <img
-              src="../../assets/API7.svg"
+              src="../../assets/api7.jpg"
               alt="Laura Lin"
               class="w-10 h-10 rounded-full object-cover"
             />
@@ -111,7 +111,7 @@
         <div class="flex items-center justify-between w-full mt-4">
           <div class="flex items-center gap-3">
             <img
-              src="../../assets/API7.svg"
+              src="../../assets/api7.jpg"
               alt="Laura Lin"
               class="w-10 h-10 rounded-full object-cover"
             />

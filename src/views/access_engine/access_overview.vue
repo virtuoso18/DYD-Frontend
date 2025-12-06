@@ -181,7 +181,17 @@ style="
                     size="small"
                     @click="updateTaskStatus(task, 'InProgress')"
                     :loading="task.updating"
-                    style="background: #3b82f6; border-color: #3b82f6;"
+                    
+                    style="
+        background: #3b82f6; 
+        border-color: #3b82f6;
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        gap: 4px; 
+        color: white; 
+        font-family: var(--font-family-main);
+      "      
                   >
                     <PlayCircleOutlined />
                     Start Progress
@@ -193,7 +203,15 @@ style="
                     size="small"
                     @click="updateTaskStatus(task, 'Completed')"
                     :loading="task.updating"
-                    style="background: #8b5cf6; border-color: #8b5cf6;"
+                    style="
+                    background: #8b5cf6; border-color: #8b5cf6;
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: center; 
+                    gap: 4px; 
+                    color: white; 
+                    font-family: var(--font-family-main);
+                  "      
                   >
                     <CheckOutlined />
                     Complete

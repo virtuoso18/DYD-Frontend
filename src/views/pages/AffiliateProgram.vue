@@ -153,7 +153,7 @@
               <div class="bg-white rounded-xl shadow-lg p-6 w-[350px] flex-shrink-0 hover:shadow-2xl transition-shadow">
                 <div class="flex items-center gap-4 mb-4">
                   <img 
-                    src="../../assets/API7.svg" 
+                    src="../../assets/api7.jpg" 
                     alt="Amy Lang" 
                     class="w-12 h-12 rounded-full object-cover"
                   />
@@ -172,7 +172,7 @@
               <div class="bg-white rounded-xl shadow-lg p-6 w-[350px] flex-shrink-0 hover:shadow-2xl transition-shadow">
                 <div class="flex items-center gap-4 mb-4">
                   <img 
-                    src="../../assets/API7.svg" 
+                    src="../../assets/api7.jpg" 
                     alt="Troy Sinclair" 
                     class="w-12 h-12 rounded-full object-cover"
                   />
@@ -191,7 +191,7 @@
               <div class="bg-white rounded-xl shadow-lg p-6 w-[350px] flex-shrink-0 hover:shadow-2xl transition-shadow">
                 <div class="flex items-center gap-4 mb-4">
                   <img 
-                    src="../../assets/API7.svg" 
+                    src="../../assets/api7.jpg" 
                     alt="Sarah Johnson" 
                     class="w-12 h-12 rounded-full object-cover"
                   />
@@ -210,7 +210,7 @@
               <div class="bg-white rounded-xl shadow-lg p-6 w-[350px] flex-shrink-0 hover:shadow-2xl transition-shadow">
                 <div class="flex items-center gap-4 mb-4">
                   <img 
-                    src="../../assets/API7.svg" 
+                    src="../../assets/api7.jpg" 
                     alt="Mike Davis" 
                     class="w-12 h-12 rounded-full object-cover"
                   />
@@ -229,7 +229,7 @@
               <div class="bg-white rounded-xl shadow-lg p-6 w-[350px] flex-shrink-0 hover:shadow-2xl transition-shadow">
                 <div class="flex items-center gap-4 mb-4">
                   <img 
-                    src="../../assets/API7.svg" 
+                    src="../../assets/api7.jpg" 
                     alt="Emily White" 
                     class="w-12 h-12 rounded-full object-cover"
                   />

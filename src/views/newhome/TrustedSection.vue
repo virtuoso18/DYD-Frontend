@@ -29,7 +29,7 @@
         <div class="order-2 lg:order-1" data-aos="fade-right" data-aos-delay="200">
           <div class="relative rounded-3xl overflow-hidden shadow-2xl hover:shadow-3xl transition-shadow duration-300 group">
             <img 
-              src="/furnitureretail.svg" 
+              src="/furnitureretail.jpg" 
               alt="Interior Design Kitchen" 
               class="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-500"
             />

@@ -14,7 +14,7 @@
             <!-- Furniture -->
             <div class="flex flex-col items-center">
               <div class="w-full aspect-square  rounded-2xl p-6 flex items-center justify-center mb-4 hover:shadow-lg transition-shadow cursor-pointer">
-                <img src="/catalog1.svg" alt="Furniture" class="w-full h-full object-contain" />
+                <img src="/catalog1.jpg" alt="Furniture" class="w-full h-full object-contain" />
               </div>
               <p class="text-base font-medium text-gray-900 text-center">Furniture</p>
             </div>
@@ -22,7 +22,7 @@
             <!-- Lighting -->
             <div class="flex flex-col items-center">
               <div class="w-full aspect-square  rounded-2xl p-6 flex items-center justify-center mb-4 hover:shadow-lg transition-shadow cursor-pointer">
-                <img src="/catalog2.svg" alt="Lighting" class="w-full h-full object-contain" />
+                <img src="/catalog2.jpg" alt="Lighting" class="w-full h-full object-contain" />
               </div>
               <p class="text-base font-medium text-gray-900 text-center">Lighting</p>
             </div>
@@ -30,7 +30,7 @@
             <!-- Bath -->
             <div class="flex flex-col items-center">
               <div class="w-full aspect-square  rounded-2xl p-6 flex items-center justify-center mb-4 hover:shadow-lg transition-shadow cursor-pointer">
-                <img src="/catalog3.svg" alt="Bath" class="w-full h-full object-contain" />
+                <img src="/catalog3.jpg" alt="Bath" class="w-full h-full object-contain" />
               </div>
               <p class="text-base font-medium text-gray-900 text-center">Bath</p>
             </div>
@@ -38,7 +38,7 @@
             <!-- Kitchen & Dining -->
             <div class="flex flex-col items-center">
               <div class="w-full aspect-square  rounded-2xl p-6 flex items-center justify-center mb-4 hover:shadow-lg transition-shadow cursor-pointer">
-                <img src="/catalog4.svg" alt="Kitchen & Dining" class="w-full h-full object-contain" />
+                <img src="/catalog4.jpg" alt="Kitchen & Dining" class="w-full h-full object-contain" />
               </div>
               <p class="text-base font-medium text-gray-900 text-center">Kitchen & Dining</p>
             </div>
@@ -46,7 +46,7 @@
             <!-- Rugs -->
             <div class="flex flex-col items-center">
               <div class="w-full aspect-square  rounded-2xl p-6 flex items-center justify-center mb-4 hover:shadow-lg transition-shadow cursor-pointer">
-                <img src="/catalog5.svg" alt="Rugs" class="w-full h-full object-contain" />
+                <img src="/catalog5.jpg" alt="Rugs" class="w-full h-full object-contain" />
               </div>
               <p class="text-base font-medium text-gray-900 text-center">Rugs</p>
             </div>
@@ -54,7 +54,7 @@
             <!-- Outdoor -->
             <div class="flex flex-col items-center">
               <div class="w-full aspect-square  rounded-2xl p-6 flex items-center justify-center mb-4 hover:shadow-lg transition-shadow cursor-pointer">
-                <img src="/catalog6.svg" alt="Outdoor" class="w-full h-full object-contain" />
+                <img src="/catalog6.jpg" alt="Outdoor" class="w-full h-full object-contain" />
               </div>
               <p class="text-base font-medium text-gray-900 text-center">Outdoor</p>
             </div>
@@ -62,7 +62,7 @@
             <!-- Decoration -->
             <div class="flex flex-col items-center">
               <div class="w-full aspect-square  rounded-2xl p-6 flex items-center justify-center mb-4 hover:shadow-lg transition-shadow cursor-pointer">
-                <img src="/catalog7.svg" alt="Decoration" class="w-full h-full object-contain" />
+                <img src="/catalog7.jpg" alt="Decoration" class="w-full h-full object-contain" />
               </div>
               <p class="text-base font-medium text-gray-900 text-center">Decoration</p>
             </div>
@@ -70,7 +70,7 @@
             <!-- Bedroom -->
             <div class="flex flex-col items-center">
               <div class="w-full aspect-square  rounded-2xl p-6 flex items-center justify-center mb-4 hover:shadow-lg transition-shadow cursor-pointer">
-                <img src="/catalog8.svg" alt="Bedroom" class="w-full h-full object-contain" />
+                <img src="/catalog8.jpg" alt="Bedroom" class="w-full h-full object-contain" />
               </div>
               <p class="text-base font-medium text-gray-900 text-center">Bedroom</p>
             </div>
@@ -78,7 +78,7 @@
             <!-- Living Room -->
             <div class="flex flex-col items-center">
               <div class="w-full aspect-square  rounded-2xl p-6 flex items-center justify-center mb-4 hover:shadow-lg transition-shadow cursor-pointer">
-                <img src="/catalog9.svg" alt="Living Room" class="w-full h-full object-contain" />
+                <img src="/catalog9.jpg" alt="Living Room" class="w-full h-full object-contain" />
               </div>
               <p class="text-base font-medium text-gray-900 text-center">Living Room</p>
             </div>
@@ -86,7 +86,7 @@
             <!-- Storage & Organization -->
             <div class="flex flex-col items-center">
               <div class="w-full aspect-square  rounded-2xl p-6 flex items-center justify-center mb-4 hover:shadow-lg transition-shadow cursor-pointer">
-                <img src="/catalog10.svg" alt="Storage & Organization" class="w-full h-full object-contain" />
+                <img src="/catalog10.jpg" alt="Storage & Organization" class="w-full h-full object-contain" />
               </div>
               <p class="text-base font-medium text-gray-900 text-center">Storage & Organization</p>
             </div>
@@ -94,7 +94,7 @@
             <!-- Holiday -->
             <div class="flex flex-col items-center">
               <div class="w-full aspect-square  rounded-2xl p-6 flex items-center justify-center mb-4 hover:shadow-lg transition-shadow cursor-pointer">
-                <img src="/catalog11.svg" alt="Holiday" class="w-full h-full object-contain" />
+                <img src="/catalog11.jpg" alt="Holiday" class="w-full h-full object-contain" />
               </div>
               <p class="text-base font-medium text-gray-900 text-center">Holiday</p>
             </div>
@@ -102,7 +102,7 @@
             <!-- Sale -->
             <div class="flex flex-col items-center">
               <div class="w-full aspect-square  rounded-2xl p-6 flex items-center justify-center mb-4 hover:shadow-lg transition-shadow cursor-pointer">
-                <img src="/catalog12.svg" alt="Sale" class="w-full h-full object-contain" />
+                <img src="/catalog12.jpg" alt="Sale" class="w-full h-full object-contain" />
               </div>
               <p class="text-base font-medium text-gray-900 text-center">Sale</p>
             </div>

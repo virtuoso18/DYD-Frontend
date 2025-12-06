@@ -4,7 +4,7 @@
     <!-- Hero Section -->
     <section class="relative h-[400px] md:h-[500px] bg-gray-100 overflow-hidden">
       <img 
-        src="../../assets/earn1.svg" 
+        src="../../assets/earn1.jpg" 
         alt="Earn Photos Hero" 
         class="w-full h-full object-cover"
       />
@@ -28,7 +28,7 @@
         <div class="grid md:grid-cols-2 gap-8 md:gap-12 items-center mb-20">
           <div class="order-2 md:order-1">
             <img 
-              src="../../assets/earn2.svg" 
+              src="../../assets/earn2.jpg" 
               alt="Read Feature Article" 
               class="w-full h-auto rounded-2xl shadow-xl"
             />
@@ -63,7 +63,7 @@
           </div>
           <div class="order-2">
             <img 
-              src="../../assets/earn3.svg" 
+              src="../../assets/earn3.jpg" 
               alt="Share or Repost" 
               class="w-full h-auto rounded-2xl shadow-xl"
             />

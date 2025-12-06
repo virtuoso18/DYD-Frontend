@@ -2,7 +2,7 @@
   
     <!-- Main Banner Section -->
     <HeroBanner
-  bgImage="/realestateagent.svg"
+  bgImage="/realestateagent.jpg"
   heading1="Turning Real Estate Dreams into Reality 
 
 
