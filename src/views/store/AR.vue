@@ -1,910 +1,1702 @@
 <template>
+<!-- {{ProductDetails}} -->
+<!-- {{glbModelUrl}} -->
   <div class="ar-app" ref="containerRef">
-    <div class="bottom-sheet-wrapper">
+    <!-- Top Navigation Bar -->
+    <div v-if="showNavbar" class="ar-navbar">
+      <span class="back-button" @click="goBack">
+        <svg width="6" height="10" viewBox="0 0 6 10" fill="none">
+          <path
+            d="M4.75 0.75L0.75 4.75L4.75 8.75"
+            stroke="#1A1A1A"
+            stroke-width="1.5"
+            stroke-linecap="round"
+          />
+        </svg>
+        Back
+      </span>
+      <div class="ar-status-badge">{{ statusMessage }}</div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" >
+      <!-- 3D Model Viewer with Occlusion Support -->
+      <div class="model-viewer-container" v-if="ProductDetails">
+        <model-viewer
+          ref="modelViewer"
+          :src="glbModelUrl"
+          :ios-src="usdzModelUrl"
+          ar
+          ar-modes="webxr scene-viewer quick-look"
+          camera-controls
+          touch-action="pan-y"
+          auto-rotate
+          shadow-intensity="1"
+          :alt="ProductDetails.name"
+        :ar-scale="`fixed ${ProductDetails.dimensions.width}m ${ProductDetails.dimensions.height}m ${ProductDetails.dimensions.length}m`"
+
+
+          environment-image="neutral"
+          exposure="1"
+          shadow-softness="1"
+          class="model-viewer"
+          @error="handleModelError"
+          @ar-status="handleARStatus"
+          @load="handleModelLoad"
+        >
+          <!-- Custom AR Button with Occlusion Info -->
+          
+
+<a-button
+            slot="ar-button"
+            size="medium"
+type="primary"
+            class="ar-button-overlay"
+            style="max-width:70%"
+            @click="prepareARWithOcclusion"
+          >
+            <span>View in Your Space</span>
+          </a-button>
+          <!-- Loading -->
+          <div slot="poster" class="model-loading">
+            <div class="spinner"></div>
+            <p>Loading 3D Model...</p>
+          </div>
+
+          <!-- Progress Bar -->
+          <div slot="progress-bar" class="progress-bar">
+            <div
+              class="progress-fill"
+              :style="{ width: loadingProgress + '%' }"
+            ></div>
+          </div>
+        </model-viewer>
+      </div>
+    </div>
+
+    <!-- Error Message -->
+    <div v-if="error" class="error-toast">
+      <div class="error-content">
+        <strong>{{ error }}</strong>
+        <p v-if="errorDetails">{{ errorDetails }}</p>
+      </div>
+      <button @click="dismissError" class="close-button">×</button>
+    </div>
+
+    <!-- AR Instructions Toast -->
+    <div v-if="showARInstructions" class="ar-instructions-toast">
+      <div class="instruction-content">
+        <p>
+          <strong>{{ arInstructionText }}</strong>
+        </p>
+        <p class="instruction-subtitle">{{ arInstructionSubtext }}</p>
+      </div>
+      <button @click="showARInstructions = false" class="close-button">
+        ×
+      </button>
+    </div>
+
+    <!-- Instruction Modal -->
+    <div v-if="showInstructionModal" class="instruction-modal-overlay">
+      <div class="instruction-modal">
+        <!-- Back Button -->
+        <button class="modal-back-button" @click="goToPreviousInstruction">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path
+              d="M12.5 15L7.5 10L12.5 5"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          Back
+        </button>
+
+        <!-- Instruction Content -->
+        <div class="instruction-modal-content">
+          <!-- Step 1 -->
+          <div v-if="step === 1" class="instruction-step">
+            <div class="instruction-image">
+              <svg width="200" height="200" viewBox="0 0 200 200" fill="none">
+                <rect width="200" height="200" rx="20" fill="#F0F4FF" />
+                <circle cx="100" cy="80" r="30" fill="#667EEA" opacity="0.2" />
+                <path d="M100 50L115 75H85L100 50Z" fill="#667EEA" />
+                <path
+                  d="M70 110H130V150H70V110Z"
+                  fill="#667EEA"
+                  opacity="0.6"
+                />
+                <circle cx="90" cy="130" r="5" fill="white" />
+                <circle cx="110" cy="130" r="5" fill="white" />
+                <path
+                  d="M85 145H115"
+                  stroke="white"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </div>
+            <div class="instruction-text">
+              <h4><b>Find a Flat Surface</b></h4>
+              <p style="font-size:12px">
+                Point your camera at a flat surface like a floor or table. Move
+                your device slowly to help it detect the surface.
+              </p>
+              <!-- <p class="instruction-tip">
+                💡 Make sure the area is well-lit for best results.
+              </p> -->
+            </div>
+          </div>
+
+          <!-- Step 2 -->
+          <div v-if="step === 2" class="instruction-step">
+            <div class="instruction-image">
+              <svg width="200" height="200" viewBox="0 0 200 200" fill="none">
+                <rect width="200" height="200" rx="20" fill="#F0F4FF" />
+                <circle cx="100" cy="100" r="60" fill="#667EEA" opacity="0.1" />
+                <circle cx="100" cy="100" r="40" fill="#667EEA" opacity="0.2" />
+                <path
+                  d="M80 100L95 115L120 85"
+                  stroke="#667EEA"
+                  stroke-width="4"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M50 100H70M130 100H150M100 50V70M100 130V150"
+                  stroke="#667EEA"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  opacity="0.4"
+                />
+              </svg>
+            </div>
+            <div class="instruction-text">
+
+              <h4><b>Place & Interact</b></h4>
+              <p style="font-size:12px">
+
+                Tap on the screen to place the furniture. You can pinch to
+                resize, and drag with one finger to rotate the item. 
+</p>
+
+              <!-- <p class="instruction-tip">
+                🎯 Walk around to see how it looks from different angles!
+              </p> -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Continue Button -->
+<div style="width:100%;display:flex;justify-content:center">
+
+        <a-button type="primary" size="medium" style="margin:auto" @click="goToNextInstruction">
+          {{ step === 2 ? "Start AR" : "Continue" }}
+        </a-button>
+      </div>
+      <br>
+    <br>
+      </div>
+    </div>
+
+    <!-- Draggable Bottom Drawer (Shown in AR Mode) -->
+    <div
+      v-if="!isFullScreen && ProductDetails"
+      class="ar-drawer"
+      :class="{
+        'drawer-collapsed': drawerState === 'collapsed',
+        'drawer-expanded': drawerState === 'expanded',
+      }"
+      :style="{
+        transform: `translateY(calc(100% - ${currentDrawerHeight}px))`,
+      }"
+    >
       <!-- Drag Handle -->
       <div
-        v-if="isSessionStarted && !fullScreenMode"
-        class="drag-handle"
-        @touchstart="startDrag"
-        @touchmove="onDrag"
-        @touchend="endDrag"
+        class="drawer-handle"
+        @touchstart="handleDrawerTouchStart"
+        @touchmove="handleDrawerTouchMove"
+        @touchend="handleDrawerTouchEnd"
+        @mousedown="handleDrawerMouseDown"
       >
-        <div class="handle-bar">
-          <div class="handle-har-icon"></div>
-          <div style="padding: 10px; width: 100%">
-            <a-row>
-              <a-col :span="16">
-                <h1 style="font-size:18px">$ {{ProductDetails.pricing.price}}</h1>
-                <h3 style="max-width: 20ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                {{ProductDetails.name}}
-              </h3>
-              </a-col>
-              <a-col :span="8">
-                <div style="display: flex; gap: 10px;justify-content: end;">
-                  <a-button shape="circle" size="large" type="primary" style="display:flex;justify-content: center;align-items: center;" @click="addToCart"
-                    ><ShoppingCartOutlined style="font-size:24px"
-                  /></a-button>
-                  <a-button
-                    @click="toggleFullscreen"
-                     style="display:flex;justify-content: center;align-items: center;"
-                    shape="circle"
-                    size="large"
-                    type="default"
+        <div class="handle-bar"></div>
+      </div>
+
+      <!-- Drawer Content -->
+      <div class="drawer-content" @click.stop>
+        <div class="product-card">
+          <div class="product-header">
+            <div class="product-info">
+              <h2>{{ ProductDetails.name }}</h2>
+              <div class="price-section">
+                <span class="current-price">${{ ProductDetails.pricing.price }}</span>
+              </div>
+              <!-- <div class="rating-section">
+                <div class="stars">
+                  <span
+                    v-for="i in 5"
+                    :key="i"
+                    class="star"
+                    :class="{ filled: i <= rating }"
+                    >★</span
                   >
-                    <svg
-                      width="24"
-                      height="24"
-                      viewBox="0 0 26 26"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                      class=""
-                      :class="{ active: mode === 'zoom' }"
-                      title="Zoom out"
-                      v-if="!fullScreenMode"
-                    >
-                      <path
-                        d="M8.57101 3.31865C8.57101 3.31865 4.32145 2.93738 3.6294 3.62942C2.93734 4.32146 3.31868 8.57101 3.31868 8.57101"
-                        stroke="#1A1A1A"
-                        stroke-width="1.60714"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M8.57101 22.3949C8.57101 22.3949 4.32145 22.7763 3.6294 22.0842C2.93734 21.3921 3.31868 17.1426 3.31868 17.1426"
-                        stroke="#1A1A1A"
-                        stroke-width="1.60714"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M17.1436 3.31865C17.1436 3.31865 21.3932 2.93738 22.0852 3.62942C22.7772 4.32146 22.3959 8.57101 22.3959 8.57101"
-                        stroke="#1A1A1A"
-                        stroke-width="1.60714"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M17.1436 22.3949C17.1436 22.3949 21.3932 22.7763 22.0852 22.0842C22.7772 21.3921 22.3959 17.1426 22.3959 17.1426"
-                        stroke="#1A1A1A"
-                        stroke-width="1.60714"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M15.0117 10.7115L21.4957 4.22754"
-                        stroke="#1A1A1A"
-                        stroke-width="1.60714"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M10.7118 15.0039L3.90039 21.8378"
-                        stroke="#1A1A1A"
-                        stroke-width="1.60714"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M10.7111 10.7171L4.12012 4.13477"
-                        stroke="#1A1A1A"
-                        stroke-width="1.60714"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M14.9775 15.0039L21.9937 21.9638"
-                        stroke="#1A1A1A"
-                        stroke-width="1.60714"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                    </svg>
-                  </a-button>
                 </div>
-              </a-col>
-            </a-row>
+                <span class="rating-text"
+                  >{{ rating }} ({{ reviewCount }} reviews)</span
+                >
+              </div> -->
+            </div>
+            <div class="cart-controller-sec">
+              <a-button
+  type="primary"
+  title="add to cart"
+  class="cart-button"
+  shape="circle"
+  @click="addToCart"
+  :disabled="!hasToken"
+>
+  <ShoppingCartOutlined style="font-size: 20px" />
+</a-button>
+              <a-button class="cart-button" title="fullscreen mode" type="primary" shape="circle" @click="toggleFullScreen">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <path
+                    d="M3 3H8M3 3V8M3 3L8 8"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M17 3H12M17 3V8M17 3L12 8"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M3 17H8M3 17V12M3 17L8 12"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M17 17H12M17 17V12M17 17L12 12"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </a-button>
+            </div>
+          </div>
+
+          <!-- Product Details -->
+          <div class="product-details">
+            <h3>Product Details</h3>
+
+            <div class="detail-section">
+              <h4>Dimensions</h4>
+              <p>Width: {{ProductDetails.dimensions.width}}" | Height: {{ProductDetails.dimensions.height}}" | Depth: {{ProductDetails.dimensions.length}}"</p>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="action-buttons">
+            <!-- <button class="wishlist-button">Show Product Detials</button>-->
+            <a-button type="primary" @click="goto_product_Route(ProductDetails)" block   size="large" style="font-size:20px;;display: flex;justify-content: center;align-items:center; width:100%"><IssuesCloseOutlined />See Product </a-button>
+            <!-- <button class="add-to-cart-button">
+              🛒 Add to Cart - ${{ currentPrice }}
+            </button> -->
           </div>
         </div>
       </div>
-      <!-- Ant Design Drawer -->
-      <a-drawer
-      v-if="ProductDetails"
-        placement="bottom"
-        height="380"
-        :open="isOpen"
-        @close="isOpen = false"
-        :closable="true"
-        :getContainer="false"
-        :mask="false"
-        :class="[{ peek: !isOpen }, 'bottom-sheet']"
-        style="position: relative; left: -16px; height: 104%;color:black"
-      >
-      <template #extra>
-<a-row>
+    </div>
 
-  <a-col :span="12" style="padding-left:4px;padding-right:4px;">
-    <a-button size="large" shape="circle" type="primary" style="font-size:20px;;display: flex;justify-content: center;align-items:center;"
-        @click="addToCart"
-    :loading="cartLoading"
+    <!-- Exit Full Screen Button (Bottom Right) -->
+    <button
+      v-if="isFullScreen"
+      class="exit-fullscreen-button"
+      @click="toggleFullScreen"
     >
-    <div style="display:flex;gap:10px">
-      <!-- <template #icon> -->
-        <ShoppingCartOutlined style="font-size:24px"/>
-      <!-- </template> -->
-      
-    </div>
-  </a-button>
-</a-col>
-          
-          <a-col :span="12" style="padding-left:4px;padding-right:4px;display: flex;justify-content: end;">
-            <a-button  size="large" shape="circle" style="font-size:20px;;display: flex;justify-content: center;align-items:center;"><HeartOutlined/> </a-button>
-          </a-col>
-          
-        </a-row>
-      </template>
-      <h1 style="font-size:18px">$ {{ProductDetails.pricing.price}}</h1>
-                <h3 style="max-width: 20ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                {{ProductDetails.name}}
-              </h3>
-              <p>Type: {{ProductDetails.furniture_type}}</p>
-
-          <h2>Product Dimensions</h2>
-          <p><span> {{ProductDetails.dimensions.width}}m</span> Width X <span>{{ProductDetails.dimensions.height}}m </span> Height X <span>{{ProductDetails.dimensions.length}}m </span> Depth</p>
-
-        <a-row class="add-to-cart-sec">
-          <a-col :span="24" style="padding-right:4px;">
-            <a-button type="primary" @click="goto_product_Route(ProductDetails)" block   size="large" style="font-size:20px;;display: flex;justify-content: center;align-items:center; width:100%"><IssuesCloseOutlined />See Product </a-button>
-          </a-col>
-         
-        </a-row>
-      
-        <a-row class="product-size-sec">
-        </a-row>
-      </a-drawer>
-    </div>
-    <div v-if="stage > 1 && stage < 4 && !isSessionStarted" class="stageview">
-      <StageView :currentStage="stage" @start-ar="startARSession" />
-    </div>
-    <div v-else-if="stage === 1" class="stage1_sec">
-      <div
-        class="step1"
-        style="
-          position: relative;
-          width: 100%;
-          height: 100vh;
-          padding: 0;
-          margin: 0;
-          background: white;
-          overflow: hidden;
-        "
-      >
-        <!-- Full Screen Canvas -->
-         
-        <div
-
-          style="
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-          ">
-          <canvas_3d_model_renderer
-            :glbModelUrl="modelUrl"
-            :Model_instance_id="'12345678'"
-            :isLoading="isLoading"
-            style="
-              width: 100% !important;
-              height: 100% !important;
-              min-height: 100% !important;
-              max-height: 100% !important;
-              display: block;
-              border-radius: 0;
-              margin: 0;
-              padding: 0;
-            "
-          />
-        </div>
-        <!-- Floating Back Button (Top Left) -->
-        <div
-          style="
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 1000;
-            width: 90%;
-          "
-        >
-          <a-row>
-            <a-col :span="4">
-              <a-button
-                shape="circle"
-                type="primary"
-                size="large"
-                aria-label="Go Back"
-                @click="this.$router.back()"
-
-                style="display:flex;justify-content: center;align-items: center;"
-              >
-                <template #icon>
-                  <ArrowLeftOutlined />
-                </template>
-              </a-button>
-            </a-col>
-            <a-col :span="20">
-              <a-alert
-                message="Pinch to zoom • Drag to rotate"
-                type="info"
-                show-icon
-                :closable="false"
-              />
-            </a-col>
-            
-          </a-row>
-          
-        </div>
-        <!-- Floating Next Button (Bottom Center) -->
-        <div
-          style="
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 1000;
-          "
-        >
-          <a-button type="primary" size="large" @click="startARSession">
-            Try in AR →
-          </a-button>
-        </div>
-      </div>
-    </div>
-    <div v-if="isSessionStarted && !fullScreenMode" class="ar_sec_navbar">
-      <!-- <span class="back-button-sec" @click="endARSession">
-      </span> -->
-        <a-button @click="endARSession"
-                shape="circle"
-                type="primary"
-                size="large"
-                aria-label="Go Back"
-                style="display:flex;justify-content: center;align-items: center;"
-              >
-                <template #icon>
-                  <ArrowLeftOutlined />
-                </template>
-              </a-button>
-    </div>
-    <!-- Loading State -->
-    <div v-if="stage === 3" v-show="isLoading" class="loading-container">
-      <div class="spinner"></div>
-      <p>{{ loadingMessage }}</p>
-      <p
-        style="
-          font-size: 12px;
-          margin-top: 20px;
-          color: rgba(255, 255, 255, 0.7);
-        "
-      >
-        Status: {{ debugStatus }}
-      </p>
-    </div>
-
-    <!-- AR View -->
-    <div v-show="!isLoading" class="ar-container">
-      <!-- A-Frame Scene Container -->
-      <div id="ar-scene-container" class="ar-scene"></div>
-
-      <!-- Status Indicators -->
-      <div v-if="shouldShowStatus" class="status-indicator">
-        <div class="ar-status">{{ arStatus }}</div>
-        <!-- <div class="floor-detection">{{ floorDetection }}</div> -->
-      </div>
-      <!-- Error Message -->
-      <div v-if="error" class="error-message">
-        <p>{{ error }}</p>
-        <button @click="error = null" class="close-error">×</button>
-      </div>
-    </div>
-    
-    <div
-      v-if="isSessionStarted && fullScreenMode"
-      @click="existFullScreen"
-      class="exitFullScreen_sec"
-    >
-      <a-button v-if="fullScreenMode" class="exit-full-screen" shape="circle" size="large"  style="display:flex;justify-content: center;align-items: center;">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24px"
-          height="24px"
-          viewBox="0 0 24 24"
-          fill="none"
-        >
-          <path
-            fill-rule="evenodd"
-            clip-rule="evenodd"
-            d="M3.29289 3.29289C3.68342 2.90237 4.31658 2.90237 4.70711 3.29289L8 6.58579V5C8 4.44772 8.44772 4 9 4C9.55228 4 10 4.44772 10 5V9C10 9.55228 9.55228 10 9 10H5C4.44772 10 4 9.55228 4 9C4 8.44772 4.44772 8 5 8H6.58579L3.29289 4.70711C2.90237 4.31658 2.90237 3.68342 3.29289 3.29289ZM19.2929 3.29289C19.6834 2.90237 20.3166 2.90237 20.7071 3.29289C21.0976 3.68342 21.0976 4.31658 20.7071 4.70711L17.4142 8H19C19.5523 8 20 8.44772 20 9C20 9.55228 19.5523 10 19 10H15C14.4477 10 14 9.55228 14 9V5C14 4.44772 14.4477 4 15 4C15.5523 4 16 4.44772 16 5V6.58579L19.2929 3.29289ZM4 15C4 14.4477 4.44772 14 5 14H9C9.55228 14 10 14.4477 10 15V19C10 19.5523 9.55228 20 9 20C8.44772 20 8 19.5523 8 19V17.4142L4.70711 20.7071C4.31658 21.0976 3.68342 21.0976 3.29289 20.7071C2.90237 20.3166 2.90237 19.6834 3.29289 19.2929L6.58579 16H5C4.44772 16 4 15.5523 4 15ZM14 15C14 14.4477 14.4477 14 15 14H19C19.5523 14 20 14.4477 20 15C20 15.5523 19.5523 16 19 16H17.4142L20.7071 19.2929C21.0976 19.6834 21.0976 20.3166 20.7071 20.7071C20.3166 21.0976 19.6834 21.0976 19.2929 20.7071L16 17.4142V19C16 19.5523 15.5523 20 15 20C14.4477 20 14 19.5523 14 19V15Z"
-            fill="#000000"
-          />
-        </svg>
-      </a-button>
-    </div>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <path
+          d="M8 3H3V8"
+          stroke="white"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+        <path
+          d="M3 3L9 9"
+          stroke="white"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+        <path
+          d="M16 3H21V8"
+          stroke="white"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+        <path
+          d="M21 3L15 9"
+          stroke="white"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+        <path
+          d="M8 21H3V16"
+          stroke="white"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+        <path
+          d="M3 21L9 15"
+          stroke="white"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+        <path
+          d="M16 21H21V16"
+          stroke="white"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+        <path
+          d="M21 21L15 15"
+          stroke="white"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    </button>
   </div>
-  <div class="footer-stepper">
-    <a-button
-      v-if="stage >= 1 && stage <= 2"
-      class="step-continue-button"
-      type="primary"
-      size="large"
-      @click="IncreasesStage"
-    >
-      Continue
-    </a-button>
-  </div>
+
 </template>
 
 <script>
-import StageView from "@/components/AR/starting_instruction_ar.vue";
-import canvas_3d_model_renderer from "@/components/AR/canvas_3d_model_renderer.vue";
-import { ArrowLeftOutlined, HeartOutlined, IssuesCloseOutlined, ShoppingCartOutlined } from "@ant-design/icons-vue";
+import { ArrowLeftOutlined, HeartOutlined,IssuesCloseOutlined , ShoppingCartOutlined } from "@ant-design/icons-vue";
 
 export default {
-  name: "ARSpinosaurs",
+  name: "ARProductView",
   data() {
     return {
-      isOpen: false,
-      startY: 0,
-      currentY: 0,
-      dragAmount: 0,
-      isLoading: false,
-      loadingMessage: "Initializing AR...",
-      stage: 1,
-      debugStatus: "Ready",
-      arStatus: "AR Ready",
-      isSessionStarted: false,
-      fullScreenMode: false,
-      shouldShowStatus: true,
-      modelUrl: "",
-      ProductDetails: null,
-      scene: null,
-      dino: null,
-      modelPlaced: false,
-      fixedModelPosition: null,
-      cartLoading: false,
+      step: 0,
+      productName: "Modern Accent Chair",
+      currentPrice: 123,
+        hasToken :'',
+      // UI State
+      showNavbar: false,
+      statusMessage: "Ready",
       error: null,
+      errorDetails: "",
+      showARInstructions: false,
+      arInstructionText: "",
+      arInstructionSubtext: "",
+      loadingProgress: 0,
+      showInstructionModal: false,
+
+      // AR Features
+      occlusionSupported: false,
+      depthSensingSupported: false,
+      isARActive: false,
+      isFullScreen: false,
+
+      // Device Detection
+      deviceInfo: "Detecting...",
+      arSupportType: "Checking...",
+      arStatusClass: "checking",
+      isIOS: false,
+      isAndroid: false,
+      iosVersion: null,
+
+      // Drawer State - Instagram Style
+      drawerState: "collapsed", // 'collapsed' (100px) or 'expanded' (300px)
+      collapsedHeight: 100,
+      expandedHeight: 300,
+      currentDrawerHeight: 100,
+      isDragging: false,
+      startY: 0,
+      startHeight: 0,
+      dragVelocity: 0,
+      lastY: 0,
+      lastTime: 0,
+      ProductDetails:null,
+
+      // Model URLs
+      glbModelUrl:
+        "https://rawcdn.githack.com/KhronosGroup/glTF-Sample-Models/master/2.0/SheenChair/glTF-Binary/SheenChair.glb",
+      usdzModelUrl: "",
     };
   },
 
-  mounted() {
-    console.log("✓ Component mounted");
-    this.fetchProductDetails();
-  },
-
-  beforeUnmount() {
-    if (this.scene) {
-      this.scene.pause();
-    }
-  },
-
-  methods: {
-    // ============================================
-    // 🚀 START AR SESSION
-    // ============================================
-    async startARSession() {
-      console.log("🚀 Starting AR Session...");
-      this.loadingMessage = "Loading AR...";
-      this.isLoading = true;
-      this.error = null;
-
-      if (!this.modelUrl) {
-        try {
-          await this.fetchProductDetails();
-        } catch (err) {
-          console.error("❌ Failed to load product:", err);
-          this.isLoading = false;
-          return;
-        }
-      }
-
-      this.stage = 3;
-
-      setTimeout(() => {
-        this.loadARFramework();
-      }, 100);
-    },
-
-    // ============================================
-    // 📦 LOAD A-FRAME
-    // ============================================
-    async loadARFramework() {
-      // Check if already loaded
-      const w = window;
-      if (w.AFRAME && w.AFRAME.version) {
-        console.log("✓ A-Frame already loaded");
-        this.setupARScene();
-        return;
-      }
-
-      // Load A-Frame script
-      const script = document.createElement("script");
-      script.src = "https://aframe.io/releases/1.4.0/aframe.min.js";
-      script.async = true;
-
-      script.onload = () => {
-        console.log("✓ A-Frame loaded");
-        setTimeout(() => this.setupARScene(), 500);
-      };
-
-      script.onerror = () => {
-        console.error("❌ Failed to load A-Frame");
-        this.isLoading = false;
-        this.error = "Failed to load AR framework";
-      };
-
-      document.head.appendChild(script);
-    },
-
-    // ============================================
-    // 🎬 SETUP AR SCENE
-    // ============================================
-    setupARScene() {
-      this.$nextTick(() => {
-        const container = document.getElementById("ar-scene-container");
-        if (!container) {
-          console.error("❌ AR container not found");
-          this.error = "AR container not found";
-          this.isLoading = false;
-          return;
-        }
-        this.createARScene(container);
-      });
-    },
-
-    // ============================================
-    // 🎨 CREATE AR SCENE
-    // ============================================
-    createARScene(container) {
-      console.log("🎨 Creating AR scene with model:", this.modelUrl);
-
-      const sceneHTML = `
-        <a-scene
-          webxr="requiredFeatures: hit-test,local-floor; optionalFeatures: dom-overlay; overlayElement: .ar-app;"
-          renderer="colorManagement: true; physicallyCorrectLights: true;"
-        >
-          <a-assets>
-            <a-asset-item id="model" src="${this.modelUrl}" response-type="arraybuffer" crossorigin="anonymous"></a-asset-item>
-          </a-assets>
-
-          <a-camera position="0 1.2 0"></a-camera>
-
-          <!-- Reticle Marker for Floor -->
-          <a-entity 
-            id="reticle-marker" 
-            position="0 -0.5 -2" 
-            visible="false"
-          >
-            <a-cylinder position="0 0 0" radius="0.15" height="0.001" color="#4CAF50" opacity="0.7"></a-cylinder>
-          </a-entity>
-
-          <!-- 3D Model Container -->
-          <a-entity 
-            id="dino" 
-            position="0 -2 -5" 
-            scale="0.8 0.8 0.8"
-            visible="false"
-          >
-            <a-entity gltf-model="#model" animation-mixer shadow="cast: true; receive: false"></a-entity>
-          </a-entity>
-
-          <!-- Shadow Plane -->
-          <a-plane 
-            id="shadowPlane" 
-            height="100" 
-            width="100" 
-            rotation="-90 0 0" 
-            position="0 0 0" 
-            shadow="receive: true; cast: false" 
-            material="color: #ffffff; transparent: true; opacity: 0.001;"
-          ></a-plane>
-
-          <!-- Lighting -->
-          <a-light type="hemisphere" intensity="1.2" color="#ffffff"></a-light>
-          <a-light 
-            type="directional" 
-            position="5 8 5" 
-            intensity="1.5" 
-            light="castShadow: true; shadowMapHeight: 2048; shadowMapWidth: 2048;"
-          ></a-light>
-          <a-light type="directional" position="-5 6 -3" intensity="0.6"></a-light>
-        </a-scene>
-      `;
-
-      try {
-        container.innerHTML = sceneHTML;
-        console.log("✓ AR Scene HTML created");
-
-        // Wait for A-Frame to initialize
-        setTimeout(() => {
-          this.scene = document.querySelector("a-scene");
-          this.dino = document.getElementById("dino");
-
-          if (this.scene) {
-            console.log("✓ A-Frame scene initialized");
-            
-            // Wait for WebXR session to start
-            this.scene.addEventListener("enter-ar", () => {
-              console.log("✓ AR session started");
-              this.isSessionStarted = true;
-              
-              // Show reticle when AR starts
-              const reticle = document.getElementById("reticle-marker");
-              if (reticle) {
-                reticle.setAttribute("visible", true);
-              }
-
-              // Handle click to place model
-              this.scene.addEventListener("click", () => {
-                if (this.dino && !this.modelPlaced) {
-                  const reticlePos = reticle?.getAttribute("position") || { x: 0, y: 0, z: -2 };
-                  this.dino.setAttribute("position", reticlePos);
-                  this.dino.setAttribute("visible", true);
-                  this.modelPlaced = true;
-                  console.log("✓ Model placed at:", reticlePos);
-                }
-              });
-            });
-
-            this.isLoading = false;
-            this.debugStatus = "AR Ready!";
-            this.arStatus = "✓ Point at floor";
-            console.log("✓ AR Ready - Point your phone at the floor");
-          }
-        }, 1500);
-      } catch (err) {
-        console.error("❌ Error creating scene:", err);
-        this.error = "Error creating AR scene: " + err.message;
-        this.isLoading = false;
-      }
-    },
-
-    // ============================================
-    // 🛑 END AR SESSION
-    // ============================================
-    async endARSession() {
-      try {
-        console.log("🛑 Ending AR Session...");
-
-        // Stop XR session
-        const scene = document.querySelector("a-scene");
-        if (scene) {
-          const w = window;
-          if (w.AFRAME && w.AFRAME.scenes && w.AFRAME.scenes.length > 0) {
-            try {
-              await scene.xrSession?.end();
-              console.log("✓ XR session ended");
-            } catch (err) {
-              console.warn("XR session end error:", err);
-            }
-          }
-        }
-
-        // Stop camera/video
-        const videoEl = document.querySelector("video");
-        if (videoEl?.srcObject) {
-          const tracks = videoEl.srcObject.getTracks();
-          tracks.forEach((track) => track.stop());
-          videoEl.srcObject = null;
-          console.log("✓ Camera stopped");
-        }
-
-        // Clear AR container
-        const container = document.getElementById("ar-scene-container");
-        if (container) {
-          container.innerHTML = "";
-        }
-
-        // Reset state
-        this.isSessionStarted = false;
-        this.stage = 1;
-        this.modelPlaced = false;
-        this.scene = null;
-        this.dino = null;
-
-        console.log("✓ AR cleanup complete");
-      } catch (error) {
-        console.error("❌ Cleanup error:", error);
-      }
-    },
-
-    // ============================================
-    // 📦 FETCH PRODUCT
-    // ============================================
-    async fetchProductDetails() {
-      try {
-        const productId = this.$route.params.product_id;
-        if (!productId) throw new Error("Product ID not found");
-
-        const token = localStorage.getItem("token");
-        const apiUrl = `${this.$store.state.root_api}product/api/product-details/${productId}/`;
-
-        const headers = { "Content-Type": "application/json" };
-        if (token) headers["Authorization"] = `Token ${token}`;
-
-        const response = await fetch(apiUrl, {
-          method: "GET",
-          headers,
-          credentials: "omit",
-        });
-
-        if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
-
-        const result = await response.json();
-        if (!result.success || !result.data) throw new Error(result.message);
-
-        this.ProductDetails = result.data;
-        this.modelUrl = `${this.$store.state.root_media_api}${result.data["3d_model"]}`;
-
-        console.log("✅ Product loaded:", this.modelUrl);
-      } catch (error) {
-        console.error("❌ Error:", error);
-        this.$message.error("Failed to load product");
-      }
-    },
-
-    // ============================================
-    // 🛒 ADD TO CART
-    // ============================================
-    async addToCart() {
-      if (!this.ProductDetails?.id) {
-        this.$message.error("Product not found");
-        return;
-      }
-
-      this.cartLoading = true;
-      try {
-        const token = localStorage.getItem("token");
-        const response = await fetch(`${this.$store.state.root_api}cart/add/`, {
-          method: "POST",
-          headers: {
-            "Authorization": `Token ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            product_type: this.ProductDetails.is_ceiling_light_product
-              ? "light"
-              : "furniture",
-            product_id: this.ProductDetails.id,
-            quantity: 1,
-          }),
-        });
-
-        const result = await response.json();
-        if (response.ok) {
-          this.$message.success("Added to cart!");
-        } else {
-          this.$message.error(result.error || "Failed to add to cart");
-        }
-      } catch (error) {
-        this.$message.error("Error adding to cart");
-      } finally {
-        this.cartLoading = false;
-      }
-    },
-
-    // ============================================
-    // 🧭 UI UTILITIES
-    // ============================================
-    IncreasesStage() {
-      if (this.stage > 0 && this.stage < 4) {
-        this.stage = Number(this.stage) + 1;
-      }
-    },
-
-    startDrag(e) {
-      this.startY = e.touches[0].clientY;
-    },
-
-    onDrag(e) {
-      this.currentY = e.touches[0].clientY;
-      this.dragAmount = this.currentY - this.startY;
-
-      if (this.dragAmount > 50) this.isOpen = false;
-      if (this.dragAmount < -50) this.isOpen = true;
-    },
-
-    endDrag() {
-      this.startY = 0;
-      this.currentY = 0;
-      this.dragAmount = 0;
-    },
-
-    toggleFullscreen() {
-      this.fullScreenMode = !this.fullScreenMode;
-    },
-
-    existFullScreen() {
-      this.fullScreenMode = false;
-    },
-
-    goto_product_Route(product) {
-      this.$router
-        .push({
-          name: "buisness_product",
-          params: {
-            buisness_name: product.business_slug,
-            product_type: "product",
-            product_id: product.id,
-          },
-        })
-        .then(() => {
-          window.location.reload();
-        })
-        .catch((err) => {
-          console.error("Navigation failed:", err);
-        });
-    },
-  },
-
   components: {
-    StageView,
-    canvas_3d_model_renderer,
     ArrowLeftOutlined,
-    HeartOutlined,
+    HeartOutlined, 
     IssuesCloseOutlined,
     ShoppingCartOutlined,
   },
+  computed: {
+    windowHeight() {
+      return window.innerHeight;
+    },
+  },
+
+  mounted() {
+   this.hasToken = localStorage.getItem('token');
+
+    this.detectDevice();
+    this.loadModelViewer();
+    this.checkOcclusionSupport();
+    this.fetchProductDetails();
+  },
+
+  methods: {
+
+    goto_product_Route(product) {
+  this.$router.push({
+    name: 'buisness_product',
+    params: {
+      buisness_name: product.business_slug,
+      product_type: 'product',
+      product_id: product.id
+    }
+  }).then(() => {
+    // Reload AFTER navigation is done
+    window.location.reload();
+  }).catch(err => {
+    console.error("Navigation failed:", err);
+  });
+},
+
+  async addToCart() {
+    if (!this.ProductDetails || !this.ProductDetails.id) {
+      this.$message.error('Product not found');
+      return;
+    }
+
+    this.cartLoading = true;
+    
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(
+        `${this.$store.state.root_api}cart/add/`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Token ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            product_type: this.ProductDetails.is_ceiling_light_product ? 'light' : 'furniture',
+            product_id: this.ProductDetails.id,
+            quantity: 1
+          })
+        }
+      );
+      
+      const result = await response.json();
+      
+      if (response.ok) {
+        this.$message.success('Added to cart!');
+      } else {
+        this.$message.error(result.error || 'Failed to add to cart');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      this.$message.error('Error adding to cart');
+    } finally {
+      this.cartLoading = false;
+    }
+  },
+
+    async fetchProductDetails() {
+      try {
+        this.isLoading=true
+        const productId = this.$route.params.product_id;
+        if (!productId) {
+          throw new Error('Product ID not found in route parameters');
+        }
+
+        let token = localStorage.getItem('token');
+        const apiUrl = `${this.$store.state.root_api}product/api/product-details/${productId}/`;
+
+        console.log('📡 Fetching from:', apiUrl);
+
+        const headers = { 'Content-Type': 'application/json' };
+        if (token) {
+          headers['Authorization'] = `Token ${token}`;
+        }
+
+        const response = await fetch(apiUrl, {
+          method: 'GET',
+          headers: headers,
+          credentials: 'omit'
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        console.log(result);
+
+        if (!result.success || !result.data) {
+          throw new Error(result.message || 'Failed to fetch product details');
+        }
+        this.ProductDetails=result.data
+        const dimensions = result.data.dimensions || {};
+        this.diamensions = {
+          width: parseFloat(dimensions.width) || 0.7,
+          height: parseFloat(dimensions.height) || 1.2,
+          depth: parseFloat(dimensions.depth || dimensions.length) || 0.6
+        };
+
+        console.log('✅ Product Dimensions (meters):', this.diamensions);
+
+        
+        this.glbModelUrl=`${this.$store.state.root_media_api}${result.data['3d_model']}`;
+        if (!this.glbModelUrl) {
+          console.error('Available fields in result.data:', Object.keys(result.data));
+          throw new Error('No 3D model URL found in product data');
+        }
+
+        // this.modelUrl = modelUrl;
+        // this.modelUrl = "https://y5hhig196j7rwq-8000.proxy.runpod.net/media/products/3d_models/c3.glb";
+        console.log('✅ Model URL:', this.modelUrl);
+        console.log('✅ Product Data Loaded');
+        
+      } catch (error) {
+        console.error('❌ Error loading product details:', error);
+        this.error = error.message || 'Failed to load product. Please try again.';
+      }
+      this.isLoading=false
+    },
+
+    async loadModelViewer() {
+      if (!customElements.get("model-viewer")) {
+        const script = document.createElement("script");
+        script.type = "module";
+        script.src =
+          "https://ajax.googleapis.com/ajax/libs/model-viewer/3.3.0/model-viewer.min.js";
+
+        script.onload = () => {
+          console.log("✅ model-viewer loaded");
+          this.checkModelViewerReady();
+        };
+
+        script.onerror = () => {
+          this.error = "Failed to load 3D viewer";
+          this.errorDetails = "Please refresh the page and try again.";
+        };
+
+        document.head.appendChild(script);
+      } else {
+        this.checkModelViewerReady();
+      }
+    },
+
+    checkModelViewerReady() {
+      const checkInterval = setInterval(() => {
+        const viewer = this.$refs.modelViewer;
+        if (viewer) {
+          console.log("✅ model-viewer element ready");
+          clearInterval(checkInterval);
+
+          viewer.setAttribute("camera-orbit", "0deg 75deg 105%");
+          viewer.setAttribute("min-camera-orbit", "auto auto 5%");
+          viewer.setAttribute("max-camera-orbit", "auto auto 500%");
+        }
+      }, 100);
+
+      setTimeout(() => clearInterval(checkInterval), 5000);
+    },
+
+    async checkOcclusionSupport() {
+      if (navigator.xr) {
+        try {
+          const depthSupported = await navigator.xr.isSessionSupported(
+            "immersive-ar"
+          );
+
+          if (depthSupported) {
+            console.log("Checking depth-sensing support...");
+            this.depthSensingSupported = true;
+
+            if (this.isIOS && this.iosVersion >= 14) {
+              this.occlusionSupported = true;
+              console.log("✅ iOS occlusion supported via ARKit");
+            } else if (this.isAndroid) {
+              this.occlusionSupported = true;
+              console.log("✅ Android occlusion supported via ARCore");
+            }
+          }
+        } catch (err) {
+          console.log("Occlusion check:", err.message);
+
+          if (this.isAndroid || (this.isIOS && this.iosVersion >= 14)) {
+            this.occlusionSupported = true;
+            console.log("✅ Occlusion available via native AR");
+          }
+        }
+      } else {
+        if (this.isAndroid || (this.isIOS && this.iosVersion >= 14)) {
+          this.occlusionSupported = true;
+          console.log("✅ Occlusion available via native AR (no WebXR)");
+        }
+      }
+    },
+
+    detectDevice() {
+      const ua = navigator.userAgent;
+
+      this.isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+
+      if (this.isIOS) {
+        const match = ua.match(/OS (\d+)_(\d+)_?(\d+)?/);
+        if (match) {
+          this.iosVersion = parseInt(match[1]);
+        }
+
+        this.deviceInfo = `iPhone/iPad (iOS ${this.iosVersion || "?"})`;
+
+        if (this.iosVersion >= 14) {
+          this.arSupportType = "✅ ARKit with Occlusion";
+          this.arStatusClass = "supported";
+        } else if (this.iosVersion >= 12) {
+          this.arSupportType = "✅ AR Quick Look";
+          this.arStatusClass = "supported";
+        } else {
+          this.arSupportType = "⚠️ iOS 12+ Required";
+          this.arStatusClass = "unsupported";
+        }
+      } else if (/Android/.test(ua)) {
+        this.isAndroid = true;
+        this.deviceInfo = "Android Device";
+        this.arSupportType = "✅ ARCore with Occlusion";
+        this.arStatusClass = "supported";
+      } else {
+        this.deviceInfo = "Desktop Browser";
+        this.arSupportType = "❌ Mobile Required";
+        this.arStatusClass = "unsupported";
+      }
+    },
+
+    prepareARWithOcclusion(event) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      this.step = 1;
+      this.showInstructionModal = true;
+    },
+
+    goToNextInstruction() {
+      if (this.step === 1) {
+        this.step = 2;
+      } else if (this.step === 2) {
+        this.step = 3;
+        this.showInstructionModal = false;
+        this.launchAR();
+      }
+    },
+
+    goToPreviousInstruction() {
+      if (this.step === 1) {
+        this.step = 0;
+        this.showInstructionModal = false;
+      } else if (this.step === 2) {
+        this.step = 1;
+      } else if (this.step === 3) {
+        this.step = 0;
+        this.showInstructionModal = false;
+      }
+    },
+
+    launchAR() {
+      console.log("Launching AR...");
+
+      // Show AR drawer at initial collapsed state (100px)
+      this.isARActive = true;
+      this.drawerState = "collapsed";
+      this.currentDrawerHeight = this.collapsedHeight;
+      this.isFullScreen = false;
+
+      if (this.occlusionSupported) {
+        this.showARInstructions = true;
+        this.arInstructionText = "Realistic AR Mode Active! ✨";
+        this.arInstructionSubtext =
+          "Real objects will naturally block the model. Move around to see the effect!";
+
+        setTimeout(() => {
+          this.showARInstructions = false;
+        }, 4000);
+      } else {
+        this.showARInstructions = true;
+        this.arInstructionText = "AR Mode";
+        this.arInstructionSubtext =
+          "Note: Model will appear on top of objects (occlusion not available on this device)";
+
+        setTimeout(() => {
+          this.showARInstructions = false;
+        }, 3000);
+      }
+
+      const viewer = this.$refs.modelViewer;
+      if (viewer && viewer.canActivateAR) {
+        viewer.activateAR();
+      }
+    },
+
+    // Toggle Full Screen Mode
+    toggleFullScreen() {
+      this.isFullScreen = !this.isFullScreen;
+
+      if (this.isFullScreen) {
+        // Hide drawer
+        this.currentDrawerHeight = 0;
+      } else {
+        // Show drawer at collapsed state
+        this.drawerState = "collapsed";
+        this.currentDrawerHeight = this.collapsedHeight;
+      }
+    },
+
+    // Drawer Touch Handlers - Instagram Style
+    handleDrawerTouchStart(e) {
+      if (this.isFullScreen) return;
+
+      this.isDragging = true;
+      this.startY = e.touches[0].clientY;
+      this.startHeight = this.currentDrawerHeight;
+      this.lastY = e.touches[0].clientY;
+      this.lastTime = Date.now();
+      this.dragVelocity = 0;
+    },
+
+    handleDrawerTouchMove(e) {
+      if (!this.isDragging || this.isFullScreen) return;
+
+      e.preventDefault();
+      const currentY = e.touches[0].clientY;
+      const deltaY = this.startY - currentY;
+      const currentTime = Date.now();
+      const deltaTime = currentTime - this.lastTime;
+
+      // Calculate velocity for smooth snap animation
+      if (deltaTime > 0) {
+        this.dragVelocity = (currentY - this.lastY) / deltaTime;
+      }
+
+      this.lastY = currentY;
+      this.lastTime = currentTime;
+
+      // Update drawer height (inverted because we're dragging from bottom)
+      let newHeight = this.startHeight + deltaY;
+
+      // Constrain between collapsed and expanded
+      newHeight = Math.max(
+        this.collapsedHeight,
+        Math.min(this.expandedHeight, newHeight)
+      );
+
+      this.currentDrawerHeight = newHeight;
+    },
+
+    handleDrawerTouchEnd(e) {
+      if (!this.isDragging || this.isFullScreen) return;
+
+      this.isDragging = false;
+
+      const midpoint = (this.collapsedHeight + this.expandedHeight) / 2;
+      const threshold = 50; // Velocity threshold for flick gesture
+
+      // Check if user flicked the drawer
+      const hasVelocity = Math.abs(this.dragVelocity) > threshold;
+
+      if (hasVelocity) {
+        // Flick gesture - snap based on velocity direction
+        if (this.dragVelocity < 0) {
+          // Flicked up
+          this.expandDrawer();
+        } else {
+          // Flicked down
+          this.collapseDrawer();
+        }
+      } else {
+        // No flick - snap based on position
+        if (this.currentDrawerHeight > midpoint) {
+          this.expandDrawer();
+        } else {
+          this.collapseDrawer();
+        }
+      }
+    },
+
+    expandDrawer() {
+      this.drawerState = "expanded";
+      this.animateDrawerTo(this.expandedHeight);
+    },
+
+    collapseDrawer() {
+      this.drawerState = "collapsed";
+      this.animateDrawerTo(this.collapsedHeight);
+    },
+
+    animateDrawerTo(targetHeight) {
+      const startHeight = this.currentDrawerHeight;
+      const distance = targetHeight - startHeight;
+      const duration = 300; // ms
+      const startTime = Date.now();
+
+      const animate = () => {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+
+        // Ease out cubic for smooth deceleration
+        const easeProgress = 1 - Math.pow(1 - progress, 3);
+
+        this.currentDrawerHeight = startHeight + distance * easeProgress;
+
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        } else {
+          this.currentDrawerHeight = targetHeight;
+        }
+      };
+
+      requestAnimationFrame(animate);
+    },
+
+    // Mouse handlers for desktop testing
+    handleDrawerMouseDown(e) {
+      if (this.isFullScreen) return;
+
+      this.isDragging = true;
+      this.startY = e.clientY;
+      this.startHeight = this.currentDrawerHeight;
+      this.lastY = e.clientY;
+      this.lastTime = Date.now();
+      this.dragVelocity = 0;
+
+      const handleMouseMove = (e) => {
+        if (!this.isDragging) return;
+
+        const currentY = e.clientY;
+        const deltaY = this.startY - currentY;
+        const currentTime = Date.now();
+        const deltaTime = currentTime - this.lastTime;
+
+        if (deltaTime > 0) {
+          this.dragVelocity = (currentY - this.lastY) / deltaTime;
+        }
+
+        this.lastY = currentY;
+        this.lastTime = currentTime;
+
+        let newHeight = this.startHeight + deltaY;
+        newHeight = Math.max(
+          this.collapsedHeight,
+          Math.min(this.expandedHeight, newHeight)
+        );
+
+        this.currentDrawerHeight = newHeight;
+      };
+
+      const handleMouseUp = () => {
+        if (!this.isDragging) return;
+
+        this.isDragging = false;
+
+        const midpoint = (this.collapsedHeight + this.expandedHeight) / 2;
+        const threshold = 50;
+
+        const hasVelocity = Math.abs(this.dragVelocity) > threshold;
+
+        if (hasVelocity) {
+          if (this.dragVelocity < 0) {
+            this.expandDrawer();
+          } else {
+            this.collapseDrawer();
+          }
+        } else {
+          if (this.currentDrawerHeight > midpoint) {
+            this.expandDrawer();
+          } else {
+            this.collapseDrawer();
+          }
+        }
+
+        document.removeEventListener("mousemove", handleMouseMove);
+        document.removeEventListener("mouseup", handleMouseUp);
+      };
+
+      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("mouseup", handleMouseUp);
+    },
+
+    handleModelLoad(event) {
+      console.log("Model loaded successfully");
+      this.loadingProgress = 100;
+
+      if (this.isIOS || this.isAndroid) {
+        setTimeout(() => {
+          this.showARInstructions = true;
+
+          if (this.occlusionSupported) {
+            this.arInstructionText = "Try Realistic AR! ✨";
+            this.arInstructionSubtext =
+              "Tap the AR button to see this product blend naturally with your space";
+          } else {
+            this.arInstructionText = "Try AR Now!";
+            this.arInstructionSubtext =
+              "Tap the AR button to place this product in your space";
+          }
+
+          setTimeout(() => {
+            this.showARInstructions = false;
+          }, 1000);
+        }, 1000);
+      }
+    },
+
+    handleModelError(event) {
+      console.error("Model loading error:", event);
+      this.error = "Failed to load 3D model";
+      this.errorDetails =
+        "The 3D model could not be loaded. Please check your internet connection.";
+    },
+
+    handleARStatus(event) {
+      console.log("AR Status:", event.detail);
+
+      if (event.detail.status === "not-presenting") {
+        console.log("AR session ended");
+        this.statusMessage = "Ready";
+        this.isARActive = false;
+        this.isFullScreen = false;
+      } else if (event.detail.status === "session-started") {
+        console.log("AR session started");
+        this.statusMessage = "AR Active";
+        this.isARActive = true;
+      } else if (event.detail.status === "failed") {
+        this.error = "AR Failed";
+        this.errorDetails = "Could not start AR session. Please try again.";
+        this.isARActive = false;
+        this.isFullScreen = false;
+      }
+    },
+
+    goBack() {
+      if (this.isARActive) {
+        this.isARActive = false;
+        this.isFullScreen = false;
+        const viewer = this.$refs.modelViewer;
+        if (viewer) {
+          // Exit AR mode
+        }
+      } else {
+        window.history.back();
+      }
+    },
+
+    dismissError() {
+      this.error = null;
+      this.errorDetails = "";
+    },
+  },
 };
 </script>
+
 <style scoped>
-.ar_sec_navbar {
+.ar-app {
+  position: relative;
   width: 100%;
-  padding: 50px 20px;
-  position: fixed;
-  top: 0px;
-  left: 0px;
-  background-color: white;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 1000 !important;
+  min-height: 100vh;
+  background: #f8f9fa;
+  overflow-x: hidden;
 }
 
-.loading-container {
+.ar-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 16px 20px;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.back-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.ar-status-badge {
   flex: 1;
+  background: #e8f5e9;
+  color: #2e7d32;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.main-content {
+  width: 100%;
+  max-width: 100%;
+}
+
+.model-viewer-container {
+  position: relative;
+  width: 100%;
+  height: 80vh;
+  min-height: 400px;
+}
+
+.model-viewer {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+}
+
+.model-loading {
+  position: absolute;
+  inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  position: fixed;
-  left: 30%;
-  bottom: 100px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #666;
 }
 
-.status-indicator {
-  position: fixed;
-  text-align: center;
-  bottom: 130px;
-  left: 40%;
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid #e0e0e0;
+  border-top-color: #1890ff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
 }
 
-#ar-scene-container {
-  position: relative;
-  z-index: 0;
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
-.footer-controls {
-  position: fixed;
-  bottom: 0px;
+
+.progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.progress-fill {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.ar-button-overlay {
+  position: absolute;
+  bottom: 25px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
+  align-items: center;
   gap: 10px;
-  z-index: 9;
-  background-color: white;
-  height: 80px;
-  width: 100%;
-  justify-content: center;
-  align-items: center;
+  transition: all 0.3s ease;
+  z-index: 10;
 }
 
-.exitFullScreen_sec {
-  position: fixed;
-  bottom: 10px;
-  right: 10px;
+.ar-button-overlay:active {
+  transform: translateX(-50%) scale(0.95);
 }
 
-.stageview {
-  padding: 10px;
-}
-.footer-stepper {
-  width: 100%;
-  position: fixed;
-  bottom: 10px;
-  /* : 13px 10px; */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.ant-drawer-wrapper-body {
-  position: relative;
-  left: -16px;
-}
-.bottom-sheet-wrapper {
+.error-toast,
+.ar-instructions-toast {
   position: fixed;
   bottom: 20px;
-  width: 100%;
-  z-index: 9;
-  /* background-color: rgb(57, 245, 19); */
+  left: 20px;
+  right: 20px;
+  padding: 16px 20px;
+  border-radius: 12px;
+  z-index: 2000;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  animation: slideUp 0.3s ease-out;
 }
 
-.drag-handle {
-  width: 100%;
-  height: 150px;
+.error-toast {
+  background: #ff4d4f;
+  color: white;
+  box-shadow: 0 8px 24px rgba(255, 77, 79, 0.4);
+}
+
+.ar-instructions-toast {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.error-content strong,
+.instruction-content strong {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 15px;
+}
+
+.error-content p,
+.instruction-content p {
+  font-size: 13px;
+  opacity: 0.95;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.instruction-subtitle {
+  font-size: 12px !important;
+  margin-top: 4px !important;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  line-height: 1;
+  opacity: 0.9;
+}
+
+.close-button:hover {
+  opacity: 1;
+}
+
+/* Instruction Modal Styles */
+.instruction-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  z-index: 3000;
   display: flex;
-  justify-content: center;
   align-items: center;
-  background: transparent;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.instruction-modal {
+  background: white;
+  border-radius: 24px;
+  width: 100%;
+  max-width: 500px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  animation: slideInUp 0.4s ease;
+  overflow: hidden;
+}
+
+@keyframes slideInUp {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-back-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.05);
+  border: none;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a1a1a;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.modal-back-button:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.modal-back-button:active {
+  transform: scale(0.95);
+}
+
+.instruction-modal-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 80px 32px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.instruction-step {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.instruction-image {
+  margin-bottom: 32px;
+  animation: floatIn 0.6s ease;
+}
+
+@keyframes floatIn {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.instruction-text {
+  width: 100%;
+}
+
+.instruction-text h3 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 16px 0;
+}
+
+.instruction-text p {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #666;
+  margin: 0 0 12px 0;
+}
+
+.instruction-tip {
+  background: linear-gradient(135deg, #fff4e6 0%, #ffe7ba 100%);
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 14px !important;
+  color: #d46b08 !important;
+  margin-top: 20px !important;
+  font-weight: 500;
+}
+
+.modal-continue-button {
+  
+  
+}
+
+.modal-continue-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(102, 126, 234, 0.5);
+}
+
+.modal-continue-button:active {
+  transform: translateY(0);
+}
+
+/* Instagram-Style Drawer Styles */
+.ar-drawer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.15);
+  z-index: 1500;
+  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  will-change: transform;
   touch-action: none;
 }
 
-.handle-bar {
-  width: 100%;
-  color:black;
-  /* height: 150px; */
-  padding: 10px;
-  background: white;
-  border-radius: 5px;
+.drawer-handle {
   position: relative;
-  left: -16px;
-  bottom: -50px;
+  padding: 12px 20px 8px;
+  cursor: grab;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+.drawer-handle:active {
+  cursor: grabbing;
+}
+
+.handle-bar {
+  width: 40px;
+  height: 4px;
+  background: #d9d9d9;
+  border-radius: 2px;
+}
+
+.fullscreen-button {
+ width: 36px;
+  height: 36px;
+  border-radius: 50%;
+   cursor: pointer;
+   margin-left: 10px;
+   color: #666;
+  /* position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.05);
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+ 
+  transition: all 0.2s ease;
+  color: #666; */
+}
+
+.fullscreen-button:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.fullscreen-button:active {
+  transform: translateY(-50%) scale(0.9);
+}
+
+.drawer-content {
+  /* overflow-y: auto; */
+  height:300px;
+  max-height: calc(350px - 5px);
+  padding: 0 20px 20px;
+}
+
+.product-card {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-.handle-har-icon {
-  width: 50px;
-  height: 3px;
-  background-color: #c4c4c4;
-  border-radius: 5px;
-  text-align: center;
-  position: relative;
-  top: -8px;
+  gap: 20px;
 }
 
-.bottom-sheet.peek {
-  transform: translateY(calc(100% - 5vh)) !important; /* Show 5% */
-}
-
-.bottom-sheet .ant-drawer-content-wrapper {
-  border-radius: 16px 16px 0 0;
-}
-
-.price-details {
-  height: 33px;
-}
-
-.add-to-cart-sec {
-  padding: 8px;
+.product-header {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.product-info {
+  flex: 1;
+}
+
+.product-info h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 8px 0;
+}
+
+.price-section {
+  display: flex;
   align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
 }
 
-.product-title-sec {
-  padding: 10px 0px;
+.current-price {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1890ff;
 }
 
-.product-size-sec > h2 {
-  width: 100%;
+.original-price {
+  font-size: 16px;
+  color: #999;
+  text-decoration: line-through;
 }
 
-.exit-full-screen {
-  position: fixed;
-  bottom: 10px;
-  right: 10px;
-  background-color: white;
+.discount {
+  background: #ff4d4f;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
 }
-.back-button-sec{
+
+.rating-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stars {
+  display: flex;
+  gap: 2px;
+}
+
+.star {
+  color: #d9d9d9;
+  font-size: 16px;
+}
+
+.star.filled {
+  color: #fadb14;
+}
+
+.rating-text {
+  font-size: 14px;
+  color: #666;
+}
+
+.cart-controller-sec{
+  
+      width: 100px;
+    display: flex;
+    justify-content: space-around;
+
+}
+
+.cart-button {
+ display: flex;
+ justify-content: center;
+ align-items:center;
+}
+
+.cart-button:active {
+  transform: scale(0.95);
+}
+
+.product-details {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.product-details h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.detail-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.detail-section h4 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #666;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.detail-section p {
+  font-size: 15px;
+  color: #1a1a1a;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.detail-section ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.detail-section li {
+  font-size: 15px;
+  color: #1a1a1a;
+  margin-bottom: 6px;
+  line-height: 1.5;
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 8px;
+}
+
+.wishlist-button,
+.add-to-cart-button {
+  padding: 14px 24px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.wishlist-button {
+  background: white;
+  color: #1a1a1a;
+  border: 2px solid #d9d9d9;
+}
+
+.wishlist-button:active {
+  transform: scale(0.98);
+}
+
+.add-to-cart-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.add-to-cart-button:active {
+  transform: scale(0.98);
+}
+
+/* Exit Full Screen Button */
+.exit-fullscreen-button {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+  border: none;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  z-index: 2000;
+  transition: all 0.3s ease;
+  animation: pulseIn 0.5s ease;
+}
+
+@keyframes pulseIn {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.exit-fullscreen-button:hover {
+  background: rgba(0, 0, 0, 0.85);
+  transform: scale(1.05);
+}
+
+.exit-fullscreen-button:active {
+  transform: scale(0.95);
+}
+
+/* Mobile Responsive */
+@media (max-width: 480px) {
+  .instruction-modal {
+    max-height: 90vh;
+  }
+
+  .instruction-modal-content {
+    padding: 70px 24px 24px;
+  }
+
+  .instruction-text h3 {
+    font-size: 24px;
+  }
+
+  .instruction-text p {
+    font-size: 15px;
+  }
+
+  .modal-continue-button {
+    font-size: 16px;
+    padding: 14px 28px;
+  }
+
+  .product-info h2 {
+    font-size: 18px;
+  }
+
+  .current-price {
+    font-size: 20px;
+  }
+
+  .exit-fullscreen-button {
+    width: 48px;
+    height: 48px;
+    bottom: 20px;
+    right: 20px;
+  }
 }
 </style>
