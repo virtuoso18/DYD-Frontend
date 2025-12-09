@@ -264,11 +264,23 @@
 </a-modal>
 
 <!-- {{ show_add_new_light_product_locally_3d_model }} -->
-<add_furniture_modal_local_3d_model v-model:visible="show_add_new_product_locally_3d_model" 
+<!-- <add_furniture_modal_local_3d_model v-model:visible="show_add_new_product_locally_3d_model" 
         :types="['Modern','Scandinavian','Classic','Minimalist','Industrial','Rustic','Boho','other',]"
         @product-created="onProductCreated"
         @cancel="onCancel"
         :rendered_modal_3D_id="model_instance_id"
+        /> -->
+
+        <add_furniture_modal_local_3d_model v-model:visible="show_add_new_product_locally_3d_model" 
+        :types="['Modern','Scandinavian','Classic','Minimalist','Industrial','Rustic','Boho','other',]"
+        @product-created="onProductCreated"
+        @cancel="onCancel"
+        :rendered_modal_3D_id="model_instance_id"
+        :prepopulatedData="prepopulatedProductData"
+        :isEditing="false"  
+        :isVariation="isCreatingVariation"
+        :baseProductId="selectedProduct?.id"
+        v-if="prepopulatedProductData"
         />
 
         <add_light_modal_local_3d_model 
@@ -682,7 +694,7 @@
   <a-button 
     block 
     @click="viewProduct(product)"
-    style="font-family: 'Poppins', sans-serif; font-size: 9px;"
+    style="font-family: 'Poppins', sans-serif; font-size: 13px;"
   >
     Product Details
   </a-button>
@@ -1626,14 +1638,22 @@
             @delete_texture="delete_product" 
             @back_product_list="backToList" 
         />
-        <show_furniture_product  
+        <!-- <show_furniture_product  
             :selectedProduct="selectedProduct" 
             v-if="active_tab === 'Furniture' && selectedProduct" 
             @edit_product="editProduct" 
             @delete_product="delete_product" 
             @back_product_list="backToList" 
+        /> -->
+         <show_furniture_product  
+            :selectedProduct="selectedProduct" 
+            v-if="active_tab === 'Furniture' && selectedProduct" 
+            @edit_product="editProduct"
+            @create_variation="createVariation"
+            @delete_product="delete_product" 
+            @back_product_list="backToList" 
+           @select_variant="handleVariantSelection"
         />
-        
         
         <!-- Different Light Products Details Component -->
         <show_Light_product_3D  
@@ -1764,6 +1784,8 @@ export default {
     },
     data() {
         return {
+             prepopulatedProductData: null,
+        isCreatingVariation: false,
             currentView: 'list', // 'list', 'details', 'edit'
             viewMode: 'grid', // 'grid', 'table'
             active_tab: "Furniture",
@@ -1889,6 +1911,54 @@ export default {
         this.fetchMyFloorTextureProducts()
     },
     methods: {
+             createVariation() {
+    console.log('Creating variation for:', this.selectedProduct);
+    
+    if (!this.selectedProduct) {
+        this.$message.error('No product selected');
+        return;
+    }
+    
+    // console.log(this.selectedProduct.furniture_type)
+    try {
+        // Prepare prepopulated data
+        this.prepopulatedProductData = {
+            id: this.selectedProduct.id,
+            name: `${this.selectedProduct.name} - Variation`,
+            description: this.selectedProduct.description || '',
+            category_name: this.selectedProduct.category?.name || '',
+            furniture_type: this.selectedProduct.furniture_type || '',
+            price: this.selectedProduct.pricing?.price || null,
+            height: this.selectedProduct.dimensions?.height || null,
+            length: this.selectedProduct.dimensions?.length || null,
+            width: this.selectedProduct.dimensions?.width || null,
+            available_colors: this.selectedProduct.colors || [],
+            images: this.selectedProduct.product_images?.map(img => ({
+                url: img.image,
+                id: img.id,
+                name: `Image ${img.id}`,
+                isExisting: true
+            })) || [],
+            model_url: this.selectedProduct.model_3d || null,
+            // Mark as base product ID for variation
+            base_product_id: this.selectedProduct.id,
+            is_variation: true
+        };
+        
+        this.isEditingVariation = true;
+        this.show_add_new_product_locally_3d_model = true;
+        
+        console.log('Prepopulated data set:', this.prepopulatedProductData);
+        
+    } catch (error) {
+        console.error('Error creating variation:', error);
+        this.$message.error('Failed to prepare variation data');
+    }
+},
+ handleVariantSelection(variantId) {
+    // Call your existing fetchProductDetails method with the variant ID
+    this.fetchProductDetails(variantId);
+  },
 async toggleFavorite(product,product_type) {
         try {
             const token = localStorage.getItem('token');

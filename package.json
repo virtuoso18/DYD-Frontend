@@ -12,6 +12,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@lottiefiles/dotlottie-vue": "^0.10.9",
     "ant-design-vue": "^4.2.6",
     "apexcharts": "^5.3.4",
     "chart.js": "^4.5.0",

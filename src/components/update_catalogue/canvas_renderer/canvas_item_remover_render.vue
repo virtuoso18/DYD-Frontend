@@ -55,8 +55,18 @@ Switch Furniture</div></a-button>
       <div class="loading-screen" :style="{ backgroundImage: `url(${backgroundImageUrl})` }">
         <div class="wave-overlay"></div>
         <div class="loading-text">
-          <div class="process-text">Loading Room...</div>
+          <div class="lottieFile-sec">
+            <DotLottieVue
+              style="height: auto; width: 250px;"
+              autoplay
+              loop
+              speed=0.5
+              src="https://lottie.host/7665c805-0ebe-4178-aca1-8828e05d3707/5tbkJuNDQ9.lottie"
+            />
+          </div>
+          <div class="process-text">{{ this.loadingMessage }}</div>
         </div>
+
       </div>
     </div>
 
@@ -467,6 +477,7 @@ Switch Furniture</div></a-button>
 <script>
 import  DrawRemovalModal from '@/components/update_catalogue/canvas_renderer/draw_removal_area_room.vue'
 import switch_furniture from '@/components/update_catalogue/bottom_drawer_item_components/switch_furniture.vue'
+import { DotLottieVue } from "@lottiefiles/dotlottie-vue";
 
 export default {
   name: 'item_remove_renderer',
@@ -503,11 +514,45 @@ export default {
   },
   components:{
     DrawRemovalModal,
-    switch_furniture
+    switch_furniture,
+    DotLottieVue
   },
-
   data() {
     return {
+      // ========== PERFORMANCE & PIXELATION SETTINGS ==========
+    // Increase this value for MORE PIXELATION and FASTER performance
+    // Recommended values: 2, 3, 4, 5, 6, 8, 10
+    // 2 = less pixelated, slower
+    // 10 = very pixelated, very fast
+    highlightPixelStep: 3,  // ← CHANGE THIS VALUE
+    
+    // This controls the pixelation for hover/normal highlights
+    // Use same or higher value than highlightPixelStep for consistency
+    hoverPixelStep: 3,  // ← CHANGE THIS VALUE
+    
+      // loading screen 
+
+      loadingMessages : [
+      "Loading your image...",
+      "Analysing the depth of the room...",
+      "Finding the walls, floor, and main areas...",
+      "Detecting the floor surface...",
+      "Optimizing processing...",
+      "Setting up the room layout...",
+      "Identifying wall positions...",
+      "Processing each wall...",
+      "Putting wall data together...",
+      "Cleaning small details...",
+      "Organizing room surfaces...",
+      "Finding objects in the room..."
+    ],
+      loadingMessage: "Loading Room",
+      msgIndex: 0,
+      intervalId: null,
+
+      // loading screen 
+
+
       draw_removal_modal:false,
       canvas: null,
       ctx: null,
@@ -626,6 +671,7 @@ canShowSwitchButton() {
   },
   
   mounted() {
+    this.cycleLoadingMessage();
     this.setupResizeObserver();
     this.updateCanvasDimensions();
     this.initCanvas();
@@ -693,10 +739,45 @@ canShowSwitchButton() {
         });
       },
       deep: true
-    }
+    },
+    zoom: {
+      handler() {
+        this.$nextTick(() => {
+          this.syncOverlayTransform();
+        });
+      },
+    },
+    panX: {
+      handler() {
+        this.$nextTick(() => {
+          this.syncOverlayTransform();
+        });
+      },
+    },
+    panY: {
+      handler() {
+        this.$nextTick(() => {
+          this.syncOverlayTransform();
+        });
+      },
+    },
   },
   
   methods: {
+ 
+    
+// Update syncOverlayTransform to use the new method
+syncOverlayTransform() {
+  if (!this.overlayCtx) return;
+  
+  if (this.selectedObjects.length > 0) {
+    this.drawPersistentSelectionHighlight();
+  } else if (this.hoveredObject) {
+    this.highlightObject(this.hoveredObject);
+  } else {
+    this.overlayCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+  }
+},
      handleSwitchFurnitureClicked() {
     const selectedFurniture = this.$refs.switchFurnitureRef.selected_furniture
     console.log('Selected furniture:', selectedFurniture)
@@ -827,7 +908,16 @@ canShowSwitchButton() {
     //   this.setupDrawingEventListeners();
     // },
     
-    
+    cycleLoadingMessage() {
+      this.loadingMessage = this.loadingMessages[this.msgIndex];
+      this.intervalId = setInterval(() => {
+        this.msgIndex = (this.msgIndex + 1) %  this.loadingMessages.length;
+        this.loadingMessage =  this.loadingMessages[this.msgIndex];
+        if (!this.isLoading) {
+          clearInterval(intervalId);
+        }
+      }, 5000);
+    },
 // Replace initializeDrawingCanvas with this to show highlight on all selected objects
 initializeDrawingCanvas() {
   if (!this.drawingCanvas) {
@@ -2322,6 +2412,9 @@ downloadMask(blob, filename) {
 
 
 // Update handleObjectClick to properly clear highlight on deselection
+
+
+// Replace handleObjectClick to draw persistent red highlight on overlay canvas
 handleObjectClick(e) {
   if (this.isLoading || this.isDragging || this.objectMasksLoading) return;
   
@@ -2344,10 +2437,75 @@ handleObjectClick(e) {
       } else {
         this.toggleObjectSelection(region.objectKey);
       }
+      
+      // Draw persistent red highlight for all selected objects
+      this.$nextTick(() => {
+        this.drawPersistentSelectionHighlight();
+      });
       break;
     }
   }
-},   
+},
+
+
+// Add this new method to draw persistent red highlight on selected objects
+// Replace drawPersistentSelectionHighlight with this zoom-aware version
+// Replace drawPersistentSelectionHighlight with this fast pixelated version
+// Add these variables to your data() section in the component
+
+
+
+// ========== UPDATE YOUR METHODS BELOW ==========
+
+
+// Replace drawPersistentSelectionHighlight with this
+drawPersistentSelectionHighlight() {
+  if (!this.overlayCtx || this.selectedObjects.length === 0) return;
+
+  this.overlayCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+
+  this.overlayCtx.save();
+  this.overlayCtx.translate(this.panX, this.panY);
+  this.overlayCtx.scale(this.zoom, this.zoom);
+
+  this.selectedObjects.forEach(objectKey => {
+    const region = this.objectMaskRegions.find(r => r.objectKey === objectKey);
+    
+    if (region && region.imageData) {
+      const imageData = region.imageData;
+      const data = imageData.data;
+      
+      this.overlayCtx.fillStyle = 'rgba(255, 0, 0, 0.4)';
+      
+      const step = this.highlightPixelStep;  // ← USES YOUR VARIABLE
+      
+      for (let y = 0; y < this.canvasHeight; y += step) {
+        let startX = -1;
+        for (let x = 0; x < this.canvasWidth; x += step) {
+          const index = (y * this.canvasWidth + x) * 4;
+          const r = data[index];
+          const g = data[index + 1];
+          const b = data[index + 2];
+          
+          if (r > 200 && g > 200 && b > 200) {
+            if (startX === -1) startX = x;
+          } else {
+            if (startX !== -1) {
+              this.overlayCtx.fillRect(startX, y, x - startX, step);
+              startX = -1;
+            }
+          }
+        }
+        if (startX !== -1) {
+          this.overlayCtx.fillRect(startX, y, this.canvasWidth - startX, step);
+        }
+      }
+    }
+  });
+
+  this.overlayCtx.restore();
+},
+
 // Update handleObjectHover to show highlight for deselectable items only in drawing mode
 // handleObjectHover(e) {
 //   if (this.isLoading || this.isDragging || this.objectMasksLoading) return;
@@ -2388,6 +2546,50 @@ handleObjectClick(e) {
 
 
 // Update handleObjectHover to properly clear overlays
+// handleObjectHover(e) {
+//   if (this.isLoading || this.isDragging || this.objectMasksLoading) return;
+  
+//   const rect = this.canvas.getBoundingClientRect();
+//   const x = e.clientX - rect.left;
+//   const y = e.clientY - rect.top;
+  
+//   let foundObject = null;
+  
+//   for (let i = this.objectMaskRegions.length - 1; i >= 0; i--) {
+//     const region = this.objectMaskRegions[i];
+    
+//     if (this.isPointInObjectMask(x, y, region.index)) {
+//       foundObject = region.objectKey;
+//       break;
+//     }
+//   }
+  
+//   if (foundObject !== this.hoveredObject) {
+//     this.hoveredObject = foundObject;
+    
+//     if (foundObject) {
+//       if (this.drawingMode && !this.selectedObjects.includes(foundObject)) {
+//         // In drawing mode and not selected - clear and don't highlight
+//         this.overlayCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+//         this.canvas.style.cursor = 'default';
+//       } else {
+//         // Can interact - show highlight
+//         this.highlightObject(foundObject);
+//         this.canvas.style.cursor = 'pointer';
+//       }
+//     } else {
+//       // No object hovered - clear overlay
+//       this.overlayCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+//       this.canvas.style.cursor = this.zoom > 1 ? 'grab' : 'default';
+//     }
+//   }
+// },
+
+
+// Update handleObjectHover to not interfere with selected objects
+
+
+// Keep simple fast version for handleObjectHover
 handleObjectHover(e) {
   if (this.isLoading || this.isDragging || this.objectMasksLoading) return;
   
@@ -2410,22 +2612,27 @@ handleObjectHover(e) {
     this.hoveredObject = foundObject;
     
     if (foundObject) {
-      if (this.drawingMode && !this.selectedObjects.includes(foundObject)) {
-        // In drawing mode and not selected - clear and don't highlight
+      if (this.selectedObjects.includes(foundObject)) {
+        this.drawPersistentSelectionHighlight();
+        this.canvas.style.cursor = 'pointer';
+      } else if (this.drawingMode && !this.selectedObjects.includes(foundObject)) {
         this.overlayCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
         this.canvas.style.cursor = 'default';
       } else {
-        // Can interact - show highlight
         this.highlightObject(foundObject);
         this.canvas.style.cursor = 'pointer';
       }
     } else {
-      // No object hovered - clear overlay
-      this.overlayCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+      if (this.selectedObjects.length > 0) {
+        this.drawPersistentSelectionHighlight();
+      } else {
+        this.overlayCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+      }
       this.canvas.style.cursor = this.zoom > 1 ? 'grab' : 'default';
     }
   }
 },
+
     isPointInObjectMask(x, y, maskIndex) {
       if (!this.objectMaskImageData[maskIndex]) return false;
       
@@ -2496,35 +2703,32 @@ toggleObjectSelection(objectKey) {
 },
 
 
-// Update the highlightObject method to handle multiple selections better
+
+
+// Replace highlightObject with this
 highlightObject(objectKey) {
   const region = this.objectMaskRegions.find(r => r.objectKey === objectKey);
   if (!region || !this.overlayCtx) return;
 
-  // Only highlight if the object is selected OR not in drawing mode
   const isSelected = this.selectedObjects.includes(objectKey);
   
-  // If in drawing mode and object is not selected, don't show highlight
   if (this.drawingMode && !isSelected) {
     this.overlayCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
     return;
   }
 
-  // Clear before drawing
   this.overlayCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
   
   this.overlayCtx.save();
-  
   this.overlayCtx.translate(this.panX, this.panY);
   this.overlayCtx.scale(this.zoom, this.zoom);
   
   const imageData = region.imageData;
   const data = imageData.data;
   
-  // Use different colors for selected vs hovered
   this.overlayCtx.fillStyle = isSelected ? 'rgba(255, 0, 0, 0.4)' : 'rgba(255, 165, 0, 0.4)';
   
-  const step = Math.max(1, Math.floor(4 / this.zoom));
+  const step = this.hoverPixelStep;  // ← USES YOUR VARIABLE
   
   for (let y = 0; y < this.canvasHeight; y += step) {
     let startX = -1;
@@ -2538,19 +2742,19 @@ highlightObject(objectKey) {
         if (startX === -1) startX = x;
       } else {
         if (startX !== -1) {
-          this.overlayCtx.fillRect(startX / this.zoom, y / this.zoom, (x - startX) / this.zoom, step / this.zoom);
+          this.overlayCtx.fillRect(startX, y, x - startX, step);
           startX = -1;
         }
       }
     }
     if (startX !== -1) {
-      this.overlayCtx.fillRect(startX / this.zoom, y / this.zoom, (this.canvasWidth - startX) / this.zoom, step / this.zoom);
+      this.overlayCtx.fillRect(startX, y, this.canvasWidth - startX, step);
     }
   }
   
   this.overlayCtx.restore();
-},
-
+}
+,
     // highlightObject(objectKey) {
     //   const region = this.objectMaskRegions.find(r => r.objectKey === objectKey);
     //   if (!region || !this.overlayCtx) return;
@@ -2614,48 +2818,49 @@ removeObjectHighlight() {
 
     // =================== RENDERING ===================
     
-    render() {
-      if (!this.canvas || !this.ctx) return;
+    // Replace the render() method with this - REMOVE the bounding box drawing
+render() {
+  if (!this.canvas || !this.ctx) return;
 
-      this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-      
-      this.ctx.fillStyle = '#f5f5f5';
-      this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
-      
-      if (!this.baseImg) return;
-      
-      this.ctx.save();
-      
-      this.ctx.translate(this.panX, this.panY);
-      this.ctx.scale(this.zoom, this.zoom);
-      
-      try {
-        this.ctx.drawImage(
-          this.baseImg,
-          this.renderOffsetX,
-          this.renderOffsetY,
-          this.renderWidth,
-          this.renderHeight
-        );
-        
-        this.ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
-        this.ctx.lineWidth = 1 / this.zoom;
-        this.ctx.strokeRect(
-          this.renderOffsetX,
-          this.renderOffsetY,
-          this.renderWidth,
-          this.renderHeight
-        );
-        
-        this.drawSelectedObjectOutlines();
-        
-      } catch (error) {
-        console.error('Error rendering image:', error);
-        this.showErrorState();
-      }
-      
-      this.ctx.restore();
-    },
+  this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+  
+  this.ctx.fillStyle = '#f5f5f5';
+  this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+  
+  if (!this.baseImg) return;
+  
+  this.ctx.save();
+  
+  this.ctx.translate(this.panX, this.panY);
+  this.ctx.scale(this.zoom, this.zoom);
+  
+  try {
+    this.ctx.drawImage(
+      this.baseImg,
+      this.renderOffsetX,
+      this.renderOffsetY,
+      this.renderWidth,
+      this.renderHeight
+    );
+    
+    this.ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
+    this.ctx.lineWidth = 1 / this.zoom;
+    this.ctx.strokeRect(
+      this.renderOffsetX,
+      this.renderOffsetY,
+      this.renderWidth,
+      this.renderHeight
+    );
+    
+    // REMOVED: this.drawSelectedObjectOutlines(); - NO MORE BOUNDING BOXES
+    
+  } catch (error) {
+    console.error('Error rendering image:', error);
+    this.showErrorState();
+  }
+  
+  this.ctx.restore();
+},
 
     drawSelectedObjectOutlines() {
       if (this.selectedObjects.length === 0) return;
@@ -2755,6 +2960,11 @@ removeObjectHighlight() {
 </script>
 
 <style scoped>
+  .main-canvas-sec{
+position: relative;
+  width: 100%;
+  height: 100%;
+}
 .canvas-container {
   position: relative;
   width: 100%;
@@ -2766,6 +2976,9 @@ removeObjectHighlight() {
 .main-canvas {
   display: block;
   transition: opacity 0.3s ease;
+  position:absolute;
+  right: 0;
+  left: 0;
 }
 
 .main-canvas.disabled {
@@ -2780,6 +2993,11 @@ removeObjectHighlight() {
 .overlay-canvas {
   border-radius: 10px;
   transition: opacity 0.3s ease;
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 2;
 }
 
 .overlay-canvas.disabled {
@@ -3051,16 +3269,22 @@ removeObjectHighlight() {
   text-align: center;
   z-index: 3;
   text-shadow: 0 2px 6px rgba(0,0,0,0.6);
-  background: rgba(0, 0, 0, 0.3);
+  /* background: rgba(0, 0, 0, 0.3); */
   padding: 20px 30px;
   border-radius: 10px;
   backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+.lottieFile-sec{
+  display: flex;
+    align-items: center;
+    justify-content: center;
+}
 .process-text {
   font-size: 18px;
   opacity: 0.9;
+  color:black;
   letter-spacing: 1px;
   text-transform: uppercase;
 }
@@ -3411,4 +3635,5 @@ removeObjectHighlight() {
     height: 71%;
   }
 }
+
 </style>

@@ -1,4 +1,11 @@
 <template>
+  <RatingModal
+  :isOpen="showRatingModal"
+  :entityId="$route.params.id"
+  entityType="room"
+  @close="showRatingModal = false"
+  @ratingSubmitted="handleRatingSubmitted"
+/>
   <a-drawer
     title="AI catalog products used in room."
     :placement="'bottom'"
@@ -1068,6 +1075,7 @@
     "
     type="text"
     block
+      @click="AddRoomitemstocart"
   >
    <ShoppingCartOutlined style="font-size:20px" />
     Add to Cart
@@ -1363,12 +1371,13 @@ import {
   ShoppingCartOutlined,
   ReloadOutlined,
 } from "@ant-design/icons-vue";
-
+import RatingModal from '@/components/store/ratings.vue'; 
 import { h } from "vue";
 
 export default {
   name: "render_catalogue",
   components: {
+    RatingModal,
     LeftOutlined,
     QuestionCircleOutlined,
     HomeOutlined,
@@ -1384,6 +1393,7 @@ export default {
   },
   data() {
     return {
+      showRatingModal: false,
       openSeeAll_used_products:false,
       liked_room:false,
       base_image_url: "",
@@ -1447,6 +1457,43 @@ export default {
   },
   
   methods: {
+    async AddRoomitemstocart() {
+      
+      this.addingToCart = true; 
+
+      try {
+        const response = await fetch(
+          `${this.$store.state.root_api}cart/add-room/`,
+          {
+            method: "POST", 
+            headers: {
+              Authorization: `Token ${localStorage.getItem("token")}`,
+              "Content-Type": "application/json",
+            },
+             body: JSON.stringify({
+              room_id: this.$route.params.id
+            })
+          }
+        );
+
+        const data = await response.json();
+        
+        if (response.ok) {
+          
+          this.$message.success('Room items added to cart successfully!');
+         
+        } else {
+         
+          this.$message.error(data.message || 'Failed to add items to cart');
+        }
+      } catch (error) {
+        console.error("Failed to add room items to cart:", error);
+        this.$message.error('An error occurred while adding items to cart');
+      } finally {
+        this.addingToCart = false;
+      }
+    },
+ 
     show_all_catalogue_products_used_in_room(){
       this.openSeeAll_used_products=true
     },
@@ -1780,48 +1827,99 @@ export default {
       }
     },
 
+    // async SaveToMyDesignes() {
+    //   console.log("📡 Saving to my designs...");
+    //   this.loading = true;
+    //   this.error.room = null;
+
+    //   try {
+    //     const roomId = this.$route.params.id;
+    //     const url = `${this.$store.state.root_api}engine/render-final-result/${roomId}`;
+
+    //     const response = await fetch(url, {
+    //       method: "POST",
+    //       headers: {
+    //         "Content-Type": "application/json",
+    //         Authorization: `Token ${localStorage.getItem("token")}`,
+    //       },
+    //       body: JSON.stringify({
+    //         request: 'save_to_my_designes',
+    //         description_room: this.description_room,
+    //         room_design_type_select: this.room_design_type_select,
+    //         room_type_select: this.room_type_select,
+    //       })
+    //     });
+
+    //     if (!response.ok) {
+    //       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    //     }
+
+    //     const responseData = await response.json();
+
+    //     if (responseData && this.is_ready) {
+    //       this.$router.push('/business-dashboard/my-designs');
+    //     } else {
+    //       this.error.room = "Room is not ready yet. Please try again later.";
+    //     }
+    //   } catch (error) {
+    //     console.error("❌ Failed to save:", error);
+    //     this.error.room = error.message;
+    //     this.showError("Failed to Save", error.message);
+    //   } finally {
+    //     this.loading = false;
+    //   }
+    // },
+    
     async SaveToMyDesignes() {
-      console.log("📡 Saving to my designs...");
-      this.loading = true;
-      this.error.room = null;
+  console.log("📡 Saving to my designs...");
+  this.loading = true;
+  this.error.room = null;
 
-      try {
-        const roomId = this.$route.params.id;
-        const url = `${this.$store.state.root_api}engine/render-final-result/${roomId}`;
+  try {
+    const roomId = this.$route.params.id;
+    const url = `${this.$store.state.root_api}engine/render-final-result/${roomId}`;
 
-        const response = await fetch(url, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Token ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify({
-            request: 'save_to_my_designes',
-            description_room: this.description_room,
-            room_design_type_select: this.room_design_type_select,
-            room_type_select: this.room_type_select,
-          })
-        });
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Token ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify({
+        request: 'save_to_my_designes',
+        description_room: this.description_room,
+        room_design_type_select: this.room_design_type_select,
+        room_type_select: this.room_type_select,
+      })
+    });
 
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
 
-        const responseData = await response.json();
+    const responseData = await response.json();
 
-        if (responseData && this.is_ready) {
-          this.$router.push('/business-dashboard/my-designs');
-        } else {
-          this.error.room = "Room is not ready yet. Please try again later.";
-        }
-      } catch (error) {
-        console.error("❌ Failed to save:", error);
-        this.error.room = error.message;
-        this.showError("Failed to Save", error.message);
-      } finally {
-        this.loading = false;
-      }
-    },
+    if (responseData && this.is_ready) {
+      this.$message.success('Design saved successfully!');
+      this.open_SaveToMyDesignes = false; // Close the save modal
+      
+      // Show rating modal after successful save (if not rated in this session)
+      
+       
+          this.showRatingModal = true;
+       
+      
+    } else {
+      this.error.room = "Room is not ready yet. Please try again later.";
+    }
+  } catch (error) {
+    console.error("❌ Failed to save:", error);
+    this.error.room = error.message;
+    this.showError("Failed to Save", error.message);
+  } finally {
+    this.loading = false;
+  }
+},
 
     async Submit_Client_request() {
       console.log("📡 Submitting client request...");

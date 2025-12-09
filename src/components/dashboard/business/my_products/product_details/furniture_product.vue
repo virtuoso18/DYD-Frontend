@@ -6,8 +6,8 @@
       @back="back_product_list"
     >
       <template #extra>
-        <a-button > <template #icon> <ClockCircleOutlined/></template>Create Variation</a-button>
-        <a-avatar style="background-color: #dc2626;">A</a-avatar>
+        <a-button  @click="createVariation()"> <template #icon> <ClockCircleOutlined/></template>Create Variation</a-button>
+                <a-avatar style="background-color: #dc2626;">A</a-avatar>
       </template>
     </a-page-header>
 
@@ -106,6 +106,70 @@
               </div> -->
           </div></div>
         </a-card>
+      
+      <div>
+         <!-- Add Product Variations  -->
+          <div v-if="selectedProduct.variants && selectedProduct.variants.length > 0" style="margin-bottom: 24px;">
+          <div style="margin-bottom: 12px; font-weight: 500; font-size: 16px;">
+            Available Variants ({{ selectedProduct.variants.length }})
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px;">
+            <div
+              v-for="variant in selectedProduct.variants"
+              :key="variant.id"
+              @click="selectVariant(variant.id)"
+              :style="{
+                border: selectedVariantId === variant.id ? '2px solid #1890ff' : '1px solid #d9d9d9',
+                borderRadius: '8px',
+                padding: '8px',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                background: selectedVariantId === variant.id ? '#e6f7ff' : '#fff'
+              }"
+            >
+              <img 
+                :src="$store.state.root_media_api + variant.primary_image" 
+                :style="{
+                  width: '100%',
+                  height: '100px',
+                  objectFit: 'cover',
+                  borderRadius: '6px',
+                  marginBottom: '8px'
+                }"
+              />
+              <div style="font-size: 13px; font-weight: 600; margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                {{ variant.name }}
+              </div>
+              <div style="display: flex; gap: 4px; margin-bottom: 4px;">
+                <div
+                  v-if="variant.primary_color"
+                  :style="{ 
+                    width: '16px', 
+                    height: '16px', 
+                    borderRadius: '50%', 
+                    backgroundColor: variant.primary_color,
+                    border: '1px solid #e0e0e0'
+                  }"
+                ></div>
+                <div
+                  v-if="variant.secondary_color"
+                  :style="{ 
+                    width: '16px', 
+                    height: '16px', 
+                    borderRadius: '50%', 
+                    backgroundColor: variant.secondary_color,
+                    border: '1px solid #e0e0e0'
+                  }"
+                ></div>
+              </div>
+              <div style="font-size: 14px; font-weight: 700; color: #1890ff;">
+                ${{ variant.pricing.current_price }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
       </a-col>
 
       <!-- Right Column - Product Details -->
@@ -211,6 +275,7 @@
             </a-col>
           </a-row>
 
+         
           <!-- Price Section -->
           <a-card size="small" style="margin-bottom: 24px; background: #fafafa;">
             <div style="display: flex; align-items: center; gap: 12px;">
@@ -308,7 +373,11 @@ export default {
       activeTextureView: null,
       activeView: '3d',
       showTextureModal: false,
-      selectedTextureIndex: 0
+      selectedTextureIndex: 0,
+
+      prepopulatedProductData: null,
+      isCreatingVariation: false,
+      selectedVariantId: null,
     }
   },
 
@@ -333,6 +402,13 @@ export default {
   },
 
  methods: {
+   selectVariant(variantId) {
+    this.selectedVariantId = variantId;
+    this.$emit('select_variant', variantId);
+  },
+   createVariation() {
+        this.$emit('create_variation', this.selectedProduct);
+    },
     handleImageClick(index) {
       this.activeView = 'image';
       this.activeImageIndex = index;

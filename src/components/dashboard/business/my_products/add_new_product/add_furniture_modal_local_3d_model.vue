@@ -1,4 +1,5 @@
 <template>
+
   <a-modal
     :open="visible"
     :closable="false"
@@ -323,9 +324,9 @@ Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac tu
                   <div style="display: flex; align-items: center;">
                     <a-input-number
                       v-model:value="productForm.dimensions.height" 
-                        @keypress="allowOnlyDecimal"
-                        @paste="handlePaste"
                       :min="0"
+                       @keypress="allowOnlyDecimal"
+                        @paste="handlePaste"
                       :step="0.01"
                       placeholder="0.8"
                       style="width: 100%; border-radius: 4px; background: #f3f4f6; border: 1px solid #e5e7eb; font-size: 13px;"
@@ -337,10 +338,10 @@ Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac tu
                   <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Length/Depth</label>
                   <div style="display: flex; align-items: center;">
                     <a-input-number
-                    @keypress="allowOnlyDecimal"
-                        @paste="handlePaste"
                       v-model:value="productForm.dimensions.length" 
                       :min="0"
+                       @keypress="allowOnlyDecimal"
+                        @paste="handlePaste"
                       :step="0.01"
                       placeholder="0.5"
                       style="width: 100%; border-radius: 4px; background: #f3f4f6; border: 1px solid #e5e7eb; font-size: 13px;"
@@ -352,10 +353,10 @@ Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac tu
                   <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Width</label>
                   <div style="display: flex; align-items: center;">
                     <a-input-number
-                    @keypress="allowOnlyDecimal"
-                        @paste="handlePaste"
                       v-model:value="productForm.dimensions.width" 
                       :min="0"
+                       @keypress="allowOnlyDecimal"
+                        @paste="handlePaste"
                       :step="0.01"
                       placeholder="1.8"
                       style="width: 100%; border-radius: 4px; background: #f3f4f6; border: 1px solid #e5e7eb; font-size: 13px;"
@@ -562,63 +563,89 @@ import canvas_3d_model_renderer from "@/components/store/canvas_3d_model_rendere
 
 export default {
   name: "AddNewProduct_modal",
-  props: {
-    visible: { type: Boolean, default: false },
-    rendered_modal_3D_id: { type: String, default: "" },
-    types: { type: Array, default: () => ['Modern','Scandinavian','Classic','Minimalist','Industrial','Rustic','Boho','other'] }
+ props: {
+  visible: { type: Boolean, default: false },
+  rendered_modal_3D_id: { type: String, default: "" },
+  types: { type: Array, default: () => ['Modern','Scandinavian','Classic','Minimalist','Industrial','Rustic','Boho','other'] },
+  // Add this new prop
+  defaultValues: { 
+    type: Object, 
+    default: () => ({
+      name: 'demo product',
+      description: 'description sample',
+      category_name: 'Chair',
+      furniture_type: '',
+      pricing: { price: 10 },
+      dimensions: { height: 1, length: 1, width: 2 },
+      images: [],
+      colors: [],
+      textures: [],
+      pbrFiles: [],
+      modelUrl: null
+    })
   },
+   prepopulatedData: { 
+    type: Object, 
+    default: () => null  // Changed from defaultValues
+  },
+},
   components: {
     canvas_3d_model_renderer,
   },
   emits: ['update:visible', 'product-created', 'cancel'],
   
-  data() {
-    return {
-      isSaving: false,
-      tempColor: '#000000',
-      isDragging: false,
-      
-      // 3D Model refs
-      local3dModelUrl: null,
-      uploaded3dModelFile: null,
-      loading3dModelDetails: false,
-      modelDetails: null,
-      error: { general: null },
-      
-      // Form data
-      productForm: {
-        name: '',
-        description: '',
-        category_name: [],
-        furniture_type: '',
-        pricing: { price: null },
-        dimensions: { height: null, length: null, width: null }
+ data() {
+  return {
+    isSaving: false,
+    tempColor: '#000000',
+    isDragging: false,
+    
+    // 3D Model refs
+    local3dModelUrl: this.defaultValues.modelUrl || null,
+    uploaded3dModelFile: null,
+    loading3dModelDetails: false,
+    modelDetails: null,
+    error: { general: null },
+    
+    // Form data - initialized with defaultValues
+    productForm: {
+      name: this.defaultValues.name || '',
+      description: this.defaultValues.description || '',
+      category_name: this.defaultValues.category_name || [],
+      furniture_type: this.defaultValues.furniture_type || '',
+      pricing: { 
+        price: this.defaultValues.pricing?.price || null 
       },
-      
-      // Collections
-      selectedImages: [],
-      selectedColors: [],
-      selectedTextures: [],
-      selectedPbrFiles: [],
-      categories_available: [],
+      dimensions: { 
+        height: this.defaultValues.dimensions?.height || null,
+        length: this.defaultValues.dimensions?.length || null,
+        width: this.defaultValues.dimensions?.width || null
+      }
+    },
+    
+    // Collections - initialized with defaultValues
+    selectedImages: this.defaultValues.images || [],
+    selectedColors: this.defaultValues.colors || [],
+    selectedTextures: this.defaultValues.textures || [],
+    selectedPbrFiles: this.defaultValues.pbrFiles || [],
+    categories_available: [],
 
-      // Category search related
-      categoryOptions: [],
-      allCategories: [],      // Store all categories from initial load
-      loadingCategories: false,
-      categorySearchError: null,
-      categorySearchTimeout: null,
-      
-      presetColors: [
-        '#000000', '#FFFFFF', '#FF0000', '#00FF00', '#0000FF', '#FFFF00',
-        '#FF00FF', '#00FFFF', '#C0C0C0', '#808080', '#800000', '#808000',
-        '#008000', '#800080', '#008080', '#000080', '#FFA500', '#FFC0CB',
-        '#A52A2A', '#DDA0DD', '#98FB98', '#F0E68C', '#DEB887', '#D2691E',
-        '#FF6347', '#40E0D0', '#EE82EE', '#90EE90', '#FFB6C1', '#87CEEB'
-      ]
-    }
-  },
-
+    // Category search related
+    categoryOptions: [],
+    allCategories: [],
+    loadingCategories: false,
+    categorySearchError: null,
+    categorySearchTimeout: null,
+    
+    presetColors: [
+      '#000000', '#FFFFFF', '#FF0000', '#00FF00', '#0000FF', '#FFFF00',
+      '#FF00FF', '#00FFFF', '#C0C0C0', '#808080', '#800000', '#808000',
+      '#008000', '#800080', '#008080', '#000080', '#FFA500', '#FFC0CB',
+      '#A52A2A', '#DDA0DD', '#98FB98', '#F0E68C', '#DEB887', '#D2691E',
+      '#FF6347', '#40E0D0', '#EE82EE', '#90EE90', '#FFB6C1', '#87CEEB'
+    ]
+  }
+},
   computed: {
     primaryImage() {
       return this.selectedImages.find(img => img.isPrimary) || this.selectedImages[0] || null;
@@ -632,36 +659,46 @@ export default {
   }
   },
 
-  watch: {
-    visible(newValue) {
-      if (!newValue) {
-        this.resetForm();
-      }
-    },
-    rendered_modal_3D_id(newId, oldId) {
-      if (newId && newId !== oldId) {
-        console.log('🔄 Modal ID changed, refetching details...', { newId, oldId });
-        this.get3dRenderedModelDetails(newId);
-        // this.fetch_Categories_available();
-         // Load categories from API
+watch: {
+  visible(newValue) {
+    if (!newValue) {
+      this.resetForm();
+    }
+  },
+  rendered_modal_3D_id(newId, oldId) {
+    if (newId && newId !== oldId) {
+      console.log('🔄 Modal ID changed, refetching details...', { newId, oldId });
+      this.get3dRenderedModelDetails(newId);
       this.loadInitialCategories();
-      }
     }
   },
+  // Add watcher for defaultValues
+  defaultValues: {
+    handler(newValues) {
+      this.initializeFormWithDefaults(newValues);
+    },
+    deep: true,
+    immediate: true
+  }
+},
 
-  mounted() {
-    if (this.rendered_modal_3D_id) {
-      console.log('🚀 Component mounted, fetching 3D model details...');
-      this.get3dRenderedModelDetails(this.rendered_modal_3D_id);
-    } else {
-      console.warn('⚠️ No rendered_modal_3D_id provided on mount');
-    }
-    this.loadInitialCategories();
-  },
+ mounted() {
+  // Initialize with default values first
+  if (this.prepopulatedData){
+
+    this.initializeFormWithDefaults(this.prepopulatedData);
+  }
+  
+  if (this.rendered_modal_3D_id) {
+    console.log('🚀 Component mounted, fetching 3D model details...');
+    this.get3dRenderedModelDetails(this.rendered_modal_3D_id);
+  } else {
+    console.warn('⚠️ No rendered_modal_3D_id provided on mount');
+  }
+  this.loadInitialCategories();
+},
 
   methods: {
-    // Load all categories on component mount
-  
     
   // Handle paste event
   handlePaste(e) {
@@ -705,7 +742,74 @@ export default {
       return;
     }
   },
+    // Load all categories on component mount
+    initializeFormWithDefaults(defaults) {
+    // Update form fields
+    console.log("defaults")
+    console.log(defaults)
+    this.productForm = {
+      name: defaults.name || '',
+      description: defaults.description || '',
+      category_name: defaults.category_name || [],
+      furniture_type: defaults.furniture_type || '',
+      pricing: { 
+        price: defaults.price || null 
+      },
+      dimensions: { 
+        height: defaults.height || null,
+        length: defaults.length || null,
+        width: defaults.width || null
+      },
 
+    };
+
+    // Update collections
+    this.selectedImages = defaults.images || [];
+    this.selectedColors = defaults.colors || [];
+    this.selectedTextures = defaults.textures || [];
+    this.selectedPbrFiles = defaults.pbrFiles || [];
+    
+    // Set 3D model URL if provided
+    if (defaults.modelUrl) {
+      this.local3dModelUrl = defaults.modelUrl;
+    }
+
+    // Handle category if provided
+    if (defaults.category_name) {
+      // If category_name is a string, convert to array for the select component
+      if (typeof defaults.category_name === 'string') {
+        this.productForm.category_name = [defaults.category_name];
+      }
+      
+      // Pre-select in dropdown if needed
+      this.handleCategoryPreSelect(defaults.category_name);
+    }
+  },
+
+  async handleCategoryPreSelect(categoryName) {
+    // If we already have categories loaded, find and select it
+    if (this.allCategories.length > 0) {
+      const foundCategory = this.allCategories.find(
+        cat => cat.name === categoryName
+      );
+      
+      if (foundCategory) {
+        // Ensure it's in the options
+        const exists = this.categoryOptions.some(
+          opt => opt.value === foundCategory.name
+        );
+        
+        if (!exists) {
+          this.categoryOptions.unshift({
+            label: foundCategory.name,
+            value: foundCategory.name,
+            data: foundCategory
+          });
+        }
+      }
+    }
+  },
+    
 async loadInitialCategories() {
   try {
     this.loadingCategories = true;
@@ -1004,22 +1108,17 @@ async loadInitialCategories() {
       } 
     },
 
-    resetForm() {
-      this.productForm = {
-        name: '',
-        description: '',
-        category_name: '',
-        furniture_type: '',
-        pricing: { price: null },
-        dimensions: { height: null, length: null, width: null }
-      };
-      this.selectedImages = [];
-      this.selectedColors = [];
-      this.selectedPbrFiles = [];
-      this.selectedTextures = [];
-      this.tempColor = '#000000';
-      this.remove3dModel();
-    },
+  resetForm() {
+  // Reset to default values instead of empty
+  this.initializeFormWithDefaults(this.defaultValues);
+  
+  // Clear 3D model if no default model URL
+  if (!this.defaultValues.modelUrl && this.local3dModelUrl) {
+    URL.revokeObjectURL(this.local3dModelUrl);
+    this.local3dModelUrl = null;
+    this.uploaded3dModelFile = null;
+  }
+},
 
     // Image Upload Methods
     uploadImages() {
@@ -1182,6 +1281,7 @@ async loadInitialCategories() {
         return false;
       }
       if (this.selectedImages.length === 0) {
+        this.$message.error('At least one product image is required');
         console.error('At least one product image is required');
         return false;
       }
@@ -1201,7 +1301,7 @@ async loadInitialCategories() {
         const store = this.$store;
         const token = localStorage.getItem('token');
         const formData = new FormData();
-
+        formData.append('variation_id',this.prepopulatedData.id);
         formData.append('name', this.productForm.name);
         formData.append('description', this.productForm.description || '');
         formData.append('category_name', this.categoryNameDisplay);
