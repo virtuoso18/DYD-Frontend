@@ -20,10 +20,17 @@ npm install
 
 ```sh
 npm run dev
+
+or
+### for specific port & host 
+npm run dev -- --host 0.0.0.0 --port 5173
 ```
 
 ### Compile and Minify for Production
 
 ```sh
 npm run build
+### and then to run the preview on the dedicated port & the dediicated self host  
+npm run preview -- --host 0.0.0.0 --port 5173
+
 ```
