@@ -369,7 +369,7 @@ export default {
 
   .content-wrapper {
     background: white;
-    min-height: 93vh;
+    min-height: 100vh;
     border-radius: 24px;
     border: 1px solid #e9ecef;
     overflow: hidden;

@@ -1,5 +1,6 @@
-<template>
-  <div style="padding: 16px; background: #ffffff; min-height: 90vh; margin-top: 0px; border: 2px solid rgba(0,0,0,0.1); border-radius: 20px;margin-top:15px">
+<template><div className="pb-4">
+
+  <div style="padding: 16px; background: #ffffff; min-height: 100vh; margin-top: 0px; border: 2px solid rgba(0,0,0,0.1); border-radius: 20px;margin-top:15px">
     <div style="max-width: 1200px; margin: 0 auto;">
       <!-- Header -->
       <a-row justify="space-between" align="middle" style="margin-bottom: 24px;">
@@ -354,6 +355,7 @@
       </a-row>
     </div>
   </div>
+</div>
 </template>
 
 <script>

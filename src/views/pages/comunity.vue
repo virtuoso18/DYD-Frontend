@@ -258,21 +258,11 @@
 
 <!-- Today's Top Designs Section -->
 <div className="bg-[#F2F2F2] !py-6">
-  <span
-  style="
-    font-family: 'Proza Libre';
-    font-weight: 600;
-    font-style: normal;
-    font-size: 32px;
-    line-height: 40px;
-    letter-spacing: -0.02em;
-    text-align: center;
-    color: #1A1A1A;
-    display: block;
-  "
->
+ <span class="!font-proza !font-semibold !text-[32px] leading-[40px] tracking-tight text-center text-gray-900 block">
   Today's Top Designs
 </span>
+
+
 
   
   <div class="flex flex-row overflow-x-auto !p-4 no-scrollbar gap-6" v-if="topDesigns.length > 0">

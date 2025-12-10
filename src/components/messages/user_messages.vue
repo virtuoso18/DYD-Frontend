@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div className="md:pt-3">
 
-    <div class="p-1 bg-white rounded-2xl   border border-gray-200">
+    <div class="p-1 bg-white rounded-2xl    border border-gray-200">
       <div class="flex h-screen overflow-auto bg-gray-50">
         <!-- Sidebar -->
         <div 
