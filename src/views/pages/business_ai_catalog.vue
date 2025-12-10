@@ -232,11 +232,22 @@
                       >
                     </a-col>
 
-                    <a-col span="4" style="display:flex;justify-content: end;">
+                    <!-- <a-col span="4" style="display:flex;justify-content: end;">
                       <a-button shape="circle" size="medium" style="display:flex;justify-content: center;align-items: center;">
                         <HeartOutlined style="font-size:18px" />
                       </a-button>
+                    </a-col> -->
+                    <a-col span="4" style="display:flex;justify-content: end;">
+                      <a-button @click="toggleFavorite(product.product_id, product.type, product)" shape="circle" size="medium" style="display:flex;justify-content: center;align-items: center;" >
+                      <template v-if="product.is_liked">
+                        <HeartFilled style="color: red" />
+                      </template>
+                      <template v-else shape="circle" size="medium" style="display:flex;justify-content: center;align-items: center;">
+                        <HeartOutlined />
+                      </template>
+                    </a-button>
                     </a-col>
+
                   </a-row>
                 </div>
               </a-col>
@@ -478,14 +489,45 @@ export default {
       this.loadProducts();
     },
 
-    toggleFavorite(id) {
-      const index = this.favorites.indexOf(id);
-      if (index > -1) {
-        this.favorites.splice(index, 1);
-      } else {
-        this.favorites.push(id);
+      async toggleFavorite(product_id, product_type, product) {
+      try {
+        const token = localStorage.getItem('token');
+        
+        // Check if user is authenticated
+        if (!token) {
+          this.$message.warning('Please login to add favorites');
+          return;
+        }
+        
+        const response = await fetch(
+          `${this.$store.state.root_api}likes/favorites/toggle/`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Token ${token}`,
+            },
+            body: JSON.stringify({
+              id: product.id,
+              type: product_type,
+            }),
+          }
+        );
+        debugger
+        const data = await response.json();
+
+        // Update the product's favorite status
+        product.is_liked = data.favorited;
+        
+        // Show success message
+        const message = data.favorited ? 'Added to favorites' : 'Removed from favorites';
+        this.$message.success(message);
+
+      } catch (error) {
+        console.error("Favorite toggle failed", error);
+        this.$message.error('Failed to update favorite');
       }
-    },
+    }
   },
 };
 </script>

@@ -63,9 +63,18 @@
     })
   
     }, -->
-                <a-button block @click="goto_product_Route(product)">
+                <!-- <a-button block @click="goto_product_Route(product)">
                   Product Details
-                </a-button>
+                </a-button> -->
+                 <a-col span="16">
+  <a-button
+    @click="goto_product_Route(product)"
+    class="w-full  !text-[8px]"
+    style="font-family: var(--font-family-main); font-size:11px;"
+  >
+    Product Details
+  </a-button>
+ </a-col>
               </a-col>
 
               <a-col span="1"></a-col>

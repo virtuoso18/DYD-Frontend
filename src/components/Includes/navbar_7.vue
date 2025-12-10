@@ -17,7 +17,7 @@
         <a href="/comunity" class="nav-link">Community</a>
         <a href="/pricing" class="nav-link">Pricing</a>
         <a href="/contact-us" class="nav-link">Contact us</a>
-        <a href="/ai-catalog" class="nav-link">AI Catalog</a>
+        <a href="/ai-catalog"  v-if="user.user_type ==='Professional'" class="nav-link">AI Catalog</a>
       </div>
 
       <!-- Right Side Actions -->

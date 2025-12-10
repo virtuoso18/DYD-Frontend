@@ -722,7 +722,9 @@ Switch Furniture</a-button> -->
           <!-- Right Panel - Canvas -->
           <a-col :span="(user?.user_type !=='User')? 17 :18" class="canvas-panel">
             
-            <div style="background:white;display:flex;align-items:center;justify-content:space-between;padding:5px 10px;height:40px;;background-color: #f3f3f6;" v-if=" (current_tab ==='image' &&  closeShareMenu ) && !(current_tab ==='image' && active_tab_image === 'home_design'  )">
+            <div style="width: 100%;
+position:absolute;
+ z-index:1;display:flex;align-items:center;justify-content:space-between;padding:5px 10px;height:40px;;background-color: #f3f3f6;" v-if=" (current_tab ==='image' &&  closeShareMenu ) && !(current_tab ==='image' && active_tab_image === 'home_design'  )">
     
     <!-- Left: Share section -->
     <div style="display:flex;align-items:center;gap:8px;" >
@@ -837,8 +839,7 @@ Switch Furniture</a-button> -->
   <div  
    :style="{
       width: '100%',
-      height: closeShareMenu
-        ? 'calc(100% - 40px)': '100%'
+      height: '100%'
     }"
   >
   

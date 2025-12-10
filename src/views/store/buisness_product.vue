@@ -69,7 +69,41 @@ export default {
         this.loadBusinessProducts()
     },
     methods:{
-        async loadBusinessProducts() {
+    //     async loadBusinessProducts() {
+    //         try {
+    //             this.loading = true;
+    //             this.error = null;
+                
+    //             const businessName = this.$route.params.buisness_name;
+                
+    //         const token = localStorage.getItem('token');
+                
+    //             const response = await fetch(`${this.$store.state.root_api}Auth/api/business/products-sold/${this.product_type}/${this.buisness_name}/${this.product_id}/`, {
+    //                 method: 'GET',
+    //                 headers: {
+    //                     'Authorization': `Token ${token}`,
+    //                     'Content-Type': 'application/json'
+    //                 }
+    //                 });
+    //     const result = await response.json();
+
+    //             if (result.success) {
+    //                 this.our_products = result.data;
+    //             } else {
+    //                 this.error = result.message || 'Business not found';
+    //             }
+    //         } catch (error) {
+    //             console.error('Error loading business data:', error);
+    //             if (error.response?.status === 404) {
+    //                 this.error = 'Business not found';
+    //             } else {
+    //                 this.error = 'Failed to load business information';
+    //             }
+    //         } finally {
+    //             this.loading = false;
+    //         }
+    //     },
+async loadBusinessProducts() {
             try {
                 this.loading = true;
                 this.error = null;
@@ -78,7 +112,7 @@ export default {
                 
             const token = localStorage.getItem('token');
                 
-                const response = await fetch(`${this.$store.state.root_api}Auth/api/business/products-sold/${this.product_type}/${this.buisness_name}/${this.product_id}/`, {
+                const response = await fetch(`${this.$store.state.root_api}Auth/api/business/products-sold/${this.buisness_name}`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Token ${token}`,
@@ -86,9 +120,11 @@ export default {
                     }
                     });
         const result = await response.json();
-
-                if (result.success) {
-                    this.our_products = result.data;
+                debugger
+                console.log(result)
+                if (result.results.success) {
+                    debugger
+                    this.our_products = result.results.data;
                 } else {
                     this.error = result.message || 'Business not found';
                 }

@@ -552,14 +552,34 @@
 
       <!-- Action column -->
       <template v-else-if="column.dataIndex === 'actions'">
-        <div style="display:flex;gap:6px;justify-content:center;">
+        <!-- <div style="display:flex;gap:6px;justify-content:center;">
           <a-button type="primary" shape="circle" @click.stop="onEdit(record)">
             <EditOutlined />
           </a-button>
           <a-button type="primary" danger shape="circle" @click.stop="onDelete(record)">
             <DeleteOutlined />
           </a-button>
+        </div> -->
+        <div style="display:flex; gap:8px; justify-content:center;">
+          <a-button
+            type="primary"
+            shape="circle"
+            @click.stop="onEdit(record)"
+            style="display:flex; align-items:center; justify-content:center; line-height:0; width:32px; height:32px;"
+          >
+            <EditOutlined />
+          </a-button>
+          <a-button
+            type="primary"
+            danger
+            shape="circle"
+            @click.stop="onDelete(record)"
+            style="display:flex; align-items:center; justify-content:center; line-height:0; width:32px; height:32px;"
+          >
+            <DeleteOutlined />
+          </a-button>
         </div>
+        
       </template>
     </template>
   </a-table>

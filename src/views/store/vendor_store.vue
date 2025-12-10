@@ -289,7 +289,7 @@
             <br>
 
             <!-- User Generated Content -->
-            <div style="padding:10px;background-color: white;border-radius:10px;border:2px solid rgba(128, 128, 128, 0.16);">
+            <div style="padding:10px;background-color: white;border-radius:10px;border:2px solid rgba(128, 128, 128, 0.16);"  v-if="currentUser.user_type !='User'">
                 <!-- <div style="padding:10px;background: #f2f2f3;border-radius:10px">
                     <h3>Gallery</h3>
                     <p>Business showcase and user content</p>
@@ -509,6 +509,7 @@ export default {
     },
     data() {
         return {
+          
             userProfile: null,
             activeKey: 'Visualization',
             business_info: {},
@@ -754,15 +755,23 @@ export default {
                 }
 
                 const businessName = this.$route.params.buisness_name;
-
+                
+                
+                const headers = {
+                  'Content-Type': 'application/json',
+                };
+                
+                let token=localStorage.getItem('token')
+                // If token exists, add Authorization header
+                if (token) {
+                  headers['Authorization'] = `Token ${token}`;
+                }
                 const response = await fetch(
-                    `${this.$store.state.root_api}Auth/api/business/products-sold/${businessName}?page=${pageNumber}&page_size=10`,
-                    {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    }
+                  `${this.$store.state.root_api}Auth/api/business/products-sold/${businessName}?page=${pageNumber}&page_size=10`,
+                  {
+                      method: 'GET',
+                      headers: headers, 
+                  }
                 );
 
                 if (!response.ok) {
