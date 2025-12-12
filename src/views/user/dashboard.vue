@@ -17,7 +17,7 @@
       />
       
       <!-- Floating action button for creating new catalogue -->
-      <router-link :to="'/start-new-catalogue'">
+      <router-link :to="'/start-new-catalogue'" v-if="this.user.user_type=='Business'">
         <a-float-button>
           <template #icon>
             <FormatPainterOutlined />

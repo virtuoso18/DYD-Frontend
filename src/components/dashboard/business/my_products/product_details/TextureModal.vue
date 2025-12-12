@@ -34,21 +34,21 @@
             </button>
 
             <!-- Header with Icon -->
-            <div class="flex items-center gap-3 mb-6">
+            <div class="flex items-center gap-3 mb-6" >
               <div class="bg-blue-100 p-2 rounded-lg">
                 <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
               </div>
-              <h2 class="text-xl md:text-2xl font-bold text-gray-900">
+              <h2 class="text-xl md:text-2xl font-bold text-gray-900" style="margin-top:8px;">
                 {{ title }}
               </h2>
             </div>
 
             <!-- Subtitle -->
-            <p class="text-sm text-gray-600 mb-6">
+            <!-- <p class="text-sm text-gray-600 mb-6">
               {{ subtitle }}
-            </p>
+            </p> -->
 
             <!-- Image Carousel with Navigation -->
             <div class="relative mb-6">
@@ -84,34 +84,8 @@
                
               </div>
             </div>
-
-            <!-- Texture Details -->
-            <div class="flex justify-between px-">
-              <!-- Composition -->
-              <div class="bg-gray-50 rounded-xl p-4">
-                <h3 class="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
-                  <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
-                  </svg>
-                  {{ compositionLabel }}
-                </h3>
-                <p class="text-sm text-gray-600">{{ currentTexture.composition }}</p>
-              </div>
-
-              <!-- Origin -->
-              <div v-if="currentTexture.origin" class="bg-gray-50 rounded-xl p-4">
-                <h3 class="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
-                  <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  {{ originLabel }}
-                </h3>
-                <p class="text-sm text-gray-600">{{ currentTexture.origin }}</p>
-              </div>
-            </div>
-
-            <!-- Color Swatches -->
+            <br>
+ <!-- Color Swatches -->
             <div v-if="currentTexture.colors && currentTexture.colors.length > 0" class="mb-6">
               <h3 class="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
                 <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -119,53 +93,40 @@
                 </svg>
                 Available Colors
               </h3>
+              <!-- {{ textures }} -->
               <div class="flex flex-wrap gap-3">
-                <div 
-                  v-for="(color, index) in currentTexture.colors" 
-                  :key="index"
-                  @click="selectColor(color)"
-                  class="relative w-12 h-12 rounded-xl cursor-pointer transition-all duration-200 shadow-md hover:shadow-lg"
-                  :class="[
-                    selectedColor === color 
-                      ? 'ring-4 ring-blue-500 ring-offset-2 scale-105' 
-                      : 'hover:scale-110'
-                  ]"
-                  :style="{ backgroundColor: color.hex || color }"
-                >
-                  <!-- Checkmark for selected color -->
-                  <div 
-                    v-if="selectedColor === color"
-                    class="absolute inset-0 flex items-center justify-center"
-                  >
-                    <svg class="w-6 h-6 text-white drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
-                    </svg>
-                  </div>
-                </div>
+               <div 
+  v-for="(tex, index) in textures"
+  :key="index"
+  @click="selectTexture(tex)"
+  class="relative w-20 h-20 rounded-xl cursor-pointer overflow-hidden transition-all duration-200 shadow-md hover:shadow-lg"
+  :class="[
+    selectedTexture?.image === tex.image
+      ? 'ring-4 ring-blue-500 ring-offset-2 scale-105'
+      : 'hover:scale-110'
+  ]"
+>
+  <!-- Texture Image -->
+  <img 
+    :src="tex.image" 
+    alt="texture" 
+    class="w-full h-full object-cover rounded-xl"
+  />
+
+  <!-- Checkmark -->
+  <div 
+    v-if="selectedTexture?.image === tex.image"
+    class="absolute inset-0 flex items-center justify-center"
+  >
+    <svg class="w-8 h-8 text-white drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+    </svg>
+  </div>
+</div>
+
               </div>
             </div>
 
-            <!-- Action Buttons -->
-            <div class="flex gap-3 pt-3">
-              <button 
-                @click="closeModal"
-                class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 px-6 rounded-xl transition-all duration-200 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-gray-400"
-              >
-                Cancel
-              </button>
-              <button 
-                @click="applyTexture"
-                class="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                :disabled="!selectedColor && currentTexture.colors && currentTexture.colors.length > 0"
-              >
-                <span class="flex items-center text-white justify-center gap-2">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                  </svg>
-                  Apply Texture
-                </span>
-              </button>
-            </div>
           </div>
         </div>
       </div>
@@ -193,12 +154,12 @@ export default {
     },
     title: {
       type: String,
-      default: 'POLY Fabric Selection'
+      default: 'Available Textures'
     },
-    subtitle: {
-      type: String,
-      default: 'Grey fabric, robust and durable'
-    },
+    // subtitle: {
+    //   type: String,
+    //   default: 'Grey fabric, robust and durable'
+    // },
     compositionLabel: {
       type: String,
       default: 'Composition'
@@ -212,7 +173,9 @@ export default {
   data() {
     return {
       currentIndex: 0,
-      selectedColor: null
+      selectedColor: null,
+          selectedTexture: null   // ✅ add this
+
     }
   },
 
@@ -260,6 +223,15 @@ export default {
   },
 
   methods: {
+    selectTexture(tex) {
+  this.selectedTexture = tex;
+
+  // Update carousel to show selected texture
+  const index = this.textures.findIndex(t => t.image === tex.image);
+  if (index !== -1) {
+    this.currentIndex = index;
+  }
+},
     closeModal() {
       this.$emit('close');
     },

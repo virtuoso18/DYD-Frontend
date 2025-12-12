@@ -6,8 +6,8 @@
       @back="back_product_list"
     >
       <template #extra>
-        <a-button  @click="createVariation()"> <template #icon> <ClockCircleOutlined/></template>Create Variation</a-button>
-                <a-avatar style="background-color: #dc2626;">A</a-avatar>
+        <a-button  @click="createVariation()" style="display:flex;justify-content: center;align-items:center;font-size:16px"> <FileSyncOutlined /><span style="margin-top:-4px">Create Variation</span></a-button>
+                <!-- <a-avatar style="background-color: #dc2626;">A</a-avatar> -->
       </template>
     </a-page-header>
 
@@ -238,7 +238,7 @@
           <a-row :gutter="16" style="margin-bottom: 24px;">
             <a-col :span="12">
               <div style="margin-bottom: 8px; font-weight: 500;">Colors:</div>
-              <div style="display: flex; gap: 6px; align-items: center;">
+              <div style="display: flex; gap: 6px; align-items: center;flex-wrap: wrap">
                 <div
                   v-for="(color, index) in selectedProduct.colors.available_colors"
                   :key="index"
@@ -253,8 +253,8 @@
               </div>
             </a-col>
             <a-col :span="12">
-              <div style="margin-bottom: 8px; font-weight: 500;">Textures:</div>
-              <div style="display: flex; gap: 6px;">
+              <div style="margin-bottom: 8px; font-weight: 500;" v-if="selectedProduct.textures.length">Textures:</div>
+              <div style="display: flex; gap: 6px;flex-wrap: wrap;">
                 <img 
                   v-for="(texture, index) in selectedProduct.textures" 
                   :key="index"
@@ -352,13 +352,13 @@
 
 <script>
 import canvas_3d_model_renderer from "@/components/store/canvas_3d_model_renderer.vue"
-import {DeleteOutlined ,EditOutlined ,ClockCircleOutlined } from '@ant-design/icons-vue';
+import {DeleteOutlined ,EditOutlined ,ClockCircleOutlined,FileSyncOutlined } from '@ant-design/icons-vue';
 import TextureModal from "./TextureModal.vue";
 export default {
   name: "product_details_store_page_buisness_user",
   components: {
     canvas_3d_model_renderer,TextureModal,
-    DeleteOutlined ,EditOutlined ,ClockCircleOutlined
+    DeleteOutlined ,EditOutlined ,ClockCircleOutlined,FileSyncOutlined
   },
    props: {
     selectedProduct: {

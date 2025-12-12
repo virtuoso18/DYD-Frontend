@@ -1,79 +1,4 @@
 <template>
-
-<!-- TEXTURE MODAL (Keep your existing modal) -->
-<a-modal 
-  v-model:open="openTextureModal" 
-  width="60%"style="max-width:500px" 
-  title="Apply Texture"
-  :footer="null"
-  centered
->
-  <div style="display: flex; flex-direction: column; gap: 16px;">
-    
-    <!-- Upload Area -->
-    <div 
-      style="
-        border: 2px dashed #d9d9d9;
-        border-radius: 8px;
-        padding: 20px;
-        text-align: center;
-        cursor: pointer;
-        transition: all 0.3s;
-      "
-      :style="textureImage ? { borderColor: '#1890ff', background: '#f0f8ff' } : {}"
-      @click="triggerTextureFileInput()"
-    >
-      <!-- No texture selected -->
-      <div v-if="!textureImage">
-        <PlusOutlined style="font-size: 30px; color: #1890ff; margin-bottom: 8px; display: block;" />
-        <p style="margin: 8px 0; font-weight: 500;">Click to select texture image</p>
-        <small style="color: #999;">PNG, JPG formats supported</small>
-      </div>
-
-      <!-- Texture preview -->
-      <div v-else style="position: relative; display: flex;justify-content: center;">
-        <div>
-
-          <img 
-          :src="textureImage" 
-          alt="Texture preview" 
-          style="max-width: 100%; max-height: 150px; border-radius: 4px;"
-          />
-          <p style="margin: 8px 0; color: #666;">Texture Selected ✓</p>
-        </div>
-      </div>
-    </div>
-    <!-- Remove button -->
-    <div v-if="textureImage" style="text-align: center;">
-      <a-button danger @click="removeSelectedTexture()">
-        Change Texture
-      </a-button>
-    </div>
-
-    <!-- Apply & Cancel buttons -->
-    <div style="display: flex; gap: 8px;">
-      <a-button block @click="closeTextureModal()">
-        Cancel
-      </a-button>
-      <a-button 
-        type="primary" 
-        block 
-        @click="applyTextureToImage()"
-        :disabled="!textureImage"
-        :loading="isApplyingTexture"
-      ><div style="display: flex;justify-content: center;align-items: center;gap:10px;">
- Apply Texture <span style="display: flex;justify-content: center;align-items: center;">
-
-        (&nbsp; <svg width="17" height="18" viewBox="0 0 17 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path fill-rule="evenodd" clip-rule="evenodd" d="M8.5013 1.91602C4.58918 1.91602 1.41797 5.08722 1.41797 8.99935C1.41797 12.9115 4.58918 16.0827 8.5013 16.0827C12.4134 16.0827 15.5846 12.9115 15.5846 8.99935C15.5846 5.08722 12.4134 1.91602 8.5013 1.91602ZM8.5013 2.62435C8.5013 4.3151 7.82965 5.93661 6.63411 7.13215C5.43856 8.3277 3.81706 8.99935 2.1263 8.99935C3.81706 8.99935 5.43856 9.671 6.63411 10.8665C7.82965 12.0621 8.5013 13.6836 8.5013 15.3743C8.5013 13.6836 9.17295 12.0621 10.3685 10.8665C11.564 9.671 13.1855 8.99935 14.8763 8.99935C13.1855 8.99935 11.564 8.3277 10.3685 7.13215C9.17295 5.93661 8.5013 4.3151 8.5013 2.62435Z" fill="currentColor"/>
-        </svg>20 )</span>
-      </div>
-      </a-button>
-    </div>
-
-  </div>
-</a-modal>
-
   
 <!-- Multi-View Queue Modal -->
 <a-modal 
@@ -245,7 +170,7 @@
                 v-if="item.status === 'completed' && item.generated_model_id" 
                 type="link"
             @click="view_result(item.generated_model_id)"
-
+                
               >
                 View Result
               </a-button>
@@ -462,7 +387,15 @@
     <div>
       <!-- Header -->
       <div class="header">
-        <span class="title">Image to 3d Object</span>
+        <a-button   @click="$router.back()"  type="text" style="padding: 4px; margin-right: 16px;" size="small">
+          <template #icon>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="15,18 9,12 15,6"></polyline>
+            </svg>
+          </template>
+        </a-button>
+
+        <span class="title">Add New Product</span>
       </div>
 
       <!-- Multi-view Toggle -->
@@ -531,167 +464,12 @@
         </div>
 
         <!-- Add Texture Section -->
-     <!-- UPDATED TEXTURE SECTION -->
-
-<!-- Add Texture Section - UPDATED UI -->
-<div class="texture-section">
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-    <p style="margin: 0; font-weight: 500;">Textures ({{ textures_available.length }})</p>
-   <a-button 
-      type="primary" 
-      size="small"
-      @click="openTexturModal()"
-      :disabled="!mainImage"
-    >
-      <template #icon>
-        <PlusOutlined />
-      </template>
-      Add Texture
-    </a-button>
-  </div>
-
-  <!-- Texture Grid - UPDATED LAYOUT -->
-  <div  style="">
-    <a-row>
-<!-- <a-col
-  span="4"
-
-  :class="{ disabledBox: !mainImage }"
-  @click="mainImage ? openTexturModal() : null"  style="
-    width: 80px;
-    height: 80px;
-    border: 2px solid #e8e8e8;
-    border-radius: 8px;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  "
->
-  <div
-    style="
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      font-size: 12px;
-      text-align: center;
-    "
-  >
-    <PlusOutlined style="font-size: 20px" />
-  </div>
-</a-col> -->
-
-    <a-col v-if="textures_available.length > 0" span="4" style="" v-for="(texture, index) in textures_available" 
-      :key="index">
-    <div
-      
-      style="
-        position: relative;
-        border-radius: 8px;
-        overflow: hidden;
-        border: 2px solid #e8e8e8;
-        transition: all 0.3s;
-        cursor: pointer;
-        margin-left:5px;
-          width: 80px; 
-          height: 80px; 
-        aspect-ratio: 1;
-      "
-      :style="texture.is_active ? { borderColor: '#52c41a', boxShadow: '0 0 0 2px #f6ffed' } : {}"
-      @click="activateTexture(index)"
-    >
-      <!-- Texture Image -->
-      <img 
-        :src="texture.main_image_texture_applied" 
-        alt="Texture result" 
-        style="
-          width: 100%; 
-          height: 100%; 
-          object-fit: cover;
-        "
-      />
-
-      <!-- Active Checkmark Overlay -->
-      <div 
-        v-if="texture.is_active"
-        @click.stop="deactivateTexture(index)"
-        style="
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: rgba(82, 196, 26, 0.2);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 32px;
-          color: #52c41a;
-        "
-      >
-        ✅
-      </div>
-
-      <!-- Delete Button - Top Right Corner -->
-      <div 
-        style="
-          position: absolute;
-          top: 4px;
-          right: 4px;
-          z-index: 10;
-        "
-        @click.stop="deleteTexture(index)"
-      >
-        <a-button 
-          type="primary" 
-          danger
-          size="small"
-          shape="circle"
-          style="width: 28px; height: 28px; padding: 0;"
-        >
-          <template #icon>
-            <DeleteOutlined />
-          </template>
-        </a-button>
-      </div>
-
-      <!-- Hover Overlay with Deactivate Button -->
-      <!-- <div 
-        v-if="texture.is_active"
-        style="
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
-          padding: 8px;
-          display: flex;
-          justify-content: center;
-          align-items: flex-end;
-        "
-      >
-        <a-button 
-          type="primary"
-          size="small"
-          @click.stop="deactivateTexture(index)"
-          style="font-size: 11px; height: 26px; padding: 0 8px;"
-        >
-          Deactivate
-        </a-button>
-      </div> -->
-    </div>
-    </a-col>
-    </a-row>
-
-  </div>
-
-  <!-- Empty State -->
-  <div v-if="textures_available.length === 0" style="text-align: center; padding: 20px 20px; color: #999; background: #fafafa; border-radius: 6px;">
-    <p style="margin: 0; font-size: 12px;">No textures applied yet</p>
-  </div>
-</div>
+        <div class="texture-section">
+          <p>Add Texture</p>
+          <div class="texture-upload" @click="!isProcessingBg && triggerFileInput('texture')">
+            <PlusOutlined />
+          </div>
+        </div>
 
         <!-- Upload More Images -->
        
@@ -786,12 +564,12 @@
         </div>
 
         <!-- Add Texture Section -->
-        <!-- <div class="texture-section">
+        <div class="texture-section">
           <p>Add Texture</p>
           <div class="texture-upload" @click="!isProcessingBg && triggerFileInput('texture')">
             <PlusOutlined />
           </div>
-        </div> -->
+        </div>
 
         
 <!-- Update the existing "Upload more images" section to include multi-view option -->
@@ -869,15 +647,6 @@
   accept="image/png,image/jpeg,image/jpg"
   style="display: none"
   @change="handleMultiViewQueueUpload($event, 0)"
-/>
-
-<!-- Hidden file input -->
-<input
-  ref="fileInput-texture-select"
-  type="file"
-  accept="image/png,image/jpeg,image/jpg"
-  style="display: none"
-  @change="handleTextureFileSelect"
 />
 <input
   ref="fileInput-mv-queue-1"
@@ -1001,28 +770,12 @@ export default {
   },
   data() {
     return {
-
-         openTextureModal: false,
-    textureImage: null,
-    isApplyingTexture: false,
-     originalMainImage: null,
-
-    // NEW: Add this texture list
-    textures_available: [
-      // {
-      //   texture_file_selected: '', // texture image file of user
-      //   main_image_texture_applied: '', // AI result from API
-      //   is_active: false, // toggle status
-      // }
-    ],
-
       openEditImage_modal: false,
       multiView: false,
       mainImage: null,
       credits: 10,
       isProcessingBg: false,
       isGenerating: false,
-
       completedItemsCount: 0,
     completedItemIds: [],
     isInitialLoad: true,
@@ -1084,10 +837,11 @@ export default {
   
 // Add these lifecycle hooks:
 mounted() {
-   // Initialize completed count on first load
+  // Initialize completed count on first load
   this.initializeCompletedCount()
   // Start queue polling when component mounts
   this.startQueuePolling()
+
 },
 
 beforeUnmount() {
@@ -1126,295 +880,21 @@ beforeUnmount() {
   }
   },
   methods: {
-    // STEP 1: Update your data() section
-
-  
-  openTexturModal() {
-    if (!this.mainImage) {
-      this.$message.warning('Please upload a main image first')
-      return
-    }
-    this.openTextureModal = true
-  },
-
-  closeTextureModal() {
-    this.openTextureModal = false
-    this.textureImage = null
-  },
-
-  triggerTextureFileInput() {
-    this.$refs['fileInput-texture-select'].click()
-  },
-
-  
-handleTextureFileSelect(event) {
-  const file = event.target.files[0]
-  if (file) {
-    // Validate file size (max 10MB)
-    if (file.size > 10 * 1024 * 1024) {
-      this.$message.error('File size must be less than 10MB')
-      return
-    }
-
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      // e.target.result already includes the data URI prefix
-      this.textureImage = e.target.result
-      console.log('Texture file loaded:', this.textureImage.substring(0, 50) + '...')
-    }
-    reader.onerror = (error) => {
-      console.error('File reading error:', error)
-      this.$message.error('Failed to read file')
-    }
-    reader.readAsDataURL(file)
-  }
-},
-  removeSelectedTexture() {
-    this.textureImage = null
-  },
-
-  // Apply texture - call backend API
-  // Replace your existing applyTextureToImage() method with this:
-
-// async applyTextureToImage() {
-//   if (!this.textureImage) {
-//     this.$message.warning('Please select a texture image')
-//     return
-//   }
-
-//   if (!this.mainImage) {
-//     this.$message.warning('Please upload a main image first')
-//     return
-//   }
-
-//   this.isApplyingTexture = true
-
-//   try {
-//     const payload = {
-//       main_image: this.mainImage,        // base64 string
-//       texture_image: this.textureImage,  // base64 string
-//       room_id: this.$route.params.id
-//     }
-
-//     console.log('Sending texture application request...')
-//     console.log('Main image length:', this.mainImage.length)
-//     console.log('Texture image length:', this.textureImage.length)
-//     console.log('Room ID:', payload.room_id)
-
-//     const token = localStorage.getItem('token')
-//     const response = await fetch(
-//       `${this.$store.state.root_api}engine/apply-texture/`,
-//       {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//           'Authorization': `Token ${token}`,
-//         },
-//         body: JSON.stringify(payload)
-//       }
-//     )
-
-//     if (response.ok) {
-//       const result = await response.json()
-      
-//       console.log('Texture applied successfully')
-//       console.log('Response:', result)
-      
-//       // Add to textures_available list
-//       const newTexture = {
-//         texture_file_selected: this.textureImage,
-//         main_image_texture_applied: result.textured_image,  // Get base64 from response
-//         is_active: false
-//       }
-      
-//       this.textures_available.push(newTexture)
-      
-//       // Automatically activate the newly applied texture
-//       this.activateTexture(this.textures_available.length - 1)
-      
-//       this.$message.success('Texture applied successfully!')
-//       this.closeTextureModal()
-//     } else {
-//       const error = await response.json()
-//       console.error('API Error Response:', error)
-//       this.$message.error(error.msg || 'Failed to apply texture')
-//     }
-//   } catch (error) {
-//     console.error('Error applying texture:', error)
-//     this.$message.error('Failed to apply texture: ' + error.message)
-//   } finally {
-//     this.isApplyingTexture = false
-//   }
-// },
- async applyTextureToImage() {
-    if (!this.textureImage) {
-      this.$message.warning('Please select a texture image')
-      return
-    }
-
-    if (!this.mainImage) {
-      this.$message.warning('Please upload a main image first')
-      return
-    }
-
-    this.isApplyingTexture = true
-
-    try {
-      const payload = {
-        main_image: this.mainImage,
-        texture_image: this.textureImage,
-        room_id: this.$route.params.id
-      }
-
-      console.log('Sending texture application request...')
-
-      const token = localStorage.getItem('token')
-      const response = await fetch(
-        `${this.$store.state.root_api}engine/apply-texture/`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Token ${token}`,
-          },
-          body: JSON.stringify(payload)
-        }
-      )
-      if(response.status==402){
-        this.openTextureModal = false;
-        const result = await response.json()
-        this.$emit('insufficient-credits',result.msg) 
-        return
-      }
-      if (response.ok) {
-        const result = await response.json()
-        
-        console.log('Texture applied successfully')
-        
-        // Add to textures_available list
-        const newTexture = {
-          texture_file_selected: this.textureImage,
-          main_image_texture_applied: result.textured_image,
-          is_active: false,
-          original_main_image: this.originalMainImage // Store reference to original
-        }
-        
-        this.textures_available.push(newTexture)
-        
-        // Automatically activate the newly applied texture
-        this.activateTexture(this.textures_available.length - 1)
-        
-        this.$message.success('Texture applied successfully!')
-        this.closeTextureModal()
-      } else {
-        const error = await response.json()
-        console.error('API Error Response:', error)
-        this.$message.error(error.msg || 'Failed to apply texture')
-      }
-    } catch (error) {
-      console.error('Error applying texture:', error)
-      this.$message.error('Failed to apply texture: ' + error.message)
-    } finally {
-      this.isApplyingTexture = false
-    }
-  },
-
-
-  // NEW: Activate/Deactivate texture
-  // activateTexture(index) {
-  //   // If clicking the same texture, deactivate it
-  //   if (this.textures_available[index].is_active) {
-  //     this.textures_available[index].is_active = false
-  //     this.mainImage = this.getOriginalImage() // revert to original
-  //     this.$message.info('Texture deactivated')
-  //     return
-  //   }
-
-  //   // Deactivate all other textures
-  //   this.textures_available.forEach((texture, i) => {
-  //     if (i !== index) {
-  //       texture.is_active = false
-  //     }
-  //   })
-
-  //   // Activate selected texture
-  //   this.textures_available[index].is_active = true
-  //   this.mainImage = this.textures_available[index].main_image_texture_applied
-  //   this.$message.success('Texture activated')
-  // },
-  
-  // UPDATED: Activate texture with green border & checkmark
-  activateTexture(index) {
-    if (!this.textures_available[index]) return
-
-    // Deactivate all other textures
-    this.textures_available.forEach((texture, i) => {
-      if (i !== index) {
-        texture.is_active = false
-      }
-    })
-
-    // Activate selected texture
-    this.textures_available[index].is_active = true
-    this.mainImage = this.textures_available[index].main_image_texture_applied
-    
-    this.$forceUpdate()
-    this.$message.success('Texture activated')
-  },
-  
-  // NEW: Deactivate texture and revert to original image
-  deactivateTexture(index) {
-    if (!this.textures_available[index]) return
-
-    const texture = this.textures_available[index]
-    
-    // Revert to original image
-    if (texture.original_main_image) {
-      this.mainImage = texture.original_main_image
-    }
-
-    // Mark as inactive
-    texture.is_active = false
-    
-    this.$forceUpdate()
-    this.$message.info('Texture deactivated - reverted to original image')
-  },
-
-  // Helper: Get original main image (before any texture)
-  getOriginalImage() {
-    // If you stored original, return it
-    // Otherwise return first texture's main_image_texture_applied before any texture
-    // For now, we'll keep the current mainImage
-    return this.mainImage
-  },
-
-  // NEW: Delete texture from list
-  deleteTexture(index) {
-    const wasActive = this.textures_available[index].is_active
-    this.textures_available.splice(index, 1)
-    
-    if (wasActive && this.textures_available.length > 0) {
-      // Activate first texture if deleted one was active
-      this.activateTexture(0)
-    } else if (wasActive) {
-      // No textures left, revert to original
-      this.mainImage = this.getOriginalImage()
-    }
-    
-    this.$message.success('Texture deleted')
-  },
-  
-    openApplyTextureModel(){
-      this.openSelectTextureModel=true
-    },
     goBack() {
       this.$emit('back')
     },
-    // Update your initializeCompletedCount method:
+    
+// Add this new method:
+
+view_result(generated_model_id){
+  this.$emit('queue-updated',generated_model_id) 
+  this.openQueueModal=false
+},
+// Update your initializeCompletedCount method:
 async initializeCompletedCount() {
   try {
     const token = localStorage.getItem('token')
-    const response = await fetch(`${this.$store.state.root_api}engine/queue-status/?room_id=${this.$route.params.id}`, {
+    const response = await fetch(`${this.$store.state.root_api}engine/queue-status-add-new-product/`, {
       method:'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -1441,6 +921,7 @@ async initializeCompletedCount() {
     this.isInitialLoad = false
   }
 },
+
     editImage(key) {
       this.currentEditingKey = key
       
@@ -1552,11 +1033,14 @@ async initializeCompletedCount() {
         images: imagesToProcess,
         multiView: true
       }
+        const token = localStorage.getItem('token');
 
       const response = await fetch(this.$store.state.root_api + 'engine/remove-images-bg/', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+                      'Authorization': `Token ${token}`,
+
         },
         body: JSON.stringify(payload)
       })
@@ -1608,21 +1092,17 @@ async initializeCompletedCount() {
         multiView: true,
         room_id: this.$route.params.id
       }
+        const token = localStorage.getItem('token');
 
-    const token = localStorage.getItem('token')
-      const response = await fetch(this.$store.state.root_api + 'engine/hy-2.0-mv-3D-gen/', {
+      const response = await fetch(this.$store.state.root_api + 'engine/hy-2.0-mv-3D-gen-add-new-product/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-                  'Authorization': `Token ${token}`,
+                      'Authorization': `Token ${token}`,
+
         },
         body: JSON.stringify(payload)
       })
-       if(response.status==402){
-        const result = await response.json()
-        this.$emit('insufficient-credits',result.msg) 
-        return
-      }
 
       if (response.ok) {
         const result = await response.json()
@@ -1639,31 +1119,13 @@ async initializeCompletedCount() {
     }
   },
 
-  //   async fetchQueueStatus() {
-  //   try {
-      
-  //            const token = localStorage.getItem('token')
-  //     const response = await fetch(`${this.$store.state.root_api}engine/queue-status/?room_id=${this.$route.params.id}`,
-  //       {method:"GET",
-  //         headers: {
-  //         'Content-Type': 'application/json',
-  //                 'Authorization': `Token ${token}`,
-  //       },}
-  //     )
-  //     if (response.ok) {
-  //       const result = await response.json()
-  //       this.queueItems = result.queue || []
-  //       // this.$emit('queue-updated', item.generated_model_id)
-  //     }
-  //   } catch (error) {
-  //     console.error('Failed to fetch queue status:', error)
-  //   }
-  // },
+  // Replace your existing fetchQueueStatus method with this:
 
-  async fetchQueueStatus() {
+// Update your fetchQueueStatus method:
+async fetchQueueStatus() {
   try {
     const token = localStorage.getItem('token')
-    const response = await fetch(`${this.$store.state.root_api}engine/queue-status/?room_id=${this.$route.params.id}`,{
+    const response = await fetch(`${this.$store.state.root_api}engine/queue-status-add-new-product/`, {
       method:'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -1777,13 +1239,14 @@ async initializeCompletedCount() {
         images: [{ type: 'main', data: this.queueImageUpload }],
         multiView: false
       }
- const token = localStorage.getItem('token')
-      const response = await fetch(this.$store.state.root_api + 'engine/remove-images-bg/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-                  'Authorization': `Token ${token}`,
-          
+        const token = localStorage.getItem('token');
+
+        
+        const response = await fetch(this.$store.state.root_api + 'engine/remove-images-bg/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${token}`,
         },
         body: JSON.stringify(payload)
       })
@@ -1818,20 +1281,17 @@ async initializeCompletedCount() {
         multiView: false,
         room_id: this.$route.params.id
       }
-    const token = localStorage.getItem('token')
-      const response = await fetch(this.$store.state.root_api + 'engine/hy-2.0-sv-3D-gen/', {
+
+        const token = localStorage.getItem('token');
+      const response = await fetch(this.$store.state.root_api +  'engine/hy-2.0-sv-3D-gen-add-new-product/', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'  ,
-                'Authorization': `Token ${token}`,
+          'Content-Type': 'application/json',
+                                'Authorization': `Token ${token}`,
         },
         body: JSON.stringify(payload)
       })
-      if(response.status==402){
-        const result = await response.json()
-        this.$emit('insufficient-credits',result.msg) 
-        return 
-      }
+
       if (response.ok) {
         const result = await response.json()
         this.$message.success('Item added to queue successfully!')
@@ -1847,14 +1307,14 @@ async initializeCompletedCount() {
     }
   },
 
-  async removeFromQueue(queueId) {
-    try {
-          const token = localStorage.getItem('token')
-      const response = await fetch(this.$store.state.root_api + 'engine/queue-status/', {
+async removeFromQueue(queueId) {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await fetch(this.$store.state.root_api + 'engine/queue-status-add-new-product/', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
-                  'Authorization': `Token ${token}`,
+                                'Authorization': `Token ${token}`,
         },
         body: JSON.stringify({ queue_id: queueId })
       })
@@ -2052,11 +1512,6 @@ async initializeCompletedCount() {
     this.$message.success('Image edited successfully!')
   },
     
-  
-view_result(generated_model_id){
-  this.$emit('queue-updated',generated_model_id) 
-  this.openQueueModal=false
-},
     closeEditModal() {
       this.openEditImage_modal = false
       this.currentEditingKey = null
@@ -2109,8 +1564,6 @@ view_result(generated_model_id){
         setTimeout(() => {
           if (key === 'main') {
             this.mainImage = e.target.result
-            this.originalMainImage = e.target.result // STORE ORIGINAL
-
             this.uploading.main = false
           } else if (typeof key === 'number') {
             this.views[key].image = e.target.result
@@ -2176,12 +1629,12 @@ view_result(generated_model_id){
           credits: this.credits
         }
 
-    const token = localStorage.getItem('token')
+    const token = localStorage.getItem('token');
         const response = await fetch(this.$store.state.root_api + 'engine/remove-images-bg/', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-                    'Authorization': `Token ${token}`,
+                                            'Authorization': `Token ${token}`,
           },
           body: JSON.stringify(payload)
         })
@@ -2308,54 +1761,48 @@ getQueueStatusColor(status) {
         credits: this.credits,
         room_id: this.$route.params.id
       }
+        const token = localStorage.getItem('token');
 
       console.log(payload)
       let response = null
-    const token = localStorage.getItem('token')
-    
-    if (this.multiView) {
-      response = await fetch(this.$store.state.root_api + 'engine/hy-2.0-mv-3D-gen/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Token ${token}`,
+
+      if (this.multiView) {
+        response = await fetch(this.$store.state.root_api + 'engine/hy-2.0-mv-3D-gen-add-new-product/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${token}`,
+
           },
           body: JSON.stringify(payload)
         })
       } else {
-        response = await fetch(this.$store.state.root_api + 'engine/hy-2.0-sv-3D-gen/', {
+        response = await fetch(this.$store.state.root_api + 'engine/hy-2.0-sv-3D-gen-add-new-product/', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-          'Authorization': `Token ${token}`,
+            'Authorization': `Token ${token}`,
 
           },
           body: JSON.stringify(payload)
         })
-      }
-      if(response.status==402){
-        const result = await response.json()
-        this.$emit('insufficient-credits',result.msg) 
-        return
       }
       
       if (response.ok) {
         const result = await response.json()
         console.log(result)
         this.$message.success('Item added to queue successfully!')
-        this.fetchQueueStatus()
+        // this.fetchQueueStatus()
         this.$emit('generated', result)
       } else {
         const errorData = await response.json()
         throw new Error(errorData.msg || 'Generation failed')
       }
-      this.isGenerating = false
     } catch (error) {
-      this.isGenerating = false
       console.error('Generation error:', error)
       this.$message.error(error.message || 'Failed to add to queue')
     } finally {
-      
+      this.isGenerating = false
       this.$emit('processing-generate', false)
     }
   },
@@ -2370,7 +1817,8 @@ getQueueStatusColor(status) {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: 100%;
+  height: 90vh;
+  overflow-y: scroll;
   margin: 0 auto;
 }
 
@@ -2452,8 +1900,9 @@ getQueueStatusColor(status) {
 
 .header {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  /* align-items: center; */
+  /* justify-content: space-between; */
+  /* gap:10px; */
   margin-bottom: 20px;
 }
 
@@ -3230,14 +2679,4 @@ getQueueStatusColor(status) {
 .multiview-queue-modal-actions .ant-btn {
   height: 40px;
   font-weight: 500;
-}
-
-
-
-.disabledBox {
-  opacity: 0.5;
-  pointer-events: none;
-  cursor: not-allowed !important;
-}
-
-</style>
+}</style>

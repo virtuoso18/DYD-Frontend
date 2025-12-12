@@ -1,6 +1,6 @@
 <template>
     <!-- roll = {{roll}} ||  &nbsp; pitch = {{pitch}} ||  &nbsp; yaw = {{yaw}} -->
-  <div class="main-canvas" ref="canvasContainer">
+  <div class="main-canvas" ref="canvasContainer" style="height:83vh">
   
     <div id="viewer" ref="viewer">
       <div id="loading" v-if="loading">Loading 3D model and ceiling data...</div>
@@ -98,7 +98,7 @@ import { useStore } from 'vuex';
 import { defineEmits } from 'vue';
 
 // Define the emit
-const emit = defineEmits(['model-3d-light-added']);
+const emit = defineEmits(['model-3d-light-added','insufficient-credits']);
 const route = useRoute();
 const store=useStore();
 
@@ -510,73 +510,137 @@ function generateBinaryMask() {
   console.log(`Binary mask generated with dimensions: ${bgWidth}x${bgHeight}`);
 }
 
-// Alternative simpler version if you want to render directly from the main scene
-// function downloadCurrentSceneImage() {
+
+// async function downloadCurrentSceneImage() {
 //   if (!renderer || !scene || !camera || !currentBackgroundTexture || !model) {
 //     console.warn("Required components not available for image generation");
 //     return;
 //   }
 
-//   // Get current canvas dimensions
-//   const width = renderer.domElement.width;
-//   const height = renderer.domElement.height;
+//   try {
+//     // Get current canvas dimensions
+//     const width = renderer.domElement.width;
+//     const height = renderer.domElement.height;
 
-//   // Store original visibility states
-//   const originalRotationControlsVisible = rotationControlsGroup ? rotationControlsGroup.visible : false;
-//   const originalGridVisible = gridHelper ? gridHelper.visible : false;
-//   const originalCeilingMaskVisible = ceilingMaskMesh ? ceilingMaskMesh.visible : false;
+//     // Store original visibility states
+//     const originalRotationControlsVisible = rotationControlsGroup ? rotationControlsGroup.visible : false;
+//     const originalGridVisible = gridHelper ? gridHelper.visible : false;
+//     const originalCeilingMaskVisible = ceilingMaskMesh ? ceilingMaskMesh.visible : false;
 
-//   // Hide UI elements temporarily
-//   if (rotationControlsGroup) rotationControlsGroup.visible = false;
-//   if (gridHelper) gridHelper.visible = false;
-//   if (ceilingMaskMesh) ceilingMaskMesh.visible = false;
+//     // Hide UI elements temporarily
+//     if (rotationControlsGroup) rotationControlsGroup.visible = false;
+//     if (gridHelper) gridHelper.visible = false;
+//     if (ceilingMaskMesh) ceilingMaskMesh.visible = false;
 
-//   // Create a temporary canvas for compositing
-//   const compositeCanvas = document.createElement('canvas');
-//   compositeCanvas.width = width;
-//   compositeCanvas.height = height;
-//   const ctx = compositeCanvas.getContext('2d');
+//     // Create a temporary canvas for compositing
+//     const compositeCanvas = document.createElement('canvas');
+//     compositeCanvas.width = width;
+//     compositeCanvas.height = height;
+//     const ctx = compositeCanvas.getContext('2d');
 
-//   // Step 1: Draw the background image
-//   const bgImage = currentBackgroundTexture.image;
-//   ctx.drawImage(bgImage, 0, 0, width, height);
+//     // Step 1: Draw the background image
+//     const bgImage = currentBackgroundTexture.image;
+//     ctx.drawImage(bgImage, 0, 0, width, height);
 
-//   // Step 2: Render only the 3D model scene
-//   // Temporarily clear the background scene to render only the model
-//   const originalBgMeshVisible = bgMesh ? bgMesh.visible : false;
-//   if (bgMesh) bgMesh.visible = false;
+//     // Step 2: Render only the 3D model scene
+//     // Temporarily clear the background scene to render only the model
+//     const originalBgMeshVisible = bgMesh ? bgMesh.visible : false;
+//     if (bgMesh) bgMesh.visible = false;
 
-//   // Set transparent background for model rendering
-//   const originalClearColor = renderer.getClearColor(new THREE.Color());
-//   const originalClearAlpha = renderer.getClearAlpha();
-//   renderer.setClearColor(0x000000, 0); // Transparent background
+//     // Set transparent background for model rendering
+//     const originalClearColor = renderer.getClearColor(new THREE.Color());
+//     const originalClearAlpha = renderer.getClearAlpha();
+//     renderer.setClearColor(0x000000, 0); // Transparent background
 
-//   // Render only the 3D scene (model without background)
-//   renderer.autoClear = false;
-//   renderer.clear();
-//   renderer.render(scene, camera);
+//     // Render only the 3D scene (model without background)
+//     renderer.autoClear = false;
+//     renderer.clear();
+//     renderer.render(scene, camera);
 
-//   // Step 3: Get the model render as image data
-//   const modelImageData = renderer.domElement.toDataURL('image/png');
+//     // Step 3: Get the model render as image data
+//     const modelImageData = renderer.domElement.toDataURL('image/png');
 
-//   // Step 4: Create an image element and composite it
-//   const modelImage = new Image();
-//   modelImage.onload = function() {
-//     // Draw the model on top of the background with proper blending
-//     ctx.globalCompositeOperation = 'source-over';
-//     ctx.drawImage(modelImage, 0, 0, width, height);
+//     // Step 4: Create composite image
+//     const finalDataURL = await new Promise((resolve) => {
+//       const modelImage = new Image();
+//       modelImage.onload = function() {
+//         // Draw the model on top of the background with proper blending
+//         ctx.globalCompositeOperation = 'source-over';
+//         ctx.drawImage(modelImage, 0, 0, width, height);
+        
+//         // Get final composite image
+//         resolve(compositeCanvas.toDataURL('image/png', 0.95));
+//       };
+//       modelImage.src = modelImageData;
+//     });
 
-//     // Step 5: Download the composite image
-//     const finalDataURL = compositeCanvas.toDataURL('image/png', 0.95);
-    
-//     const link = document.createElement('a');
-//     link.download = `ceiling_model_composite_${Date.now()}.png`;
-//     link.href = finalDataURL;
-//     document.body.appendChild(link);
-//     link.click();
-//     document.body.removeChild(link);
+//     // Step 5: Send to server via POST request
+//     const response = await fetch(store.state.root_api + 'engine/added-3d-light-to-room/', {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//         'Authorization': `Token ${localStorage.getItem('token')}`
+//       },
+//       body: JSON.stringify({
+//         image: finalDataURL,
+//         room_id: route.params.id,
+//       product_id:props.selectedlightuuid,
+//         timestamp: Date.now(),
+//         // Add any additional metadata you want to send
+//         metadata: {
+//           modelPosition: {
+//             x: modelPosition.x,
+//             y: modelPosition.y,
+//             rotation: modelRotation.y
+//           },
+//           ceilingAngles: {
+//             roll: ceilingAngles.roll,
+//             pitch: ceilingAngles.pitch,
+//             yaw: ceilingAngles.yaw
+//           },
+//           modelScale: modelSizeScale.value,
+//           ceilingHeight: currentCeilingHeight.value,
+//           dimensions: {
+//             width: width,
+//             height: height
+//           }
+//         }
+//       })
+//     });
 
-//     console.log(`Composite image downloaded with dimensions: ${width}x${height}`);
+//     if(response.status==402){
+//       console.log(response)
+//         const result = await response.json()
+//         emit('model-3d-light-added', {'image_url':image_url});
+//         emit('insufficient-credits',result.msg)
+//         return
+//       }
+      
+//     if (response.ok) {
+//       const result = await response.json();
+//       console.log('Image successfully sent to server:', result);
+//       emit('model-3d-light-added', result);
+      
+//       // Optional: Still download locally as backup
+//       // const link = document.createElement('a');
+//       // link.download = `ceiling_model_composite_${Date.now()}.png`;
+//       // link.href = finalDataURL;
+//       // document.body.appendChild(link);
+//       // link.click();
+//       // document.body.removeChild(link);
+//     } else {
+//       console.error('Failed to send image to server:', response.status, response.statusText);
+      
+//       // Fallback: Download locally if server fails
+//       const link = document.createElement('a');
+//       link.download = `ceiling_model_composite_${Date.now()}.png`;
+//       link.href = finalDataURL;
+//       document.body.appendChild(link);
+//       link.click();
+//       document.body.removeChild(link);
+//     }
+
+//     console.log(`Composite image processed with dimensions: ${width}x${height}`);
 
 //     // Restore original states
 //     if (rotationControlsGroup) rotationControlsGroup.visible = originalRotationControlsVisible;
@@ -592,9 +656,21 @@ function generateBinaryMask() {
 //     renderer.clear();
 //     renderer.render(backgroundScene, backgroundCamera);
 //     renderer.render(scene, camera);
-//   };
 
-//   modelImage.src = modelImageData;
+//   } catch (error) {
+//     console.error('Error in downloadCurrentSceneImage:', error);
+    
+//     // Restore states even if error occurs
+//     if (rotationControlsGroup) rotationControlsGroup.visible = originalRotationControlsVisible;
+//     if (gridHelper) gridHelper.visible = originalGridVisible;
+//     if (ceilingMaskMesh) ceilingMaskMesh.visible = originalCeilingMaskVisible;
+//     if (bgMesh) bgMesh.visible = originalBgMeshVisible;
+    
+//     if (renderer) {
+//       renderer.setClearColor(originalClearColor || 0x000000, originalClearAlpha || 1);
+//       renderer.autoClear = true;
+//     }
+//   }
 // }
 
 async function downloadCurrentSceneImage() {
@@ -604,14 +680,17 @@ async function downloadCurrentSceneImage() {
   }
 
   try {
-    // Get current canvas dimensions
-    const width = renderer.domElement.width;
-    const height = renderer.domElement.height;
-
-    // Store original visibility states
+    // Store original states BEFORE any modifications
+    const originalClearColor = renderer.getClearColor(new THREE.Color());
+    const originalClearAlpha = renderer.getClearAlpha();
+    const originalBgMeshVisible = bgMesh ? bgMesh.visible : false;
     const originalRotationControlsVisible = rotationControlsGroup ? rotationControlsGroup.visible : false;
     const originalGridVisible = gridHelper ? gridHelper.visible : false;
     const originalCeilingMaskVisible = ceilingMaskMesh ? ceilingMaskMesh.visible : false;
+
+    // Get current canvas dimensions
+    const width = renderer.domElement.width;
+    const height = renderer.domElement.height;
 
     // Hide UI elements temporarily
     if (rotationControlsGroup) rotationControlsGroup.visible = false;
@@ -629,13 +708,10 @@ async function downloadCurrentSceneImage() {
     ctx.drawImage(bgImage, 0, 0, width, height);
 
     // Step 2: Render only the 3D model scene
-    // Temporarily clear the background scene to render only the model
-    const originalBgMeshVisible = bgMesh ? bgMesh.visible : false;
+    // Temporarily hide background mesh
     if (bgMesh) bgMesh.visible = false;
 
     // Set transparent background for model rendering
-    const originalClearColor = renderer.getClearColor(new THREE.Color());
-    const originalClearAlpha = renderer.getClearAlpha();
     renderer.setClearColor(0x000000, 0); // Transparent background
 
     // Render only the 3D scene (model without background)
@@ -646,7 +722,7 @@ async function downloadCurrentSceneImage() {
     // Step 3: Get the model render as image data
     const modelImageData = renderer.domElement.toDataURL('image/png');
 
-    // Step 4: Create composite image
+    // Step 4: Create composite image and wait for it
     const finalDataURL = await new Promise((resolve) => {
       const modelImage = new Image();
       modelImage.onload = function() {
@@ -657,8 +733,20 @@ async function downloadCurrentSceneImage() {
         // Get final composite image
         resolve(compositeCanvas.toDataURL('image/png', 0.95));
       };
+      modelImage.onerror = function() {
+        resolve(null); // Return null if image fails to load
+      };
       modelImage.src = modelImageData;
     });
+
+    // If image generation failed, restore state and return early
+    if (!finalDataURL) {
+      console.error('Failed to generate composite image');
+      // Restore states immediately
+      restoreRendererState(originalBgMeshVisible, originalClearColor, originalClearAlpha);
+      restoreUIState(originalRotationControlsVisible, originalGridVisible, originalCeilingMaskVisible);
+      return;
+    }
 
     // Step 5: Send to server via POST request
     const response = await fetch(store.state.root_api + 'engine/added-3d-light-to-room/', {
@@ -670,9 +758,8 @@ async function downloadCurrentSceneImage() {
       body: JSON.stringify({
         image: finalDataURL,
         room_id: route.params.id,
-      product_id:props.selectedlightuuid,
+        product_id: props.selectedlightuuid,
         timestamp: Date.now(),
-        // Add any additional metadata you want to send
         metadata: {
           modelPosition: {
             x: modelPosition.x,
@@ -694,20 +781,36 @@ async function downloadCurrentSceneImage() {
       })
     });
 
+    // Handle 402 BEFORE restoring state
+    if (response.status === 402) {
+      console.log('Insufficient credits response received');
+      const result = await response.json();
+      
+      // Restore ALL states FIRST before emitting
+      restoreRendererState(originalBgMeshVisible, originalClearColor, originalClearAlpha);
+      restoreUIState(originalRotationControlsVisible, originalGridVisible, originalCeilingMaskVisible);
+      
+      // THEN emit the insufficient credits event
+      emit('insufficient-credits', result.msg);
+      return; // Exit early without emitting model-3d-light-added
+    }
+    
     if (response.ok) {
       const result = await response.json();
       console.log('Image successfully sent to server:', result);
-      emit('model-3d-light-added', result);
       
-      // Optional: Still download locally as backup
-      // const link = document.createElement('a');
-      // link.download = `ceiling_model_composite_${Date.now()}.png`;
-      // link.href = finalDataURL;
-      // document.body.appendChild(link);
-      // link.click();
-      // document.body.removeChild(link);
+      // Restore states before emitting
+      restoreRendererState(originalBgMeshVisible, originalClearColor, originalClearAlpha);
+      restoreUIState(originalRotationControlsVisible, originalGridVisible, originalCeilingMaskVisible);
+      
+      // Emit success event
+      emit('model-3d-light-added', result);
     } else {
       console.error('Failed to send image to server:', response.status, response.statusText);
+      
+      // Restore states
+      restoreRendererState(originalBgMeshVisible, originalClearColor, originalClearAlpha);
+      restoreUIState(originalRotationControlsVisible, originalGridVisible, originalCeilingMaskVisible);
       
       // Fallback: Download locally if server fails
       const link = document.createElement('a');
@@ -720,37 +823,40 @@ async function downloadCurrentSceneImage() {
 
     console.log(`Composite image processed with dimensions: ${width}x${height}`);
 
-    // Restore original states
-    if (rotationControlsGroup) rotationControlsGroup.visible = originalRotationControlsVisible;
-    if (gridHelper) gridHelper.visible = originalGridVisible;
-    if (ceilingMaskMesh) ceilingMaskMesh.visible = originalCeilingMaskVisible;
-    if (bgMesh) bgMesh.visible = originalBgMeshVisible;
-    
-    // Restore renderer settings
-    renderer.setClearColor(originalClearColor, originalClearAlpha);
-    renderer.autoClear = true;
-
-    // Resume normal rendering
-    renderer.clear();
-    renderer.render(backgroundScene, backgroundCamera);
-    renderer.render(scene, camera);
-
   } catch (error) {
     console.error('Error in downloadCurrentSceneImage:', error);
     
-    // Restore states even if error occurs
-    if (rotationControlsGroup) rotationControlsGroup.visible = originalRotationControlsVisible;
-    if (gridHelper) gridHelper.visible = originalGridVisible;
-    if (ceilingMaskMesh) ceilingMaskMesh.visible = originalCeilingMaskVisible;
-    if (bgMesh) bgMesh.visible = originalBgMeshVisible;
+    // Restore all states on error
+    const originalClearColor = renderer.getClearColor(new THREE.Color());
+    const originalClearAlpha = renderer.getClearAlpha();
+    const originalBgMeshVisible = bgMesh ? bgMesh.visible : true;
+    const originalRotationControlsVisible = rotationControlsGroup ? rotationControlsGroup.visible : true;
+    const originalGridVisible = gridHelper ? gridHelper.visible : false;
+    const originalCeilingMaskVisible = ceilingMaskMesh ? ceilingMaskMesh.visible : false;
     
-    if (renderer) {
-      renderer.setClearColor(originalClearColor || 0x000000, originalClearAlpha || 1);
-      renderer.autoClear = true;
-    }
+    restoreRendererState(originalBgMeshVisible, originalClearColor, originalClearAlpha);
+    restoreUIState(originalRotationControlsVisible, originalGridVisible, originalCeilingMaskVisible);
   }
 }
 
+// Helper function to restore renderer state
+function restoreRendererState(bgMeshVisible, clearColor, clearAlpha) {
+  if (bgMesh) bgMesh.visible = bgMeshVisible;
+  if (renderer) {
+    renderer.setClearColor(clearColor, clearAlpha);
+    renderer.autoClear = true;
+    renderer.clear();
+    renderer.render(backgroundScene, backgroundCamera);
+    renderer.render(scene, camera);
+  }
+}
+
+// Helper function to restore UI state
+function restoreUIState(rotationControlsVisible, gridVisible, ceilingMaskVisible) {
+  if (rotationControlsGroup) rotationControlsGroup.visible = rotationControlsVisible;
+  if (gridHelper) gridHelper.visible = gridVisible;
+  if (ceilingMaskMesh) ceilingMaskMesh.visible = ceilingMaskVisible;
+}
 
 
 // Corrected adjustCanvasToImageAspectRatio function with 800px max width
@@ -764,7 +870,7 @@ function adjustCanvasToImageAspectRatio(texture) {
   // Get the parent container's dimensions
   const containerRect = canvasContainer.value.getBoundingClientRect();
   const availableWidth = containerRect.width;
-  const availableHeight = Math.min(containerRect.height, 540);
+  const availableHeight = containerRect.height;
   
   // Calculate dimensions based on available space and image aspect ratio
   let newCanvasWidth, newCanvasHeight;
@@ -780,8 +886,8 @@ function adjustCanvasToImageAspectRatio(texture) {
   }
   
   // Ensure minimum dimensions
-  newCanvasWidth = Math.max(newCanvasWidth, 400);
-  newCanvasHeight = Math.max(newCanvasHeight, 500);
+  // newCanvasWidth = Math.max(newCanvasWidth, 400);
+  // newCanvasHeight = Math.max(newCanvasHeight, 500);
   
   // Update reactive variables
   canvasWidth.value = newCanvasWidth;
@@ -1519,7 +1625,7 @@ defineExpose({
   font-family: Arial, sans-serif;
   font-size: 12px;
   max-width: 600px;
-  max-height: calc(90vh);
+  max-height: calc(100vh);
   overflow-y: auto;
   z-index: 1000;
 }

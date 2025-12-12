@@ -20,8 +20,9 @@
         
             <!-- Designs List -->
             <a-col :lg="8" :md="8" :xs="24" :sm="24" style="padding:5px;" v-for="design in my_designes" :key="design.id" v-if="my_designes.length > 0">
+                
                 <div style="border:1px solid rgba(0,0,0,0.1);padding: 5px;border-radius:10px;">
-                    <img :src="this.$store.state.root_media_api+design.image" style="width:100%;border-radius:10px;max-height:200px;object-fit:cover" alt="" @click="show_design_details(design.id)">
+                    <img :src="this.$store.state.root_media_api+design.image_url" style="width:100%;border-radius:10px;max-height:200px;object-fit:cover" alt="" @click="show_design_details(design.id)">
                     <a-row style="padding-top:5px">
                         <a-col :span="22" >
                             <a-tag>Room : {{  design.room_type }}</a-tag>

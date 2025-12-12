@@ -72,7 +72,7 @@
                 size="small"
                 @click="navigateToAction(notif.action_url)"
               >
-                Take Action
+                See Results
               </a-button>
             </div>
           </div>

@@ -4,7 +4,7 @@
   <img 
     :src="this.baseImageUrl" 
     alt="" 
-    class="max-w-full max-h-[520px] mx-auto"
+    class="max-w-full max-h-[82vh] mx-auto"
   >
 </div>
 
@@ -326,6 +326,11 @@ async renderItem() {
       body: formData
     });
 
+    if(response.status==402){
+        const result = await response.json()
+        this.$emit('insufficient-credits',result.msg) 
+        return
+      }
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -1370,7 +1375,8 @@ onMouseMove(event) {
   display: block;
   margin: 0 auto;
   width: 100%;
-  height: 76vh;
+  
+  height: 82vh;
   position: relative;
   text-align: center;
 }

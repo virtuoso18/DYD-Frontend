@@ -142,7 +142,7 @@
                @mouseenter="hoveredBanner = banner.id"
                @mouseleave="hoveredBanner = null">
                
-               <img :src="banner.final_banner" @click="openBannerModal(banner)"
+               <img :src="this.$store.state.root_media_api+banner.final_banner" @click="openBannerModal(banner)"
                     style=" width: 100%; height: 100%; object-fit: contain; border-radius: 12px;border: 1px solid #e5e7eb;" 
                     alt="Generated Banner">
                
@@ -216,7 +216,7 @@
 >
   <!-- Image preview -->
   <img
-    :src="selectedBanner.final_banner"
+    :src="this.$store.state.root_media_api+selectedBanner.final_banner"
     style="width: 100%; height: auto; object-fit: contain; border-radius: 12px; border: 1px solid #e5e7eb;"
     alt="Generated Banner"
   />
@@ -334,6 +334,7 @@
                      transition: 'all 0.2s',
                      background: selectedTemplate?.id === template.id ? '#eef2ff' : 'white'
                    }">
+                   
                 <img :src="template.banner_image" 
                      style="width: 100%; height: 150px; object-fit: cover;" 
                      alt="Template">
@@ -897,7 +898,7 @@ this.selectedBanner=banner
           this.templateBanners = data.data.map(banner => ({
             id: banner.id,
             banner_id: banner.banner_id,
-            banner_image: banner.banner_image,
+            banner_image: this.$store.state.root_media_api+banner.banner_image,
             ratio: banner.ratio,
             is_active: banner.is_active,
             text_data: banner.text_data
@@ -953,7 +954,7 @@ this.selectedBanner=banner
             : (fullBanner.text_data || []);
           
           // Load banner image FIRST
-          await this.loadWorkingBannerImage(fullBanner.banner_image);
+          await this.loadWorkingBannerImage(this.$store.state.root_media_api+fullBanner.banner_image);
           
           // Initialize canvas IMMEDIATELY after image loads
           await this.$nextTick();
@@ -962,7 +963,7 @@ this.selectedBanner=banner
           // Load binary masks
           const maskUrls = fullBanner.binary_masks
             .sort((a, b) => a.order - b.order)
-            .map(mask => mask.image);
+            .map(mask => this.$store.state.root_media_api+mask.image);
           
           await this.loadWorkingMaskImages(maskUrls);
           

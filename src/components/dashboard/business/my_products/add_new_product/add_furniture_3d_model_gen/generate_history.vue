@@ -37,14 +37,14 @@
              <a-button 
             type="text" 
             size="small" 
-            @click.stop="addProduct(model)" 
             style="display:flex;align-items:center;gap:6px;padding:4px 8px;color:#3B63FB;font-size:13px;height:auto;border:none;"
-          >
+            >
+            <!-- @click.stop="addProduct(model)"  -->
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M8.0026 5.33203V10.6654M10.6693 7.9987H5.33594" stroke="#3B63FB" stroke-linecap="round" stroke-linejoin="round"/>
               <path d="M1.66406 8.0013C1.66406 5.01574 1.66406 3.52296 2.59156 2.59546C3.51906 1.66797 5.01184 1.66797 7.9974 1.66797C10.9829 1.66797 12.4757 1.66797 13.4033 2.59546C14.3307 3.52296 14.3307 5.01574 14.3307 8.0013C14.3307 10.9868 14.3307 12.4796 13.4033 13.4072C12.4757 14.3346 10.9829 14.3346 7.9974 14.3346C5.01184 14.3346 3.51906 14.3346 2.59156 13.4072C1.66406 12.4796 1.66406 10.9868 1.66406 8.0013Z" stroke="#3B63FB"/>
             </svg>
-            Add Product
+            Show Product
           </a-button>
            
         </a-col>

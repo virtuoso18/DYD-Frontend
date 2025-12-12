@@ -914,10 +914,11 @@ syncOverlayTransform() {
         this.msgIndex = (this.msgIndex + 1) %  this.loadingMessages.length;
         this.loadingMessage =  this.loadingMessages[this.msgIndex];
         if (!this.isLoading) {
-          clearInterval(intervalId);
+          clearInterval(this.intervalId);
         }
       }, 5000);
     },
+
 // Replace initializeDrawingCanvas with this to show highlight on all selected objects
 initializeDrawingCanvas() {
   if (!this.drawingCanvas) {
@@ -3116,7 +3117,8 @@ position: relative;
 
 .zoom-controls {
   position: absolute;
-  top: 16px;
+  top:60px;
+  
   right: 16px;
   display: flex;
   align-items: center;

@@ -135,7 +135,7 @@
       </div>
     </div>
      <div class="apply-section">
-      <a-button type="primary" size="large" block class="apply-button" @click="updateItemRendering()">
+      <a-button type="primary" size="large" block class="apply-button"  @click="$emit('Apply_Light', 'magnetic-light-Renerer-apply')">
         Apply
       </a-button>
     </div>

@@ -173,6 +173,11 @@ watch: {
       },
       body: JSON.stringify(payload)
     })
+    if(response.status==402){
+        const result = await response.json()
+        this.$emit('insufficient-credits',result.msg) 
+        return
+      }
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)

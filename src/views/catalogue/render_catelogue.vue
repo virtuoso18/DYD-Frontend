@@ -1,8 +1,7 @@
 <template>
-  <RatingModal
+  <BusinessRatingModal
   :isOpen="showRatingModal"
-  :entityId="$route.params.id"
-  entityType="room"
+  :businessSlug="this.$route.query.brand"
   @close="showRatingModal = false"
   @ratingSubmitted="handleRatingSubmitted"
 />
@@ -1371,13 +1370,13 @@ import {
   ShoppingCartOutlined,
   ReloadOutlined,
 } from "@ant-design/icons-vue";
-import RatingModal from '@/components/store/ratings.vue'; 
+import BusinessRatingModal from '@/components/store/ratings.vue'; 
 import { h } from "vue";
 
 export default {
   name: "render_catalogue",
   components: {
-    RatingModal,
+    BusinessRatingModal,
     LeftOutlined,
     QuestionCircleOutlined,
     HomeOutlined,

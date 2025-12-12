@@ -1,5 +1,79 @@
 <template>
   
+<!-- TEXTURE MODAL -->
+<a-modal 
+  v-model:open="openTextureModal" 
+  width="60%"
+  style="max-width:500px" 
+  title="Apply Texture"
+  :footer="null"
+  centered
+>
+  <div style="display: flex; flex-direction: column; gap: 16px;">
+    
+    <!-- Upload Area -->
+    <div 
+      style="
+        border: 2px dashed #d9d9d9;
+        border-radius: 8px;
+        padding: 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s;
+      "
+      :style="textureImage ? { borderColor: '#1890ff', background: '#f0f8ff' } : {}"
+      @click="triggerTextureFileInput()"
+    >
+      <!-- No texture selected -->
+      <div v-if="!textureImage">
+        <PlusOutlined style="font-size: 30px; color: #1890ff; margin-bottom: 8px; display: block;" />
+        <p style="margin: 8px 0; font-weight: 500;">Click to select texture image</p>
+        <small style="color: #999;">PNG, JPG formats supported</small>
+      </div>
+
+      <!-- Texture preview -->
+      <div v-else style="position: relative; display: flex;justify-content: center;">
+        <div>
+          <img 
+          :src="textureImage" 
+          alt="Texture preview" 
+          style="max-width: 100%; max-height: 150px; border-radius: 4px;"
+          />
+          <p style="margin: 8px 0; color: #666;">Texture Selected ✓</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Remove button -->
+    <div v-if="textureImage" style="text-align: center;">
+      <a-button danger @click="removeSelectedTexture()">
+        Change Texture
+      </a-button>
+    </div>
+
+    <!-- Apply & Cancel buttons -->
+    <div style="display: flex; gap: 8px;">
+      <a-button block @click="closeTextureModal()">
+        Cancel
+      </a-button>
+      <a-button 
+        type="primary" 
+        block 
+        @click="applyTextureToImage()"
+        :disabled="!textureImage"
+        :loading="isApplyingTexture"
+      >
+        <div style="display: flex;justify-content: center;align-items: center;gap:10px;">
+          Apply Texture
+          <span style="display: flex;justify-content: center;align-items: center;">
+            (⚡20)
+          </span>
+        </div>
+      </a-button>
+    </div>
+
+  </div>
+</a-modal>
 <!-- Multi-View Queue Modal -->
 <a-modal 
   v-model:open="openMultiViewQueueModal" 
@@ -463,13 +537,109 @@
           </a-button>
         </div>
 
-        <!-- Add Texture Section -->
-        <div class="texture-section">
-          <p>Add Texture</p>
-          <div class="texture-upload" @click="!isProcessingBg && triggerFileInput('texture')">
-            <PlusOutlined />
-          </div>
+        
+<!-- Add Texture Section - UPDATED UI -->
+<div class="texture-section">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+    <p style="margin: 0; font-weight: 500;">Textures ({{ textures_available.length }})</p>
+   <a-button 
+      type="primary" 
+      size="small"
+      @click="openTexturModal()"
+      :disabled="!mainImage"
+    >
+      <template #icon>
+        <PlusOutlined />
+      </template>
+      Add Texture
+    </a-button>
+  </div>
+
+  <!-- Texture Grid -->
+  <div>
+    <a-row>
+      <a-col v-if="textures_available.length > 0" span="4" v-for="(texture, index) in textures_available" 
+        :key="index">
+      <div
+        style="
+          position: relative;
+          border-radius: 8px;
+          overflow: hidden;
+          border: 2px solid #e8e8e8;
+          transition: all 0.3s;
+          cursor: pointer;
+          margin-left:5px;
+          width: 80px; 
+          height: 80px; 
+          aspect-ratio: 1;
+        "
+        :style="texture.is_active ? { borderColor: '#52c41a', boxShadow: '0 0 0 2px #f6ffed' } : {}"
+        @click="activateTexture(index)"
+      >
+        <!-- Texture Image -->
+        <img 
+          :src="texture.main_image_texture_applied" 
+          alt="Texture result" 
+          style="
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover;
+          "
+        />
+
+        <!-- Active Checkmark Overlay -->
+        <div 
+          v-if="texture.is_active"
+          @click.stop="deactivateTexture(index)"
+          style="
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(82, 196, 26, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: #52c41a;
+          "
+        >
+          ✅
         </div>
+
+        <!-- Delete Button - Top Right Corner -->
+        <div 
+          style="
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            z-index: 10;
+          "
+          @click.stop="deleteTexture(index)"
+        >
+          <a-button 
+            type="primary" 
+            danger
+            size="small"
+            shape="circle"
+            style="width: 28px; height: 28px; padding: 0;"
+          >
+            <template #icon>
+              <DeleteOutlined />
+            </template>
+          </a-button>
+        </div>
+      </div>
+      </a-col>
+    </a-row>
+  </div>
+
+  <!-- Empty State -->
+  <div v-if="textures_available.length === 0" style="text-align: center; padding: 20px 20px; color: #999; background: #fafafa; border-radius: 6px;">
+    <p style="margin: 0; font-size: 12px;">No textures applied yet</p>
+  </div>
+</div>
 
         <!-- Upload More Images -->
        
@@ -564,12 +734,12 @@
         </div>
 
         <!-- Add Texture Section -->
-        <div class="texture-section">
+        <!-- <div class="texture-section">
           <p>Add Texture</p>
           <div class="texture-upload" @click="!isProcessingBg && triggerFileInput('texture')">
             <PlusOutlined />
           </div>
-        </div>
+        </div> -->
 
         
 <!-- Update the existing "Upload more images" section to include multi-view option -->
@@ -640,6 +810,15 @@
 
     <!-- Hidden File Inputs -->
      
+    
+<input
+  ref="fileInput-texture-select"
+  type="file"
+  accept="image/png,image/jpeg,image/jpg"
+  style="display: none"
+  @change="handleTextureFileSelect"
+/>
+
 <!-- Add hidden file inputs for multi-view queue -->
 <input
   ref="fileInput-mv-queue-0"
@@ -770,6 +949,25 @@ export default {
   },
   data() {
     return {
+
+       
+    // TEXTURE DATA
+    openTextureModal: false,
+    textureImage: null,
+    isApplyingTexture: false,
+    originalMainImage: null,
+    
+    textures_available: [
+      // Structure:
+      // {
+      //   texture_file_selected: '',           
+      //   main_image_texture_applied: '',      
+      //   is_active: false,                    
+      //   original_main_image: ''              
+      // }
+    ],
+
+
       openEditImage_modal: false,
       multiView: false,
       mainImage: null,
@@ -884,6 +1082,196 @@ beforeUnmount() {
       this.$emit('back')
     },
     
+    
+// Texture Methods
+openTexturModal() {
+  if (!this.mainImage) {
+    this.$message.warning('Please upload a main image first')
+    return
+  }
+  this.openTextureModal = true
+},
+
+closeTextureModal() {
+  this.openTextureModal = false
+  this.textureImage = null
+},
+
+triggerTextureFileInput() {
+  this.$refs['fileInput-texture-select'].click()
+},
+
+handleTextureFileSelect(event) {
+  const file = event.target.files[0]
+  if (file) {
+    // Validate file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      this.$message.error('File size must be less than 10MB')
+      return
+    }
+
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      this.textureImage = e.target.result
+      console.log('Texture file loaded')
+    }
+    reader.onerror = (error) => {
+      console.error('File reading error:', error)
+      this.$message.error('Failed to read file')
+    }
+    reader.readAsDataURL(file)
+  }
+},
+
+removeSelectedTexture() {
+  this.textureImage = null
+},
+
+
+async applyTextureToImage() {
+  if (!this.textureImage) {
+    this.$message.warning('Please select a texture image')
+    return
+  }
+
+  if (!this.mainImage) {
+    this.$message.warning('Please upload a main image first')
+    return
+  }
+
+
+  this.isApplyingTexture = true
+
+  try {
+    // Ensure main_image and texture_image are valid base64 strings
+    let mainImageData = this.mainImage
+    let textureImageData = this.textureImage
+
+    // Check if they already have data URI prefix
+    if (!mainImageData.startsWith('data:')) {
+      mainImageData = `data:image/png;base64,${mainImageData}`
+    }
+    if (!textureImageData.startsWith('data:')) {
+      textureImageData = `data:image/png;base64,${textureImageData}`
+    }
+
+    const payload = {
+      main_image: mainImageData,
+      texture_image: textureImageData,
+      
+    }
+
+    console.log('Sending texture application request...')
+    
+    console.log('Main image length:', mainImageData.length)
+    console.log('Texture image length:', textureImageData.length)
+
+    const token = localStorage.getItem('token')
+    const response = await fetch(
+      `${this.$store.state.root_api}engine/apply-texture/`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Token ${token}`,
+        },
+        body: JSON.stringify(payload)
+      }
+    )
+    
+    if(response.status === 402){
+      this.openTextureModal = false
+      const result = await response.json()
+      this.$emit('insufficient-credits', result.msg) 
+      return
+    }
+    
+    if (response.ok) {
+      const result = await response.json()
+      
+      console.log('Texture applied successfully')
+      console.log('Response:', result)
+      
+      // Add to textures_available list
+      const newTexture = {
+        texture_file_selected: this.textureImage,
+        main_image_texture_applied: result.textured_image,
+        is_active: false,
+        original_main_image: this.originalMainImage
+      }
+      
+      this.textures_available.push(newTexture)
+      
+      // Automatically activate the newly applied texture
+      this.activateTexture(this.textures_available.length - 1)
+      
+      this.$message.success('Texture applied successfully!')
+      this.closeTextureModal()
+    } else {
+      const error = await response.json()
+      console.error('API Error Response:', error)
+      console.error('Response Status:', response.status)
+      this.$message.error(error.msg || 'Failed to apply texture')
+    }
+  } catch (error) {
+    console.error('Error applying texture:', error)
+    this.$message.error('Failed to apply texture: ' + error.message)
+  } finally {
+    this.isApplyingTexture = false
+  }
+},
+
+activateTexture(index) {
+  if (!this.textures_available[index]) return
+
+  // Deactivate all other textures
+  this.textures_available.forEach((texture, i) => {
+    if (i !== index) {
+      texture.is_active = false
+    }
+  })
+
+  // Activate selected texture
+  this.textures_available[index].is_active = true
+  this.mainImage = this.textures_available[index].main_image_texture_applied
+  
+  this.$forceUpdate()
+  this.$message.success('Texture activated')
+},
+
+deactivateTexture(index) {
+  if (!this.textures_available[index]) return
+
+  const texture = this.textures_available[index]
+  
+  // Revert to original image
+  if (texture.original_main_image) {
+    this.mainImage = texture.original_main_image
+  }
+
+  // Mark as inactive
+  texture.is_active = false
+  
+  this.$forceUpdate()
+  this.$message.info('Texture deactivated - reverted to original image')
+},
+
+deleteTexture(index) {
+  const wasActive = this.textures_available[index].is_active
+  this.textures_available.splice(index, 1)
+  
+  if (wasActive && this.textures_available.length > 0) {
+    // Activate first texture if deleted one was active
+    this.activateTexture(0)
+  } else if (wasActive) {
+    // No textures left, revert to original
+    if (this.originalMainImage) {
+      this.mainImage = this.originalMainImage
+    }
+  }
+  
+  this.$message.success('Texture deleted')
+},
 // Add this new method:
 
 view_result(generated_model_id){
@@ -1545,42 +1933,80 @@ async removeFromQueue(queueId) {
       }
     },
 
-    uploadFile(file, key) {
-      console.log('Uploading file for key:', key)
+    // uploadFile(file, key) {
+    //   console.log('Uploading file for key:', key)
       
-      // Set uploading state
+    //   // Set uploading state
+    //   if (key === 'main') {
+    //     this.uploading.main = true
+    //   } else if (typeof key === 'number') {
+    //     this.views[key].uploading = true
+    //   } else if (key.toString().startsWith('extra-')) {
+    //     const index = parseInt(key.toString().split('-')[1])
+    //     this.extraViews[index].uploading = true
+    //   }
+
+    //   // Simulate upload with FileReader
+    //   const reader = new FileReader()
+    //   reader.onload = (e) => {
+    //     setTimeout(() => {
+    //       if (key === 'main') {
+    //         this.mainImage = e.target.result
+    //         this.uploading.main = false
+    //       } else if (typeof key === 'number') {
+    //         this.views[key].image = e.target.result
+    //         this.views[key].uploading = false
+    //         this.$forceUpdate()
+    //       } else if (key.toString().startsWith('extra-')) {
+    //         const index = parseInt(key.toString().split('-')[1])
+    //         this.extraViews[index].image = e.target.result
+    //         this.extraViews[index].uploading = false
+    //         this.$forceUpdate()
+    //       }
+    //       console.log('Upload completed for key:', key)
+    //     }, 1000)
+    //   }
+    //   reader.readAsDataURL(file)
+    // },
+
+    
+    
+uploadFile(file, key) {
+  console.log('Uploading file for key:', key)
+  
+  // Set uploading state
+  if (key === 'main') {
+    this.uploading.main = true
+  } else if (typeof key === 'number') {
+    this.views[key].uploading = true
+  } else if (key.toString().startsWith('extra-')) {
+    const index = parseInt(key.toString().split('-')[1])
+    this.extraViews[index].uploading = true
+  }
+
+  // Simulate upload with FileReader
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    setTimeout(() => {
       if (key === 'main') {
-        this.uploading.main = true
+        this.mainImage = e.target.result
+        this.originalMainImage = e.target.result  // STORE ORIGINAL
+        this.uploading.main = false
       } else if (typeof key === 'number') {
-        this.views[key].uploading = true
+        this.views[key].image = e.target.result
+        this.views[key].uploading = false
+        this.$forceUpdate()
       } else if (key.toString().startsWith('extra-')) {
         const index = parseInt(key.toString().split('-')[1])
-        this.extraViews[index].uploading = true
+        this.extraViews[index].image = e.target.result
+        this.extraViews[index].uploading = false
+        this.$forceUpdate()
       }
-
-      // Simulate upload with FileReader
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        setTimeout(() => {
-          if (key === 'main') {
-            this.mainImage = e.target.result
-            this.uploading.main = false
-          } else if (typeof key === 'number') {
-            this.views[key].image = e.target.result
-            this.views[key].uploading = false
-            this.$forceUpdate()
-          } else if (key.toString().startsWith('extra-')) {
-            const index = parseInt(key.toString().split('-')[1])
-            this.extraViews[index].image = e.target.result
-            this.extraViews[index].uploading = false
-            this.$forceUpdate()
-          }
-          console.log('Upload completed for key:', key)
-        }, 1000)
-      }
-      reader.readAsDataURL(file)
-    },
-
+      console.log('Upload completed for key:', key)
+    }, 1000)
+  }
+  reader.readAsDataURL(file)
+},
     removeImage(key) {
       if (key === 'main') {
         this.mainImage = null
@@ -1788,6 +2214,12 @@ getQueueStatusColor(status) {
         })
       }
       
+    if(response.status === 402){
+      this.openTextureModal = false
+      const result = await response.json()
+      this.$emit('insufficient-credits', result.msg) 
+      return
+    }
       if (response.ok) {
         const result = await response.json()
         console.log(result)

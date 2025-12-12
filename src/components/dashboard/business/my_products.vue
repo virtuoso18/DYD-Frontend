@@ -1601,7 +1601,7 @@
         <!-- Product Details View -->
         
 <!-- Product Details View with Spinner -->
-<div v-if="currentView === 'details'" style="max-width: 1200px;">
+<div v-if="currentView === 'details'" style="max-width: 1200px;padding:3px">
     <!-- Spinner/Loader While Loading -->
     <div v-if="isLoading" style="
         display: flex;

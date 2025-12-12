@@ -154,32 +154,94 @@
             <div>
                 <a-row>
                     <a-col :sm="24" :xs="24" :md="12" :lg="12" v-if="!this.business_info.is_profesional_user_site">
-                        <a-row style="padding-top:50px">
-                            <a-col :sm="12" :xs="12" :md="12" :lg="12" style="border-right: 2px solid rgba(0,0,0,0.3);display: flex;justify-content: center;align-items: center;padding-top:20px">
-                                <div style="display: flex;flex-direction: column;justify-content: center;align-items: center">
-                                    <h1>4.5</h1>
-                                    <a-rate :value="4" disabled></a-rate>
-                                    <h5>(25 Users)</h5>
-                                </div>
-                            </a-col>
-                            <a-col :sm="12" :xs="12" :md="12" :lg="12" style="padding:5px">
-                                <div style="display: flex;gap:5px;">
-                                    5<a-progress :percent="50" size="small" status="active" />
-                                </div>
-                                <div style="display: flex;gap:5px;">
-                                    4<a-progress :percent="50" size="small" status="active" />
-                                </div>
-                                <div style="display: flex;gap:5px;">
-                                    3<a-progress :percent="30" size="small" />
-                                </div>
-                                <div style="display: flex;gap:5px;">
-                                    2<a-progress :percent="30" size="small" />
-                                </div>
-                                <div style="display: flex;gap:5px;">
-                                    1<a-progress :percent="70" size="small" status="exception" />
-                                </div>
-                            </a-col>
-                        </a-row>
+                          <a-row style="padding-top:50px">
+                              <a-col :sm="12" :xs="12" :md="12" :lg="12" style="border-right: 2px solid rgba(0,0,0,0.3) ;display: flex;justify-content: center;align-items: center;padding-top:20px">
+                                  <div v-if="!loadingRatings" style="display: flex;flex-direction: column;justify-content: center;align-items: center">
+                                      <h1>
+                                          {{ businessRatings.average }}
+                                      </h1>
+                                      <a-rate :value="Math.round(businessRatings.average)" disabled></a-rate>
+                                      <h5>({{ businessRatings.unique_users }} {{ businessRatings.unique_users === 1 ? 'User' : 'Users' }})</h5>
+                                  </div>
+                                  
+                                  <!-- Loading state -->
+                                  <div v-else style="display: flex;flex-direction: column;justify-content: center;align-items: center">
+                                      <a-spin size="large" />
+                                      <p style="margin-top: 10px; color: #666;">Loading ratings...</p>
+                                  </div>
+                              </a-col>
+
+                              <!-- Rating Distribution -->
+                              <a-col :sm="12" :xs="12" :md="12" :lg="12" style="padding:5px">
+                                  <!-- 5 Star -->
+                                  <div style="display: flex;gap:5px; align-items: center; margin-bottom: 8px;">
+                                      <span style="min-width: 20px; text-align: right;">5</span>
+                                      <a-progress 
+                                          :percent="calculatePercentage(businessRatings.distribution['5_star'])" 
+                                          size="small" 
+                                          :status="businessRatings.distribution['5_star'] > 0 ? 'active' : 'normal'"
+                                          style="flex: 1;"
+                                      />
+                                      <span style="min-width: 30px; text-align: right; font-size: 12px; color: #666;">
+                                          {{ businessRatings.distribution['5_star'] }}
+                                      </span>
+                                  </div>
+
+                                  <!-- 4 Star -->
+                                  <div style="display: flex;gap:5px; align-items: center; margin-bottom: 8px;">
+                                      <span style="min-width: 20px; text-align: right;">4</span>
+                                      <a-progress 
+                                          :percent="calculatePercentage(businessRatings.distribution['4_star'])" 
+                                          size="small"
+                                          :status="businessRatings.distribution['4_star'] > 0 ? 'active' : 'normal'"
+                                          style="flex: 1;"
+                                      />
+                                      <span style="min-width: 30px; text-align: right; font-size: 12px; color: #666;">
+                                          {{ businessRatings.distribution['4_star'] }}
+                                      </span>
+                                  </div>
+
+                                  <!-- 3 Star -->
+                                  <div style="display: flex;gap:5px; align-items: center; margin-bottom: 8px;">
+                                      <span style="min-width: 20px; text-align: right;">3</span>
+                                      <a-progress 
+                                          :percent="calculatePercentage(businessRatings.distribution['3_star'])" 
+                                          size="small"
+                                          style="flex: 1;"
+                                      />
+                                      <span style="min-width: 30px; text-align: right; font-size: 12px; color: #666;">
+                                          {{ businessRatings.distribution['3_star'] }}
+                                      </span>
+                                  </div>
+
+                                  <!-- 2 Star -->
+                                  <div style="display: flex;gap:5px; align-items: center; margin-bottom: 8px;">
+                                      <span style="min-width: 20px; text-align: right;">2</span>
+                                      <a-progress 
+                                          :percent="calculatePercentage(businessRatings.distribution['2_star'])" 
+                                          size="small"
+                                          style="flex: 1;"
+                                      />
+                                      <span style="min-width: 30px; text-align: right; font-size: 12px; color: #666;">
+                                          {{ businessRatings.distribution['2_star'] }}
+                                      </span>
+                                  </div>
+
+                                  <!-- 1 Star -->
+                                  <div style="display: flex;gap:5px; align-items: center;">
+                                      <span style="min-width: 20px; text-align: right;">1</span>
+                                      <a-progress 
+                                          :percent="calculatePercentage(businessRatings.distribution['1_star'])" 
+                                          size="small" 
+                                          :status="businessRatings.distribution['1_star'] > 0 ? 'exception' : 'normal'"
+                                          style="flex: 1;"
+                                      />
+                                      <span style="min-width: 30px; text-align: right; font-size: 12px; color: #666;">
+                                          {{ businessRatings.distribution['1_star'] }}
+                                      </span>
+                                  </div>
+                              </a-col>
+                          </a-row>
                     </a-col>
                     
                     <a-col :sm="24" :xs="24" :md="this.business_info.is_profesional_user_site ? 24:12" :lg="this.business_info.is_profesional_user_site ? 24:12" style="padding:10px;" >
@@ -509,7 +571,22 @@ export default {
     },
     data() {
         return {
-          
+           businessRatings: {
+             average: 0,
+             unique_users: 0,
+             total_ratings: 0,
+             distribution: {
+                  '1_star': 0,
+                  '2_star': 0,
+                  '3_star': 0,
+                  '4_star': 0,
+                  '5_star': 0
+              },
+              ratings: []
+            },
+            loadingRatings: false,
+            ratingsError: null,
+    
             userProfile: null,
             activeKey: 'Visualization',
             business_info: {},
@@ -540,6 +617,7 @@ export default {
     async mounted() {
         try {
             await this.loadBusinessData();
+            this.loadBusinessRatings()
             this.loadPosts();
         } catch (error) {
             console.error('Error in mounted:', error);
@@ -553,9 +631,86 @@ export default {
             this.our_products = [];
             this.loadBusinessData();
             this.loadBusinessProducts(1);
-        }
+          }
     },
     methods: {
+        
+    async loadBusinessRatings() {
+        try {
+            this.loadingRatings = true;
+            this.ratingsError = null;
+            
+            const businessSlug = this.business_info.slug; // Use existing business slug
+            
+            let headers= {
+              'Content-Type': 'application/json'
+            }
+            const token = localStorage.getItem('token');
+            if(token){
+                    headers['Authorization']= `Token ${token}`
+            }
+
+            const response = await fetch(
+                `${this.$store.state.root_api}room/api/business-ratings/?business_slug=${businessSlug}`,
+                {
+                    method: 'GET',
+                    headers:headers
+                }
+            );
+            
+            if (!response.ok) {
+                throw new Error(`API Error: ${response.status}`);
+            }
+            
+            const result = await response.json();
+            
+            if (result.success && result.data) {
+                this.businessRatings = {
+                    average: result.data.statistics.average || 0,
+                    unique_users: result.data.statistics.unique_users || 0,
+                    total_ratings: result.data.statistics.total_ratings || 0,
+                    distribution: result.data.statistics.distribution || {
+                        '1_star': 0,
+                        '2_star': 0,
+                        '3_star': 0,
+                        '4_star': 0,
+                        '5_star': 0
+                    },
+                    ratings: result.data.ratings || []
+                };
+                
+                console.log('✅ Business ratings loaded:', this.businessRatings);
+            } else {
+                throw new Error(result.message || 'Failed to fetch ratings');
+            }
+            
+        } catch (error) {
+            console.error('❌ Error loading business ratings:', error);
+            this.ratingsError = error.message;
+            // Set default values on error
+            this.businessRatings = {
+                average: 0,
+                unique_users: 0,
+                total_ratings: 0,
+                distribution: {
+                    '1_star': 0,
+                    '2_star': 0,
+                    '3_star': 0,
+                    '4_star': 0,
+                    '5_star': 0
+                },
+                ratings: []
+            };
+        } finally {
+            this.loadingRatings = false;
+        }
+    },
+    
+    // Calculate percentage for progress bars
+    calculatePercentage(count) {
+        if (this.businessRatings.total_ratings === 0) return 0;
+        return Math.round((count / this.businessRatings.total_ratings) * 100);
+    },
         // Utility methods
         formatNumber(num) {
             if (!num || num === 0) return "0";

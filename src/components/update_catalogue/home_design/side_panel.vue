@@ -158,22 +158,29 @@ watch: {
     }
     console.log(payload)
 
-    const response = await fetch(this.$store.state.root_api+'engine/generate-home-design-images/', { // Replace with your actual API endpoint
+    const response = await fetch(this.$store.state.root_api+'engine/generate-home-design-images/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        // Add authorization header if needed
         'Authorization': `Token ${localStorage.getItem('token')}`,
       },
       body: JSON.stringify(payload)
     })
-
+    // console.log("response Here ")
+    // console.log(response.status)
+    if(response.status===402){
+      let result = await response.json()
+      // console.log(result )
+       this.$emit('insufficient-credits',result.msg) 
+      this.generating = false
+      return
+    }
+    
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)
     }
-
-    const result = await response.json()
     
+    const result = await response.json()
     // Handle successful response
     console.log('Generation successful:', result)
     this.$message.success('Image generated successfully!')

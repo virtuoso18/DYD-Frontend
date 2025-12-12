@@ -100,11 +100,21 @@ export default {
 
   methods: {
       goto_product_Route(product){
+        let product_type= product.type
+        if(product.type==='light'){
+          product_type='product'
+        }
+        if(product.type==='floor_texture'){
+          product_type='floor'
+        }        
+        if(product.type==='wall_texture'){
+          product_type='wall'
+        }
       this.$router.push({
       name: 'buisness_product',
       params: {
         buisness_name: this.$route.params.buisness_name,
-        product_type: product.type,
+        product_type: product_type,
         product_id: product.product_id
       }
     })

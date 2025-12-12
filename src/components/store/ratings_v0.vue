@@ -14,7 +14,7 @@
         >
           <!-- Header -->
           <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-            <h2 class="text-xl font-semibold text-gray-900">Rate This Business</h2>
+            <h2 class="text-xl font-semibold text-gray-900">Rate This Room</h2>
             <button 
               @click="closeModal"
               class="text-gray-400 hover:text-gray-600 transition"
@@ -28,9 +28,9 @@
           <!-- Content -->
           <div class="px-6 py-8 flex flex-col items-center">
             <h3 class="text-2xl font-bold text-gray-900 mb-2 text-center">
-              Rate your experience
+              Rate your design experience
             </h3>
-            <p class="text-gray-600 mb-6 text-center">How was your experience with this business?</p>
+            <p class="text-gray-600 mb-6 text-center">How was your room design experience?</p>
 
             <!-- Star Rating -->
             <div class="flex gap-2 mb-8">
@@ -60,7 +60,7 @@
             <!-- Comment Box -->
             <textarea
               v-model="review"
-              placeholder="Share your thoughts about this business... (optional)"
+              placeholder="Share your thoughts about this room... (optional)"
               class="w-full px-4 py-3 border border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
               rows="4"
               :disabled="submitting"
@@ -80,6 +80,7 @@
             <button
               @click="submitRating"
               :disabled="selectedRating === 0 || submitting"
+              style="color:white"
               class="flex-1 px-6 py-3 text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed rounded-lg font-medium transition"
             >
               {{ submitting ? 'Submitting...' : 'Submit Rating' }}
@@ -99,7 +100,7 @@
 
           <!-- Header -->
           <div class="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
-            <h2 class="text-lg font-semibold text-gray-900">Rate This Business</h2>
+            <h2 class="text-lg font-semibold text-gray-900">Rate This Room</h2>
             <button 
               @click="closeModal"
               class="text-gray-400 hover:text-gray-600"
@@ -114,9 +115,9 @@
           <div class="flex-1 overflow-y-auto px-4 py-6">
             <div class="flex flex-col items-center">
               <h3 class="text-xl font-bold text-gray-900 mb-2 text-center">
-                Rate your experience
+                Rate your design experience
               </h3>
-              <p class="text-gray-600 mb-6 text-center">How was your experience with this business?</p>
+              <p class="text-gray-600 mb-6 text-center">How was your room design experience?</p>
 
               <!-- Star Rating -->
               <div class="flex gap-1 mb-6">
@@ -144,7 +145,7 @@
               <!-- Comment Box -->
               <textarea
                 v-model="review"
-                placeholder="Share your thoughts about this business... (optional)"
+                placeholder="Share your thoughts about this room... (optional)"
                 class="w-full px-4 py-3 border border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                 rows="4"
                 :disabled="submitting"
@@ -165,6 +166,7 @@
             <button
               @click="submitRating"
               :disabled="selectedRating === 0 || submitting"
+              style="color:white"
               class="flex-1 px-4 py-3 text-white bg-blue-600 active:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed rounded-lg font-medium transition"
             >
               {{ submitting ? 'Submitting...' : 'Submit Rating' }}
@@ -178,16 +180,20 @@
 
 <script>
 export default {
-  name: "BusinessRatingModal",
+  name: "RatingModal",
   
   props: {
     isOpen: {
       type: Boolean,
       default: false
     },
-    businessSlug: {
+    entityId: {
+      type: [String, Number],
+      default: null
+    },
+    entityType: {
       type: String,
-      required: true
+      default: 'room' // Changed from 'service' to 'room'
     }
   },
 
@@ -195,7 +201,7 @@ export default {
     return {
       selectedRating: 0,
       hoverRating: 0,
-      review: '',
+      review: '', // Changed from feedback to review
       submitting: false
     }
   },
@@ -249,8 +255,8 @@ export default {
       try {
         this.submitting = true;
 
-        // Construct the API URL based on your business rating endpoint
-        const apiUrl = `${this.$store.state.root_api}room/api/ratings/create/`;
+        // Construct the API URL based on your curl example
+        const apiUrl = `${this.$store.state.root_api}room/api/${this.entityId}/ratings/create/`;
 
         const response = await fetch(
           apiUrl,
@@ -261,8 +267,6 @@ export default {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              business_slug:this.businessSlug || '',
-              room_id:this.$route.params.id,
               rating: this.selectedRating,
               review: this.review.trim()
             }),
@@ -275,20 +279,21 @@ export default {
           this.$message?.success("Thank you for your rating!");
           this.$emit('ratingSubmitted', {
             rating: this.selectedRating,
-            review: this.review,
-            data: data.data
+            review: this.review
           });
           this.closeModal();
         } else {
           // Handle different error responses
           let errorMessage = "Failed to submit rating";
           
-          if (data.message) {
-            errorMessage = data.message;
-          } else if (data.detail) {
+          if (data.detail) {
             errorMessage = data.detail;
+          } else if (data.message) {
+            errorMessage = data.message;
           } else if (Array.isArray(data.rating)) {
             errorMessage = data.rating.join(', ');
+          } else if (data.rating) {
+            errorMessage = data.rating;
           }
           
           this.$message?.error(errorMessage);
@@ -305,6 +310,7 @@ export default {
 </script>
 
 <style scoped>
+/* Keep all your existing styles */
 .modal-enter-active,
 .modal-leave-active {
   transition: opacity 0.3s ease;

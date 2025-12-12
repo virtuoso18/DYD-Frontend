@@ -464,12 +464,12 @@
         </div>
 
         <!-- Add Texture Section -->
-        <div class="texture-section">
+        <!-- <div class="texture-section">
           <p>Add Texture</p>
           <div class="texture-upload" @click="!isProcessingBg && triggerFileInput('texture')">
             <PlusOutlined />
           </div>
-        </div>
+        </div> -->
 
         <!-- Upload More Images -->
        
@@ -564,12 +564,12 @@
         </div>
 
         <!-- Add Texture Section -->
-        <div class="texture-section">
+        <!-- <div class="texture-section">
           <p>Add Texture</p>
           <div class="texture-upload" @click="!isProcessingBg && triggerFileInput('texture')">
             <PlusOutlined />
           </div>
-        </div>
+        </div> -->
 
         
 <!-- Update the existing "Upload more images" section to include multi-view option -->
@@ -1788,6 +1788,11 @@ getQueueStatusColor(status) {
         })
       }
       
+    if(response.status === 402){
+      const result = await response.json()
+      this.$emit('insufficient-credits', result.msg) 
+      return
+    }
       if (response.ok) {
         const result = await response.json()
         console.log(result)

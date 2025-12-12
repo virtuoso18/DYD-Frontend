@@ -124,16 +124,19 @@ export default {
       activeTab: null
     }
   }, mounted() {
-    if (this.seeAll_Floor && this.seeAll_Floor.length > 0) {
-      this.activeTab = 'floor'
-    } else if (this.seeAll_Walls && this.seeAll_Walls.length > 0) {
-      this.activeTab = 'wall'
-    } else if (this.seeAll_furnitures && this.seeAll_furnitures.length > 0) {
-      this.activeTab = 'furniture'
-    } else if (this.seeAll_Lights && this.seeAll_Lights.length > 0) {
-      this.activeTab = 'light'
-    }
-  },
+//     console.log(this.seeAll_Floor)
+// console.log(this.seeAll_Walls)
+// console.log(this.seeAll_furnitures)
+// console.log(this.seeAll_Lights)
+  // Pick the first available tab in priority order
+  this.activeTab =
+    (this.seeAll_Floor?.length > 0 && 'floor') ||
+    (this.seeAll_Walls?.length > 0 && 'wall') ||
+    (this.seeAll_furnitures?.length > 0 && 'furniture') ||
+    (this.seeAll_Lights?.length > 0 && 'light')
+    // 'floor' // fallback default
+}
+,
   computed: {
     hasProducts() {
       return (
