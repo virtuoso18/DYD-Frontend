@@ -1,5 +1,5 @@
 <template>
-  <div class="requests-container">
+  <div class="sm:block hidden requests-container">
     <!-- Loading State -->
     <div v-if="loading" class="loading-container">
       <a-spin size="large" />
@@ -237,6 +237,177 @@
       </div>
     </a-modal>
   </div>
+  
+
+  <!-- Mobile View -->
+  <div class="sm:hidden py-4">
+    <!-- Loading State -->
+    <div v-if="loading" class="flex justify-center items-center py-16">
+      <a-spin size="large" />
+    </div>
+    
+    <!-- Empty State -->
+    <div v-else-if="!requests || requests.length === 0" class="py-16">
+      <a-empty description="No requests found" />
+    </div>
+    
+    <!-- Mobile Cards -->
+    <div v-else class="space-y-1">
+      <div 
+        v-for="request in requests" 
+        :key="request.id"
+        class="bg-white rounded-xl border border-gray-200 mb-4 overflow-hidden shadow-sm"
+        @click="onRowClick(request)"
+      >
+        <!-- Header: ID and Date -->
+        <div class="flex justify-between items-center px-4 py-3 border-b border-gray-100">
+          <div class="flex items-center gap-2">
+            <span class="label-text text-sm font-semibold text-gray-900">Request ID:</span>
+            <span class="text-[16px] font-extrabold text-black">{{ request.id.toString().slice(-4) }}</span>
+          </div>
+          <span class="label-text text-xs text-gray-500">{{ formatDate(request.created_at) }}</span>
+        </div>
+
+        <!-- Email Section -->
+        <div class="px-4 py-3 border-b border-gray-100">
+          <div class="flex items-center gap-2">
+            <span class="label-text text-xs text-gray-500">Requested by:</span>
+            <span class="label-text text-sm font-medium text-gray-900">{{ request.email }}</span>
+          </div>
+        </div>
+
+        <!-- Room Photo Section -->
+        <div class="px-4 py-3 border-b border-gray-100">
+          <div class="flex items-start justify-between gap-3">
+            <p class="label-text text-sm font-medium text-gray-700">Room photo:</p>
+            
+            <div class="flex-shrink-0 w-[245px]">
+              <img 
+                v-if="request.image_url" 
+                :src="$store.state.root_media_api + request.image_url" 
+                alt="Room"
+                class="w-full h-[160px] rounded-lg mb-4 object-cover border border-gray-200"
+              />
+              <div v-else class="w-full h-[160px] rounded-lg bg-gray-100 flex items-center justify-center border border-gray-200 mb-4">
+                <span class="text-xs text-gray-400">No Image</span>
+              </div>
+              
+              <!-- Description below image -->
+              <p class="text-[12px] font-family-poppins tracking-tight text-gray-600 line-clamp-3 text-left">
+                {{ request.message || 'No message provided' }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Generated Room Section -->
+        <div class="px-4 py-3 border-b border-gray-100">
+          <div class="flex items-start justify-between gap-3">
+            <div class="flex-1 min-w-0">
+              <p class="label-text text-sm font-medium text-gray-700 mb-2">Generated room:</p>
+              <p class="label-text text-[10px] text-gray-500">
+                {{ request.generated_image ? formatDate(request.updated_at) : 'Not generated yet' }}
+              </p>
+            </div>
+            
+            <div class="flex-shrink-0">
+              <img
+                v-if="request.generated_image" 
+                :src="$store.state.root_media_api + request.generated_image" 
+                alt="Generated"
+                class="w-[245px] h-[160px] rounded-lg object-cover border border-gray-200"
+              />
+              <div v-else class="w-[245px] h-[160px] rounded-lg bg-gray-50 flex items-center justify-center border border-dashed border-gray-300">
+                <span class="text-xs label-text text-gray-400">Pending</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status Section -->
+        <div class="px-4 py-3 bg-gray-50 border-b border-gray-100">
+          <a-tag 
+            :color="getStatusColor(request.status)"
+            class="!m-0 !rounded-full !w-full !text-center !font-family-poppins !py-1"
+          >
+            {{ request.status }}
+          </a-tag>
+        </div>
+
+        <!-- Action Buttons Section -->
+        <div class="px-4 py-3 space-y-2">
+          <a-button 
+            v-if="request.status === 'Pending'"
+            type="primary"
+            size="large"
+            @click.stop="processPhoto(request)"
+            :loading="processingIds.includes(request.id)"
+            block
+            class="!rounded-lg"
+          >
+            Process Photo
+          </a-button>
+          
+          <a-button 
+            v-if="request.status === 'Completed'"
+            type="primary"
+            size="large"
+            @click.stop="processPhoto(request)"
+            :loading="regeneratingIds.includes(request.id)"
+            block
+            class="!rounded-lg"
+          >
+            <template #icon>
+              <ReloadOutlined />
+            </template>
+            Regenerate
+          </a-button>
+          
+          <a-button 
+            v-if="(request.status !== 'Rejected') && (request.status !== 'Completed')"
+            danger
+            size="large"
+            @click.stop="openRejectModal(request)"
+            :loading="rejectingIds.includes(request.id)"
+            block
+            class="!rounded-lg"
+          >
+            Reject Request
+          </a-button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reject Modal (same for both desktop and mobile) -->
+  <a-modal
+    v-model:open="rejectModalVisible"
+    title="Reject Request"
+    :confirm-loading="rejecting"
+    @ok="handleReject"
+    @cancel="closeRejectModal"
+  >
+    <div class="reject-form">
+      <p><strong>Request ID:</strong> {{ selectedRequest?.id?.toString().slice(-4) }}</p>
+      <p><strong>Email:</strong> {{ selectedRequest?.email }}</p>
+      
+      <a-form layout="vertical">
+        <a-form-item 
+          label="Reason for rejection:"
+          :validate-status="reasonError ? 'error' : ''"
+          :help="reasonError"
+        >
+          <a-textarea 
+            v-model:value="rejectReason"
+            placeholder="Please provide a reason for rejection..."
+            :rows="4"
+            :maxlength="500"
+            show-count
+          />
+        </a-form-item>
+      </a-form>
+    </div>
+    </a-modal>
 </template>
 
 <script>
@@ -514,6 +685,28 @@ export default {
 .empty-state {
   padding: 60px 0;
   text-align: center;
+}
+
+.label-text {
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 14px;
+  line-height: 20px;
+  color: #4D4D4D;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@media (max-width: 640px) {
+  .requests-container {
+    display: none;
+  }
 }
 
 /* List View Styles */

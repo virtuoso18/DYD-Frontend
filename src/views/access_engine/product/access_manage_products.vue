@@ -888,46 +888,61 @@
                             </div>
 
                                 <a-row v-else>
-                                    <a-col v-for="product in myLights" :key="product.id" 
-                                        class="product-responsive" style="padding:5px;">
-                                        <div class="product">
-                                            <div class="product-image-container" @click="viewProduct(product)">
-                                                <img 
-                                                    :src="$store.state.root_media_api + product.primary_image" 
-                                                    :alt="product.name"
-                                                    class="product-image"
-                                                />
-                                                <div class="category-badge">{{ product.category.name }}</div>
-                                                <div class="ar-badge">AR</div>
-                                            </div>
-                                            <a-row>
-                                            <!-- {{ truncateText(product.description || 'No description available', 8) }} -->
+  <a-col v-for="product in myLights" :key="product.id" 
+    class="product-responsive" style="padding:1px;">
+    <div class="product">
+      <div class="product-image-container" @click="viewProduct(product)">
+        <img 
+          :src="$store.state.root_media_api + product.primary_image" 
+          :alt="product.name"
+          class="product-image"
+        />
+        <div class="category-badge">{{ product.category.name }}</div>
+        <div class="ar-badge">AR</div>
+      </div>
+      
+      <a-row>
+        <a-col span="24">
+          <b>{{ truncateText(product.name || 'No Name available', 19) }}</b>
+        </a-col>
+        
+        <a-col span="18">Color</a-col>
+        <a-col span="6" style="display: flex; justify-content: flex-end;">
+          <div v-for="(color, index) in product.colors.slice(0, 2)" 
+            :key="index"
+            style="width:20px; height:20px; border-radius:20px; margin-left:2px;" 
+            :style="'background:'+color">
+          </div>
+        </a-col>
+        
+        <a-col span="12">Price</a-col>
+        <a-col span="12" style="display: flex; justify-content: flex-end;">
+          <b>${{ product.pricing.price }}</b>
+        </a-col>
+        
+        <!-- Fixed Button Row -->
+        <a-col span="24" class="mt-2">
+          <div class="flex items-center gap-2">
+            <!-- Product Details Button - flex-1 takes available space -->
+            <a-button 
+              @click="viewProduct(product)" 
+              class="product-btn !truncate flex-1 !px-2"
+              style="min-width: 0;"
+            >
+              <span class="!truncate block">Product Details</span>
+            </a-button>
+            
+            <!-- Like Button - fixed width -->
+            <button class="flex items-center justify-center w-10 h-8 border border-gray-300 rounded-md hover:bg-gray-100 flex-shrink-0">
+              <HeartOutlined class="text-gray-600 text-lg" />
+            </button>
+          </div>
+        </a-col>
+      </a-row>
+    </div>
+  </a-col>
+</a-row>
 
-                                                <a-col span="24"><b>{{truncateText(product.name || 'No Name available', 19)}}</b></a-col>
-                                                <a-col span="18">Color</a-col>
-                                                <a-col span="6" style="display: flex;justify-content: end;">
-                                                    <div v-for="(color, index) in product.colors.slice(0, 2)" 
-                                                        :key="index"
-                                                        style="width:20px;height:20px;border-radius:20px;margin-left:2px;" 
-                                                        :style="'background:'+color">
-                                                    </div>
-                                                </a-col>
-                                                <a-col span="12">Price</a-col>
-                                                <a-col span="12" style="display: flex;justify-content: end;">
-                                                    <!-- <del style="font-size: 10px;">${{ product.pricing.price }}</del> -->
-                                                    <b>${{ product.pricing.price }}</b>
-                                                </a-col>
-                                                <a-col span="17">
-                                                    <a-button block @click="viewProduct(product)">Product Details</a-button>
-                                                </a-col>
-                                                <a-col span="1"></a-col>
-                                                <a-col span="4">
-                                                    <a-button><HeartOutlined /></a-button>
-                                                </a-col>
-                                            </a-row>
-                                        </div>
-                                    </a-col>
-                                </a-row>
                           
                           <!-- Pagination for Lights -->
 <div v-if="myLights.length > 0" style="display: flex; justify-content: center; margin-top: 20px; margin-bottom: 20px;">
@@ -2252,6 +2267,17 @@ truncateText(text, charLimit = 7) {
 .products-list{
     padding-bottom:20px;
     
+}
+
+.product-btn {
+  font-family: Poppins;
+  font-size: 8px;
+}
+
+@media (min-width: 640px) { /* sm: */
+  .product-btn {
+    font-size: 12px;
+  }
 }
 .product-image-container {
   position: relative;
