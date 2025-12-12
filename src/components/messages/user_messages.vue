@@ -1,5 +1,5 @@
 <template>
-  <div className="md:pt-3">
+  <div className="md:pt-3 -translate-y-18 sm:translate-y-0">
 
     <div class="p-1 bg-white rounded-2xl    border border-gray-200">
       <div class="flex h-screen overflow-auto bg-gray-50">
@@ -14,11 +14,11 @@
           <div class="p-5 border-b border-gray-200">
             <!-- Back button for mobile -->
             <div v-if="isMobile" class="flex items-center gap-3 mb-4">
-              <button @click="goBack" class="p-2 hover:bg-gray-100 rounded-full">
+              <!-- <button @click="goBack" class="p-2 hover:bg-gray-100 rounded-full">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                 </svg>
-              </button>
+              </button> -->
               <h2 class="text-2xl font-medium text-gray-900">Messages</h2>
             </div>
             <h2 v-else class="text-2xl font-medium text-gray-900 mb-4">Messages</h2>

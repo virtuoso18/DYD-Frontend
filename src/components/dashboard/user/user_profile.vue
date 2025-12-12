@@ -1,19 +1,29 @@
 <template>
   <div class="dashboard-container ">
     <!-- Main Dashboard Content -->
-    <a-row class="dashboard-content">
+    <a-row class="dashboard-content -translate-y-16 sm:translate-y-0">
       <!-- Content Area -->
       <a-col :xs="24" :sm="24" :md="24" :lg="24" class="content-area">
-        <div class="content-wrapper">
+<div class=" sm:bg-white sm:rounded-[24px] sm:border border-[#e9ecef] overflow-hidden sm:h-[800px]">
           <!-- Wavy Background Header -->
-          <div class="wavy-header" :style="'background: url('+this.$store.state.root_media_api+profile.background_picture+') center/cover no-repeat;'">
-            <!-- Background Edit Button -->
-            <a-button type="primary" shape="circle" v-if="isEditing" style="top:20px;left:20px" @click="handleBackgroundClick">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M11 4H4C3.46957 4 2.96086 4.21071 2.58579 4.58579C2.21071 4.96086 2 5.46957 2 6V20C2 20.5304 2.21071 21.0391 2.58579 21.4142C2.96086 21.7893 3.46957 22 4 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V13" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M18.5 2.5C18.8978 2.10217 19.4374 1.87868 20 1.87868C20.5626 1.87868 21.1022 2.10217 21.5 2.5C21.8978 2.89783 22.1213 3.43739 22.1213 4C22.1213 4.56261 21.8978 5.10217 21.5 5.5L12 15L8 16L9 12L18.5 2.5Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </a-button>
+<div
+  class="wavy-header sm:rounded-tl-[24px] sm:rounded-tr-[24px] border w-full h-[200px]"
+  :style="`background: url(${this.$store.state.root_media_api + profile.background_picture}) center/cover no-repeat;`"
+>            <!-- Background Edit Button -->
+            <a-button 
+  type="primary" 
+  shape="circle" 
+  v-if="isEditing" 
+  class="!flex !items-center !justify-center"
+  style="top:20px;left:20px" 
+  @click="handleBackgroundClick"
+>
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M11 4H4C3.46957 4 2.96086 4.21071 2.58579 4.58579C2.21071 4.96086 2 5.46957 2 6V20C2 20.5304 2.21071 21.0391 2.58579 21.4142C2.96086 21.7893 3.46957 22 4 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V13" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M18.5 2.5C18.8978 2.10217 19.4374 1.87868 20 1.87868C20.5626 1.87868 21.1022 2.10217 21.5 2.5C21.8978 2.89783 22.1213 3.43739 22.1213 4C22.1213 4.56261 21.8978 5.10217 21.5 5.5L12 15L8 16L9 12L18.5 2.5Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+</a-button>
+
             
             <!-- Profile Avatar in Header -->
             <div class="header-profile">
@@ -33,7 +43,18 @@
           <!-- Personal Information Section -->
           <div class="personal-info-section">
             <div class="section-header">
-              <h2>Personal Information</h2>
+<h2
+  style="
+    font-family: Poppins;
+    font-weight: 500;
+    font-style: normal;
+    font-size: 22px;
+    line-height: 24px;
+    letter-spacing: 0;
+  "
+>
+  Personal Information
+</h2>
               <button class="edit-btn" @click="toggleEdit" :disabled="loading">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                   <path d="M11 4H4C3.46957 4 2.96086 4.21071 2.58579 4.58579C2.21071 4.96086 2 5.46957 2 6V20C2 20.5304 2.21071 21.0391 2.58579 21.4142C2.96086 21.7893 3.46957 22 4 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -46,7 +67,18 @@
             <div class="form-section">
               <!-- Name Form Group -->
               <div class="form-group">
-                <label>Name</label>
+<label
+  style="
+    font-family: Poppins;
+    font-weight: 500;
+    font-style: normal;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: 0;
+  "
+>
+  Name
+</label>
                 <div class="input-wrapper">
                   <!-- Show full name when not editing -->
                   <input 
@@ -74,7 +106,16 @@
               </div>
               
               <div class="form-group">
-                <label>About</label>
+                <label
+  style="
+    font-family: Poppins;
+    font-weight: 500;
+    font-style: normal;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: 0;
+  "
+>About</label>
                 <div class="input-wrapper">
                   <textarea 
                     v-model="profile.about" 
@@ -369,7 +410,6 @@ export default {
 
   .content-wrapper {
     background: white;
-    min-height: 100vh;
     border-radius: 24px;
     border: 1px solid #e9ecef;
     overflow: hidden;
@@ -379,8 +419,7 @@ export default {
   position: relative;
   height: 200px;
   background: url("../../../assets/pricing-banner.png") center/cover no-repeat;
-  border-top-left-radius: 24px;
-  border-top-right-radius: 24px;
+  
 }
 
 .header-profile {
@@ -596,8 +635,8 @@ export default {
   }
   
   .camera-icon {
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 28px;
   }
   
   .camera-icon svg {

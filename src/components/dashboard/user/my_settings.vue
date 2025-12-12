@@ -1,64 +1,119 @@
 <template>
-    <!-- Change Password Modal -->
-    <a-modal 
-        :open="change_password_modal" 
-        title="Change Your Password"
-        @ok="changePassword"
-        @cancel="closePasswordModal"
-        :confirmLoading="passwordLoading"
+
+  <div className=" -translate-y-20 sm:translate-y-0">
+
+        <!-- Change Password Modal -->
+        <a-modal 
+            :open="change_password_modal" 
+            title="Change Your Password"
+            @ok="changePassword"
+            @cancel="closePasswordModal"
+            :confirmLoading="passwordLoading"
+        >
+            <div style="display: flex; flex-direction: column; gap: 15px;">
+                <div>
+                    <label for="current-password" style="display: block; margin-bottom: 5px; font-weight: 500;">Current Password</label>
+                    <a-input
+                        id="current-password"
+                        v-model:value="currentPassword"
+                        type="password"
+                        placeholder="Enter current password"
+                    />
+                </div>
+                <div>
+                    <label for="new-password" style="display: block; margin-bottom: 5px; font-weight: 500;">New Password</label>
+                    <a-input
+                        id="new-password"
+                        v-model:value="newPassword"
+                        type="password"
+                        placeholder="Enter new password"
+                    />
+                </div>
+                <div>
+                    <label for="confirm-password" style="display: block; margin-bottom: 5px; font-weight: 500;">Confirm New Password</label>
+                    <a-input
+                        id="confirm-password"
+                        v-model:value="confirmPassword"
+                        type="password"
+                        placeholder="Confirm new password"
+                    />
+                </div>
+            </div>
+        </a-modal>
+    
+        <!-- Main Settings Container -->
+        <div style="background-color: white; border-radius: 15px; border: 1px solid rgba(0,0,0,0.1); margin-top: 15px; min-height: 90vh; padding: 20px;">
+<h2 className="pb-4"
+  style="
+    font-family: Poppins;
+    font-weight: 500;
+    font-style: normal;
+    font-size: 18px;
+    line-height: 20px;
+    letter-spacing: 0;
+  "
+>
+  Settings
+</h2>
+    
+    
+            <!-- Password Management Section -->
+           <div style="border: 1px solid rgba(0,0,0,0.2); padding: 15px; border-radius: 7px;">
+  <a-row :gutter="[0, 16]">
+
+    <!-- LEFT COLUMN -->
+    <a-col :xs="24" :sm="24" :md="18">
+<h4
+  style="
+    font-family: Poppins;
+    font-weight: 500;
+    font-style: normal;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: 0%;
+    margin: 0;
+  "
+>
+  Manage Password
+</h4>
+      <p className="pt-2"  style="
+    font-family: Poppins;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 12px;
+    line-height: 20px;
+    letter-spacing: 0%;
+    margin: 0;
+  ">Set a new password to keep your account safe.</p>
+    </a-col>
+
+    <!-- RIGHT COLUMN (BUTTON) -->
+    <a-col 
+      :xs="24" 
+      :sm="24" 
+      :md="6"
+      style="display: flex; justify-content: center; align-items: center;"
     >
-        <div style="display: flex; flex-direction: column; gap: 15px;">
-            <div>
-                <label for="current-password" style="display: block; margin-bottom: 5px; font-weight: 500;">Current Password</label>
-                <a-input
-                    id="current-password"
-                    v-model:value="currentPassword"
-                    type="password"
-                    placeholder="Enter current password"
-                />
-            </div>
-            <div>
-                <label for="new-password" style="display: block; margin-bottom: 5px; font-weight: 500;">New Password</label>
-                <a-input
-                    id="new-password"
-                    v-model:value="newPassword"
-                    type="password"
-                    placeholder="Enter new password"
-                />
-            </div>
-            <div>
-                <label for="confirm-password" style="display: block; margin-bottom: 5px; font-weight: 500;">Confirm New Password</label>
-                <a-input
-                    id="confirm-password"
-                    v-model:value="confirmPassword"
-                    type="password"
-                    placeholder="Confirm new password"
-                />
-            </div>
-        </div>
-    </a-modal>
+      <a-button
+  type="primary"
+  @click="openPasswordModal"
+  style="
+    font-family: Poppins;
+    font-weight: 500;
+    font-style: normal;
+    font-size: 10px;
+    line-height: 20px;
+    letter-spacing: 0%;
+  "
+>
+  Change Password
+</a-button>
 
-    <!-- Main Settings Container -->
-    <div style="background-color: white; border-radius: 15px; border: 1px solid rgba(0,0,0,0.1); margin-top: 15px; min-height: 90vh; padding: 20px;">
-        <h2>Settings</h2>
+    </a-col>
 
+  </a-row>
+</div>
 
-        <!-- Password Management Section -->
-        <div style="border: 1px solid rgba(0,0,0,0.2); padding: 15px; border-radius: 7px;">
-            <a-row>
-                <a-col :span="18">
-                    <h4>Manage Password</h4>
-                    <p>Set a new password to keep your account safe.</p>
-                </a-col>
-                <a-col :span="6" style="display: flex; justify-content: center; align-items: center;">
-                    <a-button 
-                        type="primary" 
-                        @click="openPasswordModal"
-                    >
-                        Change Password
-                    </a-button>
-                </a-col>
-            </a-row>
         </div>
     </div>
 </template>

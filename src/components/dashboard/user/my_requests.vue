@@ -1,6 +1,6 @@
 <template>
 
-  <div className="py-3">
+  <div className="sm:py-3 -translate-y-15 md:translate-y-0">
 
     <div 
       class="
@@ -21,8 +21,20 @@
     >
     
     
-        <div class="header">
-          <h2 className="pr-2 sm:pr-0">Requests</h2>
+        <div class="header pt-4 md:pt-0">
+<h2
+  className="pr-2 sm:pr-0"
+  style="
+    font-family: Poppins;
+    font-weight: 500;
+    font-style: normal;
+    font-size: 22px;
+    line-height: 24px;
+    letter-spacing: 0;
+  "
+>
+  Requests
+</h2>
           <div class="view-controls">
             <div class="">
           <a-input 
@@ -39,6 +51,15 @@
               :type="viewMode === 'grid' ? 'primary' : 'default'"
               @click="setViewMode('grid')"
               :class="{ active: viewMode === 'grid' }"
+              style="
+    font-family: Poppins;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: 0;
+    text-align: center;
+  "
             >
               Grid
             </a-button>
@@ -46,6 +67,15 @@
               :type="viewMode === 'list' ? 'primary' : 'default'"
               @click="setViewMode('list')"
               :class="{ active: viewMode === 'list' }"
+              style="
+    font-family: Poppins;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: 0;
+    text-align: center;
+  "
             >
               List
             </a-button>
@@ -55,7 +85,9 @@
         
     
         <a-tabs v-model:activeKey="activeKey" @change="handleTabChange">
-          <a-tab-pane key="all" tab="All Request">
+          <a-tab-pane key="all" 
+          tab="All Request"
+          >
             <RequestsList 
               :requests="filteredRequests" 
               :loading="loading"

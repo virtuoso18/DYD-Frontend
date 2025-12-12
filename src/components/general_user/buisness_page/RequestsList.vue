@@ -1,9 +1,9 @@
 <template>
-  <div class="requests-container">
+  <div class="hidden sm:block requests-container">
     <!-- Loading State -->
     <div v-if="loading" class="loading-container">
       <a-spin size="large" />
-    </div>
+    </div> 
     
     <!-- Empty State -->
     <div v-else-if="!requests || requests.length === 0" class="empty-state">
@@ -127,6 +127,118 @@
       </div>
     </div>
   </div>
+ <div class="sm:hidden  py-4">
+  <!-- Loading State -->
+  <div v-if="loading" class="flex justify-center items-center py-16">
+    <a-spin size="large" />
+  </div> 
+  
+  <!-- Empty State -->
+  <div v-else-if="!requests || requests.length === 0" class="py-16">
+    <a-empty description="No requests found" />
+  </div>
+  
+  <!-- Mobile Cards View -->
+  <div v-else class="space-y-1 !gap-4 ">
+    <div 
+      v-for="request in requests" 
+      :key="request.id"
+      class="bg-white rounded-xl border   border-gray-200 !mb-4 overflow-hidden "
+      @click="onRowClick(request)"
+    >
+      <!-- Header: ID and Date -->
+      <div class="flex justify-between items-center px-4 py-3 border-b border-gray-100">
+        <div class="flex items-center gap-2">
+          <span class="label-text text-sm font-semibold text-gray-900">Request ID:</span>
+          <span class="text-[16px] font-extrabold text-black">{{ request.id.slice(-4) }}</span>
+        </div>
+        <span class="label-text text-xs text-gray-500">{{ formatDate(request.created_at) }}</span>
+      </div>
+
+      <!-- Room Photo Section -->
+      <div class="px-4 py-3 border-b border-gray-100">
+  <div class="flex items-start justify-between gap-3">
+    <!-- Left: Room photo label -->
+    <p class="label-text text-sm font-medium text-gray-700">Room photo:</p>
+    
+    <!-- Right: Image and Description wrapper -->
+    <div class="flex-shrink-0 w-[245px]">
+      <!-- Image -->
+      <img 
+        v-if="request.image_url" 
+        :src="this.$store.state.root_media_api + request.image_url" 
+        alt="Room"
+        class="w-full h-[160px] rounded-lg !mb-2 object-cover border border-gray-200"
+      />
+      <div v-else class="w-full h-[160px] rounded-lg bg-gray-100 flex items-center justify-center border border-gray-200">
+        <span class="text-xs text-gray-400">No Image</span>
+      </div>
+      
+      <!-- Description below image - same width -->
+      <p class="text-[12px]  font-family-poppins tracking-tight text-gray-600 mt-3 line-clamp-3 text-left">
+        {{ request.message || 'Please create my space with you best sofa and chair...' }}
+      </p>
+    </div>
+  </div>
+</div>
+
+
+      <!-- Generated Room Section -->
+      <div class="px-4 py-3 border-b border-gray-100">
+        <div class="flex items-start gap-3">
+          <!-- Left: Text and Date -->
+          <div class="flex-1 min-w-0">
+            <p class="label-text text-sm font-medium text-gray-700 mb-2">Generate room:</p>
+            <p class="label-text !text-[10px] text-gray-500">
+              {{ request.generated_image ? formatDate(request.updated_at) : 'Processing...' }}
+            </p>
+          </div>
+          
+          <!-- Right: Generated Image -->
+          <div class="flex-shrink-0">
+            <a-image
+              v-if="request.generated_image" 
+              :src="this.$store.state.root_media_api + request.generated_image" 
+              alt="Generated"
+              class="w-[45px] h-[60px]  rounded-lg object-cover border border-gray-200"
+              style="width:245px"
+            />
+            <div v-else class="w-[45px] h-[60px] rounded-lg bg-gray-50 flex items-center justify-center border border-dashed border-gray-300">
+              <span class="!text-[9px] label-text text-gray-400">Pending</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Requested To Section -->
+      <div class="px-4 py-2 border-b border-gray-100">
+        <div class="flex items-center gap-2">
+          <span class="text-xs label-text text-gray-500">Requested to &nbsp;:</span>
+          <div class="flex items-center gap-1">
+            <img 
+              src="/alumawhite.png"
+              alt="User"
+              class=" w-10"
+            />
+            <span class="text-xs label-text font-medium text-gray-900">
+              {{ request.requested_to_name || 'Aluma' }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Status Section -->
+      <div class="px-4 py-3 bg-gray-50">
+        <a-tag 
+          :color="getStatusColor(request.status)"
+          class="!m-0 !rounded-full !w-full !text-center !font-family-poppins  !py-1"
+        >
+          {{ request.status }}
+        </a-tag>
+      </div>
+    </div>
+  </div>
+</div>
 </template>
 
 <script>
@@ -246,6 +358,13 @@ export default {
   background: white;
 }
 
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 .room-photo {
   display: flex;
   align-items: center;
@@ -258,6 +377,15 @@ export default {
   object-fit: cover;
   border-radius: 8px;
   border: 1px solid #e8e8e8;
+}
+
+.label-text {
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 14px;
+  line-height: 20px;
+  color: #4D4D4D;
 }
 
 .no-image {

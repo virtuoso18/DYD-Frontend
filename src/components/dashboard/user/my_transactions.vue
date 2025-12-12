@@ -1,5 +1,5 @@
 <template>
-  <div className="pt-3">
+  <div className="md:pt-3 -translate-y-18 sm:translate-y-0 ">
 
     <div class=" bg-white min-h-screen sm:border rounded-2xl p-4  border-black/10 mt-4">
       <div class="max-w-6xl mx-auto">
