@@ -201,8 +201,8 @@
       :confirm-loading="rejecting"
       @ok="handleReject"
       @cancel="closeRejectModal"
-      :ok-button-props="{ disabled: !canReject }"
-    >
+      >
+      <!-- :ok-button-props="{ disabled: !canReject }" -->
       <div class="reject-form">
         <p><strong>Request ID:</strong> {{ selectedRequest?.id?.toString().slice(-4) }}</p>
         <p><strong>Email:</strong> {{ selectedRequest?.email }}</p>
@@ -323,8 +323,7 @@ export default {
   },
   computed: {
     canReject() {
-      return this.confirmationText.toUpperCase() === 'CONFIRM' && 
-             this.rejectReason.trim().length > 0
+      return  this.rejectReason.trim().length > 0
     }
   },
   methods: {

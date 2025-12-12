@@ -203,7 +203,7 @@
               class="w-[45px] h-[60px]  rounded-lg object-cover border border-gray-200"
               style="width:245px"
             />
-            <div v-else class="w-[45px] h-[60px] rounded-lg bg-gray-50 flex items-center justify-center border border-dashed border-gray-300">
+            <div v-else class="w-[245px] h-[145px] rounded-lg bg-gray-50 flex items-center justify-center border border-dashed border-gray-300">
               <span class="!text-[9px] label-text text-gray-400">Pending</span>
             </div>
           </div>
@@ -211,17 +211,19 @@
       </div>
 
       <!-- Requested To Section -->
-      <div class="px-4 py-2 border-b border-gray-100">
+       <div class="px-4 py-2 border-b border-gray-100">
         <div class="flex items-center gap-2">
           <span class="text-xs label-text text-gray-500">Requested to &nbsp;:</span>
           <div class="flex items-center gap-1">
-            <img 
-              src="/alumawhite.png"
+            <!-- <img 
+              :src="this.$store.state.root_media_api+ request.banner_picture"
               alt="User"
               class=" w-10"
-            />
+            /> -->
+                <a-avatar :src="this.$store.state.root_media_api+ request.banner_picture" :size="30" style="border:1px solid rgba(0,0,0,0.2)"/>
+
             <span class="text-xs label-text font-medium text-gray-900">
-              {{ request.requested_to_name || 'Aluma' }}
+              {{ request.business_user || 'Aluma' }}
             </span>
           </div>
         </div>
