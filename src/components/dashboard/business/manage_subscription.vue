@@ -348,47 +348,57 @@
         </div>
 
         <!-- Mobile Table View -->
-        <div class="block md:hidden">
-          <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-              <thead class="border-b border-[#f0f0f0]">
-                <tr>
-                  <th class="text-left py-3 px-2 font-medium text-[#8c8c8c] text-xs">Plan</th>
-                  <th class="text-left py-3 px-2 font-medium text-[#8c8c8c] text-xs">Date</th>
-                  <th class="text-left py-3 px-2 font-medium text-[#8c8c8c] text-xs">Expire Date</th>
-                  <th class="text-left py-3 px-2 font-medium text-[#8c8c8c] text-xs">Payment method</th>
-                  <th class="text-left py-3 px-2 font-medium text-[#8c8c8c] text-xs">Billed</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr
-                  v-for="record in tableData_subscriptions"
-                  :key="record.key"
-                  class="border-b border-[#f0f0f0]"
-                >
-                  <td class="py-3 px-2 font-medium text-[#262626]">{{ record.plan }}</td>
-                  <td class="py-3 px-2 text-[#262626] whitespace-nowrap">
-                    {{ formatDateShort(record.date) }}
-                  </td>
-                  <td class="py-3 px-2 text-[#262626] whitespace-nowrap">
-                    {{ formatDateShort(record.expireDate) }}
-                  </td>
-                  <td class="py-3 px-2">
-                    <div class="flex items-center gap-1">
-                      <img
-                        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='16' viewBox='0 0 24 16'%3E%3Crect width='24' height='16' rx='2' fill='%231A1F71'/%3E%3Cpath d='M8.5 4.5h7v7h-7z' fill='%23fff'/%3E%3C/svg%3E"
-                        alt="Visa"
-                        class="w-4 h-3"
-                      />
-                      <span class="text-[#595959] text-xs">Debit Card</span>
-                    </div>
-                  </td>
-                  <td class="py-3 px-2 text-[#262626]">{{ record.billed }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+        <div class="block md:hidden space-y-3 pt-4 px-2">
+    <div
+      v-for="record in tableData_subscriptions"
+      :key="record.key"
+      class="bg-white rounded-lg border border-[#f0f0f0] p-3 shadow-sm"
+    >
+      <!-- Plan and Status Row -->
+      <div class="flex justify-between items-start mb-3">
+        <div>
+          <div class="text-xs text-[#8c8c8c] mb-1">Plan</div>
+          <div class="font-semibold text-[#262626] text-sm">{{ record.plan }}</div>
         </div>
+        <span class="text-xs font-medium text-[#52c41a] bg-[#f6ffed] px-2 py-1 rounded">
+          {{ record.status }}
+        </span>
+      </div>
+
+      <!-- Date Info Grid -->
+      <div class="grid grid-cols-2 gap-3 mb-3 pb-3 py-2 border-b border-[#f0f0f0]">
+        <div>
+          <div class="text-xs text-[#8c8c8c] mb-1">Start Date</div>
+          <div class="text-xs font-medium text-[#262626]">{{ formatDateShort(record.date) }}</div>
+        </div>
+        <div>
+          <div class="text-xs text-[#8c8c8c] mb-1">Expire Date</div>
+          <div class="text-xs font-medium text-[#262626]">{{ formatDateShort(record.expireDate) }}</div>
+        </div>
+      </div>
+
+      <!-- Payment and Price Row -->
+      <div class="flex justify-between py-2 items-center mb-3">
+        <div class="flex items-center gap-2">
+          <img
+            src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='16' viewBox='0 0 24 16'%3E%3Crect width='24' height='16' rx='2' fill='%231A1F71'/%3E%3Cpath d='M8.5 4.5h7v7h-7z' fill='%23fff'/%3E%3C/svg%3E"
+            alt="Visa"
+            class="w-5 h-3"
+          />
+          <span class="text-xs text-[#8c8c8c]">{{ record.billed }}</span>
+        </div>
+        <div class="text-lg font-bold text-[#1890ff]">${{ record.price }}</div>
+      </div>
+
+      <!-- Download Button -->
+      <button
+        @click="downloadInvoice(record.innovice)"
+        class="w-full py-1 !font-family-poppins !text-[10px] text-[#1890ff] border border-[#1890ff] rounded hover:bg-[#e6f7ff] transition-colors"
+      >
+        Download Invoice
+      </button>
+    </div>
+  </div>
       </div>
 
       <!-- Credits Tab -->
