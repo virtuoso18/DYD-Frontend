@@ -16,7 +16,7 @@
 >
  Request
 </h2>
-        <div class="view-controls ">
+        <div class=" ">
           <div class="">
         <a-input 
           v-model:value="searchQuery"
@@ -27,21 +27,7 @@
             <search-outlined />
           </template>
         </a-input>
-      </div>&nbsp;
-          <a-button 
-            :type="viewMode === 'grid' ? 'primary' : 'default'"
-            @click="setViewMode('grid')"
-            :class="{ active: viewMode === 'grid' }"
-          >
-            Grid
-          </a-button>
-          <a-button 
-            :type="viewMode === 'list' ? 'primary' : 'default'"
-            @click="setViewMode('list')"
-            :class="{ active: viewMode === 'list' }"
-          >
-            List
-          </a-button>
+      </div>
         </div>
       </div>
     </div>
@@ -83,27 +69,7 @@
         </div>
       </div>
 
-      <!-- GRID BUTTON -->
-      <button
-        @click="setViewMode('grid')"
-        :class="viewMode === 'grid' 
-          ? '!bg-blue-500 text-white' 
-          : 'bg-white text-gray-700'"
-        class="px-2 py-2 text-sm font-medium border-none focus:outline-none"
-      >
-        Grid
-      </button>
-
-      <!-- LIST BUTTON -->
-      <button
-        @click="setViewMode('list')"
-        :class="viewMode === 'list' 
-          ? 'bg-blue-500 text-white' 
-          : 'bg-white text-gray-700'"
-        class="px-2 py-2 text-sm font-medium border-none focus:outline-none border-l border-[#d9d9d9]"
-      >
-        List
-      </button>
+      
 
     </div>
   </div>

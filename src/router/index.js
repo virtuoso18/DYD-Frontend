@@ -161,6 +161,7 @@ import professional_settings from '@/components/dashboard/professional/settings.
 import normal_user_profile from '@/components/dashboard/user/user_profile.vue'
 import normal_my_designs from '@/components/dashboard/user/my_designs.vue'
 import normal_my_requests from '@/components/dashboard/user/my_requests.vue'
+import normal_my_likes from '@/components/dashboard/user/my_likes.vue'
 import normal_my_messages from '@/components/messages/user_messages.vue'
 import normal_my_transactions from '@/components/dashboard/user/my_transactions.vue'
 import normal_manage_my_subscription from '@/components/dashboard/user/manage_subscription.vue'
@@ -620,6 +621,12 @@ const router = createRouter({
           path: 'my-requests',
           name: 'user_my_requests',
           component: normal_my_requests,
+        },
+        
+        {
+          path: 'my-likes',
+          name: 'user_my_likes',
+          component: normal_my_likes,
         },
         {
           path: 'my-messages',

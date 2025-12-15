@@ -38,7 +38,7 @@
                 </svg>
                 <span class="credits-number">{{liveCredits}}</span>
               </div>
-              <a-button type="primary" size="small">Buy</a-button>
+              <a-button type="primary" size="small" @click="this.$router.push('/pricing')">Buy</a-button>
             </div>
    <a-button type="primary" @click="this.$router.push({name:'my-store'})" v-if="user.user_type ==='Business' ">
             <div style="display:flex;gap:5px">

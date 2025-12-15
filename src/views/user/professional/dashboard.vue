@@ -166,9 +166,9 @@
 
 
            <router-link 
-  to="/user-dashboard/my-requests" 
+  to="/professional-dashboard/my-requests" 
   class="nav-item"
-  :class="{ active: $route.name === 'user_my_requests' }"
+  :class="{ active: $route.name === 'professional_my_requests' }"
 >
   <div class="nav-icon-wrapper">
     <svg 
@@ -193,7 +193,7 @@
 
   <span
     class="nav-text"
-    :class="{ '!text-white': $route.name === 'user_my_requests' }"
+    :class="{ '!text-white': $route.name === 'professional_my_requests' }"
     style="
       font-family: Poppins;
       font-weight: 400;

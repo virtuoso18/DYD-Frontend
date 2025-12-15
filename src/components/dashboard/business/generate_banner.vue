@@ -165,14 +165,14 @@
 
               <!-- Action Buttons -->
               <div style="display: flex; gap: 6px; margin-top: 8px;">
-                <a-button type="primary" size="medium" block @click="downloadMyBanner(banner)">
-                  <template #icon><DownloadOutlined /></template>
+                <a-button type="primary" size="medium" block @click="downloadMyBanner(banner)" style="display: flex;justify-content: center;;" >
+                  <template #icon><DownloadOutlined style="font-size:16px;padding-top:5px;"  /></template>
                   Download
                 </a-button>
-                <a-button size="medium" @click="shareMyBanner(banner)">
+                <a-button size="medium" @click="shareMyBanner(banner)" style="display: flex;justify-content: center;align-items: center;">
                   <template #icon><LinkOutlined /></template>
                 </a-button>
-                <a-button danger size="medium" @click="deleteMyBanner(banner.id)">
+                <a-button danger size="medium" @click="deleteMyBanner(banner.id)" style="display: flex;justify-content: center;align-items: center;">
                   <template #icon><DeleteOutlined /></template>
                 </a-button>
               </div>
@@ -234,7 +234,8 @@
       style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; margin-right: 10px;"
       :title="`<img src='${selectedBanner.final_banner}' alt='' srcset='' />`"
     >
-      &lt;img src="{{ shortenUrl(selectedBanner.final_banner) }}" alt="" srcset="" /&gt;
+    
+     &lt;a href="{{ base_url()+ selectedBanner.business_slug}}"&gt;   &lt;img src="{{ shortenUrl(selectedBanner.final_banner) }}" alt="" srcset="" /&gt; &lt; /a &gt;   
     </div>
 
     <!-- Copy button -->
@@ -680,13 +681,15 @@ export default {
   },
   
   methods: {
+    base_url(){return window.location.origin+'/'
+},
      shortenUrl(url) {
       if (!url) return '';
       if (url.length <= 40) return url;
       return url.slice(0, 20) + '...' + url.slice(-15);
     },
     copyEmbedCode() {
-      const code = `<img src="${this.selectedBanner.final_banner}" alt="" srcset="">`;
+      const code = `<a href="${this.base_url()+this.selectedBanner.business_slug}"><img src="${this.$store.state.root_media_api+ this.selectedBanner.final_banner}" alt="" srcset=""></a>`;
       navigator.clipboard.writeText(code);
       this.$message.success('Embed code copied!');
     },

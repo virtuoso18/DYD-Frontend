@@ -191,6 +191,50 @@
                 Requests
               </span>
             </router-link>
+             <router-link 
+  to="/user-dashboard/my-likes" 
+  class="nav-item"
+  :class="{ active: $route.name === 'user_my_likes' }"
+  @click.native="handleNavClick"
+  
+>
+  <div class="nav-icon-wrapper">
+    <svg 
+      width="19" 
+      height="19" 
+      viewBox="0 0 19 19" 
+      fill="none" 
+      xmlns="http://www.w3.org/2000/svg"
+      class="nav-icon"
+    >
+      <path 
+        d="M7.90304 15.1577C5.7611 13.556 1.51758 9.89416 1.51758 6.59893C1.51758 4.42091 3.11591 2.65527 5.31361 2.65527C6.45242 2.65527 7.59123 3.03488 9.10965 4.55329C10.6281 3.03488 11.7669 2.65527 12.9057 2.65527C15.1034 2.65527 16.7017 4.42091 16.7017 6.59893C16.7017 9.89416 12.4582 13.556 10.3163 15.1577C9.59546 15.6966 8.62383 15.6966 7.90304 15.1577Z" 
+        stroke="currentColor" 
+        stroke-width="1.13881" 
+        stroke-linecap="round" 
+        stroke-linejoin="round"
+      />
+    </svg>
+  </div>
+
+  <span
+    class="nav-text"
+    :class="{ '!text-white': $route.name === 'user_my_likes' }"
+    style="
+      font-family: Poppins;
+      font-weight: 400;
+      font-style: normal;
+      font-size: 14px;
+      line-height: 20px;
+      letter-spacing: 0;
+      text-align: center;
+      color: #666666;
+    "
+  >
+    My Likes
+  </span>
+</router-link>
+
 
             <router-link
               to="/user-dashboard/my-messages"

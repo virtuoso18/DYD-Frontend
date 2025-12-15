@@ -906,7 +906,7 @@
             Your photo already set.
           </h3>
 
-          <div
+          <div 
             style="
               background-color: #f3f2f2;
               border-radius: 10px;

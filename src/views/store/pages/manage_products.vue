@@ -271,6 +271,18 @@
         :rendered_modal_3D_id="model_instance_id"
         />
 
+        <add_furniture_modal_local_3d_model_create_variation v-model:visible="show_add_new_product_locally_3d_model" 
+        :types="['Modern','Scandinavian','Classic','Minimalist','Industrial','Rustic','Boho','other',]"
+        @product-created="onProductCreated"
+        @cancel="onCancel"
+        :rendered_modal_3D_id="model_instance_id"
+        :prepopulatedData="prepopulatedProductData"
+        :isEditing="false"  
+        :isVariation="isCreatingVariation"
+        :baseProductId="selectedProduct?.id"
+        v-if="prepopulatedProductData"
+        />
+
         <add_light_modal_local_3d_model 
         v-model:visible="show_add_new_light_product_locally_3d_model" 
         :types="['Modern','Scandinavian','Classic','Minimalist','Industrial','Rustic','Boho','other',]"
@@ -306,21 +318,21 @@
     />
     
     
-<div class="p-[10px] -translate-y-[1%] min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh] bg-white rounded-2xl border border-black/10">
+<div class="p-[10px] -translate-y-[1%] min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh] bg-white rounded-2xl sm:border border-black/10">
             <!-- Product List/Grid View -->
             <div v-if="currentView === 'list'">
                 <!-- Header Section -->
 
                 <!--for desktop-->
-                <div class="hidden md:flex justify-between items-center pt-4 mb-5">
+                <div class="hidden md:flex justify-between items-center mb-5">
 
   <!-- Title -->
-  <h3 class="flex whitespace-nowrap px-2 lg:text-lg font-semibold">
-    My Products&nbsp;
+  <h2 class="m-0 text-lg whitespace-nowrap px-2 lg:text-2xl font-semibold">
+    My Products
     <span class="text-gray-500 text-base">
       ({{ products.length + wall.length + floor.length + myLights.length }})
     </span>
-  </h3>
+  </h2>
 
   <!-- Right Side Buttons -->
   <div class="flex justify-between items-end sm:flex-col sm:w-full  xl:flex-row ">
@@ -402,7 +414,7 @@
     <button
   type="primary"
   @click="show_add_new_wall_texture = true"
-  class="flex items-center gap-2 px-3 py-2 !text-white rounded-md bg-[#3B63FB]"
+  class="flex items-center gap-2 px-3 py-2 !text-white rounded-md bg-[#3B63FB]"style="font-family: var(--font-family-main);"
 >
   <!-- Paste any SVG here -->
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -419,7 +431,7 @@
     <button
   type="primary"
   @click="show_add_new_floor_texture = true"
-  class="flex items-center gap-2 px-3 py-2 !text-white rounded-md bg-[#3B63FB]"
+  class="flex items-center gap-2 px-3 py-2 !text-white rounded-md bg-[#3B63FB]"style="font-family: var(--font-family-main);"
 >
   <svg 
     width="16" 
@@ -447,7 +459,7 @@
     <button
       type="primary"
       @click="show_add_new_light = true"
-  class="flex items-center gap-2 px-3 py-2 !text-white rounded-md bg-[#3B63FB]"
+  class="flex items-center gap-2 px-3 py-2 !text-white rounded-md bg-[#3B63FB]"style="font-family: var(--font-family-main);"
     >
        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <!-- bulb outline -->
@@ -464,7 +476,7 @@
     <button
       @click="addProduct()"
       type="primary"
-  class="flex items-center gap-2 px-3 py-2 !text-white whitespace-nowrap rounded-md bg-[#3B63FB]"
+  class="flex items-center gap-2 px-3 py-2 !text-white whitespace-nowrap rounded-md bg-[#3B63FB]"style="font-family: var(--font-family-main);"
     >
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <!-- box -->
@@ -503,6 +515,7 @@
             'flex items-center px-3 py-2 font-semibold text-xs transition',
             viewMode === 'grid' ? 'bg-blue-600 !text-white' : 'bg-white !text-gray-600'
           ]"
+          style="font-family: var(--font-family-main);"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class="mr-1">
             <rect x="3" y="3" width="7" height="7"></rect>
@@ -518,6 +531,7 @@
             'flex items-center px-3 py-2 font-semibold text-xs transition',
             viewMode === 'table' ? 'bg-blue-600 text-white' : 'bg-white text-gray-600'
           ]"
+          style="font-family: var(--font-family-main);"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="mr-1">
             <line x1="8" y1="6" x2="21" y2="6"></line>
@@ -554,12 +568,12 @@
     </div>
 
     <!-- Action Buttons -->
-    <div class="flex flex-wrap gap-2 sm:flex-col sm:w-full">
+    <div class="flex  gap-2 sm:flex-col sm:w-full">
       <!-- Wall Button -->
       <button
         type="button"
         @click="show_add_new_wall_texture = true"
-        class="flex items-center gap-2 px-3 !py-1 !text-white rounded-md bg-blue-600 font-medium whitespace-nowrap w-auto sm:w-32"
+        class="flex items-center  gap-2 px-2 py-1.5 !text-white rounded-md bg-blue-600 font-medium whitespace-nowrap w-auto sm:w-32"style="font-family: var(--font-family-main);"
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <rect x="3" y="3" width="8" height="8" rx="1"/>
@@ -573,7 +587,7 @@
       <button
         type="button"
         @click="show_add_new_floor_texture = true"
-        class="flex items-center gap-2 px-3 !py-1 !text-white rounded-md bg-blue-600 font-medium whitespace-nowrap w-auto sm:w-32"
+        class="flex items-center gap-2 px-2 py-1.5 !text-white rounded-md bg-blue-600 font-medium whitespace-nowrap w-auto sm:w-32"style="font-family: var(--font-family-main);"
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
@@ -588,7 +602,7 @@
       <button
         type="button"
         @click="show_add_new_light = true"
-        class="flex items-center gap-2 px-3 !py-1 !text-white rounded-md bg-blue-600 font-medium whitespace-nowrap w-auto sm:w-32 "
+        class="flex items-center gap-2 px-2 py-1.5 !text-white rounded-md bg-blue-600 font-medium whitespace-nowrap w-auto sm:w-32 "style="font-family: var(--font-family-main);"
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M12 2a6 6 0 0 0-4.472 10.04c.46.5.872 1.28.872 2.16 0 1.1-.2 2.2-.6 3h6.4c-.4-.8-.6-1.9-.6-3 0-.88.41-1.66.87-2.16A6 6 0 0 0 12 2z"/>
@@ -601,7 +615,7 @@
       <button
         type="button"
         @click="addProduct()"
-        class="flex items-center gap-2 px-3 !py-1 !text-white rounded-md bg-blue-600 font-medium whitespace-nowrap w-auto sm:w-32 "
+        class="flex items-center gap-2 px-2 py-1.5 !text-white rounded-md bg-blue-600 font-medium whitespace-nowrap w-auto sm:w-32 "style="font-family: var(--font-family-main);"
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M21 8v8a2 2 0 0 1-1 1.73L12 21l-8-3.27A2 2 0 0 1 3 16V8"/>
@@ -654,11 +668,12 @@
 
                                                 </a-col>
                                                 
-                                                <a-col span="18">
-                                                    Color
-                                                </a-col>
+                                                <a-col span="16" style="font-family: 'Poppins', sans-serif; font-size:13px; font-weight:400;">
+  Color
+</a-col>
+
                                                 
-                                                <a-col span="6" style="display: flex;justify-content: end;">
+                                                <a-col span="8" style="display: flex;justify-content: end;">
                                                     <div v-for="(color, index) in product.colors.slice(0, 2)" 
                                                         :key="index"
                                                         style="width:20px;height:20px;border-radius:20px;margin-left:2px;" 
@@ -666,7 +681,7 @@
                                                     </div>
                                                 </a-col>
                                                 
-                                                <a-col span="12">
+                                                <a-col span="12" style="font-family: 'Poppins', sans-serif; font-size:13px; font-weight:400;">
                                                     Price
                                                 </a-col>
                                                 
@@ -675,15 +690,23 @@
                                                     ${{ product.pricing.price }}
                                                 </a-col>
 
-                                                <a-col span="17">
-                                                    <a-button block @click="viewProduct(product)">Product Details</a-button>
-                                                </a-col>
+                                                <a-col span="18">
+  <a-button 
+    block 
+    @click="viewProduct(product)"
+    style="font-family: 'Poppins', sans-serif; font-size: 13px;"
+  >
+    Product Details
+  </a-button>
+</a-col>
+
                                                 
-                                                <a-col span="1"></a-col>
-                                                <a-col span="4">
+                                                
+                                                <a-col span="6" style="display: flex;align-items: end;justify-content: end;">
                                                     <!-- {{product,is_favorited}} -->
                                                     <!-- <a-button><HeartOutlined /></a-button> -->
-                                                     <a-button @click="toggleFavorite(product,'product')">
+                                                     <a-button @click="toggleFavorite(product,'product')"  style="padding: 2px 12px; display:flex; align-items:center; justify-content:center;"
+>
                                                                     <template v-if="product.is_favorited">
                                                                     <HeartFilled style="color: red" />
                                                                     </template>
@@ -785,15 +808,17 @@
 
                                 <!-- Buttons -->
                                 
-                                <a-col span="17">
+                                <a-col span="18">
                                     <a-button block @click="viewProduct(product)">Product Details</a-button>
                                 </a-col>
                                 
-                                <a-col span="1"></a-col>
-                                <a-col span="4">
+                                
+                                <a-col span="6" style="display: flex;align-items: end;justify-content: end;">
                                     <!-- <a-button><HeartOutlined /></a-button> -->
                                      
-                                                     <a-button @click="toggleFavorite(product,'wall_texture')">
+                                                     <a-button @click="toggleFavorite(product,'wall_texture')"
+                                                     style="padding: 2px 12px; display:flex; align-items:center; justify-content:center;"
+                                                     >
                                                                     <template v-if="product.is_favorited">
                                                                     <HeartFilled style="color: red" />
                                                                     </template>
@@ -891,15 +916,16 @@
                                 </a-col>
 
                                 <!-- Buttons -->
-                                <a-col span="17">
-                                                    <a-button block @click="viewProduct(product)">Product Details</a-button>
+                                <a-col span="18">
+                                                    <a-button block @click="viewProduct(product)"
+                                                        style="font-family: 'Poppins', sans-serif; font-size: 13px;"
+>Product Details</a-button>
                                                 </a-col>
                                                 
-                                                <a-col span="1"></a-col>
-                                                <a-col span="4">
+                                                <a-col span="6" style="display: flex;align-items: end;justify-content: end;">
                                                     <!-- <a-button><HeartOutlined /></a-button> -->
                                                      
-                                                     <a-button @click="toggleFavorite(product,'floor_texture')">
+                                                     <a-button @click="toggleFavorite(product,'floor_texture')" style="padding: 2px 12px; display:flex; align-items:center; justify-content:center;">
                                                                     <template v-if="product.is_favorited">
                                                                     <HeartFilled style="color: red" />
                                                                     </template>
@@ -970,14 +996,20 @@
                                                     <!-- <del style="font-size: 10px;">${{ product.pricing.price }}</del> -->
                                                     <b>${{ product.pricing.price }}</b>
                                                 </a-col>
-                                                <a-col span="17">
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                <a-col span="18"     style="font-family: 'Poppins', sans-serif; font-size: 13px;">
                                                     <a-button block @click="viewProduct(product)">Product Details</a-button>
                                                 </a-col>
-                                                <a-col span="1"></a-col>
-                                                <a-col span="4">
+                                                <a-col span="6"  style="display: flex;align-items: end;justify-content: end;">
                                                     <!-- <a-button><HeartOutlined /></a-button> -->
                                                    
-                                                     <a-button @click="toggleFavorite(product,'product')">
+                                                     <a-button @click="toggleFavorite(product,'product')" style="padding: 2px 12px; display:flex; align-items:center; justify-content:center;">
                                                                     <template v-if="product.is_favorited">
                                                                     <HeartFilled style="color: red" />
                                                                     </template>
@@ -1578,7 +1610,7 @@
         <!-- Product Details View -->
         
 <!-- Product Details View with Spinner -->
-<div v-if="currentView === 'details'" style="max-width: 1200px;">
+<div v-if="currentView === 'details'" style="max-width: 1200px;padding:3px">
     <!-- Spinner/Loader While Loading -->
     <div v-if="isLoading" style="
         display: flex;
@@ -1615,14 +1647,22 @@
             @delete_texture="delete_product" 
             @back_product_list="backToList" 
         />
-        <show_furniture_product  
+        <!-- <show_furniture_product  
             :selectedProduct="selectedProduct" 
             v-if="active_tab === 'Furniture' && selectedProduct" 
             @edit_product="editProduct" 
             @delete_product="delete_product" 
             @back_product_list="backToList" 
+        /> -->
+         <show_furniture_product  
+            :selectedProduct="selectedProduct" 
+            v-if="active_tab === 'Furniture' && selectedProduct" 
+            @edit_product="editProduct"
+            @create_variation="createVariation"
+            @delete_product="delete_product" 
+            @back_product_list="backToList" 
+           @select_variant="handleVariantSelection"
         />
-        
         
         <!-- Different Light Products Details Component -->
         <show_Light_product_3D  
@@ -1709,6 +1749,7 @@ import show_Light_product_sunk from '@/components/dashboard/business/my_products
 import show_Light_product_unsunk from '@/components/dashboard/business/my_products/product_details/light_product_ununk.vue'
 import show_Light_product_3D from '@/components/dashboard/business/my_products/product_details/light_product_3d.vue'
 import add_furniture_modal_local_3d_model from '@/components/dashboard/business/my_products/add_new_product/add_furniture_modal_local_3d_model.vue'
+import add_furniture_modal_local_3d_model_create_variation from '@/components/dashboard/business/my_products/add_new_product/add_furniture_modal_local_3d_model_create_variation.vue'
 import add_light_modal_local_3d_model from '@/components/dashboard/business/my_products/add_new_product/add_light_modal_local_3d_model.vue'
 
 export default {
@@ -1727,6 +1768,7 @@ export default {
         add_new_Light,
         add_new_furniture,
         add_furniture_modal_local_3d_model,
+        add_furniture_modal_local_3d_model_create_variation,
         add_light_modal_local_3d_model,
 
         // edit_update
@@ -1753,6 +1795,8 @@ export default {
     },
     data() {
         return {
+             prepopulatedProductData: null,
+        isCreatingVariation: false,
             currentView: 'list', // 'list', 'details', 'edit'
             viewMode: 'grid', // 'grid', 'table'
             active_tab: "Furniture",
@@ -1878,6 +1922,54 @@ export default {
         this.fetchMyFloorTextureProducts()
     },
     methods: {
+             createVariation() {
+    console.log('Creating variation for:', this.selectedProduct);
+    
+    if (!this.selectedProduct) {
+        this.$message.error('No product selected');
+        return;
+    }
+    
+    // console.log(this.selectedProduct.furniture_type)
+    try {
+        // Prepare prepopulated data
+        this.prepopulatedProductData = {
+            id: this.selectedProduct.id,
+            name: `${this.selectedProduct.name} - Variation`,
+            description: this.selectedProduct.description || '',
+            category_name: this.selectedProduct.category?.name || '',
+            furniture_type: this.selectedProduct.furniture_type || '',
+            price: this.selectedProduct.pricing?.price || null,
+            height: this.selectedProduct.dimensions?.height || null,
+            length: this.selectedProduct.dimensions?.length || null,
+            width: this.selectedProduct.dimensions?.width || null,
+            available_colors: this.selectedProduct.colors || [],
+            images: this.selectedProduct.product_images?.map(img => ({
+                url: img.image,
+                id: img.id,
+                name: `Image ${img.id}`,
+                isExisting: true
+            })) || [],
+            model_url: this.selectedProduct.model_3d || null,
+            // Mark as base product ID for variation
+            base_product_id: this.selectedProduct.id,
+            is_variation: true
+        };
+        
+        this.isEditingVariation = true;
+        this.show_add_new_product_locally_3d_model = true;
+        
+        console.log('Prepopulated data set:', this.prepopulatedProductData);
+        
+    } catch (error) {
+        console.error('Error creating variation:', error);
+        this.$message.error('Failed to prepare variation data');
+    }
+},
+ handleVariantSelection(variantId) {
+    // Call your existing fetchProductDetails method with the variant ID
+    this.fetchProductDetails(variantId);
+  },
 async toggleFavorite(product,product_type) {
         try {
             const token = localStorage.getItem('token');

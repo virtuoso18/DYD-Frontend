@@ -232,6 +232,33 @@ type="primary"
               <div class="price-section">
                 <span class="current-price">${{ ProductDetails.pricing.price }}</span>
               </div>
+              <!-- In the drawer content, update the color section -->
+              <a-col :span="12">
+                <div style="margin-bottom: 8px; font-weight: 500;">Colors:</div>
+                <a-alert 
+                  v-if="showColorAlert"
+                  type="warning"
+                  :message="`No model associated with ${selectedColorHex} color. Hence showing model for primary color.`"
+                  closable
+                  @close="showColorAlert = false"
+                  style="margin-bottom: 12px;"
+                />
+                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                  <div v-for="(color, index) in ProductDetails.colors.available_colors"
+                    :key="color.id"
+                    @click="selectColor(index, color)"
+                    :class="[
+                      'w-6 h-6 rounded-full transition-all cursor-pointer',
+                      color.model_file_colored_product 
+                        ? 'border-2 hover:shadow-md' 
+                        : 'outline outline-2 outline-red-500 outline-offset-2 hover:shadow-[0_0_8px_rgba(239,68,68,0.3)]',
+                      selectedColorIndex === index ? 'border-blue-500 border-4' : 'border-gray-100'
+                    ]"
+                    :style="{ backgroundColor: color.color }"
+                    :title="`${color.color}${!color.model_file_colored_product ? ' (No 3D model)' : ''}`"
+                  ></div>
+                </div>
+              </a-col>
               <!-- <div class="rating-section">
                 <div class="stars">
                   <span
@@ -247,6 +274,7 @@ type="primary"
                 >
               </div> -->
             </div>
+        
             <div class="cart-controller-sec">
               <a-button
   type="primary"
@@ -437,6 +465,11 @@ export default {
       glbModelUrl:
         "https://rawcdn.githack.com/KhronosGroup/glTF-Sample-Models/master/2.0/SheenChair/glTF-Binary/SheenChair.glb",
       usdzModelUrl: "",
+
+      selectedColorIndex: null,
+      selectedColorHex: null,
+      showColorAlert: false,
+
     };
   },
 
@@ -450,6 +483,22 @@ export default {
     windowHeight() {
       return window.innerHeight;
     },
+    selected3DModelUrl() {
+    if (this.selectedColorIndex !== null && 
+        this.ProductDetails.colors && 
+        this.ProductDetails.colors.available_colors[this.selectedColorIndex]) {
+      
+      const selectedColor = this.ProductDetails.colors.available_colors[this.selectedColorIndex];
+      
+      // If the color has a specific model file, use it
+      if (selectedColor.model_file_colored_product) {
+        return `${this.$store.state.root_media_api}${selectedColor.model_file_colored_product}`;
+      }
+    }
+    
+    // Otherwise, use the default 3D model
+    return `${this.$store.state.root_media_api}${this.ProductDetails['3d_model']}`;
+  }
   },
 
   mounted() {
@@ -1013,6 +1062,30 @@ export default {
       this.error = null;
       this.errorDetails = "";
     },
+    selectColor(index, color) {
+    this.selectedColorIndex = index;
+    
+    // Check if this color has a model file
+    if (!color.model_file_colored_product) {
+      this.selectedColorHex = color.color;
+      this.showColorAlert = true;
+    } else {
+      this.showColorAlert = false;
+    }
+    
+    // Update the model viewer source dynamically
+    this.updateModelViewerSource();
+  },
+
+  // NEW: Update the model-viewer component's source
+  updateModelViewerSource() {
+    const viewer = this.$refs.modelViewer;
+    if (viewer) {
+      const newUrl = this.selected3DModelUrl;
+      viewer.src = newUrl;
+      console.log('✅ Model updated to:', newUrl);
+    }
+  },
   },
 };
 </script>

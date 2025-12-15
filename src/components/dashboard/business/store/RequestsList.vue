@@ -336,32 +336,10 @@
 
         <!-- Action Buttons Section -->
         <div class="px-4 py-3 space-y-2">
-          <a-button 
-            v-if="request.status === 'Pending'"
-            type="primary"
-            size="large"
-            @click.stop="processPhoto(request)"
-            :loading="processingIds.includes(request.id)"
-            block
-            class="!rounded-lg"
-          >
-            Process Photo
-          </a-button>
-          
-          <a-button 
-            v-if="request.status === 'Completed'"
-            type="primary"
-            size="large"
-            @click.stop="processPhoto(request)"
-            :loading="regeneratingIds.includes(request.id)"
-            block
-            class="!rounded-lg"
-          >
-            <template #icon>
-              <ReloadOutlined />
-            </template>
-            Regenerate
-          </a-button>
+          <a-row >
+            
+            <a-col :span="12">
+              
           
           <a-button 
             v-if="(request.status !== 'Rejected') && (request.status !== 'Completed')"
@@ -374,6 +352,37 @@
           >
             Reject Request
           </a-button>
+            </a-col>
+            <a-col :span="12">  <a-button 
+            v-if="request.status === 'Pending'"
+            type="primary"
+            size="large"
+            @click.stop="processPhoto(request)"
+            :loading="processingIds.includes(request.id)"
+            block
+            class="!rounded-lg"
+            style="margin-bottom:10px"
+          >
+            Process Photo
+          </a-button>
+        <a-button 
+            v-if="request.status === 'Completed'"
+            type="primary"
+            size="large"
+            @click.stop="processPhoto(request)"
+            :loading="regeneratingIds.includes(request.id)"
+            block
+            class="!rounded-lg"
+          >
+            <template #icon>
+              <ReloadOutlined />
+            </template>
+            Regenerate
+          </a-button></a-col>
+          </a-row>
+        
+          
+          
         </div>
       </div>
     </div>

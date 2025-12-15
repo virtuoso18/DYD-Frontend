@@ -52,8 +52,8 @@ Switch Furniture</div></a-button>
   <div class="canvas-container" ref="canvasContainer">
     <!-- Loading Overlay -->
     <div v-if="isLoading || objectMasksLoading" class="scanning-loading-overlay">
-      <div class="loading-screen" :style="{ backgroundImage: `url(${backgroundImageUrl})` }">
-        <!-- {{baseImage}} -->
+      <div class="loading-screen" :style="{ backgroundImage: `url(${baseImage})` }">
+        
         <div class="wave-overlay"></div>
         <div class="loading-text">
           <!-- <div class="lottieFile-sec">

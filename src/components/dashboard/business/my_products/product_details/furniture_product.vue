@@ -276,7 +276,7 @@
             </div>
           </a-col>
           <a-col :span="12">
-            <div style="margin-bottom: 8px; font-weight: 500;">Textures:</div>
+            <div style="margin-bottom: 8px; font-weight: 500;" v-if="selectedProduct.textures.length">Textures:</div>
             <div style="display: flex; gap: 6px;flex-wrap: wrap;">
               <img 
                 v-for="(texture, index) in selectedProduct.textures" 
@@ -345,7 +345,8 @@
                 type="primary" 
                 block
                 @click="editProduct()"
-              > <template #icon> <EditOutlined/></template>
+                style="display:flex;justify-content: center;gap:10px;"
+              > <EditOutlined style="font-size:16px;padding-top:4px"/>
                 Edit Product
               </a-button>
             </a-col>
@@ -355,7 +356,8 @@
                 danger
                 block
                 @click="deleteProduct()"
-              > <template #icon> <DeleteOutlined/></template>
+                style="display:flex;justify-content: center;gap:5px;"
+              > <template #icon> <DeleteOutlined  style="font-size:16px;padding-top:4px"/></template>
                 Delete Product
               </a-button>
             </a-col>

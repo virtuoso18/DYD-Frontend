@@ -690,7 +690,7 @@
                                                     ${{ product.pricing.price }}
                                                 </a-col>
 
-                                                <a-col span="17">
+                                                <a-col span="18">
   <a-button 
     block 
     @click="viewProduct(product)"
@@ -702,7 +702,7 @@
 
                                                 
                                                 
-                                                <a-col span="6">
+                                                <a-col span="6" style="display: flex;align-items: end;justify-content: end;">
                                                     <!-- {{product,is_favorited}} -->
                                                     <!-- <a-button><HeartOutlined /></a-button> -->
                                                      <a-button @click="toggleFavorite(product,'product')"  style="padding: 2px 12px; display:flex; align-items:center; justify-content:center;"
@@ -808,15 +808,17 @@
 
                                 <!-- Buttons -->
                                 
-                                <a-col span="17">
+                                <a-col span="18">
                                     <a-button block @click="viewProduct(product)">Product Details</a-button>
                                 </a-col>
                                 
-                                <a-col span="1"></a-col>
-                                <a-col span="4">
+                                
+                                <a-col span="6" style="display: flex;align-items: end;justify-content: end;">
                                     <!-- <a-button><HeartOutlined /></a-button> -->
                                      
-                                                     <a-button @click="toggleFavorite(product,'wall_texture')">
+                                                     <a-button @click="toggleFavorite(product,'wall_texture')"
+                                                     style="padding: 2px 12px; display:flex; align-items:center; justify-content:center;"
+                                                     >
                                                                     <template v-if="product.is_favorited">
                                                                     <HeartFilled style="color: red" />
                                                                     </template>
@@ -914,15 +916,16 @@
                                 </a-col>
 
                                 <!-- Buttons -->
-                                <a-col span="17">
-                                                    <a-button block @click="viewProduct(product)">Product Details</a-button>
+                                <a-col span="18">
+                                                    <a-button block @click="viewProduct(product)"
+                                                        style="font-family: 'Poppins', sans-serif; font-size: 13px;"
+>Product Details</a-button>
                                                 </a-col>
                                                 
-                                                <a-col span="1"></a-col>
-                                                <a-col span="4">
+                                                <a-col span="6" style="display: flex;align-items: end;justify-content: end;">
                                                     <!-- <a-button><HeartOutlined /></a-button> -->
                                                      
-                                                     <a-button @click="toggleFavorite(product,'floor_texture')">
+                                                     <a-button @click="toggleFavorite(product,'floor_texture')" style="padding: 2px 12px; display:flex; align-items:center; justify-content:center;">
                                                                     <template v-if="product.is_favorited">
                                                                     <HeartFilled style="color: red" />
                                                                     </template>
@@ -993,14 +996,20 @@
                                                     <!-- <del style="font-size: 10px;">${{ product.pricing.price }}</del> -->
                                                     <b>${{ product.pricing.price }}</b>
                                                 </a-col>
-                                                <a-col span="17">
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                <a-col span="18"     style="font-family: 'Poppins', sans-serif; font-size: 13px;">
                                                     <a-button block @click="viewProduct(product)">Product Details</a-button>
                                                 </a-col>
-                                                <a-col span="1"></a-col>
-                                                <a-col span="4">
+                                                <a-col span="6"  style="display: flex;align-items: end;justify-content: end;">
                                                     <!-- <a-button><HeartOutlined /></a-button> -->
                                                    
-                                                     <a-button @click="toggleFavorite(product,'product')">
+                                                     <a-button @click="toggleFavorite(product,'product')" style="padding: 2px 12px; display:flex; align-items:center; justify-content:center;">
                                                                     <template v-if="product.is_favorited">
                                                                     <HeartFilled style="color: red" />
                                                                     </template>

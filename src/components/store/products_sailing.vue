@@ -9,7 +9,7 @@
           style="padding:5px;text-align: start;"
         >
           <div class="product">
-            <div class="product-image-container" @click="handleProductDetail(product)">
+            <div class="product-image-container" @click="goto_product_Route(product)">
               <img
                 :src="this.$store.state.root_media_api + product.product_image"
                 :alt="product.product_title"
