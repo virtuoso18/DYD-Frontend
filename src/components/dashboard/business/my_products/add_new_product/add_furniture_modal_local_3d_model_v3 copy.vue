@@ -1,4 +1,5 @@
 <template>
+
   <a-modal
     :open="visible"
     :closable="false"
@@ -324,7 +325,7 @@ Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac tu
                     <a-input-number
                       v-model:value="productForm.dimensions.height" 
                       :min="0"
-                        @keypress="allowOnlyDecimal"
+                       @keypress="allowOnlyDecimal"
                         @paste="handlePaste"
                       :step="0.01"
                       placeholder="0.8"
@@ -339,7 +340,7 @@ Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac tu
                     <a-input-number
                       v-model:value="productForm.dimensions.length" 
                       :min="0"
-                        @keypress="allowOnlyDecimal"
+                       @keypress="allowOnlyDecimal"
                         @paste="handlePaste"
                       :step="0.01"
                       placeholder="0.5"
@@ -354,7 +355,7 @@ Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac tu
                     <a-input-number
                       v-model:value="productForm.dimensions.width" 
                       :min="0"
-                        @keypress="allowOnlyDecimal"
+                       @keypress="allowOnlyDecimal"
                         @paste="handlePaste"
                       :step="0.01"
                       placeholder="1.8"
@@ -403,7 +404,7 @@ Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac tu
                         backgroundColor: color,
                         cursor: 'pointer',
                         border: '1px solid #e5e7eb',
-                        opacity: selectedColors.some(c => c.value === color) ? 0.5 : 1
+                        opacity: selectedColors.includes(color) ? 0.5 : 1
                       }"
                     ></div>
                   </div>
@@ -431,20 +432,12 @@ Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac tu
                         width: '40px',
                         height: '40px',
                         borderRadius: '50%',
-                        backgroundColor: color.value,
-                        border: color.isPrimary ? '2px solid #22c55e' : '2px solid #e5e7eb',
+                        backgroundColor: color,
+                        border: '2px solid #e5e7eb',
                         cursor: 'pointer',
-                        position: 'relative',
-                        transition: 'all 0.2s ease'
+                        position: 'relative'
                       }"
-                      @click="setPrimaryColor(color)"
                     ></div>
-                    <div 
-                      v-if="color.isPrimary"
-                      style="position: absolute; left: -5px; bottom: -5px; background: #22c55e; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 12px; box-shadow: 0 2px 4px rgba(34, 197, 94, 0.3);"
-                    >
-                      ★
-                    </div>
                     <a-button 
                       type="text" 
                       size="small" 
@@ -632,10 +625,7 @@ export default {
     
     // Collections - initialized with defaultValues
     selectedImages: this.defaultValues.images || [],
-    selectedColors: (this.defaultValues.colors || []).map((color, index) => ({
-    value: typeof color === 'string' ? color : color.value,
-    isPrimary: index === 0
-  })),
+    selectedColors: this.defaultValues.colors || [],
     selectedTextures: this.defaultValues.textures || [],
     selectedPbrFiles: this.defaultValues.pbrFiles || [],
     categories_available: [],
@@ -694,7 +684,10 @@ watch: {
 
  mounted() {
   // Initialize with default values first
-  this.initializeFormWithDefaults(this.defaultValues);
+  if (this.prepopulatedData){
+
+    this.initializeFormWithDefaults(this.prepopulatedData);
+  }
   
   if (this.rendered_modal_3D_id) {
     console.log('🚀 Component mounted, fetching 3D model details...');
@@ -706,8 +699,8 @@ watch: {
 },
 
   methods: {
-
-    // Handle paste event
+    
+  // Handle paste event
   handlePaste(e) {
     e.preventDefault();
     const pastedText = (e.clipboardData || window.clipboardData).getData('text');
@@ -752,27 +745,27 @@ watch: {
     // Load all categories on component mount
     initializeFormWithDefaults(defaults) {
     // Update form fields
+    console.log("defaults")
+    console.log(defaults)
     this.productForm = {
       name: defaults.name || '',
       description: defaults.description || '',
       category_name: defaults.category_name || [],
       furniture_type: defaults.furniture_type || '',
       pricing: { 
-        price: defaults.pricing?.price || null 
+        price: defaults.price || null 
       },
       dimensions: { 
-        height: defaults.dimensions?.height || null,
-        length: defaults.dimensions?.length || null,
-        width: defaults.dimensions?.width || null
-      }
+        height: defaults.height || null,
+        length: defaults.length || null,
+        width: defaults.width || null
+      },
+
     };
 
     // Update collections
     this.selectedImages = defaults.images || [];
-    this.selectedColors = (defaults.colors || []).map((color, index) => ({
-    value: typeof color === 'string' ? color : color.value,
-    isPrimary: index === 0
-  })),
+    this.selectedColors = defaults.colors || [];
     this.selectedTextures = defaults.textures || [];
     this.selectedPbrFiles = defaults.pbrFiles || [];
     
@@ -1171,42 +1164,23 @@ async loadInitialCategories() {
       }
     },
 
-addAvailableColor() {
-  if (this.tempColor && !this.selectedColors.some(c => c.value === this.tempColor)) {
-    // Create color object with isPrimary flag
-    const colorObj = {
-      value: this.tempColor,
-      isPrimary: this.selectedColors.length === 0 // First color is primary
-    };
-    this.selectedColors.push(colorObj);
-    this.tempColor = '#000000';
-  }
-},
+    // Color Methods
+    addAvailableColor() {
+      if (this.tempColor && !this.selectedColors.includes(this.tempColor)) {
+        this.selectedColors.push(this.tempColor);
+        this.tempColor = '#000000';
+      }
+    },
 
-addPresetColor(color) {
-  if (!this.selectedColors.some(c => c.value === color)) {
-    const colorObj = {
-      value: color,
-      isPrimary: this.selectedColors.length === 0 // First color is primary
-    };
-    this.selectedColors.push(colorObj);
-  }
-},
+    addPresetColor(color) {
+      if (!this.selectedColors.includes(color)) {
+        this.selectedColors.push(color);
+      }
+    },
 
-setPrimaryColor(color) {
-  this.selectedColors.forEach(c => c.isPrimary = false);
-  color.isPrimary = true;
-},
-
-removeColor(index) {
-  const removedColor = this.selectedColors[index];
-  this.selectedColors.splice(index, 1);
-  
-  // If removed color was primary and there are colors left, make first one primary
-  if (removedColor.isPrimary && this.selectedColors.length > 0) {
-    this.selectedColors[0].isPrimary = true;
-  }
-},
+    removeColor(index) {
+      this.selectedColors.splice(index, 1);
+    },
 
     // PBR File Methods
     uploadPbr() {
@@ -1327,7 +1301,7 @@ removeColor(index) {
         const store = this.$store;
         const token = localStorage.getItem('token');
         const formData = new FormData();
-        // formData.append('variation_id',this.prepopulatedData.id);
+        formData.append('variation_id',this.prepopulatedData.id);
         formData.append('name', this.productForm.name);
         formData.append('description', this.productForm.description || '');
         formData.append('category_name', this.categoryNameDisplay);
@@ -1364,14 +1338,9 @@ removeColor(index) {
           formData.append('pbr_files', pbrFile.file);
         });
 
-       if (this.selectedColors.length > 0) {
-        const colorsData = this.selectedColors.map(c => ({
-          value: c.value,
-          isPrimary: c.isPrimary
-        }));
-        formData.append('available_colors', JSON.stringify(colorsData));
-      }
-        
+        if (this.selectedColors.length > 0) {
+          formData.append('available_colors', JSON.stringify(this.selectedColors));
+        }
 
         this.selectedTextures.forEach(texture => {
           formData.append('textures', texture.file);

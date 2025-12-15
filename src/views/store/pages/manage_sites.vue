@@ -655,12 +655,13 @@ export default {
                 business_picture: this.business_info.business_picture || this.editData.business_picture,
                 banner_picture: this.business_info.banner_picture || this.editData.banner_picture,
             }
+            this.loadBusinessProfile();
+            this.loadBusinessProducts(1); // Load first page
+            this.loadPosts();
+            this.loadBusinessLocation();
+            this.loadBusinessRatings();
         }
-        this.loadBusinessProfile();
-        this.loadBusinessProducts(1); // Load first page
-        this.loadPosts();
-        this.loadBusinessLocation();
-      this.loadBusinessRatings();
+        
 
     },
     methods: {
@@ -824,8 +825,9 @@ export default {
                 } else {
                     this.isLoadingMoreProducts = true;
                 }
-
-                const businessName = this.business_info.slug;
+                console.log("=============================")
+                console.log(this.business_info?.slug)
+                const businessName = this.business_info?.slug;
                 const token = localStorage.getItem('token');
 
                 const response = await fetch(
@@ -1098,7 +1100,7 @@ export default {
             this.ratingsError = null;
             
             const token = localStorage.getItem('token');
-            const businessSlug = this.business_info.slug; // Use existing business slug
+            const businessSlug = this.business_info?.slug; // Use existing business slug
             
             const response = await fetch(
                 `${this.$store.state.root_api}room/api/business-ratings/?business_slug=${businessSlug}`,

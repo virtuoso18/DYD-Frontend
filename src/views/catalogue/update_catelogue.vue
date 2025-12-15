@@ -1656,50 +1656,50 @@ isCollapsed: false,
       this.brand_furniture_products= e.furniture_products;
       this.brand_lights= e.lights;
     },
-// async  rescaleWallMask(e){
+async  rescaleWallMask(e){
 
-// // 2. FLOOR TEXTURE METHOD (corrected)
-//   this.canvasLoading = true;
+// 2. FLOOR TEXTURE METHOD (corrected)
+  this.canvasLoading = true;
 
-//   try {
-//     const url = `${this.$store.state.root_api}engine/rescale-room-layout/`;
-//     const requestBody = {
-//       room_id: this.$route.params.id,
-//     };
+  try {
+    const url = `${this.$store.state.root_api}engine/rescale-room-layout/`;
+    const requestBody = {
+      room_id: this.$route.params.id,
+    };
 
-//     const responseData = await this.makeApiRequest(
-//       url,
-//       {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//           'Authorization': `Token ${localStorage.getItem('token')}`
-//         },
-//         body: JSON.stringify(requestBody)
-//       },
-//       'rescale-room-walls-layout'
-//     );
+    const responseData = await this.makeApiRequest(
+      url,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Token ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify(requestBody)
+      },
+      'rescale-room-walls-layout'
+    );
 
-//     if (responseData) {
+    if (responseData) {
       
-//       await this.fetchBinaryWallMasks(); // This will refresh object masks too
-//       this.forceCanvasUpdate();
+      await this.fetchBinaryWallMasks(); // This will refresh object masks too
+      this.forceCanvasUpdate();
 
-//       this.$message.success('Floor texture applied successfully!');
-//     } else {
-//       throw new Error('No final output received from server');
-//     }
-//   } catch (error) {
-//     console.error("Failed to apply floor texture:", error);
-//     this.showError(
-//       'Failed to Apply Floor Texture', 
-//       error.message || 'An error occurred while applying the floor texture.', 
-//       () => this.floorTextureSelected(texture_id)
-//     );
-//   } finally {
-//     this.canvasLoading = false;
-//   }
-// },
+      this.$message.success('Floor texture applied successfully!');
+    } else {
+      throw new Error('No final output received from server');
+    }
+  } catch (error) {
+    console.error("Failed to apply floor texture:", error);
+    this.showError(
+      'Failed to Apply Floor Texture', 
+      error.message || 'An error occurred while applying the floor texture.', 
+      () => this.floorTextureSelected(texture_id)
+    );
+  } finally {
+    this.canvasLoading = false;
+  }
+},
     // ==========================================
     // INITIALIZATION
     // ==========================================

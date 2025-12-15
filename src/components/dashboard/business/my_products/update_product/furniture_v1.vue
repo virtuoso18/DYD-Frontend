@@ -37,7 +37,7 @@
                 :Model_instance_id="selectedProduct.id"
                 style="width: 100%; max-height: 500px; height: 100%; border-radius: 10px"
               />
-              <!-- <a-button 
+              <a-button 
   type="text" 
   danger 
   @click="remove3DModel"
@@ -71,7 +71,7 @@
       <line x1="6" y1="6" x2="18" y2="18"></line>
     </svg>
   </template>
-</a-button> -->
+</a-button>
 
             </div>
             
@@ -110,7 +110,6 @@
             <div v-if="img.is_primary" style="position: absolute; top: -6px; left: -6px; background: #10b981; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 10px;">★</div>
             <!-- Delete Button -->
             <a-button
-           v-if="!img.is_primary"
   type="text"
   danger
   size="small"
@@ -315,104 +314,38 @@
 
           <!-- Colors & Textures -->
           <a-row :gutter="24">
-           <!-- Colors Section - Updated -->
-<a-col :span="12">
-  <h4 style="margin-bottom: 16px; font-weight: 500; font-size: 14px; color: #1f2937;">Colors</h4>
-  <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 12px;">
-    <!-- Existing Colors -->
-   <div 
+            <a-col :span="12">
+              <h4 style="margin-bottom: 16px; font-weight: 500; font-size: 14px; color: #1f2937;">Colors</h4>
+              <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 12px;">
+                <!-- Existing Colors -->
+                <div 
   v-for="color in selectedProduct.colors.available_colors" 
-  :key="color.id"
-  style="position: relative; margin-right: 12px; margin-bottom: 12px;"
+  :key="color.id" 
+  style="position: relative; width: 36px; height: 36px; margin-right: 10px;"
 >
-  <!-- Primary Badge -->
+
+  <!-- Color Box -->
+  <div
+    @click="selectColor(color.color)"
+    :style="{
+      width: '36px',
+      height: '36px',
+      borderRadius: '8px',
+      backgroundColor: color.color,
+      cursor: 'pointer',
+      border: productForm.colors.primary_color === color.color 
+        ? '3px solid #3b82f6' 
+        : '2px solid #e5e7eb'
+    }"
+  ></div>
+
+  <!-- Perfect Center X -->
   <div 
-    v-if="color.is_primary"
+    @click.stop="deleteColor(color.id)"
     style="
       position: absolute;
       top: -6px;
-      left: -6px;
-      background: #10b981;
-      color: white;
-      border-radius: 50%;
-      width: 20px;
-      height: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 10px;
-      z-index: 2;
-    "
-  >
-    ★
-  </div>
-  
-  <!-- Color Box Container -->
-  <div style="position: relative;">
-    <!-- Color Box -->
-    <div
-      @click="setPrimaryColor(color.id, color.color)"
-      :style="{
-        width: '36px',
-        height: '36px',
-        borderRadius: '8px',
-        backgroundColor: color.color,
-        cursor: 'pointer',
-        border: productForm.colors.primary_color === color.color || color.is_primary
-          ? '3px solid #3b82f6' 
-          : '2px solid #e5e7eb',
-        boxShadow: color.is_primary ? '0 0 8px rgba(59, 130, 246, 0.5)' : 'none'
-      }"
-    ></div>
-    
-    <!-- Edit Icon (Bottom Right Corner) -->
-    <div
-      @click.stop="openColorEditPopup(color)"
-      style="
-        position: absolute;
-        bottom: -4px;
-        right: -4px;
-        background: white;
-        border: 1px solid #d1d5db;
-        border-radius: 50%;
-        width: 18px;
-        height: 18px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        font-size: 10px;
-        z-index: 1;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        transition: all 0.2s;
-      "
-      @mouseenter="e => e.target.style.transform = 'scale(1.1)'"
-      @mouseleave="e => e.target.style.transform = 'scale(1)'"
-      :title="color.model_file_colored_product ? 'Edit 3D model' : 'Add 3D model'"
-    >
-      <svg 
-        width="10" 
-        height="10" 
-        viewBox="0 0 24 24" 
-        fill="none" 
-        :stroke="color.model_file_colored_product ? '#10b981' : '#6b7280'" 
-        stroke-width="2"
-        style="display: block;"
-      >
-        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-      </svg>
-    </div>
-  </div>
-
-  <!-- Delete Button (Top Right Corner) -->
-  <div 
-    @click.stop="deleteColor(color.id)"
-    v-if="!color.is_primary"
-    style="
-      position: absolute;
-      top: -8px;
-      right: -8px;
+      right: -6px;
       background: #ef4444;
       color: #fff;
       width: 20px;
@@ -423,37 +356,29 @@
       align-items: center;
       font-size: 14px;
       font-weight: bold;
-      line-height: 1;
+      line-height: 1; /* IMPORTANT for centering */
       cursor: pointer;
       box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-      z-index: 2;
-      transition: all 0.2s;
     "
-    @mouseenter="e => e.target.style.transform = 'scale(1.1)'"
-    @mouseleave="e => e.target.style.transform = 'scale(1)'"
-    title="Delete color"
   >
     ×
   </div>
+
 </div>
-    
-    <!-- Add Color Button -->
-    <div style="position: relative;">
-      <input 
-        type="color" 
-        v-model="customColor" 
-        @change="addColor(customColor)" 
-        style="opacity: 0; position: absolute; width: 36px; height: 36px; cursor: pointer;" 
-      />
-      <div style="width: 36px; height: 36px; border-radius: 8px; border: 2px dashed #d1d5db; display: flex; align-items: center; justify-content: center; cursor: pointer; background: #f9fafb;">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2">
-          <line x1="12" y1="5" x2="12" y2="19"></line>
-          <line x1="5" y1="12" x2="19" y2="12"></line>
-        </svg>
-      </div>
-    </div>
-  </div>
-</a-col>
+
+                
+                <!-- Add Color -->
+                <div style="position: relative;">
+                  <input type="color" v-model="customColor" @change="addColor(customColor)" style="opacity: 0; position: absolute; width: 36px; height: 36px; cursor: pointer;" />
+                  <div style="width: 36px; height: 36px; border-radius: 8px; border: 2px dashed #d1d5db; display: flex; align-items: center; justify-content: center; cursor: pointer; background: #f9fafb;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2">
+                      <line x1="12" y1="5" x2="12" y2="19"></line>
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </a-col>
 
             <a-col :span="12">
               <h4 style="margin-bottom: 16px; font-weight: 500; font-size: 14px; color: #1f2937;">Textures</h4>
@@ -525,138 +450,10 @@
     </a-row>
 
     <!-- Hidden File Inputs -->
+    <input ref="fileInput" type="file" style="display: none;" accept=".glb,.gltf" @change="handle3DModelUpload" />
     <input ref="imageInput" type="file" style="display: none;" accept=".jpg,.jpeg,.png" multiple @change="handleImageUpload" />
     <input ref="textureInput" type="file" style="display: none;" accept=".jpg,.jpeg,.png,.hdr,.exr" @change="handleTextureUpload" />
   </div>
-  <!-- Color Edit Popup -->
-<!-- Color Edit Popup -->
-<a-modal 
-  v-model:visible="colorEditPopupVisible" 
-  title="Edit Color"
-  :footer="null"
-  width="400px"
->
-  <div style="text-align: center; padding: 20px;">
-    {{editingColor}}
-    
-    <!-- Selected Color Display -->
-    <div 
-      :style="{
-        width: '100px',
-        height: '100px',
-        borderRadius: '12px',
-        backgroundColor: editingColor?.color,
-        margin: '0 auto 24px',
-        border: '2px solid #e5e7eb'
-      }"
-    ></div>
-
-    <!-- 3D Model Section -->
-    <a-col :xs="24" :sm="24" :md="24" :lg="24">
-      <div style="margin-bottom: 8px; text-align: left;">
-        <h3 style="margin: 0; font-size: 16px; font-weight: 600; color: #1f2937;">3D Model</h3>
-      </div>
-      <p style="color: #6b7280; font-size: 13px; margin-bottom: 24px; text-align: left;">Upload 3D model (.glb, .gltf up to 50MB)</p>
-      
-      <div style="padding-right: 24px;">
-        <div style="margin-bottom: 32px;">
-          
-          <!-- 3D Model Display (when model exists) -->
-          <div v-if="hasColorModel" style="position: relative; padding: 10px;">
-            <canvas_3d_model_renderer 
-              :glbModelUrl="get3DColorModelUrl(editingColor.model_file_colored_product)"
-              :Model_instance_id="selectedProduct.id"
-              style="width: 100%; max-height: 500px; height: 100%; border-radius: 10px"
-            />
-            
-            <!-- Change Model Button -->
-            <a-button 
-              @click="triggerFileInput"
-              style="position: absolute; top: 10px; right: 10px; background: white; border-radius: 6px; font-size: 11px;"
-              size="small"
-            >
-              Change Model
-            </a-button>
-
-            <!-- Delete Button -->
-            <a-button 
-              type="text" 
-              danger 
-              @click="removeColorModel"
-              style="
-                position: absolute; 
-                top: 12px; 
-                right: 80px;
-                background: rgba(255,255,255,0.9); 
-                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-                border-radius: 6px; 
-                width: 30px; 
-                height: 30px; 
-                padding: 0;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                line-height: 1;
-              "
-            >
-              <template #icon>
-                <svg 
-                  width="14" 
-                  height="14" 
-                  viewBox="0 0 24 24" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  stroke-width="2"
-                  style="display: block;"
-                >
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-              </template>
-            </a-button>
-          </div>
-          
-          <!-- Upload 3D Model Area (when no model exists) -->
-          <div 
-            v-else 
-            @click="triggerFileInput" 
-            @dragover.prevent="dragOver" 
-            @dragleave.prevent="dragLeave" 
-            @drop.prevent="dropColorModel"
-            style="width: 100%; height: 300px; border-radius: 12px; background: #f9fafb; border: 2px dashed #d1d5db; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer;"
-            :style="{ borderColor: isDragOver ? '#3b82f6' : '#d1d5db', background: isDragOver ? '#eff6ff' : '#f9fafb' }"
-          >
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1" style="margin-bottom: 16px;">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-              <polyline points="7,10 12,15 17,10"></polyline>
-              <line x1="12" y1="15" x2="12" y2="3"></line>
-            </svg>
-            <p style="color: #6b7280; font-size: 14px; margin: 0 0 4px 0; font-weight: 500;">
-              {{ isDragOver ? 'Drop 3D model here' : 'Drag and drop 3D model here, or click to upload' }}
-            </p>
-            <p style="color: #9ca3af; font-size: 12px; margin: 0;">Supported: .glb, .gltf (50MB max)</p>
-          </div>
-
-        </div>
-      </div>
-    </a-col>
-
-    <!-- Buttons -->
-    <div style="display: flex; gap: 12px; justify-content: center; margin-top: 24px;">
-      <a-button @click="closeColorEditPopup">Cancel</a-button>
-      <a-button type="primary" @click="updateColor" :disabled="!uploaded3dModelFile">Update</a-button>
-    </div>
-  </div>
-
-  <!-- Hidden File Input for Color Model -->
-  <input 
-    ref="colorFileInput" 
-    type="file" 
-    style="display: none;" 
-    accept=".glb,.gltf" 
-    @change="handleColorModelUpload" 
-  />
-</a-modal>
 </template>
 
 <script>
@@ -672,10 +469,6 @@ export default {
   },
   data() {
     return {
-      editingColor: null,
-      uploaded3dModelFile: null,
-      colorModelDragOver: false,
-      colorEditPopupVisible: false,
       productForm: {
         name: '', description: '', category_name: '', furniture_type: '',
         pricing: { price: '', sale_price: '' },
@@ -688,17 +481,13 @@ export default {
       isSaving: false,
       pending3DModel: null,
       imagePreviewsState: [],
-      hasUnsavedChanges: false,
-      local3dModelUrl: null,
+      hasUnsavedChanges: false
     }
   },
   computed: {
     has3DModel() {
       return this.selectedProduct['3d_model'] || this.pending3DModel;
-    },
-    hasColorModel() {
-    return this.editingColor?.model_file_colored_product || this.uploaded3dModelFile;
-  }
+    }
   },
   mounted() {
     this.initializeForm();
@@ -713,107 +502,6 @@ export default {
     productForm: { handler() { this.hasUnsavedChanges = true; }, deep: true }
   },
   methods: {
-   async setPrimaryColor(colorId, colorHex) {
-  try {
-    const token = localStorage.getItem('token');
-    
-    // Call API to set primary color
-    const response = await fetch(
-      `${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/colors/${colorId}/set-primary/`,
-      {
-        method: 'PATCH',
-        headers: {
-          'Authorization': `Token ${token}`
-        }
-      }
-    );
-
-    const result = await response.json();
-    
-    if (result.success) {
-      // Update all colors to remove primary status
-      this.selectedProduct.colors.available_colors.forEach(color => {
-        color.is_primary = false;
-      });
-      
-      // Set the selected color as primary
-      const selectedColor = this.selectedProduct.colors.available_colors.find(c => c.id === colorId);
-      if (selectedColor) {
-        selectedColor.is_primary = true;
-        this.productForm.colors.primary_color = colorHex;
-      }
-      
-      this.$message.success('Primary color updated successfully');
-    } else {
-      this.$message.error(result.message || 'Failed to set primary color');
-    }
-  } catch (error) {
-    console.error('Error setting primary color:', error);
-    this.$message.error('Error setting primary color');
-  }
-},
-   
-    openColorEditPopup(color) {
-  this.editingColor = JSON.parse(JSON.stringify(color)); // Deep copy
-  this.uploaded3dModelFile = null;
-  this.local3dModelUrl = null;
-  this.colorEditPopupVisible = true;
-},
-
-async updateColor() {
-  if (!this.uploaded3dModelFile) {
-    this.$message.warning('Please upload a 3D model file');
-    return;
-  }
-
-  if (!this.editingColor) {
-    this.$message.error('No color selected');
-    return;
-  }
-
-  try {
-    const token = localStorage.getItem('token');
-    const formData = new FormData();
-    
-    formData.append('model_file_colored_product', this.uploaded3dModelFile.file);
-
-    const response = await fetch(
-      `${this.$store.state.root_api}product/api-product-owner/products/colors/${this.editingColor.id}/update-model/`,
-      {
-        method: 'PATCH',
-        headers: {
-          'Authorization': `Token ${token}`
-        },
-        body: formData
-      }
-    );
-
-    const result = await response.json();
-
-    if (result.success) {
-      this.editingColor.model_file_colored_product = result.data.model_file_colored_product;
-      
-      const colorIndex = this.selectedProduct.colors.available_colors.findIndex(
-        c => c.id === this.editingColor.id
-      );
-      if (colorIndex !== -1) {
-        this.selectedProduct.colors.available_colors[colorIndex].model_file_colored_product = 
-          result.data.model_file_colored_product;
-      }
-
-      this.$message.success('Color model updated successfully');
-      
-      this.uploaded3dModelFile = null;
-      this.local3dModelUrl = null;
-      this.colorEditPopupVisible = false;
-    } else {
-      this.$message.error(result.message || 'Failed to update color model');
-    }
-  } catch (error) {
-    console.error('Error updating color model:', error);
-    this.$message.error('Error updating color model. Please try again.');
-  }
-},
     initializeForm() {
       if (this.selectedProduct) {
         this.productForm = {
@@ -843,22 +531,6 @@ async updateColor() {
       return this.pending3DModel ? URL.createObjectURL(this.pending3DModel) : this.$store.state.root_media_api + this.selectedProduct['3d_model'];
     },
 
- get3DColorModelUrl(url) {
-  if (this.local3dModelUrl) {
-    return this.local3dModelUrl;
-  }
-  
-  if (!url) {
-    console.warn('URL is empty or undefined');
-    return '';
-  }
-  
-  const baseUrl = this.$store.state.root_media_api;
-  const cleanUrl = url.startsWith('/') ? url : `/${url}`;
-  
-  return `${baseUrl}${cleanUrl}`;
-},
-
     handleBeforeUnload(e) {
       if (this.hasUnsavedChanges) {
         const message = 'You have unsaved changes. Are you sure you want to leave?';
@@ -885,36 +557,15 @@ async updateColor() {
     uploadMoreImages() { this.$refs.imageInput.click(); },
     uploadTexture() { this.$refs.textureInput.click(); },
 
-    // handle3DModelUpload(event) {
-    //   const file = event.target.files[0];
-    //   if (file && this.validate3DModelFile(file)) {
-    //     this.pending3DModel = file;
-    //     this.hasUnsavedChanges = true;
-    //     this.$message.success(`3D Model "${file.name}" ready for upload.`);
-    //   }
-    //   event.target.value = '';
-    // },
-    
-
-   process3dModelFile(file) {
-   
-    if (this.local3dModelUrl) {
-      URL.revokeObjectURL(this.local3dModelUrl);
-    }
-    
-    // Create new URL
-    const url = URL.createObjectURL(file);
-    this.local3dModelUrl = url;  // Vue reactivity automatically detects this change
-    
-    this.uploaded3dModelFile = {
-      file: file,
-      name: file.name,
-      size: (file.size / 1024 / 1024).toFixed(2) + ' MB'
-    };
-    
-    console.log(' 3D Model loaded locally:', file.name);
-  },
-
+    handle3DModelUpload(event) {
+      const file = event.target.files[0];
+      if (file && this.validate3DModelFile(file)) {
+        this.pending3DModel = file;
+        this.hasUnsavedChanges = true;
+        this.$message.success(`3D Model "${file.name}" ready for upload.`);
+      }
+      event.target.value = '';
+    },
 
     handleImageUpload(event) {
       const files = Array.from(event.target.files);
@@ -962,15 +613,6 @@ async updateColor() {
       }
       return true;
     },
-
-    handle3dModelUpload(event) {
-      const file = event.target.files[0];
-      if (file && this.validate3DModelFile(file)) {
-        this.process3dModelFile(file);
-      }
-      event.target.value = '';
-    },
-
 
     validateImageFile(file) {
       const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
@@ -1058,48 +700,32 @@ async updateColor() {
     },
 
     // API Methods
-   async addColor(colorHex) {
-  if (this.selectedProduct.colors.available_colors.some(color => color.color === colorHex)) {
-    this.$message.warning('Color already exists');
-    return;
-  }
-  
-  try {
-    const token = localStorage.getItem('token');
-    const response = await fetch(
-      `${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/colors/`,
-      {
-        method: 'POST',
-        headers: {
-          'Authorization': `Token ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ color: colorHex })
+    async addColor(colorHex) {
+      if (this.selectedProduct.colors.available_colors.some(color => color.color === colorHex)) {
+        this.$message.warning('Color already exists');
+        return;
       }
-    );
+      
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/colors/`, {
+          method: 'POST', headers: { 'Authorization': `Token ${token}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ color: colorHex })
+        });
 
-    const result = await response.json();
-    if (result.success) {
-      this.selectedProduct.colors.available_colors.push({
-        id: result.data.id,
-        color: result.data.color,
-        is_primary: result.data.is_primary || false
-      });
-      
-      // If this is the first color, set it as primary automatically
-      if (this.selectedProduct.colors.available_colors.length === 1) {
-        await this.setPrimaryColor(result.data.id, colorHex);
+        const result = await response.json();
+        if (result.success) {
+          this.selectedProduct.colors.available_colors.push({ id: result.data.id, color: result.data.color });
+          this.selectColor(colorHex);
+          this.$message.success('Color added successfully');
+        } else {
+          this.$message.error(result.message || 'Failed to add color');
+        }
+      } catch (error) {
+        this.$message.error('Error adding color');
+        console.error('Error adding color:', error);
       }
-      
-      this.$message.success('Color added successfully');
-    } else {
-      this.$message.error(result.message || 'Failed to add color');
-    }
-  } catch (error) {
-    this.$message.error('Error adding color');
-    console.error('Error adding color:', error);
-  }
-},
+    },
 
     async addTextureToProduct(textureFile) {
       try {
@@ -1153,45 +779,31 @@ async updateColor() {
     },
 
     async deleteColor(colorId) {
-  const colorToDelete = this.selectedProduct.colors.available_colors.find(c => c.id === colorId);
-  
-  if (colorToDelete && colorToDelete.is_primary) {
-    this.$message.error('Cannot delete primary color. Set another color as primary first.');
-    return;
-  }
-  
-  this.$confirm({
-    title: 'Delete Color',
-    content: 'Are you sure you want to delete this color?',
-    okText: 'Delete',
-    okType: 'danger',
-    cancelText: 'Cancel',
-    onOk: async () => {
-      try {
-        const token = localStorage.getItem('token');
-        const response = await fetch(
-          `${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/colors/${colorId}/`,
-          {
-            method: 'DELETE',
-            headers: { 'Authorization': `Token ${token}` }
-          }
-        );
+      this.$confirm({
+        title: 'Delete Color', content: 'Are you sure you want to delete this color?',
+        okText: 'Delete', okType: 'danger', cancelText: 'Cancel',
+        onOk: async () => {
+          try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/colors/${colorId}/`, {
+              method: 'DELETE', headers: { 'Authorization': `Token ${token}` }
+            });
 
-        const result = await response.json();
-        if (result.success) {
-          const index = this.selectedProduct.colors.available_colors.findIndex(color => color.id === colorId);
-          if (index !== -1) this.selectedProduct.colors.available_colors.splice(index, 1);
-          this.$message.success('Color deleted successfully');
-        } else {
-          this.$message.error(result.message || 'Failed to delete color');
+            const result = await response.json();
+            if (result.success) {
+              const index = this.selectedProduct.colors.available_colors.findIndex(color => color.id === colorId);
+              if (index !== -1) this.selectedProduct.colors.available_colors.splice(index, 1);
+              this.$message.success('Color deleted successfully');
+            } else {
+              this.$message.error(result.message || 'Failed to delete color');
+            }
+          } catch (error) {
+            this.$message.error('Error deleting color');
+            console.error('Error deleting color:', error);
+          }
         }
-      } catch (error) {
-        this.$message.error('Error deleting color');
-        console.error('Error deleting color:', error);
-      }
-    }
-  });
-},
+      });
+    },
 
     async deleteTexture(textureId) {
       this.$confirm({
@@ -1333,68 +945,7 @@ async updateColor() {
       } finally {
         this.isSaving = false;
       }
-    },
-    triggerFileInput() {
-  this.$refs.colorFileInput.click();
-},
-
-closeColorEditPopup() {
-  this.colorEditPopupVisible = false;
-  this.uploaded3dModelFile = null;
-  this.local3dModelUrl = null;
-  this.editingColor = null;
-},
-
-handleColorModelUpload(event) {
-  const file = event.target.files[0];
-  if (file && this.validate3DModelFile(file)) {
-    this.processColorModelFile(file);
-  }
-  event.target.value = '';
-},
-
-processColorModelFile(file) {
-  if (this.local3dModelUrl) {
-    URL.revokeObjectURL(this.local3dModelUrl);
-  }
-  
-  const url = URL.createObjectURL(file);
-  this.local3dModelUrl = url;
-  
-  this.uploaded3dModelFile = {
-    file: file,
-    name: file.name,
-    size: (file.size / 1024 / 1024).toFixed(2) + ' MB'
-  };
-  
-  console.log('✅ Color 3D Model loaded locally:', file.name);
-},
-
-dropColorModel(event) {
-  event.preventDefault();
-  this.colorModelDragOver = false;
-  const file = event.dataTransfer.files[0];
-  if (file && this.validate3DModelFile(file)) {
-    this.processColorModelFile(file);
-  }
-},
-
-removeColorModel() {
-  this.$confirm({
-    title: 'Remove 3D Model',
-    content: 'Are you sure you want to remove the 3D model for this color?',
-    okText: 'Remove',
-    okType: 'danger',
-    cancelText: 'Cancel',
-    onOk: () => {
-      this.uploaded3dModelFile = null;
-      this.local3dModelUrl = null;
-      this.$message.success('3D Model will be removed when you save.');
-   
     }
-
-  });
-},
   }
 }
 </script>

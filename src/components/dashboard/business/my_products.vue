@@ -264,14 +264,14 @@
 </a-modal>
 
 <!-- {{ show_add_new_light_product_locally_3d_model }} -->
-<!-- <add_furniture_modal_local_3d_model v-model:visible="show_add_new_product_locally_3d_model" 
+<add_furniture_modal_local_3d_model v-model:visible="show_add_new_product_locally_3d_model" 
         :types="['Modern','Scandinavian','Classic','Minimalist','Industrial','Rustic','Boho','other',]"
         @product-created="onProductCreated"
         @cancel="onCancel"
         :rendered_modal_3D_id="model_instance_id"
-        /> -->
+        />
 
-        <add_furniture_modal_local_3d_model v-model:visible="show_add_new_product_locally_3d_model" 
+        <add_furniture_modal_local_3d_model_create_variation v-model:visible="show_add_new_product_locally_3d_model" 
         :types="['Modern','Scandinavian','Classic','Minimalist','Industrial','Rustic','Boho','other',]"
         @product-created="onProductCreated"
         @cancel="onCancel"
@@ -690,7 +690,7 @@
                                                     ${{ product.pricing.price }}
                                                 </a-col>
 
-                                                <a-col span="16">
+                                                <a-col span="17">
   <a-button 
     block 
     @click="viewProduct(product)"
@@ -701,7 +701,7 @@
 </a-col>
 
                                                 
-                                                <a-col span="1"></a-col>
+                                                
                                                 <a-col span="6">
                                                     <!-- {{product,is_favorited}} -->
                                                     <!-- <a-button><HeartOutlined /></a-button> -->
@@ -1740,6 +1740,7 @@ import show_Light_product_sunk from '@/components/dashboard/business/my_products
 import show_Light_product_unsunk from '@/components/dashboard/business/my_products/product_details/light_product_ununk.vue'
 import show_Light_product_3D from '@/components/dashboard/business/my_products/product_details/light_product_3d.vue'
 import add_furniture_modal_local_3d_model from '@/components/dashboard/business/my_products/add_new_product/add_furniture_modal_local_3d_model.vue'
+import add_furniture_modal_local_3d_model_create_variation from '@/components/dashboard/business/my_products/add_new_product/add_furniture_modal_local_3d_model_create_variation.vue'
 import add_light_modal_local_3d_model from '@/components/dashboard/business/my_products/add_new_product/add_light_modal_local_3d_model.vue'
 
 export default {
@@ -1758,6 +1759,7 @@ export default {
         add_new_Light,
         add_new_furniture,
         add_furniture_modal_local_3d_model,
+        add_furniture_modal_local_3d_model_create_variation,
         add_light_modal_local_3d_model,
 
         // edit_update
