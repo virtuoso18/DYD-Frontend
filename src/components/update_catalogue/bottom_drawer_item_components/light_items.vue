@@ -92,8 +92,6 @@
                   <div
                     v-else
                     style="
-                      max-height: 200px;
-                      overflow-y: auto;
                       padding-right: 8px;
                     "
                   >
@@ -186,8 +184,6 @@
                   <div
                     v-else
                     style="
-                      max-height: 200px;
-                      overflow-y: auto;
                       padding-right: 8px;
                     "
                   >
@@ -231,8 +227,6 @@
             margin-bottom: 20px;
             padding-bottom: 15px;
             border-bottom: 1px solid #f0f0f0;
-            max-height: 300px;
-            overflow-y: scroll;
           "
         >
           <a-collapse v-model:activeKey="colourAcitveKey">
