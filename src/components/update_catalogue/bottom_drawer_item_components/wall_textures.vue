@@ -104,8 +104,6 @@
                 <a-collapse-panel key="1" header="Style">
                   <div
                     style="
-                      max-height: 200px;
-                      overflow-y: auto;
                       padding-right: 8px;
                     "
                   >
