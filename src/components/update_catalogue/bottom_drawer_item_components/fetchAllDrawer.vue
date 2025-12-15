@@ -133,8 +133,8 @@ export default {
     (this.seeAll_Floor?.length > 0 && 'floor') ||
     (this.seeAll_Walls?.length > 0 && 'wall') ||
     (this.seeAll_furnitures?.length > 0 && 'furniture') ||
-    (this.seeAll_Lights?.length > 0 && 'light')
-    // 'floor' // fallback default
+    (this.seeAll_Lights?.length > 0 && 'light') ||
+    'furniture' // fallback default
 }
 ,
   computed: {

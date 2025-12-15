@@ -50,32 +50,15 @@
                 <b>${{ product.product_price }}</b>
               </a-col>
 
-              <a-col span="17">
-                <!-- {{ product }} -->
-                  <!-- goto_product_Route(product){
-      this.$router.push({
-      name: 'buisness_product',
-      params: {
-        buisness_name: this.$route.params.buisness_name,
-        product_type: product.type,
-        product_id: product.product_id
-      }
-    })
-  
-    }, -->
-                <!-- <a-button block @click="goto_product_Route(product)">
-                  Product Details
-                </a-button> -->
-                 <a-col span="16">
+               <a-col span="17">
   <a-button
     @click="goto_product_Route(product)"
-    class="w-full  !text-[8px]"
-    style="font-family: var(--font-family-main); font-size:11px;"
+    class="w-full  !text-[12px]"
+    style="font-family: var(--font-family-main); "
   >
     Product Details
   </a-button>
  </a-col>
-              </a-col>
 
               <a-col span="1"></a-col>
               <a-col span="4">
