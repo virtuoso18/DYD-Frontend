@@ -10,17 +10,17 @@
             border-bottom: 1px solid #f0f0f0;
           "
         >
-        <div class="flex justify-between">
-          <h4 style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600">
-            Price
-          </h4>
-          <img
+          <div class="flex justify-between">
+            <h4 style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600">
+              Price
+            </h4>
+            <img
               class="w-[24px] cursor-pointer"
               @click="clearFilters"
               src="../../../assets/icons/ClearfilterIcon.svg"
               alt="clear filter"
             />
-        </div>
+          </div>
           <a-slider
             :min="0"
             :max="500000"
@@ -43,37 +43,90 @@
             border-bottom: 1px solid #f0f0f0;
           "
         >
-          <h4 style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600">
-            Category
-          </h4>
-          <div v-if="loadingFilters" style="text-align: center; padding: 10px">
-            <a-spin size="small" />
-          </div>
-          <div
-            v-else
-            style="max-height: 200px; overflow-y: auto; padding-right: 8px"
-          >
-            <a-checkbox
-              v-for="category in availableCategories"
-              :key="category.id"
-              v-model:checked="filters.selectedCategories[category.id]"
-              @change="applyFilters"
-              style="display: flex; align-items: center; margin-bottom: 8px"
-            >
-              <span
-                >{{ category.name }}
-                <span style="color: #999; font-size: 11px; margin-left: 4px"
-                  >({{ category.product_count }})</span
-                ></span
+          <a-row>
+            <a-col :xs="0" :sm="0" :md="0" :lg="24">
+              <h4 style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600">
+                Category
+              </h4>
+              <div
+                v-if="loadingFilters"
+                style="text-align: center; padding: 10px"
               >
-            </a-checkbox>
-            <div
-              v-if="availableCategories.length === 0"
-              style="color: #999; font-size: 12px"
-            >
-              No categories available
-            </div>
-          </div>
+                <a-spin size="small" />
+              </div>
+              <div
+                v-else
+                style="max-height: 200px; overflow-y: auto; padding-right: 8px"
+              >
+                <a-checkbox
+                  v-for="category in availableCategories"
+                  :key="category.id"
+                  v-model:checked="filters.selectedCategories[category.id]"
+                  @change="applyFilters"
+                  style="display: flex; align-items: center; margin-bottom: 8px"
+                >
+                  <span
+                    >{{ category.name }}
+                    <span style="color: #999; font-size: 11px; margin-left: 4px"
+                      >({{ category.product_count }})</span
+                    ></span
+                  >
+                </a-checkbox>
+                <div
+                  v-if="availableCategories.length === 0"
+                  style="color: #999; font-size: 12px"
+                >
+                  No categories available
+                </div>
+              </div>
+            </a-col>
+            <a-col :xs="24" :sm="24" :md="24" :lg="0">
+              <a-collapse v-model:activeKey="categoryKey">
+                <a-collapse-panel key="1" header="Category">
+                  <div
+                    v-if="loadingFilters"
+                    style="text-align: center; padding: 10px"
+                  >
+                    <a-spin size="small" />
+                  </div>
+                  <div
+                    v-else
+                    style="
+                      max-height: 200px;
+                      overflow-y: auto;
+                      padding-right: 8px;
+                    "
+                  >
+                    <a-checkbox
+                      v-for="category in availableCategories"
+                      :key="category.id"
+                      v-model:checked="filters.selectedCategories[category.id]"
+                      @change="applyFilters"
+                      style="
+                        display: flex;
+                        align-items: center;
+                        margin-bottom: 8px;
+                      "
+                    >
+                      <span
+                        >{{ category.name }}
+                        <span
+                          style="color: #999; font-size: 11px; margin-left: 4px"
+                          >({{ category.product_count }})</span
+                        ></span
+                      >
+                    </a-checkbox>
+                    <div
+                      v-if="availableCategories.length === 0"
+                      style="color: #999; font-size: 12px"
+                    >
+                      No categories available
+                    </div>
+                  </div>
+                </a-collapse-panel>
+              </a-collapse>
+            </a-col>
+          </a-row>
         </div>
 
         <!-- Furniture Type Filter -->
@@ -84,37 +137,92 @@
             border-bottom: 1px solid #f0f0f0;
           "
         >
-          <h4 style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600">
-            Light Type
-          </h4>
-          <div v-if="loadingFilters" style="text-align: center; padding: 10px">
-            <a-spin size="small" />
-          </div>
-          <div
-            v-else
-            style="max-height: 200px; overflow-y: auto; padding-right: 8px"
-          >
-            <a-checkbox
-              v-for="type in availableFurnitureTypes"
-              :key="type.furniture_type"
-              v-model:checked="filters.selectedTypes[type.furniture_type]"
-              @change="applyFilters"
-              style="display: flex; align-items: center; margin-bottom: 8px"
-            >
-              <span
-                >{{ type.furniture_type }}
-                <span style="color: #999; font-size: 11px; margin-left: 4px"
-                  >({{ type.product_count }})</span
-                ></span
+          <a-row>
+            <a-col :xs="0" :sm="0" :md="0" :lg="24">
+              <h4 style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600">
+                Light Type
+              </h4>
+              <div
+                v-if="loadingFilters"
+                style="text-align: center; padding: 10px"
               >
-            </a-checkbox>
-            <div
-              v-if="availableFurnitureTypes.length === 0"
-              style="color: #999; font-size: 12px"
-            >
-              No light types available
-            </div>
-          </div>
+                <a-spin size="small" />
+              </div>
+              <div
+                v-else
+                style="max-height: 200px; overflow-y: auto; padding-right: 8px"
+              >
+                <a-checkbox
+                  v-for="type in availableFurnitureTypes"
+                  :key="type.furniture_type"
+                  v-model:checked="filters.selectedTypes[type.furniture_type]"
+                  @change="applyFilters"
+                  style="display: flex; align-items: center; margin-bottom: 8px"
+                >
+                  <span
+                    >{{ type.furniture_type }}
+                    <span style="color: #999; font-size: 11px; margin-left: 4px"
+                      >({{ type.product_count }})</span
+                    ></span
+                  >
+                </a-checkbox>
+                <div
+                  v-if="availableFurnitureTypes.length === 0"
+                  style="color: #999; font-size: 12px"
+                >
+                  No light types available
+                </div>
+              </div>
+            </a-col>
+            <a-col :xs="24" :sm="24" :md="24" :lg="0">
+              <a-collapse v-model:activeKey="lightTypeKey">
+                <a-collapse-panel key="1" header="Light Type">
+                  <div
+                    v-if="loadingFilters"
+                    style="text-align: center; padding: 10px"
+                  >
+                    <a-spin size="small" />
+                  </div>
+                  <div
+                    v-else
+                    style="
+                      max-height: 200px;
+                      overflow-y: auto;
+                      padding-right: 8px;
+                    "
+                  >
+                    <a-checkbox
+                      v-for="type in availableFurnitureTypes"
+                      :key="type.furniture_type"
+                      v-model:checked="
+                        filters.selectedTypes[type.furniture_type]
+                      "
+                      @change="applyFilters"
+                      style="
+                        display: flex;
+                        align-items: center;
+                        margin-bottom: 8px;
+                      "
+                    >
+                      <span
+                        >{{ type.furniture_type }}
+                        <span
+                          style="color: #999; font-size: 11px; margin-left: 4px"
+                          >({{ type.product_count }})</span
+                        ></span
+                      >
+                    </a-checkbox>
+                    <div
+                      v-if="availableFurnitureTypes.length === 0"
+                      style="color: #999; font-size: 12px"
+                    >
+                      No light types available
+                    </div>
+                  </div>
+                </a-collapse-panel>
+              </a-collapse>
+            </a-col>
+          </a-row>
         </div>
 
         <!-- Colors Filter -->
@@ -340,7 +448,8 @@ export default {
   },
   data() {
     return {
-      styleActiveKey: ["1"],
+      categoryKey: ["1"],
+      lightTypeKey: ["1"],
       colourAcitveKey: ["1"],
       products: [],
       wishlisted: new Set(),
