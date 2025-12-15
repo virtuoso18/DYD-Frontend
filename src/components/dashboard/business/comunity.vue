@@ -1,5 +1,5 @@
 <template>
-  <div class="sm:main min-h-[100vh] pl-2 md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh] ">
+  <div class="sm:main min-h-[100vh] pl-2 md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh] " >
     <!-- Loading State -->
     <div v-if="loading" style="text-align: center; padding: 40px">
       <a-spin size="large" />
@@ -7,8 +7,8 @@
     </div>
 
     <!-- Posts Grid View -->
-    <a-row v-if="selectedPost == null" :gutter="[16, 16]">
-      <a-col :span="24" >
+    <a-row v-if="selectedPost == null" >
+      <a-col :span="24"  >
         <div style="background-color: white;border-radius: 12px;padding:10px;margin-top:15px;border:1px solid rgba(0,0,0,0.1);">
 
         <h3>My Community</h3>
@@ -27,13 +27,13 @@
                 <p style="color: #999">
                   Start sharing your amazing designs with the community!
                 </p>
-                <a-button
+                <!-- <a-button
                   type="primary"
                   style="margin-top: 16px"
                   @click="$router.push('/designs')"
                 >
                   Create Your First Design
-                </a-button>
+                </a-button> -->
               </div>
               <a-row v-else>
                 <a-col

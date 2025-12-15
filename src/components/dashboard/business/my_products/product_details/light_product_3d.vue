@@ -7,8 +7,8 @@
       @back="back_product_list"
     >
       <template #extra>
-        <a-button > <template #icon> <ClockCircleOutlined/></template>Create Variation</a-button>
-        <a-avatar style="background-color: #dc2626;">A</a-avatar>
+        <!-- <a-button > <template #icon> <ClockCircleOutlined/></template>Create Variation</a-button>
+        <a-avatar style="background-color: #dc2626;">A</a-avatar> -->
       </template>
     </a-page-header>
 

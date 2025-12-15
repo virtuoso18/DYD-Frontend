@@ -570,7 +570,7 @@
           </div>
 
           <div style="display: flex; gap: 12px; justify-content: center;">
-            <a-button @click="currentStep = 1" size="large">← Back to Edit</a-button>
+            <a-button @click="handlePreviewBack" size="large">← Back to Edit</a-button>
             <a-button type="primary" 
                       size="large"
                       :loading="isSaving"
@@ -681,6 +681,11 @@ export default {
   },
   
   methods: {
+    async handlePreviewBack() {
+      this.currentStep = 1;
+      await this.$nextTick();
+      await this.loadTemplateForEditing();
+    },
     base_url(){return window.location.origin+'/'
 },
      shortenUrl(url) {
@@ -1564,5 +1569,31 @@ async saveGeneratedBanner() {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
+}
+
+
+
+
+
+
+
+
+
+
+
+@media screen and (max-width: 1190px) {
+  .banner-image {
+    height: 70%;
+  }
+}
+@media screen and (max-width: 1048px) {
+  .banner-image {
+    height: 65%;
+  }
+}
+@media screen and (max-width: 768px) {
+  .banner-image {
+    height: 73%;
+  }
 }
 </style>

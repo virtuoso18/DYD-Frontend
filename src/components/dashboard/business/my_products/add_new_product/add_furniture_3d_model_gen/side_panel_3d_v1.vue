@@ -2249,16 +2249,9 @@ getQueueStatusColor(status) {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: 160vh;          /* below md */
+  height: 90vh;
+  overflow-y: scroll;
   margin: 0 auto;
-}
-
-/* md and above (≥768px) */
-@media (min-width: 768px) {
-  .image-to-3d-container {
-    height: 90vh;
-    overflow-y: auto;
-  }
 }
 
 /* Edit Modal Styles */

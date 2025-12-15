@@ -213,7 +213,8 @@
               />
             </a-col>
           </a-row>
-
+<a-row>
+  <a-col :span="12">
           <!-- Dimensions -->
           <a-descriptions title="Dimensions" :column="1" size="small" style="margin-bottom: 24px;">
             <a-descriptions-item 
@@ -247,7 +248,18 @@
               {{ selectedProduct.dimensions.weight }} meter
             </a-descriptions-item>
           </a-descriptions>
+</a-col>
+  <a-col :span="12">
+          <h4>AR Product</h4>
+          <!-- icon='@/assets/apply_changes_img.png' -->
+          <a-qrcode
+          error-level="H"
+          icon="/apply_changes_img.png"
+          :value="windowLocation + '/ar-product/' + selectedProduct.id"
+/>
 
+  </a-col>
+</a-row>
           <!-- Colors and Textures -->
         <a-row :gutter="16" style="margin-bottom: 24px;">
           <a-col :span="12">
@@ -378,6 +390,7 @@
 
 <script>
 import canvas_3d_model_renderer from "@/components/store/canvas_3d_model_renderer.vue"
+import qr_icon from '@/assets/apply_changes_img.png'
 import {DeleteOutlined ,EditOutlined ,ClockCircleOutlined,
   FileSyncOutlined
  } from '@ant-design/icons-vue';
@@ -387,7 +400,7 @@ export default {
   components: {
     canvas_3d_model_renderer,TextureModal,
     DeleteOutlined ,EditOutlined ,ClockCircleOutlined,
-    FileSyncOutlined
+    FileSyncOutlined,qr_icon
   },
    props: {
     selectedProduct: {
@@ -398,6 +411,7 @@ export default {
 
   data() {
     return {
+      windowLocation : window.location.origin,
       activeImageIndex: null,
       activeTextureView: null,
       activeView: '3d',

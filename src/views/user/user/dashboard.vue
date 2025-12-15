@@ -385,7 +385,7 @@
                     stroke-linejoin="round"
                   />
                 </svg>              </div>
-              <span class="nav-text text-center text-sm" :class="{ '!text-white': $route.name === 'user_manage_subscription' }" style="font-family: Poppins; font-weight: 400">
+              <span class="nav-text text-center text-sm" :class="{ '!text-white': $route.name === 'user_settings' }" style="font-family: Poppins; font-weight: 400">
                 Settings
               </span>
             </router-link>

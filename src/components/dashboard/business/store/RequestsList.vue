@@ -598,11 +598,11 @@ export default {
           message.success('Regeneration started successfully')
           this.$emit('refresh')
         } else {
-          throw new Error('Failed to regenerate')
+          throw new Error('Failed to Regenerate')
         }
       } catch (error) {
         console.error('Error regenerating:', error)
-        message.error('Failed to regenerate room')
+        message.error('Failed to Regenerate room')
       } finally {
         this.regeneratingIds = this.regeneratingIds.filter(id => id !== request.id)
       }

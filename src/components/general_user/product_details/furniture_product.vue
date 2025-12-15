@@ -284,6 +284,8 @@
                  
 <a-qrcode
   error-level="H"
+            icon="/apply_changes_img.png"
+
   :value="windowLocation + '/ar-product/' + selectedProduct.id"
 />
                     <!-- icon="https://www.antdv.com/assets/logo.1ef800a8.svg" -->

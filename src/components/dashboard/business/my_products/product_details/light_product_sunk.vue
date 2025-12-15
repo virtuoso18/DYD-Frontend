@@ -6,12 +6,12 @@
       @back="back_product_list"
     >
       <template #extra>
-        <a-button> 
+        <!-- <a-button> 
           <template #icon> 
             <ClockCircleOutlined/>
           </template>
           Create Variation
-        </a-button>
+        </a-button> -->
       </template>
     </a-page-header>
 

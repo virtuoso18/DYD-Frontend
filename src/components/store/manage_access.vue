@@ -482,7 +482,7 @@
 </h2>
         </a-col>
         <a-col class="!flex flex-row !gap-3">
-           <a-button 
+           <!-- <a-button 
     type="primary" 
     size="large" 
     @click="showAssignTaskModal"
@@ -490,7 +490,7 @@
   >
     <a-icon type="plus" />
     Assign New Task
-  </a-button>
+  </a-button> -->
 
   <a-button 
     type="default" 
@@ -586,62 +586,6 @@
 
       </a-tab-pane>
 
-<a-tab-pane key="pending-professionals" tab="Pending Professional Access">
-  <a-empty v-if="pendingProfessionalAccess.length === 0" 
-    description="No pending professional access requests" 
-    style="margin: 50px 0;"
-  />
-  
-  <a-row :gutter="16">
-    <a-col 
-      v-for="prof in pendingProfessionalAccess" 
-      :key="prof.id" 
-      :xs="24" 
-      :sm="12" 
-      :md="8"
-    >
-      <a-card hoverable style="margin-bottom: 16px;">
-        <template #cover>
-          <div style="text-align: center; padding: 20px; background: #f0f2f5;">
-            <a-avatar 
-              :src="prof.professional_user.profile_picture" 
-              :size="64"
-              icon="user"
-            />
-          </div>
-        </template>
-        
-        <a-card-meta>
-          <template #title>
-            {{ prof.professional_user.full_name }}
-          </template>
-          <template #description>
-            {{ prof.professional_user.email }}
-          </template>
-        </a-card-meta>
-
-        <div style="margin-top: 12px;">
-          <p><strong>Status:</strong> <a-tag color="orange">Pending Acceptance</a-tag></p>
-          <p><strong>Requested:</strong> {{ new Date(prof.created_at).toLocaleDateString() }}</p>
-        </div>
-
-        <div style="display: flex; gap: 8px; margin-top: 16px;">
-          <a-button type="default" style="flex: 1;" disabled>
-            Awaiting Response
-          </a-button>
-          <a-button 
-            type="primary" 
-            danger 
-            @click="revokeProfessionalAccess(prof.id)"
-            style="flex: 1;"
-          >
-            Cancel Request
-          </a-button>
-        </div>
-      </a-card>
-    </a-col>
-  </a-row>
-</a-tab-pane>
       <a-tab-pane key="all-tasks" tab="All Tasks">
         <task_List />
       </a-tab-pane>

@@ -13,7 +13,7 @@
                     <div v-if="!filteredProducts?.length"  style="height:70vh;gap:20px;;flex-direction:column;display: flex;justify-content: center;align-items: center;">
                             <!-- <a-empty :description="'No Furniture Available'"></a-empty> -->
     
-                        <a-empty :description="'You hanve not added anything in your likes till yet '"> </a-empty>
+                        <a-empty :description="'You have not added anything in your likes till yet '"> </a-empty>
                     </div>
     
                         <a-row v-else>
@@ -73,7 +73,7 @@
                     </a-tab-pane>
                     <a-tab-pane key="rooms" tab="rooms" >
                     <div v-if="!filteredrooms?.length"  style="height:70vh;gap:20px;;flex-direction:column;display: flex;justify-content: center;align-items: center;">
-                        <a-empty :description="'You hanve not added any room in your likes till yet '"> </a-empty>
+                        <a-empty :description="'You have not added any room in your likes till yet '"> </a-empty>
                         
     
                         
@@ -140,7 +140,7 @@
                       <a-tab-pane key="community-posts" tab="Community Posts" >
                   
      <div v-if="community_posts.length===0"  style="height:70vh;gap:20px;;flex-direction:column;display: flex;justify-content: center;align-items: center;">
-                        <a-empty :description="'You hanve not posted anything on comunity yet '"> </a-empty>
+                        <a-empty :description="'You have not posted anything on comunity yet '"> </a-empty>
                         
     
                         

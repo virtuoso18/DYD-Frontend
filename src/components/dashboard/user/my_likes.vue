@@ -3,7 +3,21 @@
   <div className="py-4">
 
     
-    <div class="sm:main sm:border border-gray-300   sm:rounded-xl min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh]">
+    <div 
+     class="
+    
+             sm:main 
+             min-h-[100vh] 
+             md:min-h-[100vh] 
+             md:border border-gray-300 
+             
+             sm:rounded-xl 
+             p-4 
+             
+             bg-white
+             border-gray-200 
+             xl:min-h-[100vh] 
+             2xl:min-h-[100vh]">
         <div style="padding:10px;border-radius:15px;min-height:100vh">
     <h3 style="font-family: Poppins, sans-serif; font-weight: 500; font-size: 16px; line-height: 24px; letter-spacing: 0;">
       Liked Products & Rooms 
@@ -13,7 +27,7 @@
                     <div v-if="!filteredProducts?.length"  style="height:70vh;gap:20px;;flex-direction:column;display: flex;justify-content: center;align-items: center;">
                             <!-- <a-empty :description="'No Furniture Available'"></a-empty> -->
     
-                        <a-empty :description="'You hanve not added anything in your likes till yet '"> </a-empty>
+                        <a-empty :description="'You have not added anything in your likes till yet '"> </a-empty>
                     </div>
     
                         <a-row v-else>
@@ -73,7 +87,7 @@
                     </a-tab-pane>
                     <a-tab-pane key="rooms" tab="rooms" >
                     <div v-if="!filteredrooms?.length"  style="height:70vh;gap:20px;;flex-direction:column;display: flex;justify-content: center;align-items: center;">
-                        <a-empty :description="'You hanve not added any room in your likes till yet '"> </a-empty>
+                        <a-empty :description="'You have not added any room in your likes till yet '"> </a-empty>
                         
     
                         

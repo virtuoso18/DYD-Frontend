@@ -84,37 +84,37 @@
         @cancel="onCancel"
         :rendered_modal_3D_id="model_instance_id"
     />
- <div class="flex flex-col md:flex-row w-full">
-  <!-- Center Panel (First on Mobile, Middle on Desktop) - 12/24 = 50% width -->
-  <div class="w-full md:order-2 md:w-6/12">
-    <object_viewer_3d_tab 
-      :glbModelUrl="generated3dModel_url"
-      :isLoading="processing_generate_is_Loading"
-      :Model_instance_id="model_instance_id"
-      @clicked-add-product="add_new_product"
-    />
-  </div>
-  
-  <!-- Left Panel (Second on Mobile, First on Desktop) - 6/24 = 25% width -->
-  <div class="w-full md:order-1 md:w-3/12 bg-white text-black">
-    <sidepanel_3d_tab 
-      @generated="new3DModelGenerated"
-      @queue-updated="get_3d_rendered_model_details"
-      @insufficient-credits="throw_Insufficient_credits"
-    />
-  </div>
-  
-  <!-- Right Panel (Third on Mobile, Third on Desktop) - 6/24 = 25% width -->
-  <div class="w-full md:order-3 md:w-3/12 pt-4 md:pt-0">
-    <models_3d_generate_history 
-      :list_history_generated_3d_models="list_history_generated_3d_models"
-      :loading_generated_models_history="loading_generated_models_history"
-      @clicked-model="clicked_history_model"
-    />
-  </div>
-</div>
+  <a-row>
+    <a-col :span="6" style="background-color: white;color:black;">
+      <!-- @processing-generate="processinggenerate_loading" -->
+<sidepanel_3d_tab 
+          @generated="new3DModelGenerated"
+          @queue-updated="get_3d_rendered_model_details"
+          @insufficient-credits="throw_Insufficient_credits"
+          />
+          
 
+    </a-col>
+    
+    <a-col :span="12">
+      
+  <object_viewer_3d_tab 
+  :glbModelUrl="generated3dModel_url"
+  :isLoading="processing_generate_is_Loading"
+  :Model_instance_id="model_instance_id"
+  @clicked-add-product="add_new_product"
+  />
+    </a-col>
+    <a-col :span="6">
 
+      
+<models_3d_generate_history 
+  :list_history_generated_3d_models="list_history_generated_3d_models"
+  :loading_generated_models_history="loading_generated_models_history"
+  @clicked-model="clicked_history_model"
+  />
+    </a-col>
+  </a-row>
   
   </template>
 <script>

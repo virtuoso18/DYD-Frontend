@@ -20,9 +20,9 @@
   My Designes
 </h2>
 </a-col>
-        
+        {{ my_designes }}
             <!-- Empty State -->
-            <a-col :span="24" v-if="my_designes.length === 0" style="display:flex;justify-content:center;align-items:center;height:80vh;text-align: center; padding: 60px 20px;">
+            <a-col :span="24" v-if="my_designes" style="display:flex;justify-content:center;align-items:center;height:80vh;text-align: center; padding: 60px 20px;">
                 <a-empty description="No designs available yet">
                     <template #description>
                         <p style="color: #666; font-size: 16px;">You haven't created any designs yet.</p>
@@ -32,7 +32,7 @@
             </a-col>
         
             <!-- Designs List -->
-            <a-col :lg="8" :md="8" :xs="24" :sm="24" style="padding:5px;" v-for="design in my_designes" :key="design.id" v-if="my_designes.length > 0">
+            <a-col :lg="8" :md="8" :xs="24" :sm="24" style="padding:5px;" v-for="design in my_designes" :key="design.id" v-if="my_designes">
                 
                 <div style="border:1px solid rgba(0,0,0,0.1);padding: 5px;border-radius:10px;">
                     <img :src="this.$store.state.root_media_api+design.image_url" style="width:100%;border-radius:10px;max-height:200px;object-fit:cover" alt="" @click="show_design_details(design.id)">

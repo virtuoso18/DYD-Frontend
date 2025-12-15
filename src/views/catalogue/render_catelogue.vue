@@ -906,8 +906,8 @@
             Your photo already set.
           </h3>
 
-          <div 
-            style="
+          <div v-if="user.user_type!='User'"
+            style=" 
               background-color: #f3f2f2;
               border-radius: 10px;
               padding: 10px;
@@ -1392,6 +1392,8 @@ export default {
   },
   data() {
     return {
+      user: JSON.parse(localStorage.getItem('user')),
+
       showRatingModal: false,
       openSeeAll_used_products:false,
       liked_room:false,
