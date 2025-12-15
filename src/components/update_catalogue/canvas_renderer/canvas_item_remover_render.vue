@@ -53,9 +53,10 @@ Switch Furniture</div></a-button>
     <!-- Loading Overlay -->
     <div v-if="isLoading || objectMasksLoading" class="scanning-loading-overlay">
       <div class="loading-screen" :style="{ backgroundImage: `url(${backgroundImageUrl})` }">
+        <!-- {{baseImage}} -->
         <div class="wave-overlay"></div>
         <div class="loading-text">
-          <div class="lottieFile-sec">
+          <!-- <div class="lottieFile-sec">
             <DotLottieVue
               style="height: auto; width: 250px;"
               autoplay
@@ -63,8 +64,10 @@ Switch Furniture</div></a-button>
               speed=0.5
               src="https://lottie.host/7665c805-0ebe-4178-aca1-8828e05d3707/5tbkJuNDQ9.lottie"
             />
-          </div>
-          <div class="process-text">{{ this.loadingMessage }}</div>
+          </div> -->
+          <div class="process-text" v-if="this.new_room_rendering_completed_percentage">{{ this.new_room_rendering_completed_percentage}} %</div>
+          
+          <div class="process-text">{{ this.loadingMessage }} </div>
         </div>
 
       </div>
@@ -482,6 +485,12 @@ import { DotLottieVue } from "@lottiefiles/dotlottie-vue";
 export default {
   name: 'item_remove_renderer',
   props: {
+    
+    new_room_rendering_completed_percentage:{
+      type: Object,
+      required: true
+    },
+
     baseImage: {
       type: String,
       required: true

@@ -34,10 +34,11 @@
          <div style="position: relative; padding:10px;;"   v-if="activeView === '3d'">
 
             <canvas_3d_model_renderer 
-                :glbModelUrl="selected3DModelUrl"
-                :Model_instance_id="selectedProduct.id"
-                style="width: 100%; max-height: 500px; height: 100%; border-radius: 10px"
-              />
+            :glbModelUrl="$store.state.root_media_api + selectedProduct['3d_model']"
+            :Model_instance_id="selectedProduct.id"
+            :isLoading="false"
+            style="width: 100%; max-height:500px; height: 100%;border-radius: 10px"
+            />
             <div
             style="position: absolute; bottom: 15px; right: 15px; background: white; padding: 8px 12px; border-radius: 6px; border: 1px solid #e9ecef; font-size: 12px; font-weight: 600; cursor: pointer;">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -183,35 +184,26 @@
           </a-descriptions>-->
 
           <!-- Colors and Textures -->
-         <a-row :gutter="16" style="margin-bottom: 24px;">
-          <a-col :span="12">
-            <div style="margin-bottom: 8px; font-weight: 500;">Colors:</div>
-            <a-alert 
-              v-if="showColorAlert"
-              type="warning"
-              :message="`No model associated with ${selectedColorHex} color. Hence showing model for primary color.`"
-              closable
-              @close="showColorAlert = false"
-              style="margin-bottom: 12px;"
-            />
-            <div style="display: flex; gap: 6px; align-items: center;">
-              <div v-for="(color, index) in selectedProduct.colors.available_colors"
-                :key="index"
-                @click="selectColor(index, color)"
-                :class="[
-                  'w-6 h-6 rounded-full transition-all cursor-pointer',
-                  color.model_file_colored_product 
-                    ? 'border-2 hover:shadow-md' 
-                    : 'outline outline-2 outline-red-500 outline-offset-2 hover:shadow-[0_0_8px_rgba(239,68,68,0.3)]',
-                  selectedColorIndex === index ? 'border-blue-500 border-4' : 'border-gray-100'
-                ]"
-                :style="{ backgroundColor: color.color }"
-              ></div>
-            </div>
-          </a-col>
-         <a-col :span="12">
+          <a-row :gutter="16" style="margin-bottom: 24px;">
+            <a-col :span="12">
+              <div style="margin-bottom: 8px; font-weight: 500;">Colors:</div>
+              <div style="display: flex; gap: 6px; align-items: center;">
+                <div
+                  v-for="(color, index) in selectedProduct.colors.available_colors"
+                  :key="index"
+                  :style="{ 
+                    width: '24px', 
+                    height: '24px', 
+                    borderRadius: '50%', 
+                    backgroundColor: color.color,
+                    border: '2px solid #f0f0f0'
+                  }"
+                ></div>
+              </div>
+            </a-col>
+            <a-col :span="12">
               <div style="margin-bottom: 8px; font-weight: 500;">Textures:</div>
-              <div style="display: flex; gap: 6px;">
+              <div style="display: flex; gap: 6px;flex-wrap: wrap;">
                 <img 
                   v-for="texture in selectedProduct.textures" 
                   :key="texture" 
@@ -221,8 +213,7 @@
                 />
               </div>
             </a-col>
-        </a-row>
-
+          </a-row>
 
           <div>
                 <div style="color: #666; font-size: 14px;">Price</div>
@@ -241,7 +232,7 @@
               <br>
               <a-row>
                 <a-col :span="12" style="padding-left:10px;padding-right:10px">
-                  <a-button type="primary" block > Check in your room</a-button>
+                  <a-button type="primary" block  > Check in your room</a-button>
                 </a-col>
                  <a-col :span="12" style="padding-left:10px;padding-right:10px">
                     <!-- Simple Add to Cart Button -->
@@ -265,30 +256,26 @@
                     </a-button>
                 </a-col>
 
-                <a-col :span="14" style="padding-left:10px;padding-right:10px">
+                <a-col :span="24" style="padding-left:10px;padding-right:10px;">
                   <br>
-                  <a-button type="text" block >
-                    <a-row>
-                <a-col :span="4">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12.001 2C17.524 2 22.001 6.477 22.001 12C22.001 17.523 17.524 22 12.001 22C10.2337 22.003 8.49757 21.5353 6.97099 20.645L2.00499 22L3.35699 17.032C2.46595 15.5049 1.99789 13.768 2.00099 12C2.00099 6.477 6.47799 2 12.001 2ZM8.59299 7.3L8.39299 7.308C8.26368 7.31691 8.13734 7.35087 8.02099 7.408C7.91257 7.46951 7.81355 7.5463 7.72699 7.636C7.60699 7.749 7.53899 7.847 7.46599 7.942C7.09611 8.4229 6.89696 9.01331 6.89999 9.62C6.90199 10.11 7.02999 10.587 7.22999 11.033C7.63899 11.935 8.31199 12.89 9.19999 13.775C9.41399 13.988 9.62399 14.202 9.84999 14.401C10.9534 15.3724 12.2683 16.073 13.69 16.447L14.258 16.534C14.443 16.544 14.628 16.53 14.814 16.521C15.1052 16.5056 15.3895 16.4268 15.647 16.29C15.7778 16.2223 15.9056 16.1489 16.03 16.07C16.03 16.07 16.0723 16.0413 16.155 15.98C16.29 15.88 16.373 15.809 16.485 15.692C16.569 15.6053 16.639 15.5047 16.695 15.39C16.773 15.227 16.851 14.916 16.883 14.657C16.907 14.459 16.9 14.351 16.897 14.284C16.893 14.177 16.804 14.066 16.707 14.019L16.125 13.758C16.125 13.758 15.255 13.379 14.723 13.137C14.6673 13.1128 14.6077 13.0989 14.547 13.096C14.4786 13.0888 14.4094 13.0965 14.3442 13.1184C14.279 13.1403 14.2192 13.176 14.169 13.223C14.164 13.221 14.097 13.278 13.374 14.154C13.3325 14.2098 13.2753 14.2519 13.2098 14.2751C13.1443 14.2982 13.0733 14.3013 13.006 14.284C12.9408 14.2666 12.877 14.2446 12.815 14.218C12.691 14.166 12.648 14.146 12.563 14.11C11.9889 13.8599 11.4574 13.5215 10.988 13.107C10.862 12.997 10.745 12.877 10.625 12.761C10.2316 12.3842 9.88874 11.958 9.60499 11.493L9.54599 11.398C9.50425 11.3338 9.47003 11.265 9.44399 11.193C9.40599 11.046 9.50499 10.928 9.50499 10.928C9.50499 10.928 9.74799 10.662 9.86099 10.518C9.97099 10.378 10.064 10.242 10.124 10.145C10.242 9.955 10.279 9.76 10.217 9.609C9.93699 8.925 9.64766 8.24467 9.34899 7.568C9.28999 7.434 9.11499 7.338 8.95599 7.319C8.90199 7.31233 8.84799 7.307 8.79399 7.303C8.65972 7.2953 8.52508 7.29664 8.39099 7.307L8.59299 7.3Z" fill="#03B739"/>
-                      </svg>
-                </a-col>
-                <a-col :span="20">link to the business's WhatsApp</a-col>
-
-              </a-row>
+                  <a-button type="default" block style="display: flex;justify-content:center;gap:10px;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12.001 2C17.524 2 22.001 6.477 22.001 12C22.001 17.523 17.524 22 12.001 22C10.2337 22.003 8.49757 21.5353 6.97099 20.645L2.00499 22L3.35699 17.032C2.46595 15.5049 1.99789 13.768 2.00099 12C2.00099 6.477 6.47799 2 12.001 2ZM8.59299 7.3L8.39299 7.308C8.26368 7.31691 8.13734 7.35087 8.02099 7.408C7.91257 7.46951 7.81355 7.5463 7.72699 7.636C7.60699 7.749 7.53899 7.847 7.46599 7.942C7.09611 8.4229 6.89696 9.01331 6.89999 9.62C6.90199 10.11 7.02999 10.587 7.22999 11.033C7.63899 11.935 8.31199 12.89 9.19999 13.775C9.41399 13.988 9.62399 14.202 9.84999 14.401C10.9534 15.3724 12.2683 16.073 13.69 16.447L14.258 16.534C14.443 16.544 14.628 16.53 14.814 16.521C15.1052 16.5056 15.3895 16.4268 15.647 16.29C15.7778 16.2223 15.9056 16.1489 16.03 16.07C16.03 16.07 16.0723 16.0413 16.155 15.98C16.29 15.88 16.373 15.809 16.485 15.692C16.569 15.6053 16.639 15.5047 16.695 15.39C16.773 15.227 16.851 14.916 16.883 14.657C16.907 14.459 16.9 14.351 16.897 14.284C16.893 14.177 16.804 14.066 16.707 14.019L16.125 13.758C16.125 13.758 15.255 13.379 14.723 13.137C14.6673 13.1128 14.6077 13.0989 14.547 13.096C14.4786 13.0888 14.4094 13.0965 14.3442 13.1184C14.279 13.1403 14.2192 13.176 14.169 13.223C14.164 13.221 14.097 13.278 13.374 14.154C13.3325 14.2098 13.2753 14.2519 13.2098 14.2751C13.1443 14.2982 13.0733 14.3013 13.006 14.284C12.9408 14.2666 12.877 14.2446 12.815 14.218C12.691 14.166 12.648 14.146 12.563 14.11C11.9889 13.8599 11.4574 13.5215 10.988 13.107C10.862 12.997 10.745 12.877 10.625 12.761C10.2316 12.3842 9.88874 11.958 9.60499 11.493L9.54599 11.398C9.50425 11.3338 9.47003 11.265 9.44399 11.193C9.40599 11.046 9.50499 10.928 9.50499 10.928C9.50499 10.928 9.74799 10.662 9.86099 10.518C9.97099 10.378 10.064 10.242 10.124 10.145C10.242 9.955 10.279 9.76 10.217 9.609C9.93699 8.925 9.64766 8.24467 9.34899 7.568C9.28999 7.434 9.11499 7.338 8.95599 7.319C8.90199 7.31233 8.84799 7.307 8.79399 7.303C8.65972 7.2953 8.52508 7.29664 8.39099 7.307L8.59299 7.3Z" fill="#03B739"/>
+                                      </svg>
+                    link to the business's WhatsApp
+                    
             </a-button>
 
                 </a-col>
-                <a-col :span="14" style="padding-left:10px;padding-right:10px">
-                 
+                <a-col  :xs="0" :sm="0" :lg="24" :md="24" style="padding-left:10px;padding-right:10px">
+                 <br>
 <a-qrcode
   error-level="H"
   :value="windowLocation + '/ar-product/' + selectedProduct.id"
 />
                     <!-- icon="https://www.antdv.com/assets/logo.1ef800a8.svg" -->
                 </a-col>
-                 <a-col :xs="12" :sm="12" :lg="0" :md="0" style="padding-left:10px;padding-right:10px">
+                                <a-col :xs="12" :sm="12" :lg="0" :md="0" style="padding-left:10px;padding-right:10px">
                  <button class="bg-[#3B63FB] text-white px-6 whitespace-nowrap rounded-md py-2" @click="this.$router.push('/ar-product/' + selectedProduct.id)">
   <span class="inline-block align-middle mr-2">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -330,9 +317,7 @@ export default {
       cartLoading: false,
       showConsentModal: false,
       clearingCart: false,
-      pendingCartItem: null,
-            selectedColorIndex: null,
-      showColorAlert: false
+      pendingCartItem: null
     }
   },
   components: {
@@ -467,30 +452,7 @@ export default {
 
     back_product_list() {
       this.$emit('back_product_list', this.selectedProduct.id)
-    },
-    selectColor(index,color) {
-      this.selectedColorIndex = index;
-      this.activeView = '3d'; 
-      if (!color.model_file_colored_product) {
-      this.selectedColorHex = color.color; 
-      this.showColorAlert = true;
-
-    } else {
-      this.showColorAlert = false;
     }
-    },
-  },
-   computed: {
-    selected3DModelUrl() {
-      if (this.selectedColorIndex !== null && 
-          this.selectedProduct.colors && 
-          this.selectedProduct.colors.available_colors[this.selectedColorIndex] &&
-          this.selectedProduct.colors.available_colors[this.selectedColorIndex].model_file_colored_product) {
-        return this.$store.state.root_media_api + this.selectedProduct.colors.available_colors[this.selectedColorIndex].model_file_colored_product;
-      }
-      return this.$store.state.root_media_api + this.selectedProduct['3d_model'];
-    },
-  
-  },
+  }
 }
 </script>

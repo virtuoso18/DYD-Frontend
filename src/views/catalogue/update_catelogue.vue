@@ -406,6 +406,7 @@ Switch Furniture</a-button> -->
                 :selectionMode="selectionMode"
                 :showDebugInfo="false"
                 :key="canvasKey"
+                :new_room_rendering_completed_percentage="new_room_rendering_completed_percentage"
                 @object-selection-changed="onObjectSelectionChanged"
                 @objects-selected-for-removal="onObjectsSelectedForRemoval"
                 @processing-progress="onProcessingProgress"
@@ -569,7 +570,7 @@ Switch Furniture</a-button> -->
                 <div style="">
                    <ai_catalog_item_replacement_3d_products
                    v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Furniture'"
-                   @products-see-all=seeAllProductsClicked
+                   @products-see-all=furnituresSeeAll
                    @trigger-render-3d-object="execute3DRederer"
                    ref="furniture_products_list"
                 @change-3d-model=change3dModel
@@ -1169,6 +1170,7 @@ Switch Furniture</a-button> -->
                 :selectionMode="selectionMode"
                 :showDebugInfo="false"
                 :key="canvasKey"
+                :new_room_rendering_completed_percentage="new_room_rendering_completed_percentage"
                 @object-selection-changed="onObjectSelectionChanged"
                 @objects-selected-for-removal="onObjectsSelectedForRemoval"
                 @processing-progress="onProcessingProgress"
@@ -1510,6 +1512,8 @@ isCollapsed: false,
       // Room States
       is_rendered_walls_mask: false,
       is_rendered_objects_mask: false,
+      new_room_rendering_completed_percentage:null,
+
       is_ready: false,
       roomRetryCount: 0,
       roomLoadingMessage: 'Initializing room data...',
@@ -1795,8 +1799,13 @@ async  rescaleWallMask(e){
         }, 'room');
 
         if (responseData?.data) {
+
+
           this.is_rendered_walls_mask = responseData.data.is_rendered_walls_mask;
           this.is_rendered_objects_mask = responseData.data.is_rendered_objects_mask;
+          
+          this.new_room_rendering_completed_percentage=  responseData.data.completed_percentage;
+          this.base_image_url = this.$store.state.root_media_api + responseData.data.main_image;
           this.is_ready = responseData.data.is_ready;
 
           if (!this.is_ready) {
