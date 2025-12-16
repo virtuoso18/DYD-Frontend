@@ -380,13 +380,13 @@ Switch Furniture</a-button> -->
             <!-- {{ this.binaryMasks_objects_detected }} -->
   
     <!-- Alternative: If you want to show loading for all canvas components -->
-  <div  
-   :style="{
+   <!-- :style="{
       width: '100%',
       height: closeShareMenu
         ? 'calc(100% - 40px)': '100%'
-    }"
-  >
+    }" -->
+  <div  
+    class="canvas-painting-sec"  >
   
             <canvas_floor_render 
                 v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Floor'" 
@@ -2996,7 +2996,10 @@ async fetchSingleProductType(productType, dataKey, brand, endpointMap) {
 </script>
 
 <style scoped>
-
+.canvas-painting-sec{
+  width: 100%;
+  height:70vh;
+}
 /* Example Images */
 .history-label {
   font-size: 18px;

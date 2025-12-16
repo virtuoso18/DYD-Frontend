@@ -688,7 +688,7 @@ export default {
 
 .zoom-controls {
   position: absolute;
-  top: 40px;
+  top: 16px;
   right: 16px;
   display: flex;
   align-items: center;
@@ -785,8 +785,8 @@ export default {
   }
   
   .zoom-controls {
-    top: 2px;
-    right: 2px;
+    top: 4px;
+    right: 4px;
     padding: 4px 6px;
     gap: 4px;
   }

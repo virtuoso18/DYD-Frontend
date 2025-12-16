@@ -2,25 +2,25 @@
   <div class="analytics-dashboard">
     <!-- Top Stats Cards -->
     <a-row :gutter="[16, 16]" class="mb-6">
-      <a-col :xs="24" :sm="12" :md="6">
+      <a-col :xs="12" :sm="12" :md="6">
         <div class="stat-card total-products">
           <div class="stat-label">Total Products</div>
           <div class="stat-value">{{ analyticsData ? analyticsData.total_products : '...' }}</div>
         </div>
       </a-col>
-      <a-col :xs="24" :sm="12" :md="6">
+      <a-col :xs="12" :sm="12" :md="6">
         <div class="stat-card total-clicks">
           <div class="stat-label">Total Clicks</div>
           <div class="stat-value">{{ analyticsData ? formatNumber(analyticsData.total_clicks) : '...' }}</div>
         </div>
       </a-col>
-      <a-col :xs="24" :sm="12" :md="6">
+      <a-col :xs="12" :sm="12" :md="6">
         <div class="stat-card total-simulations">
           <div class="stat-label">Total Simulations</div>
           <div class="stat-value">0</div>
         </div>
       </a-col>
-      <a-col :xs="24" :sm="12" :md="6">
+      <a-col :xs="12" :sm="12" :md="6">
         <div class="stat-card balance-credits">
           <div class="stat-label">Balance Credits</div>
           <div class="stat-value">{{ analyticsData ? formatNumber(analyticsData.credits) : '...' }}</div>
@@ -52,7 +52,7 @@
           <div class="table-header">
             <h3>Top simulation products</h3>
           </div>
-          
+          <!-- {{productsData}} -->
           <a-table 
             :columns="tableColumns" 
             :data-source="productsData" 

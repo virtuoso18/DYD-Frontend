@@ -3,7 +3,7 @@
   <div className="py-4">
 
     
-    <div class="sm:main sm:border border-gray-300   sm:rounded-xl min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh]">
+    <div class="sm:main sm:border border-gray-300   sm:rounded-2xl min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh] bg-white">
         <div style="padding:10px;border-radius:15px;min-height:100vh">
     <h3 style="font-family: Poppins, sans-serif; font-weight: 500; font-size: 16px; line-height: 24px; letter-spacing: 0;">
       Liked Products & Rooms 

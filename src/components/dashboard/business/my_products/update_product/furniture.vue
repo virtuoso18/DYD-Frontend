@@ -1277,8 +1277,19 @@ async updateColor() {
           const imageResponse = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/images/`, {
             method: 'POST', headers: { 'Authorization': `Token ${token}` }, body: formData
           });
-
           const imageResult = await imageResponse.json();
+
+          console.log("+===============================")
+          console.log(imageResult)
+          if (imageResponse.status === 403) {
+            this.$notification.error({
+              message: 'Request Refused',
+              description: imageResult?.detail || 'The server refused to process this request.',
+              placement: 'bottomRight'
+            });
+            return;
+          }
+
           if (imageResult.success) {
             this.selectedProduct.images.push(...imageResult.data);
             this.cleanupPreviews(); // Clean up previews after successful upload
@@ -1317,7 +1328,7 @@ async updateColor() {
         });
 
         const result = await response.json();
-
+        
         if (result.success) {
           this.$message.success('Product updated successfully');
           this.hasUnsavedChanges = false;

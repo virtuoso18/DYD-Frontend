@@ -919,155 +919,120 @@
         </div>
       </a-col>
 
-      <a-col :lg="6" :md="6" :sm="24" :xs="24" style="background-color: white;padding:10px;" v-if="is_client_requested_room === false && !this.$route.query.business_staff">
-        <div>
-          <h3 style="text-align:center">
-            Congratulation!<br/>
-            Your photo already set.
-          </h3>
+      <a-col :lg="6" :md="6" :sm="24" :xs="24" style="background-color: white; padding: 10px; display: flex; flex-direction: column; min-height: 87vh;" v-if="(is_client_requested_room === false && !this.$route.query.business_staff)">
+  <h3 style="text-align: center; margin: 0 0 15px 0;">
+    Congratulation!<br/>
+    Your photo already set.
+  </h3>
 
-          <div v-if="user.user_type!='User'"
-            style=" 
-              background-color: #f3f2f2;
-              border-radius: 10px;
-              padding: 10px;
-              margin-bottom:10px;
-            "
-          >
-            <a-row style="margin-bottom: 10px">
-              <a-col :span="6">
-                <img :src="base_image_url" style="width: 100%" alt="" />
-              </a-col>
-              <a-col :span="18" style="padding-left: 10px">
-                <h2 style="margin: 0; font-size: 14px;color: #000;">Share your project</h2>
-                <p style="margin: 0; font-size: 12px; font-weight: 500; color: #000;">
-                  Tell your community about the project you created
-                </p>
-              </a-col>
-            </a-row>
-            <a-button
-              type="primary"
-              @click="openShareOnComunity()"
-              block
-              style="
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                gap: 8px;
-                padding: 8px 16px;
-                height: auto;
-                border-radius: 8px;
-              "
-              
-            >
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 20 20"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M17.125 5.64648C17.125 6.95816 16.0617 8.02148 14.75 8.02148C13.4383 8.02148 12.375 6.95816 12.375 5.64648C12.375 4.33481 13.4383 3.27148 14.75 3.27148C16.0617 3.27148 17.125 4.33481 17.125 5.64648Z"
-                  stroke="white"
-                  stroke-width="1.5"
-                />
-                <path
-                  d="M7.625 10C7.625 11.3117 6.56167 12.375 5.25 12.375C3.93833 12.375 2.875 11.3117 2.875 10C2.875 8.68829 3.93833 7.625 5.25 7.625C6.56167 7.625 7.625 8.68829 7.625 10Z"
-                  stroke="white"
-                  stroke-width="1.5"
-                />
-                <path
-                  d="M17.125 14.3535C17.125 15.6652 16.0617 16.7285 14.75 16.7285C13.4383 16.7285 12.375 15.6652 12.375 14.3535C12.375 13.0418 13.4383 11.9785 14.75 11.9785C16.0617 11.9785 17.125 13.0418 17.125 14.3535Z"
-                  stroke="white"
-                  stroke-width="1.5"
-                />
-                <path
-                  d="M7.40625 9.00937L12.5521 6.63477M7.40625 10.9889L12.5521 13.3635"
-                  stroke="white"
-                  stroke-width="1.5"
-                />
-              </svg>
-              Share on community</a-button
-            >
-          </div>
-          
-
-          <div
-  style="
+  <!-- Share Section - Only shows when user hasn't posted -->
+  <div v-if="user.user_type!='User' && !is_Posted_On_Community"
+    style=" 
+      background-color: #f3f2f2;
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 10px;
+    "
+  >
+    <a-row style="margin-bottom: 10px">
+      <a-col :span="6">
+        <img :src="base_image_url" style="width: 100%" alt="" />
+      </a-col>
+      <a-col :span="18" style="padding-left: 10px">
+        <h2 style="margin: 0; font-size: 14px; color: #000;">Share your project</h2>
+        <p style="margin: 0; font-size: 12px; font-weight: 500; color: #000;">
+          Tell your community about the project you created
+        </p>
+      </a-col>
+    </a-row>
+    <a-button
+      type="primary"
+      @click="openShareOnComunity()"
+      block
+      style="
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        height: auto;
+        border-radius: 8px;
+      "
+    >
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M17.125 5.64648C17.125 6.95816 16.0617 8.02148 14.75 8.02148C13.4383 8.02148 12.375 6.95816 12.375 5.64648C12.375 4.33481 13.4383 3.27148 14.75 3.27148C16.0617 3.27148 17.125 4.33481 17.125 5.64648Z" stroke="white" stroke-width="1.5"/>
+        <path d="M7.625 10C7.625 11.3117 6.56167 12.375 5.25 12.375C3.93833 12.375 2.875 11.3117 2.875 10C2.875 8.68829 3.93833 7.625 5.25 7.625C6.56167 7.625 7.625 8.68829 7.625 10Z" stroke="white" stroke-width="1.5"/>
+        <path d="M17.125 14.3535C17.125 15.6652 16.0617 16.7285 14.75 16.7285C13.4383 16.7285 12.375 15.6652 12.375 14.3535C12.375 13.0418 13.4383 11.9785 14.75 11.9785C16.0617 11.9785 17.125 13.0418 17.125 14.3535Z" stroke="white" stroke-width="1.5"/>
+        <path d="M7.40625 9.00937L12.5521 6.63477M7.40625 10.9889L12.5521 13.3635" stroke="white" stroke-width="1.5"/>
+      </svg>
+      Share on community
+    </a-button>
+  </div>
+  
+  <!-- Detail Staging Card - Flexible -->
+  <div style="
     background-color: #f5f5f5;
     border-radius: 12px;
-    margin-bottom:10px;
+    margin-bottom: 10px;
     padding: 20px;
     font-family: 'Inter', sans-serif;
     color: #111;
-  "
->
-  <!-- Title -->
-  <h3 style="margin: 0 0 5px 0; font-size: 16px; font-weight: 600; color: #000;">
-    Detail Staging
-  </h3>
+    flex: 1;
+    overflow-y: auto;
+  ">
+    <h3 style="margin: 0 0 5px 0; font-size: 16px; font-weight: 600; color: #000;">
+      Detail Staging
+    </h3>
 
-  <!-- Room type -->
-  <div style="margin-bottom: 5px;">
-    <p style="margin: 0; font-size: 13px; color: #888;">Room type</p>
-    <p style="margin: 0; font-size: 14px; font-weight: 500; color: #000;">
-      {{room_design_type_select}}
-    </p>
-  </div>
+    <div style="margin-bottom: 5px;">
+      <p style="margin: 0; font-size: 13px; color: #888;">Room type</p>
+      <p style="margin: 0; font-size: 14px; font-weight: 500; color: #000;">
+        {{room_design_type_select}}
+      </p>
+    </div>
 
-  <!-- Style -->
-  <div style="margin-bottom: 5px;">
-    <p style="margin: 0; font-size: 13px; color: #888;">Style</p>
-    <p style="margin: 0; font-size: 14px; font-weight: 500; color: #000;">
-      {{room_type_select}}
-    </p>
-  </div>
+    <div style="margin-bottom: 5px;">
+      <p style="margin: 0; font-size: 13px; color: #888;">Style</p>
+      <p style="margin: 0; font-size: 14px; font-weight: 500; color: #000;">
+        {{room_type_select}}
+      </p>
+    </div>
 
-  <!-- Divider -->
-  <hr style="border: none; border-top: 1px solid #ddd; margin: 5px 0;" />
+    <hr style="border: none; border-top: 1px solid #ddd; margin: 5px 0;" />
 
-  <!-- Product Section -->
-  <div>
-    <p style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600; color: #000;">
-      Product
-    </p>
+    <div>
+      <p style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600; color: #000;">
+        Product
+      </p>
 
-    <a-row align="middle" style="margin-bottom: 10px;" v-if="products_used.length">
-      <a-col :span="4">
-        <img
-          :src="$store.state.root_media_api + products_used[0].product_image"
-          alt=""
-          style="width: 42px; height: 42px; border-radius: 6px; object-fit: cover;"
-        />
-      </a-col>
-      <a-col :span="20">
-        <p style="margin: 0; font-size: 14px; font-weight: 600; color: #000;">
-          {{ products_used[0].product_title }}
-        </p>
-        <a
-          href="#"
-          style="font-size: 13px; color: #2563eb; text-decoration: none;"
-          @click="this.$router.push('/'+products_used[0].business_slug+'/'+products_used[0].type+'/'+products_used[0].product_id)"
-        >
-          Product Detail
-        </a>
-      </a-col>
-    </a-row>
-    <a-row align="middle" style="margin-bottom: 10px;" v-else>
-      <a-col :span="24">
-      <a-empty description="No Products Used In room."></a-empty>  
-      </a-col>
-      
-    </a-row>
-  </div>
+      <a-row align="middle" style="margin-bottom: 10px;" v-if="products_used.length">
+        <a-col :span="4">
+          <img
+            :src="$store.state.root_media_api + products_used[0].product_image"
+            alt=""
+            style="width: 42px; height: 42px; border-radius: 6px; object-fit: cover;"
+          />
+        </a-col>
+        <a-col :span="20">
+          <p style="margin: 0; font-size: 14px; font-weight: 600; color: #000;">
+            {{ products_used[0].product_title }}
+          </p>
+          <a
+            href="#"
+            style="font-size: 13px; color: #2563eb; text-decoration: none;"
+            @click="this.$router.push('/'+products_used[0].business_slug+'/'+products_used[0].type+'/'+products_used[0].product_id)"
+          >
+            Product Detail
+          </a>
+        </a-col>
+      </a-row>
+      <a-row align="middle" style="margin-bottom: 10px;" v-else>
+        <a-col :span="24">
+          <a-empty description="No Products Used In room."></a-empty>  
+        </a-col>
+      </a-row>
+    </div>
 
-  <!-- Catalog link -->
-  <div
-    style="
-      
-    "
-  >
     <a-button
       block
       style="
@@ -1075,108 +1040,81 @@
         font-weight: 500;
         color: #2563eb;
         text-decoration: none;
+        margin-bottom: 10px;
       "
-       @click="show_all_catalogue_products_used_in_room()"
+      @click="show_all_catalogue_products_used_in_room()"
     >
       See all catalog products
     </a-button>
+
+    <a-button
+      style="display: flex; justify-content: center; text-align: center; font-size: 14px; font-weight: 500; color: #2563eb; cursor: pointer;"
+      type="text"
+      block
+      @click="AddRoomitemstocart"
+    >
+      <ShoppingCartOutlined style="font-size: 20px" />
+      Add to Cart
+    </a-button>
   </div>
 
-  <!-- Add to Cart -->
-  <a-button
-    style=" display:flex;justify-content: center;
-      text-align: center;
-      margin-top: 14px;
-      font-size: 14px;
-      font-weight: 500;
-      color: #2563eb;
-      cursor: pointer;
-    "
-    type="text"
-    block
-      @click="AddRoomitemstocart"
-  >
-   <ShoppingCartOutlined style="font-size:20px" />
-    Add to Cart
-  </a-button>
-</div>
-
-
-
-          <div
-            style="
-              background-color: #f3f2f2;
-              border-radius: 10px;
-              padding: 10px;
-            "
-          >
-          <a-row style="margin-bottom: 10px;">
-            <a-col :span="20">
-                <a-button type="primary" @click="open_SaveToMyDesignes=true" style="
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                gap: 8px;
-                padding: 8px 16px;
-                height: auto;
-                border-radius: 8px;" block>
-                    Save To My Design
-                </a-button>
-            </a-col>
-            <a-col :span="4" style="padding-left:5px">
-                <a-button  @click="toggleLikeRoom" style="
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                gap: 8px;
-                padding: 8px 16px;
-                height: auto;
-                border-radius: 8px;" 
-
-                >
-                <!-- Filled red heart when liked -->
-<svg v-if="liked_room" width="22" height="22" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M14.2518 24.4363C11.1484 22.2025 5 17.0956 5 12.5C5 9.46241 7.31579 7 10.5 7C12.15 7 13.8 7.52941 16 9.64704C18.2 7.52941 19.85 7 21.5 7C24.6842 7 27 9.46241 27 12.5C27 17.0956 20.8517 22.2025 17.7482 24.4363C16.7039 25.1879 15.2961 25.1879 14.2518 24.4363Z" 
-          fill="#ff4d4f" 
-          stroke="#ff4d4f" 
-          stroke-width="1.5" 
-          stroke-linecap="round" 
-          stroke-linejoin="round"/>
-</svg>
-
-<!-- Outline heart when not liked -->
-<svg v-else width="22" height="22" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M14.2518 24.4363C11.1484 22.2025 5 17.0956 5 12.5C5 9.46241 7.31579 7 10.5 7C12.15 7 13.8 7.52941 16 9.64704C18.2 7.52941 19.85 7 21.5 7C24.6842 7 27 9.46241 27 12.5C27 17.0956 20.8517 22.2025 17.7482 24.4363C16.7039 25.1879 15.2961 25.1879 14.2518 24.4363Z" 
-          stroke="black" 
-          stroke-width="1.5" 
-          stroke-linecap="round" 
-          stroke-linejoin="round"/>
-</svg>
-
-                </a-button>
-            </a-col>
-            <!-- <a-col>
-            </a-col> -->
-        </a-row>
-
-        <a-button type="default" block style="
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                gap: 8px;
-                padding: 8px 16px;
-                height: auto;
-                border-radius: 8px;">
-
-            <svg width="21" height="21" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 14.5V4.5M12 14.5C11.2998 14.5 9.99153 12.5057 9.5 12M12 14.5C12.7002 14.5 14.0085 12.5057 14.5 12" stroke="currentcolor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M20 16.5C20 18.982 19.482 19.5 17 19.5H7C4.518 19.5 4 18.982 4 16.5" stroke="currentcolor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            Download Raw Files
+  <!-- Save & Download Card - Fixed at bottom -->
+  <div style="
+    background-color: #f3f2f2;
+    border-radius: 10px;
+    padding: 10px;
+  ">
+    <a-row style="margin-bottom: 10px;">
+      <a-col :span="20">
+        <a-button type="primary" @click="open_SaveToMyDesignes=true" style="
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 8px;
+          padding: 8px 16px;
+          height: auto;
+          border-radius: 8px;" 
+          block
+        >
+          Save To My Design
         </a-button>
-          </div>
-        </div>
       </a-col>
+      <a-col :span="4" style="padding-left: 5px">
+        <a-button @click="toggleLikeRoom" style="
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 8px;
+          padding: 8px 16px;
+          height: auto;
+          border-radius: 8px;" 
+        >
+          <svg v-if="liked_room" width="22" height="22" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M14.2518 24.4363C11.1484 22.2025 5 17.0956 5 12.5C5 9.46241 7.31579 7 10.5 7C12.15 7 13.8 7.52941 16 9.64704C18.2 7.52941 19.85 7 21.5 7C24.6842 7 27 9.46241 27 12.5C27 17.0956 20.8517 22.2025 17.7482 24.4363C16.7039 25.1879 15.2961 25.1879 14.2518 24.4363Z" fill="#ff4d4f" stroke="#ff4d4f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <svg v-else width="22" height="22" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M14.2518 24.4363C11.1484 22.2025 5 17.0956 5 12.5C5 9.46241 7.31579 7 10.5 7C12.15 7 13.8 7.52941 16 9.64704C18.2 7.52941 19.85 7 21.5 7C24.6842 7 27 9.46241 27 12.5C27 17.0956 20.8517 22.2025 17.7482 24.4363C16.7039 25.1879 15.2961 25.1879 14.2518 24.4363Z" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a-button>
+      </a-col>
+    </a-row>
+
+    <a-button type="default" block style="
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      height: auto;
+      border-radius: 8px;">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 14.5V4.5M12 14.5C11.2998 14.5 9.99153 12.5057 9.5 12M12 14.5C12.7002 14.5 14.0085 12.5057 14.5 12" stroke="currentcolor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M20 16.5C20 18.982 19.482 19.5 17 19.5H7C4.518 19.5 4 18.982 4 16.5" stroke="currentcolor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Download Raw Files
+    </a-button>
+  </div>
+</a-col>
       
       <a-col :lg="6" :md="6" :sm="24" :xs="24" style="background-color: white;padding:10px;" v-else-if="is_client_requested_room === false && this.$route.query.business_staff">
          <div style="display: flex;flex-direction: column;justify-content: space-between;height:87vh;">
@@ -1417,6 +1355,7 @@ export default {
 
       showRatingModal: false,
       openSeeAll_used_products:false,
+      is_Posted_On_Community:false,
       liked_room:false,
       base_image_url: "",
       main_image: "",
@@ -1683,6 +1622,7 @@ export default {
         if (data.success) {
           this.$message.success('Your design has been shared on community!');
           this.closeShareModal();
+          this.is_Posted_On_Community=true
         } else {
           throw new Error(data.message || 'Failed to share post');
         }

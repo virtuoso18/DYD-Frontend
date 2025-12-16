@@ -16,7 +16,7 @@
  <nav class="px-1 pb-6 space-y-1">
           <!-- Profile -->
           <router-link 
-            to="/business-dashboard/my-profile" 
+            to="/business-dashboard/my-profile?p=true" 
             class="flex items-center !font-family-poppins gap-4 px-2 py-2 rounded-xl text-gray-700 font-medium transition-all duration-200 relative overflow-hidden group hover:bg-gray-50 hover:text-blue-600"
             :class="{ 'nav-active': $route.name === 'business_my_profile' }" 
             @click="closeMobileMenu"
@@ -38,7 +38,7 @@
 
           <!-- Business Detail -->
           <router-link 
-            to="/business-dashboard/business-details" 
+            to="/business-dashboard/business-details?p=true"
             class="flex items-center gap-4 px-2 py-2 rounded-xl text-gray-700 font-medium transition-all duration-200 relative overflow-hidden group hover:bg-gray-50 hover:text-blue-600"
             :class="{ 'nav-active': $route.name === 'business_business_details' }" 
             @click="closeMobileMenu"
@@ -59,7 +59,7 @@
 
           <!-- My Designs -->
           <router-link 
-            to="/business-dashboard/my-designs" 
+            to="/business-dashboard/my-designs?p=true"
             class="flex items-center gap-4 px-2 py-2 rounded-xl text-gray-700 font-medium transition-all duration-200 relative overflow-hidden group hover:bg-gray-50 hover:text-blue-600"
             :class="{ 'nav-active': $route.name === 'business_my_designs' }" 
             @click="closeMobileMenu"
@@ -78,7 +78,7 @@
 
           <!-- My Products -->
           <router-link 
-            to="/business-dashboard/my-products" 
+            to="/business-dashboard/my-products?p=true" 
             class="flex items-center gap-4 px-2 py-2 rounded-xl text-gray-700 font-medium transition-all duration-200 relative overflow-hidden group hover:bg-gray-50 hover:text-blue-600"
             :class="{ 'nav-active': $route.name === 'business_my_products' }" 
             @click="closeMobileMenu"
@@ -98,7 +98,7 @@
 
           <!-- Community -->
           <router-link 
-            to="/business-dashboard/comunity" 
+            to="/business-dashboard/comunity?p=true"
             class="flex items-center gap-4 px-2 py-2 rounded-xl text-gray-700 font-medium transition-all duration-200 relative overflow-hidden group hover:bg-gray-50 hover:text-blue-600"
             :class="{ 'nav-active': $route.name === 'business_dashboard_community' }" 
             @click="closeMobileMenu"
@@ -119,7 +119,7 @@
 
           <!-- Generate Banner -->
           <router-link 
-            to="/business-dashboard/generate-banner" 
+            to="/business-dashboard/generate-banner?p=true" 
             class="flex items-center gap-4 px-2 py-2 rounded-xl text-gray-700 font-medium transition-all duration-200 relative overflow-hidden group hover:bg-gray-50 hover:text-blue-600"
             :class="{ 'nav-active': $route.name === 'business_generate_banner' }" 
             @click="closeMobileMenu"
@@ -139,7 +139,7 @@
 
           <!-- Manage Subscription -->
           <router-link 
-            to="/business-dashboard/manage-subscription" 
+            to="/business-dashboard/manage-subscription?p=true" 
             class="flex items-center gap-4 px-2 py-2 rounded-xl text-gray-700 font-medium transition-all duration-200 relative overflow-hidden group hover:bg-gray-50 hover:text-blue-600"
             :class="{ 'nav-active': $route.name === 'business_manage_subscription' }" 
             @click="closeMobileMenu"
@@ -157,7 +157,7 @@
 
           <!-- Transactions -->
           <router-link 
-            to="/business-dashboard/my-transactions" 
+            to="/business-dashboard/my-transactions?p=true" 
             class="flex items-center gap-4 px-2 py-2 rounded-xl text-gray-700 font-medium transition-all duration-200 relative overflow-hidden group hover:bg-gray-50 hover:text-blue-600"
             :class="{ 'nav-active': $route.name === 'my_transactions' }" 
             @click="closeMobileMenu"

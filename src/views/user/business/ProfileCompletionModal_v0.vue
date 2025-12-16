@@ -250,8 +250,8 @@ export default {
     },
 
     handleComplete() {
-      // this.$emit('complete');
-      this.isOpen=false
+      this.$emit('complete');
+      
     },
 
     toggleStep(stepId) {

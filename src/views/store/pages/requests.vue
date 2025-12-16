@@ -33,7 +33,7 @@
     </div>
 
     <div className="sm:hidden">
-      <div class=" !py-2 bg-white rounded-2xl ">
+      <div class=" !py-2 bg-white rounded-2xl xs:rounded-0 ">
 
   <!-- HEADER -->
   <div class="header flex justify-between items-center">

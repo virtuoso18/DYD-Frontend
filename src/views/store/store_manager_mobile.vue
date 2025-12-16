@@ -56,18 +56,26 @@
       </aside>
 
       <!-- Content Area -->
-      <main v-if="showContentMobile" class="content-area flex-1 relative bg-gray-100 p-4 min-h-[80vh]">
-        <button
-          v-if="isMobile"
-          @click="backToSidebar"
-          class="absolute top-2 left-2 bg-white px-3 py-1 rounded flex items-center text-blue-600 font-semibold shadow z-20"
-        >
-          <!-- Back Icon SVG -->
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="mr-2">
-            <path d="M15 19l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          Back
-        </button>
+      <main v-if="showContentMobile" class="content-area flex-1 relative bg-gray-100 min-h-[80vh]">
+      
+         <div class="mobile-header" v-if="isMobile">
+    <!-- <div class="mobile-header" v-if="isMobile"> -->
+      <button class="back-button" v-if="isMobile" @click="backToSidebar">
+       <svg width="6" height="11" viewBox="0 0 6 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M4.75 9.75L0.75 5.25L4.75 0.75" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+
+      </button>
+      <h2 class="mobile-header-title">{{ isMobile ? currentPageTitle : 'Menu' }}</h2>
+      <button class="menu-button" @click="toggleMobileMenu" v-if="!isMobile">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <line x1="3" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <line x1="3" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+
         <!-- router-view or fallback message -->
         <router-view v-if="business_info.is_email_verified" :user="user" :profile="profile" :business_info="business_info" />
         <div v-else class="bg-white rounded-xl p-8 mt-8 flex flex-col items-center text-center border border-blue-100">
@@ -197,6 +205,49 @@ function backToSidebar() {
 </script>
 
 <style scoped>
+
+  
+/* Mobile Header */
+.mobile-header {
+  background: white;
+  border-bottom: 1px solid #e9ecef;
+  padding: 12px 16px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.back-button,
+.menu-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #374151;
+  transition: all 0.2s ease;
+}
+
+.back-button:hover,
+.menu-button:hover {
+  color: #1f2937;
+}
+
+.mobile-header-title {
+  flex: 1;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1a1a;
+  text-align: center;
+}
+
+
 .sidebar {
   min-height: 100vh;
 }

@@ -1,5 +1,5 @@
 <template>
-  <div class="sm:main min-h-[100vh] pl-2 md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh] " >
+  <div class="sm:main min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh] sm:p-0 " >
     <!-- Loading State -->
     <div v-if="loading" style="text-align: center; padding: 40px">
       <a-spin size="large" />

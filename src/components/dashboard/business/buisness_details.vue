@@ -111,8 +111,8 @@
     </a-button>
   </div>
 </a-modal>
-<div class="!sm:business-details-container sm:!py-3 !sm:!pr-2 ">
-    <a-row class="main-content shadow-sm !sm:rounded-xl ">
+<div class="!sm:business-details-container sm:!py-1 !sm:!pr-2 ">
+    <a-row class=" shadow-sm rounded-2xl ">
       <a-col :xs="24" :sm="24" :md="24" :lg="24" class="content-area">
         <div class="content-wrapper">
           <!-- {{ businessInfo.business_picture }} -->
@@ -163,37 +163,62 @@
           </div>
 
           <!-- Business card section -->
-          <div style="width:100%;max-width:600px;margin:auto;border:1px solid rgba(0,0,0,0.1);padding:20px;border-radius:10px;margin-top:20px">
-            <h2 class="!text-gray-700" >Upload Room Photo</h2>
+          <div  style="width:100%;max-width:600px;margin:auto;border:1px solid rgba(0,0,0,0.1);padding:20px;border-radius:10px;margin-top:20px">
+            <h2 class="sm:mt-0" style="color:#374151; margin-top:1.5rem;">
+Upload Room Photo</h2>
             <p class="!text-gray-700">Share the link with your customer for generating there room photo</p>
 
             <label class="!text-gray-700">Copy Link</label>
-            <a-input-group compact>
-              <a-input :value="full_url()" style="width: calc(100% - 200px);color:blue" />
-              <a-button type="primary" @click="copyLink">
-                <a-space>
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M3.33203 9.9987H2.66536C2.31174 9.9987 1.9726 9.85822 1.72256 9.60817C1.47251 9.35813 1.33203 9.01899 1.33203 8.66536V2.66536C1.33203 2.31174 1.47251 1.9726 1.72256 1.72256C1.9726 1.47251 2.31174 1.33203 2.66536 1.33203H8.66536C9.01899 1.33203 9.35813 1.47251 9.60817 1.72256C9.85822 1.9726 9.9987 2.31174 9.9987 2.66536V3.33203M7.33203 5.9987H13.332C14.0684 5.9987 14.6654 6.59565 14.6654 7.33203V13.332C14.6654 14.0684 14.0684 14.6654 13.332 14.6654H7.33203C6.59565 14.6654 5.9987 14.0684 5.9987 13.332V7.33203C5.9987 6.59565 6.59565 5.9987 7.33203 5.9987Z" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                  Copy
-                </a-space>
-              </a-button>
-            </a-input-group>
+           <a-input-group compact style="display: flex; width: 100%;">
+  <a-input :value="full_url()" style="flex: 1; color: blue;" />
+  <a-button
+    type="primary"
+    @click="copyLink"
+    style="min-width: 100px; display:flex; justify-content:center;"
+  >
+    Copy
+  </a-button>
+</a-input-group>
+
             
             <br>
             
             <label class="!text-gray-700">Simulation Link</label>
-            <a-input-group compact>
-              <a-input :value="simulation_full_url()" style="width: calc(100% - 200px);color:blue" />
-              <a-button type="primary" @click="copyLink_Simulation">
-                <a-space>
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M3.33203 9.9987H2.66536C2.31174 9.9987 1.9726 9.85822 1.72256 9.60817C1.47251 9.35813 1.33203 9.01899 1.33203 8.66536V2.66536C1.33203 2.31174 1.47251 1.9726 1.72256 1.72256C1.9726 1.47251 2.31174 1.33203 2.66536 1.33203H8.66536C9.01899 1.33203 9.35813 1.47251 9.60817 1.72256C9.85822 1.9726 9.9987 2.31174 9.9987 2.66536V3.33203M7.33203 5.9987H13.332C14.0684 5.9987 14.6654 6.59565 14.6654 7.33203V13.332C14.6654 14.0684 14.0684 14.6654 13.332 14.6654H7.33203C6.59565 14.6654 5.9987 14.0684 5.9987 13.332V7.33203C5.9987 6.59565 6.59565 5.9987 7.33203 5.9987Z" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                  Copy
-                </a-space>
-              </a-button>
-            </a-input-group>
+            <a-input-group
+  compact
+  style="display: flex; width: 100%;"
+>
+  <a-input
+    :value="simulation_full_url()"
+    style="flex: 1; color: blue;"
+  />
+
+  <a-button
+    type="primary"
+    @click="copyLink_Simulation"
+    style="min-width: 100px; display: flex; align-items: center; justify-content: center;"
+  >
+    <a-space>
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 16 16"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M3.33203 9.9987H2.66536C2.31174 9.9987 1.9726 9.85822 1.72256 9.60817C1.47251 9.35813 1.33203 9.01899 1.33203 8.66536V2.66536C1.33203 2.31174 1.47251 1.9726 1.72256 1.72256C1.9726 1.47251 2.31174 1.33203 2.66536 1.33203H8.66536C9.01899 1.33203 9.35813 1.47251 9.60817 1.72256C9.85822 1.9726 9.9987 2.31174 9.9987 2.66536V3.33203M7.33203 5.9987H13.332C14.0684 5.9987 14.6654 6.59565 14.6654 7.33203V13.332C14.6654 14.0684 14.0684 14.6654 13.332 14.6654H7.33203C6.59565 14.6654 5.9987 14.0684 5.9987 13.332V7.33203C5.9987 6.59565 6.59565 5.9987 7.33203 5.9987Z"
+          stroke="white"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+      Copy
+    </a-space>
+  </a-button>
+</a-input-group>
+
             <br>
             <h4 class="!text-gray-700">or share via social media</h4>
             
@@ -297,8 +322,14 @@
             </div>
 
             <a-form layout="vertical" class="business-form">
-              <a-row :gutter="[24, 24]">
-                <!-- Name Field -->
+<a-row
+  :gutter="{
+    xs: 0,
+    sm: 0,
+    md: [24, 12]
+  }"
+>
+            <!-- Name Field -->
                 <a-col :xs="24" :sm="24" :md="24" :lg="24">
                   <a-form-item label="Name">
                     <a-input 
@@ -496,7 +527,7 @@
               </a-row>
 
               <!-- Save Button (only show when editing) -->
-              <div v-if="isEditMode" class="form-actions">
+              <div v-if="isEditMode" class="form-actions p-2">
                 <a-button type="primary" @click="saveChanges" class="save-btn" :loading="saving">
                   Save Changes
                 </a-button>

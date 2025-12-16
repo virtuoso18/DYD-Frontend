@@ -801,7 +801,7 @@ export default {
   
   .content-area.mobile-content-visible {
     display: block !important;
-    padding-top: 60px; /* Account for fixed header */
+    /* padding-top: 60px;  */
   }
   
   .sidebar-col {

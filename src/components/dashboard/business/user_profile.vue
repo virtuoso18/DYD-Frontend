@@ -1,12 +1,12 @@
 <template>
-<div class="main sm:py-3 min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh]" >    
+<div class="main bg-white sm:py-3 min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh]" style="border-radius: 1.5rem;">
     <!-- Main Dashboard Content -->
-    <a-row class="dashboard-content ">
+    <a-row class="dashboard-content   ">
       <!-- Content Area -->
       <a-col :xs="24" :sm="24" :md="24" :lg="24" class="content-area" >
-        <div class="sm:content-wrapper">
+        <div class="sm:content-wrapper " style="">
           <!-- Wavy Background Header -->
-          <div class="wavy-header sm:rounded-t-3xl" :style="'background: url('+this.$store.state.root_media_api+profile.background_picture+') center/cover no-repeat;'">
+          <div class="wavy-header  !sm:rounded-t-3xl" :style="'background: url('+this.$store.state.root_media_api+profile.background_picture+') center/cover no-repeat;'">
             <!-- Background Edit Button -->
            <button 
   v-if="isEditing"
@@ -404,6 +404,7 @@ export default {
 .wavy-header {
   position: relative;
   height: 200px;
+  
   background: url("../../../assets/pricing-banner.png") center/cover no-repeat;
   
 }

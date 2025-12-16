@@ -327,7 +327,7 @@
                   </a-form-item>
                   <div v-if="!businessInfo.isEmailVerified && !isEditMode" style="margin-top: 12px; padding: 12px; background: #fffbe6; border-left: 4px solid #faad14; border-radius: 4px; font-size: 13px; color: #8b6914;">
                     <p style="margin: 0 0 6px 0; font-weight: 600;">Email Not Verified</p>
-                    <p style="margin: 0; line-height: 1.5;">Please verify your business email to ensure secure communication with your customers. After verification, your email cannot be modified.</p>
+                    <p style="margin: 0; line-height: 1.5;">Please verify your professional email to ensure secure communication with your customers. After verification, your email cannot be modified.</p>
                   </div>
                 </a-col>
 

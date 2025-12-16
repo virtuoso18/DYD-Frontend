@@ -23,8 +23,8 @@
       </div>
 
       <!-- Empty Cart State -->
-      <div v-else-if="cart.items && cart.items.length === 0" style="text-align: center; padding: 60px 20px;">
-        <svg style="width: 80px; height: 80px; margin-bottom: 16px; opacity: 0.5;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <div v-else-if="cart.items && cart.items.length === 0" style="text-align: center;  padding: 60px 20px;">
+        <svg style="margin:auto;width: 80px; height: 80px; margin-bottom: 16px; opacity: 0.5;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
         </svg>
         <h2 style="font-size: 24px; color: #262626; margin-bottom: 8px;">Your cart is empty</h2>

@@ -238,11 +238,6 @@ clicked_history_model(e){
   this.generated3dModel_url=this.$store.state.root_media_api+ e.media_url
   this.model_instance_id=e.new3d_model_instance
 
-   window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      })
-
 },
 async new3DModelGenerated(e){
 //   {

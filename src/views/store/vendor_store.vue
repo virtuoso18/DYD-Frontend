@@ -1,4 +1,13 @@
 <template>
+
+  <CommentsModal
+      :isOpen="showCommentsModal"
+      :post="selectedPost || {}"
+      @close="closeModal"
+      @commentAdded="handleCommentAdded"
+      @likeToggled="handleLikeToggled"
+    />
+
   
 <RequestCreateRoom 
       ref="roomModal"
@@ -447,8 +456,8 @@
                       <!-- Post Content -->
                       <div style="padding: 5px">
                         <!-- Actions Row -->
-                        <a-row style="align-items: center;">
-                          <a-col :span="14" style="display:flex;align-items: center;justify-content: start;gap:10px;">
+                        <a-row style="align-items: center">
+                          <a-col :span="14" style="display:flex;gap:10px;">
                             <img
                               :src="
                                 this.$store.state.root_media_api + post.user_profile
@@ -461,16 +470,16 @@
                               "
                               alt=""
                             />
-                            <span style="font-size: 18px;font-weight:600">{{
+                            <span style="font-size: 16px;font-weight:600">{{
                               truncateText(post.post_by, 15)
                             }}</span>
                           </a-col>
-                          <a-col :span="10" style="display: flex;justify-content: end;">
+                          <a-col :span="10" style="display: flex">
                             <!-- Post Stats -->
                             <div class="post-stats">
-                              <div class="stat-item" @click="toggleLike(post)">
+                              <div class="stat-item" >
                                 <HeartFilled
-                                  v-if="post.isLiked"
+                                  v-if="post.is_liked"
                                   style="color: #ff4d4f"
                                 />
                                 <HeartOutlined v-else />
@@ -485,10 +494,14 @@
                                   formatNumber(post.comment_count)
                                 }}</span>
                               </div>
-                              
+                              <div class="stat-item" @click="sharePost(post)">
+                                <ShareAltOutlined />
+                                <span>{{
+                                  formatNumber(post.share_count)
+                                }}</span>
+                              </div>
                             </div>
-                            <!-- More Actions Dropdown -->
-                            
+                           
                           </a-col>
                         </a-row>
                       </div>
@@ -522,7 +535,7 @@
     </div>
 </template>
 <script>
-
+import CommentsModal from '@/views/pages/CommentsModal.vue';
 import RequestCreateRoom from '@/components/general_user/buisness_page/create_request_modal.vue'
 import buisnes_products_sailing from '@/components/general_user/buisness_page/products_sailing.vue'
 import {   
@@ -557,6 +570,7 @@ export default {
         RequestCreateRoom,
         buisnes_products_sailing,
                 MapLocationViewer,
+        CommentsModal
     },
     computed: {
         hasToken() {
@@ -592,6 +606,9 @@ export default {
             business_info: {},
             our_products: [],
             community_posts_virtualisations: [],
+          showCommentsModal: false,
+          selectedPost: null,
+         
             currentUser: JSON.parse(localStorage.getItem('user') || '{}'),
 
             // Pagination states
@@ -618,7 +635,7 @@ export default {
         try {
             await this.loadBusinessData();
             this.loadBusinessRatings()
-            this.loadPosts();
+            this.fetchCommunityPosts()
         } catch (error) {
             console.error('Error in mounted:', error);
             this.error = 'Failed to load page data';
@@ -634,13 +651,94 @@ export default {
           }
     },
     methods: {
+      async fetchCommunityPosts(page = 1) {
+    try {
+      debugger
+        const token = localStorage.getItem('token');
+        const response = await fetch(
+            `${this.$store.state.root_api}community/api/business-community-posts/${this.$route.params.buisness_name}?page=${page}&page_size=12`,
+            {
+                method: 'GET',
+                headers: {
+                Authorization: `Token ${token}`,
+                "Content-Type": "application/json",
+              },
+            }
+        );
+        const result = await response.json();
+        if (result.success) {
+            this.community_posts_virtualisations = result.data;
+            // Update pagination info from response if available
+            if (result.total_count !== undefined) {
+                this.postsPagination.totalCount = result.total_count;
+                this.postsPagination.totalPages = result.total_pages;
+                this.postsPagination.currentPage = result.page;
+            }
+        }
+    } catch (error) {
+        console.error('Error loading community posts:', error);
+        this.$message.error('Error loading community posts');
+    }
+},
+
+async handlePostsPageChange(page) {
+    this.postsPagination.currentPage = page;
+    await this.fetchCommunityPosts(page);
+},
+
+
+
+openCommentsModal(post) {
+    this.viewPost(post);
+},
+
+viewPost(post) {
+    // Transform your post data to match modal props
+    this.selectedPost = {
+        id: post.id,
+        image: this.$store.state.root_media_api + post.post_image,
+        userName: post.post_by,
+        userAvatar: this.$store.state.root_media_api + post.user_profile,
+        description: post.description || post.content,
+        tags: post.tags || [],
+        views: post.view_count,
+        likes: post.like_count,
+        is_liked: post.is_liked || false,
+        comment_count: post.comment_count
+    }
+    
+    this.showCommentsModal = true;
+},
+
+closeModal() {
+    this.showCommentsModal = false;
+    this.selectedPost = null;
+},
+
+async handleCommentAdded() {
+    // Refresh the post data or update comment count
+    await this.fetchCommunityPosts();
+},
+
+async handleLikeToggled() {
+    // Refresh the post data when like is toggled in modal
+   await this.fetchCommunityPosts();
+},
+
+sharePost(post) {
+    // Share functionality
+    console.log('Sharing post:', post);
+    // Add your share logic here
+},
+
+
         
     async loadBusinessRatings() {
         try {
             this.loadingRatings = true;
             this.ratingsError = null;
-            
-            const businessSlug = this.business_info.slug; // Use existing business slug
+            console.log(this.$route.params.buisness_name)
+            const businessSlug = this.$route.params.buisness_name; // Use existing business slug
             
             let headers= {
               'Content-Type': 'application/json'
@@ -734,45 +832,6 @@ export default {
         truncateText(text, length) {
             if (!text || text.length <= length) return text;
             return text.substring(0, length) + "...";
-        },
-
-        async loadPosts() {
-            try {
-                const businessName = this.$route.params.buisness_name;
-
-                const response = await fetch(
-                    `${this.$store.state.root_api}community/api/business-community-posts/${businessName}`,
-                    {
-                        method: "GET",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                    }
-                );
-
-                const data = await response.json();
-
-                if (data.success) {
-                    this.community_posts_virtualisations = data.data.map((post) => ({
-                        ...post,
-                        isLiked: false,
-                        tags: post.tags || [],
-                        like_count: post.like_count || 0,
-                        comment_count: post.comment_count || 0,
-                        share_count: post.share_count || 0,
-                        view_count: post.view_count || 0,
-                    }));
-
-                    this.hasMore = false;
-                } else {
-                    throw new Error(data.message || "Failed to load posts");
-                }
-            } catch (error) {
-                console.error("Failed to load posts:", error);
-                this.$message.error("Failed to load posts");
-            } finally {
-                this.loading = false;
-            }
         },
 
         async startchat_with_buisness_user() {

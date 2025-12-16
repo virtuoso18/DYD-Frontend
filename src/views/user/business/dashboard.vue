@@ -127,7 +127,7 @@
     <a-row class="dashboard-content">
       
       <!-- Sidebar - Shows on mobile menu view or desktop -->
-      <a-col :xs="!menu_view_mobile ? 24 : 0" :sm="!menu_view_mobile ? 24 : 0" :md="6" :lg="6" class="sidebar-col"  >
+      <a-col :xs="!menu_view_mobile ? 24 : 0" :sm="!menu_view_mobile ? 24 : 0" :md="6" :lg="6" class="sidebar-col" v-if="!this.$route.query.p">
         <div class="sidebar">
             <!-- <div class="!font-[Poppins] !font-semibold !text-[24px] leading-[32px] tracking-[0]">
   profile
@@ -148,7 +148,7 @@
     <!-- Completion Badge (Clickable) -->
     <div 
       class="completion-badge"
-      @click="showCompletionModal = true"
+      @click="openCompletionModal"
     >
       <div class="completion-circle">
         <span class="completion-text">
@@ -467,7 +467,7 @@
       </a-col>
       
       <!-- Content Area -->
-      <a-col :xs="menu_view_mobile ? 24 : 0" :sm="menu_view_mobile ? 24 : 0" :md="18" :lg="18" style="padding:10px;">
+      <a-col :xs="menu_view_mobile ? 24 : (!this.$route.query.p ? 0 : 24)" :sm="menu_view_mobile ? 24 : (!this.$route.query.p ? 0 : 24)" :md="18" :lg="18" class="content-area" >
         <router-view :user="user" :profile="profile" :buisness_info="business_info" />
       </a-col>
     </a-row>
@@ -497,31 +497,39 @@ export default {
       // Profile Completion Modal
       showCompletionModal: false,
       profileSteps: [
-        {
-          id: 1,
-          title: 'Personal details',
-          description: 'Please fill in your personal details accurately to ensure a smooth process.',
-          completed: false
-        },
-        {
-          id: 2,
-          title: 'Business details',
-          description: 'Please fill in your Business details accurately.',
-          completed: false
-        },
-        {
-          id: 3,
-          title: 'Add at least 3 products',
-          description: 'Please add at least three products to proceed with the process.',
-          completed: false
-        },
-        {
-          id: 4,
-          title: 'Generate Your First Simulation',
-          description: 'Create your first simulation with products that you habve in your business AI catalog.',
-          completed: false
+      {
+        id: 1,
+        title: 'Personal details',
+        description: 'Please fill in your personal details accurately to ensure a smooth process.',
+        completed: false,
+        missing_fields: []  // Add this
+      },
+      {
+        id: 2,
+        title: 'Business details',
+        description: 'Please fill in your Business details accurately.',
+        completed: false,
+        missing_fields: []  // Add this
+      },
+      {
+        id: 3,
+        title: 'Add at least 3 products',
+        description: 'Please add at least three products to proceed with the process.',
+        completed: false,
+        missing_fields: [],  // Add this
+        metadata: {
+          products_added: 0,
+          products_required: 3
         }
-      ]
+      },
+      {
+        id: 4,
+        title: 'Generate Your First Simulation',
+        description: 'Create your first simulation with products that you have in your business AI catalog.',
+        completed: false,
+        missing_fields: []  // Add this
+      }
+    ]
     }
   },
 
@@ -555,6 +563,62 @@ export default {
   },
   
   methods: {
+    
+async fetchOnboardingProgress() {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${this.$store.state.root_api}Auth/api/onboarding-progress/`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Token ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log('Onboarding Progress:', data);
+
+      // Update profileSteps with API response including missing_fields
+      if (data.success && data.data.steps) {
+        data.data.steps.forEach((apiStep) => {
+          const localStep = this.profileSteps.find(s => s.id === apiStep.step);
+          if (localStep) {
+            localStep.completed = apiStep.is_completed;
+            // Add missing fields from API response
+            localStep.missing_fields = apiStep.missing_fields || [];
+            // Add metadata if present (for step 3)
+            if (apiStep.metadata) {
+              localStep.metadata = apiStep.metadata;
+            }
+          }
+        });
+      }
+
+      // Update completion percentage
+      const completed = this.profileSteps.filter(step => step.completed).length;
+      const completionPercent = Math.round((completed / this.profileSteps.length) * 100);
+      console.log(`Profile Completion: ${completionPercent}%`);
+
+      return data;
+    } else {
+      console.error('Failed to fetch onboarding progress:', response.status);
+      notification.error({
+        message: "Failed to load progress",
+        description: "Unable to fetch your onboarding progress",
+        placement: 'bottomRight'
+      });
+    }
+  } catch (error) {
+    console.error('Error fetching onboarding progress:', error);
+    notification.error({
+      message: "Error",
+      description: "An error occurred while fetching your progress",
+      placement: 'bottomRight'
+    });
+  }
+},
+
     toggleMobileMenu() {
       this.mobileMenuOpen = !this.mobileMenuOpen;
     },
@@ -590,8 +654,9 @@ export default {
 
     // Profile Completion Methods
     openCompletionModal() {
-      this.showCompletionModal = true;
-    },
+    this.fetchOnboardingProgress(); 
+    this.showCompletionModal = true;
+  },
 
     closeCompletionModal() {
       this.showCompletionModal = false;
@@ -600,11 +665,11 @@ export default {
     handleProfileComplete() {
       this.showCompletionModal = false;
       
-      notification.success({
-        message: "Profile Completed!",
-        description: "Your profile setup is now complete. You can start using all features.",
-        placement: 'bottomRight'
-      });
+      // notification.success({
+      //   message: "Profile Completed!",
+      //   description: "Your profile setup is now complete. You can start using all features.",
+      //   placement: 'bottomRight'
+      // });
 
       // Optional: Reload profile data or redirect
       this.fetchProfileStatus();
@@ -673,7 +738,7 @@ export default {
     window.addEventListener('resize', this.checkScreenSize);
     
     // Fetch profile completion status on mount
-    await this.fetchProfileStatus();
+    await this.fetchOnboardingProgress();
 
     // Optional: Show modal automatically if profile is incomplete
     if (!this.isProfileComplete && this.completionPercentage < 100) {

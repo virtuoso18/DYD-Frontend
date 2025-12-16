@@ -46,13 +46,13 @@
                 </div>
 
                 <div class="task-actions">
-                    <button 
+                    <!-- <button 
                         v-if="task.status === 'ToDo'" 
                         class="btn btn-start"
                         @click="startTask(task.id)"
                     >
                         Start Task
-                    </button>
+                    </button> -->
                 </div>
             </div>
         </div>
