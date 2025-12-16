@@ -127,7 +127,7 @@
     <a-row class="dashboard-content">
       
       <!-- Sidebar - Shows on mobile menu view or desktop -->
-      <a-col :xs="!menu_view_mobile ? 24 : 0" :sm="!menu_view_mobile ? 24 : 0" :md="6" :lg="6" class="sidebar-col">
+      <a-col :xs="!menu_view_mobile ? 24 : 0" :sm="!menu_view_mobile ? 24 : 0" :md="6" :lg="6" class="sidebar-col"  >
         <div class="sidebar">
             <!-- <div class="!font-[Poppins] !font-semibold !text-[24px] leading-[32px] tracking-[0]">
   profile
@@ -467,7 +467,7 @@
       </a-col>
       
       <!-- Content Area -->
-      <a-col :xs="menu_view_mobile ? 24 : 0" :sm="menu_view_mobile ? 24 : 0" :md="18" :lg="18" class="content-area">
+      <a-col :xs="menu_view_mobile ? 24 : 0" :sm="menu_view_mobile ? 24 : 0" :md="18" :lg="18" style="padding:10px;">
         <router-view :user="user" :profile="profile" :buisness_info="business_info" />
       </a-col>
     </a-row>

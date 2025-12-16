@@ -46,6 +46,66 @@
     <!-- Scrollable Content -->
     <div class="overflow-y-auto p-[5px] bg-[#fafafa] md:h-[calc(76vh-120px)]">
       
+      <!-- Furniture -->
+      <a-collapse v-model:activeKey="productsActiveKey" style="margin-bottom: 12px;" v-if="furniture_products.length > 0">
+        <a-collapse-panel key="products">
+          <template #header>
+            <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+              <span>Furniture</span>
+              <a-badge :count="furnitureProductsPagination.total_count" />
+            </div>
+          </template>
+          <a-empty v-if="!furniture_products.length" :image="simpleImage" />
+          <div v-else :class="showGrid ? 'grid' : 'list'">
+            <div v-for="item in filterItems(furniture_products, 'name')" :key="item.id"
+                 class="item" :class="{selected: selected_texture === item.id}"
+                 @click="selectfurnitureProduct('product', item.id, item['3d_model'], item.dimensions)">
+              <img :src="$store.state.root_media_api + item.primary_image" :alt="item.name" />
+              <div style="padding: 8px;">
+                <div style="font-weight: 600; font-size: 13px;">{{ item.name }}</div>
+                <div style="font-size: 11px; color: #999;">{{ truncate(item.description) }}</div>
+              </div>
+            </div>
+          </div>
+          <!-- Load More for Furniture -->
+          <div v-if="furnitureProductsPagination.has_next" style="padding: 12px; text-align: center;">
+            <a-button :loading="loadingFurniture" @click="loadMoreFurniture">
+              {{ loadingFurniture ? 'Loading...' : 'Load More Furniture' }}
+            </a-button>
+          </div>
+        </a-collapse-panel>
+      </a-collapse>
+
+      <!-- Lights -->
+      <a-collapse v-model:activeKey="lightsActiveKey" v-if="lights.length > 0" style="margin-bottom: 12px;">
+        <a-collapse-panel key="lights">
+          <template #header>
+            <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+              <span>Lights</span>
+              <a-badge :count="lightsPagination.total_count" />
+            </div>
+          </template>
+          <a-empty v-if="!lights.length" :image="simpleImage" />
+          <div v-else :class="showGrid ? 'grid' : 'list'">
+            <div v-for="item in filterItems(lights, 'name')" :key="item.id"
+                 class="item" :class="{selected: selected_texture === item.id}"
+                 @click="selectTexture('light', item.id, item['3d_model'], item.light_type)">
+              <img :src="$store.state.root_media_api + item.primary_image" :alt="item.name" />
+              <div style="padding: 8px;">
+                <div style="font-weight: 600; font-size: 13px;">{{ item.name }}</div>
+                <div style="font-size: 11px; color: #999;">{{ truncate(item.description) }}</div>
+              </div>
+            </div>
+          </div>
+          <!-- Load More for Lights -->
+          <div v-if="lightsPagination.has_next" style="padding: 12px; text-align: center;">
+            <a-button :loading="loadingLights" @click="loadMoreLights">
+              {{ loadingLights ? 'Loading...' : 'Load More Lights' }}
+            </a-button>
+          </div>
+        </a-collapse-panel>
+      </a-collapse>
+      
       <!-- Floors -->
       <a-collapse v-model:activeKey="floorsActiveKey" style="margin-bottom: 12px;" v-if="floors.length > 0">
         <a-collapse-panel key="floors">
@@ -106,66 +166,6 @@
         </a-collapse-panel>
       </a-collapse>
 
-      <!-- Furniture -->
-      <a-collapse v-model:activeKey="productsActiveKey" style="margin-bottom: 12px;" v-if="furniture_products.length > 0">
-        <a-collapse-panel key="products">
-          <template #header>
-            <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
-              <span>Furniture</span>
-              <a-badge :count="furnitureProductsPagination.total_count" />
-            </div>
-          </template>
-          <a-empty v-if="!furniture_products.length" :image="simpleImage" />
-          <div v-else :class="showGrid ? 'grid' : 'list'">
-            <div v-for="item in filterItems(furniture_products, 'name')" :key="item.id"
-                 class="item" :class="{selected: selected_texture === item.id}"
-                 @click="selectfurnitureProduct('product', item.id, item['3d_model'], item.dimensions)">
-              <img :src="$store.state.root_media_api + item.primary_image" :alt="item.name" />
-              <div style="padding: 8px;">
-                <div style="font-weight: 600; font-size: 13px;">{{ item.name }}</div>
-                <div style="font-size: 11px; color: #999;">{{ truncate(item.description) }}</div>
-              </div>
-            </div>
-          </div>
-          <!-- Load More for Furniture -->
-          <div v-if="furnitureProductsPagination.has_next" style="padding: 12px; text-align: center;">
-            <a-button :loading="loadingFurniture" @click="loadMoreFurniture">
-              {{ loadingFurniture ? 'Loading...' : 'Load More Furniture' }}
-            </a-button>
-          </div>
-        </a-collapse-panel>
-      </a-collapse>
-
-      <!-- Lights -->
-      <a-collapse v-model:activeKey="lightsActiveKey" v-if="lights.length > 0">
-        <a-collapse-panel key="lights">
-          <template #header>
-            <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
-              <span>Lights</span>
-              <a-badge :count="lightsPagination.total_count" />
-            </div>
-          </template>
-          <a-empty v-if="!lights.length" :image="simpleImage" />
-          <div v-else :class="showGrid ? 'grid' : 'list'">
-            <div v-for="item in filterItems(lights, 'name')" :key="item.id"
-                 class="item" :class="{selected: selected_texture === item.id}"
-                 @click="selectTexture('light', item.id, item['3d_model'], item.light_type)">
-              <img :src="$store.state.root_media_api + item.primary_image" :alt="item.name" />
-              <div style="padding: 8px;">
-                <div style="font-weight: 600; font-size: 13px;">{{ item.name }}</div>
-                <div style="font-size: 11px; color: #999;">{{ truncate(item.description) }}</div>
-              </div>
-            </div>
-          </div>
-          <!-- Load More for Lights -->
-          <div v-if="lightsPagination.has_next" style="padding: 12px; text-align: center;">
-            <a-button :loading="loadingLights" @click="loadMoreLights">
-              {{ loadingLights ? 'Loading...' : 'Load More Lights' }}
-            </a-button>
-          </div>
-        </a-collapse-panel>
-      </a-collapse>
-      
     </div>
   </div>
 </template>

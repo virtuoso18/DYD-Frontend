@@ -38,27 +38,28 @@
         </div>
     </a-modal>
 
+
     <!-- Main Settings Container -->
     <div style="background-color: white; border-radius: 15px; border: 1px solid rgba(0,0,0,0.1); margin-top: 15px; min-height: 90vh; padding: 20px;">
         <h2>Settings</h2>
 
-
         <!-- Password Management Section -->
         <div style="border: 1px solid rgba(0,0,0,0.2); padding: 15px; border-radius: 7px;">
-            <a-row>
-                <a-col :span="18">
-                    <h4>Manage Password</h4>
-                    <p>Set a new password to keep your account safe.</p>
-                </a-col>
-                <a-col :span="6" style="display: flex; justify-content: center; align-items: center;">
+            <div class="flex flex-col md:flex-row md:items-center gap-4">
+                <div class="flex-1">
+                    <h4 class="mb-2">Manage Password</h4>
+                    <p class="text-gray-600 text-sm mb-0">Set a new password to keep your account safe.</p>
+                </div>
+                <div class="flex justify-start md:justify-center">
                     <a-button 
                         type="primary" 
                         @click="openPasswordModal"
+                        class="w-full md:w-auto"
                     >
                         Change Password
                     </a-button>
-                </a-col>
-            </a-row>
+                </div>
+            </div>
         </div>
     </div>
 </template>

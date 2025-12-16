@@ -522,7 +522,27 @@
       >
      <div style="position: relative; display: inline-block;">
 
- <img
+ <div
+  v-if="imageLoading"
+  style="
+    width: 100%;
+    max-width: 800px;
+    height: 500px;
+    background: linear-gradient(
+      90deg,
+      #f0f0f0 25%,
+      #e0e0e0 50%,
+      #f0f0f0 75%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+    border-radius: 8px;
+  "
+></div>
+
+<!-- Actual Image -->
+<img
+  v-show="!imageLoading"
   :src="displayImage"
   alt="Room Render"
   style="
@@ -1393,6 +1413,7 @@ export default {
   data() {
     return {
       user: JSON.parse(localStorage.getItem('user')),
+    imageLoading: true,  // ADD THIS
 
       showRatingModal: false,
       openSeeAll_used_products:false,
@@ -1458,6 +1479,7 @@ export default {
   },
   
   methods: {
+   
     async AddRoomitemstocart() {
       
       this.addingToCart = true; 
@@ -1770,10 +1792,14 @@ export default {
     },
 
     handleImageError() {
+        this.imageLoading = false;  // Add this line
+
       this.error.room = "Failed to load the room image";
     },
 
     handleImageLoad() {
+        this.imageLoading = false;  // Add this line
+
       console.log("✅ Image loaded successfully");
     },
     
@@ -2325,5 +2351,14 @@ async toggleLikeRoom(){
   }
 }
 
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
 </style>
 

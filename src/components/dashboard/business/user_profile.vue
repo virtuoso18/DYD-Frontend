@@ -1,9 +1,9 @@
 <template>
-<div class="main sm:py-3 min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh]">    
+<div class="main sm:py-3 min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh]" >    
     <!-- Main Dashboard Content -->
     <a-row class="dashboard-content ">
       <!-- Content Area -->
-      <a-col :xs="24" :sm="24" :md="24" :lg="24" class="content-area">
+      <a-col :xs="24" :sm="24" :md="24" :lg="24" class="content-area" >
         <div class="sm:content-wrapper">
           <!-- Wavy Background Header -->
           <div class="wavy-header sm:rounded-t-3xl" :style="'background: url('+this.$store.state.root_media_api+profile.background_picture+') center/cover no-repeat;'">
@@ -383,11 +383,11 @@ export default {
 <style scoped>
 .dashboard-container {
   min-height: 100vh;
-  background: #f8f9fa;
+  background: #ffffff;
 }
 
 .dashboard-content {
-  background: #f8f9fa;
+  background: #ffffff;
   min-height: 100vh;
 }
 

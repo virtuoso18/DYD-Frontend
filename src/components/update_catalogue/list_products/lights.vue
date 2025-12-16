@@ -134,7 +134,7 @@
         <p>No products found</p>
       </div>
     </div>
-     <div class="apply-section">
+     <div class="apply-section hidden md:block">
       <a-button type="primary" size="large" block class="apply-button"  @click="$emit('Apply_Light', 'magnetic-light-Renerer-apply')">
         Apply
       </a-button>

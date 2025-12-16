@@ -20,7 +20,7 @@
               </svg>
             </template>
           </a-button>
-          <span style="font-size: 18px; font-weight: 600; color: #1f2937;">Add New Light</span>
+         <span className="whitespace-nowrap pr-2 sm:text-[18px]" style=" font-weight: 600; color: #1f2937;">Add New Light</span>
         </div>
         <div style="display: flex; gap: 12px;">
           <a-button @click="handleCancel" style="border-radius: 6px;">Cancel</a-button>
@@ -33,499 +33,520 @@
 
     <div style="padding: 0;">
       <a-row :gutter="24">
-        <!-- Left Column - 3D Model Preview -->
-        <a-col :span="10">
-          <div style="position: relative; padding:10px;">
 
-            <!-- 3D Model Upload Area (shown when no model is uploaded) -->
-            <div 
-              v-if="!local3dModelUrl"
-              @drop.prevent="handleModelDrop"
-              @dragover.prevent="isDragging = true"
-              @dragleave.prevent="isDragging = false"
-              @click="upload3dModel"
-              :style="{
-                border: isDragging ? '2px solid #3b82f6' : '2px dashed #d1d5db',
-                borderRadius: '12px',
-                padding: '40px 16px',
-                background: isDragging ? '#f8faff' : '#f9fafb',
-                minHeight: '250px',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease'
-              }"
-            >
-              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" style="margin-bottom: 16px;">
-                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-                <polyline points="3.27,6.96 12,12.01 20.73,6.96"></polyline>
-                <line x1="12" y1="22.08" x2="12" y2="12"></line>
-              </svg>
-              <p style="font-size: 14px; color: #374151; font-weight: 500; margin-bottom: 8px;">Drag and drop 3D model here or click to upload</p>
-              <p style="font-size: 12px; color: #6b7280; margin: 0;">Supported file format: .gltf / .glb</p>
-              <p style="font-size: 12px; color: #6b7280; margin: 4px 0 0 0;">File size: 50MB</p>
-            </div>
+                <div className="flex flex-col lg:flex-row">
+                  <div>
 
-            <!-- 3D Model Renderer (shown when model is uploaded) -->
-            <div v-else style="position: relative;">
-              <canvas_3d_model_renderer 
-                :glbModelUrl="local3dModelUrl"
-                :Model_instance_id="'local-preview-' + Date.now()"
-                :isLoading="false"
-                style="width: 100%; max-height:250px; height: 100%;border-radius: 10px"
-              />
-              <div
-                style="position: absolute; bottom: 75px; right: 15px; background: white; padding: 8px 12px; border-radius: 6px; border: 1px solid #e9ecef; font-size: 12px; font-weight: 600; cursor: pointer;">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                  stroke-width="2" style="margin-right: 5px; vertical-align: middle;">
-                  <path
-                    d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
-                  </path>
-                  <polyline points="3.27,6.96 12,12.01 20.73,6.96"></polyline>
-                  <line x1="12" y1="22.08" x2="12" y2="12"></line>
-                </svg>
-                3D View
-              </div>
-              
-              <!-- Change Model Button -->
-              <a-button 
-                @click="upload3dModel"
-                style="position: absolute; top: 10px; right: 10px; background: white; border-radius: 6px; font-size: 11px;"
-                size="small"
-              >
-                Change Model
-              </a-button>
-
-              <!-- Display uploaded model info -->
-              <div style="margin-top: 12px; padding: 8px 12px; background: #f8faff; border: 1px solid #e5e7eb; border-radius: 6px;">
-                <div style="display: flex; align-items: center; justify-content: space-between;">
-                  <div style="display: flex; align-items: center; gap: 8px;">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2">
-                      <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"></path>
-                    </svg>
-                    <div>
-                      <div style="font-size: 12px; font-weight: 500; color: #1f2937;">{{ uploaded3dModelFile?.name }}</div>
-                      <div style="font-size: 11px; color: #6b7280;">{{ uploaded3dModelFile?.size }}</div>
-                    </div>
-                  </div>
-                  <a-button 
-                    type="text" 
-                    size="small" 
-                    @click="remove3dModel"
-                    style="color: #ef4444; padding: 4px;"
-                  >
-                    <template #icon>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                      </svg>
-                    </template>
-                  </a-button>
-                </div>
-              </div>
-            </div>
-
-           <label style="display: block; margin-top: 16px; margin-bottom: 8px; font-size: 13px; color: #374151;">
-  Images used to create 3d model (<b>{{modelDetails?.model_mode || 'N/A'}}</b>) 
-</label>
-
-            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-  <img 
-    v-if="modelDetails?.image_0"
-    :src="this.$store.state.root_media_api + modelDetails.image_0" 
-    :style="{
-      width: '60px',
-      height: '60px',
-      objectFit: 'contain',
-      borderRadius: '8px',
-      border: '2px solid #e5e7eb'
-    }"
-  />
-  <img 
-    v-if="modelDetails?.image_1"
-    :src="this.$store.state.root_media_api + modelDetails.image_1" 
-    :style="{
-      width: '60px',
-      height: '60px',
-      objectFit: 'contain',
-      borderRadius: '8px',
-      border: '2px solid #e5e7eb'
-    }"
-  />
-  <img 
-    v-if="modelDetails?.image_2"
-    :src="this.$store.state.root_media_api + modelDetails.image_2" 
-    :style="{
-      width: '60px',
-      height: '60px',
-      objectFit: 'contain',
-      borderRadius: '8px',
-      border: '2px solid #e5e7eb'
-    }"
-  />
-  <img 
-    v-if="modelDetails?.image_3"
-    :src="this.$store.state.root_media_api + modelDetails.image_3" 
-    :style="{
-      width: '60px',
-      height: '60px',
-      objectFit: 'contain',
-      borderRadius: '8px',
-      border: '2px solid #e5e7eb'
-    }"
-  />
-</div>
-          </div>
-        </a-col>
-
-        <!-- Right Column - Product Details (keeping existing code) -->
-        <a-col :span="14">
-          <div style="padding-left: 12px;">
-            <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px; color: #1f2937;">Product Details</h3>
-
-            <!-- Upload Multiple Images Section -->
-            <div style="margin-bottom: 20px;">
-              <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #374151;">Product Images <span style="color: red;">*</span><span style="font-size: 12px; color: #6b7280;">&nbsp;(Click to upload multiple images Max 5)</span></label>
-              <div style="display: flex; gap: 8px; align-items: center;">
-                <div style="width: 60px; height: 60px; background: #f3f4f6; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer;margin-top:14px;" @click="uploadImages">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2">
-                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
-                    <circle cx="12" cy="13" r="4"></circle>
-                  </svg>
-                </div>
-
-                <div v-if="selectedImages.length > 0" style="margin-top: 16px;">
-                  <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-                    <div 
-                      v-for="(image, index) in selectedImages" 
-                      :key="index"
-                      style="position: relative; cursor: pointer;"
-                      @click="setPrimaryImage(image)"
-                    >
-                      <img 
-                        :src="image.url" 
-                        :style="{
-                          width: '60px',
-                          height: '60px',
-                          objectFit: 'cover',
-                          borderRadius: '8px',
-                          border: image.isPrimary ? '2px solid #22c55e' : '2px solid #e5e7eb'
-                        }"
-                      />
-                      <div 
-                        v-if="image.isPrimary"
-                        style="position: absolute; left: -5px; bottom: -5px; background: #22c55e; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 12px;"
-                      >
-                        ★
-                      </div>
-                      <a-button 
-                        type="text" 
-                        size="small" 
-                        @click.stop="removeImage(index)"
-                        style="position: absolute; top: -8px; right: -8px; background: #ef4444; color: white; border-radius: 50%; width: 20px; height: 20px; padding: 0; min-width: 20px;"
-                      >
-                        <template #icon>
-                          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                            <line x1="18" y1="6" x2="6" y2="18"></line>
-                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                    <!-- Left Column - 3D Model Preview -->
+                    <a-col
+    :xs="24"
+    :sm="24"
+    :md="24"
+    :lg="24"
+  > 
+                      <div style="position: relative; padding:10px;">
+            
+                        <!-- 3D Model Upload Area (shown when no model is uploaded) -->
+                        <div 
+                          v-if="!local3dModelUrl"
+                          @drop.prevent="handleModelDrop"
+                          @dragover.prevent="isDragging = true"
+                          @dragleave.prevent="isDragging = false"
+                          @click="upload3dModel"
+                          :style="{
+                            border: isDragging ? '2px solid #3b82f6' : '2px dashed #d1d5db',
+                            borderRadius: '12px',
+                            padding: '40px 16px',
+                            background: isDragging ? '#f8faff' : '#f9fafb',
+                            minHeight: '250px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            cursor: 'pointer',
+                            transition: 'all 0.3s ease'
+                          }"
+                        >
+                          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" style="margin-bottom: 16px;">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                            <polyline points="3.27,6.96 12,12.01 20.73,6.96"></polyline>
+                            <line x1="12" y1="22.08" x2="12" y2="12"></line>
                           </svg>
-                        </template>
-                      </a-button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Name Field -->
-            <div style="margin-bottom: 16px;">
-              <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Name <span style="color: red;">*</span></label>
-              <a-input 
-                v-model:value="productForm.name" 
-                placeholder="Decaly Coral"
-                style="border-radius: 6px; background: #f3f4f6; border: 1px solid #e5e7eb;"
+                          <p style="font-size: 14px; color: #374151; font-weight: 500; margin-bottom: 8px;">Drag and drop 3D model here or click to upload</p>
+                          <p style="font-size: 12px; color: #6b7280; margin: 0;">Supported file format: .gltf / .glb</p>
+                          <p style="font-size: 12px; color: #6b7280; margin: 4px 0 0 0;">File size: 50MB</p>
+                        </div>
+            
+                        <!-- 3D Model Renderer (shown when model is uploaded) -->
+                        <div v-else style="position: relative;">
+                          <canvas_3d_model_renderer 
+                            :glbModelUrl="local3dModelUrl"
+                            :Model_instance_id="'local-preview-' + Date.now()"
+                            :isLoading="false"
+                            style="width: 100%; max-height:250px; height: 100%;border-radius: 10px"
+                          />
+                          <div
+                            style="position: absolute; bottom: 75px; right: 15px; background: white; padding: 8px 12px; border-radius: 6px; border: 1px solid #e9ecef; font-size: 12px; font-weight: 600; cursor: pointer;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                              stroke-width="2" style="margin-right: 5px; vertical-align: middle;">
+                              <path
+                                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+                              </path>
+                              <polyline points="3.27,6.96 12,12.01 20.73,6.96"></polyline>
+                              <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                            </svg>
+                            3D View
+                          </div>
+                          
+                          <!-- Change Model Button -->
+                          <a-button 
+                            @click="upload3dModel"
+                            style="position: absolute; top: 10px; right: 10px; background: white; border-radius: 6px; font-size: 11px;"
+                            size="small"
+                          >
+                            Change Model
+                          </a-button>
+            
+                          <!-- Display uploaded model info -->
+                          <div style="margin-top: 12px; padding: 8px 12px; background: #f8faff; border: 1px solid #e5e7eb; border-radius: 6px;">
+                            <div style="display: flex; align-items: center; justify-content: space-between;">
+                              <div style="display: flex; align-items: center; gap: 8px;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2">
+                                  <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"></path>
+                                </svg>
+                                <div>
+                                  <div style="font-size: 12px; font-weight: 500; color: #1f2937;">{{ uploaded3dModelFile?.name }}</div>
+                                  <div style="font-size: 11px; color: #6b7280;">{{ uploaded3dModelFile?.size }}</div>
+                                </div>
+                              </div>
+                              <a-button 
+                                type="text" 
+                                size="small" 
+                                @click="remove3dModel"
+                                style="color: #ef4444; padding: 4px;"
+                              >
+                                <template #icon>
+                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                  </svg>
+                                </template>
+                              </a-button>
+                            </div>
+                          </div>
+                        </div>
+            
+                       <label style="display: block; margin-top: 16px; margin-bottom: 8px; font-size: 13px; color: #374151;">
+              Images used to create 3d model (<b>{{modelDetails?.model_mode || 'N/A'}}</b>) 
+            </label>
+            
+                        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+              <img 
+                v-if="modelDetails?.image_0"
+                :src="this.$store.state.root_media_api + modelDetails.image_0" 
+                :style="{
+                  width: '60px',
+                  height: '60px',
+                  objectFit: 'contain',
+                  borderRadius: '8px',
+                  border: '2px solid #e5e7eb'
+                }"
+              />
+              <img 
+                v-if="modelDetails?.image_1"
+                :src="this.$store.state.root_media_api + modelDetails.image_1" 
+                :style="{
+                  width: '60px',
+                  height: '60px',
+                  objectFit: 'contain',
+                  borderRadius: '8px',
+                  border: '2px solid #e5e7eb'
+                }"
+              />
+              <img 
+                v-if="modelDetails?.image_2"
+                :src="this.$store.state.root_media_api + modelDetails.image_2" 
+                :style="{
+                  width: '60px',
+                  height: '60px',
+                  objectFit: 'contain',
+                  borderRadius: '8px',
+                  border: '2px solid #e5e7eb'
+                }"
+              />
+              <img 
+                v-if="modelDetails?.image_3"
+                :src="this.$store.state.root_media_api + modelDetails.image_3" 
+                :style="{
+                  width: '60px',
+                  height: '60px',
+                  objectFit: 'contain',
+                  borderRadius: '8px',
+                  border: '2px solid #e5e7eb'
+                }"
               />
             </div>
-
-            <!-- Description Field -->
-            <div style="margin-bottom: 16px;">
-              <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Description</label>
-              <a-textarea 
-                v-model:value="productForm.description"
-                :rows="3"
-                placeholder="Living room lighting, interior lighting, pendant lighting
-Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas."
-                style="border-radius: 6px; background: #f3f4f6; border: 1px solid #e5e7eb; resize: none;"
-              />
-            </div>
-
-            <!-- Category, Type, Price Row -->
-            <a-row :gutter="12" style="margin-bottom: 16px;">
-              <a-col :span="8">
-                <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Category <span style="color: red;">*</span></label>
-                <a-select 
-  v-model:value="productForm.category_name" 
-  placeholder="Search and select category"
-  style="width: 100%;"
-  mode="tags"
-  :options="categoryOptions"
-  :loading="loadingCategories"
-  :filter-option="false"
-  :allow-clear="true"
-  show-search
-  @search="handleCategorySearch"
-  @change="handleCategoryChange"
-  @focus="handleSelectFocus"
-/>
-              </a-col>
-              <a-col :span="8">
-                <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Type</label>
-                <a-select 
-                  v-model:value="productForm.furniture_type" 
-                  placeholder="Modern"
-                  style="width: 100%;"
-                  :style="{ background: '#f3f4f6' }"
-                >
-                  <a-select-option v-for="type in types" :key="type" :value="type">{{ type }}</a-select-option>
-                </a-select>
-              </a-col>
-              <a-col :span="8">
-                <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Price <span style="color: red;">*</span></label>
-                <a-input-number
-                  v-model:value="productForm.pricing.price" 
-                  :min="0"
-                  :step="0.01"
-                  placeholder="680"
-                  style="width: 100%; border-radius: 6px; background: #f3f4f6; border: 1px solid #e5e7eb;"
-                />
-              </a-col>
-            </a-row>
-
-            <!-- Dimensions Section -->
-            <div style="margin-bottom: 20px;">
-              <h4 style="margin-bottom: 12px; font-size: 14px; font-weight: 500; color: #1f2937;">Dimensions</h4>
-              <a-row :gutter="8">
-                <a-col :span="8">
-                  <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Height</label>
-                  <div style="display: flex; align-items: center;">
-                    <a-input-number
-                      v-model:value="productForm.dimensions.height" 
-                      :min="0"
-                      :step="0.01"
-                      placeholder="0.8"
-                      style="width: 100%; border-radius: 4px; background: #f3f4f6; border: 1px solid #e5e7eb; font-size: 13px;"
-                    />
-                    <span style="margin-left: 6px; color: #9ca3af; font-size: 12px;">meter</span>
+                      </div>
+                    </a-col>
                   </div>
-                </a-col>
-                <a-col :span="8">
-                  <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Length/Depth</label>
-                  <div style="display: flex; align-items: center;">
-                    <a-input-number
-                      v-model:value="productForm.dimensions.length" 
-                      :min="0"
-                      :step="0.01"
-                      placeholder="0.5"
-                      style="width: 100%; border-radius: 4px; background: #f3f4f6; border: 1px solid #e5e7eb; font-size: 13px;"
-                    />
-                    <span style="margin-left: 6px; color: #9ca3af; font-size: 12px;">meter</span>
-                  </div>
-                </a-col>
-                <a-col :span="8">
-                  <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Width</label>
-                  <div style="display: flex; align-items: center;">
-                    <a-input-number
-                      v-model:value="productForm.dimensions.width" 
-                      :min="0"
-                      :step="0.01"
-                      placeholder="1.8"
-                      style="width: 100%; border-radius: 4px; background: #f3f4f6; border: 1px solid #e5e7eb; font-size: 13px;"
-                    />
-                    <span style="margin-left: 6px; color: #9ca3af; font-size: 12px;">meter</span>
-                  </div>
-                </a-col>
-              </a-row>
-            </div>
 
-            <!-- Available Colors Section -->
-            <div style="margin-bottom: 20px;">
-              <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #374151;">Available Colors</label>
-              
-              <a-popover trigger="click" placement="bottom">
-                <template #title>
-                  <div style="display: flex; align-items: center; gap: 8px;">
-                    <span>Add Available Colors</span>
-                    <input 
-                      type="color" 
-                      :value="tempColor"
-                      @input="tempColor = $event.target.value"
-                      style="width: 30px; height: 25px; border: none; border-radius: 4px; cursor: pointer;"
-                    />
-                    <a-button 
-                      type="primary" 
-                      size="small" 
-                      @click="addAvailableColor"
-                      style="margin-left: 8px;"
-                    >
-                      Add
-                    </a-button>
-                  </div>
-                </template>
-                <template #content>
-                  <div style="display: grid; grid-template-columns: repeat(6, 32px); gap: 8px; padding: 8px;">
-                    <div
-                      v-for="(color, index) in presetColors"
-                      :key="index"
-                      @click="addPresetColor(color)"
-                      :style="{
-                        width: '32px',
-                        height: '32px',
-                        borderRadius: '6px',
-                        backgroundColor: color,
-                        cursor: 'pointer',
-                        border: '1px solid #e5e7eb',
-                        opacity: selectedColors.includes(color) ? 0.5 : 1
-                      }"
-                    ></div>
-                  </div>
-                </template>
-                <a-button style="border-radius: 6px; border: 2px dashed #d1d5db;">
-                  <template #icon>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <line x1="12" y1="5" x2="12" y2="19"></line>
-                      <line x1="5" y1="12" x2="19" y2="12"></line>
-                    </svg>
-                  </template>
-                  Add Colors
-                </a-button>
-              </a-popover>
+                  <div>
 
-              <div v-if="selectedColors.length > 0" style="margin-top: 12px;">
-                <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-                  <div 
-                    v-for="(color, index) in selectedColors" 
-                    :key="index"
-                    style="position: relative;"
-                  >
-                    <div
-                      :style="{
-                        width: '40px',
-                        height: '40px',
-                        borderRadius: '50%',
-                        backgroundColor: color,
-                        border: '2px solid #e5e7eb',
-                        cursor: 'pointer',
-                        position: 'relative'
-                      }"
-                    ></div>
-                    <a-button 
-                      type="text" 
-                      size="small" 
-                      @click="removeColor(index)"
-                      style="position: absolute; top: -8px; right: -8px; background: #ef4444; color: white; border-radius: 50%; width: 20px; height: 20px; padding: 0; min-width: 20px;"
-                    >
-                      <template #icon>
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                          <line x1="18" y1="6" x2="6" y2="18"></line>
-                          <line x1="6" y1="6" x2="18" y2="18"></line>
-                        </svg>
-                      </template>
-                    </a-button>
+                    <!-- Right Column - Product Details (keeping existing code) -->
+                   <a-col
+    :xs="24"
+    :sm="24"
+    :md="24"
+    :lg="24"
+  > 
+                      <div style="padding-left: 12px;">
+                        <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px; color: #1f2937;">Product Details</h3>
+            
+                        <!-- Upload Multiple Images Section -->
+                        <div style="margin-bottom: 20px;">
+                          <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #374151;">Product Images <span style="color: red;">*</span><span style="font-size: 12px; color: #6b7280;">&nbsp;(Click to upload multiple images Max 5)</span></label>
+                          <div style="display: flex; gap: 8px; align-items: center;">
+                            <div style="width: 60px; height: 60px; background: #f3f4f6; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer;margin-top:14px;" @click="uploadImages">
+                              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2">
+                                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                                <circle cx="12" cy="13" r="4"></circle>
+                              </svg>
+                            </div>
+            
+                            <div v-if="selectedImages.length > 0" style="margin-top: 16px;">
+                              <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                                <div 
+                                  v-for="(image, index) in selectedImages" 
+                                  :key="index"
+                                  style="position: relative; cursor: pointer;"
+                                  @click="setPrimaryImage(image)"
+                                >
+                                  <img 
+                                    :src="image.url" 
+                                    :style="{
+                                      width: '60px',
+                                      height: '60px',
+                                      objectFit: 'cover',
+                                      borderRadius: '8px',
+                                      border: image.isPrimary ? '2px solid #22c55e' : '2px solid #e5e7eb'
+                                    }"
+                                  />
+                                  <div 
+                                    v-if="image.isPrimary"
+                                    style="position: absolute; left: -5px; bottom: -5px; background: #22c55e; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 12px;"
+                                  >
+                                    ★
+                                  </div>
+                                  <a-button 
+                                    type="text" 
+                                    size="small" 
+                                    @click.stop="removeImage(index)"
+                                    style="position: absolute; top: -8px; right: -8px; background: #ef4444; color: white; border-radius: 50%; width: 20px; height: 20px; padding: 0; min-width: 20px;"
+                                  >
+                                    <template #icon>
+                                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                                      </svg>
+                                    </template>
+                                  </a-button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+            
+                        <!-- Name Field -->
+                        <div style="margin-bottom: 16px;">
+                          <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Name <span style="color: red;">*</span></label>
+                          <a-input 
+                            v-model:value="productForm.name" 
+                            placeholder="Decaly Coral"
+                            style="border-radius: 6px; background: #f3f4f6; border: 1px solid #e5e7eb;"
+                          />
+                        </div>
+            
+                        <!-- Description Field -->
+                        <div style="margin-bottom: 16px;">
+                          <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Description</label>
+                          <a-textarea 
+                            v-model:value="productForm.description"
+                            :rows="3"
+                            placeholder="Living room lighting, interior lighting, pendant lighting
+            Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas."
+                            style="border-radius: 6px; background: #f3f4f6; border: 1px solid #e5e7eb; resize: none;"
+                          />
+                        </div>
+            
+                        <!-- Category, Type, Price Row -->
+                        <a-row :gutter="12" style="margin-bottom: 16px;">
+                          <a-col :span="8">
+                            <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Category <span style="color: red;">*</span></label>
+                            <a-select 
+              v-model:value="productForm.category_name" 
+              placeholder="Search and select category"
+              style="width: 100%;"
+              mode="tags"
+              :options="categoryOptions"
+              :loading="loadingCategories"
+              :filter-option="false"
+              :allow-clear="true"
+              show-search
+              @search="handleCategorySearch"
+              @change="handleCategoryChange"
+              @focus="handleSelectFocus"
+            />
+                          </a-col>
+                          <a-col :span="8">
+                            <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Type</label>
+                            <a-select 
+                              v-model:value="productForm.furniture_type" 
+                              placeholder="Modern"
+                              style="width: 100%;"
+                              :style="{ background: '#f3f4f6' }"
+                            >
+                              <a-select-option v-for="type in types" :key="type" :value="type">{{ type }}</a-select-option>
+                            </a-select>
+                          </a-col>
+                          <a-col :span="8">
+                            <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Price <span style="color: red;">*</span></label>
+                            <a-input-number
+                              v-model:value="productForm.pricing.price" 
+                              :min="0"
+                              :step="0.01"
+                              placeholder="680"
+                              style="width: 100%; border-radius: 6px; background: #f3f4f6; border: 1px solid #e5e7eb;"
+                            />
+                          </a-col>
+                        </a-row>
+            
+                        <!-- Dimensions Section -->
+                        <div style="margin-bottom: 20px;">
+                          <h4 style="margin-bottom: 12px; font-size: 14px; font-weight: 500; color: #1f2937;">Dimensions</h4>
+                          <a-row :gutter="8">
+                            <a-col :span="8">
+                              <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Height</label>
+                              <div style="display: flex; align-items: center;">
+                                <a-input-number
+                                  v-model:value="productForm.dimensions.height" 
+                                  :min="0"
+                                  :step="0.01"
+                                  placeholder="0.8"
+                                  style="width: 100%; border-radius: 4px; background: #f3f4f6; border: 1px solid #e5e7eb; font-size: 13px;"
+                                />
+                                <span style="margin-left: 6px; color: #9ca3af; font-size: 12px;">meter</span>
+                              </div>
+                            </a-col>
+                            <a-col :span="8">
+                              <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Length/Depth</label>
+                              <div style="display: flex; align-items: center;">
+                                <a-input-number
+                                  v-model:value="productForm.dimensions.length" 
+                                  :min="0"
+                                  :step="0.01"
+                                  placeholder="0.5"
+                                  style="width: 100%; border-radius: 4px; background: #f3f4f6; border: 1px solid #e5e7eb; font-size: 13px;"
+                                />
+                                <span style="margin-left: 6px; color: #9ca3af; font-size: 12px;">meter</span>
+                              </div>
+                            </a-col>
+                            <a-col :span="8">
+                              <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Width</label>
+                              <div style="display: flex; align-items: center;">
+                                <a-input-number
+                                  v-model:value="productForm.dimensions.width" 
+                                  :min="0"
+                                  :step="0.01"
+                                  placeholder="1.8"
+                                  style="width: 100%; border-radius: 4px; background: #f3f4f6; border: 1px solid #e5e7eb; font-size: 13px;"
+                                />
+                                <span style="margin-left: 6px; color: #9ca3af; font-size: 12px;">meter</span>
+                              </div>
+                            </a-col>
+                          </a-row>
+                        </div>
+            
+                        <!-- Available Colors Section -->
+                        <div style="margin-bottom: 20px;">
+                          <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #374151;">Available Colors</label>
+                          
+                          <a-popover trigger="click" placement="bottom">
+                            <template #title>
+                              <div style="display: flex; align-items: center; gap: 8px;">
+                                <span>Add Available Colors</span>
+                                <input 
+                                  type="color" 
+                                  :value="tempColor"
+                                  @input="tempColor = $event.target.value"
+                                  style="width: 30px; height: 25px; border: none; border-radius: 4px; cursor: pointer;"
+                                />
+                                <a-button 
+                                  type="primary" 
+                                  size="small" 
+                                  @click="addAvailableColor"
+                                  style="margin-left: 8px;"
+                                >
+                                  Add
+                                </a-button>
+                              </div>
+                            </template>
+                            <template #content>
+                              <div style="display: grid; grid-template-columns: repeat(6, 32px); gap: 8px; padding: 8px;">
+                                <div
+                                  v-for="(color, index) in presetColors"
+                                  :key="index"
+                                  @click="addPresetColor(color)"
+                                  :style="{
+                                    width: '32px',
+                                    height: '32px',
+                                    borderRadius: '6px',
+                                    backgroundColor: color,
+                                    cursor: 'pointer',
+                                    border: '1px solid #e5e7eb',
+                                    opacity: selectedColors.includes(color) ? 0.5 : 1
+                                  }"
+                                ></div>
+                              </div>
+                            </template>
+                            <a-button style="border-radius: 6px; border: 2px dashed #d1d5db;">
+                              <template #icon>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
+                              </template>
+                              Add Colors
+                            </a-button>
+                          </a-popover>
+            
+                          <div v-if="selectedColors.length > 0" style="margin-top: 12px;">
+                            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                              <div 
+                                v-for="(color, index) in selectedColors" 
+                                :key="index"
+                                style="position: relative;"
+                              >
+                                <div
+                                  :style="{
+                                    width: '40px',
+                                    height: '40px',
+                                    borderRadius: '50%',
+                                    backgroundColor: color,
+                                    border: '2px solid #e5e7eb',
+                                    cursor: 'pointer',
+                                    position: 'relative'
+                                  }"
+                                ></div>
+                                <a-button 
+                                  type="text" 
+                                  size="small" 
+                                  @click="removeColor(index)"
+                                  style="position: absolute; top: -8px; right: -8px; background: #ef4444; color: white; border-radius: 50%; width: 20px; height: 20px; padding: 0; min-width: 20px;"
+                                >
+                                  <template #icon>
+                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                                    </svg>
+                                  </template>
+                                </a-button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+            
+                        <!-- Textures Section -->
+                        <div style="margin-bottom: 20px;">
+                          <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #374151;">Texture Images</label>
+                          <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                            <div style="cursor: pointer;" @click="uploadTexture">
+                              <div style="width: 48px; height: 40px; background: #f3f4f6; border: 2px dashed #d1d5db; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2">
+                                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
+                              </div>
+                            </div>
+            
+                            <div v-for="(texture, index) in selectedTextures" :key="index" style="position: relative;">
+                              <div 
+                                :style="{ 
+                                  width: '48px', 
+                                  height: '40px', 
+                                  backgroundImage: `url(${texture.url})`, 
+                                  backgroundSize: 'cover', 
+                                  backgroundPosition: 'center', 
+                                  borderRadius: '8px', 
+                                  border: '2px solid #e5e7eb', 
+                                  cursor: 'pointer' 
+                                }"
+                              ></div>
+                              <a-button 
+                                type="text" 
+                                size="small" 
+                                @click="removeTexture(index)"
+                                style="position: absolute; top: -6px; right: -6px; background: #ef4444; color: white; border-radius: 50%; width: 18px; height: 18px; padding: 0; min-width: 18px;"
+                              >
+                                <template #icon>
+                                  <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                  </svg>
+                                </template>
+                              </a-button>
+                            </div>
+                          </div>
+                        </div>
+            
+                        <!-- PBR Files Section -->
+                        <div style="margin-bottom: 20px;">
+                          <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #374151;">PBR Files</label>
+                          
+                          <div style="cursor: pointer;" @click="uploadPbr">
+                            <div style="width: 100%; height: 48px; background: #f3f4f6; border: 2px dashed #d1d5db; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="17,8 12,3 7,8"></polyline>
+                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                              </svg>
+                              <span style="font-size: 12px; color: #6b7280;">Upload PBR files (.pbr, .zip, .rar, etc.)</span>
+                            </div>
+                          </div>
+            
+                          <div v-if="selectedPbrFiles.length > 0" style="margin-top: 12px;">
+                            <div v-for="(pbrFile, index) in selectedPbrFiles" :key="index" 
+                                style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: #f8faff; border: 1px solid #e5e7eb; border-radius: 6px; margin-bottom: 6px;">
+                              <div style="display: flex; align-items: center; gap: 8px;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2">
+                                  <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"></path>
+                                </svg>
+                                <div>
+                                  <div style="font-size: 13px; font-weight: 500; color: #1f2937;">{{ pbrFile.name }}</div>
+                                  <div style="font-size: 11px; color: #6b7280;">{{ pbrFile.size }}</div>
+                                </div>
+                              </div>
+                              <a-button 
+                                type="text" 
+                                size="small" 
+                                @click="removePbrFile(index)"
+                                style="color: #ef4444; padding: 4px;"
+                              >
+                                <template #icon>
+                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                  </svg>
+                                </template>
+                              </a-button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </a-col>
                   </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Textures Section -->
-            <div style="margin-bottom: 20px;">
-              <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #374151;">Texture Images</label>
-              <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-                <div style="cursor: pointer;" @click="uploadTexture">
-                  <div style="width: 48px; height: 40px; background: #f3f4f6; border: 2px dashed #d1d5db; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2">
-                      <line x1="12" y1="5" x2="12" y2="19"></line>
-                      <line x1="5" y1="12" x2="19" y2="12"></line>
-                    </svg>
+          
                   </div>
-                </div>
 
-                <div v-for="(texture, index) in selectedTextures" :key="index" style="position: relative;">
-                  <div 
-                    :style="{ 
-                      width: '48px', 
-                      height: '40px', 
-                      backgroundImage: `url(${texture.url})`, 
-                      backgroundSize: 'cover', 
-                      backgroundPosition: 'center', 
-                      borderRadius: '8px', 
-                      border: '2px solid #e5e7eb', 
-                      cursor: 'pointer' 
-                    }"
-                  ></div>
-                  <a-button 
-                    type="text" 
-                    size="small" 
-                    @click="removeTexture(index)"
-                    style="position: absolute; top: -6px; right: -6px; background: #ef4444; color: white; border-radius: 50%; width: 18px; height: 18px; padding: 0; min-width: 18px;"
-                  >
-                    <template #icon>
-                      <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                      </svg>
-                    </template>
-                  </a-button>
-                </div>
-              </div>
-            </div>
-
-            <!-- PBR Files Section -->
-            <div style="margin-bottom: 20px;">
-              <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #374151;">PBR Files</label>
-              
-              <div style="cursor: pointer;" @click="uploadPbr">
-                <div style="width: 100%; height: 48px; background: #f3f4f6; border: 2px dashed #d1d5db; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                    <polyline points="17,8 12,3 7,8"></polyline>
-                    <line x1="12" y1="3" x2="12" y2="15"></line>
-                  </svg>
-                  <span style="font-size: 12px; color: #6b7280;">Upload PBR files (.pbr, .zip, .rar, etc.)</span>
-                </div>
-              </div>
-
-              <div v-if="selectedPbrFiles.length > 0" style="margin-top: 12px;">
-                <div v-for="(pbrFile, index) in selectedPbrFiles" :key="index" 
-                    style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: #f8faff; border: 1px solid #e5e7eb; border-radius: 6px; margin-bottom: 6px;">
-                  <div style="display: flex; align-items: center; gap: 8px;">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2">
-                      <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"></path>
-                    </svg>
-                    <div>
-                      <div style="font-size: 13px; font-weight: 500; color: #1f2937;">{{ pbrFile.name }}</div>
-                      <div style="font-size: 11px; color: #6b7280;">{{ pbrFile.size }}</div>
-                    </div>
-                  </div>
-                  <a-button 
-                    type="text" 
-                    size="small" 
-                    @click="removePbrFile(index)"
-                    style="color: #ef4444; padding: 4px;"
-                  >
-                    <template #icon>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                      </svg>
-                    </template>
-                  </a-button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </a-col>
       </a-row>
     </div>
 
