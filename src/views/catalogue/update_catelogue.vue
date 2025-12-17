@@ -624,7 +624,7 @@ Switch Furniture</a-button> -->
       <div class="main_panel">
         <a-row class="full-height">
           <!-- Left Sidebar - Tool Icons -->
-          <a-col :span="(user?.user_type !=='User' && user?.user_type !=='Professional' )? 1 :0" class="left-sidebar">
+          <a-col :span="user?.user_type ==='Business' ? 1 :0" class="left-sidebar">
             <div class="tool-icons">
               <div :class="current_tab==='image' ?'tool-item active' :'tool-item '" @click="changeCurrentTab('image')">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none">
@@ -653,7 +653,8 @@ Switch Furniture</a-button> -->
           </a-col>
   
           <!-- Middle Panel - Controls -->
-          <a-col :span="6" class="middle-panel" v-if="current_tab=='image'" >
+           <!-- (user?.user_type !=='User' && user?.user_type !=='Professional' )? 6 :7 -->
+          <a-col :span="user?.user_type ==='Business' || user?.user_type ==='User' ? 6 :7" class="middle-panel" v-if="current_tab=='image'" >
             <div class="controls-container">
               <!-- Top Action Buttons -->
               <div class="action-buttons">

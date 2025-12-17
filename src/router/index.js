@@ -146,7 +146,7 @@ import add_furniture from '@/components/dashboard/business/my_products/add_new_p
 import add_light from '@/components/dashboard/business/my_products/add_new_product/add_light_ceiling_3d.vue'
 
 import profesional_buisness_details from '@/components/dashboard/professional/buisness_details.vue'
-
+import profesional_my_designes from '@/components/dashboard/professional/my_designs.vue'
 
 
 // Import individual dashboard components for professional users
@@ -515,6 +515,11 @@ const router = createRouter({
           path: 'business-details',
           name: 'profesional_buisness_details',
           component: profesional_buisness_details,
+        },
+        {
+          path: 'my-designes',
+          name: 'professional_designes',
+          component: profesional_my_designes,
         },
         {
           path: 'my-messages',

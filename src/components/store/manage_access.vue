@@ -493,7 +493,7 @@
   </a-button> -->
 
   <a-button 
-    type="default" 
+    type="primary" 
     size="large" 
     @click="showGrantProfessionalAccessModal"
     class="ml-3 max-sm:ml-2 max-sm:!px-2 max-sm:!py-1 max-sm:!text-xs max-sm:!h-auto"
@@ -508,7 +508,8 @@
     <!-- Tabs -->
     <!-- {{ all_staff }} -->
      <!-- {"error": false, "count": 1, "data": [ { "id": "2b7b4e47-664e-45be-a91e-731e8db82a90", "professional_user": { "id": 4, "email": "ashishwaykar@sdlccorp.com", "full_name": "Ashish Professional", "phone": "", "profile_picture": "/media/default/default-user.jpg" }, "access_request_accepted": true, "is_active": true, "created_at": "2025-11-20T07:34:49.960787+00:00", "updated_at": "2025-11-20T07:41:14.187668+00:00", "assigned_tasks": [], "task_count": 0 } ] } -->
-    <a-tabs v-model:activeKey="activeTab">
+    <!-- <a-tabs v-model:activeKey="activeTab"> -->
+       <a-tabs v-model:activeKey="activeTab" @change="handleTabChange">
       <a-tab-pane key="all-staff" tab="All Staff">
         <!-- Staff Table -->
     <div class="w-full md:w-[80%] mx-auto">
@@ -551,7 +552,7 @@
       </template>
 
       <!-- Action column -->
-      <template v-else-if="column.dataIndex === 'actions'">
+      <!-- <template v-else-if="column.dataIndex === 'actions'"> -->
         <!-- <div style="display:flex;gap:6px;justify-content:center;">
           <a-button type="primary" shape="circle" @click.stop="onEdit(record)">
             <EditOutlined />
@@ -560,7 +561,7 @@
             <DeleteOutlined />
           </a-button>
         </div> -->
-        <div style="display:flex; gap:8px; justify-content:center;">
+        <!-- <div style="display:flex; gap:8px; justify-content:center;">
           <a-button
             type="primary"
             shape="circle"
@@ -580,14 +581,14 @@
           </a-button>
         </div>
         
-      </template>
+      </template> -->
     </template>
   </a-table>
 
       </a-tab-pane>
 
       <a-tab-pane key="all-tasks" tab="All Tasks">
-        <task_List />
+         <task_List :tasks="allBusinessTasks" :loading="loadingAllTasks"/>
       </a-tab-pane>
     </a-tabs>
     </div>
@@ -1061,10 +1062,11 @@
                     <a-button type="default" shape="circle" @click.stop="show_Mail_employee_modal()">
                       <MailOutlined />
                     </a-button>
-                    <a-button type="default" shape="circle" @click.stop="show_Edit_employee_modal()">
+                    <!-- <a-button type="default" shape="circle" @click.stop="show_Edit_employee_modal()">
                       <EditOutlined />
-                    </a-button>
-                    <a-button type="primary" danger shape="circle" @click.stop="show_Delete_employee_modal()">
+                    </a-button> -->
+                    <!-- <a-button type="primary" danger shape="circle" @click.stop="show_Delete_employee_modal()"> -->
+                      <a-button type="primary" danger shape="circle" @click.stop="show_Delete_employee_modal(staff_details.id)">
                       <DeleteOutlined />
                     </a-button>
                   </div>
@@ -1161,12 +1163,12 @@ export default {
           key: 'task_count',
           align: 'center',
         },
-        {
-          title: 'Actions',
-          dataIndex: 'actions',
-          key: 'actions',
-          align: 'center',
-        },
+        // {
+        //   title: 'Actions',
+        //   dataIndex: 'actions',
+        //   key: 'actions',
+        //   align: 'center',
+        // },
       ],
 
       mailForm: {
@@ -1238,6 +1240,12 @@ export default {
       // New permission toggles for business_customers
       business_customers_read: false,
       business_customers_delete: false,
+
+
+      allBusinessTasks: [],
+      loadingAllTasks: false,
+      staff_details: null,
+      staff_access_id: null, 
     };
   },
   components:{EditOutlined,DeleteOutlined ,LeftOutlined,  PhoneOutlined,MailOutlined,RedoOutlined,task_List},
@@ -1246,6 +1254,75 @@ export default {
      * Updated customRow method to properly pass record and handle clicks
      * This returns an object with click handler and styling for table rows
      */
+     handleTabChange(activeKey) {
+
+      this.activeTab = activeKey;
+
+      if (activeKey === 'all-tasks') {
+
+        this.fetchAllBusinessTasks();
+
+      }
+
+    },
+
+    async fetchAllBusinessTasks() {
+
+      this.loadingAllTasks = true;
+
+      try {
+
+        const response = await fetch(
+
+          `${this.$store.state.root_api}access-engine/api/tasks/retrieve/`,
+
+          {
+
+            headers: { Authorization: `Token ${localStorage.getItem('token')}` },
+
+          }
+
+        );
+
+
+
+        const data = await response.json();
+
+        
+
+        if (Array.isArray(data)) {
+
+          this.allBusinessTasks = data;
+
+          console.log('All business tasks fetched:', this.allBusinessTasks);
+
+        } else if (data.error) {
+
+          this.$message.error(data.message || 'Failed to fetch tasks');
+
+          this.allBusinessTasks = [];
+
+        } else {
+
+          this.allBusinessTasks = [];
+
+        }
+
+      } catch (error) {
+
+        console.error('Error fetching all business tasks:', error);
+
+        this.$message.error('An error occurred while fetching tasks');
+
+        this.allBusinessTasks = [];
+
+      } finally {
+
+        this.loadingAllTasks = false;
+
+      }
+
+    },
     customRow(record) {
       console.log('Row clicked:', record);
       return {
@@ -1615,17 +1692,124 @@ export default {
       this.open_Delete_employee_modal = true;
     },
     
-    confirmDeleteEmployee() {
-      if (this.deleteConfirmation !== 'CONFIRM') {
-        this.$message.error('Please type CONFIRM to delete');
-        return;
-      }
+    async confirmDeleteEmployee() {
+
+  // Validate confirmation input
+
+  if (this.deleteConfirmation !== 'CONFIRM') {
+
+    this.$message.error('Please type CONFIRM to delete');
+
+    return;
+
+  }
+
+  
+
+  // Use the stored access ID instead of looking for it in staff_details
+
+  if (!this.staff_access_id) {
+
+    this.$message.error('Staff ID not found');
+
+    return;
+
+  }
+
+
+
+  if (!this.staff_details) {
+
+    this.$message.error('No staff member selected');
+
+    return;
+
+  }
+
+
+
+  try {
+
+    console.log('Deleting staff with access ID:', this.staff_access_id);
+
+    
+
+    // Make the DELETE request using the stored access ID
+
+    const response = await fetch(
+
+      `${this.$store.state.root_api}access-engine/api/professional-access/delete-professional/${this.staff_access_id}/`,
+
+      {
+
+        method: 'DELETE',
+
+        headers: {
+
+          'Authorization': `Token ${localStorage.getItem('token')}`,
+
+          'Content-Type': 'application/json'
+
+        }}
+
+    );
+
+
+
+    const data = await response.json();
+
+
+
+    // Check for errors in response
+
+    if (!data.error) {
+
+      this.$message.success('Professional user deleted successfully');
+
       
-      console.log('Employee deleted:', this.selectedEmployee);
-      this.$message.success('Employee deleted successfully');
+
+      // Close modal and reset form
+
       this.open_Delete_employee_modal = false;
+
       this.deleteConfirmation = '';
-    },
+
+
+      this.selectedEmployee = null;
+
+      this.staff_access_id = null;  // Clear the stored ID
+
+      
+
+      // Refresh staff list and return to main view
+
+      await this.fetchAllStaff();
+
+      await this.fetchProfessionalAccessRequests();
+
+      
+
+      this.view = 'all_staff_view';
+
+      this.staff_details = null;
+
+      
+
+    } else {
+
+      this.$message.error(data.message || 'Failed to delete professional user');
+
+    }
+
+  } catch (error) {
+
+    console.error('Error deleting professional user:', error);
+
+    this.$message.error('An error occurred while deleting the professional user');
+
+  }
+
+},
     
     resetMailForm() {
       this.mailForm = {
@@ -2088,6 +2272,11 @@ export default {
         this.$message.error('Invalid staff record');
         return;
       }
+       this.staff_access_id = record.id;  // Store the ID here
+
+      console.log('Stored access ID:', this.staff_access_id);
+
+
 
       this.fetchStaff(record);
       this.view = "staff_details_view";
@@ -2099,11 +2288,15 @@ export default {
     backToManageAccess() {
       this.view = "all_staff_view";
       this.hasUnsavedChanges = false;
+          this.staff_access_id = null; 
+
+
     }
   },
 
   mounted() {
-    this.fetchAllStaff();
+    this.fetchAllStaff();  
+
   }
 };
 </script>

@@ -17,7 +17,7 @@
 >
     <div class="header">
       <h2 className="pr-2 sm:pr-0">Requests</h2>
-      <div class="view-controls">
+      <div class="">
         <div class="">
       <a-input 
         v-model:value="searchQuery"
@@ -29,7 +29,7 @@
         </template>
       </a-input>
     </div>&nbsp;
-        <a-button 
+        <!-- <a-button 
           :type="viewMode === 'grid' ? 'primary' : 'default'"
           @click="setViewMode('grid')"
           :class="{ active: viewMode === 'grid' }"
@@ -42,7 +42,7 @@
           :class="{ active: viewMode === 'list' }"
         >
           List
-        </a-button>
+        </a-button> -->
       </div>
     </div>
 

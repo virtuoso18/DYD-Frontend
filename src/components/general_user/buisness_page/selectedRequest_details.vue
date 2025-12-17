@@ -36,7 +36,7 @@
       <div style="margin-top:30px;" v-if="selected_request.status=='Completed'">
         <h3 style="margin-bottom:5px;font-size:18px;font-weight:600;">Generated Design</h3>
         <p style="color:#666;font-size:14px;margin-bottom:16px;">{{ formatDate(selected_request.created_at) }}</p>
-        
+        <!-- {{ selected_request }} -->
         <a-row :gutter="[24, 24]">
           <a-col :sm="24" :md="14" :lg="14">
             <a-image 

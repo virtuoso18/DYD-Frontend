@@ -279,6 +279,41 @@
 
             
            <router-link 
+  to="/professional-dashboard/my-designes" 
+  class="nav-item"
+  :class="{ active: $route.name === 'professional_designes' }"
+  @click.native="handleMobileNavClick"
+>
+  <div class="nav-icon-wrapper">
+  <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M6.59961 17.3767C6.71544 18.5542 6.97721 19.3468 7.56883 19.9384C8.62997 20.9996 10.3378 20.9996 13.7536 20.9996C17.1694 20.9996 18.8773 20.9996 19.9384 19.9384C20.9996 18.8773 20.9996 17.1694 20.9996 13.7536C20.9996 10.3378 20.9996 8.62997 19.9384 7.56883C19.3468 6.97721 18.5542 6.71544 17.3767 6.59961"
+                    stroke="currentColor"
+                  />
+                  <path
+                    d="M3 10.2C3 6.80588 3 5.10883 4.05441 4.05441C5.10883 3 6.80588 3 10.2 3C13.5941 3 15.2912 3 16.3456 4.05441C17.4 5.10883 17.4 6.80588 17.4 10.2C17.4 13.5941 17.4 15.2912 16.3456 16.3456C15.2912 17.4 13.5941 17.4 10.2 17.4C6.80588 17.4 5.10883 17.4 4.05441 16.3456C3 15.2912 3 13.5941 3 10.2Z"
+                    stroke="currentColor"
+                  />
+                  <path
+                    d="M5.69922 17.3992C8.77777 13.123 12.2374 7.45193 17.3992 11.7052"
+                    stroke="currentColor"
+                  />
+                </svg>   </div>
+
+  <span 
+    class="nav-text"
+    :class="{ '!text-white': $route.name === 'professional_designes' }"
+    style="font-family: Poppins; font-weight: 400; font-style: normal; font-size: 14px; line-height: 20px; letter-spacing: 0; text-align: center; color: #666666;"
+  >
+My Designes  </span>
+</router-link>
+           <router-link 
   to="/professional-dashboard/business-details" 
   class="nav-item"
   :class="{ active: $route.name === 'profesional_buisness_details' }"

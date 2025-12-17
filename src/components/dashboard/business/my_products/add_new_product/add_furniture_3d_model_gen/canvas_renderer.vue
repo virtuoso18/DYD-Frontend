@@ -184,7 +184,7 @@ Add New Product </a-button>
 <path d="M1 7.5C1 10.8137 3.68627 13.5 7 13.5C10.3137 13.5 13 10.8137 13 7.5C13 4.18629 10.3137 1.5 7 1.5C4.8618 1.5 2.98487 2.61843 1.92227 4.30218M1.1956 1.50051L1.3104 2.86968C1.39307 3.85589 1.4344 4.34899 1.75573 4.62609C2.07707 4.90319 2.55113 4.85457 3.49933 4.7573L4.86227 4.6175" stroke="#333333" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>&nbsp;
 
-Regererate </a-button>
+Regenerate </a-button>
       </a-col>
     </a-row>
   </div>
