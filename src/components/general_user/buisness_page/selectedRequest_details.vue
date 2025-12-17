@@ -1,7 +1,7 @@
 <template>
   <div className="sm:-translate-y-3 -translate-y-8">
 
-    <div className="h-[800px]" style="background-color:white;border-radius:15px;border:1px solid rgba(0,0,0,0.1);padding:20px;">
+    <div className="" style="background-color:white;border-radius:15px;border:1px solid rgba(0,0,0,0.1);padding:20px;">
       <a-button type="text" @click="this.$emit('back-button-clicked',true)" 
                style="padding:8px 12px;margin-bottom:20px;border-radius:8px;display:flex;align-items:center;color:#666;font-weight:500;transition:all 0.3s;"
                onmouseover="this.style.backgroundColor='#f5f5f5'" 
@@ -50,7 +50,7 @@
             
             <div v-for="product in products_used" :key="product.id" 
                  style="background:#f8f9fa;border-radius:12px;padding:16px;margin-bottom:16px;">
-            {{ product }}  
+            
               <a-row :gutter="[12, 12]">
                 <a-col :span="8">
                   <div style="position:relative;" @click="goto_product_Route(product)">
@@ -67,9 +67,9 @@
                     <span style="background:#e6f7ff;color:#1890ff;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:500;">
                       {{ product.category_name }}
                     </span>
-                    <span style="background:#f0f0f0;color:#666;padding:4px 8px;border-radius:50%;font-size:10px;font-weight:600;">
+                    <!-- <span style="background:#f0f0f0;color:#666;padding:4px 8px;border-radius:50%;font-size:10px;font-weight:600;">
                       AR
-                    </span>
+                    </span> -->
                   </div>
                   
                   <h4 style="font-size:14px;font-weight:600;margin-bottom:8px;line-height:1.3;">
@@ -96,13 +96,18 @@
               <a-row style="margin-top:12px;" >
                 <a-col :span="20">
                   <a-button size="large" block @click="goto_product_Route(product)" 
-                           style="border:1px solid #d9d9d9;color:#666;">
+                          >
                     Product Detail
                   </a-button>
                 </a-col>
                 <a-col :span="4" style="display: flex;justify-content: center;">
-                  <a-button size="large" style="border:1px solid #d9d9d9;">
-                    <HeartOutlined style="color:#666;" />
+                  <a-button  size="large"  @click="toggleFavorite(product)" style="display:flex;justify-content: center;align-items:center;">
+                  <template v-if="product.is_favorited">
+                    <HeartFilled style="color: red" />
+                  </template>
+                  <template v-else>
+                    <HeartOutlined />
+                  </template>
                   </a-button>
                 </a-col>
               </a-row>
@@ -128,12 +133,12 @@
 </template>
 
 <script>
-import { HeartOutlined } from '@ant-design/icons-vue'
+import { HeartOutlined ,HeartFilled} from '@ant-design/icons-vue'
 
 export default {
   name: "selectedRequest",
   components: {
-    HeartOutlined
+    HeartOutlined,HeartFilled
   },
   props: {
     selected_request: Object
@@ -147,6 +152,56 @@ export default {
     this.loadUsedProducts()
   },
   methods: {
+    
+    async toggleFavorite(product) {
+      try {
+        // Check if user is authenticated
+        const token = localStorage.getItem("token");
+        if (!token) {
+          message.warning("Please login to add favorites");
+          return;
+        }
+
+        product.favoriting = true;
+
+        const response = await fetch(
+          `${this.$store.state.root_api}likes/favorites/toggle/`,
+
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Token ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              id: product.product_id,
+              type: product.product_type
+            })
+          }
+        );
+
+        const data = await response.json();
+ this.loadUsedProducts()
+        if (data.success) {
+          // Toggle the favorite status
+          product.is_favorited = !product.is_favorited;
+          
+          if (product.is_favorited) {
+            message.success("Added to favorites");
+          } else {
+            message.success("Removed from favorites");
+          }
+        } else {
+          message.error(data.message || "Failed to update favorite");
+        }
+      } catch (error) {
+        console.error("Failed to toggle favorite:", error);
+        message.error("Failed to update favorite");
+      } finally {
+        product.favoriting = false;
+      }
+    },
+
     async loadUsedProducts() {
       try {
         this.loadingProductsUsed = true;

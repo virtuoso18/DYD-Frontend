@@ -532,41 +532,84 @@
 <!-- Color Edit Popup -->
 <a-modal 
   v-model:visible="colorEditPopupVisible" 
-  title="Edit Color"
-  :footer="null"
-  width="400px"
+  
+    width="900px"
+  centered
+  height="500px"
 >
-  <div style="text-align: center; padding: 20px;">
-    {{editingColor}}
-    
-    <!-- Selected Color Display -->
-    <div 
+
+  <template #title >
+    <!-- <div style="display:flex;gap:10px;flex-direction: row;font-weight:bold">
+      <div 
       :style="{
-        width: '100px',
-        height: '100px',
+        width: '20px',
+        height: '20px',
         borderRadius: '12px',
         backgroundColor: editingColor?.color,
-        margin: '0 auto 24px',
         border: '2px solid #e5e7eb'
       }"
-    ></div>
+    ></div> <h3 style="margin-top:-3px;">Add 3D model with color</h3>
+  </div> -->
+  </template>
+  <template #footer >
+    <a-button @click="closeColorEditPopup">Cancel</a-button>
+    <a-button type="primary" @click="updateColor" :disabled="!uploaded3dModelFile">Update</a-button>
+  </template>
+  <div style="text-align: center;">
+    <!-- {{editingColor}} -->
+   <a-row>
 
     <!-- 3D Model Section -->
-    <a-col :xs="24" :sm="24" :md="24" :lg="24">
-      <div style="margin-bottom: 8px; text-align: left;">
-        <h3 style="margin: 0; font-size: 16px; font-weight: 600; color: #1f2937;">3D Model</h3>
+    <a-col :xs="24" :sm="12" :md="12" :lg="12">
+      <div style="display: flex;gap:10px;">
+
+       <div 
+        :style="{
+          width: '40px',
+          height: '40px',
+          borderRadius: '12px',
+          backgroundColor: editingColor?.color,
+          
+          border: '2px solid #e5e7eb'
+        }"
+      ></div>
+      <div>
+
+        <div style="text-align: left;">
+          <h3 style="margin: 0; font-size: 16px; font-weight: 600; color: #1f2937;">3D Model</h3>
+        </div>
+        <p style="color: #6b7280; font-size: 13px; text-align: left;">Upload 3D model (.glb, .gltf up to 50MB)</p>
       </div>
-      <p style="color: #6b7280; font-size: 13px; margin-bottom: 24px; text-align: left;">Upload 3D model (.glb, .gltf up to 50MB)</p>
+      </div>
       
-      <div style="padding-right: 24px;">
-        <div style="margin-bottom: 32px;">
+    </a-col>
+    <a-col :xs="24" :sm="12" :md="12" :lg="12">
+      <div style="display:flex;justify-content:center">
+
+       
+      <div>
+
+        <a-radio-group v-model:value="upload3dModelFrom">
+          <a-radio-button value="LocalDevice">Local System</a-radio-button>
+          <a-radio-button value="Generated3d_Models_History">DYD AI Generated</a-radio-button>
+        </a-radio-group>
+      </div>
+      
+    </div>
+    
+    <!-- Selected Color Display -->
+
+    </a-col>
+  <a-col :span="upload3dModelFrom==='Generated3d_Models_History' ? 12: 24" >
+    <div style="">
+        <div style="">
           
           <!-- 3D Model Display (when model exists) -->
           <div v-if="hasColorModel" style="position: relative; padding: 10px;">
             <canvas_3d_model_renderer 
               :glbModelUrl="get3DColorModelUrl(editingColor.model_file_colored_product)"
               :Model_instance_id="selectedProduct.id"
-              style="width: 100%; max-height: 500px; height: 100%; border-radius: 10px"
+              style="width: 100%; max-height: 300px; height: 100%; border-radius: 10px"
             />
             
             <!-- Change Model Button -->
@@ -579,7 +622,7 @@
             </a-button>
 
             <!-- Delete Button -->
-            <a-button 
+            <!-- <a-button 
               type="text" 
               danger 
               @click="removeColorModel"
@@ -613,7 +656,7 @@
                   <line x1="6" y1="6" x2="18" y2="18"></line>
                 </svg>
               </template>
-            </a-button>
+            </a-button> -->
           </div>
           
           <!-- Upload 3D Model Area (when no model exists) -->
@@ -639,13 +682,18 @@
 
         </div>
       </div>
-    </a-col>
-
-    <!-- Buttons -->
-    <div style="display: flex; gap: 12px; justify-content: center; margin-top: 24px;">
-      <a-button @click="closeColorEditPopup">Cancel</a-button>
-      <a-button type="primary" @click="updateColor" :disabled="!uploaded3dModelFile">Update</a-button>
+  </a-col>
+   <a-col :span="upload3dModelFrom==='Generated3d_Models_History' ? 12: 0" >
+    <div v-if="upload3dModelFrom==='Generated3d_Models_History'" style="display: flex;justify-content:center;align-items:center;height:100%">
+      Comming Soon
     </div>
+    <div>
+
+    </div>
+   </a-col>
+  </a-row>
+  
+    <!-- Buttons -->
   </div>
 
   <!-- Hidden File Input for Color Model -->
@@ -672,6 +720,7 @@ export default {
   },
   data() {
     return {
+      upload3dModelFrom:'LocalDevice',
       editingColor: null,
       uploaded3dModelFile: null,
       colorModelDragOver: false,

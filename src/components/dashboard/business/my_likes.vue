@@ -21,7 +21,7 @@
                 class="product-responsive" style="padding:5px;">
                 <div class="product">
     
-                    <div class="product-image-container" @click="viewProduct(product)">
+                    <div class="product-image-container" @click="goto_product_Route(product)">
                         <img 
                             :src="$store.state.root_media_api + product.image" 
                             :alt="product.name"
@@ -36,7 +36,7 @@
                         </a-col>
     
                         <a-col span="18">
-                            <a-button block @click="viewProduct(product)">Product Details</a-button>
+                            <a-button block @click="goto_product_Route(product)">Product Details</a-button>
                         </a-col>
     
     
@@ -82,7 +82,7 @@
                             <a-col v-for="product in filteredrooms" :key="product.id" 
                                 class="product-responsive" style="padding:5px;">
                                 <div class="product">
-                                    <div class="product-image-container" @click="viewProduct(product)">
+                                    <div class="product-image-container" @click="viewRoom(product)">
                                         <img 
                                             :src="$store.state.root_media_api + product.image" 
                                             :alt="product.name"
@@ -106,7 +106,7 @@
                                     
     
                                         <a-col span="17">
-                                            <a-button block @click="viewProduct(product)">Product Details</a-button>
+                                            <a-button block @click="viewRoom(product)">Product Details</a-button>
                                         </a-col>
                                         
                                         <a-col span="1"></a-col>
@@ -460,6 +460,28 @@ export default {
   
   methods: {
     // Modal Methods
+    
+ goto_product_Route(product){
+        let product_type= product.type
+        if(product.type==='light'){
+          product_type='product'
+        }
+        if(product.type==='floor_texture'){
+          product_type='floor'
+        }        
+        if(product.type==='wall_texture'){
+          product_type='wall'
+        }
+      this.$router.push({
+      name: 'buisness_product',
+      params: {
+        buisness_name: product.business_slug,
+        product_type: product_type,
+        product_id: product.id
+      }
+    })
+  
+    },
     viewPost(post) {
       // Transform your post data to match modal props
       this.selectedPost = {
@@ -503,6 +525,22 @@ export default {
       }
     },
 
+    
+    formatNumber(num) {
+      if (!num) return 0
+      if (num >= 1000) return (num / 1000).toFixed(1) + 'k'
+      return num
+    },
+
+    truncateText(text, length) {
+      if (!text) return ''
+      return text.length > length ? text.substring(0, length) + '...' : text
+    },
+
+    openCommentsModal(post) {
+      this.viewPost(post)
+    },
+        
     // Utility methods
     formatNumber(num) {
       if (!num || num === 0) return "0";

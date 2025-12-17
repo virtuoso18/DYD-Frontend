@@ -58,10 +58,10 @@
 </svg>
 
   </div>
-
   <!-- Middle: Buttons -->
-  <div style="display:flex;align-items:center;gap:12px;">
-    <a-button style="border:none;background:#f9f9f9;padding:5px 12px;border-radius:6px;cursor:pointer;
+  <div style="display:flex;align-items:center;gap:12px;" v-if="glbModelUrl">
+    
+    <a-button @click="downloadGLB(glbModelUrl)" style="border:none;background:#f9f9f9;padding:5px 12px;border-radius:6px;cursor:pointer;
                    color:#2a5afc;display:flex;align-items:center;gap:6px;font-size:16px;">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M12 14.5V4.5M12 14.5C11.2998 14.5 9.99153 12.5057 9.5 12M12 14.5C12.7002 14.5 14.0085 12.5057 14.5 12" stroke="#3B63FB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -243,7 +243,17 @@ Regenerate </a-button>
 const Add_new_product = () => {
   emit('clicked-add-product', props.Model_instance_id)
 }
+const downloadGLB = (glbModelUrl) => {
+  if (!glbModelUrl) return
 
+  const link = document.createElement('a')
+  link.href = glbModelUrl
+  link.target = '_blank'
+  link.download = '' // browser will infer filename
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+}
   function initializeScene(container) {
     scene = new THREE.Scene();
     backgroundScene = new THREE.Scene();
