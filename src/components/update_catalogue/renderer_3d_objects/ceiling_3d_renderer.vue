@@ -1,90 +1,92 @@
 <template>
-  <!-- roll = {{roll}} ||  &nbsp; pitch = {{pitch}} ||  &nbsp; yaw = {{yaw}} -->
-  <div class="main-canvas" ref="canvasContainer" >
-    <div id="viewer" ref="viewer">
-      <div id="loading" v-if="loading">
-        Loading 3D model and ceiling data...
+  <div>
+
+    <!-- roll = {{roll}} ||  &nbsp; pitch = {{pitch}} ||  &nbsp; yaw = {{yaw}} -->
+    <div class="main-canvas" ref="canvasContainer" >
+      <div id="viewer" ref="viewer">
+        <div id="loading" v-if="loading">
+          Loading 3D model and ceiling data...
+        </div>
       </div>
     </div>
-  </div>
-
-  <div
-    class=""
-    style="
-      display: flex;
-      justify-content: space-between;
-      padding-left: 8px;
-      padding-top: 10px;
-      padding-right: 10px;
-      background: white;
-      height: 50px;
-    "
-  >
-    <div style="display: flex; flex-direction: row">
-      <!-- Roll Control -->
-      <div style="display: flex; align-items: center; gap: 4px">
-        <label style="font-size: 10px; font-weight: bold; white-space: nowrap"
-          >Roll</label
-        >
-        <a-slider
-          v-model:value="adjustRoll"
-          :min="-45"
-          :max="45"
-          :step="1"
-          :tooltip-formatter="(value) => `${value}°`"
-          style="width: 120px; height: 10px"
-        />
-        <span style="font-size: 9px; min-width: 25px; text-align: center"
-          >{{ adjustRoll }}°</span
-        >
+    <div
+      class="flex flex-wrap justify-between gap-3"
+      style="
+        padding-left: 8px;
+        padding-top: 0px;
+        padding-right: 10px;
+        background: white;
+        min-height: 50px;
+      "
+    >
+      <!-- Sliders Section - Auto wrapping based on width -->
+      <div class="flex flex-wrap gap-2 flex-1 min-w-0">
+        <!-- Roll Control -->
+        <div class="flex items-center gap-1 flex-shrink-0" style="min-width: 180px;">
+          <label style="font-size: 10px; font-weight: bold; white-space: nowrap"
+            >Roll</label
+          >
+          <a-slider
+            v-model:value="adjustRoll"
+            :min="-45"
+            :max="45"
+            :step="1"
+            :tooltip-formatter="(value) => `${value}°`"
+            style="width: 120px; height: 10px"
+          />
+          <span style="font-size: 9px; min-width: 25px; text-align: center"
+            >{{ adjustRoll }}°</span
+          >
+        </div>
+        
+        <!-- Pitch Control -->
+        <div class="flex items-center gap-1 flex-shrink-0" style="min-width: 180px;">
+          <label style="font-size: 10px; font-weight: bold; white-space: nowrap"
+            >Pitch</label
+          >
+          <a-slider
+            v-model:value="adjustPitch"
+            :min="-45"
+            :max="45"
+            :step="1"
+            :tooltip-formatter="(value) => `${value}°`"
+            style="width: 120px; height: 10px"
+          />
+          <span style="font-size: 9px; min-width: 25px; text-align: center"
+            >{{ adjustPitch }}°</span
+          >
+        </div>
+        
+        <!-- Size Control -->
+        <div class="flex items-center gap-1 flex-shrink-0" style="min-width: 180px;">
+          <label style="font-size: 10px; font-weight: bold; white-space: nowrap"
+            >Size</label
+          >
+          <a-slider
+            type="range"
+            v-model:value="modelSizeScale"
+            :min="0.5"
+            :max="4.0"
+            :step="0.1"
+            :tooltip-formatter="(value) => `${value}°`"
+            style="width: 120px; height: 10px"
+          />
+          <span style="font-size: 9px; min-width: 25px; text-align: center"
+            >{{ modelSizeScale }}x</span
+          >
+        </div>
       </div>
-      <!-- Pitch Control -->
-      <div style="display: flex; align-items: center; gap: 4px">
-        <label style="font-size: 10px; font-weight: bold; white-space: nowrap"
-          >Pitch</label
-        >
-        <a-slider
-          v-model:value="adjustPitch"
-          :min="-45"
-          :max="45"
-          :step="1"
-          :tooltip-formatter="(value) => `${value}°`"
-          style="width: 120px; height: 10px"
-        />
-        <span style="font-size: 9px; min-width: 25px; text-align: center"
-          >{{ adjustPitch }}°</span
-        >
-      </div>
-      <!-- Size Control -->
-
-      <div style="display: flex; align-items: center; gap: 4px">
-        <label style="font-size: 10px; font-weight: bold; white-space: nowrap"
-          >Size</label
-        >
-        <a-slider
-          type="range"
-          v-model:value="modelSizeScale"
-          :min="0.5"
-          :max="4.0"
-          :step="0.1"
-          :tooltip-formatter="(value) => `${value}°`"
-          style="width: 120px; height: 10px"
-        />
-        <span style="font-size: 9px; min-width: 25px; text-align: center"
-          >{{ modelSizeScale }}x</span
-        >
-      </div>
-    </div>
-    <!-- Action Button -->
-    <!-- <a-button @click="generateBinaryMask" type="primary" size="medium" >
-    Generate Mask
-  </a-button> -->
-    <!-- <a-button @click="downloadCurrentSceneImage" type="primary" size="medium" >
-    Download current scene
-  </a-button> -->
-
-    <div>
-      <div style="display: flex; gap: 10px">
+      
+      <!-- Action Button -->
+      <!-- <a-button @click="generateBinaryMask" type="primary" size="medium" >
+      Generate Mask
+    </a-button> -->
+      <!-- <a-button @click="downloadCurrentSceneImage" type="primary" size="medium" >
+      Download current scene
+    </a-button> -->
+      
+      <!-- Before/After Buttons -->
+      <div class="flex gap-2 flex-shrink-0">
         <a-button
           class="toolbar-btn primary-btn"
           @click="reset_entire_room"
@@ -101,22 +103,27 @@
           After
         </a-button>
       </div>
-    </div>
-    <div>
-      <!-- <a-button type="primary" class="toolbar-btn primary-btn" @click="downloadCurrentSceneImage" :disabled="isLoading">
+      
+      <!-- Apply Changes Button -->
+      <div class="flex-shrink-0 w-full md:w-auto">
+        <!-- <a-button type="primary" class="toolbar-btn primary-btn" @click="downloadCurrentSceneImage" :disabled="isLoading">
+            Apply Changes
+          </a-button> -->
+        <a-button
+          type="primary"
+          class="toolbar-btn primary-btn w-full md:w-auto"
+          @click="$emit('Apply-Changes', '3d-ceiling-light-Renerer')"
+          :disabled="isLoading"
+        >
           Apply Changes
-        </a-button> -->
-      <a-button
-        type="primary"
-        class="toolbar-btn primary-btn"
-        @click="$emit('Apply-Changes', '3d-ceiling-light-Renerer')"
-        :disabled="isLoading"
-      >
-        Apply Changes
-      </a-button>
+        </a-button>
+      </div>
     </div>
   </div>
 </template>
+
+
+
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount, reactive, watch } from "vue";

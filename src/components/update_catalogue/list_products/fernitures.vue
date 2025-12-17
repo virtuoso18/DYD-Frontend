@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div className="pt-8 sm:pt-2">
     <!-- Header -->
     <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px; background: white; border-bottom: 1px solid #f0f0f0;">
       <span 
@@ -15,7 +15,7 @@
     
       
       >AI Catalog</span>
-      <a-button size="small" type="text" @click="$emit('see-all-products', true)">See all</a-button>
+      <a-button size="small" type="default" @click="$emit('see-all-products', true)">See all</a-button>
     </div>
     
     <!-- Search Bar -->

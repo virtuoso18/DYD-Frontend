@@ -49,17 +49,30 @@
 
       <!-- Examples -->
       <p class="history-label">Your History </p>
-      <div class="example-images">
-        <a-row>
-        <a-col span="8" v-for="histry_card in your_history" :key="id" style="padding:5px;">
-          {{this.$route.query.brand}}
-           <router-link :to="this.$route.query.brand ? '/update-catalogue/'+histry_card.id+'?brand='+this.$route.query.brand: '/update-catalogue/'+histry_card.id">
-            <img  @click="" :src="this.$store.state.root_media_api+histry_card.image" class="example-image" />
-          </router-link>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 px-5 max-w-[1300px] mx-auto">
+  <div
+    v-for="histry_card in your_history"
+    :key="histry_card.id"
+    class="p-[5px]"
+  >
+    {{ $route.query.brand }}
 
-          </a-col>
-        </a-row>
-        </div>
+    <router-link
+      :to="
+        $route.query.brand
+          ? `/update-catalogue/${histry_card.id}?brand=${$route.query.brand}`
+          : `/update-catalogue/${histry_card.id}`
+      "
+    >
+      <img
+        :src="$store.state.root_media_api + histry_card.image"
+        alt="Example"
+        class="example-image"
+      />
+    </router-link>
+  </div>
+</div>
+
 
       <!-- Examples -->
       <p class="example-label">Use an example image</p>

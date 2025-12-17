@@ -1,6 +1,6 @@
 <template>
 
-  <div className="py-4">
+  <div className="sm:py-4">
 
     
     <div class="sm:main sm:border border-gray-300   sm:rounded-2xl min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh] bg-white">

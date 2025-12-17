@@ -1,9 +1,9 @@
 <template>
-  <div class="dashboard-container">
+  <div class="dashboard-container ">
   
 
     <!-- Mobile Header -->
-    <div class="mobile-header" v-if="menu_view_mobile">
+    <div class="mobile-header " v-if="menu_view_mobile">
     <!-- <div class="mobile-header" v-if="isMobile"> -->
       <button class="back-button" @click="goBack" v-if="menu_view_mobile">
        <svg width="6" height="11" viewBox="0 0 6 11" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -23,7 +23,7 @@
 
     <!-- Mobile Drawer Menu -->
     <transition name="drawer">
-      <div class="mobile-drawer" v-if="mobileMenuOpen && isMobile" @click.self="closeMobileMenu">
+      <div class="mobile-drawer " v-if="mobileMenuOpen && isMobile" @click.self="closeMobileMenu">
         <div class="drawer-content">
           <div class="drawer-header">
             <button class="close-button" @click="closeMobileMenu">
@@ -124,7 +124,7 @@
     </transition>
 
     <!-- Main Dashboard Content -->
-    <a-row class="dashboard-content">
+    <a-row class="dashboard-content ">
       
       <!-- Sidebar - Shows on mobile menu view or desktop -->
       <a-col :xs="!menu_view_mobile ? 24 : 0" :sm="!menu_view_mobile ? 24 : 0" :md="6" :lg="6" class="sidebar-col" v-if="!this.$route.query.p">

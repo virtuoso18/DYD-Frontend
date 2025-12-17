@@ -111,10 +111,10 @@
     </a-button>
   </div>
 </a-modal>
-<div class="!sm:business-details-container sm:!py-1 !sm:!pr-2 ">
-    <a-row class=" shadow-sm rounded-2xl ">
+<div class="!sm:business-details-container  sm:!py-1 !sm:!pr-2 ">
+    <a-row className=" shadow-sm rounded-2xl sm:!my-2 ">
       <a-col :xs="24" :sm="24" :md="24" :lg="24" class="content-area">
-        <div class="content-wrapper">
+        <div class="content-wrapper bg-">
           <!-- {{ businessInfo.business_picture }} -->
 
           <!-- Header with Furniture Image -->

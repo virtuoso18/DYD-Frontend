@@ -414,7 +414,7 @@
   </div>
   <div class="flex md:hidden bg-white px-3 py-2 w-full justify-center">
     <!-- Left Buttons -->
-    <div class="flex flex-col gap-2 pt-1">
+    <div class="flex flex-col gap-2 pt-1 ">
       <div className="flex flex-row gap-24 justify-center">
         <button
           @click="DrawRemoval_model"
@@ -500,7 +500,7 @@
       </div>
 
       <!-- Add above the Apply Changes button section -->
-      <div class="flex items-center space-x-6 mb-4 justify-center">
+      <!-- <div class="flex items-center space-x-6 mb-4 justify-center">
         <span
           style="
             font-family: Poppins;
@@ -509,7 +509,7 @@
             line-height: 20px;
             letter-spacing: 0%;
             text-align: center;
-            color: #4b5563; /* text-gray-600 */
+            color: #4b5563; 
           "
         >
           Add Lights:
@@ -532,7 +532,7 @@
                 line-height: 20px;
                 letter-spacing: 0%;
                 text-align: center;
-                color: #4b5563; /* text-gray-600 */
+                color: #4b5563;
               "
               >Rectangle</span
             >
@@ -554,13 +554,13 @@
                 line-height: 20px;
                 letter-spacing: 0%;
                 text-align: center;
-                color: #4b5563; /* text-gray-600 */
+                color: #4b5563; 
               "
               >Circular</span
             >
           </button>
         </div>
-      </div>
+      </div> -->
 
       <div>
         <button
@@ -574,7 +574,7 @@
             text-align: center;
             color: white;
           "
-          class="!bg-blue-500 rounded-md w-full py-2 whitespace-nowrap"
+          class="!bg-blue-500 rounded-md w-full !py-2 whitespace-nowrap"
           @click="$emit('Apply-Changes', 'all-tab')"
           :disabled="isLoading || drawingMode"
         >

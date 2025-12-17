@@ -1,5 +1,5 @@
 <template>
-<div class="main bg-white sm:py-3 min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh]" style="border-radius: 1.5rem;">
+<div class="main bg-white sm:!my-3  min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh]" style="border-radius: 1.5rem;">
     <!-- Main Dashboard Content -->
     <a-row class="dashboard-content   ">
       <!-- Content Area -->
@@ -384,6 +384,18 @@ export default {
 .dashboard-container {
   min-height: 100vh;
   background: #ffffff;
+}
+
+.main {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+@media (min-width: 640px) { /* sm */
+  .main {
+    padding-top: 0.75rem; 
+    padding-bottom: 0.75rem;
+  }
 }
 
 .dashboard-content {
