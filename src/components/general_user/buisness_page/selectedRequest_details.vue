@@ -50,7 +50,7 @@
             
             <div v-for="product in products_used" :key="product.id" 
                  style="background:#f8f9fa;border-radius:12px;padding:16px;margin-bottom:16px;">
-              
+            {{ product }}  
               <a-row :gutter="[12, 12]">
                 <a-col :span="8">
                   <div style="position:relative;" @click="goto_product_Route(product)">
@@ -177,16 +177,16 @@ export default {
       console.log('View product:', product);
     },
      goto_product_Route(product){
-       debugger
+      //  debugger
         console.log(product)
-        let product_type= product.type
-        if(product.type==='light'){
+        let product_type= product.product_type
+        if(product.product_type==='light'){
           product_type='product'
         }
-        if(product.type==='floor_texture'){
+        if(product.product_type==='floor_texture'){
           product_type='floor'
         }        
-        if(product.type==='wall_texture'){
+        if(product.product_type==='wall_texture'){
           product_type='wall'
         }
       this.$router.push({
@@ -194,7 +194,7 @@ export default {
       params: {
         buisness_name: product.business_slug,
         product_type: product_type,
-        product_id: product.id
+        product_id: product.product_id
       }
     })
   
