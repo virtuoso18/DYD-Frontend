@@ -526,14 +526,14 @@ Switch Furniture</a-button> -->
   
   
     <a-row v-if="current_tab=='image' && active_tab_image === 'home_design'">
-      <a-col :sm="0" :xs="0" :md="16" :lg="16" >
+      <a-col :sm="24" :xs="24" :md="16" :lg="16" >
   
     <main_panel_home_design v-if="current_tab=='image' && active_tab_image === 'home_design'"
     :home_design_images="home_design_images"
     />
       </a-col>
       
-      <a-col :sm="0" :xs="0" :md="8" :lg="8" >
+      <a-col :sm="24" :xs="24" :md="8" :lg="8" >
     <history_panel_home_design v-if="current_tab=='image' && active_tab_image === 'home_design'"
     @home-design-history-clicked="home_design_history_clicked"
     ref="home_design_history"
@@ -604,11 +604,18 @@ Switch Furniture</a-button> -->
                   </div>
               </div>
               <div class="category-section" v-if="active_tab_image === 'home_design'">
+                
+    <main_panel_home_design v-if="current_tab=='image' && active_tab_image === 'home_design'"
+    :home_design_images="home_design_images"
+    />
                 <side_panel_home_design :base_image_url="base_image_url"
                 @home-design-generation-complete="newhome_designes_generated"
                 @insufficient-credits="throw_Insufficient_credits"
                 />
-                
+<history_panel_home_design v-if="current_tab=='image' && active_tab_image === 'home_design'"
+    @home-design-history-clicked="home_design_history_clicked"
+    ref="home_design_history"
+    />
                 <!-- main_panel_home_design
                 history_panel_home_design -->
                  <!-- <div class="tab-content-placeholder">
