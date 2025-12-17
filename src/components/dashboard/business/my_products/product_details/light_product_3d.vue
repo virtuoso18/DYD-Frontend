@@ -1,6 +1,6 @@
 <template>
     <!-- {{ selectedProduct }} -->
-  <div>
+  <div className="">
     <!-- Header -->
     <a-page-header 
       :title="selectedProduct.name" 

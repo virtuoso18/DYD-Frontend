@@ -1,7 +1,7 @@
 <template>
   <div class="ai-catalog-section">
     <!-- Fixed Header -->
-    <div class="ai-catalog-header">
+    <div class="ai-catalog-header py-3">
       <span class="!text-gray-700"  style="
           font-family: Poppins;
           font-weight: 500;
@@ -10,7 +10,7 @@
           line-height: 20px;
           letter-spacing: 0;
         ">AI Catalog</span>
-      <a-button size='small' type="text" class="see-all-link" @click="seeAllClicked">See all</a-button>
+      <a-button size='small' type="default" class="see-all-link" @click="seeAllClicked">See all</a-button>
     </div>
     
     <!-- Fixed Search Bar -->
@@ -343,10 +343,17 @@ export default {
 
 .scrollable-content {
   flex: 1;
-  overflow-y: auto;
   padding-right: 4px;
   display: flex;
   flex-direction: column;
+}
+
+@media (min-width:768px) {
+
+  .scrollable-content {
+     overflow-y: auto;
+  }
+  
 }
 
 .scrollable-content::-webkit-scrollbar {

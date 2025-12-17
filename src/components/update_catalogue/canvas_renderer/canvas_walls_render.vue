@@ -173,7 +173,7 @@
        </div>
      </div>
   </div>
-  <div class="flex md:hidden justify-between px-3 bg-white">
+  <div class="flex flex-wrap md:hidden justify-between px-3 bg-white">
 
   <!-- LEFT SIDE -->
   <div class="pt-1">

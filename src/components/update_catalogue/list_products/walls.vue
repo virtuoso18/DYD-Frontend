@@ -7,8 +7,8 @@
     </div>
     
     <!-- Fixed Header -->
-    <div class="ai-catalog-header">
-      <span class="!text-gray-700 py-2"  style="
+    <div class="ai-catalog-header py-2">
+      <span class="!text-gray-700 py-3"  style="
           font-family: Poppins;
           font-weight: 500;
           font-style: normal;
@@ -16,7 +16,7 @@
           line-height: 20px;
           letter-spacing: 0;
         ">AI Catalog</span>
-      <a-button size='small' type="text" class="see-all-link" @click="seeAllClicked">See all</a-button>
+      <a-button size='small' type="default" class="see-all-link" @click="seeAllClicked">See all</a-button>
     </div>
     
     <!-- Fixed Search Bar -->

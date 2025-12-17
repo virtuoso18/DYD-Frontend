@@ -7,7 +7,7 @@
       </a-button>
     </div>
     <!-- Fixed Header -->
-    <div class="ai-catalog-header ">
+    <div class="ai-catalog-header py-3 ">
       <span
         style="
           font-family: Poppins;
@@ -20,7 +20,7 @@
       >
         AI Catalog
       </span>
-      <a-button size='small' type="text" class="see-all-link" @click="seeAllClicked">See all</a-button>
+      <a-button size='small' type="default" class="see-all-link" @click="seeAllClicked">See all</a-button>
     </div>
     
     <!-- Fixed Search Bar -->

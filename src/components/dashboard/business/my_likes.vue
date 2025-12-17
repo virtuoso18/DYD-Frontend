@@ -1,6 +1,6 @@
 <template>
 
-  <div className="py-4">
+  <div className="sm:py-4">
 
     
     <div class="sm:main sm:border border-gray-300   sm:rounded-2xl min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh] bg-white">
@@ -30,29 +30,45 @@
                         <div class="category-badge">{{ product.category }}</div>
                     </div>
     
-                    <a-row>
-                        <a-col span="24">
-                            <b>{{ truncateText(product.name || 'No name available', 19) }}</b>
-                        </a-col>
-    
-                        <a-col span="18">
-                            <a-button block @click="viewProduct(product)">Product Details</a-button>
-                        </a-col>
-    
-    
-                        <!-- ❤️ Dynamic Favorite Button -->
-                        <a-col span="6" style="display: flex;justify-content: end;">
-                        <a-button @click="toggleFavorite(product)" style="display: flex;justify-content: center;align-items: center;">
-                            <template v-if="product.is_favorited">
-                            <HeartFilled style="color: red" />
-                            </template>
-                            <template v-else>
-                            <HeartOutlined />
-                            </template>
-                        </a-button>
-                        </a-col>
-    
-            </a-row>
+                   <div class="flex flex-col w-full">
+  <!-- Product Name -->
+  <div class="w-full mb-2">
+    <b class="block w-full truncate" style="font-family: 'Poppins', sans-serif;">
+      {{ product.name || 'No name available' }}
+    </b>
+  </div>
+
+  <!-- Buttons Row -->
+  <div class="flex items-center gap-2 w-full">
+    <!-- Product Details Button - 75% width (18/24) -->
+    <div class="w-3/4">
+      <button 
+        @click="viewProduct(product)"
+        class="w-full !py-1.5 px-4 bg-white border border-gray-300 rounded hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500 transition-colors whitespace-nowrap"
+        style="font-family: 'Poppins', sans-serif; font-size: 12px;"
+      >
+        Product Details
+      </button>
+    </div>
+
+    <!-- Favorite Button - 25% width (6/24) -->
+    <div class="w-1/4 flex items-end justify-end">
+      <button 
+        @click="toggleFavorite(product)"
+        class="bg-white border border-gray-300 rounded hover:bg-gray-50 hover:border-blue-500 transition-colors flex items-center justify-center"
+        style="padding: 8px 12px;"
+      >
+        <template v-if="product.is_favorited">
+          <HeartFilled style="color: red" />
+        </template>
+        <template v-else>
+          <HeartOutlined />
+        </template>
+      </button>
+    </div>
+  </div>
+</div>
+
     
         </div>
     </a-col>

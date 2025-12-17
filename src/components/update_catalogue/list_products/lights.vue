@@ -1,143 +1,146 @@
 <template>
-  <div class="ai-catalog-section">
-    <div class="apply-section  md:hidden">
-      <a-button type="primary" size="large" block class="apply-button" @click="$emit('Apply_Light', 'magnetic-light-Renerer-apply')">
-        Apply
-      </a-button>
-    </div>
+  <div className="sm:pt-0 pt-32">
 
-    <!-- Fixed Header -->
-    <div class="ai-catalog-header ">
-      <span style="
-        font-family: Poppins;
-        font-weight: 500;
-        font-style: normal;
-        font-size: 14px;
-        line-height: 20px;
-        letter-spacing: 0;
-      ">
-        AI Catalog
-      </span>
-      <a-button size='small' type="text" class="see-all-link" @click="seeAllClicked">See all</a-button>
-    </div>
-    
-    <!-- Fixed Search Bar -->
-    <div class="search-section">
-      <a-input 
-        v-model:value="searchText" 
-        placeholder="Search"
-        class="search-input"
-        @input="handleSearchChange"
-      >
-        <template #prefix>
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path d="M7.33333 12.6667C10.2789 12.6667 12.6667 10.2789 12.6667 7.33333C12.6667 4.38781 10.2789 2 7.33333 2C4.38781 2 2 4.38781 2 7.33333C2 10.2789 4.38781 12.6667 7.33333 12.6667Z" stroke="#999" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M14 14L11.1 11.1" stroke="#999" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </template>
-      </a-input>
-      <div class="filter-icons">
-        <button @click="showGrid = false" class="filter-btn" :class="{ active: !showGrid }">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <path d="M5 10H15M2.5 5H17.5M7.5 15H12.5" stroke="#666" stroke-width="1.5" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <button @click="showGrid = true" class="filter-btn" :class="{ active: showGrid }">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <rect x="3" y="3" width="6" height="6" stroke="#666" stroke-width="1.5"/>
-            <rect x="11" y="3" width="6" height="6" stroke="#666" stroke-width="1.5"/>
-            <rect x="3" y="11" width="6" height="6" stroke="#666" stroke-width="1.5"/>
-            <rect x="11" y="11" width="6" height="6" stroke="#666" stroke-width="1.5"/>
-          </svg>
-        </button>
-      </div>
-    </div>
-
-    <!-- Scrollable Content Area -->
-    <div class="scrollable-content">
-      <!-- Loading initial -->
-      <div v-if="loading && catalogItems.length === 0" class="loading">
-        <a-spin />
-      </div>
-
-      <!-- Product Grid/List -->
-      <div v-if="!loading || catalogItems.length > 0" class="product-container" :class="{ 'grid-view': showGrid, 'list-view': !showGrid }">
-        <div v-for="(item, index) in catalogItems" :key="index" @click="updateItemRendering(item.id, item.light_type, item['3d_model'])" style="
-          background: #ffffff;
-          border: none;
-          border-radius: 4px;
-          padding:2px;
-          border:1px solid rgba(128, 128, 128, 0.14);"
-          :style="selected_light===item.id ? 'border:1px solid blue': ''">
-          <div class="product-item">
-            <div class="product-image">
-              <img :src="this.$store.state.root_media_api + item.primary_image" :alt="item.name" />
-            </div>
-            <div class="product-info">
-              <div style="display:flex;justify-content: space-between;" class="">
-                <div style="background-color: grey;color :white;border-radius:5px;padding-left:5px;padding-right:5px;padding-top:1px;height:22px;font-size:12px">
-                  {{ item.furniture_type }}
-                </div>
-                <div v-if="item['3d_model']" style="padding:3px;border:1px solid grey;border-radius:5px;padding-left:5px;padding-right:5px;padding-top:1px;height:22px;font-size:12px">AR</div>
-              </div>
-              <div class="product-name">{{ truncateText( item.name || 'No name Available', 3) }}</div>
-
-              <div class="product-details" style="display:flex;justify-content: space-between;">
-                <span class="product-color">Colors</span>
-                <div style="display: flex; gap: 4px; align-items: center; margin-left: 8px;">
-                  <div v-for="color in item.colors_available.slice(0, 2)" :key="color.id" class="color-dot" :style="{ backgroundColor: color.color }"></div>
-                </div>
-              </div>
-              <div class="product-price">
-                <span v-if="item.pricing.is_on_sale">
-                  Price 
-                  <span style="text-decoration: line-through; color: #999; margin-left: 8px;">${{ item.pricing.price }}</span>
-                </span>
-                <span v-else style="font-weight:700 ;display: flex;justify-content: space-between;width:100%">
-                  Price <span style="font-weight: 700;">${{ item.pricing.current_price }}</span>
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <a-row>
-            <a-col :span="18" style="padding-right:5px">
-              <a-button block type="default" @click="this.$router.push('/'+item.business_slug+'/'+'product'+'/'+item.id)" >
-                Product Detail
-              </a-button>
-            </a-col>
-            <a-col :span="6" style="">
-              <a-button block type="default" style="padding:0;display: flex;justify-content: center;align-items: center;">
-                <HeartOutlined />
-              </a-button>
-            </a-col>
-          </a-row>
-        </div>
-      </div>
-
-      <!-- Load More Button -->
-      <div v-if="catalogItems.length > 0 && paginationInfo.has_next" class="load-more-container">
-        <a-button 
-          block 
-          type="default" 
-          size="large"
-          :loading="loadingMore"
-          @click="loadMoreItems"
-          class="load-more-btn"
-        >
-          {{ loadingMore ? 'Loading...' : 'Load More' }}
+    <div class="ai-catalog-section ">
+      <div class="apply-section  md:hidden">
+        <a-button type="primary" size="large" block class="apply-button" @click="$emit('Apply_Light', 'magnetic-light-Renerer-apply')">
+          Apply
         </a-button>
       </div>
-
-      <!-- No items message -->
-      <div v-if="!loading && catalogItems.length === 0" class="no-items">
-        <p>No products found</p>
+  
+      <!-- Fixed Header -->
+      <div class="ai-catalog-header py-3 ">
+        <span style="
+          font-family: Poppins;
+          font-weight: 500;
+          font-style: normal;
+          font-size: 14px;
+          line-height: 20px;
+          letter-spacing: 0;
+        ">
+          AI Catalog
+        </span>
+        <a-button size='small' type="default" class="see-all-link" @click="seeAllClicked">See all</a-button>
       </div>
-    </div>
-     <div class="apply-section hidden md:block">
-      <a-button type="primary" size="large" block class="apply-button"  @click="$emit('Apply_Light', 'magnetic-light-Renerer-apply')">
-        Apply
-      </a-button>
+      
+      <!-- Fixed Search Bar -->
+      <div class="search-section">
+        <a-input 
+          v-model:value="searchText" 
+          placeholder="Search"
+          class="search-input"
+          @input="handleSearchChange"
+        >
+          <template #prefix>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M7.33333 12.6667C10.2789 12.6667 12.6667 10.2789 12.6667 7.33333C12.6667 4.38781 10.2789 2 7.33333 2C4.38781 2 2 4.38781 2 7.33333C2 10.2789 4.38781 12.6667 7.33333 12.6667Z" stroke="#999" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M14 14L11.1 11.1" stroke="#999" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </template>
+        </a-input>
+        <div class="filter-icons">
+          <button @click="showGrid = false" class="filter-btn" :class="{ active: !showGrid }">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M5 10H15M2.5 5H17.5M7.5 15H12.5" stroke="#666" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <button @click="showGrid = true" class="filter-btn" :class="{ active: showGrid }">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <rect x="3" y="3" width="6" height="6" stroke="#666" stroke-width="1.5"/>
+              <rect x="11" y="3" width="6" height="6" stroke="#666" stroke-width="1.5"/>
+              <rect x="3" y="11" width="6" height="6" stroke="#666" stroke-width="1.5"/>
+              <rect x="11" y="11" width="6" height="6" stroke="#666" stroke-width="1.5"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+  
+      <!-- Scrollable Content Area -->
+      <div class="scrollable-content">
+        <!-- Loading initial -->
+        <div v-if="loading && catalogItems.length === 0" class="loading">
+          <a-spin />
+        </div>
+  
+        <!-- Product Grid/List -->
+        <div v-if="!loading || catalogItems.length > 0" class="product-container" :class="{ 'grid-view': showGrid, 'list-view': !showGrid }">
+          <div v-for="(item, index) in catalogItems" :key="index" @click="updateItemRendering(item.id, item.light_type, item['3d_model'])" style="
+            background: #ffffff;
+            border: none;
+            border-radius: 4px;
+            padding:2px;
+            border:1px solid rgba(128, 128, 128, 0.14);"
+            :style="selected_light===item.id ? 'border:1px solid blue': ''">
+            <div class="product-item">
+              <div class="product-image">
+                <img :src="this.$store.state.root_media_api + item.primary_image" :alt="item.name" />
+              </div>
+              <div class="product-info">
+                <div style="display:flex;justify-content: space-between;" class="">
+                  <div style="background-color: grey;color :white;border-radius:5px;padding-left:5px;padding-right:5px;padding-top:1px;height:22px;font-size:12px">
+                    {{ item.furniture_type }}
+                  </div>
+                  <div v-if="item['3d_model']" style="padding:3px;border:1px solid grey;border-radius:5px;padding-left:5px;padding-right:5px;padding-top:1px;height:22px;font-size:12px">AR</div>
+                </div>
+                <div class="product-name">{{ truncateText( item.name || 'No name Available', 3) }}</div>
+  
+                <div class="product-details" style="display:flex;justify-content: space-between;">
+                  <span class="product-color">Colors</span>
+                  <div style="display: flex; gap: 4px; align-items: center; margin-left: 8px;">
+                    <div v-for="color in item.colors_available.slice(0, 2)" :key="color.id" class="color-dot" :style="{ backgroundColor: color.color }"></div>
+                  </div>
+                </div>
+                <div class="product-price">
+                  <span v-if="item.pricing.is_on_sale">
+                    Price 
+                    <span style="text-decoration: line-through; color: #999; margin-left: 8px;">${{ item.pricing.price }}</span>
+                  </span>
+                  <span v-else style="font-weight:700 ;display: flex;justify-content: space-between;width:100%">
+                    Price <span style="font-weight: 700;">${{ item.pricing.current_price }}</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+  
+            <a-row>
+              <a-col :span="18" style="padding-right:5px">
+                <a-button block type="default" @click="this.$router.push('/'+item.business_slug+'/'+'product'+'/'+item.id)" >
+                  Product Detail
+                </a-button>
+              </a-col>
+              <a-col :span="6" style="">
+                <a-button block type="default" style="padding:0;display: flex;justify-content: center;align-items: center;">
+                  <HeartOutlined />
+                </a-button>
+              </a-col>
+            </a-row>
+          </div>
+        </div>
+  
+        <!-- Load More Button -->
+        <div v-if="catalogItems.length > 0 && paginationInfo.has_next" class="load-more-container">
+          <a-button 
+            block 
+            type="default" 
+            size="large"
+            :loading="loadingMore"
+            @click="loadMoreItems"
+            class="load-more-btn"
+          >
+            {{ loadingMore ? 'Loading...' : 'Load More' }}
+          </a-button>
+        </div>
+  
+        <!-- No items message -->
+        <div v-if="!loading && catalogItems.length === 0" class="no-items">
+          <p>No products found</p>
+        </div>
+      </div>
+       <div class="apply-section hidden md:block">
+        <a-button type="primary" size="large" block class="apply-button"  @click="$emit('Apply_Light', 'magnetic-light-Renerer-apply')">
+          Apply
+        </a-button>
+      </div>
     </div>
   </div>
 </template>
