@@ -1,3650 +1,2650 @@
 <template>
-  <a-drawer
-  v-if="selectedObjectForSwitch"
-  :title="'select '+formatObjectName(selectedObjectForSwitch)+' furniture which you wanted to switch with here. '"
-  :placement="'bottom'"
-  :closable="true"
-    :open="openSelectObjectModal"
-    height="90%"
-    style="
-  border-top-left-radius: 20px;;
-  border-top-right-radius: 20px;;
-"
-    @close="openSelectFurnitureModel"
+  <div>
+    <br><a-modal
+  v-model:open="open_add_newProductModal"
+  title="Select how you wanted to add product"
+  @ok="handleOk"
+  centered
+  :width="480"
+>
+  <div style="display:flex; flex-direction:column; gap:16px; margin-top:20px;">
+    <!-- AI Generation Option -->
+    <a-button
+      type="default"
+      block
+      size="large"
+      @click="add_Product_For('DYD_AI')"
+      style="height: auto; padding: 16px; display: flex; align-items: center; gap: 12px;"
     >
-    <template #extra> <div class="head-section"> 
-          <a-button @click="handleSwitchFurnitureClicked" type="primary" > 
-            <div style="display: flex;gap:10px;;justify-content: center;align-items:center;"><svg width="16" height="15" viewBox="0 0 16 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M4.25 14.2288C3.35489 14.2288 2.49645 13.893 1.86351 13.2952C1.23058 12.6975 0.875 11.8867 0.875 11.0413C0.875 10.196 1.23058 9.38521 1.86351 8.78744C2.49645 8.18967 3.35489 7.85384 4.25 7.85384C5.14511 7.85384 6.00355 8.18967 6.63649 8.78744C7.26942 9.38521 7.625 10.196 7.625 11.0413C7.625 11.8867 7.26942 12.6975 6.63649 13.2952C6.00355 13.893 5.14511 14.2288 4.25 14.2288ZM11.75 7.14551C11.3068 7.14551 10.8679 7.06306 10.4584 6.90287C10.049 6.74269 9.67691 6.5079 9.36351 6.21191C9.05012 5.91592 8.80152 5.56454 8.63191 5.17781C8.4623 4.79109 8.375 4.3766 8.375 3.95801C8.375 3.53942 8.4623 3.12493 8.63191 2.7382C8.80152 2.35148 9.05012 2.00009 9.36351 1.7041C9.67691 1.40812 10.049 1.17333 10.4584 1.01314C10.8679 0.852955 11.3068 0.770508 11.75 0.770508C12.6451 0.770508 13.5035 1.10633 14.1365 1.7041C14.7694 2.30188 15.125 3.11263 15.125 3.95801C15.125 4.80339 14.7694 5.61414 14.1365 6.21191C13.5035 6.80968 12.6451 7.14551 11.75 7.14551ZM1.25 4.66634C1.25 3.72703 1.64509 2.8262 2.34835 2.162C3.05161 1.49781 4.00544 1.12467 5 1.12467H7.25V2.54134H5C4.40326 2.54134 3.83097 2.76522 3.40901 3.16374C2.98705 3.56225 2.75 4.10276 2.75 4.66634V6.79134H1.25V4.66634ZM13.25 8.20801V10.333C13.25 10.8966 13.0129 11.4371 12.591 11.8356C12.169 12.2341 11.5967 12.458 11 12.458H8.75V13.8747H11C11.9946 13.8747 12.9484 13.5015 13.6517 12.8373C14.3549 12.1732 14.75 11.2723 14.75 10.333V8.20801H13.25Z" fill="white"/>
-</svg>
-&nbsp;
-Switch Furniture</div></a-button>
-    </div>
-    </template>
-    <a-row>
-      <a-col :span="4">
-        <div style="display:flex;flex-direction: column;">
-
-          <a-checkbox v-model:checked="Furnitures_Checkbox">Furnitures</a-checkbox>
-          <a-checkbox v-model:checked="Lights_Checkbox">Lights</a-checkbox>
-        </div>
-
+      <svg width="40" height="40" viewBox="0 0 100 100" style="flex-shrink: 0;">
+        <!-- AI Brain Icon with Animation -->
+        <defs>
+          <linearGradient id="aiGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+          </linearGradient>
+        </defs>
         
-      </a-col>
-      <a-col :span="20">
-        <switch_furniture    ref="switchFurnitureRef"
- :furniture_name="formatObjectName(selectedObjectForSwitch)" :furnitures="Furnitures_Checkbox" :lights="Lights_Checkbox"/>
-      </a-col>
-    </a-row>
-    
-  </a-drawer>
-
-  <DrawRemovalModal 
-    :visible="draw_removal_modal"
-    :baseImage="baseImage"
-    :roomId="this.$route.params.id"
-    @update:visible="draw_removal_modal = $event"
-    @submit-removal="handleDrawnAreaRemoval"
-    @removal-success="handleRemovalSuccess"
-    @cancel="draw_removal_modal = false"
-  />
-
-  <div class="canvas-container" ref="canvasContainer">
-    <!-- Loading Overlay -->
-    <div v-if="isLoading || objectMasksLoading" class="scanning-loading-overlay">
-      <div class="loading-screen" :style="{ backgroundImage: `url(${baseImage})` }">
+        <!-- Brain outline -->
+        <path d="M50 20 C35 20 25 30 25 40 C25 45 27 50 30 53 L30 70 C30 75 35 80 40 80 L60 80 C65 80 70 75 70 70 L70 53 C73 50 75 45 75 40 C75 30 65 20 50 20 Z" 
+              fill="url(#aiGradient)" opacity="0.3"/>
         
-        <div class="wave-overlay"></div>
-        <div class="loading-text">
-          <!-- <div class="lottieFile-sec">
-            <DotLottieVue
-              style="height: auto; width: 250px;"
-              autoplay
-              loop
-              speed=0.5
-              src="https://lottie.host/7665c805-0ebe-4178-aca1-8828e05d3707/5tbkJuNDQ9.lottie"
-            />
-          </div> -->
-          <div class="process-text" v-if="this.new_room_rendering_completed_percentage">{{ this.new_room_rendering_completed_percentage}} %</div>
+        <!-- Neural connections -->
+        <circle cx="40" cy="40" r="3" fill="#fff">
+          <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="50" cy="35" r="3" fill="#fff">
+          <animate attributeName="opacity" values="1;0.3;1" dur="2s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="60" cy="40" r="3" fill="#fff">
+          <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="45" cy="50" r="3" fill="#fff">
+          <animate attributeName="opacity" values="0.7;0.3;0.7" dur="2s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="55" cy="50" r="3" fill="#fff">
+          <animate attributeName="opacity" values="0.3;0.8;0.3" dur="2s" repeatCount="indefinite"/>
+        </circle>
+        
+        <!-- Connecting lines -->
+        <line x1="40" y1="40" x2="50" y2="35" stroke="#fff" stroke-width="1" opacity="0.6">
+          <animate attributeName="opacity" values="0.3;0.8;0.3" dur="2s" repeatCount="indefinite"/>
+        </line>
+        <line x1="50" y1="35" x2="60" y2="40" stroke="#fff" stroke-width="1" opacity="0.6">
+          <animate attributeName="opacity" values="0.6;0.3;0.6" dur="2s" repeatCount="indefinite"/>
+        </line>
+        <line x1="40" y1="40" x2="45" y2="50" stroke="#fff" stroke-width="1" opacity="0.6">
+          <animate attributeName="opacity" values="0.4;0.9;0.4" dur="2s" repeatCount="indefinite"/>
+        </line>
+        <line x1="60" y1="40" x2="55" y2="50" stroke="#fff" stroke-width="1" opacity="0.6">
+          <animate attributeName="opacity" values="0.8;0.4;0.8" dur="2s" repeatCount="indefinite"/>
+        </line>
+        
+        <!-- Sparkle effect -->
+        <circle cx="35" cy="30" r="2" fill="#fff">
+          <animate attributeName="r" values="0;2;0" dur="3s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0;1;0" dur="3s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="65" cy="35" r="2" fill="#fff">
+          <animate attributeName="r" values="0;2;0" dur="3s" begin="1.5s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0;1;0" dur="3s" begin="1.5s" repeatCount="indefinite"/>
+        </circle>
+      </svg>
+      <span style="flex: 1; text-align: left; font-size: 15px;">Generate 3D Model with DYD AI</span>
+    </a-button>
+
+    <!-- Local Upload Option -->
+    <a-button
+      type="default"
+      block
+      size="large"
+      @click="add_Product_For('local_system')"
+      style="height: auto; padding: 16px; display: flex; align-items: center; gap: 12px;"
+    >
+      <svg width="40" height="40" viewBox="0 0 100 100" style="flex-shrink: 0;">
+        <!-- Upload Icon with Animation -->
+        <defs>
+          <linearGradient id="uploadGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" style="stop-color:#48bb78;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#38a169;stop-opacity:1" />
+          </linearGradient>
+        </defs>
+        
+        <!-- Folder -->
+        <path d="M20 35 L20 75 C20 78 22 80 25 80 L75 80 C78 80 80 78 80 75 L80 40 C80 37 78 35 75 35 L55 35 L50 30 L25 30 C22 30 20 32 20 35 Z" 
+              fill="url(#uploadGradient)" opacity="0.3" stroke="#48bb78" stroke-width="2"/>
+        
+        <!-- Upload Arrow -->
+        <g transform="translate(50, 55)">
+          <!-- Arrow shaft -->
+          <rect x="-3" y="-15" width="6" height="25" fill="#48bb78" rx="2">
+            <animateTransform
+              attributeName="transform"
+              type="translate"
+              values="0,5; 0,-2; 0,5"
+              dur="1.5s"
+              repeatCount="indefinite"/>
+            <animate attributeName="opacity" values="0.4;1;0.4" dur="1.5s" repeatCount="indefinite"/>
+          </rect>
           
-          <div class="process-text">{{ this.loadingMessage }} </div>
-        </div>
-
-      </div>
-    </div>
-
-    <div class="main-canvas-sec">
-
-    <!-- Main Canvas -->
-    <canvas
-      ref="canvas"
-      :width="canvasWidth"
-      :height="canvasHeight"
-      class="main-canvas"
-      :class="{ 
-        'disabled': isLoading,
-        'furniture-mode': true
-      }"
-    ></canvas>
-
-    <!-- Hover overlay for object highlighting -->
-    <canvas
-      ref="overlayCanvas"
-      :width="canvasWidth"
-      :height="canvasHeight"
-      class="overlay-canvas"
-      :class="{ 'disabled': isLoading }"
-      style="position: absolute; top: 0; left: 0; z-index: 2; pointer-events: none;"
-    ></canvas>
-    </div>
-
-    <!-- Object Selection Indicators -->
-    <div 
-      v-if="!isLoading && selectedObjects.length > 0" 
-      class="object-indicators"
-      :style="{ width: canvasWidth + 'px', height: canvasHeight + 'px' }"
+          <!-- Arrow head -->
+          <path d="M0,-20 L-8,-10 L8,-10 Z" fill="#48bb78">
+            <animateTransform
+              attributeName="transform"
+              type="translate"
+              values="0,5; 0,-2; 0,5"
+              dur="1.5s"
+              repeatCount="indefinite"/>
+            <animate attributeName="opacity" values="0.4;1;0.4" dur="1.5s" repeatCount="indefinite"/>
+          </path>
+        </g>
+        
+        <!-- Document icon inside folder -->
+        <rect x="35" y="55" width="12" height="15" fill="#fff" opacity="0.6" rx="1"/>
+        <line x1="37" y1="59" x2="45" y2="59" stroke="#48bb78" stroke-width="1" opacity="0.8"/>
+        <line x1="37" y1="62" x2="45" y2="62" stroke="#48bb78" stroke-width="1" opacity="0.8"/>
+        <line x1="37" y1="65" x2="43" y2="65" stroke="#48bb78" stroke-width="1" opacity="0.8"/>
+      </svg>
+      <span style="flex: 1; text-align: left; font-size: 15px;">Upload 3D Model from Local System</span>
+    </a-button>
+  </div>
+  
+  <template #footer></template>
+</a-modal>
+<a-modal
+  v-model:open="open_add_newLightModal"
+  title="Select how you wanted to add The Light product"
+  @ok="handleOk"
+  centered
+  :width="480"
+>
+  <div style="display:flex; flex-direction:column; gap:16px; margin-top:20px;">
+    <!-- AI Generation Option -->
+    <a-button
+      type="default"
+      block
+      size="large"
+      @click="add_Product_Light_For('DYD_AI')"
+      style="height: auto; padding: 16px; display: flex; align-items: center; gap: 12px;"
     >
-      <div
-        v-for="(objectKey, index) in selectedObjects"
-        :key="objectKey"
-        class="object-indicator"
-        :style="{
-          left: '20px',
-          top: (20 + index * 35) + 'px'
-        }"
-      >
-        <span class="object-name">{{ formatObjectName(objectKey) }}</span>
-        <button 
-          class="remove-object-btn" 
-          @click="toggleObjectSelection(objectKey)"
-          title="Remove selection"
+      <svg width="40" height="40" viewBox="0 0 100 100" style="flex-shrink: 0;">
+        <!-- AI Brain Icon with Animation -->
+        <defs>
+          <linearGradient id="aiGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+          </linearGradient>
+        </defs>
+        
+        <!-- Brain outline -->
+        <path d="M50 20 C35 20 25 30 25 40 C25 45 27 50 30 53 L30 70 C30 75 35 80 40 80 L60 80 C65 80 70 75 70 70 L70 53 C73 50 75 45 75 40 C75 30 65 20 50 20 Z" 
+              fill="url(#aiGradient)" opacity="0.3"/>
+        
+        <!-- Neural connections -->
+        <circle cx="40" cy="40" r="3" fill="#fff">
+          <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="50" cy="35" r="3" fill="#fff">
+          <animate attributeName="opacity" values="1;0.3;1" dur="2s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="60" cy="40" r="3" fill="#fff">
+          <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="45" cy="50" r="3" fill="#fff">
+          <animate attributeName="opacity" values="0.7;0.3;0.7" dur="2s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="55" cy="50" r="3" fill="#fff">
+          <animate attributeName="opacity" values="0.3;0.8;0.3" dur="2s" repeatCount="indefinite"/>
+        </circle>
+        
+        <!-- Connecting lines -->
+        <line x1="40" y1="40" x2="50" y2="35" stroke="#fff" stroke-width="1" opacity="0.6">
+          <animate attributeName="opacity" values="0.3;0.8;0.3" dur="2s" repeatCount="indefinite"/>
+        </line>
+        <line x1="50" y1="35" x2="60" y2="40" stroke="#fff" stroke-width="1" opacity="0.6">
+          <animate attributeName="opacity" values="0.6;0.3;0.6" dur="2s" repeatCount="indefinite"/>
+        </line>
+        <line x1="40" y1="40" x2="45" y2="50" stroke="#fff" stroke-width="1" opacity="0.6">
+          <animate attributeName="opacity" values="0.4;0.9;0.4" dur="2s" repeatCount="indefinite"/>
+        </line>
+        <line x1="60" y1="40" x2="55" y2="50" stroke="#fff" stroke-width="1" opacity="0.6">
+          <animate attributeName="opacity" values="0.8;0.4;0.8" dur="2s" repeatCount="indefinite"/>
+        </line>
+        
+        <!-- Sparkle effect -->
+        <circle cx="35" cy="30" r="2" fill="#fff">
+          <animate attributeName="r" values="0;2;0" dur="3s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0;1;0" dur="3s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="65" cy="35" r="2" fill="#fff">
+          <animate attributeName="r" values="0;2;0" dur="3s" begin="1.5s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0;1;0" dur="3s" begin="1.5s" repeatCount="indefinite"/>
+        </circle>
+      </svg>
+      <span style="flex: 1; text-align: left; font-size: 15px;">Generate 3D Light Model with DYD AI</span>
+    </a-button>
+
+    <!-- Local Upload Option -->
+    <a-button
+      type="default"
+      block
+      size="large"
+      @click="add_Product_Light_For('local_system')"
+      style="height: auto; padding: 16px; display: flex; align-items: center; gap: 12px;"
+    >
+      <svg width="40" height="40" viewBox="0 0 100 100" style="flex-shrink: 0;">
+        <!-- Upload Icon with Animation -->
+        <defs>
+          <linearGradient id="uploadGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" style="stop-color:#48bb78;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#38a169;stop-opacity:1" />
+          </linearGradient>
+        </defs>
+        
+        <!-- Folder -->
+        <path d="M20 35 L20 75 C20 78 22 80 25 80 L75 80 C78 80 80 78 80 75 L80 40 C80 37 78 35 75 35 L55 35 L50 30 L25 30 C22 30 20 32 20 35 Z" 
+              fill="url(#uploadGradient)" opacity="0.3" stroke="#48bb78" stroke-width="2"/>
+        
+        <!-- Upload Arrow -->
+        <g transform="translate(50, 55)">
+          <!-- Arrow shaft -->
+          <rect x="-3" y="-15" width="6" height="25" fill="#48bb78" rx="2">
+            <animateTransform
+              attributeName="transform"
+              type="translate"
+              values="0,5; 0,-2; 0,5"
+              dur="1.5s"
+              repeatCount="indefinite"/>
+            <animate attributeName="opacity" values="0.4;1;0.4" dur="1.5s" repeatCount="indefinite"/>
+          </rect>
+          
+          <!-- Arrow head -->
+          <path d="M0,-20 L-8,-10 L8,-10 Z" fill="#48bb78">
+            <animateTransform
+              attributeName="transform"
+              type="translate"
+              values="0,5; 0,-2; 0,5"
+              dur="1.5s"
+              repeatCount="indefinite"/>
+            <animate attributeName="opacity" values="0.4;1;0.4" dur="1.5s" repeatCount="indefinite"/>
+          </path>
+        </g>
+        
+        <!-- Document icon inside folder -->
+        <rect x="35" y="55" width="12" height="15" fill="#fff" opacity="0.6" rx="1"/>
+        <line x1="37" y1="59" x2="45" y2="59" stroke="#48bb78" stroke-width="1" opacity="0.8"/>
+        <line x1="37" y1="62" x2="45" y2="62" stroke="#48bb78" stroke-width="1" opacity="0.8"/>
+        <line x1="37" y1="65" x2="43" y2="65" stroke="#48bb78" stroke-width="1" opacity="0.8"/>
+      </svg>
+      <span style="flex: 1; text-align: left; font-size: 15px;">Upload 3D Model from Local System</span>
+    </a-button>
+  </div>
+  
+  <template #footer></template>
+</a-modal>
+
+<!-- {{ show_add_new_light_product_locally_3d_model }} -->
+<add_furniture_modal_local_3d_model v-model:visible="show_add_new_product_locally_3d_model" 
+        :types="['Modern','Scandinavian','Classic','Minimalist','Industrial','Rustic','Boho','other',]"
+        @product-created="onProductCreated"
+        @cancel="onCancel"
+        :rendered_modal_3D_id="model_instance_id"
+        />
+
+        <add_furniture_modal_local_3d_model_create_variation v-model:visible="show_add_new_product_locally_3d_model" 
+        :types="['Modern','Scandinavian','Classic','Minimalist','Industrial','Rustic','Boho','other',]"
+        @product-created="onProductCreated"
+        @cancel="onCancel"
+        :rendered_modal_3D_id="model_instance_id"
+        :prepopulatedData="prepopulatedProductData"
+        :isEditing="false"  
+        :isVariation="isCreatingVariation"
+        :baseProductId="selectedProduct?.id"
+        v-if="prepopulatedProductData"
+        />
+
+        <add_light_modal_local_3d_model 
+        v-model:visible="show_add_new_light_product_locally_3d_model" 
+        :types="['Modern','Scandinavian','Classic','Minimalist','Industrial','Rustic','Boho','other',]"
+        @product-created="onLightProductCreated"
+        @cancel="onCancel"
+        :rendered_modal_3D_id="model_instance_id"
+        />
+
+        <!-- <add_furniture_modal_local_3d_model v-model:visible="show_add_new_product_locally_3d_model" 
+        :types="['Modern','Scandinavian','Classic','Minimalist','Industrial','Rustic','Boho','other',]"
+        @product-created="onProductCreated"
+        @cancel="onCancel"
+        :rendered_modal_3D_id="model_instance_id"
+        /> -->
+
+        <!-- this.fetchMyProducts() -->
+
+    <add_new_floorTexture
+        v-model:visible="show_add_new_floor_texture"
+        @product-created="this.fetchMyFloorTextureProducts()"
+    />
+    
+     <add_new_wallTexture
+        v-model:visible="show_add_new_wall_texture"
+        @product-created="this.fetchMyWallTextureProducts()"
+
+    />
+     <add_new_Light
+        v-model:visible="show_add_new_light"
+        @cancel="clicked_cancel_add_new_light"
+        @add-3d-light="addLightProduct()"
+        @product-created="this.fetchMyLights()"
+    />
+    
+    
+<div class="sm:p-[10px]  -translate-y-[1%] min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh] bg-white rounded-2xl sm:border border-black/10">
+            <!-- Product List/Grid View -->
+            <div v-if="currentView === 'list'">
+                <!-- Header Section -->
+
+                <!--for desktop-->
+                <div class="hidden md:flex justify-between items-center mb-5">
+
+  <!-- Title -->
+  <h2 class="m-0 text-lg  whitespace-nowrap px-2 lg:text-2xl font-semibold">
+    My Products
+    <span class="text-gray-500 text-base">
+      ({{ products.length + wall.length + floor.length + myLights.length }})
+    </span>
+  </h2>
+
+  <!-- Right Side Buttons -->
+  <div class="flex justify-between items-end sm:flex-col sm:w-full  xl:flex-row ">
+    <div className="flex flex-row gap-6">
+
+        <!-- View Toggle Buttons -->
+                            <div style="display: flex; border: 1px solid #ddd; border-radius: 6px; overflow: hidden;">
+                                <a-button 
+                                    @click="viewMode = 'grid'"
+                                    :style="{
+                                        padding: '8px 12px',
+                                        border: 'none',
+                                        background: viewMode === 'grid' ? '#3B63FB' : 'white',
+                                        color: viewMode === 'grid' ? 'white' : '#666',
+                                        cursor: 'pointer',
+                                        fontSize: '12px',
+                                        fontWeight: '600'
+                                    }"
+                                >
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 4px;">
+                                        <rect x="3" y="3" width="7" height="7"></rect>
+                                        <rect x="14" y="3" width="7" height="7"></rect>
+                                        <rect x="3" y="14" width="7" height="7"></rect>
+                                        <rect x="14" y="14" width="7" height="7"></rect>
+                                    </svg>
+                                    <!-- Grid -->
+                                </a-button>
+                                <a-button 
+                                    @click="viewMode = 'table'"
+                                    :style="{
+                                        padding: '8px 12px',
+                                        border: 'none',
+                                        background: viewMode === 'table' ? '#3B63FB' : 'white',
+                                        color: viewMode === 'table' ? 'white' : '#666',
+                                        cursor: 'pointer',
+                                        fontSize: '12px',
+                                        fontWeight: '600'
+                                    }"
+                                >
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px;">
+                                        <line x1="8" y1="6" x2="21" y2="6"></line>
+                                        <line x1="8" y1="12" x2="21" y2="12"></line>
+                                        <line x1="8" y1="18" x2="21" y2="18"></line>
+                                        <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                                        <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                                        <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                                    </svg>
+                                    <!-- List -->
+                                </a-button>
+                                    
+                            </div>
+    
+        <!-- Search -->
+        <div class="relative">
+          <input
+            type="text"
+            placeholder="Search Product"
+            v-model="searchQuery"
+            class="pl-9 pr-3 py-1.5 border border-gray-300 rounded-md w-[200px] outline-none text-sm"
+          />
+          <svg
+            class="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+        </div>
+    </div>
+
+    <div className="flex flex-row gap-2 ">
+    
+    <!-- Wall Button -->
+    <button
+  type="primary"
+  @click="show_add_new_wall_texture = true"
+  class="flex items-center gap-2 px-3 py-2 !text-white rounded-md bg-[#3B63FB]"style="font-family: var(--font-family-main);"
+>
+  <!-- Paste any SVG here -->
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <rect x="3" y="3" width="8" height="8" rx="1"/>
+    <rect x="13" y="3" width="8" height="8" rx="1"/>
+    <rect x="3" y="13" width="8" height="8" rx="1"/>
+    <rect x="13" y="13" width="8" height="8" rx="1"/>
+  </svg>
+  Wall
+</button>
+
+
+    <!-- Floor Button -->
+    <button
+  type="primary"
+  @click="show_add_new_floor_texture = true"
+  class="flex items-center gap-2 px-3 py-2 !text-white rounded-md bg-[#3B63FB]"style="font-family: var(--font-family-main);"
+>
+  <svg 
+    width="16" 
+    height="16" 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    stroke-width="2" 
+    stroke-linecap="round" 
+    stroke-linejoin="round"
+  >
+    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+
+    <line x1="3" y1="9" x2="21" y2="9"></line>
+    <line x1="3" y1="15" x2="21" y2="15"></line>
+
+    <line x1="9" y1="3" x2="9" y2="21"></line>
+    <line x1="15" y1="3" x2="15" y2="21"></line>
+  </svg>
+  Floor
+</button>
+
+
+    <!-- Light Button -->
+    <button
+      type="primary"
+      @click="show_add_new_light = true"
+  class="flex items-center gap-2 px-3 py-2 !text-white rounded-md bg-[#3B63FB]"style="font-family: var(--font-family-main);"
+    >
+       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <!-- bulb outline -->
+    <path d="M12 2a6 6 0 0 0-4.472 10.04c.46.5.872 1.28.872 2.16 0 1.1-.2 2.2-.6 3h6.4c-.4-.8-.6-1.9-.6-3 0-.88.41-1.66.87-2.16A6 6 0 0 0 12 2z"/>
+    <!-- filament / detail -->
+    <path d="M10 14h4"/>
+    <!-- base -->
+    <path d="M9 19h6v2H9z"/>
+  </svg>
+      Light
+    </button>
+
+    <!-- Add Product Button -->
+    <button
+      @click="addProduct()"
+      type="primary"
+  class="flex items-center gap-2 px-3 py-2 !text-white whitespace-nowrap rounded-md bg-[#3B63FB]"style="font-family: var(--font-family-main);"
+    >
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <!-- box -->
+    <path d="M21 8v8a2 2 0 0 1-1 1.73L12 21l-8-3.27A2 2 0 0 1 3 16V8" />
+    <path d="M12 3v5" />
+    <path d="M3.27 6.96L12 10l8.73-3.04" />
+    <!-- plus -->
+    <path d="M12 12v6" />
+    <path d="M9 15h6" />
+  </svg>
+      Add Product
+    </button>
+
+  </div>
+</div>
+</div>
+<!--for mobile-->
+<div class="flex md:hidden flex-wrap items-center justify-between mb-5 w-full gap-3">
+  <!-- Title -->
+  <h2 class="m-0 text-lg lg:text-2xl font-semibold px-2 whitespace-nowrap">
+    My Products
+    <span class="text-gray-500 text-base">
+      ({{ products.length + wall.length + floor.length + myLights.length }})
+    </span>
+  </h2>
+
+  <!-- Right Side Controls -->
+  <div class="flex flex-wrap items-center gap-3 w-auto sm:w-full">
+    <!-- View Toggle Buttons and Search -->
+    <div class="flex flex-wrap items-center gap-3 w-auto sm:w-full">
+      <!-- View Toggle Buttons -->
+      <div class="flex border border-gray-200 rounded-md overflow-hidden">
+        <button
+          @click="viewMode = 'grid'"
+          :class="[
+            'flex items-center px-3 py-2 font-semibold text-xs transition',
+            viewMode === 'grid' ? 'bg-blue-600 !text-white' : 'bg-white !text-gray-600'
+          ]"
+          style="font-family: var(--font-family-main);"
         >
-          ×
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class="mr-1">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+          </svg>
+          Grid
+        </button>
+        <button
+          @click="viewMode = 'table'"
+          :class="[
+            'flex items-center px-3 py-2 font-semibold text-xs transition',
+            viewMode === 'table' ? 'bg-blue-600 text-white' : 'bg-white text-gray-600'
+          ]"
+          style="font-family: var(--font-family-main);"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="mr-1">
+            <line x1="8" y1="6" x2="21" y2="6"></line>
+            <line x1="8" y1="12" x2="21" y2="12"></line>
+            <line x1="8" y1="18" x2="21" y2="18"></line>
+            <line x1="3" y1="6" x2="3.01" y2="6"></line>
+            <line x1="3" y1="12" x2="3.01" y2="12"></line>
+            <line x1="3" y1="18" x2="3.01" y2="18"></line>
+          </svg>
+          List
         </button>
       </div>
+      <!-- Search Input -->
+      <div class="relative">
+        <input
+          type="text"
+          placeholder="Search Product"
+          v-model="searchQuery"
+          class="pl-8 pr-3 py-2 border border-gray-300 rounded-md w-48 outline-none text-sm"
+        />
+        <svg
+          class="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.35-4.35"></path>
+        </svg>
+      </div>
     </div>
 
-    <!-- Drawing Mode Controls -->
-    
-<!-- Updated Drawing Mode Controls Template -->
-<div v-if="drawingMode && selectedObjectForSwitch" class="drawing-mode-controls">
-  <!-- Header with Minimize/Maximize Button -->
-  <div class="drawing-header">
-    <div class="header-top">
-      <h3>{{ formatObjectName(selectedObjectForSwitch) }}</h3>
-      <button 
-        @click="isDrawingControlsMinimized = !isDrawingControlsMinimized"
-        class="minimize-btn"
-        :title="isDrawingControlsMinimized ? 'Maximize' : 'Minimize'"
+    <!-- Action Buttons -->
+    <div class="flex  gap-2 sm:flex-col sm:w-full">
+      <!-- Wall Button -->
+      <button
+        type="button"
+        @click="show_add_new_wall_texture = true"
+        class="flex items-center  gap-2 px-1.5 py-1.5 !text-white rounded-md bg-blue-600 font-medium whitespace-nowrap w-auto sm:w-32"style="font-family: var(--font-family-main);"
       >
-        {{ isDrawingControlsMinimized ? '⊞' : '−' }}
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="8" height="8" rx="1"/>
+          <rect x="13" y="3" width="8" height="8" rx="1"/>
+          <rect x="3" y="13" width="8" height="8" rx="1"/>
+          <rect x="13" y="13" width="8" height="8" rx="1"/>
+        </svg>
+        Wall
+      </button>
+      <!-- Floor Button -->
+      <button
+        type="button"
+        @click="show_add_new_floor_texture = true"
+        class="flex items-center gap-2 px-1.5 py-1.5 !text-white rounded-md bg-blue-600 font-medium whitespace-nowrap w-auto sm:w-32"style="font-family: var(--font-family-main);"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="3" y1="9" x2="21" y2="9"></line>
+          <line x1="3" y1="15" x2="21" y2="15"></line>
+          <line x1="9" y1="3" x2="9" y2="21"></line>
+          <line x1="15" y1="3" x2="15" y2="21"></line>
+        </svg>
+        Floor
+      </button>
+      <!-- Light Button -->
+      <button
+        type="button"
+        @click="show_add_new_light = true"
+        class="flex items-center gap-2 px-1.5 py-1.5 !text-white rounded-md bg-blue-600 font-medium whitespace-nowrap w-auto sm:w-32 "style="font-family: var(--font-family-main);"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2a6 6 0 0 0-4.472 10.04c.46.5.872 1.28.872 2.16 0 1.1-.2 2.2-.6 3h6.4c-.4-.8-.6-1.9-.6-3 0-.88.41-1.66.87-2.16A6 6 0 0 0 12 2z"/>
+          <path d="M10 14h4"/>
+          <path d="M9 19h6v2H9z"/>
+        </svg>
+        Light
+      </button>
+      <!-- Add Product Button -->
+      <button
+        type="button"
+        @click="addProduct()"
+        class="flex items-center gap-2 px-1.5 py-1.5 !text-white rounded-md bg-blue-600 font-medium whitespace-nowrap w-auto sm:w-32 "style="font-family: var(--font-family-main);"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 8v8a2 2 0 0 1-1 1.73L12 21l-8-3.27A2 2 0 0 1 3 16V8"/>
+          <path d="M12 3v5"/>
+          <path d="M3.27 6.96L12 10l8.73-3.04"/>
+          <path d="M12 12v6"/>
+          <path d="M9 15h6"/>
+        </svg>
+        Add Product
       </button>
     </div>
   </div>
+</div>
 
-  <!-- Collapsible Content -->
- <div v-if="!isDrawingControlsMinimized" class="drawing-content">
-  <!-- Mode Toggle Buttons -->
-  <!-- <div class="mode-toggle"> -->
+
+                <!-- Grid View -->
+                <div v-if="viewMode === 'grid'" class="sm:main">
+                    <div class="products-list">
+                        <a-tabs v-model:activeKey="active_tab">
+                            <a-tab-pane key="Furniture" tab="Furniture" v-if="filteredProducts.length > 0"   >
+                            <div v-if="!filteredProducts.length"  style="height:70vh;gap:10px;;flex-direction:column;display: flex;justify-content: center;align-items: center;">
+                                  <a-empty :description="'No Furniture Available'"></a-empty>
+
+                                <a-button type="primary" @click="addProduct()">
+                                    Add Furniture
+                                </a-button>
+                            </div>
+
+                                <a-row v-else>
+                                    <a-col v-for="product in filteredProducts" :key="product.id" 
+                                        class="product-responsive p-1 sm:p-2">
+                                        <div class="product">
+                                            <div class="product-image-container" @click="viewProduct(product)">
+                                                <img 
+                                                    :src="$store.state.root_media_api + product.primary_image" 
+                                                    :alt="product.name"
+                                                    class="product-image"
+                                                />
+                                                <!-- Category Badge -->
+                                                <div class="category-badge">{{ product.category.name }}</div>
+                                                <!-- AR Badge -->
+                                                <div class="ar-badge">AR</div>
+                                            </div>
+                                            <!-- {{ truncateText(product.description || 'No description available', 8) }} -->
+
+                                            <a-row>
+                                            <a-col span="24">
+  <b class="block w-full truncate" :title="product.name">
+    {{ product.name || 'No name available' }}
+  </b>
+</a-col>
+
+
+                                                
+                                                <a-col span="16" style="font-family: 'Poppins', sans-serif; font-size:13px; font-weight:400;">
+  Color
+</a-col>
+
+                                                
+                                                <a-col span="8" style="display: flex;justify-content: end;">
+                                                    <div v-for="(color, index) in product.colors.slice(0, 2)" 
+                                                        :key="index"
+                                                        style="width:20px;height:20px;border-radius:20px;margin-left:2px;" 
+                                                        :style="'background:'+color">
+                                                    </div>
+                                                </a-col>
+                                                
+                                                <a-col span="12" style="font-family: 'Poppins', sans-serif; font-size:13px; font-weight:400;">
+                                                    Price
+                                                </a-col>
+                                                
+                                                <a-col span="12"  style="display: flex;justify-content: end;font-weight:700">
+                                                    <!-- <del style="font-size: 10px;">${{ product.pricing.price }}</del> -->
+                                                    ${{ product.pricing.price }}
+                                                </a-col>
+
+                                               <div class="flex items-center gap-2 w-full">
+  <!-- Product Details Button - 75% width (18/24) -->
+  <div class="w-3/4">
     <button 
-      @click="isBrushMode = true"
-      :class="['mode-btn', { active: isBrushMode }]"
-      title="Brush Mode"
+      @click="viewProduct(product)"
+      class="w-full py-2 px-4 bg-white border border-gray-300 rounded hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500 transition-colors whitespace-nowrap"
+      style="font-family: 'Poppins', sans-serif; font-size: 12px;"
     >
-      🖌️ Brush
+      Product Details
     </button>
+  </div>
+
+  <!-- Like Button - 25% width (6/24) -->
+  <div class="w-1/4  flex items-end justify-end">
     <button 
-      @click="isBrushMode = false"
-      :class="['mode-btn', { active: !isBrushMode }]"
-      title="Deselect Mode"
+      @click="toggleFavorite(product,'product')"
+      class="bg-white !py-2.5 border border-gray-300 rounded hover:bg-gray-50 hover:border-blue-500 transition-colors flex items-center justify-center"
+      style="padding: 2px 12px;"
     >
-      ✕ Deselect
+      <template v-if="product.is_favorited">
+        <HeartFilled style="color: red" />
+      </template>
+      <template v-else>
+        <HeartOutlined />
+      </template>
     </button>
-  <!-- </div> -->
+  </div>
+</div>
 
-  <!-- Divider -->
-  <div class="divider"></div>
-
-  <!-- Brush Size Control - Vertical (only show in brush mode) -->
-  <div v-if="isBrushMode" class="brush-control">
-    <label>Brush Size</label>
-    <div class="size-display">{{ brushSize }}px</div>
-    <input 
-      type="range" 
-      min="5" 
-      max="50" 
-      :value="brushSize"
-      @input="changeBrushSize($event.target.value)"
-      class="brush-slider vertical"
+                                            </a-row>
+                                        </div>
+                                    </a-col>
+                                </a-row>
+                            
+                            <div v-if="filteredProducts.length > 0" style="display: flex; justify-content: center; margin-top: 20px; margin-bottom: 20px;">
+    <a-pagination 
+        v-model:current="productsPagination.currentPage"
+        :total="productsPagination.totalCount"
+        :page-size="productsPagination.pageSize"
+        @change="handleProductsPageChange"
+        show-total
+        :show-size-changer="false"
     />
-    <div class="size-buttons">
-      <button @click="brushSize = Math.max(5, brushSize - 2)" class="size-btn">−</button>
-      <button @click="brushSize = Math.min(50, brushSize + 2)" class="size-btn">+</button>
-    </div>
-  </div>
-
-  <!-- Divider -->
-  <div class="divider"></div>
-
-  <!-- Drawing Actions - Vertical -->
-  <div class="drawing-actions">
-    <button 
-      @click="undoDrawing"
-      :disabled="!canUndo || !isBrushMode"
-      class="drawing-btn"
-      title="Undo (Ctrl+Z)"
-    >
-      ↶ Undo
-    </button>
-    
-    <button 
-      @click="redoDrawing"
-      :disabled="!canRedo || !isBrushMode"
-      class="drawing-btn"
-      title="Redo (Ctrl+Y)"
-    >
-      ↷ Redo
-    </button>
-    
-    <button 
-      @click="resetDrawing"
-      class="drawing-btn reset-btn"
-      title="Clear all drawings"
-    >
-      🔄 Reset
-    </button>
-  </div>
-
-  <!-- Divider -->
-  <div class="divider"></div>
-
-  <!-- Submit Controls - Vertical -->
-  <!-- @click="submitDrawnMask" -->
-  <div class="submit-actions">
-    <button 
-      @click="openSelectFurnitureModel"
-      :disabled="switchingInProgress"
-      class="drawing-btn submit-btn"
-    >
-      {{ switchingInProgress ? '⟳' : '✓' }} Apply
-    </button>
-    
-    <button 
-      @click="closeSwitchFurnitureMode"
-      :disabled="switchingInProgress"
-      class="drawing-btn cancel-btn"
-    >
-      ✕ Cancel
-    </button>
-  </div>
 </div>
+                            </a-tab-pane>
+                            <a-tab-pane key="Wall" tab="Wall" v-if="wall.length > 0" force-render>
+                                <!-- {{ wall }} -->
+                            <div style="height:70vh;gap:20px;;flex-direction:column;display: flex;justify-content: center;align-items: center;" v-if="wall.length===0" >
+                                <a-empty :description="'No Wall Textures Available'"></a-empty>                                
+                                <a-button type="primary" @click="show_add_new_wall_texture=true">
+                                    Add Wall Texture 
+                                </a-button>
+                            </div>
+                                <a-row>
+                                    <a-col 
+                            v-for="product in wall" 
+                            :key="product.id" 
+                            class="product-responsive" 
+                            style="padding:5px;"
+                            >
+                            <div class="product">
+                                <!-- Product image container -->
+                                <!-- <div 
+                                class="product-image-container" 
+                                @click="viewProduct(product)"
+                                style="position: relative;"
+                                > -->
+                            
+
+                                <div class="product-image-container" @click="viewProduct(product)">
+                                                <img 
+                                                :src="$store.state.root_media_api + (product.product_images.length > 0 
+                                        ? product.product_images[0].image 
+                                        : product.texture_image)"
+                                    :alt="product.title"
+                                                    class="product-image"
+                                                />
+                                                <!-- Category Badge -->
+                                                <div class="category-badge"> {{ product.texture_style }}</div>
+                                                <!-- AR Badge -->
+                                                <div class="ar-badge">AR</div>
+                                            </div>
+                                <!-- </div> -->
+
+                                <!-- Product details -->
+                                <a-row style="margin-top:10px;">
+                                <a-col span="24">
+                                    <!-- <b>{{ product.title }}</b> -->
+                                    <b>{{ truncateText(product.title || 'No title available', 19) }}</b>
+
+                                </a-col>
+
+                                <!-- Colors -->
+                                <a-col span="18">Colors</a-col>
+                                <a-col span="6" style="display:flex; justify-content:end;">
+                                    <div 
+                                    v-for="(color, index) in product.associated_colors.slice(0, 2)" 
+                                    :key="index"
+                                    :style="{ 
+                                        background: color.color_hex, 
+                                        width:'20px', 
+                                        height:'20px', 
+                                        borderRadius:'20px', 
+                                        marginLeft:'2px' 
+                                    }"
+                                    ></div>
+                                </a-col>
+
+                                <!-- Price -->
+                                <a-col span="12" style="margin-top:4px;">Price</a-col>
+                                <a-col span="12" style="margin-top:4px;width:100%;display: flex;justify-content: end;">
+                                    <!-- <del v-if="product.is_on_sale" style="font-size: 10px;">
+                                    ${{ product.price}}
+                                    </del> -->
+                                    <!-- {{ product.sale_price }} -->
+                                    <span style="font-size:14px; font-weight:600; margin-left:4px;">
+                                    ${{ product.sale_price_per_sqm || 0 }}
+                                    </span>
+                                </a-col>
+
+                                <!-- Buttons -->
+                                
+                                <a-col span="18">
+                                    <a-button block @click="viewProduct(product)">Product Details</a-button>
+                                </a-col>
+                                
+                                
+                                <a-col span="6" style="display: flex;align-items: end;justify-content: end;">
+                                    <!-- <a-button><HeartOutlined /></a-button> -->
+                                     
+                                                     <a-button @click="toggleFavorite(product,'wall_texture')"
+                                                     style="padding: 2px 12px; display:flex; align-items:center; justify-content:center;"
+                                                     >
+                                                                    <template v-if="product.is_favorited">
+                                                                    <HeartFilled style="color: red" />
+                                                                    </template>
+                                                                    <template v-else>
+                                                                    <HeartOutlined />
+                                                                    </template>
+                                                </a-button>
+                                </a-col>
+                                </a-row>
+                            </div>
+                            </a-col>
+
+                                </a-row>
+                            
+                            
+                            
+                            <!-- Pagination for Wall -->
+<div v-if="wall.length > 0" style="display: flex; justify-content: center; margin-top: 20px; margin-bottom: 20px;">
+    <a-pagination 
+        v-model:current="wallPagination.currentPage"
+        :total="wallPagination.totalCount"
+        :page-size="wallPagination.pageSize"
+        @change="handleWallPageChange"
+        show-total
+        :show-size-changer="false"
+    />
 </div>
+</a-tab-pane>
+                            <a-tab-pane key="Floor" tab="Floor" v-if="floor.length > 0">
+                                <!-- {{ floor }} -->
+                            <div style="height:70vh;gap:20px;;flex-direction:column;display: flex;justify-content: center;align-items: center;" v-if="floor.length===0" >
+                                                                  <a-empty :description="'No Floor Textures Available'"></a-empty>
 
-    <!-- Selection Controls (only show when not in drawing mode) -->
-    <div v-if="!isLoading && objectMaskCacheReady && !drawingMode" class="selection-controls">
-      <a-button 
-        v-if="canShowSwitchButton"
-        class="toolbar-btn primary-btn" 
-        @click="openSwitchFurnitureMode"
-      >
-        🔄 Switch Furniture
-      </a-button>
-      
-      <a-button class="toolbar-btn primary-btn" @click="make_room_empty">
-        Remove All Furniture
-      </a-button>
-    </div>
+                                
+                                <a-button type="primary" @click="show_add_new_floor_texture=true">
+                                    Add Floor Texture 
+                                </a-button>
+                            </div>
+                                <a-row v-else>
+                                    <a-col 
+                            v-for="product in floor" 
+                            :key="product.id" 
+                            class="product-responsive" 
+                            style="padding:5px;"
+                            >
+                            <div class="product">
+                                <!-- Product image container -->
+                                <div class="product-image-container" @click="viewProduct(product)">
+                                                <img 
+                                                :src="$store.state.root_media_api + (product.product_images.length > 0 
+                                        ? product.product_images[0].image 
+                                        : product.texture_image)"
+                                    :alt="product.title"
+                                                    class="product-image"
+                                                />
+                                                <!-- Category Badge -->
+                                                <div class="category-badge"> {{ product.texture_style }}</div>
+                                                <!-- AR Badge -->
+                                                <div class="ar-badge">AR</div>
+                                            </div>
 
-    <!-- Zoom Controls -->
-    <div v-if="!isLoading" class="zoom-controls">
-      <button @click="zoomIn" class="zoom-btn" title="Zoom In">+</button>
-      <span class="zoom-level">{{ Math.round(zoom * 100) }}%</span>
-      <button @click="zoomOut" class="zoom-btn" title="Zoom Out">-</button>
-      <button @click="resetZoomAndPan" class="zoom-btn reset-btn" title="Reset View">⌂</button>
-    </div>
+                                <!-- Product details -->
+                                <a-row style="margin-top:10px;">
+                                <a-col span="24">
+                                    <b>{{ product.title }}</b>
+                                </a-col>
 
-    <!-- Pan Instructions -->
-    <div v-if="zoom > 1 && !isLoading" class="instructions">
-      <span v-if="!drawingMode">Click and drag to pan • Mouse wheel to zoom • Click objects to select</span>
-      <span v-else>Draw on the furniture area to refine its boundaries</span>
-    </div>
+                                <!-- Colors -->
+                                <a-col span="18">Colors</a-col>
+                                <a-col span="6" style="display:flex; justify-content:end;">
+                                    <div 
+                                    v-for="(color, index) in product.associated_colors.slice(0, 2)" 
+                                    :key="index"
+                                    :style="{ 
+                                        background: color.color_hex, 
+                                        width:'20px', 
+                                        height:'20px', 
+                                        borderRadius:'20px', 
+                                        marginLeft:'2px' 
+                                    }"
+                                    ></div>
+                                </a-col>
 
-    <!-- Debug Info -->
-    <div v-if="showDebugInfo" class="debug-info">
-      <div>Objects detected: {{ Object.keys(objectMasks || {}).length }}</div>
-      <div>Cache ready: {{ objectMaskCacheReady }}</div>
-      <div>Regions processed: {{ objectMaskRegions.length }}</div>
-      <div>Selected: {{ selectedObjects.length }}</div>
-      <div v-if="drawingMode">Drawing Mode: Active</div>
-    </div>
-  </div>
-  <div className="hidden md:block">
+                                <!-- Price -->
+                                <a-col span="12" style="margin-top:4px;">Price</a-col>
+                                <a-col span="12" style="margin-top:4px;">
+                                    <!-- <del v-if="product.is_on_sale" style="font-size: 10px;">
+                                    ${{ product.price_per_sqm }}
+                                    </del> -->
+                                    <span style="font-size:14px; font-weight:600; margin-left:4px;;display: flex;justify-content: end;">
+                                    <!-- ${{ product.current_price_per_sqm }} -->
+                                    ${{ product.sale_price_per_sqm || 0 }}
 
-    <div class="bottom-toolbar" style="display:flex;justify-content: space-between;background: white;padding-left:10px;padding-right:10px;">
-      <div style="display:flex;gap:5px;padding-top:5px;">
-        <a-button 
-          @click="DrawRemoval_model" 
-          style="display:flex;gap:5px;gap:10px;"
-        >
-          <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M13.6273 8.3374C15.6172 4.66839 14.7102 2.1779 11.3058 2C8.83147 2.04724 6.27908 3.38042 4.24174 5.44289C2.53199 7.17373 0.848545 9.65267 1.46654 12.012C1.603 12.5329 1.86906 12.8879 2.28937 13.2219C3.41888 14.1194 4.52754 14.1984 6.66281 13.6742C8.8252 13.0171 10.1658 12.0272 11.2962 11.0145M11.2962 11.0145C11.2973 11.0134 11.2985 11.0123 11.2997 11.0113C11.3019 11.0094 11.3005 11.0058 11.2976 11.0058C11.2955 11.0058 11.2939 11.008 11.2947 11.01C11.2952 11.0115 11.2957 11.013 11.2962 11.0145ZM11.2962 11.0145C11.5431 11.7446 11.3867 12.3963 10.9616 13.6742" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          Draw removal
-        </a-button>
-  
-        <a-button
-          @click="toggleSelection"
-          class="control-btn"
-          :disabled="objectMaskRegions.length === 0 || drawingMode"
-        >
-          {{ selectedObjects.length === objectMaskRegions.length ? 'Clear Selection'+`(${selectedObjects.length})` : 'Select All' }}
-        </a-button>
-  
-        <a-button 
-          @click="removeSelectedObjects" 
-          class="control-btn remove"
-          :disabled="selectedObjects.length === 0 || drawingMode"
-        >
-          Remove Selected ({{ selectedObjects.length }})
-        </a-button>
+                                    </span>
+                                </a-col>
+
+                                <!-- Buttons -->
+                                <a-col span="18">
+                                                    <a-button block @click="viewProduct(product)"
+                                                        style="font-family: 'Poppins', sans-serif; font-size: 13px;"
+>Product Details</a-button>
+                                                </a-col>
+                                                
+                                                <a-col span="6" style="display: flex;align-items: end;justify-content: end;">
+                                                    <!-- <a-button><HeartOutlined /></a-button> -->
+                                                     
+                                                     <a-button @click="toggleFavorite(product,'floor_texture')" style="padding: 2px 12px; display:flex; align-items:center; justify-content:center;">
+                                                                    <template v-if="product.is_favorited">
+                                                                    <HeartFilled style="color: red" />
+                                                                    </template>
+                                                                    <template v-else>
+                                                                    <HeartOutlined />
+                                                                    </template>
+                                                </a-button>
+                                                </a-col>
+                                </a-row>
+                            </div>
+                            </a-col>
+
+                                </a-row>
+                            
+                            <!-- Pagination for Floor -->
+<div v-if="floor.length > 0" style="display: flex; justify-content: center; margin-top: 20px; margin-bottom: 20px;">
+    <a-pagination 
+        v-model:current="floorPagination.currentPage"
+        :total="floorPagination.totalCount"
+        :page-size="floorPagination.pageSize"
+        @change="handleFloorPageChange"
+        show-total
+        :show-size-changer="false"
+    />
+</div>
+                            </a-tab-pane>
+                            <a-tab-pane key="Lights" tab="Lights" v-if="myLights.length > 0">
+                            <div  v-if="myLights.length === 0 " style="height:70vh;gap:20px;;flex-direction:column;display: flex;justify-content: center;align-items: center;">
+                                <!-- required light configuration solution to add new light product -->
+                                <!-- <br>❌ un-sunk light <br>
+                                ❌ 3D Lamp light draggabe everywhere <br>                             
+                                ✅ sunk light <br>
+                                ✅ sticked ceiling 3D light <br>                              -->
+                                <a-empty :description="'No Lights Available'"></a-empty>
+                               
+                                <a-button type="primary" @click="show_add_new_light=true">
+                                    Add Lights Product 
+                                </a-button>
+                            </div>
+
+                                <a-row v-else>
+                                    <a-col v-for="product in myLights" :key="product.id" 
+                                        class="product-responsive" style="padding:5px;">
+                                        <div class="product">
+                                            <div class="product-image-container" @click="viewProduct(product)">
+                                                <img 
+                                                    :src="$store.state.root_media_api + product.primary_image" 
+                                                    :alt="product.name"
+                                                    class="product-image"
+                                                />
+                                                <div class="category-badge">{{ product.category.name }}</div>
+                                                <div class="ar-badge">AR</div>
+                                            </div>
+                                            <a-row>
+                                            <!-- {{ truncateText(product.description || 'No description available', 8) }} -->
+
+                                                <a-col span="24"><b>{{truncateText(product.name || 'No Name available', 19)}}</b></a-col>
+                                                <a-col span="18">Color</a-col>
+                                                <a-col span="6" style="display: flex;justify-content: end;">
+                                                    <div v-for="(color, index) in product.colors.slice(0, 2)" 
+                                                        :key="index"
+                                                        style="width:20px;height:20px;border-radius:20px;margin-left:2px;" 
+                                                        :style="'background:'+color">
+                                                    </div>
+                                                </a-col>
+                                                <a-col span="12">Price</a-col>
+                                                <a-col span="12" style="display: flex;justify-content: end;">
+                                                    <!-- <del style="font-size: 10px;">${{ product.pricing.price }}</del> -->
+                                                    <b>${{ product.pricing.price }}</b>
+                                                </a-col>
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                <a-col span="18"     style="font-family: 'Poppins', sans-serif; font-size: 13px;">
+                                                    <a-button block @click="viewProduct(product)">Product Details</a-button>
+                                                </a-col>
+                                                <a-col span="6"  style="display: flex;align-items: end;justify-content: end;">
+                                                    <!-- <a-button><HeartOutlined /></a-button> -->
+                                                   
+                                                     <a-button @click="toggleFavorite(product,'product')" style="padding: 2px 12px; display:flex; align-items:center; justify-content:center;">
+                                                                    <template v-if="product.is_favorited">
+                                                                    <HeartFilled style="color: red" />
+                                                                    </template>
+                                                                    <template v-else>
+                                                                    <HeartOutlined />
+                                                                    </template>
+                                                </a-button>
+                                                </a-col>
+                                            </a-row>
+                                        </div>
+                                    </a-col>
+                                </a-row>
+                            
+                            <!-- Pagination for Lights -->
+<div v-if="myLights.length > 0" style="display: flex; justify-content: center; margin-top: 20px; margin-bottom: 20px;">
+    <a-pagination 
+        v-model:current="lightsPagination.currentPage"
+        :total="lightsPagination.totalCount"
+        :page-size="lightsPagination.pageSize"
+        @change="handleLightsPageChange"
+        show-total
+        :show-size-changer="false"
+    />
+</div>
+                            </a-tab-pane>
+
+                            <a-tab-pane key="Furniture" tab="Furniture" v-if="filteredProducts.length === 0"   >
+                            <div v-if="!filteredProducts.length"  style="height:70vh;gap:20px;;flex-direction:column;display: flex;justify-content: center;align-items: center;">
+                                  <a-empty :description="'No Furniture Available'"></a-empty>
+
+                                <a-button type="primary" @click="addProduct()">
+                                    Add Furniture
+                                </a-button>
+                            </div>
+                            </a-tab-pane>
+                            <a-tab-pane key="Wall" tab="Wall" v-if="wall.length === 0" force-render>
+                                <!-- {{ wall }} -->
+                            <div style="height:70vh;gap:20px;;flex-direction:column;display: flex;justify-content: center;align-items: center;" v-if="wall.length===0" >
+                                <a-empty :description="'No Wall Textures Available'"></a-empty>                                
+                                <a-button type="primary" @click="show_add_new_wall_texture=true">
+                                    Add Wall Texture 
+                                </a-button>
+                            </div>
+                            </a-tab-pane>
+                            <a-tab-pane key="Floor" tab="Floor" v-if="floor.length === 0">
+                                <!-- {{ floor }} -->
+                            <div style="height:70vh;gap:20px;;flex-direction:column;display: flex;justify-content: center;align-items: center;" v-if="floor.length===0" >
+                                                                  <a-empty :description="'No Floor Textures Available'"></a-empty>
+
+                                
+                                <a-button type="primary" @click="show_add_new_floor_texture=true">
+                                    Add Floor Texture 
+                                </a-button>
+                            </div></a-tab-pane>
+                            <a-tab-pane key="Lights" tab="Lights" v-if="myLights.length === 0">
+                                <div  v-if="myLights.length === 0 " style="height:70vh;gap:20px;;flex-direction:column;display: flex;justify-content: center;align-items: center;">
+                                    <!-- required light configuration solution to add new light product -->
+                                    <!-- <br>❌ un-sunk light <br>
+                                    ❌ 3D Lamp light draggabe everywhere <br>                             
+                                    ✅ sunk light <br>
+                                    ✅ sticked ceiling 3D light <br>                              -->
+                                    <a-empty :description="'No Lights Available'"></a-empty>
+                                
+                                    <a-button type="primary" @click="show_add_new_light=true">
+                                        Add Lights Product 
+                                    </a-button>
+                                </div>
+                            </a-tab-pane>
+
+
+                        </a-tabs>
+                    </div>
+                </div>
+
+                <!-- Table View -->
+                <div v-if="viewMode === 'table'" class="main">
+                <a-tabs v-model:activeKey="active_tab">
+                            <a-tab-pane key="Furniture" tab="Furniture" v-if="filteredProducts.length > 0" >
+                            <div v-if="!filteredProducts.length"  style="height:70vh;gap:20px;;flex-direction:column;display: flex;justify-content: center;align-items: center;">
+                                
+                                  <a-empty :description="'No Furniture Available'"></a-empty>
+
+                                <a-button type="primary" @click="addProduct()">
+                                    Add Furniture
+                                </a-button>
+                            </div>
+                                <div v-else>
+
+                                    <a-table 
+    :columns="columns" 
+    :data-source="filteredProducts" 
+    row-key="id" 
+    :scroll="{ x: 800 }"
+    :pagination="{
+        current: productsPagination.currentPage,
+        pageSize: productsPagination.pageSize,
+        total: productsPagination.totalCount,
+        onChange: handleProductsPageChange,
+        showTotal: (total) => `Total ${total} items`
+    }"
+    style="background: white; border-radius: 8px; overflow: hidden; cursor:pointer"
+>
+                                <!-- <a-table :columns="columns" :data-source="filteredProducts" row-key="id" :pagination="false"
+                        :scroll="{ x: 800 }" style="background: white; border-radius: 8px; overflow: hidden; cursor:pointer"> -->
+                        <template #bodyCell="{ column, record, index }">
+                            <template v-if="column.key === 'serial'">
+                                <span style="font-weight: 600; color: #666;">{{ index + 1 }}</span>
+                            </template>
+
+                            <template v-if="column.key === 'product'">
+                                <div @click="viewProduct(record)"
+                                    style="display: flex; gap: 12px; align-items: center; cursor: pointer;">
+                                    <img :src="$store.state.root_media_api + record.primary_image"
+                                        style="width: 60px; height: 60px; border-radius: 8px; object-fit: cover;">
+                                    <div>
+                                        <div style="font-weight: 600; color: #333; margin-bottom: 4px;">{{ truncateText(record.name || 'No title available', 13) }}</div>
+                                        <!-- <a href="#" style="color: #4F46E5; font-size: 12px; text-decoration: none;">Contact
+                                            Info</a> -->
+                                            <!-- {{ record }} -->
+                                        <div style="font-size: 12px; color: #666; margin-top: 2px;">
+                                            {{ truncateText(record.description || 'No description available', 19) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <template v-if="column.key === 'category'">
+                                <span>{{ record.category.name }}</span>
+                            </template>
+
+                            <template v-if="column.key === 'type'">
+                                <span>{{ record.furniture_type }}</span>
+                            </template>
+
+                            <template v-if="column.key === 'createDate'">
+                                <span>{{ formatDate(record.created_at) }}</span>
+                            </template>
+
+                            <template v-if="column.key === 'dimensions'">
+                                <span style="font-size: 12px;">{{ record.diamenstions }}</span>
+                            </template>
+
+                            <template v-if="column.key === 'colors'">
+                                <div style="display: flex; gap: 3px;">
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                        <div
+                            v-for="(color, index) in record.colors.slice(0, 3)"
+                            :key="index"
+                            :style="{ width: '16px', height: '16px', borderRadius: '50%', backgroundColor: color }"
+                        ></div>
+
+                        <span v-if="record.colors.length > 3">...</span>
+                        </div>
+                                </div>
+                            </template>
+
+                            <template v-if="column.key === 'price'">
+                                <span style="font-weight: 600; color: #333;">${{ record.pricing.price }}</span>
+                                <!-- <span style="font-weight: 600; color: #333;"><del style="font-size: 10px;">${{ record.pricing.price }}</del>&nbsp;${{ record.pricing.sale_price }}</span> -->
+                            </template>
+
+                            <template v-if="column.key === 'actions'">
+                                <div style="display: flex; gap: 5px;">
+                                    <button
+                                        style="background: #f1f5f9; border: 1px solid #cbd5e1; color: #64748b; padding: 4px 8px; border-radius: 4px; font-size: 12px; cursor: pointer;">AR</button>
+                                    <button @click="viewProduct(record)"
+                                        style="background: #4F46E5; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 12px; cursor: pointer;">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                            stroke-width="2">
+                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                            <path d="m18.5 2.5 a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                        </svg>
+                                    </button>
+                                    <!-- <button @click="deleteProduct(record)"
+                                        style="background: #ef4444; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 12px; cursor: pointer;">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                            stroke-width="2">
+                                            <polyline points="3,6 5,6 21,6"></polyline>
+                                            <path
+                                                d="m19,6v14a2,2 0 0,1-2,2H7a2,2 0 0,1-2-2V6m3,0V4a2,2 0 0,1,2-2h4a2,2 0 0,1,2,2v2">
+                                            </path>
+                                        </svg>
+                                    </button> -->
+                                </div>
+                            </template>
+                        </template>
+                    </a-table> 
+                                </div>
+                            </a-tab-pane>
+                            <a-tab-pane key="Wall" tab="Wall"v-if="wall.length > 0"  force-render>
+                            <div style="height:70vh;gap:20px;;flex-direction:column;display: flex;justify-content: center;align-items: center;" v-if="wall.length===0" >
+                                <a-empty :description="'No Wall Textures Available'"></a-empty>
+                                <a-button type="primary" @click="show_add_new_wall_texture=true">
+                                    Add Wall Texture 
+                                </a-button>
+                            </div>
+                            <a-table v-else
+                                :columns="columns" 
+                                :data-source="wall" 
+                                row-key="id" 
+                                :pagination="false"
+                                :scroll="{ x: 800 }" 
+                                style="background: white; border-radius: 8px; overflow: hidden; cursor:pointer"
+                                >
+                                <template #bodyCell="{ column, record, index }">
+
+                                    <!-- Serial -->
+                                    <template v-if="column.key === 'serial'">
+                                    <span style="font-weight: 600; color: #666;">{{ index + 1 }}</span>
+                                    </template>
+
+                                    <!-- Product -->
+                                    <template v-if="column.key === 'product'">
+                                    <div @click="viewProduct(record)" style="display: flex; gap: 12px; align-items: center; cursor: pointer;">
+                                        <img 
+                                        :src="$store.state.root_media_api + (record.product_images.length > 0 ? record.product_images[0].image : record.texture_image)" 
+                                        style="width: 60px; height: 60px; border-radius: 8px; object-fit: cover;"
+                                        >
+                                        <div>
+                                        <div style="font-weight: 600; color: #333; margin-bottom: 4px;">
+                                            {{ truncateText(record.title || 'No title available', 13) }}
+                                        </div>
+                                        <!-- <a href="#" style="color: #4F46E5; font-size: 12px; text-decoration: none;">Contact Info</a> -->
+                                        <div style="font-size: 12px; color: #666; margin-top: 2px;">
+    {{ truncateText(record.description || 'No description available', 19) }}
+                                        </div>
+                                        </div>
+                                    </div>
+                                    </template>
+
+                                    <!-- Category (use texture style) -->
+                                    <template v-if="column.key === 'Style'">
+                                    <span>{{ record.texture_style }}</span>
+                                    </template>
+
+                                    <!-- Category (use texture style) -->
+                                    <template v-if="column.key === 'category'">
+                                    <span>Wall</span>
+                                    </template>
+
+                                    <!-- Type (brand / model) -->
+                                    <template v-if="column.key === 'type'">
+                                    <span>{{ record.brand || record.model_number || 'Texture' }}</span>
+                                    </template>
+
+                                    <!-- Created Date -->
+                                    <template v-if="column.key === 'createDate'">
+                                    <span>{{ formatDate(record.created_at) }}</span>
+                                    </template>
+
+                                    <!-- Dimensions -->
+                                    <template v-if="column.key === 'dimensions'">
+                                    <span style="font-size: 12px;">
+                                        {{ record.size_width }} x {{ record.size_height }} cm
+                                    </span>
+                                    </template>
+
+                                    <!-- Colors -->
+                                    <template v-if="column.key === 'colors'">
+                                    <div style="display: flex; align-items: center; gap: 6px;">
+                                        <div
+                                        v-for="(color, index) in record.associated_colors.slice(0, 3)"
+                                        :key="index"
+                                        :style="{ width: '16px', height: '16px', borderRadius: '50%', backgroundColor: color.color_hex }"
+                                        ></div>
+                                        <span v-if="record.associated_colors.length > 3">...</span>
+                                    </div>
+                                    </template>
+
+                                    <!-- Price -->
+                                    <template v-if="column.key === 'price'">
+                                    <span style="font-weight: 600; color: #333;">
+                                        <!-- <del v-if="record.is_on_sale" style="font-size: 10px;">${{ record.price_per_sqm }}</del>
+                                        &nbsp;${{ record.current_price_per_sqm }} -->
+                                        ${{ record.sale_price_per_sqm || 0 }}
+
+                                    </span>
+                                    </template>
+
+                                    <!-- Actions -->
+                                    <template v-if="column.key === 'actions'">
+                                    <div style="display: flex; gap: 5px;">
+                                        <button
+                                        style="background: #f1f5f9; border: 1px solid #cbd5e1; color: #64748b; padding: 4px 8px; border-radius: 4px; font-size: 12px; cursor: pointer;"
+                                        >AR</button>
+                                        <button  @click="viewProduct(record)"
+                                        style="background: #4F46E5; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 12px; cursor: pointer;"
+                                        >
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                            <path d="m18.5 2.5 a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                        </svg>
+                                        </button>
+                                        <!-- <button @click="deleteProduct(record)"
+                                        style="background: #ef4444; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 12px; cursor: pointer;"
+                                        >
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <polyline points="3,6 5,6 21,6"></polyline>
+                                            <path d="m19,6v14a2,2 0 0,1-2,2H7a2,2 0 0,1-2-2V6m3,0V4a2,2 0 0,1,2-2h4a2,2 0 0,1,2,2v2"></path>
+                                        </svg>
+                                        </button> -->
+                                    </div>
+                                    </template>
+                                </template>
+                                </a-table>
+
+                            </a-tab-pane>
+                            <a-tab-pane key="Floor" tab="Floor"v-if="floor.length > 0"  >
+                                <!-- {{ floor }} -->
+                            <div style="height:70vh;gap:20px;;flex-direction:column;display: flex;justify-content: center;align-items: center;" v-if="floor.length===0" >
+                                
+                                  <a-empty :description="'No Floor Textures Available'"></a-empty>
+                                 
+                                <a-button type="primary" @click="show_add_new_floor_texture=true">
+                                    Add Floor Texture 
+                                </a-button>
+                            </div>
+
+                            <a-table v-else
+                                    :columns="columns" 
+                                    :data-source="floor" 
+                                    row-key="id" 
+                                    :pagination="false"
+                                    :scroll="{ x: 1000 }"
+                                    style="background: white; border-radius: 8px; overflow: hidden; cursor: pointer;"
+                                    >
+                                    <template #bodyCell="{ column, record, index }">
+
+                                        <!-- Serial -->
+                                        <template v-if="column.key === 'serial'">
+                                        <span style="font-weight: 600; color: #666;">{{ index + 1 }}</span>
+                                        </template>
+
+                                        <!-- Product -->
+                                        <template v-if="column.key === 'product'">
+                                        <div @click="viewProduct(record)" style="display: flex; gap: 12px; align-items: center; cursor: pointer;">
+                                            <img 
+                                            :src="$store.state.root_media_api + (record.product_images?.length ? record.product_images[0].image : record.texture_image)" 
+                                            style="width: 60px; height: 60px; border-radius: 8px; object-fit: cover;"
+                                            >
+                                            <div>
+                                            <div style="font-weight: 600; color: #333; margin-bottom: 4px;">
+                                                {{ truncateText(record.title || 'No title available', 13) }}
+                                            </div>
+                                            <!-- <a href="#" style="color: #4F46E5; font-size: 12px; text-decoration: none;">Contact Info</a> -->
+                                            <div style="font-size: 12px; color: #666; margin-top: 2px;">
+                                                {{ truncateText(record.description || 'No description available', 19) }}
+                                            </div>
+                                            </div>
+                                        </div>
+                                        </template>
+
+                                        <!-- Category (Texture Style) -->
+                                        <template v-if="column.key === 'category'">
+                                        <span>{{ record.texture_style || '-' }}</span>
+                                        </template>
+
+                                        <!-- Type (Brand / Model) -->
+                                        <template v-if="column.key === 'type'">
+                                        <span>{{ record.brand || record.model_number || 'Floor Tile' }}</span>
+                                        </template>
+
+                                        <!-- Created Date -->
+                                        <template v-if="column.key === 'createDate'">
+                                        <span>{{ formatDate(record.created_at) }}</span>
+                                        </template>
+
+                                        <!-- Dimensions -->
+                                        <template v-if="column.key === 'dimensions'">
+                                        <span style="font-size: 12px;">
+                                            <template v-if="record.size_width && record.size_height">
+                                            {{ record.size_width }} x {{ record.size_height }} cm
+                                            </template>
+                                            <template v-else>-</template>
+                                        </span>
+                                        </template>
+
+                                        <!-- Colors -->
+                                        <template v-if="column.key === 'colors'">
+                                        <div style="display: flex; align-items: center; gap: 6px;">
+                                            <div
+                                            v-for="(color, i) in record.associated_colors?.slice(0, 3)"
+                                            :key="i"
+                                            :style="{ width: '16px', height: '16px', borderRadius: '50%', backgroundColor: color.color_hex }"
+                                            ></div>
+                                            <span v-if="record.associated_colors?.length > 3">...</span>
+                                        </div>
+                                        </template>
+
+                                        <!-- Price -->
+                                        <template v-if="column.key === 'price'">
+                                        <span style="font-weight: 600; color: #333;">
+                                            <template v-if="record.is_on_sale">
+                                            <del style="font-size: 10px; color: #999;">${{ record.price_per_sqm }}</del>
+                                            &nbsp;${{ record.sale_price_per_sqm || record.current_price_per_sqm }}
+                                            </template>
+                                            <template v-else>
+                                            <!-- ${{ record.current_price_per_sqm || record.price_per_sqm }} -->
+                                            
+                                            ${{ record.sale_price_per_sqm || 0 }}
+                                            </template>
+
+                                        </span>
+                                        </template>
+
+                                        <!-- Actions -->
+                                        <template v-if="column.key === 'actions'">
+                                        <div style="display: flex; gap: 5px;">
+                                            <button
+                                            style="background: #f1f5f9; border: 1px solid #cbd5e1; color: #64748b; padding: 4px 8px; border-radius: 4px; font-size: 12px; cursor: pointer;"
+                                            >AR</button>
+                                            <button  @click="viewProduct(record)"
+                                            style="background: #4F46E5; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 12px; cursor: pointer;">
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                                <path d="m18.5 2.5 a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                            </svg>
+                                            </button>
+                                            <!-- <button @click="deleteProduct(record)"
+                                            style="background: #ef4444; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 12px; cursor: pointer;">
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <polyline points="3,6 5,6 21,6"></polyline>
+                                                <path d="m19,6v14a2,2 0 0,1-2,2H7a2,2 0 0,1-2-2V6m3,0V4a2,2 0 0,1,2-2h4a2,2 0 0,1,2,2v2"></path>
+                                            </svg>
+                                            </button> -->
+                                        </div>
+                                        </template>
+
+                                    </template>
+                                    </a-table>
+
+
+
+                            </a-tab-pane>
+                            <a-tab-pane key="Lights" tab="Lights" v-if="myLights.length > 0"  >
+                            <div  v-if="myLights.length === 0 " style="height:70vh;gap:20px;;flex-direction:column;display: flex;justify-content: center;align-items: center;">
+                                  <a-empty :description="'No Lights Available'"></a-empty>
+                                
+                                <a-button type="primary" @click="show_add_new_light=true">
+                                    Add Lights Product 
+                                </a-button>
+                            </div>
+                            <div v-else>
+                                <a-table 
+    :columns="columns" 
+    :data-source="myLights" 
+    row-key="id" 
+    :scroll="{ x: 800 }"
+    :pagination="{
+        current: lightsPagination.currentPage,
+        pageSize: lightsPagination.pageSize,
+        total: lightsPagination.totalCount,
+        onChange: handleLightsPageChange,
+        showTotal: (total) => `Total ${total} items`
+    }"
+    style="background: white; border-radius: 8px; overflow: hidden; cursor:pointer">
+<!-- 
+                                <a-table :columns="columns" :data-source="myLights" row-key="id" :pagination="false"
+:scroll="{ x: 800 }" style="background: white; border-radius: 8px; overflow: hidden; cursor:pointer"> -->
+                        <template #bodyCell="{ column, record, index }">
+                            <template v-if="column.key === 'serial'">
+                                <span style="font-weight: 600; color: #666;">{{ index + 1 }}</span>
+                            </template>
+
+                            <template v-if="column.key === 'product'">
+                                <div @click="viewProduct(record)"
+                                    style="display: flex; gap: 12px; align-items: center; cursor: pointer;">
+                                    <img :src="$store.state.root_media_api + record.primary_image"
+                                        style="width: 60px; height: 60px; border-radius: 8px; object-fit: cover;">
+                                    <div>
+                                        <div style="font-weight: 600; color: #333; margin-bottom: 4px;">
+                                            {{ truncateText(record.name || 'No title available', 13) }}
+                                        </div>
+                                        <!-- <a href="#" style="color: #4F46E5; font-size: 12px; text-decoration: none;">Contact
+                                            Info</a> -->
+                                            <!-- {{ record }} -->
+                                        <div style="font-size: 12px; color: #666; margin-top: 2px;">
+                                            {{ truncateText(record.description || 'No description available', 19) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <template v-if="column.key === 'category'">
+                                <span>{{ record.category.name }}</span>
+                            </template>
+
+                            <template v-if="column.key === 'type'">
+                                <span>{{ record.light_type }}</span>
+                            </template>
+
+                            <template v-if="column.key === 'createDate'">
+                                <span>{{ formatDate(record.created_at) }}</span>
+                            </template>
+
+                            <template v-if="column.key === 'dimensions'">
+                                <span style="font-size: 12px;">{{ record.diamenstions }}</span>
+                            </template>
+
+                            <template v-if="column.key === 'colors'">
+                                <div style="display: flex; gap: 3px;">
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                        <div
+                            v-for="(color, index) in record.colors.slice(0, 3)"
+                            :key="index"
+                            :style="{ width: '16px', height: '16px', borderRadius: '50%', backgroundColor: color }"
+                        ></div>
+
+                        <span v-if="record.colors.length > 3">...</span>
+                        </div>
+                                </div>
+                            </template>
+
+                            <template v-if="column.key === 'price'">
+                                <span style="font-weight: 600; color: #333;">${{ record.pricing.price }}</span>
+                                <!-- <span style="font-weight: 600; color: #333;"><del style="font-size: 10px;">${{ record.pricing.price }}</del>&nbsp;${{ record.pricing.sale_price }}</span> -->
+                            </template>
+
+                            <template v-if="column.key === 'actions'">
+                                <div style="display: flex; gap: 5px;">
+                                    <button
+                                        style="background: #f1f5f9; border: 1px solid #cbd5e1; color: #64748b; padding: 4px 8px; border-radius: 4px; font-size: 12px; cursor: pointer;">AR</button>
+                                    <button @click="viewProduct(record)"
+                                        style="background: #4F46E5; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 12px; cursor: pointer;">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                            stroke-width="2">
+                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                            <path d="m18.5 2.5 a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                        </svg>
+                                    </button>
+                                    <!-- <button @click="deleteProduct(record)"
+                                        style="background: #ef4444; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 12px; cursor: pointer;">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                            stroke-width="2">
+                                            <polyline points="3,6 5,6 21,6"></polyline>
+                                            <path
+                                                d="m19,6v14a2,2 0 0,1-2,2H7a2,2 0 0,1-2-2V6m3,0V4a2,2 0 0,1,2-2h4a2,2 0 0,1,2,2v2">
+                                            </path>
+                                        </svg>
+                                    </button> -->
+                                </div>
+                            </template>
+                        </template>
+                    </a-table> 
+                                </div>
+                            </a-tab-pane>
+
+
+                            <a-tab-pane key="Furniture" tab="Furniture" v-if="filteredProducts.length === 0"   >
+                            <div v-if="!filteredProducts.length"  style="height:70vh;gap:20px;;flex-direction:column;display: flex;justify-content: center;align-items: center;">
+                                  <a-empty :description="'No Furniture Available'"></a-empty>
+
+                                <a-button type="primary" @click="addProduct()">
+                                    Add Furniture
+                                </a-button>
+                            </div>
+                            </a-tab-pane>
+                            <a-tab-pane key="Wall" tab="Wall" v-if="wall.length === 0" force-render >
+                                <!-- {{ wall }} -->
+                            <div style="height:70vh;gap:20px;;flex-direction:column;display: flex;justify-content: center;align-items: center;" v-if="wall.length===0" >
+                                <a-empty :description="'No Wall Textures Available'"></a-empty>                                
+                                <a-button type="primary" @click="show_add_new_wall_texture=true">
+                                    Add Wall Texture 
+                                </a-button>
+                            </div>
+                            </a-tab-pane>
+                            <a-tab-pane key="Floor" tab="Floor" v-if="floor.length === 0" >
+                                <!-- {{ floor }} -->
+                            <div style="height:70vh;gap:20px;;flex-direction:column;display: flex;justify-content: center;align-items: center;" v-if="floor.length===0" >
+                                                                  <a-empty :description="'No Floor Textures Available'"></a-empty>
+
+                                
+                                <a-button type="primary" @click="show_add_new_floor_texture=true">
+                                    Add Floor Texture 
+                                </a-button>
+                            </div></a-tab-pane>
+                            <a-tab-pane key="Lights" tab="Lights" v-if="myLights.length === 0" >
+                                <div  v-if="myLights.length === 0 " style="height:70vh;gap:20px;;flex-direction:column;display: flex;justify-content: center;align-items: center;">
+                                    <!-- required light configuration solution to add new light product -->
+                                    <!-- <br>❌ un-sunk light <br>
+                                    ❌ 3D Lamp light draggabe everywhere <br>                             
+                                    ✅ sunk light <br>
+                                    ✅ sticked ceiling 3D light <br>                              -->
+                                    <a-empty :description="'No Lights Available'"></a-empty>
+                                
+                                    <a-button type="primary" @click="show_add_new_light=true">
+                                        Add Lights Product 
+                                    </a-button>
+                                </div>
+                            </a-tab-pane>
+
+                        </a-tabs>
+                    
+                </div>
+            </div>
+            <!-- {{ selectedProduct.category }} -->
+
+        <!-- Product Details View -->
         
-        <a-button type="primary" class="toolbar-btn primary-btn" @click="reset_entire_room" 
-        :disabled="isLoading || drawingMode">
-          Reset room
-        </a-button>
-      </div>
-      
-      <div style="padding-top:10px;">
-        <a-button type="primary" class="toolbar-btn primary-btn" @click="$emit('Apply-Changes', 'all-tab')" :disabled="isLoading || drawingMode">
-          Apply Changes
-        </a-button>
-      </div>
+<!-- Product Details View with Spinner -->
+<div v-if="currentView === 'details'" style="max-width: 1200px;padding:3px">
+    <!-- Spinner/Loader While Loading -->
+    <div v-if="isLoading" style="
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 70vh;
+        flex-direction: column;
+        gap: 20px;
+    ">
+        <!-- Ant Design Spin Component -->
+        <a-spin size="large" />
+        
+        <!-- Optional: Custom Loading Text -->
+        <p style="
+            color: #666;
+            font-size: 16px;
+            font-weight: 500;
+        ">Loading product details...</p>
     </div>
-  </div>
-  <div class="flex md:hidden  bg-white px-3 py-2 w-full justify-center">
-  <!-- Left Buttons -->
-  <div class="flex flex-col gap-2 pt-1">
-    <div className="flex flex-row gap-24 justify-center">
 
-      <button 
-        @click="DrawRemoval_model"
-        className="flex items-center gap-2 !whitespace-nowrap"
-      >
-       <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g clip-path="url(#clip0_8010_87804)">
-<path d="M0.625 7.86037C1.411 6.76037 3.795 3.63537 6.587 1.87837C8.686 0.556372 10.667 2.30137 9.13 4.05837C7.627 5.77637 5.612 8.14137 4.751 9.31537C3.859 10.5324 5.386 12.0054 6.914 10.6034C7.934 9.66737 8.999 8.59037 10.08 7.79437C11.54 6.72037 12.792 7.66837 12.155 8.87937C11.695 9.75437 11.36 10.1404 10.975 10.8774C10.591 11.6134 10.998 12.4964 11.581 12.5724C12.303 12.6654 12.76 12.1484 13.377 11.3414" stroke="#1A1A1A" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
-</g>
-<defs>
-<clipPath id="clip0_8010_87804">
-<rect width="14" height="14" fill="white"/>
-</clipPath>
-</defs>
-</svg>
-
-        Draw removal
-      </button>
-  
-      <!-- Select All / Clear -->
-     <button
-  @click="toggleSelection"
-  class="whitespace-nowrap  rounded-md p-2 flex items-center gap-2"
-  :disabled="objectMaskRegions.length === 0 || drawingMode"
->
-  <svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M9.64601 0.975971L1.02587 9.19354M9.64601 9.19354L1.02587 0.975971" stroke="#1A1A1A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-  </svg>
-
-  {{ 
-    selectedObjects.length === objectMaskRegions.length 
-      ? 'Clear Selection' + `(${selectedObjects.length})` 
-      : 'Select All' 
-  }}
-</button>
-
+    <!-- Product Details Content -->
+    <div v-else>
+        <show_floorTexture_product  
+            :selectedTexture="selectedProduct" 
+            v-if="active_tab === 'Floor' && selectedProduct" 
+            @edit_texture="editProduct" 
+            @delete_texture="delete_product" 
+            @back_product_list="backToList" 
+        />
+        <show_wallTexture_product  
+            :selectedTexture="selectedProduct" 
+            v-if="active_tab === 'Wall' && selectedProduct" 
+            @edit_texture="editProduct" 
+            @delete_texture="delete_product" 
+            @back_product_list="backToList" 
+        />
+        <!-- <show_furniture_product  
+            :selectedProduct="selectedProduct" 
+            v-if="active_tab === 'Furniture' && selectedProduct" 
+            @edit_product="editProduct" 
+            @delete_product="delete_product" 
+            @back_product_list="backToList" 
+        /> -->
+         <show_furniture_product  
+            :selectedProduct="selectedProduct" 
+            v-if="active_tab === 'Furniture' && selectedProduct" 
+            @edit_product="editProduct"
+            @create_variation="createVariation"
+            @delete_product="delete_product" 
+            @back_product_list="backToList" 
+           @select_variant="handleVariantSelection"
+        />
+        
+        <!-- Different Light Products Details Component -->
+        <show_Light_product_3D  
+            :selectedProduct="selectedProduct" 
+            v-if="active_tab === 'Lights' && selectedProduct && selectedProduct.is_ceiling_light_product && selectedProduct.light_type == 'hanging'" 
+            @edit_product="editProduct" 
+            @delete_product="delete_product" 
+            @back_product_list="backToList" 
+        />
+        <show_Light_product_sunk  
+            :selectedProduct="selectedProduct" 
+            v-if="active_tab === 'Lights' && selectedProduct && selectedProduct.is_ceiling_light_product && selectedProduct.light_type == 'sunk'" 
+            @edit_product="editProduct" 
+            @delete_product="delete_product" 
+            @back_product_list="backToList" 
+        />
+        <show_Light_product_unsunk  
+            :selectedProduct="selectedProduct" 
+            v-if="active_tab === 'Lights' && selectedProduct && selectedProduct.is_ceiling_light_product && selectedProduct.light_type == 'unsunk'" 
+            @edit_product="editProduct" 
+            @delete_product="delete_product" 
+            @back_product_list="backToList" 
+        />
     </div>
-    
-    <!-- Draw Removal -->
-
-    <!-- Remove Selected -->
-     <div className="flex w-full flex-row gap-28 justify-between">
-      
-       <button 
-         @click="removeSelectedObjects"
-         className=" !text-red-600  rounded-md p-2 whitespace-nowrap"
-         :disabled="selectedObjects.length === 0 || drawingMode"
-       >
-         Remove Selected ({{ selectedObjects.length }})
-       </button>
-   
-       <!-- Reset Room -->
-       <button 
-         type="primary" 
-         className="!text-blue-700 -translate-x-10 rounded-md p-2 whitespace-nowrap "
-         @click="reset_entire_room"
-         :disabled="isLoading || drawingMode"
-       >
-         Reset room
-       </button>
-     </div>
-
-     <!-- Add above the Apply Changes button section -->
-<div class="flex items-center space-x-6 mb-4 justify-center">
-<span 
-  style="
-    font-family: Poppins;
-    font-weight: 500;
-    font-size: 10px;
-    line-height: 20px;
-    letter-spacing: 0%;
-    text-align: center;
-    color: #4B5563; /* text-gray-600 */
-  "
->
-  Add Lights:
-</span>
-  
-   <div className="flex flex-row pl-2 gap-4">
-
-     <button
-       class="flex items-center bg-white rounded-xl px-5 py-2 shadow-sm  hover:shadow transition"
-       :class="{ 'ring-2 ring-blue-400': selectedLight === 'rectangle' }"
-       @click="selectedLight = 'rectangle'"
-       type="button"
-     >
-       <span class="w-4 h-4  bg-[#27B2F8]  rounded-md"></span>
-       <span className="pl-2" 
-  style="
-    font-family: Poppins;
-    font-weight: 500;
-    font-size: 10px;
-    line-height: 20px;
-    letter-spacing: 0%;
-    text-align: center;
-    color: #4B5563; /* text-gray-600 */
-  "
->Rectangle</span>
-     </button>
-   
-     <button
-       class="flex items-center bg-white rounded-xl px-5 py-2 shadow-sm space-x-3 hover:shadow transition"
-       :class="{ 'ring-2 ring-blue-400': selectedLight === 'circular' }"
-       @click="selectedLight = 'circular'"
-       type="button"
-     >
-       <span class="w-4 h-4 bg-[#27B2F8] rounded-full"></span>
-       <span  className="pl-2" 
-  style="
-    font-family: Poppins;
-    font-weight: 500;
-    font-size: 10px;
-    line-height: 20px;
-    letter-spacing: 0%;
-    text-align: center;
-    color: #4B5563; /* text-gray-600 */
-  "
->Circular</span>
-     </button>
-   </div>
 </div>
 
+        <!-- Edit Product View -->
+        <div v-if="currentView === 'edit'" style="max-width: 1200px;">
+            <edit_floorTexture  :selectedTexture="selectedProduct" v-if="active_tab=== 'Floor' &&  selectedProduct" :categories_available="categories_available" :types="types" @cancel_edit_back_product_list="backToList" />
+            <edit_wallTexture   :selectedTexture="selectedProduct" v-if="active_tab=== 'Wall' && selectedProduct" :categories_available="categories_available" :types="types" @cancel_edit_back_product_list="backToList"/>
+            <edit_furniture  :selectedProduct="selectedProduct" v-if="active_tab=== 'Furniture' && selectedProduct" :categories_available="categories_available" :types="types" @cancel_edit_back_product_list="backToList" />
+            <!-- <edit_furniture :selectedProduct="selectedProduct" v-if="selectedProduct" :categories_available="categories_available" :types="types" @cancel_edit_back_product_list="backToList" /> -->
+            
+            <!-- <edit_Light :selectedProduct="selectedProduct" v-if="active_tab===  'Lights' && selectedProduct" :categories_available="categories_available" :types="types" @cancel_edit_back_product_list="backToList" /> -->
+            
+            <edit_Light_hanging_3d :selectedProduct="selectedProduct" v-if="active_tab===  'Lights' && selectedProduct && selectedProduct.is_ceiling_light_product &&  selectedProduct.light_type=='hanging'" :categories_available="categories_available" :types="types" @cancel_edit_back_product_list="backToList"/>
+            <edit_Light_sunk :selectedProduct="selectedProduct" v-if="active_tab===  'Lights' && selectedProduct && selectedProduct.is_ceiling_light_product &&  selectedProduct.light_type=='sunk'" :categories_available="categories_available" :types="types" @cancel_edit_back_product_list="backToList" />
+            <edit_Light_unsunk :selectedProduct="selectedProduct" v-if="active_tab===  'Lights' && selectedProduct && selectedProduct.is_ceiling_light_product &&  selectedProduct.light_type=='unsunk'" :categories_available="categories_available" :types="types" @cancel_edit_back_product_list="backToList" />
+        </div>
 
-     <div>
-     <button 
-  type="primary"
-  style="
-    font-family: Poppins;
-    font-weight: 500;
-    font-size: 10px;
-    line-height: 20px;
-    letter-spacing: 0%;
-    text-align: center;
-    color: white;
-  "
-  class="!bg-blue-500 rounded-md w-full py-2 whitespace-nowrap"
-  @click="$emit('Apply-Changes', 'all-tab')"
-  :disabled="isLoading || drawingMode"
->
-  Apply Changes
-</button>
-
-     </div>
-
+        <!-- Hidden file inputs for image uploads -->
+        <input ref="mainImageInput" type="file" accept="image/*" style="display: none" @change="handleMainImageChange">
+        <input ref="galleryImageInput" type="file" accept="image/*" multiple style="display: none"
+            @change="handleGalleryImageChange">
+    </div>
+    <br>
   </div>
-
-  <!-- Apply Changes -->
-  
-</div>
-
 </template>
 
 <script>
-import  DrawRemovalModal from '@/components/update_catalogue/canvas_renderer/draw_removal_area_room.vue'
-import switch_furniture from '@/components/update_catalogue/bottom_drawer_item_components/switch_furniture.vue'
-import { DotLottieVue } from "@lottiefiles/dotlottie-vue";
+import {HeartOutlined,HeartFilled,ExclamationCircleOutlined} from '@ant-design/icons-vue'
+import product_details from '@/components/store/product_details.vue'
+// import edit_product from '@/components/store/edit_product.vue'
+// import add_new_product from '@/components/store/add_new_product.vue'
+
+import { Modal } from 'ant-design-vue';
+
+import { createVNode } from 'vue';
+
+// add new
+import add_new_floorTexture from '@/components/dashboard/business/my_products/add_new_product/add_floor_texture.vue' 
+import add_new_wallTexture from '@/components/dashboard/business/my_products/add_new_product/add_wall_texture.vue'
+import add_new_Light from '@/components/dashboard/business/my_products/add_new_product/add_light.vue'
+import add_new_furniture from '@/components/dashboard/business/my_products/add_new_product/add_furniture.vue'
+
+
+// update_existing
+import edit_floorTexture from '@/components/dashboard/business/my_products/update_product/floor_texture.vue' 
+import edit_wallTexture from '@/components/dashboard/business/my_products/update_product/wall_texture.vue'
+import edit_furniture from '@/components/dashboard/business/my_products/update_product/furniture.vue'
+
+import edit_Light from '@/components/dashboard/business/my_products/update_product/light.vue'
+import edit_Light_hanging_3d from '@/components/dashboard/business/my_products/update_product/light_hanging_3d.vue'
+import edit_Light_sunk from '@/components/dashboard/business/my_products/update_product/light_sunk.vue'
+import edit_Light_unsunk from '@/components/dashboard/business/my_products/update_product/light_unsunk.vue'
+
+// show existing
+import show_floorTexture_product from '@/components/dashboard/business/my_products/product_details/floor_texture.vue' 
+import show_wallTexture_product from '@/components/dashboard/business/my_products/product_details/wall_texture.vue'
+import show_furniture_product from '@/components/dashboard/business/my_products/product_details/furniture_product.vue'
+
+// differentt Light Products Details Component 
+import show_Light_product_sunk from '@/components/dashboard/business/my_products/product_details/light_product_sunk.vue'
+import show_Light_product_unsunk from '@/components/dashboard/business/my_products/product_details/light_product_ununk.vue'
+import show_Light_product_3D from '@/components/dashboard/business/my_products/product_details/light_product_3d.vue'
+import add_furniture_modal_local_3d_model from '@/components/dashboard/business/my_products/add_new_product/add_furniture_modal_local_3d_model.vue'
+import add_furniture_modal_local_3d_model_create_variation from '@/components/dashboard/business/my_products/add_new_product/add_furniture_modal_local_3d_model_create_variation.vue'
+import add_light_modal_local_3d_model from '@/components/dashboard/business/my_products/add_new_product/add_light_modal_local_3d_model.vue'
 
 export default {
-  name: 'item_remove_renderer',
-  props: {
-    
-    new_room_rendering_completed_percentage:{
-      type: Object,
-      required: true
-    },
+    name: 'UnifiedProducts',
+    components:{
+        HeartOutlined,
+        HeartFilled,
+        ExclamationCircleOutlined,
+        product_details,
+        // edit_product,
+        // add_new_product,
 
-    baseImage: {
-      type: String,
-      required: true
-    },
-    objectMasks: {
-      type: Object,
-      default: () => ({})
-    },
-    cachedObjectImages: {
-      type: Map,
-      default: () => new Map()
-    },
-    objectMaskCacheReady: {
-      type: Boolean,
-      default: false
-    },
-    isLoading: {
-      type: Boolean,
-      default: false
-    },
-    selectionMode: {
-      type: String,
-      default: 'multiple',
-      validator: value => ['single', 'multiple'].includes(value)
-    },
-    showDebugInfo: {
-      type: Boolean,
-      default: false
-    }
-  },
-  components:{
-    DrawRemovalModal,
-    switch_furniture,
-    DotLottieVue
-  },
-  data() {
-    return {
-      // ========== PERFORMANCE & PIXELATION SETTINGS ==========
-    // Increase this value for MORE PIXELATION and FASTER performance
-    // Recommended values: 2, 3, 4, 5, 6, 8, 10
-    // 2 = less pixelated, slower
-    // 10 = very pixelated, very fast
-    highlightPixelStep: 3,  // ← CHANGE THIS VALUE
-    
-    // This controls the pixelation for hover/normal highlights
-    // Use same or higher value than highlightPixelStep for consistency
-    hoverPixelStep: 3,  // ← CHANGE THIS VALUE
-    
-      // loading screen 
+        // add new Create API show the modal 
+        add_new_floorTexture,
+        add_new_wallTexture,
+        add_new_Light,
+        add_new_furniture,
+        add_furniture_modal_local_3d_model,
+        add_furniture_modal_local_3d_model_create_variation,
+        add_light_modal_local_3d_model,
 
-      loadingMessages : [
-      "Loading your image...",
-      "Analysing the depth of the room...",
-      "Finding the walls, floor, and main areas...",
-      "Detecting the floor surface...",
-      "Optimizing processing...",
-      "Setting up the room layout...",
-      "Identifying wall positions...",
-      "Processing each wall...",
-      "Putting wall data together...",
-      "Cleaning small details...",
-      "Organizing room surfaces...",
-      "Finding objects in the room..."
-    ],
-      loadingMessage: "Loading Room",
-      msgIndex: 0,
-      intervalId: null,
+        // edit_update
+        edit_floorTexture,
+        edit_wallTexture,
+        edit_Light,
+        edit_furniture,
 
-      // loading screen 
+        // show_product_details
+        show_floorTexture_product,
+        show_wallTexture_product,
+        show_furniture_product,
 
 
-      draw_removal_modal:false,
-      canvas: null,
-      ctx: null,
-      overlayCanvas: null,
-      overlayCtx: null,
-      baseImg: null,
-      
-      // Object mask processing
-      objectMaskImages: [],
-      objectMaskRegions: [],
-      objectMaskImageData: [],
-      hoveredObject: null,
-      selectedObjects: [],
-      
-      // Object mask caching system
-      objectMaskCache: new Map(),
-      isCacheInitialized: false,
-      objectMasksLoading: false,
-      objectMasksLoadingProgress: 0,
-      currentObjectMasksHash: '',
-      
-      // Canvas dimensions
-      canvasWidth: 800,
-      canvasHeight: 600,
-      containerWidth: 800,
-      containerHeight: 600,
-      
-      // Image rendering properties
-      renderWidth: 800,
-      renderHeight: 600,
-      renderOffsetX: 0,
-      renderOffsetY: 0,
-      scaleX: 1,
-      scaleY: 1,
-      
-      // Zoom and pan functionality
-      zoom: 1,
-      minZoom: 1.0,
-      maxZoom: 5,
-      panX: 0,
-      panY: 0,
-      isDragging: false,
-      dragStartX: 0,
-      dragStartY: 0,
-      dragStartPanX: 0,
-      dragStartPanY: 0,
-      
-      // Resize observer
-      resizeObserver: null,
-      
-      // Processing states
-      processingObjects: false,
-      processingCurrent: 0,
-      processingTotal: 0,
-      
-      // Drawing mode state
-      drawingMode: false,
-      drawingCanvas: null,
-      drawingCtx: null,
-      drawingHistory: [],
-      currentDrawingHistoryIndex: -1,
-      brushSize: 10,
-        brushColor: 'rgba(255, 0, 0, 0.08)',  // Very light/transparent
-      
-      openSelectObjectModal:false,
-      Furnitures_Checkbox:true,
-      Lights_Checkbox:false,
-      isDrawing: false,
-          isBrushMode: true,  // Track if brush is active or deselect mode is active
+        // show_Light_product,
+        show_Light_product_sunk,
+        show_Light_product_unsunk,
+        show_Light_product_3D,
 
-      selectedObjectForSwitch: null,
-        isDrawingControlsMinimized: false,  
+        // update_Light_product,
+        edit_Light_hanging_3d,
+        edit_Light_sunk,
+        edit_Light_unsunk,
+    },
+    data() {
+        return {
+             prepopulatedProductData: null,
+        isCreatingVariation: false,
+            currentView: 'list', // 'list', 'details', 'edit'
+            viewMode: 'grid', // 'grid', 'table'
+            active_tab: "Furniture",
+            searchQuery: '',
+            isLoading:false,
+            selectedProduct: null,
 
-      // Backend communication
-      switchingInProgress: false
-    }
-  },
-  
-  computed: { 
-    // canShowSwitchButton() {
-    //   return this.selectedObjects.length >= 1 && !this.drawingMode;
-    // },
-    // Replace the canShowSwitchButton computed property with this
-canShowSwitchButton() {
-  if (this.selectedObjects.length === 0 || this.drawingMode) {
-    return false;
-  }
-  
-  // Check if all selected objects are from the same category
-  if (this.selectedObjects.length > 0) {
-    const firstKey = this.selectedObjects[0];
-    const baseKey = this.getBaseKeyName(firstKey);
-    
-    // All selected objects must have the same base key
-    const allSameCategory = this.selectedObjects.every(key => 
-      this.getBaseKeyName(key) === baseKey
-    );
-    
-    return allSameCategory;
-  }
-  
-  return false;
-},
-    
-    canUndo() {
-      return this.currentDrawingHistoryIndex > 0;
-    },
-    
-    canRedo() {
-      return this.currentDrawingHistoryIndex < this.drawingHistory.length - 1;
-    },
-    
-    objectMasksHash() {
-      return JSON.stringify(this.objectMasks || {});
-    }
-  },
-  
-  mounted() {
-    this.cycleLoadingMessage();
-    this.setupResizeObserver();
-    this.updateCanvasDimensions();
-    this.initCanvas();
-    this.setupEventListeners();
-    this.loadImage();
-  },
-  
-  beforeUnmount() {
-    if (this.resizeObserver) {
-      this.resizeObserver.disconnect();
-    }
-    this.removeEventListeners();
-    this.clearObjectMaskCache();
-  },
-  
-  watch: {
-    baseImage: {
-      handler() {
-        console.log('Base image changed, reloading...');
-        this.loadImage();
-      },
-      immediate: false
-    },
-    
-    objectMasksHash: {
-      handler(newHash, oldHash) {
-        if (oldHash && newHash !== oldHash) {
-          console.log('Object masks changed, clearing and reloading...');
-          this.handleObjectMasksChange();
-        }
-      },
-      immediate: false
-    },
-    
-    cachedObjectImages: {
-      handler(newCached, oldCached) {
-        if (this.objectMaskCacheReady && newCached && newCached.size > 0) {
-          const newSize = newCached ? newCached.size : 0;
-          const oldSize = oldCached ? oldCached.size : 0;
-          
-          if (newSize !== oldSize) {
-            console.log('Cached images changed, reloading from parent cache');
-            this.loadFromParentCache();
-          }
-        }
-      },
-      deep: false
-    },
-    
-    objectMaskCacheReady: {
-      handler(isReady) {
-        if (isReady && this.cachedObjectImages && this.cachedObjectImages.size > 0) {
-          console.log('Cache became ready, loading from parent cache');
-          this.loadFromParentCache();
-        }
-      },
-      immediate: false
-    },
-    
-    selectedObjects: {
-      handler() {
-        this.emitObjectSelectionChange();
-        this.$nextTick(() => {
-          this.render();
-        });
-      },
-      deep: true
-    },
-    zoom: {
-      handler() {
-        this.$nextTick(() => {
-          this.syncOverlayTransform();
-        });
-      },
-    },
-    panX: {
-      handler() {
-        this.$nextTick(() => {
-          this.syncOverlayTransform();
-        });
-      },
-    },
-    panY: {
-      handler() {
-        this.$nextTick(() => {
-          this.syncOverlayTransform();
-        });
-      },
-    },
-  },
-  
-  methods: {
- 
-    
-// Update syncOverlayTransform to use the new method
-syncOverlayTransform() {
-  if (!this.overlayCtx) return;
-  
-  if (this.selectedObjects.length > 0) {
-    this.drawPersistentSelectionHighlight();
-  } else if (this.hoveredObject) {
-    this.highlightObject(this.hoveredObject);
-  } else {
-    this.overlayCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-  }
-},
-     handleSwitchFurnitureClicked() {
-    const selectedFurniture = this.$refs.switchFurnitureRef.selected_furniture
-    console.log('Selected furniture:', selectedFurniture)
-    this.openSelectFurnitureModel()
-    this.renderFurnitureSwitching(selectedFurniture)
-    // Use the selected furniture as needed
-  },
-  // render the furniture switching 
-   async renderFurnitureSwitching(product_selected){
-      if (!this.drawingCanvas || !this.selectedObjectForSwitch) return;
-      
-    this.switchingInProgress = true;
-    
-    // Create a merged binary mask of all selected objects + drawing
-    const mergedMaskBlob = await this.createMergedBinaryMask();
-    
-    if (!mergedMaskBlob) {
-      throw new Error('Failed to create merged mask');
-    }
-    
-    this.$emit('furniture-switching-started',true);
-    const formData = new FormData();
-    formData.append('mask', mergedMaskBlob, 'refined-mask.png');
-    formData.append('product_selected', product_selected.id);
-    formData.append('room_id', this.$route.params.id);
-    formData.append('object_keys', JSON.stringify(this.selectedObjects));
-    formData.append('base_key', this.selectedObjectForSwitch);
-    formData.append('original_mask_paths', JSON.stringify(
-      this.selectedObjects.reduce((acc, key) => {
-        acc[key] = this.objectMasks[key];
-        return acc;
-      }, {})
-    ));
-    formData.append('canvas_dimensions', JSON.stringify(this.getCanvasDimensions()));
-    
-    const response = await fetch(`${this.$store.state.root_api}engine/furniture-switch/`, {
-      method: 'POST',
-      body: formData,
-      headers: {
-          'Authorization': `Token ${localStorage.getItem('token')}`
-
-      }
-    });
-    
-    if (!response.ok) {
-      throw new Error(`Backend error: ${response.statusText}`);
-    }
-    
-    const result = await response.json();
-    
-    this.$emit('furniture-switched', {
-      objectKeys: this.selectedObjects,
-      baseKey: this.selectedObjectForSwitch,
-      result: result
-    });
-    
-    },
-    validateSelectionSameCategory() {
-  if (this.selectedObjects.length === 0) {
-    return false;
-  }
-  
-  const baseKeys = new Set(this.selectedObjects.map(key => this.getBaseKeyName(key)));
-  
-  if (baseKeys.size > 1) {
-    this.$message.error('Please select furniture items from the same category');
-    return false;
-  }
-  
-  return true;
-},
-    // =================== SWITCH FURNITURE LOGIC ===================
-    
-    openSwitchFurnitureMode() {
-      if (this.selectedObjects.length === 0) return;
-      
-      const firstSelectedKey = this.selectedObjects[0];
-      const baseKey = this.getBaseKeyName(firstSelectedKey);
-      
-      const allMatchingKeys = this.objectMaskRegions
-        .map(region => region.objectKey)
-        .filter(key => this.getBaseKeyName(key) === baseKey);
-      
-      this.selectedObjects = [...new Set(allMatchingKeys)];
-      this.selectedObjectForSwitch = baseKey;
-      
-      this.drawingMode = true;
-      this.initializeDrawingCanvas();
-    },
-    
-    closeSwitchFurnitureMode() {
-      this.drawingMode = false;
-      this.selectedObjectForSwitch = null;
-      this.clearDrawingCanvas();
-      this.drawingHistory = [];
-      this.currentDrawingHistoryIndex = -1;
-      
-      this.render();
-    },
-    
-    getBaseKeyName(key) {
-      return key.replace(/_\d+$/, '');
-    },
-    
-    // =================== DRAWING CANVAS SETUP ===================
-    
-    // initializeDrawingCanvas() {
-    //   if (!this.drawingCanvas) {
-    //     this.drawingCanvas = document.createElement('canvas');
-    //     this.drawingCanvas.width = this.canvasWidth;
-    //     this.drawingCanvas.height = this.canvasHeight;
-    //     this.drawingCanvas.className = 'drawing-overlay-canvas';
-    //     this.drawingCanvas.style.position = 'absolute';
-    //     this.drawingCanvas.style.top = '0';
-    //     this.drawingCanvas.style.left = '0';
-    //     this.drawingCanvas.style.zIndex = '3';
-    //     this.drawingCanvas.style.cursor = 'crosshair';
-    //     this.drawingCanvas.style.pointerEvents = 'auto';
-        
-    //     this.$refs.canvasContainer.appendChild(this.drawingCanvas);
-    //   }
-      
-    //   this.drawingCtx = this.drawingCanvas.getContext('2d');
-    //   this.drawingCanvas.width = this.canvasWidth;
-    //   this.drawingCanvas.height = this.canvasHeight;
-      
-    //   this.saveDrawingState();
-    //   this.setupDrawingEventListeners();
-    // },
-    
-    cycleLoadingMessage() {
-      this.loadingMessage = this.loadingMessages[this.msgIndex];
-      this.intervalId = setInterval(() => {
-        this.msgIndex = (this.msgIndex + 1) %  this.loadingMessages.length;
-        this.loadingMessage =  this.loadingMessages[this.msgIndex];
-        if (!this.isLoading) {
-          clearInterval(this.intervalId);
-        }
-      }, 5000);
-    },
-
-// Replace initializeDrawingCanvas with this to show highlight on all selected objects
-initializeDrawingCanvas() {
-  if (!this.drawingCanvas) {
-    this.drawingCanvas = document.createElement('canvas');
-    this.drawingCanvas.width = this.canvasWidth;
-    this.drawingCanvas.height = this.canvasHeight;
-    this.drawingCanvas.className = 'drawing-overlay-canvas';
-    this.drawingCanvas.style.position = 'absolute';
-    this.drawingCanvas.style.top = '0';
-    this.drawingCanvas.style.left = '0';
-    this.drawingCanvas.style.zIndex = '3';
-    this.drawingCanvas.style.cursor = 'crosshair';
-    this.drawingCanvas.style.pointerEvents = 'auto';
-    
-    this.$refs.canvasContainer.appendChild(this.drawingCanvas);
-  }
-  
-  this.drawingCtx = this.drawingCanvas.getContext('2d');
-  this.drawingCanvas.width = this.canvasWidth;
-  this.drawingCanvas.height = this.canvasHeight;
-  
-  // Draw highlight for all selected objects on the drawing canvas
-  this.drawSelectedFurnitureHighlight();
-  
-  this.saveDrawingState();
-  this.setupDrawingEventListeners();
-},
-
-// Add this new method to highlight all selected furniture
-drawSelectedFurnitureHighlight() {
-  if (!this.drawingCtx) return;
-  
-  // Clear canvas first
-  this.drawingCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-  
-  // Highlight ONLY selected objects
-  this.selectedObjects.forEach(objectKey => {
-    const region = this.objectMaskRegions.find(r => r.objectKey === objectKey);
-    
-    if (region && region.imageData) {
-      const imageData = region.imageData;
-      const data = imageData.data;
-      
-      // Draw red highlight with 0.2 opacity
-      this.drawingCtx.fillStyle = 'rgba(255, 0, 0, 0.2)';
-      
-      const step = 1; // Use step 1 for smooth highlight
-      
-      for (let y = 0; y < this.canvasHeight; y += step) {
-        let startX = -1;
-        for (let x = 0; x < this.canvasWidth; x += step) {
-          const index = (y * this.canvasWidth + x) * 4;
-          const r = data[index];
-          const g = data[index + 1];
-          const b = data[index + 2];
-          
-          if (r > 200 && g > 200 && b > 200) {
-            if (startX === -1) startX = x;
-          } else {
-            if (startX !== -1) {
-              this.drawingCtx.fillRect(startX, y, (x - startX), step);
-              startX = -1;
-            }
-          }
-        }
-        if (startX !== -1) {
-          this.drawingCtx.fillRect(startX, y, (this.canvasWidth - startX), step);
-        }
-      }
-    }
-  });
-}
-,
-    clearDrawingCanvas() {
-      if (this.drawingCtx) {
-        this.drawingCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-      }
-      
-      this.removeDrawingEventListeners();
-      
-      if (this.drawingCanvas && this.drawingCanvas.parentNode) {
-        this.drawingCanvas.parentNode.removeChild(this.drawingCanvas);
-        this.drawingCanvas = null;
-        this.drawingCtx = null;
-      }
-    },
-    
-    // =================== DRAWING EVENT LISTENERS ===================
-    
-    setupDrawingEventListeners() {
-      if (!this.drawingCanvas) return;
-      
-      this.drawingCanvas.addEventListener('mousedown', this.handleDrawingMouseDown);
-      this.drawingCanvas.addEventListener('mousemove', this.handleDrawingMouseMove);
-      this.drawingCanvas.addEventListener('mouseup', this.handleDrawingMouseUp);
-      this.drawingCanvas.addEventListener('mouseleave', this.handleDrawingMouseLeave);
-      this.drawingCanvas.addEventListener('touchstart', this.handleDrawingTouchStart, { passive: false });
-      this.drawingCanvas.addEventListener('touchmove', this.handleDrawingTouchMove, { passive: false });
-      this.drawingCanvas.addEventListener('touchend', this.handleDrawingTouchEnd);
-    },
-    
-    removeDrawingEventListeners() {
-      if (!this.drawingCanvas) return;
-      
-      this.drawingCanvas.removeEventListener('mousedown', this.handleDrawingMouseDown);
-      this.drawingCanvas.removeEventListener('mousemove', this.handleDrawingMouseMove);
-      this.drawingCanvas.removeEventListener('mouseup', this.handleDrawingMouseUp);
-      this.drawingCanvas.removeEventListener('mouseleave', this.handleDrawingMouseLeave);
-      this.drawingCanvas.removeEventListener('touchstart', this.handleDrawingTouchStart);
-      this.drawingCanvas.removeEventListener('touchmove', this.handleDrawingTouchMove);
-      this.drawingCanvas.removeEventListener('touchend', this.handleDrawingTouchEnd);
-    },
-    
-    // =================== DRAWING MOUSE HANDLERS ===================
-    
-    // handleDrawingMouseDown(e) {
-    //   if (!this.drawingMode || !this.drawingCtx) return;
-    //   e.preventDefault();
-      
-    //   this.isDrawing = true;
-    //   const rect = this.drawingCanvas.getBoundingClientRect();
-    //   const x = e.clientX - rect.left;
-    //   const y = e.clientY - rect.top;
-      
-    //   this.drawingCtx.beginPath();
-    //   this.drawingCtx.moveTo(x, y);
-    // },
-    
-    // handleDrawingMouseMove(e) {
-    //   if (!this.isDrawing || !this.drawingCtx) return;
-    //   e.preventDefault();
-      
-    //   const rect = this.drawingCanvas.getBoundingClientRect();
-    //   const x = e.clientX - rect.left;
-    //   const y = e.clientY - rect.top;
-      
-    //   this.drawBrushStroke(x, y);
-    // },
-    
-    // handleDrawingMouseUp(e) {
-    //   if (!this.drawingMode) return;
-    //   e.preventDefault();
-      
-    //   if (this.isDrawing) {
-    //     this.isDrawing = false;
-    //     this.drawingCtx.closePath();
-    //     this.saveDrawingState();
-    //   }
-    // },
-    
-// Also update handleDrawingMouseDown to reset alpha
-handleDrawingMouseDown(e) {
-  if (!this.drawingMode || !this.drawingCtx) return;
-  e.preventDefault();
-  
-  const rect = this.drawingCanvas.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
-  
-  // In deselect mode
-  if (!this.isBrushMode) {
-    for (let i = this.objectMaskRegions.length - 1; i >= 0; i--) {
-      const region = this.objectMaskRegions[i];
-      
-      if (this.selectedObjects.includes(region.objectKey) && 
-          this.isPointInObjectMask(x, y, region.index)) {
-        this.toggleObjectSelection(region.objectKey);
-        break;
-      }
-    }
-    return; // Don't start drawing in deselect mode
-  }
-  
-  // In brush mode - start drawing
-  if (this.isBrushMode) {
-    this.isDrawing = true;
-    this.drawingCtx.globalAlpha = 0.3;  // Set alpha before drawing
-    const ctx = this.drawingCtx;
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-  }
-},
-handleDrawingMouseMove(e) {
-  if (!this.isDrawing || !this.drawingCtx || !this.isBrushMode) return;
-  e.preventDefault();
-  
-  const rect = this.drawingCanvas.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
-  
-  this.drawBrushStroke(x, y);
-},
-
-handleDrawingMouseUp(e) {
-  if (!this.drawingMode) return;
-  e.preventDefault();
-  
-  if (this.isDrawing && this.isBrushMode) {
-    this.isDrawing = false;
-    this.drawingCtx.closePath();
-    this.saveDrawingState();
-  }
-}
-,
-    handleDrawingMouseLeave(e) {
-      if (this.isDrawing) {
-        this.isDrawing = false;
-        this.drawingCtx.closePath();
-        this.saveDrawingState();
-      }
-    },
-    
-    // =================== DRAWING TOUCH HANDLERS ===================
-    
-    handleDrawingTouchStart(e) {
-      if (!this.drawingMode) return;
-      e.preventDefault();
-      
-      if (e.touches.length === 1) {
-        this.isDrawing = true;
-        const rect = this.drawingCanvas.getBoundingClientRect();
-        const touch = e.touches[0];
-        const x = touch.clientX - rect.left;
-        const y = touch.clientY - rect.top;
-        
-        this.drawingCtx.beginPath();
-        this.drawingCtx.moveTo(x, y);
-      }
-    },
-    
-    handleDrawingTouchMove(e) {
-      if (!this.isDrawing) return;
-      e.preventDefault();
-      
-      const rect = this.drawingCanvas.getBoundingClientRect();
-      const touch = e.touches[0];
-      const x = touch.clientX - rect.left;
-      const y = touch.clientY - rect.top;
-      
-      this.drawBrushStroke(x, y);
-    },
-    
-    handleDrawingTouchEnd(e) {
-      if (!this.drawingMode) return;
-      e.preventDefault();
-      
-      if (this.isDrawing) {
-        this.isDrawing = false;
-        this.drawingCtx.closePath();
-        this.saveDrawingState();
-      }
-    },
-    
-    // =================== DRAWING UTILITIES ===================
-    
-// Update drawBrushStroke to use the new brush color
-
-// Replace your drawBrushStroke method with this
-drawBrushStroke(x, y) {
-  if (!this.drawingCtx) return;
-  
-  this.drawingCtx.globalAlpha = 0.3;  // Set transparency to 30%
-  this.drawingCtx.strokeStyle = '#FF0000';  // Pure red
-  this.drawingCtx.lineWidth = this.brushSize;
-  this.drawingCtx.lineCap = 'round';
-  this.drawingCtx.lineJoin = 'round';
-  this.drawingCtx.lineTo(x, y);
-  this.drawingCtx.stroke();
-  this.drawingCtx.globalAlpha = 1.0;  // Reset alpha
-},
-
-    // Update saveDrawingState to preserve highlight
-saveDrawingState() {
-  if (!this.drawingCanvas) return;
-  
-  const imageData = this.drawingCtx.getImageData(0, 0, this.canvasWidth, this.canvasHeight);
-  
-  // Remove any redo history if we're at the end
-  if (this.currentDrawingHistoryIndex < this.drawingHistory.length - 1) {
-    this.drawingHistory = this.drawingHistory.slice(0, this.currentDrawingHistoryIndex + 1);
-  }
-  
-  this.drawingHistory.push(imageData);
-  this.currentDrawingHistoryIndex = this.drawingHistory.length - 1;
-},
-    
-    undoDrawing() {
-      if (!this.canUndo) return;
-      
-      this.currentDrawingHistoryIndex--;
-      this.restoreDrawingState();
-    },
-    
-    redoDrawing() {
-      if (!this.canRedo) return;
-      
-      this.currentDrawingHistoryIndex++;
-      this.restoreDrawingState();
-    },
-    
-    // restoreDrawingState() {
-    //   if (!this.drawingCtx || this.currentDrawingHistoryIndex < 0) return;
-      
-    //   const imageData = this.drawingHistory[this.currentDrawingHistoryIndex];
-    //   this.drawingCtx.putImageData(imageData, 0, 0);
-    // },
-    
-    
-    
-// Also update your restoreDrawingState to properly refresh after undo/redo
-restoreDrawingState() {
-  if (!this.drawingCtx || this.currentDrawingHistoryIndex < 0) return;
-  
-  // First clear canvas
-  this.drawingCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-  
-  // Redraw highlight for only selected objects
-  this.drawSelectedFurnitureHighlight();
-  
-  // Then restore drawing state
-  const imageData = this.drawingHistory[this.currentDrawingHistoryIndex];
-  
-  // Blend the saved drawing on top of the highlight
-  const tempCanvas = document.createElement('canvas');
-  tempCanvas.width = this.canvasWidth;
-  tempCanvas.height = this.canvasHeight;
-  const tempCtx = tempCanvas.getContext('2d');
-  tempCtx.putImageData(imageData, 0, 0);
-  
-  this.drawingCtx.drawImage(tempCanvas, 0, 0);
-},
-
-// Update resetDrawing to also respect current selections
-resetDrawing() {
-  if (!this.drawingCtx) return;
-  
-  this.drawingCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-  
-  // Redraw highlight for only selected objects
-  this.drawSelectedFurnitureHighlight();
-  
-  this.drawingHistory = [];
-  this.currentDrawingHistoryIndex = -1;
-  this.saveDrawingState();
-},
-    // =================== MASK GENERATION & SUBMISSION ===================
-    
-    // async submitDrawnMask() {
-    //   if (!this.drawingCanvas || !this.selectedObjectForSwitch) return;
-      
-    //   try {
-    //     this.switchingInProgress = true;
-        
-    //     const maskBlob = await new Promise(resolve => {
-    //       this.drawingCanvas.toBlob(resolve, 'image/png');
-    //     });
-        
-    //     const formData = new FormData();
-    //     formData.append('mask', maskBlob, 'refined-mask.png');
-    //     formData.append('room_id', this.$route.params.id);
-    //     formData.append('object_keys', JSON.stringify(this.selectedObjects));
-    //     formData.append('base_key', this.selectedObjectForSwitch);
-    //     formData.append('original_mask_paths', JSON.stringify(
-    //       this.selectedObjects.reduce((acc, key) => {
-    //         acc[key] = this.objectMasks[key];
-    //         return acc;
-    //       }, {})
-    //     ));
-    //     formData.append('canvas_dimensions', JSON.stringify(this.getCanvasDimensions()));
-        
-    //     const response = await fetch(`${this.$store.state.root_api}/api/furniture/switch`, {
-    //       method: 'POST',
-    //       body: formData,
-    //       headers: {
-    //         'Authorization': `Bearer ${this.$store.state.authToken}`
-    //       }
-    //     });
-        
-    //     if (!response.ok) {
-    //       throw new Error(`Backend error: ${response.statusText}`);
-    //     }
-        
-    //     const result = await response.json();
-        
-    //     this.$emit('furniture-switched', {
-    //       objectKeys: this.selectedObjects,
-    //       baseKey: this.selectedObjectForSwitch,
-    //       result: result
-    //     });
-        
-    //     this.closeSwitchFurnitureMode();
-    //     this.$message.success('Furniture switched successfully!');
-        
-    //   } catch (error) {
-    //     console.error('Error submitting mask:', error);
-    //     this.$message.error('Failed to switch furniture. Please try again.');
-    //   } finally {
-    //     this.switchingInProgress = false;
-    //   }
-    // },
-    
-    openSelectFurnitureModel () {
-      
-      this.openSelectObjectModal = !this.openSelectObjectModal
-
-    },
-    // Replace submitDrawnMask with this
-    async submitDrawnMask() {
-      if (!this.drawingCanvas || !this.selectedObjectForSwitch) return;
-      
-  try {
-    this.switchingInProgress = true;
-    
-    // Create a merged binary mask of all selected objects + drawing
-    const mergedMaskBlob = await this.createMergedBinaryMask();
-    
-    if (!mergedMaskBlob) {
-      throw new Error('Failed to create merged mask');
-    }
-    
-    // Download the merged mask
-    this.downloadMask(mergedMaskBlob, `${this.selectedObjectForSwitch}-merged-mask.png`);
-    
-    // Optionally, also send to backend if needed
-    // Uncomment the code below if you want to send to backend as well
-    /*
-    const formData = new FormData();
-    formData.append('mask', mergedMaskBlob, 'refined-mask.png');
-    formData.append('room_id', this.$route.params.id);
-    formData.append('object_keys', JSON.stringify(this.selectedObjects));
-    formData.append('base_key', this.selectedObjectForSwitch);
-    formData.append('original_mask_paths', JSON.stringify(
-      this.selectedObjects.reduce((acc, key) => {
-        acc[key] = this.objectMasks[key];
-        return acc;
-      }, {})
-    ));
-    formData.append('canvas_dimensions', JSON.stringify(this.getCanvasDimensions()));
-    
-    const response = await fetch(`${this.$store.state.root_api}/api/furniture/switch`, {
-      method: 'POST',
-      body: formData,
-      headers: {
-        'Authorization': `Bearer ${this.$store.state.authToken}`
-      }
-    });
-    
-    if (!response.ok) {
-      throw new Error(`Backend error: ${response.statusText}`);
-    }
-    
-    const result = await response.json();
-    
-    this.$emit('furniture-switched', {
-      objectKeys: this.selectedObjects,
-      baseKey: this.selectedObjectForSwitch,
-      result: result
-    });
-    */
-    
-    this.closeSwitchFurnitureMode();
-    this.$message.success('Merged binary mask downloaded successfully!');
-    
-  } catch (error) {
-    console.error('Error submitting mask:', error);
-    this.$message.error('Failed to create merged mask. Please try again.');
-  } finally {
-    this.switchingInProgress = false;
-  }
-},
-
-// Add this new method to create merged binary mask
-// async createMergedBinaryMask() {
-//   try {
-//     // Create a white canvas (base for binary mask)
-//     const mergedCanvas = document.createElement('canvas');
-//     mergedCanvas.width = this.canvasWidth;
-//     mergedCanvas.height = this.canvasHeight;
-//     const mergedCtx = mergedCanvas.getContext('2d');
-    
-//     // Start with black background
-//     mergedCtx.fillStyle = '#000000';
-//     mergedCtx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
-    
-//     // Merge all selected object masks
-//     this.selectedObjects.forEach(objectKey => {
-//       const region = this.objectMaskRegions.find(r => r.objectKey === objectKey);
-      
-//       if (region && region.imageData) {
-//         const imageData = region.imageData;
-//         const data = imageData.data;
-        
-//         // Draw white pixels for all masked areas
-//         mergedCtx.fillStyle = '#FFFFFF';
-        
-//         for (let y = 0; y < this.canvasHeight; y++) {
-//           let startX = -1;
-//           for (let x = 0; x < this.canvasWidth; x++) {
-//             const index = (y * this.canvasWidth + x) * 4;
-//             const r = data[index];
-//             const g = data[index + 1];
-//             const b = data[index + 2];
+            // popup for the add new product where user will need to choose the local 3d model or the DYD generated 3d model there
+            open_add_newProductModal:false,
+            show_add_new_product_locally_3d_model:false,
             
-//             // Check if pixel is white (masked area)
-//             if (r > 200 && g > 200 && b > 200) {
-//               if (startX === -1) startX = x;
-//             } else {
-//               if (startX !== -1) {
-//                 mergedCtx.fillRect(startX, y, (x - startX), 1);
-//                 startX = -1;
-//               }
-//             }
-//           }
-//           if (startX !== -1) {
-//             mergedCtx.fillRect(startX, y, (this.canvasWidth - startX), 1);
-//           }
-//         }
-//       }
-//     });
-    
-//     // Now overlay the user's drawing on top of the merged mask
-//     // Get the drawing canvas data
-//     const drawingImageData = this.drawingCtx.getImageData(0, 0, this.canvasWidth, this.canvasHeight);
-//     const drawingData = drawingImageData.data;
-    
-//     // Get the merged mask data
-//     const mergedImageData = mergedCtx.getImageData(0, 0, this.canvasWidth, this.canvasHeight);
-//     const mergedData = mergedImageData.data;
-    
-//     // Blend drawing with merged mask
-//     for (let i = 0; i < drawingData.length; i += 4) {
-//       const r = drawingData[i];
-//       const g = drawingData[i + 1];
-//       const b = drawingData[i + 2];
-//       const a = drawingData[i + 3];
-      
-//       // If drawing pixel is red (user drew), make it white in final mask
-//       if (r > 200 && g < 100 && b < 100 && a > 100) {
-//         mergedData[i] = 255;     // R
-//         mergedData[i + 1] = 255; // G
-//         mergedData[i + 2] = 255; // B
-//         mergedData[i + 3] = 255; // A
-//       }
-//     }
-    
-//     // Put the merged data back
-//     mergedCtx.putImageData(mergedImageData, 0, 0);
-    
-//     // Convert canvas to blob
-//     return new Promise((resolve, reject) => {
-//       mergedCanvas.toBlob(
-//         (blob) => {
-//           if (blob) {
-//             resolve(blob);
-//           } else {
-//             reject(new Error('Failed to create blob'));
-//           }
-//         },
-//         'image/png'
-//       );
-//     });
-    
-//   } catch (error) {
-//     console.error('Error creating merged mask:', error);
-//     throw error;
-//   }
-// },
+            open_add_newLightModal:false,
+            show_add_new_light_product_locally_3d_model:false,
 
-async createMergedBinaryMask() {
-  try {
-    // Create canvas with BASE IMAGE dimensions, not canvas dimensions
-    const mergedCanvas = document.createElement('canvas');
-    mergedCanvas.width = this.baseImg.width;   // Use original image width
-    mergedCanvas.height = this.baseImg.height; // Use original image height
-    const mergedCtx = mergedCanvas.getContext('2d');
-    
-    // Start with black background
-    mergedCtx.fillStyle = '#000000';
-    mergedCtx.fillRect(0, 0, this.baseImg.width, this.baseImg.height);
-    
-    // Merge all selected object masks
-    this.selectedObjects.forEach(objectKey => {
-      const region = this.objectMaskRegions.find(r => r.objectKey === objectKey);
-      
-      if (region && region.imageData) {
-        const imageData = region.imageData;
-        const data = imageData.data;
-        
-        // Draw white pixels for all masked areas
-        mergedCtx.fillStyle = '#FFFFFF';
-        
-        // Scale calculations based on original image
-        const scaleX = this.baseImg.width / this.canvasWidth;
-        const scaleY = this.baseImg.height / this.canvasHeight;
-        
-        for (let y = 0; y < this.canvasHeight; y++) {
-          let startX = -1;
-          for (let x = 0; x < this.canvasWidth; x++) {
-            const index = (y * this.canvasWidth + x) * 4;
-            const r = data[index];
-            const g = data[index + 1];
-            const b = data[index + 2];
-            
-            // Check if pixel is white (masked area)
-            if (r > 200 && g > 200 && b > 200) {
-              if (startX === -1) startX = x;
-            } else {
-              if (startX !== -1) {
-                // Scale coordinates to original image size
-                const scaledX = Math.round(startX * scaleX);
-                const scaledY = Math.round(y * scaleY);
-                const scaledWidth = Math.round((x - startX) * scaleX);
-                const scaledHeight = Math.round(scaleY);
-                
-                mergedCtx.fillRect(scaledX, scaledY, scaledWidth, scaledHeight);
-                startX = -1;
-              }
-            }
-          }
-          if (startX !== -1) {
-            const scaledX = Math.round(startX * scaleX);
-            const scaledY = Math.round(y * scaleY);
-            const scaledWidth = Math.round((this.canvasWidth - startX) * scaleX);
-            const scaledHeight = Math.round(scaleY);
-            
-            mergedCtx.fillRect(scaledX, scaledY, scaledWidth, scaledHeight);
-          }
-        }
-      }
-    });
-    
-    // Now overlay the user's drawing on top of the merged mask
-    const drawingImageData = this.drawingCtx.getImageData(0, 0, this.canvasWidth, this.canvasHeight);
-    const drawingData = drawingImageData.data;
-    
-    const mergedImageData = mergedCtx.getImageData(0, 0, this.baseImg.width, this.baseImg.height);
-    const mergedData = mergedImageData.data;
-    
-    // Scale coordinates for drawing overlay
-    const scaleX = this.baseImg.width / this.canvasWidth;
-    const scaleY = this.baseImg.height / this.canvasHeight;
-    
-    for (let y = 0; y < this.canvasHeight; y++) {
-      for (let x = 0; x < this.canvasWidth; x++) {
-        const canvasIndex = (y * this.canvasWidth + x) * 4;
-        const r = drawingData[canvasIndex];
-        const g = drawingData[canvasIndex + 1];
-        const b = drawingData[canvasIndex + 2];
-        const a = drawingData[canvasIndex + 3];
-        
-        // If drawing pixel is red (user drew), make it white in final mask
-        if (r > 200 && g < 100 && b < 100 && a > 100) {
-          const scaledX = Math.round(x * scaleX);
-          const scaledY = Math.round(y * scaleY);
-          const mergedIndex = (scaledY * this.baseImg.width + scaledX) * 4;
-          
-          mergedData[mergedIndex] = 255;     // R
-          mergedData[mergedIndex + 1] = 255; // G
-          mergedData[mergedIndex + 2] = 255; // B
-          mergedData[mergedIndex + 3] = 255; // A
-        }
-      }
-    }
-    
-    // Put the merged data back
-    mergedCtx.putImageData(mergedImageData, 0, 0);
-    
-    // Convert canvas to blob
-    return new Promise((resolve, reject) => {
-      mergedCanvas.toBlob(
-        (blob) => {
-          if (blob) {
-            resolve(blob);
-          } else {
-            reject(new Error('Failed to create blob'));
-          }
+            editingProduct: null,
+            originalProduct: null,
+            showAddProduct: false,
+            show_add_new_floor_texture: false,
+            show_add_new_wall_texture: false,
+            show_add_new_light: false,
+            categories_available: [],
+            types: [],
+            columns: [
+                {
+                    title: '',
+                    key: 'serial',
+                    width: 40,
+                },
+                {
+                    title: 'Product',
+                    key: 'product',
+                    width: 200,
+                },
+                {
+                    title: 'Category',
+                    key: 'category',
+                    width: 70,
+                },
+                {
+                    title: 'Type',
+                    key: 'type',
+                    width: 70,
+                },
+                {
+                    title: 'Create date',
+                    key: 'createDate',
+                    width: 120,
+                },
+                {
+                    title: 'Size',
+                    key: 'dimensions',
+                    width: 100,
+                },
+                {
+                    title: 'Color',
+                    key: 'colors',
+                    width: 80,
+                },
+                {
+                    title: 'Price',
+                    key: 'price',
+                    width: 40,
+                },
+                {
+                    title: 'AR/VR',
+                    key: 'actions',
+                    width: 80,
+                },
+            ],
+            products: [],
+            wall:[],
+            floor:[],
+            myLights:[],
+
+
+        // Pagination states for Products
+        productsPagination: {
+            currentPage: 1,
+            pageSize: 20,
+            totalCount: 0,
+            totalPages: 0
         },
-        'image/png'
-      );
-    });
-    
-  } catch (error) {
-    console.error('Error creating merged mask:', error);
-    throw error;
-  }
-},
-
-// Add this new method to download the mask
-downloadMask(blob, filename) {
-  try {
-    // Create blob URL
-    const blobUrl = URL.createObjectURL(blob);
-    
-    // Create temporary link element
-    const link = document.createElement('a');
-    link.href = blobUrl;
-    link.download = filename;
-    
-    // Trigger download
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    // Clean up blob URL
-    URL.revokeObjectURL(blobUrl);
-    
-    console.log(`Merged mask downloaded as ${filename}`);
-    
-  } catch (error) {
-    console.error('Error downloading mask:', error);
-    throw error;
-  }
-},
-    changeBrushSize(newSize) {
-      this.brushSize = newSize;
-    },
-
-    handleRemovalSuccess() {
-      this.$emit('handle_removal_completed', true)
-    },
-
-    // =================== OBJECT MASKS CHANGE HANDLING ===================
-    
-    async handleObjectMasksChange() {
-      try {
-        this.clearAllObjectState();
-        this.removeObjectHighlight();
-        this.render();
         
-        if (this.objectMasks && Object.keys(this.objectMasks).length > 0) {
-          this.currentObjectMasksHash = this.objectMasksHash;
-          
-          if (this.objectMaskCacheReady && this.cachedObjectImages && this.cachedObjectImages.size > 0) {
-            console.log('Using parent cache for new masks');
-            await this.loadFromParentCache();
-          } else {
-            console.log('Initializing new object mask cache');
-            await this.initializeObjectMaskCache();
-          }
-        } else {
-          console.log('No object masks to load');
-          this.showEmptyFurnitureState();
+        // Pagination states for Lights
+        lightsPagination: {
+            currentPage: 1,
+            pageSize: 20,
+            totalCount: 0,
+            totalPages: 0
+        },
+        
+        // Pagination states for Wall
+        wallPagination: {
+            currentPage: 1,
+            pageSize: 20,
+            totalCount: 0,
+            totalPages: 0
+        },
+        
+        // Pagination states for Floor
+        floorPagination: {
+            currentPage: 1,
+            pageSize: 20,
+            totalCount: 0,
+            totalPages: 0
         }
-        
-      } catch (error) {
-        console.error('Error handling object masks change:', error);
-        this.showEmptyFurnitureState();
-      }
-    },
-    
-    clearAllObjectState() {
-      console.log('Clearing all object state...');
-      
-      this.objectMaskCache.clear();
-      this.isCacheInitialized = false;
-      this.objectMaskImages = [];
-      this.objectMaskRegions = [];
-      this.objectMaskImageData = [];
-      this.selectedObjects = [];
-      this.hoveredObject = null;
-      this.objectMasksLoading = false;
-      this.objectMasksLoadingProgress = 0;
-    },
-    
-    // =================== SELECTION CONTROLS ===================
-    
-    DrawRemoval_model() {
-      this.draw_removal_modal = true
-    },
-    
-    toggleSelection() {
-      if (this.selectedObjects.length === this.objectMaskRegions.length) {
-        this.clearSelections();
-      } else {
-        this.selectAllObjects();
-      }
-    },
-    
-    selectAllObjects() {
-      if (this.isLoading || this.objectMasksLoading) return;
-      this.selectedObjects = this.objectMaskRegions.map(region => region.objectKey);
-    },
-
-    clearSelections() {
-      if (this.isLoading) return;
-      this.selectedObjects = [];
-      this.removeObjectHighlight();
-    },
-
-    removeSelectedObjects() {
-      if (this.selectedObjects.length === 0) return;
-      
-      console.log('Removing selected objects:', this.selectedObjects);
-      
-      this.$emit('objects-selected-for-removal', {
-        selectedObjects: [...this.selectedObjects],
-        objectMasks: this.selectedObjects.reduce((acc, key) => {
-          if (this.objectMasks[key]) {
-            acc[key] = this.objectMasks[key];
-          }
-          return acc;
-        }, {}),
-        canvasDimensions: this.getCanvasDimensions()
-      });
-      
-      this.clearSelections();
-    },
-    
-    make_room_empty() {
-      this.$emit('make-room-empty', true)
-    },
-    
-    reset_entire_room() {
-      this.$emit('reset-entire-room', true)
-    },
-    
-    // =================== INITIALIZATION ===================
-    
-    setupResizeObserver() {
-      if (typeof ResizeObserver !== 'undefined') {
-        this.resizeObserver = new ResizeObserver(() => {
-          this.updateCanvasDimensions();
-          this.$nextTick(() => {
-            this.render();
-          });
-        });
-        
-        if (this.$refs.canvasContainer) {
-          this.resizeObserver.observe(this.$refs.canvasContainer);
         }
-      } else {
-        window.addEventListener('resize', this.handleWindowResize);
-      }
     },
-
-    handleWindowResize() {
-      this.updateCanvasDimensions();
-      this.$nextTick(() => {
-        this.render();
-      });
+    computed: {
+        filteredProducts() {
+            if (!this.searchQuery) return this.products;
+            return this.products.filter(product =>
+                product.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                product.category.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                product.furniture_type.toLowerCase().includes(this.searchQuery.toLowerCase())
+            );
+        }
     },
+    mounted() {
+        this.fetchMyProducts()
+        this.fetchMyLights()
+        this.fetchMyWallTextureProducts()
+        this.fetchMyFloorTextureProducts()
+    },
+    methods: {
+             createVariation() {
+    console.log('Creating variation for:', this.selectedProduct);
     
-    updateCanvasDimensions() {
-      if (this.$refs.canvasContainer) {
-        const rect = this.$refs.canvasContainer.getBoundingClientRect();
-        this.containerWidth = Math.floor(rect.width);
-        this.containerHeight = Math.floor(rect.height);
-        this.canvasWidth = this.containerWidth;
-        this.canvasHeight = this.containerHeight;
-      }
-    },
-
-    initCanvas() {
-      this.canvas = this.$refs.canvas;
-      this.overlayCanvas = this.$refs.overlayCanvas;
-      
-      if (!this.canvas || !this.overlayCanvas) {
-        console.error('Canvas refs not found');
+    if (!this.selectedProduct) {
+        this.$message.error('No product selected');
         return;
-      }
-      
-      this.ctx = this.canvas.getContext('2d');
-      this.overlayCtx = this.overlayCanvas.getContext('2d');
-      
-      this.ctx.fillStyle = '#f0f0f0';
-      this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
-    },
-
-    // =================== EVENT LISTENERS ===================
-    
-    // setupEventListeners() {
-    //   if (!this.canvas) return;
-      
-    //   this.canvas.addEventListener('wheel', this.handleWheel, { passive: false });
-    //   this.canvas.addEventListener('mousedown', this.handleMouseDown);
-    //   this.canvas.addEventListener('mousemove', this.handleMouseMove);
-    //   this.canvas.addEventListener('mouseup', this.handleMouseUp);
-    //   this.canvas.addEventListener('mouseleave', this.handleMouseLeave);
-    //   this.canvas.addEventListener('click', this.handleObjectClick);
-    //   this.canvas.addEventListener('contextmenu', (e) => e.preventDefault());
-    //   this.canvas.addEventListener('touchstart', this.handleTouchStart, { passive: false });
-    //   this.canvas.addEventListener('touchmove', this.handleTouchMove, { passive: false });
-    //   this.canvas.addEventListener('touchend', this.handleTouchEnd);
-    // },
-        setupEventListeners() {
-      // console.log("g1");
-      if (!this.canvas) return;
-      // Prevent scroll/pinch on mobile
-      this.canvas.style.touchAction = "none";
-      // WHEEL (desktop zoom)
-      this.canvas.addEventListener("wheel", this.handleWheel, {
-        passive: false,
-      });
-      // :three_button_mouse: Mouse events (still keep)
-      this.canvas.addEventListener("mousedown", this.handleMouseDown);
-      this.canvas.addEventListener("mousemove", this.handleMouseMove);
-      this.canvas.addEventListener("mouseup", this.handleMouseUp);
-      this.canvas.addEventListener("mouseleave", this.handleMouseLeave);
-      this.canvas.addEventListener("click", this.handleObjectClick);
-      this.canvas.addEventListener("contextmenu", (e) => e.preventDefault());
-      // :star: POINTER EVENTS — MOBILE + DESKTOP (FULL FIX)
-      this.canvas.addEventListener("pointerdown", this.handleMouseDown);
-      this.canvas.addEventListener("pointermove", this.handleMouseMove);
-      this.canvas.addEventListener("pointerup", this.handleMouseUp);
-      this.canvas.addEventListener("pointerleave", this.handleMouseLeave);
-      // :x: REMOVE these — they break pointer events in Android
-      // this.canvas.addEventListener("touchstart", ...)
-      // this.canvas.addEventListener("touchmove", ...)
-      // this.canvas.addEventListener("touchend", ...)
-    },
-
-    removeEventListeners() {
-      if (!this.canvas) return;
-      
-      this.canvas.removeEventListener('wheel', this.handleWheel);
-      this.canvas.removeEventListener('mousedown', this.handleMouseDown);
-      this.canvas.removeEventListener('mousemove', this.handleMouseMove);
-      this.canvas.removeEventListener('mouseup', this.handleMouseUp);
-      this.canvas.removeEventListener('mouseleave', this.handleMouseLeave);
-      this.canvas.removeEventListener('click', this.handleObjectClick);
-      this.canvas.removeEventListener('touchstart', this.handleTouchStart);
-      this.canvas.removeEventListener('touchmove', this.handleTouchMove);
-      this.canvas.removeEventListener('touchend', this.handleTouchEnd);
-      
-      if (typeof ResizeObserver === 'undefined') {
-        window.removeEventListener('resize', this.handleWindowResize);
-      }
-    },
-
-    // =================== MOUSE & TOUCH HANDLERS ===================
-    
-    handleWheel(e) {
-      if (this.isLoading) return;
-      e.preventDefault();
-      
-      const rect = this.canvas.getBoundingClientRect();
-      const mouseX = e.clientX - rect.left;
-      const mouseY = e.clientY - rect.top;
-      
-      const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
-      const newZoom = Math.max(this.minZoom, Math.min(this.maxZoom, this.zoom * zoomFactor));
-      
-      if (newZoom !== this.zoom) {
-        const imageX = (mouseX - this.panX) / this.zoom;
-        const imageY = (mouseY - this.panY) / this.zoom;
-        
-        this.zoom = newZoom;
-        this.panX = mouseX - imageX * this.zoom;
-        this.panY = mouseY - imageY * this.zoom;
-        
-        this.constrainPan();
-        this.render();
-      }
-    },
-
-    handleMouseDown(e) {
-      if (this.isLoading) return;
-      
-      if (e.button === 0 || e.button === 2) {
-        this.isDragging = true;
-        this.dragStartX = e.clientX;
-        this.dragStartY = e.clientY;
-        this.dragStartPanX = this.panX;
-        this.dragStartPanY = this.panY;
-        this.canvas.style.cursor = 'grabbing';
-        e.preventDefault();
-      }
-    },
-
-    handleMouseMove(e) {
-      if (this.isLoading) return;
-      
-      if (this.isDragging) {
-        const deltaX = e.clientX - this.dragStartX;
-        const deltaY = e.clientY - this.dragStartY;
-        
-        this.panX = this.dragStartPanX + deltaX;
-        this.panY = this.dragStartPanY + deltaY;
-        
-        this.constrainPan();
-        this.render();
-        e.preventDefault();
-      } else {
-        if (this.objectMaskCacheReady && this.objectMaskRegions.length > 0) {
-          this.handleObjectHover(e);
-        }
-      }
-    },
-
-    handleMouseUp(e) {
-      if (this.isLoading) return;
-      
-      if (this.isDragging) {
-        this.isDragging = false;
-        this.canvas.style.cursor = this.zoom > 1 ? 'grab' : 'default';
-        e.preventDefault();
-      }
-    },
-    
-    handleMouseLeave(e) {
-      this.handleMouseUp(e);
-      this.removeObjectHighlight();
-    },
-
-    handleTouchStart(e) {
-      if (this.isLoading) return;
-      e.preventDefault();
-      
-      if (e.touches.length === 1) {
-        const touch = e.touches[0];
-        this.isDragging = true;
-        this.dragStartX = touch.clientX;
-        this.dragStartY = touch.clientY;
-        this.dragStartPanX = this.panX;
-        this.dragStartPanY = this.panY;
-      }
-    },
-
-    handleTouchMove(e) {
-      if (this.isLoading) return;
-      e.preventDefault();
-      
-      if (this.isDragging && e.touches.length === 1) {
-        const touch = e.touches[0];
-        const deltaX = touch.clientX - this.dragStartX;
-        const deltaY = touch.clientY - this.dragStartY;
-        
-        this.panX = this.dragStartPanX + deltaX;
-        this.panY = this.dragStartPanY + deltaY;
-        
-        this.constrainPan();
-        this.render();
-      }
-    },
-
-    handleTouchEnd(e) {
-      if (this.isLoading) return;
-      e.preventDefault();
-      this.isDragging = false;
-      this.removeObjectHighlight();
-    },
-
-    // =================== ZOOM & PAN CONTROLS ===================
-    
-    constrainPan() {
-      if (!this.baseImg) return;
-      
-      const zoomedImageWidth = this.renderWidth * this.zoom;
-      const zoomedImageHeight = this.renderHeight * this.zoom;
-      const zoomedImageLeft = this.renderOffsetX * this.zoom;
-      const zoomedImageTop = this.renderOffsetY * this.zoom;
-      
-      const maxPanX = Math.max(0, zoomedImageWidth + zoomedImageLeft - this.canvasWidth);
-      const minPanX = Math.min(0, -zoomedImageLeft);
-      const maxPanY = Math.max(0, zoomedImageHeight + zoomedImageTop - this.canvasHeight);
-      const minPanY = Math.min(0, -zoomedImageTop);
-      
-      this.panX = Math.max(-maxPanX, Math.min(minPanX, this.panX));
-      this.panY = Math.max(-maxPanY, Math.min(minPanY, this.panY));
-    },
-
-    zoomIn() {
-      if (this.isLoading) return;
-      
-      const newZoom = Math.min(this.maxZoom, this.zoom * 1.2);
-      if (newZoom !== this.zoom) {
-        this.zoomToCenter(newZoom);
-      }
-    },
-
-    zoomOut() {
-      if (this.isLoading) return;
-      
-      const newZoom = Math.max(this.minZoom, this.zoom / 1.2);
-      if (newZoom !== this.zoom) {
-        this.zoomToCenter(newZoom);
-      }
-    },
-
-    zoomToCenter(newZoom) {
-      const centerX = this.canvasWidth / 2;
-      const centerY = this.canvasHeight / 2;
-      
-      const imageX = (centerX - this.panX) / this.zoom;
-      const imageY = (centerY - this.panY) / this.zoom;
-      
-      this.zoom = newZoom;
-      this.panX = centerX - imageX * this.zoom;
-      this.panY = centerY - imageY * this.zoom;
-      
-      this.constrainPan();
-      this.render();
-    },
-
-    resetZoomAndPan() {
-      if (this.isLoading) return;
-      
-      this.zoom = 1;
-      this.panX = 0;
-      this.panY = 0;
-      this.render();
-    },
-
-    // =================== IMAGE LOADING ===================
-    
-    async loadImage() {
-      if (!this.baseImage) {
-        console.warn('No base image provided');
-        return;
-      }
-      
-      try {
-        this.baseImg = await this.createImageFromSrc(this.baseImage);
-        this.calculateImageDimensions();
-        this.render();
-        await this.processInitialObjectMasks();
-        
-      } catch (error) {
-        console.error('Error loading image:', error);
-        this.showErrorState();
-      }
-    },
-    
-    async processInitialObjectMasks() {
-      this.currentObjectMasksHash = this.objectMasksHash;
-      
-      if (this.objectMaskCacheReady && this.cachedObjectImages && this.cachedObjectImages.size > 0) {
-        console.log('Loading from cached object images');
-        await this.loadFromParentCache();
-      } else if (this.objectMasks && Object.keys(this.objectMasks).length > 0) {
-        console.log('Initializing object mask cache');
-        await this.initializeObjectMaskCache();
-      } else {
-        this.showEmptyFurnitureState();
-      }
-    },
-
-    createImageFromSrc(src) {
-      return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.crossOrigin = 'anonymous';
-        
-        img.onload = () => resolve(img);
-        img.onerror = (error) => reject(new Error(`Failed to load image: ${src}`));
-        
-        img.src = src;
-      });
-    },
-
-    calculateImageDimensions() {
-      if (!this.baseImg) return;
-      
-      const maxWidth = this.canvasWidth;
-      const maxHeight = this.canvasHeight;
-      
-      const imgAspectRatio = this.baseImg.width / this.baseImg.height;
-      const canvasAspectRatio = maxWidth / maxHeight;
-      
-      if (imgAspectRatio > canvasAspectRatio) {
-        this.renderWidth = maxWidth;
-        this.renderHeight = Math.round(maxWidth / imgAspectRatio);
-        this.renderOffsetX = 0;
-        this.renderOffsetY = Math.round((maxHeight - this.renderHeight) / 2);
-      } else {
-        this.renderHeight = maxHeight;
-        this.renderWidth = Math.round(maxHeight * imgAspectRatio);
-        this.renderOffsetX = Math.round((maxWidth - this.renderWidth) / 2);
-        this.renderOffsetY = 0;
-      }
-      
-      this.scaleX = this.renderWidth / this.baseImg.width;
-      this.scaleY = this.renderHeight / this.baseImg.height;
-    },
-
-    // =================== OBJECT MASK CACHING ===================
-    
-    async initializeObjectMaskCache() {
-      if (this.isCacheInitialized || this.objectMasksLoading || !this.objectMasks || Object.keys(this.objectMasks).length === 0) {
-        return;
-      }
-
-      this.isCacheInitialized = true;
-      this.objectMasksLoading = true;
-      this.objectMasksLoadingProgress = 0;
-      
-      console.log('Initializing object mask cache...');
-      
-      const objectEntries = Object.entries(this.objectMasks);
-      const totalMasks = objectEntries.length;
-      
-      try {
-        const loadingPromises = objectEntries.map(async ([objectKey, maskPath], index) => {
-          try {
-            const fullPath = this.$store ? `${this.$store.state.root_api}${maskPath}` : maskPath;
-            const img = await this.loadImageWithPromise(fullPath, 8000);
-            
-            this.objectMaskCache.set(objectKey, {
-              image: img,
-              objectKey,
-              maskPath,
-              fullPath,
-              loaded: true,
-              loadedAt: Date.now(),
-              index
-            });
-            
-            this.objectMasksLoadingProgress = Math.round(((index + 1) / totalMasks) * 100);
-            return { success: true, objectKey };
-            
-          } catch (error) {
-            console.error(`Failed to cache mask ${objectKey}:`, error.message);
-            return { success: false, objectKey, error: error.message };
-          }
-        });
-        
-        await Promise.allSettled(loadingPromises);
-        
-        this.objectMasksLoading = false;
-        console.log('Object mask cache initialized');
-        
-        await this.loadFromCache();
-        
-      } catch (error) {
-        console.error('Failed to initialize object mask cache:', error);
-        this.objectMasksLoading = false;
-        this.isCacheInitialized = false;
-      }
-    },
-
-    async loadFromCache() {
-      if (this.objectMaskCache.size === 0) {
-        console.log('No cached masks to load');
-        this.showEmptyFurnitureState();
-        return;
-      }
-
-      this.objectMaskImages = [];
-      let loadedFromCache = 0;
-      
-      this.objectMaskCache.forEach((cachedMask, objectKey) => {
-        if (cachedMask.loaded && cachedMask.image) {
-          this.objectMaskImages.push({
-            img: cachedMask.image,
-            objectKey: cachedMask.objectKey,
-            maskPath: cachedMask.maskPath,
-            index: this.objectMaskImages.length
-          });
-          loadedFromCache++;
-        }
-      });
-      
-      console.log(`Loaded ${loadedFromCache} object masks from cache`);
-      
-      await this.processObjectMaskRegions();
-      this.render();
-    },
-
-    async loadFromParentCache() {
-      if (!this.cachedObjectImages || this.cachedObjectImages.size === 0) {
-        console.log('No parent cached images to load');
-        this.showEmptyFurnitureState();
-        return;
-      }
-
-      this.objectMaskImages = [];
-      let loadedFromParentCache = 0;
-      
-      this.cachedObjectImages.forEach((cachedImage, objectKey) => {
-        if (cachedImage) {
-          this.objectMaskImages.push({
-            img: cachedImage,
-            objectKey: objectKey,
-            maskPath: this.objectMasks[objectKey] || '',
-            index: this.objectMaskImages.length
-          });
-          loadedFromParentCache++;
-        }
-      });
-      
-      console.log(`Loaded ${loadedFromParentCache} object masks from parent cache`);
-      
-      await this.processObjectMaskRegions();
-      this.render();
-    },
-
-    clearObjectMaskCache() {
-      console.log('Clearing object mask cache...');
-      this.clearAllObjectState();
-      this.removeObjectHighlight();
-    },
-
-    showEmptyFurnitureState() {
-      this.clearAllObjectState();
-      this.render();
-    },
-
-    loadImageWithPromise(src, timeout = 8000) {
-      return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.crossOrigin = 'anonymous';
-        
-        const timeoutId = setTimeout(() => {
-          reject(new Error(`Timeout loading: ${src}`));
-        }, timeout);
-        
-        img.onload = () => {
-          clearTimeout(timeoutId);
-          resolve(img);
-        };
-        
-        img.onerror = () => {
-          clearTimeout(timeoutId);
-          reject(new Error(`Failed to load: ${src}`));
-        };
-        
-        img.src = src;
-      });
-    },
-
-    // =================== OBJECT MASK PROCESSING ===================
-    
-    async processObjectMaskRegions() {
-      console.log('Starting object mask region processing...');
-      
-      this.objectMaskRegions = [];
-      this.objectMaskImageData = [];
-      
-      if (!this.objectMaskImages.length) {
-        console.log('No object mask images to process');
-        return;
-      }
-
-      const batchSize = 3;
-      const totalMasks = this.objectMaskImages.length;
-      let processedCount = 0;
-      
-      this.$emit('processing-progress', { current: 0, total: totalMasks });
-      
-      try {
-        for (let i = 0; i < this.objectMaskImages.length; i += batchSize) {
-          const batch = this.objectMaskImages.slice(i, i + batchSize);
-          
-          await this.processMaskBatch(batch, i);
-          
-          processedCount += batch.length;
-          this.$emit('processing-progress', { 
-            current: processedCount, 
-            total: totalMasks 
-          });
-          
-          await this.yieldToBrowser();
-        }
-        
-        console.log(`Processed ${this.objectMaskRegions.length} object masks`);
-        
-      } catch (error) {
-        console.error('Error in object mask processing:', error);
-      } finally {
-        this.$emit('processing-complete');
-      }
-    },
-
-    async processMaskBatch(maskBatch, startIndex) {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          maskBatch.forEach((maskData, batchIndex) => {
-            if (!maskData || !maskData.img) return;
-            
-            const globalIndex = startIndex + batchIndex;
-            this.processSingleObjectMask(maskData, globalIndex);
-          });
-          resolve();
-        }, 0);
-      });
-    },
-
-    processSingleObjectMask(maskData, index) {
-      try {
-        const tempCanvas = document.createElement('canvas');
-        tempCanvas.width = this.canvasWidth;
-        tempCanvas.height = this.canvasHeight;
-        const tempCtx = tempCanvas.getContext('2d');
-        
-        tempCtx.fillStyle = '#000000';
-        tempCtx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
-        
-        tempCtx.drawImage(
-          maskData.img, 
-          this.renderOffsetX, 
-          this.renderOffsetY, 
-          this.renderWidth, 
-          this.renderHeight
-        );
-        
-        const imageData = tempCtx.getImageData(0, 0, this.canvasWidth, this.canvasHeight);
-        
-        this.objectMaskImageData[index] = {
-          imageData: imageData,
-          objectKey: maskData.objectKey,
-          index: index
-        };
-        
-        const bounds = this.findObjectBoundsOptimized(imageData);
-        
-        if (bounds) {
-          this.objectMaskRegions.push({
-            objectKey: maskData.objectKey,
-            index: index,
-            bounds: bounds,
-            imageData: imageData
-          });
-        }
-        
-      } catch (error) {
-        console.error(`Error processing mask ${index}:`, error);
-      }
-    },
-
-    findObjectBoundsOptimized(imageData) {
-      const data = imageData.data;
-      let minX = this.canvasWidth, maxX = 0;
-      let minY = this.canvasHeight, maxY = 0;
-      let hasWhitePixels = false;
-      
-      const step = 2;
-      
-      for (let y = 0; y < this.canvasHeight; y += step) {
-        let rowHasWhite = false;
-        
-        for (let x = 0; x < this.canvasWidth; x += step) {
-          const index = (y * this.canvasWidth + x) * 4;
-          const r = data[index];
-          const g = data[index + 1];
-          const b = data[index + 2];
-          
-          if (r > 200 && g > 200 && b > 200) {
-            hasWhitePixels = true;
-            rowHasWhite = true;
-            minX = Math.min(minX, x);
-            maxX = Math.max(maxX, x);
-            minY = Math.min(minY, y);
-            maxY = Math.max(maxY, y);
-          }
-        }
-        
-        if (hasWhitePixels && !rowHasWhite && y > maxY + step * 10) {
-          break;
-        }
-      }
-      
-      return hasWhitePixels ? { minX, maxX, minY, maxY } : null;
-    },
-
-    yieldToBrowser() {
-      return new Promise(resolve => {
-        setTimeout(resolve, 0);
-      });
-    },
-
-    // =================== OBJECT INTERACTION ===================
-//     handleObjectClick(e) {
-//   // Allow clicking even in drawing mode to deselect
-//   if (this.isLoading || this.isDragging || this.objectMasksLoading) return;
-  
-//   if (!this.objectMaskRegions || this.objectMaskRegions.length === 0) {
-//     return;
-//   }
-  
-//   const rect = this.canvas.getBoundingClientRect();
-//   const x = e.clientX - rect.left;
-//   const y = e.clientY - rect.top;
-  
-//   for (let i = this.objectMaskRegions.length - 1; i >= 0; i--) {
-//     const region = this.objectMaskRegions[i];
-    
-//     if (this.isPointInObjectMask(x, y, region.index)) {
-//       // In drawing mode, only allow deselection (removing from selection)
-//       if (this.drawingMode) {
-//         // Only allow toggling OFF, not adding new items
-//         if (this.selectedObjects.includes(region.objectKey)) {
-//           this.toggleObjectSelection(region.objectKey);
-//         }
-//         // If item is not selected and we're in drawing mode, do nothing
-//       } else {
-//         // Normal mode - allow full toggle
-//         this.toggleObjectSelection(region.objectKey);
-//       }
-//       break;
-//     }
-//   }
-// },
-
-
-// Update handleObjectClick to properly clear highlight on deselection
-
-
-// Replace handleObjectClick to draw persistent red highlight on overlay canvas
-handleObjectClick(e) {
-  if (this.isLoading || this.isDragging || this.objectMasksLoading) return;
-  
-  if (!this.objectMaskRegions || this.objectMaskRegions.length === 0) {
-    return;
-  }
-  
-  const rect = this.canvas.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
-  
-  for (let i = this.objectMaskRegions.length - 1; i >= 0; i--) {
-    const region = this.objectMaskRegions[i];
-    
-    if (this.isPointInObjectMask(x, y, region.index)) {
-      if (this.drawingMode) {
-        if (this.selectedObjects.includes(region.objectKey)) {
-          this.toggleObjectSelection(region.objectKey);
-        }
-      } else {
-        this.toggleObjectSelection(region.objectKey);
-      }
-      
-      // Draw persistent red highlight for all selected objects
-      this.$nextTick(() => {
-        this.drawPersistentSelectionHighlight();
-      });
-      break;
     }
-  }
-},
-
-
-// Add this new method to draw persistent red highlight on selected objects
-// Replace drawPersistentSelectionHighlight with this zoom-aware version
-// Replace drawPersistentSelectionHighlight with this fast pixelated version
-// Add these variables to your data() section in the component
-
-
-
-// ========== UPDATE YOUR METHODS BELOW ==========
-
-
-// Replace drawPersistentSelectionHighlight with this
-drawPersistentSelectionHighlight() {
-  if (!this.overlayCtx || this.selectedObjects.length === 0) return;
-
-  this.overlayCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-
-  this.overlayCtx.save();
-  this.overlayCtx.translate(this.panX, this.panY);
-  this.overlayCtx.scale(this.zoom, this.zoom);
-
-  this.selectedObjects.forEach(objectKey => {
-    const region = this.objectMaskRegions.find(r => r.objectKey === objectKey);
     
-    if (region && region.imageData) {
-      const imageData = region.imageData;
-      const data = imageData.data;
-      
-      this.overlayCtx.fillStyle = 'rgba(255, 0, 0, 0.4)';
-      
-      const step = this.highlightPixelStep;  // ← USES YOUR VARIABLE
-      
-      for (let y = 0; y < this.canvasHeight; y += step) {
-        let startX = -1;
-        for (let x = 0; x < this.canvasWidth; x += step) {
-          const index = (y * this.canvasWidth + x) * 4;
-          const r = data[index];
-          const g = data[index + 1];
-          const b = data[index + 2];
-          
-          if (r > 200 && g > 200 && b > 200) {
-            if (startX === -1) startX = x;
-          } else {
-            if (startX !== -1) {
-              this.overlayCtx.fillRect(startX, y, x - startX, step);
-              startX = -1;
+    // console.log(this.selectedProduct.furniture_type)
+    try {
+        // Prepare prepopulated data
+        this.prepopulatedProductData = {
+            id: this.selectedProduct.id,
+            name: `${this.selectedProduct.name} - Variation`,
+            description: this.selectedProduct.description || '',
+            category_name: this.selectedProduct.category?.name || '',
+            furniture_type: this.selectedProduct.furniture_type || '',
+            price: this.selectedProduct.pricing?.price || null,
+            height: this.selectedProduct.dimensions?.height || null,
+            length: this.selectedProduct.dimensions?.length || null,
+            width: this.selectedProduct.dimensions?.width || null,
+            available_colors: this.selectedProduct.colors || [],
+            images: this.selectedProduct.product_images?.map(img => ({
+                url: img.image,
+                id: img.id,
+                name: `Image ${img.id}`,
+                isExisting: true
+            })) || [],
+            model_url: this.selectedProduct.model_3d || null,
+            // Mark as base product ID for variation
+            base_product_id: this.selectedProduct.id,
+            is_variation: true
+        };
+        
+        this.isEditingVariation = true;
+        this.show_add_new_product_locally_3d_model = true;
+        
+        console.log('Prepopulated data set:', this.prepopulatedProductData);
+        
+    } catch (error) {
+        console.error('Error creating variation:', error);
+        this.$message.error('Failed to prepare variation data');
+    }
+},
+ handleVariantSelection(variantId) {
+    // Call your existing fetchProductDetails method with the variant ID
+    this.fetchProductDetails(variantId);
+  },
+async toggleFavorite(product,product_type) {
+        try {
+            const token = localStorage.getItem('token');
+            console.log(product)
+            const response = await fetch(
+                
+            `${this.$store.state.root_api}likes/favorites/toggle/`,
+            {
+                method: "POST",
+                headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Token ${token}`,
+                },
+                body: JSON.stringify({
+                id: product.id,
+                type: product_type,
+                }),
             }
-          }
-        }
-        if (startX !== -1) {
-          this.overlayCtx.fillRect(startX, y, this.canvasWidth - startX, step);
-        }
-      }
-    }
-  });
+            );
 
-  this.overlayCtx.restore();
+            const data = await response.json();
+
+            product.is_favorited = data.favorited;
+
+        } catch (error) {
+            console.error("Favorite toggle failed", error);
+        }
+        },
+
+          delete_product(e){
+            console.log('clicked delete')
+            console.log(e)
+            if (e['product_type'] =='wall'){
+                this.deleteWallTexture(e['product_id'])
+            }
+            if (e ['product_type']=='Floor'){
+                this.deleteFloorTexture(e['product_id'])
+            }
+            if (e['product_type'] =='Light'){
+                this.deleteLight(e['product_id'])
+            }
+            if (e['product_type'] =='Furniture'){
+                this.deleteFurniture(e['product_id'])
+            }
+        },
+
+        deleteWallTexture(product_id){
+            Modal.confirm({
+                title: 'Delete Wall Texture',
+                icon: createVNode(ExclamationCircleOutlined),
+                content: 'Are you sure you want to delete this wall texture? This action cannot be undone.',
+                okText: 'Delete',
+                okType: 'danger',
+                cancelText: 'Cancel',
+                onOk: async () => {
+                    try {
+                        let url_delete_product = `${this.$store.state.root_api}room/api-owner/walls/${product_id}/`
+
+                        const token = localStorage.getItem('token');
+                        const response = await fetch(`${url_delete_product}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Authorization': `Token ${token}`
+                            }
+                        });
+
+                        if (response.ok) {
+                            this.$message.success('Wall texture deleted successfully');
+                            this.currentView = 'list'
+                            this.selectedProduct = null
+                            this.fetchMyWallTextureProducts()
+                        } else {
+                            this.$message.error('Failed to delete wall texture');
+                            console.error('Delete failed with status:', response.status);
+                        }
+                    } catch (error) {
+                        this.$message.error('Error deleting wall texture');
+                        console.error('Error deleting wall texture:', error);
+                    }
+                },
+                onCancel() {
+                    console.log('Delete cancelled');
+                }
+            });
+        },
+
+        deleteFloorTexture(product_id){
+            console.log("clicked on delete FloorTexture")
+            Modal.confirm({
+                title: 'Delete Floor Texture',
+                icon: createVNode(ExclamationCircleOutlined),
+                content: 'Are you sure you want to delete this floor texture? This action cannot be undone.',
+                okText: 'Delete',
+                okType: 'danger',
+                cancelText: 'Cancel',
+                onOk: async () => {
+                    try {
+                        let url_delete_product = `${this.$store.state.root_api}room/api-owner/floors/${product_id}/`
+
+                        const token = localStorage.getItem('token');
+                        const response = await fetch(`${url_delete_product}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Authorization': `Token ${token}`
+                            }
+                        });
+
+                        if (response.ok) {
+                            this.$message.success('Floor texture deleted successfully');
+                            this.currentView = 'list'
+                            this.selectedProduct = null
+                            this.fetchMyFloorTextureProducts()
+                        } else {
+                            this.$message.error('Failed to delete floor texture');
+                            console.error('Delete failed with status:', response.status);
+                        }
+                    } catch (error) {
+                        this.$message.error('Error deleting floor texture');
+                        console.error('Error deleting floor texture:', error);
+                    }
+                },
+                onCancel() {
+                    console.log('Delete cancelled');
+                }
+            });
+        },
+
+        deleteLight(product_id){
+            Modal.confirm({
+                title: 'Delete Light',
+                icon: createVNode(ExclamationCircleOutlined),
+                content: 'Are you sure you want to delete this light? This action cannot be undone.',
+                okText: 'Delete',
+                okType: 'danger',
+                cancelText: 'Cancel',
+                onOk: async () => {
+                    try {
+                        let url_delete_product = `${this.$store.state.root_api}product/api-product-owner/lights/${product_id}/`
+
+                        const token = localStorage.getItem('token');
+                        const response = await fetch(`${url_delete_product}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Authorization': `Token ${token}`
+                            }
+                        });
+
+                        if (response.ok) {
+                            this.$message.success('Light deleted successfully');
+                            this.currentView = 'list'
+                            this.selectedProduct = null
+                            this.fetchMyLights()
+                        } else {
+                            this.$message.error('Failed to delete light');
+                            console.error('Delete failed with status:', response.status);
+                        }
+                    } catch (error) {
+                        this.$message.error('Error deleting light');
+                        console.error('Error deleting light:', error);
+                    }
+                },
+                onCancel() {
+                    console.log('Delete cancelled');
+                }
+            });
+        },
+
+        deleteFurniture(product_id){
+            Modal.confirm({
+                title: 'Delete Furniture',
+                icon: createVNode(ExclamationCircleOutlined),
+                content: 'Are you sure you want to delete this furniture? This action cannot be undone.',
+                okText: 'Delete',
+                okType: 'danger',
+                cancelText: 'Cancel',
+                onOk: async () => {
+                    try {
+                        let url_delete_product = `${this.$store.state.root_api}product/api-product-owner/products/${product_id}/`
+
+                        const token = localStorage.getItem('token');
+                        const response = await fetch(`${url_delete_product}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Authorization': `Token ${token}`
+                            }
+                        });
+
+                        if (response.ok) {
+                            this.$message.success('Furniture deleted successfully');
+                            this.currentView = 'list'
+                            this.selectedProduct = null
+                            this.fetchMyProducts()
+                        } else {
+                            this.$message.error('Failed to delete furniture');
+                            console.error('Delete failed with status:', response.status);
+                        }
+                    } catch (error) {
+                        this.$message.error('Error deleting furniture');
+                        console.error('Error deleting furniture:', error);
+                    }
+                },
+                onCancel() {
+                    console.log('Delete cancelled');
+                }
+            });
+        },
+
+        clicked_cancel_add_new_light(){
+            this.show_add_new_light=false
+        },
+
+        handleProductsPageChange(page) {
+    this.productsPagination.currentPage = page;
+    this.fetchMyProducts(page);
 },
 
-// Update handleObjectHover to show highlight for deselectable items only in drawing mode
-// handleObjectHover(e) {
-//   if (this.isLoading || this.isDragging || this.objectMasksLoading) return;
-  
-//   const rect = this.canvas.getBoundingClientRect();
-//   const x = e.clientX - rect.left;
-//   const y = e.clientY - rect.top;
-  
-//   let foundObject = null;
-  
-//   for (let i = this.objectMaskRegions.length - 1; i >= 0; i--) {
-//     const region = this.objectMaskRegions[i];
-    
-//     if (this.isPointInObjectMask(x, y, region.index)) {
-//       foundObject = region.objectKey;
-//       break;
-//     }
-//   }
-  
-//   if (foundObject !== this.hoveredObject) {
-//     this.hoveredObject = foundObject;
-    
-//     if (foundObject) {
-//       // In drawing mode, only highlight if it's already selected (can be deselected)
-//       if (this.drawingMode && !this.selectedObjects.includes(foundObject)) {
-//         this.removeObjectHighlight();
-//         this.canvas.style.cursor = 'default';
-//       } else {
-//         this.highlightObject(foundObject);
-//         this.canvas.style.cursor = 'pointer';
-//       }
-//     } else {
-//       this.removeObjectHighlight();
-//       this.canvas.style.cursor = this.zoom > 1 ? 'grab' : 'default';
-//     }
-//   }
+handleLightsPageChange(page) {
+    this.lightsPagination.currentPage = page;
+    this.fetchMyLights(page);
+},
+
+handleWallPageChange(page) {
+    this.wallPagination.currentPage = page;
+    this.fetchMyWallTextureProducts(page);
+},
+
+handleFloorPageChange(page) {
+    this.floorPagination.currentPage = page;
+    this.fetchMyFloorTextureProducts(page);
+},
+//         truncateText(text, wordLimit) {
+//   if (!text) return '';
+//   const words = text.split(' ');
+//   if (words.length <= wordLimit) return text;
+//   return words.slice(0, wordLimit).join(' ') + '...';
 // },
 
-
-// Update handleObjectHover to properly clear overlays
-// handleObjectHover(e) {
-//   if (this.isLoading || this.isDragging || this.objectMasksLoading) return;
-  
-//   const rect = this.canvas.getBoundingClientRect();
-//   const x = e.clientX - rect.left;
-//   const y = e.clientY - rect.top;
-  
-//   let foundObject = null;
-  
-//   for (let i = this.objectMaskRegions.length - 1; i >= 0; i--) {
-//     const region = this.objectMaskRegions[i];
-    
-//     if (this.isPointInObjectMask(x, y, region.index)) {
-//       foundObject = region.objectKey;
-//       break;
-//     }
-//   }
-  
-//   if (foundObject !== this.hoveredObject) {
-//     this.hoveredObject = foundObject;
-    
-//     if (foundObject) {
-//       if (this.drawingMode && !this.selectedObjects.includes(foundObject)) {
-//         // In drawing mode and not selected - clear and don't highlight
-//         this.overlayCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-//         this.canvas.style.cursor = 'default';
-//       } else {
-//         // Can interact - show highlight
-//         this.highlightObject(foundObject);
-//         this.canvas.style.cursor = 'pointer';
-//       }
-//     } else {
-//       // No object hovered - clear overlay
-//       this.overlayCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-//       this.canvas.style.cursor = this.zoom > 1 ? 'grab' : 'default';
-//     }
-//   }
-// },
-
-
-// Update handleObjectHover to not interfere with selected objects
-
-
-// Keep simple fast version for handleObjectHover
-handleObjectHover(e) {
-  if (this.isLoading || this.isDragging || this.objectMasksLoading) return;
-  
-  const rect = this.canvas.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
-  
-  let foundObject = null;
-  
-  for (let i = this.objectMaskRegions.length - 1; i >= 0; i--) {
-    const region = this.objectMaskRegions[i];
-    
-    if (this.isPointInObjectMask(x, y, region.index)) {
-      foundObject = region.objectKey;
-      break;
-    }
-  }
-  
-  if (foundObject !== this.hoveredObject) {
-    this.hoveredObject = foundObject;
-    
-    if (foundObject) {
-      if (this.selectedObjects.includes(foundObject)) {
-        this.drawPersistentSelectionHighlight();
-        this.canvas.style.cursor = 'pointer';
-      } else if (this.drawingMode && !this.selectedObjects.includes(foundObject)) {
-        this.overlayCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-        this.canvas.style.cursor = 'default';
-      } else {
-        this.highlightObject(foundObject);
-        this.canvas.style.cursor = 'pointer';
-      }
-    } else {
-      if (this.selectedObjects.length > 0) {
-        this.drawPersistentSelectionHighlight();
-      } else {
-        this.overlayCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-      }
-      this.canvas.style.cursor = this.zoom > 1 ? 'grab' : 'default';
-    }
-  }
-},
-
-    isPointInObjectMask(x, y, maskIndex) {
-      if (!this.objectMaskImageData[maskIndex]) return false;
-      
-      const canvasX = Math.round((x - this.panX) / this.zoom);
-      const canvasY = Math.round((y - this.panY) / this.zoom);
-      
-      if (canvasX < 0 || canvasX >= this.canvasWidth || canvasY < 0 || canvasY >= this.canvasHeight) {
-        return false;
-      }
-      
-      const imageData = this.objectMaskImageData[maskIndex].imageData;
-      const index = (canvasY * this.canvasWidth + canvasX) * 4;
-      const r = imageData.data[index];
-      const g = imageData.data[index + 1];
-      const b = imageData.data[index + 2];
-      
-      return r > 200 && g > 200 && b > 200;
-    },
-
-    // toggleObjectSelection(objectKey) {
-    //   let updatedObjects = [...this.selectedObjects];
-    //   const index = updatedObjects.indexOf(objectKey);
-      
-    //   if (this.selectionMode === 'single') {
-    //     updatedObjects = updatedObjects.includes(objectKey) ? [] : [objectKey];
-    //   } else {
-    //     if (index > -1) {
-    //       updatedObjects.splice(index, 1);
-    //     } else {
-    //       updatedObjects.push(objectKey);
-    //     }
-    //   }
-      
-    //   this.selectedObjects = updatedObjects;
-    // },
-    // Replace your toggleObjectSelection method with this
-toggleObjectSelection(objectKey) {
-  let updatedObjects = [...this.selectedObjects];
-  const index = updatedObjects.indexOf(objectKey);
-  
-  if (this.selectionMode === 'single') {
-    updatedObjects = updatedObjects.includes(objectKey) ? [] : [objectKey];
-  } else {
-    if (index > -1) {
-      updatedObjects.splice(index, 1);
-    } else {
-      updatedObjects.push(objectKey);
-    }
-  }
-  
-  this.selectedObjects = updatedObjects;
-  
-  // IMPORTANT: Refresh the drawing canvas highlight immediately
-  this.$nextTick(() => {
-    if (this.drawingMode && this.drawingCtx) {
-      // Clear the drawing canvas
-      this.drawingCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-      
-      // Redraw only the currently selected objects
-      this.drawSelectedFurnitureHighlight();
-      
-      // Save the updated state
-      this.saveDrawingState();
-    }
-    
-    this.removeObjectHighlight();
-  });
-},
-
-
-
-
-// Replace highlightObject with this
-highlightObject(objectKey) {
-  const region = this.objectMaskRegions.find(r => r.objectKey === objectKey);
-  if (!region || !this.overlayCtx) return;
-
-  const isSelected = this.selectedObjects.includes(objectKey);
-  
-  if (this.drawingMode && !isSelected) {
-    this.overlayCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-    return;
-  }
-
-  this.overlayCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-  
-  this.overlayCtx.save();
-  this.overlayCtx.translate(this.panX, this.panY);
-  this.overlayCtx.scale(this.zoom, this.zoom);
-  
-  const imageData = region.imageData;
-  const data = imageData.data;
-  
-  this.overlayCtx.fillStyle = isSelected ? 'rgba(255, 0, 0, 0.4)' : 'rgba(255, 165, 0, 0.4)';
-  
-  const step = this.hoverPixelStep;  // ← USES YOUR VARIABLE
-  
-  for (let y = 0; y < this.canvasHeight; y += step) {
-    let startX = -1;
-    for (let x = 0; x < this.canvasWidth; x += step) {
-      const index = (y * this.canvasWidth + x) * 4;
-      const r = data[index];
-      const g = data[index + 1];
-      const b = data[index + 2];
-      
-      if (r > 200 && g > 200 && b > 200) {
-        if (startX === -1) startX = x;
-      } else {
-        if (startX !== -1) {
-          this.overlayCtx.fillRect(startX, y, x - startX, step);
-          startX = -1;
+truncateText(text, charLimit = 7) {
+            if (!text) return '';
+            if (text.length <= charLimit) return text;
+            return text.slice(0, charLimit) + '...';
+        },
+        filteredProductsByType(type) {
+            const filtered = this.filteredProducts.filter(product => 
+                product.furniture_type === type || product.category.name === type
+            );
+            return filtered;
+        },
+        formatDate(isoString) {
+            const date = new Date(isoString);
+            const options = { year: "numeric", month: "long", day: "numeric" };
+            return date.toLocaleDateString("en-US", options);
+        },
+        // async fetchMyProducts() {
+        //     try {
+        //         const token = localStorage.getItem('token');
+        //         const response = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/`, {
+        //             method: 'GET',
+        //             headers: {
+        //                 'Authorization': `Token ${token}`
+        //             }
+        //         });
+        //         const result = await response.json();
+        //         if (result.success) {
+        //             const data = result.data;
+        //             this.products = data
+        //         }
+        //     } catch (error) {
+        //         console.error('Error loading business profile:', error);
+        //     }
+        // },
+        async fetchMyProducts(page = 1) {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(
+            `${this.$store.state.root_api}product/api-product-owner/products/?page=${page}&page_size=${this.productsPagination.pageSize}`,
+            {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Token ${token}`
+                }
+            }
+        );
+        const result = await response.json();
+        if (result.success) {
+            this.products = result.data;
+            // Update pagination info from response
+            this.productsPagination.totalCount = result.total_count;
+            this.productsPagination.totalPages = result.total_pages;
+            this.productsPagination.currentPage = result.page;
         }
-      }
+    } catch (error) {
+        console.error('Error loading products:', error);
+        this.$message.error('Error loading products');
     }
-    if (startX !== -1) {
-      this.overlayCtx.fillRect(startX, y, this.canvasWidth - startX, step);
-    }
-  }
-  
-  this.overlayCtx.restore();
-}
-,
-    // highlightObject(objectKey) {
-    //   const region = this.objectMaskRegions.find(r => r.objectKey === objectKey);
-    //   if (!region || !this.overlayCtx) return;
-
-    //   this.overlayCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-    //   this.overlayCtx.save();
-      
-    //   this.overlayCtx.translate(this.panX, this.panY);
-    //   this.overlayCtx.scale(this.zoom, this.zoom);
-      
-    //   const imageData = region.imageData;
-    //   const data = imageData.data;
-      
-    //   const isSelected = this.selectedObjects.includes(objectKey);
-    //   this.overlayCtx.fillStyle = isSelected ? 'rgba(255, 0, 0, 0.4)' : 'rgba(255, 165, 0, 0.4)';
-      
-    //   const step = Math.max(1, Math.floor(4 / this.zoom));
-      
-    //   for (let y = 0; y < this.canvasHeight; y += step) {
-    //     let startX = -1;
-    //     for (let x = 0; x < this.canvasWidth; x += step) {
-    //       const index = (y * this.canvasWidth + x) * 4;
-    //       const r = data[index];
-    //       const g = data[index + 1];
-    //       const b = data[index + 2];
-          
-    //       if (r > 200 && g > 200 && b > 200) {
-    //         if (startX === -1) startX = x;
-    //       } else {
-    //         if (startX !== -1) {
-    //           this.overlayCtx.fillRect(startX / this.zoom, y / this.zoom, (x - startX) / this.zoom, step / this.zoom);
-    //           startX = -1;
-    //         }
-    //       }
-    //     }
-    //     if (startX !== -1) {
-    //       this.overlayCtx.fillRect(startX / this.zoom, y / this.zoom, (this.canvasWidth - startX) / this.zoom, step / this.zoom);
-    //     }
-    //   }
-      
-    //   this.overlayCtx.restore();
-    // },
-
-    // removeObjectHighlight() {
-    //   this.hoveredObject = null;
-    //   if (this.overlayCtx) {
-    //     this.overlayCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-    //   }
-    // },
-    
-// Update removeObjectHighlight to be more thorough
-removeObjectHighlight() {
-  this.hoveredObject = null;
-  if (this.overlayCtx) {
-    // Clear the entire overlay canvas
-    this.overlayCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-    // Make sure to clear saved state
-    this.overlayCtx.restore();
-  }
 },
-
-    // =================== RENDERING ===================
-    
-    // Replace the render() method with this - REMOVE the bounding box drawing
-render() {
-  if (!this.canvas || !this.ctx) return;
-
-  this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-  
-  this.ctx.fillStyle = '#f5f5f5';
-  this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
-  
-  if (!this.baseImg) return;
-  
-  this.ctx.save();
-  
-  this.ctx.translate(this.panX, this.panY);
-  this.ctx.scale(this.zoom, this.zoom);
-  
-  try {
-    this.ctx.drawImage(
-      this.baseImg,
-      this.renderOffsetX,
-      this.renderOffsetY,
-      this.renderWidth,
-      this.renderHeight
-    );
-    
-    this.ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
-    this.ctx.lineWidth = 1 / this.zoom;
-    this.ctx.strokeRect(
-      this.renderOffsetX,
-      this.renderOffsetY,
-      this.renderWidth,
-      this.renderHeight
-    );
-    
-    // REMOVED: this.drawSelectedObjectOutlines(); - NO MORE BOUNDING BOXES
-    
-  } catch (error) {
-    console.error('Error rendering image:', error);
-    this.showErrorState();
-  }
-  
-  this.ctx.restore();
-},
-
-    drawSelectedObjectOutlines() {
-      if (this.selectedObjects.length === 0) return;
-      
-      this.ctx.strokeStyle = 'rgba(255, 0, 0, 0.8)';
-      this.ctx.lineWidth = 2 / this.zoom;
-      
-      this.selectedObjects.forEach(objectKey => {
-        const region = this.objectMaskRegions.find(r => r.objectKey === objectKey);
-        if (region && region.bounds) {
-          const { minX, maxX, minY, maxY } = region.bounds;
-          this.ctx.strokeRect(
-            minX / this.zoom,
-            minY / this.zoom,
-            (maxX - minX) / this.zoom,
-            (maxY - minY) / this.zoom
-          );
+        //  async fetchMyLights() {
+        //     try {
+        //         const token = localStorage.getItem('token');
+        //         const response = await fetch(`${this.$store.state.root_api}product/api-product-owner/lights/`, {
+        //             method: 'GET',
+        //             headers: {
+        //                 'Authorization': `Token ${token}`
+        //             }
+        //         });
+        //         const result = await response.json();
+        //         if (result.success) {
+        //             const data = result.data;
+        //             this.myLights = data
+        //         }
+        //     } catch (error) {
+        //         console.error('Error loading business profile:', error);
+        //     }
+        // },
+        async fetchMyLights(page = 1) {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(
+            `${this.$store.state.root_api}product/api-product-owner/lights/?page=${page}&page_size=${this.lightsPagination.pageSize}`,
+            {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Token ${token}`
+                }
+            }
+        );
+        const result = await response.json();
+        if (result.success) {
+            this.myLights = result.data;
+            // Update pagination info from response
+            this.lightsPagination.totalCount = result.total_count;
+            this.lightsPagination.totalPages = result.total_pages;
+            this.lightsPagination.currentPage = result.page;
         }
-      });
-    },
-
-    showErrorState() {
-      if (!this.ctx) return;
-      
-      this.ctx.fillStyle = '#ffcccc';
-      this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
-      this.ctx.fillStyle = '#cc0000';
-      this.ctx.font = '20px Arial';
-      this.ctx.textAlign = 'center';
-      this.ctx.fillText(
-        'Error loading image',
-        this.canvasWidth / 2,
-        this.canvasHeight / 2
-      );
-    },
-
-    // =================== UTILITY METHODS ===================
-    
-    formatObjectName(objectKey) {
-      return objectKey.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-    },
-
-    getCanvasDimensions() {
-      return {
-        width: this.canvasWidth,
-        height: this.canvasHeight,
-        renderWidth: this.renderWidth,
-        renderHeight: this.renderHeight,
-        renderOffsetX: this.renderOffsetX,
-        renderOffsetY: this.renderOffsetY,
-        scaleX: this.scaleX,
-        scaleY: this.scaleY,
-        zoom: this.zoom,
-        panX: this.panX,
-        panY: this.panY
-      };
-    },
-
-    // =================== EVENT EMISSION ===================
-    
-    emitObjectSelectionChange() {
-      this.$emit('object-selection-changed', {
-        selectedObjects: [...this.selectedObjects],
-        selectionMode: this.selectionMode,
-        objectMasks: this.selectedObjects.reduce((acc, key) => {
-          if (this.objectMasks[key]) {
-            acc[key] = this.objectMasks[key];
-          }
-          return acc;
-        }, {}),
-        canvasDimensions: this.getCanvasDimensions()
-      });
-    },
-
-    // =================== PUBLIC API METHODS ===================
-    
-    updateImage(newImageSrc) {
-      this.baseImage = newImageSrc;
-      this.loadImage();
-    },
-
-    getCanvasState() {
-      return {
-        ...this.getCanvasDimensions(),
-        selectedObjects: [...this.selectedObjects],
-        objectRegions: this.objectMaskRegions.length,
-        cacheReady: this.objectMaskCacheReady
-      };
-    },
-
-    forceRefreshObjectMasks(newObjectMasks) {
-      console.log('Force refreshing object masks...');
-      this.handleObjectMasksChange();
+    } catch (error) {
+        console.error('Error loading lights:', error);
+        this.$message.error('Error loading lights');
     }
-  }
+},
+        // async fetchMyWallTextureProducts() {
+        //     try {
+        //         const token = localStorage.getItem('token');
+        //         const response = await fetch(`${this.$store.state.root_api}room/api-owner/wall/`, {
+        //             method: 'GET',
+        //             headers: {
+        //                 'Authorization': `Token ${token}`
+        //             }
+        //         });
+        //         const result = await response.json();
+        //         if (result.success) {
+        //             const data = result.data;
+        //             this.wall = data
+        //         }
+        //     } catch (error) {
+        //         console.error('Error loading business profile:', error);
+        //     }
+        // },
+        async fetchMyWallTextureProducts(page = 1) {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(
+            `${this.$store.state.root_api}room/api-owner/wall/?page=${page}&page_size=${this.wallPagination.pageSize}`,
+            {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Token ${token}`
+                }
+            }
+        );
+        const result = await response.json();
+        if (result.success) {
+            this.wall = result.data;
+            this.wallPagination.totalCount = result.total_count;
+            this.wallPagination.totalPages = result.total_pages;
+            this.wallPagination.currentPage = result.page;
+        }
+    } catch (error) {
+        console.error('Error loading wall textures:', error);
+        this.$message.error('Error loading wall textures');
+    }
+},
+        // async fetchMyFloorTextureProducts() {
+        //     try {
+        //         const token = localStorage.getItem('token');
+        //         const response = await fetch(`${this.$store.state.root_api}room/api-owner/floor/`, {
+        //             method: 'GET',
+        //             headers: {
+        //                 'Authorization': `Token ${token}`
+        //             }
+        //         });
+        //         const result = await response.json();
+        //         if (result.success) {
+        //             const data = result.data;
+        //             this.floor = data
+        //         }
+        //     } catch (error) {
+        //         console.error('Error loading business profile:', error);
+        //     }
+        // },
+        async fetchMyFloorTextureProducts(page = 1) {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(
+            `${this.$store.state.root_api}room/api-owner/floor/?page=${page}&page_size=${this.floorPagination.pageSize}`,
+            {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Token ${token}`
+                }
+            }
+        );
+        const result = await response.json();
+        if (result.success) {
+            this.floor = result.data;
+            this.floorPagination.totalCount = result.total_count;
+            this.floorPagination.totalPages = result.total_pages;
+            this.floorPagination.currentPage = result.page;
+        }
+    } catch (error) {
+        console.error('Error loading floor textures:', error);
+        this.$message.error('Error loading floor textures');
+    }
+},
+        
+async fetchProductDetails(product_id) {
+    try {
+        let url_product_details = `${this.$store.state.root_api}product/api-product-owner/products/${product_id}`;
+        
+        if (this.active_tab === 'Wall') {
+            url_product_details = `${this.$store.state.root_api}room/api-owner/walls/${product_id}`;
+        }
+        if (this.active_tab === 'Floor') {
+            url_product_details = `${this.$store.state.root_api}room/api-owner/floors/${product_id}`;
+        }
+        if (this.active_tab === 'Lights') {
+            url_product_details = `${this.$store.state.root_api}product/api-product-owner/lights/${product_id}`;
+        }
+        
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${url_product_details}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Token ${token}`
+            }
+        });
+        
+        const result = await response.json();
+        if (result.success) {
+            const data = result.data;
+            this.selectedProduct = data;
+            this.categories_available = result.categories_available;
+            this.types = result.types;
+            
+            // Hide loader after data is loaded
+            this.isLoading = false;
+        } else {
+            this.$message.error('Failed to load product details');
+            this.isLoading = false;
+            this.backToList();
+        }
+    } catch (error) {
+        console.error('Error loading product details:', error);
+        this.$message.error('Error loading product details');
+        this.isLoading = false;
+        this.backToList();
+    }
+},
+
+        viewProduct(product) {
+    this.isLoading = true;
+    this.currentView = 'details';
+    
+    // Fetch product details
+    this.fetchProductDetails(product.id);
+},
+        backToList() {
+            this.currentView = 'list';
+            this.selectedProduct = null;
+        },
+        editProduct(product) {
+            this.editingProduct = JSON.parse(JSON.stringify(product));
+            this.originalProduct = product;
+            this.currentView = 'edit';
+        },
+        cancelEdit() {
+            this.editingProduct = null;
+            this.originalProduct = null;
+            if (this.selectedProduct) {
+                this.currentView = 'details';
+            } else {
+                this.currentView = 'list';
+            }
+        },
+        saveProduct() {
+            if (this.editingProduct) {
+                const index = this.products.findIndex(p => p.id === this.editingProduct.id);
+                if (index !== -1) {
+                    this.editingProduct.dimensions = `${this.editingProduct.length} in W x ${this.editingProduct.height} H`;
+                    this.editingProduct.fullDimensions = `${this.editingProduct.length} in W x ${this.editingProduct.width} In D x ${this.editingProduct.height} in H`;
+                    this.products.splice(index, 1, this.editingProduct);
+                    this.selectedProduct = this.editingProduct;
+                }
+            }
+            this.editingProduct = null;
+            this.originalProduct = null;
+            this.currentView = this.selectedProduct ? 'details' : 'list';
+        },
+        deleteProduct(product) {
+            if (confirm(`Are you sure you want to delete ${product.name}?`)) {
+                const index = this.products.findIndex(p => p.id === product.id);
+                if (index !== -1) {
+                    this.products.splice(index, 1);
+                }
+                if (this.selectedProduct && this.selectedProduct.id === product.id) {
+                    this.selectedProduct = null;
+                    this.currentView = 'list';
+                }
+            }
+        },
+        addProduct() {
+        this.open_add_newProductModal=true
+            // this.showAddProduct = !this.showAddProduct
+        // this.$router.push("/my-products/add-new-furniture");
+        },
+        addLightProduct() {
+        this.open_add_newLightModal=true
+            // this.showAddProduct = !this.showAddProduct
+        
+        // this.$router.push("/my-products/add-new-furniture");
+            
+        },
+        add_Product_For(selected_add_newProductModal){
+            if (selected_add_newProductModal ==='DYD_AI'){
+            this.$router.push("/my-products/add-new-furniture");}
+        else{
+            this.show_add_new_product_locally_3d_model=true
+            console.log(selected_add_newProductModal)
+        }
+        },
+        add_Product_Light_For(selected_add_newProductModal){
+            if (selected_add_newProductModal ==='DYD_AI'){
+            // this.$router.push("/my-products/add-new-furniture");
+            this.$router.push('/my-products/add-new-light');
+        }
+        else{
+            this.show_add_new_light_product_locally_3d_model=true
+            console.log(selected_add_newProductModal)
+        }
+        },
+        // Event handlers from add_new_product component
+        onProductCreated(newProduct) {
+            // this.products.push(newProduct);
+            this.showAddProduct = false;
+            this.fetchMyProducts(); // Refresh the list
+        },
+        onLightProductCreated(newLightProduct){
+            // this.myLights.push(newLightProduct);
+            this.open_add_newLightModal=false;
+            this.show_add_new_light_product_locally_3d_model=false;
+            this.show_add_new_light=false;
+            this.fetchMyLights()
+        },
+        onCancel() {
+            this.showAddProduct = false;
+        },
+        // Image handling methods
+        handleMainImageChange(event) {
+            const file = event.target.files[0];
+            if (file && this.editingProduct) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    this.editingProduct.image = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        },
+        handleGalleryImageChange(event) {
+            const files = Array.from(event.target.files);
+            if (files.length && this.editingProduct) {
+                files.forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        this.editingProduct.gallery.push(e.target.result);
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+        }
+    }
 }
 </script>
 
+
 <style scoped>
-  .main-canvas-sec{
-position: relative;
-  width: 100%;
-  height: 100%;
+.main{
+    padding:10px;
+    border-radius:20px;
+    /* height: 100vh; */
+  min-height:85vh;
+    background: white;
+    border:2px solid rgba(128, 128, 128, 0.16);
+    margin-top:10px;
+    margin-bottom:10px;
 }
-.canvas-container {
+.head-section{
+    display:flex;
+    justify-content: space-between;
+}
+.product{
+    padding:10px;
+    margin-bottom:10px;
+    border-radius:10px;
+    background:#f3f2f4;
+}
+.products-list{
+    padding-bottom:20px;
+    
+}
+.product-image-container {
   position: relative;
-  width: 100%;
-  height: 92%;
-  overflow: hidden;
-  background: #f5f5f5;
-}
-
-.main-canvas {
-  display: block;
-  transition: opacity 0.3s ease;
-  position:absolute;
-  right: 0;
-  left: 0;
-}
-
-.main-canvas.disabled {
-  opacity: 0.5;
-  pointer-events: none;
-}
-
-.main-canvas.furniture-mode {
-  cursor: crosshair;
-}
-
-.overlay-canvas {
-  border-radius: 10px;
-  transition: opacity 0.3s ease;
-  position: absolute;
-  top: 0;
-  left: 0;
-  pointer-events: none;
-  z-index: 2;
-}
-
-.overlay-canvas.disabled {
-  opacity: 0.5;
-}
-
-.object-indicators {
-  position: absolute;
-  top: 0;
-  left: 0;
-  pointer-events: none;
-  z-index: 5;
-}
-
-.object-indicator {
-  position: absolute;
-  background: rgba(0, 0, 0, 0.8);
-  color: white;
-  padding: 6px 12px;
-  border-radius: 15px;
-  font-size: 12px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  max-width: 150px;
-}
-
-.object-name {
-  flex: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-weight: 500;
-}
-
-.remove-object-btn {
-  background: rgba(255, 0, 0, 0.8);
-  border: none;
-  color: white;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  font-size: 12px;
-  cursor: pointer;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  height: 180px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.2s;
-  pointer-events: all;
+  /* padding: 16px; */
 }
 
-.remove-object-btn:hover {
-  background: rgba(255, 0, 0, 1);
-}
-
-.selection-controls {
-  position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  z-index: 6;
-  background-color: rgba(255, 255, 255, 0.136);
-  backdrop-filter: blur(5px);
-  max-width: 700px;
-  padding: 10px;
-  border-radius: 8px;
-}
-
-.control-btn {
-  padding: 8px 16px;
-  border: none;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-  min-width: 120px;
-}
-
-.control-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.control-btn.select-all {
-  background: #52c41a;
-  color: white;
-}
-
-.control-btn.select-all:hover:not(:disabled) {
-  background: #389e0d;
-}
-
-.control-btn.clear {
-  background: #faad14;
-  color: white;
-}
-
-.control-btn.clear:hover:not(:disabled) {
-  background: #d48806;
-}
-
-.control-btn.remove {
-  background: #ff4d4f;
-  color: white;
-}
-
-.control-btn.remove:hover:not(:disabled) {
-  background: #cf1322;
-}
-
-.zoom-controls {
-  position: absolute;
-  top:60px;
-  
-  right: 16px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(255, 255, 255, 0.95);
-  padding: 8px 12px;
-  border-radius: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  z-index: 5;
-}
-
-.zoom-btn {
-  width: 28px;
-  height: 28px;
-  border: none;
-  border-radius: 50%;
-  background: #1890ff;
-  color: white;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  font-weight: bold;
-  transition: all 0.2s ease;
-}
-
-.zoom-btn:hover {
-  background: #40a9ff;
-  transform: scale(1.05);
-}
-
-.zoom-btn:active {
-  transform: scale(0.95);
-}
-
-.zoom-btn.reset-btn {
-  font-size: 12px;
-}
-
-.zoom-level {
-  font-size: 12px;
-  font-weight: 500;
-  color: #666;
-  min-width: 36px;
-  text-align: center;
-}
-
-.instructions {
-  position: absolute;
-  bottom: 20px;
-  left: 20px;
-  background: rgba(0, 0, 0, 0.8);
-  color: white;
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-size: 12px;
-  z-index: 6;
-}
-
-.debug-info {
-  position: absolute;
-  bottom: 80px;
-  right: 20px;
-  background: rgba(0, 0, 0, 0.9);
-  color: white;
-  padding: 10px;
-  border-radius: 6px;
-  font-size: 11px;
-  z-index: 6;
-  font-family: monospace;
-}
-
-.debug-info div {
-  margin-bottom: 2px;
-}
-
-/* Loading overlay styles */
-.scanning-loading-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
+.product-image {
   width: 100%;
   height: 100%;
-  z-index: 10;
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-.loading-screen {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  border-radius: 10px;
-}
-
-.loading-screen::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1;
-}
-
-.wave-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    to left,
-    rgba(0,102,255,1) 0%,
-    rgba(0,102,255,0.4) 20%,
-    rgba(0,102,255,0.3) 30%,
-    rgba(0,102,255,0.2) 35%,
-    rgba(0,102,255,0.15) 40%,
-    rgba(0,102,255,0.10) 50%,
-    rgba(0,102,255,0.0) 100%
-  );
-  animation: moveWaveLeftToRight 3s linear infinite,
-             waveFade 3s ease-in-out infinite;
-  z-index: 2;
-}
-
-@keyframes moveWaveLeftToRight {
-  from { transform: translateX(-100%); }
-  to   { transform: translateX(50%); }
-}
-
-@keyframes waveFade {
-  0%   { opacity: 0; }
-  10%  { opacity: 1; }
-  90%  { opacity: 1; }
-  100% { opacity: 0; }
-}
-
-.loading-text {
-  position: relative;
-  color: #fff;
-  text-align: center;
-  z-index: 3;
-  text-shadow: 0 2px 6px rgba(0,0,0,0.6);
-  /* background: rgba(0, 0, 0, 0.3); */
-  padding: 20px 30px;
-  border-radius: 10px;
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.lottieFile-sec{
-  display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.process-text {
-  font-size: 18px;
-  opacity: 0.9;
-  color:black;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* Drawing Mode Styles - Vertical Right Panel */
-.drawing-mode-controls {
-  position: fixed;
-  top: 50%;
-  right: 20px;
-  transform: translateY(-50%);
-  background: rgba(255, 255, 255, 0.98);
+  object-fit: cover;
   border-radius: 12px;
-  padding: 0;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-  z-index: 100;
-  width: 100px;
-  max-height: 90vh;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease;
 }
 
-.drawing-mode-controls.minimized {
-  width: 100px;
-}
-
-.drawing-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 12px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  position: relative;
-}
-
-.header-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 6px;
-}
-
-.drawing-header h3 {
-  margin: 0;
-  font-size: 13px;
+.category-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(0, 0, 0, 0.75);
   color: white;
-  font-weight: 600;
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
-  white-space: nowrap;
-  flex: 1;
-}
-
-.minimize-btn {
-  background: rgba(255, 255, 255, 0.2);
-  border: none;
-  color: white;
-  width: 28px;
-  height: 28px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
-  flex-shrink: 0;
-}
-
-.minimize-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: scale(1.05);
-}
-
-.drawing-content {
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  overflow-y: auto;
-  max-height: calc(90vh - 52px);
-}
-
-/* Brush Control - Vertical */
-.brush-control {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-}
-
-.brush-control label {
-  font-size: 11px;
-  font-weight: 600;
-  color: #333;
-  text-align: center;
-}
-
-.size-display {
-  font-size: 12px;
-  font-weight: bold;
-  color: #1890ff;
-  background: #e6f7ff;
   padding: 4px 8px;
-  border-radius: 4px;
-  min-width: 40px;
-  text-align: center;
-}
-
-.brush-slider {
-  width: 5px;
-  height: 100px;
-  border-radius: 5px;
-  background: #ddd;
-  outline: none;
-  -webkit-appearance: slider-vertical;
-  appearance: slider-vertical;
-  cursor: pointer;
-}
-
-.brush-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: #1890ff;
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-  border: 2px solid white;
-}
-
-.brush-slider::-moz-range-thumb {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: #1890ff;
-  cursor: pointer;
-  border: 2px solid white;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-}
-
-.size-buttons {
-  display: flex;
-  gap: 4px;
-}
-
-.size-btn {
-  width: 24px;
-  height: 24px;
-  border: 1px solid #ddd;
-  background: #f5f5f5;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: bold;
-  color: #333;
-  transition: all 0.2s;
-}
-
-.size-btn:hover {
-  background: #1890ff;
-  color: white;
-  border-color: #1890ff;
-}
-
-/* Divider */
-.divider {
-  width: 100%;
-  height: 1px;
-  background: linear-gradient(to right, transparent, #ddd, transparent);
-}
-
-/* Drawing Actions - Vertical */
-.drawing-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-/* Submit Actions - Vertical */
-.submit-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-/* Drawing Buttons - Full Width */
-.drawing-btn {
-  width: 100%;
-  padding: 8px 6px;
-  border: none;
   border-radius: 6px;
-  font-size: 11px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  background: #f0f0f0;
-  color: #333;
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-}
-
-.drawing-btn:hover:not(:disabled) {
-  background: #e0e0e0;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.drawing-btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.drawing-btn:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-.drawing-btn.submit-btn {
-  background: #52c41a;
-  color: white;
-}
-
-.drawing-btn.submit-btn:hover:not(:disabled) {
-  background: #389e0d;
-}
-
-.drawing-btn.cancel-btn {
-  background: #ff4d4f;
-  color: white;
-}
-
-.drawing-btn.cancel-btn:hover:not(:disabled) {
-  background: #cf1322;
-}
-
-.drawing-btn.reset-btn {
-  background: #faad14;
-  color: white;
-}
-
-.drawing-btn.reset-btn:hover:not(:disabled) {
-  background: #d48806;
-}
-
-/* Instructions */
-.drawing-instructions {
   font-size: 10px;
-  color: #999;
-  text-align: center;
-  line-height: 1.3;
-  padding: 8px 4px;
-  background: #f9f9f9;
-  border-radius: 4px;
-}
-
-/* Scrollbar styling */
-.drawing-content::-webkit-scrollbar {
-  width: 4px;
-}
-
-.drawing-content::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.drawing-content::-webkit-scrollbar-thumb {
-  background: #ccc;
-  border-radius: 2px;
-}
-
-.drawing-content::-webkit-scrollbar-thumb:hover {
-  background: #999;
-}
-/* Mode Toggle Buttons */
-.mode-toggle {
-  display: flex;
-  gap: 4px;
-  width: 100%;
-}
-
-.mode-btn {
-  flex: 1;
-  padding: 8px 6px;
-  border: 1px solid #ddd;
-  background: #f5f5f5;
-  border-radius: 6px;
-  font-size: 11px;
   font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  color: #333;
-  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.mode-btn:hover {
-  background: #e0e0e0;
-  border-color: #999;
+.ar-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: #e5e7eb;
+  color: #374151;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+.product-responsive {
+  width:50%;
+  flex: 0 0 50%;
 }
 
-.mode-btn.active {
-  background: #1890ff;
-  color: white;
-  border-color: #1890ff;
-  box-shadow: 0 2px 8px rgba(24, 144, 255, 0.3);
-}
-
-.mode-btn.active:hover {
-  background: #40a9ff;
-  border-color: #40a9ff;
-}
-@media screen and (min-width:400px) and (max-width:770px){
-  .canvas-container{
-    height: 70%;
-  }
-}
-@media screen and (min-width:200px) and (max-width:400px){
-  .canvas-container{
-    height: 71%;
-  }
-}
-
+@media (min-width: 576px) { .product-responsive { width: 50%; flex: 0 0 50%; } }
+@media (min-width: 768px) { .product-responsive { width: 33.333%; flex: 0 0 33.333%; } }
+@media (min-width: 992px) { .product-responsive { width: 25%; flex: 0 0 25%; } }
+@media (min-width: 1200px) { .product-responsive { width: 20%; flex: 0 0 20%; } }
 </style>

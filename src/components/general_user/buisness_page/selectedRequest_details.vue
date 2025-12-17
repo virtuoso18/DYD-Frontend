@@ -53,7 +53,7 @@
               
               <a-row :gutter="[12, 12]">
                 <a-col :span="8">
-                  <div style="position:relative;" @click="viewProduct(product)">
+                  <div style="position:relative;" @click="goto_product_Route(product)">
                     <img 
                       :src="$store.state.root_media_api + product.product_image"
                       :alt="product.product_title"
@@ -95,7 +95,7 @@
               
               <a-row style="margin-top:12px;" >
                 <a-col :span="20">
-                  <a-button size="large" block @click="viewProduct(product)" 
+                  <a-button size="large" block @click="goto_product_Route(product)" 
                            style="border:1px solid #d9d9d9;color:#666;">
                     Product Detail
                   </a-button>
@@ -176,7 +176,29 @@ export default {
       // Add your view product logic here
       console.log('View product:', product);
     },
-    
+     goto_product_Route(product){
+       debugger
+        console.log(product)
+        let product_type= product.type
+        if(product.type==='light'){
+          product_type='product'
+        }
+        if(product.type==='floor_texture'){
+          product_type='floor'
+        }        
+        if(product.type==='wall_texture'){
+          product_type='wall'
+        }
+      this.$router.push({
+      name: 'buisness_product',
+      params: {
+        buisness_name: product.business_slug,
+        product_type: product_type,
+        product_id: product.id
+      }
+    })
+  
+    },
     formatDate(dateString) {
       if (!dateString) return '';
       
