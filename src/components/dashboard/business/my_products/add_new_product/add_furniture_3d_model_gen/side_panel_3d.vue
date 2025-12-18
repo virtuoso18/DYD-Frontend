@@ -63,12 +63,12 @@
         :disabled="!textureImage"
         :loading="isApplyingTexture"
       >
-        <div style="display: flex;justify-content: center;align-items: center;gap:10px;">
+        <!-- <div style="display: flex;justify-content: center;align-items: center;gap:10px;"> -->
           Apply Texture
-          <span style="display: flex;justify-content: center;align-items: center;">
-            (⚡20)
-          </span>
-        </div>
+          <!-- <span style="display: flex;justify-content: center;align-items: center;"> -->
+            (⚡20 )
+          <!-- </span> -->
+        <!-- </div> -->
       </a-button>
     </div>
 

@@ -147,6 +147,7 @@ import add_light from '@/components/dashboard/business/my_products/add_new_produ
 
 import profesional_buisness_details from '@/components/dashboard/professional/buisness_details.vue'
 import profesional_my_designes from '@/components/dashboard/professional/my_designs.vue'
+import profesional_my_community_posts from '@/components/dashboard/professional/comunity.vue'
 
 
 // Import individual dashboard components for professional users
@@ -520,6 +521,12 @@ const router = createRouter({
           path: 'my-designes',
           name: 'professional_designes',
           component: profesional_my_designes,
+        },
+        
+        {
+          path: 'my-community-posts',
+          name: 'profesional_my_community_posts',
+          component: profesional_my_community_posts,
         },
         {
           path: 'my-messages',

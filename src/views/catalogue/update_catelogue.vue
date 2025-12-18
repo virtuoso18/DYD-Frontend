@@ -822,7 +822,7 @@ Switch Furniture</a-button> -->
           <a-col :span="(user?.user_type !=='User')? 17 :18" class="canvas-panel" >
             
            <div
-           v-if="current_tab==='image'"
+           v-if="current_tab==='image' && active_tab_image != 'home_design'"
                 style="
                   width: 100%;
                   display: flex;
@@ -1129,6 +1129,186 @@ Switch Furniture</a-button> -->
                 
               </div>
 
+              <div
+                v-if="
+                  current_tab === 'image' && active_tab_image === 'home_design'
+                "
+                style="
+                  width: 67%;
+                  display: flex;
+                  align-items: center;
+                  justify-content: space-between;
+                  padding: 5px 10px;
+                  height: 40px;
+                  position: absolute;
+                  right: 10;
+                  z-index: 1;
+                "
+              >
+                <!-- Left: Close button -->
+                <div class="right-social-ctrl-sec">
+                  <div
+                    class="right-socialShare-contrl-icon"
+                    :class="{ show: isCollapsed }"
+                    style="padding: none; outline: none; margin: none"
+                    @click="toggleSocialShare"
+                  >
+                    <svg
+                      class="w-6 h-6 text-gray-800 dark:text-white"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      v-if="isCollapsed"
+                    >
+                      <path
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M16.153 19 21 12l-4.847-7H3l4.848 7L3 19h13.153Z"
+                      />
+                    </svg>
+                    <svg
+                      width="27"
+                      height="26"
+                      viewBox="0 0 27 26"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      v-if="!isCollapsed"
+                    >
+                      <path
+                        d="M0.760742 12.5071C0.760742 6.6112 0.760742 3.66325 2.68209 1.83162C4.60346 -1.56944e-07 7.69583 0 13.8806 0C20.0653 0 23.1577 -1.56944e-07 25.0791 1.83162C27.0004 3.66325 27.0004 6.6112 27.0004 12.5071C27.0004 18.403 27.0004 21.351 25.0791 23.1826C23.1577 25.0142 20.0653 25.0142 13.8806 25.0142C7.69583 25.0142 4.60346 25.0142 2.68209 23.1826C0.760742 21.351 0.760742 18.403 0.760742 12.5071Z"
+                        fill="#E33827"
+                      />
+                      <path
+                        d="M18.1919 8.39785L9.57176 16.6154M18.1919 16.6154L9.57176 8.39785"
+                        stroke="white"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </div>
+                </div>
+                <div
+                  class="socialShares-sec"
+                  :class="{ collapsed: isCollapsed }"
+                  style="
+                    width: 98%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    padding: 5px 10px;
+                    height: 40px;
+                  "
+                  v-if="
+                    current_tab === 'image' &&
+                    closeShareMenu &&
+                    active_tab_image === 'home_design'
+                  "
+                >
+                  <!-- Middle: Share section -->
+                  <div
+                    style="
+                      border: 1px solid rgba(0, 0, 0, 0.2);
+                      background: #ffffff;
+                      padding: 3px 12px;
+                      border-radius: 6px;
+                      cursor: pointer;
+                      color: #2a5afc;
+                      display: flex;
+                      align-items: center;
+                      gap: 6px;
+                      font-size: 16px;
+                    "
+                  >
+                    <span style="font-size: 16px; color: #444"
+                      >Share on social:</span
+                    >
+                    <img src="/whatsapp.svg" alt="Whatsapp" class="w-5 h-5"/>
+    <img src="/logos_facebook.svg" alt="Facebook" class="w-5 h-5"/>
+    <img src="/instagram.svg" alt="Instagram" class="w-5 h-5"/>
+                  </div>
+                  <!-- Right: Buttons -->
+                  <div style="display: flex; align-items: center; gap: 12px">
+                    <!-- <a-button
+                      @click="Change_Room_SeeAll()"
+                      style="
+                        border: 1px solid rgba(0, 0, 0, 0.2);
+                        background: #ffffff;
+                        padding: 5px 12px;
+                        border-radius: 6px;
+                        cursor: pointer;
+                        color: #2a5afc;
+                        display: flex;
+                        align-items: center;
+                        gap: 6px;
+                        font-size: 16px;
+                      "
+                    >
+                      <svg
+                        width="19"
+                        height="20"
+                        viewBox="0 0 19 20"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M16.625 15.5417V10.2114C16.625 9.78192 16.5376 9.35689 16.3682 8.9622C16.1987 8.56752 15.9508 8.21143 15.6394 7.9156L10.5909 3.12048C10.2967 2.84093 9.90627 2.68506 9.5004 2.68506C9.09452 2.68506 8.70414 2.84093 8.40988 3.12048L3.36062 7.9156C3.04922 8.21143 2.80126 8.56752 2.63182 8.9622C2.46238 9.35689 2.375 9.78192 2.375 10.2114V15.5417C2.375 15.9617 2.54181 16.3644 2.83875 16.6613C3.13568 16.9582 3.53841 17.1251 3.95833 17.1251H15.0417C15.4616 17.1251 15.8643 16.9582 16.1613 16.6613C16.4582 16.3644 16.625 15.9617 16.625 15.5417Z"
+                          stroke="#3B63FB"
+                          stroke-width="1.5"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                      Change Room
+                    </a-button> -->
+                    <a-button
+                      style="
+                        border: 1px solid rgba(0, 0, 0, 0.2);
+                        background: #ffffff;
+                        padding: 5px 12px;
+                        border-radius: 6px;
+                        cursor: pointer;
+                        color: #2a5afc;
+                        display: flex;
+                        align-items: center;
+                        gap: 6px;
+                        font-size: 16px;
+                      "
+                      @click="downloadImage"
+                    >
+                      <svg
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M12 14.5V4.5M12 14.5C11.2998 14.5 9.99153 12.5057 9.5 12M12 14.5C12.7002 14.5 14.0085 12.5057 14.5 12"
+                          stroke="#3B63FB"
+                          stroke-width="1.5"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                        <path
+                          d="M20 16.5C20 18.982 19.482 19.5 17 19.5H7C4.518 19.5 4 18.982 4 16.5"
+                          stroke="#3B63FB"
+                          stroke-width="1.5"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                      Download
+                    </a-button>
+                  </div>
+                </div>
+              </div>
+
             <!-- Show loading state when room is not ready -->
             <!-- <div v-if="!is_ready || canvasLoading" class="canvas-loading-container">
               <div class="loading-content">
@@ -1410,7 +1590,7 @@ export default {
   
   data() {
     return {
-      
+        brand:'',
        showCreditModal: false,
       creditErrorMessage: "",
 isCollapsed: false,
@@ -1788,6 +1968,28 @@ async  rescaleWallMask(e){
       }
     },
 
+    syncBrandAndReload(brand) {
+    if (!brand) return
+
+    const currentBrand = this.$route.query.brand
+
+    // If same → do nothing
+    if (currentBrand === brand) return
+
+    // Build new URL with updated query
+    const newQuery = {
+      ...this.$route.query,
+      brand
+    }
+
+    const resolved = this.$router.resolve({
+      path: this.$route.path,
+      query: newQuery
+    })
+
+    // FULL page refresh
+    window.location.href = resolved.href
+  },
     // ==========================================
     // ROOM DATA FETCHING
     // ==========================================
@@ -1811,7 +2013,12 @@ async  rescaleWallMask(e){
 
           this.is_rendered_walls_mask = responseData.data.is_rendered_walls_mask;
           this.is_rendered_objects_mask = responseData.data.is_rendered_objects_mask;
-          
+          if (responseData?.data?.brand) {
+            this.brand = responseData.data.brand
+            this.syncBrandAndReload(this.brand )
+
+          }
+
           this.new_room_rendering_completed_percentage=  responseData.data.completed_percentage;
           this.base_image_url = this.$store.state.root_media_api + responseData.data.main_image;
           this.is_ready = responseData.data.is_ready;

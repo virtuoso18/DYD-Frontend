@@ -158,7 +158,7 @@ export default {
         // Check if user is authenticated
         const token = localStorage.getItem("token");
         if (!token) {
-          message.warning("Please login to add favorites");
+          this.$message.warning("Please login to add favorites");
           return;
         }
 
@@ -187,16 +187,16 @@ export default {
           product.is_favorited = !product.is_favorited;
           
           if (product.is_favorited) {
-            message.success("Added to favorites");
+            this.$message.success("Added to favorites");
           } else {
-            message.success("Removed from favorites");
+            this.$message.success("Removed from favorites");
           }
         } else {
-          message.error(data.message || "Failed to update favorite");
+          this.$message.error(data.message || "Failed to update favorite");
         }
       } catch (error) {
         console.error("Failed to toggle favorite:", error);
-        message.error("Failed to update favorite");
+        this.$message.error("Failed to update favorite");
       } finally {
         product.favoriting = false;
       }

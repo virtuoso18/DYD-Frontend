@@ -37,6 +37,7 @@
                 <div style="border:1px solid rgba(0,0,0,0.1);padding: 5px;border-radius:10px;">
                     <img :src="this.$store.state.root_media_api+design.image" style="width:100%;border-radius:10px;max-height:200px;object-fit:cover" alt="" @click="show_design_details(design.id)">
                     <a-row style="padding-top:5px">
+                        <!-- {{ design }} -->
                         <a-col :span="22" >
                             <a-tag>Room : {{  design.room_type }}</a-tag>
                             <a-tag>Style : {{ design.room_design_type }}</a-tag>
@@ -206,12 +207,21 @@
                                                         </a-col>
         
                                                         <a-col span="17">
-                                                            <a-button block @click="viewProduct(product)">Product Details</a-button>
+                                                            <!-- {{ product }} -->
+                                                            <a-button block @click="goto_product_Route(product)">Product Details</a-button>
                                                         </a-col>
                                                         
                                                         <a-col span="1"></a-col>
                                                         <a-col span="4">
-                                                            <a-button><HeartOutlined /></a-button>
+                                                            <!-- {{product.is_favorited}} -->
+                                                            <a-button  size="medium"  @click="toggleFavorite(product)" style="display:flex;justify-content: center;align-items:center;">
+                  <template v-if="product.is_favorited">
+                    <HeartFilled style="color: red" />
+                  </template>
+                  <template v-else>
+                    <HeartOutlined />
+                  </template>
+                  </a-button>
                                                         </a-col>
                                                     </a-row>
                                                 </div>
@@ -228,6 +238,7 @@
 import {HeartOutlined,DeleteOutlined, EditOutlined,
     ArrowLeftOutlined,
     SaveOutlined,
+    HeartFilled,
 CloseOutlined
     
 } from '@ant-design/icons-vue'
@@ -245,6 +256,7 @@ data(){ return {
 }},
 components:{
     HeartOutlined,
+    HeartFilled,
     DeleteOutlined,
     EditOutlined,
     ArrowLeftOutlined,
@@ -256,6 +268,78 @@ CloseOutlined
         this.loadMyDesignes()
     },
     methods:{
+        
+    async toggleFavorite(product) {
+      try {
+        // Check if user is authenticated
+        const token = localStorage.getItem("token");
+        if (!token) {
+          this.$message.warning("Please login to add favorites");
+          return;
+        }
+
+        product.favoriting = true;
+
+        const response = await fetch(
+          `${this.$store.state.root_api}likes/favorites/toggle/`,
+
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Token ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              id: product.product_id,
+              type: product.product_type
+            })
+          }
+        );
+
+        const data = await response.json();
+        if (data.success) {
+            // Toggle the favorite status
+            product.is_favorited = !product.is_favorited;
+            // this.loadMyDesignes()
+            
+          if (product.is_favorited) {
+            this.$message.success("Added to favorites");
+          } else {
+            this.$message.success("Removed from favorites");
+          }
+        } else {
+          this.$message.error(data.message || "Failed to update favorite");
+        }
+      } catch (error) {
+        console.error("Failed to toggle favorite:", error);
+        this.$message.error("Failed to update favorite");
+      } finally {
+        product.favoriting = false;
+      }
+    },
+
+         goto_product_Route(product){
+            //  debugger
+                console.log(product)
+                let product_type= product.product_type
+                if(product.product_type==='light'){
+                product_type='product'
+                }
+                if(product.product_type==='floor_texture'){
+                product_type='floor'
+                }        
+                if(product.product_type==='wall_texture'){
+                product_type='wall'
+                }
+            this.$router.push({
+            name: 'buisness_product',
+            params: {
+                buisness_name: product.business_slug,
+                product_type: product_type,
+                product_id: product.product_id
+            }
+            })
+    },
         businessUrl(business_slug) {
       return window.location.origin + '/' + business_slug;
     },
@@ -430,6 +514,7 @@ async save_Design() {
 
         show_design_details(design_id){
             this.view_type='details',
+            console.log(design_id)
             this.loadDesignDetails(design_id)
         },
         

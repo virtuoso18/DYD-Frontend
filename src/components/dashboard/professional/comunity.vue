@@ -1006,7 +1006,7 @@ export default {
         produuct_type='wall'
       }
       else{
-        produuct_type=product.type
+        produuct_type=product.product_type
       }
       this.$router.push({
       name: 'buisness_product',

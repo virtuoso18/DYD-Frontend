@@ -200,7 +200,7 @@
   <a-modal
   v-model:open="openGrantProfessionalAccessModal"
   centered
-  title="Grant Access to Professional"
+  title="Grant Access to Employee"
   width="500px"
   @ok="handleGrantProfessionalAccess"
   okText="Send Request"
@@ -208,10 +208,10 @@
   :confirmLoading="sendingProfessionalAccessRequest"
 >
   <a-form layout="vertical">
-    <a-form-item label="Professional Email" required>
+    <a-form-item label="Employee Email" required>
       <a-input
         v-model:value="professionalAccessForm.professional_email"
-        placeholder="Enter professional user email"
+        placeholder="Enter employee user email"
         size="large"
         type="email"
       />
@@ -220,7 +220,7 @@
     <a-form-item label="Request Message" required>
       <a-textarea
         v-model:value="professionalAccessForm.request_message"
-        placeholder="Explain why you need this professional's access..."
+        placeholder="Explain why you need this employee's access..."
         :rows="4"
         size="large"
       />
@@ -246,7 +246,7 @@
   >
     <div style="text-align: center; padding: 20px;">
       <p style="font-size: 16px; margin-bottom: 30px;">
-        <strong>Phone:</strong> {{ selectedEmployee?.phone }}
+        <strong>Phone:</strong> {{ staff_details.phone || 'Unavailable' }}
       </p>
       <div style="display: flex; gap: 10px; justify-content: center;">
         <a-button
@@ -270,8 +270,8 @@
   </a-modal>
 
   <!-- Mail Modal -->
-  <a-modal
-  v-if="this.staff_details"
+  <!-- <a-modal
+  v-if="this.staff_details "
 
     v-model:open="open_Mail_employee_modal"
     centered
@@ -280,7 +280,18 @@
     @ok="sendEmail"
     okText="Send"
     cancelText="Cancel"
-  >
+  > -->
+  <a-modal
+  v-if="this.staff_details"
+  v-model:open="open_Mail_employee_modal"
+  centered
+  title="Send Email"
+  width="500px"
+  @ok="sendEmail"
+  okText="Send"
+  cancelText="Cancel"
+  :ok-button-props="{ loading: isEmailSending }"
+>
     <a-form layout="vertical">
       <a-form-item label="To">
         <a-input
@@ -499,7 +510,7 @@
     class="ml-3 max-sm:ml-2 max-sm:!px-2 max-sm:!py-1 max-sm:!text-xs max-sm:!h-auto"
   >
     <a-icon type="user-add" />
-    Grant Professional Access
+    Grant Employee Access
   </a-button>
         </a-col>
       </a-row>
@@ -600,15 +611,15 @@
     <div class="page-header">
       <a-row type="flex" justify="space-between" align="middle">
         <a-col>
-          <a-button @click="backToManageAccess">
+          <a-button @click="backToManageAccess" style="display: flex;justify-content: center;align-items: center;">
             
             <LeftOutlined />
           </a-button>
         </a-col>
         <a-col>
           <a-space>
-            <a-button type="primary" @click="showStaffDetails(this.staff_details.email)"><RedoOutlined />Refresh</a-button>
-            <a-button type="primary" @click="showCreateNewtaskModal(this.staff_details)"><RedoOutlined />Create New Task</a-button>
+            <a-button type="primary" @click="showStaffDetails(this.staff_details.email)" style="display:flex;justify-content: center;gap:10px;"><RedoOutlined style="margin-top:4px;" />Refresh</a-button>
+            <a-button type="primary" @click="showCreateNewtaskModal(this.staff_details)"   style="display:flex;justify-content: center;gap:10px;"><PlusSquareOutlined  style="margin-top:4px;" />Create New Task</a-button>
           </a-space>
         </a-col>
         <a-col :span="24">
@@ -1007,6 +1018,9 @@
               <a-tab-pane key="tasks" tab="Tasks Assigned">
 
                 <task_List :tasks="staff_details.tasks"/>
+                <div v-if="staff_details.tasks.length===0" style="display:flex;justify-content: center;align-items: center;height:100%;">
+                  <a-empty description="No tasks got assigned."></a-empty>
+                </div>
               </a-tab-pane>
               <a-tab-pane key="access-logs" tab="Access Logs">
                 <div >
@@ -1053,20 +1067,20 @@
                   <br>
                     <h4>Name: <span>{{staff_details.name}}</span></h4>
                     <h4 v-if="staff_details.phone_number">Phone: <span>{{staff_details.phone_number}}</span></h4>
-                    <h4 v-if="staff_details.date_joined">Created At: <span>{{staff_details.date_joined}} </span></h4>
+                    <h4 v-if="staff_details.date_joined">Created At: <span>{{formatDate(staff_details.date_joined)}} </span></h4>
                   <br>
                    <div style="display:flex;gap:6px;justify-content:center;">
-                    <a-button type="default" shape="circle" @click.stop="show_Phone_employee_modal()">
+                    <!-- <a-button type="default" shape="circle" @click.stop="show_Phone_employee_modal()">
                       <PhoneOutlined />
-                    </a-button>
-                    <a-button type="default" shape="circle" @click.stop="show_Mail_employee_modal()">
+                    </a-button> -->
+                    <a-button type="default" shape="circle" @click.stop="show_Mail_employee_modal()" style="display:flex;justify-content:center;align-items:center">
                       <MailOutlined />
                     </a-button>
                     <!-- <a-button type="default" shape="circle" @click.stop="show_Edit_employee_modal()">
                       <EditOutlined />
                     </a-button> -->
                     <!-- <a-button type="primary" danger shape="circle" @click.stop="show_Delete_employee_modal()"> -->
-                      <a-button type="primary" danger shape="circle" @click.stop="show_Delete_employee_modal(staff_details.id)">
+                      <a-button type="primary" danger shape="circle" @click.stop="show_Delete_employee_modal(staff_details.id)" style="display:flex;justify-content:center;align-items:center">
                       <DeleteOutlined />
                     </a-button>
                   </div>
@@ -1085,7 +1099,7 @@
   </div>
 </template>
 <script>
-import { EditOutlined,DeleteOutlined ,LeftOutlined,  PhoneOutlined,MailOutlined,RedoOutlined} from '@ant-design/icons-vue';
+import { EditOutlined,DeleteOutlined ,LeftOutlined,PlusSquareOutlined,  PhoneOutlined,MailOutlined,RedoOutlined} from '@ant-design/icons-vue';
 
 import task_List from '@/components/store/tasks_assigned_list.vue'
 export default {
@@ -1113,7 +1127,8 @@ export default {
     return {
       openGrantProfessionalAccessModal: false,
       sendingProfessionalAccessRequest: false,
-      
+          isEmailSending: false,
+
       professionalAccessForm: {
         professional_email: '',
         request_message: ''
@@ -1248,8 +1263,20 @@ export default {
       staff_access_id: null, 
     };
   },
-  components:{EditOutlined,DeleteOutlined ,LeftOutlined,  PhoneOutlined,MailOutlined,RedoOutlined,task_List},
+  components:{EditOutlined,DeleteOutlined ,LeftOutlined,  PhoneOutlined,MailOutlined,RedoOutlined,PlusSquareOutlined,task_List},
   methods: {
+     formatDate(isoDate) {
+    if (!isoDate) return '-'
+
+    return new Date(isoDate).toLocaleString(undefined, {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    })
+  },
     /**
      * Updated customRow method to properly pass record and handle clicks
      * This returns an object with click handler and styling for table rows
@@ -1586,17 +1613,48 @@ export default {
       }
     },
     
-    sendEmail() {
-      if (!this.mailForm.subject.trim() || !this.mailForm.message.trim()) {
-        this.$message.error('Subject and message are required');
-        return;
+   async sendEmail() {
+  if (!this.mailForm.subject.trim() || !this.mailForm.message.trim()) {
+    this.$message.error('Subject and message are required');
+    return;
+  }
+  
+  this.isEmailSending = true; // START LOADING
+  
+  try {
+    const token = localStorage.getItem('token');
+    
+    if (!token) {
+      this.$message.warning('Please login to add favorites');
+      return;
+    }
+    
+    const response = await fetch(
+      `${this.$store.state.root_api}access-engine/api/email/send/`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Token ${token}`,
+        },
+        body: JSON.stringify({
+          'receiver_email': this.staff_details.email,
+          'email_text': this.mailForm.message,
+          'subject': this.mailForm.subject,
+        }),
       }
-      
+    );
+
+    if (response.status === 200) {
       console.log('Email sent:', this.mailForm);
       this.$message.success('Email sent successfully');
       this.open_Mail_employee_modal = false;
       this.resetMailForm();
-    },
+    }
+  } finally {
+    this.isEmailSending = false; // STOP LOADING
+  }
+},
     
     openEditModal(employee) {
       this.selectedEmployee = employee;

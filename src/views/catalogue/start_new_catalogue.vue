@@ -55,12 +55,20 @@
     :key="histry_card.id"
     class="p-[5px]"
   >
-    {{ $route.query.brand }}
+  <!-- {{ histry_card.brand }} -->
+    <!-- {{ $route.query.brand }} -->
 
-    <router-link
+    <!-- <router-link
       :to="
         $route.query.brand
           ? `/update-catalogue/${histry_card.id}?brand=${$route.query.brand}`
+          : `/update-catalogue/${histry_card.id}`
+      "
+    > -->
+    <router-link
+      :to="
+        $route.query.brand
+          ? (histry_card.brand ? `/update-catalogue/${histry_card.id}?brand=${histry_card.brand}` : `/update-catalogue/${histry_card.id}?brand=${$route.query.brand}`)
           : `/update-catalogue/${histry_card.id}`
       "
     >
@@ -200,7 +208,7 @@ export default {
         this.$message.error("Only image files allowed!");
         return false;
       }
-      
+
       if (!isValidSize) {
         this.$message.error("Image must be smaller than 10MB!");
         return false;
@@ -220,6 +228,13 @@ export default {
         // Create FormData for multipart upload
         const formData = new FormData();
         formData.append('base_image', file);
+        if(this.$route.query.brand){
+          formData.append('business_owner',this.$route.query.brand);
+          
+          console.log(this.$route.query.brand)
+          // return 
+        }
+        
 
         // Create AbortController for timeout
         const controller = new AbortController();

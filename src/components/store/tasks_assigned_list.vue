@@ -24,6 +24,7 @@
                 :key="task.id" 
                 class="task-item"
             >
+            <!-- {{ task }} -->
                 <div class="task-header">
                     <span 
                         class="status-badge"

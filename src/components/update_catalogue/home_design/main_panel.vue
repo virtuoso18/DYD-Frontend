@@ -1,5 +1,6 @@
 <template>
-    
+    <a-row>
+      <a-col :sm="24" :xs="24" :lg="0" :md="0">
           <div style="background:white;display:flex;align-items:center;justify-content:space-between;padding:5px 10px;height:40px;;background-color: #f3f3f6;" v-if="closeShareMenu">
   
   <!-- Left: Share section -->
@@ -80,7 +81,8 @@
 </div>
   </div>
 </div>
-
+</a-col>
+</a-row>
 
 <div class="main-panel" :style="{ minHeight: panelHeight }" style="max-height:70vh">
             <div class="image-grid" :class="gridClass">

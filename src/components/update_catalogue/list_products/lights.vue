@@ -391,8 +391,8 @@ export default {
 }
 
 .filter-btn.active {
-  background: #1890ff;
-  border-color: #1890ff;
+  background: #3B63FB;
+  border-color: #3B63FB;
 }
 
 .filter-btn.active svg path,

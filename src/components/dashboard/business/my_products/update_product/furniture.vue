@@ -353,9 +353,9 @@
     <div
       @click="setPrimaryColor(color.id, color.color)"
       :style="{
-        width: '36px',
-        height: '36px',
-        borderRadius: '8px',
+        width: '58px',
+        height: '58px',
+        borderRadius: '5px',
         backgroundColor: color.color,
         cursor: 'pointer',
         border: productForm.colors.primary_color === color.color || color.is_primary
@@ -445,7 +445,7 @@
         @change="addColor(customColor)" 
         style="opacity: 0; position: absolute; width: 36px; height: 36px; cursor: pointer;" 
       />
-      <div style="width: 36px; height: 36px; border-radius: 8px; border: 2px dashed #d1d5db; display: flex; align-items: center; justify-content: center; cursor: pointer; background: #f9fafb;">
+      <div style="width: 58px; height: 58px; border-radius: 8px; border: 2px dashed #d1d5db; display: flex; align-items: center; justify-content: center; cursor: pointer; background: #f9fafb;">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2">
           <line x1="12" y1="5" x2="12" y2="19"></line>
           <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -469,8 +469,8 @@
   <div
     @click="selectTexture(texture.id)"
     :style="{
-      width: '48px',
-      height: '36px',
+      width: '58px',
+      height: '58px',
       borderRadius: '8px',
       backgroundImage: `url(${$store.state.root_media_api + texture.texture})`,
       backgroundSize: 'cover',
@@ -511,7 +511,7 @@
 
 
                 <!-- Add Texture -->
-                <div @click="uploadTexture" style="width: 48px; height: 36px; border-radius: 8px; border: 2px dashed #d1d5db; display: flex; align-items: center; justify-content: center; cursor: pointer; background: #f9fafb;">
+                <div @click="uploadTexture" style="width: 58px; height: 58px; border-radius: 8px; border: 2px dashed #d1d5db; display: flex; align-items: center; justify-content: center; cursor: pointer; background: #f9fafb;">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2">
                     <line x1="12" y1="5" x2="12" y2="19"></line>
                     <line x1="5" y1="12" x2="19" y2="12"></line>

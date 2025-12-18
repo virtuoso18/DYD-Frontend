@@ -130,7 +130,9 @@
 </div>
 
         <a-col :xs="24" :sm="24" :md="12" :lg="12" style="padding: 10px">
-          <img
+          <!-- {{selected_design.data}} -->
+          <a-image
+          
             :src="this.$store.state.root_media_api + selected_design.data.image"
             style="
               width: 100%;
@@ -200,6 +202,7 @@
               "
               style="flex-shrink: 0"
             />
+            
             <span style="font-size: 15px; font-weight: 600">{{
               selected_design.data.business_name
             }}</span>
@@ -212,9 +215,9 @@
       <!-- Image -->
       <div class="flex-shrink-0">
         <img 
-          :src="projectImage" 
+          :src="this.$store.state.root_media_api + selected_design.data.image" 
           alt="Project"
-          class="w-24 h-24 rounded-lg object-cover"
+          class="w-24 h-18 rounded-lg object-fill"
         />
       </div>
 
@@ -237,9 +240,10 @@
     </div>
 
     <!-- Share Button -->
-    <button 
+    <a-button type="primary"
       @click="shareOnCommunity"
-      class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-4 px-6 rounded-xl flex items-center justify-center gap-3 transition-all duration-300 shadow-md hover:shadow-lg"
+      size="large"
+      block style="margin-top:10px;display:flex;justify-content: center;align-items: center;gap:8px;"
     >
       <svg 
         class="w-5 h-5" 
@@ -258,7 +262,7 @@
     font-family: var(--font-family-main);
         "
     >Share on community</span>
-    </button>
+    </a-button>
   </div>
         </a-col>
         <a-col :xs="24" :sm="24" :md="12" :lg="12" style="padding: 10px" v-else>
@@ -410,14 +414,13 @@
                     ${{ product.product_price }}
                   </a-col>
 
-                  <a-col span="17">
+                  <!-- <a-col span="18">
                     <a-button block @click="viewProduct(product)"
                       >Product Details</a-button
                     >
                   </a-col>
 
-                  <a-col span="1"></a-col>
-                  <a-col span="4">
+                  <a-col span="6">
                       <a-button @click="toggleFavorite(product.product_id,product.product_type,product)">
                                                                     <template v-if="product.is_favorited">
                                                                     <HeartFilled style="color: red" />
@@ -426,7 +429,38 @@
                                                                     <HeartOutlined />
                                                                     </template>
                                                 </a-button>
-                  </a-col>
+                  </a-col> -->
+                  <div class="flex items-center gap-2 w-full">
+                          <!-- Product Details Button - 75% width (18/24) -->
+                          <div class="w-3/4">
+                            <button
+                              @click="goto_product_Route(product)"
+                                class="w-full py-2 px-4 bg-white border border-gray-300 rounded hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500 transition-colors whitespace-nowrap"
+                              style="
+                                font-family: 'Poppins', sans-serif;
+                                font-size: 12px;
+                              "
+                            >
+                              Product Details
+                            </button>
+                          </div>
+
+                          <!-- Like Button - 25% width (6/24) -->
+                          <div class="w-1/4 flex items-end justify-end">
+                            <button
+                              @click="toggleFavorite(product.product_id,product.product_type,product)"
+                              class="bg-white !py-2.5 border border-gray-300 rounded hover:bg-gray-50 hover:border-blue-500 transition-colors flex items-center justify-center"
+                              style="padding: 2px 12px"
+                            >
+                              <template v-if="product.is_favorited">
+                                <HeartFilled style="color: red" />
+                              </template>
+                              <template v-else>
+                                <HeartOutlined />
+                              </template>
+                            </button>
+                          </div>
+                        </div>
                 </a-row>
               </div>
             </a-col>
@@ -473,6 +507,68 @@ export default {
     this.loadMyDesignes();
   },
   methods: {
+    
+    async toggleFavorite(product_id, product_type, product) {
+      try {
+        const token = localStorage.getItem('token');
+        
+        // Check if user is authenticated
+        if (!token) {
+          this.$message.warning('Please login to add favorites');
+          return;
+        }
+        
+        const response = await fetch(
+          `${this.$store.state.root_api}likes/favorites/toggle/`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Token ${token}`,
+            },
+            body: JSON.stringify({
+              id: product_id,
+              type: product_type,
+            }),
+          }
+        );
+        // debugger
+        const data = await response.json();
+
+        // Update the product's favorite status
+        product.is_favorited = data.favorited;
+        
+        // Show success message
+        const message = data.favorited ? 'Added to favorites' : 'Removed from favorites';
+        this.$message.success(message);
+
+      } catch (error) {
+        console.error("Favorite toggle failed", error);
+        this.$message.error('Failed to update favorite');
+      }
+    },
+    goto_product_Route(product){
+      let produuct_type='product'
+      if (product.product_type=='light'){
+        produuct_type='product'
+      }else if (product.product_type=='floor_texture'){
+        produuct_type='floor'
+      }else if (product.product_type=='wall_texture'){
+        produuct_type='wall'
+      }
+      else{
+        produuct_type=product.product_type
+      }
+      this.$router.push({
+      name: 'buisness_product',
+      params: {
+        buisness_name: this.selected_design.data.business_slug,
+        product_type: produuct_type,
+        product_id: product.product_id
+      }
+    })
+  
+    },
     async delete_Design() {
       console.log("Delete design button clicked");
 
@@ -684,34 +780,7 @@ export default {
       this.view_type = "all";
       this.selected_design = null;
     },
-    async toggleFavorite(product_id,product_type,product) {
-        try {
-            const token = localStorage.getItem('token');
-            
-            const response = await fetch(
-                
-            `${this.$store.state.root_api}likes/favorites/toggle/`,
-            {
-                method: "POST",
-                headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Token ${token}`,
-                },
-                body: JSON.stringify({
-                id: product_id,
-                type: product_type,
-                }),
-            }
-            );
-
-            const data = await response.json();
-
-            product.is_favorited = data.favorited;
-
-        } catch (error) {
-            console.error("Favorite toggle failed", error);
-        }
-        }
+    
   },
 };
 </script>

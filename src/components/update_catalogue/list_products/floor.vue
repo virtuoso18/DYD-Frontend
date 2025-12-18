@@ -65,12 +65,14 @@
       <!-- Product Grid/List -->
       <div v-if="!loading || catalogItems.length > 0" class="product-container" :class="{ 'grid-view': showGrid, 'list-view': !showGrid }">
         
+        <!-- border:1px solid rgba(128, 128, 128, 0.14); -->
         <div v-for="(item, index) in catalogItems" :key="index" style="
-background: #ffffff;
+background: #f2f2f2;
 border: none;
 border-radius: 4px;
-padding:2px;
-border:1px solid rgba(128, 128, 128, 0.14);" @click="selectTexture(item.id)"
+padding:5px;
+"
+ @click="selectTexture(item.id)"
 :style="selected_texture===item.id ? 'border:1px solid blue': ''">
           <div class="product-item">
 
@@ -98,12 +100,12 @@ border:1px solid rgba(128, 128, 128, 0.14);" @click="selectTexture(item.id)"
 
           <a-row>
             <a-col :span="18" style="padding-right:5px">
-              <a-button block type="default" @click="this.$router.push('/'+item.business_slug+'/'+'floor'+'/'+item.id)" >
+              <a-button  block type="default" @click="this.$router.push('/'+item.business_slug+'/'+'floor'+'/'+item.id)"  style=" border: none;">
                 Product Detail
               </a-button>
             </a-col>
             <a-col :span="6" style="">
-              <a-button block type="default" style="padding:0;display: flex;justify-content: center;align-items: center;">
+              <a-button  block type="default" style="padding:0;display: flex;justify-content: center;align-items: center; border: none;">
                   <HeartOutlined />
               </a-button>
             </a-col>
@@ -383,8 +385,8 @@ export default {
 }
 
 .filter-btn.active {
-  background: #1890ff;
-  border-color: #1890ff;
+  background: #3B63FB;
+  border-color: #3B63FB;
 }
 
 .filter-btn.active svg path,

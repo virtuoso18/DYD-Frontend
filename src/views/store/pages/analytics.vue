@@ -248,7 +248,7 @@ export default {
 
         if (response.ok && data.success) {
           this.analyticsData = data.data
-          this.$message.success('Analytics data loaded successfully')
+          // this.$message.success('Analytics data loaded successfully')
         } else {
           this.$message.error(data.message || 'Failed to fetch analytics')
         }
@@ -306,7 +306,7 @@ export default {
           })
           
           console.log('Final productsData:', this.productsData)
-          this.$message.success('Top products loaded successfully')
+          // this.$message.success('Top products loaded successfully')
         } else {
           this.$message.error(data.message || 'Failed to fetch top products')
         }
