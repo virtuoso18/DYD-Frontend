@@ -359,14 +359,14 @@
                 <!-- {{ truncateText(product.description || 'No description available', 8) }} -->
 
                 <a-row>
-              <div
+                           <a-col :span="24"
   class="overflow-x-auto whitespace-nowrap hide-scrollbar"
   style="max-width: 200px;"
 >
   <b class="font-light !text-gray-700 inline-block">
     {{ product.product_title }}
   </b>
-</div>
+</a-col>
 
 
 

@@ -61,11 +61,10 @@
       <!-- Product Grid/List -->
       <div v-if="!loading || catalogItems.length > 0" class="product-container" :class="{ 'grid-view': showGrid, 'list-view': !showGrid }">
         <div v-for="(item, index) in catalogItems" :key="index" style="
-background: #ffffff;
+ background: #f2f2f2;
 border: none;
 border-radius: 4px;
-padding:2px;
-border:1px solid rgba(128, 128, 128, 0.14);" @click="selectTexture(item.id)"
+padding:5px;" @click="selectTexture(item.id)"
 :style="selected_texture===item.id ? 'border:1px solid blue': ''">
          <div class="product-item relative">
   <div class="product-image relative">
@@ -78,12 +77,12 @@ border:1px solid rgba(128, 128, 128, 0.14);" @click="selectTexture(item.id)"
       Wall Texture
     </div>
 
-    <div class="absolute top-2  rounded-md right-2 z-10 !text-white"
+    <!-- <div class="absolute top-2  rounded-md right-2 z-10 !text-white"
          style="padding:3px;background-color: grey;
          padding-left:5px;padding-right:5px;padding-top:1px;
          height:22px;font-size:12px">
       AR
-    </div>
+    </div> -->
 
     <img :src="this.$store.state.root_media_api+item.texture_image" :alt="item.title" />
   </div>
@@ -117,12 +116,12 @@ border:1px solid rgba(128, 128, 128, 0.14);" @click="selectTexture(item.id)"
 
           <a-row>
             <a-col :span="18" style="padding-right:5px">
-              <a-button block type="default" @click="this.$router.push('/'+item.business_slug+'/'+'wall'+'/'+item.id)" >
+              <a-button block type="default" @click="this.$router.push('/'+item.business_slug+'/'+'wall'+'/'+item.id)" style="border: none;">
                 Product Detail
               </a-button>
             </a-col>
             <a-col :span="6" style="">
-              <a-button block type="default" style="padding:0;display: flex;justify-content: center;align-items: center;">
+              <a-button block type="default" style="padding:0;display: flex;justify-content: center;align-items: center;border: none;">
                 <HeartOutlined style="margin:0" />
               </a-button>
             </a-col>

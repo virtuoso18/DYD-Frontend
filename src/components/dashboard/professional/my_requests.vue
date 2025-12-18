@@ -4,15 +4,14 @@
   -translate-y-14
          sm:main 
          min-h-[100vh] 
-         md:min-h-[136vh] 
          md:border border-gray-300 
          sm:translate-y-3 
          sm:rounded-xl 
          p-4 
          bg-white
          border-gray-200 
-         xl:min-h-[170vh] 
-         2xl:min-h-[150vh]"
+         
+         "
   v-if="page_view === 'list_all_requests'"
 >
     <div class="header">

@@ -1,5 +1,5 @@
 <template>
-  <div class="sm:main min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh] sm:p-0 " >
+  <div class="sm:main bg-white min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh] sm:p-0 " style="border-radius: 12px;padding:10px;margin-top:15px;border:1px solid rgba(0,0,0,0.1);" >
     <!-- Loading State -->
     <div v-if="loading" style="text-align: center; padding: 40px">
       <a-spin size="large" />
@@ -9,7 +9,7 @@
     <!-- Posts Grid View -->
     <a-row v-if="selectedPost == null" >
       <a-col :span="24"  >
-        <div style="background-color: white;border-radius: 12px;padding:10px;margin-top:15px;border:1px solid rgba(0,0,0,0.1);">
+        <div >
 
         <h3>My Community</h3>
         <div> 
