@@ -27,17 +27,18 @@
     <!-- Designs List -->
     <a-col :lg="8" :md="8" :xs="24" :sm="24" style="padding:5px;" v-for="design in my_designes" :key="design.id" v-if="my_designes.length > 0">
         <div style="border:1px solid rgba(0,0,0,0.1);padding: 5px;border-radius:10px;">
+          <!-- {{ design }} -->
             <img :src="this.$store.state.root_media_api+design.image" style="width:100%;border-radius:10px;max-height:200px;object-fit:cover" alt="" @click="show_design_details(design.id)">
             <a-row style="padding-top:5px">
                 <a-col :span="22" >
                     <a-tag>Room : {{  design.room_type }}</a-tag>
                     <a-tag>Style : {{ design.room_design_type }}</a-tag>
                 </a-col>
-                <a-col :span="2">
+                <!-- <a-col :span="2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="15px" height="15px" viewBox="0 0 16 16" fill="#000000" class="bi bi-three-dots-vertical">
                         <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
                     </svg>
-                </a-col>
+                </a-col> -->
             </a-row>
         </div>
     </a-col>
@@ -338,10 +339,10 @@
               v-for="product in selected_design.data.products_used"
               :key="product.id"
               class="product-responsive"
-              style="padding: 5px"
+              style="padding: 4px"
             >
               <!-- {{product.product_colors}} -->
-              <div class="product">
+              <div class="product" style="padding: 3px">
                 <div
                   class="product-image-container"
                   @click="viewProduct(product)"
@@ -766,9 +767,10 @@ export default {
         );
 
         const result = await response.json();
+        console.log(result)
         this.selected_design = result;
 
-        this.description_room = this.selected_design.data.room_description;
+        this.description_room = this.selected_design.data.room_description ;
         this.room_design_type_select = this.selected_design.data.room_type;
         this.room_type_select = this.selected_design.data.room_design_type;
       } catch (error) {

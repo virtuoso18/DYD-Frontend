@@ -4,7 +4,7 @@
     <!-- Hero Section -->
     <section class="relative h-[500px] md:h-[600px] bg-gray-100 overflow-hidden">
       <img 
-        src="../../assets/API1.svg" 
+        src="../../assets/API1.jpg" 
         alt="API Hero" 
         class="w-full h-full object-cover"
       />

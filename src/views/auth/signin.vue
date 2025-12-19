@@ -52,17 +52,21 @@
           class="continue-btn"
           :disabled="loading"
           block
+          
           @click="Submit_Login"
         >
+        <a-space>
+
           <a-spin
-            v-if="loading"
-            :spinning="loading"
-            :indicator="indicator"
-            class="mx-2"
+          v-if="loading"
+          :spinning="loading"
+          :indicator="indicator"
+          class="mx-2"
           />
-          <span class="text-white">
+          <span class="text-white" style="margin-top:5px">
             {{ loading ? "Logging in..." : "Continue" }}
           </span>
+        </a-space>
         </a-button>
 
         <div class="divider">

@@ -445,7 +445,7 @@
         @change="addColor(customColor)" 
         style="opacity: 0; position: absolute; width: 36px; height: 36px; cursor: pointer;" 
       />
-      <div style="width: 58px; height: 58px; border-radius: 8px; border: 2px dashed #d1d5db; display: flex; align-items: center; justify-content: center; cursor: pointer; background: #f9fafb;">
+      <div style="margin-top:-5px;width: 58px; height: 58px; border-radius: 8px; border: 2px dashed #d1d5db; display: flex; align-items: center; justify-content: center; cursor: pointer; background: #f9fafb;">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2">
           <line x1="12" y1="5" x2="12" y2="19"></line>
           <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -511,7 +511,7 @@
 
 
                 <!-- Add Texture -->
-                <div @click="uploadTexture" style="width: 58px; height: 58px; border-radius: 8px; border: 2px dashed #d1d5db; display: flex; align-items: center; justify-content: center; cursor: pointer; background: #f9fafb;">
+                <div @click="uploadTexture" style="margin-top:25px;width: 58px; height: 58px; border-radius: 8px; border: 2px dashed #d1d5db; display: flex; align-items: center; justify-content: center; cursor: pointer; background: #f9fafb;">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2">
                     <line x1="12" y1="5" x2="12" y2="19"></line>
                     <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -533,9 +533,9 @@
 <a-modal 
   v-model:visible="colorEditPopupVisible" 
   
-    width="900px"
+    
   centered
-  height="500px"
+  style="width:900px;min-height:500px"
 >
 
   <template #title >
@@ -553,6 +553,7 @@
   </template>
   <template #footer >
     <a-button @click="closeColorEditPopup">Cancel</a-button>
+    
     <a-button type="primary" @click="updateColor" :disabled="!uploaded3dModelFile">Update</a-button>
   </template>
   <div style="text-align: center;">
@@ -600,7 +601,7 @@
     <!-- Selected Color Display -->
 
     </a-col>
-  <a-col :span="upload3dModelFrom==='Generated3d_Models_History' ? 12: 24" >
+  <a-col :span="24" v-if="upload3dModelFrom!=='Generated3d_Models_History'" style="min-height:400px"  >
     <div style="">
         <div style="">
           
@@ -683,10 +684,23 @@
         </div>
       </div>
   </a-col>
-   <a-col :span="upload3dModelFrom==='Generated3d_Models_History' ? 12: 0" >
-    <div v-if="upload3dModelFrom==='Generated3d_Models_History'" style="display: flex;justify-content:center;align-items:center;height:100%">
-      Comming Soon
-    </div>
+   <a-col :span="24" v-if="upload3dModelFrom==='Generated3d_Models_History'" style="min-height:400px"  >
+      <a-row>
+        <a-col :sm="24" :xs="24" :md="12" :lg="12">
+            <history_model_preview_3d 
+                :glbModelUrl="this.selected_color_model_url"
+                :Model_instance_id="selectedProduct.id"
+                style="width: 100%; min-height: 300px; height: 100%; border-radius: 10px"
+              />
+        </a-col>
+        <a-col :sm="24" :xs="24" :md="12" :lg="12">
+          <select3d_model_for_color :list_history_generated_3d_models="list_history_generated_3d_models"
+:loading_generated_models_history="loading_generated_models_history" @clicked-model="clickedModel"/>
+        </a-col>
+      </a-row>
+
+<!-- {{list_history_generated_3d_models }} -->
+      
     <div>
 
     </div>
@@ -709,10 +723,11 @@
 
 <script>
 import canvas_3d_model_renderer from "@/components/store/canvas_3d_model_renderer.vue"
-
+import history_model_preview_3d from "@/components/dashboard/business/my_products/add_color_3d_model/history_model_preview_3d.vue"
+import select3d_model_for_color from '@/components/dashboard/business/my_products/add_color_3d_model/dyd_generated.vue'
 export default {
   name: "edit_product_details_store_page_business_user",
-  components: { canvas_3d_model_renderer },
+  components: { canvas_3d_model_renderer,history_model_preview_3d,select3d_model_for_color },
   props: {
     selectedProduct: { type: Object, required: true },
     categories_available: { type: Array, required: true },
@@ -720,6 +735,11 @@ export default {
   },
   data() {
     return {
+      loading_generated_models_history:true,
+      list_history_generated_3d_models:[],
+      selected_color_model_url:'',
+      model_instance_id_generated_history:'',
+
       upload3dModelFrom:'LocalDevice',
       editingColor: null,
       uploaded3dModelFile: null,
@@ -751,6 +771,8 @@ export default {
   },
   mounted() {
     this.initializeForm();
+    this.fetch3d_models_generated_by_user();
+
     window.addEventListener('beforeunload', this.handleBeforeUnload);
   },
   beforeUnmount() {
@@ -762,6 +784,59 @@ export default {
     productForm: { handler() { this.hasUnsavedChanges = true; }, deep: true }
   },
   methods: {
+clickedModel(e) {
+      // this.$message.success(e['new3d_model_instance'])
+      // Convert Windows backslashes to URL slashes
+      const fixedUrl = e['media_url'].replace(/\\/g, '/');
+      // this.$message.success(fixedUrl);
+      this.model_instance_id_generated_history=e['new3d_model_instance']
+      this.selected_color_model_url=this.$store.state.root_media_api + fixedUrl
+    },
+    
+// 3. Enhanced fetch3d Models History  method with immediate update the History 
+async fetch3d_models_generated_by_user() {
+  this.loading_generated_models_history = true;
+
+  try {
+    const url = `${this.$store.state.root_api}engine/generated-3d-models-user-history/`;
+
+    console.log('📡 Fetching generated 3D models history...');
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Token ${localStorage.getItem('token')}`,
+        'Accept': 'application/json'
+      }
+    });
+
+    // 🔴 Handle HTTP errors
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+
+    // ✅ Parse JSON
+    const responseData = await response.json();
+
+    // ✅ Safely extract data
+    this.list_history_generated_3d_models = responseData.models ?? [];
+
+  } catch (error) {
+    console.error('❌ Failed to fetch history generated 3D Models:', error);
+
+    this.error.general = error.message;
+
+    this.showError(
+      'Failed to fetch history generated 3D Models',
+      error.message,
+      () => this.fetch3d_models_generated_by_user()
+    );
+
+  } finally {
+    this.loading_generated_models_history = false;
+  }
+}
+,
    async setPrimaryColor(colorId, colorHex) {
   try {
     const token = localStorage.getItem('token');

@@ -65,7 +65,7 @@
         <!-- Product Grid/List -->
         <div v-if="!loading || catalogItems.length > 0" class="product-container" :class="{ 'grid-view': showGrid, 'list-view': !showGrid }">
           <div v-for="(item, index) in catalogItems" :key="index" @click="updateItemRendering(item.id, item.light_type, item['3d_model'])" style="
-            background: #f2f2f2;
+           background: #f2f2f2;
 border: none;
 border-radius: 4px;
 padding:5px;"
@@ -101,15 +101,16 @@ padding:5px;"
               </div>
             </div>
   
-            <a-row>
+           <a-row>
               <a-col :span="18" style="padding-right:5px">
-                <a-button block type="default" @click="this.$router.push('/'+item.business_slug+'/'+'product'+'/'+item.id)" style="border: none;" >
+                <a-button block type="default" @click="this.$router.push('/'+item.business_slug+'/'+'product'+'/'+item.id)"  style="border: none;"  >
                   Product Detail
                 </a-button>
               </a-col>
               <a-col :span="6" style="">
-                <a-button block type="default" style="padding:0;display: flex;justify-content: center;align-items: center;border: none;">
-                  <HeartOutlined />
+                <a-button block type="default" style="padding:0;display: flex;justify-content: center;align-items: center;border: none;" @click.stop="toggleLike(item.id, index)">
+                  <HeartFilled v-if="item.is_liked" style="color: red;" />
+                  <HeartOutlined v-else style="font-size: 18px;" />
                 </a-button>
               </a-col>
             </a-row>
@@ -276,7 +277,49 @@ export default {
         'type': type,
         'model_3d_url': model_3d_url
       });
-    }
+    },
+       async toggleLike(itemId, itemIndex) {
+    try {
+      const token = localStorage.getItem('token');
+      
+      // Check if user is authenticated
+      if (!token) {
+        this.$message.warning('Please login to add favorites');
+        return;
+      }
+
+      // Add to toggling set
+     
+
+      const response = await fetch(
+        `${this.$store.state.root_api}likes/favorites/toggle/`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Token ${token}`,
+          },
+          body: JSON.stringify({
+            id: itemId,
+            type: 'light', 
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      // Update the item's like status
+      this.catalogItems[itemIndex].is_liked = data.favorited;
+      
+      // Show success message
+      const message = data.favorited ? 'Added to favorites' : 'Removed from favorites';
+      this.$message.success(message);
+
+    } catch (error) {
+      console.error("Like toggle failed", error);
+      this.$message.error('Failed to update favorite');
+    } 
+  }
   }
 };
 </script>

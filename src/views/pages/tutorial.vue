@@ -3,7 +3,7 @@
     <!-- Banner Section -->
     <div class="relative">
       <img
-        src="../../assets/tutorial.svg"
+        src="../../assets/tutorial.jpg"
         alt="Contact Banner"
         class="w-full h-[592px] object-cover block"
       />

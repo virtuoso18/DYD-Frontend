@@ -1,6 +1,6 @@
 <template>
 
-    <div class="main">
+    <div class="main !my-3 hidden md:block">
         <div v-if="view === 'list'" class="customers-page">
 <h3 className="!text-gray-700 p-2"
   style="
@@ -117,6 +117,168 @@
         </div>
 
     </div>
+
+<div
+  class=" md:hidden "
+  style="
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    height: auto;
+    padding: 2px;
+    background-color: white;
+  "
+>
+  <!-- Mobile View -->
+  <div v-if="view === 'list'" class="p-4">
+    <!-- Header -->
+    <h3 class="text-gray-700 text-lg font-semibold mb-4" style="font-family: Poppins;">
+      Customers
+    </h3>
+
+    <!-- Loading State -->
+    <div v-if="loading" class="flex justify-center items-center py-12">
+      <a-spin size="large" />
+    </div>
+
+    <!-- Customer Cards -->
+    <div v-else class="!space-y-4 ">
+      <div
+        v-for="customer in customers"
+        :key="customer.id"
+        @click="fetchCustomerRequests(customer)"
+        class="bg-white rounded-xl  shadow-sm border border-gray-200 p-4 active:scale-98 transition-transform cursor-pointer"
+      >
+        <!-- Row 1: Avatar + Name -->
+        <div class="flex items-center gap-3 !mb-2">
+          <a-avatar 
+            :src="$store.state.root_media_api + customer.profile_picture" 
+            :size="48"
+            class="flex-shrink-0"
+          >
+            {{ getInitials(customer.customer_name) }}
+          </a-avatar>
+          <div class="flex-1  min-w-0">
+            <h4 class="text-base font-semibold text-gray-900 truncate">
+              {{ customer.customer_name }}
+            </h4>
+          </div>
+          <!-- Arrow Icon -->
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="text-gray-400 flex-shrink-0">
+            <path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+
+        <!-- Row 2: Email -->
+        <div class="flex items-center gap-2 !mb-2 px-1">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="text-gray-400 flex-shrink-0">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <polyline points="22,6 12,13 2,6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span class="text-sm text-gray-600 truncate">{{ customer.email }}</span>
+        </div>
+
+        <!-- Row 3: Joined Date -->
+        <div class="flex items-center gap-2 mb-3 px-1">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="text-gray-400 flex-shrink-0">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="16" y1="2" x2="16" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="8" y1="2" x2="8" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="3" y1="10" x2="21" y2="10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span class="text-sm text-gray-600">Joined {{ formatDate(customer.Joined_date) }}</span>
+        </div>
+
+        <!-- Row 4: Stats (if available) -->
+        <div v-if="customer.total_simulations !== undefined" class="flex items-center justify-between pt-3 border-t border-gray-100">
+          <div class="flex items-center gap-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="text-blue-500">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="text-xs text-gray-500">Total Simulations</span>
+          </div>
+          <span class="text-sm font-semibold text-gray-900">{{ customer.total_simulations || 0 }}</span>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div v-if="!loading && customers.length === 0" class="text-center py-12">
+        <a-empty description="No customers found" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Details View -->
+  <div v-if="view === 'details'" class="bg-gray-50 min-h-screen">
+    <!-- Mobile Header with Back Button -->
+    <div class="bg-white border-b border-gray-200 ">
+      <div class="p-4">
+        <button 
+          @click="backButtonClickedUser_list" 
+          class="flex items-center gap-3 w-full !mb-3 active:opacity-70 transition-opacity"
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="text-gray-600">
+            <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span class="text-sm font-medium text-gray-600">Back to Customers</span>
+        </button>
+
+        <!-- User Card -->
+        <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-4 border border-blue-100">
+          <div class="flex items-center gap-4 mb-4">
+            <a-avatar 
+              :src="$store.state.root_media_api + selected_user.profile_picture" 
+              :size="64"
+              class="border-2 border-white shadow-sm"
+            >
+              {{ getInitials(selected_user.customer_name) }}
+            </a-avatar>
+            <div class="flex-1 min-w-0">
+              <h3 class="text-lg font-semibold text-gray-900 mb-1 truncate">
+                {{ selected_user.customer_name }}
+              </h3>
+              <p class="text-sm text-gray-600 truncate">{{ selected_user.email }}</p>
+            </div>
+          </div>
+
+          <!-- Joined Date Badge -->
+          <div class="bg-white rounded-lg px-4 !my-3 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="text-blue-500">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke="currentColor" stroke-width="2"/>
+                <line x1="16" y1="2" x2="16" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <line x1="8" y1="2" x2="8" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <line x1="3" y1="10" x2="21" y2="10" stroke="currentColor" stroke-width="2"/>
+              </svg>
+              <span class="text-xs font-medium text-gray-600">Joined Date</span>
+            </div>
+            <span class="text-sm font-semibold text-gray-900">
+              {{ formatDate(selected_user.Joined_date) }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Requests List -->
+    <div class="p-4 ">
+      <RequestsList 
+        :requests="customer_requests" 
+        :loading="loading"
+        :view-mode="viewMode" 
+        @record-clicked="recordClicked"
+        @refresh="refreshRequests"
+      />
+    </div>
+  </div>
+
+  <!-- Mobile Selected Request View -->
+  <div v-if="view === 'selected_request'" class="bg-gray-50 min-h-screen">
+    <selectedRequest 
+      :selected_request="selected_request" 
+      @back-button-clicked="backButtonClicked"
+    />
+  </div>
+</div>
+
 </template>
 <script>
 import RequestsList from '@/components/store/RequestsList.vue'
@@ -317,9 +479,9 @@ getInitials  (name)  {
 </script>
 <style scoped>
 .main{
-    margin-top:15px;
+    
     border:1px solid rgba(0,0,0,0.1);
-    height:100%;
+    height:100vh;
     padding:10px;
     background-color: white;
     border-radius:15px;

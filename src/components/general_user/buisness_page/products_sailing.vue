@@ -58,7 +58,7 @@
               
               <a-col span="1"></a-col>
               <a-col span="4">
-                <a-button @click="toggleFavorite(product.product_id, product.type, product)">
+                <a-button @click="toggleFavorite(product.product_id, product.type, product)" style="display: flex;justify-content: center;align-items: center;">
                   <template v-if="product.is_favorited">
                     <HeartFilled style="color: red" />
                   </template>

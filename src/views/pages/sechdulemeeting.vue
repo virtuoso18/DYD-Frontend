@@ -4,7 +4,7 @@
     <!-- Banner Section -->
     <div class="relative">
       <img
-        src="../../assets/sechdulemeeting.svg"
+        src="../../assets/sechdulemeeting.jpg"
         alt="Contact Banner"
         class="w-full h-[542px] object-cover block"
       />

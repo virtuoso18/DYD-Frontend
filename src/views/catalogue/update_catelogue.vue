@@ -385,7 +385,8 @@ Switch Furniture</a-button> -->
       height: closeShareMenu
         ? 'calc(100% - 40px)': '100%'
     }" -->
-  <div  
+  <div     v-if="LockCanvasOperation===false"
+  
     class="canvas-painting-sec"  >
   
             <canvas_floor_render 
@@ -565,6 +566,70 @@ Switch Furniture</a-button> -->
     </a-row>
   </div>
   
+  <div v-else>
+    <div
+  style="
+    /* position: fixed; */
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+  "
+>
+  <!-- Image container -->
+  <div
+    style="
+      position: relative;
+      background: #fff;
+      
+      max-height: 90vh;
+      max-width: 90vw;
+    "
+  >
+    <img
+      :src="base_image_url"
+      style="
+        max-height: 89vh;
+        max-width: 80vw;
+        object-fit: contain;
+        display: block;
+        margin: auto;
+      "
+    />
+
+    <!-- Center warning overlay -->
+    <div
+      style="
+        position: absolute;
+        inset: 0;
+        background: rgba(0,0,0,0.55);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: #fff;
+        font-size: 18px;
+        font-weight: 500;
+        padding: 24px;
+        
+      "
+    >
+      <div>
+        <p style="font-size: 20px; font-weight: 600; margin-bottom: 12px;">
+          ⚠️ Privacy Notice
+        </p>
+        <p>
+          Please upload a room image <b>without people</b>.<br />
+          Images containing persons are <b>not processed</b> as per our
+          privacy policies.
+        </p>
+        <a-button type="primary" @click="this.$route.query.brand ? this.$router.push('/start-new-catalogue?brand='+this.$route.query.brand ):this.$router.push('/start-new-catalogue') " style="align-items: center;"><CloudUploadOutlined style="font-size: 18px;" /> Upload new Image</a-button>
+      </div>
+    </div>
+  </div>
+</div>
+  </div>
           
                 <!-- AI Catalog Section -->
                 <div style="">
@@ -605,7 +670,8 @@ Switch Furniture</a-button> -->
               </div>
               <div class="category-section" v-if="active_tab_image === 'home_design'">
                 
-    <main_panel_home_design v-if="current_tab=='image' && active_tab_image === 'home_design'"
+                
+    <main_panel_home_design v-if="current_tab=='image' && active_tab_image === 'home_design' && home_design_images"
     :home_design_images="home_design_images"
     />
                 <side_panel_home_design :base_image_url="base_image_url"
@@ -1338,6 +1404,7 @@ Switch Furniture</a-button> -->
       width: '100%',
       height: '100%'
     }"
+    v-if="LockCanvasOperation===false"
   >
   
             <canvas_floor_render 
@@ -1517,7 +1584,74 @@ Switch Furniture</a-button> -->
   
     </a-row>
   </div>
-  
+  <div v-else>
+    <div
+  style="
+    /* position: fixed; */
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+  "
+>
+  <!-- Image container -->
+  <div
+    style="
+      position: relative;
+      background: #fff;
+      
+      max-height: 90vh;
+      max-width: 90vw;
+    "
+  >
+    <img
+      :src="base_image_url"
+      style="
+        max-height: 89vh;
+        max-width: 80vw;
+        object-fit: contain;
+        display: block;
+        margin: auto;
+      "
+    />
+
+    <!-- Center warning overlay -->
+    <div
+      style="
+        position: absolute;
+        inset: 0;
+        background: rgba(0,0,0,0.55);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: #fff;
+        font-size: 18px;
+        font-weight: 500;
+        padding: 24px;
+        
+      "
+    >
+      <div>
+        <p style="font-size: 20px; font-weight: 600; margin-bottom: 12px;">
+          ⚠️ Privacy Notice
+        </p>
+        <p>
+          Please upload a room image <b>without people</b>.<br />
+          Images containing persons are <b>not processed</b> as per our
+          privacy policies.
+        </p>
+        <a-space>
+
+          <a-button type="primary" @click="this.$route.query.brand ? this.$router.push('/start-new-catalogue?brand='+this.$route.query.brand ):this.$router.push('/start-new-catalogue') " style="align-items: center;display: flex;justify-content: center;"><CloudUploadOutlined style="font-size: 18px;" /> Upload new Image</a-button>
+          <a-button type="default" @click="RoomRemovePerson " :loading="canvasLoading" style="align-items: center;display: flex;justify-content: center;"><UserDeleteOutlined  style="font-size: 18px;" /> Remove persons</a-button>
+        </a-space>
+        </div>
+    </div>
+  </div>
+</div>
+  </div>
           </a-col>
         </a-row>
       </div>
@@ -1554,7 +1688,7 @@ Switch Furniture</a-button> -->
 
 
 <script>
-import { BulbOutlined } from '@ant-design/icons-vue';
+import { BulbOutlined,CloudUploadOutlined ,UserDeleteOutlined } from '@ant-design/icons-vue';
 import canvas_floor_render from '@/components/update_catalogue/canvas_renderer/canvas_floor_render.vue'
 import canvas_item_remover_render from '@/components/update_catalogue/canvas_renderer/canvas_item_remover_render.vue'
 import canvas_lights_render from '@/components/update_catalogue/canvas_renderer/canvas_lights_render.vue'
@@ -1590,6 +1724,7 @@ export default {
   
   data() {
     return {
+      LockCanvasOperation:false,
         brand:'',
        showCreditModal: false,
       creditErrorMessage: "",
@@ -2158,6 +2293,23 @@ async  rescaleWallMask(e){
           this.binaryMasks_objects_detected = { ...responseData.objects_detected_masks } || {};
           this.allObjectsBinaryMasks = { ...this.binaryMasks_objects_detected };
           
+       
+          Object.entries(this.binaryMasks_objects_detected).forEach(([key, value]) => {
+  const baseKey = key
+    .replace(/_\d+$/, '')
+    .trim()
+    .toLowerCase()
+
+  if (baseKey === 'person') {
+  //   console.log('Person detected → key:', key, 'value:', value)
+  //    this.$message?.error(
+  //   'Human presence detected. For privacy, submit an image without people.',
+  //   2
+  // )
+    // this.$message?.error(value)
+  this.LockCanvasOperation=true
+  }
+})
           this.maskUpdateTrigger += 1;
           
           this.$nextTick(() => {
@@ -2386,6 +2538,67 @@ async  rescaleWallMask(e){
         },
         body: JSON.stringify(requestData)
       }, 'removeObjects');
+    },
+
+
+
+
+    async RoomRemovePerson(removalData) {
+      console.log('🗑️ Removing objects:', removalData);
+      
+      try {
+        this.canvasLoading = true;
+        
+        const result = await this.removePersonsFromRoom(removalData);
+
+        if (result.error) {
+          this.creditErrorMessage = result.msg;
+          this.showCreditModal = true;
+          return;
+        }
+        
+        if (!result.error) {
+          this.binaryMasks_objects_detected = result.objects_detected_masks || {};
+          this.base_image_url = this.$store.state.root_media_api + result.final_output;
+          
+          this.forceCanvasUpdate();
+          this.$message?.success(`Removed persons from room!`, 3);
+          
+          if (Object.keys(this.binaryMasks_objects_detected).length > 0) {
+            await this.refreshObjectMaskCache();
+          }
+          this.LockCanvasOperation=false
+        } else {
+          throw new Error(result.message || 'Failed to remove objects');
+        }
+      } catch (error) {
+        console.error('❌ Object removal failed:', error);
+        this.$message?.error(`Failed: ${error.message}`, 4);
+        this.showError('Object Removal Failed', error.message);
+      } finally {
+        this.canvasLoading = false;
+      }
+    },
+
+    async removePersonsFromRoom(removalData) {
+      const roomId = this.$route.params.id;
+      const url = `${this.$store.state.root_api}engine/room-remove-person/${roomId}`;
+      
+      // const requestData = {
+      //   room_id: roomId,
+      //   binary_mask_key: removalData.selectedObjects,
+      //   object_masks: removalData.objectMasks,
+      //   canvas_dimensions: removalData.canvasDimensions
+      // };
+
+      return await this.makeApiRequest(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Token ${localStorage.getItem('token')}`
+        },
+        // body: JSON.stringify(requestData)
+      }, 'removePersons');
     },
 
     async makeRoomEmpty() {
@@ -3167,7 +3380,8 @@ async fetchSingleProductType(productType, dataKey, brand, endpointMap) {
 
   components: {
     BulbOutlined,
-
+CloudUploadOutlined,
+UserDeleteOutlined,
     // canvas Renderer
     canvas_floor_render,
     canvas_item_remover_render, // All 

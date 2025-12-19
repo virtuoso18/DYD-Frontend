@@ -205,7 +205,7 @@
             </a-col>
             <a-col :span="12">
               <div style="margin-bottom: 8px; font-weight: 500;">Textures:</div>
-              <div style="display: flex; gap: 6px;">
+              <div style="display: flex; gap: 6px;flex-wrap: wrap;">
                 <img 
                   v-for="texture in selectedProduct.textures" 
                   :key="texture" 

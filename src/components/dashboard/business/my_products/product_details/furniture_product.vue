@@ -257,6 +257,7 @@
           icon="/apply_changes_img.png"
           :value="windowLocation + '/ar-product/' + selectedProduct.id"
 />
+<!-- <a-button @click="this.$router.push('/ar-product/' + selectedProduct.id)">AR</a-button> -->
 
   </a-col>
 </a-row>
@@ -281,7 +282,7 @@
                   color.model_file_colored_product 
                     ? 'border-2 hover:shadow-md' 
                     : 'outline outline-2 outline-red-500 outline-offset-2 hover:shadow-[0_0_8px_rgba(239,68,68,0.3)]',
-                  selectedColorIndex === index ? 'border-blue-500 border-4' : 'border-gray-100'
+                  selectedColorIndex === index ? 'border-blue-500 border-2' : 'border-gray-100'
                 ]"
                 :style="{ backgroundColor: color.color }"
               ></div>

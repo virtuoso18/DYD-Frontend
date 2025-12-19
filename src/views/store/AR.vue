@@ -1,6 +1,4 @@
 <template>
-<!-- {{ProductDetails}} -->
-<!-- {{glbModelUrl}} -->
   <div class="ar-app" ref="containerRef">
     <!-- Top Navigation Bar -->
     <div v-if="showNavbar" class="ar-navbar">
@@ -19,12 +17,31 @@
     </div>
 
     <!-- Main Content -->
-    <div class="main-content" >
+    <div class="main-content">
       <!-- 3D Model Viewer with Occlusion Support -->
+       
       <div class="model-viewer-container" v-if="ProductDetails">
+        
+
+<div style="padding:10px;width:100%" v-if="!isAuthenticated">
+  <a-alert
+message="Login required"
+type="info"
+closable
+>
+<!-- description="Info Description Info Description Info Description Info Description" -->
+<template #action>
+  <a-space direction="vertical">
+    <a-button size="small" type="primary" @click.stop="this.$router.push('/login')">Login</a-button>
+    <!-- <a-button size="small" danger type="ghost">Decline</a-button> -->
+  </a-space>
+</template>
+</a-alert>
+
+</div>
         <model-viewer
           ref="modelViewer"
-          :src="glbModelUrl"
+          :src="this.$store.state.root_media_api+selected3DModelUrl"
           :ios-src="usdzModelUrl"
           ar
           ar-modes="webxr scene-viewer quick-look"
@@ -33,9 +50,7 @@
           auto-rotate
           shadow-intensity="1"
           :alt="ProductDetails.name"
-        :ar-scale="`fixed ${ProductDetails.dimensions.width}m ${ProductDetails.dimensions.height}m ${ProductDetails.dimensions.length}m`"
-
-
+          :ar-scale="`fixed ${ProductDetails.dimensions.width}m ${ProductDetails.dimensions.height}m ${ProductDetails.dimensions.length}m`"
           environment-image="neutral"
           exposure="1"
           shadow-softness="1"
@@ -44,13 +59,10 @@
           @ar-status="handleARStatus"
           @load="handleModelLoad"
         >
-          <!-- Custom AR Button with Occlusion Info -->
-          
-
-<a-button
+          <a-button
             slot="ar-button"
             size="medium"
-type="primary"
+            type="primary"
             class="ar-button-overlay"
             style="max-width:70%"
             @click="prepareARWithOcclusion"
@@ -143,9 +155,6 @@ type="primary"
                 Point your camera at a flat surface like a floor or table. Move
                 your device slowly to help it detect the surface.
               </p>
-              <!-- <p class="instruction-tip">
-                💡 Make sure the area is well-lit for best results.
-              </p> -->
             </div>
           </div>
 
@@ -173,30 +182,22 @@ type="primary"
               </svg>
             </div>
             <div class="instruction-text">
-
               <h4><b>Place & Interact</b></h4>
               <p style="font-size:12px">
-
                 Tap on the screen to place the furniture. You can pinch to
-                resize, and drag with one finger to rotate the item. 
-</p>
-
-              <!-- <p class="instruction-tip">
-                🎯 Walk around to see how it looks from different angles!
-              </p> -->
+                resize, and drag with one finger to rotate the item.
+              </p>
             </div>
           </div>
         </div>
 
         <!-- Continue Button -->
-<div style="width:100%;display:flex;justify-content:center">
-
-        <a-button type="primary" size="medium" style="margin:auto" @click="goToNextInstruction">
-          {{ step === 2 ? "Start AR" : "Continue" }}
-        </a-button>
-      </div>
-      <br>
-    <br>
+        <div style="width:100%;display:flex;justify-content:center">
+          <a-button type="primary" size="medium" style="margin:auto" @click="goToNextInstruction">
+            {{ step === 2 ? "Start AR" : "Continue" }}
+          </a-button>
+        </div>
+        <br><br>
       </div>
     </div>
 
@@ -230,10 +231,12 @@ type="primary"
             <div class="product-info">
               <h2>{{ ProductDetails.name }}</h2>
               <div class="price-section">
-                <span class="current-price">${{ ProductDetails.pricing.price }}</span>
+                <span class="current-price">${{ ProductDetails.pricing.current_price }}</span>
+                <span v-if="ProductDetails.pricing.is_on_sale" class="discount">SALE</span>
               </div>
-              <!-- In the drawer content, update the color section -->
-              <a-col :span="12">
+
+              <!-- Colors Section -->
+              <a-col :span="24">
                 <div style="margin-bottom: 8px; font-weight: 500;">Colors:</div>
                 <a-alert 
                   v-if="showColorAlert"
@@ -259,33 +262,19 @@ type="primary"
                   ></div>
                 </div>
               </a-col>
-              <!-- <div class="rating-section">
-                <div class="stars">
-                  <span
-                    v-for="i in 5"
-                    :key="i"
-                    class="star"
-                    :class="{ filled: i <= rating }"
-                    >★</span
-                  >
-                </div>
-                <span class="rating-text"
-                  >{{ rating }} ({{ reviewCount }} reviews)</span
-                >
-              </div> -->
             </div>
         
             <div class="cart-controller-sec">
               <a-button
-  type="primary"
-  title="add to cart"
-  class="cart-button"
-  shape="circle"
-  @click="addToCart"
-  :disabled="!hasToken"
->
-  <ShoppingCartOutlined style="font-size: 20px" />
-</a-button>
+                type="primary"
+                title="add to cart"
+                class="cart-button"
+                shape="circle"
+                @click="addToCart"
+                :disabled="!hasToken"
+              >
+                <ShoppingCartOutlined style="font-size: 20px" />
+              </a-button>
               <a-button class="cart-button" title="fullscreen mode" type="primary" shape="circle" @click="toggleFullScreen">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                   <path
@@ -324,21 +313,64 @@ type="primary"
           <!-- Product Details -->
           <div class="product-details">
             <h3>Product Details</h3>
-
             <div class="detail-section">
               <h4>Dimensions</h4>
               <p>Width: {{ProductDetails.dimensions.width}}" | Height: {{ProductDetails.dimensions.height}}" | Depth: {{ProductDetails.dimensions.length}}"</p>
             </div>
           </div>
-
-          <!-- Action Buttons -->
+ <!-- Action Buttons -->
           <div class="action-buttons">
-            <!-- <button class="wishlist-button">Show Product Detials</button>-->
-            <a-button type="primary" @click="goto_product_Route(ProductDetails)" block   size="large" style="font-size:20px;;display: flex;justify-content: center;align-items:center; width:100%"><IssuesCloseOutlined />See Product </a-button>
-            <!-- <button class="add-to-cart-button">
-              🛒 Add to Cart - ${{ currentPrice }}
-            </button> -->
+            <a-button type="primary" @click="goto_product_Route(ProductDetails)" block size="large" style="font-size:20px;display: flex;justify-content: center;align-items:center; width:100%">
+              <IssuesCloseOutlined />See Product
+            </a-button>
           </div>
+          <!-- Variants Section -->
+          <div v-if="ProductDetails.variants && ProductDetails.variants.length > 0" class="variants-section">
+            <h3>Available Variants</h3>
+            <a-row>
+              <a-col :span="12" 
+              v-for="variant in ProductDetails.variants"
+              :key="variant.id"
+             style="border:1px solid rgba(0,0,0,0.2);padding:5px;border-radius:10px"
+              :class="{ 'variant-selected': currentProduct.id === variant.id }"
+              @click="selectVariant(variant)"
+              >
+              
+                <div class="variant-image-wrapper">
+                  <img 
+                    v-if="variant.primary_image" 
+                    :src="this.$store.state.root_media_api+variant.primary_image" 
+                    :alt="variant.name"
+                    class="variant-image"
+                  />
+                  <div v-else class="variant-image-placeholder">No Image</div>
+                </div>
+                <div class="variant-info">
+                  <p class="variant-name">{{ variant.name }}</p>
+                  
+                  <a-row>
+                    
+                    <a-col :span="12" >Price</a-col>
+                    <a-col :span="12" style="color:blue;font-weight:bold;text-align:end">${{ variant.pricing.current_price }}</a-col>
+
+                    <a-col :span="12" >Color</a-col>
+                    <a-col :span="12" style="display: flex;justify-content: end;">
+                      <div style="width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid #e8e8e8;" :style="{ backgroundColor: variant.primary_color }"></div>
+                    </a-col>
+                  </a-row>
+                  
+                  <!-- {{ variant }} -->
+                </div>
+                 
+              </a-col>
+              </a-row>
+            </div>
+          
+
+         
         </div>
       </div>
     </div>
@@ -409,11 +441,10 @@ type="primary"
       </svg>
     </button>
   </div>
-
 </template>
 
 <script>
-import { ArrowLeftOutlined, HeartOutlined,IssuesCloseOutlined , ShoppingCartOutlined } from "@ant-design/icons-vue";
+import { ArrowLeftOutlined, HeartOutlined, IssuesCloseOutlined, ShoppingCartOutlined } from "@ant-design/icons-vue";
 
 export default {
   name: "ARProductView",
@@ -421,8 +452,8 @@ export default {
     return {
       step: 0,
       productName: "Modern Accent Chair",
-      currentPrice: 123,
-        hasToken :'',
+      hasToken: '',
+      
       // UI State
       showNavbar: false,
       statusMessage: "Ready",
@@ -448,8 +479,8 @@ export default {
       isAndroid: false,
       iosVersion: null,
 
-      // Drawer State - Instagram Style
-      drawerState: "collapsed", // 'collapsed' (100px) or 'expanded' (300px)
+      // Drawer State
+      drawerState: "collapsed",
       collapsedHeight: 100,
       expandedHeight: 300,
       currentDrawerHeight: 100,
@@ -459,17 +490,17 @@ export default {
       dragVelocity: 0,
       lastY: 0,
       lastTime: 0,
-      ProductDetails:null,
-
-      // Model URLs
-      glbModelUrl:
-        "https://rawcdn.githack.com/KhronosGroup/glTF-Sample-Models/master/2.0/SheenChair/glTF-Binary/SheenChair.glb",
+      
+      // Product Data
+      ProductDetails: null,
+      currentProduct: null,
+      glbModelUrl: "",
       usdzModelUrl: "",
 
+      // Color Selection
       selectedColorIndex: null,
       selectedColorHex: null,
       showColorAlert: false,
-
     };
   },
 
@@ -479,31 +510,32 @@ export default {
     IssuesCloseOutlined,
     ShoppingCartOutlined,
   },
+
   computed: {
     windowHeight() {
       return window.innerHeight;
     },
+      isAuthenticated() {
+    return !!localStorage.getItem('token')
+  },
     selected3DModelUrl() {
-    if (this.selectedColorIndex !== null && 
-        this.ProductDetails.colors && 
-        this.ProductDetails.colors.available_colors[this.selectedColorIndex]) {
-      
-      const selectedColor = this.ProductDetails.colors.available_colors[this.selectedColorIndex];
-      
-      // If the color has a specific model file, use it
-      if (selectedColor.model_file_colored_product) {
-        return `${this.$store.state.root_media_api}${selectedColor.model_file_colored_product}`;
+      if (this.selectedColorIndex !== null && 
+          this.ProductDetails.colors && 
+          this.ProductDetails.colors.available_colors[this.selectedColorIndex]) {
+        
+        const selectedColor = this.ProductDetails.colors.available_colors[this.selectedColorIndex];
+        
+        if (selectedColor.model_file_colored_product) {
+          return selectedColor.model_file_colored_product;
+        }
       }
+      
+      return this.ProductDetails['3d_model'];
     }
-    
-    // Otherwise, use the default 3D model
-    return `${this.$store.state.root_media_api}${this.ProductDetails['3d_model']}`;
-  }
   },
 
   mounted() {
-   this.hasToken = localStorage.getItem('token');
-
+    this.hasToken = localStorage.getItem('token');
     this.detectDevice();
     this.loadModelViewer();
     this.checkOcclusionSupport();
@@ -511,67 +543,82 @@ export default {
   },
 
   methods: {
+    
+     selectVariant(variant) {
+      
+      this.$router.push({
+        name: this.$route.name,
+        params: {
+          ...this.$route.params,
+          product_id: variant.id
+        }
+      }).then(() => {
+        
+        window.location.reload();
+      }).catch(err => {
+        console.error("Navigation failed:", err);
+      });
+    },
 
     goto_product_Route(product) {
-  this.$router.push({
-    name: 'buisness_product',
-    params: {
-      buisness_name: product.business_slug,
-      product_type: 'product',
-      product_id: product.id
-    }
-  }).then(() => {
-    // Reload AFTER navigation is done
-    window.location.reload();
-  }).catch(err => {
-    console.error("Navigation failed:", err);
-  });
-},
-
-  async addToCart() {
-    if (!this.ProductDetails || !this.ProductDetails.id) {
-      this.$message.error('Product not found');
-      return;
-    }
-
-    this.cartLoading = true;
-    
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(
-        `${this.$store.state.root_api}cart/add/`,
-        {
-          method: 'POST',
-          headers: {
-            'Authorization': `Token ${token}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            product_type: this.ProductDetails.is_ceiling_light_product ? 'light' : 'furniture',
-            product_id: this.ProductDetails.id,
-            quantity: 1
-          })
+      this.$router.push({
+        name: 'buisness_product',
+        params: {
+          buisness_name: product.business_slug,
+          product_type: 'product',
+          product_id: product.id
         }
-      );
-      
-      const result = await response.json();
-      
-      if (response.ok) {
-        this.$message.success('Added to cart!');
-      } else {
-        this.$message.error(result.error || 'Failed to add to cart');
+      }).then(() => {
+        window.location.reload();
+      }).catch(err => {
+        console.error("Navigation failed:", err);
+      });
+    },
+
+    async addToCart() {
+      if (!this.ProductDetails || !this.ProductDetails.id) {
+        this.$message.error('Product not found');
+        return;
       }
-    } catch (error) {
-      console.error('Error:', error);
-      this.$message.error('Error adding to cart');
-    } finally {
-      this.cartLoading = false;
-    }
-  },
+
+      this.cartLoading = true;
+      
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(
+          `${this.$store.state.root_api}cart/add/`,
+          {
+            method: 'POST',
+            headers: {
+              'Authorization': `Token ${token}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              product_type: this.ProductDetails.is_ceiling_light_product ? 'light' : 'furniture',
+              product_id: this.ProductDetails.id,
+              quantity: 1
+            })
+          }
+        );
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+          this.$message.success('Added to cart!');
+        } else {
+          this.$message.error(result.error || 'Failed to add to cart');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        this.$message.error('Error adding to cart');
+      } finally {
+        this.cartLoading = false;
+      }
+    },
 
     async fetchProductDetails() {
       try {
-        this.isLoading=true
+        this.isLoading = true;
         const productId = this.$route.params.product_id;
         if (!productId) {
           throw new Error('Product ID not found in route parameters');
@@ -598,38 +645,30 @@ export default {
         }
 
         const result = await response.json();
-        console.log(result);
+        console.log('Product Details:', result);
 
         if (!result.success || !result.data) {
           throw new Error(result.message || 'Failed to fetch product details');
         }
-        this.ProductDetails=result.data
+
+        this.ProductDetails = result.data;
+        this.currentProduct = result.data;
+        
         const dimensions = result.data.dimensions || {};
-        this.diamensions = {
+        this.dimensions = {
           width: parseFloat(dimensions.width) || 0.7,
           height: parseFloat(dimensions.height) || 1.2,
           depth: parseFloat(dimensions.depth || dimensions.length) || 0.6
         };
 
-        console.log('✅ Product Dimensions (meters):', this.diamensions);
-
-        
-        this.glbModelUrl=`${this.$store.state.root_media_api}${result.data['3d_model']}`;
-        if (!this.glbModelUrl) {
-          console.error('Available fields in result.data:', Object.keys(result.data));
-          throw new Error('No 3D model URL found in product data');
-        }
-
-        // this.modelUrl = modelUrl;
-        // this.modelUrl = "https://y5hhig196j7rwq-8000.proxy.runpod.net/media/products/3d_models/c3.glb";
-        console.log('✅ Model URL:', this.modelUrl);
-        console.log('✅ Product Data Loaded');
+        console.log('✅ Product Dimensions (meters):', this.dimensions);
+        console.log('✅ Product Data Loaded with', result.data.variants.length, 'variants');
         
       } catch (error) {
         console.error('❌ Error loading product details:', error);
         this.error = error.message || 'Failed to load product. Please try again.';
       }
-      this.isLoading=false
+      this.isLoading = false;
     },
 
     async loadModelViewer() {
@@ -774,7 +813,6 @@ export default {
     launchAR() {
       console.log("Launching AR...");
 
-      // Show AR drawer at initial collapsed state (100px)
       this.isARActive = true;
       this.drawerState = "collapsed";
       this.currentDrawerHeight = this.collapsedHeight;
@@ -806,21 +844,17 @@ export default {
       }
     },
 
-    // Toggle Full Screen Mode
     toggleFullScreen() {
       this.isFullScreen = !this.isFullScreen;
 
       if (this.isFullScreen) {
-        // Hide drawer
         this.currentDrawerHeight = 0;
       } else {
-        // Show drawer at collapsed state
         this.drawerState = "collapsed";
         this.currentDrawerHeight = this.collapsedHeight;
       }
     },
 
-    // Drawer Touch Handlers - Instagram Style
     handleDrawerTouchStart(e) {
       if (this.isFullScreen) return;
 
@@ -841,7 +875,6 @@ export default {
       const currentTime = Date.now();
       const deltaTime = currentTime - this.lastTime;
 
-      // Calculate velocity for smooth snap animation
       if (deltaTime > 0) {
         this.dragVelocity = (currentY - this.lastY) / deltaTime;
       }
@@ -849,10 +882,8 @@ export default {
       this.lastY = currentY;
       this.lastTime = currentTime;
 
-      // Update drawer height (inverted because we're dragging from bottom)
       let newHeight = this.startHeight + deltaY;
 
-      // Constrain between collapsed and expanded
       newHeight = Math.max(
         this.collapsedHeight,
         Math.min(this.expandedHeight, newHeight)
@@ -867,22 +898,17 @@ export default {
       this.isDragging = false;
 
       const midpoint = (this.collapsedHeight + this.expandedHeight) / 2;
-      const threshold = 50; // Velocity threshold for flick gesture
+      const threshold = 50;
 
-      // Check if user flicked the drawer
       const hasVelocity = Math.abs(this.dragVelocity) > threshold;
 
       if (hasVelocity) {
-        // Flick gesture - snap based on velocity direction
         if (this.dragVelocity < 0) {
-          // Flicked up
           this.expandDrawer();
         } else {
-          // Flicked down
           this.collapseDrawer();
         }
       } else {
-        // No flick - snap based on position
         if (this.currentDrawerHeight > midpoint) {
           this.expandDrawer();
         } else {
@@ -904,14 +930,13 @@ export default {
     animateDrawerTo(targetHeight) {
       const startHeight = this.currentDrawerHeight;
       const distance = targetHeight - startHeight;
-      const duration = 300; // ms
+      const duration = 300;
       const startTime = Date.now();
 
       const animate = () => {
         const elapsed = Date.now() - startTime;
         const progress = Math.min(elapsed / duration, 1);
 
-        // Ease out cubic for smooth deceleration
         const easeProgress = 1 - Math.pow(1 - progress, 3);
 
         this.currentDrawerHeight = startHeight + distance * easeProgress;
@@ -926,7 +951,6 @@ export default {
       requestAnimationFrame(animate);
     },
 
-    // Mouse handlers for desktop testing
     handleDrawerMouseDown(e) {
       if (this.isFullScreen) return;
 
@@ -997,25 +1021,25 @@ export default {
       console.log("Model loaded successfully");
       this.loadingProgress = 100;
 
-      if (this.isIOS || this.isAndroid) {
-        setTimeout(() => {
-          this.showARInstructions = true;
+      // if (this.isIOS || this.isAndroid) {
+      //   setTimeout(() => {
+      //     this.showARInstructions = true;
 
-          if (this.occlusionSupported) {
-            this.arInstructionText = "Try Realistic AR! ✨";
-            this.arInstructionSubtext =
-              "Tap the AR button to see this product blend naturally with your space";
-          } else {
-            this.arInstructionText = "Try AR Now!";
-            this.arInstructionSubtext =
-              "Tap the AR button to place this product in your space";
-          }
+      //     if (this.occlusionSupported) {
+      //       this.arInstructionText = "Try Realistic AR! ✨";
+      //       this.arInstructionSubtext =
+      //         "Tap the AR button to see this product blend naturally with your space";
+      //     } else {
+      //       this.arInstructionText = "Try AR Now!";
+      //       this.arInstructionSubtext =
+      //         "Tap the AR button to place this product in your space";
+      //     }
 
-          setTimeout(() => {
-            this.showARInstructions = false;
-          }, 1000);
-        }, 1000);
-      }
+      //     setTimeout(() => {
+      //       this.showARInstructions = false;
+      //     }, 1000);
+      //   }, 1000);
+      // }
     },
 
     handleModelError(event) {
@@ -1049,10 +1073,6 @@ export default {
       if (this.isARActive) {
         this.isARActive = false;
         this.isFullScreen = false;
-        const viewer = this.$refs.modelViewer;
-        if (viewer) {
-          // Exit AR mode
-        }
       } else {
         window.history.back();
       }
@@ -1062,30 +1082,28 @@ export default {
       this.error = null;
       this.errorDetails = "";
     },
-    selectColor(index, color) {
-    this.selectedColorIndex = index;
-    
-    // Check if this color has a model file
-    if (!color.model_file_colored_product) {
-      this.selectedColorHex = color.color;
-      this.showColorAlert = true;
-    } else {
-      this.showColorAlert = false;
-    }
-    
-    // Update the model viewer source dynamically
-    this.updateModelViewerSource();
-  },
 
-  // NEW: Update the model-viewer component's source
-  updateModelViewerSource() {
-    const viewer = this.$refs.modelViewer;
-    if (viewer) {
-      const newUrl = this.selected3DModelUrl;
-      viewer.src = newUrl;
-      console.log('✅ Model updated to:', newUrl);
-    }
-  },
+    selectColor(index, color) {
+      this.selectedColorIndex = index;
+      
+      if (!color.model_file_colored_product) {
+        this.selectedColorHex = color.color;
+        this.showColorAlert = true;
+      } else {
+        this.showColorAlert = false;
+      }
+      
+      this.updateModelViewerSource();
+    },
+
+    updateModelViewerSource() {
+      const viewer = this.$refs.modelViewer;
+      if (viewer) {
+        const newUrl = this.selected3DModelUrl;
+        viewer.src = newUrl;
+        console.log('✅ Model updated to:', newUrl);
+      }
+    },
   },
 };
 </script>
@@ -1285,7 +1303,6 @@ export default {
   opacity: 1;
 }
 
-/* Instruction Modal Styles */
 .instruction-modal-overlay {
   position: fixed;
   inset: 0;
@@ -1361,7 +1378,7 @@ export default {
 
 .instruction-modal-content {
   flex: 1;
-  overflow-y: auto;
+  /* overflow-y: auto; */
   padding: 80px 32px 32px;
   display: flex;
   flex-direction: column;
@@ -1420,21 +1437,6 @@ export default {
   font-weight: 500;
 }
 
-.modal-continue-button {
-  
-  
-}
-
-.modal-continue-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 32px rgba(102, 126, 234, 0.5);
-}
-
-.modal-continue-button:active {
-  transform: translateY(0);
-}
-
-/* Instagram-Style Drawer Styles */
 .ar-drawer {
   position: fixed;
   bottom: 0;
@@ -1470,43 +1472,12 @@ export default {
   border-radius: 2px;
 }
 
-.fullscreen-button {
- width: 36px;
-  height: 36px;
-  border-radius: 50%;
-   cursor: pointer;
-   margin-left: 10px;
-   color: #666;
-  /* position: absolute;
-  right: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(0, 0, 0, 0.05);
-  border: none;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
- 
-  transition: all 0.2s ease;
-  color: #666; */
-}
-
-.fullscreen-button:hover {
-  background: rgba(0, 0, 0, 0.1);
-}
-
-.fullscreen-button:active {
-  transform: translateY(-50%) scale(0.9);
-}
-
 .drawer-content {
-  /* overflow-y: auto; */
-  height:300px;
+  height: 300px;
   max-height: calc(350px - 5px);
   padding: 0 20px 20px;
+  overflow-y: auto;
+  padding-bottom:40px;
 }
 
 .product-card {
@@ -1546,12 +1517,6 @@ export default {
   color: #1890ff;
 }
 
-.original-price {
-  font-size: 16px;
-  color: #999;
-  text-decoration: line-through;
-}
-
 .discount {
   background: #ff4d4f;
   color: white;
@@ -1561,43 +1526,16 @@ export default {
   font-weight: 600;
 }
 
-.rating-section {
+.cart-controller-sec {
+  width: 100px;
   display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.stars {
-  display: flex;
-  gap: 2px;
-}
-
-.star {
-  color: #d9d9d9;
-  font-size: 16px;
-}
-
-.star.filled {
-  color: #fadb14;
-}
-
-.rating-text {
-  font-size: 14px;
-  color: #666;
-}
-
-.cart-controller-sec{
-  
-      width: 100px;
-    display: flex;
-    justify-content: space-around;
-
+  justify-content: space-around;
 }
 
 .cart-button {
- display: flex;
- justify-content: center;
- align-items:center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .cart-button:active {
@@ -1639,16 +1577,87 @@ export default {
   line-height: 1.5;
 }
 
-.detail-section ul {
-  margin: 0;
-  padding-left: 20px;
+.variants-section {
+  padding-top: 12px;
+  border-top: 1px solid #e8e8e8;
 }
 
-.detail-section li {
-  font-size: 15px;
+.variants-section h3 {
+  font-size: 18px;
+  font-weight: 700;
   color: #1a1a1a;
-  margin-bottom: 6px;
-  line-height: 1.5;
+  margin: 0 0 12px 0;
+}
+
+.variant-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  border: 2px solid #e8e8e8;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.variant-card:hover {
+  border-color: #1890ff;
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.variant-card.variant-selected {
+  border-color: #1890ff;
+  background: rgba(24, 144, 255, 0.08);
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.25);
+}
+
+.variant-image-wrapper {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f5f5f5;
+}
+
+.variant-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.variant-image-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: #999;
+  background: #f5f5f5;
+}
+
+.variant-info {
+  width: 100%;
+}
+
+.variant-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 4px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.variant-price {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1890ff;
+  margin: 0 0 6px 0;
 }
 
 .action-buttons {
@@ -1658,38 +1667,6 @@ export default {
   padding-top: 8px;
 }
 
-.wishlist-button,
-.add-to-cart-button {
-  padding: 14px 24px;
-  border-radius: 12px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  border: none;
-}
-
-.wishlist-button {
-  background: white;
-  color: #1a1a1a;
-  border: 2px solid #d9d9d9;
-}
-
-.wishlist-button:active {
-  transform: scale(0.98);
-}
-
-.add-to-cart-button {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-}
-
-.add-to-cart-button:active {
-  transform: scale(0.98);
-}
-
-/* Exit Full Screen Button */
 .exit-fullscreen-button {
   position: fixed;
   bottom: 24px;
@@ -1734,7 +1711,6 @@ export default {
   transform: scale(0.95);
 }
 
-/* Mobile Responsive */
 @media (max-width: 480px) {
   .instruction-modal {
     max-height: 90vh;
@@ -1752,11 +1728,6 @@ export default {
     font-size: 15px;
   }
 
-  .modal-continue-button {
-    font-size: 16px;
-    padding: 14px 28px;
-  }
-
   .product-info h2 {
     font-size: 18px;
   }
@@ -1770,6 +1741,10 @@ export default {
     height: 48px;
     bottom: 20px;
     right: 20px;
+  }
+
+  .variants-grid {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
   }
 }
 </style>

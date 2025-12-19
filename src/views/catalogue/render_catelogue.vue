@@ -450,58 +450,126 @@
   </a-modal>
 
 
-  <div v-if="!rendering_started" style="background-color: #f3f3f3;">
+  <div className="hidden lg:block" v-if="!rendering_started" style="background-color: #f3f3f3;">
     <a-row style="padding: 20px;  padding-top: 30px">
       <a-col :span="8" style="display: flex; align-items: center">
-        <button
-          style="
-            background: none;
-            border: none;
-            color: #666;
-            cursor: pointer;
-            font-size: 14px;
-          "
-        >
-          ← &nbsp;Back to edit
-        </button>
+       <button
+  style="
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  "
+>
+  <svg width="7" height="13" viewBox="0 0 7 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M6.08594 0.75L0.752604 6.08333L6.08594 11.4167" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+  <span style="
+    font-family: Poppins;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: 0%;
+  ">
+    Back to edit
+  </span>
+</button>
+
       </a-col>
       <a-col
         :span="8"
         style="display: flex; justify-content: center; align-items: center"
       >
-        <div style="display: flex; gap: 0; border-radius: 20px; width: 100%; max-width: 150px;z-index:2">
-  <a-button 
-    :type="currentView === 'before' ? 'primary' : 'default'"
+     <div class="relative inline-flex items-center translate-y-6 bg-gray-100 rounded-xl p-1 w-full max-w-[150px] z-[2]">
+  <!-- Sliding background indicator -->
+  <div 
+    class="absolute top-1 bottom-1 w-[calc(50%-0.25rem)] bg-blue-600 rounded-xl shadow-lg transition-all duration-300 ease-in-out"
+    :class="currentView === 'after' ? 'left-[calc(50%+0.125rem)]' : 'left-1'"
+  ></div>
+  
+  <!-- Before Button -->
+  <button
     @click="showBefore"
     :disabled="rendering_started"
-  > 
-    Before 
-  </a-button>
-  <a-button 
-    :type="currentView === 'after' ? 'primary' : 'default'"
+    class="relative z-10 flex-1 px-1 sm:px-2 py-2 font-medium rounded-xl transition-colors duration-300 font-poppins flex items-center justify-center min-w-0 overflow-hidden"
+    style="
+      font-family: Poppins;
+      font-weight: 400;
+      font-size: 10px;
+      line-height: 20px;
+      letter-spacing: 0%;
+      text-align: center;
+    "
+    :class="[
+      currentView === 'before' 
+        ? '!text-white' 
+        : 'text-gray-700',
+      rendering_started ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
+    ]"
+  >
+    <span class="whitespace-nowrap">Before</span>
+  </button>
+  
+  <!-- After Button -->
+  <button
     @click="showAfter"
     :disabled="rendering_started"
-  > 
-    After 
-  </a-button>
+    class="relative z-10 flex-1 px-1 sm:px-2 py-2 font-medium rounded-xl transition-colors duration-300 font-poppins flex items-center justify-center min-w-0 overflow-hidden"
+    style="
+      font-family: Poppins;
+      font-weight: 400;
+      font-size: 10px;
+      line-height: 20px;
+      letter-spacing: 0%;
+      text-align: center;
+    "
+    :class="[
+      currentView === 'after' 
+        ? '!text-white' 
+        : 'text-gray-700',
+      rendering_started ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
+    ]"
+  >
+    <span class="whitespace-nowrap">After</span>
+  </button>
 </div>
+
+
       </a-col>
-      <a-col
-        :span="8"
-        style="display: flex; justify-content: flex-end; align-items: center"
-      >
-        <button
-          style="
-            background: none;
-            border: none;
-            color: #666;
-            cursor: pointer;
-            font-size: 14px;
-          "
-        >
-          ⚪ Support
-        </button>
-      </a-col>
+     <a-col
+  :span="8"
+  style="display: flex; justify-content: flex-end; align-items: center"
+>
+  <button
+    style="
+      background: none;
+      border: none;
+      color: #666;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    "
+  >
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M7.98514 1.71483C7.50739 1.7062 7.03262 1.79187 6.58802 1.96693C6.14341 2.14198 5.73769 2.403 5.39407 2.73503C5.05046 3.06706 4.7757 3.46359 4.58551 3.90193C4.39533 4.34026 4.29345 4.8118 4.28571 5.28955V10.2859C4.28571 10.589 4.16531 10.8797 3.95098 11.094C3.73665 11.3083 3.44596 11.4287 3.14286 11.4287H1.71429C1.25963 11.4287 0.823594 11.2481 0.502103 10.9267C0.180612 10.6052 0 10.1692 0 9.71452L0 7.4289C0 6.97426 0.180612 6.53824 0.502103 6.21676C0.823594 5.89528 1.25963 5.71468 1.71429 5.71468H2.57143V5.26898C2.58186 4.5666 2.73055 3.87315 3.00902 3.22824C3.28749 2.58333 3.69028 1.99959 4.19439 1.51036C4.69849 1.02113 5.29404 0.635999 5.94701 0.376953C6.59998 0.117906 7.2976 -0.00997706 8 0.000607193C8.70241 -0.00997706 9.40002 0.117906 10.053 0.376953C10.706 0.635999 11.3015 1.02113 11.8056 1.51036C12.3097 1.99959 12.7125 2.58333 12.991 3.22824C13.2695 3.87315 13.4181 4.5666 13.4286 5.26898V5.71468H14.2857C14.7404 5.71468 15.1764 5.89528 15.4979 6.21676C15.8194 6.53824 16 6.97426 16 7.4289V9.71452C16 10.1692 15.8194 10.6052 15.4979 10.9267C15.1764 11.2481 14.7404 11.4287 14.2857 11.4287H13.4286V12.0002C13.4287 12.7724 13.1445 13.5177 12.6302 14.0938C12.1158 14.6699 11.4074 15.0364 10.64 15.1235C10.491 15.3895 10.2737 15.611 10.0105 15.7651C9.74733 15.9192 9.44782 16.0003 9.14286 16H7.42857C6.97392 16 6.53788 15.8194 6.21639 15.4979C5.8949 15.1764 5.71429 14.7404 5.71429 14.2858C5.71429 13.8311 5.8949 13.3951 6.21639 13.0736C6.53788 12.7522 6.97392 12.5716 7.42857 12.5716H9.14286C9.76229 12.5716 10.3051 12.8995 10.6057 13.3921C10.9207 13.3197 11.2019 13.1426 11.4032 12.8898C11.6046 12.637 11.7142 12.3234 11.7143 12.0002V5.28841C11.7064 4.8082 11.6035 4.3343 11.4114 3.89412C11.2193 3.45394 10.9418 3.0562 10.595 2.7239C10.2483 2.39159 9.83908 2.13132 9.39111 1.95812C8.94313 1.78492 8.46527 1.70223 7.98514 1.71483Z" fill="#1A1A1A"/>
+    </svg>
+    <span style="
+      font-family: Poppins;
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 20px;
+      letter-spacing: 0%;
+      text-align: center;
+    ">
+      Support
+    </span>
+  </button>
+</a-col>
+
     </a-row>
     <div
       style="
@@ -534,11 +602,23 @@
       #e0e0e0 50%,
       #f0f0f0 75%
     );
-    background-size: 200% 100%;
-    animation: skeleton-loading 1.5s infinite;
-    border-radius: 8px;
+   background-size: 200% 100%;
+      animation: skeleton-loading 1.5s infinite;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
   "
-></div>
+>
+ <div style="text-align: center; color: #999;">
+      <div style="font-size: 16px; margin-bottom: 8px;">
+        <LoadingOutlined style="font-size: 32px;" />
+      </div>
+      <div style="font-family: Poppins; font-size: 14px;">
+        Loading your render...
+      </div>
+    </div>
+</div>
 
 <!-- Actual Image -->
 <img
@@ -548,8 +628,10 @@
   style="
     width: 100%;
     max-width: 800px;
+    min-width: 300px;
     height: 100%;
     max-height: 500px;
+     min-height: 300px;
     object-fit: cover;
     display: block;
     border-radius: 8px;
@@ -562,6 +644,7 @@
   <img 
     src="../../assets/apply_changes_img.png" 
     alt="Apply Changes"
+    v-show="!imageLoading"
     style="
       position: absolute;
       bottom: 10px;
@@ -826,6 +909,334 @@
       </div>
     </div>
   </div>
+
+  <div className="block lg:hidden" v-if="!rendering_started">
+    <a-row style="padding: 20px; padding-top: 30px" :gutter="[16, 16]">
+      <!-- Back to edit button - Left -->
+      <a-col :xs="12" :sm="12" :md="12" style="display: flex; align-items: center">
+        <button
+          style="
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+          "
+        >
+         <svg width="6" height="11" viewBox="0 0 6 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M4.75 9.75L0.75 5.25L4.75 0.75" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+
+          <span style="
+            font-family: Poppins;
+            font-weight: 500;
+            font-size: 14px;
+            line-height: 20px;
+            letter-spacing: 0%;
+          ">
+            Back to edit
+          </span>
+        </button>
+      </a-col>
+
+      <!-- Support button - Right -->
+      <a-col :xs="12" :sm="12" :md="12" style="display: flex; justify-content: flex-end; align-items: center">
+       <button
+  style="
+    background: #F2F2F2;
+    border: 1px solid transparent;
+    color: #666;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border-radius: 6px;
+  "
+>
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M7.98514 1.71483C7.50739 1.7062 7.03262 1.79187 6.58802 1.96693C6.14341 2.14198 5.73769 2.403 5.39407 2.73503C5.05046 3.06706 4.7757 3.46359 4.58551 3.90193C4.39533 4.34026 4.29345 4.8118 4.28571 5.28955V10.2859C4.28571 10.589 4.16531 10.8797 3.95098 11.094C3.73665 11.3083 3.44596 11.4287 3.14286 11.4287H1.71429C1.25963 11.4287 0.823594 11.2481 0.502103 10.9267C0.180612 10.6052 0 10.1692 0 9.71452L0 7.4289C0 6.97426 0.180612 6.53824 0.502103 6.21676C0.823594 5.89528 1.25963 5.71468 1.71429 5.71468H2.57143V5.26898C2.58186 4.5666 2.73055 3.87315 3.00902 3.22824C3.28749 2.58333 3.69028 1.99959 4.19439 1.51036C4.69849 1.02113 5.29404 0.635999 5.94701 0.376953C6.59998 0.117906 7.2976 -0.00997706 8 0.000607193C8.70241 -0.00997706 9.40002 0.117906 10.053 0.376953C10.706 0.635999 11.3015 1.02113 11.8056 1.51036C12.3097 1.99959 12.7125 2.58333 12.991 3.22824C13.2695 3.87315 13.4181 4.5666 13.4286 5.26898V5.71468H14.2857C14.7404 5.71468 15.1764 5.89528 15.4979 6.21676C15.8194 6.53824 16 6.97426 16 7.4289V9.71452C16 10.1692 15.8194 10.6052 15.4979 10.9267C15.1764 11.2481 14.7404 11.4287 14.2857 11.4287H13.4286V12.0002C13.4287 12.7724 13.1445 13.5177 12.6302 14.0938C12.1158 14.6699 11.4074 15.0364 10.64 15.1235C10.491 15.3895 10.2737 15.611 10.0105 15.7651C9.74733 15.9192 9.44782 16.0003 9.14286 16H7.42857C6.97392 16 6.53788 15.8194 6.21639 15.4979C5.8949 15.1764 5.71429 14.7404 5.71429 14.2858C5.71429 13.8311 5.8949 13.3951 6.21639 13.0736C6.53788 12.7522 6.97392 12.5716 7.42857 12.5716H9.14286C9.76229 12.5716 10.3051 12.8995 10.6057 13.3921C10.9207 13.3197 11.2019 13.1426 11.4032 12.8898C11.6046 12.637 11.7142 12.3234 11.7143 12.0002V5.28841C11.7064 4.8082 11.6035 4.3343 11.4114 3.89412C11.2193 3.45394 10.9418 3.0562 10.595 2.7239C10.2483 2.39159 9.83908 2.13132 9.39111 1.95812C8.94313 1.78492 8.46527 1.70223 7.98514 1.71483Z" fill="#1A1A1A"/>
+  </svg>
+  <span style="
+    font-family: Poppins;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: 0%;
+    text-align: center;
+  ">
+    Support
+  </span>
+</button>
+
+      </a-col>
+
+      <!-- Mobile: Share on social - Full width on mobile -->
+       
+    </a-row>
+    <div className="flex flex-row justify-between">
+      <div
+           style="
+             padding: 12px 16px;
+             border-radius: 8px;
+             display: flex;
+             align-items: center;
+             gap: 12px;
+             width: 40%;
+             justify-content: center;
+           "
+         >
+           <span style="color: #666; font-size: 12px; font-weight: 500">Share:</span>
+ <svg width="21" height="22" viewBox="0 0 21 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M0.443867 10.772C0.443375 12.6043 0.908 14.3934 1.79148 15.9703L0.359375 21.3581L5.71044 19.9124C7.19048 20.7426 8.84874 21.1776 10.5339 21.1778H10.5383C16.1013 21.1778 20.6296 16.5134 20.632 10.7802C20.6331 8.00211 19.5841 5.38976 17.6781 3.42436C15.7726 1.45913 13.2382 0.376268 10.5379 0.375C4.97429 0.375 0.446246 5.03914 0.443949 10.772" fill="url(#paint0_linear_7920_80738)"/>
+<path d="M0.0877734 10.77C0.0871992 12.6682 0.568476 14.5212 1.48345 16.1546L0 21.7356L5.54293 20.238C7.07019 21.0961 8.78973 21.5485 10.5395 21.5491H10.544C16.3065 21.5491 20.9975 16.7169 21 10.7786C21.001 7.90064 19.9142 5.19437 17.9402 3.15857C15.966 1.12301 13.341 0.00118336 10.544 0C4.78045 0 0.0900703 4.8315 0.0877734 10.77ZM3.38879 15.8733L3.18183 15.5348C2.3118 14.1093 1.85259 12.4621 1.85325 10.7706C1.85505 5.83474 5.75351 1.819 10.5473 1.819C12.8687 1.82001 15.0504 2.7525 16.6914 4.44437C18.3323 6.13641 19.2352 8.38565 19.2346 10.7779C19.2325 15.7138 15.3339 19.73 10.544 19.73H10.5405C8.98086 19.7292 7.45123 19.2976 6.11723 18.482L5.79977 18.288L2.51048 19.1767L3.38879 15.8733Z" fill="url(#paint1_linear_7920_80738)"/>
+<path d="M7.93402 6.26438C7.7383 5.81614 7.53232 5.80709 7.34619 5.79923C7.19377 5.79247 7.01954 5.79298 6.84547 5.79298C6.67123 5.79298 6.38814 5.86051 6.14886 6.12973C5.90933 6.3992 5.23438 7.05039 5.23438 8.37482C5.23438 9.69926 6.1706 10.9793 6.30111 11.1591C6.43179 11.3386 8.1085 14.1435 10.764 15.2225C12.971 16.1193 13.4201 15.9409 13.8991 15.8959C14.3782 15.8511 15.4449 15.2449 15.6625 14.6163C15.8803 13.9878 15.8803 13.449 15.815 13.3364C15.7497 13.2242 15.5755 13.1569 15.3142 13.0223C15.0529 12.8877 13.7684 12.2364 13.529 12.1465C13.2894 12.0568 13.1153 12.012 12.941 12.2815C12.7668 12.5507 12.2665 13.1569 12.114 13.3364C11.9617 13.5164 11.8092 13.5388 11.548 13.4041C11.2866 13.269 10.4452 12.9851 9.44693 12.0681C8.67025 11.3545 8.14591 10.4733 7.9935 10.2038C7.84108 9.93466 7.97717 9.78877 8.10818 9.65463C8.22556 9.53401 8.36953 9.34028 8.50029 9.18314C8.63055 9.02593 8.67403 8.91376 8.76114 8.73423C8.84834 8.55452 8.8047 8.39731 8.73949 8.26266C8.67403 8.12801 8.16634 6.79664 7.93402 6.26438Z" fill="white"/>
+<defs>
+<linearGradient id="paint0_linear_7920_80738" x1="1013.99" y1="2098.69" x2="1013.99" y2="0.375" gradientUnits="userSpaceOnUse">
+<stop stop-color="#1FAF38"/>
+<stop offset="1" stop-color="#60D669"/>
+</linearGradient>
+<linearGradient id="paint1_linear_7920_80738" x1="1050" y1="2173.56" x2="1050" y2="0" gradientUnits="userSpaceOnUse">
+<stop stop-color="#F9F9F9"/>
+<stop offset="1" stop-color="white"/>
+</linearGradient>
+</defs>
+</svg>
+
+ <svg
+              width="20"
+              height="20"
+              viewBox="0 0 20 20"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <g clip-path="url(#clip0_7489_34290)">
+                <path
+                  d="M20 10C20 4.47719 15.5228 0 10 0C4.47719 0 0 4.47719 0 10C0 14.9913 3.65687 19.1284 8.4375 19.8785V12.8906H5.89844V10H8.4375V7.79688C8.4375 5.29063 9.93047 3.90625 12.2147 3.90625C13.3088 3.90625 14.4531 4.10156 14.4531 4.10156V6.5625H13.1922C11.9499 6.5625 11.5625 7.33336 11.5625 8.12422V10H14.3359L13.8926 12.8906H11.5625V19.8785C16.3431 19.1284 20 14.9913 20 10Z"
+                  fill="#1877F2"
+                />
+                <path
+                  d="M13.8926 12.8906L14.3359 10H11.5625V8.12422C11.5625 7.33328 11.9499 6.5625 13.1922 6.5625H14.4531V4.10156C14.4531 4.10156 13.3088 3.90625 12.2146 3.90625C9.93047 3.90625 8.4375 5.29063 8.4375 7.79688V10H5.89844V12.8906H8.4375V19.8785C8.95439 19.9595 9.4768 20.0001 10 20C10.5232 20.0001 11.0456 19.9595 11.5625 19.8785V12.8906H13.8926Z"
+                  fill="white"
+                />
+              </g>
+              <defs>
+                <clipPath id="clip0_7489_34290">
+                  <rect width="20" height="20" fill="white" />
+                </clipPath>
+              </defs>
+            </svg> <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M15.3125 0H4.6875C2.09867 0 0 2.09867 0 4.6875V15.3125C0 17.9013 2.09867 20 4.6875 20H15.3125C17.9013 20 20 17.9013 20 15.3125V4.6875C20 2.09867 17.9013 0 15.3125 0Z" fill="url(#paint0_radial_7920_80746)"/>
+<path d="M15.3125 0H4.6875C2.09867 0 0 2.09867 0 4.6875V15.3125C0 17.9013 2.09867 20 4.6875 20H15.3125C17.9013 20 20 17.9013 20 15.3125V4.6875C20 2.09867 17.9013 0 15.3125 0Z" fill="url(#paint1_radial_7920_80746)"/>
+<path d="M10.0007 2.1875C7.87898 2.1875 7.61266 2.1968 6.77938 2.23469C5.94766 2.27281 5.37992 2.40445 4.8832 2.59766C4.3693 2.79719 3.93344 3.06414 3.49922 3.49852C3.06461 3.93281 2.79766 4.36867 2.5975 4.88234C2.40375 5.37922 2.27195 5.94719 2.23453 6.77852C2.19727 7.61188 2.1875 7.87828 2.1875 10.0001C2.1875 12.1219 2.19688 12.3873 2.23469 13.2206C2.27297 14.0523 2.40461 14.6201 2.59766 15.1168C2.79734 15.6307 3.0643 16.0666 3.49867 16.5008C3.93281 16.9354 4.36867 17.203 4.88219 17.4025C5.3793 17.5957 5.94711 17.7273 6.77867 17.7655C7.61203 17.8034 7.87813 17.8127 9.99977 17.8127C12.1217 17.8127 12.3872 17.8034 13.2205 17.7655C14.0522 17.7273 14.6205 17.5957 15.1177 17.4025C15.6313 17.203 16.0666 16.9354 16.5006 16.5008C16.9352 16.0666 17.2021 15.6307 17.4023 15.117C17.5944 14.6201 17.7262 14.0522 17.7653 13.2208C17.8027 12.3875 17.8125 12.1219 17.8125 10.0001C17.8125 7.87828 17.8027 7.61203 17.7653 6.77867C17.7262 5.94695 17.5944 5.3793 17.4023 4.88258C17.2021 4.36867 16.9352 3.93281 16.5006 3.49852C16.0661 3.06398 15.6315 2.79703 15.1172 2.59773C14.6191 2.40445 14.0511 2.27273 13.2194 2.23469C12.386 2.1968 12.1207 2.1875 9.99828 2.1875H10.0007ZM9.29984 3.59539C9.50789 3.59508 9.74 3.59539 10.0007 3.59539C12.0867 3.59539 12.3339 3.60289 13.1577 3.64031C13.9194 3.67516 14.3328 3.80242 14.6082 3.90938C14.9728 4.05094 15.2327 4.22023 15.506 4.49375C15.7795 4.76719 15.9487 5.02758 16.0906 5.39219C16.1976 5.66719 16.325 6.08063 16.3597 6.84234C16.3971 7.66594 16.4052 7.91328 16.4052 9.99828C16.4052 12.0833 16.3971 12.3307 16.3597 13.1542C16.3248 13.9159 16.1976 14.3294 16.0906 14.6045C15.9491 14.9691 15.7795 15.2287 15.506 15.502C15.2326 15.7754 14.973 15.9446 14.6082 16.0863C14.3331 16.1937 13.9194 16.3206 13.1577 16.3555C12.3341 16.3929 12.0867 16.401 10.0007 16.401C7.91461 16.401 7.66734 16.3929 6.84383 16.3555C6.08211 16.3203 5.66867 16.193 5.39305 16.0861C5.02852 15.9445 4.76805 15.7752 4.49461 15.5018C4.22117 15.2284 4.05195 14.9686 3.91 14.6038C3.80305 14.3287 3.67562 13.9153 3.64094 13.1536C3.60352 12.33 3.59602 12.0827 3.59602 9.99633C3.59602 7.91 3.60352 7.66398 3.64094 6.84039C3.67578 6.07867 3.80305 5.66523 3.91 5.38984C4.05164 5.02523 4.22117 4.76484 4.49469 4.49141C4.7682 4.21797 5.02852 4.04867 5.39312 3.9068C5.66852 3.79938 6.08211 3.67242 6.84383 3.63742C7.56453 3.60484 7.84383 3.59508 9.29984 3.59344V3.59539ZM14.171 4.89258C13.6534 4.89258 13.2335 5.31211 13.2335 5.82977C13.2335 6.34734 13.6534 6.76727 14.171 6.76727C14.6886 6.76727 15.1085 6.34734 15.1085 5.82977C15.1085 5.31219 14.6886 4.89227 14.171 4.89227V4.89258ZM10.0007 5.98797C7.78508 5.98797 5.98867 7.78438 5.98867 10.0001C5.98867 12.2158 7.78508 14.0113 10.0007 14.0113C12.2164 14.0113 14.0122 12.2158 14.0122 10.0001C14.0122 7.78445 12.2163 5.98797 10.0005 5.98797H10.0007ZM10.0007 7.39586C11.4389 7.39586 12.6049 8.56172 12.6049 10.0001C12.6049 11.4383 11.4389 12.6043 10.0007 12.6043C8.5625 12.6043 7.39656 11.4383 7.39656 10.0001C7.39656 8.56172 8.56242 7.39586 10.0007 7.39586Z" fill="white"/>
+<defs>
+<radialGradient id="paint0_radial_7920_80746" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(5.3125 21.5404) rotate(-90) scale(19.8215 18.4355)">
+<stop stop-color="#FFDD55"/>
+<stop offset="0.1" stop-color="#FFDD55"/>
+<stop offset="0.5" stop-color="#FF543E"/>
+<stop offset="1" stop-color="#C837AB"/>
+</radialGradient>
+<radialGradient id="paint1_radial_7920_80746" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(-3.35008 1.4407) rotate(78.681) scale(8.86031 36.5225)">
+<stop stop-color="#3771C8"/>
+<stop offset="0.128" stop-color="#3771C8"/>
+<stop offset="1" stop-color="#6600FF" stop-opacity="0"/>
+</radialGradient>
+</defs>
+</svg>
+
+          </div>
+ 
+       <!-- Mobile: Download button - Full width on mobile -->
+        <div>
+ 
+          <button
+          className="!text-blue-500"
+            block
+            style="
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              gap: 8px;
+              padding: 8px 16px;
+              height: auto;
+              border-radius: 8px;
+            "
+          >
+           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 14.5V4.5M12 14.5C11.2998 14.5 9.99153 12.5057 9.5 12M12 14.5C12.7002 14.5 14.0085 12.5057 14.5 12" stroke="#3B63FB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M20 16.5C20 18.982 19.482 19.5 17 19.5H7C4.518 19.5 4 18.982 4 16.5" stroke="#3B63FB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+
+            Download Now
+        </button>
+        </div>
+
+    </div>
+
+    <!-- Image Container with Before/After Toggle -->
+    <div style="display: flex; justify-content: center; padding-top: 60px; margin-top: -25px;">
+      <div style="padding: 15px; border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); background: white;">
+        <div style="position: relative; display: inline-block;">
+          <!-- Loading Skeleton -->
+          <div
+            v-if="imageLoading"
+            style="
+              width: 100%;
+              max-width: 800px;
+              height: 500px;
+              background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+              background-size: 200% 100%;
+              animation: skeleton-loading 1.5s infinite;
+              border-radius: 8px;
+            "
+          ></div>
+
+          <!-- Actual Image -->
+          <img
+            v-show="!imageLoading"
+            :src="displayImage"
+            alt="Room Render"
+            style="
+              width: 100%;
+              max-width: 800px;
+              height: 100%;
+              max-height: 500px;
+              object-fit: cover;
+              display: block;
+              border-radius: 8px;
+              transition: opacity 0.3s ease-in-out;
+            "
+            @error="handleImageError"
+            @load="handleImageLoad"
+          />
+
+          <!-- Before/After Toggle - Positioned on Image -->
+          <div style="position: absolute; top: 20px; left: 50%; transform: translateX(-50%); z-index: 10;">
+            <div class="relative inline-flex items-center bg-gray-100 rounded-xl !px-4 sm:p-1 w-full h-9 max-w-[100px]">
+              <!-- Sliding background indicator -->
+              <div 
+                class="absolute top-1 bottom-1 w-[calc(50%-0.25rem)] bg-blue-600 rounded-lg shadow-lg transition-all duration-300 ease-in-out"
+                :class="currentView === 'after' ? 'left-[calc(50%+0.125rem)]' : 'left-1'"
+              ></div>
+              
+              <!-- Before Button -->
+              <button
+                @click="showBefore"
+                :disabled="rendering_started"
+                class="relative z-10 flex-1 px-1 sm:px-2 py-2 font-medium rounded-xl transition-colors duration-300 font-poppins flex items-center justify-center min-w-0 overflow-hidden"
+                style="
+                  font-family: Poppins;
+                  font-weight: 400;
+                  font-size: 8px;
+                  line-height: 20px;
+                  letter-spacing: 0%;
+                  text-align: center;
+                "
+                :class="[
+                  currentView === 'before' 
+                    ? '!text-white' 
+                    : 'text-gray-700',
+                  rendering_started ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
+                ]"
+              >
+                <span class="whitespace-nowrap">Before</span>
+              </button>
+              
+              <!-- After Button -->
+              <button
+                @click="showAfter"
+                :disabled="rendering_started"
+                class="relative z-10 flex-1 px-1 sm:px-2 py-2 font-medium rounded-xl transition-colors duration-300 font-poppins flex items-center justify-center min-w-0 overflow-hidden"
+                style="
+                  font-family: Poppins;
+                  font-weight: 400;
+                  font-size: 8px;
+                  line-height: 20px;
+                  letter-spacing: 0%;
+                  text-align: center;
+                "
+                :class="[
+                  currentView === 'after' 
+                    ? '!text-white' 
+                    : 'text-gray-700',
+                  rendering_started ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
+                ]"
+              >
+                <span class="whitespace-nowrap pl-4 sm:pl-0">After</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Apply Changes Icon -->
+          <img 
+            src="../../assets/apply_changes_img.png" 
+            alt="Apply Changes"
+            style="position: absolute; bottom: 10px; right: 10px; width: 60px; height: 60px;"
+          />
+        </div>
+
+        <!-- Desktop Actions (hidden on mobile) -->
+        <div class="hidden md:flex" style="gap: 15px; padding-top: 15px; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+          <div style="padding: 12px 16px; background: #f2f9fa; border-radius: 8px; flex-shrink: 0; display: flex; align-items: center; gap: 12px;">
+            <span style="color: #666; font-size: 14px; font-weight: 500">Share on social:</span>
+            <!-- Social icons SVGs here -->
+          </div>
+
+          <div style="display: flex; gap: 12px; align-items: center">
+            <a-button type="default" style="display: flex; align-items: center; gap: 8px; padding: 8px 16px; height: auto; border-radius: 8px;">
+              <!-- SVG here -->
+              Download Now
+            </a-button>
+
+            <a-button type="primary" @click="openRenderNowModal()" style="display: flex; align-items: center; gap: 8px; padding: 8px 16px; height: auto; border-radius: 8px;">
+              <!-- SVG here -->
+              Render Now
+            </a-button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile: Render Now button - Full width below image -->
+    <a-row :gutter="[16, 16]" class="md:hidden" style="padding: 0 20px; padding-top: 20px;">
+      <a-col :span="24">
+       <a-button
+  type="primary"
+  block
+  @click="openRenderNowModal()"
+  style="
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 16px;
+    height: auto;
+    border-radius: 8px;
+  "
+>
+  <svg width="16" height="21" viewBox="0 0 16 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M6.63549 7.31641L7.08768 8.53829C7.68052 10.1405 7.97702 10.9416 8.56142 11.526C9.14583 12.1105 9.94682 12.4069 11.5491 12.9998L12.771 13.4519L11.5491 13.904C9.94682 14.4969 9.14583 14.7933 8.56142 15.3778C7.97702 15.9622 7.68052 16.7633 7.08768 18.3655L6.63549 19.5874L6.18331 18.3655C5.59047 16.7633 5.29397 15.9622 4.70956 15.3778C4.12516 14.7933 3.32417 14.4969 1.72188 13.904L0.5 13.4519L1.72188 12.9998C3.32417 12.4069 4.12516 12.1105 4.70956 11.526C5.29397 10.9416 5.59047 10.1405 6.18331 8.53829L6.63549 7.31641Z" fill="white" stroke="white" stroke-linejoin="round"/>
+    <path d="M11.6365 0.5L11.9212 1.31459C12.2945 2.38275 12.4812 2.91682 12.8491 3.30643C13.2171 3.69603 13.7214 3.89365 14.7303 4.2889L15.4996 4.59033L14.7303 4.89176C13.7214 5.287 13.2171 5.48463 12.8491 5.87423C12.4812 6.26384 12.2945 6.79791 11.9212 7.86607L11.6365 8.68066L11.3518 7.86607C10.9785 6.79791 10.7919 6.26384 10.4239 5.87423C10.0559 5.48463 9.55162 5.287 8.54277 4.89176L7.77344 4.59033L8.54277 4.2889C9.55162 3.89365 10.0559 3.69603 10.4239 3.30643C10.7919 2.91682 10.9785 2.38275 11.3518 1.31459L11.6365 0.5Z" fill="white" stroke="white" stroke-linejoin="round"/>
+  </svg>
+  <span style="
+    font-family: Poppins;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: 0%;
+    text-align: center;
+  ">
+    Render Now
+  </span>
+</a-button>
+
+      </a-col>
+    </a-row>
+  </div>
+
+
   <div v-else style="background-color: #f3f3f3;min-height:90.5vh;">
     <a-row>
       <a-col
@@ -1405,6 +1816,11 @@ export default {
     };
   },
   
+
+
+
+
+  
   computed: {
     displayImage() {
       return this.currentView === 'before' ? this.main_image : this.base_image_url;
@@ -1754,6 +2170,7 @@ export default {
     async startRendering_API_CALL() {
       console.log("📡 Starting rendering...");
       this.loading = true;
+      this.imageLoading = true;
       this.error.room = null;
 
       try {
@@ -1784,10 +2201,12 @@ export default {
           this.base_image_url = this.$store.state.root_media_api + responseData.final_image_output;
         } else {
           this.error.room = "Room is not ready yet. Please try again later.";
+          this.imageLoading = false; 
         }
       } catch (error) {
         console.error("❌ Failed to start rendering:", error);
         this.error.room = error.message;
+        this.imageLoading = false; 
         this.showError("Failed to Start Rendering", error.message);
       } finally {
         this.loading = false;
@@ -1987,6 +2406,7 @@ export default {
     async fetchRoom() {
       console.log("📡 Fetching room data...");
       this.loading = true;
+      this.imageLoading = true; 
       this.error.room = null;
 
       try {
@@ -2016,13 +2436,16 @@ export default {
             console.log("✅ Room data loaded:", this.base_image_url);
           } else {
             this.error.room = "Room is not ready yet. Please try again later.";
+            this.imageLoading = false; 
           }
         } else {
           this.error.room = "No room data found";
+          this.imageLoading = false; 
         }
       } catch (error) {
         console.error("❌ Failed to fetch room:", error);
         this.error.room = error.message;
+        this.imageLoading = false;
         this.showError("Failed to Load Room", error.message);
       } finally {
         this.loading = false;
@@ -2301,4 +2724,3 @@ async toggleLikeRoom(){
   }
 }
 </style>
-

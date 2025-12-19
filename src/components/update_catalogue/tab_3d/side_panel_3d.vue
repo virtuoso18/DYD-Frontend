@@ -538,14 +538,14 @@
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
     <p style="margin: 0; font-weight: 500;">Textures ({{ textures_available.length }})</p>
    <a-button 
-      type="primary" 
+      :type="!mainImage ? 'default' :'primary'" 
       size="small"
       @click="openTexturModal()"
       :disabled="!mainImage"
-    >
-      <template #icon>
+      style="display:flex;justify-content: center;align-items: center;"
+      >
+      
         <PlusOutlined />
-      </template>
       Add Texture
     </a-button>
   </div>

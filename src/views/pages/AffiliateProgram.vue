@@ -4,7 +4,7 @@
     <!-- Hero Section -->
     <section class="relative h-[400px] md:h-[500px] bg-gray-100 overflow-hidden">
       <img 
-        src="../../assets/API1.svg" 
+        src="../../assets/API1.jpg" 
         alt="Affiliate Program Hero" 
         class="w-full h-full object-cover"
       />

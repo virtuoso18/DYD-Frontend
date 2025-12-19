@@ -994,6 +994,7 @@
         <!--for mobile-->
         <div
           class="flex md:hidden flex-wrap items-center justify-between mb-5 w-full gap-3"
+          style="padding:2px;"
         >
           <!-- Title -->
           <h2
@@ -1042,12 +1043,12 @@
                 <button
                   @click="viewMode = 'table'"
                   :class="[
-                    'flex items-center px-3 py-2 font-semibold text-xs transition',
+                    'flex items-center px-3 py-2 font-semibold text-xs transition ',
                     viewMode === 'table'
                       ? 'bg-blue-600 text-white'
                       : 'bg-white text-gray-600',
                   ]"
-                  style="font-family: var(--font-family-main)"
+                  style="font-family: var(--font-family-main);color:white"
                 >
                   <svg
                     width="16"
@@ -1192,7 +1193,7 @@
 
         <!-- Grid View -->
         <div v-if="viewMode === 'grid'" class="sm:main">
-          <div class="products-list ">
+          <div class="products-list " style="padding:2px">
             <a-tabs v-model:activeKey="active_tab">
               <a-tab-pane
                 key="Furniture"
@@ -1222,8 +1223,9 @@
                     v-for="product in filteredProducts"
                     :key="product.id"
                     class="product-responsive p-1 sm:p-2"
+                    style="padding: 5px"
                   >
-                    <div class="product">
+                    <div class="product" style="padding: 5px">
                       <div
                         class="product-image-container"
                         @click="viewProduct(product)"
@@ -1304,38 +1306,41 @@
                           <!-- <del style="font-size: 10px;">${{ product.pricing.price }}</del> -->
                           ${{ product.pricing.price }}
                         </a-col>
+ <a-col span="17">
+                          <a-button block @click="viewProduct(product)" style="display:flex;justify-content:center"
+                            >Product Details</a-button
+                          >
+                        </a-col>
 
-                        <div class="flex items-center gap-2 w-full">
-                          <!-- Product Details Button - 75% width (18/24) -->
-                          <div class="w-3/4">
-                            <button
-                              @click="viewProduct(product)"
-                              class="w-full py-2 px-4 bg-white border border-gray-300 rounded hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500 transition-colors whitespace-nowrap"
-                              style="
-                                font-family: 'Poppins', sans-serif;
-                                font-size: 12px;
-                              "
-                            >
-                              Product Details
-                            </button>
-                          </div>
+                        <a-col :span="1"></a-col>
+                        <a-col
+                          span="6"
+                          style="
+                            display: flex;
+                            align-items: end;
+                            justify-content: end;
+                          "
+                        >
+                          <!-- <a-button><HeartOutlined /></a-button> -->
 
-                          <!-- Like Button - 25% width (6/24) -->
-                          <div class="w-1/4 flex items-end justify-end">
-                            <button
-                              @click="toggleFavorite(product, 'product')"
-                              class="bg-white !py-2.5 border border-gray-300 rounded hover:bg-gray-50 hover:border-blue-500 transition-colors flex items-center justify-center"
-                              style="padding: 2px 12px"
-                            >
-                              <template v-if="product.is_favorited">
-                                <HeartFilled style="color: red" />
-                              </template>
-                              <template v-else>
-                                <HeartOutlined />
-                              </template>
-                            </button>
-                          </div>
-                        </div>
+                          <a-button
+                            @click="toggleFavorite(product, 'product')"
+                            style="
+                              padding: 2px 12px;
+                              display: flex;
+                              align-items: center;
+                              justify-content: center;
+                            "
+                          >
+                            <template v-if="product.is_favorited">
+                              <HeartFilled style="color: red" />
+                            </template>
+                            <template v-else>
+                              <HeartOutlined />
+                            </template>
+                          </a-button>
+                        </a-col>
+                        
                       </a-row>
                     </div>
                   </a-col>
@@ -1395,7 +1400,7 @@
                     class="product-responsive"
                     style="padding: 5px"
                   >
-                    <div class="product">
+                    <div class="product"  style="padding: 5px">
                       <!-- Product image container -->
                       <!-- <div 
                                 class="product-image-container" 
@@ -1487,12 +1492,13 @@
 
                         <!-- Buttons -->
 
-                        <a-col span="18">
-                          <a-button block @click="viewProduct(product)"
+                        <a-col span="17">
+                          <a-button block @click="viewProduct(product)" style="display:flex;justify-content:center"
                             >Product Details</a-button
                           >
                         </a-col>
 
+                        <a-col :span="1"></a-col>
                         <a-col
                           span="6"
                           style="
@@ -1576,7 +1582,7 @@
                     class="product-responsive"
                     style="padding: 5px"
                   >
-                    <div class="product">
+                    <div class="product" style="padding: 4px">
                       <!-- Product image container -->
                       <div
                         class="product-image-container"
@@ -1648,18 +1654,19 @@
                         </a-col>
 
                         <!-- Buttons -->
-                        <a-col span="18">
+                        <a-col span="17">
                           <a-button
                             block
                             @click="viewProduct(product)"
                             style="
                               font-family: 'Poppins', sans-serif;
-                              font-size: 13px;
+                              font-size: 12px; display:flex; justify-content: center;align-items:center
                             "
                             >Product Details</a-button
                           >
                         </a-col>
 
+                        <a-col :span="1"></a-col>
                         <a-col
                           span="6"
                           style="
@@ -1743,7 +1750,7 @@
                     class="product-responsive"
                     style="padding: 5px"
                   >
-                    <div class="product">
+                    <div class="product" style="padding: 4px">
                       <div
                         class="product-image-container"
                         @click="viewProduct(product)"
@@ -1802,9 +1809,12 @@
                           style="
                             font-family: 'Poppins', sans-serif;
                             font-size: 13px;
+                            padding-right:5px
                           "
                         >
-                          <a-button block @click="viewProduct(product)"
+                          <a-button block @click="viewProduct(product)" style=" display: flex;width:100%;
+                              align-items: center;
+                              justify-content: center;"
                             >Product Details</a-button
                           >
                         </a-col>

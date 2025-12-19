@@ -374,12 +374,9 @@ export default {
       });
     },
 
-    continueShopping() {
-      this.$router.push('/shop');
-    },
-
+   
     goToShop() {
-      this.$router.push('/shop');
+      // this.$router.push('/shop');
     },
 
     formatPrice(price) {

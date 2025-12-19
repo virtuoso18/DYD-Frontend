@@ -184,17 +184,20 @@
 
           <!-- Colors and Textures -->
          <a-row :gutter="16" style="margin-bottom: 24px;">
-          <a-col :span="12">
-            <div style="margin-bottom: 8px; font-weight: 500;">Colors:</div>
+          <a-col span="24">
             <a-alert 
               v-if="showColorAlert"
               type="warning"
-              :message="`No model associated with ${selectedColorHex} color. Hence showing model for primary color.`"
+              :message="`No model associated with ${selectedColorHex} color. Showing model for primary color.`"
               closable
               @close="showColorAlert = false"
               style="margin-bottom: 12px;"
             />
-            <div style="display: flex; gap: 6px; align-items: center;">
+          </a-col>
+          <a-col :span="12">
+            <div style="margin-bottom: 8px; font-weight: 500;">Colors:</div>
+            
+            <div style="display: flex; gap: 6px; align-items: center;flex-wrap: wrap;">
               <div v-for="(color, index) in selectedProduct.colors.available_colors"
                 :key="index"
                 @click="selectColor(index, color)"
@@ -202,16 +205,16 @@
                   'w-6 h-6 rounded-full transition-all cursor-pointer',
                   color.model_file_colored_product 
                     ? 'border-2 hover:shadow-md' 
-                    : 'outline outline-2 outline-red-500 outline-offset-2 hover:shadow-[0_0_8px_rgba(239,68,68,0.3)]',
-                  selectedColorIndex === index ? 'border-blue-500 border-4' : 'border-gray-100'
+                    : 'outline outline-2 outline-red-500 outline-offset-2 hover:shadow-[0_0_3px_rgba(239,68,68,0.3)]',
+                  selectedColorIndex === index ? 'border-blue-500 border-2' : 'border-gray-100'
                 ]"
                 :style="{ backgroundColor: color.color }"
               ></div>
             </div>
           </a-col>
-         <a-col :span="12">
+         <a-col :span="12" v-if="selectedProduct.textures.length">
               <div style="margin-bottom: 8px; font-weight: 500;">Textures:</div>
-              <div style="display: flex; gap: 6px;">
+              <div style="display: flex; gap: 6px;flex-wrap: wrap;">
                 <img 
                   v-for="texture in selectedProduct.textures" 
                   :key="texture" 
@@ -280,7 +283,7 @@
             </a-button>
 
                 </a-col>
-                <a-col :span="14" style="padding-left:10px;padding-right:10px">
+                <a-col :xs="0" :sm="0" :lg="24" :md="24"  style="padding-left:10px;padding-right:10px">
                  
 <a-qrcode
   error-level="H"

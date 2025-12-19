@@ -47,7 +47,9 @@
 
     <!-- Products Table - Updated to match your list view -->
     <a-row :gutter="[16, 16]">
-      <a-col :span="24">
+            <a-col :xs="0" :sm="0" :md="0" :lg="24">
+      
+>
         <div class="table-card">
           <div class="table-header">
             <h3>Top simulation products</h3>
@@ -139,18 +141,36 @@
           </a-table>
         </div>
       </a-col>
+      <a-col :xs="24" :sm="24" :md="24" :lg="0">
+        <div class="table-card">
+          <div class="table-header">
+            <h3>Top simulation products</h3>
+          </div>
+          <div class="product-listed-sec">
+            <AnalyticsProductCard
+              v-for="product in productsData"
+              :key="product.id"
+              :product="product"
+            />
+          </div>
+        </div>
+      </a-col>
+
     </a-row>
   </div>
 </template>
 
 <script>
 import { Chart, registerables } from 'chart.js'
-
+import AnalyticsProductCard from '@/components/store/AnalyticsProductCard.vue'
 // Register Chart.js components
 Chart.register(...registerables)
 
 export default {
   name: 'Analytics',
+  components:{
+    AnalyticsProductCard
+  },
   data() {
     return {
       chart: null,
@@ -573,6 +593,24 @@ export default {
   
   .stat-value {
     font-size: 24px;
+  }
+}
+.product-listed-sec {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+@media screen and (max-width: 570px) {
+  .product-listed-sec {
+    gap: 5px;
+    justify-content: center;
+    align-items: center;
+    min-width: 370px;
+  }
+  .table-card {
+    padding: 0;
+    background: none;
+    box-shadow: none;
   }
 }
 </style>

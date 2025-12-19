@@ -162,9 +162,9 @@ mounted(){
 },
 methods:{
   async loadHistoryModel(){
-    console.log("======================================================")
-    console.log("=======================   Need To Load 3d Model Here ===============================")
-    console.log("======================================================")
+    // console.log("======================================================")
+    // console.log("=======================   Need To Load 3d Model Here ===============================")
+    // console.log("======================================================")
     
     
   this.loading_generated_models_history= true;

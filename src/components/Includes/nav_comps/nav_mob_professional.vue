@@ -147,10 +147,23 @@ export default {
         @click="closeMobileMenu"
       >
         <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center transition-all duration-200 group-hover:bg-blue-100">
-          <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M0.5 14.5C0.5 13.4391 0.921427 12.4217 1.67157 11.6716C2.42172 10.9214 3.43913 10.5 4.5 10.5H12.5C13.5609 10.5 14.5783 10.9214 15.3284 11.6716C16.0786 12.4217 16.5 13.4391 16.5 14.5C16.5 15.0304 16.2893 15.5391 15.9142 15.9142C15.5391 16.2893 15.0304 16.5 14.5 16.5H2.5C1.96957 16.5 1.46086 16.2893 1.08579 15.9142C0.710714 15.5391 0.5 15.0304 0.5 14.5Z" stroke="white" stroke-linejoin="round"/>
-<path d="M8.5 6.5C10.1569 6.5 11.5 5.15685 11.5 3.5C11.5 1.84315 10.1569 0.5 8.5 0.5C6.84315 0.5 5.5 1.84315 5.5 3.5C5.5 5.15685 6.84315 6.5 8.5 6.5Z" stroke="white"/>
-</svg>
+          <svg
+          width="17"
+          height="17"
+          viewBox="0 0 17 17"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M0.5 14.5C0.5 13.4391 0.921427 12.4217 1.67157 11.6716C2.42172 10.9214 3.43913 10.5 4.5 10.5H12.5C13.5609 10.5 14.5783 10.9214 15.3284 11.6716C16.0786 12.4217 16.5 13.4391 16.5 14.5C16.5 15.0304 16.2893 15.5391 15.9142 15.9142C15.5391 16.2893 15.0304 16.5 14.5 16.5H2.5C1.96957 16.5 1.46086 16.2893 1.08579 15.9142C0.710714 15.5391 0.5 15.0304 0.5 14.5Z"
+            stroke="currentColor"
+            stroke-linejoin="round"
+          />
+          <path
+            d="M8.5 6.5C10.1569 6.5 11.5 5.15685 11.5 3.5C11.5 1.84315 10.1569 0.5 8.5 0.5C6.84315 0.5 5.5 1.84315 5.5 3.5C5.5 5.15685 6.84315 6.5 8.5 6.5Z"
+            stroke="currentColor"
+          />
+        </svg>
 
         </div>
         <span class="flex-1 text-sm !font-family-poppins">Profile</span>
@@ -203,9 +216,20 @@ export default {
         @click="closeMobileMenu"
       >
         <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center transition-all duration-200 group-hover:bg-blue-100">
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <polygon points="12,2 15.09,8.26 22,9 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9 8.91,8.26" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+          <svg
+          width="20"
+          height="17"
+          viewBox="0 0 20 17"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M5.44 5.445H14.06M5.44 5.445H0.5M5.44 5.445L9.09 15.496M5.44 5.445L7.84 1.512L8.39 0.5M14.06 5.445H19M14.06 5.445L10.41 15.496M14.06 5.445L11.66 1.512L11.094 0.5M0.5 5.445C0.5 5.865 0.579 6.285 0.736 6.681C0.948 7.216 1.378 7.709 2.236 8.694L5.703 12.67C7.1 14.272 7.798 15.074 8.626 15.368C8.77867 15.422 8.93333 15.4647 9.09 15.496M0.5 5.445C0.5 5.025 0.579 4.605 0.736 4.208C0.948 3.673 1.378 3.181 2.236 2.195C2.703 1.661 2.936 1.394 3.206 1.187C3.60742 0.881067 4.0726 0.669496 4.567 0.568C4.901 0.5 5.255 0.5 5.964 0.5H8.39M9.09 15.496C9.52578 15.5822 9.97422 15.5822 10.41 15.496M8.39 0.5H11.094M19 5.445C19 5.865 18.921 6.285 18.764 6.681C18.552 7.216 18.122 7.709 17.264 8.694L13.797 12.67C12.4 14.272 11.702 15.074 10.874 15.368C10.7226 15.4216 10.5675 15.4643 10.41 15.496M19 5.445C19 5.025 18.921 4.605 18.764 4.208C18.552 3.673 18.122 3.181 17.264 2.195C16.797 1.661 16.564 1.394 16.294 1.187C15.8926 0.881067 15.4274 0.669496 14.933 0.568C14.599 0.5 14.245 0.5 13.536 0.5H11.094"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
         </div>
         <span class="flex-1 text-sm !font-family-poppins">Manage Subscription</span>
         <svg class="w-5 h-5 opacity-0 transform -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">

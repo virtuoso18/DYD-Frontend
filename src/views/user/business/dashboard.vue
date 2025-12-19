@@ -1668,7 +1668,7 @@ export default {
 
 .nav-item.active:hover {
   /* background: linear-gradient(135deg, #1d4ed8, #1e40af); */
-  background-color: #738ef8;
+  background-color: #3B63FB;
   color: white;
 }
 

@@ -86,7 +86,7 @@
     </a-button> -->
       
       <!-- Before/After Buttons -->
-      <div class="flex gap-2 flex-shrink-0">
+      <!-- <div class="flex gap-2 flex-shrink-0">
         <a-button
           class="toolbar-btn primary-btn"
           @click="reset_entire_room"
@@ -103,9 +103,9 @@
           After
         </a-button>
       </div>
-      
+       -->
       <!-- Apply Changes Button -->
-      <div class="flex-shrink-0 w-full md:w-auto">
+      <div class="flex-shrink-0 w-full md:w-auto pt-2">
         <!-- <a-button type="primary" class="toolbar-btn primary-btn" @click="downloadCurrentSceneImage" :disabled="isLoading">
             Apply Changes
           </a-button> -->
@@ -2005,7 +2005,7 @@ defineExpose({
 
 @media screen and (min-width:768px) {
   .main-canvas{
-    min-height: 70vh;
+    min-height: 83vh;
   }
 }
 </style>

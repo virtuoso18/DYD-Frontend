@@ -4,7 +4,7 @@
       <img
         :src="this.baseImageUrl"
         alt=""
-        class="max-w-full max-h-[55vh] md:max-h-[85vh] mx-auto"
+        class="max-w-full max-h-[54vh] md:max-h-[83vh] mx-auto"
       />
     </div>
   </div>
