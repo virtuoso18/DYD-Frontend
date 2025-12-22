@@ -2049,6 +2049,8 @@ selectAllWallsOnInit() {
   height: 100%;
   /* background: rgba(0, 0, 0, 0.05); */
   z-index: 1;
+  background: rgba(20, 20, 20, 0.55);
+  backdrop-filter: blur(0.1px); 
 }
 .wave-overlay {
   position: absolute;

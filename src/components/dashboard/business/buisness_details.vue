@@ -993,7 +993,7 @@ async checkVerificationStatus() {
             instagram: data.instagram_url ? `https://instagram.com/${data.instagram_url}` : "",
             facebook: data.facebook_url ? `https://facebook.com/${data.facebook_url}` : "",
             website: data.website_url ? `https://${data.website_url}` : "",
-            cartLink: ""
+            cartLink:data.cart_url ? `https://${data.cart_url}` : "",
           };
           console.log(this.businessInfo.business_picture)
 
@@ -1033,7 +1033,8 @@ async checkVerificationStatus() {
           whatsapp_number: this.extractWhatsAppNumber(this.businessInfo.whatsapp),
           instagram_url: this.extractInstagramHandle(this.businessInfo.instagram),
           facebook_url: this.extractFacebookHandle(this.businessInfo.facebook),
-          website_url: this.extractWebsiteUrl(this.businessInfo.website)
+          website_url: this.extractWebsiteUrl(this.businessInfo.website),
+          cart_url: this.extractWebsiteUrl(this.businessInfo.cartLink),
         };
 
         // Include image data if changed

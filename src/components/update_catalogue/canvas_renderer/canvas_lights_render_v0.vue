@@ -72,262 +72,92 @@
       </div> -->
     </div>
 
-    <!-- desktop view -->
-<div className="hidden md:block">
-
-  <a-row v-if="!isLoading"  class="main-toolbar" >
-    <a-col :span="8">
-       <div class="tool-section">
-      <h4>Track Tools</h4>
-      <div class="button-group">
-        <a-button 
-          @click="toggleTrackMode" 
-          :class="{ active: trackMode }" 
-          type="primary"
-          size="small"
+    <a-row v-if="!isLoading"  class="main-toolbar" >
+      <a-col :span="8">
+         <div class="tool-section">
+        <h4>Track Tools</h4>
+        <div class="button-group">
+          <a-button 
+            @click="toggleTrackMode" 
+            :class="{ active: trackMode }" 
+            type="primary"
+            size="small"
+            style="display:flex;gap:10px"
+          >
+            <svg viewBox="0 0 20 20" width="15" height="15" style="margin-top:2px;">
+              <path fill="currentColor" d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"/>
+            </svg>
+            {{ trackMode ? 'Exit Track Mode' : 'Draw Tracks' }}
+          </a-button>
+          <a-button @click="clearTracks" 
           style="display:flex;gap:10px"
-        >
-          <svg viewBox="0 0 20 20" width="15" height="15" style="margin-top:2px;">
-            <path fill="currentColor" d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"/>
-          </svg>
-          {{ trackMode ? 'Exit Track Mode' : 'Draw Tracks' }}
-        </a-button>
-        <a-button @click="clearTracks" 
-        style="display:flex;gap:10px"
-        size="small" :disabled="tracks.length === 0" :danger="true">
-          <svg viewBox="0 0 20 20" width="15" height="15" style="margin-top:2px;">
-            <path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
-          </svg>
-          Clear Tracks
-        </a-button>
+          size="small" :disabled="tracks.length === 0" :danger="true">
+            <svg viewBox="0 0 20 20" width="15" height="15" style="margin-top:2px;">
+              <path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+            </svg>
+            Clear Tracks
+          </a-button>
+        </div>
       </div>
-    </div>
 
+      </a-col>
+      <a-col :span="8" style="display :flex; justify-content: center;"> <!-- Light Tools -->
+      <div class="tool-section" >
+        <h4>Add Lights</h4>
+        <div class="button-group">
+          <a-button 
+          size="small"
+            @click="setLightType('rectangular')" 
+            :class="{ active: selectedLightType === 'rectangular' }" 
+            
+          >
+             🟧
+            Rectangle
+          </a-button>
+          <a-button 
+          size="small"
+            @click="setLightType('circular')" 
+            :class="{ active: selectedLightType === 'circular' }" 
+            
+          >
+            🟠Circular
+          </a-button>
+        </div>
+      </div></a-col>
+      <a-col :span="8" style="display :flex; justify-content: end;"><div class="tool-section stats-section">
+        <div class="stats">
+          <div class="stat">
+            <span class="stat-label">Tracks</span>
+            <span class="stat-value">{{ tracks.length }}</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Lights</span>
+            <span class="stat-value">{{ lights.length }}</span>
+          </div>
+        </div>
+      </div>
+    
+    
+ <!-- <a-button 
+        @click="saveRoom" 
+        type="primary"
+        size="large"
+        style="margin:0;margin-top: 5px;margin-left: 16px;color:white"
+        :disabled="lights.length === 0"
+      >
+        Save 
+      </a-button> -->
+      
+ <a-button 
+        @click="$emit('Apply-Changes', 'sunk-magnetic-light-Renerer')" 
+        type="primary"
+        size="large"
+        style="margin:0;margin-top: 5px;margin-left: 16px;color:white"
+      >
+        Apply Changes
+      </a-button>
     </a-col>
-    <a-col :span="8" style="display :flex; justify-content: center;"> <!-- Light Tools -->
-    <div class="tool-section w-full">
-     <h4>Add Lights</h4>
-    
-
-     <div class="justify-center gap-6 mb-4 font-poppins">
-       <!-- Buttons -->
-       <div class="flex flex-wrap gap-3 pl-2">
-         <!-- Rectangle -->
-         <button
-           type="button"
-           @click="selectedLight = 'rectangle'"
-           class="flex items-center justify-center bg-white rounded-xl px-1 py-2 shadow-sm transition hover:shadow flex-1 min-w-[120px]"
-           :class="{
-             'ring-2 ring-[#27B2F8]': selectedLight === 'rectangle'
-           }"
-         >
-           <span class="w-4 h-4 bg-[#27B2F8] rounded-md"></span>
-           <span class="pl-2 font-medium text-[10px] leading-5 text-gray-600 whitespace-nowrap font-poppins">
-             Rectangle
-           </span>
-         </button>
-
-         <!-- Circular -->
-         <button
-           type="button"
-           @click="selectedLight = 'circular'"
-           class="flex items-center justify-center bg-white rounded-xl px-1 py-2 shadow-sm transition hover:shadow flex-1 min-w-[120px]"
-           :class="{
-             'ring-2 ring-[#27B2F8]': selectedLight === 'circular'
-           }"
-         >
-           <span class="w-4 h-4 bg-[#27B2F8] rounded-full"></span>
-           <span class="pl-2 font-medium text-[10px] leading-5 text-gray-600 whitespace-nowrap font-poppins">
-             Circular
-           </span>
-         </button>
-       </div>
-     </div>
-   </div></a-col>
-    <a-col :span="8" style="display :flex; justify-content: end;"><div class="tool-section stats-section">
-      <div class="stats">
-        <div class="stat">
-          <span class="stat-label">Tracks</span>
-          <span class="stat-value">{{ tracks.length }}</span>
-        </div>
-        <div class="stat">
-          <span class="stat-label">Lights</span>
-          <span class="stat-value">{{ lights.length }}</span>
-        </div>
-      </div>
-    </div>
-  
-  
-<!-- <a-button 
-      @click="saveRoom" 
-      type="primary"
-      size="large"
-      style="margin:0;margin-top: 5px;margin-left: 16px;color:white"
-      :disabled="lights.length === 0"
-    >
-      Save 
-    </a-button> -->
-    
-<a-button 
-      @click="$emit('Apply-Changes', 'sunk-magnetic-light-Renerer')" 
-      type="primary"
-      size="large"
-      style="margin:0;margin-top: 5px;margin-left: 16px;color:white"
-    >
-      Finalise Changes
-    </a-button>
-  </a-col>
-  </a-row>
-</div>
-
-<!-- mobile view -->
-
-<div className="md:hidden ">
-
-  <a-row v-if="!isLoading" class="main-toolbar m-0 max-w-full overflow-x-hidden">
- <!-- Track Tools Section -->
-
- <div>
-
-  <div class="tool-section stats-section flex-none">
-       <div class="stats flex gap-4">
-         <div class="stat">
-           <span class="stat-label">Tracks</span>
-           <span class="stat-value">{{ tracks.length }}</span>
-         </div>
-         <div class="stat">
-           <span class="stat-label">Lights</span>
-           <span class="stat-value">{{ lights.length }}</span>
-         </div>
-       </div>
-     </div>
-
-     <div class="tool-section">
-       <h4>Track Tools</h4>
-       <div class="button-group flex flex-wrap gap-2">
-         <button 
-           @click="toggleTrackMode" 
-           :class="{ active: trackMode }" 
-           type="primary"
-           size="small"
-           class="flex gap-2 flex-1 min-w-0 border rounded-md border-gray-300 p-1 "
-         >
-           <svg viewBox="0 0 20 20" width="15" height="15" class="mt-0.5">
-             <path fill="currentColor" d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"/>
-           </svg>
-           <span class="whitespace-nowrap overflow-hidden text-[#666666] text-ellipsis">
-             {{ trackMode ? 'Exit Track Mode' : 'Draw Tracks' }}
-           </span>
-         </button>
-         <button 
-           @click="clearTracks" 
-           class="flex gap-2 flex-1 min-w-0  border rounded-md border-gray-300 p-1 "
-           size="small" 
-           :disabled="tracks.length === 0" 
-           :danger="true"
-         >
-           <svg viewBox="0 0 20 20" width="15" height="15" class="mt-0.5">
-             <path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
-           </svg>
-           <span class="whitespace-nowrap text-[#666666]">Clear Tracks</span>
-         </button>
-       </div>
-     </div>
- </div>
-<div>
-
- <!-- Light Tools Section -->
-   <div class="tool-section w-full">
-     <h4>Add Lights</h4>
-    
-
-     <div class="justify-center gap-6 mb-4 font-poppins">
-       <!-- Buttons -->
-       <div class="flex flex-wrap gap-3 pl-2">
-         <!-- Rectangle -->
-         <button
-           type="button"
-           @click="selectedLight = 'rectangle'"
-           class="flex items-center justify-center bg-white rounded-xl px-5 py-2 shadow-sm transition hover:shadow flex-1 min-w-[120px]"
-           :class="{
-             'ring-2 ring-[#27B2F8]': selectedLight === 'rectangle'
-           }"
-         >
-           <span class="w-4 h-4 bg-[#27B2F8] rounded-md"></span>
-           <span class="pl-2 font-medium text-[10px] leading-5 text-gray-600 whitespace-nowrap font-poppins">
-             Rectangle
-           </span>
-         </button>
-
-         <!-- Circular -->
-         <button
-           type="button"
-           @click="selectedLight = 'circular'"
-           class="flex items-center justify-center bg-white rounded-xl px-5 py-2 shadow-sm transition hover:shadow flex-1 min-w-[120px]"
-           :class="{
-             'ring-2 ring-[#27B2F8]': selectedLight === 'circular'
-           }"
-         >
-           <span class="w-4 h-4 bg-[#27B2F8] rounded-full"></span>
-           <span class="pl-2 font-medium text-[10px] leading-5 text-gray-600 whitespace-nowrap font-poppins">
-             Circular
-           </span>
-         </button>
-       </div>
-     </div>
-   </div>
-</div>
-
-<div>
-
- <!-- Stats and Apply Button Section -->
-   <div class="flex flex-wrap gap-3 items-center">
-     
-     
-     <!-- <a-button 
-       @click="saveRoom" 
-       type="primary"
-       size="large"
-       class="m-0 text-white flex-1 min-w-0"
-       :disabled="lights.length === 0"
-     >
-       Save 
-     </a-button> -->
-     
-    <button
- @click="$emit('Apply-Changes', 'sunk-magnetic-light-Renerer')"
- class="
-   m-0
-   flex-1
-   min-w-0
-   flex
-   items-center
-   justify-center
-   rounded-lg
-   bg-blue-600
-   px-20
-   py-3
-   !text-white
-   font-medium
-   whitespace-nowrap
-   font-family-poppins
-   text-base
-   hover:bg-blue-700
-   active:bg-blue-800
-   transition
-   disabled:opacity-50
-   disabled:cursor-not-allowed
- "
->
- Finalise Changes
-</button>
-
-   </div>
-</div>
-
-</a-row>
-</div>
-
+    </a-row>
 
     <!-- Light Editor Modal -->
     <div v-if="editingLight" class="modal-overlay" @click="closeEditor">
@@ -2371,6 +2201,8 @@ defineExpose({
   height: 100%;
   /* background: rgba(0, 0, 0, 0.05); */
   z-index: 1;
+  background: rgba(20, 20, 20, 0.55);
+  backdrop-filter: blur(0.1px); 
 }
 .wave-overlay {
   position: absolute;

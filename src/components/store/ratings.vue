@@ -81,6 +81,7 @@
               @click="submitRating"
               :disabled="selectedRating === 0 || submitting"
               class="flex-1 px-6 py-3 text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed rounded-lg font-medium transition"
+              style="color:white"
             >
               {{ submitting ? 'Submitting...' : 'Submit Rating' }}
             </button>

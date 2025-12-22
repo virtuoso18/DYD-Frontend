@@ -705,76 +705,6 @@
 
     </div>
    </a-col>
-   <!-- Add this inside the Color Edit Popup modal, after the 3D Model section -->
-<a-col :span="24" style="margin-top: 24px; padding-top: 24px; border-top: 1px solid #f0f0f0;">
-  <h4 style="margin-bottom: 16px; font-weight: 600; font-size: 14px; color: #1f2937;">
-    Associated Texture
-  </h4>
-  
-  <div v-if="selectedProduct.textures && selectedProduct.textures.length > 0">
-    <p style="color: #6b7280; font-size: 13px; margin-bottom: 12px;">
-      Select a texture to associate with this color
-    </p>
-    
-    <!-- Texture Grid -->
-    <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
-      <!-- No Texture Option -->
-      <div 
-        @click="selectColorTexture(null)"
-        :style="{
-          width: '58px',
-          height: '58px',
-          borderRadius: '8px',
-          background: '#f9fafb',
-          border: editingColor?.selected_texture_id === null 
-            ? '3px solid #3b82f6' 
-            : '2px solid #e5e7eb',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          cursor: 'pointer',
-          transition: 'all 0.2s'
-        }"
-        style="cursor: pointer;"
-        title="No texture"
-      >
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2">
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg>
-      </div>
-
-      <!-- Existing Textures -->
-      <div 
-        v-for="texture in selectedProduct.textures" 
-        :key="texture.id"
-        @click="selectColorTexture(texture.id)"
-        :style="{
-          width: '58px',
-          height: '58px',
-          borderRadius: '8px',
-          backgroundImage: `url(${$store.state.root_media_api + texture.texture})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          border: editingColor?.selected_texture_id === texture.id 
-            ? '3px solid #3b82f6' 
-            : '2px solid #e5e7eb',
-          cursor: 'pointer',
-          transition: 'all 0.2s',
-          boxShadow: editingColor?.selected_texture_id === texture.id 
-            ? '0 0 8px rgba(59, 130, 246, 0.5)' 
-            : 'none'
-        }"
-      ></div>
-    </div>
-  </div>
-
-  <div v-else style="padding: 16px; background: #f9fafb; border-radius: 8px; text-align: center;">
-    <p style="color: #6b7280; margin: 0; font-size: 13px;">
-      No textures available. Add textures to the product first.
-    </p>
-  </div>
-</a-col>
   </a-row>
   
     <!-- Buttons -->
@@ -854,30 +784,13 @@ export default {
     productForm: { handler() { this.hasUnsavedChanges = true; }, deep: true }
   },
   methods: {
-    clickedModel(e) {
+clickedModel(e) {
+      // this.$message.success(e['new3d_model_instance'])
+      // Convert Windows backslashes to URL slashes
       const fixedUrl = e['media_url'].replace(/\\/g, '/');
-      this.selected_color_model_url = this.$store.state.root_media_api + fixedUrl;
-      
-    
-      this.uploaded3dModelFile = {
-        file: null,
-        isGenerated: true,
-        generatedUrl: fixedUrl 
-      };
-    },
-    async urlToFile(url, filename) {
-      // Fetch from URL
-      const response = await fetch(this.$store.state.root_media_api + url);
-      
-      // Convert to Blob
-      const blob = await response.blob();
-      
-      
-      const file = new File([blob], filename, { 
-        type: blob.type 
-      });
-      
-      return file;  
+      // this.$message.success(fixedUrl);
+      this.model_instance_id_generated_history=e['new3d_model_instance']
+      this.selected_color_model_url=this.$store.state.root_media_api + fixedUrl
     },
     
 // 3. Enhanced fetch3d Models History  method with immediate update the History 
@@ -964,19 +877,15 @@ async fetch3d_models_generated_by_user() {
   }
 },
    
- openColorEditPopup(color) {
-  this.editingColor = {
-    ...color,
-    selected_texture_id: color.selected_texture_id || null
-  };
+    openColorEditPopup(color) {
+  this.editingColor = JSON.parse(JSON.stringify(color)); // Deep copy
   this.uploaded3dModelFile = null;
   this.local3dModelUrl = null;
   this.colorEditPopupVisible = true;
 },
 
-
 async updateColor() {
-  if (!this.uploaded3dModelFile && !this.editingColor?.model_file_colored_product) {
+  if (!this.uploaded3dModelFile) {
     this.$message.warning('Please upload a 3D model file');
     return;
   }
@@ -990,28 +899,7 @@ async updateColor() {
     const token = localStorage.getItem('token');
     const formData = new FormData();
     
-    let fileToUpload = this.uploaded3dModelFile.file;
-  
-    
-    if (this.uploaded3dModelFile.isGenerated && !fileToUpload) {
-
-    const originalFileName = this.uploaded3dModelFile.generatedUrl.split('/').pop();
-    
-    fileToUpload = await this.urlToFile(
-      this.uploaded3dModelFile.generatedUrl,
-      originalFileName  
-    );
-  }
-    
-    
-    formData.append('model_file_colored_product', fileToUpload);
-    debugger
-    // Add texture association
-    if (this.editingColor.selected_texture_id !== null && this.editingColor.selected_texture_id !== undefined) {
-      formData.append('texture_id', this.editingColor.selected_texture_id);
-    } else {
-      formData.append('texture_id', ''); // Empty to remove texture association
-    }
+    formData.append('model_file_colored_product', this.uploaded3dModelFile.file);
 
     const response = await fetch(
       `${this.$store.state.root_api}product/api-product-owner/products/colors/${this.editingColor.id}/update-model/`,
@@ -1027,25 +915,17 @@ async updateColor() {
     const result = await response.json();
 
     if (result.success) {
-      if (this.uploaded3dModelFile) {
-        this.editingColor.model_file_colored_product = result.data.model_file_colored_product;
-      }
-      
-      this.editingColor.selected_texture_id = result.data.selected_texture_id || null;
+      this.editingColor.model_file_colored_product = result.data.model_file_colored_product;
       
       const colorIndex = this.selectedProduct.colors.available_colors.findIndex(
         c => c.id === this.editingColor.id
       );
       if (colorIndex !== -1) {
-        if (this.uploaded3dModelFile) {
-          this.selectedProduct.colors.available_colors[colorIndex].model_file_colored_product = 
-            result.data.model_file_colored_product;
-        }
-        this.selectedProduct.colors.available_colors[colorIndex].selected_texture_id = 
-          result.data.selected_texture_id || null;
+        this.selectedProduct.colors.available_colors[colorIndex].model_file_colored_product = 
+          result.data.model_file_colored_product;
       }
 
-      this.$message.success('Color model and texture updated successfully');
+      this.$message.success('Color model updated successfully');
       
       this.uploaded3dModelFile = null;
       this.local3dModelUrl = null;
@@ -1123,14 +1003,6 @@ async updateColor() {
         
       }
     },
-    selectColorTexture(textureId) {
-    if (this.editingColor) {
-      this.editingColor.selected_texture_id = textureId;
-      this.$message.success(
-        textureId ? 'Texture selected' : 'Texture removed'
-      );
-    }
-  },
 
     // File Upload Methods
     upload3DModel() { this.$refs.fileInput.click(); },

@@ -31,8 +31,8 @@
             <img :src="this.$store.state.root_media_api+design.image" style="width:100%;border-radius:10px;max-height:200px;object-fit:cover" alt="" @click="show_design_details(design.id)">
             <a-row style="padding-top:5px">
                 <a-col :span="22" >
-                    <a-tag style="border:none;background:#f3f7f5">Room : {{  design.room_type }}</a-tag>
-                    <a-tag style="border:none;background:#f3f7f5">Style : {{ design.room_design_type }}</a-tag>
+                    <a-tag>Room : {{  design.room_type }}</a-tag>
+                    <a-tag>Style : {{ design.room_design_type }}</a-tag>
                 </a-col>
                 <!-- <a-col :span="2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="15px" height="15px" viewBox="0 0 16 16" fill="#000000" class="bi bi-three-dots-vertical">
@@ -469,16 +469,6 @@
         </a-col>
       </a-row>
     </a-row>
-    <ShareOnCommunity
-      :open="open_ShareOnCommunity"
-      :imageUrl="selectedDesignImage"
-      :roomId="selected_design?.data?.id || null"
-      :roomType="selectedDesign?.data?.room_type"
-      :roomDesignType="selectedDesign?.data?.room_design_type"
-      :productCount="selectedDesign?.data?.products_used?.length || 0"
-      :apiBaseUrl="$store.state.root_api"
-      @success="handleShareSuccess"
-    />
   </div>
 </template>
 <script>
@@ -491,7 +481,7 @@ import {
   CloseOutlined,
     HeartFilled,
 } from "@ant-design/icons-vue";
-import ShareOnCommunity from '@/views/catalogue/share_on_community.vue'
+
 export default {
   name: "my_designes",
   data() {
@@ -503,9 +493,6 @@ export default {
       description_room: "",
       room_design_type_select: "",
       room_type_select: "",
-      open_ShareOnCommunity: false,
-      selectedDesignImage: '',
-      selectedDesign: null
     };
   },
   components: {
@@ -516,7 +503,6 @@ export default {
     ArrowLeftOutlined,
     SaveOutlined,
     CloseOutlined,
-    ShareOnCommunity
   },
   mounted() {
     this.loadMyDesignes();
@@ -796,21 +782,6 @@ export default {
       this.view_type = "all";
       this.selected_design = null;
     },
-   shareOnCommunity() {
-      // Ensure we have valid data before opening modal
-      if (!this.selected_design || !this.selected_design.data) {
-        this.$message.error('Design data not available');
-        return;
-      }
-
-      this.selectedDesignImage = this.$store.state.root_media_api + this.selected_design.data.image;
-      this.selectedDesign = this.selected_design;
-      this.open_ShareOnCommunity = true;
-    },
-    handleShareSuccess() {
-      console.log('Design shared successfully!');
-      this.open_ShareOnCommunity = false;
-    }
     
   },
 };

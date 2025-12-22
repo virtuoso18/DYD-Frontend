@@ -847,7 +847,7 @@
               />
             </router-link>
 
-            <div class="nav-item" @click="logout_user">
+            <div @click="logout_user">
               <div
                 className="w-full h-[46px] bg-[#FEE3E0] rounded-[8px] flex items-center justify-center gap-2 cursor-pointer hover:bg-[#fcbeb8] transition"
               >
@@ -1668,7 +1668,7 @@ export default {
 
 .nav-item.active:hover {
   /* background: linear-gradient(135deg, #1d4ed8, #1e40af); */
-  background-color: #3B63FB;
+  background-color: #3b63fb;
   color: white;
 }
 
@@ -1800,7 +1800,7 @@ export default {
 
 .nav-item.active:hover {
   /* background: linear-gradient(135deg, #1d4ed8, #1e40af); */
-  background-color: #6884f2;
+  background-color: #3b63fb;
   color: white;
 }
 

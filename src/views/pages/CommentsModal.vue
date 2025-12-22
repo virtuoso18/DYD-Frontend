@@ -197,7 +197,7 @@
                 />
                 <button 
                   @click="addComment"
-                  class="p-2 text-white rounded-lg hover:bg-blue-600 transition"
+                  class="p-2 text-white rounded-lg transition"
                   :disabled="!newComment.trim() || addingComment"
                 >
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">

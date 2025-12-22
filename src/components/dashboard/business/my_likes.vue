@@ -6,10 +6,16 @@
     <div class="sm:main sm:border border-gray-300   sm:rounded-2xl min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh] bg-white">
         <div style="padding:10px;border-radius:15px;min-height:100vh">
     <h3 style="font-family: Poppins, sans-serif; font-weight: 500; font-size: 16px; line-height: 24px; letter-spacing: 0;">
-      Liked Products & Rooms 
+      Liked Products & Rooms
     </h3>
-                <a-tabs v-model:activeKey="active_tab">
-                    <a-tab-pane key="Furniture" tab="Furniture" >
+  <a-tabs 
+  ref="tabsRef"
+  v-model:activeKey="active_tab" 
+  :key="tabRefreshKey"
+  @tabClick="handleTabClick"
+>
+
+                          <a-tab-pane key="Furniture" tab="Furniture" >
                     <div v-if="!filteredProducts?.length"  style="height:70vh;gap:20px;;flex-direction:column;display: flex;justify-content: center;align-items: center;">
                             <!-- <a-empty :description="'No Furniture Available'"></a-empty> -->
     
@@ -82,6 +88,7 @@
                             <a-col v-for="product in filteredrooms" :key="product.id" 
                                 class="product-responsive" style="padding:5px;">
                                 <div class="product">
+                                  <!-- {{ product }} -->
                                     <div class="product-image-container" @click="viewRoom(product)">
                                         <img 
                                             :src="$store.state.root_media_api + product.image" 
@@ -130,7 +137,7 @@
                                 v-model:current="roomPagination.currentPage"
                                 :total="roomPagination.totalCount"
                                 :page-size="roomPagination.pageSize"
-                                @change="handleProductsPageChange"
+                                @change="handleRoomsPageChange"
                                 show-total
                                 :show-size-changer="false"
                             />
@@ -363,16 +370,27 @@
     </div>
   </div>
 <CommentsModal
-  v-if="selectedPost"
+    v-if="showModal && selectedPost"
   :isOpen="showModal"
   :post="selectedPost"
-  @close="closeModal" 
+  @close="closeModal"
   @commentAdded="handleCommentAdded"
   @likeToggled="handleLikeToggled"
 />
+
+<RoomDetailsModal
+  v-if="roomModalVisible"                    
+  :visible="roomModalVisible"
+  :room="selectedRoom || {}"
+  :mediaBase="$store.state.root_media_api"
+  @close="closeRoomModal"
+/>
+
+
 </template>
 <script>
 import CommentsModal from '@/views/pages/CommentsModal.vue';
+import RoomDetailsModal from '@/views/pages/RoomDetailsModal.vue';
 import {
   ExclamationCircleOutlined,
   EyeOutlined,
@@ -399,6 +417,7 @@ export default {
     MessageOutlined,
     ShareAltOutlined,
     CommentsModal,
+    RoomDetailsModal,
     MoreOutlined,
     EditOutlined,
     DeleteOutlined,
@@ -409,9 +428,14 @@ export default {
   
   data() {
     return {
+        active_tab: 'community-posts',  // MUST initialize
+
       products: [],
       rooms: [],
+      roomModalVisible: false,
+      selectedRoom: null,
       community_posts: [],
+      tabRefreshKey: 0,
       showModal: false,
       selectedPost: null,
       
@@ -459,8 +483,29 @@ export default {
   },
   
   methods: {
-    // Modal Methods
-    
+
+     handleTabChange(key) {
+    this.active_tab = key;  // Force sync
+    // Reset modal state when switching tabs
+    this.showModal = false;
+    this.selectedPost = null;
+  },
+
+   handleTabClick(key) {
+    this.active_tab = key;
+    this.tabRefreshKey++;  // Force re-render
+  },
+
+ viewRoom(room) {
+      // room object already looks like:
+      // { added_at, is_favorited, id, name, image, category, type }
+      this.selectedRoom = room
+      this.roomModalVisible = true
+    },
+    closeRoomModal() {
+      this.roomModalVisible = false
+      this.selectedRoom = null
+    },    
  goto_product_Route(product){
         let product_type= product.type
         if(product.type==='light'){
@@ -500,10 +545,20 @@ export default {
       this.showModal = true
     },
 
-    closeModal() {
-      this.showModal = false
-      this.selectedPost = null
-    },
+     closeModal() {
+    this.showModal = false;
+    this.selectedPost = null;
+    
+    // FORCE tabs to reset after modal closes
+    this.$nextTick(() => {
+      const tabs = this.$refs.tabsRef;  // Add ref="tabsRef" to a-tabs
+      if (tabs) {
+        tabs.$forceUpdate();
+      }
+      this.tabRefreshKey++;
+      this.active_tab = this.active_tab;  // Trigger reactivity
+    });
+  },
 
     handleCommentAdded() {
       if (this.selectedPost) {
@@ -717,6 +772,21 @@ export default {
   border: 1px solid rgba(128, 128, 128, 0.167);
   padding: 20px;
   background-color: white;
+}
+
+/* Force remove modal backdrop interference */
+:deep(.ant-modal-mask) {
+  z-index: 1000 !important;
+}
+
+:deep(.ant-tabs-nav) {
+  pointer-events: auto !important;
+}
+
+/* Ensure tabs clickable after modal */
+.ant-tabs-top > .ant-tabs-nav {
+  position: relative;
+  z-index: 10;
 }
 .head-section{
     display:flex;

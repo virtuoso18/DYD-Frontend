@@ -68,7 +68,12 @@
       <div>
         <h4 style="margin: 0; font-weight: 600; font-size: 16px; color: #262626;">{{ item.product_name }}</h4>
         <p style="margin: 4px 0 0 0; color: #8c8c8c; font-size: 12px; text-transform: capitalize;">{{ item.product_type.replace('_', ' ') }}</p>
+        <!-- <div class="hover:bg-green-10 p-1 " style="display: flex;justify-content: start;gap:10px; cursor:pointer" @click="$router.push('/'+item.business_profile_slug)">
+          <a-avatar style="border:1px solid rgba(0,0,0,0.2)" :src="this.$store.state.root_media_api+item.business_profile_banner_picture" alt="" />
+          <h4>{{ item.business_profile_name }}</h4>
+        </div> -->
       </div>
+      
       <button 
         style="background: none; border: none; cursor: pointer; color: #ff4d4f; padding: 4px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;"
         @click="removeItem(item.id)"
@@ -81,6 +86,7 @@
           <path d="M9.33333 7.33333V11.3333" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </button>
+      <!-- {{item}} -->
     </div>
 
     <!-- Color/Details if needed -->
@@ -162,6 +168,25 @@
                       <span v-if="!loading">Back To the Owner Web</span>
                       <span v-else>Processing...</span>
                     </a-button>
+                      <!-- <a-button 
+                        type="default" 
+                        block 
+                        :href="item.business_website_url"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        :disabled="!item.business_website_url"
+                        class="business-link-btn"
+                      >
+                        <template v-if="item.business_website_url">
+                          <LinkOutlined class="mr-2" />
+                          Back To Owner Website
+                        </template>
+                        <template v-else>
+                          <LockOutlined class="mr-2" />
+                          No Website Available
+                        </template>
+                      </a-button> -->
+
                   </a-space>
                 </div>
               </div>
@@ -174,7 +199,7 @@
 </template>
 
 <script>
-import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
+import { ExclamationCircleOutlined,LinkOutlined } from '@ant-design/icons-vue';
 import { h } from 'vue';
 
 export default {
@@ -304,7 +329,7 @@ export default {
     async removeItem(itemId) {
   this.$confirm({
     title: 'Delete Item from Cart',
-    icon: h(ExclamationCircleOutlined),
+    icon: h(ExclamationCircleOutlined,LinkOutlined),
     content: h(
       'div',
       { style: 'color: #262626;' },

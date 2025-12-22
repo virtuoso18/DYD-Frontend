@@ -257,22 +257,29 @@ Switch Furniture</a-button> -->
      <div class="controls-container">
               <!-- Top Action Buttons -->
               <div class="action-buttons">
-                <div type="primary" :class="active_tab_image === 'item_replacement' ? 'action-btn active':'action-btn'" @click="selectActiveTab('item_replacement')">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <path d="M4.59 13.83V16.13M13.79 13.83V16.13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                    <path d="M15.32 7.70C15.32 6.27 15.32 5.55 15.01 5.02C14.81 4.67 14.52 4.38 14.17 4.18C13.64 3.87 12.92 3.87 11.49 3.87H6.89C5.46 3.87 4.74 3.87 4.21 4.18C3.86 4.38 3.57 4.67 3.37 5.02C3.06 5.55 3.06 6.27 3.06 7.70" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                    <path d="M15.32 7.70C14.48 7.70 13.79 8.39 13.79 9.23V10.77C13.79 11.40 13.66 11.53 13.03 11.53H5.36C4.73 11.53 4.59 11.40 4.59 10.77V9.23C4.59 8.39 3.91 7.70 3.06 7.70C2.21 7.70 1.53 8.39 1.53 9.23C1.53 9.80 1.84 10.30 2.29 10.56V10.77C2.29 12.21 2.29 12.93 2.74 13.38C3.19 13.83 3.92 13.83 5.36 13.83H13.03C14.47 13.83 15.19 13.83 15.64 13.38C16.09 12.93 16.09 12.21 16.09 10.77V10.56C16.55 10.30 16.86 9.80 16.86 9.23C16.86 8.39 16.17 7.70 15.32 7.70Z" stroke="currentColor" stroke-width="1.5"/>
-                  </svg>&nbsp;
-                  Item Replace
-                </div>
-                <div :class="active_tab_image === 'home_design' ? 'action-btn active':'action-btn'" @click="selectActiveTab('home_design')">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <path d="M11.65 11.68V6.32C11.65 4.74 11.65 3.96 11.16 3.47C10.68 2.98 9.90 2.98 8.35 2.98H5.71C4.15 2.98 3.38 2.98 2.89 3.47C2.41 3.96 2.41 4.74 2.41 6.32V11.68C2.41 13.25 2.41 14.04 2.89 14.53C3.38 15.02 4.15 15.02 5.71 15.02H8.35C9.90 15.02 10.68 15.02 11.16 14.53C11.65 14.04 11.65 13.25 11.65 11.68Z" stroke="currentColor" stroke-width="1.5"/>
-                    <path d="M7.63 15.02H11.73C13.01 15.02 13.66 15.02 14.06 14.63C14.46 14.24 14.46 13.61 14.46 12.35V7.66C14.46 6.40 14.46 5.77 14.06 5.38C13.66 4.98 13.01 4.98 11.73 4.98" stroke="currentColor" stroke-width="1.5"/>
-                    <path d="M9.24 8.10V9.70" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                  </svg>&nbsp;
-                  Home Design
-                </div>
+                <div
+  type="primary"
+  :class="active_tab_image === 'item_replacement' ? 'action-btn active':'action-btn'"
+  @click="selectActiveTab('item_replacement')"
+>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+    <path d="M4.59 13.83V16.13M13.79 13.83V16.13" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
+    <path d="M15.32 7.70C15.32 6.27 15.32 5.55 15.01 5.02C14.81 4.67 14.52 4.38 14.17 4.18C13.64 3.87 12.92 3.87 11.49 3.87H6.89C5.46 3.87 4.74 3.87 4.21 4.18C3.86 4.38 3.57 4.67 3.37 5.02C3.06 5.55 3.06 6.27 3.06 7.70" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M15.32 7.70C14.48 7.70 13.79 8.39 13.79 9.23V10.77C13.79 11.40 13.66 11.53 13.03 11.53H5.36C4.73 11.53 4.59 11.40 4.59 10.77V9.23C4.59 8.39 3.91 7.70 3.06 7.70C2.21 7.70 1.53 8.39 1.53 9.23C1.53 9.80 1.84 10.30 2.29 10.56V10.77C2.29 12.21 2.29 12.93 2.74 13.38C3.19 13.83 3.92 13.83 5.36 13.83H13.03C14.47 13.83 15.19 13.83 15.64 13.38C16.09 12.93 16.09 12.21 16.09 10.77V10.56C16.55 10.30 16.86 9.80 16.86 9.23C16.86 8.39 16.17 7.70 15.32 7.70Z" stroke="currentColor" stroke-width="1.5"/>
+  </svg>
+  <span className="pl-1" style="font-family: Poppins; font-weight: 400; font-size: 12px; line-height: 20px; letter-spacing: 0%; text-align: center;">&nbsp;Item Replace</span>
+</div>
+                <div
+  :class="active_tab_image === 'home_design' ? 'action-btn active':'action-btn'"
+  @click="selectActiveTab('home_design')"
+>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+    <path d="M11.65 11.68V6.32C11.65 4.74 11.65 3.96 11.16 3.47C10.68 2.98 9.90 2.98 8.35 2.98H5.71C4.15 2.98 3.38 2.98 2.89 3.47C2.41 3.96 2.41 4.74 2.41 6.32V11.68C2.41 13.25 2.41 14.04 2.89 14.53C3.38 15.02 4.15 15.02 5.71 15.02H8.35C9.90 15.02 10.68 15.02 11.16 14.53C11.65 14.04 11.65 13.25 11.65 11.68Z" stroke="currentColor" stroke-width="1.5"/>
+    <path d="M7.63 15.02H11.73C13.01 15.02 13.66 15.02 14.06 14.63C14.46 14.24 14.46 13.61 14.46 12.35V7.66C14.46 6.40 14.46 5.77 14.06 5.38C13.66 4.98 13.01 4.98 11.73 4.98" stroke="currentColor" stroke-width="1.5"/>
+    <path d="M9.24 8.10V9.70" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+  </svg>
+  <span className="pl-1" style="font-family: Poppins; font-weight: 400; font-size: 12px; line-height: 20px; letter-spacing: 0%; text-align: center;">&nbsp;Home Design</span>
+</div>
               </div>
   
               <!-- Category Tabs -->
@@ -616,15 +623,22 @@ Switch Furniture</a-button> -->
       "
     >
       <div>
-        <p style="font-size: 20px; font-weight: 600; margin-bottom: 12px;">
+        <p style="font-size: 14px; font-weight: 600; margin-bottom: 12px;">
           ⚠️ Privacy Notice
         </p>
-        <p>
+        <p  style="font-size: 12px;">
           Please upload a room image <b>without people</b>.<br />
           Images containing persons are <b>not processed</b> as per our
           privacy policies.
         </p>
-        <a-button type="primary" @click="this.$route.query.brand ? this.$router.push('/start-new-catalogue?brand='+this.$route.query.brand ):this.$router.push('/start-new-catalogue') " style="align-items: center;"><CloudUploadOutlined style="font-size: 18px;" /> Upload new Image</a-button>
+        <!-- <a-button type="primary" @click="this.$route.query.brand ? this.$router.push('/start-new-catalogue?brand='+this.$route.query.brand ):this.$router.push('/start-new-catalogue') " style="align-items: center;"><CloudUploadOutlined style="font-size: 18px;" /> Upload new Image</a-button> -->
+         
+        <a-space>
+
+          <a-button size="small" type="primary" @click="this.$route.query.brand ? this.$router.push('/start-new-catalogue?brand='+this.$route.query.brand ):this.$router.push('/start-new-catalogue') " style="align-items: center;display: flex;justify-content: center;"><CloudUploadOutlined style="font-size: 18px;" /> Upload new Image</a-button>
+          <a-button size="small" type="default" @click="RoomRemovePerson " :loading="canvasLoading" style="align-items: center;display: flex;justify-content: center;"><UserDeleteOutlined  style="font-size: 18px;" /> Remove persons</a-button>
+        </a-space>
+
       </div>
     </div>
   </div>
@@ -1819,7 +1833,7 @@ isCollapsed: false,
       
       // Canvas Control
       canvasKey: 0,
-      canvasLoading: false,
+      canvasLoading: true,
       selectionMode: 'multiple',
       showSelectionButtons: true,
       

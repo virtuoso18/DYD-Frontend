@@ -211,9 +211,9 @@
     <div class="sticky top-0 z-10 bg-white border-b border-gray-200 px-4 md:px-6 py-4">
       <div class="flex items-center justify-between max-w-7xl mx-auto">
         <a-button @click="closePostDetails" type="text" size="large" style="display:flex;justify-content: center;align-items:center;">
-          <ArrowLeftOutlined  style="margin-top:5px;"/>
+          <ArrowLeftOutlined  style="margin-top:2px;"/>
           <span class="font-bold" style="">Back</span>
-        </a-button>
+          </a-button>
         <div class="flex gap-2">
           <a-button @click="editPost(selectedPost)" type="default" style="display: flex;justify-content: center;align-items: center;" >
             <EditOutlined  /> Edit

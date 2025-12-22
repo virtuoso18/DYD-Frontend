@@ -1,7 +1,7 @@
 <template>
-  <div className="sm:pt-0 pt-32">
+  <div className="sm:pt-0 pt-32 ">
 
-    <div class="ai-catalog-section ">
+    <div class="ai-catalog-section p-1 ">
       <div class="apply-section  md:hidden">
         <a-button type="primary" size="large" block class="apply-button" @click="$emit('Apply_Light', 'magnetic-light-Renerer-apply')">
           Apply

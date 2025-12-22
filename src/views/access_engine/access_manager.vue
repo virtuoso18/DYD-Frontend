@@ -421,7 +421,7 @@ export default {
   border-radius: 20px;
   border: 1px solid #e9ecef;
   min-height: calc(100vh - 20px);
-  padding: 24px;
+  padding: 10px;
   overflow-y: auto;
 }
 
