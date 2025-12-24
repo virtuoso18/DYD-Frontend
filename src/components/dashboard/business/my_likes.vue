@@ -3,7 +3,7 @@
   <div className="sm:py-4">
 
     
-    <div class="sm:main sm:border border-gray-300   sm:rounded-2xl min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh] bg-white">
+    <div class="sm:main sm:border border-gray-200   sm:rounded-2xl min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh] bg-white">
         <div style="padding:10px;border-radius:15px;min-height:100vh">
     <h3 style="font-family: Poppins, sans-serif; font-weight: 500; font-size: 16px; line-height: 24px; letter-spacing: 0;">
       Liked Products & Rooms
@@ -170,10 +170,10 @@
             display: flex;
             flex-direction: column;
             box-shadow: 0 0px 0px rgba(0, 0, 0, 0);
-            transition: all 0.3s ease;
+            transition: all 0.1s ease;
           "
-          @mouseenter="$event.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)'"
-          @mouseleave="$event.currentTarget.style.boxShadow = '0 0px 0px rgba(0, 0, 0, 0)'"
+          @mouseenter="$event.currentTarget.style.border = '1px solid rgba(0, 0, 255, 0.2)'"
+          @mouseleave="$event.currentTarget.style.border = '1px solid rgba(0, 0, 0, 0.1)'"
           >
             <!-- Post Image -->
             <div style="position: relative">
@@ -186,15 +186,14 @@
                   width: 100%;
                   height: 200px;
                   object-fit: cover;
-                  border-radius: 10px;
+                  border-radius: 16px;
                   padding: 5px;
                   cursor: pointer;
                   transition: transform 0.3s ease;
                 "
                 :alt="post.title"
     @click="viewPost(post)"
-                @mouseenter="$event.currentTarget.style.transform = 'scale(1.01)'"
-                @mouseleave="$event.currentTarget.style.transform = 'scale(1)'"
+                
               />
     
               <!-- Tags - Fixed for string array -->
@@ -282,7 +281,7 @@
             </div>
     
             <!-- Post Content -->
-            <div style="padding: 5px">
+            <div style="padding-left: 10px;padding-right: 10px;padding-top: 3px;padding-bottom: 5px">
               <!-- Actions Row -->
               <a-row style="align-items: center">
                 <a-col :span="16" style="display: flex; gap: 10px; justify-content: start; align-items: center;">

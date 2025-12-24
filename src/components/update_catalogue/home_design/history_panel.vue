@@ -75,16 +75,63 @@ export default {
         }
     },
     
-    mounted() {
+    async mounted() {
         // Initialize roomId - you might get this from route params, props, or store
         this.roomId = this.$route.params.id
         
         if (this.roomId) {
             this.fetchGenerateHistory();
         }
+
+        if(this.$route.query.home_design){
+        try {
+            const item = await this.getHomeDesignItem(this.$route.query.home_design)
+            console.log("========================================================-------------------")
+            console.log(item)
+            // Pass only the images array, not the entire item
+            this.clicked_history(item.images)
+        } catch(error) {
+            console.error('Error loading home design item:', error)
+        }}
+      
     },
     
     methods: {
+     async getHomeDesignItem(home_design_id){
+    this.loading = true;
+    this.error = null;
+    try {
+        const response = await fetch(this.$store.state.root_api + 'engine/get-home-design-history/'+home_design_id, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Token ${localStorage.getItem('token')}`,
+            }
+            // Remove body for GET request
+        });
+
+        // Check if response is ok
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        console.log("API Response:", result);
+        
+        // Return the data if success is true
+        if (result.success) {
+            return result.data;
+        } else {
+            throw new Error(result.message || 'Failed to fetch home design');
+        }
+        
+    } catch (error) {
+        console.error('Error fetching history home design rendered Item:', error);
+        throw error; // Re-throw so caller can handle it
+    } finally {
+        this.loading = false;
+    }
+},
       clicked_history(item){
         this.$emit('home-design-history-clicked',item)
       },

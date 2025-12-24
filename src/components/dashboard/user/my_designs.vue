@@ -57,7 +57,7 @@
                 <a-row>
                     <a-col :span="24" style="display: flex;justify-content: space-between;">
                         
-                     <a-button @click="goback" type="text" size="large">
+                     <a-button @click="goback" type="text" size="large" style="display:flex;justify-content: center;align-items: center;">
                     <ArrowLeftOutlined style="margin-right: 8px" />
                       <b>Back</b>
                 </a-button>

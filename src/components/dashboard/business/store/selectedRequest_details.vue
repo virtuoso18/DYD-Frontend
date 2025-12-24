@@ -48,7 +48,7 @@
           <h3 style="margin-bottom:16px;font-size:16px;font-weight:600;">Products use in Design</h3>
           
           <div v-for="product in products_used" :key="product.id" 
-               style="background:#f8f9fa;border-radius:12px;padding:16px;margin-bottom:16px;">
+               style="background:#ffffff;border-radius:12px;padding:16px;margin-bottom:16px;">
             
             <a-row :gutter="[12, 12]">
               <a-col :span="8">
@@ -63,10 +63,10 @@
               
               <a-col :span="16">
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-                  <span style="background:#e6f7ff;color:#1890ff;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:500;">
+                  <span style="background:#f4f5f7;color:#000;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:500;">
                     {{ product.category_name }}
                   </span>
-                  <span style="background:#f0f0f0;color:#666;padding:4px 8px;border-radius:50%;font-size:10px;font-weight:600;">
+                  <span style="background:#f0f0f0;color:#666;padding:4px 8px;border-radius:6px;font-size:10px;font-weight:600;">
                     AR
                   </span>
                 </div>
@@ -95,12 +95,12 @@
             <a-row style="margin-top:12px;" >
               <a-col :span="20">
                 <a-button size="large" block @click="viewProduct(product)" 
-                         style="border:1px solid #d9d9d9;color:#666;">
+                         style="border:1px solid #d9d9d9;color:#000; background-color: #f2f2f2;border:none;;">
                   Product Detail
                 </a-button>
               </a-col>
               <a-col :span="4" style="display: flex;justify-content: center;">
-                <a-button size="large" style="border:1px solid #d9d9d9;">
+                <a-button size="large" style="border:1px solid #d9d9d9; ; background-color: #f2f2f2;border:none;display:flex;justify-content:center;align-items: center;color:#000;">
                   <HeartOutlined style="color:#666;" />
                 </a-button>
               </a-col>

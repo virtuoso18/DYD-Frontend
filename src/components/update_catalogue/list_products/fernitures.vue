@@ -1,7 +1,7 @@
 <template>
   <div className="pt-8 sm:pt-2">
     <!-- Header -->
-    <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px; background: white; border-bottom: 1px solid #f0f0f0;">
+    <!-- <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px; background: white; border-bottom: 1px solid #f0f0f0;">
       <span 
      
         style="
@@ -16,10 +16,27 @@
       
       >AI Catalog</span>
       <a-button size="small" type="default" @click="$emit('see-all-products', true)">See all</a-button>
+    </div> -->
+<!-- {{ brand_data }} -->
+    <div class="ai-catalog-header px-2 ">
+      <router-link :to="'/'+$route.query.brand">
+        <div style="display: flex;gap:10px;">
+          <a-avatar size="medium" style="border:1px solid rgba(0,0,0,0.2)" :src="this.$store.state.root_media_api+brand_data.business_picture"></a-avatar>
+          <span class="!text-gray-700 py-3"  style="
+          font-family: Poppins;
+          font-weight: 700;
+          font-style: normal;
+          font-size: 16px;
+          line-height: 20px;
+          letter-spacing: 0;margin-top:-6px
+          ">AI Catalog</span>
+        </div>
+      </router-link>
+      <a-button size='small' type="default" class="see-all-link"  @click="$emit('see-all-products', true)">See all</a-button>
     </div>
     
     <!-- Search Bar -->
-    <div style="display: flex; gap: 8px; padding: 12px 16px; background: white; border-bottom: 1px solid #f0f0f0;">
+    <div style="display: flex; gap: 8px; padding-left:8px;padding-right:8px; background: white; border-bottom: 1px solid #f0f0f0;">
       <a-input v-model:value="searchText" placeholder="Search products..." allow-clear style="flex: 1;" @input="handleSearchChange">
         <template #prefix>
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -227,6 +244,10 @@ export default {
       searchTimeout: null,
     };
   },
+  
+  props:{
+    brand_data:Object
+  },
   mounted() {
     const route = this.$route;
     this.catalogueId = route.params.id;
@@ -241,6 +262,12 @@ export default {
     }
   },
   methods: {
+      truncateChars(text, limit = 11) {
+  if (!text) return ''
+  return text.length > limit
+    ? text.slice(0, limit) + '...'
+    : text
+},
     async fetchData(brand = null) {
       const endpoints = brand ? [
         { key: 'floors', url: `room/api/load-brand-products/floors/${brand}`, pagination: 'floorsPagination' },
@@ -403,4 +430,19 @@ export default {
 
 .item img { width: 100%; height: 100px; object-fit: cover; }
 .list .item img { width: 100px; flex-shrink: 0; }
+
+.ai-catalog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.see-all-link {
+  color: #1890ff;
+  text-decoration: none;
+}
+
 </style>

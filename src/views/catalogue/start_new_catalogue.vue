@@ -55,7 +55,7 @@
     :key="histry_card.id"
     class="p-[5px]"
   >
-  <!-- {{ histry_card.brand }} -->
+  {{ histry_card.brand }}
     <!-- {{ $route.query.brand }} -->
 
     <!-- <router-link

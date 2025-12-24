@@ -25,11 +25,11 @@
     </a-col>
 
     <!-- Designs List -->
-    <a-col :lg="8" :md="8" :xs="24" :sm="24" style="padding:5px;" v-for="design in my_designes" :key="design.id" v-if="my_designes.length > 0">
-        <div style="border:1px solid rgba(0,0,0,0.1);padding: 5px;border-radius:10px;">
+    <a-col :lg="8" :md="8" :xs="24" :sm="24" style="padding:10px;" v-for="design in my_designes" :key="design.id" v-if="my_designes.length > 0">
+        <div style="border:2px solid rgba(0,0,0,0.07);padding: 5px;border-radius:14px;">
           <!-- {{ design }} -->
             <img :src="this.$store.state.root_media_api+design.image" style="width:100%;border-radius:10px;max-height:200px;object-fit:cover" alt="" @click="show_design_details(design.id)">
-            <a-row style="padding-top:5px">
+            <a-row style="padding-top:10px;padding-bottom:5px">
                 <a-col :span="22" >
                     <a-tag style="border:none;background:#f3f7f5">Room : {{  design.room_type }}</a-tag>
                     <a-tag style="border:none;background:#f3f7f5">Style : {{ design.room_design_type }}</a-tag>

@@ -9,7 +9,7 @@
     <!-- Posts Grid View -->
     <a-row v-if="selectedPost == null" >
       <a-col :span="24"  >
-        <div style="background-color: white;border-radius: 12px;padding:10px;margin-top:15px;border:1px solid rgba(0,0,0,0.1);">
+        <div style="background-color: white;border-radius: 16px;padding:10px;margin-top:15px;border:1px solid rgba(0,0,0,0.1);">
 
         <h3>My Community</h3>
         <div> 
@@ -56,7 +56,7 @@
                             width: 100%;
                             height: 200px;
                             object-fit: cover;
-                            border-radius: 10px;padding:5px;
+                            border-radius: 16px;padding:5px;
                             cursor: pointer;
                           "
                           :alt="post.title"
@@ -1616,7 +1616,7 @@ handleLikeToggled() {
 .post-card {
   border: 1px solid rgba(0, 0, 0, 0.1);
   padding: 0px;
-  border-radius: 12px;
+  border-radius: 14px;
   background: white;
   /* transition: all 0.3s ease; */
   height: 100%;
@@ -1625,7 +1625,8 @@ handleLikeToggled() {
 }
 
 .post-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(38, 0, 255, 0.21);
+  /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); */
   /* transform: translateY(-2px); */
 }
 
@@ -1767,10 +1768,10 @@ handleLikeToggled() {
   position: absolute;
   top: 12px;
   left: 12px;
-  display: flex;
-  flex-wrap: wrap;
   gap: 6px;
   max-width: 60%;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 /* Fix: Reference Tailwind to enable @apply and utilities */
@@ -2011,7 +2012,7 @@ handleLikeToggled() {
 }
 
 .post-card:hover img {
-  transform: scale(1.01);
+  /* transform: scale(1.01); */
 }
 
 /* Better button styling */

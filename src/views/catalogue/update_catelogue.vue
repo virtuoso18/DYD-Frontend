@@ -95,8 +95,23 @@
 "
     @close="onClose_drawer_modal"
     >
-    <template #title>
-AI Catalog Walls Textures  
+    <template #title >
+      
+<router-link :to="'/'+this.$route.query.brand" >
+        <div style="display: flex;gap:10px;">
+          <a-avatar size="medium" style="margin-top:6px;border:1px solid rgba(0,0,0,0.2)" :src="this.$store.state.root_media_api+brand_data.business_picture"></a-avatar>
+          <span class="!text-gray-700 py-3"  style="
+          font-family: Poppins;
+          font-weight: 700;
+          font-style: normal;
+          font-size: 16px;
+          line-height: 20px;
+          letter-spacing: 0;
+          ">{{ brand_data.name}} AI Catalog Wall Textures</span>
+        <!-- {{ brand_data }} -->
+          <!-- <b>  {{truncateChars(brand_data.name,limit=15)}}</b> -->
+        </div>
+      </router-link>
     </template> 
        <template #extra> <div class="head-section" >
           <a-button type="primary" style="display:flex;justify-content:center;gap:10px;color:white"> 
@@ -127,9 +142,24 @@ Download
 "
     @close="onClose_drawer_modal"
     >
-    <template #title>
-AI Catalog Floor Textures
-    </template> 
+    <template #title >
+      
+<router-link :to="'/'+this.$route.query.brand" >
+        <div style="display: flex;gap:10px;">
+          <a-avatar size="medium" style="margin-top:6px;border:1px solid rgba(0,0,0,0.2)" :src="this.$store.state.root_media_api+brand_data.business_picture"></a-avatar>
+          <span class="!text-gray-700 py-3"  style="
+          font-family: Poppins;
+          font-weight: 700;
+          font-style: normal;
+          font-size: 16px;
+          line-height: 20px;
+          letter-spacing: 0;
+          ">{{ brand_data.name}} AI Catalog Floor Textures</span>
+        <!-- {{ brand_data }} -->
+          <!-- <b>  {{truncateChars(brand_data.name,limit=15)}}</b> -->
+        </div>
+      </router-link>
+    </template>  
 
     <template #extra> <div class="head-section " >
           <a-button type="primary" style="display:flex;justify-content:center;gap:10px;color:white"> 
@@ -161,8 +191,24 @@ Download
 "
     @close="onClose_drawer_modal"
     > 
-    <template #title>
-      AI Catalog Furnitures Textures
+    
+    <template #title >
+      
+<router-link :to="'/'+this.$route.query.brand" >
+        <div style="display: flex;gap:10px;">
+          <a-avatar size="medium" style="margin-top:6px;border:1px solid rgba(0,0,0,0.2)" :src="this.$store.state.root_media_api+brand_data.business_picture"></a-avatar>
+          <span class="!text-gray-700 py-3"  style="
+          font-family: Poppins;
+          font-weight: 700;
+          font-style: normal;
+          font-size: 16px;
+          line-height: 20px;
+          letter-spacing: 0;
+          ">{{ brand_data.name}} AI Catalog Furnitures</span>
+        <!-- {{ brand_data }} -->
+          <!-- <b>  {{truncateChars(brand_data.name,limit=15)}}</b> -->
+        </div>
+      </router-link>
     </template> 
 
        <template #extra> <div class="head-section" >
@@ -185,7 +231,7 @@ Download
   </a-drawer>
   <!-- Lights Drawerr -->
 <a-drawer
-    title="AI Catalog Lights Textures"
+    
     :placement="'bottom'"
     :closable="true"
     :open="openSeeAll_Lights"
@@ -197,6 +243,25 @@ Download
 "
     @close="onClose_drawer_modal"
     > 
+    
+    <template #title >
+      
+<router-link :to="'/'+this.$route.query.brand" >
+        <div style="display: flex;gap:10px;">
+          <a-avatar size="medium" style="margin-top:6px;border:1px solid rgba(0,0,0,0.2)" :src="this.$store.state.root_media_api+brand_data.business_picture"></a-avatar>
+          <span class="!text-gray-700 py-3"  style="
+          font-family: Poppins;
+          font-weight: 700;
+          font-style: normal;
+          font-size: 16px;
+          line-height: 20px;
+          letter-spacing: 0;
+          ">{{ brand_data.name}} AI Catalog LightS</span>
+        <!-- {{ brand_data }} -->
+          <!-- <b>  {{truncateChars(brand_data.name,limit=15)}}</b> -->
+        </div>
+      </router-link>
+    </template> 
        <template #extra> <div class="head-section" >
           <a-button type="primary" style="display:flex;justify-content:center;gap:10px;color:white"> 
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -222,6 +287,7 @@ Download
   :seeAll_furnitures="seeAll_furnitures"
   :seeAll_Lights="seeAll_Lights"
   @close="onClose_drawer_modal"
+  :brand_data="brand_data"
 />
 
 
@@ -678,6 +744,7 @@ Switch Furniture</a-button> -->
                 <div style="">
                    <ai_catalog_item_replacement_3d_products
                    v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Furniture'"
+                    :brand_data="brand_data"
                    @products-see-all=furnituresSeeAll
                    @trigger-render-3d-object="execute3DRederer"
                    ref="furniture_products_list"
@@ -686,17 +753,20 @@ Switch Furniture</a-button> -->
                    <floor v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Floor'"
                    @texture-selected="floorTextureSelected"
                   ref="floor_products_list"
+                    :brand_data="brand_data"
   
                    @floor-see-all="floorSeeAll"
                    ></floor>
                    <walls v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Wall'"
                    @texture-selected="wallTextureSelected"
                   ref="wall_products_list"
+                    :brand_data="brand_data"
   
                    @walls-see-all="wallsSeeAll"
                    ></walls>
                    <fernitures v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='All'"
                      @product-selected="product_selected_all_tabs_section"
+                    :brand_data="brand_data"
   
                    @see-all-products="SeeAllProducts"
                    >
@@ -704,7 +774,7 @@ Switch Furniture</a-button> -->
                    <lights v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Lights'"
                    @light-selected="lightSelected"
                   ref="lights_list"
-  
+                    :brand_data="brand_data"
                    @light-see-all="lightsSeeAll"
                    @Apply_Light="Apply_ceiling_light"
                    >
@@ -851,6 +921,7 @@ Switch Furniture</a-button> -->
                 <div style="">
                    <ai_catalog_item_replacement_3d_products
                    v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Furniture'"
+                    :brand_data="brand_data"
                    @products-see-all="furnituresSeeAll"
                    @trigger-render-3d-object="execute3DRederer"
                    ref="furniture_products_list"
@@ -859,12 +930,14 @@ Switch Furniture</a-button> -->
                    <floor v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Floor'"
                    @texture-selected="floorTextureSelected"
                   ref="floor_products_list"
+                    :brand_data="brand_data"
   
                    @floor-see-all="floorSeeAll"
                    ></floor>
                    <walls v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Wall'"
                    @texture-selected="wallTextureSelected"
                   ref="wall_products_list"
+                    :brand_data="brand_data"
   
                    @walls-see-all="wallsSeeAll"
                    ></walls>
@@ -872,12 +945,15 @@ Switch Furniture</a-button> -->
                      @product-selected="product_selected_all_tabs_section"
                     @brand-products="get_all_products_tabs_available"
                    @see-all-products="SeeAllProducts"
+                    :brand_data="brand_data"
+
                    >
                    </fernitures>
                    <lights v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Lights'"
                    @light-selected="lightSelected"
                    @products-see-all="lightsSeeAll"
                   ref="lights_list"
+                    :brand_data="brand_data"
   
                    @light-see-all="lightsSeeAll"
                    @Apply_Light="Apply_ceiling_light"
@@ -1769,6 +1845,11 @@ export default {
     return {
       LockCanvasOperation:false,
         brand:'',
+        brand_data:{
+          'name':'DYD',
+          'business_picture':'/media/default/banner.jpg',
+          'banner_picture':'/media/default/banner.jpg',
+        },
        showCreditModal: false,
       creditErrorMessage: "",
 isCollapsed: false,
@@ -1972,7 +2053,10 @@ isCollapsed: false,
 
   async mounted() {
     await this.initializeComponent();
-    
+    if(this.$route.query.home_design){
+      this.goto_home_design_show(this.$route.query.home_design)
+      // console.log(this.$route.query.home_design)
+    }
   },
 
   beforeUnmount() {
@@ -1984,6 +2068,9 @@ isCollapsed: false,
   },
 
   methods: {
+    goto_home_design_show(){
+      this.active_tab_image='home_design'
+    },
   toggleSocialShare() {
       this.isCollapsed = !this.isCollapsed;
     },
@@ -2193,6 +2280,13 @@ async  rescaleWallMask(e){
           this.is_rendered_objects_mask = responseData.data.is_rendered_objects_mask;
           if (responseData?.data?.brand) {
             this.brand = responseData.data.brand
+            this.brand_data ={
+              'name':responseData.data.brand_name,
+              'business_picture':responseData.data.brand_banner_logo,
+              'banner_picture':responseData.data.brand_avatar_logo,
+            } 
+            // console.log("+-----------------------------=================-------------------=================")
+            // console.log(this.brand_data)
             this.syncBrandAndReload(this.brand )
 
           }
@@ -3122,7 +3216,7 @@ async fetchSingleProductType(productType, dataKey, brand, endpointMap) {
     onClose_drawer_modal() {
       this.openSeeAll_Walls = false;
       this.openSeeAll_Floor = false;
-      this.closeShareMenu = false;
+      // this.closeShareMenu = false;
       this.openSeeAll_products=false;
       this.openSeeAll_ChangeRoom = false;
       this.openSeeAll_furnitures = false;

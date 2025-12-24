@@ -172,7 +172,11 @@ export default {
     }
   },
   mounted() {
+  if(this.$route.query.brand){
+    this.fetchCatalogItems(this.$route.query.brand)
+  }else{
     this.fetchCatalogItems()
+  }
     this.fetchLights()
   },
   methods: {

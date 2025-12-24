@@ -664,21 +664,21 @@ if (savedLang) {
 
 .notification-badge {
   position: absolute;
-  top: -8px;
+  top: -4px;
   right: -8px;
   background: #ef4444;
   color: white;
   border-radius: 50%;
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 12px;
   font-weight: 700;
-  border: 2px solid white;
-  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
-  animation: badgePulse 2s infinite;
+  border: 0px;
+  /* box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+  animation: badgePulse 2s infinite; */
 }
 
 @keyframes badgePulse {

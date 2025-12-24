@@ -2,7 +2,6 @@
   <!-- Fetch All Drawer -->
 <a-drawer
 
-  title="AI All Products"
   :placement="'bottom'"
   :closable="true"
   :open="openSeeAll_products"
@@ -12,6 +11,24 @@
   @close="onClose_drawer_modal"
 >
 
+    <template #title >
+      
+<router-link :to="'/'+this.$route.query.brand" >
+        <div style="display: flex;gap:10px;">
+          <a-avatar size="medium" style="margin-top:6px;border:1px solid rgba(0,0,0,0.2)" :src="this.$store.state.root_media_api+brand_data.business_picture"></a-avatar>
+          <span class="!text-gray-700 py-3"  style="
+          font-family: Poppins;
+          font-weight: 700;
+          font-style: normal;
+          font-size: 16px;
+          line-height: 20px;
+          letter-spacing: 0;
+          ">{{ brand_data.name}} AI Catalog Wall Textures</span>
+        <!-- {{ brand_data }} -->
+          <!-- <b>  {{truncateChars(brand_data.name,limit=15)}}</b> -->
+        </div>
+      </router-link>
+    </template> 
      <template #extra> <div class="head-section" >
           <a-button type="primary" style="display:flex;justify-content:center;gap:10px;color:white"> 
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -114,7 +131,8 @@ export default {
     seeAll_Walls: Array,
     seeAll_furnitures: Array,
     seeAll_Lights: Array,
-    onClose_drawer_modal: Function
+    onClose_drawer_modal: Function,
+    brand_data:Object
   },
   components:{
     wall_textures_bottom_drawer_menu,

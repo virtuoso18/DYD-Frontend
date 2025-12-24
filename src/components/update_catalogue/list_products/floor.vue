@@ -7,7 +7,7 @@
       </a-button>
     </div>
     <!-- Fixed Header -->
-    <div class="ai-catalog-header py-3 ">
+    <!-- <div class="ai-catalog-header py-3 ">
       <span
         style="
           font-family: Poppins;
@@ -20,6 +20,24 @@
       >
         AI Catalog
       </span>
+      <a-button size='small' type="default" class="see-all-link" @click="seeAllClicked">See all</a-button>
+    </div> -->
+    <div class="ai-catalog-header  ">
+      <router-link :to="'/'+$route.query.brand">
+        <div style="display: flex;gap:10px;">
+          <a-avatar size="medium" style="border:1px solid rgba(0,0,0,0.2)" :src="this.$store.state.root_media_api+brand_data.business_picture"></a-avatar>
+          <span class="!text-gray-700 py-3"  style="
+          font-family: Poppins;
+          font-weight: 700;
+          font-style: normal;
+          font-size: 16px;
+          line-height: 20px;
+          letter-spacing: 0;margin-top:-6px
+          ">AI Catalog</span>
+        <!-- {{ brand_data }} -->
+          <!-- <b>  {{truncateChars(brand_data.name,limit=15)}}</b> -->
+        </div>
+      </router-link>
       <a-button size='small' type="default" class="see-all-link" @click="seeAllClicked">See all</a-button>
     </div>
     
@@ -145,6 +163,10 @@ import { HeartFilled, HeartOutlined } from '@ant-design/icons-vue';
 
 export default {
   name: 'AiCatalog',
+  
+  props:{
+    brand_data:Object
+  },
   data() {
     return {
       searchText: '',
@@ -183,6 +205,12 @@ export default {
     }
   },
   methods: {
+      truncateChars(text, limit = 11) {
+  if (!text) return ''
+  return text.length > limit
+    ? text.slice(0, limit) + '...'
+    : text
+},
     async fetchCatalogItems(brand = null, page = 1, isLoadMore = false) {
       if (page === 1 && !isLoadMore) {
         this.loading = true;
