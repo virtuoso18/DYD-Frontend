@@ -363,7 +363,7 @@
                   </a-col>
 
                   <a-col span="17">
-                    <a-button block @click="handleProductDetail(product)"
+                    <a-button block class="product-detail-btn" @click="handleProductDetail(product)"
                       >Product Details</a-button
                     >
                   </a-col>
@@ -737,13 +737,14 @@ export default {
 </script>
 
 <style scoped>
-.main {
-  padding: 10px;
-  border-radius: 20px;
-  background: white;
-  border: 2px solid rgba(128, 128, 128, 0.16);
-  margin-top: 10px;
-  margin-bottom: 10px;
+@media (min-width: 768px) {
+  .main {
+    padding: 10px;
+    border-radius: 20px;
+    background: white;
+    border: 2px solid rgba(128, 128, 128, 0.16);
+    margin-bottom: 10px;
+  }
 }
 
 .head-section {
@@ -760,6 +761,31 @@ export default {
 
 .products-list {
   padding-bottom: 20px;
+}
+
+.product-detail-btn {
+  white-space: nowrap;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-weight: 500;
+  color: #030c20;
+  background: transparent;
+  transition: color 0.2s ease;
+  font-size: 12px;
+  height: auto; /* override antd */
+}
+
+.product-detail-btn:hover {
+  color: #1d4ed8;
+  border-color: #1d4ed8;
+}
+
+/* sm and above */
+@media (min-width: 640px) {
+  .product-detail-btn {
+    font-size: 14px;
+  }
 }
 
 .product-image-container {

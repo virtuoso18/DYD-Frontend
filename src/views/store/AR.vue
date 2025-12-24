@@ -226,43 +226,59 @@ closable
 
       <!-- Drawer Content -->
       <div class="drawer-content" @click.stop>
+        
         <div class="product-card">
           <div class="product-header">
-            <div class="product-info">
+            <a-row>
+
+            <a-col :span="23" class="product-info">
               <h2>{{ ProductDetails.name }}</h2>
               <div class="price-section">
                 <span class="current-price">${{ ProductDetails.pricing.current_price }}</span>
                 <span v-if="ProductDetails.pricing.is_on_sale" class="discount">SALE</span>
               </div>
+              
 
               <!-- Colors Section -->
-              <a-col :span="24">
-                <div style="margin-bottom: 8px; font-weight: 500;">Colors:</div>
-                <a-alert 
-                  v-if="showColorAlert"
-                  type="warning"
-                  :message="`No model associated with ${selectedColorHex} color. Hence showing model for primary color.`"
-                  closable
-                  @close="showColorAlert = false"
-                  style="margin-bottom: 12px;"
-                />
-                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                  <div v-for="(color, index) in ProductDetails.colors.available_colors"
+              
+            </a-col>
+            <a-col :span="23">
+              <div style="margin-bottom: 8px; font-weight: 500;">Colors:</div>
+              <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                <div v-for="(color, index) in ProductDetails.colors.available_colors"
+                  :key="color.id"
+                  @click="selectColor(index, color)"
+                  :class="[
+                    'w-6 h-6 rounded-full transition-all cursor-pointer',
+                    color.model_file_colored_product 
+                      ? 'border-2 hover:shadow-md' 
+                      : 'outline outline-2 outline-red-500 outline-offset-2 hover:shadow-[0_0_8px_rgba(239,68,68,0.3)]',
+                    selectedColorIndex === index ? 'border-blue-500 border-2' : 'border-gray-100'
+                  ]"
+                  :style="{ backgroundColor: color.color }"
+                  :title="`${color.color}${!color.model_file_colored_product ? ' (No 3D model)' : ''}`"
+                ></div>
+              </div>
+
+              <div style="margin-bottom: 8px; font-weight: 500;" >Textures:</div>
+
+               <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;margin-top:10px">
+
+                <div v-for="(color, index) in ProductDetails.colors.available_colors">
+
+                  <div v-if="color.product_texture?.texture"
                     :key="color.id"
                     @click="selectColor(index, color)"
-                    :class="[
-                      'w-6 h-6 rounded-full transition-all cursor-pointer',
-                      color.model_file_colored_product 
-                        ? 'border-2 hover:shadow-md' 
-                        : 'outline outline-2 outline-red-500 outline-offset-2 hover:shadow-[0_0_8px_rgba(239,68,68,0.3)]',
-                      selectedColorIndex === index ? 'border-blue-500 border-4' : 'border-gray-100'
-                    ]"
-                    :style="{ backgroundColor: color.color }"
+                    class="rounded-full transition-all cursor-pointer"
+                    :class="selectedColorIndex === index ? 'border-blue-500 border-1' : 'border-gray-100'"
                     :title="`${color.color}${!color.model_file_colored_product ? ' (No 3D model)' : ''}`"
-                  ></div>
+                  >
+                  <img :src="this.$store.state.root_media_api+color.product_texture?.texture" alt="" style="width:40px;height:40px;border:1px solid rgba(0,0,0,0.2);border-radius: 100%;object-fit :cover">
                 </div>
-              </a-col>
-            </div>
+                </div>
+                </div>
+            </a-col>
+            </a-row>
         
             <div class="cart-controller-sec">
               <a-button
@@ -1494,7 +1510,7 @@ export default {
 }
 
 .product-info {
-  flex: 1;
+ 
 }
 
 .product-info h2 {

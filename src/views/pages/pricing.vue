@@ -29,119 +29,120 @@
         </div>
       </div>
 
-      <!-- Pricing Cards -->
-      <div class="pricing-cards" v-if="data !== null">
-        <!-- Basic Plan -->
-        <div class="pricing-card basic-card">
-          <div class="card-header">
-            <h3 class="plan-name">Basic</h3>
-            <p class="plan-subtitle">Basic Plan</p>
+      <!-- {{ data }} -->
+        <!-- Pricing Cards -->
+        <div class="pricing-cards" v-if="data !== null">
+          <!-- Basic Plan -->
+          <div class="pricing-card basic-card">
+            <div class="card-header">
+              <h3 class="plan-name">Basic</h3>
+              <p class="plan-subtitle">Basic Plan</p>
+            </div>
+            <div class="price-section">
+              <span class="currency">$</span>
+              <span class="price">{{ data.basic.monthly_charges }}</span>
+              <p class="billing-period">{{data.basic.plan_credits}} credits / month</p>
+            </div>
+            <button class="get-started-btn basic-btn" @click="this.$router.push('/make-payment/'+'basic')">Get Started</button>
+            <div class="features-list">
+              <div class="feature-item">
+                <span class="checkmark">✓</span>
+                <span>1000 monthly credits recharge</span>
+              </div>
+              <div class="feature-item">
+                <span class="checkmark">✓</span>
+                <span>10 task working in queue</span>
+              </div>
+              <div class="feature-item">
+                <span class="checkmark">✓</span>
+                <span>4 free retries per generation</span>
+              </div>
+              <div class="feature-item">
+                <span class="checkmark">✓</span>
+                <span>Multi-view image to 3D</span>
+              </div>
+              <div class="feature-item">
+                <span class="checkmark">✓</span>
+                <span>Download community models</span>
+              </div>
+            </div>
           </div>
-          <div class="price-section">
-            <span class="currency">$</span>
-            <span class="price">{{ data.basic.monthly_charges }}</span>
-            <p class="billing-period">{{data.basic.plan_credits}} credits / month</p>
+
+          <!-- Pro Plan -->
+          <div class="pricing-card pro-card">
+            <div class="card-header">
+              <h3 class="plan-name">Pro</h3>
+              <p class="plan-subtitle">MOST POPULAR</p>
+            </div>
+            <div class="price-section">
+              <span class="currency">$</span>
+              <span class="price">{{ data.pro.monthly_charges }}</span>
+              <p class="billing-period">{{data.pro.plan_credits}} credits / month</p>
+            </div>
+            <button class="get-started-btn pro-btn" @click="this.$router.push('/make-payment/'+'pro')">Get Started</button>
+            <div class="features-list">
+              <div class="feature-item">
+                <span class="checkmark">✓</span>
+                <span>4000 monthly credits recharge</span>
+              </div>
+              <div class="feature-item">
+                <span class="checkmark">✓</span>
+                <span>30 task working in queue</span>
+              </div>
+              <div class="feature-item">
+                <span class="checkmark">✓</span>
+                <span>8 free retries per generation</span>
+              </div>
+              <div class="feature-item">
+                <span class="checkmark">✓</span>
+                <span>Multi-view image to 3D</span>
+              </div>
+              <div class="feature-item">
+                <span class="checkmark">✓</span>
+                <span>Download community model</span>
+              </div>
+            </div>
           </div>
-          <button class="get-started-btn basic-btn" @click="this.$router.push('/make-payment/'+'basic')">Get Started</button>
-          <div class="features-list">
-            <div class="feature-item">
-              <span class="checkmark">✓</span>
-              <span>1000 monthly credits recharge</span>
+
+          <!-- Enterprise Plan -->
+          <div class="pricing-card enterprise-card">
+            <div class="card-header">
+              <h3 class="plan-name">Enterprise</h3>
+              <p class="plan-subtitle">For Organization</p>
             </div>
-            <div class="feature-item">
-              <span class="checkmark">✓</span>
-              <span>10 task working in queue</span>
+            <div class="price-section">
+              <span class="currency">$</span>
+              <span class="price">{{ data.enterprise.monthly_charges }}</span>
+              <p class="billing-period">{{data.enterprise.plan_credits}} Customizable credit / month</p>
             </div>
-            <div class="feature-item">
-              <span class="checkmark">✓</span>
-              <span>4 free retries per generation</span>
-            </div>
-            <div class="feature-item">
-              <span class="checkmark">✓</span>
-              <span>Multi-view image to 3D</span>
-            </div>
-            <div class="feature-item">
-              <span class="checkmark">✓</span>
-              <span>Download community models</span>
+            <button class="get-started-btn enterprise-btn" @click="this.$router.push('/make-payment/'+'enterprise')">Get Started</button>
+            <div class="features-list">
+              <div class="feature-item">
+                <span class="checkmark">✓</span>
+                <span>Customizable balance</span>
+              </div>
+              <div class="feature-item">
+                <span class="checkmark">✓</span>
+                <span>50+ task working in queue</span>
+              </div>
+              <div class="feature-item">
+                <span class="checkmark">✓</span>
+                <span>20 free retries per generation</span>
+              </div>
+              <div class="feature-item">
+                <span class="checkmark">✓</span>
+                <span>Multi-view image to 3D</span>
+              </div>
+              <div class="feature-item">
+                <span class="checkmark">✓</span>
+                <span>Download community model</span>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- Pro Plan -->
-        <div class="pricing-card pro-card">
-          <div class="card-header">
-            <h3 class="plan-name">Pro</h3>
-            <p class="plan-subtitle">MOST POPULAR</p>
-          </div>
-          <div class="price-section">
-            <span class="currency">$</span>
-            <span class="price">{{ data.pro.monthly_charges }}</span>
-            <p class="billing-period">{{data.pro.plan_credits}} credits / month</p>
-          </div>
-          <button class="get-started-btn pro-btn" @click="this.$router.push('/make-payment/'+'pro')">Get Started</button>
-          <div class="features-list">
-            <div class="feature-item">
-              <span class="checkmark">✓</span>
-              <span>4000 monthly credits recharge</span>
-            </div>
-            <div class="feature-item">
-              <span class="checkmark">✓</span>
-              <span>30 task working in queue</span>
-            </div>
-            <div class="feature-item">
-              <span class="checkmark">✓</span>
-              <span>8 free retries per generation</span>
-            </div>
-            <div class="feature-item">
-              <span class="checkmark">✓</span>
-              <span>Multi-view image to 3D</span>
-            </div>
-            <div class="feature-item">
-              <span class="checkmark">✓</span>
-              <span>Download community model</span>
-            </div>
-          </div>
-        </div>
 
-        <!-- Enterprise Plan -->
-        <div class="pricing-card enterprise-card">
-          <div class="card-header">
-            <h3 class="plan-name">Enterprise</h3>
-            <p class="plan-subtitle">For Organization</p>
-          </div>
-          <div class="price-section">
-            <span class="currency">$</span>
-            <span class="price">{{ data.enterprice.monthly_charges }}</span>
-            <p class="billing-period">{{data.enterprice.plan_credits}} Customizable credit / month</p>
-          </div>
-          <button class="get-started-btn enterprise-btn" @click="this.$router.push('/make-payment/'+'enterprice')">Get Started</button>
-          <div class="features-list">
-            <div class="feature-item">
-              <span class="checkmark">✓</span>
-              <span>Customizable balance</span>
-            </div>
-            <div class="feature-item">
-              <span class="checkmark">✓</span>
-              <span>50+ task working in queue</span>
-            </div>
-            <div class="feature-item">
-              <span class="checkmark">✓</span>
-              <span>20 free retries per generation</span>
-            </div>
-            <div class="feature-item">
-              <span class="checkmark">✓</span>
-              <span>Multi-view image to 3D</span>
-            </div>
-            <div class="feature-item">
-              <span class="checkmark">✓</span>
-              <span>Download community model</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-            <br><br>
-
+              <br><br>
       <!-- Credit Top Up Section -->
       <div class="credit-topup-section">
         <div class="topup-info">
@@ -182,12 +183,14 @@ export default {
     async fetchPricingPlans(){
       
       try {
-          // const token = localStorage.getItem('token');
+        let header={}
+          const token = localStorage.getItem('token');
+          if (token){
+            header['Authorization'] = `Token ${token}`
+          }
           const response = await fetch(`${this.$store.state.root_api}subscription/api/get-all-plans/`, {
               method: 'GET',
-              // headers: {
-              //     'Authorization': `Token ${token}`
-              // }
+              headers: header
           });
           const result = await response.json();
           if (result.success) {

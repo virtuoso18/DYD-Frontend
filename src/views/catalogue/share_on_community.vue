@@ -225,7 +225,7 @@ export default {
   },
   methods: {
     closeModal() {
-      this.$emit('update:open', false);
+      this.$emit('update:close', true);
     },
 
     resetShareForm() {

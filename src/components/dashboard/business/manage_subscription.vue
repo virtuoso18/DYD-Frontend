@@ -421,7 +421,7 @@
                 :key="record.key"
                 class="border-b border-[#f0f0f0] hover:bg-[#fafafa] transition-colors"
               >
-                <td class="py-4 px-4 font-medium text-[#262626]">{{ formatDate(record.date) }}</td>
+                <td class="py-4 px-4 font-medium text-[#262626]">{{  formatDateShort(record.purchase_date)  }}</td>
                 <td class="py-4 px-4 font-medium text-[#262626] text-center">
                   {{ record.purchased_credits }}
                 </td>

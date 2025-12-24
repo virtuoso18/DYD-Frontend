@@ -90,12 +90,6 @@
 
       <div>
        
-      </div>
-      <a-row>
-        <a-col :span=24 > <div class="tool-section stats-section flex-none">
-          <a-row>
-            <a-col :sm="24" :xs="24" :md="6" :lg="6">
-              
 <div class="tool-section">
           <h4>Track Tools</h4>
           <div class="button-group flex flex-wrap gap-2">
@@ -136,11 +130,10 @@
           </div>
         </div>
         
-            </a-col>
-            <a-col :sm="24" :xs="24" :md="12" :lg="12" style="margin-top:10px">
-              <a-row>
-            <a-col  :sm="8" :xs="8" :lg="12" :md="12">
-               <div class="stats flex gap-4">
+      </div>
+      <a-row>
+        <a-col :span=18 style="padding-top:10px"> <div class="tool-section stats-section flex-none">
+          <div class="stats flex gap-4">
             <div class="stat">
               <span class="stat-label">Tracks</span>
               <span class="stat-value">{{ tracks.length }}</span>
@@ -150,14 +143,8 @@
               <span class="stat-value">{{ lights.length }}</span>
             </div>
             <div >
-              
-            </div>
-          </div>
-              </a-col>
-              
-            <a-col  :sm="8" :xs="8" :lg="12" :md="12">
               <h4>Add Lights</h4>
-          <div style="display:flex;gap:10px">
+          <div style="display:flex;justify-content: space-between;">
 
             <a-button   siize="small" @click="selectedLight = 'rectangle'">
 
@@ -169,33 +156,13 @@
             </a-button>
 
             </div>
-              </a-col>
-              
-            <a-col :sm="8" :xs="8" :lg="0" :md="0" style="display: flex;flex-direction: column;justify-content: end;">
-          <a-button type="primary" @click="openLightEditorModal">Set Light Size</a-button>
-
-              </a-col>
-            </a-row>
-
-              
-
-</a-col>
-            <a-col :sm="24" :xs="24" :md="6" :lg="6" style="margin-top:10px">
-              <a-button
-              type="primary"
-              block
-            @click="$emit('Apply-Changes', 'sunk-magnetic-light-Renerer')"
-          >
-            Finalise Changes
-          </a-button>
-</a-col>
-          </a-row>
-         
+            </div>
+          </div>
         </div>
  
         </a-col>
         <a-col :span=6 style="display: flex;justify-content: center;align-items: end;">
-              
+              <a-button type="primary" @click="openLightEditorModal">Set Light Size</a-button>
       
         </a-col>
       </a-row>
@@ -215,7 +182,12 @@
        Save 
      </a-button> -->
 
-          
+          <button
+            @click="$emit('Apply-Changes', 'sunk-magnetic-light-Renerer')"
+            class="m-0 flex-1 min-w-0 flex items-center justify-center rounded-lg bg-blue-600 px-20 py-3 !text-white font-medium whitespace-nowrap font-family-poppins text-base hover:bg-blue-700 active:bg-blue-800 transition disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Finalise Changes
+          </button>
         </div>
       </div>
     </div>
@@ -1178,7 +1150,7 @@ function handleTouchStart(e) {
   /* ---------- LONG PRESS ---------- */
   longPressTimer.value = setTimeout(
     () => {
-      if (touchedLight.value) {
+      if (touchedLight) {
         resizeMode.value = true;
         resizingLight.value = touchedLight.value;
         resizeStartPos.value = touchedLight.value.trackPosition;
@@ -2050,7 +2022,7 @@ defineExpose({
   flex: 1;
   background: #f5f5f5;
   overflow: hidden;
-  height: 90%;
+  height: 55%;
 }
 
 .main-canvas {
@@ -2153,14 +2125,14 @@ defineExpose({
 }
 
 /* Navigation Controls */
-.navigation-controls {
+/* .navigation-controls {
   position: absolute;
   top: 16px;
   right: 16px;
   display: flex;
   gap: 8px;
   z-index: 200;
-}
+} */
 
 /* .zoom-controls {
   display: flex;
@@ -2623,7 +2595,7 @@ defineExpose({
   }
 
   .settings-grid {
-    /* grid-template-columns: 1fr; */
+    grid-template-columns: 1fr;
   }
 
   .stats {
@@ -2638,8 +2610,7 @@ defineExpose({
   }
 
   .navigation-controls {
-    display:none;
-    top: 40px;
+    top: 12px;
     right: 12px;
     gap: 6px;
   }
@@ -2695,6 +2666,49 @@ defineExpose({
   .help-text {
     font-size: 11px;
     padding: 6px 12px;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .main-toolbar {
+    background: rgba(28, 28, 30, 0.95);
+    border-top-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .tool-section h4 {
+    color: #8e8e93;
+  }
+
+  .tool-btn {
+    background: #1c1c1e;
+    color: #ffffff;
+    border-color: #38383a;
+  }
+
+  .tool-btn:hover {
+    background: #2c2c2e;
+    border-color: #007aff;
+  }
+
+  .light-editor {
+    background: #1c1c1e;
+    color: #ffffff;
+  }
+
+  .editor-header {
+    background: #2c2c2e;
+    border-bottom-color: #38383a;
+  }
+
+  .action-btn {
+    background: #2c2c2e;
+    color: #ffffff;
+    border-color: #38383a;
+  }
+
+  .action-btn:hover {
+    background: #38383a;
   }
 }
 
@@ -2864,18 +2878,9 @@ defineExpose({
 }
 
 @media (max-width: 768px) {
-.canvas-container{
-  height: 70%;
-}
   .stats-and-actions {
     flex-direction: column;
     gap: 8px;
   }
-}
-@media (max-width: 400px) {
-
-.canvas-container{
-  height: 60%;
-}
 }
 </style>

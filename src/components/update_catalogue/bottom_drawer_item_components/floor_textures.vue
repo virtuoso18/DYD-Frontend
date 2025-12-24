@@ -1,6 +1,6 @@
 <template>
-  <div class="main">
-    <a-row class="see-all-section">
+  <div class="main ">
+    <a-row class="see-all-section ">
       <a-col :sm="24" :md="24" :lg="4">
         <!-- Clear Button -->
         <!-- <a-button block type="primary" @click="clearFilters"
@@ -280,7 +280,7 @@
               v-for="product in products"
               :key="product.id"
               class="product-responsive"
-              style="padding: 5px"
+              style="padding: 3px"
             >
               <div class="product">
                 <div class="product-image-container">
@@ -300,10 +300,10 @@
                     <b>{{ product.title }}</b>
                   </a-col>
 
-                  <a-col span="18"> Colors </a-col>
+                  <a-col span="12"> Colors </a-col>
 
                   <a-col
-                    span="6"
+                    span="12"
                     style="display: flex; justify-content: end; gap: 4px"
                   >
                     <div
@@ -335,7 +335,7 @@
                   </a-col>
 
                   <a-col span="17">
-                    <a-button block @click="handleProductDetail(product)"
+                    <a-button block class="product-detail-btn" @click="handleProductDetail(product)"
                       >Product Details</a-button
                     >
                   </a-col>
@@ -345,6 +345,8 @@
                     <a-button
                       :type="isWishlisted(product.id) ? 'primary' : 'default'"
                       @click="toggleWishlist(product)"
+                      class="product-detail-btn" 
+                       
                     >
                       <HeartOutlined />
                     </a-button>
@@ -692,20 +694,23 @@ export default {
 </script>
 
 <style scoped>
-.main {
-  padding: 10px;
-  border-radius: 20px;
-  background: white;
-  border: 2px solid rgba(128, 128, 128, 0.16);
-  margin-bottom: 10px;
+@media (min-width: 768px) {
+  .main {
+    padding: 10px;
+    border-radius: 20px;
+    background: white;
+    border: 2px solid rgba(128, 128, 128, 0.16);
+    margin-bottom: 10px;
+  }
 }
+
 
 .see-all-section {
   display: flex;
 }
 
 .product {
-  padding: 10px;
+  padding: 5px;
   margin-bottom: 10px;
   border-radius: 10px;
   background: #f3f2f4;
@@ -744,6 +749,31 @@ export default {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+}
+
+.product-detail-btn {
+  white-space: nowrap;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-weight: 500;
+  color: #030c20;
+  background: transparent;
+  transition: color 0.2s ease;
+  font-size: 12px;
+  height: auto; /* override antd */
+}
+
+.product-detail-btn:hover {
+  color: #1d4ed8;
+  border-color: #1d4ed8;
+}
+
+/* sm and above */
+@media (min-width: 640px) {
+  .product-detail-btn {
+    font-size: 14px;
+  }
 }
 
 .ar-badge {

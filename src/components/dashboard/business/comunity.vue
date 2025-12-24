@@ -560,29 +560,51 @@
         </div>
 
         <!-- Add Comment Input (Fixed at Bottom) -->
-        <div class="pt-4 border-t border-gray-200 bg-gray-50">
-          <div class="flex items-center gap-2 w-full rounded-xl px-3 py-2">
-            <!-- Textarea -->
-            <a-textarea
-              v-model:value="newComment"
-              placeholder="Add a comment..."
-              :rows="1"
-              auto-size
-              class="flex-1 border-none shadow-md resize-none"
-            />
+      <div class="pt-4 border-t border-gray-200 bg-white">
+  <!-- Outer field (single border, rounded) -->
+  <div class="flex items-center w-full rounded-2xl border border-gray-300 px-4 py-2 bg-white">
+    <!-- Textarea -->
+   <a-textarea
+  v-model:value="newComment"
+  placeholder="Type here"
+  :rows="1"
+  auto-size
+  class="flex-1 resize-none"
+  style="border:none; box-shadow:none; outline:none; background:transparent;"
+/>
 
-            <!-- Send Button -->
-            <button
-              @click="addComment"
-              :disabled="!newComment.trim()"
-              class="w-10 h-10 flex items-center justify-center rounded-md disabled:opacity-30"
-            >
-              <svg width="18" height="18" viewBox="0 0 16 16" fill="#3B63FB">
-                <path d="M3.721 7.63038L5.2073 8.12581C6.18973 8.45258 6.67989 8.61702 7.03196 8.96909C7.38403 9.32117 7.54847 9.81238 7.87525 10.7927L8.37068 12.279C9.1971 14.7604 9.61031 16 10.3703 16C11.1293 16 11.5435 14.7604 12.37 12.279L15.3615 3.30642C15.9434 1.56082 16.2343 0.688014 15.7737 0.227368C15.313 -0.233277 14.4402 0.0576566 12.6957 0.638471L3.71995 3.63214C1.24174 4.45751 0 4.87072 0 5.63073C0 6.39074 1.24069 6.80395 3.721 7.63038Z"/>
-              </svg>
-            </button>
-          </div>
-        </div>
+
+    <!-- Send button with your SVG -->
+    <button
+      @click="addComment"
+      :disabled="!newComment.trim()"
+      class="ml-2 w-8 h-8 flex items-center justify-center rounded-full
+             text-blue-500 disabled:opacity-30 disabled:cursor-not-allowed"
+    >
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 16 16"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M3.721 7.63038L5.2073 8.12581C6.18973 8.45258 6.67989 8.61702 7.03196 8.96909C7.38403 9.32117 7.54847 9.81238 7.87525 10.7927L8.37068 12.279C9.1971 14.7604 9.61031 16 10.3703 16C11.1293 16 11.5435 14.7604 12.37 12.279L15.3615 3.30642C15.9434 1.56082 16.2343 0.688014 15.7737 0.227368C15.313 -0.233277 14.4402 0.0576566 12.6957 0.638471L3.71995 3.63214C1.24174 4.45751 0 4.87072 0 5.63073C0 6.39074 1.24069 6.80395 3.721 7.63038Z"
+          fill="#3B63FB"
+        />
+        <path
+          d="M3.721 7.63038L5.2073 8.12581C6.18973 8.45258 6.67989 8.61702 7.03196 8.96909C7.38403 9.32117 7.54847 9.81238 7.87525 10.7927L8.37068 12.279C9.1971 14.7604 9.61031 16 10.3703 16C11.1293 16 11.5435 14.7604 12.37 12.279L15.3615 3.30642C15.9434 1.56082 16.2343 0.688014 15.7737 0.227368C15.313 -0.233277 14.4402 0.0576566 12.6957 0.638471L3.71995 3.63214C1.24174 4.45751 0 4.87072 0 5.63073C0 6.39074 1.24069 6.80395 3.721 7.63038Z"
+          fill="#3B63FB"
+        />
+        <path
+          d="M5.65441 9.68062L3.48084 8.95644C3.32874 8.90574 3.16709 8.8904 3.00817 8.91159C2.84925 8.93278 2.69726 8.98994 2.56376 9.07872L1.41478 9.844C1.27877 9.93462 1.17202 10.0628 1.10752 10.213C1.04302 10.3631 1.02354 10.5288 1.05146 10.6898C1.07938 10.8509 1.15349 11.0003 1.26477 11.12C1.37606 11.2397 1.51973 11.3245 1.67831 11.364L3.73909 11.8784C3.83183 11.9016 3.91653 11.9495 3.98411 12.0171C4.0517 12.0847 4.09964 12.1694 4.12279 12.2621L4.63719 14.3229C4.67674 14.4815 4.76151 14.6252 4.8812 14.7364C5.00089 14.8477 5.15034 14.9218 5.31137 14.9498C5.47241 14.9777 5.63808 14.9582 5.78825 14.8937C5.93841 14.8292 6.0666 14.7225 6.15722 14.5864L6.9225 13.4375C7.01128 13.304 7.06844 13.152 7.08963 12.9931C7.11082 12.8341 7.09548 12.6725 7.04478 12.5204L6.32061 10.3468C6.26884 10.1917 6.1817 10.0508 6.06608 9.93514C5.95045 9.81952 5.80952 9.73238 5.65441 9.68062Z"
+          fill="#3B63FB"
+        />
+      </svg>
+    </button>
+  </div>
+</div>
+
       </div>
     </div>
   </div>
@@ -801,261 +823,14 @@
     </a-modal>
 
     <!-- Comments Modal -->
-    <a-modal
-      v-model:open="commentsModalVisible"
-      :title="null"
-      width="800px"
-      :footer="null"
-      :closable="false"
-      class="comments-modal"
-    >
-      <a-row>
-        <a-col :span="12">
-          <a-avatar
-            :size="35"
-            :src="$store.state.root_media_api + selectedPostForComments?.user_profile"
-            style="border: 1px solid rgba(0, 0, 0, 0.4)"
-          >
-            {{
-              selectedPostForComments?.post_by?.charAt(0).toUpperCase() || "U"
-            }}
-          </a-avatar>
-          <span class="post-owner-name"
-            >&nbsp;<b>{{
-              selectedPostForComments?.post_by || "Anonymous"
-            }}</b></span
-          >
-        </a-col>
 
-        <a-col
-          :span="12"
-          style="
-            display: flex;
-            justify-content: space-between;
-            padding-left: 10px;
-          "
-        >
-          <span style="font-size: 16px; font-weight: bold">Comments</span>
-          <a-button type="text" @click="closeCommentsModal" class="close-btn">
-            <CloseOutlined />
-          </a-button>
-        </a-col>
-
-        <a-col :span="12">
-          <img
-            :src="
-              $store.state.root_media_api + selectedPostForComments?.post_image ||
-              require('../../../assets/home_main_banner.jpg')
-            "
-            :alt="selectedPostForComments?.title"
-            style="width: 100%; border-radius: 10px"
-          />
-          <!-- Post Stats -->
-
-          <div
-            style="
-              display: flex;
-              justify-content: space-between;
-              margin-bottom: 5px;
-              margin-top: 10px;
-            "
-          >
-            <div
-              style="
-                display: flex;
-                align-items: center;
-                gap: 6px;
-                background: rgba(0, 0, 0, 0.05);
-                padding: 6px 12px;
-                border-radius: 20px;
-                color: #666;
-                font-size: 14px;
-                font-weight: 500;
-              "
-            >
-              <EyeOutlined style="font-size: 14px" />
-              <span>{{
-                formatNumber(selectedPostForComments?.view_count)
-              }}</span>
-            </div>
-            <div style="display: flex; gap: 12px">
-              <div
-                style="
-                  display: flex;
-                  align-items: center;
-                  gap: 6px;
-                  background: rgba(0, 0, 0, 0.05);
-                  padding: 6px 12px;
-                  border-radius: 20px;
-                  color: #666;
-                  font-size: 14px;
-                  font-weight: 500;
-                "
-              >
-                <HeartOutlined style="font-size: 14px" />
-                <span>{{
-                  formatNumber(selectedPostForComments?.like_count)
-                }}</span>
-              </div>
-              <div
-                style="
-                  display: flex;
-                  align-items: center;
-                  gap: 6px;
-                  background: rgba(0, 0, 0, 0.05);
-                  padding: 6px 12px;
-                  border-radius: 20px;
-                  color: #666;
-                  font-size: 14px;
-                  font-weight: 500;
-                "
-              >
-                <MessageOutlined style="font-size: 14px" />
-                <span>{{ formatNumber(modalComments.length) }}</span>
-              </div>
-            </div>
-          </div>
-          <p>{{ selectedPostForComments?.title }}</p>
-          <a-tag
-            v-for="(tag, index) in selectedPostForComments?.tags"
-            :key="index"
-            color="blue"
-            style="margin: 2px; border-radius: 12px; font-size: 11px"
-          >
-            {{ tag }}
-          </a-tag>
-        </a-col>
-        <a-col
-          :span="12"
-          style="
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-          "
-        >
-          <div style="max-height: 350px; overflow-y: scroll">
-            <div v-if="!modalComments.length" style="display: flex;justify-content: center;align-items: center;height:100%;min-height:300px">
-                <div>
-                    <a-empty description="No Comments Available"></a-empty>
-                    
-                </div>
-            </div>
-            <div v-else
-              v-for="comment in modalComments"
-              :key="comment.id"
-              style="padding: 10px"
-            >
-              <div style="display: flex; justify-content: space-between">
-                <div style="display: flex">
-                  <a-avatar
-                    :size="32"
-                    style="border: 1px solid rgba(0, 0, 0, 0.1)"
-                    :src="
-                      $store.state.root_media_api +
-                      comment.comment_owner?.user_profile
-                    "
-                  >
-                    {{
-                      comment.comment_owner?.username
-                        ?.charAt(0)
-                        .toUpperCase() || "U"
-                    }} </a-avatar
-                  >&nbsp;
-                  {{ comment.comment_owner?.username || "Anonymous" }}
-                </div>
-                {{ formatDate(comment.created_at) }}
-              </div>
-              <p style="margin-left: 20px">{{ comment.content }}</p>
-
-              <!-- Replies if any -->
-              <div
-                v-if="comment.replies && comment.replies.length > 0"
-                class="replies-section-modal"
-              >
-                <div
-                  v-for="reply in comment.replies"
-                  :key="reply.id"
-                  class="reply-item-modal"
-                >
-                  <a-avatar :size="24" class="reply-avatar">
-                    {{
-                      reply.comment_owner?.username?.charAt(0).toUpperCase() ||
-                      "U"
-                    }}
-                  </a-avatar>
-                  <div class="reply-content-modal">
-                    <span class="reply-author-modal">{{
-                      reply.comment_owner?.username || "Anonymous"
-                    }}</span>
-                    <span class="reply-date-modal">{{
-                      formatDate(reply.created_at)
-                    }}</span>
-                    <p class="reply-text-modal">{{ reply.content }}</p>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Load More Comments -->
-              <div v-if="hasMoreModalComments" class="load-more-comments">
-                <a-button
-                  type="link"
-                  @click="loadMoreModalComments"
-                  :loading="loadingModalComments"
-                  class="load-more-btn"
-                >
-                  Load More Comments
-                </a-button>
-              </div>
-            </div>
-          </div>
-          <div style="padding: 10px">
-            <a-row>
-              <a-col :span="20">
-                <a-input
-                  v-model:value="newModalComment"
-                  placeholder="Type here"
-                  style="width: 100%"
-                  @keyup.enter="addModalComment"
-                />
-              </a-col>
-              <a-col :span="4" style="padding-left: 10px">
-                <a-button
-                  type="primary"
-                  @click="addModalComment"
-                  :loading="addingModalComment"
-                  :disabled="!newModalComment.trim()"
-                >
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 16 16"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M3.721 7.63038L5.2073 8.12581C6.18973 8.45258 6.67989 8.61702 7.03196 8.96909C7.38403 9.32117 7.54847 9.81238 7.87525 10.7927L8.37068 12.279C9.1971 14.7604 9.61031 16 10.3703 16C11.1293 16 11.5435 14.7604 12.37 12.279L15.3615 3.30642C15.9434 1.56082 16.2343 0.688014 15.7737 0.227368C15.313 -0.233277 14.4402 0.0576566 12.6957 0.638471L3.71995 3.63214C1.24174 4.45751 0 4.87072 0 5.63073C0 6.39074 1.24069 6.80395 3.721 7.63038Z"
-                      fill="currentColor"
-                    />
-                    <path
-                      d="M3.721 7.63038L5.2073 8.12581C6.18973 8.45258 6.67989 8.61702 7.03196 8.96909C7.38403 9.32117 7.54847 9.81238 7.87525 10.7927L8.37068 12.279C9.1971 14.7604 9.61031 16 10.3703 16C11.1293 16 11.5435 14.7604 12.37 12.279L15.3615 3.30642C15.9434 1.56082 16.2343 0.688014 15.7737 0.227368C15.313 -0.233277 14.4402 0.0576566 12.6957 0.638471L3.71995 3.63214C1.24174 4.45751 0 4.87072 0 5.63073C0 6.39074 1.24069 6.80395 3.721 7.63038Z"
-                      fill="currentColor"
-                    />
-                    <path
-                      d="M5.65441 9.68062L3.48084 8.95644C3.32874 8.90574 3.16709 8.8904 3.00817 8.91159C2.84925 8.93278 2.69726 8.98994 2.56376 9.07872L1.41478 9.844C1.27877 9.93462 1.17202 10.0628 1.10752 10.213C1.04302 10.3631 1.02354 10.5288 1.05146 10.6898C1.07938 10.8509 1.15349 11.0003 1.26477 11.12C1.37606 11.2397 1.51973 11.3245 1.67831 11.364L3.73909 11.8784C3.83183 11.9016 3.91653 11.9495 3.98411 12.0171C4.0517 12.0847 4.09964 12.1694 4.12279 12.2621L4.63719 14.3229C4.67674 14.4815 4.76151 14.6252 4.8812 14.7364C5.00089 14.8477 5.15034 14.9218 5.31137 14.9498C5.47241 14.9777 5.63808 14.9582 5.78825 14.8937C5.93841 14.8292 6.0666 14.7225 6.15722 14.5864L6.9225 13.4375C7.01128 13.304 7.06844 13.152 7.08963 12.9931C7.11082 12.8341 7.09548 12.6725 7.04478 12.5204L6.32061 10.3468C6.26884 10.1917 6.1817 10.0508 6.06608 9.93514C5.95045 9.81952 5.80952 9.73238 5.65441 9.68062Z"
-                      fill="currentColor"
-                    />
-                  </svg>
-                </a-button>
-              </a-col>
-            </a-row>
-          </div>
-        </a-col>
-      </a-row>
-    </a-modal>
   </div>
+ <CommentsModal v-if="commentsModalVisible" :is-open="commentsModalVisible" :post="selectedPostForComments" @close="closeCommentsModal" @comment-added="handleCommentAdded" @like-toggled="handleLikeToggled" />
+
 </template>
 
 <script>
+import CommentsModal from "@/views/pages/CommentsModal.vue";
 import {
   EyeOutlined,
   HeartOutlined,
@@ -1077,6 +852,7 @@ export default {
     HeartOutlined,
     HeartFilled,
     MessageOutlined,
+    CommentsModal,
     ShareAltOutlined,
     MoreOutlined,
     EditOutlined,
@@ -1176,15 +952,35 @@ export default {
     },
     // Open comments modal (replace the viewPost call in comment icon click)
     async openCommentsModal(post) {
-      this.selectedPostForComments = { ...post };
-      this.modalComments = [];
-      this.modalCommentsPage = 1;
-      this.hasMoreModalComments = false;
-      this.commentsModalVisible = true;
+  this.selectedPostForComments = { 
+    ...post,
+    userAvatar: this.$store.state.root_media_api + post.user_profile, // For modal avatar
+    userName: post.post_by,
+    image: this.$store.state.root_media_api + post.post_image,
+    views: post.view_count || 0,
+    likes: post.like_count || 0,
+    is_liked: post.is_liked || false
+  };
+  this.commentsModalVisible = true;
+  await this.loadModalComments(post.id); // Pre-load comments
+},
 
-      // Load comments for modal
-      await this.loadModalComments(post.id);
-    },
+handleCommentAdded() {
+  // Update main post list comment count
+  const postIndex = this.posts.findIndex(p => p.id === this.selectedPostForComments?.id);
+  if (postIndex !== -1) {
+    this.posts[postIndex].comment_count += 1;
+  }
+},
+
+handleLikeToggled() {
+  // Sync like state back to main list
+  const postIndex = this.posts.findIndex(p => p.id === this.selectedPostForComments?.id);
+  if (postIndex !== -1) {
+    this.posts[postIndex].is_liked = this.selectedPostForComments.is_liked;
+    this.posts[postIndex].like_count = this.selectedPostForComments.likes;
+  }
+},
 
     // Close comments modal
     closeCommentsModal() {
@@ -1833,6 +1629,8 @@ export default {
   /* transform: translateY(-2px); */
 }
 
+
+
 /* Fixed tags overlay positioning */
 .tags-overlay {
   position: absolute;
@@ -1973,6 +1771,24 @@ export default {
   flex-wrap: wrap;
   gap: 6px;
   max-width: 60%;
+}
+
+/* Fix: Reference Tailwind to enable @apply and utilities */
+@reference "tailwindcss"; 
+
+.comments-modal :deep(.ant-modal) {
+  @apply rounded-none md:rounded-3xl;  
+}
+
+.comments-modal :deep(.ant-modal-content) {
+  @apply h-full md:h-auto md:max-h-[90vh] rounded-none md:rounded-3xl;
+}
+
+@media (max-width: 767px) {
+  .comments-modal :deep(.ant-modal) {
+    top: 10% !important;
+    margin: 0 !important;
+  }
 }
 
 .post-detail-actions {

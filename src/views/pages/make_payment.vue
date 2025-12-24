@@ -200,11 +200,16 @@ export default {
             this.loading = true;
 
             try {
+                let header={
+                        'Content-Type': 'application/json',
+                    }
+                    const token = localStorage.getItem('token');
+                    if (token){
+                        header['Authorization'] = `Token ${token}`
+                    }
                 const response = await fetch(`${this.$store.state.root_api}subscription/api/get-plan-details/${this.$route.params.plan_type}/`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers:header ,
                     body: JSON.stringify({
                         plan_type: this.$route.params.plan_type,
                         email: this.email,
@@ -251,8 +256,17 @@ export default {
         
         async fetchPricingPlan_details() {
             try {
+                
+                let header={
+                        'Content-Type': 'application/json',
+                    }
+                    const token = localStorage.getItem('token');
+                    if (token){
+                        header['Authorization'] = `Token ${token}`
+                    }
                 const response = await fetch(`${this.$store.state.root_api}subscription/api/get-plan-details/${this.$route.params.plan_type}`, {
                     method: 'GET',
+                    headers:header
                 });
                 const result = await response.json();
                 if (result.success) {

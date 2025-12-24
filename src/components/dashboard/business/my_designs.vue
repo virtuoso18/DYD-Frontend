@@ -478,6 +478,8 @@
       :productCount="selectedDesign?.data?.products_used?.length || 0"
       :apiBaseUrl="$store.state.root_api"
       @success="handleShareSuccess"
+
+      @update:close="closeShareOnCommunityModel"
     />
   </div>
 </template>
@@ -505,7 +507,8 @@ export default {
       room_type_select: "",
       open_ShareOnCommunity: false,
       selectedDesignImage: '',
-      selectedDesign: null
+      selectedDesign: null,
+      
     };
   },
   components: {
@@ -522,7 +525,9 @@ export default {
     this.loadMyDesignes();
   },
   methods: {
-    
+    closeShareOnCommunityModel(){
+      this.open_ShareOnCommunity=false
+    },
     async toggleFavorite(product_id, product_type, product) {
       try {
         const token = localStorage.getItem('token');

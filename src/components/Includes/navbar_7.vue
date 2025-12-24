@@ -14,8 +14,9 @@
       <!-- Navigation Links -->
       <div class="navbar-nav">
         <a href="/" class="nav-link">DYD Business</a>
-        <a href="/comunity" class="nav-link">Community</a>
-        <a href="/pricing" class="nav-link">Pricing</a>
+        
+        <a href="/comunity"   v-if="(user.user_type ==='Professional') || (user.user_type ==='Business')" class="nav-link">Community</a>
+        <a href="/pricing" v-if="(user.user_type ==='Professional') || (user.user_type ==='Business')" class="nav-link">Pricing</a>
         <a href="/contact-us" class="nav-link">Contact us</a>
         <a href="/ai-catalog"  v-if="user.user_type ==='Professional'" class="nav-link">AI Catalog</a>
       </div>
@@ -31,7 +32,7 @@
   <a-select-option value="he">HB</a-select-option>
 </a-select>
 
-            <div class="btn-input_credits">
+            <div class="btn-input_credits" v-if="(user.user_type ==='Professional') || (user.user_type ==='Business')">
               <div class="credits-content">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 17 17" fill="none">
                   <path fill-rule="evenodd" clip-rule="evenodd" d="M8.49935 1.41699C4.58722 1.41699 1.41602 4.5882 1.41602 8.50033C1.41602 12.4124 4.58722 15.5837 8.49935 15.5837C12.4115 15.5837 15.5827 12.4124 15.5827 8.50033C15.5827 4.5882 12.4115 1.41699 8.49935 1.41699ZM8.49935 2.12533C8.49935 3.81608 7.8277 5.43759 6.63215 6.63313C5.43661 7.82868 3.8151 8.50033 2.12435 8.50033C3.8151 8.50033 5.43661 9.17198 6.63215 10.3675C7.8277 11.5631 8.49935 13.1846 8.49935 14.8753C8.49935 13.1846 9.171 11.5631 10.3665 10.3675C11.5621 9.17198 13.1836 8.50033 14.8743 8.50033C13.1836 8.50033 11.5621 7.82868 10.3665 6.63313C9.171 5.43759 8.49935 3.81608 8.49935 2.12533Z" fill="currentColor"/>

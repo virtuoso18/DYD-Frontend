@@ -1,14 +1,17 @@
 <template>
   <!-- Fetch All Drawer -->
 <a-drawer
+
   title="AI All Products"
   :placement="'bottom'"
   :closable="true"
   :open="openSeeAll_products"
   height="90%"
-  style="border-top-left-radius: 20px; border-top-right-radius: 20px;padding-top:0"
+  style="border-top-left-radius: 20px; border-top-right-radius: 20px; padding-top: 0"
+  :bodyStyle="{ padding: '0 0px 0px' }"  
   @close="onClose_drawer_modal"
 >
+
      <template #extra> <div class="head-section" >
           <a-button type="primary" style="display:flex;justify-content:center;gap:10px;color:white"> 
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -24,70 +27,73 @@ Download
 
     <!-- Right Side - Products Tabs -->
     <a-col :span="24">
-      <a-tabs v-model:activeKey="activeTab" class="products-tabs">
-        
-       
-        <!-- Floor Textures Tab -->
-        <a-tab-pane key="floor" class="tab-pane-content">
-          <template #tab>
-            <span>🟫 Floor Textures</span>
-          </template>
-          <div class="products-section">
-            <div v-if="seeAll_Floor && seeAll_Floor.length > 0">
-              <floor_textures_bottom_drawer_menu :products="seeAll_Floor" />
-            </div>
-            <div v-else class="empty-state">
-              <a-empty description="No floor textures available" />
-            </div>
-          </div>
-        </a-tab-pane>
+      <div className="md:p-4">
 
-        <!-- Wall Textures Tab -->
-        <a-tab-pane key="wall" class="tab-pane-content">
-          <template #tab>
-            <span>🟪 Wall Textures</span>
-          </template>
-          <div class="products-section">
-            <div v-if="seeAll_Walls && seeAll_Walls.length > 0">
-              <wall_textures_bottom_drawer_menu :products="seeAll_Walls" />
+        <a-tabs v-model:activeKey="activeTab" class="products-tabs">
+          
+         
+          <!-- Floor Textures Tab -->
+          <a-tab-pane key="floor" class="tab-pane-content">
+            <template #tab>
+              <span>🟫 Floor Textures</span>
+            </template>
+            <div class="sm:products-section">
+              <div v-if="seeAll_Floor && seeAll_Floor.length > 0">
+                <floor_textures_bottom_drawer_menu :products="seeAll_Floor" />
+              </div>
+              <div v-else class="empty-state">
+                <a-empty description="No floor textures available" />
+              </div>
             </div>
-            <div v-else class="empty-state">
-              <a-empty description="No wall textures available" />
+          </a-tab-pane>
+  
+          <!-- Wall Textures Tab -->
+          <a-tab-pane key="wall" class="tab-pane-content">
+            <template #tab>
+              <span>🟪 Wall Textures</span>
+            </template>
+            <div class="products-section">
+              <div v-if="seeAll_Walls && seeAll_Walls.length > 0">
+                <wall_textures_bottom_drawer_menu :products="seeAll_Walls" />
+              </div>
+              <div v-else class="empty-state">
+                <a-empty description="No wall textures available" />
+              </div>
             </div>
-          </div>
-        </a-tab-pane>
-
-        <!-- Furniture Tab -->
-        <a-tab-pane key="furniture" class="tab-pane-content">
-          <template #tab>
-            <span>🪑 Furniture</span>
-          </template>
-          <div class="products-section">
-            <div v-if="seeAll_furnitures && seeAll_furnitures.length > 0">
-              <furnitures_bottom_drawer_menu :products="seeAll_furnitures" />
+          </a-tab-pane>
+  
+          <!-- Furniture Tab -->
+          <a-tab-pane key="furniture" class="tab-pane-content">
+            <template #tab>
+              <span>🪑 Furniture</span>
+            </template>
+            <div class="products-section">
+              <div v-if="seeAll_furnitures && seeAll_furnitures.length > 0">
+                <furnitures_bottom_drawer_menu :products="seeAll_furnitures" />
+              </div>
+              <div v-else class="empty-state">
+                <a-empty description="No furniture products available" />
+              </div>
             </div>
-            <div v-else class="empty-state">
-              <a-empty description="No furniture products available" />
+          </a-tab-pane>
+  
+          <!-- Lights Tab -->
+          <a-tab-pane key="light" class="tab-pane-content">
+            <template #tab>
+              <span>💡 Lights</span>
+            </template>
+            <div class="products-section">
+              <div v-if="seeAll_Lights && seeAll_Lights.length > 0">
+                <light_items_bottom_drawer_menu :products="seeAll_Lights" />
+              </div>
+              <div v-else class="empty-state">
+                <a-empty description="No lights available" />
+              </div>
             </div>
-          </div>
-        </a-tab-pane>
-
-        <!-- Lights Tab -->
-        <a-tab-pane key="light" class="tab-pane-content">
-          <template #tab>
-            <span>💡 Lights</span>
-          </template>
-          <div class="products-section">
-            <div v-if="seeAll_Lights && seeAll_Lights.length > 0">
-              <light_items_bottom_drawer_menu :products="seeAll_Lights" />
-            </div>
-            <div v-else class="empty-state">
-              <a-empty description="No lights available" />
-            </div>
-          </div>
-        </a-tab-pane>
-
-      </a-tabs>
+          </a-tab-pane>
+  
+        </a-tabs>
+      </div>
     </a-col>
   </a-row>
 </a-drawer>
@@ -165,6 +171,8 @@ export default {
   justify-content: space-between;
   align-items: center;
 }
+
+
 
 .filters-section {
   background: #f5f5f5;

@@ -1,5 +1,6 @@
 <template>
-  <div className="sm:pt-0 pt-32 ">
+  <!-- <div className="sm:pt-0 pt-32 "> -->
+  <div className="sm:pt-0 ">
 
     <div class="ai-catalog-section p-1 ">
       <div class="apply-section  md:hidden">

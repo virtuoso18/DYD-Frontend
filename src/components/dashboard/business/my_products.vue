@@ -1306,7 +1306,7 @@
                           <!-- <del style="font-size: 10px;">${{ product.pricing.price }}</del> -->
                           ${{ product.pricing.price }}
                         </a-col>
- <a-col span="17">
+ <a-col span="18">
                           <a-button block @click="viewProduct(product)" style="display:flex;justify-content:center"
                             >Product Details</a-button
                           >
@@ -1314,7 +1314,7 @@
 
                         <a-col :span="1"></a-col>
                         <a-col
-                          span="6"
+                          span="5"
                           style="
                             display: flex;
                             align-items: end;

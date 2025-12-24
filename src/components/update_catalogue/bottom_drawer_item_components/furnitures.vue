@@ -404,28 +404,31 @@
 
                 <a-row>
                   <a-col span="24">
-                    <b>{{ product.name }}</b>
-                  </a-col>
+  <b class="product-name">
+    {{ product.name }}
+  </b>
+</a-col>
 
-                  <a-col span="18"> Colors </a-col>
+                  <a-col span="12"> Colors </a-col>
 
                   <a-col
-                    span="6"
-                    style="display: flex; justify-content: end; gap: 4px"
-                  >
-                    <div
-                      v-for="color in product.colors_available"
-                      :key="color.id"
-                      style="
-                        width: 20px;
-                        height: 20px;
-                        border-radius: 20px;
-                        border: 1px solid #ddd;
-                      "
-                      :style="{ backgroundColor: color.color }"
-                      :title="`Color ${color.color}`"
-                    ></div>
-                  </a-col>
+  span="12"
+  style="display: flex; justify-content: end; gap: 4px"
+>
+  <div
+    v-for="color in product.colors_available.slice(0, 3)"
+    :key="color.id"
+    style="
+      width: 20px;
+      height: 20px;
+      border-radius: 20px;
+      border: 1px solid #ddd;
+    "
+    :style="{ backgroundColor: color.color }"
+    :title="`Color ${color.color}`"
+  ></div>
+</a-col>
+
 
                   <a-col span="12"> Price </a-col>
 
@@ -433,28 +436,36 @@
                     ${{ getPrice(product) }}
                   </a-col>
 
-                  <a-col
-                    span="24"
-                    style="font-size: 11px; color: #666; margin-bottom: 4px"
-                  >
-                    Dimensions: {{ getDimensions(product) }}
-                  </a-col>
+                 <a-col
+  span="24"
+  style="font-size: 11px; color: #666; margin-bottom: 4px; max-width: 100%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;"
+>
+  Dimensions: {{ getDimensions(product) }}
+</a-col>
 
-                  <a-col span="17">
-                    <a-button block @click="handleProductDetail(product)"
+
+                  <a-col span="16">
+                    <a-button block class="product-detail-btn" @click="handleProductDetail(product)"
                       >Product Details</a-button
                     >
                   </a-col>
 
                   <a-col span="1"></a-col>
-                  <a-col span="4">
-                    <a-button
-                      :type="isWishlisted(product.id) ? 'primary' : 'default'"
-                      @click="toggleWishlist(product)"
-                    >
-                      <HeartOutlined />
-                    </a-button>
-                  </a-col>
+                 <a-col span="4">
+  <a-button
+    :type="isWishlisted(product.id) ? 'primary' : 'default'"
+    @click="toggleWishlist(product)"
+    class="sm:product-detail-btn"
+  >
+    <!-- style="
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    " -->
+    <HeartOutlined />
+  </a-button>
+</a-col>
+
                 </a-row>
               </div>
             </a-col>
@@ -864,16 +875,19 @@ export default {
 </script>
 
 <style scoped>
-.main {
-  padding: 10px;
-  border-radius: 20px;
-  background: white;
-  border: 2px solid rgba(128, 128, 128, 0.16);
-  margin-bottom: 10px;
+@media (min-width: 768px) {
+  .main {
+    padding: 10px;
+    border-radius: 20px;
+    background: white;
+    border: 2px solid rgba(128, 128, 128, 0.16);
+    margin-bottom: 10px;
+  }
 }
 
+
 .product {
-  padding: 10px;
+  padding: 5px;
   margin-bottom: 10px;
   border-radius: 10px;
   background: #f3f2f4;
@@ -913,6 +927,42 @@ export default {
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
+
+.product-name {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;   /* max 2 lines */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.4;
+}
+
+
+.product-detail-btn {
+  white-space: nowrap;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-weight: 500;
+  color: #030c20;
+  background: transparent;
+  transition: color 0.2s ease;
+  font-size: 12px;
+  height: auto; /* override antd */
+}
+
+.product-detail-btn:hover {
+  color: #1d4ed8;
+  border-color: #1d4ed8;
+}
+
+/* sm and above */
+@media (min-width: 640px) {
+  .product-detail-btn {
+    font-size: 14px;
+  }
+}
+
 
 .ar-badge {
   position: absolute;
