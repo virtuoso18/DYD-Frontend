@@ -58,10 +58,10 @@
 </svg>
 
   </div>
-
   <!-- Middle: Buttons -->
-  <div style="display:flex;align-items:center;gap:12px;">
-    <a-button style="border:none;background:#f9f9f9;padding:5px 12px;border-radius:6px;cursor:pointer;
+  <div style="display:flex;align-items:center;gap:12px;" v-if="glbModelUrl">
+    
+    <a-button @click="downloadGLB(glbModelUrl)" style="border:none;background:#f9f9f9;padding:5px 12px;border-radius:6px;cursor:pointer;
                    color:#2a5afc;display:flex;align-items:center;gap:6px;font-size:16px;">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M12 14.5V4.5M12 14.5C11.2998 14.5 9.99153 12.5057 9.5 12M12 14.5C12.7002 14.5 14.0085 12.5057 14.5 12" stroke="#3B63FB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -169,7 +169,7 @@
 <div v-if="glbModelUrl" style="position:relative;padding-left:10px;top:-60px;">
     <a-row>
       <a-col :span="12" style="padding-top:10px">
-        <a-button type="primary" size="medium" style="display: flex;gap:5px;flex-direction: row;justify-content: center;align-items: center;" @click="Add_new_product()">
+        <a-button type="primary" size="medium" style="display: flex;gap:5px;flex-direction: row;justify-content: center;align-items: center;" @click="Add_new_product">
           <svg width="19" height="19" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M8.5026 5.83398V11.1673M11.1693 8.50065H5.83594" stroke="white" stroke-linecap="round" stroke-linejoin="round" />
 <path d="M2.16406 8.49935C2.16406 5.51379 2.16406 4.02101 3.09156 3.09351C4.01906 2.16602 5.51184 2.16602 8.4974 2.16602C11.4829 2.16602 12.9757 2.16602 13.9033 3.09351C14.8307 4.02101 14.8307 5.51379 14.8307 8.49935C14.8307 11.4849 14.8307 12.9777 13.9033 13.9052C12.9757 14.8327 11.4829 14.8327 8.4974 14.8327C5.51184 14.8327 4.01906 14.8327 3.09156 13.9052C2.16406 12.9777 2.16406 11.4849 2.16406 8.49935Z" stroke="white"/>
@@ -184,7 +184,7 @@ Add New Product </a-button>
 <path d="M1 7.5C1 10.8137 3.68627 13.5 7 13.5C10.3137 13.5 13 10.8137 13 7.5C13 4.18629 10.3137 1.5 7 1.5C4.8618 1.5 2.98487 2.61843 1.92227 4.30218M1.1956 1.50051L1.3104 2.86968C1.39307 3.85589 1.4344 4.34899 1.75573 4.62609C2.07707 4.90319 2.55113 4.85457 3.49933 4.7573L4.86227 4.6175" stroke="#333333" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>&nbsp;
 
-Regererate </a-button>
+Regenerate </a-button>
       </a-col>
     </a-row>
   </div>
@@ -243,7 +243,17 @@ Regererate </a-button>
 const Add_new_product = () => {
   emit('clicked-add-product', props.Model_instance_id)
 }
+const downloadGLB = (glbModelUrl) => {
+  if (!glbModelUrl) return
 
+  const link = document.createElement('a')
+  link.href = glbModelUrl
+  link.target = '_blank'
+  link.download = '' // browser will infer filename
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+}
   function initializeScene(container) {
     scene = new THREE.Scene();
     backgroundScene = new THREE.Scene();

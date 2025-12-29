@@ -34,15 +34,15 @@
     <div style="padding: 0;">
       <a-row :gutter="24">
 
-                <div className="flex flex-col lg:flex-row">
-                  <div>
+                <!-- <div className="flex flex-col lg:flex-row"> -->
+                  <!-- <div> -->
 
                     <!-- Left Column - Image Preview -->
                                <a-col
     :xs="24"
     :sm="24"
-    :md="24"
-    :lg="20"
+    :md="10"
+    :lg="10"
   >
                       <div style="border: 2px solid #3b82f6; border-radius: 12px; padding: 16px; background: #f8faff; position: relative; min-height: 350px; display: flex; align-items: center; justify-content: center;">
                         <div v-if="primaryImage" style="height: 100%; display: flex; align-items: center; justify-content: center;">
@@ -203,15 +203,15 @@
                         </div>
                       </div>
                     </a-col>
-                  </div>
-          <div>
+                  <!-- </div> -->
+          <!-- <div> -->
 
             <!-- Right Column - Product Details -->
             <a-col
 :xs="24"
 :sm="24"
-:md="24"
-:lg="24"
+:md="14"
+:lg="14"
 > 
               <div style="padding-left: 12px;">
                 <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px; color: #1f2937;">Light Product Details</h3>
@@ -384,8 +384,8 @@
     
               </div>
             </a-col>
-          </div>
-                  </div>
+          <!-- </div> -->
+                  <!-- </div> -->
 
       </a-row>
     </div>

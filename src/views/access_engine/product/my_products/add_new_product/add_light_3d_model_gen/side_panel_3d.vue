@@ -464,12 +464,12 @@
         </div>
 
         <!-- Add Texture Section -->
-        <div class="texture-section">
+        <!-- <div class="texture-section">
           <p>Add Texture</p>
           <div class="texture-upload" @click="!isProcessingBg && triggerFileInput('texture')">
             <PlusOutlined />
           </div>
-        </div>
+        </div> -->
 
         <!-- Upload More Images -->
        
@@ -564,12 +564,12 @@
         </div>
 
         <!-- Add Texture Section -->
-        <div class="texture-section">
+        <!-- <div class="texture-section">
           <p>Add Texture</p>
           <div class="texture-upload" @click="!isProcessingBg && triggerFileInput('texture')">
             <PlusOutlined />
           </div>
-        </div>
+        </div> -->
 
         
 <!-- Update the existing "Upload more images" section to include multi-view option -->
@@ -894,7 +894,7 @@ view_result(generated_model_id){
 async initializeCompletedCount() {
   try {
     const token = localStorage.getItem('token')
-    const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/business-access-queue-status-add-new-product/?access-id=`+this.$route.query.access_id, {
+    const response = await fetch(`${this.$store.state.root_api}engine/queue-status-add-new-product/`, {
       method:'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -1035,7 +1035,7 @@ async initializeCompletedCount() {
       }
         const token = localStorage.getItem('token');
 
-      const response = await fetch(this.$store.state.root_api + 'access-engine/api/business-products/business-access-remove-images-bg/?access-id='+this.$route.query.access_id, {
+      const response = await fetch(this.$store.state.root_api + 'engine/remove-images-bg/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -1094,7 +1094,7 @@ async initializeCompletedCount() {
       }
         const token = localStorage.getItem('token');
 
-      const response = await fetch(this.$store.state.root_api + 'access-engine/api/business-products/business-access-hy-2.0-mv-3D-gen-add-new-product/?access-id='+this.$route.query.access_id, {
+      const response = await fetch(this.$store.state.root_api + 'engine/hy-2.0-mv-3D-gen/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -1125,7 +1125,7 @@ async initializeCompletedCount() {
 async fetchQueueStatus() {
   try {
     const token = localStorage.getItem('token')
-    const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/business-access-queue-status-add-new-product/?access-id=`+this.$route.query.access_id, {
+    const response = await fetch(`${this.$store.state.root_api}engine/queue-status-add-new-product/`, {
       method:'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -1242,7 +1242,7 @@ async fetchQueueStatus() {
         const token = localStorage.getItem('token');
 
         
-        const response = await fetch(this.$store.state.root_api + 'access-engine/api/business-products/business-access-remove-images-bg/?access-id='+this.$route.query.access_id, {
+        const response = await fetch(this.$store.state.root_api + 'engine/remove-images-bg/', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1283,7 +1283,7 @@ async fetchQueueStatus() {
       }
 
         const token = localStorage.getItem('token');
-      const response = await fetch(this.$store.state.root_api + 'access-engine/api/business-products/business-access-hy-2.0-sv-3D-gen-add-new-product/?access-id='+this.$route.query.access_id, {
+      const response = await fetch(this.$store.state.root_api + 'engine/hy-2.0-sv-3D-gen/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -1310,7 +1310,7 @@ async fetchQueueStatus() {
 async removeFromQueue(queueId) {
   try {
     const token = localStorage.getItem('token');
-    const response = await fetch(this.$store.state.root_api + 'access-engine/api/business-products/business-access-queue-status-add-new-product/?access-id='+this.$route.query.access_id, {
+    const response = await fetch(this.$store.state.root_api + 'engine/queue-status-add-new-product/', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -1630,7 +1630,7 @@ async removeFromQueue(queueId) {
         }
 
     const token = localStorage.getItem('token');
-        const response = await fetch(this.$store.state.root_api + 'access-engine/api/business-products/business-access-remove-images-bg/?access-id='+this.$route.query.access_id, {
+        const response = await fetch(this.$store.state.root_api + 'engine/remove-images-bg/', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1767,7 +1767,7 @@ getQueueStatusColor(status) {
       let response = null
 
       if (this.multiView) {
-        response = await fetch(this.$store.state.root_api + 'access-engine/api/business-products/business-access-hy-2.0-mv-3D-gen-add-new-product/?access-id='+this.$route.query.access_id,{
+        response = await fetch(this.$store.state.root_api + 'engine/hy-2.0-mv-3D-gen-add-new-product/', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1777,7 +1777,7 @@ getQueueStatusColor(status) {
           body: JSON.stringify(payload)
         })
       } else {
-        response = await fetch(this.$store.state.root_api + 'access-engine/api/business-products/business-access-hy-2.0-sv-3D-gen-add-new-product/?access-id='+this.$route.query.access_id,{
+        response = await fetch(this.$store.state.root_api + 'engine/hy-2.0-sv-3D-gen-add-new-product/', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1788,6 +1788,11 @@ getQueueStatusColor(status) {
         })
       }
       
+    if(response.status === 402){
+      const result = await response.json()
+      this.$emit('insufficient-credits', result.msg) 
+      return
+    }
       if (response.ok) {
         const result = await response.json()
         console.log(result)
@@ -1817,9 +1822,16 @@ getQueueStatusColor(status) {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: 90vh;
-  overflow-y: scroll;
+  height: 120vh;          /* below md */
   margin: 0 auto;
+}
+
+/* md and above (≥768px) */
+@media (min-width: 768px) {
+  .image-to-3d-container {
+    height: 90vh;
+    overflow-y: auto;
+  }
 }
 
 /* Edit Modal Styles */

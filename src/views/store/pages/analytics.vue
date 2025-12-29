@@ -29,50 +29,51 @@
     </a-row>
 
     <!-- Daily Credit Consumption Chart -->
-<a-row :gutter="[16, 16]" class="mb-6">
-  <a-col :span="24">
-    <div class="chart-card">
-      <div class="chart-header">
-        <h3>Daily Credit Consumption</h3>
-        <div class="chart-filters">
-          <a-date-picker
-            v-model:value="creditChartDateRange[0]"
-            placeholder="Start Date"
-            style="width: 150px; margin-right: 8px;"
-            @change="fetchDailyCreditConsumption"
-          />
-          <a-date-picker
-            v-model:value="creditChartDateRange[1]"
-            placeholder="End Date"
-            style="width: 150px;"
-            @change="fetchDailyCreditConsumption"
-          />
+    <a-row :gutter="[16, 16]" class="mb-6">
+      <a-col :span="24">
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3>Daily Credit Consumption</h3>
+            <div class="chart-filters">
+              <a-date-picker
+                v-model:value="creditChartDateRange[0]"
+                placeholder="Start Date"
+                style="width: 150px; margin-right: 8px;"
+                @change="fetchDailyCreditConsumption"
+              />
+              <a-date-picker
+                v-model:value="creditChartDateRange[1]"
+                placeholder="End Date"
+                style="width: 150px;"
+                @change="fetchDailyCreditConsumption"
+              />
+            </div>
+          </div>
+          
+          <!-- Daily Credit Stats Summary -->
+          <div v-if="dailyCreditData" class="credit-summary">
+            <div class="summary-item">
+              <span class="summary-label">Total Consumed:</span>
+              <span class="summary-value">{{ dailyCreditData.summary.total_consumed }}</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Avg Daily:</span>
+              <span class="summary-value">{{ dailyCreditData.summary.average_daily }}</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Active Days:</span>
+              <span class="summary-value">{{ dailyCreditData.summary.days_with_consumption }}</span>
+            </div>
+          </div>
+          
+          <!-- Chart -->
+          <div class="chart-container">
+            <canvas ref="creditChartCanvas" style="max-height: 300px;"></canvas>
+          </div>
         </div>
-      </div>
-      
-      <!-- Daily Credit Stats Summary -->
-      <div v-if="dailyCreditData" class="credit-summary">
-        <div class="summary-item">
-          <span class="summary-label">Total Consumed:</span>
-          <span class="summary-value">{{ dailyCreditData.summary.total_consumed }}</span>
-        </div>
-        <div class="summary-item">
-          <span class="summary-label">Avg Daily:</span>
-          <span class="summary-value">{{ dailyCreditData.summary.average_daily }}</span>
-        </div>
-        <div class="summary-item">
-          <span class="summary-label">Active Days:</span>
-          <span class="summary-value">{{ dailyCreditData.summary.days_with_consumption }}</span>
-        </div>
-      </div>
-      
-      <!-- Chart -->
-      <div class="chart-container">
-        <canvas ref="creditChartCanvas" style="max-height: 300px;"></canvas>
-      </div>
-    </div>
-  </a-col>
-</a-row>
+      </a-col>
+    </a-row>
+
     <!-- Chart Section -->
     <a-row :gutter="[16, 16]" class="mb-6">
       <a-col :span="24">
@@ -90,31 +91,123 @@
       </a-col>
     </a-row>
 
-    <!-- Credit Transactions Table -->
+    <!-- User-wise Credit Summary Table -->
     <a-row :gutter="[16, 16]" class="mb-6">
       <a-col :span="24">
         <div class="table-card">
           <div class="table-header">
-            <h3>Credit Transactions</h3>
+            <h3>User-wise Credit Consumption Summary</h3>
           </div>
-          <!-- Date Range Filter for Credit Transactions -->
+          <!-- Filters for User Summary -->
           <div style="margin-bottom: 16px; display: flex; gap: 16px; flex-wrap: wrap;">
             <a-date-picker
-              v-model:value="dateRange[0]"
+              v-model:value="summaryDateRange[0]"
               placeholder="Start Date"
               style="width: 200px"
-              @change="fetchCreditTransactions"
+              @change="fetchUsersCreditSummary"
             />
             <a-date-picker
-              v-model:value="dateRange[1]"
+              v-model:value="summaryDateRange[1]"
               placeholder="End Date"
               style="width: 200px"
-              @change="fetchCreditTransactions"
+              @change="fetchUsersCreditSummary"
             />
             <a-select
-              v-model:value="filterStatus"
+              v-model:value="summarySortBy"
+              placeholder="Sort By"
+              @change="fetchUsersCreditSummary"
+              style="width: 200px"
+            >
+              <a-select-option value="credits_desc">Credits (High to Low)</a-select-option>
+              <a-select-option value="credits_asc">Credits (Low to High)</a-select-option>
+              <a-select-option value="user_name">User Name (A-Z)</a-select-option>
+            </a-select>
+          </div>
+          <a-table 
+            :columns="userSummaryColumns" 
+            :data-source="usersSummaryData" 
+            row-key="user_id" 
+            :pagination="summaryPagination"
+            :scroll="{ x: 800 }"
+            :loading="summaryLoading"
+            style="background: white; border-radius: 8px; overflow: hidden;"
+            @change="onUserSummaryTableChange"
+          >
+            <template #bodyCell="{ column, record, index }">
+              <template v-if="column.key === 'serial'">
+                <span style="font-weight: 600; color: #666;">{{ index + 1 }}</span>
+              </template>
+
+              <template v-if="column.key === 'user_name'">
+                <span style="cursor: pointer; color: #4f46e5; font-weight: 500;">
+                  {{ record.user_name || record.user_email }}
+                </span>
+              </template>
+
+              <template v-if="column.key === 'user_email'">
+                <span>{{ record.user_email }}</span>
+              </template>
+
+              <template v-if="column.key === 'total_credits_consumed'">
+              <span
+                :style="{
+                  color: record.total_credits_consumed > 0 ? '#10b981' : '#ef4444',
+                  fontWeight: '600'
+                }"
+              >
+                {{ record.total_credits_consumed > 0 ? '+' : '' }}{{ record.total_credits_consumed }}
+              </span>
+            </template>
+
+              <template v-if="column.key === 'transaction_count'">
+                <span style="font-weight: 600; color: #4f46e5;">
+                  {{ record.transaction_count }}
+                </span>
+              </template>
+
+              <template v-if="column.key === 'actions'">
+                <button
+                  style="background: #4f46e5; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; cursor: pointer;"
+                  @click="viewUserTransactions(record.user_id)"
+                >
+                  View Details
+                </button>
+              </template>
+            </template>
+          </a-table>
+        </div>
+      </a-col>
+    </a-row>
+
+    <!-- Individual User Transaction Details Table -->
+   
+
+    <a-drawer
+  v-model:open="drawerVisible"
+  :placement="'bottom'"
+  :closable="true"
+  :height="'85vh'"
+  :title="`Credit Transactions - ${selectedUserEmail}`"
+  :body-style="{ padding: '24px' }"
+>
+  <!-- Date Range Filter for User Transactions -->
+   <div style="margin-bottom: 16px; display: flex; gap: 16px; flex-wrap: wrap;">
+            <a-date-picker
+              v-model:value="transactionDateRange[0]"
+              placeholder="Start Date"
+              style="width: 200px"
+              @change="fetchUserTransactionDetails"
+            />
+            <a-date-picker
+              v-model:value="transactionDateRange[1]"
+              placeholder="End Date"
+              style="width: 200px"
+              @change="fetchUserTransactionDetails"
+            />
+            <a-select
+              v-model:value="transactionFilterStatus"
               placeholder="Filter by Status"
-              @change="fetchCreditTransactions"
+              @change="fetchUserTransactionDetails"
               style="width: 200px"
               allow-clear
             >
@@ -124,23 +217,37 @@
               <a-select-option value="failed">Failed</a-select-option>
             </a-select>
           </div>
-          <!-- {{ creditTransactions }} -->
-          <a-table 
+
+  <!-- User Summary Stats -->
+  <div v-if="userTransactionsSummary" class="user-transaction-summary">
+            <div class="summary-item">
+              <span class="summary-label">Total Credits Consumed:</span>
+              <span class="summary-value">{{ userTransactionsSummary.total_credits_consumed }}</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Total Transactions:</span>
+              <span class="summary-value">{{ userTransactionsSummary.total_transactions }}</span>
+            </div>
+          </div>
+
+  <!-- Transaction Table -->
+  <a-table 
             :columns="creditTableColumns" 
-            :data-source="creditTransactions" 
+            :data-source="userTransactionsList" 
             row-key="id" 
-            :pagination="false"
-            :scroll="{ x: 1000 }"
-            :loading="creditLoading"
+            :pagination="transactionPagination"
+            :scroll="{ x: 1200 }"
+            :loading="transactionDetailsLoading"
+            @change="onTransactionTableChange"
             style="background: white; border-radius: 8px; overflow: hidden;"
           >
             <template #bodyCell="{ column, record, index }">
               <template v-if="column.key === 'serial'">
-                <span style="font-weight: 600; color: #666;">{{ index + 1 }}</span>
+                <span style="font-weight: 600; color: #666;">{{ (transactionPagination.current - 1) * transactionPagination.pageSize + index + 1 }}</span>
               </template>
 
-              <template v-if="column.key === 'consumed_by_email'">
-                <span>{{ record.consumed_by_email }}</span>
+              <template v-if="column.key === 'user_email'">
+                <span>{{ record.user_email }}</span>
               </template>
 
               <template v-if="column.key === 'credits_changed'">
@@ -167,10 +274,6 @@
                 <span>{{ record.business_name || '-' }}</span>
               </template>
 
-              <template v-if="column.key === 'room_name'">
-                <span>{{ record.room_name || '-' }}</span>
-              </template>
-
               <template v-if="column.key === 'created_at'">
                 <span>{{ formatDate(record.created_at) }}</span>
               </template>
@@ -178,6 +281,7 @@
               <template v-if="column.key === 'description'">
                 <span style="font-size: 12px;">{{ record.description || '-' }}</span>
               </template>
+
               <template v-if="column.key === 'chat_with_customer'">
                 <button
                   style="background: #4f46e5; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; cursor: pointer;"
@@ -188,9 +292,9 @@
               </template>
             </template>
           </a-table>
-        </div>
-      </a-col>
-    </a-row>
+</a-drawer>
+
+
 
     <!-- Products Table -->
     <a-row :gutter="[16, 16]">
@@ -328,6 +432,38 @@ export default {
       creditTransactions: [],
       dateRange: [null, null],
       filterStatus: '',
+      
+      // NEW: User Summary Data
+      usersSummaryData: [],
+      summaryLoading: false,
+      summaryDateRange: [dayjs().subtract(30, 'day'), dayjs()],
+      summarySortBy: 'credits_desc',
+      summaryPagination: {
+        current: 1,
+        pageSize: 10,
+        total: 0,
+        showSizeChanger: true,
+        pageSizeOptions: ['5', '10', '20', '50'],
+        showTotal: (total) => `Total ${total} users`,
+      },
+      
+      // NEW: User Transaction Details
+      selectedUserForDetails: null,
+      selectedUserEmail: '',
+      userTransactionsList: [],
+      userTransactionsSummary: null,
+      transactionDetailsLoading: false,
+      transactionDateRange: [dayjs().subtract(30, 'day'), dayjs()],
+      transactionFilterStatus: '',
+      transactionPagination: {
+        current: 1,
+        pageSize: 20,
+        total: 0,
+        showSizeChanger: true,
+        pageSizeOptions: ['10', '20', '50', '100'],
+        showTotal: (total) => `Total ${total} items`,
+      },
+      
       chartFilter: {
         type: '',
         status: ''
@@ -386,6 +522,42 @@ export default {
           width: 80,
         },
       ],
+      
+      // User Summary Table Columns
+      userSummaryColumns: [
+        {
+          title: '',
+          key: 'serial',
+          width: 40,
+        },
+        {
+          title: 'User Name',
+          key: 'user_name',
+          width: 150,
+        },
+        {
+          title: 'Email',
+          key: 'user_email',
+          width: 200,
+        },
+        {
+          title: 'Total Credits Consumed',
+          key: 'total_credits_consumed',
+          width: 180,
+        },
+        {
+          title: 'Transaction Count',
+          key: 'transaction_count',
+          width: 150,
+        },
+        {
+          title: 'Actions',
+          key: 'actions',
+          width: 120,
+        },
+      ],
+      
+      // Credit Transactions Table Columns
       creditTableColumns: [
         {
           title: '',
@@ -393,35 +565,30 @@ export default {
           width: 40,
         },
         {
-          title: 'Consumed By Email',
-          key: 'consumed_by_email',
+          title: 'User Email',
+          key: 'user_email',
           width: 150,
         },
-        // {
-        //   title: 'Business',
-        //   key: 'business_name',
-        //   width: 150,
-        // },
+        {
+          title: 'Business',
+          key: 'business_name',
+          width: 150,
+        },
         {
           title: 'Credits',
           key: 'credits_changed',
           width: 100,
         },
-        // {
-        //   title: 'Type',
-        //   key: 'type',
-        //   width: 80,
-        // },
+        {
+          title: 'Type',
+          key: 'type',
+          width: 80,
+        },
         {
           title: 'Status',
           key: 'status',
           width: 100,
         },
-        // {
-        //   title: 'Room',
-        //   key: 'room_name',
-        //   width: 120,
-        // },
         {
           title: 'Date',
           key: 'created_at',
@@ -433,18 +600,19 @@ export default {
           width: 200,
         },
         {
-          title: 'Chat with Customer',
+          title: 'Chat',
           key: 'chat_with_customer',
-          width: 50,
+          width: 80,
         }
       ],
-      productsData: []
+      productsData: [],
+      drawerVisible: false,
     }
   },
   mounted() {
     this.fetchAnalytics()
     this.fetchTopProducts()
-    this.fetchCreditTransactions()
+    this.fetchUsersCreditSummary()
     this.fetchDailyCreditConsumption()  
     this.initChart()
   },
@@ -452,11 +620,23 @@ export default {
     if (this.chart) {
       this.chart.destroy()
     }
-     if (this.creditChart) {  // ADD THESE 3 LINES
+     if (this.creditChart) {
       this.creditChart.destroy()
     }
   },
   methods: {
+    async viewUserTransactions(userId) {
+  this.selectedUserForDetails = userId
+  
+  const user = this.usersSummaryData.find(u => u.user_id === userId)
+  this.selectedUserEmail = user ? user.user_email : userId
+  
+  this.transactionPagination.current = 1
+  
+  // Add these two lines:
+  this.drawerVisible = true
+  await this.fetchUserTransactionDetails()
+},
     truncateText(text, charLimit = 13) {
       if (!text) return ''
       if (text.length <= charLimit) return text
@@ -490,180 +670,29 @@ export default {
         this.loading = false
       }
     },
-    async fetchDailyCreditConsumption() {
-  try {
-    const params = new URLSearchParams()
 
-    // Add date filters
-    if (this.creditChartDateRange[0]) {
-      params.append('start_date', this.creditChartDateRange[0].toISOString())
-    }
-    if (this.creditChartDateRange[1]) {
-      params.append('end_date', this.creditChartDateRange[1].toISOString())
-    }
-
-    const response = await fetch(
-      `${this.$store.state.root_api}subscription/api/analytics-daily-credit-transactions/?${params}`,
-      {
-        headers: {
-          'Authorization': `Token ${localStorage.getItem('token')}`
-        }
-      }
-    )
-
-    const data = await response.json()
-    console.log('Daily Credit Consumption API Response:', data)
-
-    if (response.ok && data.success) {
-      this.dailyCreditData = data.data
-      this.updateCreditChart()
-    } else {
-      this.$message.error(data.message || 'Failed to fetch daily credit consumption')
-    }
-  } catch (error) {
-    console.error('Error fetching daily credit consumption:', error)
-    this.$message.error('An error occurred while fetching daily credit consumption')
-  }
-},
-
-updateCreditChart() {
-  if (!this.dailyCreditData) return
-
-  const ctx = this.$refs.creditChartCanvas.getContext('2d')
-  
-  // Destroy existing chart if it exists
-  if (this.creditChart) {
-    this.creditChart.destroy()
-  }
-
-  const gradient = ctx.createLinearGradient(0, 0, 0, 300)
-  gradient.addColorStop(0, 'rgba(239, 68, 68, 0.3)')
-  gradient.addColorStop(1, 'rgba(239, 68, 68, 0.05)')
-  
-  this.creditChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: this.dailyCreditData.chart_labels,
-      datasets: [{
-        label: 'Credits Consumed',
-        data: this.dailyCreditData.chart_data,
-        borderColor: '#ef4444',
-        backgroundColor: gradient,
-        borderWidth: 2,
-        fill: true,
-        tension: 0.4,
-        pointBackgroundColor: '#ef4444',
-        pointBorderColor: '#ffffff',
-        pointBorderWidth: 2,
-        pointRadius: 4,
-        pointHoverRadius: 6,
-        pointHoverBackgroundColor: '#ef4444',
-        pointHoverBorderColor: '#ffffff',
-        pointHoverBorderWidth: 2
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      interaction: {
-        intersect: false,
-        mode: 'index'
-      },
-      plugins: {
-        legend: {
-          display: false
-        },
-        tooltip: {
-          backgroundColor: '#1e293b',
-          titleColor: '#ffffff',
-          bodyColor: '#ffffff',
-          borderColor: '#1e293b',
-          borderWidth: 1,
-          cornerRadius: 6,
-          displayColors: false,
-          callbacks: {
-            title: function(context) {
-              return context[0].label
-            },
-            label: function(context) {
-              return 'Credits: ' + context.parsed.y.toFixed(2)
-            }
-          }
-        }
-      },
-      scales: {
-        x: {
-          grid: {
-            display: true,
-            color: '#f1f5f9',
-            drawBorder: false,
-            lineWidth: 1,
-            drawTicks: false
-          },
-          ticks: {
-            color: '#94a3b8',
-            font: {
-              size: 12
-            },
-            maxRotation: 45,
-            minRotation: 0
-          },
-          border: {
-            display: false
-          }
-        },
-        y: {
-          beginAtZero: true,
-          grid: {
-            display: true,
-            color: '#f1f5f9',
-            drawBorder: false,
-            lineWidth: 1,
-            drawTicks: false
-          },
-          ticks: {
-            color: '#94a3b8',
-            font: {
-              size: 12
-            },
-            callback: function(value) {
-              return value.toFixed(0)
-            }
-          },
-          border: {
-            display: false
-          }
-        }
-      },
-      elements: {
-        point: {
-          hoverRadius: 6
-        }
-      }
-    }
-  })
-},
-
-    async fetchCreditTransactions() {
-      this.creditLoading = true
+    // NEW: Fetch User-wise Credit Summary
+    async fetchUsersCreditSummary() {
+      this.summaryLoading = true
       try {
         const params = new URLSearchParams()
 
-        // Add date filters
-        if (this.dateRange[0]) {
-          params.append('start_date', this.dateRange[0].toISOString())
+        if (this.summaryDateRange[0]) {
+          params.append('start_date', this.summaryDateRange[0].toISOString())
         }
-        if (this.dateRange[1]) {
-          params.append('end_date', this.dateRange[1].toISOString())
+        if (this.summaryDateRange[1]) {
+          params.append('end_date', this.summaryDateRange[1].toISOString())
         }
-
-        // Add status filter
-        if (this.filterStatus) {
-          params.append('status', this.filterStatus)
+        if (this.summarySortBy) {
+          params.append('sort_by', this.summarySortBy)
         }
+        
+        // Add pagination params
+        params.append('page', this.summaryPagination.current)
+        params.append('page_size', this.summaryPagination.pageSize)
 
         const response = await fetch(
-          `${this.$store.state.root_api}subscription/api/analytics-credit-transactions/?${params}`,
+          `${this.$store.state.root_api}subscription/api/users-summary/?${params}`,
           {
             headers: {
               'Authorization': `Token ${localStorage.getItem('token')}`
@@ -672,33 +701,264 @@ updateCreditChart() {
         )
 
         const data = await response.json()
-        console.log('Credit Transactions API Response:', data)
+        console.log('Users Credit Summary API Response:', data)
 
         if (response.ok && data.success) {
-          this.creditTransactions = data.data.transactions || []
+          this.usersSummaryData = data.data.summary || []
           
-          // Calculate stats
-          if (this.creditTransactions.length > 0) {
-           
-            const totalConsumed = this.creditTransactions
-              .filter(tx => tx.type === 'consume' && tx.status === 'success')
-              .reduce((sum, tx) => sum + parseFloat(tx.credits_changed), 0)
+          // Update pagination data from response
+          if (data.data.pagination) {
+            this.summaryPagination.total = data.data.pagination.total_items
+            this.summaryPagination.current = data.data.pagination.page
+            this.summaryPagination.pageSize = data.data.pagination.page_size
+          }
+          
+          // Calculate total consumed
+          const totalConsumed = this.usersSummaryData.reduce((sum, user) => {
+            return sum + (user.total_credits_consumed || 0)
+          }, 0)
 
-            this.creditStats = {
-
-              total_consumed: totalConsumed,
-
-            }
+          this.creditStats = {
+            total_consumed: totalConsumed,
           }
         } else {
-          this.$message.error(data.message || 'Failed to fetch credit transactions')
+          this.$message.error(data.message || 'Failed to fetch user summary')
         }
       } catch (error) {
-        console.error('Error fetching credit transactions:', error)
-        this.$message.error('An error occurred while fetching credit transactions')
+        console.error('Error fetching user summary:', error)
+        this.$message.error('An error occurred while fetching user summary')
       } finally {
-        this.creditLoading = false
+        this.summaryLoading = false
       }
+    },
+
+    // NEW: Handle user summary table pagination change
+    onUserSummaryTableChange(pagination) {
+      this.summaryPagination = pagination
+      this.fetchUsersCreditSummary()
+    },
+
+    // // NEW: View User Transactions
+    // async viewUserTransactions(userId) {
+    //   this.selectedUserForDetails = userId
+      
+    //   // Find user email from summary
+    //   const user = this.usersSummaryData.find(u => u.user_id === userId)
+    //   this.selectedUserEmail = user ? user.user_email : userId
+      
+    //   // Reset pagination
+    //   this.transactionPagination.current = 1
+      
+    //   // Fetch transaction details
+    //   await this.fetchUserTransactionDetails()
+    // },
+
+    // NEW: Fetch Individual User Transaction Details
+    async fetchUserTransactionDetails() {
+      this.transactionDetailsLoading = true
+      try {
+        const params = new URLSearchParams()
+
+        if (this.transactionDateRange[0]) {
+          params.append('start_date', this.transactionDateRange[0].toISOString())
+        }
+        if (this.transactionDateRange[1]) {
+          params.append('end_date', this.transactionDateRange[1].toISOString())
+        }
+        if (this.transactionFilterStatus) {
+          params.append('status', this.transactionFilterStatus)
+        }
+
+        params.append('page', this.transactionPagination.current)
+        params.append('page_size', this.transactionPagination.pageSize)
+
+        const response = await fetch(
+          `${this.$store.state.root_api}subscription/api/${this.selectedUserForDetails}/transactions/?${params}`,
+          {
+            headers: {
+              'Authorization': `Token ${localStorage.getItem('token')}`
+            }
+          }
+        )
+
+        const data = await response.json()
+        console.log('User Transaction Details API Response:', data)
+
+        if (response.ok && data.success) {
+          this.userTransactionsList = data.data.transactions || []
+          this.userTransactionsSummary = data.data.summary || {}
+          
+          // Update pagination
+          this.transactionPagination.total = data.data.pagination.total_items || 0
+          this.transactionPagination.current = data.data.pagination.page
+          this.transactionPagination.pageSize = data.data.pagination.page_size
+        } else {
+          this.$message.error(data.message || 'Failed to fetch transaction details')
+        }
+      } catch (error) {
+        console.error('Error fetching transaction details:', error)
+        this.$message.error('An error occurred while fetching transaction details')
+      } finally {
+        this.transactionDetailsLoading = false
+      }
+    },
+
+    // Handle table pagination change
+    onTransactionTableChange(pagination) {
+      this.transactionPagination = pagination
+      this.fetchUserTransactionDetails()
+    },
+
+    async fetchDailyCreditConsumption() {
+      try {
+        const params = new URLSearchParams()
+
+        if (this.creditChartDateRange[0]) {
+          params.append('start_date', this.creditChartDateRange[0].toISOString())
+        }
+        if (this.creditChartDateRange[1]) {
+          params.append('end_date', this.creditChartDateRange[1].toISOString())
+        }
+
+        const response = await fetch(
+          `${this.$store.state.root_api}subscription/api/analytics-daily-credit-transactions/?${params}`,
+          {
+            headers: {
+              'Authorization': `Token ${localStorage.getItem('token')}`
+            }
+          }
+        )
+
+        const data = await response.json()
+        console.log('Daily Credit Consumption API Response:', data)
+
+        if (response.ok && data.success) {
+          this.dailyCreditData = data.data
+          this.updateCreditChart()
+        } else {
+          this.$message.error(data.message || 'Failed to fetch daily credit consumption')
+        }
+      } catch (error) {
+        console.error('Error fetching daily credit consumption:', error)
+        this.$message.error('An error occurred while fetching daily credit consumption')
+      }
+    },
+
+    updateCreditChart() {
+      if (!this.dailyCreditData) return
+
+      const ctx = this.$refs.creditChartCanvas.getContext('2d')
+      
+      if (this.creditChart) {
+        this.creditChart.destroy()
+      }
+
+      const gradient = ctx.createLinearGradient(0, 0, 0, 300)
+      gradient.addColorStop(0, 'rgba(239, 68, 68, 0.3)')
+      gradient.addColorStop(1, 'rgba(239, 68, 68, 0.05)')
+      
+      this.creditChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: this.dailyCreditData.chart_labels,
+          datasets: [{
+            label: 'Credits Consumed',
+            data: this.dailyCreditData.chart_data,
+            borderColor: '#ef4444',
+            backgroundColor: gradient,
+            borderWidth: 2,
+            fill: true,
+            tension: 0.4,
+            pointBackgroundColor: '#ef4444',
+            pointBorderColor: '#ffffff',
+            pointBorderWidth: 2,
+            pointRadius: 4,
+            pointHoverRadius: 6,
+            pointHoverBackgroundColor: '#ef4444',
+            pointHoverBorderColor: '#ffffff',
+            pointHoverBorderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: {
+            intersect: false,
+            mode: 'index'
+          },
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              backgroundColor: '#1e293b',
+              titleColor: '#ffffff',
+              bodyColor: '#ffffff',
+              borderColor: '#1e293b',
+              borderWidth: 1,
+              cornerRadius: 6,
+              displayColors: false,
+              callbacks: {
+                title: function(context) {
+                  return context[0].label
+                },
+                label: function(context) {
+                  return 'Credits: ' + context.parsed.y.toFixed(2)
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: {
+                display: true,
+                color: '#f1f5f9',
+                drawBorder: false,
+                lineWidth: 1,
+                drawTicks: false
+              },
+              ticks: {
+                color: '#94a3b8',
+                font: {
+                  size: 12
+                },
+                maxRotation: 45,
+                minRotation: 0
+              },
+              border: {
+                display: false
+              }
+            },
+            y: {
+              beginAtZero: true,
+              grid: {
+                display: true,
+                color: '#f1f5f9',
+                drawBorder: false,
+                lineWidth: 1,
+                drawTicks: false
+              },
+              ticks: {
+                color: '#94a3b8',
+                font: {
+                  size: 12
+                },
+                callback: function(value) {
+                  return value.toFixed(0)
+                }
+              },
+              border: {
+                display: false
+              }
+            }
+          },
+          elements: {
+            point: {
+              hoverRadius: 6
+            }
+          }
+        }
+      })
     },
 
     async fetchTopProducts() {
@@ -782,62 +1042,59 @@ updateCreditChart() {
     },
 
     async startChatWithCustomer(creditTransaction) {
-  try {
-    // Get current user from localStorage
-    debugger
-    const currentUserData = localStorage.getItem('user')
-    if (!currentUserData) {
-      this.$message.error('User information not found')
-      return
-    }
+      try {
+        const currentUserData = localStorage.getItem('user')
+        if (!currentUserData) {
+          this.$message.error('User information not found')
+          return
+        }
 
-    const currentUser = JSON.parse(currentUserData)
-    const selectedUserId = creditTransaction.consumed_by_id
+        const currentUser = JSON.parse(currentUserData)
+        const selectedUserId = creditTransaction.consumed_by_id
 
-    if (!selectedUserId) {
-      this.$message.error('Cannot initiate chat: User ID not found')
-      return
-    }
+        if (!selectedUserId) {
+          this.$message.error('Cannot initiate chat: User ID not found')
+          return
+        }
 
-    const payload = JSON.stringify({
-      type: 'DM',
-      members: [currentUser.id, parseInt(selectedUserId)],
-      name: `${currentUser.first_name} & Customer`,
-    })
+        const payload = JSON.stringify({
+          type: 'DM',
+          members: [currentUser.id, parseInt(selectedUserId)],
+          name: `${currentUser.first_name} & Customer`,
+        })
 
-    const response = await fetch(`${this.$store.state.root_api}chat/chats`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Token ' + localStorage.getItem('token'),
-      },
-      body: payload,
-    })
+        const response = await fetch(`${this.$store.state.root_api}chat/chats`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Token ' + localStorage.getItem('token'),
+          },
+          body: payload,
+        })
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
-    }
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
 
-    const data = await response.json()
-    const chatRoomId = data.room_id || data.id
+        const data = await response.json()
+        const chatRoomId = data.room_id || data.id
 
-    // Route based on user type
-    if (currentUser.user_type === 'User') {
-      this.$router.push({
-        path: '/user-dashboard/my-messages',
-        query: { chatId: chatRoomId }
-      })
-    } else if (currentUser.user_type === 'Business' || currentUser.user_type === 'Professional') {
-      this.$router.push({
-        path: '/my-store/messages',
-        query: { chatId: chatRoomId }
-      })
-    }
-  } catch (error) {
-    console.error('Error creating chat room:', error)
-    this.$message.error('Failed to start conversation. Please try again.')
-  }
-},
+        if (currentUser.user_type === 'User') {
+          this.$router.push({
+            path: '/user-dashboard/my-messages',
+            query: { chatId: chatRoomId }
+          })
+        } else if (currentUser.user_type === 'Business' || currentUser.user_type === 'Professional') {
+          this.$router.push({
+            path: '/my-store/messages',
+            query: { chatId: chatRoomId }
+          })
+        }
+      } catch (error) {
+        console.error('Error creating chat room:', error)
+        this.$message.error('Failed to start conversation. Please try again.')
+      }
+    },
 
     initChart() {
       const ctx = this.$refs.chartCanvas.getContext('2d')
@@ -1091,7 +1348,8 @@ updateCreditChart() {
   align-items: center;
 }
 
-.credit-summary {
+.credit-summary,
+.user-transaction-summary {
   display: flex;
   gap: 24px;
   margin: 16px 0;
@@ -1128,10 +1386,10 @@ updateCreditChart() {
     width: 100% !important;
   }
   
-  .credit-summary {
+  .credit-summary,
+  .user-transaction-summary {
     flex-direction: column;
     gap: 12px;
   }
 }
-
 </style>

@@ -235,7 +235,7 @@
       :title="`<img src='${selectedBanner.final_banner}' alt='' srcset='' />`"
     >
     
-     &lt;a href="{{ base_url()+ selectedBanner.business_slug}}"&gt;   &lt;img src="{{ shortenUrl(selectedBanner.final_banner) }}" alt="" srcset="" /&gt; &lt; /a &gt;   
+     &lt;a href="{{ base_url()+ "start-new-catalogue?brand="+selectedBanner.business_slug}}"&gt;   &lt;img src="{{ shortenUrl(selectedBanner.final_banner) }}" alt="" srcset="" /&gt; &lt; /a &gt;   
     </div>
 
     <!-- Copy button -->

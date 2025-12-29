@@ -1337,7 +1337,7 @@
   </h3>
 
   <!-- Share Section - Only shows when user hasn't posted -->
-  <div v-if="user.user_type!='User' && !is_Posted_On_Community"
+  <div v-if="user.user_type!='User'"
     style=" 
       background-color: #f3f2f2;
       border-radius: 10px;
@@ -1356,7 +1356,30 @@
         </p>
       </a-col>
     </a-row>
-    <a-button
+    <a-button v-if="is_Posted_On_Community"
+      type="default"
+      @click="openShareOnComunity()"
+      block
+      style="
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        padding: 4px 16px;
+        height: auto;
+        border-radius: 8px;
+      "
+    >
+     <svg xmlns="http://www.w3.org/2000/svg" width="28px" height="28px" viewBox="0 0 24 24" fill="none">
+<path d="M20 12C20 9.19974 20 7.79961 19.455 6.73005C18.9757 5.78924 18.2108 5.02433 17.27 4.54497C16.2004 4 14.8003 4 12 4C9.19974 4 7.79961 4 6.73005 4.54497C5.78924 5.02433 5.02433 5.78924 4.54497 6.73005C4 7.79961 4 9.19974 4 12V18C4 18.9428 4 19.4142 4.29289 19.7071C4.58579 20 5.05719 20 6 20H12C14.8003 20 16.2004 20 17.27 19.455C18.2108 18.9757 18.9757 18.2108 19.455 17.27C20 16.2004 20 14.8003 20 12Z" fill="green" fill-opacity="0.24"/>
+<path d="M8.5 12.5L15.5 12.5" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M8.5 15.5L13.5 15.5" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M17.5 3.5V9.5" stroke="#222222" stroke-linecap="round"/>
+<path d="M14.5 6.5H20.5" stroke="#222222" stroke-linecap="round"/>
+</svg>
+      Shared on community
+    </a-button>
+    <a-button v-else
       type="primary"
       @click="openShareOnComunity()"
       block
@@ -1477,7 +1500,26 @@
   ">
     <a-row style="margin-bottom: 10px;">
       <a-col :span="20">
-        <a-button type="primary" @click="open_SaveToMyDesignes=true" style="
+        <a-button type="default" @click="gotoMyDesignes" v-if="SavedToMyDesignes" style="
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 8px;
+          padding: 4px 16px;
+          height: auto;
+          
+          border-radius: 8px;" 
+          block
+        
+        >
+        <svg xmlns="http://www.w3.org/2000/svg" width="30px" height="30px" viewBox="0 0 24 24" fill="none">
+<path d="M3 8H17.8C18.9201 8 19.4802 8 19.908 8.21799C20.2843 8.40973 20.5903 8.71569 20.782 9.09202C21 9.51984 21 10.0799 21 11.2V16.8C21 17.9201 21 18.4802 20.782 18.908C20.5903 19.2843 20.2843 19.5903 19.908 19.782C19.4802 20 18.9201 20 17.8 20H6.2C5.0799 20 4.51984 20 4.09202 19.782C3.71569 19.5903 3.40973 19.2843 3.21799 18.908C3 18.4802 3 17.9201 3 16.8V8Z" fill="green" fill-opacity="0.24"/>
+<path d="M3 8C3 7.06812 3 6.60218 3.15224 6.23463C3.35523 5.74458 3.74458 5.35523 4.23463 5.15224C4.60218 5 5.06812 5 6 5H8.34315C9.16065 5 9.5694 5 9.93694 5.15224C10.3045 5.30448 10.5935 5.59351 11.1716 6.17157L13 8H3Z" fill="green" fill-opacity="0.24"/>
+<path d="M9 13.5L10.8939 15.3939C10.9525 15.4525 11.0475 15.4525 11.1061 15.3939L15 11.5" stroke="#000"/>
+</svg> Saved To My Designes
+        </a-button>
+
+        <a-button type="primary" @click="open_SaveToMyDesignes=true" v-else style="
           display: flex;
           justify-content: center;
           align-items: center;
@@ -1763,6 +1805,7 @@ export default {
     return {
       user: JSON.parse(localStorage.getItem('user')),
     imageLoading: true,  // ADD THIS
+      SavedToMyDesignes:false,
 
       showRatingModal: false,
       openSeeAll_used_products:false,
@@ -1834,7 +1877,17 @@ export default {
   },
   
   methods: {
-   
+   gotoMyDesignes(){
+    if (this.user.user_type=="Business"){
+      this.$router.push('/business-dashboard/my-designs')
+    }
+    if (this.user.user_type=="Professional"){
+      this.$router.push('/professional-dashboard/my-designs')
+    }
+    if (this.user.user_type=="User"){
+      this.$router.push('/user-dashboard/my-designs')
+    }
+   },
     async AddRoomitemstocart() {
       
       this.addingToCart = true; 
@@ -2289,6 +2342,7 @@ export default {
       this.$message.success('Design saved successfully!');
       this.open_SaveToMyDesignes = false; // Close the save modal
       
+      this.SavedToMyDesignes=true;
       // Show rating modal after successful save (if not rated in this session)
       
        
@@ -2723,4 +2777,5 @@ async toggleLikeRoom(){
     background-position: -200% 0;
   }
 }
+
 </style>

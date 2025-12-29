@@ -6,8 +6,8 @@
       @back="back_product_list"
     >
       <template #extra>
-        <a-button > <template #icon> <ClockCircleOutlined/></template>Create Variation</a-button>
-        <a-avatar style="background-color: #dc2626;">A</a-avatar>
+        <a-button  @click="createVariation()" style="display:flex;justify-content: center;align-items:center;font-size:16px"> <FileSyncOutlined /><span style="margin-top:-4px">Create Variation</span></a-button>
+        
       </template>
     </a-page-header>
 
@@ -16,10 +16,10 @@
       <!-- Left Column - 3D Model and Images -->
       <a-col :xs="24" :md="12">
         <!-- 3D Model Card -->
-         <div style="position: relative; ">
+         <div style="position: relative; padding:10px;;"  v-if="activeView === '3d'">
 
             <canvas_3d_model_renderer 
-            :glbModelUrl="$store.state.root_media_api + selectedProduct['3d_model']"
+            :glbModelUrl="selected3DModelUrl"
             :Model_instance_id="selectedProduct.id"
             :isLoading="false"
             style="width: 100%; max-height:500px; height: 100%;border-radius: 10px"
@@ -36,24 +36,154 @@
     </svg>
     3D View
 </div>
-</div>
 
+</div>
+<!-- Texture Preview Card -->
+<a-card 
+  v-if="activeTextureView !== null && selectedProduct.textures[activeTextureView]" 
+  title="Texture Preview" 
+  style="margin-bottom: 24px;"
+>
+  <div style="width: 100%; max-height: 300px; display: flex; align-items: center; justify-content: center; background: #f5f5f5; border-radius: 8px;">
+    <img 
+      :src="$store.state.root_media_api + selectedProduct.textures[activeTextureView].texture"
+      style="width: 100%; height: 100%; object-fit: contain; border-radius: 8px;"
+    />
+  </div>
+</a-card>
+<div 
+  v-else-if="activeView === 'image' && activeImageIndex !== null"
+  style="width: 100%; max-height:500px; height: 100%; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #f5f5f5;">
+  <img 
+    :src="$store.state.root_media_api + selectedProduct.images[activeImageIndex].image"
+    style="width: 100%; height: 100%; object-fit: contain; border-radius: 10px;"
+  />
+</div>
         <!-- Images Section -->
-        <a-card title="Product Images" >
+        <a-card title="Product Images" style="margin-top: 16px;">
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+
+                   <div 
+  @click="activeView = '3d'"
+  :style="{
+    height:'80px',
+    width:'80px',
+    border: activeView === '3d' ? '3px solid #1890ff' : '1px solid rgba(0,0,0,0.1)',
+    borderRadius:'10px',
+    display:'flex',
+    flexDirection: 'center',
+    justifyContent: 'center',
+    alignItems:'center',
+    fontSize:'30px',
+    fontWeight:'700',
+    color: activeView === '3d' ? '#1890ff' : 'grey',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease'
+  }"
+>
+  3D
+</div>
           <div style="display: flex; gap: 8px; flex-wrap: wrap;">
               <img 
-              v-for="img in selectedProduct.images" 
-              :key="img" 
-              :src="$store.state.root_media_api + img.image"
-              style="width: 80px; height: 80px; border-radius: 8px; object-fit: cover; border: 1px solid #d9d9d9;"
-              />
+  v-for="(img, index) in selectedProduct.images" 
+  @click="handleImageClick(index)"
+  :key="index" 
+  :src="$store.state.root_media_api + img.image"
+  :style="{
+    width: '80px', 
+    height: '80px', 
+    borderRadius: '8px', 
+    objectFit: 'cover',
+    border: activeView === 'image' && activeImageIndex === index ? '3px solid #1890ff' : '1px solid #d9d9d9',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease'
+  }"
+/>
               <!-- <div 
                 style="width: 80px; height: 80px; border: 2px dashed #d9d9d9; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; background: #fafafa;"
               >
                 <a-icon type="plus" style="color: #bfbfbf;" />
               </div> -->
-          </div>
+          </div></div>
         </a-card>
+        <!-- Product Variants Section - ADD THIS ENTIRE BLOCK -->
+        <div v-if="selectedProduct.variants && selectedProduct.variants.length > 0" style="margin-bottom: 24px;">
+          <div style="margin-bottom: 12px; font-weight: 500; font-size: 16px;">
+            Available Variants ({{ selectedProduct.variants.length }})
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px;">
+            <div
+              v-for="variant in selectedProduct.variants"
+              :key="variant.id"
+              @click="selectVariant(variant.id)"
+              :style="{
+                border: selectedVariantId === variant.id ? '2px solid #1890ff' : '1px solid #d9d9d9',
+                borderRadius: '8px',
+                padding: '8px',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                background: selectedVariantId === variant.id ? '#e6f7ff' : '#fff'
+              }"
+            >
+              <img 
+                :src="$store.state.root_media_api + variant.primary_image" 
+                :style="{
+                  width: '100%',
+                  height: '100px',
+                  objectFit: 'cover',
+                  borderRadius: '6px',
+                  marginBottom: '8px'
+                }"
+              />
+              <div style="font-size: 13px; font-weight: 600; margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                {{ variant.name }}
+              </div>
+              <div style="display: flex; gap: 4px; margin-bottom: 4px;">
+                <div
+                  v-if="variant.primary_color"
+                  :style="{ 
+                    width: '16px', 
+                    height: '16px', 
+                    borderRadius: '50%', 
+                    backgroundColor: variant.primary_color,
+                    border: '1px solid #e0e0e0'
+                  }"
+                >
+              </div>
+                <div
+                  v-if="variant.secondary_color"
+                  :style="{ 
+                    width: '16px', 
+                    height: '16px', 
+                    borderRadius: '50%', 
+                    backgroundColor: variant.secondary_color,
+                    border: '1px solid #e0e0e0'
+                  }"
+                ></div>
+              </div>
+              <div style="font-size: 14px; font-weight: 700; color: #1890ff;">
+                ${{ variant.pricing.current_price }}
+              </div>
+              <!-- <a-tag 
+                v-if="!variant.stock.is_in_stock" 
+                color="red" 
+                size="small"
+                style="margin-top: 4px;"
+              >
+                Out of Stock
+              </a-tag>
+              <a-tag 
+                v-else-if="variant.pricing.is_on_sale" 
+                color="orange" 
+                size="small"
+                style="margin-top: 4px;"
+              >
+                On Sale
+              </a-tag> -->
+            </div>
+          </div>
+        </div>
+
       </a-col>
 
       <!-- Right Column - Product Details -->
@@ -83,7 +213,8 @@
               />
             </a-col>
           </a-row>
-
+<a-row>
+  <a-col :span="12">
           <!-- Dimensions -->
           <a-descriptions title="Dimensions" :column="1" size="small" style="margin-bottom: 24px;">
             <a-descriptions-item 
@@ -100,7 +231,7 @@
             </a-descriptions-item>
             <a-descriptions-item 
               v-if="selectedProduct.dimensions.length" 
-              label="Length/Depth"
+              label="Length"
             >
               {{ selectedProduct.dimensions.length }} meter
             </a-descriptions-item>
@@ -108,48 +239,80 @@
               v-if="selectedProduct.dimensions.depth" 
               label="Depth"
             >
-              {{ selectedProduct.dimensions.depth }}
+              {{ selectedProduct.dimensions.depth }} meter
             </a-descriptions-item>
             <a-descriptions-item 
               v-if="selectedProduct.dimensions.weight" 
               label="Weight"
             >
-              {{ selectedProduct.dimensions.weight }}
+              {{ selectedProduct.dimensions.weight }} meter
             </a-descriptions-item>
           </a-descriptions>
+</a-col>
+  <a-col :span="12">
+          <h4>AR Product</h4>
+          <!-- icon='@/assets/apply_changes_img.png' -->
+          <a-qrcode
+          error-level="H"
+          icon="/apply_changes_img.png"
+          :value="windowLocation + '/ar-product/' + selectedProduct.id"
+/>
+<!-- <a-button @click="this.$router.push('/ar-product/' + selectedProduct.id)">AR</a-button> -->
 
+  </a-col>
+</a-row>
           <!-- Colors and Textures -->
-          <a-row :gutter="16" style="margin-bottom: 24px;">
-            <a-col :span="12">
-              <div style="margin-bottom: 8px; font-weight: 500;">Colors:</div>
-              <div style="display: flex; gap: 6px; align-items: center;">
-                <div
-                  v-for="(color, index) in selectedProduct.colors.available_colors"
-                  :key="index"
-                  :style="{ 
-                    width: '24px', 
-                    height: '24px', 
-                    borderRadius: '50%', 
-                    backgroundColor: color.color,
-                    border: '2px solid #f0f0f0'
-                  }"
-                ></div>
-              </div>
-            </a-col>
-            <a-col :span="12">
-              <div style="margin-bottom: 8px; font-weight: 500;">Textures:</div>
-              <div style="display: flex; gap: 6px;">
-                <img 
-                  v-for="texture in selectedProduct.textures" 
-                  :key="texture" 
-                  :src="$store.state.root_media_api + texture.texture" 
-                  alt="" 
-                  style="width: 40px; height: 40px; border-radius: 4px; border: 1px solid #d9d9d9; object-fit: cover;"
-                />
-              </div>
-            </a-col>
-          </a-row>
+        <a-row :gutter="16" style="margin-bottom: 24px;">
+          <a-col :span="12">
+            <div style="margin-bottom: 8px; font-weight: 500;">Colors:</div>
+            <a-alert 
+              v-if="showColorAlert"
+              type="warning"
+              :message="`No model associated with ${selectedColorHex} color. Hence showing model for primary color.`"
+              closable
+              @close="showColorAlert = false"
+              style="margin-bottom: 12px;"
+            />
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <div v-for="(color, index) in selectedProduct.colors.available_colors"
+                :key="index"
+                @click="selectColor(index, color)"
+                :class="[
+                  'w-6 h-6 rounded-full transition-all cursor-pointer',
+                  color.model_file_colored_product 
+                    ? 'border-2 hover:shadow-md' 
+                    : 'outline outline-2 outline-red-500 outline-offset-2 hover:shadow-[0_0_8px_rgba(239,68,68,0.3)]',
+                  selectedColorIndex === index ? 'border-blue-500 border-2' : 'border-gray-100'
+                ]"
+                :style="{ backgroundColor: color.color }"
+              ></div>
+            </div>
+          </a-col>
+          <a-col :span="12">
+            <div style="margin-bottom: 8px; font-weight: 500;" v-if="selectedProduct.textures.length">Textures:</div>
+            <div style="display: flex; gap: 6px;flex-wrap: wrap;">
+              <img 
+                v-for="(texture, index) in selectedProduct.textures" 
+                :key="index"
+                @click.stop="openTextureModal(index)"
+                :src="$store.state.root_media_api + texture.texture" 
+                alt="" 
+                :style="{
+                  width: '40px', 
+                  height: '40px', 
+                  borderRadius: '4px',
+                  border: activeTextureView === index ? '3px solid #1890ff' : '1px solid #d9d9d9',
+                  cursor: 'pointer',
+                  objectFit: 'cover',
+                  transition: 'all 0.3s ease'
+                }"
+              />
+            </div>
+            
+          </a-col>
+        </a-row>
 
+        
           <!-- Price Section -->
           <a-card size="small" style="margin-bottom: 24px; background: #fafafa;">
             <div style="display: flex; align-items: center; gap: 12px;">
@@ -192,22 +355,22 @@
           <a-row :gutter="12">
             <a-col :span="12">
               <a-button 
-              v-if="product_access_recieved.update"
                 type="primary" 
                 block
                 @click="editProduct()"
-              > <template #icon> <EditOutlined/></template>
+                style="display:flex;justify-content: center;gap:10px;"
+              > <EditOutlined style="font-size:16px;padding-top:4px"/>
                 Edit Product
               </a-button>
             </a-col>
             <a-col :span="12">
               <a-button 
-              v-if="product_access_recieved.delete"
                 type="default" 
                 danger
                 block
                 @click="deleteProduct()"
-              > <template #icon> <DeleteOutlined/></template>
+                style="display:flex;justify-content: center;gap:5px;"
+              > <template #icon> <DeleteOutlined  style="font-size:16px;padding-top:4px"/></template>
                 Delete Product
               </a-button>
             </a-col>
@@ -215,31 +378,160 @@
         </a-card>
       </a-col>
     </a-row>
+     <!-- Texture Modal -->
+    <TextureModal 
+      :isOpen="showTextureModal"
+      :textures="formattedTextures"
+      :initialIndex="selectedTextureIndex"
+      @close="closeTextureModal"
+      @apply="applyTexture"
+    />
   </div>
 </template>
 
 <script>
 import canvas_3d_model_renderer from "@/components/store/canvas_3d_model_renderer.vue"
-import {DeleteOutlined ,EditOutlined ,ClockCircleOutlined } from '@ant-design/icons-vue';
+import qr_icon from '@/assets/apply_changes_img.png'
+import {DeleteOutlined ,EditOutlined ,ClockCircleOutlined,
+  FileSyncOutlined
+ } from '@ant-design/icons-vue';
+import TextureModal from "./TextureModal.vue";
 export default {
   name: "product_details_store_page_buisness_user",
   components: {
-    canvas_3d_model_renderer,
-    DeleteOutlined ,EditOutlined ,ClockCircleOutlined
+    canvas_3d_model_renderer,TextureModal,
+    DeleteOutlined ,EditOutlined ,ClockCircleOutlined,
+    FileSyncOutlined,qr_icon
   },
-  props: {
-    product_access_recieved:Object,
+   props: {
+    selectedProduct: {
+      type: Object,
+      required: true
+    }
+  },
 
-    selectedProduct: Object
+  data() {
+    return {
+      windowLocation : window.location.origin,
+      activeImageIndex: null,
+      activeTextureView: null,
+      activeView: '3d',
+      showTextureModal: false,
+      selectedTextureIndex: 0,
+      prepopulatedProductData: null,
+      isCreatingVariation: false,
+      selectedVariantId: null,
+      selectedColorIndex: null,
+      showColorAlert: false
+    }
   },
-  methods: {
+
+  computed: {
+    selected3DModelUrl() {
+      if (this.selectedColorIndex !== null && 
+          this.selectedProduct.colors && 
+          this.selectedProduct.colors.available_colors[this.selectedColorIndex] &&
+          this.selectedProduct.colors.available_colors[this.selectedColorIndex].model_file_colored_product) {
+        return this.$store.state.root_media_api + this.selectedProduct.colors.available_colors[this.selectedColorIndex].model_file_colored_product;
+      }
+      return this.$store.state.root_media_api + this.selectedProduct['3d_model'];
+    },
+    
+    formattedTextures() {
+      if (!this.selectedProduct.textures || this.selectedProduct.textures.length === 0) {
+        return [];
+      }
+      
+      return this.selectedProduct.textures.map(texture => ({
+        image: this.$store.state.root_media_api + texture.texture,
+        name: texture.name || 'Texture',
+        composition: texture.composition || '100% Polyester',
+        origin: texture.origin || 'Made in Italy',
+        colors: texture.colors || [
+          { hex: '#D4A574' },
+          { hex: '#3F5E6B' },
+          { hex: '#4A4A4A' }
+        ]
+      }));
+    }
+  },
+
+ methods: {
+    handleImageClick(index) {
+      this.activeView = 'image';
+      this.activeImageIndex = index;
+      this.activeTextureView = null;
+    },
+    selectVariant(variantId) {
+    this.selectedVariantId = variantId;
+    this.$emit('select_variant', variantId);
+  },
+   selectColor(index,color) {
+      this.selectedColorIndex = index;
+      this.activeView = '3d'; 
+      if (!color.model_file_colored_product) {
+      this.selectedColorHex = color.color; 
+      this.showColorAlert = true;
+
+    } else {
+      this.showColorAlert = false;
+    }
+    },
+
+
+    openTextureModal(index) {
+      console.log('Opening texture modal, index:', index);
+      console.log('Textures available:', this.selectedProduct.textures);
+      console.log('Formatted textures:', this.formattedTextures);
+      
+      this.selectedTextureIndex = index;
+      
+      // Use nextTick to ensure DOM updates before showing modal
+      this.$nextTick(() => {
+        this.showTextureModal = true;
+        console.log('Modal state set to:', this.showTextureModal);
+      });
+    },
+
+
+    closeTextureModal() {
+      this.showTextureModal = false;
+    },
+
+
+    applyTexture(data) {
+      console.log('Applied texture:', data);
+      this.activeTextureView = data.index;
+      this.activeView = null;
+      this.activeImageIndex = null;
+      
+      // Emit to parent or save to API
+      this.$emit('texture-changed', {
+        productId: this.selectedProduct.id,
+        textureIndex: data.index,
+        selectedColor: data.color
+      });
+      
+      this.closeTextureModal();
+    },
+
+
     editProduct() {
       this.$emit('edit_product', this.selectedProduct.id)
     },
-    deleteProduct() {
-      this.$emit('delete_product', {"product_id":this.selectedProduct.id,"product_type":"Furniture"})
-
+   createVariation() {
+        this.$emit('create_variation', this.selectedProduct);
     },
+
+
+    deleteProduct() {
+      this.$emit('delete_product', {
+        "product_id": this.selectedProduct.id,
+        "product_type": "Furniture"
+      })
+    },
+
+
     back_product_list() {
       this.$emit('back_product_list', this.selectedProduct.id)
     }

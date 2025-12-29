@@ -1,5 +1,4 @@
 <template>
-  
   <add_sunk_unsunk_light
     :LightType="light_type"
     :visible="sunk_unsunk_light_modal"
@@ -120,46 +119,54 @@
         </div>
 
         <!-- Unsunk Magnetic Light -->
-        <div class="light-option-card" @click="showModalSunkUnsunk('unsunk')">
-          <div class="light-image-container">
-            <div class="light-illustration unsunk-light">
-              <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
-                <!-- Ceiling surface -->
-                <rect x="0" y="40" width="120" height="8" fill="#E5E7EB"/>
-                <!-- Surface-mounted base -->
-                <ellipse cx="60" cy="48" rx="28" ry="8" fill="#374151"/>
-                <!-- Light fixture (surface mounted) -->
-                <ellipse cx="60" cy="55" rx="22" ry="12" fill="#10B981"/>
-                <ellipse cx="60" cy="53" rx="18" ry="10" fill="#34D399"/>
-                <!-- Light beam (directional) -->
-                <g opacity="0.7">
-                  <polygon points="42,65 78,65 85,95 35,95" fill="url(#unsunkGradient)"/>
-                </g>
-                <!-- Magnetic indicators -->
-                <circle cx="35" cy="45" r="3" fill="#EF4444"/>
-                <circle cx="85" cy="45" r="3" fill="#EF4444"/>
-                <!-- Surface mount screws -->
-                <circle cx="45" cy="42" r="1.5" fill="#6B7280"/>
-                <circle cx="75" cy="42" r="1.5" fill="#6B7280"/>
-                <defs>
-                  <linearGradient id="unsunkGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" style="stop-color:#10B981;stop-opacity:0.8"/>
-                    <stop offset="100%" style="stop-color:#10B981;stop-opacity:0.1"/>
-                  </linearGradient>
-                </defs>
-              </svg>
-            </div>
-            <div class="light-glow unsunk-glow"></div>
-          </div>
-          <div class="light-info">
-            <h3 class="light-title">Unsunk Magnetic Light</h3>
-            <p class="light-description">Surface-mounted lighting with easy magnetic attachment</p>
-            <div class="light-features">
-              <span class="feature-tag">Surface Mount</span>
-              <span class="feature-tag">Easy Install</span>
-            </div>
-          </div>
-        </div>
+    <div class="light-option-card relative overflow-hidden cursor-not-allowed" @click.prevent>
+  <!-- Diagonal "Coming Soon" Banner -->
+  <div class="absolute top-6 -right-10 bg-gradient-to-r from-blue-500 to-purple-500 text-white text-xs font-bold px-12 py-1 rotate-45 z-20 shadow-lg">
+    COMING SOON
+  </div>
+  
+  <div class="light-image-container blur-[2px] opacity-70 pointer-events-none">
+    <div class="light-illustration unsunk-light">
+      <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
+        <!-- Ceiling surface -->
+        <rect x="0" y="40" width="120" height="8" fill="#E5E7EB"/>
+        <!-- Surface-mounted base -->
+        <ellipse cx="60" cy="48" rx="28" ry="8" fill="#374151"/>
+        <!-- Light fixture (surface mounted) -->
+        <ellipse cx="60" cy="55" rx="22" ry="12" fill="#10B981"/>
+        <ellipse cx="60" cy="53" rx="18" ry="10" fill="#34D399"/>
+        <!-- Light beam (directional) -->
+        <g opacity="0.7">
+          <polygon points="42,65 78,65 85,95 35,95" fill="url(#unsunkGradient)"/>
+        </g>
+        <!-- Magnetic indicators -->
+        <circle cx="35" cy="45" r="3" fill="#EF4444"/>
+        <circle cx="85" cy="45" r="3" fill="#EF4444"/>
+        <!-- Surface mount screws -->
+        <circle cx="45" cy="42" r="1.5" fill="#6B7280"/>
+        <circle cx="75" cy="42" r="1.5" fill="#6B7280"/>
+        <defs>
+          <linearGradient id="unsunkGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" style="stop-color:#10B981;stop-opacity:0.8"/>
+            <stop offset="100%" style="stop-color:#10B981;stop-opacity:0.1"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+    <div class="light-glow unsunk-glow"></div>
+  </div>
+  
+  <div class="light-info opacity-70">
+    <h3 class="light-title">Unsunk Magnetic Light</h3>
+    <p class="light-description">Surface-mounted lighting with easy magnetic attachment</p>
+    <div class="light-features">
+      <span class="feature-tag opacity-50">Surface Mount</span>
+      <span class="feature-tag opacity-50">Easy Install</span>
+    </div>
+  </div>
+</div>
+
+
       </div>
       
       <div class="help-section">
@@ -178,7 +185,6 @@
 
 <script>
 import add_sunk_unsunk_light from '@/views/access_engine/product/my_products/add_new_product/add_sunk_unsunk_light_modal.vue'
-
 export default {
   name: "AddNewLight",
   components:{
@@ -189,7 +195,6 @@ export default {
     categories_available: { type: Array, default: () => [] },
     types: { type: Array, default: () => [] }
   },
-
   emits: ['update:visible', 'product-created', 'cancel','add-3d-light'],
   data() {
     return {

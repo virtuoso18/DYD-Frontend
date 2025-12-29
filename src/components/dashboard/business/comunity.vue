@@ -201,7 +201,6 @@
               </a-row>
             </div>
         </div>
-
       </a-col>
     </a-row>
 

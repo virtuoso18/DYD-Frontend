@@ -7,12 +7,12 @@
       @back="back_texture_list"
     >
       <template #extra>
-        <a-button> 
+        <!-- <a-button> 
           <template #icon> 
             <ClockCircleOutlined/>
           </template>
           Create Variation
-        </a-button>
+        </a-button> -->
       </template>
     </a-page-header>
     
@@ -214,7 +214,7 @@
           <!-- Action Buttons -->
           <a-row :gutter="12">
             <a-col :span="12">
-              <a-button v-if="product_access_recieved.update"
+              <a-button 
                 type="primary" 
                 block
                 @click="editTexture()"
@@ -230,7 +230,6 @@
                 type="default" 
                 danger
                 block
-                v-if="product_access_recieved.delete"
                 @click="deleteTexture()"
               > 
                 <template #icon> 
@@ -258,7 +257,6 @@ export default {
     DeleteOutlined,
   },
   props: {
-    product_access_recieved:Object,
     selectedTexture: {
       type: Object,
       required: true
@@ -332,6 +330,7 @@ export default {
     };
 
     const deleteTexture = () => {
+      
       // emit('delete-texture', props.selectedTexture.id);
       emit('delete_texture', {"product_id":props.selectedTexture.id,"product_type":"Floor"})
     };

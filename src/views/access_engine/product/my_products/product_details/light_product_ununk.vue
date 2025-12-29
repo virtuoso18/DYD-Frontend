@@ -188,7 +188,6 @@
           <a-row :gutter="12">
             <a-col :span="12">
               <a-button 
-              v-if="product_access_recieved.update"
                 type="primary" 
                 block
                 @click="editProduct()"
@@ -201,7 +200,6 @@
             </a-col>
             <a-col :span="12">
               <a-button 
-              v-if="product_access_recieved.delete"
                 type="default" 
                 danger
                 block
@@ -311,7 +309,6 @@ export default {
     };
 
     const deleteProduct = () => {
-      // emit('delete_product', props.selectedProduct.id)
       emit('delete_product', {"product_id":props.selectedProduct.id,"product_type":"Light"})
 
     };

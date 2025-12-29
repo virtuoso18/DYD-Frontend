@@ -1,144 +1,274 @@
 <template>
-<div class="sm:main sm:border border-gray-200 bg-white !mb-5 sm:translate-y-3 sm:rounded-2xl min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh]">
-    <a-row v-if="view_type=='all'">
-    <a-col :span="24">
+  <div
+    class="sm:main sm:border border-gray-200 bg-white !mb-5 sm:translate-y-3 sm:rounded-2xl min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh]"
+  >
+    <a-row v-if="view_type == 'all'">
+      <a-col :span="24">
+        <h2
+          className="!p-4 sm:p-0 !font-[Poppins] font-medium text-[16px] leading-[24px] text-gray-700 tracking-[0]"
+        >
+          My Designes
+        </h2>
+      </a-col>
 
-
-   <h2 className="!p-4 sm:p-0 !font-[Poppins] font-medium text-[16px] leading-[24px] text-gray-700 tracking-[0]">
-  My Designes
-</h2>
-
-
-    
-    
-    
-    </a-col>
-
-    <!-- Empty State -->
-    <a-col :span="24" v-if="my_designes.length === 0" style="display:flex;justify-content:center;align-items:center;height:80vh;text-align: center; padding: 60px 20px;">
+      <!-- Empty State -->
+      <a-col
+        :span="24"
+        v-if="my_designes.length === 0"
+        style="
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 80vh;
+          text-align: center;
+          padding: 60px 20px;
+        "
+      >
         <a-empty description="No designs available yet">
-            <template #description>
-                <p style="color: #666; font-size: 16px;">You haven't created any designs yet.</p>
-                <p style="color: #999; font-size: 14px;">Start creating your first design!</p>
-            </template>
+          <template #description>
+            <p style="color: #666; font-size: 16px">
+              You haven't created any designs yet.
+            </p>
+            <p style="color: #999; font-size: 14px">
+              Start creating your first design!
+            </p>
+          </template>
         </a-empty>
-    </a-col>
+      </a-col>
 
-    <!-- Designs List -->
-    <a-col :lg="8" :md="8" :xs="24" :sm="24" style="padding:10px;" v-for="design in my_designes" :key="design.id" v-if="my_designes.length > 0">
-        <div style="border:2px solid rgba(0,0,0,0.07);padding: 5px;border-radius:14px;">
-          <!-- {{ design }} -->
-            <img :src="this.$store.state.root_media_api+design.image" style="width:100%;border-radius:10px;max-height:200px;object-fit:cover" alt="" @click="show_design_details(design.id)">
-            <a-row style="padding-top:10px;padding-bottom:5px">
-                <a-col :span="22" >
+      <!-- Designs List -->
+
+      <a-col :span="24" style="padding: 5px 10px">
+        <a-row type="flex" :wrap="true" >
+          <a-col
+            :lg="8"
+            :md="12"
+            :sm="24"
+            :xs="24"
+            style=" padding: 0px 8px; display: flex"
+            v-for="design in my_designes"
+            :key="design.id"
+            v-if="my_designes.length > 0"
+          >
+            <div
+              class="cursor-pointer w-full"
+              style="
+                border: 2px solid rgba(0, 0, 0, 0.07);
+                border-radius: 14px;
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+                overflow: hidden;
+              "
+            >
+              <div class="relative" style="flex-shrink: 0">
+                <!-- Only On Community Poeted Design Ciounter Number Of Views  -->
+<div  v-if="design.shared_on_community_my_design">
+
+                <div
+                  class="tag-sec absolute left-0 top-1 flex gap-1 px-2 py-1"
+                  style="z-index: 10; flex-wrap: wrap"
+                >
+                  <div
+                    class="px-2 py-1 bg-[#181A1B80] text-white rounded-md text-xs sm:text-sm"
+                  >
+                    {{ design.room_type }}
+                  </div>
+                  <div
+                    class="px-2 py-1 bg-[#181A1B80] text-white rounded-md text-xs sm:text-sm"
+                  >
+                    {{ design.room_design_type }}
+                  </div>
+                </div>
+                
+                <div
+                  class="view-count-sec absolute right-2 top-1 flex drop-shadow-md"
+                  style="z-index: 10; gap: 4px"
+                >
+                  <img
+                    src="../../../assets/icons/eye.svg"
+                    style="width: 32px; height: 28px"
+                    alt=""
+                  />
+                  <span
+                    class="flex items-center text-white drop-shadow-md text-xs sm:text-sm"
+                    >{{ 954 }}</span
+                  >
+                </div>
+                <!-- Only On Community Poeted Design  -->
+</div>
+
+<!-- {{ design }} -->
+                <img
+                  :src="this.$store.state.root_media_api + design.image"
+                  style="
+                    width: 100%;
+                    border-radius: 10px;
+                    height: auto;
+                    object-fit: cover;
+
+                  "
+                  alt=""
+                  @click="show_design_details(design.id)"
+                />
+              </div>
+
+              <div v-if="design.shared_on_community_my_design"
+                class="flex mx-4 sm:mx-6 my-4 sm:my-6 p-1"
+                style="flex-shrink: 0"
+              >
+                <div class="flex w-1/2 gap-2 items-center">
+                  <img
+                    class="w-6 h-6 rounded-full flex-shrink-0"
+                    src="../../../assets/icons/humanIcon.png"
+                    alt="Design Image"
+                  />
+                  <div class="text-sm sm:text-base truncate ml-2 sm:ml-3">
+                    John Doe
+                  </div>
+                </div>
+                <div class="flex justify-around w-1/2 items-center gap-2">
+                  <div class="flex gap-1 items-center min-w-0">
+                    <img
+                      src="../../../assets/icons/commentIcon.svg"
+                      alt=""
+                      style="width: 16px; height: 16px; flex-shrink: 0"
+                    />
+                    <span class="text-xs sm:text-sm">{{ 15 }}k</span>
+                  </div>
+                  <div class="flex gap-1 items-center min-w-0">
+                    <img
+                      src="../../../assets/icons/favourite.svg"
+                      alt=""
+                      style="width: 16px; height: 16px; flex-shrink: 0"
+                    />
+                    <span class="text-xs sm:text-sm">{{ 2 }}k</span>
+                  </div>
+                  <div class="flex justify-end items-center">
+                    <MoreOutlined
+                      :style="{ fontWeight: '700', fontSize: '16px' }"
+                    />
+                  </div>
+                </div>
+              </div>
+
+                <a-col :span="22" v-else style="padding-top:10px;padding-bottom:10px;padding-left:5px;">
+
+
                     <a-tag style="border:none;background:#f3f7f5">Room : {{  design.room_type }}</a-tag>
                     <a-tag style="border:none;background:#f3f7f5">Style : {{ design.room_design_type }}</a-tag>
                 </a-col>
-                <!-- <a-col :span="2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="15px" height="15px" viewBox="0 0 16 16" fill="#000000" class="bi bi-three-dots-vertical">
-                        <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
-                    </svg>
-                </a-col> -->
-            </a-row>
-        </div>
-    </a-col>
-</a-row>
-
+            </div>
+          </a-col>
+        </a-row>
+      </a-col>
+    </a-row>
 
     <a-row v-if="view_type == 'details' && selected_design">
       <a-row>
         <div class="w-full flex p-3 justify-between items-center">
+          <!-- Back Button -->
+          <button
+            @click="goback"
+            class="flex items-center gap-2 !text-gray-700 text-lg hover:text-black cursor-pointer"
+          >
+            <!-- Icon -->
+            <svg
+              width="6"
+              height="11"
+              viewBox="0 0 6 11"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M4.75 9.75L0.75 5.25L4.75 0.75"
+                stroke="#1A1A1A"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
 
-  <!-- Back Button -->
-  <button 
-    @click="goback" 
-    class="flex items-center gap-2 !text-gray-700 text-lg hover:text-black"
-  >
-    <!-- Icon -->
-    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-      <path fill-rule="evenodd" d="M10 18a1 1 0 01-.7-.3l-7-7a1 1 0 010-1.4l7-7a1 1 0 111.4 1.4L4.42 9H18a1 1 0 110 2H4.42l6.28 6.3A1 1 0 0110 18z" clip-rule="evenodd"/>
-    </svg>
+            <b>Back</b>
+          </button>
 
-    <b>Back</b>
-  </button>
+          <!-- Right Side Buttons -->
+          <div class="flex items-center gap-3 hide-below-md">
+            <!-- Edit Button -->
+            <button
+              v-if="!start_edit"
+              @click="edit_Design"
+              class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 flex items-center gap-2 border border-gray-300 cursor-pointer"
+              style="
+                font-family: var(--font-family-main);
+                color: var(--text-color-secondary);
+              "
+            >
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path d="M12 20h9"></path>
+                <path
+                  d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4 12.5-12.5z"
+                ></path>
+              </svg>
+              Edit
+            </button>
 
-  <!-- Right Side Buttons -->
-  <div class="flex items-center gap-3">
+            <!-- Delete Button -->
+            <button
+              @click="delete_Design"
+              class="px-4 py-2 !text-red-600 hover:text-red-700 border rounded-md flex items-center gap-2 cursor-pointer"
+            >
+              <svg
+                width="15"
+                height="15"
+                viewBox="0 0 15 15"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <g clip-path="url(#clip0_6921_12619)">
+                  <path
+                    d="M13.5938 3.75H1.40625C1.14375 3.75 0.9375 3.54375 0.9375 3.28125C0.9375 3.01875 1.14375 2.8125 1.40625 2.8125H13.5938C13.8562 2.8125 14.0625 3.01875 14.0625 3.28125C14.0625 3.54375 13.8562 3.75 13.5938 3.75Z"
+                    fill="#E33827"
+                  />
+                  <path
+                    d="M10.332 3.57344L9.91953 2.20469C9.89113 2.10732 9.83192 2.02179 9.75078 1.96094C9.66964 1.90008 9.57095 1.86719 9.46953 1.86719H5.53203C5.43061 1.86719 5.33192 1.90008 5.25078 1.96094C5.16964 2.02179 5.11043 2.10732 5.08203 2.20469L4.66953 3.57344L3.76953 3.30156L4.18203 1.93281C4.36016 1.33281 4.90391 0.929688 5.53203 0.929688H9.46953C10.0977 0.929688 10.632 1.33281 10.8195 1.93281L11.232 3.30156L10.332 3.57344Z"
+                    fill="#E33827"
+                  />
+                  <path
+                    d="M10.8086 14.0625H4.18984C3.43047 14.0625 2.81172 13.4625 2.78359 12.7031L2.46484 3.45L3.40234 3.42188L3.72109 12.675C3.72109 12.9281 3.93672 13.125 4.18984 13.125H10.818C11.0711 13.125 11.2773 12.9281 11.2867 12.675L11.6055 3.42188L12.543 3.45L12.2242 12.7031C12.1961 13.4625 11.5773 14.0625 10.818 14.0625H10.8086Z"
+                    fill="#E33827"
+                  />
+                  <path
+                    d="M6.09375 10.8945C5.83125 10.8945 5.625 10.6883 5.625 10.4258V6.67578C5.625 6.41328 5.83125 6.20703 6.09375 6.20703C6.35625 6.20703 6.5625 6.41328 6.5625 6.67578V10.4258C6.5625 10.6883 6.35625 10.8945 6.09375 10.8945ZM8.90625 10.8945C8.64375 10.8945 8.4375 10.6883 8.4375 10.4258V6.67578C8.4375 6.41328 8.64375 6.20703 8.90625 6.20703C9.16875 6.20703 9.375 6.41328 9.375 6.67578V10.4258C9.375 10.6883 9.16875 10.8945 8.90625 10.8945Z"
+                    fill="#E33827"
+                  />
+                </g>
+                <defs>
+                  <clipPath id="clip0_6921_12619">
+                    <rect width="15" height="15" fill="white" />
+                  </clipPath>
+                </defs>
+              </svg>
 
-    <!-- Edit Button -->
-    <button 
-      v-if="!start_edit"
-      @click="edit_Design"
-      class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 flex items-center gap-2 border border-gray-300"
-      style="font-family: var(--font-family-main); color: var(--text-color);"
-    >
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-        <path d="M12 20h9"></path>
-        <path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4 12.5-12.5z"></path>
-      </svg>
-      Edit
-    </button>
-
-    <!-- Save Button -->
-    <button 
-      v-if="start_edit"
-      @click="save_Design"
-      class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2"
-      style="font-family: var(--font-family-main); color: var(--text-color);"
-    >
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-        <path d="M5 13l4 4L19 7"></path>
-      </svg>
-      Save
-    </button>
-
-    <!-- Close Button -->
-    <button 
-      v-if="start_edit"
-      @click="close_Design"
-      class="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 flex items-center gap-2"
-      style="font-family: var(--font-family-main); color: var(--text-color);"
-    >
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-        <path d="M6 18L18 6M6 6l12 12"></path>
-      </svg>
-      Close
-    </button>
-
-    <!-- Delete Button -->
-    <button 
-      @click="delete_Design"
-      class="px-4 py-2 !text-red-600 hover:text-red-700 border rounded-md flex items-center gap-2"
-    >
-    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g clip-path="url(#clip0_6921_12619)">
-<path d="M13.5938 3.75H1.40625C1.14375 3.75 0.9375 3.54375 0.9375 3.28125C0.9375 3.01875 1.14375 2.8125 1.40625 2.8125H13.5938C13.8562 2.8125 14.0625 3.01875 14.0625 3.28125C14.0625 3.54375 13.8562 3.75 13.5938 3.75Z" fill="#E33827"/>
-<path d="M10.332 3.57344L9.91953 2.20469C9.89113 2.10732 9.83192 2.02179 9.75078 1.96094C9.66964 1.90008 9.57095 1.86719 9.46953 1.86719H5.53203C5.43061 1.86719 5.33192 1.90008 5.25078 1.96094C5.16964 2.02179 5.11043 2.10732 5.08203 2.20469L4.66953 3.57344L3.76953 3.30156L4.18203 1.93281C4.36016 1.33281 4.90391 0.929688 5.53203 0.929688H9.46953C10.0977 0.929688 10.632 1.33281 10.8195 1.93281L11.232 3.30156L10.332 3.57344Z" fill="#E33827"/>
-<path d="M10.8086 14.0625H4.18984C3.43047 14.0625 2.81172 13.4625 2.78359 12.7031L2.46484 3.45L3.40234 3.42188L3.72109 12.675C3.72109 12.9281 3.93672 13.125 4.18984 13.125H10.818C11.0711 13.125 11.2773 12.9281 11.2867 12.675L11.6055 3.42188L12.543 3.45L12.2242 12.7031C12.1961 13.4625 11.5773 14.0625 10.818 14.0625H10.8086Z" fill="#E33827"/>
-<path d="M6.09375 10.8945C5.83125 10.8945 5.625 10.6883 5.625 10.4258V6.67578C5.625 6.41328 5.83125 6.20703 6.09375 6.20703C6.35625 6.20703 6.5625 6.41328 6.5625 6.67578V10.4258C6.5625 10.6883 6.35625 10.8945 6.09375 10.8945ZM8.90625 10.8945C8.64375 10.8945 8.4375 10.6883 8.4375 10.4258V6.67578C8.4375 6.41328 8.64375 6.20703 8.90625 6.20703C9.16875 6.20703 9.375 6.41328 9.375 6.67578V10.4258C9.375 10.6883 9.16875 10.8945 8.90625 10.8945Z" fill="#E33827"/>
-</g>
-<defs>
-<clipPath id="clip0_6921_12619">
-<rect width="15" height="15" fill="white"/>
-</clipPath>
-</defs>
-</svg>
-
-      Delete
-    </button>
-
-  </div>
-</div>
+              Delete
+            </button>
+          </div>
+        </div>
 
         <a-col :xs="24" :sm="24" :md="12" :lg="12" style="padding: 10px">
           <!-- {{selected_design.data}} -->
           <a-image
-          
             :src="this.$store.state.root_media_api + selected_design.data.image"
             style="
               width: 100%;
               height: 100%;
-              max-height: 400px;
+              max-height: 700px;
               border-radius: 10px;
               object-fit: cover;
             "
@@ -154,19 +284,84 @@
           v-if="!start_edit"
         >
           <!-- {{ selected_design.data}} -->
-            <span      style="
-    font-family: var(--font-family-main);
-         color:var(--text-color)
-        "
-    >
+          <span
+            style="
+              font-family: var(--font-family-main);
+              color: var(--text-color-secondary);
+            "
+          >
+            {{ selected_design.data.room_description }}
+          </span>
+          <div class="flex gap-3" style="margin: 10px 0px">
+            <div class="bg-gray-200 px-2 py-1 rounded-md text-gray-1000">
+              {{ selected_design.data.room_type }}
+            </div>
+            <div class="bg-gray-200 px-2 py-1 rounded-md text-gray-1000">
+              {{ selected_design.data.room_design_type }}
+            </div>
+          </div>
+          <div class="control-button-sec hide-above-md flex gap-2">
+            <a-button
+              type="primary"
+              @click="edit_Design"
+              class="w-[193px] bg-[#3B63FB]"
+              >Edit</a-button
+            >
+            <a-button
+              type="primary"
+              class="w-[193px] bg-[#E33827] flex items-center"
+              danger
+              style=""
+              :size="large"
+              @click="delete_Design"
+            >
+              Delete
+            </a-button>
+            <!-- Save Button -->
 
-              {{ selected_design.data.room_description }}
-            </span>
-          
+            <button
+              v-if="start_edit"
+              @click="save_Design"
+              class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2 cursor-pointer"
+              style="
+                font-family: var(--font-family-main);
+                color: var(--text-color-secondary);
+              "
+            >
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path d="M5 13l4 4L19 7"></path>
+              </svg>
+              Save
+            </button>
 
-          <br /><br />
-          <a-tag>{{ selected_design.data.room_type }}</a-tag>
-          <a-tag>{{ selected_design.data.room_design_type }}</a-tag>
+            <!-- Close Button -->
+            <button
+              v-if="start_edit"
+              @click="close_Design"
+              class="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 flex items-center gap-2 cursor-pointer"
+              style="
+                font-family: var(--font-family-main);
+                color: var(--text-color-secondary);
+              "
+            >
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+              Close
+            </button>
+          </div>
 
           <br />
           <br />
@@ -180,7 +375,6 @@
           >
             Created From
           </p>
-          
 
           <router-link
             :to="'/' + selected_design.data.business_slug"
@@ -203,68 +397,80 @@
               "
               style="flex-shrink: 0"
             />
-            
+
             <span style="font-size: 15px; font-weight: 600">{{
               selected_design.data.business_name
             }}</span>
-            
           </router-link>
 
-          <div class="w-full max-w-xl mx-auto bg-gray-100 rounded-2xl border border-gray-200 !mt-4  p-6">
-    <!-- Header -->
-    <div class="flex items-start gap-4 mb-6">
-      <!-- Image -->
-      <div class="flex-shrink-0">
-        <img 
-          :src="this.$store.state.root_media_api + selected_design.data.image" 
-          alt="Project"
-          class="w-24 h-18 rounded-lg object-fill"
-        />
-      </div>
+          <div
+            class="w-full max-w-xl mx-auto bg-gray-100 rounded-2xl border border-gray-200 !mt-4 p-6"
+          >
+            <!-- Header -->
+            <div class="flex items-start gap-4 mb-6">
+              <!-- Image -->
+              <div class="flex-shrink-0">
+                <img
+                  :src="
+                    this.$store.state.root_media_api +
+                    selected_design.data.image
+                  "
+                  alt="Project"
+                  class="w-24 h-18 rounded-lg object-fill"
+                />
+              </div>
 
-      <!-- Text Content -->
-      <div class="flex-1">
-        <h2 class="text-xl font-bold text-gray-900 mb-2"
-        
-             style="
-    font-family: var(--font-family-main);
-         color:var(--text-color)
-        "
-    
-        >
-          Share your project
-        </h2>
-        <p class="text-gray-600 text-sm leading-relaxed">
-          Tell your community about the project you created
-        </p>
-      </div>
-    </div>
+              <!-- Text Content -->
+              <div class="flex-1">
+                <h2
+                  class="text-xl font-bold text-gray-900 mb-2"
+                  style="
+                    font-family: var(--font-family-main);
+                    color: var(--text-color-secondary);
+                  "
+                >
+                  Share your project
+                </h2>
+                <p class="text-gray-600 text-sm leading-relaxed">
+                  Tell your community about the project you created
+                </p>
+              </div>
+            </div>
 
-    <!-- Share Button -->
-    <a-button type="primary"
-      @click="shareOnCommunity"
-      size="large"
-      block style="margin-top:10px;display:flex;justify-content: center;align-items: center;gap:8px;"
-    >
-      <svg 
-        class="w-5 h-5" 
-        fill="none" 
-        stroke="white" 
-        viewBox="0 0 24 24"
-      >
-        <path 
-          stroke-linecap="round" 
-          stroke-linejoin="round" 
-          stroke-width="2" 
-          d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
-        />
-      </svg>
-      <span className="text-white"      style="
-    font-family: var(--font-family-main);
-        "
-    >Share on community</span>
-    </a-button>
-  </div>
+            <!-- Share Button -->
+            <a-button
+              type="primary"
+              @click="shareOnCommunity"
+              size="large"
+              block
+              style="
+                margin-top: 10px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 8px;
+              "
+            >
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="white"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
+                />
+              </svg>
+              <span
+                className="text-white"
+                style="font-family: var(--font-family-main)"
+                >Share on community</span
+              >
+            </a-button>
+          </div>
         </a-col>
         <a-col :xs="24" :sm="24" :md="12" :lg="12" style="padding: 10px" v-else>
           <div style="margin-bottom: 20px">
@@ -331,9 +537,55 @@
               ><strong>Products:</strong> {{ products_used.length }} items</span
             >
           </div>
+          <div style="display: flex; gap: 15px; margin-top: 10px">
+            <!-- Save Button -->
+            <button
+              v-if="start_edit"
+              @click="save_Design"
+              class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2 cursor-pointer"
+              style="
+                font-family: var(--font-family-main);
+                color: var(--text-white);
+              "
+            >
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path d="M5 13l4 4L19 7"></path>
+              </svg>
+              Save
+            </button>
+
+            <!-- Close Button -->
+            <button
+              v-if="start_edit"
+              @click="close_Design"
+              class="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 flex items-center gap-2 cursor-pointer"
+              style="
+                font-family: var(--font-family-main);
+                color: var(--text-color-secondary);
+              "
+            >
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+              Close
+            </button>
+          </div>
         </a-col>
 
         <a-col :span="24">
+          <h3 class="px-4 my-4 text-[20px] text-[#1A1A1A]">Product used to create room</h3>
           <a-row>
             <a-col
               v-for="product in selected_design.data.products_used"
@@ -360,25 +612,20 @@
                 <!-- {{ truncateText(product.description || 'No description available', 8) }} -->
 
                 <a-row>
-                           <a-col :span="24"
-  class="overflow-x-auto whitespace-nowrap hide-scrollbar"
-  style="max-width: 200px;"
->
-  <b class="font-light !text-gray-700 inline-block">
-    {{ product.product_title }}
-  </b>
-</a-col>
+                  <a-col
+                    :span="24"
+                    class="overflow-x-auto whitespace-nowrap hide-scrollbar"
+                    style="max-width: 200px"
+                  >
+                    <b class="font-light !text-gray-700 inline-block">
+                      {{ product.product_title }}
+                    </b>
+                  </a-col>
 
-
-
-<a-col 
-  span="18"
-  
-  class="font-light !text-gray-700"
->
-  Color
-</a-col>
-                  <a-col  span="6" style="display: flex; justify-content: end">
+                  <a-col span="18" class="font-light !text-gray-700">
+                    Color
+                  </a-col>
+                  <a-col span="6" style="display: flex; justify-content: end">
                     <div
                       v-for="(color, index) in product.product_colors.slice(
                         0,
@@ -403,7 +650,7 @@
                   <a-col class="!text-gray-700" span="12"> Price </a-col>
 
                   <a-col
-                  class="!text-gray-700"
+                    class="!text-gray-700"
                     span="12"
                     style="
                       display: flex;
@@ -432,36 +679,42 @@
                                                 </a-button>
                   </a-col> -->
                   <div class="flex items-center gap-2 w-full">
-                          <!-- Product Details Button - 75% width (18/24) -->
-                          <div class="w-3/4">
-                            <button
-                              @click="goto_product_Route(product)"
-                                class="w-full py-2 px-4 bg-white border border-gray-300 rounded hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500 transition-colors whitespace-nowrap"
-                              style="
-                                font-family: 'Poppins', sans-serif;
-                                font-size: 12px;
-                              "
-                            >
-                              Product Details
-                            </button>
-                          </div>
+                    <!-- Product Details Button - 75% width (18/24) -->
+                    <div class="w-3/4">
+                      <button
+                        @click="goto_product_Route(product)"
+                        class="w-full py-2 px-4 bg-white border border-gray-300 rounded hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500 transition-colors whitespace-nowrap"
+                        style="
+                          font-family: 'Poppins', sans-serif;
+                          font-size: 12px;
+                        "
+                      >
+                        Product Details
+                      </button>
+                    </div>
 
-                          <!-- Like Button - 25% width (6/24) -->
-                          <div class="w-1/4 flex items-end justify-end">
-                            <button
-                              @click="toggleFavorite(product.product_id,product.product_type,product)"
-                              class="bg-white !py-2.5 border border-gray-300 rounded hover:bg-gray-50 hover:border-blue-500 transition-colors flex items-center justify-center"
-                              style="padding: 2px 12px"
-                            >
-                              <template v-if="product.is_favorited">
-                                <HeartFilled style="color: red" />
-                              </template>
-                              <template v-else>
-                                <HeartOutlined />
-                              </template>
-                            </button>
-                          </div>
-                        </div>
+                    <!-- Like Button - 25% width (6/24) -->
+                    <div class="w-1/4 flex items-end justify-end">
+                      <button
+                        @click="
+                          toggleFavorite(
+                            product.product_id,
+                            product.product_type,
+                            product
+                          )
+                        "
+                        class="bg-white !py-2.5 border border-gray-300 rounded hover:bg-gray-50 hover:border-blue-500 transition-colors flex items-center justify-center"
+                        style="padding: 2px 12px"
+                      >
+                        <template v-if="product.is_favorited">
+                          <HeartFilled style="color: red" />
+                        </template>
+                        <template v-else>
+                          <HeartOutlined />
+                        </template>
+                      </button>
+                    </div>
+                  </div>
                 </a-row>
               </div>
             </a-col>
@@ -478,22 +731,22 @@
       :productCount="selectedDesign?.data?.products_used?.length || 0"
       :apiBaseUrl="$store.state.root_api"
       @success="handleShareSuccess"
-
       @update:close="closeShareOnCommunityModel"
     />
   </div>
 </template>
 <script>
 import {
+  MoreOutlined,
   HeartOutlined,
   DeleteOutlined,
   EditOutlined,
   ArrowLeftOutlined,
   SaveOutlined,
   CloseOutlined,
-    HeartFilled,
+  HeartFilled,
 } from "@ant-design/icons-vue";
-import ShareOnCommunity from '@/views/catalogue/share_on_community.vue'
+import ShareOnCommunity from "@/views/catalogue/share_on_community.vue";
 export default {
   name: "my_designes",
   data() {
@@ -506,45 +759,45 @@ export default {
       room_design_type_select: "",
       room_type_select: "",
       open_ShareOnCommunity: false,
-      selectedDesignImage: '',
+      selectedDesignImage: "",
       selectedDesign: null,
-      
     };
   },
   components: {
+    MoreOutlined,
     HeartOutlined,
     DeleteOutlined,
-        HeartFilled,
+    HeartFilled,
     EditOutlined,
     ArrowLeftOutlined,
     SaveOutlined,
     CloseOutlined,
-    ShareOnCommunity
+    ShareOnCommunity,
   },
   mounted() {
     this.loadMyDesignes();
   },
   methods: {
-    closeShareOnCommunityModel(){
-      this.open_ShareOnCommunity=false
+    closeShareOnCommunityModel() {
+      this.open_ShareOnCommunity = false;
     },
     async toggleFavorite(product_id, product_type, product) {
       try {
-        const token = localStorage.getItem('token');
-        
+        const token = localStorage.getItem("token");
+
         // Check if user is authenticated
         if (!token) {
-          this.$message.warning('Please login to add favorites');
+          this.$message.warning("Please login to add favorites");
           return;
         }
-        
+
         const response = await fetch(
           `${this.$store.state.root_api}likes/favorites/toggle/`,
           {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              "Authorization": `Token ${token}`,
+              Authorization: `Token ${token}`,
             },
             body: JSON.stringify({
               id: product_id,
@@ -557,37 +810,36 @@ export default {
 
         // Update the product's favorite status
         product.is_favorited = data.favorited;
-        
-        // Show success message
-        const message = data.favorited ? 'Added to favorites' : 'Removed from favorites';
-        this.$message.success(message);
 
+        // Show success message
+        const message = data.favorited
+          ? "Added to favorites"
+          : "Removed from favorites";
+        this.$message.success(message);
       } catch (error) {
         console.error("Favorite toggle failed", error);
-        this.$message.error('Failed to update favorite');
+        this.$message.error("Failed to update favorite");
       }
     },
-    goto_product_Route(product){
-      let produuct_type='product'
-      if (product.product_type=='light'){
-        produuct_type='product'
-      }else if (product.product_type=='floor_texture'){
-        produuct_type='floor'
-      }else if (product.product_type=='wall_texture'){
-        produuct_type='wall'
-      }
-      else{
-        produuct_type=product.product_type
+    goto_product_Route(product) {
+      let produuct_type = "product";
+      if (product.product_type == "light") {
+        produuct_type = "product";
+      } else if (product.product_type == "floor_texture") {
+        produuct_type = "floor";
+      } else if (product.product_type == "wall_texture") {
+        produuct_type = "wall";
+      } else {
+        produuct_type = product.product_type;
       }
       this.$router.push({
-      name: 'buisness_product',
-      params: {
-        buisness_name: this.selected_design.data.business_slug,
-        product_type: produuct_type,
-        product_id: product.product_id
-      }
-    })
-  
+        name: "buisness_product",
+        params: {
+          buisness_name: this.selected_design.data.business_slug,
+          product_type: produuct_type,
+          product_id: product.product_id,
+        },
+      });
     },
     async delete_Design() {
       console.log("Delete design button clicked");
@@ -786,10 +1038,10 @@ export default {
         );
 
         const result = await response.json();
-        console.log(result)
+        console.log(result);
         this.selected_design = result;
 
-        this.description_room = this.selected_design.data.room_description ;
+        this.description_room = this.selected_design.data.room_description;
         this.room_design_type_select = this.selected_design.data.room_type;
         this.room_type_select = this.selected_design.data.room_design_type;
       } catch (error) {
@@ -801,22 +1053,22 @@ export default {
       this.view_type = "all";
       this.selected_design = null;
     },
-   shareOnCommunity() {
+    shareOnCommunity() {
       // Ensure we have valid data before opening modal
       if (!this.selected_design || !this.selected_design.data) {
-        this.$message.error('Design data not available');
+        this.$message.error("Design data not available");
         return;
       }
 
-      this.selectedDesignImage = this.$store.state.root_media_api + this.selected_design.data.image;
+      this.selectedDesignImage =
+        this.$store.state.root_media_api + this.selected_design.data.image;
       this.selectedDesign = this.selected_design;
       this.open_ShareOnCommunity = true;
     },
     handleShareSuccess() {
-      console.log('Design shared successfully!');
+      console.log("Design shared successfully!");
       this.open_ShareOnCommunity = false;
-    }
-    
+    },
   },
 };
 </script>
@@ -827,7 +1079,7 @@ export default {
   border-radius: 20px;
   border: 1px solid rgba(128, 128, 128, 0.167);
   padding: 10px;
-  
+
   background-color: white;
 }
 
@@ -878,14 +1130,13 @@ export default {
 }
 
 .hide-scrollbar {
-  scrollbar-width: none;       /* Firefox */
-  -ms-overflow-style: none;    /* IE/Edge */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
 }
 
 .hide-scrollbar::-webkit-scrollbar {
-  display: none;               /* Chrome / Safari */
+  display: none; /* Chrome / Safari */
 }
-
 
 .ar-badge {
   position: absolute;
@@ -926,6 +1177,16 @@ export default {
   .product-responsive {
     width: 20%;
     flex: 0 0 20%;
+  }
+}
+@media screen and (max-width: 768px) {
+  .hide-below-md {
+    display: none;
+  }
+}
+@media screen and (min-width: 769px) {
+  .hide-above-md {
+    display: none;
   }
 }
 </style>

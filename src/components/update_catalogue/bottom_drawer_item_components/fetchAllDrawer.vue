@@ -23,7 +23,7 @@
           font-size: 16px;
           line-height: 20px;
           letter-spacing: 0;
-          ">{{ brand_data.name}} AI Catalog Wall Textures</span>
+          ">{{ brand_data.name}} AI Catalog</span>
         <!-- {{ brand_data }} -->
           <!-- <b>  {{truncateChars(brand_data.name,limit=15)}}</b> -->
         </div>

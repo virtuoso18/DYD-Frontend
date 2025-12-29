@@ -1,168 +1,171 @@
 <template>
-  <div class="p-1 bg-white rounded-2xl mt-1 border border-gray-200">
-    <div class="flex h-screen bg-gray-50">
-      <!-- Sidebar -->
-      <div 
-        :class="[
-          'w-full md:w-[400px] bg-white border-r border-gray-200 flex flex-col',
-          currentRoomId && isMobile ? 'hidden' : 'flex'
-        ]"
-      >
-        <!-- Sidebar Header -->
-        <div class="p-5 border-b border-gray-200">
-          <!-- Back button for mobile -->
-          <div v-if="isMobile" class="flex items-center gap-3 mb-4">
-            <button @click="goBack" class="p-2 hover:bg-gray-100 !text-gray-700 rounded-full">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
-            <h2 class="text-2xl font-medium text-gray-900">Messages</h2>
-          </div>
-          <h2 v-else class="text-2xl font-medium text-gray-900 mb-4">Messages</h2>
-          
-          <!-- Search -->
-          <div class="relative">
-            <input 
-              type="text" 
-              placeholder="Search by name" 
-              class="w-full px-4 py-3 bg-gray-50 !text-gray-800 placeholder-gray-500 border border-gray-200 rounded-3xl text-sm outline-none transition-all focus:bg-white focus:border-blue-500 focus:shadow-lg"
-              v-model="searchQuery"
-            >
-          </div>
-        </div>
+  <div className="md:pt-3 -translate-y-18 sm:translate-y-0">
 
-        <!-- Conversations List -->
-        <div class="flex-1 overflow-y-auto py-2">
-          <div 
-            v-for="room in filteredRooms" 
-            :key="room.id"
-            class="flex items-center px-6 py-3 cursor-pointer transition-all border-l-4 border-transparent hover:bg-gray-50"
-            :class="{ 'bg-blue-50 !border-blue-500': currentRoomId === room.id }"
-            @click="selectRoom(room.id, get_proper_user_avatar(room.userProfilsAvatar).first_name +' '+ get_proper_user_avatar(room.userProfilsAvatar).last_name, get_proper_user_avatar(room.userProfilsAvatar).avatar + '?t=' + new Date().getTime())"
-          >
-            <!-- Avatar -->
-            <div class="mr-4 flex-shrink-0">
-              <a-avatar 
-                size="large" 
-                :src="$store.state.root_media_api + get_proper_user_avatar(room.userProfilsAvatar).avatar"
-              />
-            </div>
-
-            <!-- Conversation Info -->
-            <div class="flex-1 min-w-0">
-              <div class="flex justify-between items-center mb-1">
-                <h4 class="text-base font-medium text-gray-900 truncate">
-                  {{ get_proper_user_avatar(room.userProfilsAvatar).first_name }} 
-                  {{ get_proper_user_avatar(room.userProfilsAvatar).last_name }}
-                </h4>
-                <span class="text-xs text-gray-500 flex-shrink-0 ml-2">
-                  {{ room.lastMessageTime || '1 day ago' }}
-                </span>
-              </div>
-              <div class="flex justify-between items-center">
-                <p class="text-sm text-gray-500 truncate flex-1">
-                  {{ room.lastMessage || 'Hi, how are you?' }}
-                </p>
-                <span 
-                  v-if="room.unseenCount > 0"
-                  class="bg-blue-500 text-white rounded-full px-2 py-0.5 text-xs font-medium ml-2 flex-shrink-0"
-                >
-                  {{ room.unseenCount }}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Main Chat Area -->
-      <div 
-        :class="[
-          'flex-1 flex flex-col bg-white',
-          !currentRoomId && isMobile ? 'hidden' : 'flex'
-        ]"
-      >
-        <!-- Chat Header -->
-        <div v-if="currentRoomId" class="px-6 py-4 border-b border-gray-200 bg-white sticky top-0 z-10">
-          <div class="flex items-center">
+    <div class="p-1 bg-white rounded-2xl    border border-gray-200">
+      <div class="flex h-screen overflow-auto bg-gray-50">
+        <!-- Sidebar -->
+        <div 
+          :class="[
+            'w-full md:w-[400px] bg-white border-r border-gray-200 flex flex-col',
+            currentRoomId && isMobile ? 'hidden' : 'flex'
+          ]"
+        >
+          <!-- Sidebar Header -->
+          <div class="p-5 border-b border-gray-200">
             <!-- Back button for mobile -->
-            <button 
-              v-if="isMobile"
-              @click="closeChatMobile"
-              class="mr-3 p-2 hover:bg-gray-100 rounded-full"
-            >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
-
-            <div class="mr-4">
-              <a-avatar 
-                size="large" 
-                :src="$store.state.root_media_api + currentUserAvatar" 
-                class="border border-gray-200"
-              />
+            <div v-if="isMobile" class="flex items-center gap-3 mb-4">
+              <!-- <button @click="goBack" class="p-2 hover:bg-gray-100 rounded-full">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+              </button> -->
+              <h2 class="text-2xl font-medium text-gray-900">Messages</h2>
             </div>
-            <div>
-              <h3 class="text-lg font-medium text-gray-900">{{ getCurrentChatName() }}</h3>
+            <h2 v-else class="text-2xl font-medium text-gray-900 mb-4">Messages</h2>
+            
+            <!-- Search -->
+            <div class="relative">
+              <input 
+                type="text" 
+                placeholder="Search by name" 
+                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-3xl text-sm outline-none transition-all focus:bg-white focus:border-blue-500 focus:shadow-lg"
+                v-model="searchQuery"
+              >
             </div>
           </div>
-        </div>
-
-        <!-- Messages Area -->
-        <div class="flex-1 overflow-y-auto px-6 py-4" ref="messagesContainer">
-          <!-- Empty State -->
-          <div v-if="!currentRoomId" class="flex flex-col items-center justify-center h-full text-center text-gray-500">
-            <h3 class="text-lg font-medium text-gray-900 mb-2">Select a conversation to start chatting</h3>
-            <p class="text-sm">Choose from your existing conversations or start a new one</p>
-          </div>
-          
-          <!-- Messages List -->
-          <div v-else class="flex flex-col gap-4">
+  
+          <!-- Conversations List -->
+          <div class="flex-1 overflow-y-auto py-2">
             <div 
-              v-for="message in messages" 
-              :key="message.id || message.timestamp"
-              class="flex"
-              :class="message.user == currentUser.id ? 'justify-end' : 'justify-start'"
+              v-for="room in filteredRooms" 
+              :key="room.id"
+              class="flex items-center px-6 py-3 cursor-pointer transition-all border-l-4 border-transparent hover:bg-gray-50"
+              :class="{ 'bg-blue-50 !border-blue-500': currentRoomId === room.id }"
+              @click="selectRoom(room.id, get_proper_user_avatar(room.userProfilsAvatar).first_name +' '+ get_proper_user_avatar(room.userProfilsAvatar).last_name, get_proper_user_avatar(room.userProfilsAvatar).avatar + '?t=' + new Date().getTime())"
             >
-              <div class="max-w-[70%]">
-                <div 
-                  class="px-4 py-3 rounded-2xl break-words leading-relaxed"
-                  :class="message.user == currentUser.id 
-                    ? 'bg-blue-500 text-white' 
-                    : 'bg-gray-200 text-gray-900'"
-                >
-                  {{ message.message }}
+              <!-- Avatar -->
+              <div class="mr-4 flex-shrink-0">
+                <a-avatar 
+                  size="large" 
+                  :src="$store.state.root_media_api + get_proper_user_avatar(room.userProfilsAvatar).avatar"
+                />
+              </div>
+  
+              <!-- Conversation Info -->
+              <div class="flex-1 min-w-0">
+                <div class="flex justify-between items-center mb-1">
+                  <h4 class="text-base font-medium text-gray-900 truncate">
+                    {{ get_proper_user_avatar(room.userProfilsAvatar).first_name }} 
+                    {{ get_proper_user_avatar(room.userProfilsAvatar).last_name }}
+                  </h4>
+                  <span class="text-xs text-gray-500 flex-shrink-0 ml-2">
+                    {{ room.lastMessageTime || '1 day ago' }}
+                  </span>
                 </div>
-                <div class="text-xs text-gray-500 mt-1 text-right">
-                  {{ formatTime(message.timestamp) }}
+                <div class="flex justify-between items-center">
+                  <p class="text-sm text-gray-500 truncate flex-1">
+                    {{ room.lastMessage || 'Hi, how are you?' }}
+                  </p>
+                  <span 
+                    v-if="room.unseenCount > 0"
+                    class="bg-blue-500 text-white rounded-full px-2 py-0.5 text-xs font-medium ml-2 flex-shrink-0"
+                  >
+                    {{ room.unseenCount }}
+                  </span>
                 </div>
               </div>
             </div>
           </div>
         </div>
-
-        <!-- Message Input -->
-        <div v-if="currentRoomId" class="px-6 py-4 border-t border-gray-200 bg-white">
-          <div class="flex items-center gap-3 max-w-3xl">
-            <input 
-              type="text" 
-              v-model="newMessage"
-              placeholder="Type here" 
-              class="flex-1 px-5 py-3 bg-gray-50 border border-gray-200 rounded-3xl text-sm outline-none transition-all focus:bg-white focus:border-blue-500 focus:shadow-lg"
-              @keypress.enter="sendMessage"
-            >
-            <button 
-              @click="sendMessage" 
-              class="w-12 h-12 bg-blue-500 text-white rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors disabled:bg-gray-200 disabled:cursor-not-allowed"
-              :disabled="!newMessage.trim()"
-            >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path d="M22 2L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </button>
+        
+        <!-- Main Chat Area -->
+        <div 
+          :class="[
+            'flex-1 flex flex-col bg-white',
+            !currentRoomId && isMobile ? 'hidden' : 'flex'
+          ]"
+        >
+          <!-- Chat Header -->
+          <div v-if="currentRoomId" class="px-6 py-4 border-b border-gray-200 bg-white sticky top-0 z-10">
+            <div class="flex items-center">
+              <!-- Back button for mobile -->
+              <button 
+                v-if="isMobile"
+                @click="closeChatMobile"
+                class="mr-3 p-2 hover:bg-gray-100 rounded-full"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+  
+              <div class="mr-4">
+                <a-avatar 
+                  size="large" 
+                  :src="$store.state.root_media_api + currentUserAvatar" 
+                  class="border border-gray-200"
+                />
+              </div>
+              <div>
+                <h3 class="text-lg font-medium text-gray-900">{{ getCurrentChatName() }}</h3>
+              </div>
+            </div>
+          </div>
+  
+          <!-- Messages Area -->
+          <div class="flex-1 overflow-y-auto px-6 py-4" ref="messagesContainer">
+            <!-- Empty State -->
+            <div v-if="!currentRoomId" class="flex flex-col items-center justify-center h-full text-center text-gray-500">
+              <h3 class="text-lg font-medium text-gray-900 mb-2">Select a conversation to start chatting</h3>
+              <p class="text-sm">Choose from your existing conversations or start a new one</p>
+            </div>
+            
+            <!-- Messages List -->
+            <div v-else class="flex flex-col gap-4">
+              <div 
+                v-for="message in messages" 
+                :key="message.id || message.timestamp"
+                class="flex"
+                :class="message.user == currentUser.id ? 'justify-end' : 'justify-start'"
+              >
+                <div class="max-w-[70%]">
+                  <div 
+                    class="px-4 py-3 rounded-2xl break-words leading-relaxed"
+                    :class="message.user == currentUser.id 
+                      ? 'bg-blue-500 text-white' 
+                      : 'bg-gray-200 text-gray-900'"
+                  >
+                    {{ message.message }}
+                  </div>
+                  <div class="text-xs text-gray-500 mt-1 text-right">
+                    {{ formatTime(message.timestamp) }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+  
+          <!-- Message Input -->
+          <div v-if="currentRoomId" class="px-6 py-4 border-t border-gray-200 bg-white">
+            <div class="flex items-center gap-3 max-w-3xl">
+              <input 
+                type="text" 
+                v-model="newMessage"
+                placeholder="Type here" 
+                class="flex-1 px-5 py-3 bg-gray-50 border border-gray-200 rounded-3xl text-sm outline-none transition-all focus:bg-white focus:border-blue-500 focus:shadow-lg"
+                @keypress.enter="sendMessage"
+              >
+              <button 
+                @click="sendMessage" 
+                class="w-12 h-12 bg-blue-500 text-white rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors disabled:bg-gray-200 disabled:cursor-not-allowed"
+                :disabled="!newMessage.trim()"
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path d="M22 2L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
       </div>

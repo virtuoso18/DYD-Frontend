@@ -47,7 +47,7 @@
   :md="24"
   :lg="24"
 >
-              <div className="lg:w-80" style="border: 2px solid #3b82f6; border-radius: 12px; padding: 16px; background: #f8faff; position: relative; min-height: 350px; display: flex; align-items: center; justify-content: center;">
+              <div className="lg:w-100" style="border: 2px solid #3b82f6; border-radius: 12px; padding: 16px; background: #f8faff; position: relative; min-height: 350px; display: flex; align-items: center; justify-content: center;">
                 <div v-if="primaryImage" style="height: 100%; display: flex; align-items: center; justify-content: center;">
                   <img 
                     :src="primaryImage.url" 
