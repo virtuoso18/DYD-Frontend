@@ -39,13 +39,13 @@
       <!-- Designs List -->
 
       <a-col :span="24" style="padding: 5px 10px">
-        <a-row type="flex" :wrap="true" >
+        <a-row type="flex" :wrap="true">
           <a-col
             :lg="8"
             :md="12"
             :sm="24"
             :xs="24"
-            style=" padding: 0px 8px; display: flex"
+            style="padding: 0px 8px; display: flex"
             v-for="design in my_designes"
             :key="design.id"
             v-if="my_designes.length > 0"
@@ -63,57 +63,56 @@
             >
               <div class="relative" style="flex-shrink: 0">
                 <!-- Only On Community Poeted Design Ciounter Number Of Views  -->
-<div  v-if="design.shared_on_community_my_design">
-
-                <div
-                  class="tag-sec absolute left-0 top-1 flex gap-1 px-2 py-1"
-                  style="z-index: 10; flex-wrap: wrap"
-                >
+                <div v-if="design.shared_on_community_my_design">
                   <div
-                    class="px-2 py-1 bg-[#181A1B80] text-white rounded-md text-xs sm:text-sm"
+                    class="tag-sec absolute left-0 top-1 flex gap-1 px-2 py-1"
+                    style="z-index: 10; flex-wrap: wrap"
                   >
-                    {{ design.room_type }}
+                    <div
+                      class="px-2 py-1 bg-[#181A1B80] text-white rounded-md text-xs sm:text-sm"
+                    >
+                      {{ design.room_type }}
+                    </div>
+                    <div
+                      class="px-2 py-1 bg-[#181A1B80] text-white rounded-md text-xs sm:text-sm"
+                    >
+                      {{ design.room_design_type }}
+                    </div>
                   </div>
-                  <div
-                    class="px-2 py-1 bg-[#181A1B80] text-white rounded-md text-xs sm:text-sm"
-                  >
-                    {{ design.room_design_type }}
-                  </div>
-                </div>
-                
-                <div
-                  class="view-count-sec absolute right-2 top-1 flex drop-shadow-md"
-                  style="z-index: 10; gap: 4px"
-                >
-                  <img
-                    src="../../../assets/icons/eye.svg"
-                    style="width: 32px; height: 28px"
-                    alt=""
-                  />
-                  <span
-                    class="flex items-center text-white drop-shadow-md text-xs sm:text-sm"
-                    >{{ 954 }}</span
-                  >
-                </div>
-                <!-- Only On Community Poeted Design  -->
-</div>
 
-<!-- {{ design }} -->
+                  <div
+                    class="view-count-sec absolute right-2 top-1 flex drop-shadow-md"
+                    style="z-index: 10; gap: 4px"
+                  >
+                    <img
+                      src="../../../assets/icons/eye.svg"
+                      style="width: 32px; height: 28px"
+                      alt=""
+                    />
+                    <span
+                      class="flex items-center text-white drop-shadow-md text-xs sm:text-sm"
+                      >{{ 954 }}</span
+                    >
+                  </div>
+                  <!-- Only On Community Poeted Design  -->
+                </div>
+
+                <!-- {{ design }} -->
                 <img
                   :src="this.$store.state.root_media_api + design.image"
                   style="
                     width: 100%;
                     border-radius: 10px;
-                    height: auto;
+                    height: 100%;
                     object-fit: cover;
-
                   "
                   alt=""
                   @click="show_design_details(design.id)"
                 />
               </div>
 
-              <div v-if="design.shared_on_community_my_design"
+              <div
+                v-if="design.shared_on_community_my_design"
                 class="flex mx-4 sm:mx-6 my-4 sm:my-6 p-1"
                 style="flex-shrink: 0"
               >
@@ -152,12 +151,22 @@
                 </div>
               </div>
 
-                <a-col :span="22" v-else style="padding-top:10px;padding-bottom:10px;padding-left:5px;">
-
-
-                    <a-tag style="border:none;background:#f3f7f5">Room : {{  design.room_type }}</a-tag>
-                    <a-tag style="border:none;background:#f3f7f5">Style : {{ design.room_design_type }}</a-tag>
-                </a-col>
+              <a-col
+                :span="22"
+                v-else
+                style="
+                  padding-top: 10px;
+                  padding-bottom: 10px;
+                  padding-left: 5px;
+                "
+              >
+                <a-tag style="border: none; background: #f3f7f5"
+                  >Room : {{ design.room_type }}</a-tag
+                >
+                <a-tag style="border: none; background: #f3f7f5"
+                  >Style : {{ design.room_design_type }}</a-tag
+                >
+              </a-col>
             </div>
           </a-col>
         </a-row>
@@ -585,7 +594,9 @@
         </a-col>
 
         <a-col :span="24">
-          <h3 class="px-4 my-4 text-[20px] text-[#1A1A1A]">Product used to create room</h3>
+          <h3 class="px-4 my-4 text-[20px] text-[#1A1A1A]">
+            Product used to create room
+          </h3>
           <a-row>
             <a-col
               v-for="product in selected_design.data.products_used"

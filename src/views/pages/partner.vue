@@ -9,7 +9,7 @@
       />
       <div class="absolute inset-0 flex items-center justify-center">
         <h1
-          class="text-center pb-34 text-black"
+          class="text-center pb-34 text-black font-bold"
           style="
             font-family: 'Proza Libre';
             font-weight: 700;
@@ -62,12 +62,11 @@
     </div>
 
         <h3
-  class="text-center mb-4 text-black"
+  class="text-center mb-4 text-black font-bold text-2xl sm:text-4xl md:text-5xl lg:text-6xl"
   style="
     font-family: 'Proza Libre';
     font-weight: 700;
     font-style: bold;
-    font-size: 48px;
     line-height: 52px;
     letter-spacing: -0.02em;
   "
@@ -79,67 +78,64 @@ Achieve Your Goals with Us
    <div class="bg-[#F9FAFB] py-12 ">
     <!-- 5 Static Cards -->
     <div
-      class="flex flex-wrap justify-center md:justify-between gap-6 overflow-x-auto pb-6"
+      class="flex flex-wrap justify-center md:justify-between gap-2 sm:gap-6 overflow-x-auto pb-6"
     >
       <img
         src="../../assets/card11.png"
         alt="Card 1"
-        class="w-[242px] h-[130px] object-cover rounded-xl  flex-shrink-0 hover:scale-105 transition-transform duration-300"
+        class="w-[180px] h-auto sm:w-[242px] sm:h-[130px] object-cover rounded-xl  flex-shrink-0 hover:scale-105 transition-transform duration-300"
       />
       <img
         src="../../assets/card2.png"
         alt="Card 2"
-        class="w-[242px] h-[130px] object-cover rounded-xl  flex-shrink-0 hover:scale-105 transition-transform duration-300"
+        class="w-[180px] h-auto sm:w-[242px] sm:h-[130px] object-cover rounded-xl  flex-shrink-0 hover:scale-105 transition-transform duration-300"
       />
       <img
         src="../../assets/card3.png"
         alt="Card 3"
-        class="w-[242px] h-[130px] object-cover rounded-xl  flex-shrink-0 hover:scale-105 transition-transform duration-300"
+        class="w-[180px] h-auto sm:w-[242px] sm:h-[130px] object-cover rounded-xl  flex-shrink-0 hover:scale-105 transition-transform duration-300"
       />
       <img
         src="../../assets/card4.png"
         alt="Card 4"
-        class="w-[242px] h-[130px] object-cover rounded-xl flex-shrink-0 hover:scale-105 transition-transform duration-300"
+        class="w-[180px] h-auto sm:w-[242px] sm:h-[130px] object-cover rounded-xl flex-shrink-0 hover:scale-105 transition-transform duration-300"
       />
       <img
         src="../../assets/card5.png"
         alt="Card 5"
-        class="w-[242px] h-[130px] object-cover rounded-xl  flex-shrink-0 hover:scale-105 transition-transform duration-300"
+        class="w-[180px] h-auto sm:w-[242px] sm:h-[130px] object-cover rounded-xl  flex-shrink-0 hover:scale-105 transition-transform duration-300"
       />
-    </div>
-    <div
-      class="flex flex-wrap justify-center md:justify-between gap-6 overflow-x-auto pb-6"
-    >
+   
       <img
         src="../../assets/card6.png"
         alt="Card 1"
-        class="w-[242px] h-[130px] object-cover rounded-xl  flex-shrink-0 hover:scale-105 transition-transform duration-300"
+        class="w-[180px] h-auto sm:w-[242px] sm:h-[130px] object-cover rounded-xl  flex-shrink-0 hover:scale-105 transition-transform duration-300"
       />
       <img
         src="../../assets/card7.png"
         alt="Card 2"
-        class="w-[242px] h-[130px] object-cover rounded-xl  flex-shrink-0 hover:scale-105 transition-transform duration-300"
+        class="w-[180px] h-auto sm:w-[242px] sm:h-[130px] object-cover rounded-xl  flex-shrink-0 hover:scale-105 transition-transform duration-300"
       />
       <img
         src="../../assets/card8.png"
         alt="Card 3"
-        class="w-[242px] h-[130px] object-cover rounded-xl  flex-shrink-0 hover:scale-105 transition-transform duration-300"
+        class="w-[180px] h-auto sm:w-[242px] sm:h-[130px] object-cover rounded-xl  flex-shrink-0 hover:scale-105 transition-transform duration-300"
       />
       <img
         src="../../assets/card9.png"
         alt="Card 4"
-        class="w-[242px] h-[130px] object-cover rounded-xl flex-shrink-0 hover:scale-105 transition-transform duration-300"
+        class="w-[180px] h-auto sm:w-[242px] sm:h-[130px] object-cover rounded-xl flex-shrink-0 hover:scale-105 transition-transform duration-300"
       />
       <img
         src="../../assets/card10.png"
         alt="Card 5"
-        class="w-[242px] h-[130px] object-cover rounded-xl  flex-shrink-0 hover:scale-105 transition-transform duration-300"
+        class="w-[180px] h-auto sm:w-[242px] sm:h-[130px] object-cover rounded-xl  flex-shrink-0 hover:scale-105 transition-transform duration-300"
       />
     </div>
 
     <!-- Bottom Image Section -->
     <div
-      class="flex flex-col md:flex-row items-center justify-between bg-[#F2F2F2] rounded-2xl  py-6 md:p-10 mt-8"
+      class="flex flex-col md:flex-row items-center justify-between bg-[#F2F2F2] rounded-2xl  py-6 md:p-10 px-4 mt-8"
     >
       <!-- Left Text -->
       <div class="md:w-1/2 w-full">

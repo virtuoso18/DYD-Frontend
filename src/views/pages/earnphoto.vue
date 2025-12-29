@@ -1,6 +1,6 @@
 <!-- EarnPhotos.vue -->
 <template>
-  <div class="w-full">
+  <div class="w-full ">
     <!-- Hero Section -->
     <section class="relative h-[400px] md:h-[500px] bg-gray-100 overflow-hidden">
       <img 
@@ -8,7 +8,7 @@
         alt="Earn Photos Hero" 
         class="w-full h-full object-cover"
       />
-      <div class="absolute inset-0 flex items-center justify-center px-4">
+      <div class="absolute inset-0 flex items-center justify-center">
         <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold text-gray-900 text-center leading-tight tracking-tight" 
             style="font-family: 'Proza Libre';">
           Earn Photos
@@ -17,7 +17,7 @@
     </section>
 
     <!-- Main Title -->
-    <section class="py-16 px-16 bg-white">
+    <section class="py-16 px-4 sm:px-8 sm:px-8 md:px-16 bg-white">
       <div class="max-w-8xl px-auto text-center">
         <h2 class="text-3xl md:text-5xl font-bold text-gray-900 mb-16 leading-tight tracking-tight" 
             style="font-family: 'Proza Libre'; letter-spacing: -0.02em;">
@@ -34,8 +34,8 @@
             />
           </div>
           <div class="order-1 md:order-2 text-left">
-            <div class="text-8xl md:text-9xl font-bold text-gray-200 mb-4" style="font-family: 'Proza Libre';">
-             <img src="/01 (1).svg" alt="01" />
+            <div class="text-8xl md:text-9xl font-bold text-gray-200 mb-4 my-4" style="font-family: 'Proza Libre';">
+             <img  src="/01 (1).svg" alt="01" />
             </div>
             <h3 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
               Read the Feature Article
@@ -50,8 +50,8 @@
         <!-- Step 02 - Share or Repost -->
         <div class="grid md:grid-cols-2 gap-8 md:gap-12 items-center mb-20">
           <div class="order-1 text-left">
-            <div class="text-8xl md:text-9xl font-bold text-gray-200 mb-4" style="font-family: 'Proza Libre';">
-              <img src="/02.svg" alt="01" />
+            <div class="my-16 text-8xl md:text-9xl font-bold text-gray-200 " style="font-family: 'Proza Libre';">
+              <img  src="/02.svg" alt="01" />
             </div>
             <h3 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
               Share or Repost on any of<br />these platforms
@@ -81,7 +81,7 @@
           </div>
           <div class="order-1 md:order-2 text-left">
             <div class="text-8xl md:text-9xl font-bold text-gray-200 mb-4" style="font-family: 'Proza Libre';">
-              <img src="/03.svg" alt="01" />
+              <img class="my-2" src="/03.svg" alt="01" />
             </div>
             <h3 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
               Capture Your Share
@@ -127,7 +127,7 @@
           </div>
           <div class="order-1 md:order-2 text-left">
             <div class="text-8xl md:text-9xl font-bold text-gray-200 mb-4" style="font-family: 'Proza Libre';">
-              <img src="/05.svg" alt="01" />
+              <img class="my-2" src="/05.svg" alt="01" />
             </div>
             <h3 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
               Claim Your Reward
