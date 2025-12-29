@@ -1,32 +1,25 @@
 <template>
   <div>
     <!-- Banner Section -->
-    <div class="relative">
+    <div class="relative h-[80vh] w-full">
       <img
-        src="../../assets/blogs.jpg"
+        src="../../assets/blog.jpg"
         alt="Contact Banner"
-        class="w-full h-[592px] object-cover block"
+        class="absolute inset-0 w-full h-full object-cover"
       />
-      <div class="absolute inset-0 flex items-center justify-center">
-        <h1
-          class="text-center pb-34 text-black"
-          style="
-            font-family: 'Proza Libre';
-            font-weight: 700;
-            font-style: bold;
-            font-size: 44px;
-            line-height: 52px;
-            letter-spacing: -0.02em;
-          "
-        >
-        </h1>
-      </div>
+
+      <h1
+        class="absolute inset-0 flex items-center justify-center text-center text-black font-bold md:font-bold text-5xl sm:text-5xl md:text-[70px] leading-tight"
+        style="font-family: 'Proza Libre'; letter-spacing: -0.02em"
+      >
+        Blogs
+      </h1>
     </div>
 
     <!-- Stats Cards Section -->
     <!-- Tutorial Cards Section -->
 <!-- Tutorial Cards Section -->
- <div class="w-full py-16 flex justify-center items-center">
+ <div class="w-full py-16 flex justify-center px-4 items-center">
     <div class="flex flex-wrap justify-start gap-16 overflow-x-auto md:overflow-visible scrollbar-hide">
       <!-- Card 1 -->
       <div class="flex flex-col items-start flex-shrink-0 w-full sm:w-[354px]">

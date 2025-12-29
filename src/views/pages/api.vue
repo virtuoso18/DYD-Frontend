@@ -21,15 +21,15 @@
   <span class="absolute top-0 right-[-5px] text-[15px]">✦</span>
   <span class="absolute top-[15px] right-[5px] text-[30px]">✦</span>
 
-  Go to console
+  <span class="text-[20px] md:text-xl">Go to console</span>
 </button>
 
       </div>
     </section>
 
     <!-- Unlock Potential Section -->
-    <section class="py-16 px-4 bg-white">
-      <div class="max-w-full mx-auto px-12 text-center">
+    <section class="py-12 lg:py-16 px-4 bg-white">
+      <div class="max-w-full mx-auto lg:px-12 text-center">
         <h2 class="text-3xl md:text-5xl font-bold text-gray-900 mb-12 leading-tight tracking-tight" 
             style="font-family: 'Proza Libre'; letter-spacing: -0.02em;">
           Unlock the potential of<br />
@@ -46,8 +46,8 @@
     </section>
 
     <!-- Our API Services Section -->
-    <section class="py-16 px-4 bg-gray-50">
-      <div class="max-w-full mx-auto px-18">
+    <section class="md:py-0 lg:py-16 px-4 bg-gray-50">
+      <div class="max-w-full mx-auto lg:px-18">
         <div class="text-center mb-12">
           <h2 class="text-3xl md:text-5xl font-bold text-gray-900 mb-4 leading-tight tracking-tight" 
               style="font-family: 'Proza Libre'; letter-spacing: -0.02em;">
@@ -104,7 +104,7 @@
 
     <!-- AI-Powered Interior Imaging API Suite -->
     <section class="py-16 px-4 bg-white">
-      <div class="max-w-8xl px-8 mx-auto">
+      <div class="max-w-8xl lg:px-8 mx-auto">
         <h2 class="text-3xl md:text-5xl font-bold text-gray-900 text-center mb-16 leading-tight tracking-tight" 
             style="font-family: 'Proza Libre'; letter-spacing: -0.02em;">
           AI-Powered Interior Imaging API Suite
@@ -198,14 +198,14 @@
 
 
     <!-- FAQ Section -->
-    <section class="py-16 px-4 bg-white">
+    <section class="py-16 px-2 bg-white">
       <div class="max-w-8xl mx-auto">
         <h2 class="text-3xl md:text-5xl font-bold text-gray-900 text-center mb-12 leading-tight tracking-tight" 
             style="font-family: 'Proza Libre'; letter-spacing: -0.02em;">
           Got questions? We have answers
         </h2>
 
-        <div class= "space-y-4 px-8 py-4 ">
+        <div class= "space-y-4 px-0 md:px-8 py-4 ">
           <!-- FAQ Item 1 -->
           <div class="border border-gray-200 rounded-lg overflow-hidden">
             <button
