@@ -22,7 +22,7 @@
     <h3 style="font-family: Poppins, sans-serif; font-weight: 500; font-size: 16px; line-height: 24px; letter-spacing: 0;">
       Liked Products & Rooms 
     </h3>
-                <a-tabs v-model:activeKey="active_tab">
+                <a-tabs v-model:activeKey="active_tab" :key="tabRefreshKey" @tabClick="handleTabClick">
                     <a-tab-pane key="Furniture" tab="Furniture" >
                     <div v-if="!filteredProducts?.length"  style="height:70vh;gap:20px;;flex-direction:column;display: flex;justify-content: center;align-items: center;">
                             <!-- <a-empty :description="'No Furniture Available'"></a-empty> -->
@@ -97,7 +97,7 @@
                             <a-col v-for="product in filteredrooms" :key="product.id" 
                                 class="product-responsive" style="padding:5px;">
                                 <div class="product">
-                                    <div class="product-image-container" @click="viewProduct(product)">
+                                    <div class="product-image-container" @click="viewRoom(product)">
                                         <img 
                                             :src="$store.state.root_media_api + product.image" 
                                             :alt="product.name"
@@ -121,7 +121,7 @@
                                     
     
                                         <a-col span="17">
-                                            <a-button block @click="viewProduct(product)">Product Details</a-button>
+                                            <a-button block @click="viewRoom(product)">Product Details</a-button>
                                         </a-col>
                                         
                                         <a-col span="1"></a-col>
@@ -164,9 +164,17 @@
   @commentAdded="handleCommentAdded"
   @likeToggled="handleLikeToggled"
 />
+<RoomDetailsModal
+  v-if="roomModalVisible"                    
+  :visible="roomModalVisible"
+  :room="selectedRoom || {}"
+  :mediaBase="$store.state.root_media_api"
+  @close="closeRoomModal"
+/>
 </template>
 <script>
 import CommentsModal from '@/views/pages/CommentsModal.vue';
+import RoomDetailsModal from '@/views/pages/RoomDetailsModal.vue';
 import {
   ExclamationCircleOutlined,
   EyeOutlined,
@@ -193,6 +201,7 @@ export default {
     MessageOutlined,
     ShareAltOutlined,
     CommentsModal,
+    RoomDetailsModal,
     MoreOutlined,
     EditOutlined,
     DeleteOutlined,
@@ -208,6 +217,9 @@ export default {
       community_posts: [],
       showModal: false,
       selectedPost: null,
+      roomModalVisible: false,
+      selectedRoom: null,
+      tabRefreshKey: 0,
       
       // Pagination states for Products
       productsPagination: {
@@ -458,7 +470,28 @@ export default {
 
     handleRoomsPageChange(page) {
       this.fetchMyRooms(page);
-    }
+    },
+     viewRoom(room) {
+      // room object already looks like:
+      // { added_at, is_favorited, id, name, image, category, type }
+      this.selectedRoom = room
+      this.roomModalVisible = true
+    },
+    closeRoomModal() {
+      this.roomModalVisible = false
+      this.selectedRoom = null
+    },
+      handleTabChange(key) {
+    this.active_tab = key;  // Force sync
+    // Reset modal state when switching tabs
+    this.showModal = false;
+    this.selectedPost = null;
+  },
+
+   handleTabClick(key) {
+    this.active_tab = key;
+    this.tabRefreshKey++;  // Force re-render
+  },
   }
 }
 </script>

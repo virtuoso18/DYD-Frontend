@@ -427,7 +427,7 @@ export default {
   
   data() {
     return {
-        active_tab: 'community-posts',  // MUST initialize
+        active_tab: 'Furniture',  // MUST initialize
 
       products: [],
       rooms: [],

@@ -2,7 +2,7 @@
   <div class="main">
     <div class="products-list">
       <a-row>
-        <a-col 
+        <a-col
           v-for="product in products"
           :key="product.product_id"
           class="product-responsive"
@@ -113,7 +113,7 @@ export default {
       this.$router.push({
       name: 'buisness_product',
       params: {
-        buisness_name: this.$route.params.buisness_name,
+        buisness_name: this.$route.params.buisness_name || product.business_slug,
         product_type: product_type,
         product_id: product.product_id
       }
@@ -164,7 +164,7 @@ export default {
             }),
           }
         );
-        debugger
+        
         const data = await response.json();
 
         // Update the product's favorite status
