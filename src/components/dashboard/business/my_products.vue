@@ -994,7 +994,7 @@
         <!--for mobile-->
         <div
           class="flex md:hidden flex-wrap items-center justify-between mb-5 w-full gap-3"
-          style="padding:2px;"
+          style="padding: 2px"
         >
           <!-- Title -->
           <h2
@@ -1048,7 +1048,7 @@
                       ? 'bg-blue-600 text-white'
                       : 'bg-white text-gray-600',
                   ]"
-                  style="font-family: var(--font-family-main);color:white"
+                  style="font-family: var(--font-family-main); color: white"
                 >
                   <svg
                     width="16"
@@ -1193,176 +1193,189 @@
 
         <!-- Grid View -->
         <div v-if="viewMode === 'grid'" class="sm:main">
-          <div class="products-list " style="padding:2px">
+          <div class="products-list" style="padding: 2px">
             <a-tabs v-model:activeKey="active_tab">
               <a-tab-pane
                 key="Furniture"
                 tab="Furniture"
-                v-if="filteredProducts.length > 0"
               >
                 <div
-                  v-if="!filteredProducts.length"
-                  style="
-                    height: 70vh;
-                    gap: 10px;
-                    flex-direction: column;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                  "
+                  v-if="isLoading"
+                  class="spinner-sec w-full h-[80vh] flex justify-center items-center"
                 >
-                  <a-empty :description="'No Furniture Available'"></a-empty>
-
-                  <a-button type="primary" @click="addProduct()">
-                    Add Furniture
-                  </a-button>
+                  <a-spin tip="Loading..."> </a-spin>
                 </div>
-
-                <a-row v-else>
-                  <a-col
-                    v-for="product in filteredProducts"
-                    :key="product.id"
-                    class="product-responsive p-1 sm:p-2"
-                    style="padding: 5px"
+                <div v-else>
+                  <div
+                    v-if="!filteredProducts.length"
+                    style="
+                      height: 70vh;
+                      gap: 10px;
+                      flex-direction: column;
+                      display: flex;
+                      justify-content: center;
+                      align-items: center;
+                    "
                   >
-                    <div class="product" style="padding: 5px">
-                      <div
-                        class="product-image-container"
-                        @click="viewProduct(product)"
-                      >
-                        <img
-                          :src="
-                            $store.state.root_media_api + product.primary_image
-                          "
-                          :alt="product.name"
-                          class="product-image"
-                        />
-                        <!-- Category Badge -->
-                        <div class="category-badge">
-                          {{ product.category.name }}
+                    <a-empty :description="'No Furniture Available'"></a-empty>
+
+                    <a-button type="primary" @click="addProduct()">
+                      Add Furniture
+                    </a-button>
+                  </div>
+
+                  <a-row v-else>
+                    <a-col
+                      v-for="product in filteredProducts"
+                      :key="product.id"
+                      class="product-responsive p-1 sm:p-2"
+                      style="padding: 5px"
+                    >
+                      <div class="product" style="padding: 5px">
+                        <div
+                          class="product-image-container"
+                          @click="viewProduct(product)"
+                        >
+                          <img
+                            :src="
+                              $store.state.root_media_api +
+                              product.primary_image
+                            "
+                            :alt="product.name"
+                            class="product-image"
+                          />
+                          <!-- Category Badge -->
+                          <div class="category-badge">
+                            {{ product.category.name }}
+                          </div>
+                          <!-- AR Badge -->
+                          <div class="ar-badge">AR</div>
                         </div>
-                        <!-- AR Badge -->
-                        <div class="ar-badge">AR</div>
-                      </div>
-                      <!-- {{ truncateText(product.description || 'No description available', 8) }} -->
+                        <!-- {{ truncateText(product.description || 'No description available', 8) }} -->
 
-                      <a-row>
-                        <a-col span="24">
-                          <b
-                            class="block w-full truncate"
-                            :title="product.name"
-                          >
-                            {{ product.name || "No name available" }}
-                          </b>
-                        </a-col>
+                        <a-row>
+                          <a-col span="24">
+                            <b
+                              class="block w-full truncate"
+                              :title="product.name"
+                            >
+                              {{ product.name || "No name available" }}
+                            </b>
+                          </a-col>
 
-                        <a-col
-                          span="16"
-                          style="
-                            font-family: 'Poppins', sans-serif;
-                            font-size: 13px;
-                            font-weight: 400;
-                          "
-                        >
-                          Color
-                        </a-col>
-
-                        <a-col
-                          span="8"
-                          style="display: flex; justify-content: end"
-                        >
-                          <div
-                            v-for="(color, index) in product.colors.slice(0, 2)"
-                            :key="index"
+                          <a-col
+                            span="16"
                             style="
-                              width: 20px;
-                              height: 20px;
-                              border-radius: 20px;
-                              margin-left: 2px;
+                              font-family: 'Poppins', sans-serif;
+                              font-size: 13px;
+                              font-weight: 400;
                             "
-                            :style="'background:' + color"
-                          ></div>
-                        </a-col>
-
-                        <a-col
-                          span="12"
-                          style="
-                            font-family: 'Poppins', sans-serif;
-                            font-size: 13px;
-                            font-weight: 400;
-                          "
-                        >
-                          Price
-                        </a-col>
-
-                        <a-col
-                          span="12"
-                          style="
-                            display: flex;
-                            justify-content: end;
-                            font-weight: 700;
-                          "
-                        >
-                          <!-- <del style="font-size: 10px;">${{ product.pricing.price }}</del> -->
-                          ${{ product.pricing.price }}
-                        </a-col>
- <a-col span="18">
-                          <a-button block @click="viewProduct(product)" style="display:flex;justify-content:center"
-                            >Product Details</a-button
                           >
-                        </a-col>
+                            Color
+                          </a-col>
 
-                        <a-col :span="1"></a-col>
-                        <a-col
-                          span="5"
-                          style="
-                            display: flex;
-                            align-items: end;
-                            justify-content: end;
-                          "
-                        >
-                          <!-- <a-button><HeartOutlined /></a-button> -->
+                          <a-col
+                            span="8"
+                            style="display: flex; justify-content: end"
+                          >
+                            <div
+                              v-for="(color, index) in product.colors.slice(
+                                0,
+                                2
+                              )"
+                              :key="index"
+                              style="
+                                width: 20px;
+                                height: 20px;
+                                border-radius: 20px;
+                                margin-left: 2px;
+                              "
+                              :style="'background:' + color"
+                            ></div>
+                          </a-col>
 
-                          <a-button
-                            @click="toggleFavorite(product, 'product')"
+                          <a-col
+                            span="12"
                             style="
-                              padding: 2px 12px;
+                              font-family: 'Poppins', sans-serif;
+                              font-size: 13px;
+                              font-weight: 400;
+                            "
+                          >
+                            Price
+                          </a-col>
+
+                          <a-col
+                            span="12"
+                            style="
                               display: flex;
-                              align-items: center;
-                              justify-content: center;
+                              justify-content: end;
+                              font-weight: 700;
                             "
                           >
-                            <template v-if="product.is_favorited">
-                              <HeartFilled style="color: red" />
-                            </template>
-                            <template v-else>
-                              <HeartOutlined />
-                            </template>
-                          </a-button>
-                        </a-col>
-                        
-                      </a-row>
-                    </div>
-                  </a-col>
-                </a-row>
+                            <!-- <del style="font-size: 10px;">${{ product.pricing.price }}</del> -->
+                            ${{ product.pricing.price }}
+                          </a-col>
+                          <a-col span="18">
+                            <a-button
+                              block
+                              @click="viewProduct(product)"
+                              style="display: flex; justify-content: center"
+                              >Product Details</a-button
+                            >
+                          </a-col>
 
-                <div
-                  v-if="filteredProducts.length > 0"
-                  style="
-                    display: flex;
-                    justify-content: center;
-                    margin-top: 20px;
-                    margin-bottom: 20px;
-                  "
-                >
-                  <a-pagination
-                    v-model:current="productsPagination.currentPage"
-                    :total="productsPagination.totalCount"
-                    :page-size="productsPagination.pageSize"
-                    @change="handleProductsPageChange"
-                    show-total
-                    :show-size-changer="false"
-                  />
+                          <a-col :span="1"></a-col>
+                          <a-col
+                            span="5"
+                            style="
+                              display: flex;
+                              align-items: end;
+                              justify-content: end;
+                            "
+                          >
+                            <!-- <a-button><HeartOutlined /></a-button> -->
+
+                            <a-button
+                              @click="toggleFavorite(product, 'product')"
+                              style="
+                                padding: 2px 12px;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                              "
+                            >
+                              <template v-if="product.is_favorited">
+                                <HeartFilled style="color: red" />
+                              </template>
+                              <template v-else>
+                                <HeartOutlined />
+                              </template>
+                            </a-button>
+                          </a-col>
+                        </a-row>
+                      </div>
+                    </a-col>
+                  </a-row>
+
+                  <div
+                    v-if="filteredProducts.length > 0"
+                    style="
+                      display: flex;
+                      justify-content: center;
+                      margin-top: 20px;
+                      margin-bottom: 20px;
+                    "
+                  >
+                    <a-pagination
+                      v-model:current="productsPagination.currentPage"
+                      :total="productsPagination.totalCount"
+                      :page-size="productsPagination.pageSize"
+                      @change="handleProductsPageChange"
+                      show-total
+                      :show-size-changer="false"
+                    />
+                  </div>
                 </div>
               </a-tab-pane>
               <a-tab-pane
@@ -1400,7 +1413,7 @@
                     class="product-responsive"
                     style="padding: 5px"
                   >
-                    <div class="product"  style="padding: 5px">
+                    <div class="product" style="padding: 5px">
                       <!-- Product image container -->
                       <!-- <div 
                                 class="product-image-container" 
@@ -1493,7 +1506,10 @@
                         <!-- Buttons -->
 
                         <a-col span="17">
-                          <a-button block @click="viewProduct(product)" style="display:flex;justify-content:center"
+                          <a-button
+                            block
+                            @click="viewProduct(product)"
+                            style="display: flex; justify-content: center"
                             >Product Details</a-button
                           >
                         </a-col>
@@ -1660,7 +1676,10 @@
                             @click="viewProduct(product)"
                             style="
                               font-family: 'Poppins', sans-serif;
-                              font-size: 12px; display:flex; justify-content: center;align-items:center
+                              font-size: 12px;
+                              display: flex;
+                              justify-content: center;
+                              align-items: center;
                             "
                             >Product Details</a-button
                           >
@@ -1809,12 +1828,18 @@
                           style="
                             font-family: 'Poppins', sans-serif;
                             font-size: 13px;
-                            padding-right:5px
+                            padding-right: 5px;
                           "
                         >
-                          <a-button block @click="viewProduct(product)" style=" display: flex;width:100%;
+                          <a-button
+                            block
+                            @click="viewProduct(product)"
+                            style="
+                              display: flex;
+                              width: 100%;
                               align-items: center;
-                              justify-content: center;"
+                              justify-content: center;
+                            "
                             >Product Details</a-button
                           >
                         </a-col>
@@ -3682,6 +3707,7 @@ export default {
     // },
     async fetchMyProducts(page = 1) {
       try {
+        this.isLoading = true;
         const token = localStorage.getItem("token");
         const response = await fetch(
           `${this.$store.state.root_api}product/api-product-owner/products/?page=${page}&page_size=${this.productsPagination.pageSize}`,
@@ -3703,6 +3729,8 @@ export default {
       } catch (error) {
         console.error("Error loading products:", error);
         this.$message.error("Error loading products");
+      } finally {
+        this.isLoading = false;
       }
     },
     //  async fetchMyLights() {
