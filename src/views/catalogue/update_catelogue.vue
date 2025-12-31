@@ -489,7 +489,14 @@ Switch Furniture</a-button> -->
     }" -->
   <div     v-if="LockCanvasOperation===false"
   
-    class="canvas-painting-sec" :class="(current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Lights' && selected_light_type==='sunk') ? 'light-height-adjuster':''"  >
+    class="canvas-painting-sec" 
+    :class="((current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Lights' && selected_light_type==='sunk') ? 'light-height-adjuster':'') || 
+    ((current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Floor') ? 'mobile-floor-height-adjuster':'') ||
+    ((current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Wall') ? 'mobile-wall-height-adjuster':'') ||
+    ((current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Lights' && selected_light_type==='') ? 'mobile-unselected-light-height-adjuster':'') 
+
+    " 
+      >
   
             <canvas_floor_render 
                 v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Floor'" 
@@ -523,7 +530,7 @@ Switch Furniture</a-button> -->
                 />
                 <!-- @redetect-objects-room="fetch_redetect_ObjectsBinary_Masks" -->
   <!-- ceiling light renderer -->
-              <img :src="this.base_image_url" style="width:100%;height:100%;object-fit:contain" alt="" v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Lights' && selected_light_type===''">
+              <img :src="this.base_image_url" style="width:100%;height:50vh;object-fit:contain" alt="" v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Lights' && selected_light_type===''">
               <canvas_lights_render 
                 v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Lights' && selected_light_type==='sunk'" 
                 :baseImage="base_image_url"
@@ -931,9 +938,10 @@ Switch Furniture</a-button> -->
                    @texture-selected="floorTextureSelected"
                   ref="floor_products_list"
                     :brand_data="brand_data"
-  
-                   @floor-see-all="floorSeeAll"
-                   ></floor>
+                    
+                    @floor-see-all="floorSeeAll"
+                    ></floor>
+                    <!-- style="height:100%;max-height:77vh" -->
                    <walls v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Wall'"
                    @texture-selected="wallTextureSelected"
                   ref="wall_products_list"
@@ -3989,6 +3997,16 @@ UserDeleteOutlined,
 @media (max-width:400px) {
   .light-height-adjuster{
   height:80vh
+}
+.mobile-floor-height-adjuster{
+  height:52vh
+}
+
+.mobile-wall-height-adjuster{
+  height:52vh
+}
+.mobile-unselected-light-height-adjuster{
+  height:50vh
 }
 }
 </style>

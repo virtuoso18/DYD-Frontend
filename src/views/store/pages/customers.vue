@@ -1,6 +1,6 @@
 <template>
 
-    <div class="main !my-3 hidden md:block">
+    <div class="main !my-3 hidden md:block w-full">
         <div v-if="view === 'list'" class="customers-page">
 <h3 className="!text-gray-700 p-2"
   style="
@@ -481,7 +481,7 @@ getInitials  (name)  {
 .main{
     
     border:1px solid rgba(0,0,0,0.1);
-    height:100vh;
+    height:auto;
     padding:10px;
     background-color: white;
     border-radius:15px;

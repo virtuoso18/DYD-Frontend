@@ -100,43 +100,6 @@
       <button @click="resetZoomAndPan" class="zoom-btn reset-btn" title="Reset View">⌂</button>
     </div>
 
-    <div class="rescale-controls" >
-
-      <button
-      @click="showFlatSurfaceModal = true"
-  class="!px-2 !py-1  whitespace-nowrap !text-black rounded-md btn-text-style flex items-center justify-center"
-  type="primary"
-  :disabled="isLoading"
-  title="Rescale Room Layout"
->
-  <svg
-    width="16"
-    height="16"
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <!-- circular arrow -->
-    <path
-      d="M21 12a9 9 0 1 1-2.64-6.36"
-      stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-    />
-    <path
-      d="M21 3v6h-6"
-      stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-    />
-  </svg>
-</button>
-
-    </div>
-
-    
-
     <!-- Pan Instructions -->
     <div v-if="zoom > 1 && !isLoading" class="instructions">
       Click and drag to pan • Mouse wheel to zoom
@@ -210,15 +173,15 @@
        </div>
      </div>
   </div>
-  <div class="flex flex-wrap md:hidden justify-between px-3  bg-white">
+  <div class="flex flex-wrap md:hidden justify-between px-3 bg-white">
 
   <!-- LEFT SIDE -->
   <div class="pt-1">
-    <div class="flex gap-3 pt-1 pr-1">
+    <div class="flex gap-1 pt-1 pr-1">
 
       <!-- Select / Deselect All -->
       <button
-  class="flex items-center gap-[3px] !px-4 !py-[6px] bg-[#4e70f9] !text-white whitespace-nowrap rounded-md btn-text-style !text-[12px]"
+  class="flex items-center gap-[3px] !px-2 !py-[0px] bg-[#4e70f9] !text-white whitespace-nowrap rounded-md btn-text-style !text-[8px]"
   :class="{ 'active': allWallsSelected }"
   @click="toggleSelectAll"
   :disabled="isLoading"
@@ -233,8 +196,8 @@
 
 
       <!-- Clear Button -->
-      <!-- <button
-        class="control-btn clear-btn !px-4 !py-[2px] bg-[#4e70f9] !text-red rounded-md btn-text-style  !text-[12px]"
+      <button
+        class="control-btn clear-btn !px-2 !py-[1px] bg-[#4e70f9] !text-red rounded-md btn-text-style  !text-[8px]"
         @click="clearAllSelections"
         :disabled="internalSelectedMasks.length === 0 || isLoading"
         title="Clear Selection"
@@ -243,26 +206,26 @@
           <path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16zM4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
         </svg>
         Clear
-      </button> -->
+      </button>
 
       <!-- Rescale -->
-      <!-- <button
-        class="!px-1 !py-[1px]  bg-[#4e70f9] whitespace-nowrap !text-white rounded-md btn-text-style  !text-[12px]"
+      <button
+        class="!px-1 !py-[1px]  bg-[#4e70f9] whitespace-nowrap !text-white rounded-md btn-text-style  !text-[8px]"
         type="primary"
         :disabled="isLoading"
         @click="rescaleRoomLayout()"
       >
         Rescale Room layout
-      </button> -->
+      </button>
 
     </div>
   </div>
 
   <!-- MIDDLE -->
-  <!-- <div>
-    <div class="!pt-2 flex gap-1  pr-1">
+  <div>
+    <div class="pt-1 flex gap-1 pt-2 pr-1">
       <button
-        class="toolbar-btn primary-btn !px-2 !py-[0px] bg-[#4e70f9] !text-white rounded-md btn-text-style  !text-[12px]"
+        class="toolbar-btn primary-btn !px-2 !py-[0px] bg-[#4e70f9] !text-white rounded-md btn-text-style  !text-[8px]"
         @click="reset_entire_room"
         :disabled="isLoading"
       >
@@ -271,20 +234,20 @@
 
       <button
         type="primary"
-        class="toolbar-btn primary-btn !px-2 !py-[2px] bg-[#4e70f9] !text-white rounded-md btn-text-style  !text-[12px]"
+        class="toolbar-btn primary-btn !px-2 !py-[2px] bg-[#4e70f9] !text-white rounded-md btn-text-style  !text-[8px]"
         @click="reset_entire_room"
         :disabled="isLoading"
       >
         After
       </button>
     </div>
-  </div> -->
+  </div>
 
   <!-- RIGHT SIDE -->
-  <div class="pt-2">
+  <div class="pt-1">
   <button
   type="primary"
-  class="toolbar-btn primary-btn bg-[#4e70f9] whitespace-nowrap !text-white rounded-md !px-2 !py-[6px] !text-[12px] btn-text-style"
+  class="toolbar-btn primary-btn bg-[#4e70f9] whitespace-nowrap !text-white rounded-md !px-2 !py-[3px] !text-[8px] btn-text-style"
   @click="$emit('Apply-Changes', 'Walls-Renerer')"
   :disabled="isLoading"
 >
@@ -294,23 +257,12 @@
 
   </div>
 
-<FlatSurfaceModal
-      :isVisible="showFlatSurfaceModal"
-      @close="showFlatSurfaceModal = false"
-      @continue="handleFlatSurfaceContinue"
-    />
-
 </div>
 
 </template>
 <script>
-import FlatSurfaceModal from '@/components/update_catalogue/FlatSurfaceModal.vue';
-
 export default {
   name: 'walls_renderer',
-  components: {
-    FlatSurfaceModal
-  },
   
 // 1. Add maskUpdateTrigger as a prop in child component
 props: {
@@ -398,11 +350,9 @@ props: {
       
       // Resize observer
       resizeObserver: null,
-      showFlatSurfaceModal: false,
       
       // Internal selected masks (for immediate UI updates)
       internalSelectedMasks: []
-      
     }
   },
 
@@ -495,17 +445,6 @@ watch: {
 
   
   methods: {
-
-     handleFlatSurfaceContinue() {
-      // Your rescale logic here
-      this.rescaleRoomLayout()
-      console.log('Continue with flat surface detection')
-    },
-    
-    rescaleRoomLayout() {
-      // Your existing rescale logic
-      console.log('Rescaling room layout...')
-    },
     // ===================
     // INITIALIZATION
     // ===================
@@ -1534,7 +1473,7 @@ selectAllWallsOnInit() {
 
 .btn-text-style {
   font-family: Poppins;
-  font-weight: 300;
+  font-weight: 400;
   font-style: Medium;
   font-size: 10px;
   line-height: 14px;
@@ -1563,20 +1502,6 @@ selectAllWallsOnInit() {
   padding: 8px 12px;
   border-radius: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  z-index: 5;
-}
-
-.rescale-controls {
-  position: absolute;
-  bottom: 34px;
-  right: 12px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background:rgba(255, 255, 255, 0.6);
-  padding: 8px 12px;
-  border-radius: 20px;
-  /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45); */
   z-index: 5;
 }
 

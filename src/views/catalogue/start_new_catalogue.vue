@@ -48,7 +48,7 @@
 
 
       <!-- Examples -->
-      <p class="history-label">Your History </p>
+      <p class="history-label">   <a-spin v-if="loading_user_history_rooms" /> Your History </p>
       <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 px-5 max-w-[1300px] mx-auto">
   <div
     v-for="histry_card in your_history"
@@ -83,14 +83,33 @@
 
 
       <!-- Examples -->
-      <p class="example-label">Use an example image</p>
+      <p class="example-label"><a-spin v-if="loading_Example_rooms"/> Use an example image</p>
       <div class="example-images">
         <a-row>
 
-          <a-col span="8" v-for="example in exampleImages" :key="id" style="padding:5px;">
-            
-              <img  @click="startTestRoom(example.id)" :src="this.$store.state.root_media_api+example.image" class="example-image" />
-          </a-col>
+          <a-col
+  sm="12"
+  xs="12"
+  md="8"
+  lf="8"
+  v-for="example in exampleImages"
+  :key="example.id"
+  style="padding:5px;"
+>
+  <div class="image-wrapper" @click="!loading && startTestRoom(example.id)">
+    <img
+      :src="$store.state.root_media_api + example.image"
+      class="example-image"
+      :class="{ dimmed: loading }"
+    />
+
+    <!-- Loader overlay -->
+    <div v-if="loading" class="loader-overlay">
+      <a-spin />
+    </div>
+  </div>
+</a-col>
+
         </a-row>
       </div>
 
@@ -109,6 +128,9 @@ export default {
   },
   data() {
     return {
+      loading:false,
+      loading_Example_rooms:true,
+      loading_user_history_rooms:true,
       fileList: [],
       uploading: false,
       uploadResult: null,
@@ -124,7 +146,7 @@ export default {
   },
   methods: {
     async fetchExampleRooms() {
-      this.loading = true;
+      this.loading_Example_rooms = true;
       try {
         const url = `${this.$store.state.root_api}room/api/example-rooms/`;
         const response = await fetch(url, {
@@ -142,7 +164,7 @@ export default {
       } catch (error) {
         console.error("Failed to fetch:", error);
       } finally {
-        this.loading = false;
+        this.loading_Example_rooms = false;
       }
     },
     async startTestRoom(room_id) {
@@ -179,7 +201,7 @@ export default {
       }
     },
     async fetchUserHistoryRooms() {
-      this.loading = true;
+      this.loading_user_history_rooms = true;
       try {
         const url = `${this.$store.state.root_api}room/api/user-history-rooms/`;
         const response = await fetch(url, {
@@ -197,7 +219,7 @@ export default {
       } catch (error) {
         console.error("Failed to fetch:", error);
       } finally {
-        this.loading = false;
+        this.loading_user_history_rooms = false;
       }
     },
       beforeUpload(file) {
@@ -547,6 +569,41 @@ export default {
 .upload-hint {
   font-size: 12px;
   color: #999;
+}
+
+
+
+
+
+
+
+
+
+.image-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.example-image {
+  width: 100%;
+  border-radius: 10px;
+  display: block;
+  cursor: pointer;
+}
+
+.example-image.dimmed {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.loader-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 10px;
 }
 
 </style>

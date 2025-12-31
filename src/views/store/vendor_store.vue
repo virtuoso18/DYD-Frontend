@@ -866,9 +866,15 @@ sharePost(post) {
                     })
                 }
 
-                if (this.currentUser.user_type === 'Business' || this.currentUser.user_type === 'Professional') {
+                if (this.currentUser.user_type === 'Business' ) {
                     this.$router.push({
                         path: '/my-store/messages',
+                        query: { chatId: data.room_id }
+                    })
+                }
+                  if (this.currentUser.user_type === 'Professional') {
+                    this.$router.push({
+                        path: '/professional-dashboard/my-messages',
                         query: { chatId: data.room_id }
                     })
                 }
