@@ -64,7 +64,7 @@
                             span="8"
                             style="display: flex; justify-content: end"
                           >
-                          {{product.product_colors}}
+                          <!-- {{product.product_colors}} -->
                             <div
                               v-for="(color, index) in product.product_colors.slice(
                                 0,
