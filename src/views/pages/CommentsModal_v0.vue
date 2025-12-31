@@ -402,22 +402,19 @@ export default {
   },
 
   watch: {
-   isOpen: {
-    immediate: true,
-    handler(newVal) {
-      console.log('isOpen watcher fired:', newVal);
-
+    isOpen(newVal) {
       if (newVal) {
         document.body.style.overflow = 'hidden';
         this.localIsLiked = this.post.is_liked;
         this.localLikes = this.post.likes;
+        // Load comments when modal opens
         this.loadComments();
       } else {
         document.body.style.overflow = '';
+        // Reset comments when modal closes
         this.resetComments();
       }
-    }
-  },
+    },
     post: {
     immediate: true,
     handler(newPost) {
@@ -442,13 +439,12 @@ export default {
     },
 
     async loadComments(page = 1) {
-      debugger
       if (page === 1) {
         this.loadingComments = true;
       } else {
         this.loadingMoreComments = true;
       }
-      
+
       try {
         const response = await fetch(
           `${this.$store.state.root_api}community/api/comments/?post_id=${this.post.id}&page=${page}`,
