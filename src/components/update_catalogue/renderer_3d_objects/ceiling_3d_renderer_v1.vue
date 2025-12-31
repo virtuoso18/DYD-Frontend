@@ -1,166 +1,126 @@
 <template>
-  <div className="">
-    <div class="main-canvas" ref="canvasContainer">
+  <div>
+
+    <!-- roll = {{roll}} ||  &nbsp; pitch = {{pitch}} ||  &nbsp; yaw = {{yaw}} -->
+    <div class="main-canvas" ref="canvasContainer" >
       <div id="viewer" ref="viewer">
         <div id="loading" v-if="loading">
           Loading 3D model and ceiling data...
         </div>
       </div>
     </div>
-    
-    <div class="flex flex-wrap justify-between gap-3 header-wrapper">
-      <!-- Sliders Section -->
-      <div class="flex flex-row md:flex-row overflow-x-auto gap-8 md:gap-2 items-center justify-center flex-1 min-w-0">
+    <div
+      class="flex flex-wrap justify-between gap-3"
+      style="
+        padding-left: 8px;
+        padding-top: 0px;
+        padding-right: 10px;
+        background: white;
+        min-height: 50px;
+      "
+    >
+      <!-- Sliders Section - Auto wrapping based on width -->
+      <div class="flex flex-wrap gap-2 flex-1 min-w-0">
         <!-- Roll Control -->
-        <div class="flex flex-col md:flex-row md:items-center gap-1 flex-shrink-0">
-          <label class="text-[10px] font-bold whitespace-nowrap">Roll</label>
-          
-          <!-- Mobile: +/- Buttons -->
-          <div class="flex md:hidden items-center gap-1">
-            <button
-              type="button"
-              @click="adjustRoll = Math.max(-45, adjustRoll - 1)"
-              :disabled="adjustRoll <= -45"
-              class="w-6 h-6 flex items-center justify-center bg-gray-200 hover:bg-gray-300 active:bg-gray-400 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <span class="text-sm font-bold">−</span>
-            </button>
-            
-            <span class="text-[10px] min-w-[35px] text-center font-semibold">{{ adjustRoll }}°</span>
-            
-            <button
-              type="button"
-              @click="adjustRoll = Math.min(45, adjustRoll + 1)"
-              :disabled="adjustRoll >= 45"
-              class="w-6 h-6 flex items-center justify-center bg-gray-200 hover:bg-gray-300 active:bg-gray-400 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <span class="text-sm font-bold">+</span>
-            </button>
-          </div>
-          
-          <!-- Desktop: Slider -->
-          <div class="hidden md:flex items-center gap-1">
-            <a-slider
-              v-model:value="adjustRoll"
-              :min="-45"
-              :max="45"
-              :step="1"
-              :tooltip-formatter="(value) => `${value}°`"
-              style="width: 120px; height: 10px"
-            />
-            <span style="font-size: 9px; min-width: 25px; text-align: center">
-              {{ adjustRoll }}°
-            </span>
-          </div>
+        <div class="flex items-center gap-1 flex-shrink-0" style="min-width: 180px;">
+          <label style="font-size: 10px; font-weight: bold; white-space: nowrap"
+            >Roll</label
+          >
+          <a-slider
+            v-model:value="adjustRoll"
+            :min="-45"
+            :max="45"
+            :step="1"
+            :tooltip-formatter="(value) => `${value}°`"
+            style="width: 120px; height: 10px"
+          />
+          <span style="font-size: 9px; min-width: 25px; text-align: center"
+            >{{ adjustRoll }}°</span
+          >
         </div>
         
         <!-- Pitch Control -->
-        <div class="flex flex-col md:flex-row md:items-center gap-1 flex-shrink-0">
-          <label class="text-[10px] font-bold whitespace-nowrap">Pitch</label>
-          
-          <!-- Mobile: +/- Buttons -->
-          <div class="flex md:hidden items-center gap-1">
-            <button
-              type="button"
-              @click="adjustPitch = Math.max(-45, adjustPitch - 1)"
-              :disabled="adjustPitch <= -45"
-              class="w-6 h-6 flex items-center justify-center bg-gray-200 hover:bg-gray-300 active:bg-gray-400 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <span class="text-sm font-bold">−</span>
-            </button>
-            
-            <span class="text-[10px] min-w-[35px] text-center font-semibold">{{ adjustPitch }}°</span>
-            
-            <button
-              type="button"
-              @click="adjustPitch = Math.min(45, adjustPitch + 1)"
-              :disabled="adjustPitch >= 45"
-              class="w-6 h-6 flex items-center justify-center bg-gray-200 hover:bg-gray-300 active:bg-gray-400 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <span class="text-sm font-bold">+</span>
-            </button>
-          </div>
-          
-          <!-- Desktop: Slider -->
-          <div class="hidden md:flex items-center gap-1">
-            <a-slider
-              v-model:value="adjustPitch"
-              :min="-45"
-              :max="45"
-              :step="1"
-              :tooltip-formatter="(value) => `${value}°`"
-              style="width: 120px; height: 10px"
-            />
-            <span style="font-size: 9px; min-width: 25px; text-align: center">
-              {{ adjustPitch }}°
-            </span>
-          </div>
+        <div class="flex items-center gap-1 flex-shrink-0" style="min-width: 180px;">
+          <label style="font-size: 10px; font-weight: bold; white-space: nowrap"
+            >Pitch</label
+          >
+          <a-slider
+            v-model:value="adjustPitch"
+            :min="-45"
+            :max="45"
+            :step="1"
+            :tooltip-formatter="(value) => `${value}°`"
+            style="width: 120px; height: 10px"
+          />
+          <span style="font-size: 9px; min-width: 25px; text-align: center"
+            >{{ adjustPitch }}°</span
+          >
         </div>
         
         <!-- Size Control -->
-        <div class="flex flex-col md:flex-row md:items-center gap-1 flex-shrink-0">
-          <label class="text-[10px] font-bold whitespace-nowrap">Size</label>
-          
-          <!-- Mobile: +/- Buttons -->
-          <div class="flex md:hidden items-center gap-1">
-            <button
-              type="button"
-              @click="modelSizeScale = Math.max(0.5, parseFloat((modelSizeScale - 0.1).toFixed(1)))"
-              :disabled="modelSizeScale <= 0.5"
-              class="w-6 h-6 flex items-center justify-center bg-gray-200 hover:bg-gray-300 active:bg-gray-400 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <span class="text-sm font-bold">−</span>
-            </button>
-            
-            <span class="text-[10px] min-w-[35px] text-center font-semibold">{{ modelSizeScale }}x</span>
-            
-            <button
-              type="button"
-              @click="modelSizeScale = Math.min(4.0, parseFloat((modelSizeScale + 0.1).toFixed(1)))"
-              :disabled="modelSizeScale >= 4.0"
-              class="w-6 h-6 flex items-center justify-center bg-gray-200 hover:bg-gray-300 active:bg-gray-400 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <span class="text-sm font-bold">+</span>
-            </button>
-          </div>
-          
-          <!-- Desktop: Slider -->
-          <div class="hidden md:flex items-center gap-1">
-            <a-slider
-              v-model:value="modelSizeScale"
-              :min="0.5"
-              :max="4.0"
-              :step="0.1"
-              :tooltip-formatter="(value) => `${value}x`"
-              style="width: 120px; height: 10px"
-            />
-            <span style="font-size: 9px; min-width: 25px; text-align: center">
-              {{ modelSizeScale }}x
-            </span>
-          </div>
+        <div class="flex items-center gap-1 flex-shrink-0" style="min-width: 180px;">
+          <label style="font-size: 10px; font-weight: bold; white-space: nowrap"
+            >Size</label
+          >
+          <a-slider
+            type="range"
+            v-model:value="modelSizeScale"
+            :min="0.5"
+            :max="4.0"
+            :step="0.1"
+            :tooltip-formatter="(value) => `${value}°`"
+            style="width: 120px; height: 10px"
+          />
+          <span style="font-size: 9px; min-width: 25px; text-align: center"
+            >{{ modelSizeScale }}x</span
+          >
         </div>
       </div>
-
+      
+      <!-- Action Button -->
+      <!-- <a-button @click="generateBinaryMask" type="primary" size="medium" >
+      Generate Mask
+    </a-button> -->
+      <!-- <a-button @click="downloadCurrentSceneImage" type="primary" size="medium" >
+      Download current scene
+    </a-button> -->
+      
+      <!-- Before/After Buttons -->
+      <!-- <div class="flex gap-2 flex-shrink-0">
+        <a-button
+          class="toolbar-btn primary-btn"
+          @click="reset_entire_room"
+          :disabled="isLoading"
+        >
+          Before
+        </a-button>
+        <a-button
+          type="primary"
+          class="toolbar-btn primary-btn"
+          @click="reset_entire_room"
+          :disabled="isLoading"
+        >
+          After
+        </a-button>
+      </div>
+       -->
       <!-- Apply Changes Button -->
-      <div class="flex-shrink-0 w-full md:w-auto !py-2">
-        <div className="pb-4">
-          <a-button
-            type="primary"
-            class="toolbar-btn primary-btn w-full md:w-auto"
-            @click="$emit('Apply-Changes', '3d-ceiling-light-Renerer')"
-            :disabled="isLoading"
-          >
+      <div class="flex-shrink-0 w-full md:w-auto pt-2">
+        <!-- <a-button type="primary" class="toolbar-btn primary-btn" @click="downloadCurrentSceneImage" :disabled="isLoading">
             Apply Changes
-          </a-button>
-        </div>
+          </a-button> -->
+        <a-button
+          type="primary"
+          class="toolbar-btn primary-btn w-full md:w-auto"
+          @click="$emit('Apply-Changes', '3d-ceiling-light-Renerer')"
+          :disabled="isLoading"
+        >
+          Apply Changes
+        </a-button>
       </div>
     </div>
   </div>
 </template>
-
-
-
-
 
 
 
@@ -1852,39 +1812,6 @@ defineExpose({
   z-index: 1000;
 }
 
-.header-wrapper {
-  padding-left: 8px;
-  padding-right: 10px;
-  padding-top: 0;
-  background: white;
-  min-height: 50px;
-  position: relative; /* ADD THIS */
-  z-index: 100; /* ADD THIS */
-}
-
-/* 400px – 800px */
-@media (min-width: 400px) and (max-width: 800px) {
-  .header-wrapper {
-    min-height: 150px;
-  }
-}
-
-/* above 800px */
-@media (min-width: 801px) {
-  .header-wrapper {
-    min-height: 50px;
-  }
-}
-
-/* FIX: Ensure buttons are always clickable on mobile */
-.header-wrapper button {
-  position: relative;
-  z-index: 101;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-}
-
 .control-group {
   margin-bottom: 15px;
   padding-bottom: 10px;
@@ -1993,6 +1920,7 @@ defineExpose({
 }
 
 .ceiling-status {
+  /* Changed from floor-status */
   padding: 4px 8px;
   border-radius: 3px;
   font-weight: bold;
@@ -2000,11 +1928,13 @@ defineExpose({
 }
 
 .ceiling-status.valid {
+  /* Changed from floor-status.valid */
   background-color: rgba(0, 255, 0, 0.2);
   color: #00ff00;
 }
 
 .ceiling-status.invalid {
+  /* Changed from floor-status.invalid */
   background-color: rgba(255, 0, 0, 0.2);
   color: #ff4444;
 }
@@ -2031,20 +1961,7 @@ defineExpose({
   margin: auto;
   width: 100%;
   height: 100%;
-  min-height: 300px;
-  position: relative; /* ADD THIS */
-  z-index: 1; /* ADD THIS - Lower than header */
-}
-
-/* apply styles ONLY above 740px */
-@media (min-width: 741px) {
-  .main-canvas {
-    display: block;
-    margin: auto;
-    width: 100%;
-    height: 100%;
-    min-height: 400px;
-  }
+  min-height: 400px;
 }
 
 #viewer {
@@ -2052,17 +1969,6 @@ defineExpose({
   width: 100%;
   height: 100%;
   min-height: 400px;
-  /* FIX: Prevent canvas from blocking buttons */
-  isolation: isolate; /* ADD THIS */
-}
-
-/* FIX: Ensure Three.js canvas doesn't block clicks */
-#viewer canvas {
-  display: block;
-  max-width: 100%;
-  height: auto;
-  position: relative; /* ADD THIS */
-  z-index: 0; /* ADD THIS - Lowest z-index */
 }
 
 #loading {
@@ -2098,39 +2004,8 @@ defineExpose({
 }
 
 @media screen and (min-width:768px) {
-  .main-canvas {
+  .main-canvas{
     min-height: 83vh;
   }
 }
-
-/* MOBILE SPECIFIC FIX - Critical for 375px screens */
-@media (max-width: 767px) {
-  .header-wrapper {
-    position: relative;
-    z-index: 100;
-    background: white;
-    padding: 8px 10px;
-  }
-  
-  .header-wrapper button {
-    pointer-events: auto !important;
-    z-index: 101 !important;
-  }
-  
-  /* Ensure canvas doesn't overflow and block buttons */
-  .main-canvas {
-    max-height: calc(100vh - 200px);
-    overflow: hidden;
-  }
-  
-  #viewer {
-    pointer-events: auto;
-  }
-  
-  #viewer canvas {
-    pointer-events: auto;
-    touch-action: pan-y pinch-zoom;
-  }
-}
 </style>
-

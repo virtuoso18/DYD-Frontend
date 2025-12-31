@@ -1,184 +1,189 @@
 <template>
-  <div class="ai-catalog-section">
-    <!-- Fixed Header -->
-    <!-- <div class="ai-catalog-header py-3">
-      <span class="!text-gray-700"  style="
-          font-family: Poppins;
-          font-weight: 500;
-          font-style: normal;
-          font-size: 14px;
-          line-height: 20px;
-          letter-spacing: 0;
-        ">AI Catalog</span>
-      <a-button size='small' type="default" class="see-all-link" @click="seeAllClicked">See all</a-button>
-    </div> -->
+<div class="pt-wrapper">
 
-    <div class="ai-catalog-header  ">
-      <router-link :to="'/'+$route.query.brand">
-        <div style="display: flex;gap:10px;">
-          <a-avatar size="medium" style="border:1px solid rgba(0,0,0,0.2)" :src="this.$store.state.root_media_api+brand_data.business_picture"></a-avatar>
-          <span class="!text-gray-700 py-3"  style="
-          font-family: Poppins;
-          font-weight: 700;
-          font-style: normal;
-          font-size: 16px;
-          line-height: 20px;
-          letter-spacing: 0;margin-top:-6px
+    <div class="ai-catalog-section !mx-1 ">
+      <!-- Fixed Header -->
+      <!-- <div class="ai-catalog-header py-3">
+        <span class="!text-gray-700"  style="
+            font-family: Poppins;
+            font-weight: 500;
+            font-style: normal;
+            font-size: 14px;
+            line-height: 20px;
+            letter-spacing: 0;
           ">AI Catalog</span>
-        <!-- {{ brand_data }} -->
-          <!-- <b>  {{truncateChars(brand_data.name,limit=15)}}</b> -->
-        </div>
-      </router-link>
-      <a-button size='small' type="default" class="see-all-link" @click="seeAllClicked">See all</a-button>
-    </div>
-    
-    <!-- Fixed Search Bar -->
-    <div class="search-section">
-      <a-input 
-        v-model:value="searchText" 
-        placeholder="Search"
-        class="search-input"
-        @input="handleSearchChange"
-      >
-        <template #prefix>
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path d="M7.33333 12.6667C10.2789 12.6667 12.6667 10.2789 12.6667 7.33333C12.6667 4.38781 10.2789 2 7.33333 2C4.38781 2 2 4.38781 2 7.33333C2 10.2789 4.38781 12.6667 7.33333 12.6667Z" stroke="#999" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M14 14L11.1 11.1" stroke="#999" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </template>
-      </a-input>
-      <div class="filter-icons">
-        <button @click="showGrid = false" class="filter-btn" :class="{ active: !showGrid }">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <path d="M5 10H15M2.5 5H17.5M7.5 15H12.5" stroke="#666" stroke-width="1.5" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <button @click="showGrid = true" class="filter-btn" :class="{ active: showGrid }">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <rect x="3" y="3" width="6" height="6" stroke="#666" stroke-width="1.5"/>
-            <rect x="11" y="3" width="6" height="6" stroke="#666" stroke-width="1.5"/>
-            <rect x="3" y="11" width="6" height="6" stroke="#666" stroke-width="1.5"/>
-            <rect x="11" y="11" width="6" height="6" stroke="#666" stroke-width="1.5"/>
-          </svg>
-        </button>
-      </div>
-    </div>
-
-    <!-- Scrollable Content Area -->
-    <div class="scrollable-content">
-      <!-- Loading initial -->
-      <div v-if="loading && catalogItems.length === 0" class="loading">
-        <a-spin />
-      </div>
-
-      <!-- Product Grid/List -->
-      <div v-if="!loading || catalogItems.length > 0" class="product-container" :class="{ 'grid-view': showGrid, 'list-view': !showGrid }">
-        <div v-for="(item, index) in catalogItems" :key="index" @click="updateItemRendering(item['id'],item['3d_model'],item['dimensions']['width'],item['dimensions']['height'],item['dimensions']['depth'])" style="
- background: #f2f2f2;
-border: none;
-border-radius: 4px;
-padding:5px;"
-          :style="selected_item===item.id ? 'border:1px solid blue': ''">
-          
-          <div class="product-item">
-            <div class="product-image" style="position:relative;">
-              <img :src="this.$store.state.root_media_api + item.primary_image"
-                   :alt="item.name" />
-
-              <!-- Tags -->
-              <div style="
-                   position:absolute;
-                   top:10px;
-                   left:0;
-                   right:0;
-                   display:flex;
-                   justify-content:space-between;
-                   padding:0 10px;
-                   pointer-events:none;
-              ">
-                <div style="
-                     background-color:#f2f2f2;
-                     color:black;
-                     border-radius:6px;
-                     padding:2px 8px;
-                     font-size:12px;
-                     height:22px;
-                     display:flex;
-                     align-items:center;
-                ">
-                  {{ item.category.name }}
-                </div>
-
-                <div style="
-                     background-color:#f2f2f2;
-                     border-radius:6px;
-                     font-size:12px;
-                     height:22px;
-                     display:flex;
-                     align-items:center;
-                ">
-                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M10.8307 2.5H9.16406C5.62853 2.5 3.86076 2.5 2.76241 3.59835C1.66406 4.6967 1.66406 6.46447 1.66406 10C1.66406 13.5355 1.66406 15.3033 2.76241 16.4017C3.86076 17.5 5.62853 17.5 9.16406 17.5H10.8307C14.3662 17.5 16.1341 17.5 17.2324 16.4017C18.3307 15.3033 18.3307 13.5355 18.3307 10C18.3307 6.46447 18.3307 4.6967 17.2324 3.59835C16.1341 2.5 14.3662 2.5 10.8307 2.5Z" stroke="#666666" stroke-linecap="round"/>
-                    <path d="M5 11.6667L6.4622 8.40642C6.73323 7.80215 6.86874 7.5 7.08333 7.5C7.29792 7.5 7.43344 7.80215 7.70447 8.40642L9.16667 11.6667M11.6667 11.6667V10M11.6667 10V8.5C11.6667 8.02859 11.6667 7.79289 11.8131 7.64645C11.9596 7.5 12.1952 7.5 12.6667 7.5H13.75C14.4403 7.5 15 8.05964 15 8.75C15 9.44033 14.4403 10 13.75 10M11.6667 10H13.75M13.75 10L14.5833 11.6667" stroke="#666666" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </div>
-              </div>
-            </div>
-
-            <div class="product-info">
-              <div class="product-name">{{ truncateText( item.name || 'No Name available', 3) }}</div>
-              <div class="product-details" style="display:flex;justify-content: space-between;">
-                <span class="product-color">Colors </span>
-                <div style="display: flex; gap: 4px; align-items: center; margin-left: 8px;">
-                  <div v-for="color in item.colors_available.slice(0, 2)" :key="color.id" class="color-dot" :style="{ backgroundColor: color.color }"></div>
-                </div>
-              </div>
-              
-              <div class="product-price">Price <span style="font-weight: 600;">${{item.pricing.price}}</span></div>
-            </div>
+        <a-button size='small' type="default" class="see-all-link" @click="seeAllClicked">See all</a-button>
+      </div> -->
+  
+      <div class="ai-catalog-header  ">
+        <router-link :to="'/'+$route.query.brand">
+          <div style="display: flex;gap:10px;">
+            <a-avatar size="medium" style="border:1px solid rgba(0,0,0,0.2)" :src="this.$store.state.root_media_api+brand_data.business_picture"></a-avatar>
+            <span class="!text-gray-700 py-3"  style="
+            font-family: Poppins;
+            font-weight: 700;
+            font-style: normal;
+            font-size: 16px;
+            line-height: 20px;
+            letter-spacing: 0;margin-top:-6px
+            ">AI Catalog</span>
+          <!-- {{ brand_data }} -->
+            <!-- <b>  {{truncateChars(brand_data.name,limit=15)}}</b> -->
           </div>
-
-         <a-row>
-              <a-col :span="18" style="padding-right:5px">
-                <a-button block type="default" @click="this.$router.push('/'+item.business_slug+'/'+'product'+'/'+item.id)"  style="border: none;">
-                  Product Detail
-                </a-button>
-              </a-col>
-              <a-col :span="6" style="">
-                <a-button block type="default" style="padding:0;display: flex;justify-content: center;align-items: center;border: none;" @click.stop="toggleLike(item.id, index)">
-                  <HeartFilled v-if="item.is_liked" style="color: red;" />
-                  <HeartOutlined v-else style="font-size: 18px;" />
-                </a-button>
-              </a-col>
-            </a-row>
-          </div>
+        </router-link>
+        <a-button size='small' type="default" class="see-all-link" @click="seeAllClicked">See all</a-button>
       </div>
-
-      <!-- Load More Button -->
-      <div v-if="catalogItems.length > 0 && paginationInfo.has_next" class="load-more-container">
-        <a-button 
-          block 
-          type="default" 
-          size="large"
-          :loading="loadingMore"
-          @click="loadMoreItems"
-          class="load-more-btn"
+      
+      <!-- Fixed Search Bar -->
+      <div class="search-section">
+        <a-input 
+          v-model:value="searchText" 
+          placeholder="Search"
+          class="search-input"
+          @input="handleSearchChange"
         >
-          {{ loadingMore ? 'Loading...' : 'Load More' }}
+          <template #prefix>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M7.33333 12.6667C10.2789 12.6667 12.6667 10.2789 12.6667 7.33333C12.6667 4.38781 10.2789 2 7.33333 2C4.38781 2 2 4.38781 2 7.33333C2 10.2789 4.38781 12.6667 7.33333 12.6667Z" stroke="#999" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M14 14L11.1 11.1" stroke="#999" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </template>
+        </a-input>
+        <div class="filter-icons">
+          <button @click="showGrid = false" class="filter-btn" :class="{ active: !showGrid }">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M5 10H15M2.5 5H17.5M7.5 15H12.5" stroke="#666" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <button @click="showGrid = true" class="filter-btn" :class="{ active: showGrid }">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <rect x="3" y="3" width="6" height="6" stroke="#666" stroke-width="1.5"/>
+              <rect x="11" y="3" width="6" height="6" stroke="#666" stroke-width="1.5"/>
+              <rect x="3" y="11" width="6" height="6" stroke="#666" stroke-width="1.5"/>
+              <rect x="11" y="11" width="6" height="6" stroke="#666" stroke-width="1.5"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+  
+      <!-- Scrollable Content Area -->
+      <div class="scrollable-content">
+        <!-- Loading initial -->
+        <div v-if="loading && catalogItems.length === 0" class="loading">
+          <a-spin />
+        </div>
+  
+        <!-- Product Grid/List -->
+        <div v-if="!loading || catalogItems.length > 0" class="product-container" :class="{ 'grid-view': showGrid, 'list-view': !showGrid }">
+          <div v-for="(item, index) in catalogItems" :key="index" @click="updateItemRendering(item['id'],item['3d_model'],item['dimensions']['width'],item['dimensions']['height'],item['dimensions']['depth'])" style="
+   background: #f2f2f2;
+  border: none;
+  border-radius: 4px;
+  padding:5px;"
+            :style="selected_item===item.id ? 'border:1px solid blue': ''">
+            
+            <div class="product-item">
+              <div class="product-image" style="position:relative;">
+                <img :src="this.$store.state.root_media_api + item.primary_image"
+                     :alt="item.name" />
+  
+                <!-- Tags -->
+                <div style="
+                     position:absolute;
+                     top:10px;
+                     left:0;
+                     right:0;
+                     display:flex;
+                     justify-content:space-between;
+                     padding:0 10px;
+                     pointer-events:none;
+                ">
+                  <div style="
+                       background-color:#f2f2f2;
+                       color:black;
+                       border-radius:6px;
+                       padding:2px 8px;
+                       font-size:12px;
+                       height:22px;
+                       display:flex;
+                       align-items:center;
+                  ">
+                    {{ item.category.name }}
+                  </div>
+  
+                  <div style="
+                       background-color:#f2f2f2;
+                       border-radius:6px;
+                       font-size:12px;
+                       height:22px;
+                       display:flex;
+                       align-items:center;
+                  ">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M10.8307 2.5H9.16406C5.62853 2.5 3.86076 2.5 2.76241 3.59835C1.66406 4.6967 1.66406 6.46447 1.66406 10C1.66406 13.5355 1.66406 15.3033 2.76241 16.4017C3.86076 17.5 5.62853 17.5 9.16406 17.5H10.8307C14.3662 17.5 16.1341 17.5 17.2324 16.4017C18.3307 15.3033 18.3307 13.5355 18.3307 10C18.3307 6.46447 18.3307 4.6967 17.2324 3.59835C16.1341 2.5 14.3662 2.5 10.8307 2.5Z" stroke="#666666" stroke-linecap="round"/>
+                      <path d="M5 11.6667L6.4622 8.40642C6.73323 7.80215 6.86874 7.5 7.08333 7.5C7.29792 7.5 7.43344 7.80215 7.70447 8.40642L9.16667 11.6667M11.6667 11.6667V10M11.6667 10V8.5C11.6667 8.02859 11.6667 7.79289 11.8131 7.64645C11.9596 7.5 12.1952 7.5 12.6667 7.5H13.75C14.4403 7.5 15 8.05964 15 8.75C15 9.44033 14.4403 10 13.75 10M11.6667 10H13.75M13.75 10L14.5833 11.6667" stroke="#666666" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+  
+              <div class="product-info">
+<div class="product-name truncate">
+  {{ truncateText(item.name || 'No Name available', 2) }}
+</div>
+                <div class="product-details" style="display:flex;justify-content: space-between;">
+                  <span class="product-color">Colors </span>
+                  <div style="display: flex; gap: 4px; align-items: center; margin-left: 8px;">
+                    <div v-for="color in item.colors_available.slice(0, 2)" :key="color.id" class="color-dot" :style="{ backgroundColor: color.color }"></div>
+                  </div>
+                </div>
+                
+                <div class="product-price">Price <span style="font-weight: 600;">${{item.pricing.price}}</span></div>
+              </div>
+            </div>
+  
+           <a-row>
+                <a-col :span="18" style="padding-right:5px">
+                  <a-button block type="default" @click="this.$router.push('/'+item.business_slug+'/'+'product'+'/'+item.id)"  style="border: none;">
+                    Product Detail
+                  </a-button>
+                </a-col>
+                <a-col :span="6" style="">
+                  <a-button block type="default" style="padding:0;display: flex;justify-content: center;align-items: center;border: none;" @click.stop="toggleLike(item.id, index)">
+                    <HeartFilled v-if="item.is_liked" style="color: red;" />
+                    <HeartOutlined v-else style="font-size: 18px;" />
+                  </a-button>
+                </a-col>
+              </a-row>
+            </div>
+        </div>
+  
+        <!-- Load More Button -->
+        <div v-if="catalogItems.length > 0 && paginationInfo.has_next" class="load-more-container">
+          <a-button 
+            block 
+            type="default" 
+            size="large"
+            :loading="loadingMore"
+            @click="loadMoreItems"
+            class="load-more-btn"
+          >
+            {{ loadingMore ? 'Loading...' : 'Load More' }}
+          </a-button>
+        </div>
+  
+        <!-- No items message -->
+        <div v-if="!loading && catalogItems.length === 0" class="no-items">
+          <p>No products found</p>
+        </div>
+      </div>
+  
+      <!-- Fixed Apply Button -->
+  <div class="apply-section hidden md:block">
+        <a-button type="primary" size="large" block  @click="$emit('trigger-render-3d-object')">
+          Apply
         </a-button>
       </div>
-
-      <!-- No items message -->
-      <div v-if="!loading && catalogItems.length === 0" class="no-items">
-        <p>No products found</p>
-      </div>
-    </div>
-
-    <!-- Fixed Apply Button -->
-<div class="apply-section hidden md:block">
-      <a-button type="primary" size="large" block  @click="$emit('trigger-render-3d-object')">
-        Apply
-      </a-button>
     </div>
   </div>
 </template>
@@ -375,10 +380,19 @@ export default {
 </script>
 
 <style scoped>
+
+
+/* only below 440px */
+@media (max-width: 780px) {
+  /* .pt-wrapper {
+    padding-top: 3.5rem;
+  } */
+}
+
 .ai-catalog-section {
   display: flex;
   flex-direction: column;
-  height: 76vh; 
+  height: 77vh; 
 }
 
 .ai-catalog-header {
@@ -388,6 +402,13 @@ export default {
   font-size: 14px;
   font-weight: 700;
   flex-shrink: 0;
+}
+
+/* only below 400px */
+@media (max-width: 400px) {
+  .ai-catalog-header {
+    padding-top: 26px;
+  }
 }
 
 .see-all-link {
@@ -674,7 +695,7 @@ export default {
 
 .apply-section {
   flex-shrink: 0;
-  padding-top: 16px;
+  padding-top: 8px;
 }
 
 .apply-button {

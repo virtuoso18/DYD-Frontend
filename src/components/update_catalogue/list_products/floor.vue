@@ -1,28 +1,13 @@
 <template>
   <div class="ai-catalog-section">
 
-    <div class="apply-section md:hidden">
+    <div class="apply-section md:hidden ">
       <a-button type="primary" size="large" block class="apply-button" @click="updateItemRendering()">
         Apply
       </a-button>
     </div>
-    <!-- Fixed Header -->
-    <!-- <div class="ai-catalog-header py-3 ">
-      <span
-        style="
-          font-family: Poppins;
-          font-weight: 500;
-          font-style: normal;
-          font-size: 14px;
-          line-height: 20px;
-          letter-spacing: 0;
-        "
-      >
-        AI Catalog
-      </span>
-      <a-button size='small' type="default" class="see-all-link" @click="seeAllClicked">See all</a-button>
-    </div> -->
-    <div class="ai-catalog-header  ">
+   
+    <div class="ai-catalog-header ">
       <router-link :to="'/'+$route.query.brand">
         <div style="display: flex;gap:10px;">
           <a-avatar size="medium" style="border:1px solid rgba(0,0,0,0.2)" :src="this.$store.state.root_media_api+brand_data.business_picture"></a-avatar>
@@ -359,8 +344,9 @@ export default {
 
 @media (min-width: 640px) {
   .ai-catalog-section {
-    height: 76vh;
+    height: 77vh;
   }
+  
 }
 
 .ai-catalog-header {
@@ -592,7 +578,8 @@ export default {
 
 .apply-section {
   flex-shrink: 0;
-  padding-top: 16px;
+ 
+  padding-top: 8px
 }
 
 .apply-button {
@@ -624,6 +611,9 @@ export default {
 }
 
 @media (max-width: 768px) {
+  .apply-section {
+  padding-bottom: 20px;}
+ 
   .list-view .product-image {
     width: 100px;
     height: 100px;

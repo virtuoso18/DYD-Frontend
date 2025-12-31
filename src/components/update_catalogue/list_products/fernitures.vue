@@ -18,7 +18,7 @@
       <a-button size="small" type="default" @click="$emit('see-all-products', true)">See all</a-button>
     </div> -->
 <!-- {{ brand_data }} -->
-    <div class="ai-catalog-header px-2 ">
+    <div class="ai-catalog-header pt-2 !mx-1 ">
       <router-link :to="'/'+$route.query.brand">
         <div style="display: flex;gap:10px;">
           <a-avatar size="medium" style="border:1px solid rgba(0,0,0,0.2)" :src="this.$store.state.root_media_api+brand_data.business_picture"></a-avatar>
@@ -61,7 +61,7 @@
     </div>
 
     <!-- Scrollable Content -->
-    <div class="overflow-y-auto p-[5px] bg-[#fafafa] md:h-[calc(76vh-120px)]">
+    <div class="overflow-y-auto p-[5px] bg-[#fafafa] md:h-[calc(76vh-80px)]">
       
       <!-- Furniture -->
       <a-collapse v-model:activeKey="productsActiveKey" style="margin-bottom: 12px;" v-if="furniture_products.length > 0">

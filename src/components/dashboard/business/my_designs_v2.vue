@@ -1,10 +1,5 @@
 <template>
-  <div v-if="isLoading" class="spinner-sec w-full h-[80vh] flex justify-center items-center">
-    <a-spin tip="Loading...">
-    </a-spin>
-  </div> 
-
-  <div v-else="!isLoading"
+  <div
     class="sm:main sm:border border-gray-200 bg-white !mb-5 sm:translate-y-3 sm:rounded-2xl min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh]"
   >
     <a-row v-if="view_type == 'all'">
@@ -42,6 +37,7 @@
       </a-col>
 
       <!-- Designs List -->
+
       <a-col :span="24" style="padding: 5px 10px">
         <a-row type="flex" :wrap="true">
           <a-col
@@ -66,8 +62,8 @@
               "
             >
               <div class="relative" style="flex-shrink: 0">
-                <!-- Only On Community Posted Design Counter Number Of Views -->
-                <div v-if="design.shared_on_community_my_design && design.community_posts && design.community_posts.length > 0">
+                <!-- Only On Community Poeted Design Ciounter Number Of Views  -->
+                <div v-if="design.shared_on_community_my_design">
                   <div
                     class="tag-sec absolute left-0 top-1 flex gap-1 px-2 py-1"
                     style="z-index: 10; flex-wrap: wrap"
@@ -95,11 +91,13 @@
                     />
                     <span
                       class="flex items-center text-white drop-shadow-md text-xs sm:text-sm"
-                      >{{ design.community_posts[0].view_count }}</span
+                      >{{ 954 }}</span
                     >
                   </div>
+                  <!-- Only On Community Poeted Design  -->
                 </div>
 
+                <!-- {{ design }} -->
                 <img
                   :src="this.$store.state.root_media_api + design.image"
                   style="
@@ -108,28 +106,24 @@
                     height: 100%;
                     object-fit: cover;
                   "
-                  @click="handleImageClick(design)"
                   alt=""
-                  />
+                  @click="show_design_details(design.id)"
+                />
               </div>
 
               <div
-                v-if="design.shared_on_community_my_design && design.community_posts && design.community_posts.length > 0"
+                v-if="design.shared_on_community_my_design"
                 class="flex mx-4 sm:mx-6 my-4 sm:my-6 p-1"
                 style="flex-shrink: 0"
               >
                 <div class="flex w-1/2 gap-2 items-center">
                   <img
                     class="w-6 h-6 rounded-full flex-shrink-0"
-                    :src="
-                      design.community_posts[0].profile_picture
-                        ? $store.state.root_media_api + design.community_posts[0].profile_picture
-                        : '/default-avatar.png'
-                    "
+                    src="../../../assets/icons/humanIcon.png"
                     alt="Design Image"
                   />
                   <div class="text-sm sm:text-base truncate ml-2 sm:ml-3">
-                    {{ design.community_posts[0].post_owner }}
+                    John Doe
                   </div>
                 </div>
                 <div class="flex justify-around w-1/2 items-center gap-2">
@@ -139,26 +133,21 @@
                       alt=""
                       style="width: 16px; height: 16px; flex-shrink: 0"
                     />
-                    <span class="text-xs sm:text-sm">{{ design.community_posts[0].comment_count }}</span>
+                    <span class="text-xs sm:text-sm">{{ 15 }}k</span>
                   </div>
                   <div class="flex gap-1 items-center min-w-0">
-                      <HeartFilled
-                      v-if="design.community_posts[0].is_liked"
-                      style="color: #ff4d4f; font-size: 16px"
+                    <img
+                      src="../../../assets/icons/favourite.svg"
+                      alt=""
+                      style="width: 16px; height: 16px; flex-shrink: 0"
                     />
-                    <HeartOutlined
-                      v-else
-                      style="font-size: 16px"
-                    />
-                    <span class="text-xs sm:text-sm">
-                      {{ design.community_posts[0].like_count }}
-                    </span>
+                    <span class="text-xs sm:text-sm">{{ 2 }}k</span>
                   </div>
-                  <!-- <div class="flex justify-end items-center">
+                  <div class="flex justify-end items-center">
                     <MoreOutlined
                       :style="{ fontWeight: '700', fontSize: '16px' }"
                     />
-                  </div> -->
+                  </div>
                 </div>
               </div>
 
@@ -192,6 +181,7 @@
             @click="goback"
             class="flex items-center gap-2 !text-gray-700 text-lg hover:text-black cursor-pointer"
           >
+            <!-- Icon -->
             <svg
               width="6"
               height="11"
@@ -207,6 +197,7 @@
                 stroke-linejoin="round"
               />
             </svg>
+
             <b>Back</b>
           </button>
 
@@ -273,12 +264,14 @@
                   </clipPath>
                 </defs>
               </svg>
+
               Delete
             </button>
           </div>
         </div>
 
         <a-col :xs="24" :sm="24" :md="12" :lg="12" style="padding: 10px">
+          <!-- {{selected_design.data}} -->
           <a-image
             :src="this.$store.state.root_media_api + selected_design.data.image"
             style="
@@ -299,6 +292,7 @@
           style="padding: 10px"
           v-if="!start_edit"
         >
+          <!-- {{ selected_design.data}} -->
           <span
             style="
               font-family: var(--font-family-main);
@@ -326,10 +320,13 @@
               type="primary"
               class="w-[193px] bg-[#E33827] flex items-center"
               danger
+              style=""
+              :size="large"
               @click="delete_Design"
             >
               Delete
             </a-button>
+            <!-- Save Button -->
 
             <button
               v-if="start_edit"
@@ -352,6 +349,7 @@
               Save
             </button>
 
+            <!-- Close Button -->
             <button
               v-if="start_edit"
               @click="close_Design"
@@ -523,6 +521,7 @@
                 >
                 <a-option-select value="Vintage">Vintage</a-option-select>
               </a-select>
+              <!-- {{ room_type || 'Living Room' }} -->
             </span>
             <span
               ><strong>Room Type:</strong>
@@ -541,9 +540,10 @@
                 <a-option-select value="Office">Office</a-option-select>
                 <a-option-select value="Rest Room">Rest Room</a-option-select>
               </a-select>
+              <!-- {{ room_design_type || 'Modern' }} -->
             </span>
-            <span v-if="selected_design.data.products_used"
-              ><strong>Products:</strong> {{ selected_design.data.products_used.length }} items</span
+            <span v-if="products_used"
+              ><strong>Products:</strong> {{ products_used.length }} items</span
             >
           </div>
           <div style="display: flex; gap: 15px; margin-top: 10px">
@@ -604,6 +604,7 @@
               class="product-responsive"
               style="padding: 4px"
             >
+              <!-- {{product.product_colors}} -->
               <div class="product" style="padding: 3px">
                 <div
                   class="product-image-container"
@@ -619,6 +620,7 @@
                   <!-- AR Badge -->
                   <div class="ar-badge">AR</div>
                 </div>
+                <!-- {{ truncateText(product.description || 'No description available', 8) }} -->
 
                 <a-row>
                   <a-col
@@ -652,6 +654,7 @@
                         (color.color_hex ? color.color_hex : color.color)
                       "
                     >
+                      <!-- {{ color }} -->
                     </div>
                   </a-col>
 
@@ -666,11 +669,28 @@
                       font-weight: 700;
                     "
                   >
+                    <!-- <del style="font-size: 10px;">${{ product.pricing.price }}</del> -->
                     ${{ product.product_price }}
                   </a-col>
 
+                  <!-- <a-col span="18">
+                    <a-button block @click="viewProduct(product)"
+                      >Product Details</a-button
+                    >
+                  </a-col>
+
+                  <a-col span="6">
+                      <a-button @click="toggleFavorite(product.product_id,product.product_type,product)">
+                                                                    <template v-if="product.is_favorited">
+                                                                    <HeartFilled style="color: red" />
+                                                                    </template>
+                                                                    <template v-else>
+                                                                    <HeartOutlined />
+                                                                    </template>
+                                                </a-button>
+                  </a-col> -->
                   <div class="flex items-center gap-2 w-full">
-                    <!-- Product Details Button - 75% width -->
+                    <!-- Product Details Button - 75% width (18/24) -->
                     <div class="w-3/4">
                       <button
                         @click="goto_product_Route(product)"
@@ -684,7 +704,7 @@
                       </button>
                     </div>
 
-                    <!-- Like Button - 25% width -->
+                    <!-- Like Button - 25% width (6/24) -->
                     <div class="w-1/4 flex items-end justify-end">
                       <button
                         @click="
@@ -713,32 +733,19 @@
         </a-col>
       </a-row>
     </a-row>
-    
-    <!-- Share On Community Modal -->
     <ShareOnCommunity
       :open="open_ShareOnCommunity"
       :imageUrl="selectedDesignImage"
       :roomId="selected_design?.data?.id || null"
-      :roomType="selected_design?.data?.room_type"
-      :roomDesignType="selected_design?.data?.room_design_type"
-      :productCount="selected_design?.data?.products_used?.length || 0"
+      :roomType="selectedDesign?.data?.room_type"
+      :roomDesignType="selectedDesign?.data?.room_design_type"
+      :productCount="selectedDesign?.data?.products_used?.length || 0"
       :apiBaseUrl="$store.state.root_api"
       @success="handleShareSuccess"
       @update:close="closeShareOnCommunityModel"
     />
-
-    <!-- Comments Modal -->
-    <CommentsModal
-      v-if="selectedPost"
-      :isOpen="showCommentsModal"
-      :post="selectedPost"
-      @close="closeCommentsModal" 
-      @commentAdded="handleCommentAdded"
-      @likeToggled="handleLikeToggled"
-    />
   </div>
 </template>
-
 <script>
 import {
   MoreOutlined,
@@ -751,8 +758,6 @@ import {
   HeartFilled,
 } from "@ant-design/icons-vue";
 import ShareOnCommunity from "@/views/catalogue/share_on_community.vue";
-import CommentsModal from '@/views/pages/CommentsModal.vue';
-
 export default {
   name: "my_designes",
   data() {
@@ -767,9 +772,6 @@ export default {
       open_ShareOnCommunity: false,
       selectedDesignImage: "",
       selectedDesign: null,
-      showCommentsModal: false,
-      selectedPost: null,
-      isLoading: true,
     };
   },
   components: {
@@ -782,72 +784,19 @@ export default {
     SaveOutlined,
     CloseOutlined,
     ShareOnCommunity,
-    CommentsModal,
   },
   mounted() {
     this.loadMyDesignes();
   },
   methods: {
-    // Handle image click - show modal if shared on community, else show details
-    handleImageClick(design) {
-      if (design.shared_on_community_my_design && design.community_posts && design.community_posts.length > 0) {
-        this.viewPost(design);
-      } else {
-        this.show_design_details(design.id);
-      }
-    },
-
-    // Transform design data to post format for CommentsModal
-    viewPost(design) {
-      debugger
-      // Use only the first community post
-      const firstPost = design.community_posts[0];
-      
-      this.selectedPost = {
-        id: firstPost.id,
-        title: firstPost.title,
-        content: firstPost.content,
-        image: this.$store.state.root_media_api + design.image,
-        userName: firstPost.post_owner,
-        userAvatar: this.$store.state.root_media_api + (firstPost.profile_picture || ''),
-        description: firstPost.content || design.room_description || '',
-        tags: [design.room_type, design.room_design_type],
-        views: firstPost.view_count,
-        likes: firstPost.like_count,
-        is_liked: firstPost.is_liked || false,
-        comment_count: firstPost.comment_count,
-        // Add these additional fields that CommentsModal likely needs
-        post_image: this.$store.state.root_media_api + firstPost.post_image,
-        created_at: firstPost.created_at,
-        updated_at: firstPost.updated_at,
-        // Pass API configuration
-        apiBaseUrl: this.$store.state.root_api
-      };
-      
-      this.showCommentsModal = true;
-    },
-
-    closeCommentsModal() {
-      this.showCommentsModal = false;
-      this.selectedPost = null;
-    },
-
-    handleCommentAdded() {
-      this.loadMyDesignes();
-    },
-
-    handleLikeToggled() {
-     this.loadMyDesignes();
-    },
-
     closeShareOnCommunityModel() {
       this.open_ShareOnCommunity = false;
     },
-    
     async toggleFavorite(product_id, product_type, product) {
       try {
         const token = localStorage.getItem("token");
 
+        // Check if user is authenticated
         if (!token) {
           this.$message.warning("Please login to add favorites");
           return;
@@ -867,10 +816,13 @@ export default {
             }),
           }
         );
-
+        // debugger
         const data = await response.json();
+
+        // Update the product's favorite status
         product.is_favorited = data.favorited;
 
+        // Show success message
         const message = data.favorited
           ? "Added to favorites"
           : "Removed from favorites";
@@ -880,7 +832,6 @@ export default {
         this.$message.error("Failed to update favorite");
       }
     },
-    
     goto_product_Route(product) {
       let produuct_type = "product";
       if (product.product_type == "light") {
@@ -901,10 +852,10 @@ export default {
         },
       });
     },
-    
     async delete_Design() {
       console.log("Delete design button clicked");
 
+      // Show confirmation dialog
       this.$confirm({
         title: "Delete Design",
         content:
@@ -940,9 +891,10 @@ export default {
 
             if (responseData.success || responseData.status === "success") {
               this.$message.success("Design deleted successfully");
+              // Go back to designs list and reload
               this.view_type = "all";
               this.selected_design = null;
-              await this.loadMyDesignes();
+              await this.loadMyDesignes(); // Reload the designs list
             } else {
               throw new Error(
                 responseData.message || "Failed to delete design"
@@ -961,6 +913,7 @@ export default {
     async save_Design() {
       console.log("Save design button clicked");
 
+      // Validate required fields
       if (!this.description_room.trim()) {
         this.$message.error("Please provide a room description");
         return;
@@ -1005,13 +958,17 @@ export default {
         if (responseData.success || responseData.status === "success") {
           this.$message.success("Design updated successfully");
 
+          // Update the selected design data with new values
           this.selected_design.data.room_description =
             this.description_room.trim();
           this.selected_design.data.room_design_type =
             this.room_design_type_select;
           this.selected_design.data.room_type = this.room_type_select;
 
+          // Exit edit mode
           this.start_edit = false;
+
+          // Optionally reload the designs list to reflect changes
           await this.loadMyDesignes();
         } else {
           throw new Error(responseData.message || "Failed to save design");
@@ -1023,19 +980,24 @@ export default {
         this.loading = false;
       }
     },
-    
     edit_Design() {
       this.start_edit = true;
-      console.log("edit_design Button Clicked");
+      console.log("edit_design Button Clicked ");
     },
 
     close_Design() {
       this.start_edit = false;
     },
 
+    showError(title, message, retryCallback) {
+      this.$notification.error({
+        message: title,
+        description: message,
+        duration: 0,
+      });
+    },
     async loadMyDesignes() {
       try {
-        this.isLoading = true;
         const token = localStorage.getItem("token");
 
         const response = await fetch(
@@ -1060,14 +1022,11 @@ export default {
       } catch (error) {
         console.error("Error loading business profile:", error);
         this.$message.error("Network error while loading profile");
-      } finally {
-        this.isLoading = false;
       }
     },
 
     show_design_details(design_id) {
-      this.view_type = "details";
-      this.loadDesignDetails(design_id);
+      (this.view_type = "details"), this.loadDesignDetails(design_id);
     },
 
     async loadDesignDetails(design_id) {
@@ -1101,13 +1060,12 @@ export default {
         this.$message.error("Network error while loading profile");
       }
     },
-    
     goback() {
       this.view_type = "all";
       this.selected_design = null;
     },
-    
     shareOnCommunity() {
+      // Ensure we have valid data before opening modal
       if (!this.selected_design || !this.selected_design.data) {
         this.$message.error("Design data not available");
         return;
@@ -1118,20 +1076,13 @@ export default {
       this.selectedDesign = this.selected_design;
       this.open_ShareOnCommunity = true;
     },
-    
     handleShareSuccess() {
       console.log("Design shared successfully!");
       this.open_ShareOnCommunity = false;
-      // Reload designs to get updated community_posts data
-      this.loadMyDesignes();
-      if (this.selected_design && this.selected_design.data) {
-        this.loadDesignDetails(this.selected_design.data.id);
-      }
     },
   },
 };
 </script>
-
 <style scoped>
 .main {
   margin-top: 10px;
@@ -1139,6 +1090,7 @@ export default {
   border-radius: 20px;
   border: 1px solid rgba(128, 128, 128, 0.167);
   padding: 10px;
+
   background-color: white;
 }
 
@@ -1146,18 +1098,15 @@ export default {
   display: flex;
   justify-content: space-between;
 }
-
 .product {
   padding: 10px;
   margin-bottom: 10px;
   border-radius: 10px;
   background: #f3f2f4;
 }
-
 .products-list {
   padding-bottom: 20px;
 }
-
 .product-image-container {
   position: relative;
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
@@ -1165,11 +1114,13 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  /* padding: 16px; */
 }
 
 .product-image {
   width: 100%;
   height: 100%;
+
   object-fit: cover;
   border-radius: 12px;
   transition: transform 0.3s ease;
@@ -1190,12 +1141,12 @@ export default {
 }
 
 .hide-scrollbar {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
 }
 
 .hide-scrollbar::-webkit-scrollbar {
-  display: none;
+  display: none; /* Chrome / Safari */
 }
 
 .ar-badge {
@@ -1210,7 +1161,6 @@ export default {
   font-weight: 700;
   letter-spacing: 0.5px;
 }
-
 .product-responsive {
   width: 50%;
   flex: 0 0 50%;
@@ -1222,34 +1172,29 @@ export default {
     flex: 0 0 50%;
   }
 }
-
 @media (min-width: 768px) {
   .product-responsive {
     width: 33.333%;
     flex: 0 0 33.333%;
   }
 }
-
 @media (min-width: 992px) {
   .product-responsive {
     width: 25%;
     flex: 0 0 25%;
   }
 }
-
 @media (min-width: 1200px) {
   .product-responsive {
     width: 20%;
     flex: 0 0 20%;
   }
 }
-
 @media screen and (max-width: 768px) {
   .hide-below-md {
     display: none;
   }
 }
-
 @media screen and (min-width: 769px) {
   .hide-above-md {
     display: none;

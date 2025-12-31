@@ -39,16 +39,24 @@
             <div 
               v-for="room in filteredRooms" 
               :key="room.id"
-              class="flex items-center px-6 py-3 cursor-pointer transition-all border-l-4 border-transparent hover:bg-gray-50"
+              class="flex items-center px-6 py-3 cursor-pointer gap-4 transition-all border-l-4 border-transparent hover:bg-gray-50"
               :class="{ 'bg-blue-50 !border-blue-500': currentRoomId === room.id }"
               @click="selectRoom(room.id, get_proper_user_avatar(room.userProfilsAvatar).first_name +' '+ get_proper_user_avatar(room.userProfilsAvatar).last_name, get_proper_user_avatar(room.userProfilsAvatar).avatar + '?t=' + new Date().getTime())"
             >
+            
               <!-- Avatar -->
               <div class="mr-4 flex-shrink-0">
-                <a-avatar 
-                  size="large" 
+                <a-avatar v-if="!room.userProfilsAvatar?.user_3"
+                  size="large"  style="border:1px solid rgba(0,0,0,0.2)"
                   :src="$store.state.root_media_api + get_proper_user_avatar(room.userProfilsAvatar).avatar"
                 />
+                
+             <a-avatar-group v-else :max-count="2" :max-style="{ color: '#f56a00', backgroundColor: '#fde3cf' }">
+                <a-avatar style="border:1px solid rgba(0,0,0,0.2)" :src="$store.state.root_media_api +room.userProfilsAvatar.user_1.avatar" />
+                <a-avatar style="border:1px solid rgba(0,0,0,0.2)" :src="$store.state.root_media_api +room.userProfilsAvatar.user_2.avatar" />
+                <a-avatar style="border:1px solid rgba(0,0,0,0.2)" :src="$store.state.root_media_api +room.userProfilsAvatar.user_3.avatar" />
+            </a-avatar-group>
+
               </div>
   
               <!-- Conversation Info -->
@@ -128,13 +136,15 @@
                 class="flex"
                 :class="message.user == currentUser.id ? 'justify-end' : 'justify-start'"
               >
+              
                 <div class="max-w-[70%]">
                   <div 
-                    class="px-4 py-3 rounded-2xl break-words leading-relaxed"
-                    :class="message.user == currentUser.id 
+                  class="px-4 py-3 rounded-2xl break-words leading-relaxed"
+                  :class="message.user == currentUser.id 
                       ? 'bg-blue-500 text-white' 
                       : 'bg-gray-200 text-gray-900'"
                   >
+                  <a-avatar :src="$store.state.root_media_api+message.userImage"></a-avatar>
                     {{ message.message }}
                   </div>
                   <div class="text-xs text-gray-500 mt-1 text-right">

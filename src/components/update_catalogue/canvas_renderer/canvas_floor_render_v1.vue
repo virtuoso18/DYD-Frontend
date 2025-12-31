@@ -32,9 +32,9 @@
       Click and drag to pan • Mouse wheel to zoom
     </div>
   </div>
-   <div class="apply-wrapper" style="display:flex;justify-content: space-between;padding-left:10px;padding-right:10px;">
+   <div class="" style="display:flex;justify-content: space-between;padding-left:10px;padding-right:10px;">
      
-  <div style="display:flex;gap:5px;padding-top:10px;">
+  <div style="display:flex;gap:5px;padding-top:5px;">
 
       <a-button  :disabled="isLoading" class="toolbar-btn primary-btn" @click="reset_entire_room">
         Before
@@ -628,21 +628,10 @@ export default {
 </script>
 
 <style scoped>
-  .apply-wrapper {
-  
-}
-
-/* apply translate ONLY below 400px */
-@media (max-width: 400px) {
-  .apply-wrapper {
-    /* transform: translateY(0.5rem); */
-    /* height:60px; */
-  }
-}
 .canvas-container {
   position: relative;
   width: 100%;
-  height: 100%;
+  height: 93%;
   min-height: 300px;
   overflow: hidden;
   background: #f5f5f5;
@@ -792,7 +781,7 @@ export default {
 
 @media (max-width: 480px) {
   .canvas-container {
-    min-height: 280px;
+    min-height: 250px;
   }
   
   .zoom-controls {

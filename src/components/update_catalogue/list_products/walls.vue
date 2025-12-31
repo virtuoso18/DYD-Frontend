@@ -1,5 +1,5 @@
 <template>
-  <div class="ai-catalog-section !pt-4 sm:!pt-0">
+  <div class="ai-catalog-section !pt-8 sm:!pt-0">
     <div class="apply-section md:hidden">
       <a-button type="primary" size="large" block class="apply-button" @click="updateItemRendering()">
         Apply
@@ -643,7 +643,7 @@ export default {
 
 .apply-section {
   flex-shrink: 0;
-  padding-top: 16px;
+  padding-top: 8px;
 }
 
 .apply-button {

@@ -1,6 +1,6 @@
 <template>
   <!-- <div className="sm:pt-0 pt-32 "> -->
-  <div className="sm:pt-0 ">
+  <div >
 
     <div class="ai-catalog-section p-1 ">
       <div class="apply-section  md:hidden">
@@ -361,7 +361,7 @@ export default {
 
 @media (min-width: 640px) {
   .ai-catalog-section {
-    height: 76vh;
+    height: 77vh;
   }
 }
 
@@ -651,9 +651,22 @@ export default {
 
 .apply-section {
   flex-shrink: 0;
-  padding-top: 16px;
+  padding-top: 16px; /* default: below 400px */
 }
 
+/* from 400px to 900px → 0px */
+@media (min-width: 300px) and (max-width: 900px) {
+  .apply-section {
+    padding-top: 0px;
+  }
+}
+
+/* above 900px → 16px again */
+@media (min-width: 901px) {
+  .apply-section {
+    padding-top: 8px;
+  }
+}
 .apply-button {
   height: 44px;
   border-radius: 6px;

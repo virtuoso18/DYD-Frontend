@@ -2236,6 +2236,7 @@ defineExpose({
   /* position: absolute; */
   /* gap: 24px; */
   padding: 5px 5px;
+  padding-bottom:0px;
   background: white;
   backdrop-filter: blur(16px);
   border-top: 1px solid rgba(0, 0, 0, 0.1);

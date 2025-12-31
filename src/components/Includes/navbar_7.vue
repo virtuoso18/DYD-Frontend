@@ -661,16 +661,15 @@ if (savedLang) {
   position: relative;
   display: inline-block;
 }
-
 .notification-badge {
   position: absolute;
-  top: -4px;
-  right: -8px;
-  background: #ef4444;
+  top: -1px;
+  right: -0px;
+  background: #EF4444;
   color: white;
   border-radius: 50%;
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
