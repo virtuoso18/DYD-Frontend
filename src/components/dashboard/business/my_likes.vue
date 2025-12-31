@@ -22,6 +22,8 @@
                         <a-empty :description="'You have not added anything in your likes till yet '"> </a-empty>
                     </div>
     
+
+                    
                         <a-row v-else>
                           <a-col v-for="product in filteredProducts" :key="product.id"
                 class="product-responsive" style="padding:5px;">
@@ -36,10 +38,72 @@
                         <div class="category-badge">{{ product.category }}</div>
                     </div>
     
+                    <!-- {{product}} -->
                     <a-row>
                         <a-col span="24">
-                            <b>{{ truncateText(product.name || 'No name available', 19) }}</b>
-                        </a-col>
+                            <b
+                              class="block w-full truncate"
+                              :title="product.name"
+                            >
+                              {{ product.name || "No name available" }}
+                            </b>
+                          </a-col>
+
+                          <a-col
+                            span="16"
+                            style="
+                              font-family: 'Poppins', sans-serif;
+                              font-size: 13px;
+                              font-weight: 400;
+                            "
+                          >
+                            Color
+                          </a-col>
+
+                          <a-col
+                            span="8"
+                            style="display: flex; justify-content: end"
+                          >
+                          <!-- {{product.product_colors}} -->
+                            <div
+                              v-for="(color, index) in product.product_colors.slice(
+                                0,
+                                2
+                              )"
+                              :key="index"
+                              style="
+                                width: 20px;
+                                height: 20px;
+                                border-radius: 20px;
+                                margin-left: 2px;
+                              "
+                              :style="'background:' + color.color"
+                            ></div>
+                          </a-col>
+
+                          <a-col
+                            span="12"
+                            style="
+                              font-family: 'Poppins', sans-serif;
+                              font-size: 13px;
+                              font-weight: 400;
+                            "
+                          >
+                            Price
+                          </a-col>
+
+                          <a-col
+                            span="12"
+                            style="
+                              display: flex;
+                              justify-content: end;
+                              font-weight: 700;
+                            "
+                          >
+                            <!-- <del style="font-size: 10px;">${{ product.pricing.price }}</del> -->
+                            ${{ product.product_price }}
+                          </a-col>
+                        <!-- {{ product }} -->
     
                         <a-col span="18">
                             <a-button block @click="goto_product_Route(product)">Product Details</a-button>
@@ -90,6 +154,7 @@
                                 <div class="product">
                                   <!-- {{ product }} -->
                                     <div class="product-image-container" @click="viewRoom(product)">
+                                      <!-- {{ product }} -->
                                         <img 
                                             :src="$store.state.root_media_api + product.image" 
                                             :alt="product.name"

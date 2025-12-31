@@ -262,7 +262,7 @@
               </span>
             </router-link>
 
-            <router-link
+            <!-- <router-link
               to="/user-dashboard/manage-subscription"
               class="nav-item"
               :class="{ active: $route.name === 'user_manage_subscription' }"
@@ -286,9 +286,9 @@
               <span class="nav-text text-center text-sm" :class="{ '!text-white': $route.name === 'user_manage_subscription' }" style="font-family: Poppins; font-weight: 400">
                 Manage Subscription
               </span>
-            </router-link>
+            </router-link> -->
 
-            <router-link
+            <!-- <router-link
               to="/user-dashboard/my-transactions"
               class="nav-item"
               :class="{ active: $route.name === 'user_my_transactions' }"
@@ -312,7 +312,7 @@
               <span class="nav-text text-center text-sm" :class="{ '!text-white': $route.name === 'user_transactions' }" style="font-family: Poppins; font-weight: 400">
                 Transactions
               </span>
-            </router-link>
+            </router-link> -->
 
             <div
               class="nav-item"

@@ -283,7 +283,8 @@
       <a-col :span="6">
         <!-- Add Product Button -->
                 <div style="margin-top: 20px;">
-                    <router-link to="/my-store/manage-products">
+                                        <router-link :to="'/access-business/manage-products?access_id='+this.$route.query.access_id+'&&brand='+this.$route.query.brand">
+
                         <a-button type="primary" style="width: 100%;">
                             <template #icon>+&nbsp;</template>
                             Add More Products
@@ -651,17 +652,7 @@ export default {
     mounted() {
       // Initialize editData with business_info
       this.loadBusinessProfile();
-        if (this.business_info) {
-            this.editData = {
-                ...this.editData,
-                business_picture: this.business_info.business_picture || this.editData.business_picture,
-                banner_picture: this.business_info.banner_picture || this.editData.banner_picture,
-            }
-            this.loadBusinessProducts(1); // Load first page
-            this.loadPosts();
-            this.loadBusinessLocation();
-            this.loadBusinessRatings();
-        }
+       
         
 
     },
@@ -1038,6 +1029,18 @@ export default {
 
                     localStorage.setItem('business_profile', JSON.stringify(data));
                     this.business_info = data;
+
+                     if (this.business_info) {
+                          this.editData = {
+                              ...this.editData,
+                              business_picture: this.business_info.business_picture || this.editData.business_picture,
+                              banner_picture: this.business_info.banner_picture || this.editData.banner_picture,
+                          }
+                          this.loadBusinessProducts(1); // Load first page
+                          this.loadPosts();
+                          this.loadBusinessLocation();
+                          this.loadBusinessRatings();
+                      }
                 }
                 
             } catch (error) {

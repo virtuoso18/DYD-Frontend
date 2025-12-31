@@ -43,7 +43,7 @@
                   :md="8"
                   :xs="24"
                   :sm="24"
-                  ><div style="padding: 2px">
+                  ><div style="padding: 4px">
                     <div class="post-card">
                       <!-- Post Image -->
                       <div style="position: relative">
@@ -56,7 +56,7 @@
                             width: 100%;
                             height: 200px;
                             object-fit: cover;
-                            border-radius: 16px;padding:5px;
+                            border-radius: 16px;
                             cursor: pointer;
                           "
                           :alt="post.title"
