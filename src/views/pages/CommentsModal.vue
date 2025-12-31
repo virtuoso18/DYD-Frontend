@@ -431,6 +431,7 @@ export default {
 
   methods: {
     closeModal() {
+      document.body.style.overflow = 'auto'
       this.$emit('close');
     },
 
