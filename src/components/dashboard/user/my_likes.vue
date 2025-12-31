@@ -1,180 +1,243 @@
 <template>
-
   <div className="py-4">
+    <div
+      class="sm:main min-h-[100vh] md:min-h-[100vh] md:border border-gray-300 sm:rounded-xl p-4 bg-white border-gray-200 xl:min-h-[100vh] 2xl:min-h-[100vh]"
+    >
+      <div style="padding: 10px; border-radius: 15px; min-height: 100vh">
+        <h3
+          style="
+            font-family: Poppins, sans-serif;
+            font-weight: 500;
+            font-size: 16px;
+            line-height: 24px;
+            letter-spacing: 0;
+          "
+        >
+          Liked Products & Rooms
+        </h3>
+        <a-tabs
+          v-model:activeKey="active_tab"
+          :key="tabRefreshKey"
+          @tabClick="handleTabClick"
+        >
+          <a-tab-pane key="Furniture" tab="Furniture">
+            <div
+              v-if="isLoading"
+              class="spinner-sec w-full h-[80vh] flex justify-center items-center"
+            >
+              <a-spin tip="Loading..."> </a-spin>
+            </div>
+            <div v-else>
+              <div
+                v-if="!filteredProducts?.length"
+                style="
+                  height: 70vh;
+                  gap: 20px;
+                  flex-direction: column;
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                "
+              >
+                <!-- <a-empty :description="'No Furniture Available'"></a-empty> -->
 
-    
-    <div 
-     class="
-    
-             sm:main 
-             min-h-[100vh] 
-             md:min-h-[100vh] 
-             md:border border-gray-300 
-             
-             sm:rounded-xl 
-             p-4 
-             
-             bg-white
-             border-gray-200 
-             xl:min-h-[100vh] 
-             2xl:min-h-[100vh]">
-        <div style="padding:10px;border-radius:15px;min-height:100vh">
-    <h3 style="font-family: Poppins, sans-serif; font-weight: 500; font-size: 16px; line-height: 24px; letter-spacing: 0;">
-      Liked Products & Rooms 
-    </h3>
-                <a-tabs v-model:activeKey="active_tab" :key="tabRefreshKey" @tabClick="handleTabClick">
-                    <a-tab-pane key="Furniture" tab="Furniture" >
-                    <div v-if="!filteredProducts?.length"  style="height:70vh;gap:20px;;flex-direction:column;display: flex;justify-content: center;align-items: center;">
-                            <!-- <a-empty :description="'No Furniture Available'"></a-empty> -->
-    
-                        <a-empty :description="'You have not added anything in your likes till yet '"> </a-empty>
+                <a-empty
+                  :description="'You have not added anything in your likes till yet '"
+                >
+                </a-empty>
+              </div>
+
+              <a-row v-else>
+                <a-col
+                  v-for="product in filteredProducts"
+                  :key="product.id"
+                  class="product-responsive"
+                  style="padding: 5px"
+                >
+                  <div class="product">
+                    <div
+                      class="product-image-container"
+                      @click="viewProduct(product)"
+                    >
+                      <img
+                        :src="$store.state.root_media_api + product.image"
+                        :alt="product.name"
+                        class="product-image"
+                      />
+                      <div class="category-badge">{{ product.category }}</div>
                     </div>
-    
-                        <a-row v-else>
-                          <a-col v-for="product in filteredProducts" :key="product.id"
-                class="product-responsive" style="padding:5px;">
-                <div class="product">
-    
-                    <div class="product-image-container" @click="viewProduct(product)">
-                        <img 
-                            :src="$store.state.root_media_api + product.image" 
-                            :alt="product.name"
-                            class="product-image"
-                        />
-                        <div class="category-badge">{{ product.category }}</div>
-                    </div>
-    
+
                     <a-row>
-                        <a-col span="24">
-                            <b>{{ truncateText(product.name || 'No name available', 19) }}</b>
-                        </a-col>
-    
-                        <a-col span="17">
-                            <a-button block @click="viewProduct(product)">Product Details</a-button>
-                        </a-col>
-    
-                        <a-col span="1"></a-col>
-    
-                        <!-- ❤️ Dynamic Favorite Button -->
-                        <a-col span="4">
+                      <a-col span="24">
+                        <b>{{
+                          truncateText(product.name || "No name available", 19)
+                        }}</b>
+                      </a-col>
+
+                      <a-col span="17">
+                        <a-button block @click="viewProduct(product)"
+                          >Product Details</a-button
+                        >
+                      </a-col>
+
+                      <a-col span="1"></a-col>
+
+                      <!-- ❤️ Dynamic Favorite Button -->
+                      <a-col span="4">
                         <a-button @click="toggleFavorite(product)">
-                            <template v-if="product.is_favorited">
+                          <template v-if="product.is_favorited">
                             <HeartFilled style="color: red" />
-                            </template>
-                            <template v-else>
+                          </template>
+                          <template v-else>
                             <HeartOutlined />
-                            </template>
+                          </template>
                         </a-button>
-                        </a-col>
-    
-            </a-row>
-    
-        </div>
-    </a-col>
-    
-                        </a-row>
-                    
-                    <div v-if="filteredProducts?.length > 0" style="display: flex; justify-content: center; margin-top: 20px; margin-bottom: 20px;">
-    <a-pagination 
-    v-model:current="productsPagination.currentPage"
-    :total="productsPagination.totalCount"
-    :page-size="productsPagination.pageSize"
-    @change="handleProductsPageChange"
-    show-total
-    :show-size-changer="false"
-    />
-    </div>
-                    </a-tab-pane>
-                    <a-tab-pane key="rooms" tab="rooms" >
-                    <div v-if="!filteredrooms?.length"  style="height:70vh;gap:20px;;flex-direction:column;display: flex;justify-content: center;align-items: center;">
-                        <a-empty :description="'You have not added any room in your likes till yet '"> </a-empty>
-                        
-    
-                        
+                      </a-col>
+                    </a-row>
+                  </div>
+                </a-col>
+              </a-row>
+
+              <div
+                v-if="filteredProducts?.length > 0"
+                style="
+                  display: flex;
+                  justify-content: center;
+                  margin-top: 20px;
+                  margin-bottom: 20px;
+                "
+              >
+                <a-pagination
+                  v-model:current="productsPagination.currentPage"
+                  :total="productsPagination.totalCount"
+                  :page-size="productsPagination.pageSize"
+                  @change="handleProductsPageChange"
+                  show-total
+                  :show-size-changer="false"
+                />
+              </div>
+            </div>
+          </a-tab-pane>
+          <a-tab-pane key="rooms" tab="rooms">
+            <div
+              v-if="isLoading"
+              class="spinner-sec w-full h-[80vh] flex justify-center items-center"
+            >
+              <a-spin tip="Loading..."> </a-spin>
+            </div>
+            <div v-else>
+              <div
+                v-if="!filteredrooms?.length"
+                style="
+                  height: 70vh;
+                  gap: 20px;
+                  flex-direction: column;
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                "
+              >
+                <a-empty
+                  :description="'You have not added any room in your likes till yet '"
+                >
+                </a-empty>
+              </div>
+
+              <a-row v-else>
+                <a-col
+                  v-for="product in filteredrooms"
+                  :key="product.id"
+                  class="product-responsive"
+                  style="padding: 5px"
+                >
+                  <div class="product">
+                    <div
+                      class="product-image-container"
+                      @click="viewRoom(product)"
+                    >
+                      <img
+                        :src="$store.state.root_media_api + product.image"
+                        :alt="product.name"
+                        class="product-image"
+                      />
+                      <!-- Category Badge -->
+                      <div class="category-badge">{{ product.category }}</div>
                     </div>
-    
-                        <a-row v-else>
-                            <a-col v-for="product in filteredrooms" :key="product.id" 
-                                class="product-responsive" style="padding:5px;">
-                                <div class="product">
-                                    <div class="product-image-container" @click="viewRoom(product)">
-                                        <img 
-                                            :src="$store.state.root_media_api + product.image" 
-                                            :alt="product.name"
-                                            class="product-image"
-                                        />
-                                        <!-- Category Badge -->
-                                        <div class="category-badge">{{ product.category }}</div>
-                                        
-                                        
-                                    </div>
-                                    <!-- {{ truncateText(product.description || 'No description available', 8) }} -->
-    
-                                    <a-row>
-                                        <a-col span="24">
-                                            <!-- <b>{{product.name}}</b> -->
-                                            <b>{{ truncateText(product.name || 'No name available', 19) }}</b>
-    
-                                        </a-col>
-                                        
-                                        
-                                    
-    
-                                        <a-col span="17">
-                                            <a-button block @click="viewRoom(product)">Product Details</a-button>
-                                        </a-col>
-                                        
-                                        <a-col span="1"></a-col>
-                                        <a-col span="4">
-      <a-button @click="toggleFavorite(product)">
-        <template v-if="product.is_favorited">
-          <HeartFilled style="color: red" />
-        </template>
-        <template v-else>
-          <HeartOutlined />
-        </template>
-      </a-button>
-    </a-col>
-                                    </a-row>
-                                </div>
-                            </a-col>
-                        </a-row>
-                    
-                    <div v-if="filteredrooms?.length > 0" style="display: flex; justify-content: center; margin-top: 20px; margin-bottom: 20px;">
-                            <a-pagination 
-                                v-model:current="roomPagination.currentPage"
-                                :total="roomPagination.totalCount"
-                                :page-size="roomPagination.pageSize"
-                                @change="handleProductsPageChange"
-                                show-total
-                                :show-size-changer="false"
-                            />
-                    </div>
-                    </a-tab-pane>
-                     
-                </a-tabs>
-        </div>
+                    <!-- {{ truncateText(product.description || 'No description available', 8) }} -->
+
+                    <a-row>
+                      <a-col span="24">
+                        <!-- <b>{{product.name}}</b> -->
+                        <b>{{
+                          truncateText(product.name || "No name available", 19)
+                        }}</b>
+                      </a-col>
+
+                      <a-col span="17">
+                        <a-button block @click="viewRoom(product)"
+                          >Product Details</a-button
+                        >
+                      </a-col>
+
+                      <a-col span="1"></a-col>
+                      <a-col span="4">
+                        <a-button @click="toggleFavorite(product)">
+                          <template v-if="product.is_favorited">
+                            <HeartFilled style="color: red" />
+                          </template>
+                          <template v-else>
+                            <HeartOutlined />
+                          </template>
+                        </a-button>
+                      </a-col>
+                    </a-row>
+                  </div>
+                </a-col>
+              </a-row>
+
+              <div
+                v-if="filteredrooms?.length > 0"
+                style="
+                  display: flex;
+                  justify-content: center;
+                  margin-top: 20px;
+                  margin-bottom: 20px;
+                "
+              >
+                <a-pagination
+                  v-model:current="roomPagination.currentPage"
+                  :total="roomPagination.totalCount"
+                  :page-size="roomPagination.pageSize"
+                  @change="handleProductsPageChange"
+                  show-total
+                  :show-size-changer="false"
+                />
+              </div>
+            </div>
+          </a-tab-pane>
+        </a-tabs>
+      </div>
     </div>
   </div>
-<CommentsModal
-  v-if="selectedPost"
-  :isOpen="showModal"
-  :post="selectedPost"
-  @close="closeModal" 
-  @commentAdded="handleCommentAdded"
-  @likeToggled="handleLikeToggled"
-/>
-<RoomDetailsModal
-  v-if="roomModalVisible"                    
-  :visible="roomModalVisible"
-  :room="selectedRoom || {}"
-  :mediaBase="$store.state.root_media_api"
-  @close="closeRoomModal"
-/>
+  <CommentsModal
+    v-if="selectedPost"
+    :isOpen="showModal"
+    :post="selectedPost"
+    @close="closeModal"
+    @commentAdded="handleCommentAdded"
+    @likeToggled="handleLikeToggled"
+  />
+  <RoomDetailsModal
+    v-if="roomModalVisible"
+    :visible="roomModalVisible"
+    :room="selectedRoom || {}"
+    :mediaBase="$store.state.root_media_api"
+    @close="closeRoomModal"
+  />
 </template>
 <script>
-import CommentsModal from '@/views/pages/CommentsModal.vue';
-import RoomDetailsModal from '@/views/pages/RoomDetailsModal.vue';
+import CommentsModal from "@/views/pages/CommentsModal.vue";
+import RoomDetailsModal from "@/views/pages/RoomDetailsModal.vue";
 import {
   ExclamationCircleOutlined,
   EyeOutlined,
@@ -188,11 +251,11 @@ import {
   PushpinOutlined,
   ArrowLeftOutlined,
   CloseOutlined,
-} from '@ant-design/icons-vue'
+} from "@ant-design/icons-vue";
 
 export default {
-  name: 'likes',
-  
+  name: "likes",
+
   components: {
     ExclamationCircleOutlined,
     EyeOutlined,
@@ -209,9 +272,10 @@ export default {
     ArrowLeftOutlined,
     CloseOutlined,
   },
-  
+
   data() {
     return {
+      isLoading:true,
       products: [],
       rooms: [],
       community_posts: [],
@@ -220,50 +284,55 @@ export default {
       roomModalVisible: false,
       selectedRoom: null,
       tabRefreshKey: 0,
-      
+
       // Pagination states for Products
       productsPagination: {
         currentPage: 1,
         pageSize: 20,
         totalCount: 0,
-        totalPages: 0
+        totalPages: 0,
       },
-      
+
       roomPagination: {
         currentPage: 1,
         pageSize: 20,
         totalCount: 0,
-        totalPages: 0
+        totalPages: 0,
       },
-    }
+    };
   },
-  
+
   computed: {
     filteredProducts() {
-      console.log('reached inside filtered products')
+      console.log("reached inside filtered products");
       if (!this.searchQuery) return this.products;
-      return this.products.filter(product =>
-        product.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-        product.category.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-        product.furniture_type.toLowerCase().includes(this.searchQuery.toLowerCase())
+      return this.products.filter(
+        (product) =>
+          product.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          product.category.name
+            .toLowerCase()
+            .includes(this.searchQuery.toLowerCase()) ||
+          product.furniture_type
+            .toLowerCase()
+            .includes(this.searchQuery.toLowerCase())
       );
     },
-    
+
     filteredrooms() {
-      console.log('reached inside filtered rooms')
+      console.log("reached inside filtered rooms");
       if (!this.searchQuery) return this.rooms;
-      return this.rooms.filter(room =>
+      return this.rooms.filter((room) =>
         room.name.toLowerCase().includes(this.searchQuery.toLowerCase())
       );
-    }
+    },
   },
-  
+
   mounted() {
-    this.fetchMyProducts()
-    this.fetchMyRooms()
-    this.fetchMyLikes()
+    this.fetchMyProducts();
+    // this.fetchMyRooms();
+    // this.fetchMyLikes();
   },
-  
+
   methods: {
     // Modal Methods
     viewPost(post) {
@@ -273,38 +342,42 @@ export default {
         image: this.$store.state.root_media_api + post.post_image,
         userName: post.post_by,
         userAvatar: this.$store.state.root_media_api + post.user_profile,
-        description: post.description || post.content || '',
+        description: post.description || post.content || "",
         tags: post.tags || [],
         views: post.view_count,
         likes: post.like_count,
         is_liked: post.isLiked || false,
-        comment_count: post.comment_count
-      }
-      
-      this.showModal = true
+        comment_count: post.comment_count,
+      };
+
+      this.showModal = true;
     },
 
     closeModal() {
-      this.showModal = false
-      this.selectedPost = null
+      this.showModal = false;
+      this.selectedPost = null;
     },
 
     handleCommentAdded() {
       if (this.selectedPost) {
-        const postIndex = this.community_posts.findIndex(p => p.id === this.selectedPost.id)
+        const postIndex = this.community_posts.findIndex(
+          (p) => p.id === this.selectedPost.id
+        );
         if (postIndex !== -1) {
-          this.community_posts[postIndex].comment_count++
-          this.selectedPost.comment_count++
+          this.community_posts[postIndex].comment_count++;
+          this.selectedPost.comment_count++;
         }
       }
     },
 
     handleLikeToggled() {
       if (this.selectedPost) {
-        const postIndex = this.community_posts.findIndex(p => p.id === this.selectedPost.id)
+        const postIndex = this.community_posts.findIndex(
+          (p) => p.id === this.selectedPost.id
+        );
         if (postIndex !== -1) {
-          this.community_posts[postIndex].isLiked = this.selectedPost.is_liked
-          this.community_posts[postIndex].like_count = this.selectedPost.likes
+          this.community_posts[postIndex].isLiked = this.selectedPost.is_liked;
+          this.community_posts[postIndex].like_count = this.selectedPost.likes;
         }
       }
     },
@@ -318,49 +391,53 @@ export default {
     },
 
     truncateText(text, charLimit = 7) {
-      if (!text) return '';
+      if (!text) return "";
       if (text.length <= charLimit) return text;
-      return text.slice(0, charLimit) + '...';
+      return text.slice(0, charLimit) + "...";
     },
 
     // Fetch Methods
     async fetchMyProducts(page = 1) {
       try {
-        console.log('reached inside fetch my products ')
-        const token = localStorage.getItem('token');
+        console.log("reached inside fetch my products ");
+        this.isLoading = true;
+        const token = localStorage.getItem("token");
         const response = await fetch(
           `${this.$store.state.root_api}likes/favorites/?page=${page}&page_size=${this.productsPagination.pageSize}&item_type=product,wall_texture,floor_texture`,
           {
-            method: 'GET',
+            method: "GET",
             headers: {
-              'Authorization': `Token ${token}`
-            }
+              Authorization: `Token ${token}`,
+            },
           }
         );
         const result = await response.json();
         if (result.success) {
-          console.log('result:- ', result.data)
+          console.log("result:- ", result.data);
           this.products = result.data;
           this.productsPagination.totalCount = result.total_count;
           this.productsPagination.totalPages = result.total_pages;
           this.productsPagination.currentPage = result.page;
         }
       } catch (error) {
-        console.error('Error loading products:', error);
-        this.$message.error('Error loading products');
+        console.error("Error loading products:", error);
+        this.$message.error("Error loading products");
+      }finally {
+        this.isLoading = false;
       }
     },
 
     async fetchMyRooms(page = 1) {
       try {
-        const token = localStorage.getItem('token');
+        this.isLoading = true;
+        const token = localStorage.getItem("token");
         const response = await fetch(
           `${this.$store.state.root_api}likes/favorites/?page=${page}&page_size=${this.roomPagination.pageSize}&item_type=room`,
           {
-            method: 'GET',
+            method: "GET",
             headers: {
-              'Authorization': `Token ${token}`
-            }
+              Authorization: `Token ${token}`,
+            },
           }
         );
         const result = await response.json();
@@ -371,45 +448,47 @@ export default {
           this.roomPagination.currentPage = result.page;
         }
       } catch (error) {
-        console.error('Error loading room ', error);
-        this.$message.error('Error loading room ');
+        console.error("Error loading room ", error);
+        this.$message.error("Error loading room ");
+      }finally {
+        this.isLoading = false;
       }
     },
 
     async fetchMyLikes(page = 1) {
       try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem("token");
         const response = await fetch(
           `${this.$store.state.root_api}community/api/my-likes/?page=${page}&page_size=${this.roomPagination.pageSize}`,
           {
-            method: 'GET',
+            method: "GET",
             headers: {
-              'Authorization': `Token ${token}`
-            }
+              Authorization: `Token ${token}`,
+            },
           }
         );
         const result = await response.json();
         if (result.success) {
-          this.community_posts = result.data
+          this.community_posts = result.data;
         }
       } catch (error) {
-        console.error('Error loading community posts ', error);
-        this.$message.error('Error loading community posts');
+        console.error("Error loading community posts ", error);
+        this.$message.error("Error loading community posts");
       }
     },
 
     // Toggle Methods
     async toggleFavorite(product) {
       try {
-        const token = localStorage.getItem('token');
-        console.log(product)
+        const token = localStorage.getItem("token");
+        console.log(product);
         const response = await fetch(
           `${this.$store.state.root_api}likes/favorites/toggle/`,
           {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              "Authorization": `Token ${token}`,
+              Authorization: `Token ${token}`,
             },
             body: JSON.stringify({
               id: product.id,
@@ -423,10 +502,10 @@ export default {
 
         // REMOVE the product from the list when unfavorited
         if (!product.is_favorited) {
-          if (product.type !== 'room') {
-            this.products = this.products.filter(p => p.id !== product.id);
+          if (product.type !== "room") {
+            this.products = this.products.filter((p) => p.id !== product.id);
           } else {
-            this.rooms = this.rooms.filter(p => p.id !== product.id);
+            this.rooms = this.rooms.filter((p) => p.id !== product.id);
           }
         }
       } catch (error) {
@@ -436,14 +515,14 @@ export default {
 
     async toggleLike(post) {
       try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem("token");
         const response = await fetch(
           `${this.$store.state.root_api}community/api/posts/like/`,
           {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              "Authorization": `Token ${token}`,
+              Authorization: `Token ${token}`,
             },
             body: JSON.stringify({
               post_id: post.id,
@@ -471,34 +550,38 @@ export default {
     handleRoomsPageChange(page) {
       this.fetchMyRooms(page);
     },
-     viewRoom(room) {
+    viewRoom(room) {
       // room object already looks like:
       // { added_at, is_favorited, id, name, image, category, type }
-      this.selectedRoom = room
-      this.roomModalVisible = true
+      this.selectedRoom = room;
+      this.roomModalVisible = true;
     },
     closeRoomModal() {
-      this.roomModalVisible = false
-      this.selectedRoom = null
+      this.roomModalVisible = false;
+      this.selectedRoom = null;
     },
-      handleTabChange(key) {
-    this.active_tab = key;  // Force sync
-    // Reset modal state when switching tabs
-    this.showModal = false;
-    this.selectedPost = null;
-  },
+    handleTabChange(key) {
+      this.active_tab = key; // Force sync
+      // Reset modal state when switching tabs
+      this.showModal = false;
+      this.selectedPost = null;
+    },
 
-   handleTabClick(key) {
-    this.active_tab = key;
-    this.tabRefreshKey++;  // Force re-render
-  },
+    handleTabClick(key) {
+      this.active_tab = key;
+      if( key === 'Furniture'){
+        this.fetchMyProducts();
+    }else if( key === 'rooms'){
+      this.fetchMyRooms();
+    }
+    // Force re-render
+    this.tabRefreshKey++;
   }
-}
+  },
+};
 </script>
 
-
 <style scoped>
-
 .main {
   margin-top: 10px;
   margin-bottom: 10px;
@@ -507,19 +590,18 @@ export default {
   padding: 20px;
   background-color: white;
 }
-.head-section{
-    display:flex;
-    justify-content: space-between;
+.head-section {
+  display: flex;
+  justify-content: space-between;
 }
-.product{
-    padding:10px;
-    margin-bottom:10px;
-    border-radius:10px;
-    background:#f3f2f4;
+.product {
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  background: #f3f2f4;
 }
-.products-list{
-    padding-bottom:20px;
-    
+.products-list {
+  padding-bottom: 20px;
 }
 .product-image-container {
   position: relative;
@@ -566,14 +648,32 @@ export default {
   letter-spacing: 0.5px;
 }
 .product-responsive {
-  width:50%;
+  width: 50%;
   flex: 0 0 50%;
 }
 
-@media (min-width: 576px) { .product-responsive { width: 50%; flex: 0 0 50%; } }
-@media (min-width: 768px) { .product-responsive { width: 33.333%; flex: 0 0 33.333%; } }
-@media (min-width: 992px) { .product-responsive { width: 25%; flex: 0 0 25%; } }
-@media (min-width: 1200px) { .product-responsive { width: 20%; flex: 0 0 20%; } }
-
-
+@media (min-width: 576px) {
+  .product-responsive {
+    width: 50%;
+    flex: 0 0 50%;
+  }
+}
+@media (min-width: 768px) {
+  .product-responsive {
+    width: 33.333%;
+    flex: 0 0 33.333%;
+  }
+}
+@media (min-width: 992px) {
+  .product-responsive {
+    width: 25%;
+    flex: 0 0 25%;
+  }
+}
+@media (min-width: 1200px) {
+  .product-responsive {
+    width: 20%;
+    flex: 0 0 20%;
+  }
+}
 </style>

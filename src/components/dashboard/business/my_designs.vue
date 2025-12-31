@@ -1,5 +1,10 @@
 <template>
-  <div
+  <div v-if="isLoading" class="spinner-sec w-full h-[80vh] flex justify-center items-center">
+    <a-spin tip="Loading...">
+    </a-spin>
+  </div> 
+
+  <div v-else="!isLoading"
     class="sm:main sm:border border-gray-200 bg-white !mb-5 sm:translate-y-3 sm:rounded-2xl min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh]"
   >
     <a-row v-if="view_type == 'all'">
@@ -764,6 +769,7 @@ export default {
       selectedDesign: null,
       showCommentsModal: false,
       selectedPost: null,
+      isLoading: true,
     };
   },
   components: {
@@ -1029,6 +1035,7 @@ export default {
 
     async loadMyDesignes() {
       try {
+        this.isLoading = true;
         const token = localStorage.getItem("token");
 
         const response = await fetch(
@@ -1053,6 +1060,8 @@ export default {
       } catch (error) {
         console.error("Error loading business profile:", error);
         this.$message.error("Network error while loading profile");
+      } finally {
+        this.isLoading = false;
       }
     },
 
