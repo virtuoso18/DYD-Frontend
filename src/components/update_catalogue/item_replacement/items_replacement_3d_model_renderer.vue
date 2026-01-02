@@ -4,7 +4,7 @@
       <img
         :src="this.baseImageUrl"
         alt=""
-        class="max-w-full  mx-auto"
+        class="max-w-full max-h-[54vh] md:max-h-[83vh] mx-auto"
       />
     </div>
   </div>
@@ -14,7 +14,7 @@
   >
     <!-- {{ modelDimensions }} -->
     <div
-      class="main-canvas max-w-full"
+      class="main-canvas max-w-full max-h-[55vh] md:max-h-[95vh] mx-auto"
       ref="canvasContainer"
     >
       <!-- Loading Overlay -->
@@ -157,7 +157,24 @@
   </button>
 </div>
 
- 
+  <!-- <div class="apply-section md:hidden">
+    <a-button
+      type="primary"
+      size="large"
+      block
+      @click="$emit('trigger-render-3d-object')"
+      style="
+        font-family: Poppins;
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 20px;
+        letter-spacing: 0%;
+        text-align: center;
+      "
+    >
+      Apply
+    </a-button>
+  </div> -->
 </template>
 
 <script>
