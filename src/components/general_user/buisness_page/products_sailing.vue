@@ -3,6 +3,7 @@
     <div class="products-list">
       <a-row>
         <a-col 
+        
           v-for="product in products"
           :key="product.product_id"
           class="product-responsive"

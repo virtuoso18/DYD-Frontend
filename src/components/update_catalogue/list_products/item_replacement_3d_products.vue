@@ -1,6 +1,24 @@
 <template>
 <div class="pt-wrapper">
-
+ <div class="apply-section md:hidden">
+    <a-button
+      type="primary"
+      size="large"
+      block
+      @click="$emit('trigger-render-3d-object')"
+      style="
+        font-family: Poppins;
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 20px;
+        letter-spacing: 0%;
+        text-align: center;
+      "
+    >
+      Apply
+    </a-button>
+  </div>
+  <br>
     <div class="ai-catalog-section !mx-1 ">
       <!-- Fixed Header -->
       <!-- <div class="ai-catalog-header py-3">

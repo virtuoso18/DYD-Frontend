@@ -583,8 +583,8 @@ watch: {
       this.canvas.addEventListener('contextmenu', (e) => e.preventDefault());
       
       // Touch events for mobile
-      this.canvas.addEventListener('touchstart', this.handleTouchStart, { passive: false });
-      this.canvas.addEventListener('touchmove', this.handleTouchMove, { passive: false });
+      this.canvas.addEventListener('touchstart', this.handleTouchStart);
+      this.canvas.addEventListener('touchmove', this.handleTouchMove);
       this.canvas.addEventListener('touchend', this.handleTouchEnd);
     },
 
@@ -682,7 +682,7 @@ watch: {
     // Touch events for mobile devices
     handleTouchStart(e) {
       if (this.isLoading) return;
-      e.preventDefault();
+      //e.preventDefault();
       
       if (e.touches.length === 1) {
         const touch = e.touches[0];
@@ -696,7 +696,7 @@ watch: {
 
     handleTouchMove(e) {
       if (this.isLoading) return;
-      e.preventDefault();
+     // e.preventDefault();
       
       if (this.isDragging && e.touches.length === 1) {
         const touch = e.touches[0];
@@ -714,7 +714,7 @@ watch: {
 
     handleTouchEnd(e) {
       if (this.isLoading) return;
-      e.preventDefault();
+    //  e.preventDefault();
       this.isDragging = false;
     },
 
@@ -1698,7 +1698,7 @@ selectAllWallsOnInit() {
   }
   
   .main-canvas {
-    touch-action: none;
+    touch-action: pan-y;
   }
 }
 /* Add these styles to your existing CSS */

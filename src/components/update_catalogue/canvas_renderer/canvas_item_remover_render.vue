@@ -2010,7 +2010,9 @@ export default {
       // console.log("g1");
       if (!this.canvas) return;
       // Prevent scroll/pinch on mobile
-      this.canvas.style.touchAction = "none";
+      
+      // this.canvas.style.touchAction = "none";
+
       // WHEEL (desktop zoom)
       this.canvas.addEventListener("wheel", this.handleWheel, {
         passive: false,
@@ -2131,7 +2133,7 @@ export default {
 
     handleTouchStart(e) {
       if (this.isLoading) return;
-      e.preventDefault();
+      // e.preventDefault();
 
       if (e.touches.length === 1) {
         const touch = e.touches[0];
@@ -2145,7 +2147,7 @@ export default {
 
     handleTouchMove(e) {
       if (this.isLoading) return;
-      e.preventDefault();
+     // e.preventDefault();
 
       if (this.isDragging && e.touches.length === 1) {
         const touch = e.touches[0];
@@ -2162,7 +2164,7 @@ export default {
 
     handleTouchEnd(e) {
       if (this.isLoading) return;
-      e.preventDefault();
+     // e.preventDefault();
       this.isDragging = false;
       this.removeObjectHighlight();
     },

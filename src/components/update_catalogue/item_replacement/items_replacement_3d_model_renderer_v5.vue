@@ -4,7 +4,7 @@
       <img
         :src="this.baseImageUrl"
         alt=""
-        class="max-w-full  mx-auto"
+        class="max-w-full max-h-[54vh] md:max-h-[83vh] mx-auto"
       />
     </div>
   </div>
@@ -14,7 +14,7 @@
   >
     <!-- {{ modelDimensions }} -->
     <div
-      class="main-canvas max-w-full"
+      class="main-canvas max-w-full max-h-[55vh] md:max-h-[95vh] mx-auto"
       ref="canvasContainer"
     >
       <!-- Loading Overlay -->
@@ -31,9 +31,9 @@
       <div id="viewer" ref="viewer"></div>
     </div>
   </div>
-<!-- 
+
   <div class="flex justify-between items-center py-2 px-2 bg-white w-full">
-    
+    <!-- Left: Reset -->
     <button
       className="bg-gray-300 px-6 py-1 rounded-md"
       @click="reset_entire_room"
@@ -50,7 +50,7 @@
       Reset
     </button>
 
-    
+    <!-- Right: Apply Changes -->
     <button
       className="pt-[10px] !text-white px-2  bg-blue-500 rounded-md py-1"
       type="primary"
@@ -67,97 +67,26 @@
     >
       Apply Changes
     </button>
-  </div> -->
+  </div>
 
-  
-<div class="flex justify-between items-center py-2 px-2 bg-white w-full gap-2">
-  <!-- Left: Reset -->
-  <button
-    className="bg-gray-300 px-6 py-1 rounded-md"
-    @click="reset_entire_room"
-    :disabled="isLoading"
-    style="
-      font-family: Poppins;
-      font-weight: 500;
-      font-size: 14px;
-      line-height: 20px;
-      letter-spacing: 0%;
-      text-align: center;
-    "
-  >
-    Reset
-  </button>
-
-  <!-- Center: Scale Controls -->
-  <div class="flex items-center gap-2">
-    <!-- Minus Button -->
-    <button
-      className="bg-red-500 hover:bg-red-600 !text-white px-3 py-1 rounded-md"
-      @click="scaleDown"
-      :disabled="isLoading || !modelLoaded"
-      style="
-        font-family: Poppins;
-        font-weight: 600;
-        font-size: 16px;
-        line-height: 20px;
-        text-align: center;
-        min-width: 40px;
-      "
-    >
-      −
-    </button>
-
-    <!-- Scale Display -->
-    <div
-      class="bg-gray-100 px-3 py-1 rounded-md text-center"
+  <div class="apply-section md:hidden">
+    <a-button
+      type="primary"
+      size="large"
+      block
+      @click="$emit('trigger-render-3d-object')"
       style="
         font-family: Poppins;
         font-weight: 500;
-        font-size: 12px;
-        min-width: 60px;
-      "
-    >
-      {{ (modelScale * 100).toFixed(0) }}%
-    </div>
-
-    <!-- Plus Button -->
-    <button
-      className="bg-green-500 hover:bg-green-600 !text-white px-3 py-1 rounded-md"
-      @click="scaleUp"
-      :disabled="isLoading || !modelLoaded"
-      style="
-        font-family: Poppins;
-        font-weight: 600;
-        font-size: 16px;
+        font-size: 14px;
         line-height: 20px;
+        letter-spacing: 0%;
         text-align: center;
-        min-width: 40px;
       "
     >
-      +
-    </button>
+      Apply
+    </a-button>
   </div>
-
-  <!-- Right: Apply Changes -->
-  <button
-    className="pt-[10px] !text-white px-2  bg-blue-500 rounded-md py-1"
-    type="primary"
-    @click="$emit('Apply-Changes', 'item-replacement-3d-renderer')"
-    :disabled="isLoading"
-    style="
-      font-family: Poppins;
-      font-weight: 500;
-      font-size: 13px;
-      line-height: 20px;
-      letter-spacing: 0%;
-      text-align: center;
-    "
-  >
-    Apply Changes
-  </button>
-</div>
-
- 
 </template>
 
 <script>
@@ -198,11 +127,6 @@ export default {
 
       // Floor data from JSON
       // floorData: {}
-      // ... your existing data ...
-      modelScale: 1.0,           // Track current scale multiplier
-      minScale: 0.5,             // Minimum scale (50%)
-      maxScale: 3.0,             // Maximum scale (300%)
-      scaleStep: 0.1,            // Step size for +/- buttons (10%)
     };
   },
 
@@ -280,54 +204,6 @@ export default {
   },
 
   methods: {
-    
-  scaleUp() {
-    if (!this.model || this.modelScale >= this.maxScale) return;
-    this.modelScale = Math.min(this.maxScale, this.modelScale + this.scaleStep);
-    this.applyModelScale();
-  },
-
-  scaleDown() {
-    if (!this.model || this.modelScale <= this.minScale) return;
-    this.modelScale = Math.max(this.minScale, this.modelScale - this.scaleStep);
-    this.applyModelScale();
-  },
-
-applyModelScale() {
-  if (!this.model || !this.modelBoundingBox) return;
-
-  // Apply the combined scale (base scale * user scale)
-  const finalScale = this.baseModelScale * this.modelScale;
-  this.model.scale.setScalar(finalScale);
-
-  // Get the current world position before we recalculate
-  const currentWorldPos = this.model.position.clone();
-
-  // Update bounding box for accurate positioning
-  this.modelBoundingBox.setFromObject(this.model);
-  this.modelSize = this.modelBoundingBox.getSize(new THREE.Vector3());
-
-  // IMPORTANT: Calculate the model's bottom in LOCAL space (before scaling affected it)
-  // The bounding box min.y is in local space, so we need to account for the actual scale
-  const modelBottomLocal = this.modelBoundingBox.min.y;
-  
-  // Get the floor height at the model's current X, Z position
-  const floorY = this.getFloorHeightAtPosition(currentWorldPos);
-
-  // Position the model so its bottom touches the floor
-  // We place the model's origin at: floorHeight - (modelBottomLocal * finalScale)
-  // This ensures the actual bottom of the scaled model sits on the floor
-  const modelBottomWorldOffset = modelBottomLocal * finalScale;
-  this.model.position.y = floorY - modelBottomWorldOffset;
-
-  // Keep X and Z positions unchanged
-  this.model.position.x = currentWorldPos.x;
-  this.model.position.z = currentWorldPos.z;
-
-  // Update rotation ring size
-  this.updateRotationRingPosition();
-},
-
     async load_the_fileData() {
       try {
         const response = await fetch(this.floor_3d_model_grid);
@@ -1335,36 +1211,37 @@ applyModelScale() {
       mouse.x = ((clientX - rect.left) / rect.width) * 2 - 1;
       mouse.y = -((clientY - rect.top) / rect.height) * 2 + 1;
       // MODEL DRAGGING
-      
-if (this.isDraggingModel) {
-  this.raycaster.setFromCamera(mouse, this.camera);
-  const worldPoint = new THREE.Vector3();
-  
-  if (this.raycaster.ray.intersectPlane(this.dragPlane, worldPoint)) {
-    worldPoint.sub(this.dragOffset);
-    
-    this.model.position.x = worldPoint.x;
-    this.model.position.z = worldPoint.z;
-    
-    // FIXED: Use the same calculation as applyModelScale
-    const { a, b, c, d } = this.planeEquation;
-    let floorY;
-    if (Math.abs(b) > 0.001) {
-      floorY = -(a * worldPoint.x + c * worldPoint.z + d) / b;
-    } else {
-      floorY = this.floorData.floor_plane.height;
-    }
-    
-    // FIXED: Account for current model scale when positioning
-    const finalScale = this.baseModelScale * this.modelScale;
-    const modelBottomWorldOffset = this.modelBoundingBox.min.y * finalScale;
-    this.model.position.y = floorY - modelBottomWorldOffset;
-    
-    this.updateRotationRingPosition();
-    this.isOnValidFloor = true;
-  }
-}
-
+      if (this.isDraggingModel) {
+        this.raycaster.setFromCamera(mouse, this.camera);
+        const worldPoint = new THREE.Vector3();
+        // Hit drag plane
+        if (this.raycaster.ray.intersectPlane(this.dragPlane, worldPoint)) {
+          // APPLY OFFSET FIX — Keeps pointer locked on model
+          // NEW POSITION = worldPoint - dragOffset
+          // ---------------------------------------------
+          worldPoint.sub(this.dragOffset);
+          // FULL SCREEN MOVEMENT FIX (X + Y movement)
+          // No restriction → allow entire floor movement
+          // ---------------------------------------------
+          this.model.position.x = worldPoint.x;
+          this.model.position.z = worldPoint.z;
+          // ---------------------------------------------
+          // FLOOR HEIGHT (same as you already had)
+          // ---------------------------------------------
+          const { a, b, c, d } = this.planeEquation;
+          let floorY;
+          if (Math.abs(b) > 0.001) {
+            floorY = -(a * worldPoint.x + c * worldPoint.z + d) / b;
+          } else {
+            floorY = this.floorData.floor_plane.height;
+          }
+          // Correct for scaled model bottom
+          const modelBottom = this.modelBoundingBox.min.y * this.baseModelScale;
+          this.model.position.y = floorY - modelBottom;
+          this.updateRotationRingPosition();
+          this.isOnValidFloor = true;
+        }
+      }
       // ------------------------------------------------------------
       // MODEL ROTATION
       // ------------------------------------------------------------
@@ -1448,27 +1325,25 @@ if (this.isDraggingModel) {
       this.backgroundScene.add(this.bgMesh);
     },
 
-    
-reset_entire_room() {
-  if (!this.model) return;
+    reset_entire_room() {
+      if (!this.model) return;
 
-  const initialPos = this.floorPoint.clone();
-  this.model.position.x = initialPos.x;
-  this.model.position.z = initialPos.z;
+      const initialPos = this.floorPoint.clone();
+      this.model.position.x = initialPos.x;
+      this.model.position.z = initialPos.z;
 
-  const floorY = this.getFloorHeightAtPosition(initialPos);
-  
-  // Use the same calculation as applyModelScale
-  const finalScale = this.baseModelScale * this.modelScale;
-  const modelBottomWorldOffset = this.modelBoundingBox.min.y * finalScale;
-  this.model.position.y = floorY - modelBottomWorldOffset;
+      const floorY = this.getFloorHeightAtPosition(initialPos);
+      // const modelBottom = this.modelBoundingBox.min.y;
+      const modelBottom = this.modelBoundingBox.min.y * this.baseModelScale;
 
-  this.modelRotation.y = 0;
-  this.model.rotation.y = 0;
+      this.model.position.y = floorY - modelBottom;
 
-  this.applyPerspectiveScaling();
-  this.updateRotationRingPosition();
-},
+      this.modelRotation.y = 0;
+      this.model.rotation.y = 0;
+
+      this.applyPerspectiveScaling();
+      this.updateRotationRingPosition();
+    },
 
     animate() {
       this.animationId = requestAnimationFrame(this.animate);

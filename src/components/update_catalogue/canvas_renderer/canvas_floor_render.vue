@@ -235,8 +235,8 @@ export default {
       this.canvas.addEventListener('contextmenu', (e) => e.preventDefault());
       
       // Touch events for mobile
-      this.canvas.addEventListener('touchstart', this.handleTouchStart, { passive: false });
-      this.canvas.addEventListener('touchmove', this.handleTouchMove, { passive: false });
+      this.canvas.addEventListener('touchstart', this.handleTouchStart);
+      this.canvas.addEventListener('touchmove', this.handleTouchMove);
       this.canvas.addEventListener('touchend', this.handleTouchEnd);
     },
 
@@ -347,11 +347,11 @@ export default {
     // Touch events for mobile devices
     handleTouchStart(e) {
       if (this.isCurrentlyLoading) {
-        e.preventDefault();
+      //  e.preventDefault();
         return;
       }
       
-      e.preventDefault();
+     // e.preventDefault();
       
       if (e.touches.length === 1) {
         const touch = e.touches[0];
@@ -365,11 +365,11 @@ export default {
 
     handleTouchMove(e) {
       if (this.isCurrentlyLoading) {
-        e.preventDefault();
+      //  e.preventDefault();
         return;
       }
       
-      e.preventDefault();
+    //  e.preventDefault();
       
       if (this.isDragging && e.touches.length === 1) {
         const touch = e.touches[0];
@@ -386,11 +386,11 @@ export default {
 
     handleTouchEnd(e) {
       if (this.isCurrentlyLoading) {
-        e.preventDefault();
+      //  e.preventDefault();
         return;
       }
       
-      e.preventDefault();
+      // e.preventDefault();
       this.isDragging = false;
     },
 
@@ -768,8 +768,7 @@ export default {
   .zoom-controls {
     top: 8px;
     right: 8px;
-    padding: 6px 8px;
-    gap: 6px;
+    padding: 6px 8px;gap: 6px;
   }
   
   .zoom-btn {
@@ -829,7 +828,7 @@ export default {
   }
   
   .main-canvas {
-    touch-action: none;
+    touch-action: pan-y;
   }
 }
 
