@@ -638,11 +638,14 @@ export default {
     /* transform: translateY(0.5rem); */
     /* height:60px; */
   }
+  .canvas-container{
+    height: 100%;
+  }
 }
 .canvas-container {
   position: relative;
   width: 100%;
-  height: 100%;
+  height: 92%;
   min-height: 300px;
   overflow: hidden;
   background: #f5f5f5;

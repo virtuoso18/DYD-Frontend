@@ -14,7 +14,7 @@
   >
     <!-- {{ modelDimensions }} -->
     <div
-      class="main-canvas max-w-full max-h-[55vh] md:max-h-[95vh] mx-auto"
+      class="main-canvas max-h-[300px] md:max-h-[95vh] mx-auto"
       ref="canvasContainer"
     >
       <!-- Loading Overlay -->

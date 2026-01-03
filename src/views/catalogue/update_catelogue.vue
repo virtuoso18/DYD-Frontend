@@ -541,7 +541,7 @@ Switch Furniture</a-button> -->
                 />
                 <!-- @redetect-objects-room="fetch_redetect_ObjectsBinary_Masks" -->
   <!-- ceiling light renderer -->
-              <img :src="this.base_image_url" style="width:100%;height:50vh;object-fit:contain" alt="" v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Lights' && selected_light_type===''">
+              <img :src="this.base_image_url" style="width:100%;height:100%;object-fit:contain" alt="" v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Lights' && selected_light_type===''">
               <canvas_lights_render 
                 v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Lights' && selected_light_type==='sunk'" 
                 :baseImage="base_image_url"
@@ -3581,10 +3581,10 @@ UserDeleteOutlined,
 </script>
 
 <style scoped>
-.canvas-painting-sec{
+/* .canvas-painting-sec{
   width: 100%;
   height:70vh;
-}
+} */
 
 /* Example Images */
 .history-label {
@@ -3729,17 +3729,18 @@ UserDeleteOutlined,
 
 .category-tabs {
   display: flex;
+  justify-content: space-around;
   flex-wrap: wrap;
   padding: 5px 5px 0;
-  gap: 4px;
+  gap: 3px;
   /* border-bottom: 1px solid #f0f0f0; */
 }
 
 .category-tab {
   padding: 7px ;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 500;
-  gap:5px;
+  gap:2px;
   display: flex;
   color: #666;
   border:1px solid rgba(0,0,0,0.1);
@@ -4011,25 +4012,25 @@ UserDeleteOutlined,
   height:80vh
 }
 .light-3d-height-adjuster{
-  height:52vh
+  height:100%
 
 }
 .mobile-floor-height-adjuster{
-  height:52vh
+  height:100%
 }
 
 .mobile-wall-height-adjuster{
-  height:52vh
+  height:100%
 }
 .mobile-unselected-light-height-adjuster{
-  height:50vh
+  height:100%
 }
 .mobile-furniture-nonselected-height-adjuster{
-  height:50vh
+  height:100%
 
 }
 .mobile-furniture-selected-height-adjuster{
-  height:60vh
+  height:100%
 
 }
 }

@@ -454,6 +454,7 @@
     <a-row style="padding: 20px;  padding-top: 30px">
       <a-col :span="8" style="display: flex; align-items: center">
        <button
+         @click="$router.back()"
   style="
     background: none;
     border: none;
@@ -1252,7 +1253,7 @@
           align-items: center;
         "
       >
-        <div style="display: flex; gap: 0; border-radius: 20px; width: 100%; max-width: 150px; margin-bottom: 10px;">
+        <!-- <div style="display: flex; gap: 0; border-radius: 20px; width: 100%; max-width: 150px; margin-bottom: 10px;">
   <a-button 
     :type="currentView === 'before' ? 'primary' : 'default'"
     @click="showBefore"
@@ -1267,6 +1268,59 @@
   > 
     After 
   </a-button>
+</div> -->
+ <div class="relative inline-flex items-center translate-y-6 bg-gray-100 rounded-xl p-1 w-full max-w-[150px] z-[2] ">
+  <!-- Sliding background indicator -->
+  <div 
+    class="absolute top-1 bottom-1 w-[calc(50%-0.25rem)] bg-blue-600 rounded-xl shadow-lg transition-all duration-300 ease-in-out"
+    :class="currentView === 'after' ? 'left-[calc(50%+0.125rem)]' : 'left-1'"
+  ></div>
+  
+  <!-- Before Button -->
+  <button
+    @click="showBefore"
+    :disabled="loading"
+    class="relative z-10 flex-1 px-1 sm:px-2 py-2 font-medium rounded-xl transition-colors duration-300 font-poppins flex items-center justify-center min-w-0 overflow-hidden"
+    style="
+      font-family: Poppins;
+      font-weight: 400;
+      font-size: 10px;
+      line-height: 20px;
+      letter-spacing: 0%;
+      text-align: center;
+    "
+    :class="[
+      currentView === 'before' 
+        ? '!text-white' 
+        : 'text-gray-700',
+      loading ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
+    ]"
+  >
+    <span class="whitespace-nowrap">Before</span>
+  </button>
+  
+  <!-- After Button -->
+  <button
+    @click="showAfter"
+    :disabled="loading"
+    class="relative z-10 flex-1 px-1 sm:px-2 py-2 font-medium rounded-xl transition-colors duration-300 font-poppins flex items-center justify-center min-w-0 overflow-hidden"
+    style="
+      font-family: Poppins;
+      font-weight: 400;
+      font-size: 10px;
+      line-height: 20px;
+      letter-spacing: 0%;
+      text-align: center;
+    "
+    :class="[
+      currentView === 'after' 
+        ? '!text-white' 
+        : 'text-gray-700',
+      loading ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
+    ]"
+  >
+    <span class="whitespace-nowrap">After</span>
+  </button>
 </div>
 
         <div style="display: flex; flex-direction: column">

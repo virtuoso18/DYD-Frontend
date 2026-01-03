@@ -207,7 +207,7 @@
 </template>
 
 <script>
-import BusinessProductsSailing from '@/components/general_user/buisness_page/products_sailing.vue'
+import BusinessProductsSailing from '@/components/general_user/buisness_page/liked_products_sailing.vue'
 
 export default {
   name: 'RoomDetailsModal',

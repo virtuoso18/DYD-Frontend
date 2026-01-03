@@ -5,6 +5,7 @@
       type="primary"
       size="large"
       block
+      
       @click="$emit('trigger-render-3d-object')"
       style="
         font-family: Poppins;
@@ -13,13 +14,14 @@
         line-height: 20px;
         letter-spacing: 0%;
         text-align: center;
+        
       "
     >
       Apply
     </a-button>
+    <br>
   </div>
-  <br>
-    <div class="ai-catalog-section !mx-1 ">
+    <div class="ai-catalog-section !mx-1  py-2 ">
       <!-- Fixed Header -->
       <!-- <div class="ai-catalog-header py-3">
         <span class="!text-gray-700"  style="
@@ -425,7 +427,7 @@ export default {
 /* only below 400px */
 @media (max-width: 400px) {
   .ai-catalog-header {
-    padding-top: 26px;
+    /* padding-top: 26px; */
   }
 }
 
@@ -714,6 +716,8 @@ export default {
 .apply-section {
   flex-shrink: 0;
   padding-top: 8px;
+  padding-left:10px;
+        padding-right:10px;
 }
 
 .apply-button {

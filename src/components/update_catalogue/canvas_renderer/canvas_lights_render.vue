@@ -194,10 +194,10 @@
         </div>
  
         </a-col>
-        <a-col :span=6 style="display: flex;justify-content: center;align-items: end;">
+        <!-- <a-col :span=6 style="display: flex;justify-content: center;align-items: end;">
               
       
-        </a-col>
+        </a-col> -->
       </a-row>
      <br>
       

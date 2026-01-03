@@ -1,5 +1,5 @@
 <template>
-<div style="width:100%;height:90vh;background-color: white;padding:16px;overflow-y:auto;">
+<div style="width:100%;background-color: white;padding:16px;" class="Generated_history">
     <h2 style="font-size:18px;font-weight:600;color:#333;margin:0 0 16px 0;">Generate History</h2>
     
     <!-- Empty State -->
@@ -224,5 +224,17 @@ padding:1px;
 .main-image:hover{
   border:1px solid blue ;
   
+}
+.Generated_history{
+    height:90vh;
+    overflow-y:auto;
+}
+
+@media screen and (max-width: 500px) {
+  .Generated_history{
+    height:100%;
+    overflow-y:none;
+}
+
 }
 </style>

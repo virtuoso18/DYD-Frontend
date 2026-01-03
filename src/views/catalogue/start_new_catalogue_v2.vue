@@ -1,7 +1,7 @@
 <template>
   <div class="home-container">
     <!-- Loading Modal - Direct in DOM -->
-     <!-- Loading Modal - Direct in DOM --><Transition name="modal-fade">
+    <Transition name="modal-fade">
       <div
         v-if="showLoadingModal"
         class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 backdrop-blur-sm"
@@ -38,163 +38,137 @@
 
     <!-- Instructions Modal -->
     <Transition name="modal-fade">
-      <div
-        v-if="showInstructionsModal"
-        class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
-        style="position: fixed; top: 0; left: 0; right: 0; bottom: 0;"
-        @click.self="showInstructionsModal = false"
+  <div
+    v-if="showInstructionsModal"
+    class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
+    style="position: fixed; top: 0; left: 0; right: 0; bottom: 0;"
+    @click.self="showInstructionsModal = false"
+  >
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 relative">
+      <button
+        @click="showInstructionsModal = false"
+        class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 transition-colors z-10"
       >
-        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 relative">
-          <button
-            @click="showInstructionsModal = false"
-            class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 transition-colors z-10"
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+
+      <div class="pt-12 px-3 pb-6">
+        <h2 class="text-xl font-bold text-center mb-8"></h2>
+        
+        <!-- IMAGE PREVIEW SECTION -->
+        <div v-if="pendingImage" class="mb-6">
+          <img 
+            :src="pendingImage.preview" 
+            alt="Selected room"
+            class="w-full h-64 object-cover rounded-xl shadow-lg mb-4"
+          />
+          
+          <button 
+            @click="changePendingImage"
+            class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors mb-3"
           >
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-            </svg>
+            Change Image
           </button>
 
-          <div class="pt-12 px-3 pb-6">
-            <h2 class="text-xl font-bold text-center mb-8"></h2>
-            
-            <div  v-if="!modalPreviewImage"  class="border-2 border-dashed border-gray-300 rounded-xl p-5 mb-6">
-              <div class="flex items-center gap-3 mb-4">
-                <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <g clip-path="url(#clip0_7680_52365)">
-                    <path d="M17.9362 14.8169C17.9362 15.2305 17.7719 15.6272 17.4794 15.9197C17.1869 16.2122 16.7902 16.3765 16.3766 16.3765H2.33991C1.92627 16.3765 1.52957 16.2122 1.23708 15.9197C0.944591 15.6272 0.780273 15.2305 0.780273 14.8169V6.23893C0.780273 5.82529 0.944591 5.42859 1.23708 5.1361C1.52957 4.84361 1.92627 4.67929 2.33991 4.67929H5.45917L7.01881 2.33984H11.6977L13.2573 4.67929H16.3766C16.7902 4.67929 17.1869 4.84361 17.4794 5.1361C17.7719 5.42859 17.9362 5.82529 17.9362 6.23893V14.8169Z" stroke="#606367" stroke-width="1.55963" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M9.35852 13.2571C11.0812 13.2571 12.4778 11.8605 12.4778 10.1378C12.4778 8.4151 11.0812 7.01855 9.35852 7.01855C7.6358 7.01855 6.23926 8.4151 6.23926 10.1378C6.23926 11.8605 7.6358 13.2571 9.35852 13.2571Z" stroke="#606367" stroke-width="1.55963" stroke-linecap="round" stroke-linejoin="round"/>
-                  </g>
-                  <defs>
-                    <clipPath id="clip0_7680_52365">
-                      <rect width="18.7156" height="18.7156" fill="white"/>
-                    </clipPath>
-                  </defs>
-                </svg>
-                <p class="text-[14px] !font-family-poppins text-gray-700">Upload the picture of your space here.</p>
-              </div>
+          <button 
+            @click="processPendingImage"
+            :disabled="uploadingModal"
+            class="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors"
+          >
+            <svg v-if="uploadingModal" class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            {{ uploadingModal ? 'Processing...' : 'Continue' }}
+          </button>
+        </div>
 
-              <div class="flex items-center gap-3 mb-4">
-                <svg width="17" height="18" viewBox="0 0 17 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M4.21193 13.4677C2.81866 13.7015 1.75052 14.0482 1.16804 14.4559C0.585558 14.8635 0.520238 15.3101 0.981863 15.7284C1.44349 16.1467 2.40715 16.5141 3.72798 16.7755C4.41096 16.9107 5.17038 17.0137 5.97282 17.0817M12.387 13.4667C13.7812 13.7 14.8506 14.0465 15.4346 14.454C16.0186 14.8615 16.0856 15.3081 15.6256 15.7265C15.1655 16.1449 14.2032 16.5126 12.8834 16.7743C12.1989 16.9101 11.4373 17.0135 10.6325 17.0817M8.30265 7.13925V12.1958M8.30265 7.13925L13.3859 4.14732M8.30265 7.13925L3.21937 4.14732M7.87904 0.791234C8.14117 0.639901 8.46413 0.639901 8.72626 0.791234L13.3819 3.47914C13.644 3.63048 13.8055 3.91016 13.8055 4.21285V9.58867C13.8055 9.89136 13.644 10.171 13.3819 10.3224L8.72626 13.0103C8.46413 13.1616 8.14117 13.1616 7.87904 13.0103L3.22344 10.3224C2.96131 10.171 2.79983 9.89136 2.79983 9.58867V4.21285C2.79983 3.91016 2.96131 3.63048 3.22344 3.47914L7.87904 0.791234Z" stroke="#606367" stroke-width="1.35554" stroke-linecap="round"/>
-                </svg>
-                <p class="text-[14px] !font-family-poppins text-gray-700">Try our products in space</p>
-              </div>
-
-              <div class="flex items-center gap-3 mb-4">
-                <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M14.8169 2.33887H3.89948C3.03812 2.33887 2.33984 3.03714 2.33984 3.8985V14.8159C2.33984 15.6773 3.03812 16.3756 3.89948 16.3756H14.8169C15.6783 16.3756 16.3765 15.6773 16.3765 14.8159V3.8985C16.3765 3.03714 15.6783 2.33887 14.8169 2.33887Z" stroke="#606367" stroke-width="1.55963" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M6.62871 7.79843C7.27473 7.79843 7.79843 7.27473 7.79843 6.62871C7.79843 5.98269 7.27473 5.45898 6.62871 5.45898C5.98269 5.45898 5.45898 5.98269 5.45898 6.62871C5.45898 7.27473 5.98269 7.79843 6.62871 7.79843Z" stroke="#606367" stroke-width="1.55963" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M16.3765 11.6969L12.4774 7.79785L3.89941 16.3758" stroke="#606367" stroke-width="1.55963" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                <p class="text-[14px] !font-family-poppins text-gray-700">Clean the camera</p>
-              </div>
-
-              <div class="flex items-center gap-3 relative">
-                <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M8.57838 14.8159C12.0238 14.8159 14.8169 12.0228 14.8169 8.5774C14.8169 5.13195 12.0238 2.33887 8.57838 2.33887C5.13293 2.33887 2.33984 5.13195 2.33984 8.5774C2.33984 12.0228 5.13293 14.8159 8.57838 14.8159Z" stroke="#606367" stroke-width="1.55963" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M16.3776 16.3766L12.9854 12.9844" stroke="#606367" stroke-width="1.55963" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M8.57812 6.23828V10.9172" stroke="#606367" stroke-width="1.55963" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M6.23926 8.57715H10.9182" stroke="#606367" stroke-width="1.55963" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                <p class="text-[14px] !font-family-poppins text-gray-700">Take the picture at 0.5 zoom.</p>
-              </div>
+        <!-- UPLOAD INSTRUCTIONS SECTION -->
+        <div v-else>
+          <div class="border-2 border-dashed border-gray-300 rounded-xl p-5 mb-6">
+            <div class="flex items-center gap-3 mb-4">
+              <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g clip-path="url(#clip0_7680_52365)">
+                  <path d="M17.9362 14.8169C17.9362 15.2305 17.7719 15.6272 17.4794 15.9197C17.1869 16.2122 16.7902 16.3765 16.3766 16.3765H2.33991C1.92627 16.3765 1.52957 16.2122 1.23708 15.9197C0.944591 15.6272 0.780273 15.2305 0.780273 14.8169V6.23893C0.780273 5.82529 0.944591 5.42859 1.23708 5.1361C1.52957 4.84361 1.92627 4.67929 2.33991 4.67929H5.45917L7.01881 2.33984H11.6977L13.2573 4.67929H16.3766C16.7902 4.67929 17.1869 4.84361 17.4794 5.1361C17.7719 5.42859 17.9362 5.82529 17.9362 6.23893V14.8169Z" stroke="#606367" stroke-width="1.55963" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M9.35852 13.2571C11.0812 13.2571 12.4778 11.8605 12.4778 10.1378C12.4778 8.4151 11.0812 7.01855 9.35852 7.01855C7.6358 7.01855 6.23926 8.4151 6.23926 10.1378C6.23926 11.8605 7.6358 13.2571 9.35852 13.2571Z" stroke="#606367" stroke-width="1.55963" stroke-linecap="round" stroke-linejoin="round"/>
+                </g>
+              </svg>
+              <p class="text-[14px] text-gray-700">Upload the picture of your space here.</p>
             </div>
-            
-            <br>
-            <!-- Hidden file input for modal -->
-            <input 
-              ref="modalFileInput"
-              type="file" 
-              accept=".png,.jpg,.jpeg"
-              @change="handleModalFileUploadChange"
-              class="hidden"
-            />
 
-            <!-- Show preview if image is selected, else show upload button -->
-            <div v-if="!modalPreviewImage" class="space-y-3">
-              <button 
-                @click="triggerFileUpload"
-                :disabled="uploading"
-                class="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed !text-white font-medium py-3 px-4 text-[14px] !font-family-poppins rounded-lg flex items-center justify-center gap-2 transition-colors mb-5"
-              >
-                <svg v-if="uploading" class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-
-                <svg v-else width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <g clip-path="url(#clip0_7680_52390)">
-                    <path d="M17.9362 21.0542C17.9362 21.4679 17.7719 21.8646 17.4794 22.157C17.1869 22.4495 16.7902 22.6138 16.3766 22.6138H2.33991C1.92627 22.6138 1.52957 22.4495 1.23708 22.157C0.944591 21.8646 0.780273 21.4679 0.780273 21.0542V12.4762C0.780273 12.0626 0.944591 11.6659 1.23708 11.3734C1.52957 11.0809 1.92627 10.9166 2.33991 10.9166H5.45917L7.01881 8.57715H11.6977L13.2573 10.9166H16.3766C16.7902 10.9166 17.1869 11.0809 17.4794 11.3734C17.7719 11.6659 17.9362 12.0626 17.9362 12.4762V21.0542Z" stroke="white" stroke-width="1.55963" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M9.35755 19.4954C11.0803 19.4954 12.4768 18.0988 12.4768 16.3761C12.4768 14.6534 11.0803 13.2568 9.35755 13.2568C7.63482 13.2568 6.23828 14.6534 6.23828 16.3761C6.23828 18.0988 7.63482 19.4954 9.35755 19.4954Z" stroke="white" stroke-width="1.55963" stroke-linecap="round" stroke-linejoin="round"/>
-                  </g>
-                  <path d="M22.8937 8.43H20.5683V10.7882H19.6403V8.43H17.3258V7.58936H19.6403V5.22027H20.5683V7.58936H22.8937V8.43Z" fill="white"/>
-                  <defs>
-                    <clipPath id="clip0_7680_52390">
-                      <rect width="18.7156" height="18.7156" fill="white" transform="translate(0 6.23828)"/>
-                    </clipPath>
-                  </defs>
-                </svg>
-
-                {{ uploading ? 'Processing...' : 'Upload a picture' }}
-              </button>
-
-              <!-- <div class="text-start">
-                <p class="text-xs text-center text-gray-500 mb-4">You don't have any pictures? - try our sample pictures</p>
-                
-                <div 
-                  @click="handleSampleClick" 
-                  class="inline-block cursor-pointer hover:scale-105 transition-transform"
-                >
-                  <img 
-                    v-if="exampleImages.length > 0"
-                    :src="$store.state.root_media_api + exampleImages[0].image" 
-                    alt="Room 01" 
-                    class="w-40 h-28 object-cover rounded-lg shadow-md mb-2"
-                  />
-                  <p class="text-sm font-medium text-gray-700">Room 01</p>
-                </div>
-              </div> -->
+            <div class="flex items-center gap-3 mb-4">
+              <svg width="17" height="18" viewBox="0 0 17 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4.21193 13.4677C2.81866 13.7015 1.75052 14.0482 1.16804 14.4559C0.585558 14.8635 0.520238 15.3101 0.981863 15.7284C1.44349 16.1467 2.40715 16.5141 3.72798 16.7755C4.41096 16.9107 5.17038 17.0137 5.97282 17.0817M12.387 13.4667C13.7812 13.7 14.8506 14.0465 15.4346 14.454C16.0186 14.8615 16.0856 15.3081 15.6256 15.7265C15.1655 16.1449 14.2032 16.5126 12.8834 16.7743C12.1989 16.9101 11.4373 17.0135 10.6325 17.0817M8.30265 7.13925V12.1958M8.30265 7.13925L13.3859 4.14732M8.30265 7.13925L3.21937 4.14732M7.87904 0.791234C8.14117 0.639901 8.46413 0.639901 8.72626 0.791234L13.3819 3.47914C13.644 3.63048 13.8055 3.91016 13.8055 4.21285V9.58867C13.8055 9.89136 13.644 10.171 13.3819 10.3224L8.72626 13.0103C8.46413 13.1616 8.14117 13.1616 7.87904 13.0103L3.22344 10.3224C2.96131 10.171 2.79983 9.89136 2.79983 9.58867V4.21285C2.79983 3.91016 2.96131 3.63048 3.22344 3.47914L7.87904 0.791234Z" stroke="#606367" stroke-width="1.35554" stroke-linecap="round"/>
+              </svg>
+              <p class="text-[14px] text-gray-700">Try our products in space</p>
             </div>
-            <!-- Preview state - show when image is selected -->
-            <div v-else class="space-y-4">
-              <!-- {{ !modalPreviewImage }} -->
-              
+
+            <div class="flex items-center gap-3 mb-4">
+              <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M14.8169 2.33887H3.89948C3.03812 2.33887 2.33984 3.03714 2.33984 3.8985V14.8159C2.33984 15.6773 3.03812 16.3756 3.89948 16.3756H14.8169C15.6783 16.3756 16.3765 15.6773 16.3765 14.8159V3.8985C16.3765 3.03714 15.6783 2.33887 14.8169 2.33887Z" stroke="#606367" stroke-width="1.55963" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M6.62871 7.79843C7.27473 7.79843 7.79843 7.27473 7.79843 6.62871C7.79843 5.98269 7.27473 5.45898 6.62871 5.45898C5.98269 5.45898 5.45898 5.98269 5.45898 6.62871C5.45898 7.27473 5.98269 7.79843 6.62871 7.79843Z" stroke="#606367" stroke-width="1.55963" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M16.3765 11.6969L12.4774 7.79785L3.89941 16.3758" stroke="#606367" stroke-width="1.55963" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <p class="text-[14px] text-gray-700">Clean the camera</p>
+            </div>
+
+            <div class="flex items-center gap-3 relative">
+              <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8.57838 14.8159C12.0238 14.8159 14.8169 12.0228 14.8169 8.5774C14.8169 5.13195 12.0238 2.33887 8.57838 2.33887C5.13293 2.33887 2.33984 5.13195 2.33984 8.5774C2.33984 12.0228 5.13293 14.8159 8.57838 14.8159Z" stroke="#606367" stroke-width="1.55963" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M16.3776 16.3766L12.9854 12.9844" stroke="#606367" stroke-width="1.55963" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M8.57812 6.23828V10.9172" stroke="#606367" stroke-width="1.55963" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M6.23926 8.57715H10.9182" stroke="#606367" stroke-width="1.55963" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <p class="text-[14px] text-gray-700">Take the picture at 0.5 zoom.</p>
+            </div>
+          </div>
+
+          <input 
+            ref="fileInput"
+            type="file" 
+            accept=".png,.jpg,.jpeg"
+            @change="handleModalFileUpload"
+            class="hidden"
+          />
+
+          <button 
+            @click="triggerFileUpload"
+            :disabled="uploading"
+            class="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-medium py-3 px-4 text-[14px] rounded-lg flex items-center justify-center gap-2 transition-colors mb-5"
+          >
+            <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <g clip-path="url(#clip0_7680_52390)">
+                <path d="M17.9362 21.0542C17.9362 21.4679 17.7719 21.8646 17.4794 22.157C17.1869 22.4495 16.7902 22.6138 16.3766 22.6138H2.33991C1.92627 22.6138 1.52957 22.4495 1.23708 22.157C0.944591 21.8646 0.780273 21.4679 0.780273 21.0542V12.4762C0.780273 12.0626 0.944591 11.6659 1.23708 11.3734C1.52957 11.0809 1.92627 10.9166 2.33991 10.9166H5.45917L7.01881 8.57715H11.6977L13.2573 10.9166H16.3766C16.7902 10.9166 17.1869 11.0809 17.4794 11.3734C17.7719 11.6659 17.9362 12.0626 17.9362 12.4762V21.0542Z" stroke="white" stroke-width="1.55963" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M9.35755 19.4954C11.0803 19.4954 12.4768 18.0988 12.4768 16.3761C12.4768 14.6534 11.0803 13.2568 9.35755 13.2568C7.63482 13.2568 6.23828 14.6534 6.23828 16.3761C6.23828 18.0988 7.63482 19.4954 9.35755 19.4954Z" stroke="white" stroke-width="1.55963" stroke-linecap="round" stroke-linejoin="round"/>
+              </g>
+              <path d="M22.8937 8.43H20.5683V10.7882H19.6403V8.43H17.3258V7.58936H19.6403V5.22027H20.5683V7.58936H22.8937V8.43Z" fill="white"/>
+            </svg>
+            Upload a picture
+          </button>
+
+          <div class="text-start">
+            <p class="text-xs text-center text-gray-500 mb-4">You don't have any pictures? - try our sample pictures</p>
+            
+            <div 
+              @click="handleSampleClick" 
+              class="inline-block cursor-pointer hover:scale-105 transition-transform"
+            >
               <img 
-                :src="modalPreviewImage" 
-                alt="Selected room"
-                class="w-full h-48 object-cover rounded-xl shadow-lg"
+                v-if="exampleImages.length > 0"
+                :src="$store.state.root_media_api + exampleImages[0].image" 
+                alt="Room 01" 
+                class="w-40 h-28 object-cover rounded-lg shadow-md mb-2"
               />
-              
-              <div class="bg-gray-50 rounded-xl p-4 text-center">
-                <p class="text-sm text-gray-600 mb-2">Image selected and ready</p>
-                <p class="text-xs text-gray-500">Size: {{ (modalFile?.size / 1024 / 1024).toFixed(2) }} MB</p>
-              </div>
-
-              <div class="space-y-2 flex gap-2">
-                <button
-                  @click="resetModalPreview"
-                  class="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3 px-4 text-[14px] !font-family-poppins rounded-lg transition-colors"
-                >
-                  Change Room Image
-                </button>
-
-                <button
-                  @click="saveAndContinue"
-                  :disabled="uploading"
-                  class="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed !text-white font-semibold py-3 px-4 text-[14px] !font-family-poppins rounded-lg flex items-center justify-center gap-2 transition-colors"
-                >
-                  <svg v-if="uploading" class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  {{ uploading ? 'Processing...' : 'Continue' }}
-                </button>
-              </div>
+              <p class="text-sm font-medium text-gray-700">Room 01</p>
             </div>
           </div>
         </div>
       </div>
-    </Transition>
+    </div>
+  </div>
+</Transition>
 
     <!-- Mobile Drawer (Hidden on desktop) -->
 <Transition name="drawer-slide">
@@ -264,7 +238,7 @@
             <!-- Stats Cards -->
             <div class="grid grid-cols-3 h-20 gap-3">
               <div class="bg-white rounded-xl  border border-gray-200 p-2 flex flex-col items-center justify-center text-center">
-                <p class="text-2xl font-bold !font-family-poppins text-gray-900 leading-none ">{{  selectedImage.objects_detected }}</p>
+                <p class="text-2xl font-bold !font-family-poppins text-gray-900 leading-none ">{{ detectedObjects.length }}</p>
                 <p class="text-xs !font-family-poppins text-gray-600">Objects</p>
               </div>
               <div class="bg-white rounded-xl  border border-gray-200 p-2 flex flex-col items-center justify-center text-center">
@@ -291,13 +265,11 @@
   
     Manage Detected Objects
   </button>
-  <br>
-
+  
   <!-- Use This Room Button -->
   <button
     @click="useSelectedRoom"
-                  class="w-full bg-blue-600 pt-3  !text-white hover:bg-blue-500 font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors"
-
+    class="w-full mt-3 bg-white text-blue-600 hover:bg-blue-50 font-semibold py-3.5 px-4 !mt-3 flex items-center justify-center gap-2 transition-colors"
   >
     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
@@ -323,9 +295,9 @@
     <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
 
     <!-- Modal Content -->
-    <div class="relative bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+    <div class="relative bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
       <!-- Modal Header -->
-      <div class="flex items-center justify-between px-6 py-2 border-b border-gray-200">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
         <h2 class="text-xl font-bold text-gray-900"></h2>
         <button
           @click="closeDrawer"
@@ -337,86 +309,73 @@
         </button>
       </div>
 
-      <!-- Two Column Layout -->
-      <div class="flex flex-1 overflow-hidden">
-        <!-- Left Side - Image -->
-        <div class="w-1/2 p-6 flex items-center justify-center bg-gray-50">
-          <img 
-            v-if="selectedImage"
-            :src="$store.state.root_media_api + selectedImage.image"
-            alt="Selected room"
-            class="w-full h-full object-contain rounded-xl shadow-lg"
-          />
+      <!-- Scrollable Content -->
+      <div class="overflow-y-auto flex-1 p-6">
+        <!-- Image Preview -->
+        <img 
+          v-if="selectedImage"
+          :src="$store.state.root_media_api + selectedImage.image"
+          alt="Selected room"
+          class="w-full h-80 object-cover rounded-xl shadow-lg mb-6"
+        />
+
+        <!-- Detected Objects Header -->
+        <div class="bg-white rounded-xl border border-gray-200 p-4 !my-4">
+          <h3 class="text-lg font-bold text-gray-900 mb-2">Detected Objects</h3>
+          <p class="text-sm text-gray-600">
+            Tap on any detected objects (green boxes) to replace or delete it.
+          </p>
         </div>
-        <!-- {{ $store.state.root_media_api + selectedImage.image }} -->
 
-        <!-- Vertical Divider -->
-        <div class="w-px bg-gray-200"></div>
-
-        <!-- Right Side - Content -->
-        <div class="w-1/2 flex flex-col overflow-hidden">
-          <!-- Scrollable Content Area -->
-          <div class="flex-1 overflow-y-auto p-6">
-            <!-- Detected Objects Header -->
-            <div class="bg-gray-50 rounded-xl border border-gray-200 p-4 mb-6">
-              <h3 class="text-lg font-bold text-gray-900 mb-2">Detected Objects</h3>
-              <p class="text-sm text-gray-600">
-                Tap on any detected objects (green boxes) to replace or delete it.
-              </p>
-            </div>
-
-            <!-- Project Stats -->
-            <div class="mb-6">
-              <div class="flex items-center justify-between mb-4">
-                <h4 class="text-base font-bold text-gray-900">Project Stats</h4>
-                <span class="text-sm font-semibold text-gray-700">Aluma AI Catalog</span>
-              </div>
-
-              <div class="grid grid-cols-3 font-family-poppins gap-3">
-                <div class="bg-gray-50 rounded-xl border border-gray-200 p-4 flex flex-col items-center justify-center text-center">
-                  <p class="text-2xl font-bold text-gray-900 leading-none mb-1">{{ selectedImage.objects_detected }}</p>
-                  <p class="text-xs text-gray-600">Objects</p>
-                </div>
-                <div class="bg-gray-50 rounded-xl border border-gray-200 p-4 flex flex-col items-center justify-center text-center">
-                  <p class="text-2xl font-bold text-blue-600 leading-none mb-1">{{ selectedImage.used_products }}</p>
-                  <p class="text-xs text-gray-600">Products</p>
-                </div>
-                <div class="bg-gray-50 rounded-xl border border-gray-200 p-4 flex flex-col items-center justify-center text-center">
-                  <p class="text-2xl font-bold text-green-600 leading-none mb-1">0</p>
-                  <p class="text-xs text-gray-600">Replaced</p>
-                </div>
-              </div>
-            </div>
+        <!-- Project Stats -->
+        <div class="mb-6">
+          <div class="flex items-center justify-between mb-4">
+            <h4 class="text-base font-bold text-gray-900">Project Stats</h4>
+            <span class="text-sm font-semibold text-gray-700">Aluma AI Catalog</span>
           </div>
 
-          <!-- Action Buttons - Fixed at Bottom -->
-          <div class="flex gap-2 px-6 py-4 border-t border-gray-200 bg-white space-y-3">
-            <button 
-              @click="showObjectManagement = true"
-              class="w-full bg-gray-500 hover:bg-gray-700 !text-white font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-lg"
-            >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-              </svg>
-              Manage Objects
-            </button>
-            <button
-              @click="useSelectedRoom"
-              class="w-full bg-blue-600 pt-3  !text-white hover:bg-blue-500 font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors"
-            >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-              </svg>
-              Use This Room
-            </button>
+          <div class="grid grid-cols-3 h-24 !font-family-poppins gap-4">
+            <div class="bg-white rounded-xl  border border-gray-200 p-3 flex flex-col items-center justify-center text-center">
+              <p class="text-3xl font-bold !font-family-poppins text-gray-900 leading-none mb-2">{{ selectedImage.objects_detected }}</p>
+              <p class="text-sm text-gray-600">Objects</p>
+            </div>
+            <div class="bg-white rounded-xl  border border-gray-200 p-3 flex flex-col items-center justify-center text-center">
+              <p class="text-3xl font-bold text-blue-600 leading-none mb-2">0</p>
+              <p class="text-sm text-gray-600">Products</p>
+            </div>
+            <div class="bg-white rounded-xl  border border-gray-200 p-3 flex flex-col items-center justify-center text-center">
+              <p class="text-3xl font-bold text-green-600 leading-none mb-2">0</p>
+              <p class="text-sm text-gray-600">Replaced</p>
+            </div>
           </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex gap-3 !mt-12">
+          <button
+            @click="showObjectManagement = true"
+            class="flex-1 bg-gray-200 hover:bg-blue-700 text-white font-semibold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-lg"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+            Manage Objects
+          </button>
+          <button
+            @click="useSelectedRoom"
+            class="flex-1 bg-white border-2 border-blue-600 text-blue-600 hover:bg-blue-50 font-semibold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+            Use This Room
+          </button>
         </div>
       </div>
     </div>
   </div>
 </Transition>
-
 
 
     <!-- Object Management Drawer (Slides from right) -->
@@ -451,23 +410,13 @@
       <!-- Scrollable Objects List -->
       <div class="flex-1 overflow-y-auto px-4 pb-6">
         <div class="!mt-4 space-y-3">
-         
-
-          <!-- Empty state -->
-          <div v-if="detectedObjects.length === 0" class="text-center">
-
-             <div v-if = "selectedImage.binary_masks"
+          <div 
             v-for="(obj, index) in selectedImage.binary_masks" 
             :key="obj.id"
             class="!mb-2 flex items-center justify-between bg-white shadow-sm rounded-xl px-4 hover:border-red-300 transition-colors"
           >
-          <!-- {{index}} -->
-           <!-- {{ this.$store.state.root_media_api + selectedImage.image }}
-          {{this.$store.state.root_api+obj}} -->
-          <MaskOverlay
-            :selectedImage="selectedImage.image "
-            :maskPath="obj"
-          />
+          {{index}}
+          {{obj}}
             <div class="flex items-center gap-3">
               <div>
                 <p class="font-semibold font-family-poppins pt-2 text-gray-900">{{ obj.name }}</p>
@@ -487,8 +436,9 @@
               </svg>
             </button>
           </div>
-          <div v-else>
 
+          <!-- Empty state -->
+          <div v-if="detectedObjects.length === 0" class="text-center py-12">
             <svg class="w-16 h-16 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
@@ -496,23 +446,21 @@
             <p class="text-sm text-gray-400 mt-1">Room is clean and ready</p>
           </div>
         </div>
-        </div>
       </div>
 
       <!-- Bottom Action Buttons -->
-      <div class="flex gap-2 px-4 py-4 border-t border-gray-200 bg-white space-y-3 md:rounded-b-2xl">
-       
+      <div class="px-4 py-4 border-t border-gray-200 bg-white space-y-3 md:rounded-b-2xl">
         <button
-          @click="showObjectManagement = false"
-          class="w-full bg-gray-200  hover:bg-gray-200 text-gray-700 font-semibold py-3.5 px-4 rounded-xl transition-colors"
-        >
-          Cancel
-        </button>
-         <button
           @click="saveObjectChanges"
-          class="w-full bg-blue-600 !font-family-poppins hover:bg-blue-700 !text-white font-semibold py-3.5 px-4 rounded-xl transition-colors"
+          class="w-full bg-blue-600 !font-family-poppins hover:bg-blue-700 !text-white font-semibold py-3.5 px-4 rounded-xl transition-colors shadow-lg"
         >
           Save Changes
+        </button>
+        <button
+          @click="showObjectManagement = false"
+          class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3.5 px-4 rounded-xl transition-colors"
+        >
+          Cancel
         </button>
       </div>
     </div>
@@ -561,23 +509,25 @@
       <!-- History -->
       <p class="history-label pl-2"><a-spin v-if="loading_user_history_rooms" /> Your History </p>
       <div class="grid grid-cols-3 sm:grid-cols-3 gap-1 sm:gap-2 px-5 max-w-[1300px]">
-       <div
-  v-for="histry_card in your_history"
-  :key="histry_card.id"
-  class="p-[5px]"
->
-  <div 
-    @click="openImageDrawer(histry_card)" 
-    class="cursor-pointer hover:opacity-80 transition-opacity"
-  >
-    <img
-      :src="$store.state.root_media_api + histry_card.image"
-      alt="Example"
-      class="example-image rounded-lg"
-    />
-  </div>
-</div>
-
+        <div
+          v-for="histry_card in your_history"
+          :key="histry_card.id"
+          class="p-[5px]"
+        >
+          <router-link
+            :to="
+              $route.query.brand
+                ? (histry_card.brand ? `/update-catalogue/${histry_card.id}?brand=${histry_card.brand}` : `/update-catalogue/${histry_card.id}?brand=${$route.query.brand}`)
+                : `/update-catalogue/${histry_card.id}`
+            "
+          >
+            <img
+              :src="$store.state.root_media_api + histry_card.image"
+              alt="Example"
+              class="example-image"
+            />
+          </router-link>
+        </div>
       </div>
 
       <!-- Examples -->
@@ -613,8 +563,6 @@
       :key="example.id"
       class="relative"
     >
-    <!-- {{ example.objects_detected }} -->
-    <!-- {{ example.binary_masks }} -->
       <div 
         class="image-wrapper cursor-pointer" 
         @click="openImageDrawer(example)"
@@ -645,62 +593,62 @@
   </div>
 </template>
 
-
 <script>
 import { CloudUploadOutlined } from '@ant-design/icons-vue';
-import MaskOverlay from "@/components/update_catalogue/start_new_catalog/mask_overlay.vue"
+
 export default {
   components: {
-    CloudUploadOutlined,
-    MaskOverlay
+    CloudUploadOutlined
   },
   
-  data() {
-    return {
-      showLoadingModal: false,
-      showInstructionsModal: false,
-      showImageDrawer: false,
-      showObjectManagement: false,
-      selectedImage: null,
-      detectedObjects: [],
-      loading: false,
-      loading_Example_rooms: true,
-      loading_user_history_rooms: true,
-      fileList: [],
-      uploading: false,
-      uploadResult: null,
-      uploadError: null,
-      your_history: [],
-      exampleImages: [],
-      
-      // NEW: Modal file preview states
-      modalPreviewImage: null,
-      modalFile: null,
-      
-      // Room type filter
-      selectedRoomType: 'all',
-      roomTypes: [
-        { label: 'Living room', value: 'living_room' },
-        { label: 'Kitchen', value: 'kitchen' },
-        { label: 'Bedroom', value: 'bedroom' },
-        { label: 'Dining room', value: 'dining_room' }
-      ]
-    };
-  },
+ data() {
+  return {
+    showLoadingModal: false,
+    showInstructionsModal: false,
+    showImageDrawer: false,
+    showObjectManagement: false,
+    selectedImage: null,
+    detectedObjects: [],
+    loading: false,
+    loading_Example_rooms: true,
+    loading_user_history_rooms: true,
+    fileList: [],
+    uploading: false,
+    uploadResult: null,
+    uploadError: null,
+    your_history: [],
+    exampleImages: [],
+    
+    // NEW: Room type filter
+    selectedRoomType: 'all',
+    roomTypes: [
+      { label: 'Living room', value: 'living_room' },
+      { label: 'Kitchen', value: 'kitchen' },
+      { label: 'Bedroom', value: 'bedroom' },
+      { label: 'Dining room', value: 'dining_room' }
+    ],
+    pendingImage: null,
+      uploadingModal: false,
+      fileInput: null
+  };
+},
 
-  computed: {
-    filteredExampleImages() {
-      if (this.selectedRoomType === 'all') {
-        return this.exampleImages;
-      }
-      return this.exampleImages.filter(
-        img => img.room_type === this.selectedRoomType
-      );
+computed: {
+  filteredExampleImages() {
+    if (this.selectedRoomType === 'all') {
+      return this.exampleImages;
     }
-  },
+    return this.exampleImages.filter(
+      img => img.room_type === this.selectedRoomType
+    );
+  }
+},
 
+
+  
   mounted() {
-    const hasVisited = false
+    // const hasVisited = localStorage.getItem('hasVisitedHome');
+    const hasVisited = false;
     console.log('Has visited before:', hasVisited);
     
     if (!hasVisited) {
@@ -720,156 +668,21 @@ export default {
   },
   
   methods: {
-    // NEW METHOD: Trigger modal file input
-    triggerFileUpload() {
-      if (!this.uploading) {
-        this.$refs.modalFileInput.click();
-      }
-    },
+     // Trigger file upload from button
+   
 
-    // NEW METHOD: Handle file selection from modal
-    handleModalFileUploadChange(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const isValid = this.beforeUpload(file);
-      if (!isValid) {
-        this.$refs.modalFileInput.value = '';
-        return;
-      }
-
-      // Store file and create preview
-      this.modalFile = file;
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        this.modalPreviewImage = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    },
-
-    // NEW METHOD: Reset preview and allow user to select another image
-    resetModalPreview() {
-      this.modalPreviewImage = null;
-      this.modalFile = null;
-      this.$refs.modalFileInput.value = '';
-    },
-
-    // NEW METHOD: Save and continue - fires the API with the selected image
-    async saveAndContinue() {
-      if (!this.modalFile) {
-        this.$message.error('Please select an image first');
-        return;
-      }
-
-      this.uploading = true;
-      
-      try {
-        const formData = new FormData();
-        formData.append('base_image', this.modalFile);
-        
-        if (this.$route.query.brand) {
-          formData.append('business_owner', this.$route.query.brand);
-          console.log(this.$route.query.brand);
-        }
-
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 120000);
-
-        const response = await fetch(this.$store.state.root_api + 'engine/new-room/', {
-          method: 'POST',
-          body: formData,
-          headers: {
-            'Authorization': `Token ${localStorage.getItem('token')}`
-          },
-          signal: controller.signal
-        });
-
-        clearTimeout(timeoutId);
-        const responseData = await response.json();
-
-        if (response.ok && !responseData.error) {
-          this.uploadResult = responseData;
-          this.$message.success('Room processed successfully!');
-          
-          // Close the instructions modal
-          this.showInstructionsModal = false;
-          
-          this.$emit('upload-success', responseData);
-          
-          // Navigate to update catalogue page
-          if (this.$route.query.brand) {
-            this.$router.push({ 
-              name: 'update_catelogue',  
-              params: { id: responseData.room_id },
-              query: {
-                brand: this.$route.query.brand,
-              } 
-            });
-          } else {
-            this.$router.push({ 
-              name: 'update_catelogue', 
-              params: { id: responseData.room_id } 
-            });
-          }
-        } else {
-          const errorMsg = responseData.msg || `HTTP ${response.status}: Upload failed`;
-          this.uploadError = errorMsg;
-          this.$message.error(errorMsg);
-        }
-      } catch (error) {
-        console.error('Upload error:', error);
-        
-        let errorMessage = 'Upload failed';
-        
-        if (error.name === 'AbortError') {
-          errorMessage = 'Upload timeout - file may be too large or processing is taking too long';
-        } else if (error.message.includes('fetch')) {
-          errorMessage = 'Network error - please check your connection';
-        } else {
-          errorMessage = error.message || 'Unknown error occurred';
-        }
-
-        this.uploadError = errorMessage;
-        this.$message.error(errorMessage);
-      } finally {
-        this.uploading = false;
-      }
-    },
-
-    // EXISTING METHODS (Keep all your existing methods)
-    openImageDrawer(historyCard) {
-      this.selectedImage = historyCard;
+    openImageDrawer(image) {
+      this.selectedImage = image;
       this.showImageDrawer = true;
       
-      if (historyCard.detected_objects && historyCard.detected_objects.length > 0) {
-        this.detectedObjects = historyCard.detected_objects;
-      } else {
-        // this.fetchDetectedObjects(historyCard.id);
-        this.detectedObjects = [];
-      }
-    },
-
-    async fetchDetectedObjects(roomId) {
-      try {
-        const url = `${this.$store.state.root_api}room/api/detected-objects/${roomId}/`;
-        const response = await fetch(url, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Token ${localStorage.getItem('token')}`
-          },
-        });
-        const data = await response.json();
-        
-        if (data && data.data) {
-          this.detectedObjects = data.data;
-        } else {
-          this.detectedObjects = [];
-        }
-      } catch (error) {
-        console.error("Failed to fetch detected objects:", error);
-        this.detectedObjects = [];
-      }
+      // Simulate detected objects - Replace with actual API call
+      this.detectedObjects = [
+        { id: 1, name: 'Sofa', confidence: 95 },
+        { id: 2, name: 'Coffee Table', confidence: 88 },
+        { id: 3, name: 'Lamp', confidence: 92 },
+        { id: 4, name: 'Plant', confidence: 85 },
+        { id: 5, name: 'Rug', confidence: 78 }
+      ];
     },
 
     closeDrawer() {
@@ -877,7 +690,6 @@ export default {
       this.showObjectManagement = false;
       setTimeout(() => {
         this.selectedImage = null;
-        this.detectedObjects = [];
       }, 300);
     },
 
@@ -894,21 +706,7 @@ export default {
     useSelectedRoom() {
       if (this.selectedImage) {
         this.showImageDrawer = false;
-        
-        if (this.$route.query.brand) {
-          this.$router.push({ 
-            name: 'update_catelogue', 
-            params: { id: this.selectedImage.id },
-            query: {
-              brand: this.selectedImage.brand || this.$route.query.brand,
-            } 
-          });
-        } else {
-          this.$router.push({ 
-            name: 'update_catelogue', 
-            params: { id: this.selectedImage.id } 
-          });
-        }
+        this.startTestRoom(this.selectedImage.id);
       }
     },
 
@@ -922,13 +720,131 @@ export default {
       });
     },
 
-    handleSampleClick() {
-      this.showInstructionsModal = false;
-      if (this.exampleImages.length > 0) {
-        this.startTestRoom(this.exampleImages[0].id);
+    // triggerFileUpload() {
+    //   if (!this.uploading) {
+    //     this.$refs.fileInput.click();
+    //   }
+    // },
+     triggerFileUpload() {
+      if (!this.uploading && !this.uploadingModal) {
+        this.$refs.fileInput.click();
       }
     },
 
+   // Handle file selection from input
+    async handleModalFileUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      // Validate file
+      const isValid = this.beforeUpload(file);
+      if (!isValid) {
+        this.$refs.fileInput.value = '';
+        return;
+      }
+
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.pendingImage = {
+          file: file,
+          preview: e.target.result,
+          fileName: file.name
+        };
+      };
+      reader.readAsDataURL(file);
+
+      // Reset file input
+      this.$refs.fileInput.value = '';
+    },
+
+
+      // Handle sample image click
+    async handleSampleClick() {
+      if (this.exampleImages.length > 0) {
+        this.showInstructionsModal = false;
+        this.startTestRoom(this.exampleImages[0].id);
+      }
+    },
+     // Process the pending image (fire API)
+    async processPendingImage() {
+      if (!this.pendingImage || !this.pendingImage.file) return;
+
+      this.uploadingModal = true;
+
+      try {
+        const formData = new FormData();
+        formData.append('base_image', this.pendingImage.file);
+
+        if (this.$route.query.brand) {
+          formData.append('business_owner', this.$route.query.brand);
+        }
+
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 120000);
+
+        const response = await fetch(
+          this.$store.state.root_api + 'engine/new-room/',
+          {
+            method: 'POST',
+            body: formData,
+            headers: {
+              'Authorization': `Token ${localStorage.getItem('token')}`
+            },
+            signal: controller.signal
+          }
+        );
+
+        clearTimeout(timeoutId);
+        const responseData = await response.json();
+
+        if (response.ok && !responseData.error) {
+          this.$message.success('Room processed successfully!');
+          
+          // Close modal
+          this.showInstructionsModal = false;
+          this.pendingImage = null;
+
+          // Navigate to update catalogue
+          if (this.$route.query.brand) {
+            this.$router.push({
+              name: 'update_catelogue',
+              params: { id: responseData.room_id },
+              query: { brand: this.$route.query.brand }
+            });
+          } else {
+            this.$router.push({
+              name: 'update_catelogue',
+              params: { id: responseData.room_id }
+            });
+          }
+        } else {
+          const errorMsg = responseData.msg || `HTTP ${response.status}: Upload failed`;
+          this.$message.error(errorMsg);
+        }
+      } catch (error) {
+        console.error('Upload error:', error);
+
+        let errorMessage = 'Upload failed';
+
+        if (error.name === 'AbortError') {
+          errorMessage = 'Upload timeout - file may be too large';
+        } else if (error.message.includes('fetch')) {
+          errorMessage = 'Network error - please check your connection';
+        } else {
+          errorMessage = error.message || 'Unknown error occurred';
+        }
+
+        this.$message.error(errorMessage);
+      } finally {
+        this.uploadingModal = false;
+      }
+    },
+ // Allow user to change selected image
+    changePendingImage() {
+      this.pendingImage = null;
+      this.$refs.fileInput.click();
+    },
     async fetchExampleRooms() {
       this.loading_Example_rooms = true;
       try {

@@ -1488,7 +1488,7 @@ selectAllWallsOnInit() {
 .canvas-container {
   position: relative;
   width: 100%;
-  height: 93%;
+  height: 100%;
   min-height: 300px;
   overflow: hidden;
   background: #f5f5f5;

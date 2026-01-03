@@ -143,7 +143,7 @@
 
       <!-- Apply Changes Button -->
       <div class="flex-shrink-0 w-full md:w-auto !py-2">
-        <div className="pb-4">
+        <div >
           <a-button
             type="primary"
             class="toolbar-btn primary-btn w-full md:w-auto"

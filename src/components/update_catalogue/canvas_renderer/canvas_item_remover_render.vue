@@ -412,7 +412,7 @@
       </div>
     </div>
   </div>
-  <div class="flex md:hidden bg-white px-3 py-2 w-full justify-center">
+  <div class="flex md:hidden bg-white   w-full justify-center">
     <!-- Left Buttons -->
     <div class="flex flex-col gap-2 pt-1 ">
       <div className="flex flex-row gap-24 justify-center">
@@ -3220,7 +3220,7 @@ export default {
 .main-canvas-sec {
   position: relative;
   width: 100%;
-  height: 100%;
+  height: 35vh;
 }
 .canvas-container {
   position: relative;
@@ -3879,5 +3879,12 @@ export default {
   .canvas-container {
     height: 71%;
   }
+}
+
+@media screen and (max-width: 500px) {
+ .zoom-controls {
+  top: 16px;right: 5px;
+}
+
 }
 </style>
