@@ -1,12 +1,9 @@
 <template>
-  <div class="py-4">
+  <div className="sm:py-4">
     <div
-      class="sm:main sm:border border-gray-300 bg-white sm:rounded-2xl min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh]"
+      class="sm:main sm:border border-gray-200 sm:rounded-2xl min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh] bg-white"
     >
-      <div
-        clas="p-4"
-        style="padding: 10px; border-radius: 18px; min-height: 100vh"
-      >
+      <div style="padding: 10px; border-radius: 15px; min-height: 100vh">
         <h3
           style="
             font-family: Poppins, sans-serif;
@@ -19,6 +16,7 @@
           Liked Products & Rooms
         </h3>
         <a-tabs
+          ref="tabsRef"
           v-model:activeKey="active_tab"
           :key="tabRefreshKey"
           @tabClick="handleTabClick"
@@ -31,94 +29,151 @@
               <a-spin tip="Loading..."> </a-spin>
             </div>
             <div v-else>
-              <div
-                v-if="!filteredProducts?.length"
-                style="
-                  height: 70vh;
-                  gap: 20px;
-                  flex-direction: column;
-                  display: flex;
-                  justify-content: center;
-                  align-items: center;
-                "
+            <div
+              v-if="!filteredProducts?.length"
+              style="
+                height: 70vh;
+                gap: 20px;
+                flex-direction: column;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+              "
+            >
+              <!-- <a-empty :description="'No Furniture Available'"></a-empty> -->
+
+              <a-empty
+                :description="'You have not added anything in your likes till yet '"
               >
-                <!-- <a-empty :description="'No Furniture Available'"></a-empty> -->
+              </a-empty>
+            </div>
 
-                <a-empty
-                  :description="'You have not added anything in your likes till yet '"
-                >
-                </a-empty>
-              </div>
-
-              <a-row v-else>
-                <a-col
-                  v-for="product in filteredProducts"
-                  :key="product.id"
-                  class="product-responsive"
-                  style="padding: 5px"
-                >
-                  <div class="product">
-                    <div
-                      class="product-image-container"
-                      @click="viewProduct(product)"
-                    >
-                      <img
-                        :src="$store.state.root_media_api + product.image"
-                        :alt="product.name"
-                        class="product-image"
-                      />
-                      <div class="category-badge">{{ product.category }}</div>
-                    </div>
-
-                    <a-row>
-                      <a-col span="24">
-                        <b>{{
-                          truncateText(product.name || "No name available", 19)
-                        }}</b>
-                      </a-col>
-
-                      <a-col span="17">
-                        <a-button block @click="viewProduct(product)"
-                          >Product Details</a-button
-                        >
-                      </a-col>
-
-                      <a-col span="1"></a-col>
-
-                      <!-- ❤️ Dynamic Favorite Button -->
-                      <a-col span="4">
-                        <a-button @click="toggleFavorite(product)">
-                          <template v-if="product.is_favorited">
-                            <HeartFilled style="color: red" />
-                          </template>
-                          <template v-else>
-                            <HeartOutlined />
-                          </template>
-                        </a-button>
-                      </a-col>
-                    </a-row>
+            <a-row v-else>
+              <a-col
+                v-for="product in filteredProducts"
+                :key="product.id"
+                class="product-responsive"
+                style="padding: 5px"
+              >
+                <div class="product">
+                  <div
+                    class="product-image-container"
+                    @click="goto_product_Route(product)"
+                  >
+                    <img
+                      :src="$store.state.root_media_api + product.image"
+                      :alt="product.name"
+                      class="product-image"
+                    />
+                    <div class="category-badge">{{ product.category }}</div>
                   </div>
-                </a-col>
-              </a-row>
 
-              <div
-                v-if="filteredProducts?.length > 0"
-                style="
-                  display: flex;
-                  justify-content: center;
-                  margin-top: 20px;
-                  margin-bottom: 20px;
-                "
-              >
-                <a-pagination
-                  v-model:current="productsPagination.currentPage"
-                  :total="productsPagination.totalCount"
-                  :page-size="productsPagination.pageSize"
-                  @change="handleProductsPageChange"
-                  show-total
-                  :show-size-changer="false"
-                />
-              </div>
+                  <a-row>
+                        <a-col span="24">
+                            <b
+                              class="block w-full truncate"
+                              :title="product.name"
+                            >
+                              {{ product.name || "No name available" }}
+                            </b>
+                          </a-col>
+
+                          <a-col
+                            span="16"
+                            style="
+                              font-family: 'Poppins', sans-serif;
+                              font-size: 13px;
+                              font-weight: 400;
+                            "
+                          >
+                            Color
+                          </a-col>
+
+                          <a-col
+                            span="8"
+                            style="display: flex; justify-content: end"
+                          >
+                          <!-- {{product.product_colors}} -->
+                            <div
+                              v-for="(color, index) in product.product_colors.slice(
+                                0,
+                                2
+                              )"
+                              :key="index"
+                              style="
+                                width: 20px;
+                                height: 20px;
+                                border-radius: 20px;
+                                margin-left: 2px;
+                              "
+                              :style="'background:' + color.color"
+                            ></div>
+                          </a-col>
+
+                          <a-col
+                            span="12"
+                            style="
+                              font-family: 'Poppins', sans-serif;
+                              font-size: 13px;
+                              font-weight: 400;
+                            "
+                          >
+                            Price
+                          </a-col>
+
+                          <a-col
+                            span="12"
+                            style="
+                              display: flex;
+                              justify-content: end;
+                              font-weight: 700;
+                            "
+                          >
+                            <!-- <del style="font-size: 10px;">${{ product.pricing.price }}</del> -->
+                            ${{ product.product_price }}
+                          </a-col>
+                        <!-- {{ product }} -->
+    
+                        <a-col span="18">
+                            <a-button block @click="goto_product_Route(product)">Product Details</a-button>
+                        </a-col>
+    
+    
+                        <!-- ❤️ Dynamic Favorite Button -->
+                        <a-col span="6" style="display: flex;justify-content: end;">
+                        <a-button @click="toggleFavorite(product)" style="display: flex;justify-content: center;align-items: center;">
+                            <template v-if="product.is_favorited">
+                            <HeartFilled style="color: red" />
+                            </template>
+                            <template v-else>
+                            <HeartOutlined />
+                            </template>
+                        </a-button>
+                        </a-col>
+    
+            </a-row>
+                </div>
+              </a-col>
+            </a-row>
+
+            <div
+              v-if="filteredProducts?.length > 0"
+              style="
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+              "
+            >
+              <a-pagination
+                v-model:current="productsPagination.currentPage"
+                :total="productsPagination.totalCount"
+                :page-size="productsPagination.pageSize"
+                @change="handleProductsPageChange"
+                show-total
+                :show-size-changer="false"
+              />
+            </div>
             </div>
           </a-tab-pane>
           <a-tab-pane key="rooms" tab="rooms">
@@ -145,7 +200,6 @@
                 >
                 </a-empty>
               </div>
-
               <a-row v-else>
                 <a-col
                   v-for="product in filteredrooms"
@@ -154,6 +208,7 @@
                   style="padding: 5px"
                 >
                   <div class="product">
+                    <!-- {{ product }} -->
                     <div
                       class="product-image-container"
                       @click="viewRoom(product)"
@@ -197,7 +252,6 @@
                   </div>
                 </a-col>
               </a-row>
-
               <div
                 v-if="filteredrooms?.length > 0"
                 style="
@@ -211,7 +265,7 @@
                   v-model:current="roomPagination.currentPage"
                   :total="roomPagination.totalCount"
                   :page-size="roomPagination.pageSize"
-                  @change="handleProductsPageChange"
+                  @change="handleRoomsPageChange"
                   show-total
                   :show-size-changer="false"
                 />
@@ -219,7 +273,7 @@
             </div>
           </a-tab-pane>
           <a-tab-pane key="community-posts" tab="Community Posts">
-            <div
+             <div
               v-if="isLoading"
               class="spinner-sec w-full h-[80vh] flex justify-center items-center"
             >
@@ -263,15 +317,15 @@
                         display: flex;
                         flex-direction: column;
                         box-shadow: 0 0px 0px rgba(0, 0, 0, 0);
-                        transition: all 0.3s ease;
+                        transition: all 0.1s ease;
                       "
                       @mouseenter="
-                        $event.currentTarget.style.boxShadow =
-                          '0 4px 12px rgba(0, 0, 0, 0.1)'
+                        $event.currentTarget.style.border =
+                          '1px solid rgba(0, 0, 255, 0.2)'
                       "
                       @mouseleave="
-                        $event.currentTarget.style.boxShadow =
-                          '0 0px 0px rgba(0, 0, 0, 0)'
+                        $event.currentTarget.style.border =
+                          '1px solid rgba(0, 0, 0, 0.1)'
                       "
                     >
                       <!-- Post Image -->
@@ -285,19 +339,13 @@
                             width: 100%;
                             height: 200px;
                             object-fit: cover;
-                            border-radius: 10px;
+                            border-radius: 16px;
                             padding: 5px;
                             cursor: pointer;
                             transition: transform 0.3s ease;
                           "
                           :alt="post.title"
                           @click="viewPost(post)"
-                          @mouseenter="
-                            $event.currentTarget.style.transform = 'scale(1.01)'
-                          "
-                          @mouseleave="
-                            $event.currentTarget.style.transform = 'scale(1)'
-                          "
                         />
 
                         <!-- Tags - Fixed for string array -->
@@ -392,7 +440,14 @@
                       </div>
 
                       <!-- Post Content -->
-                      <div style="padding: 5px">
+                      <div
+                        style="
+                          padding-left: 10px;
+                          padding-right: 10px;
+                          padding-top: 3px;
+                          padding-bottom: 5px;
+                        "
+                      >
                         <!-- Actions Row -->
                         <a-row style="align-items: center">
                           <a-col
@@ -508,19 +563,49 @@
                 />
               </div>
             </div>
+            <div>
+ <div
+              v-if="isLoading"
+              class="spinner-sec w-full h-[80vh] flex justify-center items-center"
+            >
+              <a-spin tip="Loading..."> </a-spin>
+            </div>
+            <div v-else>
+              <div
+                v-if="community_posts.length === 0"
+                style="
+                  height: 70vh;
+                  gap: 20px;
+                  flex-direction: column;
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                "
+              >
+                <a-empty
+                  :description="'You have not posted anything on comunity yet '"
+                >
+                </a-empty>
+              </div>
+            
+              
+            </div>
+            </div>
+           
           </a-tab-pane>
         </a-tabs>
       </div>
     </div>
   </div>
   <CommentsModal
-    v-if="selectedPost"
+    v-if="showModal && selectedPost"
     :isOpen="showModal"
     :post="selectedPost"
     @close="closeModal"
     @commentAdded="handleCommentAdded"
     @likeToggled="handleLikeToggled"
   />
+
   <RoomDetailsModal
     v-if="roomModalVisible"
     :visible="roomModalVisible"
@@ -569,15 +654,16 @@ export default {
 
   data() {
     return {
+      active_tab: "Furniture", // MUST initialize
       isLoading: true,
       products: [],
       rooms: [],
-      community_posts: [],
-      showModal: false,
-      selectedPost: null,
       roomModalVisible: false,
       selectedRoom: null,
+      community_posts: [],
       tabRefreshKey: 0,
+      showModal: false,
+      selectedPost: null,
 
       // Pagination states for Products
       productsPagination: {
@@ -595,7 +681,6 @@ export default {
       },
     };
   },
-
   computed: {
     filteredProducts() {
       console.log("reached inside filtered products");
@@ -628,7 +713,55 @@ export default {
   },
 
   methods: {
-    // Modal Methods
+    handleTabChange(key) {
+      this.active_tab = key;
+      // Reset modal state when switching tabs
+      this.showModal = false;
+      this.selectedPost = null;
+    },
+
+    handleTabClick(key) {
+      this.active_tab = key;
+      if (key === "Furniture") {
+        this.fetchMyProducts();
+      } else if (key === "rooms") {
+        this.fetchMyRooms();
+      } else {
+        this.fetchMyLikes();
+      }
+      this.tabRefreshKey++; // Force re-render
+    },
+
+    viewRoom(room) {
+      // room object already looks like:
+      // { added_at, is_favorited, id, name, image, category, type }
+      this.selectedRoom = room;
+      this.roomModalVisible = true;
+    },
+    closeRoomModal() {
+      this.roomModalVisible = false;
+      this.selectedRoom = null;
+    },
+    goto_product_Route(product) {
+      let product_type = product.type;
+      if (product.type === "light") {
+        product_type = "product";
+      }
+      if (product.type === "floor_texture") {
+        product_type = "floor";
+      }
+      if (product.type === "wall_texture") {
+        product_type = "wall";
+      }
+      this.$router.push({
+        name: "buisness_product",
+        params: {
+          buisness_name: product.business_slug,
+          product_type: product_type,
+          product_id: product.id,
+        },
+      });
+    },
     viewPost(post) {
       // Transform your post data to match modal props
       this.selectedPost = {
@@ -650,6 +783,16 @@ export default {
     closeModal() {
       this.showModal = false;
       this.selectedPost = null;
+
+      // FORCE tabs to reset after modal closes
+      this.$nextTick(() => {
+        const tabs = this.$refs.tabsRef; // Add ref="tabsRef" to a-tabs
+        if (tabs) {
+          tabs.$forceUpdate();
+        }
+        this.tabRefreshKey++;
+        this.active_tab = this.active_tab; // Trigger reactivity
+      });
     },
 
     handleCommentAdded() {
@@ -676,6 +819,21 @@ export default {
       }
     },
 
+    formatNumber(num) {
+      if (!num) return 0;
+      if (num >= 1000) return (num / 1000).toFixed(1) + "k";
+      return num;
+    },
+
+    truncateText(text, length) {
+      if (!text) return "";
+      return text.length > length ? text.substring(0, length) + "..." : text;
+    },
+
+    openCommentsModal(post) {
+      this.viewPost(post);
+    },
+
     // Utility methods
     formatNumber(num) {
       if (!num || num === 0) return "0";
@@ -693,7 +851,6 @@ export default {
     // Fetch Methods
     async fetchMyProducts(page = 1) {
       try {
-        console.log("reached inside fetch my products ");
         this.isLoading = true;
         const token = localStorage.getItem("token");
         const response = await fetch(
@@ -847,34 +1004,6 @@ export default {
     handleRoomsPageChange(page) {
       this.fetchMyRooms(page);
     },
-    viewRoom(room) {
-      // room object already looks like:
-      // { added_at, is_favorited, id, name, image, category, type }
-      this.selectedRoom = room;
-      this.roomModalVisible = true;
-    },
-    closeRoomModal() {
-      this.roomModalVisible = false;
-      this.selectedRoom = null;
-    },
-    handleTabChange(key) {
-      this.active_tab = key; // Force sync
-      // Reset modal state when switching tabs
-      this.showModal = false;
-      this.selectedPost = null;
-    },
-
-    handleTabClick(key) {
-      this.active_tab = key;
-      if (key === "Furniture") {
-        this.fetchMyProducts();
-      } else if (key === "rooms") {
-        this.fetchMyRooms();
-      } else {
-        this.fetchMyLikes();
-      }
-      this.tabRefreshKey++; // Force re-render
-    },
   },
 };
 </script>
@@ -887,6 +1016,21 @@ export default {
   border: 1px solid rgba(128, 128, 128, 0.167);
   padding: 20px;
   background-color: white;
+}
+
+/* Force remove modal backdrop interference */
+:deep(.ant-modal-mask) {
+  z-index: 1000 !important;
+}
+
+:deep(.ant-tabs-nav) {
+  pointer-events: auto !important;
+}
+
+/* Ensure tabs clickable after modal */
+.ant-tabs-top > .ant-tabs-nav {
+  position: relative;
+  z-index: 10;
 }
 .head-section {
   display: flex;

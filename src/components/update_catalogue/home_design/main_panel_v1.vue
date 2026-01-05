@@ -428,19 +428,18 @@ computed: {
   }
   
   .image-grid {
-    /* gap: 12px; */
+    gap: 12px;
     max-width: 100%;
-    max-height: 350px;
     margin-bottom: 24px;
   }
   
-   .grid-2,
+  .grid-2,
   .grid-3,
   .grid-4 {
-    grid-template-columns: repeat(2,1fr);
+    grid-template-columns: 1fr;
     grid-template-rows: auto;
   }
-  /*
+  
   .grid-3 .large-image {
     grid-row: auto;
     min-height: 200px;
@@ -448,7 +447,7 @@ computed: {
   
   .grid-3 .small-image {
     min-height: 200px;
-  } */
+  }
   
   .image-container {
     min-height: 200px;
@@ -465,13 +464,13 @@ computed: {
     padding: 12px;
   }
   
-  /* .image-grid {
+  .image-grid {
     gap: 8px;
-  } */
+  }
   
   .image-container {
     min-height: 180px;
-    /* border-radius: 8px; */
+    border-radius: 8px;
   }
 }
 

@@ -228,64 +228,106 @@
     </div>
 
     <div class="queue-list">
-      <a-list :data-source="queueItems" item-layout="horizontal">
-        <template #renderItem="{ item }">
-          
-          <a-list-item>
-            <template #actions>
-              <a-button 
-                v-if="item.status === 'pending'" 
-                type="link" 
-                danger 
-                @click="removeFromQueue(item.id)"
+       <a-row :gutter="[16, 16]">
+  <a-col 
+    v-for="item in queueItems" 
+    :key="item.id" 
+    :xs="24" 
+    :sm="12" 
+    :md="8" 
+    :lg="6"
+  >
+  <!-- border: 1px solid rgba(0,0,0,0.1); -->
+  <!-- box-shadow: 0 2px 8px rgba(0,0,0,0.06); -->
+    <div style="
+      
+      
+      transition: all 0.3s ease;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    "
+    >
+    <!-- @mouseenter="$event.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.12)'; $event.currentTarget.style.transform = 'translateY(-2px)';"
+    @mouseleave="$event.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.06)'; $event.currentTarget.style.transform = 'translateY(0)';" -->
+      <!-- Image and Status Section -->
+      <a-row :gutter="[16, 8]" style="
+        padding: 12px;
+        background: #f3f2f3;
+      border-radius: 10px;
+        margin: 0;
+      ">
+        <!-- Image Column (Full width on mobile, half on desktop) -->
+        <a-col :xs="24" :sm="24" :md="12" :lg="12" style="display: flex; justify-content: center; align-items: center;">
+          <div style="text-align: center;">
+            <img 
+              :src="item.images_preview[0]" 
+              alt="Preview" 
+              style="
+                max-width: 100px; 
+                max-height: 100px;
+                border-radius: 8px;
+                object-fit: cover;
+                margin-bottom: 8px;
+              " 
+            />
+            <div>
+              <a-tag 
+                :color="getQueueStatusColor(item.status)"
+                style="margin: 0;"
               >
-                Remove
-              </a-button>
-              <a-button 
-                v-if="item.status === 'completed' && item.generated_model_id" 
-                type="link"
-            @click="view_result(item.generated_model_id)"
+                {{ getQueueStatusText(item.status) }}
+              </a-tag>
+            </div>
+          </div>
+        </a-col>
 
-              >
-                View Result
-              </a-button>
-            </template>
-            
-            <a-list-item-meta>
-              <template #title>
-                <div class="queue-item-title">
-                  <a-tag :color="getQueueStatusColor(item.status)">
-                    {{ getQueueStatusText(item.status) }}
-                  </a-tag>
-                  <span>Position: {{ item.queue_position }}</span>
-                  <span style="margin-left: 16px;">{{ item.model_mode }}</span>
-                </div>
-              </template>
-              <template #description>
-                <div style="display:flex;gap:20px;">
+        <!-- Content Column (Full width on mobile, half on desktop) -->
+        <a-col :xs="24" :sm="24" :md="12" :lg="12">
+          <div style="flex: 1;">
+            <p style="margin: 0 0 8px 0; font-size: 12px; color: #999;">
+              <strong>Created:</strong> {{ formatQueueTime(item.created_at) }}
+            </p>
+            <p v-if="item.started_at" style="margin: 0 0 8px 0; font-size: 12px; color: #999;">
+              <strong>Started:</strong> {{ formatQueueTime(item.started_at) }}
+            </p>
+            <p v-if="item.completed_at" style="margin: 0 0 8px 0; font-size: 12px; color: #999;">
+              <strong>Completed:</strong> {{ formatQueueTime(item.completed_at) }}
+            </p>
+            <p v-if="item.error_message" style="margin: 0 0 8px 0; font-size: 12px; color: #ff4d4f;">
+              🔴 Failed (Error)
+            </p>
+          </div>
+          <div style="padding: 12px; display: flex; gap: 8px; flex-direction: column;">
+        <a-button 
+          v-if="item.status === 'pending'" 
+          type="primary"
+          danger
+          block
+          size="small"
+          @click="removeFromQueue(item.id)"
+        >
+          Remove
+        </a-button>
+        <a-button 
+          v-if="item.status === 'completed' && item.generated_model_id" 
+          type="primary"
+          block
+          size="small"
+          @click="view_result(item.generated_model_id)"
+        >
+          View Result
+        </a-button>
+      </div>
+        </a-col>
+      </a-row>
 
-                  <div>
-                    
-                    <!-- {{item.images_preview[0]}}  -->
-                    <img 
-                    :src="item.images_preview[0]" 
-                    alt="Preview" 
-                    style="max-width: 100px; max-height: 100px;" 
-                    />
+      <!-- Buttons Section -->
+      
+    </div>
+  </a-col>
+</a-row>
 
-                  </div>
-                  <div>
-                  <p style="margin:0">Created: {{ formatQueueTime(item.created_at) }}</p>
-                  <p v-if="item.started_at" style="margin:0">Started: {{ formatQueueTime(item.started_at) }}</p>
-                  <p v-if="item.completed_at" style="margin:0">Completed: {{ formatQueueTime(item.completed_at) }}</p>
-                  <p v-if="item.error_message"  style="margin:0"class="error-msg">Error: {{ item.error_message }}</p>
-                </div>
-                </div>
-              </template>
-            </a-list-item-meta>
-          </a-list-item>
-        </template>
-      </a-list>
       
       <div v-if="queueItems.length === 0" class="empty-queue">
         <a-empty description="No items in queue" />

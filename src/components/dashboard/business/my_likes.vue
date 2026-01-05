@@ -69,37 +69,89 @@
                   </div>
 
                   <a-row>
-                    <a-col span="24">
-                      <b>{{
-                        truncateText(product.name || "No name available", 19)
-                      }}</b>
-                    </a-col>
+                        <a-col span="24">
+                            <b
+                              class="block w-full truncate"
+                              :title="product.name"
+                            >
+                              {{ product.name || "No name available" }}
+                            </b>
+                          </a-col>
 
-                    <a-col span="18">
-                      <a-button block @click="goto_product_Route(product)"
-                        >Product Details</a-button
-                      >
-                    </a-col>
+                          <a-col
+                            span="16"
+                            style="
+                              font-family: 'Poppins', sans-serif;
+                              font-size: 13px;
+                              font-weight: 400;
+                            "
+                          >
+                            Color
+                          </a-col>
 
-                    <!-- ❤️ Dynamic Favorite Button -->
-                    <a-col span="6" style="display: flex; justify-content: end">
-                      <a-button
-                        @click="toggleFavorite(product)"
-                        style="
-                          display: flex;
-                          justify-content: center;
-                          align-items: center;
-                        "
-                      >
-                        <template v-if="product.is_favorited">
-                          <HeartFilled style="color: red" />
-                        </template>
-                        <template v-else>
-                          <HeartOutlined />
-                        </template>
-                      </a-button>
-                    </a-col>
-                  </a-row>
+                          <a-col
+                            span="8"
+                            style="display: flex; justify-content: end"
+                          >
+                          <!-- {{product.product_colors}} -->
+                            <div
+                              v-for="(color, index) in product.product_colors.slice(
+                                0,
+                                2
+                              )"
+                              :key="index"
+                              style="
+                                width: 20px;
+                                height: 20px;
+                                border-radius: 20px;
+                                margin-left: 2px;
+                              "
+                              :style="'background:' + color.color"
+                            ></div>
+                          </a-col>
+
+                          <a-col
+                            span="12"
+                            style="
+                              font-family: 'Poppins', sans-serif;
+                              font-size: 13px;
+                              font-weight: 400;
+                            "
+                          >
+                            Price
+                          </a-col>
+
+                          <a-col
+                            span="12"
+                            style="
+                              display: flex;
+                              justify-content: end;
+                              font-weight: 700;
+                            "
+                          >
+                            <!-- <del style="font-size: 10px;">${{ product.pricing.price }}</del> -->
+                            ${{ product.product_price }}
+                          </a-col>
+                        <!-- {{ product }} -->
+    
+                        <a-col span="18">
+                            <a-button block @click="goto_product_Route(product)">Product Details</a-button>
+                        </a-col>
+    
+    
+                        <!-- ❤️ Dynamic Favorite Button -->
+                        <a-col span="6" style="display: flex;justify-content: end;">
+                        <a-button @click="toggleFavorite(product)" style="display: flex;justify-content: center;align-items: center;">
+                            <template v-if="product.is_favorited">
+                            <HeartFilled style="color: red" />
+                            </template>
+                            <template v-else>
+                            <HeartOutlined />
+                            </template>
+                        </a-button>
+                        </a-col>
+    
+            </a-row>
                 </div>
               </a-col>
             </a-row>

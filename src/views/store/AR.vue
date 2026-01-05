@@ -20,25 +20,37 @@
     <div class="main-content">
       <!-- 3D Model Viewer with Occlusion Support -->
        
-      <div class="model-viewer-container" v-if="ProductDetails">
+      <div class="model-viewer-container" style="position:absolute" v-if="ProductDetails">
         
 
-<div style="padding:10px;width:100%" v-if="!isAuthenticated">
-  <a-alert
-message="Login required"
+<div style="padding:10px;width:100%;position :absolute;z-index:2" v-if="!isAuthenticated">
+  
+  <a-row>
+<a-col span="4">
+    <a-button style="display:flex;justify-content: center;align-items: center;" size="large" type="primary" @click.stop="this.$router.push('/'+ProductDetails.business_slug)"><LeftOutlined /> </a-button>
+   </a-col>
+<a-col span="20"> <a-alert
+
 type="info"
 closable
 >
 <!-- description="Info Description Info Description Info Description Info Description" -->
-<template #action>
-  <a-space direction="vertical">
-    <a-button size="small" type="primary" @click.stop="this.$router.push('/login')">Login</a-button>
+<template #message>
+  <a-space direction="horizontle">
+    <span>Login required</span>
+    <a-button size="small" type="primary" @click.stop="this.$router.push('/login')">Get Login </a-button>
     <!-- <a-button size="small" danger type="ghost">Decline</a-button> -->
   </a-space>
 </template>
-</a-alert>
-
+</a-alert></a-col>
+  </a-row>
+ 
+ 
 </div>
+
+<!-- {{ProductDetails.business_slug}} -->
+    <a-button shape="circle" size="large" v-if="isAuthenticated" style="position :absolute;z-index:2;margin-top:20px;margin-left:20px; display:flex;justify-content: center;align-items: center;" type="primary" @click.stop="this.$router.push('/'+ProductDetails.business_slug)"><LeftOutlined /> </a-button>
+
         <model-viewer
           ref="modelViewer"
           :src="this.$store.state.root_media_api+selected3DModelUrl"
@@ -460,7 +472,7 @@ closable
 </template>
 
 <script>
-import { ArrowLeftOutlined, HeartOutlined, IssuesCloseOutlined, ShoppingCartOutlined } from "@ant-design/icons-vue";
+import { LeftOutlined ,ArrowLeftOutlined, HeartOutlined, IssuesCloseOutlined, ShoppingCartOutlined } from "@ant-design/icons-vue";
 
 export default {
   name: "ARProductView",
@@ -521,6 +533,7 @@ export default {
   },
 
   components: {
+    LeftOutlined ,
     ArrowLeftOutlined,
     HeartOutlined, 
     IssuesCloseOutlined,
@@ -1128,7 +1141,7 @@ export default {
 .ar-app {
   position: relative;
   width: 100%;
-  min-height: 100vh;
+  min-height: 80vh;
   background: #f8f9fa;
   overflow-x: hidden;
 }

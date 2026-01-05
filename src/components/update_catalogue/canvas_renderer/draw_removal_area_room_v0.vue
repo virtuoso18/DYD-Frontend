@@ -110,7 +110,7 @@
               <a-input placeholder="type the object name here" style="width:100%"></a-input>
             </div>
             <a-button 
-              @click="fetchSAM3Mask" 
+              @click="fetchSAMMask" 
               :loading="isFetchingSAMMask"
               :disabled="samPoints.length === 0 || isProcessing"
               type="primary"
@@ -635,58 +635,6 @@ export default {
       }
     },
     
-
-    
-    async fetchSAM3Mask() {
-      
-      this.isFetchingSAMMask = true;
-      
-      try {
-       
-        const apiEndpoint = this.$store?.state?.root_api || '';
-        const url = `${apiEndpoint}engine/sam3-segment/`;
-        
-        const response = await fetch(url, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            room_id: this.roomId,
-            image_base64: imageBase64,
-            points: this.samPoints.map(p => ({ x: p.x, y: p.y })),
-            confidence: this.samConfidence,
-            image_dimensions: {
-              width: this.baseImg.width,
-              height: this.baseImg.height
-            }
-          })
-        });
-        
-        if (!response.ok) {
-          throw new Error(`Server error: ${response.status}`);
-        }
-        
-        const result = await response.json();
-        
-        if (result.success && result.mask_base64) {
-          this.samMask = result.mask_base64;
-          this.samMaskGenerated = true;
-          await this.drawSAMMask();
-          this.$message.success('Mask generated successfully!');
-        } else {
-          throw new Error(result.message || 'Failed to generate mask');
-        }
-        
-      } catch (error) {
-        console.error('SAM-2 segmentation failed:', error);
-        this.$message.error('Failed to generate SAM-2 mask. Please try again.');
-      } finally {
-        this.isFetchingSAMMask = false;
-      }
-    },
-
-
     async drawSAMMask() {
       if (!this.samMask) return;
       

@@ -76,34 +76,20 @@
 
     <!-- Chart Section -->
     <a-row :gutter="[16, 16]" class="mb-6">
-  <a-col :span="24">
-    <div class="chart-card">
-      <div class="chart-header">
-        <h3>Favorite product</h3>
-        <div class="chart-filters">
-          <a-date-picker
-            v-model:value="favoriteChartDateRange[0]"
-            placeholder="Start Date"
-            style="width: 150px; margin-right: 8px;"
-            @change="fetchFavoriteChartData"
-          />
-          <a-date-picker
-            v-model:value="favoriteChartDateRange[1]"
-            placeholder="End Date"
-            style="width: 150px;"
-            @change="fetchFavoriteChartData"
-          />
+      <a-col :span="24">
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3>Favorite product</h3>
+            <div class="date-range">1 June - 1 July, 2025</div>
+          </div>
+          
+          <!-- Chart -->
+          <div class="chart-container">
+            <canvas ref="chartCanvas" style="max-height: 300px;"></canvas>
+          </div>
         </div>
-      </div>
-      
-      <!-- Chart -->
-      <div class="chart-container">
-        <canvas ref="favoriteChartCanvas" style="max-height: 300px;"></canvas>
-      </div>
-    </div>
-  </a-col>
-</a-row>
-
+      </a-col>
+    </a-row>
 
     <!-- User-wise Credit Summary Table -->
     <a-row :gutter="[16, 16]" class="mb-6">
@@ -621,12 +607,6 @@ export default {
       ],
       productsData: [],
       drawerVisible: false,
-
-      // Favorite Chart Data
-      favoriteChartData: [],
-      favoriteChartDateRange: [dayjs().subtract(30, 'day'), dayjs()],
-      favoriteChart: null,
-      currentBusinessSlug: '',
     }
   },
   mounted() {
@@ -634,8 +614,7 @@ export default {
     this.fetchTopProducts()
     this.fetchUsersCreditSummary()
     this.fetchDailyCreditConsumption()  
-    // this.initChart()
-    this.fetchFavoriteChartData()
+    this.initChart()
   },
   beforeUnmount() {
     if (this.chart) {
@@ -1033,7 +1012,7 @@ export default {
         console.error('Error fetching top products:', error)
         this.$message.error('An error occurred while fetching top products')
       } finally {
-        this.loading = false    
+        this.loading = false
       }
     },
 
@@ -1117,312 +1096,122 @@ export default {
       }
     },
 
-    // initChart() {
-    //   const ctx = this.$refs.chartCanvas.getContext('2d')
+    initChart() {
+      const ctx = this.$refs.chartCanvas.getContext('2d')
       
-    //   const gradient = ctx.createLinearGradient(0, 0, 0, 300)
-    //   gradient.addColorStop(0, 'rgba(79, 70, 229, 0.3)')
-    //   gradient.addColorStop(1, 'rgba(79, 70, 229, 0.05)')
+      const gradient = ctx.createLinearGradient(0, 0, 0, 300)
+      gradient.addColorStop(0, 'rgba(79, 70, 229, 0.3)')
+      gradient.addColorStop(1, 'rgba(79, 70, 229, 0.05)')
       
-    //   this.chart = new Chart(ctx, {
-    //     type: 'line',
-    //     data: {
-    //       labels: Array.from({ length: this.chartData.length }, (_, i) => i + 1),
-    //       datasets: [{
-    //         label: 'Favorite Product',
-    //         data: this.chartData,
-    //         borderColor: '#4F46E5',
-    //         backgroundColor: gradient,
-    //         borderWidth: 2,
-    //         fill: true,
-    //         tension: 0.4,
-    //         pointBackgroundColor: '#4F46E5',
-    //         pointBorderColor: '#ffffff',
-    //         pointBorderWidth: 2,
-    //         pointRadius: 4,
-    //         pointHoverRadius: 6,
-    //         pointHoverBackgroundColor: '#4F46E5',
-    //         pointHoverBorderColor: '#ffffff',
-    //         pointHoverBorderWidth: 2
-    //       }]
-    //     },
-    //     options: {
-    //       responsive: true,
-    //       maintainAspectRatio: false,
-    //       interaction: {
-    //         intersect: false,
-    //         mode: 'index'
-    //       },
-    //       plugins: {
-    //         legend: {
-    //           display: false
-    //         },
-    //         tooltip: {
-    //           backgroundColor: '#1e293b',
-    //           titleColor: '#ffffff',
-    //           bodyColor: '#ffffff',
-    //           borderColor: '#1e293b',
-    //           borderWidth: 1,
-    //           cornerRadius: 6,
-    //           displayColors: false,
-    //           callbacks: {
-    //             title: function(context) {
-    //               return 'Day ----- ' + context[0].label
-    //             },
-    //             label: function(context) {
-    //               return context.parsed.y + 'k'
-    //             }
-    //           }
-    //         }
-    //       },
-    //       scales: {
-    //         x: {
-    //           grid: {
-    //             display: true,
-    //             color: '#f1f5f9',
-    //             drawBorder: false,
-    //             lineWidth: 1,
-    //             drawTicks: false
-    //           },
-    //           ticks: {
-    //             color: '#94a3b8',
-    //             font: {
-    //               size: 12
-    //             },
-    //             maxTicksLimit: 10
-    //           },
-    //           border: {
-    //             display: false
-    //           }
-    //         },
-    //         y: {
-    //           beginAtZero: true,
-    //           max: 50,
-    //           grid: {
-    //             display: true,
-    //             color: '#f1f5f9',
-    //             drawBorder: false,
-    //             lineWidth: 1,
-    //             drawTicks: false
-    //           },
-    //           ticks: {
-    //             color: '#94a3b8',
-    //             font: {
-    //               size: 12
-    //             },
-    //             stepSize: 10,
-    //             callback: function(value) {
-    //               return value + 'k'
-    //             }
-    //           },
-    //           border: {
-    //             display: false
-    //           }
-    //         }
-    //       },
-    //       elements: {
-    //         point: {
-    //           hoverRadius: 6
-    //         }
-    //       }
-    //     }
-    //   })
-    // },
+      this.chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: Array.from({ length: this.chartData.length }, (_, i) => i + 1),
+          datasets: [{
+            label: 'Favorite Product',
+            data: this.chartData,
+            borderColor: '#4F46E5',
+            backgroundColor: gradient,
+            borderWidth: 2,
+            fill: true,
+            tension: 0.4,
+            pointBackgroundColor: '#4F46E5',
+            pointBorderColor: '#ffffff',
+            pointBorderWidth: 2,
+            pointRadius: 4,
+            pointHoverRadius: 6,
+            pointHoverBackgroundColor: '#4F46E5',
+            pointHoverBorderColor: '#ffffff',
+            pointHoverBorderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: {
+            intersect: false,
+            mode: 'index'
+          },
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              backgroundColor: '#1e293b',
+              titleColor: '#ffffff',
+              bodyColor: '#ffffff',
+              borderColor: '#1e293b',
+              borderWidth: 1,
+              cornerRadius: 6,
+              displayColors: false,
+              callbacks: {
+                title: function(context) {
+                  return 'Day ----- ' + context[0].label
+                },
+                label: function(context) {
+                  return context.parsed.y + 'k'
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: {
+                display: true,
+                color: '#f1f5f9',
+                drawBorder: false,
+                lineWidth: 1,
+                drawTicks: false
+              },
+              ticks: {
+                color: '#94a3b8',
+                font: {
+                  size: 12
+                },
+                maxTicksLimit: 10
+              },
+              border: {
+                display: false
+              }
+            },
+            y: {
+              beginAtZero: true,
+              max: 50,
+              grid: {
+                display: true,
+                color: '#f1f5f9',
+                drawBorder: false,
+                lineWidth: 1,
+                drawTicks: false
+              },
+              ticks: {
+                color: '#94a3b8',
+                font: {
+                  size: 12
+                },
+                stepSize: 10,
+                callback: function(value) {
+                  return value + 'k'
+                }
+              },
+              border: {
+                display: false
+              }
+            }
+          },
+          elements: {
+            point: {
+              hoverRadius: 6
+            }
+          }
+        }
+      })
+    },
     
     formatNumber(num) {
       if (!num) return '0'
       return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-    },
-
-    
-  async fetchFavoriteChartData() {
-    try {
-      debugger
-      const params = new URLSearchParams()
-
-      if (this.favoriteChartDateRange[0]) {
-        params.append('start_date', this.favoriteChartDateRange[0].toISOString())
-      }
-      if (this.favoriteChartDateRange[1]) {
-        params.append('end_date', this.favoriteChartDateRange[1].toISOString())
-      }
-
-      // Get business slug from analytics data if available
-      // const businessSlug = 'infinity-computer-labs'
-
-      // if (!businessSlug) {
-      //   console.warn('Business slug not found')
-      //   return
-      // }
-
-      // params.append('business_slug', businessSlug)
-
-      const response = await fetch(
-        `${this.$store.state.root_api}Auth/api/favorites/business-chart/?${params}`,
-        {
-          headers: {
-            'Authorization': `Token ${localStorage.getItem('token')}`
-          }
-        }
-      )
-
-      const data = await response.json()
-      console.log('Favorite Chart API Response:', data)
-
-      if (response.ok && data) {
-        this.favoriteChartData = data.chartData || []
-        this.updateFavoriteChart()
-      } else {
-        this.$message.error(data.error || 'Failed to fetch favorite chart data')
-      }
-    } catch (error) {
-      console.error('Error fetching favorite chart data:', error)
-      this.$message.error('An error occurred while fetching favorite chart data')
     }
-  },
-
-
-  updateFavoriteChart() {
-  if (!this.$refs.favoriteChartCanvas) return
-
-  const ctx = this.$refs.favoriteChartCanvas.getContext('2d')
-  
-  if (this.favoriteChart) {
-    this.favoriteChart.destroy()
-  }
-
-  const gradient = ctx.createLinearGradient(0, 0, 0, 300)
-  gradient.addColorStop(0, 'rgba(79, 70, 229, 0.3)')
-  gradient.addColorStop(1, 'rgba(79, 70, 229, 0.05)')
-  
-  // Generate dates starting from today or a specific date
-  const dates = []
-  if (this.favoriteChartDateRange[0] && this.favoriteChartDateRange[1]) {
-    const startDate = new Date(this.favoriteChartDateRange[0])
-    for (let i = 0; i < this.favoriteChartData.length; i++) {
-      const date = new Date(startDate)
-      date.setDate(date.getDate() + i)
-      dates.push(date)
-    }
-  } else {
-    // Fallback to today if no date range selected
-    for (let i = 0; i < this.favoriteChartData.length; i++) {
-      const date = new Date()
-      date.setDate(date.getDate() - (this.favoriteChartData.length - 1 - i))
-      dates.push(date)
-    }
-  }
-  
-  this.favoriteChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: Array.from({ length: this.favoriteChartData.length }, (_, i) => i + 1),
-      datasets: [{
-        label: 'Favorite Product',
-        data: this.favoriteChartData,
-        borderColor: '#4F46E5',
-        backgroundColor: gradient,
-        borderWidth: 2,
-        fill: true,
-        tension: 0.4,
-        pointBackgroundColor: '#4F46E5',
-        pointBorderColor: '#ffffff',
-        pointBorderWidth: 2,
-        pointRadius: 4,
-        pointHoverRadius: 6,
-        pointHoverBackgroundColor: '#4F46E5',
-        pointHoverBorderColor: '#ffffff',
-        pointHoverBorderWidth: 2
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      interaction: {
-        intersect: false,
-        mode: 'index'
-      },
-      plugins: {
-        legend: {
-          display: false
-        },
-        tooltip: {
-          backgroundColor: '#1e293b',
-          titleColor: '#ffffff',
-          bodyColor: '#ffffff',
-          borderColor: '#1e293b',
-          borderWidth: 1,
-          cornerRadius: 6,
-          displayColors: false,
-          callbacks: {
-            title: function(context) {
-              const dayNum = context[0].label
-              const date = dates[context[0].dataIndex]
-              const formattedDate = date.toLocaleDateString('en-US', { 
-                month: 'short', 
-                day: 'numeric', 
-                year: 'numeric' 
-              })
-              return `Day ${dayNum} - ${formattedDate}`
-            },
-            label: function(context) {
-              return context.parsed.y + ' favorites'
-            }
-          }
-        }
-      },
-      scales: {
-        x: {
-          grid: {
-            display: true,
-            color: '#f1f5f9',
-            drawBorder: false,
-            lineWidth: 1,
-            drawTicks: false
-          },
-          ticks: {
-            color: '#94a3b8',
-            font: {
-              size: 12
-            },
-            maxTicksLimit: 10
-          },
-          border: {
-            display: false
-          }
-        },
-        y: {
-          beginAtZero: true,
-          grid: {
-            display: true,
-            color: '#f1f5f9',
-            drawBorder: false,
-            lineWidth: 1,
-            drawTicks: false
-          },
-          ticks: {
-            color: '#94a3b8',
-            font: {
-              size: 12
-            },
-            stepSize: 10,
-            callback: function(value) {
-              return value
-            }
-          },
-          border: {
-            display: false
-          }
-        }
-      },
-      elements: {
-        point: {
-          hoverRadius: 6
-        }
-      }
-    }
-  })
-}
   }
 }
 </script>

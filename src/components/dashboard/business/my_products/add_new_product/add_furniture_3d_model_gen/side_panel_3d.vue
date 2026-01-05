@@ -208,26 +208,137 @@
 >
   <div class="queue-content">
     <div class="queue-header">
-      <a-row :gutter="16">
-        <a-col :span="6">
-          <a-statistic title="Total Items" :value="queueItemsCount" />
+      <a-row >
+        <a-col  :xs="24" 
+                :sm="12" 
+                :md="8" 
+                :lg="8" >
+            <a-statistic title="Total Items" :value="queueItemsCount" />
         </a-col>
-        <a-col :span="6">
-          <a-statistic title="Processing" :value="processingQueueItems.length" />
+        <a-col  :xs="24" 
+                :sm="12" 
+                :md="8" 
+                :lg="8" >
+            <a-statistic title="Processing" :value="processingQueueItems.length" />
         </a-col>
-        <a-col :span="6">
-          <a-statistic title="Pending" :value="pendingQueueItems.length" />
+        <a-col  :xs="24" 
+                :sm="12" 
+                :md="8" 
+                :lg="8" >
+            <a-statistic title="Pending" :value="pendingQueueItems.length" />
         </a-col>
-        <a-col :span="6">
-          <a-button type="primary" @click="showAddToQueueModal" :disabled="!canAddToQueue">
+        <!-- <a-col :span="6">
+           <a-button type="primary" @click="showAddToQueueModal" :disabled="!canAddToQueue">
             Add to Queue
-          </a-button>
-        </a-col>
+          </a-button> 
+        </a-col> -->
       </a-row>
+
+
     </div>
 
     <div class="queue-list">
-      <a-list :data-source="queueItems" item-layout="horizontal">
+      <a-row :gutter="[16, 16]">
+  <a-col 
+    v-for="item in queueItems" 
+    :key="item.id" 
+    :xs="24" 
+    :sm="12" 
+    :md="8" 
+    :lg="6"
+  >
+  <!-- border: 1px solid rgba(0,0,0,0.1); -->
+  <!-- box-shadow: 0 2px 8px rgba(0,0,0,0.06); -->
+    <div style="
+      
+      
+      transition: all 0.3s ease;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    "
+    >
+    <!-- @mouseenter="$event.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.12)'; $event.currentTarget.style.transform = 'translateY(-2px)';"
+    @mouseleave="$event.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.06)'; $event.currentTarget.style.transform = 'translateY(0)';" -->
+      <!-- Image and Status Section -->
+      <a-row :gutter="[16, 8]" style="
+        padding: 12px;
+        background: #f3f2f3;
+      border-radius: 10px;
+        margin: 0;
+      ">
+        <!-- Image Column (Full width on mobile, half on desktop) -->
+        <a-col :xs="24" :sm="24" :md="12" :lg="12" style="display: flex; justify-content: center; align-items: center;">
+          <div style="text-align: center;">
+            <img 
+              :src="item.images_preview[0]" 
+              alt="Preview" 
+              style="
+                max-width: 100px; 
+                max-height: 100px;
+                border-radius: 8px;
+                object-fit: cover;
+                margin-bottom: 8px;
+              " 
+            />
+            <div>
+              <a-tag 
+                :color="getQueueStatusColor(item.status)"
+                style="margin: 0;"
+              >
+                {{ getQueueStatusText(item.status) }}
+              </a-tag>
+            </div>
+          </div>
+        </a-col>
+
+        <!-- Content Column (Full width on mobile, half on desktop) -->
+        <a-col :xs="24" :sm="24" :md="12" :lg="12">
+          <div style="flex: 1;">
+            <p style="margin: 0 0 8px 0; font-size: 12px; color: #999;">
+              <strong>Created:</strong> {{ formatQueueTime(item.created_at) }}
+            </p>
+            <p v-if="item.started_at" style="margin: 0 0 8px 0; font-size: 12px; color: #999;">
+              <strong>Started:</strong> {{ formatQueueTime(item.started_at) }}
+            </p>
+            <p v-if="item.completed_at" style="margin: 0 0 8px 0; font-size: 12px; color: #999;">
+              <strong>Completed:</strong> {{ formatQueueTime(item.completed_at) }}
+            </p>
+            <p v-if="item.error_message" style="margin: 0 0 8px 0; font-size: 12px; color: #ff4d4f;">
+              🔴 Failed (Error)
+            </p>
+          </div>
+          <div style="padding: 12px; display: flex; gap: 8px; flex-direction: column;">
+        <a-button 
+          v-if="item.status === 'pending'" 
+          type="primary"
+          danger
+          block
+          size="small"
+          @click="removeFromQueue(item.id)"
+        >
+          Remove
+        </a-button>
+        <a-button 
+          v-if="item.status === 'completed' && item.generated_model_id" 
+          type="primary"
+          block
+          size="small"
+          @click="view_result(item.generated_model_id)"
+        >
+          View Result
+        </a-button>
+      </div>
+        </a-col>
+      </a-row>
+
+      <!-- Buttons Section -->
+      
+    </div>
+  </a-col>
+</a-row>
+
+      <!-- <a-list :data-source="queueItems" item-layout="horizontal">
         <template #renderItem="{ item }">
           
           <a-list-item>
@@ -265,7 +376,7 @@
 
                   <div>
                     
-                    <!-- {{item.images_preview[0]}}  -->
+                   
                     <img 
                     :src="item.images_preview[0]" 
                     alt="Preview" 
@@ -284,7 +395,7 @@
             </a-list-item-meta>
           </a-list-item>
         </template>
-      </a-list>
+      </a-list> -->
       
       <div v-if="queueItems.length === 0" class="empty-queue">
         <a-empty description="No items in queue" />
@@ -513,15 +624,15 @@
             </div>
             
             <div class="image-actions" v-if="!isProcessingBg">
-              <a-button type="primary" shape="circle" @click.stop="editImage('main')">
+              <a-button type="primary" shape="circle" @click.stop="editImage('main')" style="display: flex;justify-content: center;align-items:center;">
                 <template #icon>
-                  <EditOutlined />
                 </template>
+                <EditOutlined />
               </a-button>
-              <a-button type="primary" :danger="true" shape="circle" @click.stop="removeImage('main')">
+              <a-button type="primary" :danger="true" shape="circle" @click.stop="removeImage('main')" style="display: flex;justify-content: center;align-items:center;">
                 <template #icon>
-                  <DeleteOutlined />
                 </template>
+                <DeleteOutlined />
               </a-button>
             </div>
           </div>
@@ -529,10 +640,9 @@
 
         <!-- Remove Background Button -->
         <div v-if="mainImage" class="action-section">
-          <a-button block @click="removeBackground" :loading="isProcessingBg" :disabled="isProcessingBg">
-            <template #icon v-if="!isProcessingBg">
-              <ScissorOutlined />
-            </template>
+          <a-button block @click="removeBackground" :loading="isProcessingBg" :disabled="isProcessingBg" style="display:flex;justify-content: center;align-items:center;gap:10px;">
+            
+            <ScissorOutlined  v-if="!isProcessingBg" />
             {{ isProcessingBg ? 'Removing Background...' : 'Remove Background' }}
           </a-button>
         </div>
@@ -547,10 +657,11 @@
       size="small"
       @click="openTexturModal()"
       :disabled="!mainImage"
+      style="display:flex;justify-content: center;align-items: center;"
     >
       <template #icon>
-        <PlusOutlined />
       </template>
+      <PlusOutlined />
       Add Texture
     </a-button>
   </div>
@@ -648,11 +759,10 @@
     <div class="section-header" style="padding:0 10px">
 
     <p>Upload more images</p>
-    <a-badge :count="queueItemsCount" :offset="[10, 0]">
-      <a-button type="link" @click="showQueueModal" style="padding: 0;">
-        View Queue
+    <a-button type="link" @click="showQueueModal" style="padding: 0;display: flex;gap:10px;justify-content: center;align-items: center;">
+      View Queue
+      <a-badge :count="queueItemsCount" size="23" />
       </a-button>
-    </a-badge>
   </div>
   <!-- <div class="more-images-upload" @click="showAddToQueueModal">
     <CameraOutlined />
