@@ -34,15 +34,14 @@
     <div style="padding: 0;">
       <a-row :gutter="24">
 
-                <div className="flex flex-col lg:flex-row">
-                  <div>
-
+                
+                   
                     <!-- Left Column - 3D Model Preview -->
                                <a-col
     :xs="24"
     :sm="24"
-    :md="24"
-    :lg="20"
+    :md="10"
+    :lg="10"
   >
                       <div style="position: relative; padding:10px;">
             
@@ -187,18 +186,30 @@
               />
             </div>
                       </div>
+                       <div style="margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; padding: 12px; background: #f8faff; border-radius: 8px; border: 1px solid #e5e7eb;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2">
+                        <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+                      </svg>
+                      <span style="font-size: 13px; font-weight: 500; color: #374151;">Model Resizable</span>
+                    </div>
+                    
+                    <a-switch 
+                      v-model:checked="is_resizable"
+                      @change="handleResizableChange"
+                      style="background-color: #3b82f6;"
+                    />
+                       </div>
                     </a-col>
-                  </div>
-
-                  <div>
+                  
 
                     
                             <!-- Right Column - Product Details (keeping existing code) -->
                             <a-col
             :xs="24"
             :sm="24"
-            :md="24"
-            :lg="28"
+            :md="14"
+            :lg="14"
           > 
                               <div style="padding-left: 1px;">
                                 <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px; color: #1f2937;">Product Details</h3>
@@ -569,8 +580,7 @@
                                 </div>
                               </div>
                             </a-col>
-                  </div>
-                  </div>
+                  
 
       </a-row>
     </div>
@@ -674,7 +684,8 @@ export default {
       '#008000', '#800080', '#008080', '#000080', '#FFA500', '#FFC0CB',
       '#A52A2A', '#DDA0DD', '#98FB98', '#F0E68C', '#DEB887', '#D2691E',
       '#FF6347', '#40E0D0', '#EE82EE', '#90EE90', '#FFB6C1', '#87CEEB'
-    ]
+    ],
+    is_resizable: false,
   }
 },
   computed: {
@@ -728,6 +739,11 @@ watch: {
 
   methods: {
 
+    handleResizableChange(value) {
+    
+    this.is_resizable = value;
+    
+  },
     // Handle paste event
   handlePaste(e) {
     e.preventDefault();
@@ -1397,6 +1413,8 @@ removeColor(index) {
         this.selectedTextures.forEach(texture => {
           formData.append('textures', texture.file);
         });
+
+        formData.append('is_resizable', this.is_resizable ? 'True' : 'False');
 
         console.log('📤 Sending product data:', {
           name: this.productForm.name,

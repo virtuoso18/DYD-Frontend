@@ -607,6 +607,7 @@ Switch Furniture</a-button> -->
               <items_replacement_renderer 
                     v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Furniture'" 
                     :glbUrl="item_replacement_renderer_3d_model_url"
+                    :is_resizable="is_resizable"
                     :product_id="selected_3d_product_model"
                     :modelDimensions="{ width: selected_model_width, height: selected_model_height, depth: selected_model_depth }"
                     :baseImageUrl=base_image_url
@@ -1644,6 +1645,7 @@ Switch Furniture</a-button> -->
               <items_replacement_renderer 
                     v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Furniture'" 
                     :glbUrl="item_replacement_renderer_3d_model_url"
+                    :is_resizable="is_resizable"
                     :product_id="selected_3d_product_model"
                     :modelDimensions="{ width: selected_model_width, height: selected_model_height, depth: selected_model_depth }"
                     :baseImageUrl=base_image_url
@@ -1884,6 +1886,7 @@ isCollapsed: false,
       selected_light_type: '',
       model_3d_url: '',
       item_replacement_renderer_3d_model_url: '',
+      is_resizable:false,
       selected_3d_product_model: '',
       maskUpdateTrigger: 0,
       
@@ -3362,6 +3365,7 @@ async fetchSingleProductType(productType, dataKey, brand, endpointMap) {
       // console.log("-------------------")
       // console.log(e)
       this.item_replacement_renderer_3d_model_url = this.$store.state.root_media_api + e.model_url;
+       this.is_resizable=e.is_resizable
       this.selected_3d_product_model = e.model_uuid;
       this.selected_model_width=e.width
       this.selected_model_height=e.height

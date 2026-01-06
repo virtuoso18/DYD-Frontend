@@ -89,7 +89,7 @@
   </button>
 
   <!-- Center: Scale Controls -->
-  <div class="flex items-center gap-2">
+  <div class="flex items-center gap-2" v-show="is_resizable">
     <!-- Minus Button -->
     <button
       className="bg-red-500 hover:bg-red-600 !text-white px-3 py-1 rounded-md"
@@ -189,6 +189,7 @@ export default {
     glbUrl: { type: String, required: true },
     product_id: { type: String, required: true },
     baseImageUrl: { type: String, required: true },
+    is_resizable: { type: Boolean, required: true },
     floorData: Object,
     modelDimensions: {
       type: Object,

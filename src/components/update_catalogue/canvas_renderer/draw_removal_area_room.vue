@@ -1,221 +1,554 @@
 <template>
-  <a-modal 
-    v-model:open="localDrawRemovalModal" 
-    title="Object Removal Tool" 
-    width="90%"
-    :maskClosable="false"
-    @cancel="handleCancel"
-  >
-    <template #footer>
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-          <!-- Mode Toggle -->
-          <div class="mode-toggle">
-            <span style="margin-right: 8px; font-weight: 500; font-size: 12px;">Mode:</span>
-            <a-radio-group v-model:value="removalMode" button-style="solid" :disabled="isProcessing" size="small">
-              <a-radio-button value="draw">
-                <span>✏️ Draw</span>
-              </a-radio-button>
-              <a-radio-button value="sam2">
-                <span>🎯 SAM-2</span>
-              </a-radio-button>
-               <a-radio-button value="sam3">
-                <span>🎯 SAM-3</span>
-              </a-radio-button>
-            </a-radio-group>
+  <div>
+    <!-- Desktop Modal -->
+    <a-modal 
+      v-if="!isMobile"
+      v-model:open="localVisible" 
+      title="Object Removal Tool" 
+      width="95%"
+      :maskClosable="false"
+      @cancel="handleCancel"
+      class="removal-modal"
+      :body-style="{ padding: '20px' }"
+    >
+      <template #footer>
+        
+      </template>
+
+      <a-row>
+        <a-col :span="16">
+          <div class="removal-container-desktop">
+        <div class="instructions-banner" :class="removalMode">
+          <div class="instruction-content">
+            <span class="mode-icon">{{ getModeIcon() }}</span>
+            <div class="instruction-text">
+              <strong>{{ getModeTitle() }}</strong>
+              <span>{{ getModeInstructions() }}</span>
+            </div>
+          </div>
+          <div class="status-indicator">
+            <span v-if="removalMode === 'sam2'">
+              {{ samPoints.length }} point{{ samPoints.length !== 1 ? 's' : '' }}
+              <span v-if="samMaskGenerated" style="color: #4CAF50; margin-left: 8px;">● Detected</span>
+              <span v-else style="color: #ff9800; margin-left: 8px;">○ Ready</span>
+            </span>
+            <span v-else-if="removalMode === 'sam3'">
+              {{ sam3MasksList.length }} mask{{ sam3MasksList.length !== 1 ? 's' : '' }}
+              <span v-if="samMaskGenerated" style="color: #4CAF50; margin-left: 8px;">● Detected</span>
+              <span v-else style="color: #ff9800; margin-left: 8px;">○ Ready</span>
+            </span>
+            <span v-else>
+              {{ drawingHistory.length }} stroke{{ drawingHistory.length !== 1 ? 's' : '' }}
+            </span>
+          </div>
+        </div>
+
+        <div class="canvas-wrapper-desktop" ref="canvasWrapper">
+          <div class="canvas-overlay">
+            <canvas
+              ref="drawCanvas"
+              @mousedown="handleCanvasMouseDown"
+              @mousemove="handleCanvasMouseMove"
+              @mouseup="handleCanvasMouseUp"
+              @mouseleave="handleCanvasMouseLeave"
+              @click="handleCanvasClick"
+              :style="{ cursor: getCursorStyle() }"
+            ></canvas>
+
+            <!-- Draw Mode Cursor -->
+            <div 
+              v-if="showCursor && removalMode === 'draw'" 
+              class="custom-cursor"
+              :style="{
+                left: cursorX + 'px',
+                top: cursorY + 'px',
+                width: (brushSize * displayScale) + 'px',
+                height: (brushSize * displayScale) + 'px',
+                borderColor: useEraser ? '#ffffff' : '#ff4444',
+                background: useEraser ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 68, 68, 0.15)',
+              }"
+            ></div>
+
+            <!-- SAM Points Indicators -->
+            <div 
+              v-for="(point, index) in samPoints" 
+              :key="'sam-point-' + index"
+              class="sam-point-indicator"
+              :class="{ 'point-active': index === samPoints.length - 1 }"
+              :style="{
+                left: point.displayX + 'px',
+                top: point.displayY + 'px',
+              }"
+            >
+              <span class="point-number">{{ index + 1 }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Processing Overlay -->
+        <div v-if="isProcessing || isFetchingSAMMask" class="processing-overlay">
+          <a-spin size="large" />
+          <p>{{ isFetchingSAMMask ? 'Generating mask...' : 'Processing removal request...' }}</p>
+        </div>
+      </div>
+        </a-col>
+        <a-col :span="8">
+          <div >
+          <div class="left-controls">
+            <div class="mode-section">
+              <span class="control-label">Mode:</span>
+              <a-radio-group v-model:value="removalMode" button-style="solid" :disabled="isProcessing" size="small">
+                <a-radio-button value="draw">✏️ Draw</a-radio-button>
+                <a-radio-button value="sam2">🎯 SAM-2</a-radio-button>
+                <a-radio-button value="sam3">🎯 SAM-3</a-radio-button>
+              </a-radio-group>
+            </div>
+
+            <!-- Draw Mode Controls -->
+            <template v-if="removalMode === 'draw'">
+              <div class="control-group">
+                <a-button 
+                  @click="clearDrawing" 
+                  :disabled="isProcessing || drawingHistory.length === 0" 
+                  size="small"
+                >
+                  <template #icon><DeleteOutlined /></template>
+                  Clear
+                </a-button>
+                <a-button 
+                  @click="undoLastStroke" 
+                  :disabled="drawingHistory.length === 0 || isProcessing" 
+                  size="small"
+                >
+                  <template #icon><UndoOutlined /></template>
+                  Undo
+                </a-button>
+              </div>
+
+              <div class="control-group">
+                <span class="control-label">Brush:</span>
+                <a-slider 
+                  v-model:value="brushSize" 
+                  :min="5" 
+                  :max="100" 
+                  :step="5"
+                  style="width: 150px;"
+                  :disabled="isProcessing"
+                />
+                <span class="value-label">{{ brushSize }}px</span>
+              </div>
+
+              <div class="control-group">
+                <a-button 
+                  :type="useEraser ? 'primary' : 'default'"
+                  @click="toggleEraser"
+                  :disabled="isProcessing"
+                  size="small"
+                >
+                  🧹 Eraser
+                </a-button>
+              </div>
+            </template>
+
+            <!-- SAM-2 Mode Controls -->
+            <template v-if="removalMode === 'sam2'">
+              <div class="control-group">
+                <a-button 
+                  @click="clearSAMPoints" 
+                  :disabled="isProcessing || samPoints.length === 0" 
+                  size="small"
+                >
+                  <template #icon><DeleteOutlined /></template>
+                  Clear ({{ samPoints.length }})
+                </a-button>
+                <a-button 
+                  @click="undoLastSAMPoint" 
+                  :disabled="samPoints.length === 0 || isProcessing" 
+                  size="small"
+                >
+                  <template #icon><UndoOutlined /></template>
+                  Undo
+                </a-button>
+              </div>
+
+              <div class="control-group">
+                <span class="control-label">Confidence:</span>
+                <a-slider 
+                  v-model:value="samConfidence" 
+                  :min="0" 
+                  :max="1" 
+                  :step="0.05"
+                  style="width: 150px;"
+                  :disabled="isProcessing"
+                />
+                <span class="value-label">{{ samConfidence.toFixed(2) }}</span>
+              </div>
+
+              <a-button 
+                @click="fetchSAMMask" 
+                :loading="isFetchingSAMMask"
+                :disabled="samPoints.length === 0 || isProcessing"
+                type="primary"
+                size="small"
+              >
+                🎯 Detect
+              </a-button>
+            </template>
+
+            <!-- SAM-3 Mode Controls -->
+            <template v-if="removalMode === 'sam3'">
+              <div class="control-group">
+                <a-button 
+                  @click="clearSAM3Masks" 
+                  :disabled="isProcessing || sam3MasksList.length === 0" 
+                  size="small"
+                >
+                  <template #icon><DeleteOutlined /></template>
+                  Clear ({{ sam3MasksList.length }})
+                </a-button>
+                <a-button 
+                  @click="undoLastSAM3Mask" 
+                  :disabled="sam3MasksList.length === 0 || isProcessing" 
+                  size="small"
+                >
+                  <template #icon><UndoOutlined /></template>
+                  Undo
+                </a-button>
+              </div>
+
+              <div class="control-group">
+                <span class="control-label">Confidence:</span>
+                <a-slider 
+                  v-model:value="samConfidence" 
+                  :min="0" 
+                  :max="1" 
+                  :step="0.05"
+                  style="width: 150px;"
+                  :disabled="isProcessing"
+                />
+                <span class="value-label">{{ samConfidence.toFixed(2) }}</span>
+              </div>
+
+              <a-input 
+                v-model:value="sam3TextPrompt" 
+                placeholder="e.g., person, chair, table..." 
+                style="width: 250px; max-width: 100%;"
+                :disabled="isProcessing"
+                size="small"
+              />
+
+              <a-button 
+                @click="fetchSAM3Mask" 
+                :loading="isFetchingSAMMask"
+                :disabled="!sam3TextPrompt || isProcessing"
+                type="primary"
+                size="small"
+              >
+                🎯 Detect
+              </a-button>
+            </template>
           </div>
 
-          <!-- Drawing Controls -->
+          <div class="right-controls">
+            <a-button @click="handleCancel" :disabled="isProcessing">
+              Cancel
+            </a-button>
+            <a-button 
+              type="primary" 
+              @click="handleSubmit" 
+              :loading="isProcessing"
+              :disabled="!hasValidMask"
+            >
+              ✨ Remove Area
+            </a-button>
+          </div>
+        </div>
+        </a-col>
+      </a-row>
+      
+
+
+    </a-modal>
+
+    <!-- Mobile Drawer -->
+    <a-drawer
+      v-else
+      v-model:open="localVisible"
+      title="Object Removal Tool"
+      placement="bottom"
+      :height="'95vh'"
+      @close="handleCancel"
+      :body-style="{ padding: '16px', overflow: 'auto' }"
+      class="removal-drawer"
+    >
+      <div class="removal-container-mobile">
+        <!-- Mode Toggle -->
+        <div class="mobile-mode-section">
+          <span class="control-label">Mode:</span>
+          <a-radio-group v-model:value="removalMode" button-style="solid" :disabled="isProcessing" size="small">
+            <a-radio-button value="draw">✏️ Draw</a-radio-button>
+            <a-radio-button value="sam2">🎯 SAM-2</a-radio-button>
+            <a-radio-button value="sam3">🎯 SAM-3</a-radio-button>
+          </a-radio-group>
+        </div>
+
+        <!-- Instructions -->
+        <div class="instructions-banner" :class="removalMode">
+          <div class="instruction-content">
+            <span class="mode-icon">{{ getModeIcon() }}</span>
+            <div class="instruction-text">
+              <strong>{{ getModeTitle() }}</strong>
+              <span>{{ getModeInstructions() }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Canvas -->
+        <div class="canvas-wrapper-mobile" ref="canvasWrapperMobile">
+          <div class="canvas-overlay">
+            <canvas
+              ref="drawCanvasMobile"
+              @mousedown="handleCanvasMouseDown"
+              @mousemove="handleCanvasMouseMove"
+              @mouseup="handleCanvasMouseUp"
+              @mouseleave="handleCanvasMouseLeave"
+              @click="handleCanvasClick"
+              @touchstart="handleCanvasMouseDown"
+              @touchmove="handleCanvasMouseMove"
+              @touchend="handleCanvasMouseUp"
+              :style="{ cursor: getCursorStyle() }"
+            ></canvas>
+
+            <!-- Draw Mode Cursor -->
+            <div 
+              v-if="showCursor && removalMode === 'draw'" 
+              class="custom-cursor"
+              :style="{
+                left: cursorX + 'px',
+                top: cursorY + 'px',
+                width: (brushSize * displayScale) + 'px',
+                height: (brushSize * displayScale) + 'px',
+                borderColor: useEraser ? '#ffffff' : '#ff4444',
+                background: useEraser ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 68, 68, 0.15)',
+              }"
+            ></div>
+
+            <!-- SAM Points -->
+            <div 
+              v-for="(point, index) in samPoints" 
+              :key="'sam-point-' + index"
+              class="sam-point-indicator"
+              :class="{ 'point-active': index === samPoints.length - 1 }"
+              :style="{
+                left: point.displayX + 'px',
+                top: point.displayY + 'px',
+              }"
+            >
+              <span class="point-number">{{ index + 1 }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Controls Panel -->
+        <div class="mobile-controls-panel">
+          <!-- Draw Controls -->
           <template v-if="removalMode === 'draw'">
-            <a-button @click="clearDrawing" :disabled="isProcessing" size="small">
-              <template #icon><span>🗑️</span></template>
-              Clear
-            </a-button>
-            <a-button @click="undoLastStroke" :disabled="drawingHistory.length === 0 || isProcessing" size="small">
-              <template #icon><span>↶</span></template>
-              Undo
-            </a-button>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <span style="font-size: 12px; color: #666;">Brush:</span>
-              <a-slider 
-                v-model:value="brushSize" 
-                :min="5" 
-                :max="100" 
-                :step="5"
-                style="width: 120px;"
-                :disabled="isProcessing"
-              />
-              <span style="font-size: 12px; color: #666; min-width: 40px;">{{ brushSize }}px</span>
+            <div class="control-section">
+              <div class="control-row">
+                <a-button 
+                  @click="clearDrawing" 
+                  :disabled="isProcessing || drawingHistory.length === 0" 
+                  size="small"
+                  style="display: flex;justify-content: center;align-items: center;"
+
+                  block
+                >
+                  <template #icon><DeleteOutlined /></template>
+                  Clear
+                </a-button>
+                <a-button 
+                  @click="undoLastStroke" 
+                  :disabled="drawingHistory.length === 0 || isProcessing" 
+                  size="small"
+                  style="display: flex;justify-content: center;align-items: center;"
+
+                  block
+                >
+                  <template #icon><UndoOutlined /></template>
+                  Undo
+                </a-button>
+              </div>
+
+              <div class="control-row">
+                <span class="control-label">Brush: {{ brushSize }}px</span>
+                <a-slider 
+                style="width:100%"
+                  v-model:value="brushSize" 
+                  :min="5" 
+                  :max="100" 
+                  :step="5"
+                  :disabled="isProcessing"
+                />
+              </div>
+
+              <div class="control-row">
+                <a-button 
+                  :type="useEraser ? 'primary' : 'default'"
+                  @click="toggleEraser"
+                  :disabled="isProcessing"
+                  block
+                >
+                  🧹 {{ useEraser ? 'Eraser On' : 'Eraser' }}
+                </a-button>
+              </div>
             </div>
           </template>
 
           <!-- SAM-2 Controls -->
           <template v-if="removalMode === 'sam2'">
-            <a-button @click="clearSAMPoints" :disabled="isProcessing || samPoints.length === 0" size="small">
-              <template #icon><span>🗑️</span></template>
-              Clear ({{ samPoints.length }})
-            </a-button>
-            <a-button @click="undoLastSAMPoint" :disabled="samPoints.length === 0 || isProcessing" size="small">
-              <template #icon><span>↶</span></template>
-              Undo
-            </a-button>
-            <div style="display: flex; gap: 8px; align-items: center;">
-              <span style="font-size: 12px; color: #666;">Confidence:</span>
-              <a-slider 
-                v-model:value="samConfidence" 
-                :min="0" 
-                :max="1" 
-                :step="0.05"
-                style="width: 120px;"
-                :disabled="isProcessing"
-              />
-              <span style="font-size: 12px; color: #666; min-width: 40px;">{{ samConfidence.toFixed(2) }}</span>
+            <div class="control-section">
+              <div class="control-row">
+                <a-button 
+                  @click="clearSAMPoints" 
+                  :disabled="isProcessing || samPoints.length === 0" 
+                  size="small"
+                  block
+                  style="display: flex;justify-content: center;align-items: center;"
+
+                >
+                  <template #icon><DeleteOutlined /></template>
+                  Clear ({{ samPoints.length }})
+                </a-button>
+                <a-button 
+                  @click="undoLastSAMPoint" 
+                  :disabled="samPoints.length === 0 || isProcessing" 
+                  size="small"
+                  block
+                  style="display: flex;justify-content: center;align-items: center;"
+
+                >
+                  <template #icon><UndoOutlined /></template>
+                  Undo
+                </a-button>
+              </div>
+
+              <div class="control-row">
+                <span class="control-label">Confidence: {{ samConfidence.toFixed(2) }}</span>
+                <a-slider 
+                style="width:100%"
+                  v-model:value="samConfidence" 
+                  :min="0" 
+                  :max="1" 
+                  :step="0.05"
+                  :disabled="isProcessing"
+                />
+              </div>
+
+              <a-button 
+                @click="fetchSAMMask" 
+                :loading="isFetchingSAMMask"
+                :disabled="samPoints.length === 0 || isProcessing"
+                type="primary"
+                block
+              >
+                🎯 Detect
+              </a-button>
             </div>
-            <a-button 
-              @click="fetchSAMMask" 
-              :loading="isFetchingSAMMask"
-              :disabled="samPoints.length === 0 || isProcessing"
-              type="primary"
-              size="small"
-            >
-              <template #icon><span>🎯</span></template>
-              Detect
-            </a-button>
           </template>
 
-
+          <!-- SAM-3 Controls -->
           <template v-if="removalMode === 'sam3'">
-            <a-button @click="clearSAMPoints" :disabled="isProcessing || samPoints.length === 0" size="small">
-              <template #icon><span>🗑️</span></template>
-              Clear ({{ samPoints.length }})
-            </a-button>
-            <a-button @click="undoLastSAMPoint" :disabled="samPoints.length === 0 || isProcessing" size="small">
-              <template #icon><span>↶</span></template>
-              Undo
-            </a-button>
-            <div style="display: flex; gap: 8px; align-items: center;">
-              <span style="font-size: 12px; color: #666;">Confidence:</span>
-              <a-slider 
-                v-model:value="samConfidence" 
-                :min="0" 
-                :max="1" 
-                :step="0.05"
-                style="width: 120px;"
+            <div class="control-section">
+              <div class="control-row">
+                <a-button 
+                  @click="clearSAM3Masks" 
+                  :disabled="isProcessing || sam3MasksList.length === 0" 
+                  size="small"
+                  block
+                  style="display: flex;justify-content: center;align-items: center;"
+                >
+                  <DeleteOutlined />
+                  Clear ({{ sam3MasksList.length }})
+                </a-button>
+                <a-button 
+                  @click="undoLastSAM3Mask" 
+                  :disabled="sam3MasksList.length === 0 || isProcessing" 
+                  size="small"
+                  block
+                  style="display: flex;justify-content: center;align-items: center;"
+
+                >
+                  <template #icon><UndoOutlined /></template>
+                  Undo
+                </a-button>
+              </div>
+
+              <div class="control-row">
+                <span class="control-label">Confidence: {{ samConfidence.toFixed(2) }}</span>
+                <a-slider style="width:100%"
+                  v-model:value="samConfidence" 
+                  :min="0" 
+                  :max="1" 
+                  :step="0.05"
+                  :disabled="isProcessing"
+                />
+              </div>
+
+              <a-input 
+                v-model:value="sam3TextPrompt" 
+                placeholder="e.g., person, chair, table..." 
                 :disabled="isProcessing"
+                size="small"
               />
-              <span style="font-size: 12px; color: #666; min-width: 40px;">{{ samConfidence.toFixed(2) }}</span>
+
+              <a-button 
+                @click="fetchSAM3Mask" 
+                :loading="isFetchingSAMMask"
+                :disabled="!sam3TextPrompt || isProcessing"
+                type="primary"
+                block
+              >
+                🎯 Detect
+              </a-button>
             </div>
-            <div style="display: flex; gap: 8px; align-items: center;">
-              <span style="font-size: 12px; color: #666;">Object</span>
-              <a-input placeholder="type the object name here" style="width:100%"></a-input>
-            </div>
-            <a-button 
-              @click="fetchSAM3Mask" 
-              :loading="isFetchingSAMMask"
-              :disabled="samPoints.length === 0 || isProcessing"
-              type="primary"
-              size="small"
-            >
-              <template #icon><span>🎯</span></template>
-              Detect
-            </a-button>
           </template>
         </div>
 
-        <div style="display: flex; gap: 10px;">
-          <a-button @click="handleCancel" :disabled="isProcessing">Cancel</a-button>
+        <!-- Action Buttons -->
+        <div class="mobile-action-buttons">
+          <a-button @click="handleCancel" :disabled="isProcessing" block>
+            Cancel
+          </a-button>
           <a-button 
             type="primary" 
             @click="handleSubmit" 
             :loading="isProcessing"
-            :disabled="!hasValidMask">
-            Remove Area
+            :disabled="!hasValidMask"
+            block
+          >
+            ✨ Remove Area
           </a-button>
         </div>
-      </div>
-    </template>
-    
-    <div class="draw-removal-container">
-      <!-- Instructions -->
-      <div class="instructions-banner" :class="removalMode">
-        <div class="instruction-content">
-          <span class="mode-icon">{{ removalMode === 'sam2' ? '🎯' : '✏️' }}</span>
-          <div class="instruction-text">
-            <strong v-if="removalMode === 'draw'">Draw Mode:</strong>
-            <strong v-else>SAM-2 Mode:</strong>
-            <span v-if="removalMode === 'draw'">
-              Paint over the areas you want to remove from the image
-            </span>
-            <span v-else>
-              Click points on the object to segment it automatically
-            </span>
-          </div>
-        </div>
-        <div class="status-indicator">
-          <span v-if="removalMode === 'sam2'">
-            {{ samPoints.length }} point{{ samPoints.length !== 1 ? 's' : '' }} 
-            <span v-if="samMaskGenerated" style="color: #4CAF50;">● Detected</span>
-            <span v-else style="color: #ff9800;">○ Ready</span>
-          </span>
-          <span v-else>
-            {{ drawingHistory.length }} stroke{{ drawingHistory.length !== 1 ? 's' : '' }}
-          </span>
+
+        <!-- Processing Overlay -->
+        <div v-if="isProcessing || isFetchingSAMMask" class="processing-overlay">
+          <a-spin size="large" />
+          <p>{{ isFetchingSAMMask ? 'Generating mask...' : 'Processing removal...' }}</p>
         </div>
       </div>
-
-      <!-- Canvas Container -->
-      <div class="canvas-wrapper" ref="canvasWrapper">
-        <div class="canvas-overlay">
-          <canvas
-            ref="drawCanvas"
-            @mousedown="handleCanvasMouseDown"
-            @mousemove="handleCanvasMouseMove"
-            @mouseup="handleCanvasMouseUp"
-            @mouseleave="handleCanvasMouseLeave"
-            @click="handleCanvasClick"
-            :style="{ cursor: getCursorStyle() }"
-          ></canvas>
-          
-          <!-- Custom cursor for drawing mode -->
-          <div 
-            v-if="showCursor && removalMode === 'draw'" 
-            class="custom-cursor"
-            :style="{
-              left: cursorX + 'px',
-              top: cursorY + 'px',
-              width: (brushSize * displayScale) + 'px',
-              height: (brushSize * displayScale) + 'px',
-            }"
-          ></div>
-
-          <!-- SAM-2 point indicators -->
-          <div 
-            v-for="(point, index) in samPoints" 
-            :key="'sam-point-' + index"
-            class="sam-point-indicator"
-            :class="{ 'point-active': index === samPoints.length - 1 }"
-            :style="{
-              left: point.displayX + 'px',
-              top: point.displayY + 'px',
-            }"
-          >
-            <span class="point-number">{{ index + 1 }}</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Processing Indicator -->
-      <div v-if="isProcessing || isFetchingSAMMask" class="processing-overlay">
-        <a-spin size="large" />
-        <p>{{ isFetchingSAMMask ? 'Generating SAM-2 mask...' : 'Processing removal request...' }}</p>
-      </div>
-    </div>
-  </a-modal>
+    </a-drawer>
+  </div>
 </template>
 
 <script>
+import { DeleteOutlined, UndoOutlined } from '@ant-design/icons-vue';
+
 export default {
-  name: 'DrawRemovalModal',
+  name: 'ObjectRemovalTool',
+  components: {
+    DeleteOutlined,
+    UndoOutlined,
+  },
   props: {
     visible: {
       type: Boolean,
@@ -233,7 +566,7 @@ export default {
   
   data() {
     return {
-      localDrawRemovalModal: false,
+      localVisible: false,
       removalMode: 'draw',
       
       canvas: null,
@@ -246,24 +579,25 @@ export default {
       
       brushSize: 20,
       brushColor: 'rgba(255, 0, 0, 0.6)',
-      
-      // Display scale factor
       displayScale: 1,
       
-      // Drawing history
       drawingHistory: [],
       currentStroke: [],
       
-      // SAM-2 state
       samPoints: [],
       samMask: null,
       samMaskGenerated: false,
       samConfidence: 0.8,
       
-      // Custom cursor
+      sam3TextPrompt: '',
+      sam3MasksList: [],
+      sam3CurrentMaskIndex: 0,
+      
       showCursor: false,
       cursorX: 0,
-      cursorY: 0
+      cursorY: 0,
+      useEraser: false,
+      isMobile: false,
     }
   },
   
@@ -278,51 +612,92 @@ export default {
   },
   
   watch: {
-    visible: {
-      handler(newVal) {
-        this.localDrawRemovalModal = newVal;
-        if (newVal) {
-          this.$nextTick(() => {
-            this.initializeCanvas();
-          });
-        }
-      },
-      immediate: true
+    visible(newVal) {
+      this.localVisible = newVal;
+      if (newVal) {
+        this.$nextTick(() => {
+          this.initializeCanvas();
+        });
+      }
     },
     
-    localDrawRemovalModal(newVal) {
+    localVisible(newVal) {
       if (!newVal) {
         this.$emit('update:visible', false);
       }
     },
     
-    baseImage: {
-      handler() {
-        if (this.localDrawRemovalModal) {
-          this.loadBaseImage();
-        }
+    baseImage() {
+      if (this.localVisible) {
+        this.loadBaseImage();
       }
     },
     
     removalMode(newVal) {
-      if (newVal === 'sam2') {
+      if (newVal === 'draw') {
+        this.clearSAMPoints();
+        this.clearSAM3Masks();
+      } else if (newVal === 'sam2') {
         this.clearDrawing();
+        this.clearSAM3Masks();
       } else {
+        this.clearDrawing();
         this.clearSAMPoints();
       }
       this.redrawCanvas();
     }
   },
+
+  mounted() {
+    this.isMobile = window.innerWidth < 1024;
+    window.addEventListener('resize', () => {
+      this.isMobile = window.innerWidth < 1024;
+    });
+  },
   
   methods: {
+    getModeIcon() {
+      if (this.removalMode === 'draw') return '✏️';
+      if (this.removalMode === 'sam2') return '🎯';
+      return '🎯';
+    },
+
+    getModeTitle() {
+      if (this.removalMode === 'draw') return 'Draw Mode';
+      if (this.removalMode === 'sam2') return 'SAM-2 Mode';
+      return 'SAM-3 Mode';
+    },
+
+    getModeInstructions() {
+      if (this.removalMode === 'draw') return 'Paint over the areas you want to remove';
+      if (this.removalMode === 'sam2') return 'Click points on the object to segment it';
+      return 'Enter object name and click detect';
+    },
+
+    toggleEraser() {
+      this.useEraser = !this.useEraser;
+      this.$message.info(this.useEraser ? 'Eraser mode ON' : 'Brush mode ON');
+    },
+
     async initializeCanvas() {
-      this.canvas = this.$refs.drawCanvas;
-      if (!this.canvas) {
+      // Wait for refs to be available
+      await this.$nextTick();
+      
+      let canvas;
+      if (this.isMobile) {
+        canvas = this.$refs.drawCanvasMobile;
+      } else {
+        canvas = this.$refs.drawCanvas;
+      }
+      
+      if (!canvas) {
         console.error('Canvas element not found');
+        setTimeout(() => this.initializeCanvas(), 100);
         return;
       }
       
-      this.ctx = this.canvas.getContext('2d');
+      this.canvas = canvas;
+      this.ctx = canvas.getContext('2d');
       await this.loadBaseImage();
     },
     
@@ -352,22 +727,19 @@ export default {
     setupCanvas() {
       if (!this.baseImg || !this.canvas) return;
       
-      // Set canvas to EXACT image dimensions
       this.canvas.width = this.baseImg.width;
       this.canvas.height = this.baseImg.height;
       
-      // Calculate display scale
-      const wrapper = this.$refs.canvasWrapper;
+      const wrapper = this.isMobile ? this.$refs.canvasWrapperMobile : this.$refs.canvasWrapper;
       if (wrapper) {
         const rect = wrapper.getBoundingClientRect();
-        const maxWidth = rect.width - 40;
-        const maxHeight = rect.height - 40;
+        const maxWidth = rect.width - 20;
+        const maxHeight = rect.height - 20;
         
         const scaleX = maxWidth / this.baseImg.width;
         const scaleY = maxHeight / this.baseImg.height;
         this.displayScale = Math.min(scaleX, scaleY, 1);
         
-        // Set canvas display size
         this.canvas.style.width = (this.baseImg.width * this.displayScale) + 'px';
         this.canvas.style.height = (this.baseImg.height * this.displayScale) + 'px';
       }
@@ -380,14 +752,11 @@ export default {
       if (!this.baseImg || !this.ctx) return;
       
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-      
-      // Draw image at full resolution
       this.ctx.drawImage(this.baseImg, 0, 0, this.canvas.width, this.canvas.height);
       
-      // Redraw overlays
       if (this.removalMode === 'draw') {
         this.redrawAllStrokes();
-      } else if (this.removalMode === 'sam2' && this.samMaskGenerated) {
+      } else if ((this.removalMode === 'sam2' || this.removalMode === 'sam3') && this.samMaskGenerated) {
         this.drawSAMMask();
       }
     },
@@ -395,11 +764,9 @@ export default {
     getCanvasCoordinates(e) {
       const rect = this.canvas.getBoundingClientRect();
       
-      // Get click position relative to canvas display
       const displayX = e.clientX - rect.left;
       const displayY = e.clientY - rect.top;
       
-      // Convert to canvas coordinates (accounting for display scale)
       const canvasX = displayX / this.displayScale;
       const canvasY = displayY / this.displayScale;
       
@@ -414,8 +781,7 @@ export default {
     getCursorStyle() {
       if (this.isProcessing || this.isFetchingSAMMask) return 'wait';
       if (this.removalMode === 'draw') return this.isDrawing ? 'none' : 'crosshair';
-      if (this.removalMode === 'sam2') return 'pointer';
-      return 'default';
+      return 'pointer';
     },
     
     // ==================== DRAWING MODE ====================
@@ -438,6 +804,9 @@ export default {
         if (this.isDrawing) {
           this.draw(e);
         }
+      } else if (this.removalMode === 'sam2') {
+        this.cursorX = displayX;
+        this.cursorY = displayY;
       }
     },
     
@@ -455,8 +824,10 @@ export default {
     },
     
     handleCanvasClick(e) {
-      if (this.removalMode === 'sam2') {
-        this.addSAMPoint(e);
+      if (this.removalMode === 'sam2' || this.removalMode === 'sam3') {
+        if (this.removalMode === 'sam2') {
+          this.addSAMPoint(e);
+        }
       }
     },
     
@@ -489,10 +860,14 @@ export default {
       
       this.currentStroke.push({ x: canvasX, y: canvasY });
       
-      this.ctx.strokeStyle = this.brushColor;
-      this.ctx.lineWidth = this.brushSize;
-      this.ctx.lineTo(canvasX, canvasY);
-      this.ctx.stroke();
+      if (this.useEraser) {
+        this.ctx.clearRect(canvasX - this.brushSize/2, canvasY - this.brushSize/2, this.brushSize, this.brushSize);
+      } else {
+        this.ctx.strokeStyle = this.brushColor;
+        this.ctx.lineWidth = this.brushSize;
+        this.ctx.lineTo(canvasX, canvasY);
+        this.ctx.stroke();
+      }
     },
     
     stopDrawing() {
@@ -500,7 +875,8 @@ export default {
         this.drawingHistory.push({
           points: [...this.currentStroke],
           brushSize: this.brushSize,
-          brushColor: this.brushColor
+          brushColor: this.brushColor,
+          isEraser: this.useEraser
         });
         this.currentStroke = [];
       }
@@ -511,12 +887,14 @@ export default {
       this.drawingHistory = [];
       this.currentStroke = [];
       this.redrawCanvas();
+      this.$message.info('Drawing cleared');
     },
     
     undoLastStroke() {
       if (this.drawingHistory.length > 0) {
         this.drawingHistory.pop();
         this.redrawCanvas();
+        this.$message.info('Last stroke removed');
       }
     },
     
@@ -524,16 +902,20 @@ export default {
       this.drawingHistory.forEach(stroke => {
         if (stroke.points.length === 0) return;
         
-        this.ctx.strokeStyle = stroke.brushColor;
-        this.ctx.lineWidth = stroke.brushSize;
-        this.ctx.beginPath();
-        this.ctx.moveTo(stroke.points[0].x, stroke.points[0].y);
-        
-        stroke.points.forEach(point => {
-          this.ctx.lineTo(point.x, point.y);
-        });
-        
-        this.ctx.stroke();
+        if (stroke.isEraser) {
+          this.ctx.clearRect(stroke.points[0].x - stroke.brushSize/2, stroke.points[0].y - stroke.brushSize/2, stroke.brushSize, stroke.brushSize);
+        } else {
+          this.ctx.strokeStyle = stroke.brushColor;
+          this.ctx.lineWidth = stroke.brushSize;
+          this.ctx.beginPath();
+          this.ctx.moveTo(stroke.points[0].x, stroke.points[0].y);
+          
+          stroke.points.forEach(point => {
+            this.ctx.lineTo(point.x, point.y);
+          });
+          
+          this.ctx.stroke();
+        }
       });
     },
     
@@ -554,13 +936,10 @@ export default {
         displayY: displayY
       });
       
-      // Clear previous mask
       this.samMaskGenerated = false;
       this.samMask = null;
       
-      console.log(`SAM Point ${this.samPoints.length}: Canvas(${canvasX},${canvasY}) Display(${displayX.toFixed(1)},${displayY.toFixed(1)})`);
-      
-      this.$message.info(`Point ${this.samPoints.length} added at (${canvasX}, ${canvasY})`);
+      this.$message.info(`Point ${this.samPoints.length} added`);
     },
     
     clearSAMPoints() {
@@ -568,6 +947,7 @@ export default {
       this.samMask = null;
       this.samMaskGenerated = false;
       this.redrawCanvas();
+      this.$message.info('Points cleared');
     },
     
     undoLastSAMPoint() {
@@ -576,6 +956,7 @@ export default {
         this.samMaskGenerated = false;
         this.samMask = null;
         this.redrawCanvas();
+        this.$message.info('Last point removed');
       }
     },
     
@@ -629,20 +1010,18 @@ export default {
         
       } catch (error) {
         console.error('SAM-2 segmentation failed:', error);
-        this.$message.error('Failed to generate SAM-2 mask. Please try again.');
+        this.$message.error('Failed to generate mask');
       } finally {
         this.isFetchingSAMMask = false;
       }
     },
     
-
+    // ==================== SAM-3 MODE ====================
     
     async fetchSAM3Mask() {
-      
       this.isFetchingSAMMask = true;
       
       try {
-       
         const apiEndpoint = this.$store?.state?.root_api || '';
         const url = `${apiEndpoint}engine/sam3-segment/`;
         
@@ -653,13 +1032,8 @@ export default {
           },
           body: JSON.stringify({
             room_id: this.roomId,
-            image_base64: imageBase64,
-            points: this.samPoints.map(p => ({ x: p.x, y: p.y })),
             confidence: this.samConfidence,
-            image_dimensions: {
-              width: this.baseImg.width,
-              height: this.baseImg.height
-            }
+            text_prompt: this.sam3TextPrompt,
           })
         });
         
@@ -669,23 +1043,105 @@ export default {
         
         const result = await response.json();
         
-        if (result.success && result.mask_base64) {
-          this.samMask = result.mask_base64;
+        if (result.success && result.binary_masks_list && result.binary_masks_list.length > 0) {
+          this.sam3MasksList = result.binary_masks_list;
+          this.samMask = await this.loadAndCombineAllMasks(apiEndpoint, result.binary_masks_list);
           this.samMaskGenerated = true;
+          
           await this.drawSAMMask();
-          this.$message.success('Mask generated successfully!');
+          this.$message.success(`${result.binary_masks_list.length} masks detected!`);
         } else {
           throw new Error(result.message || 'Failed to generate mask');
         }
         
       } catch (error) {
-        console.error('SAM-2 segmentation failed:', error);
-        this.$message.error('Failed to generate SAM-2 mask. Please try again.');
+        console.error('SAM-3 segmentation failed:', error);
+        this.$message.error('Failed to generate mask');
       } finally {
         this.isFetchingSAMMask = false;
       }
     },
 
+    async loadAndCombineAllMasks(apiEndpoint, maskPaths) {
+      const combinedCanvas = document.createElement('canvas');
+      combinedCanvas.width = this.baseImg.width;
+      combinedCanvas.height = this.baseImg.height;
+      const combinedCtx = combinedCanvas.getContext('2d');
+      
+      combinedCtx.fillStyle = '#000000';
+      combinedCtx.fillRect(0, 0, combinedCanvas.width, combinedCanvas.height);
+      
+      for (const maskPath of maskPaths) {
+        const maskUrl = `${apiEndpoint}${maskPath}`;
+        
+        try {
+          const maskImg = await this.createImageFromSrc(maskUrl);
+          
+          const tempCanvas = document.createElement('canvas');
+          tempCanvas.width = combinedCanvas.width;
+          tempCanvas.height = combinedCanvas.height;
+          const tempCtx = tempCanvas.getContext('2d');
+          
+          tempCtx.drawImage(maskImg, 0, 0, combinedCanvas.width, combinedCanvas.height);
+          
+          const imageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+          const data = imageData.data;
+          
+          const combinedImageData = combinedCtx.getImageData(0, 0, combinedCanvas.width, combinedCanvas.height);
+          const combinedData = combinedImageData.data;
+          
+          for (let i = 0; i < data.length; i += 4) {
+            if (data[i] > 128) {
+              combinedData[i] = 255;
+              combinedData[i + 1] = 255;
+              combinedData[i + 2] = 255;
+              combinedData[i + 3] = 255;
+            }
+          }
+          
+          combinedCtx.putImageData(combinedImageData, 0, 0);
+          
+        } catch (error) {
+          console.error(`Failed to load mask: ${maskPath}`, error);
+        }
+      }
+      
+      return combinedCanvas.toDataURL('image/png');
+    },
+
+    clearSAM3Masks() {
+      this.sam3MasksList = [];
+      this.sam3CurrentMaskIndex = 0;
+      this.samMask = null;
+      this.samMaskGenerated = false;
+      this.sam3TextPrompt = '';
+      this.redrawCanvas();
+      this.$message.info('Masks cleared');
+    },
+
+    undoLastSAM3Mask() {
+      if (this.sam3MasksList && this.sam3MasksList.length > 0) {
+        this.sam3MasksList.pop();
+        
+        if (this.sam3MasksList.length > 0) {
+          const apiEndpoint = this.$store?.state?.root_api || '';
+          this.loadAndCombineAllMasks(apiEndpoint, this.sam3MasksList).then(combinedMask => {
+            this.samMask = combinedMask;
+            this.samMaskGenerated = true;
+            this.drawSAMMask();
+            this.$message.info(`${this.sam3MasksList.length} mask(s) remaining`);
+          }).catch(error => {
+            this.$message.error('Failed to update masks');
+            console.error(error);
+          });
+        } else {
+          this.samMask = null;
+          this.samMaskGenerated = false;
+          this.redrawCanvas();
+          this.$message.info('All masks cleared');
+        }
+      }
+    },
 
     async drawSAMMask() {
       if (!this.samMask) return;
@@ -718,11 +1174,9 @@ export default {
         this.ctx.drawImage(tempCanvas, 0, 0);
         
       } catch (error) {
-        console.error('Error drawing SAM mask:', error);
+        console.error('Error drawing mask:', error);
       }
     },
-    
-    // ==================== COMMON ====================
     
     redrawCanvas() {
       this.drawBaseImage();
@@ -785,19 +1239,21 @@ export default {
       this.drawingHistory.forEach(stroke => {
         if (stroke.points.length === 0) return;
         
-        maskCtx.strokeStyle = '#FFFFFF';
-        maskCtx.lineWidth = stroke.brushSize;
-        maskCtx.beginPath();
-        
-        stroke.points.forEach((point, index) => {
-          if (index === 0) {
-            maskCtx.moveTo(point.x, point.y);
-          } else {
-            maskCtx.lineTo(point.x, point.y);
-          }
-        });
-        
-        maskCtx.stroke();
+        if (!stroke.isEraser) {
+          maskCtx.strokeStyle = '#FFFFFF';
+          maskCtx.lineWidth = stroke.brushSize;
+          maskCtx.beginPath();
+          
+          stroke.points.forEach((point, index) => {
+            if (index === 0) {
+              maskCtx.moveTo(point.x, point.y);
+            } else {
+              maskCtx.lineTo(point.x, point.y);
+            }
+          });
+          
+          maskCtx.stroke();
+        }
       });
       
       return maskCanvas.toDataURL('image/png');
@@ -836,7 +1292,8 @@ export default {
     handleCancel() {
       this.clearDrawing();
       this.clearSAMPoints();
-      this.localDrawRemovalModal = false;
+      this.clearSAM3Masks();
+      this.localVisible = false;
       this.$emit('update:visible', false);
       this.$emit('cancel');
     }
@@ -845,88 +1302,201 @@ export default {
 </script>
 
 <style scoped>
-.draw-removal-container {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+.removal-modal :deep(.ant-modal-header) {
+  background: #ffffff;
+  border-bottom: 1px solid #e8e8e8;
+  padding: 16px;
 }
 
-.mode-toggle {
+.removal-modal :deep(.ant-modal-title) {
+  color: #1a1a1a;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.removal-modal :deep(.ant-modal-content) {
+  background: #fafafa;
+  color: #1a1a1a;
+  padding: 0;
+}
+
+.removal-modal :deep(.ant-modal-footer) {
+  background: #ffffff;
+  border-top: 1px solid #e8e8e8;
+}
+
+.removal-drawer :deep(.ant-drawer-header) {
+  background: #ffffff;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.removal-drawer :deep(.ant-drawer-title) {
+  color: #1a1a1a;
+}
+
+.removal-drawer :deep(.ant-drawer-content) {
+  background: #fafafa;
+  color: #1a1a1a;
+}
+
+.footer-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.left-controls {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+  flex: 1;
+  min-width: 0;
+}
+
+.right-controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.control-group {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.mode-section {
   display: flex;
   align-items: center;
+  gap: 12px;
+}
+
+.control-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #595959;
+  white-space: nowrap;
+}
+
+.value-label {
+  font-size: 12px;
+  color: #8c8c8c;
+  min-width: 45px;
+  text-align: right;
+}
+
+.removal-container-desktop {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.removal-container-mobile {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+}
+
+.mobile-mode-section {
+  padding: 12px;
+  display: flex;
+  justify-content: space-between;
+  background: #ffffff;
+  border-radius: 4px;
+  border: 1px solid #e8e8e8;
 }
 
 .instructions-banner {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 16px;
-  background: linear-gradient(90deg, #2a2a2a 0%, #353535 100%);
-  color: #e0e0e0;
+  padding: 12px 16px;
+  background: linear-gradient(90deg, #f5f5f5 0%, #ffffff 100%);
+  color: #1a1a1a;
   border-radius: 4px;
   font-size: 13px;
   font-weight: 400;
   transition: background 0.3s ease;
-  border: 1px solid #444;
+  border: 1px solid #e8e8e8;
 }
 
-.instructions-banner.sam2 {
-  background: linear-gradient(90deg, #1a4d6d 0%, #245a7a 100%);
-  border-color: #2a6b8f;
+.instructions-banner.sam2,
+.instructions-banner.sam3 {
+  background: linear-gradient(90deg, #e6f7ff 0%, #f0f5ff 100%);
+  border-color: #91d5ff;
 }
 
 .instruction-content {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .instruction-text {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
 }
 
 .instruction-text strong {
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: #fff;
+  color: #1a1a1a;
 }
 
 .instruction-text span {
   font-size: 12px;
-  color: #b0b0b0;
+  color: #595959;
 }
 
 .mode-icon {
-  font-size: 20px;
+  font-size: 24px;
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
 }
 
 .status-indicator {
-  background: rgba(0, 0, 0, 0.3);
-  padding: 4px 12px;
+  background: rgba(255, 255, 255, 0.6);
+  padding: 6px 12px;
   border-radius: 3px;
   font-size: 11px;
   font-weight: 500;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.1);
   letter-spacing: 0.3px;
+  white-space: nowrap;
+  color: #1a1a1a;
 }
 
-.canvas-wrapper {
+.canvas-wrapper-desktop {
   position: relative;
   width: 100%;
-  height: 600px;
-  /* background: #2a2a2a; */
+  height: 500px;
   border-radius: 4px;
   overflow: auto;
-  /* box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3); */
   display: flex;
   justify-content: center;
   align-items: center;
-  /* border: 1px solid #444; */
+  background: #f5f5f5;
+  border: 1px solid #e8e8e8;
+}
+
+.canvas-wrapper-mobile {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  border-radius: 4px;
+  overflow: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f5f5f5;
+  border: 1px solid #e8e8e8;
+  margin: 12px 0;
 }
 
 .canvas-overlay {
@@ -937,6 +1507,7 @@ export default {
 canvas {
   display: block;
   image-rendering: crisp-edges;
+  border-radius: 2px;
 }
 
 .custom-cursor {
@@ -945,15 +1516,15 @@ canvas {
   border-radius: 50%;
   pointer-events: none;
   z-index: 1000;
-  background: rgba(255, 68, 68, 0.15);
   transform: translate(-50%, -50%);
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.5);
+  transition: all 0.05s ease-out;
 }
 
 .sam-point-indicator {
   position: absolute;
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   background: #ff4444;
   border: 2px solid white;
   border-radius: 50%;
@@ -974,7 +1545,7 @@ canvas {
 
 .point-number {
   color: white;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: bold;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
@@ -996,7 +1567,7 @@ canvas {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(30, 30, 30, 0.95);
+  background: rgba(255, 255, 255, 0.95);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -1004,36 +1575,58 @@ canvas {
   gap: 16px;
   z-index: 100;
   border-radius: 4px;
+  backdrop-filter: blur(2px);
 }
 
 .processing-overlay p {
   margin: 0;
-  font-size: 16px;
-  color: #e0e0e0;
+  font-size: 14px;
+  color: #1a1a1a;
   font-weight: 500;
 }
 
-:deep(.ant-modal-content) {
-  background: #1a1a1a;
-  color: #e0e0e0;
+.mobile-controls-panel {
+  padding: 16px;
+  background: #ffffff;
+  border-radius: 4px;
+  border: 1px solid #e8e8e8;
 }
 
-:deep(.ant-modal-header) {
-  background: #2a2a2a;
-  border-bottom: 1px solid #444;
+.control-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-:deep(.ant-modal-title) {
-  color: #e0e0e0;
+.control-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
-:deep(.ant-modal-footer) {
-  background: #2a2a2a;
-  border-top: 1px solid #444;
+.control-row > button {
+  flex: 1;
+  min-width: 100px;
+}
+
+.mobile-action-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.mobile-action-buttons button {
+  flex: 1;
 }
 
 :deep(.ant-btn) {
   border-radius: 4px;
+  font-weight: 500;
+}
+
+:deep(.ant-btn-primary) {
+  background: #1890ff;
+  border-color: #1890ff;
 }
 
 :deep(.ant-slider-track) {
@@ -1042,5 +1635,42 @@ canvas {
 
 :deep(.ant-slider-handle) {
   border-color: #1890ff;
+  background: #1890ff;
+}
+
+:deep(.ant-radio-group) {
+  display: inline-flex;
+  /* gap: 8px; */
+}
+
+:deep(.ant-input) {
+  background: #ffffff;
+  border-color: #e8e8e8;
+  color: #1a1a1a;
+}
+
+:deep(.ant-input::placeholder) {
+  color: #bfbfbf;
+}
+
+:deep(.ant-input:focus) {
+  border-color: #1890ff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+}
+
+@media (max-width: 1024px) {
+  .footer-controls {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .left-controls {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .right-controls {
+    width: 100%;
+  }
 }
 </style>

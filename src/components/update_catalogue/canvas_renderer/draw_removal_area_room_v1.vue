@@ -19,6 +19,9 @@
               <a-radio-button value="sam2">
                 <span>🎯 SAM-2</span>
               </a-radio-button>
+               <a-radio-button value="sam3">
+                <span>🎯 SAM-3</span>
+              </a-radio-button>
             </a-radio-group>
           </div>
 
@@ -79,6 +82,44 @@
               Detect
             </a-button>
           </template>
+
+
+        <template v-if="removalMode === 'sam3'">
+  <a-button @click="clearSAM3Masks" :disabled="isProcessing || !sam3MasksList || sam3MasksList.length === 0" size="small">
+    <template #icon><span>🗑️</span></template>
+    Clear ({{ sam3MasksList ? sam3MasksList.length : 0 }})
+  </a-button>
+  <a-button @click="undoLastSAM3Mask" :disabled="!sam3MasksList || sam3MasksList.length === 0 || isProcessing" size="small">
+    <template #icon><span>↶</span></template>
+    Undo
+  </a-button>
+  <div style="display: flex; gap: 8px; align-items: center;">
+    <span style="font-size: 12px; color: #666;">Confidence:</span>
+    <a-slider 
+      v-model:value="samConfidence" 
+      :min="0" 
+      :max="1" 
+      :step="0.05"
+      style="width: 120px;"
+      :disabled="isProcessing"
+    />
+    <span style="font-size: 12px; color: #666; min-width: 40px;">{{ samConfidence.toFixed(2) }}</span>
+  </div>
+  <div style="display: flex; gap: 8px; align-items: center;">
+    <span style="font-size: 12px; color: #666;">Object</span>
+    <a-input placeholder="type the object name here" v-model:value="sam3_text_prompt" style="width:100%"></a-input>
+  </div>
+  <a-button 
+    @click="fetchSAM3Mask" 
+    :loading="isFetchingSAMMask"
+    :disabled="sam3_text_prompt.length===0 || isProcessing"
+    type="primary"
+    size="small"
+  >
+    <template #icon><span>🎯</span></template>
+    Detect
+  </a-button>
+</template>
         </div>
 
         <div style="display: flex; gap: 10px;">
@@ -166,7 +207,7 @@
       <!-- Processing Indicator -->
       <div v-if="isProcessing || isFetchingSAMMask" class="processing-overlay">
         <a-spin size="large" />
-        <p>{{ isFetchingSAMMask ? 'Generating SAM-2 mask...' : 'Processing removal request...' }}</p>
+        <p>{{ isFetchingSAMMask ? 'Generating SAM mask...' : 'Processing removal request...' }}</p>
       </div>
     </div>
   </a-modal>
@@ -203,6 +244,7 @@ export default {
       isProcessing: false,
       isFetchingSAMMask: false,
       
+      
       brushSize: 20,
       brushColor: 'rgba(255, 0, 0, 0.6)',
       
@@ -218,7 +260,10 @@ export default {
       samMask: null,
       samMaskGenerated: false,
       samConfidence: 0.8,
-      
+
+      sam3_text_prompt:'',
+      sam3MasksList: [],           // New: store list of mask paths
+      sam3CurrentMaskIndex: 0,      // New: track current mask index
       // Custom cursor
       showCursor: false,
       cursorX: 0,
@@ -594,6 +639,178 @@ export default {
       }
     },
     
+async fetchSAM3Mask() {
+  this.isFetchingSAMMask = true;
+  
+  try {
+    const apiEndpoint = this.$store?.state?.root_api || '';
+    const url = `${apiEndpoint}engine/sam3-segment/`;
+    
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        room_id: this.roomId,
+        confidence: this.samConfidence,
+        text_prompt: this.sam3_text_prompt,
+      })
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Server error: ${response.status}`);
+    }
+    
+    const result = await response.json();
+    
+    if (result.success && result.binary_masks_list && result.binary_masks_list.length > 0) {
+      // Store all masks
+      this.sam3MasksList = result.binary_masks_list;
+      
+      // Load all mask images and combine them
+      this.samMask = await this.loadAndCombineAllMasks(apiEndpoint, result.binary_masks_list);
+      this.samMaskGenerated = true;
+      
+      await this.drawSAMMask();
+      this.$message.success(`Mask generated successfully! (${result.binary_masks_list.length} segmentations combined)`);
+    } else {
+      throw new Error(result.message || 'Failed to generate mask');
+    }
+    
+  } catch (error) {
+    console.error('SAM-3 segmentation failed:', error);
+    this.$message.error('Failed to generate SAM-3 mask. Please try again.');
+  } finally {
+    this.isFetchingSAMMask = false;
+  }
+} ,
+
+async loadImageAsBase64(imageUrl) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      const base64 = canvas.toDataURL('image/png');
+      resolve(base64);
+    };
+    
+    img.onerror = () => {
+      reject(new Error(`Failed to load image from URL: ${imageUrl}`));
+    };
+    
+    img.src = imageUrl;
+  });
+} ,
+
+async loadAndCombineAllMasks(apiEndpoint, maskPaths) {
+  // Create a canvas to combine all masks
+  const combinedCanvas = document.createElement('canvas');
+  combinedCanvas.width = this.baseImg.width;
+  combinedCanvas.height = this.baseImg.height;
+  const combinedCtx = combinedCanvas.getContext('2d');
+  
+  // Initialize with black background
+  combinedCtx.fillStyle = '#000000';
+  combinedCtx.fillRect(0, 0, combinedCanvas.width, combinedCanvas.height);
+  
+  // Load and composite each mask
+  for (const maskPath of maskPaths) {
+    const maskUrl = `${apiEndpoint}${maskPath}`;
+    
+    try {
+      const maskImg = await this.createImageFromSrc(maskUrl);
+      
+      // Create temporary canvas for this mask
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = combinedCanvas.width;
+      tempCanvas.height = combinedCanvas.height;
+      const tempCtx = tempCanvas.getContext('2d');
+      
+      // Draw mask at correct size
+      tempCtx.drawImage(maskImg, 0, 0, combinedCanvas.width, combinedCanvas.height);
+      
+      // Get image data and composite with combined mask
+      const imageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+      const data = imageData.data;
+      
+      const combinedImageData = combinedCtx.getImageData(0, 0, combinedCanvas.width, combinedCanvas.height);
+      const combinedData = combinedImageData.data;
+      
+      // OR operation: combine all white pixels from all masks
+      for (let i = 0; i < data.length; i += 4) {
+        if (data[i] > 128) { // If this mask has white pixel
+          combinedData[i] = 255;     // Set to white in combined
+          combinedData[i + 1] = 255;
+          combinedData[i + 2] = 255;
+          combinedData[i + 3] = 255;
+        }
+      }
+      
+      combinedCtx.putImageData(combinedImageData, 0, 0);
+      
+    } catch (error) {
+      console.error(`Failed to load mask: ${maskPath}`, error);
+      // Continue with other masks if one fails
+    }
+  }
+  
+  // Convert combined mask to base64
+  return combinedCanvas.toDataURL('image/png');
+} ,
+
+clearSAM3Masks() {
+  this.sam3MasksList = [];
+  this.sam3CurrentMaskIndex = 0;
+  this.samMask = null;
+  this.samMaskGenerated = false;
+  this.sam3_text_prompt = '';
+  this.redrawCanvas();
+} ,
+
+undoLastSAM3Mask() {
+  if (this.sam3MasksList && this.sam3MasksList.length > 0) {
+    // Remove the last mask from the list
+    this.sam3MasksList.pop();
+    
+    if (this.sam3MasksList.length > 0) {
+      // Reload and redraw remaining masks
+      const apiEndpoint = this.$store?.state?.root_api || '';
+      this.loadAndCombineAllMasks(apiEndpoint, this.sam3MasksList).then(combinedMask => {
+        this.samMask = combinedMask;
+        this.samMaskGenerated = true;
+        this.drawSAMMask();
+        this.$message.info(`Removed last mask. ${this.sam3MasksList.length} mask(s) remaining`);
+      }).catch(error => {
+        this.$message.error('Failed to update masks');
+        console.error(error);
+      });
+    } else {
+      // No masks left
+      this.samMask = null;
+      this.samMaskGenerated = false;
+      this.redrawCanvas();
+      this.$message.info('All masks cleared');
+    }
+  }
+} ,
+
+createImageFromSrc(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error('Failed to load image'));
+    img.src = src;
+  });
+} ,
+
     async drawSAMMask() {
       if (!this.samMask) return;
       

@@ -154,7 +154,20 @@
                                   </template>
                                 </a-button>
                               </div> -->
+                     <div style="margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; padding: 12px; background: #f8faff; border-radius: 8px; border: 1px solid #e5e7eb;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2">
+                            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+                          </svg>
+                          <span style="font-size: 13px; font-weight: 500; color: #374151;">Model Resizable</span>
+                        </div>
                     
+                        <a-switch 
+                          v-model:checked="is_resizable"
+                          @change="handleResizableChange"
+                          style="background-color: #3b82f6;"
+                        />
+                       </div>
                               
                             </a-col>
                   <!-- </div> -->
@@ -613,7 +626,8 @@ export default {
         '#008000', '#800080', '#008080', '#000080', '#FFA500', '#FFC0CB',
         '#A52A2A', '#DDA0DD', '#98FB98', '#F0E68C', '#DEB887', '#D2691E',
         '#FF6347', '#40E0D0', '#EE82EE', '#90EE90', '#FFB6C1', '#87CEEB'
-      ]
+      ],
+      is_resizable: false,
     }
   },
 
@@ -657,6 +671,9 @@ export default {
   },
 
   methods: {
+    handleResizableChange(value) {    
+    this.is_resizable = value;    
+  },
    setPrimaryColor(colorOrIndex) {
       if (typeof colorOrIndex === 'number') {
         // Called with index
@@ -1162,6 +1179,9 @@ removeColor(index) {
         this.selectedTextures.forEach(texture => {
           formData.append('textures', texture.file);
         });
+
+        formData.append('is_resizable', this.is_resizable ? 'True' : 'False');
+
 
         console.log('📤 Sending product data:', {
           name: this.productForm.name,
