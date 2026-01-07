@@ -95,13 +95,13 @@
   
         <!-- Product Grid/List -->
         <div v-if="!loading || catalogItems.length > 0" class="product-container" :class="{ 'grid-view': showGrid, 'list-view': !showGrid }">
-          <div v-for="(item, index) in catalogItems" :key="index" @click="updateItemRendering(item['id'],item['3d_model'],item['dimensions']['width'],item['dimensions']['height'],item['dimensions']['depth'],item['is_resizable'])" style="
+          <div v-for="(item, index) in catalogItems" :key="index" @click="updateItemRendering(item['id'],item['3d_model'],item['dimensions']['width'],item['dimensions']['height'],item['dimensions']['length'],item['is_resizable'])" style="
    background: #f2f2f2;
   border: none;
   border-radius: 4px;
   padding:5px;"
             :style="selected_item===item.id ? 'border:1px solid blue': ''">
-            
+          <!-- {{item['dimensions']['width']}},{{item['dimensions']['height']}},{{item['dimensions']['length'] }}   -->
             <div class="product-item">
               <div class="product-image" style="position:relative;">
                 <img :src="this.$store.state.root_media_api + item.primary_image"
@@ -345,6 +345,7 @@ export default {
 
     updateItemRendering(model_id, model_url, width, height, depth,is_resizable) {
       this.selected_item = model_id;
+
       this.$emit('change-3d-model', {
         'model_uuid': model_id,
         'model_url': model_url,

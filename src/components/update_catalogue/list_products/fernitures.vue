@@ -19,6 +19,9 @@
     </div> -->
 <!-- {{ brand_data }} -->
     <div class="ai-catalog-header pt-2 !mx-1 ">
+    <div class=" flex gap-2">
+      <!-- <a-button tooltip="switch brand" @click="$emit('switch-brand-profesional', true)" style="display: flex;justify-content: center;align-items:center;" shape="circle"><SwapOutlined /></a-button> -->
+
       <router-link :to="'/'+$route.query.brand">
         <div style="display: flex;gap:10px;">
           <a-avatar size="medium" style="border:1px solid rgba(0,0,0,0.2)" :src="this.$store.state.root_media_api+brand_data.business_picture"></a-avatar>
@@ -32,6 +35,8 @@
           ">AI Catalog</span>
         </div>
       </router-link>
+    </div>
+
       <a-button size='small' type="default" class="see-all-link"  @click="$emit('see-all-products', true)">See all</a-button>
     </div>
     
@@ -190,7 +195,9 @@
 <script>
 import { Empty } from 'ant-design-vue';
 
+
 export default {
+ 
   data() {
     return {
       searchText: '',

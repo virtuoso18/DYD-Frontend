@@ -150,7 +150,7 @@
             @click="$emit('Apply-Changes', '3d-ceiling-light-Renerer')"
             :disabled="isLoading"
           >
-            Apply Changes
+            Finalise Changes
           </a-button>
         </div>
       </div>

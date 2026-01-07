@@ -283,10 +283,23 @@
     Manage Detected Objects
   </button>
   <br>
+  <!-- {{showImageDrawer_test_room}} -->
 
   <!-- Use This Room Button -->
   <button
-    @click="useSelectedRoom"
+     v-if="showImageDrawer_test_room"
+            @click="handleSampleClick"
+                  class="w-full bg-blue-600 pt-3  !text-white hover:bg-blue-500 font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors"
+
+  >
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+    </svg>
+    Use This Room
+  </button>
+  <button
+     v-else
+            @click="useSelectedRoom"
                   class="w-full bg-blue-600 pt-3  !text-white hover:bg-blue-500 font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors"
 
   >
@@ -338,7 +351,7 @@
             v-if="selectedImage"
             :src="$store.state.root_media_api + selectedImage.image"
             alt="Selected room"
-            class="w-full h-full object-contain rounded-xl shadow-lg"
+            class="w-full h-full object-contain rounded-xl "
           />
         </div>
         <!-- {{ $store.state.root_media_api + selectedImage.image }} -->
@@ -397,8 +410,24 @@
               </svg>
               Manage Objects
             </button>
+            <!-- @click="useSelectedRoom" -->
+            <!-- @click="useSelectedRoom" -->
+             <!-- {{ showImageDrawer_test_room }} -->
             <button
-              @click="useSelectedRoom"
+            v-if="showImageDrawer_test_room"
+            @click="handleSampleClick"
+
+              class="w-full bg-blue-600 pt-3  !text-white hover:bg-blue-500 font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+              Continue
+            </button>
+            <button
+            v-else
+            @click="useSelectedRoom"
+
               class="w-full bg-blue-600 pt-3  !text-white hover:bg-blue-500 font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors"
             >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -457,13 +486,12 @@
                 <a-col :span="12"    > --> 
 
                   <MaskOverlay
-v-if = "selectedImage.binary_masks"
-v-for="(obj, index) in selectedImage.binary_masks"
+                    v-if = "selectedImage.binary_masks"
+                    v-for="(obj, index) in selectedImage.binary_masks"
                     :selectedImage="selectedImage "
                     :maskPath="obj"
                     :title="index"
                     :key="obj.id"
-        
                     :handleRemoveObject="removeObject"
                   />
                 <!-- </a-col>
@@ -622,7 +650,7 @@ v-for="(obj, index) in selectedImage.binary_masks"
     >
       <div 
         class="image-wrapper cursor-pointer" 
-        @click="openImageDrawer(example)"
+        @click="openImageDrawer_test_room(example)"
       >
         <img
           :src="$store.state.root_media_api + example.image"
@@ -687,6 +715,7 @@ export default {
       // NEW: Modal file preview states
       modalPreviewImage: null,
       modalFile: null,
+      showImageDrawer_test_room:false,
       
       // Room type filter
       selectedRoomType: 'all',
@@ -861,7 +890,18 @@ export default {
         this.detectedObjects = [];
       }
     },
-
+    openImageDrawer_test_room(historyCard) {
+      this.selectedImage = historyCard;
+      this.showImageDrawer = true;
+      this.showImageDrawer_test_room = true;
+      
+      if (historyCard.detected_objects && historyCard.detected_objects.length > 0) {
+        this.detectedObjects = historyCard.detected_objects;
+      } else {
+        // this.fetchDetectedObjects(historyCard.id);
+        this.detectedObjects = [];
+      }
+    },
     async fetchDetectedObjects(roomId) {
       try {
         const url = `${this.$store.state.root_api}room/api/detected-objects/${roomId}/`;
@@ -887,6 +927,7 @@ export default {
 
     closeDrawer() {
       this.showImageDrawer = false;
+      this.showImageDrawer_test_room=false;
       this.showObjectManagement = false;
       setTimeout(() => {
         this.selectedImage = null;
@@ -935,10 +976,11 @@ export default {
       });
     },
 
-    handleSampleClick() {
+    handleSampleClick(room_id) {
       this.showInstructionsModal = false;
-      if (this.exampleImages.length > 0) {
-        this.startTestRoom(this.exampleImages[0].id);
+     if (this.selectedImage) {
+        this.showImageDrawer = false;
+        this.startTestRoom(this.selectedImage.id);
       }
     },
 
@@ -969,7 +1011,11 @@ export default {
       console.log(room_id);
       this.loading = true;
       try {
-        const url = `${this.$store.state.root_api}room/api/start-example-room/${room_id}`;
+        let url = `${this.$store.state.root_api}room/api/start-example-room/${room_id}`;
+        if(this.$route.query.brand){
+          url = `${this.$store.state.root_api}room/api/start-example-room/${room_id}?brand=${this.$route.query.brand}`;
+
+        }
         const response = await fetch(url, {
           method: 'GET',
           headers: {

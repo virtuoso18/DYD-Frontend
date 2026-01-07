@@ -61,6 +61,43 @@
         <span class="wall-number">{{ region.maskIndex + 1 }}</span>
         <div v-if="internalSelectedMasks.includes(region.maskIndex)" class="checkmark">✓</div>
       </button>
+
+       <a-button  style="top:20px;margin:auto;pointer-events: all;"
+           class="control-btn"
+           
+           :class="{ 'active': allWallsSelected }"
+           @click="toggleSelectAll"
+           :disabled="isLoading"
+           :title="allWallsSelected ? 'Deselect All' : 'Select All'"
+         >
+           <!-- <svg  width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+             <path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16zm3.5-5L7 6.5 4.5 9 3 7.5 7 3.5 13 9.5 11.5 11z"/>
+            </svg> -->
+            <div v-if="allWallsSelected" style="
+            width:16px;height:16px;
+  background: red;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  color: white;
+  font-weight: bold;
+">X</div>
+            <div v-else style="
+            width:16px;height:16px;
+  background: #52c41a;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  color: white;
+  font-weight: bold;
+">✓</div>
+           {{ allWallsSelected ? 'Deselect All' : 'Select All' }} 
+
+         </a-button>
     </div>
 
     <!-- Selection Controls -->
@@ -161,7 +198,7 @@
       
    <div style="padding-top:5px;">
  <div style="display:flex;gap:5px;padding-top:5px;">
-     <a-button 
+     <!-- <a-button 
            class="control-btn"
            :class="{ 'active': allWallsSelected }"
            @click="toggleSelectAll"
@@ -172,8 +209,8 @@
              <path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16zm3.5-5L7 6.5 4.5 9 3 7.5 7 3.5 13 9.5 11.5 11z"/>
            </svg>
            {{ allWallsSelected ? 'Deselect All' : 'Select All' }}
-         </a-button>
-         <a-button 
+         </a-button> -->
+         <!-- <a-button 
          class="control-btn clear-btn"
          @click="clearAllSelections"
          :disabled="internalSelectedMasks.length === 0 || isLoading"
@@ -184,7 +221,7 @@
            <path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16zM4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
          </svg>
          Clear
-       </a-button>
+       </a-button> -->
        <a-button type='primary' :disabled="isLoading" @click="rescaleRoomLayout()"> 
          Rescale Room layout
        </a-button>
@@ -205,7 +242,7 @@
        </div>
        <div style="padding-top:10px;">
          <a-button type="primary" class="toolbar-btn primary-btn" @click="$emit('Apply-Changes', 'Walls-Renerer')" :disabled="isLoading">
-           Apply Changes
+           Finalise Changes
          </a-button>
        </div>
      </div>
@@ -967,49 +1004,92 @@ selectAllWallsOnInit() {
       });
     },
 
+    // processSingleMask(maskData, index) {
+    //   try {
+    //     const tempCanvas = document.createElement('canvas');
+    //     tempCanvas.width = this.canvasWidth;
+    //     tempCanvas.height = this.canvasHeight;
+    //     const tempCtx = tempCanvas.getContext('2d');
+        
+    //     // Fill with black background
+    //     tempCtx.fillStyle = '#000000';
+    //     tempCtx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+        
+    //     // Draw mask
+    //     tempCtx.drawImage(
+    //       maskData.img,
+    //       this.renderOffsetX,
+    //       this.renderOffsetY,
+    //       this.renderWidth,
+    //       this.renderHeight
+    //     );
+        
+    //     const imageData = tempCtx.getImageData(0, 0, this.canvasWidth, this.canvasHeight);
+    //     this.maskImageData[index] = imageData;
+        
+    //     const center = this.findMaskCenter(imageData);
+        
+    //     if (center) {
+    //       return {
+    //         maskIndex: index,
+    //         centerX: center.x,
+    //         centerY: center.y,
+    //         originalCenterX: center.x,
+    //         originalCenterY: center.y,
+    //         imageData: imageData
+    //       };
+    //     }
+        
+    //     return null;
+        
+    //   } catch (error) {
+    //     console.error(`Error processing mask ${index}:`, error);
+    //     return null;
+    //   }
+    // },
+
     processSingleMask(maskData, index) {
-      try {
-        const tempCanvas = document.createElement('canvas');
-        tempCanvas.width = this.canvasWidth;
-        tempCanvas.height = this.canvasHeight;
-        const tempCtx = tempCanvas.getContext('2d');
-        
-        // Fill with black background
-        tempCtx.fillStyle = '#000000';
-        tempCtx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
-        
-        // Draw mask
-        tempCtx.drawImage(
-          maskData.img,
-          this.renderOffsetX,
-          this.renderOffsetY,
-          this.renderWidth,
-          this.renderHeight
-        );
-        
-        const imageData = tempCtx.getImageData(0, 0, this.canvasWidth, this.canvasHeight);
-        this.maskImageData[index] = imageData;
-        
-        const center = this.findMaskCenter(imageData);
-        
-        if (center) {
-          return {
-            maskIndex: index,
-            centerX: center.x,
-            centerY: center.y,
-            originalCenterX: center.x,
-            originalCenterY: center.y,
-            imageData: imageData
-          };
-        }
-        
-        return null;
-        
-      } catch (error) {
-        console.error(`Error processing mask ${index}:`, error);
-        return null;
+  const imgW = this.baseImg.width;
+  const imgH = this.baseImg.height;
+
+  const tempCanvas = document.createElement('canvas');
+  tempCanvas.width = imgW;
+  tempCanvas.height = imgH;
+
+  const ctx = tempCanvas.getContext('2d');
+
+  ctx.drawImage(maskData.img, 0, 0, imgW, imgH);
+
+  const imageData = ctx.getImageData(0, 0, imgW, imgH);
+  this.maskImageData[index] = imageData;
+
+  const center = this.findMaskCenterImageSpace(imageData, imgW, imgH);
+
+  return {
+    maskIndex: index,
+    imageX: center.x,   // 🔥 IMAGE SPACE
+    imageY: center.y,   // 🔥 IMAGE SPACE
+  };
+},
+findMaskCenterImageSpace(imageData, width, height) {
+  const data = imageData.data;
+  let sx = 0, sy = 0, count = 0;
+
+  for (let y = 0; y < height; y += 4) {
+    for (let x = 0; x < width; x += 4) {
+      const i = (y * width + x) * 4;
+      if (data[i] > 200) {
+        sx += x;
+        sy += y;
+        count++;
       }
-    },
+    }
+  }
+
+  if (!count) return null;
+  return { x: sx / count, y: sy / count };
+}
+,
 
     findMaskCenter(imageData) {
       const data = imageData.data;
@@ -1170,56 +1250,122 @@ selectAllWallsOnInit() {
       }
     },
 
-    drawWallHighlight(maskIndex) {
-      if (!this.maskImageData[maskIndex] || !this.overlayCtx) return;
+    // drawWallHighlight(maskIndex) {
+    //   if (!this.maskImageData[maskIndex] || !this.overlayCtx) return;
 
-      this.overlayCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-      this.overlayCtx.save();
+    //   this.overlayCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+    //   this.overlayCtx.save();
       
-      this.overlayCtx.translate(this.panX, this.panY);
-      this.overlayCtx.scale(this.zoom, this.zoom);
+    //   this.overlayCtx.translate(this.panX, this.panY);
+    //   this.overlayCtx.scale(this.zoom, this.zoom);
       
-      const imageData = this.maskImageData[maskIndex];
-      const data = imageData.data;
+    //   const imageData = this.maskImageData[maskIndex];
+    //   const data = imageData.data;
       
-      this.overlayCtx.fillStyle = 'rgba(0, 255, 255, 0.3)';
+    //   this.overlayCtx.fillStyle = 'rgba(0, 255, 255, 0.3)';
       
-      // Optimized highlighting - draw rectangles for consecutive pixels
-      for (let y = 0; y < this.canvasHeight; y += 2) {
-        let startX = -1;
-        for (let x = 0; x < this.canvasWidth; x += 2) {
-          const index = (y * this.canvasWidth + x) * 4;
-          const r = data[index];
-          const g = data[index + 1];
-          const b = data[index + 2];
+    //   // Optimized highlighting - draw rectangles for consecutive pixels
+    //   for (let y = 0; y < this.canvasHeight; y += 2) {
+    //     let startX = -1;
+    //     for (let x = 0; x < this.canvasWidth; x += 2) {
+    //       const index = (y * this.canvasWidth + x) * 4;
+    //       const r = data[index];
+    //       const g = data[index + 1];
+    //       const b = data[index + 2];
           
-          if (r > 200 && g > 200 && b > 200) {
-            if (startX === -1) startX = x;
-          } else {
-            if (startX !== -1) {
-              this.overlayCtx.fillRect(
-                startX / this.zoom, 
-                y / this.zoom, 
-                (x - startX) / this.zoom, 
-                2 / this.zoom
-              );
-              startX = -1;
-            }
-          }
-        }
-        if (startX !== -1) {
-          this.overlayCtx.fillRect(
-            startX / this.zoom, 
-            y / this.zoom, 
-            (this.canvasWidth - startX) / this.zoom, 
-            2 / this.zoom
-          );
-        }
-      }
+    //       if (r > 200 && g > 200 && b > 200) {
+    //         if (startX === -1) startX = x;
+    //       } else {
+    //         if (startX !== -1) {
+    //           this.overlayCtx.fillRect(
+    //             startX / this.zoom, 
+    //             y / this.zoom, 
+    //             (x - startX) / this.zoom, 
+    //             2 / this.zoom
+    //           );
+    //           startX = -1;
+    //         }
+    //       }
+    //     }
+    //     if (startX !== -1) {
+    //       this.overlayCtx.fillRect(
+    //         startX / this.zoom, 
+    //         y / this.zoom, 
+    //         (this.canvasWidth - startX) / this.zoom, 
+    //         2 / this.zoom
+    //       );
+    //     }
+    //   }
       
-      this.overlayCtx.restore();
-    },
+    //   this.overlayCtx.restore();
+    // },
+drawWallHighlight(maskIndex) {
+  const imageData = this.maskImageData[maskIndex];
+  if (!imageData || !this.overlayCtx) return;
 
+  const ctx = this.overlayCtx;
+  ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+  ctx.save();
+
+  // 1️⃣ Same pan + zoom as base image
+  ctx.translate(this.panX, this.panY);
+  ctx.scale(this.zoom, this.zoom);
+
+  // 2️⃣ Move to image render position
+  ctx.translate(this.renderOffsetX, this.renderOffsetY);
+
+  // 3️⃣ Scale mask to rendered image size
+  const scaleX = this.renderWidth / imageData.width;
+  const scaleY = this.renderHeight / imageData.height;
+  ctx.scale(scaleX, scaleY);
+
+  const data = imageData.data;
+  ctx.fillStyle = 'rgba(0, 255, 255, 0.3)';
+
+  const step = 2;
+
+  for (let y = 0; y < imageData.height; y += step) {
+    let startX = -1;
+
+    for (let x = 0; x < imageData.width; x += step) {
+      const idx = (y * imageData.width + x) * 4;
+      const r = data[idx];
+
+      if (r > 200) {
+        if (startX === -1) startX = x;
+      } else if (startX !== -1) {
+        ctx.fillRect(
+          startX,
+          y,
+          x - startX,
+          step
+        );
+        startX = -1;
+      }
+    }
+
+    if (startX !== -1) {
+      ctx.fillRect(
+        startX,
+        y,
+        imageData.width - startX,
+        step
+      );
+    }
+  }
+
+  ctx.restore();
+}
+
+,
+imageDataToCanvas(imageData) {
+  const c = document.createElement('canvas');
+  c.width = imageData.width;
+  c.height = imageData.height;
+  c.getContext('2d').putImageData(imageData, 0, 0);
+  return c;
+}
+,
     // ===================
     // RENDERING
     // ===================
@@ -1345,19 +1491,29 @@ selectAllWallsOnInit() {
       this.ctx.restore();
     },
 
-    updateButtonPositions() {
-      if (!this.showSelectionButtons) return;
+    // updateButtonPositions() {
+    //   if (!this.showSelectionButtons) return;
       
-      this.maskRegions.forEach(region => {
-        if (!region.originalCenterX) {
-          region.originalCenterX = region.centerX;
-          region.originalCenterY = region.centerY;
-        }
+    //   this.maskRegions.forEach(region => {
+    //     if (!region.originalCenterX) {
+    //       region.originalCenterX = region.centerX;
+    //       region.originalCenterY = region.centerY;
+    //     }
         
-        region.centerX = region.originalCenterX * this.zoom + this.panX;
-        region.centerY = region.originalCenterY * this.zoom + this.panY;
-      });
-    },
+    //     region.centerX = region.originalCenterX * this.zoom + this.panX;
+    //     region.centerY = region.originalCenterY * this.zoom + this.panY;
+    //   });
+    // },
+    updateButtonPositions() {
+  this.maskRegions.forEach(r => {
+    r.centerX =
+      (r.imageX * this.scaleX + this.renderOffsetX) * this.zoom + this.panX;
+
+    r.centerY =
+      (r.imageY * this.scaleY + this.renderOffsetY) * this.zoom + this.panY;
+  });
+},
+
 
     // ===================
     // EVENT EMISSION
@@ -1488,7 +1644,7 @@ selectAllWallsOnInit() {
 .canvas-container {
   position: relative;
   width: 100%;
-  height: 100%;
+  height: 83vh;
   min-height: 300px;
   overflow: hidden;
   background: #f5f5f5;
@@ -2006,7 +2162,9 @@ selectAllWallsOnInit() {
     top: 10px;
     left: 10px;
   }
-  
+.canvas-container {
+    height: 100%;
+}
   .control-btn {
     padding: 6px 10px;
     font-size: 11px;

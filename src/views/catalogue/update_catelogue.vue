@@ -79,7 +79,6 @@
   </div>
 </a-modal>
 
-
   <!-- Walls Drawer -->
 <a-drawer
 
@@ -97,6 +96,7 @@
     >
     <template #title >
       
+            <div style="display: flex;gap:10px;">
 <router-link :to="'/'+this.$route.query.brand" >
         <div style="display: flex;gap:10px;">
           <a-avatar size="medium" style="margin-top:6px;border:1px solid rgba(0,0,0,0.2)" :src="this.$store.state.root_media_api+brand_data.business_picture"></a-avatar>
@@ -112,6 +112,11 @@
           <!-- <b>  {{truncateChars(brand_data.name,limit=15)}}</b> -->
         </div>
       </router-link>
+      <div style="display: flex;margin-top:5px;" v-if="user?.user_type==='Professional'">
+
+        <a-button tooltip="switch brand" @click="showSwitchBrandPanel" style="display: flex;justify-content: center;align-items:center;" shape="circle"><SwapOutlined /></a-button>
+      </div>
+    </div>
     </template> 
        <template #extra> <div class="head-section" >
           <a-button type="primary" style="display:flex;justify-content:center;gap:10px;color:white"> 
@@ -144,6 +149,7 @@ Download
     >
     <template #title >
       
+      <div style="display: flex;gap:10px;">
 <router-link :to="'/'+this.$route.query.brand" >
         <div style="display: flex;gap:10px;">
           <a-avatar size="medium" style="margin-top:6px;border:1px solid rgba(0,0,0,0.2)" :src="this.$store.state.root_media_api+brand_data.business_picture"></a-avatar>
@@ -159,6 +165,11 @@ Download
           <!-- <b>  {{truncateChars(brand_data.name,limit=15)}}</b> -->
         </div>
       </router-link>
+            <div style="display: flex;margin-top:5px;"  v-if="user?.user_type==='Professional'">
+      <a-button tooltip="switch brand" @click="showSwitchBrandPanel" style="display: flex;justify-content: center;align-items:center;" shape="circle"><SwapOutlined /></a-button>
+   
+         </div> </div>
+
     </template>  
 
     <template #extra> <div class="head-section " >
@@ -194,6 +205,7 @@ Download
     
     <template #title >
       
+            <div style="display: flex;gap:10px;">
 <router-link :to="'/'+this.$route.query.brand" >
         <div style="display: flex;gap:10px;">
           <a-avatar size="medium" style="margin-top:6px;border:1px solid rgba(0,0,0,0.2)" :src="this.$store.state.root_media_api+brand_data.business_picture"></a-avatar>
@@ -209,6 +221,10 @@ Download
           <!-- <b>  {{truncateChars(brand_data.name,limit=15)}}</b> -->
         </div>
       </router-link>
+            <div style="display: flex;margin-top:5px;"  v-if="user?.user_type==='Professional'">
+      <a-button tooltip="switch brand" @click="showSwitchBrandPanel" style="display: flex;justify-content: center;align-items:center;" shape="circle"><SwapOutlined /></a-button>
+      </div>
+    </div>
     </template> 
 
        <template #extra> <div class="head-section" >
@@ -246,6 +262,7 @@ Download
     
     <template #title >
       
+            <div style="display: flex;gap:10px;">
 <router-link :to="'/'+this.$route.query.brand" >
         <div style="display: flex;gap:10px;">
           <a-avatar size="medium" style="margin-top:6px;border:1px solid rgba(0,0,0,0.2)" :src="this.$store.state.root_media_api+brand_data.business_picture"></a-avatar>
@@ -261,6 +278,10 @@ Download
           <!-- <b>  {{truncateChars(brand_data.name,limit=15)}}</b> -->
         </div>
       </router-link>
+      <div style="display: flex;margin-top:5px;"  v-if="user?.user_type==='Professional'">
+      <a-button tooltip="switch brand" @click.stop="showSwitchBrandPanel" style="display: flex;justify-content: center;align-items:center;" shape="circle"><SwapOutlined /></a-button>
+         </div>
+    </div>
     </template> 
        <template #extra> <div class="head-section" >
           <a-button type="primary" style="display:flex;justify-content:center;gap:10px;color:white"> 
@@ -279,8 +300,58 @@ Download
       
   </a-drawer>
 
+ <!-- Switch Brand Drawer -->
+<a-drawer
+
+    :placement="'bottom'"
+    :closable="true"
+    :open="openSeeAll_brands_panel"
+    height="90%"
+    :bodyStyle="{ padding: '0 0px 0px' }"  
+    style="
+  border-top-left-radius: 20px;;
+  
+  border-top-right-radius: 20px;;
+"
+    @close="onClose_drawer_modal"
+    >
+    <template #title >
+      
+
+        <div style="display: flex;gap:10px;">
+          <span class="!text-gray-700 py-3"  style="
+          font-family: Poppins;
+          font-weight: 700;
+          font-style: normal;
+          font-size: 16px;
+          line-height: 20px;
+          letter-spacing: 0;
+          ">Explore DYD's Best  AI Catalog Brands</span>
+        <!-- {{ brand_data }} -->
+          <!-- <b>  {{truncateChars(brand_data.name,limit=15)}}</b> -->
+        </div>
+      
+    </template> 
+       <template #extra> <div class="head-section" >
+          <a-button type="primary" style="display:flex;justify-content:center;gap:10px;color:white"> 
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 15.575C11.8667 15.575 11.7417 15.5543 11.625 15.513C11.5083 15.4717 11.4 15.4007 11.3 15.3L7.7 11.7C7.5 11.5 7.404 11.2667 7.412 11C7.42 10.7333 7.516 10.5 7.7 10.3C7.9 10.1 8.13767 9.996 8.413 9.988C8.68833 9.98 8.92567 10.0757 9.125 10.275L11 12.15V5C11 4.71667 11.096 4.47934 11.288 4.288C11.48 4.09667 11.7173 4.00067 12 4C12.2827 3.99934 12.5203 4.09534 12.713 4.288C12.9057 4.48067 13.0013 4.718 13 5V12.15L14.875 10.275C15.075 10.075 15.3127 9.979 15.588 9.987C15.8633 9.995 16.1007 10.0993 16.3 10.3C16.4833 10.5 16.5793 10.7333 16.588 11C16.5967 11.2667 16.5007 11.5 16.3 11.7L12.7 15.3C12.6 15.4 12.4917 15.471 12.375 15.513C12.2583 15.555 12.1333 15.5757 12 15.575ZM6 20C5.45 20 4.97933 19.8043 4.588 19.413C4.19667 19.0217 4.00067 18.5507 4 18V16C4 15.7167 4.096 15.4793 4.288 15.288C4.48 15.0967 4.71733 15.0007 5 15C5.28267 14.9993 5.52033 15.0953 5.713 15.288C5.90567 15.4807 6.00133 15.718 6 16V18H18V16C18 15.7167 18.096 15.4793 18.288 15.288C18.48 15.0967 18.7173 15.0007 19 15C19.2827 14.9993 19.5203 15.0953 19.713 15.288C19.9057 15.4807 20.0013 15.718 20 16V18C20 18.55 19.8043 19.021 19.413 19.413C19.0217 19.805 18.5507 20.0007 18 20H6Z" fill="white"/>
+</svg>
+Download
+          </a-button>
+    </div>
+    </template >
+<div className="md:p-3 p-1">
+<switch_business @switch-brand-profesional-user="switchRoomBrand"/>
+          </div>
+    
+   
+  </a-drawer>
+
   <!-- Fetch All Drawer  -->
  <fetch_all_drawer_component
+ :user_type="user?.user_type"
+ @switch-brand-profesional="showSwitchBrandPanel"
   :openSeeAll_products="openSeeAll_products"
   :seeAll_Floor="seeAll_Floor"
   :seeAll_Walls="seeAll_Walls"
@@ -966,7 +1037,7 @@ Switch Furniture</a-button> -->
                     @brand-products="get_all_products_tabs_available"
                    @see-all-products="SeeAllProducts"
                     :brand_data="brand_data"
-
+                    
                    >
                    </fernitures>
                    <lights v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Lights'"
@@ -1828,7 +1899,9 @@ Switch Furniture</a-button> -->
 
 
 <script>
-import { BulbOutlined,CloudUploadOutlined ,UserDeleteOutlined } from '@ant-design/icons-vue';
+
+import switch_business from '@/views/catalogue/switch_business.vue'
+import { BulbOutlined,CloudUploadOutlined ,UserDeleteOutlined,SwapOutlined } from '@ant-design/icons-vue';
 import canvas_floor_render from '@/components/update_catalogue/canvas_renderer/canvas_floor_render.vue'
 import canvas_item_remover_render from '@/components/update_catalogue/canvas_renderer/canvas_item_remover_render.vue'
 import canvas_lights_render from '@/components/update_catalogue/canvas_renderer/canvas_lights_render.vue'
@@ -2024,7 +2097,10 @@ isCollapsed: false,
       processingObjects: false,
       processingCurrent: 0,
       processingTotal: 0,
-      processingProgress: 0
+      processingProgress: 0,
+
+
+      openSeeAll_brands_panel:false,
     }
   },
 
@@ -2090,6 +2166,31 @@ isCollapsed: false,
   },
 
   methods: {
+
+   async switchRoomBrand(brand_slug) {
+        try {
+          const url = `${this.$store.state.root_api}room/api/switch-room-brand/${this.$route.params.id}/${brand_slug}/`;
+
+          const responseData = await this.makeApiRequest(
+            url,
+            {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Token ${localStorage.getItem('token')}`
+              }
+            },
+            'switch-the-room-brand'
+          );
+
+          if (responseData?.success) {
+            window.location.reload();
+          }
+        } catch (error) {
+          console.error('Failed to switch room brand:', error);
+        }
+      },
+
     goto_home_design_show(){
       this.active_tab_image='home_design'
     },
@@ -2775,7 +2876,10 @@ async  rescaleWallMask(e){
           },
           body: JSON.stringify(requestBody)
         });
-
+        if(responseData.error){
+        this.throw_Insufficient_credits("Insufficient credits to remove all furniture . This action requires 10 credits. Please top up your balance and try again.")
+        }
+        
         if (responseData?.final_output) {
           this.base_image_url = this.$store.state.root_media_api + responseData.final_output;
           await this.fetchBinaryWallMasks();
@@ -3048,6 +3152,18 @@ async  rescaleWallMask(e){
     // DRAWER MODALS
     // ==========================================
     
+     showSwitchBrandPanel() {
+  this.openSeeAll_brands_panel = true;
+      this.openSeeAll_Walls = false;
+      this.openSeeAll_Floor = false;
+      // this.closeShareMenu = false;
+      this.openSeeAll_products=false;
+      this.openSeeAll_ChangeRoom = false;
+      this.openSeeAll_furnitures = false;
+      this.openSeeAll_Lights = false;
+  // this.fetchData('all', 'seeAll_products');
+  // fetch_all_brands_list
+},
     SeeAllProducts(e) {
   this.openSeeAll_products = true;
   this.fetchData('all', 'seeAll_products');
@@ -3072,7 +3188,6 @@ lightsSeeAll() {
   this.openSeeAll_Lights = true;
   this.fetchData('lights', 'seeAll_Lights');
 },
-
 async fetchData(product_type, dataKey) {
   const brand = this.$route.query.brand;
 
@@ -3236,6 +3351,7 @@ async fetchSingleProductType(productType, dataKey, brand, endpointMap) {
     },
 
     onClose_drawer_modal() {
+      this.openSeeAll_brands_panel=false;
       this.openSeeAll_Walls = false;
       this.openSeeAll_Floor = false;
       // this.closeShareMenu = false;
@@ -3539,9 +3655,14 @@ async fetchSingleProductType(productType, dataKey, brand, endpointMap) {
   },
 
   components: {
+    SwapOutlined,
     BulbOutlined,
 CloudUploadOutlined,
 UserDeleteOutlined,
+
+    // switch Business
+    switch_business,
+
     // canvas Renderer
     canvas_floor_render,
     canvas_item_remover_render, // All 
@@ -3737,6 +3858,7 @@ UserDeleteOutlined,
   flex-wrap: wrap;
   padding: 5px 5px 0;
   gap: 3px;
+  
   /* border-bottom: 1px solid #f0f0f0; */
 }
 
@@ -3745,6 +3867,7 @@ UserDeleteOutlined,
   font-size: 11px;
   font-weight: 500;
   gap:2px;
+  
   display: flex;
   color: #666;
   border:1px solid rgba(0,0,0,0.1);

@@ -10,9 +10,9 @@
   </div>
   <div
     v-else
-    style="display: flex; justify-content: center; align-items: center"
+    style="display: flex; justify-content: center; align-items: center;position:relative"
   >
-    <!-- {{ modelDimensions }} -->
+    <!-- {{ currentModelDimensions }} -->
     <div
       class="main-canvas max-h-[300px] md:max-h-[95vh] mx-auto"
       ref="canvasContainer"
@@ -29,7 +29,9 @@
 
       <!-- 3D Viewer Container -->
       <div id="viewer" ref="viewer"></div>
+      
     </div>
+    <span style="font-size:12px;font-weight: 600;position:absolute;bottom:10px;left:10px">W-{{ currentModelDimensions.width }}m X H-{{ currentModelDimensions.height }}m X D-{{ currentModelDimensions.depth }}m</span>
   </div>
 <!-- 
   <div class="flex justify-between items-center py-2 px-2 bg-white w-full">
@@ -92,7 +94,7 @@
   <div class="flex items-center gap-2" v-show="is_resizable">
     <!-- Minus Button -->
     <button
-      className="bg-red-500 hover:bg-red-600 !text-white px-3 py-1 rounded-md"
+      className="bg-red-100 hover:bg-red-200 !text-black px-3 py-1 rounded-md"
       @click="scaleDown"
       :disabled="isLoading || !modelLoaded"
       style="
@@ -122,7 +124,7 @@
 
     <!-- Plus Button -->
     <button
-      className="bg-green-500 hover:bg-green-600 !text-white px-3 py-1 rounded-md"
+      className="bg-green-100 hover:bg-green-200 !text-black px-3 py-1 rounded-md"
       @click="scaleUp"
       :disabled="isLoading || !modelLoaded"
       style="
@@ -139,22 +141,15 @@
   </div>
 
   <!-- Right: Apply Changes -->
-  <button
+  <a-button
     className="pt-[10px] !text-white px-2  bg-blue-500 rounded-md py-1"
     type="primary"
     @click="$emit('Apply-Changes', 'item-replacement-3d-renderer')"
     :disabled="isLoading"
-    style="
-      font-family: Poppins;
-      font-weight: 500;
-      font-size: 13px;
-      line-height: 20px;
-      letter-spacing: 0%;
-      text-align: center;
-    "
+    
   >
-    Apply Changes
-  </button>
+    Finalise Changes
+  </a-button>
 </div>
 
   <!-- <div class="apply-section md:hidden">
@@ -220,7 +215,14 @@ export default {
       modelScale: 1.0,           // Track current scale multiplier
       minScale: 0.5,             // Minimum scale (50%)
       maxScale: 3.0,             // Maximum scale (300%)
-      scaleStep: 0.1,            // Step size for +/- buttons (10%)
+      scaleStep: 0.02,            // Step size for +/- buttons (10%)
+
+    // Store the base dimensions separately
+    currentModelDimensions: {
+      width: 0,
+      height: 0,
+      depth: 0
+    }
     };
   },
 
@@ -263,35 +265,62 @@ export default {
     this.floorBounds = null;
     this.baseModelScale = 1.0;
   },
+// CORRECT PLACEMENT - Replace your entire watch section with this:
 
-  watch: {
-    glbUrl: {
-      handler(newUrl, oldUrl) {
-        if (newUrl && newUrl !== "" && newUrl !== oldUrl) {
-          this.$nextTick(() => {
-            this.handleGlbUrlChange();
-          });
-        }
-      },
-      immediate: false,
+watch: {
+  glbUrl: {
+    handler(newUrl, oldUrl) {
+      if (newUrl && newUrl !== "" && newUrl !== oldUrl) {
+        this.$nextTick(() => {
+          this.handleGlbUrlChange();
+        });
+      }
     },
-    baseImageUrl: {
-      handler(newUrl, oldUrl) {
-        if (newUrl && newUrl !== oldUrl && this.viewerInitialized) {
-          this.initializeBackground();
-        }
-      },
+    immediate: false,
+  },
+  baseImageUrl: {
+    handler(newUrl, oldUrl) {
+      if (newUrl && newUrl !== oldUrl && this.viewerInitialized) {
+        this.initializeBackground();
+      }
     },
   },
-
-  mounted() {
-    if (this.glbUrl && this.glbUrl !== "") {
-      this.$nextTick(() => {
-        this.handleGlbUrlChange();
-        this.load_the_fileData();
-      });
-    }
+  modelDimensions: {
+    handler(newDimensions, oldDimensions) {
+      if (newDimensions && newDimensions !== oldDimensions) {
+        // Update currentModelDimensions with the new prop values, scaled by current modelScale
+        this.currentModelDimensions.width = parseFloat((newDimensions.width * this.modelScale).toFixed(2));
+        this.currentModelDimensions.height = parseFloat((newDimensions.height * this.modelScale).toFixed(2));
+        this.currentModelDimensions.depth = parseFloat((newDimensions.depth * this.modelScale).toFixed(2));
+        
+        console.log("ModelDimensions updated:", this.currentModelDimensions);
+        
+        // If model is loaded, recalculate scale based on new dimensions
+        if (this.model && this.modelBoundingBox) {
+          this.setupModelBounds();
+          this.applyModelScale();
+        }
+      }
+    },
+    deep: true,
   },
+},
+mounted() {
+  if (this.glbUrl && this.glbUrl !== "") {
+    // Initialize currentModelDimensions from props
+    this.currentModelDimensions = {
+      width: parseFloat(this.modelDimensions.width),
+      height: parseFloat(this.modelDimensions.height),
+      depth: parseFloat(this.modelDimensions.depth)
+    };
+    
+    this.$nextTick(() => {
+      this.handleGlbUrlChange();
+      this.load_the_fileData();
+    });
+  }
+},
+
 
   beforeUnmount() {
     this.cleanup();
@@ -300,16 +329,29 @@ export default {
   methods: {
     
   scaleUp() {
-    if (!this.model || this.modelScale >= this.maxScale) return;
-    this.modelScale = Math.min(this.maxScale, this.modelScale + this.scaleStep);
-    this.applyModelScale();
-  },
+  if (!this.model || this.modelScale >= this.maxScale) return;
+  this.modelScale = Math.min(this.maxScale, this.modelScale + this.scaleStep);
+  
+  // Update the dimension display
+  this.currentModelDimensions.width = (this.modelDimensions.width * this.modelScale).toFixed(2);
+  this.currentModelDimensions.height = (this.modelDimensions.height * this.modelScale).toFixed(2);
+  this.currentModelDimensions.depth = (this.modelDimensions.depth * this.modelScale).toFixed(2);
+  
+  this.applyModelScale();
+},
 
-  scaleDown() {
-    if (!this.model || this.modelScale <= this.minScale) return;
-    this.modelScale = Math.max(this.minScale, this.modelScale - this.scaleStep);
-    this.applyModelScale();
-  },
+  
+scaleDown() {
+  if (!this.model || this.modelScale <= this.minScale) return;
+  this.modelScale = Math.max(this.minScale, this.modelScale - this.scaleStep);
+  
+  // Update the dimension display
+  this.currentModelDimensions.width = (this.modelDimensions.width * this.modelScale).toFixed(2);
+  this.currentModelDimensions.height = (this.modelDimensions.height * this.modelScale).toFixed(2);
+  this.currentModelDimensions.depth = (this.modelDimensions.depth * this.modelScale).toFixed(2);
+  
+  this.applyModelScale();
+},
 
 applyModelScale() {
   if (!this.model || !this.modelBoundingBox) return;
@@ -1470,13 +1512,22 @@ if (this.isDraggingModel) {
 reset_entire_room() {
   if (!this.model) return;
 
+  // Reset scale
+  this.modelScale = 1.0;
+  
+  // Reset dimensions to original
+  this.currentModelDimensions = {
+    width: this.modelDimensions.width,
+    height: this.modelDimensions.height,
+    depth: this.modelDimensions.depth
+  };
+
   const initialPos = this.floorPoint.clone();
   this.model.position.x = initialPos.x;
   this.model.position.z = initialPos.z;
 
   const floorY = this.getFloorHeightAtPosition(initialPos);
   
-  // Use the same calculation as applyModelScale
   const finalScale = this.baseModelScale * this.modelScale;
   const modelBottomWorldOffset = this.modelBoundingBox.min.y * finalScale;
   this.model.position.y = floorY - modelBottomWorldOffset;

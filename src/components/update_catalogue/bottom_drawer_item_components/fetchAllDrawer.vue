@@ -13,6 +13,7 @@
 
     <template #title >
       
+      <div style="display: flex;gap:10px;">
 <router-link :to="'/'+this.$route.query.brand" >
         <div style="display: flex;gap:10px;">
           <a-avatar size="medium" style="margin-top:6px;border:1px solid rgba(0,0,0,0.2)" :src="this.$store.state.root_media_api+brand_data.business_picture"></a-avatar>
@@ -26,8 +27,14 @@
           ">{{ brand_data.name}} AI Catalog</span>
         <!-- {{ brand_data }} -->
           <!-- <b>  {{truncateChars(brand_data.name,limit=15)}}</b> -->
+          
         </div>
       </router-link>
+      <div style="display: flex;margin-top:5px;"  v-if="user_type==='Professional'">
+
+      <a-button tooltip="switch brand" @click="$emit('switch-brand-profesional', true)" style="display: flex;justify-content: center;align-items:center;" shape="circle"><SwapOutlined /></a-button>
+      </div>
+    </div>
     </template> 
      <template #extra> <div class="head-section" >
           <a-button type="primary" style="display:flex;justify-content:center;gap:10px;color:white"> 
@@ -122,6 +129,7 @@ import wall_textures_bottom_drawer_menu from '@/components/update_catalogue/bott
 import floor_textures_bottom_drawer_menu from '@/components/update_catalogue/bottom_drawer_item_components/floor_textures.vue'
 import furnitures_bottom_drawer_menu from '@/components/update_catalogue/bottom_drawer_item_components/furnitures.vue'
 import light_items_bottom_drawer_menu from '@/components/update_catalogue/bottom_drawer_item_components/light_items.vue'
+import { SwapOutlined } from '@ant-design/icons-vue';
 
 export default {
   name: 'FetchAllDrawer',
@@ -132,9 +140,11 @@ export default {
     seeAll_furnitures: Array,
     seeAll_Lights: Array,
     onClose_drawer_modal: Function,
-    brand_data:Object
+    brand_data:Object,
+    user_type:String,
   },
   components:{
+    SwapOutlined,
     wall_textures_bottom_drawer_menu,
     floor_textures_bottom_drawer_menu,
     furnitures_bottom_drawer_menu,

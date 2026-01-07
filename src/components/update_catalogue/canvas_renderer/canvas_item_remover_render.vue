@@ -367,19 +367,53 @@
               stroke-linejoin="round"
             />
           </svg>
-          Draw removal
+          <!-- Draw removal -->
         </a-button>
+        <!-- class="control-btn" -->
 
         <a-button
           @click="toggleSelection"
-          class="control-btn"
+          type="default"
+          style="display: flex;gap:5px;justify-content: center;align-items: center;"
           :disabled="objectMaskRegions.length === 0 || drawingMode"
         >
-          {{
-            selectedObjects.length === objectMaskRegions.length
-              ? "Clear Selection" + `(${selectedObjects.length})`
-              : "Select All"
-          }}
+        <svg v-if=" selectedObjects.length != objectMaskRegions.length" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#000000" height="20px" width="20px" version="1.1" id="Layer_1" viewBox="0 0 512 512" xml:space="preserve">
+<g>
+	<g>
+		<path d="M503.467,247.467H264.533V8.533C264.533,3.823,260.719,0,256,0s-8.533,3.823-8.533,8.533v238.933H8.533    C3.814,247.467,0,251.29,0,256s3.814,8.533,8.533,8.533h238.933v238.933c0,4.71,3.814,8.533,8.533,8.533s8.533-3.823,8.533-8.533    V264.533h238.933c4.719,0,8.533-3.823,8.533-8.533S508.186,247.467,503.467,247.467z"/>
+	</g>
+</g>
+<g>
+	<g>
+		<path d="M384,281.6h-93.867c-4.719,0-8.533,3.823-8.533,8.533V384c0,4.71,3.814,8.533,8.533,8.533H384    c4.719,0,8.533-3.823,8.533-8.533v-93.867C392.533,285.423,388.719,281.6,384,281.6z"/>
+	</g>
+</g>
+<g>
+	<g>
+		<path d="M221.867,281.6H128c-4.719,0-8.533,3.823-8.533,8.533V384c0,4.71,3.814,8.533,8.533,8.533h93.867    c4.719,0,8.533-3.823,8.533-8.533v-93.867C230.4,285.423,226.586,281.6,221.867,281.6z"/>
+	</g>
+</g>
+<g>
+	<g>
+		<path d="M221.867,119.467H128c-4.719,0-8.533,3.823-8.533,8.533v93.867c0,4.71,3.814,8.533,8.533,8.533h93.867    c4.719,0,8.533-3.823,8.533-8.533V128C230.4,123.29,226.586,119.467,221.867,119.467z"/>
+	</g>
+</g>
+<g>
+	<g>
+		<path d="M384,119.467h-93.867c-4.719,0-8.533,3.823-8.533,8.533v93.867c0,4.71,3.814,8.533,8.533,8.533H384    c4.719,0,8.533-3.823,8.533-8.533V128C392.533,123.29,388.719,119.467,384,119.467z"/>
+	</g>
+</g>
+</svg>
+
+
+
+<svg v-else xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 24 24" fill="none">
+<path d="M16 4H16.01M16 12H16.01M12 4H12.01M12 8H12.01M12 12H12.01M12 16H12.01M12 20H12.01M16 20H16.01M8 4H8.01M8 12H8.01M4 4H4.01M4 8H4.01M4 12H4.01M4 16H4.01M4 20H4.01M8 20H8.01M20 4H20.01M20 8H20.01M20 12H20.01M20 16H20.01M20 20H20.01" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+        <span v-if="selectedObjects.length === objectMaskRegions.length">
+          {{selectedObjects.length}} 
+        </span>
+            
         </a-button>
 
         <a-button
@@ -407,7 +441,7 @@
           @click="$emit('Apply-Changes', 'all-tab')"
           :disabled="isLoading || drawingMode"
         >
-          Apply Changes
+          Finalise Changes
         </a-button>
       </div>
     </div>
