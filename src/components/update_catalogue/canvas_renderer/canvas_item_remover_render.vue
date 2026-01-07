@@ -446,92 +446,104 @@
       </div>
     </div>
   </div>
-  <div class="flex md:hidden bg-white   w-full justify-center">
+  <div class="md:hidden bg-white " style="width:100%">
     <!-- Left Buttons -->
-    <div class="flex flex-col gap-2 pt-1 ">
-      <div className="flex flex-row gap-24 justify-center">
-        <button
+    <div class="flex flex-col gap-2 pt-1 px-2">
+      <div className="flex flex-row gap-6 justify-center">
+        
+         <a-button
           @click="DrawRemoval_model"
-          className="flex items-center gap-2 !whitespace-nowrap"
+          style="display: flex; gap: 5px; gap: 10px"
         >
           <svg
-            width="14"
-            height="14"
-            viewBox="0 0 14 14"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <g clip-path="url(#clip0_8010_87804)">
-              <path
-                d="M0.625 7.86037C1.411 6.76037 3.795 3.63537 6.587 1.87837C8.686 0.556372 10.667 2.30137 9.13 4.05837C7.627 5.77637 5.612 8.14137 4.751 9.31537C3.859 10.5324 5.386 12.0054 6.914 10.6034C7.934 9.66737 8.999 8.59037 10.08 7.79437C11.54 6.72037 12.792 7.66837 12.155 8.87937C11.695 9.75437 11.36 10.1404 10.975 10.8774C10.591 11.6134 10.998 12.4964 11.581 12.5724C12.303 12.6654 12.76 12.1484 13.377 11.3414"
-                stroke="#1A1A1A"
-                stroke-width="1.25"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </g>
-            <defs>
-              <clipPath id="clip0_8010_87804">
-                <rect width="14" height="14" fill="white" />
-              </clipPath>
-            </defs>
-          </svg>
-
-          Draw removal
-        </button>
-
-        <!-- Select All / Clear -->
-        <button
-          @click="toggleSelection"
-          class="whitespace-nowrap rounded-md p-2 flex items-center gap-2"
-          :disabled="objectMaskRegions.length === 0 || drawingMode"
-        >
-          <svg
-            width="11"
-            height="11"
-            viewBox="0 0 11 11"
+            viewBox="0 0 16 16"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
             <path
-              d="M9.64601 0.975971L1.02587 9.19354M9.64601 9.19354L1.02587 0.975971"
-              stroke="#1A1A1A"
-              stroke-width="2"
+              d="M13.6273 8.3374C15.6172 4.66839 14.7102 2.1779 11.3058 2C8.83147 2.04724 6.27908 3.38042 4.24174 5.44289C2.53199 7.17373 0.848545 9.65267 1.46654 12.012C1.603 12.5329 1.86906 12.8879 2.28937 13.2219C3.41888 14.1194 4.52754 14.1984 6.66281 13.6742C8.8252 13.0171 10.1658 12.0272 11.2962 11.0145M11.2962 11.0145C11.2973 11.0134 11.2985 11.0123 11.2997 11.0113C11.3019 11.0094 11.3005 11.0058 11.2976 11.0058C11.2955 11.0058 11.2939 11.008 11.2947 11.01C11.2952 11.0115 11.2957 11.013 11.2962 11.0145ZM11.2962 11.0145C11.5431 11.7446 11.3867 12.3963 10.9616 13.6742"
+              stroke="currentcolor"
               stroke-linecap="round"
               stroke-linejoin="round"
             />
           </svg>
+          <!-- Draw removal -->
+        </a-button>
+        <!-- class="control-btn" -->
 
-          {{
-            selectedObjects.length === objectMaskRegions.length
-              ? "Clear Selection" + `(${selectedObjects.length})`
-              : "Select All"
-          }}
-        </button>
+        <a-button
+          @click="toggleSelection"
+          type="default"
+          style="display: flex;gap:5px;justify-content: center;align-items: center;"
+          :disabled="objectMaskRegions.length === 0 || drawingMode"
+        >
+        <svg v-if=" selectedObjects.length != objectMaskRegions.length" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#000000" height="20px" width="20px" version="1.1" id="Layer_1" viewBox="0 0 512 512" xml:space="preserve">
+<g>
+	<g>
+		<path d="M503.467,247.467H264.533V8.533C264.533,3.823,260.719,0,256,0s-8.533,3.823-8.533,8.533v238.933H8.533    C3.814,247.467,0,251.29,0,256s3.814,8.533,8.533,8.533h238.933v238.933c0,4.71,3.814,8.533,8.533,8.533s8.533-3.823,8.533-8.533    V264.533h238.933c4.719,0,8.533-3.823,8.533-8.533S508.186,247.467,503.467,247.467z"/>
+	</g>
+</g>
+<g>
+	<g>
+		<path d="M384,281.6h-93.867c-4.719,0-8.533,3.823-8.533,8.533V384c0,4.71,3.814,8.533,8.533,8.533H384    c4.719,0,8.533-3.823,8.533-8.533v-93.867C392.533,285.423,388.719,281.6,384,281.6z"/>
+	</g>
+</g>
+<g>
+	<g>
+		<path d="M221.867,281.6H128c-4.719,0-8.533,3.823-8.533,8.533V384c0,4.71,3.814,8.533,8.533,8.533h93.867    c4.719,0,8.533-3.823,8.533-8.533v-93.867C230.4,285.423,226.586,281.6,221.867,281.6z"/>
+	</g>
+</g>
+<g>
+	<g>
+		<path d="M221.867,119.467H128c-4.719,0-8.533,3.823-8.533,8.533v93.867c0,4.71,3.814,8.533,8.533,8.533h93.867    c4.719,0,8.533-3.823,8.533-8.533V128C230.4,123.29,226.586,119.467,221.867,119.467z"/>
+	</g>
+</g>
+<g>
+	<g>
+		<path d="M384,119.467h-93.867c-4.719,0-8.533,3.823-8.533,8.533v93.867c0,4.71,3.814,8.533,8.533,8.533H384    c4.719,0,8.533-3.823,8.533-8.533V128C392.533,123.29,388.719,119.467,384,119.467z"/>
+	</g>
+</g>
+</svg>
+
+
+
+<svg v-else xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 24 24" fill="none">
+<path d="M16 4H16.01M16 12H16.01M12 4H12.01M12 8H12.01M12 12H12.01M12 16H12.01M12 20H12.01M16 20H16.01M8 4H8.01M8 12H8.01M4 4H4.01M4 8H4.01M4 12H4.01M4 16H4.01M4 20H4.01M8 20H8.01M20 4H20.01M20 8H20.01M20 12H20.01M20 16H20.01M20 20H20.01" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+        <!-- <span v-if="selectedObjects.length === objectMaskRegions.length">
+          {{selectedObjects.length}} 
+        </span> -->
+            
+        </a-button>
+
+         <!-- Remove Selected -->
+      <a-button
+     
+          @click="removeSelectedObjects"
+          style="background-color: red;color:white;display: flex;justify-content: center;align-items: center;"
+          danger          
+          :disabled="selectedObjects.length === 0 || drawingMode"
+        >
+          <!-- Remove Selected  -->
+           <DeleteOutlined />
+          {{ selectedObjects.length }}
+        </a-button>
+
+        <!-- Reset Room -->
+        <a-button
+          type="primary"
+          style="display:flex;justify-content:center;align-items: center;gap:5px;"
+          @click="reset_entire_room"
+          :disabled="isLoading || drawingMode"
+        >
+        <RedoOutlined />
+          Reset room
+        </a-button>
       </div>
 
       <!-- Draw Removal -->
 
-      <!-- Remove Selected -->
-      <div className="flex w-full flex-row gap-28 justify-between">
-        <button
-          @click="removeSelectedObjects"
-          className=" !text-red-600  rounded-md p-2 whitespace-nowrap"
-          :disabled="selectedObjects.length === 0 || drawingMode"
-        >
-          Remove Selected ({{ selectedObjects.length }})
-        </button>
-
-        <!-- Reset Room -->
-        <button
-          type="primary"
-          className="!text-blue-700 -translate-x-10 rounded-md p-2 whitespace-nowrap "
-          @click="reset_entire_room"
-          :disabled="isLoading || drawingMode"
-        >
-          Reset room
-        </button>
-      </div>
+     
 
       <!-- Add above the Apply Changes button section -->
       <!-- <div class="flex items-center space-x-6 mb-4 justify-center">
@@ -624,6 +636,7 @@
 import DrawRemovalModal from "@/components/update_catalogue/canvas_renderer/draw_removal_area_room.vue";
 import switch_furniture from "@/components/update_catalogue/bottom_drawer_item_components/switch_furniture.vue";
 import { DotLottieVue } from "@lottiefiles/dotlottie-vue";
+import { DeleteOutlined ,RedoOutlined  } from '@ant-design/icons-vue';
 
 export default {
   name: "item_remove_renderer",
@@ -667,6 +680,8 @@ export default {
     DrawRemovalModal,
     switch_furniture,
     DotLottieVue,
+    DeleteOutlined,
+    RedoOutlined ,
   },
   data() {
     return {
@@ -2862,60 +2877,86 @@ export default {
     // Keep simple fast version for handleObjectHover
     handleObjectHover(e) {
       if (this.isLoading || this.isDragging || this.objectMasksLoading) return;
-
       const rect = this.canvas.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
-
       let foundObject = null;
-
       for (let i = this.objectMaskRegions.length - 1; i >= 0; i--) {
         const region = this.objectMaskRegions[i];
-
         if (this.isPointInObjectMask(x, y, region.index)) {
           foundObject = region.objectKey;
           break;
         }
       }
-
+      // Only redraw if hovering changed
       if (foundObject !== this.hoveredObject) {
         this.hoveredObject = foundObject;
-
+        // STEP 1: Always redraw selected objects in red first
+        if (this.selectedObjects.length > 0) {
+          this.drawPersistentSelectionHighlight();
+        }
+        // STEP 2: Add yellow hover highlight on top
+        if (foundObject && !this.selectedObjects.includes(foundObject)) {
+          // Hovering over unselected object - show yellow highlight
+          if (!this.drawingMode) {
+            this.drawHoverHighlight(foundObject);
+          }
+        } else if (!foundObject) {
+          // Not hovering over anything
+          if (this.selectedObjects.length === 0) {
+            // No selected objects either - clear canvas
+            this.overlayCtx.clearRect(
+              0,
+              0,
+              this.canvasWidth,
+              this.canvasHeight
+            );
+          }
+          // If there are selected objects, they're already drawn above
+        }
+        // Update cursor
         if (foundObject) {
-          if (this.selectedObjects.includes(foundObject)) {
-            this.drawPersistentSelectionHighlight();
-            this.canvas.style.cursor = "pointer";
-          } else if (
-            this.drawingMode &&
-            !this.selectedObjects.includes(foundObject)
-          ) {
-            this.overlayCtx.clearRect(
-              0,
-              0,
-              this.canvasWidth,
-              this.canvasHeight
-            );
-            this.canvas.style.cursor = "default";
-          } else {
-            this.highlightObject(foundObject);
-            this.canvas.style.cursor = "pointer";
-          }
+          this.canvas.style.cursor = "pointer";
         } else {
-          if (this.selectedObjects.length > 0) {
-            this.drawPersistentSelectionHighlight();
-          } else {
-            this.overlayCtx.clearRect(
-              0,
-              0,
-              this.canvasWidth,
-              this.canvasHeight
-            );
-          }
           this.canvas.style.cursor = this.zoom > 1 ? "grab" : "default";
         }
       }
     },
-
+ drawHoverHighlight(objectKey) {
+      const region = this.objectMaskRegions.find(
+        (r) => r.objectKey === objectKey
+      );
+      if (!region || !this.overlayCtx) return;
+      this.overlayCtx.save();
+      this.overlayCtx.translate(this.panX, this.panY);
+      this.overlayCtx.scale(this.zoom, this.zoom);
+      const imageData = region.imageData;
+      const data = imageData.data;
+      // Bright yellow for hover
+      this.overlayCtx.fillStyle = "rgba(255, 165, 0, 0.4)";
+      const step = this.hoverPixelStep;
+      for (let y = 0; y < this.canvasHeight; y += step) {
+        let startX = -1;
+        for (let x = 0; x < this.canvasWidth; x += step) {
+          const index = (y * this.canvasWidth + x) * 4;
+          const r = data[index];
+          const g = data[index + 1];
+          const b = data[index + 2];
+          if (r > 200 && g > 200 && b > 200) {
+            if (startX === -1) startX = x;
+          } else {
+            if (startX !== -1) {
+              this.overlayCtx.fillRect(startX, y, x - startX, step);
+              startX = -1;
+            }
+          }
+        }
+        if (startX !== -1) {
+          this.overlayCtx.fillRect(startX, y, this.canvasWidth - startX, step);
+        }
+      }
+      this.overlayCtx.restore();
+    },
     isPointInObjectMask(x, y, maskIndex) {
       if (!this.objectMaskImageData[maskIndex]) return false;
 
@@ -3094,15 +3135,31 @@ export default {
     // },
 
     // Update removeObjectHighlight to be more thorough
+    // removeObjectHighlight() {
+    //   this.hoveredObject = null;
+    //   if (this.overlayCtx) {
+    //     // Clear the entire overlay canvas
+    //     this.overlayCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+    //     // Make sure to clear saved state
+    //     this.overlayCtx.restore();
+    //   }
+    // },
+
     removeObjectHighlight() {
-      this.hoveredObject = null;
-      if (this.overlayCtx) {
-        // Clear the entire overlay canvas
-        this.overlayCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-        // Make sure to clear saved state
-        this.overlayCtx.restore();
-      }
-    },
+  this.hoveredObject = null;
+  if (this.overlayCtx) {
+    this.overlayCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+    // Redraw selected objects after clearing
+    if (this.selectedObjects.length > 0) {
+      this.drawPersistentSelectionHighlight();
+    }
+  }
+},
+
+
+
+
+
 
     // =================== RENDERING ===================
 

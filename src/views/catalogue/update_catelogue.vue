@@ -450,16 +450,16 @@ Switch Furniture</a-button> -->
   
               <!-- Category Tabs -->
               <div class="category-section" v-if="active_tab_image === 'item_replacement'">
-                <div class="category-tabs !py-1">
-                  <div :class="select_replace === 'All' ? 'category-tab active' : 'category-tab'" @click="selectCategory('All')">
+                <div class="category-tabs">
+                  <div :class="select_replace === 'All' ? 'category-tab active' : 'category-tab'" @click="selectCategory('All')"  >
                    <svg width="1.875em" height="1.5em" viewBox="13 1 38 30" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M32 3L43.5 9.5L43.5 23L32 29L20.5 23L20.5 9.5L32 3ZM32 3V16.5" stroke="currentColor" stroke-linejoin="round"></path><path d="M32 16.5L43.5 23L32 29L20.5 23L32 16.5Z" fill="url(#paint0_linear_1_56)" stroke="currentColor" stroke-linejoin="round"></path><defs><linearGradient id="paint0_linear_1_56" x1="32" y1="16.5" x2="32" y2="29" gradientUnits="userSpaceOnUse"><stop stop-color="#00000033" stop-opacity="0"></stop><stop offset="1" stop-color="#00000033"></stop></linearGradient></defs></svg>
                     All
                   </div>
-                  <div :class="select_replace === 'Floor' ? 'category-tab active' : 'category-tab'" @click="selectCategory('Floor')">
+                  <div :class="select_replace === 'Floor' ? 'category-tab active' : 'category-tab'" @click="selectCategory('Floor')" v-if="brand_floors.length>0">
                    <svg width="1.875em" height="1.5em" viewBox="13 1 38 30" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M32 3L43.5 9.5L43.5 23L32 29L20.5 23L20.5 9.5L32 3ZM32 3V16.5" stroke="currentColor" stroke-linejoin="round"></path><path d="M32 16.5L43.5 23L32 29L20.5 23L32 16.5Z" fill="url(#paint0_linear_1_56)" stroke="currentColor" stroke-linejoin="round"></path><defs><linearGradient id="paint0_linear_1_56" x1="32" y1="16.5" x2="32" y2="29" gradientUnits="userSpaceOnUse"><stop stop-color="#00000033" stop-opacity="0"></stop><stop offset="1" stop-color="#00000033"></stop></linearGradient></defs></svg>
                     Floor
                   </div>
-                  <div :class="select_replace === 'Furniture' ? 'category-tab active' : 'category-tab'" @click="selectCategory('Furniture')">
+                  <div :class="select_replace === 'Furniture' ? 'category-tab active' : 'category-tab'" @click="selectCategory('Furniture')" v-if="brand_furniture_products.length>0">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
                     <path d="M4.59 13.83V16.13M13.79 13.83V16.13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                     <path d="M15.32 7.70C15.32 6.27 15.32 5.55 15.01 5.02C14.81 4.67 14.52 4.38 14.17 4.18C13.64 3.87 12.92 3.87 11.49 3.87H6.89C5.46 3.87 4.74 3.87 4.21 4.18C3.86 4.38 3.57 4.67 3.37 5.02C3.06 5.55 3.06 6.27 3.06 7.70" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
@@ -467,14 +467,37 @@ Switch Furniture</a-button> -->
                   </svg>
                   Furniture
                   </div>
-                  <div :class="select_replace === 'Wall' ? 'category-tab active' : 'category-tab'" @click="selectCategory('Wall')">
+                  <div :class="select_replace === 'Wall' ? 'category-tab active' : 'category-tab'" @click="selectCategory('Wall')" v-if="brand_walls.length>0">
                    <svg width="1.875em" height="1.5em" viewBox="13 1 38 30" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M32 29L43.5 23L43.5 9.5L32 3L20.5 9.5L20.5 23L32 29Z" stroke="currentColor" stroke-linejoin="round"></path><path d="M43.5 9.5L32 3V16.25L43.5 23L43.5 9.5Z" fill="url(#paint0_linear_2_147)" stroke="currentColor" stroke-linejoin="round"></path><path d="M32 3L20.5 9.5L20.5 23L32 16.25L32 3Z" fill="url(#paint1_linear_2_147)" stroke="currentColor" stroke-linejoin="round"></path><defs><linearGradient id="paint0_linear_2_147" x1="43.5" y1="13" x2="32" y2="13" gradientUnits="userSpaceOnUse"><stop stop-color="#00000033"></stop><stop offset="1" stop-color="#00000033" stop-opacity="0"></stop></linearGradient><linearGradient id="paint1_linear_2_147" x1="20.5" y1="14.5" x2="32" y2="14.5" gradientUnits="userSpaceOnUse"><stop stop-color="#00000033"></stop><stop offset="1" stop-color="#00000033" stop-opacity="0"></stop></linearGradient></defs></svg> 
                    Wall
                   </div>
-                  <div :class="select_replace === 'Lights' ? 'category-tab active' : 'category-tab'" @click="selectCategory('Lights')">
+                  <div :class="select_replace === 'Lights' ? 'category-tab active' : 'category-tab'" @click="selectCategory('Lights')" v-if="brand_lights.length>0">
                   <BulbOutlined style="font-size: 14px;" />  Lights
                   </div>
-                </div>
+
+
+
+
+                  <div :class="'category-tab deactive'"  v-if="brand_floors.length === 0">
+                   <svg width="1.875em" height="1.5em" viewBox="13 1 38 30" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M32 3L43.5 9.5L43.5 23L32 29L20.5 23L20.5 9.5L32 3ZM32 3V16.5" stroke="currentColor" stroke-linejoin="round"></path><path d="M32 16.5L43.5 23L32 29L20.5 23L32 16.5Z" fill="url(#paint0_linear_1_56)" stroke="currentColor" stroke-linejoin="round"></path><defs><linearGradient id="paint0_linear_1_56" x1="32" y1="16.5" x2="32" y2="29" gradientUnits="userSpaceOnUse"><stop stop-color="#00000033" stop-opacity="0"></stop><stop offset="1" stop-color="#00000033"></stop></linearGradient></defs></svg>
+                    Floor
+                  </div>
+                  <div :class="'category-tab deactive'" v-if="brand_furniture_products.length === 0">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M4.59 13.83V16.13M13.79 13.83V16.13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    <path d="M15.32 7.70C15.32 6.27 15.32 5.55 15.01 5.02C14.81 4.67 14.52 4.38 14.17 4.18C13.64 3.87 12.92 3.87 11.49 3.87H6.89C5.46 3.87 4.74 3.87 4.21 4.18C3.86 4.38 3.57 4.67 3.37 5.02C3.06 5.55 3.06 6.27 3.06 7.70" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    <path d="M15.32 7.70C14.48 7.70 13.79 8.39 13.79 9.23V10.77C13.79 11.40 13.66 11.53 13.03 11.53H5.36C4.73 11.53 4.59 11.40 4.59 10.77V9.23C4.59 8.39 3.91 7.70 3.06 7.70C2.21 7.70 1.53 8.39 1.53 9.23C1.53 9.80 1.84 10.30 2.29 10.56V10.77C2.29 12.21 2.29 12.93 2.74 13.38C3.19 13.83 3.92 13.83 5.36 13.83H13.03C14.47 13.83 15.19 13.83 15.64 13.38C16.09 12.93 16.09 12.21 16.09 10.77V10.56C16.55 10.30 16.86 9.80 16.86 9.23C16.86 8.39 16.17 7.70 15.32 7.70Z" stroke="currentColor" stroke-width="1.5"/>
+                  </svg>
+                  Furniture
+                  </div>
+                  <div :class="'category-tab deactive'"  v-if="brand_walls.length === 0">
+                   <svg width="1.875em" height="1.5em" viewBox="13 1 38 30" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M32 29L43.5 23L43.5 9.5L32 3L20.5 9.5L20.5 23L32 29Z" stroke="currentColor" stroke-linejoin="round"></path><path d="M43.5 9.5L32 3V16.25L43.5 23L43.5 9.5Z" fill="url(#paint0_linear_2_147)" stroke="currentColor" stroke-linejoin="round"></path><path d="M32 3L20.5 9.5L20.5 23L32 16.25L32 3Z" fill="url(#paint1_linear_2_147)" stroke="currentColor" stroke-linejoin="round"></path><defs><linearGradient id="paint0_linear_2_147" x1="43.5" y1="13" x2="32" y2="13" gradientUnits="userSpaceOnUse"><stop stop-color="#00000033"></stop><stop offset="1" stop-color="#00000033" stop-opacity="0"></stop></linearGradient><linearGradient id="paint1_linear_2_147" x1="20.5" y1="14.5" x2="32" y2="14.5" gradientUnits="userSpaceOnUse"><stop stop-color="#00000033"></stop><stop offset="1" stop-color="#00000033" stop-opacity="0"></stop></linearGradient></defs></svg> 
+                   Wall
+                  </div>
+                  <div :class="'category-tab deactive'" v-if="brand_lights.length === 0">
+                  <BulbOutlined style="font-size: 14px;" />  Lights
+                  </div>
+                  </div>
   
             
     <div 

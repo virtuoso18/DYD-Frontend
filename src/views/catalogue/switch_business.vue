@@ -40,7 +40,7 @@
     <h3 style="color:black">{{ business.name }}</h3>
     <!-- {{ business.slug }} -->
 
-    <a-button  @click="$emit('switch-brand-profesional-user', business.slug)" type="primary" block style="display: flex;gap:10px;justify-content: center; align-items: center;"><SwapOutlined/> Switch Brand </a-button>
+    <a-button  @click="clickBusiness(business.slug)" type="primary" block style="display: flex;gap:10px;justify-content: center; align-items: center;" :loading="loading"><SwapOutlined/> Switch Brand </a-button>
   </a-col>
 </a-row>
  </div>
@@ -111,6 +111,7 @@ export default {
   },
   data() {
     return {
+
       all_businesses: [],
       current_page: 1,
       total_pages: 1,
@@ -124,6 +125,10 @@ export default {
   },
   computed: {},
   methods: {
+    clickBusiness(business_slug){
+        this.loading=true;
+        this.$emit('switch-brand-profesional-user', business_slug)
+    },
     async fetch_All_Business_Accounts() {
       try {
         this.loading = true;
