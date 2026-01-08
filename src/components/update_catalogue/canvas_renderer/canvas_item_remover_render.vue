@@ -410,26 +410,37 @@
 <svg v-else xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 24 24" fill="none">
 <path d="M16 4H16.01M16 12H16.01M12 4H12.01M12 8H12.01M12 12H12.01M12 16H12.01M12 20H12.01M16 20H16.01M8 4H8.01M8 12H8.01M4 4H4.01M4 8H4.01M4 12H4.01M4 16H4.01M4 20H4.01M8 20H8.01M20 4H20.01M20 8H20.01M20 12H20.01M20 16H20.01M20 20H20.01" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
-        <span v-if="selectedObjects.length === objectMaskRegions.length">
+        <!-- <span v-if="selectedObjects.length === objectMaskRegions.length">
           {{selectedObjects.length}} 
-        </span>
+        </span> -->
             
         </a-button>
 
+        <!-- class="control-btn remove" -->
         <a-button
           @click="removeSelectedObjects"
-          class="control-btn remove"
+          style="display: flex;justify-content: center;align-items: center;background-color:red;color:white"
+          :style="{
+    color: 'white',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: selectedObjects.length === 0 ? 'rgb(285, 85, 96)' : 'red'
+  }"
           :disabled="selectedObjects.length === 0 || drawingMode"
         >
-          Remove Selected ({{ selectedObjects.length }})
+         <DeleteOutlined/> {{ selectedObjects.length }}
         </a-button>
 
         <a-button
           type="primary"
           class="toolbar-btn primary-btn"
+          style="display:flex;justify-content:center;align-items: center;gap:5px;"
+
           @click="reset_entire_room"
           :disabled="isLoading || drawingMode"
         >
+        <RedoOutlined />
           Reset room
         </a-button>
       </div>
@@ -518,22 +529,27 @@
 
          <!-- Remove Selected -->
       <a-button
-     
-          @click="removeSelectedObjects"
-          style="background-color: red;color:white;display: flex;justify-content: center;align-items: center;"
-          danger          
-          :disabled="selectedObjects.length === 0 || drawingMode"
-        >
-          <!-- Remove Selected  -->
-           <DeleteOutlined />
-          {{ selectedObjects.length }}
-        </a-button>
+  @click="removeSelectedObjects"
+  danger
+   :style="{
+    color: 'white',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: selectedObjects.length === 0 ? 'rgb(285, 85, 96)' : 'red'
+  }"
+  :disabled="selectedObjects.length === 0 || drawingMode"
+>
+  <DeleteOutlined />
+  {{ selectedObjects.length }}
+</a-button>
 
         <!-- Reset Room -->
         <a-button
           type="primary"
           style="display:flex;justify-content:center;align-items: center;gap:5px;"
           @click="reset_entire_room"
+          
           :disabled="isLoading || drawingMode"
         >
         <RedoOutlined />
@@ -1944,6 +1960,7 @@ export default {
         this.clearSelections();
       } else {
         this.selectAllObjects();
+        this.drawPersistentSelectionHighlight();
       }
     },
 

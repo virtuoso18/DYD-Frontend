@@ -1,5 +1,13 @@
 <template>
-  <div class="dashboard-container ">
+ <!-- Profile Completion Modal -->
+              <ProfileCompletionModal
+                :isOpen="showCompletionModal"
+                :initialSteps="profileSteps"
+                @close="showCompletionModal = false"
+                @complete="handleProfileComplete"
+              />
+
+<div class="dashboard-container ">
    
     <!-- Mobile Header - Only visible on mobile when viewing content -->
     <div v-if="!menu_view_mobile" class="mobile-header md:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-[#e9ecef] px-4 py-3 flex items-center justify-between shadow-sm">
@@ -25,7 +33,7 @@
         :class="{ 'mobile-sidebar-visible': menu_view_mobile }"
       >
         <div class="sidebar">
-          
+           
           <div class="user-info">
             <div class="user-avatar">
               <img :src="this.$store.state.root_media_api+profile.profile_picture" alt="John Doe" />
@@ -39,7 +47,7 @@
     class="absolute -translate-y-0 right-[10px] w-full flex justify-center cursor-pointer"
     @click="showCompletionModal = true"
   >
-    <div class="completion-circle">
+    <!-- <div class="completion-circle">
                         <span class="completion-text inline-flex items-center justify-center" style="font-family: Poppins; font-weight: 400; font-style: normal; font-size: 12px; line-height: 20px; letter-spacing: 0; text-align: center; color: #3b63fb;">
 
         <svg xmlns="http://www.w3.org/2000/svg" width="22px" height="22px" viewBox="0 0 24 24" fill="none">
@@ -57,10 +65,31 @@
         </svg>
         &nbsp;90% completed
       </span>
-    </div>
+    </div> -->
+    <div class="completion-badge" @click="openCompletionModal" style="width:100%;margin:auto">
+                <div class="completion-circle">
+                  <span class="completion-text">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="22px"
+                      height="22px"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        clip-rule="evenodd"
+                        d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12ZM12 17.75C12.4142 17.75 12.75 17.4142 12.75 17V11C12.75 10.5858 12.4142 10.25 12 10.25C11.5858 10.25 11.25 10.5858 11.25 11V17C11.25 17.4142 11.5858 17.75 12 17.75ZM12 7C12.5523 7 13 7.44772 13 8C13 8.55228 12.5523 9 12 9C11.4477 9 11 8.55228 11 8C11 7.44772 11.4477 7 12 7Z"
+                        fill="currentcolor"
+                      />
+                    </svg>
+                    &nbsp;{{ completionPercentage }}% completed
+                  </span>
+                </div>
+              </div>
   </div>
             
-            <div class="package-info pt-14">
+            <div class="package-info pt-12">
               <div class="package-header">
                 <span class="package-label text-center" style="font-family: Poppins; font-weight: 400; font-style: normal; font-size: 10px; line-height: 20px; letter-spacing: 0;">
                   Your package</span>
@@ -808,15 +837,48 @@ Comunity  </span>
 
 <script>
 import { notification } from 'ant-design-vue'
-
+import ProfileCompletionModal from "./ProfileCompletionModal.vue";
 export default {
   name: 'DashboardManager_professional_user',
   
+  components: {
+    ProfileCompletionModal,
+  },
+
   data() {
     return {
       user: JSON.parse(localStorage.getItem('user')),
       profile: JSON.parse(localStorage.getItem('profile')),
-      menu_view_mobile: true // Track mobile view state - true shows menu, false shows content
+      menu_view_mobile: true, // Track mobile view state - true shows menu, false shows content
+      
+      // Profile Completion Modal
+      showCompletionModal: false,
+      profileSteps: [
+        {
+          id: 1,
+          title: "Personal details",
+          description:
+            "Please fill in your personal details accurately to ensure a smooth process.",
+          completed: false,
+          missing_fields: [], // Add this
+        },
+        {
+          id: 2,
+          title: "Business details",
+          description: "Please fill in your Business details accurately.",
+          completed: false,
+          missing_fields: [], // Add this
+        },
+        
+        {
+          id: 3,
+          title: "Generate Your First Simulation",
+          description:
+            "Create your first simulation with products that you have in your business AI catalog.",
+          completed: false,
+          missing_fields: [], // Add this
+        },
+      ],
     }
   },
   
@@ -835,7 +897,19 @@ export default {
         'professional_settings': 'Settings'
       }
       return titles[this.$route.name] || 'Dashboard'
-    }
+    },
+
+    
+    completionPercentage() {
+      const completed = this.profileSteps.filter(
+        (step) => step.completed
+      ).length;
+      return Math.round((completed / this.profileSteps.length) * 100);
+    },
+
+    isProfileComplete() {
+      return this.profileSteps.every((step) => step.completed);
+    },
   },
   
   watch: {
@@ -848,9 +922,11 @@ export default {
     }
   },
   
-  mounted() {
+  async mounted() {
     // Check initial screen size
     this.checkScreenSize()
+    // Fetch profile completion status on mount
+    await this.fetchOnboardingProgress();
     window.addEventListener('resize', this.checkScreenSize)
   },
   
@@ -859,6 +935,93 @@ export default {
   },
   
   methods: {
+    handleProfileComplete() {
+      this.showCompletionModal = false;
+
+      // notification.success({
+      //   message: "Profile Completed!",
+      //   description: "Your profile setup is now complete. You can start using all features.",
+      //   placement: 'bottomRight'
+      // });
+
+      // Optional: Reload profile data or redirect
+      this.fetchProfileStatus();
+    },
+    async fetchOnboardingProgress() {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch(
+          `${this.$store.state.root_api}Auth/api/onboarding-progress-profesional/`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Token ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log("Onboarding Progress:", data);
+
+          // Update profileSteps with API response including missing_fields
+          if (data.success && data.data.steps) {
+            data.data.steps.forEach((apiStep) => {
+              const localStep = this.profileSteps.find(
+                (s) => s.id === apiStep.step
+              );
+              if (localStep) {
+                localStep.completed = apiStep.is_completed;
+                // Add missing fields from API response
+                localStep.missing_fields = apiStep.missing_fields || [];
+                // Add metadata if present (for step 3)
+                if (apiStep.metadata) {
+                  localStep.metadata = apiStep.metadata;
+                }
+              }
+            });
+          }
+
+          // Update completion percentage
+          const completed = this.profileSteps.filter(
+            (step) => step.completed
+          ).length;
+          const completionPercent = Math.round(
+            (completed / this.profileSteps.length) * 100
+          );
+          console.log(`Profile Completion: ${completionPercent}%`);
+
+          return data;
+        } else {
+          console.error(
+            "Failed to fetch onboarding progress:",
+            response.status
+          );
+          notification.error({
+            message: "Failed to load progress",
+            description: "Unable to fetch your onboarding progress",
+            placement: "bottomRight",
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching onboarding progress:", error);
+        notification.error({
+          message: "Error",
+          description: "An error occurred while fetching your progress",
+          placement: "bottomRight",
+        });
+      }
+    },
+
+    openCompletionModal() {
+      this.fetchOnboardingProgress();
+      this.showCompletionModal = true;
+    },
+
+    closeCompletionModal() {
+      this.showCompletionModal = false;
+    },
     checkScreenSize() {
       // Reset to dashboard view on mobile load
       if (window.innerWidth < 768) {
@@ -989,12 +1152,12 @@ export default {
   color: #6b7280;
   font-size: 14px;
 }
-
+/* 
 .completion-badge {
   position: absolute;
   top: 10px;
-  right: 10px;
-}
+  left: 10px;
+} */
 
 .completion-circle {
   display: inline-block;
@@ -1002,6 +1165,11 @@ export default {
   padding: 8px 16px;
   font-size: 14px;
   font-weight: 600;
+}
+
+.completion-circle:hover {
+  border:1px solid #3b83f63d ;
+  border-radius:16px
 }
 
 .completion-text {

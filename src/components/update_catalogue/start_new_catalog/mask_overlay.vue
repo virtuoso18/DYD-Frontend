@@ -18,7 +18,7 @@
           }"
         ></canvas>
       </div>
-      <button
+      <!-- <button
         @click="removeObject(index)"
         class="p-2 hover:bg-red-100 text-red-600 rounded-lg transition-colors bg-white absolute right-4 bottom-4 cursor-pointer"
       >
@@ -46,7 +46,7 @@
             fill="#E33827"
           />
         </svg>
-      </button>
+      </button> -->
     </div>
   </div>
 </template>

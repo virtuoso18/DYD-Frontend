@@ -290,6 +290,17 @@
         >
           Credits
         </button>
+        <button
+          @click="activeTab = 'credits_used'"
+          :class="[
+            'pb-3 px-1 text-sm font-medium !text-gray-700 border-b-2 transition-colors',
+            activeTab === 'credits_used'
+              ? 'border-[#3B63FB] text-[#3B63FB]'
+              : 'border-transparent text-[#8c8c8c] hover:text-[#262626]'
+          ]"
+        >
+          Credits Used
+        </button>
       </div>
     </div>
 
@@ -411,7 +422,7 @@
                 :key="record.key"
                 class="border-b border-[#f0f0f0] hover:bg-[#fafafa] transition-colors"
               >
-                <td class="py-4 px-4 font-medium text-[#262626]">{{ formatDate(record.date) }}</td>
+                <td class="py-4 px-4 font-medium text-[#262626]">{{ formatDate(record.purchase_date) }}</td>
                 <td class="py-4 px-4 font-medium text-[#262626] text-center">
                   {{ record.purchased_credits }}
                 </td>
@@ -471,6 +482,10 @@
           </div>
         </div>
       </div>
+        <div v-show="activeTab === 'credits_used'">
+          Well_PAGINATED_LIST_HERE
+<!-- List Here the Credits consumed By User  -->
+        </div>
     </div>
   </div>
         </div>

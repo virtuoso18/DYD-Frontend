@@ -641,9 +641,9 @@
   @error="handleImageError"
   @load="handleImageLoad"
 />
-
+<!-- {{ this.$store.state.root_media_api+brand_banner_logo }} -->
   <img 
-    src="../../assets/apply_changes_img.png" 
+    :src="this.$store.state.root_media_api+brand_banner_logo" 
     alt="Apply Changes"
     v-show="!imageLoading"
     style="
@@ -652,6 +652,7 @@
       right: 10px;
       width: 60px;
       height: 60px;
+      border-radius:10px;
     "
   />
 
@@ -1360,7 +1361,7 @@
 />
 
 
-  <img 
+  <!-- <img 
     src="../../assets/apply_changes_img.png" 
     alt="Apply Changes"
     style="
@@ -1369,6 +1370,19 @@
       right: 10px;
       width: 60px;
       height: 60px;
+    "
+  /> -->
+  <img 
+    :src="this.$store.state.root_media_api+brand_banner_logo" 
+    alt="Apply Changes"
+    v-show="!imageLoading"
+    style="
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      width: 60px;
+      height: 60px;
+      border-radius:10px;
     "
   />
 
@@ -1860,6 +1874,10 @@ export default {
       user: JSON.parse(localStorage.getItem('user')),
     imageLoading: true,  // ADD THIS
       SavedToMyDesignes:false,
+      
+      brand_name:'',
+      brand_avatar_logo:'',
+      brand_banner_logo:'',
 
       showRatingModal: false,
       openSeeAll_used_products:false,
@@ -2541,6 +2559,10 @@ export default {
             this.base_image_url = this.$store.state.root_media_api + responseData.data.image;
             this.main_image = this.$store.state.root_media_api + responseData.data.main_image;
             this.is_client_requested_room = responseData.data.is_client_requested_room;
+
+            this.brand_name=responseData.data.brand_name
+            this.brand_avatar_logo=responseData.data.brand_avatar_logo
+            this.brand_banner_logo=responseData.data.brand_banner_logo
             console.log("✅ Room data loaded:", this.base_image_url);
           } else {
             this.error.room = "Room is not ready yet. Please try again later.";

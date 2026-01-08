@@ -72,7 +72,7 @@
     <!-- White Section with Search -->
     <div class="white-section z-100 -translate-y-20 sm:translate-y-0">
       <div class="search-section">
-        <div class="search-container">
+        <div class="search-container relative">
           <!-- Custom Dropdown -->
           <div class="custom-dropdown" @click.stop="toggleDropdown">
             <div class="dropdown-selected">
@@ -128,16 +128,77 @@
             </ul>
           </div>
 
-          <input
+          <!-- <input
             type="text"
             class="search-input"
             placeholder="What are you looking for?"
             v-model="searchQuery"
             @keyup.enter="onSearch"
-          />
-          <button class="search-button" @click="onSearch">Search</button>
+          /> -->
+          <div style="width:100%">
+
+            <input
+    type="text"
+     class="search-input"
+     style="width:100%"
+    placeholder="What are you looking for?"
+    v-model="searchQuery"
+    @focus="onInputFocus"
+    @input="onInputChange"
+    @keydown.enter.prevent="onSearch"
+  />
+   <div
+  v-if="showTagDropdown && tagResults.length"
+  style="border:1px solid rgba(0,0,0,0.2); border-top:none;border-radius:0 0  10px 10px;position:relative"
+>
+  <ul>
+    <li v-if="tagLoading" class="px-4 py-2 text-sm text-gray-400">
+  Searching tags…
+</li>
+    <li
+      v-for="tag in tagResults"
+      :key="tag.id"
+      class="px-4 py-2 hover:bg-gray-100 cursor-pointer flex justify-between"
+      @click="goToTag(tag.name)"
+      style="padding:10px"
+    >
+      <span class="font-medium text-gray-800">
+        #{{ tag.name }}
+      </span>
+      <span class="text-xs text-gray-500">
+        {{ tag.post_count }} posts
+      </span>
+    </li>
+  </ul>
+
+  <!-- VIEW MORE -->
+  <div
+    v-if="tagHasNext"
+    class="px-4 py-2 text-center border-t cursor-pointer text-blue-600 text-sm hover:bg-gray-50"
+    @click="loadMoreTags"
+  >
+    View more
+  </div>
+</div>
+          </div>
+
+          <a-button type="primary" style="width:100%;max-width:100px" @click="onSearch">Search</a-button>
+
+
+          
+<!-- {{ tagResults }} -->
+
+        
+
         </div>
-      </div>
+      
+       
+
+
+
+
+</div>
+      
 
       <!-- Trending Section -->
       <div class="trending-section">
@@ -151,36 +212,36 @@
           class="trending-tags text-gray-700 flex flex-wrap gap-2 justify-center mt-3"
         >
           <!-- Button 1 -->
-          <button
-            class="bg-[#F2F2F2] !px-4 !py-1 rounded-md text-[12px] font-[400] leading-[100%] text-center font-space"
+          <button @click="this.$router.push('/comunity-posts/modern-interior')"
+            class="bg-[#F2F2F2] !px-4 !py-1 rounded-md text-[12px] font-[400] leading-[100%] text-center font-space cursor-pointer"
           >
             Modern Interior
           </button>
 
           <!-- Button 2 -->
-          <button
-            class="bg-[#F2F2F2] !px-4 !py-1 rounded-md text-[12px] font-[400] leading-[100%] text-center font-space"
+          <button @click="this.$router.push('/comunity-posts/modern-interior')"
+            class="bg-[#F2F2F2] !px-4 !py-1 rounded-md text-[12px] font-[400] leading-[100%] text-center font-space  cursor-pointer"
           >
             Kitchen setup
           </button>
 
           <!-- Button 3 -->
-          <button
-            class="bg-[#F2F2F2] !px-4 !py-1 rounded-md text-[12px] font-[400] leading-[100%] text-center font-space"
+          <button @click="this.$router.push('/comunity-posts/bedroom')"
+            class="bg-[#F2F2F2] !px-4 !py-1 rounded-md text-[12px] font-[400] leading-[100%] text-center font-space  cursor-pointer"
           >
             Bedroom kids
           </button>
 
           <!-- Button 4 -->
-          <button
-            class="bg-[#F2F2F2] !px-4 !py-1 rounded-md text-[12px] font-[400] leading-[100%] text-center font-space"
+          <button @click="this.$router.push('/comunity-posts/dining-room')"
+            class="bg-[#F2F2F2] !px-4 !py-1 rounded-md text-[12px] font-[400] leading-[100%] text-center font-space  cursor-pointer"
           >
             Dining room elegant
           </button>
 
           <!-- Button 5 -->
-          <button
-            class="bg-[#F2F2F2] !px-4 !py-1 rounded-md text-[12px] font-[400] leading-[100%] text-center font-space"
+          <button @click="this.$router.push('/comunity-posts/ccandinavian')"
+            class="bg-[#F2F2F2] !px-4 !py-1 rounded-md text-[12px] font-[400] leading-[100%] text-center font-space  cursor-pointer"
           >
             Scandinavian
           </button>
@@ -803,6 +864,21 @@ export default {
   },
   data() {
     return {
+
+      searchQuery: "",
+
+    // TAG SEARCH STATE
+    tagResults: [],
+    tagPage: 1,
+    tagPageSize: 8,
+    tagHasNext: false,
+    tagLoading: false,
+    showTagDropdown: false,
+
+    searchDebounceTimer: null,
+
+
+
       selectedCategory: "",
       selectedCategoryText: "Interior Design",
       selectedCategoryIcon:
@@ -839,6 +915,7 @@ export default {
         },
       ],
 
+      
       swiper_bg: swiper_bg,
       slidesPerView: window.innerWidth <= 768 ? 1 : 5,
       designers_slidesPerView: window.innerWidth <= 768 ? 3 : 8,
@@ -1246,6 +1323,19 @@ export default {
       postComments: [],
     };
   },
+  watch: {
+  searchQuery(newVal) {
+    if (!newVal || newVal.length < 2) {
+      this.resetTagSearch()
+      return
+    }
+
+    clearTimeout(this.searchDebounceTimer)
+    this.searchDebounceTimer = setTimeout(() => {
+      this.searchTags(true)
+    }, 300)
+  }
+},
   setup() {
     const onSwiper = (swiper) => {
       console.log(swiper);
@@ -1310,6 +1400,68 @@ export default {
     },
   },
   methods: {
+    resetTagSearch() {
+    this.tagResults = []
+    this.tagPage = 1
+    this.tagHasNext = false
+    this.showTagDropdown = false
+  },
+
+  async searchTags(reset = false) {
+  if (this.tagLoading) return
+
+  if (reset) {
+    this.tagPage = 1
+    this.tagResults = []
+  }
+
+  this.tagLoading = true
+
+  try {
+    const response = await fetch(
+      `${this.$store.state.root_api}community/api/search-post-tags?q=${encodeURIComponent(this.searchQuery)}&page=${this.tagPage}&page_size=${this.tagPageSize}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Token ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
+      }
+    )
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+
+    const res = await response.json()
+
+    // ✅ payload mapping
+    const data = res.data || []
+
+    this.tagResults = reset
+      ? data
+      : [...this.tagResults, ...data]
+
+    this.tagHasNext = res.pagination?.has_next ?? false
+    this.showTagDropdown = true
+  } catch (e) {
+    console.error("Tag search failed", e)
+  } finally {
+    this.tagLoading = false
+  }
+},
+
+
+  loadMoreTags() {
+    if (!this.tagHasNext) return
+    this.tagPage += 1
+    this.searchTags(false)
+  },
+
+  goToTag(tagName) {
+    this.resetTagSearch()
+    this.$router.push(`/comunity-posts/${encodeURIComponent(tagName)}`)
+  },
     //     data() {
     //   return {
     //     // ... your existing data properties ...
@@ -1989,7 +2141,7 @@ export default {
 /* Custom dropdown wrapper - matches HTML exactly */
 .custom-dropdown {
   position: relative;
-  width: 200px;
+  width: 250px;
   cursor: pointer;
   font-family: sans-serif;
 }
@@ -2452,5 +2604,15 @@ export default {
   .designs-section {
     padding: 40px 16px 60px;
   }
+}
+
+
+.search-container {
+  position: relative;
+}
+
+.search-dropdown {
+  max-height: 280px;
+  overflow-y: auto;
 }
 </style>

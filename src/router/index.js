@@ -113,6 +113,7 @@ import authentication from '@/views/auth/authenticaition.vue'
 import pricing from '@/views/pages/pricing.vue'
 import make_payment from '@/views/pages/make_payment.vue'
 import comunity from '@/views/pages/comunity.vue'
+import comunity_tagged_posts from '@/views/pages/comunity_tagged_posts.vue'
 import contactus from '@/views/pages/contactus.vue'
 import dashboard_manager from '@/views/user/dashboard.vue'
  
@@ -280,6 +281,12 @@ const router = createRouter({
       path: '/comunity',
       name: 'comunity',
       component: comunity,
+    },
+    
+    {
+      path: '/comunity-posts/:tag',
+      name: 'comunity_tagged_posts',
+      component: comunity_tagged_posts,
     },
     {
       path: '/contact-us',

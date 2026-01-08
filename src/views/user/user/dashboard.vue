@@ -45,38 +45,38 @@
               {{ user?.email || "johndoe@gmail.com" }}
             </p>
 
-            <div class="completion-badge sm:absolute sm:top-2.5 sm:right-2.5">
-              <div class="completion-circle">
-                <span class="completion-text inline-flex items-center justify-center" style="font-family: Poppins; font-weight: 400; font-style: normal; font-size: 12px; line-height: 20px; letter-spacing: 0; text-align: center; color: #3b63fb;">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="14px"
-                    height="14px"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    class="mr-1"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      clip-rule="evenodd"
-                      d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12ZM12 17.75C12.4142 17.75 12.75 17.4142 12.75 17V11C12.75 10.5858 12.4142 10.25 12 10.25C11.5858 10.25 11.25 10.5858 11.25 11V17C11.25 17.4142 11.5858 17.75 12 17.75ZM12 7C12.5523 7 13 7.44772 13 8C13 8.55228 12.5523 9 12 9C11.4477 9 11 8.55228 11 8C11 7.44772 11.4477 7 12 7Z"
-                      fill="currentColor"
-                    />
-                  </svg>
-                  &nbsp;90% completed
-                </span>
-              </div>
-            </div>
+              <!-- <div class="completion-badge sm:absolute sm:top-2.5 sm:right-2.5">
+                <div class="completion-circle">
+                  <span class="completion-text inline-flex items-center justify-center" style="font-family: Poppins; font-weight: 400; font-style: normal; font-size: 12px; line-height: 20px; letter-spacing: 0; text-align: center; color: #3b63fb;">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="14px"
+                      height="14px"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      class="mr-1"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        clip-rule="evenodd"
+                        d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12ZM12 17.75C12.4142 17.75 12.75 17.4142 12.75 17V11C12.75 10.5858 12.4142 10.25 12 10.25C11.5858 10.25 11.25 10.5858 11.25 11V17C11.25 17.4142 11.5858 17.75 12 17.75ZM12 7C12.5523 7 13 7.44772 13 8C13 8.55228 12.5523 9 12 9C11.4477 9 11 8.55228 11 8C11 7.44772 11.4477 7 12 7Z"
+                        fill="currentColor"
+                      />
+                    </svg>
+                    &nbsp;90% completed
+                  </span>
+                </div>
+              </div> -->
 
             <div class="package-info pt-12 md:pt-1 ">
-              <div class="package-header">
+              <!-- <div class="package-header">
                 <span class="package-label text-center" style="font-family: Poppins; font-weight: 400; font-style: normal; font-size: 10px; line-height: 20px; letter-spacing: 0;">
                   Your package
                 </span>
                 <router-link to="/pricing" class="upgrade-link text-center" style="font-family: Poppins; font-weight: 500; font-style: normal; font-size: 10px; line-height: 20px; letter-spacing: 0; color: #3b63fb;">
                   Upgrade
                 </router-link>
-              </div>
+              </div> -->
               <div class="package-card">
                 <span class="package-type text-center" style="font-family: Poppins; font-weight: 500; font-style: normal; font-size: 14px; line-height: 20px; letter-spacing: 0; color: #3b63fb;">
                   Free User
