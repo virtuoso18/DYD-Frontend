@@ -1,4 +1,36 @@
 <template>
+  <a-modal   :open="open_select_bp_model"
+  centered
+  :footer="null"
+  @cancel="closeCartModal"
+  title="Select a Business">
+    <template #footer></template>
+    <div 
+  v-for="item in business_cart_links" 
+  class="li-business-cart"
+  
+  :key="item.id">
+
+    <div class="hover:bg-green-10 p-1 " style="display: flex;justify-content: start;gap:10px; cursor:pointer"   @click="handleBusinessClick(item)">
+              <a-avatar size="large" style="border:1px solid rgba(0,0,0,0.2)" :src="this.$store.state.root_media_api+item.business_profile_banner_picture" alt="" />
+              <div>
+                <h4 style="margin-bottom:0px">{{ item.business_profile_name }}</h4>
+              {{item.business_cart_url}}
+              {{item.business_cart_url ? "":"DYD Mini Site"}}
+              </div>
+            </div>
+
+         
+          <a-avatar-group :max-count="2" :max-style="{ color: '#f56a00', backgroundColor: '#fde3cf' }">
+          <a-avatar style="border:1px solid rgba(0,0,0,0.2)" :src="this.$store.state.root_media_api+i.product_image" v-for="i in item.cart_products">
+          </a-avatar>
+          </a-avatar-group>
+          
+
+
+      </div>
+  </a-modal>
+  
   <div class="cart-container">
     <!-- Header Section -->
     
@@ -72,6 +104,7 @@
           <a-avatar style="border:1px solid rgba(0,0,0,0.2)" :src="this.$store.state.root_media_api+item.business_profile_banner_picture" alt="" />
           <h4>{{ item.business_profile_name }}</h4>
         </div> -->
+        
       </div>
       
       <button 
@@ -164,7 +197,7 @@
                     <a-button type="text" block >
                       Add Furniture
                     </a-button>
-                    <a-button type="primary"  block  @click="checkout" :disabled="loading">
+                    <a-button type="primary"  block  @click="fetchWebsiteLinks" :disabled="loading">
                       <span v-if="!loading">Back To the Owner Web</span>
                       <span v-else>Processing...</span>
                     </a-button>
@@ -215,15 +248,22 @@ export default {
         shipping_charges: '0.00',
         total_payment: '0.00',
         created_at: '',
-        updated_at: ''
+        updated_at: '',
       },
-      loading: false
+      loading: false,
+      open_select_bp_model:false,
+      business_cart_links:[]
     };
   },
   mounted() {
     this.fetchCart();
+    
   },
   methods: {
+    closeCartModal(){
+      this.open_select_bp_model=false
+
+    },
     getApiUrl() {
       return this.$store.state.root_api;
     },
@@ -232,6 +272,15 @@ export default {
       return localStorage.getItem('token') || sessionStorage.getItem('token');
     },
 
+    handleBusinessClick(item){
+       if (item.business_cart_url) {
+      // Open cart link in new tab and switch focus
+      this.goToShop(item.business_cart_url)
+    } else {
+      // Fallback to business profile
+      this.$router.push(`/${item.business_profile_slug}`);
+    }
+    },
     async makeRequest(url, method = 'GET', data = null) {
       const headers = {
         'Authorization': `Token ${this.getToken()}`,
@@ -278,6 +327,45 @@ export default {
         });
         return null;
       }
+    },
+     goToShop(link_bp) {
+        let url = link_bp?.trim();
+
+        if (!url) return;
+
+        // If protocol missing, add https://
+        if (!/^https?:\/\//i.test(url)) {
+          url = `https://${url}`;
+        }
+        const newTab = window.open(url, "_blank", "noopener,noreferrer");
+        if (newTab) {
+          newTab.focus();
+        }
+      },
+
+    async fetchWebsiteLinks() {
+      this.loading = true;
+      const url = `${this.getApiUrl()}cart/goto-cart-link/`;
+      const result = await this.makeRequest(url, 'GET');
+      
+      if (result) {
+        if (result.type==='single'){
+          console.log(result)
+          // handle here for the mini site & the businesws_cart_url
+          if(result.business_cart_url){
+            this.goToShop(result.business_cart_url)
+          }else{
+            this.$router.push(`/${result.business_profile_slug}`);
+          }
+
+        }
+        if (result.type==='multiple'){
+            this.open_select_bp_model=true
+            this.business_cart_links=result.businesses
+        }
+      }
+      
+      this.loading = false;
     },
 
     async fetchCart() {
@@ -400,9 +488,7 @@ export default {
     },
 
    
-    goToShop() {
-      // this.$router.push('/shop');
-    },
+    
 
     formatPrice(price) {
       const numPrice = parseFloat(price);
@@ -462,4 +548,14 @@ export default {
   letter-spacing: -0.5px;
 }
 
+.li-business-cart{
+  padding:10px;
+  display: flex;justify-content: space-between;align-items: center;
+  border:1px solid rgba(0,0,0,0.1);
+  margin-bottom:10px
+}
+.li-business-cart:hover{
+  cursor: pointer;
+  border:1px solid rgba(0,0,255,0.3);
+}
 </style>

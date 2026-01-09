@@ -13,6 +13,7 @@
 
       <!-- Tags -->
       <div class="absolute top-3 left-3 flex gap-1 sm:gap-2">
+        <!-- {{ tags }} -->
         <span 
           v-for="(tag, index) in tags"
           :key="index"

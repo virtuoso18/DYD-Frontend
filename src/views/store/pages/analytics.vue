@@ -180,12 +180,14 @@
               </template>
 
               <template v-if="column.key === 'actions'">
-                <button
-                  style="background: #4f46e5; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; cursor: pointer;"
+                <a-button
+                type="primary"
+                size="small"
+                  style="display: flex;justify-content: center;align-items: center;"
                   @click="viewUserTransactions(record.user_id)"
                 >
-                  View Details
-                </button>
+                 <OrderedListOutlined />View Details
+                </a-button>
               </template>
             </template>
           </a-table>
@@ -201,9 +203,23 @@
   :placement="'bottom'"
   :closable="true"
   :height="'85vh'"
-  :title="`Credit Transactions - ${selectedUserEmail}`"
   :body-style="{ padding: '24px' }"
 >
+<template #title>
+  <div style="display: flex;justify-content: space-between;font-size:16px;font-weight:600;align-items: center;">
+
+    {{ `Credit Transactions - ${selectedUserEmail}` }}
+    
+    <a-button v-if="current_user.id!=selectedUserForDetails"
+    type="primary"
+    style="display:flex;justify-content:center;align-items:center;"
+    @click="startChatWithCustomer(selectedUserForDetails)"
+    >
+    Chat
+   <MessageOutlined /> 
+  </a-button>
+</div>
+</template>
   <!-- Date Range Filter for User Transactions -->
    <div style="margin-bottom: 16px; display: flex; gap: 16px; flex-wrap: wrap;">
             <a-date-picker
@@ -230,6 +246,8 @@
               <a-select-option value="success">Success</a-select-option>
               <a-select-option value="failed">Failed</a-select-option>
             </a-select>
+            
+             
           </div>
 
   <!-- User Summary Stats -->
@@ -296,14 +314,14 @@
                 <span style="font-size: 12px;">{{ record.description || '-' }}</span>
               </template>
 
-              <template v-if="column.key === 'chat_with_customer'">
+              <!-- <template v-if="column.key === 'chat_with_customer'">
                 <button
                   style="background: #4f46e5; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; cursor: pointer;"
                   @click="startChatWithCustomer(record)"
                 >
                   Chat
                 </button>
-              </template>
+              </template> -->
             </template>
           </a-table>
 </a-drawer>
@@ -425,16 +443,18 @@
 import { Chart, registerables } from 'chart.js'
 import AnalyticsProductCard from '@/components/store/AnalyticsProductCard.vue'
 import dayjs from 'dayjs'
-
+import {MessageOutlined,OrderedListOutlined} from '@ant-design/icons-vue'
 Chart.register(...registerables)
 
 export default {
   name: 'Analytics',
   components:{
-    AnalyticsProductCard
+    AnalyticsProductCard,
+    MessageOutlined,OrderedListOutlined
   },
   data() {
     return {
+      current_user:JSON.parse(localStorage.getItem('user')),
       chart: null,
       loading: false,
       creditChart: null,
@@ -612,12 +632,12 @@ export default {
           title: 'Description',
           key: 'description',
           width: 200,
-        },
-        {
-          title: 'Chat',
-          key: 'chat_with_customer',
-          width: 80,
         }
+        // {
+        //   title: 'Chat',
+        //   key: 'chat_with_customer',
+        //   width: 80,
+        // }
       ],
       productsData: [],
       drawerVisible: false,
@@ -656,7 +676,7 @@ export default {
   
   // Add these two lines:
   this.drawerVisible = true
-  await this.fetchUserTransactionDetails()
+  await this.fetchUserTransactionDetails(user)
 },
     truncateText(text, charLimit = 13) {
       if (!text) return ''
@@ -775,7 +795,7 @@ export default {
     // },
 
     // NEW: Fetch Individual User Transaction Details
-    async fetchUserTransactionDetails() {
+    async fetchUserTransactionDetails(user=null) {
       this.transactionDetailsLoading = true
       try {
         const params = new URLSearchParams()
@@ -1071,7 +1091,7 @@ export default {
         }
 
         const currentUser = JSON.parse(currentUserData)
-        const selectedUserId = creditTransaction.consumed_by_id
+        const selectedUserId = this.selectedUserForDetails
 
         if (!selectedUserId) {
           this.$message.error('Cannot initiate chat: User ID not found')
@@ -1237,7 +1257,7 @@ export default {
     
   async fetchFavoriteChartData() {
     try {
-      debugger
+      // debugger
       const params = new URLSearchParams()
 
       if (this.favoriteChartDateRange[0]) {

@@ -483,8 +483,143 @@
         </div>
       </div>
         <div v-show="activeTab === 'credits_used'">
-          Well_PAGINATED_LIST_HERE
-<!-- List Here the Credits consumed By User  -->
+          
+
+
+          <div v-show="activeTab === 'credits_used'">
+  <!-- Desktop Table -->
+  <div class="hidden md:block overflow-x-auto">
+    <table class="w-full text-sm border-collapse">
+      <thead>
+        <tr class="border-b border-[#f0f0f0]">
+          <th class="text-left py-3 px-4 font-medium text-[#8c8c8c] text-xs">Date</th>
+          <th class="text-left py-3 px-4 font-medium text-[#8c8c8c] text-xs">Type</th>
+          <th class="text-left py-3 px-4 font-medium text-[#8c8c8c] text-xs">Credits Used</th>
+          <th class="text-left py-3 px-4 font-medium text-[#8c8c8c] text-xs">Status</th>
+          <th class="text-left py-3 px-4 font-medium text-[#8c8c8c] text-xs">Description</th>
+          <!-- <th class="text-left py-3 px-4 font-medium text-[#8c8c8c] text-xs">Room</th> -->
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="transaction in creditsConsumptions"
+          :key="transaction.id"
+          class="border-b border-[#f0f0f0] hover:bg-[#fafafa] transition-colors"
+        >
+          <td class="py-4 px-4 font-medium text-[#262626]">
+            {{ formatDate(transaction.created_at) }}
+          </td>
+          <td class="py-4 px-4 text-[#262626]">
+            <span 
+              :class="[
+                'px-3 py-1 rounded-full text-xs font-medium',
+                transaction.type === 'consume' 
+                  ? 'bg-red-100 text-red-700' 
+                  : 'bg-green-100 text-green-700'
+              ]"
+            >
+              {{ transaction.type === 'consume' ? 'Consumed' : 'Deposited' }}
+            </span>
+          </td>
+          <td class="py-4 px-4 font-semibold" :class="transaction.credits_changed < 0 ? 'text-red-600' : 'text-green-600'">
+            {{ transaction.credits_changed }}
+          </td>
+          <td class="py-4 px-4">
+            <span 
+              :class="[
+                'px-3 py-1 rounded-full text-xs font-medium',
+                transaction.status === 'success' 
+                  ? 'bg-green-100 text-green-700'
+                  : transaction.status === 'pending'
+                  ? 'bg-yellow-100 text-yellow-700'
+                  : 'bg-red-100 text-red-700'
+              ]"
+            >
+              {{ transaction.status }}
+            </span>
+          </td>
+          <td class="py-4 px-4 text-[#8c8c8c] text-sm max-w-xs truncate">
+            {{ transaction.description || '-' }}
+          </td>
+          <!-- <td class="py-4 px-4 text-[#262626]">
+            {{ transaction.room || '-' }}
+          </td> -->
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Mobile Table View -->
+  <div class="block md:hidden">
+    <div class="space-y-3">
+      <div
+        v-for="transaction in creditsConsumptions"
+        :key="transaction.id"
+        class="bg-[#fafafa] rounded-lg p-3 border border-[#f0f0f0]"
+      >
+        <div class="flex justify-between items-start mb-2">
+          <span class="font-medium text-[#262626]">
+            {{ formatDateShort(transaction.created_at) }}
+          </span>
+          <span 
+            :class="[
+              'px-2 py-1 rounded text-xs font-medium',
+              transaction.status === 'success' 
+                ? 'bg-green-100 text-green-700'
+                : transaction.status === 'pending'
+                ? 'bg-yellow-100 text-yellow-700'
+                : 'bg-red-100 text-red-700'
+            ]"
+          >
+            {{ transaction.status }}
+          </span>
+        </div>
+        <div class="flex justify-between mb-2">
+          <span class="text-[#8c8c8c] text-xs">Type:</span>
+          <span class="text-[#262626]">{{ transaction.type === 'consume' ? 'Consumed' : 'Deposited' }}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-[#8c8c8c] text-xs">Credits:</span>
+          <span :class="transaction.credits_changed < 0 ? 'text-red-600 font-semibold' : 'text-green-600 font-semibold'">
+            {{ transaction.credits_changed }}
+          </span>
+        </div>
+        <div v-if="transaction.description" class="text-[#8c8c8c] text-xs mt-2">
+          {{ transaction.description }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="mt-6 flex justify-center">
+    <a-pagination
+      v-model:current="paginationConfig.current"
+      :page-size="paginationConfig.pageSize"
+      :total="paginationConfig.total"
+      :show-total="paginationConfig.showTotal"
+      :show-quick-jumper="paginationConfig.showQuickJumper"
+      @change="handlePaginationChange"
+      class="ant-pagination-custom"
+    />
+  </div>
+
+  <!-- Loading State -->
+  <div v-if="loading" class="flex justify-center items-center py-8">
+    <a-spin size="large" />
+  </div>
+
+  <!-- Error State -->
+  <div v-if="error && !loading" class="bg-red-50 border border-red-200 rounded-lg p-4 mt-4">
+    <p class="text-red-700 text-sm">{{ error }}</p>
+  </div>
+
+  <!-- Empty State -->
+  <div v-if="creditsConsumptions.length === 0 && !loading && !error" class="text-center py-8">
+    <p class="text-[#8c8c8c]">No credit transactions found</p>
+  </div>
+</div>
+
         </div>
     </div>
   </div>
@@ -518,12 +653,28 @@ export default {
         { title: 'Status', dataIndex: 'status', key: 'status', width: 100 }
       ],
       tableData_subscriptions: [],
-      tableData_credits: []
+      tableData_credits: [],
+
+
+      // ... existing data ...
+    creditsConsumptions: [],
+    paginationConfig: {
+      current: 1,
+      pageSize: 15,
+      total: 0,
+      showSizeChanger: false,
+      showQuickJumper: true,
+      showTotal: (total) => `Total ${total} transactions`
+    },
+    loading: false,
+    error: null
     };
   },
   mounted() {
     this.fetch_my_subscriptions();
     this.fetch_my_credits();
+      this.fetch_my_credits_consumptions(1);
+
   },
   methods: {
     downloadInvoice(invoicePath) {
@@ -551,6 +702,53 @@ export default {
         day: "numeric"
       });
     },
+// REPLACE the fetch_my_credits_consumptions method with this:
+async fetch_my_credits_consumptions(page = 1) {
+  try {
+    this.loading = true;
+    this.error = null;
+    const token = localStorage.getItem('token');
+    
+    const response = await fetch(
+      `${this.$store.state.root_api}subscription/api/profesional-user-credits-consumption/?page=${page}`,
+      {
+        method: 'GET',
+        headers: {
+          'Authorization': `Token ${token}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const result = await response.json();
+    
+    // Extract data from paginated response
+    if (result.results) {
+      this.creditsConsumptions = result.results.transactions || [];
+      this.paginationConfig.total = result.count || 0;
+      this.paginationConfig.current = page;
+    } else {
+      this.error = result.message || 'Failed to load credits consumption';
+    }
+  } catch (error) {
+    console.error('Error loading credits consumptions:', error);
+    this.error = 'Failed to load credits consumption data';
+  } finally {
+    this.loading = false;
+  }
+},
+
+// ADD this handler method:
+handlePaginationChange(page) {
+  this.paginationConfig.current = page;
+  this.fetch_my_credits_consumptions(page);
+}
+,
+
     async fetch_my_subscriptions() {
       try {
         this.loading = true;

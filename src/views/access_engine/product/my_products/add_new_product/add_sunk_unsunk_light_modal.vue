@@ -210,8 +210,8 @@
             <a-col
 :xs="24"
 :sm="24"
-:md="12"
-:lg="12"
+:md="14"
+:lg="14"
 > 
               <div style="padding-left: 12px;">
                 <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px; color: #1f2937;">Light Product Details</h3>

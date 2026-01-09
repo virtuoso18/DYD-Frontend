@@ -1236,7 +1236,7 @@ export default {
 .completion-text {
   display: flex;
   align-items: center;
-  color: blue;
+  color: #3b63fb;
   font-size: 14px;
   font-weight: 600;
   white-space: nowrap;

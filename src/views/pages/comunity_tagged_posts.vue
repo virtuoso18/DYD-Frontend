@@ -7,12 +7,12 @@
     </h1>
 
     <!-- LOADING -->
-    <div v-if="loading" class="text-center py-12 text-gray-500">
+    <!-- <div v-if="loading" class="text-center py-12 text-gray-500">
       Loading posts...
-    </div>
+    </div> -->
 
     <!-- EMPTY STATE -->
-    <div v-else-if="posts.length === 0" class="text-center py-12 text-gray-500">
+    <div v-if="posts.length === 0" class="text-center py-12 text-gray-500">
       No posts found for this tag.
     </div>
 
@@ -21,16 +21,14 @@
       v-else
       class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6"
     >
-    <!-- <div v-for="post in posts">
-        {{ post }}
-    </div> -->
       <a-row>
         <a-col v-for="post in posts" :sm="24" :xs="24" :md="24" :lg="24">
+          <!-- {{ post.tags }} -->
             <DesignCard
               :key="post.id"
               :image="this.$store.state.root_media_api+getPostImage(post)"
               :avatar="this.$store.state.root_media_api+getUserAvatar(post)"
-              :tags="getPostTags(post)"
+              :tags="post.tags"
               :name="post.post_owner.username"
               :likes="post.like_count"
               :views="post.view_count"
@@ -40,9 +38,6 @@
               />
         </a-col>
       </a-row>
-
-        <!-- width="100%" -->
-        <!-- height="250px" -->
     </div>
 
     <!-- PAGINATION -->
@@ -59,19 +54,31 @@
       />
     </div>
 
+    <!-- COMMENTS MODAL -->
+    <CommentsModal 
+      v-if="commentsModalVisible" 
+      :is-open="commentsModalVisible" 
+      :post="selectedPostForComments" 
+      @close="closeCommentsModal" 
+      @comment-added="handleCommentAdded" 
+      @like-toggled="handleLikeToggled" 
+    />
+
   </div>
 </template>
 
 <script>
-    import DesignCard from "@/components/Includes/DesignCard_tag_comunity_post.vue";
-    import CommentsModal from "./CommentsModal.vue";
+import DesignCard from "@/components/Includes/DesignCard_tag_comunity_post.vue";
+import CommentsModal from "./CommentsModal.vue";
+
 export default {
   name: "community_posts_tagged",
 
-   components: {
+  components: {
     DesignCard,
-        CommentsModal,
+    CommentsModal,
   },
+
   data() {
     return {
       posts: [],
@@ -79,6 +86,10 @@ export default {
       page: 1,
       pageSize: 12,
       totalCount: 0,
+      
+      // Comments Modal specific
+      commentsModalVisible: false,
+      selectedPostForComments: null,
     }
   },
 
@@ -106,7 +117,6 @@ export default {
 
       try {
         const response = await fetch(
-            
           `${this.$store.state.root_api}community/api/all-posts-by-tag/${encodeURIComponent(this.tag)}/?tag=${encodeURIComponent(this.tag)}&page=${this.page}&page_size=${this.pageSize}`,
           {
             headers: {
@@ -150,13 +160,63 @@ export default {
       return post.tags?.map(t => t.name) || []
     },
 
-    openPost(post) {
-
-    //   this.$router.push(`/community/post/${post.id}`)
-    // open the community post model Here
-
+    /**
+     * Open comments modal for a post
+     * Format the post data to match CommentsModal expectations
+     */
+    async openPost(post) {
+      this.selectedPostForComments = { 
+        ...post,
+        userAvatar: this.$store.state.root_media_api + (post.post_owner?.avatar || post.user_profile),
+        userName: post.post_owner?.username || post.post_by,
+        image: this.$store.state.root_media_api + post.post_image,
+        views: post.view_count || 0,
+        likes: post.like_count || 0,
+        is_liked: post.is_liked || false,
+        title: post.title || "",
+        content: post.content || "",
+      };
+      this.commentsModalVisible = true;
     },
-    
+
+    /**
+     * Close comments modal
+     */
+    closeCommentsModal() {
+      this.commentsModalVisible = false;
+      this.selectedPostForComments = null;
+    },
+
+    /**
+     * Handle comment added event from modal
+     * Update the comment count in the posts list
+     */
+    handleCommentAdded() {
+      // Update main post list comment count
+      // const postIndex = this.posts.findIndex(p => p.id === this.selectedPostForComments?.id);
+      // if (postIndex !== -1) {
+      //   this.posts[postIndex].comment_count += 1;
+      // }
+      this.fetchCommunityPostsByTag()
+    },
+
+    /**
+     * Handle like toggled event from modal
+     * Sync like state back to main list
+     */
+    handleLikeToggled() {
+      // Sync like state back to main list
+      // const postIndex = this.posts.findIndex(p => p.id === this.selectedPostForComments?.id);
+      // if (postIndex !== -1) {
+      //   this.posts[postIndex].is_liked = this.selectedPostForComments.is_liked;
+      //   this.posts[postIndex].like_count = this.selectedPostForComments.likes;
+      // }
+      this.fetchCommunityPostsByTag()
+    },
   },
 }
 </script>
+
+<style scoped>
+/* Add any component-specific styles here */
+</style>

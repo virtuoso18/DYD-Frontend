@@ -3438,8 +3438,15 @@ handleFloorPageChange(page) {
         add_Product_Light_For(selected_add_newProductModal){
             if (selected_add_newProductModal ==='DYD_AI'){
             // this.$router.push("/my-products/add-new-furniture");
-            this.$router.push('/access-business/create-light-product-3d-model-add-light');
-            
+            // this.$router.push('/access-business/create-light-product-3d-model-add-light');
+
+             if (selected_add_newProductModal ==='DYD_AI'){
+                this.$router.push("/access-business/create-light-product-3d-model-add-light?access_id="+this.$route.query.access_id+"&brand="+this.$route.query.brand);
+            }
+            else{
+                this.show_add_new_product_locally_3d_model=true
+                console.log(selected_add_newProductModal)
+            }
         }
         else{
             this.show_add_new_light_product_locally_3d_model=true

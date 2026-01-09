@@ -31,7 +31,7 @@
       <div id="viewer" ref="viewer"></div>
       
     </div>
-    <span style="font-size:12px;font-weight: 600;position:absolute;bottom:10px;left:10px">W-{{ currentModelDimensions.width }}m X H-{{ currentModelDimensions.height }}m X D-{{ currentModelDimensions.depth }}m</span>
+    <span style="background:white;border-radius:5px;padding-left: 5px;padding-right: 5px; font-size:12px;font-weight: 600;position:absolute;bottom:10px;left:10px">W-{{ currentModelDimensions.width }}m X H-{{ currentModelDimensions.height }}m X D-{{ currentModelDimensions.depth }}m</span>
   </div>
 <!-- 
   <div class="flex justify-between items-center py-2 px-2 bg-white w-full">

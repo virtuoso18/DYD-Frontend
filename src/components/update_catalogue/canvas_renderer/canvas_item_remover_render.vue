@@ -322,13 +322,13 @@
     </div>
 
     <!-- Pan Instructions -->
-    <div v-if="zoom > 1 && !isLoading" class="instructions">
+    <!-- <div v-if="zoom > 1 && !isLoading" class="instructions">
       <span v-if="!drawingMode"
         >Click and drag to pan • Mouse wheel to zoom • Click objects to
         select</span
       >
       <span v-else>Draw on the furniture area to refine its boundaries</span>
-    </div>
+    </div> -->
 
     <!-- Debug Info -->
     <div v-if="showDebugInfo" class="debug-info">

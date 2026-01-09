@@ -118,12 +118,12 @@
 <script>
 
 // 3d Panel Tab 
-import sidepanel_3d_tab from '@/components/dashboard/business/my_products/add_new_product/add_light_3d_model_gen/side_panel_3d.vue'
-import object_viewer_3d_tab from '@/components/dashboard/business/my_products/add_new_product/add_light_3d_model_gen/canvas_renderer.vue'
-import models_3d_generate_history from '@/components/dashboard/business/my_products/add_new_product/add_light_3d_model_gen/generate_history.vue'
-import add_new_furniture from '@/components/dashboard/business/my_products/add_new_product/add_light_modal.vue'
+import sidepanel_3d_tab from '@/views/access_engine/product/my_products/add_new_product/add_light_3d_model_gen/side_panel_3d.vue'
+import object_viewer_3d_tab from '@/views/access_engine/product/my_products/add_new_product/add_light_3d_model_gen/canvas_renderer.vue'
+import models_3d_generate_history from '@/views/access_engine/product/my_products/add_new_product/add_light_3d_model_gen/generate_history.vue'
+import add_new_furniture from '@/views/access_engine/product/my_products/add_new_product/add_light_modal.vue'
 
-export default {
+export default { 
   name:"add_Furniture"
 ,
 data(){
@@ -169,7 +169,9 @@ methods:{
     },
 
   onProductCreated(e){
-this.$router.push('/business-dashboard/my-products')
+// this.$router.push('/business-dashboard/my-products')
+this.$router.push("/access-business/manage-products?access_id="+this.$route.query.access_id+"&brand="+this.$route.query.brand)
+
   },
   add_new_product(e){
     console.log(e)
@@ -193,7 +195,7 @@ async new3DModelGenerated(e){
 //     "output_path": "C:\\Users\\adminay\\Documents\\AI-Applications\\002 webapp - ComfyUI\\comfyui_api_backend\\media\\3d-Rendered-Models/e25444e1-a6f5-4423-b573-dc9f4a90c52d\\Hy3D_00076_.glb",
 //     "media_url": "/media/3d-Rendered-Models/e25444e1-a6f5-4423-b573-dc9f4a90c52d/Hy3D_00076_.glb",
 //     "model_id": "e25444e1-a6f5-4423-b573-dc9f4a90c52d"
-// }
+// } 
 this.processing_generate_is_Loading=true
 // this.processing_generate_is_Loading=e
 
@@ -247,7 +249,9 @@ async get_3d_rendered_model_details(generated_3d_model_id) {
   this.loading_generated_models_history= true;
 
   try {
-    const url = `${this.$store.state.root_api}engine/generated-3d-models-user-history/`;
+    const url = `${this.$store.state.root_api}access-engine/api/business-products/business-access-generated-3d-models-business-history/?access-id=`+this.$route.query.access_id;
+
+    // const url = `${this.$store.state.root_api}engine/generated-3d-models-user-history/`;
     const payload = {
           'model_3d_id': generated_3d_model_id,
 
@@ -290,7 +294,9 @@ async fetch3d_models_generated_by_user() {
   this.loading_generated_models_history= true;
 
   try {
-    const url = `${this.$store.state.root_api}engine/generated-3d-models-user-history/`;
+    // const url = `${this.$store.state.root_api}engine/generated-3d-models-user-history/`;
+    const url = `${this.$store.state.root_api}access-engine/api/business-products/business-access-generated-3d-models-business-history/?access-id=`+this.$route.query.access_id;
+
     
     console.log('📡 Fetching generated 3d models hisrtory ...');
     const responseData = await this.makeApiRequest(url, { 

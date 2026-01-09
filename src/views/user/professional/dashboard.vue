@@ -1165,10 +1165,13 @@ export default {
   padding: 8px 16px;
   font-size: 14px;
   font-weight: 600;
+  border:1px solid #3b83f63d ;
+  border-radius:16px
+
 }
 
 .completion-circle:hover {
-  border:1px solid #3b83f63d ;
+  border:1px solid #3b83f68e ;
   border-radius:16px
 }
 

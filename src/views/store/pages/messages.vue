@@ -43,12 +43,12 @@
               :class="{ 'bg-blue-50 !border-blue-500': currentRoomId === room.id }"
               @click="selectRoom(room.id, get_proper_user_avatar(room.userProfilsAvatar).first_name +' '+ get_proper_user_avatar(room.userProfilsAvatar).last_name, get_proper_user_avatar(room.userProfilsAvatar).avatar + '?t=' + new Date().getTime())"
             >
-            
+            <!-- {{ get_proper_user_avatar(room.userProfilsAvatar) }} -->
               <!-- Avatar -->
               <div class="mr-4 flex-shrink-0">
                 <a-avatar v-if="!room.userProfilsAvatar?.user_3"
                   size="large"  style="border:1px solid rgba(0,0,0,0.2)"
-                  :src="$store.state.root_media_api + get_proper_user_avatar(room.userProfilsAvatar).avatar"
+                  :src="$store.state.root_media_api + get_proper_user_avatar(room.userProfilsAvatar)?.avatar"
                 />
                 
              <a-avatar-group v-else :max-count="2" :max-style="{ color: '#f56a00', backgroundColor: '#fde3cf' }">
@@ -60,11 +60,11 @@
               </div>
   
               <!-- Conversation Info -->
-              <div class="flex-1 min-w-0">
+           <div class="flex-1 min-w-0">
                 <div class="flex justify-between items-center mb-1">
                   <h4 class="text-base font-medium text-gray-900 truncate">
-                    {{ get_proper_user_avatar(room.userProfilsAvatar).first_name }} 
-                    {{ get_proper_user_avatar(room.userProfilsAvatar).last_name }}
+                    {{ get_proper_user_avatar(room.userProfilsAvatar)?.first_name }} 
+                    {{ get_proper_user_avatar(room.userProfilsAvatar)?.last_name }}
                   </h4>
                   <span class="text-xs text-gray-500 flex-shrink-0 ml-2">
                     {{ room.lastMessageTime || '1 day ago' }}
@@ -72,7 +72,7 @@
                 </div>
                 <div class="flex justify-between items-center">
                   <p class="text-sm text-gray-500 truncate flex-1">
-                    {{ room.lastMessage || 'Hi, how are you?' }}
+                    {{ room.lastMessage || 'Say Hi to, '+get_proper_user_avatar(room.userProfilsAvatar)?.first_name }}
                   </p>
                   <span 
                     v-if="room.unseenCount > 0"
@@ -81,7 +81,7 @@
                     {{ room.unseenCount }}
                   </span>
                 </div>
-              </div>
+              </div>  
             </div>
           </div>
         </div>

@@ -36,18 +36,15 @@
     <div style="padding: 0;">
       <a-row :gutter="24">
 
-                <div className="flex flex-col lg:flex-row">
-
-                  <div>
-
+                
                     <!-- Left Column - 3D Model Preview -->
                    <a-col
     :xs="24"
     :sm="24"
-    :md="24"
-    :lg="24"
+    :md="10"
+    :lg="10"
   > 
-                      <div style="position: relative; padding:10px;;">
+                      <div style="position: relative; ;">
             
                         <canvas_3d_model_renderer 
                         :glbModelUrl="this.$store.state.root_media_api + modelDetails['model_file']"
@@ -156,16 +153,13 @@
             
                       
                     </a-col>
-                  </div>
-          
-                  <!-- Right Column - Product Details -->
-                   <div>
+                  
 
                      <a-col
 :xs="24"
 :sm="24"
-:md="24"
-:lg="20"
+:md="14"
+:lg="14"
 >
             
             <div style="padding-left: 12px;">
@@ -530,8 +524,7 @@
               </div>
             </div>
           </a-col>
-                   </div>
-</div>
+                 
       </a-row>
     </div>
 
@@ -782,8 +775,9 @@ export default {
         if (!renderedModal3dId) {
           throw new Error('No rendered modal 3D ID provided');
         }
-
-        const url = `${store.state.root_api}product/api-product-owner/get-rendered-3d-model-details/${renderedModal3dId}/`;
+ 
+    const url = `${store.state.root_api}access-engine/api/business-products/business-access-get-rendered-3d-model-details/${renderedModal3dId}/?access-id=`+this.$route.query.access_id;
+        // const url = `${store.state.root_api}product/api-product-owner/get-rendered-3d-model-details/${renderedModal3dId}/`;
         
         console.log('📡 Fetching generated 3d models history...', { generated3dModelId, renderedModal3dId });
         
@@ -1112,7 +1106,9 @@ export default {
           pbr_files_count: this.selectedPbrFiles.length
         });
 
-        const response = await fetch(`${store.state.root_api}product/api-product-owner/lights/`, {
+        // const response = await fetch(`${store.state.root_api}product/api-product-owner/lights/`, {
+    const response = await fetch(`${store.state.root_api}access-engine/api/business-products/add-product-light/?access-id=`+this.$route.query.access_id, {
+
           method: 'POST',
           headers: { 
             'Authorization': `Token ${token}` 

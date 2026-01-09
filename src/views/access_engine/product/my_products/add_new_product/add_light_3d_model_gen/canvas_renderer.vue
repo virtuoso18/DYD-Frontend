@@ -169,7 +169,7 @@
 <div v-if="glbModelUrl" style="position:relative;padding-left:10px;top:-60px;">
     <a-row>
       <a-col :span="12" style="padding-top:10px">
-        <a-button type="primary" size="medium" style="display: flex;gap:5px;flex-direction: row;justify-content: center;align-items: center;" @click="Add_new_product()">
+        <a-button type="primary" size="medium" style="display: flex;gap:5px;flex-direction: row;justify-content: center;align-items: center;" @click="Add_new_product">
           <svg width="19" height="19" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M8.5026 5.83398V11.1673M11.1693 8.50065H5.83594" stroke="white" stroke-linecap="round" stroke-linejoin="round" />
 <path d="M2.16406 8.49935C2.16406 5.51379 2.16406 4.02101 3.09156 3.09351C4.01906 2.16602 5.51184 2.16602 8.4974 2.16602C11.4829 2.16602 12.9757 2.16602 13.9033 3.09351C14.8307 4.02101 14.8307 5.51379 14.8307 8.49935C14.8307 11.4849 14.8307 12.9777 13.9033 13.9052C12.9757 14.8327 11.4829 14.8327 8.4974 14.8327C5.51184 14.8327 4.01906 14.8327 3.09156 13.9052C2.16406 12.9777 2.16406 11.4849 2.16406 8.49935Z" stroke="white"/>
