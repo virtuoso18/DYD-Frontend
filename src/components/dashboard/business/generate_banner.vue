@@ -694,7 +694,8 @@ export default {
       return url.slice(0, 20) + '...' + url.slice(-15);
     },
     copyEmbedCode() {
-      const code = `<a href="${this.base_url()+this.selectedBanner.business_slug}"><img src="${this.$store.state.root_media_api+ this.selectedBanner.final_banner}" alt="" srcset=""></a>`;
+      
+      const code = `<a href="${this.base_url()+"start-new-catalogue?brand="+this.selectedBanner.business_slug}"><img src="${this.$store.state.root_media_api+ this.selectedBanner.final_banner}" alt="" srcset=""></a>`;
       navigator.clipboard.writeText(code);
       this.$message.success('Embed code copied!');
     },

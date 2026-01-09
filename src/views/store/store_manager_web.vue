@@ -340,12 +340,14 @@ export default {
 }
 
 .nav-item.active {
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  /* background: linear-gradient(135deg, #3b82f6, #1d4ed8); */
+  background:#3b63fb;
   color: white;
 }
 
 .nav-item.active:hover {
-  background: linear-gradient(135deg, #1d4ed8, #1e40af);
+  /* background: linear-gradient(135deg, #1d4ed8, #1e40af); */
+  background:#3b63fb;
   color: white;
 }
 

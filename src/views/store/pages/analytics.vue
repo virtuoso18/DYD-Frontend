@@ -1292,8 +1292,11 @@ export default {
   }
 
   const gradient = ctx.createLinearGradient(0, 0, 0, 300)
-  gradient.addColorStop(0, 'rgba(79, 70, 229, 0.3)')
-  gradient.addColorStop(1, 'rgba(79, 70, 229, 0.05)')
+  // gradient.addColorStop(0, 'rgba(79, 70, 229, 0.3)')
+  // gradient.addColorStop(1, 'rgba(79, 70, 229, 0.05)')
+  gradient.addColorStop(0, 'rgba(59, 99, 251, 0.3)')
+gradient.addColorStop(1, 'rgba(59, 99, 251, 0.05)')
+
   
   // Generate dates starting from today or a specific date
   const dates = []
@@ -1320,17 +1323,17 @@ export default {
       datasets: [{
         label: 'Favorite Product',
         data: this.favoriteChartData,
-        borderColor: '#4F46E5',
+        borderColor: '#3b63fb',
         backgroundColor: gradient,
         borderWidth: 2,
         fill: true,
         tension: 0.4,
-        pointBackgroundColor: '#4F46E5',
+        pointBackgroundColor: '#3b63fb',
         pointBorderColor: '#ffffff',
         pointBorderWidth: 2,
         pointRadius: 4,
         pointHoverRadius: 6,
-        pointHoverBackgroundColor: '#4F46E5',
+        pointHoverBackgroundColor: '#3b63fb',
         pointHoverBorderColor: '#ffffff',
         pointHoverBorderWidth: 2
       }]
@@ -1347,10 +1350,10 @@ export default {
           display: false
         },
         tooltip: {
-          backgroundColor: '#1e293b',
+          backgroundColor: '#3b63fb',
           titleColor: '#ffffff',
           bodyColor: '#ffffff',
-          borderColor: '#1e293b',
+          borderColor: '#3b63fb',
           borderWidth: 1,
           cornerRadius: 6,
           displayColors: false,
@@ -1448,7 +1451,7 @@ export default {
 }
 
 .stat-card.total-products {
-  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  background: #3b63fb;
   color: white;
 }
 

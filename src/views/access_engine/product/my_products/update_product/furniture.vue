@@ -91,6 +91,20 @@
             </div>
           </div>
         </div>
+        <div style="margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; padding: 12px; background: #f8faff; border-radius: 8px; border: 1px solid #e5e7eb;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2">
+                        <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+                      </svg>
+                      <span style="font-size: 13px; font-weight: 500; color: #374151;">Model Resizable</span>
+                    </div>
+                    
+                    <a-switch 
+                      v-model:checked="is_resizable"
+                       @change="handleResizableChange"
+                      style="background-color: #3b82f6;"
+                    />
+                       </div>
       </a-col>
 
       <!-- Right Column - Images -->
@@ -829,6 +843,7 @@ export default {
       imagePreviewsState: [],
       hasUnsavedChanges: false,
       local3dModelUrl: null,
+      is_resizable: false,
     }
   },
   computed: {
@@ -854,6 +869,9 @@ export default {
     productForm: { handler() { this.hasUnsavedChanges = true; }, deep: true }
   },
   methods: {
+      handleResizableChange(value) {    
+    this.is_resizable = value;    
+  },
     clickedModel(e) {
       const fixedUrl = e['media_url'].replace(/\\/g, '/');
       this.selected_color_model_url = this.$store.state.root_media_api + fixedUrl;
@@ -885,7 +903,8 @@ async fetch3d_models_generated_by_user() {
   this.loading_generated_models_history = true;
 
   try {
-    const url = `${this.$store.state.root_api}engine/generated-3d-models-user-history/`;
+    // access-engine/api/business-products/add-product-floor-tile/?access-id=`+route.query.access_id
+    const url = `${this.$store.state.root_api}access-engine/api/business-products/generated-3d-models-user-history/?access-id=`+this.$route.query.access_id;
 
     console.log('📡 Fetching generated 3D models history...');
 
@@ -930,7 +949,8 @@ async fetch3d_models_generated_by_user() {
     
     // Call API to set primary color
     const response = await fetch(
-      `${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/colors/${colorId}/set-primary/`,
+      // access-engine/api/business-products/add-product-floor-tile/?access-id=`+this.$route.query.access_id
+      `${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/colors/${colorId}/set-primary/?access-id=`+this.$route.query.access_id,
       {
         method: 'PATCH',
         headers: {
@@ -1005,7 +1025,7 @@ async updateColor() {
     
     
     formData.append('model_file_colored_product', fileToUpload);
-    debugger
+    // debugger
     // Add texture association
     if (this.editingColor.selected_texture_id !== null && this.editingColor.selected_texture_id !== undefined) {
       formData.append('texture_id', this.editingColor.selected_texture_id);
@@ -1014,7 +1034,8 @@ async updateColor() {
     }
 
     const response = await fetch(
-      `${this.$store.state.root_api}product/api-product-owner/products/colors/${this.editingColor.id}/update-model/`,
+      // access-engine/api/business-products/add-product-floor-tile/?access-id=`+this.$route.query.access_id
+      `${this.$store.state.root_api}access-engine/api/business-products/products/colors/${this.editingColor.id}/update-model/?access-id=`+this.$route.query.access_id,
       {
         method: 'PATCH',
         headers: {
@@ -1080,6 +1101,7 @@ async updateColor() {
         this.hasUnsavedChanges = false;
         this.imagePreviewsState = [];
         this.pending3DModel = null;
+        this.is_resizable =this.selectedProduct?.is_resizable || false;
       }
     },
 
@@ -1288,7 +1310,10 @@ async updateColor() {
     async togglePrimaryImage(imageId) {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/images/${imageId}/set-primary/`, {
+
+      // access-engine/api/business-products/add-product-floor-tile/?access-id=`+this.$route.query.access_id
+
+        const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/images/${imageId}/set-primary/?access-id=`+this.$route.query.access_id, {
           method: 'PATCH',
           headers: { 'Authorization': `Token ${token}` }
         });
@@ -1319,7 +1344,8 @@ async updateColor() {
   try {
     const token = localStorage.getItem('token');
     const response = await fetch(
-      `${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/colors/`,
+      // access-engine/api/business-products/add-product-floor-tile/?access-id=`+this.$route.query.access_id
+    `${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/colors/?access-id=`+this.$route.query.access_id,
       {
         method: 'POST',
         headers: {
@@ -1358,8 +1384,8 @@ async updateColor() {
         const token = localStorage.getItem('token');
         const formData = new FormData();
         formData.append('texture', textureFile);
+        const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/textures/?access-id=`+this.$route.query.access_id, {
 
-        const response = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/textures/`, {
           method: 'POST', headers: { 'Authorization': `Token ${token}` }, body: formData
         });
 
@@ -1384,7 +1410,9 @@ async updateColor() {
         onOk: async () => {
           try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/images/${imageId}/`, {
+            const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/images/${imageId}/?access-id=`+this.$route.query.access_id, {
+
+            // const response = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/images/${imageId}/`, {
               method: 'DELETE', headers: { 'Authorization': `Token ${token}` }
             });
 
@@ -1422,7 +1450,9 @@ async updateColor() {
       try {
         const token = localStorage.getItem('token');
         const response = await fetch(
-          `${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/colors/${colorId}/`,
+          
+          // `${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/colors/${colorId}/`,
+          `${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/colors/${colorId}/?access-id=`+this.$route.query.access_id,
           {
             method: 'DELETE',
             headers: { 'Authorization': `Token ${token}` }
@@ -1452,7 +1482,9 @@ async updateColor() {
         onOk: async () => {
           try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/textures/${textureId}/`, {
+              const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/textures/${textureId}/?access-id=`+this.$route.query.access_id, {
+
+            // const response = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/textures/${textureId}/`, {
               method: 'DELETE', headers: { 'Authorization': `Token ${token}` }
             });
 
@@ -1524,16 +1556,17 @@ async updateColor() {
           this.imagePreviewsState.forEach(preview => {
             formData.append('images', preview.file);
             preview.uploading = true;
-          });
+          }) ; 
+          const imageResponse = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/images/?access-id=`+this.$route.query.access_id, {
 
-          const imageResponse = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/images/`, {
+          // const imageResponse = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/images/`, {
             method: 'POST', headers: { 'Authorization': `Token ${token}` }, body: formData
           });
           const imageResult = await imageResponse.json();
 
-          console.log("+===============================")
-          console.log(imageResult)
-          if (imageResponse.status === 403) {
+          // console.log("+===============================")
+          // console.log(imageResult)
+          if (imageResponse.status === 403) { 
             this.$notification.error({
               message: 'Request Refused',
               description: imageResult?.detail || 'The server refused to process this request.',
@@ -1574,8 +1607,11 @@ async updateColor() {
         if (this.pending3DModel) {
           productData.append('model_file', this.pending3DModel);
         }
+        
+        productData.append('is_resizable',  this.is_resizable ? 'True' : 'False');
 
-        const response = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/`, {
+        const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/?access-id=`+this.$route.query.access_id, {
+        // const response = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/`, {
           method: 'PUT', headers: { 'Authorization': `Token ${token}` }, body: productData
         });
 

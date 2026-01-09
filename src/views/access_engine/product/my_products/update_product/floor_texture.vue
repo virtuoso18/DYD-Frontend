@@ -16,7 +16,7 @@
         <a-button @click="cancel_edit_back_texture_list" style="border-radius: 8px;">Cancel</a-button>
         <a-button type="primary" @click="saveTexture" :loading="isSaving" style="border-radius: 8px;">
           {{ isSaving ? 'Saving...' : 'Save' }}
-        </a-button>
+        </a-button> 
       </div>
     </div>
 
@@ -719,7 +719,9 @@ export default {
     async togglePrimaryImage(imageId) {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch(`${this.$store.state.root_api}room/api-owner/floor/${this.selectedTexture.id}/images/${imageId}/set-primary/`, {
+        const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/floor/${this.selectedTexture.id}/images/${imageId}/set-primary/?access-id=`+this.$route.query.access_id, {
+
+        // const response = await fetch(`${this.$store.state.root_api}room/api-owner/floor/${this.selectedTexture.id}/images/${imageId}/set-primary/`, {
           method: 'PATCH',
           headers: { 'Authorization': `Token ${token}` }
         });
@@ -749,7 +751,9 @@ export default {
     
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${this.$store.state.root_api}room/api-owner/floor/${this.selectedTexture.id}/colors/`, {
+      const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/floor/${this.selectedTexture.id}/colors/?access-id=`+this.$route.query.access_id, {
+
+      // const response = await fetch(`${this.$store.state.root_api}room/api-owner/floor/${this.selectedTexture.id}/colors/`, {
         method: 'POST',
         headers: { 
           'Authorization': `Token ${token}`, 
@@ -786,7 +790,9 @@ export default {
         onOk: async () => {
           try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`${this.$store.state.root_api}room/api-owner/floor/${this.selectedTexture.id}/colors/${colorId}/`, {
+            const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/floor/${this.selectedTexture.id}/colors/${colorId}/?access-id=`+this.$route.query.access_id, {
+
+            // const response = await fetch(`${this.$store.state.root_api}room/api-owner/floor/${this.selectedTexture.id}/colors/${colorId}/`, {
               method: 'DELETE',
               headers: { 'Authorization': `Token ${token}` }
             });
@@ -819,7 +825,9 @@ export default {
         onOk: async () => {
           try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`${this.$store.state.root_api}room/api-owner/floor/${this.selectedTexture.id}/images/${imageId}/`, {
+            const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/floor/${this.selectedTexture.id}/images/${imageId}/?access-id=`+this.$route.query.access_id, {
+
+            // const response = await fetch(`${this.$store.state.root_api}room/api-owner/floor/${this.selectedTexture.id}/images/${imageId}/`, {
               method: 'DELETE',
               headers: { 'Authorization': `Token ${token}` }
             });
@@ -897,7 +905,8 @@ export default {
             preview.uploading = true;
           });
 
-          const imageResponse = await fetch(`${this.$store.state.root_api}room/api-owner/floor/${this.selectedTexture.id}/images/`, {
+            const imageResponse = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/floor/${this.selectedTexture.id}/images/?access-id=`+this.$route.query.access_id, {
+
             method: 'POST',
             headers: { 'Authorization': `Token ${token}` },
             body: formData

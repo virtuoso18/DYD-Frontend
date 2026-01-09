@@ -1209,11 +1209,11 @@ export default {
 /* Completion Badge Styles */
 .completion-badge {
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  /* transition: transform 0.2s ease, box-shadow 0.2s ease; */
 }
 
 .completion-badge:hover {
-  transform: translateY(-2px);
+  /* transform: translateY(-2px); */
 }
 
 .completion-circle {
@@ -1222,12 +1222,15 @@ export default {
   justify-content: center;
   border-radius: 50px;
   padding: 10px 20px;
-  transition: all 0.3s ease;
+  border:1px solid rgba(0,0,255,0.1);
+
+  /* transition: all 0.3s ease; */
 }
 
 .completion-badge:hover .completion-circle {
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
-  transform: scale(1.05);
+  /* box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6); */
+  border:1px solid rgba(0,0,255,0.2);
+  /* transform: scale(1.05); */
 }
 
 .completion-text {

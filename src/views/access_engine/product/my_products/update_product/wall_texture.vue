@@ -709,7 +709,8 @@ export default {
     async togglePrimaryImage(imageId) {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch(`${this.$store.state.root_api}room/api-owner/wall/${this.selectedTexture.id}/images/${imageId}/set-primary/`, {
+        const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/wall/${this.selectedTexture.id}/images/${imageId}/set-primary/?access-id=`+this.$route.query.access_id, {
+        // const response = await fetch(`${this.$store.state.root_api}room/api-owner/wall/${this.selectedTexture.id}/images/${imageId}/set-primary/`, {
           method: 'PATCH',
           headers: { 'Authorization': `Token ${token}` }
         });
@@ -739,7 +740,9 @@ export default {
     
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${this.$store.state.root_api}room/api-owner/wall/${this.selectedTexture.id}/colors/`, {
+      const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/wall/${this.selectedTexture.id}/colors/?access-id=`+this.$route.query.access_id, {
+
+      // const response = await fetch(`${this.$store.state.root_api}room/api-owner/wall/${this.selectedTexture.id}/colors/`, {
         method: 'POST',
         headers: { 
           'Authorization': `Token ${token}`, 
@@ -776,7 +779,9 @@ export default {
         onOk: async () => {
           try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`${this.$store.state.root_api}room/api-owner/wall/${this.selectedTexture.id}/colors/${colorId}/`, {
+            const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/wall/${this.selectedTexture.id}/colors/${colorId}/?access-id=`+this.$route.query.access_id, {
+
+            // const response = await fetch(`${this.$store.state.root_api}room/api-owner/wall/${this.selectedTexture.id}/colors/${colorId}/`, {
               method: 'DELETE',
               headers: { 'Authorization': `Token ${token}` }
             });
@@ -809,7 +814,9 @@ export default {
         onOk: async () => {
           try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`${this.$store.state.root_api}room/api-owner/wall/${this.selectedTexture.id}/images/${imageId}/`, {
+            const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/wall/${this.selectedTexture.id}/images/${imageId}/?access-id=`+this.$route.query.access_id, {
+
+            // const response = await fetch(`${this.$store.state.root_api}room/api-owner/wall/${this.selectedTexture.id}/images/${imageId}/`, {
               method: 'DELETE',
               headers: { 'Authorization': `Token ${token}` }
             });
@@ -886,8 +893,9 @@ export default {
             formData.append('images', preview.file);
             preview.uploading = true;
           });
+          const imageResponse = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/wall/${this.selectedTexture.id}/images/?access-id=`+this.$route.query.access_id, {
 
-          const imageResponse = await fetch(`${this.$store.state.root_api}room/api-owner/wall/${this.selectedTexture.id}/images/`, {
+          // const imageResponse = await fetch(`${this.$store.state.root_api}room/api-owner/wall/${this.selectedTexture.id}/images/`, {
             method: 'POST',
             headers: { 'Authorization': `Token ${token}` },
             body: formData
@@ -910,8 +918,9 @@ export default {
             textureData.append(key, this.textureForm[key]);
           }
         });
+        const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/walls/${this.selectedTexture.id}/?access-id=`+this.$route.query.access_id, {
 
-        const response = await fetch(`${this.$store.state.root_api}room/api-owner/walls/${this.selectedTexture.id}/`, {
+        // const response = await fetch(`${this.$store.state.root_api}room/api-owner/walls/${this.selectedTexture.id}/`, {
           method: 'PUT',
           headers: { 'Authorization': `Token ${token}` },
           body: textureData

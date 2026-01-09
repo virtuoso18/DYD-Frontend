@@ -1,12 +1,14 @@
-
 <template>
-  <!-- {{ access_recieved.generate_banner }} -->
-  <div >
+<div class="bg-white sm:rounded-[15px]  min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh] sm:border border-black/10 !my-[10px] !mr-[10px] p-[20px]">
     
     <!-- Header Section --> 
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
       <div>
-        <h3 style="margin: 0; font-weight: 700; color: #1f2937;">
+        <h3 className="text-[18px]"     style="
+    font-family: var(--font-family-main);
+         color:var(--text-color)
+        "
+    >
           My Banners
         </h3>
         <p style="margin: 4px 0 0 0; color: #6b7280; font-size: 12px;">Create and manage your custom banners</p>
@@ -107,7 +109,14 @@
 
         <div style="width: 1px; height: 32px; background: #e5e7eb;"></div>
 
-        <a-button v-if="access_recieved.generate_banner.create" @click="showCreateModal = true" type="primary" size="medium" style="display: flex; gap: 8px; align-items: center; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);">
+        <a-button @click="this.$router.push('/admin-generate-banner')" size="medium" style="border: 2px solid #e5e7eb;">
+          <template #icon>
+            <SettingOutlined />
+          </template>
+          Admin Panel
+        </a-button>
+
+        <a-button @click="showCreateModal = true" type="primary" size="medium" style="display: flex; gap: 8px; align-items: center; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);">
           <template #icon>
             <svg width="17" height="18" viewBox="0 0 17 18" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M8.0026 5.83203V11.1654M10.6693 8.4987H5.33594" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -133,7 +142,7 @@
                @mouseenter="hoveredBanner = banner.id"
                @mouseleave="hoveredBanner = null">
                
-               <img :src="banner.final_banner" @click="openBannerModal(banner)"
+               <img :src="this.$store.state.root_media_api+banner.final_banner" @click="openBannerModal(banner)"
                     style=" width: 100%; height: 100%; object-fit: contain; border-radius: 12px;border: 1px solid #e5e7eb;" 
                     alt="Generated Banner">
                
@@ -156,14 +165,14 @@
 
               <!-- Action Buttons -->
               <div style="display: flex; gap: 6px; margin-top: 8px;">
-                <a-button type="primary" size="medium" v-if="access_recieved.generate_banner.download" block @click="downloadMyBanner(banner)">
-                  <template #icon><DownloadOutlined /></template>
+                <a-button type="primary" size="medium" block @click="downloadMyBanner(banner)" style="display: flex;justify-content: center;;" >
+                  <template #icon><DownloadOutlined style="font-size:16px;padding-top:5px;"  /></template>
                   Download
                 </a-button>
-                <a-button size="medium" v-if="access_recieved.generate_banner.share" @click="shareMyBanner(banner)">
+                <a-button size="medium" @click="shareMyBanner(banner)" style="display: flex;justify-content: center;align-items: center;">
                   <template #icon><LinkOutlined /></template>
                 </a-button>
-                <a-button danger  v-if="access_recieved.generate_banner.delete" size="medium" @click="deleteMyBanner(banner.id)">
+                <a-button danger size="medium" @click="deleteMyBanner(banner.id)" style="display: flex;justify-content: center;align-items: center;">
                   <template #icon><DeleteOutlined /></template>
                 </a-button>
               </div>
@@ -207,7 +216,7 @@
 >
   <!-- Image preview -->
   <img
-    :src="selectedBanner.final_banner"
+    :src="this.$store.state.root_media_api+selectedBanner.final_banner"
     style="width: 100%; height: auto; object-fit: contain; border-radius: 12px; border: 1px solid #e5e7eb;"
     alt="Generated Banner"
   />
@@ -225,7 +234,8 @@
       style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; margin-right: 10px;"
       :title="`<img src='${selectedBanner.final_banner}' alt='' srcset='' />`"
     >
-      &lt;img src="{{ shortenUrl(selectedBanner.final_banner) }}" alt="" srcset="" /&gt;
+    
+     &lt;a href="{{ base_url()+ "start-new-catalogue?brand="+selectedBanner.business_slug}}"&gt;   &lt;img src="{{ shortenUrl(selectedBanner.final_banner) }}" alt="" srcset="" /&gt; &lt; /a &gt;   
     </div>
 
     <!-- Copy button -->
@@ -325,6 +335,7 @@
                      transition: 'all 0.2s',
                      background: selectedTemplate?.id === template.id ? '#eef2ff' : 'white'
                    }">
+                   
                 <img :src="template.banner_image" 
                      style="width: 100%; height: 150px; object-fit: cover;" 
                      alt="Template">
@@ -559,7 +570,7 @@
           </div>
 
           <div style="display: flex; gap: 12px; justify-content: center;">
-            <a-button @click="currentStep = 1" size="large">← Back to Edit</a-button>
+            <a-button @click="handlePreviewBack" size="large">← Back to Edit</a-button>
             <a-button type="primary" 
                       size="large"
                       :loading="isSaving"
@@ -589,17 +600,13 @@ import {
 
 export default {
   
-  name: 'access_manage_generate_banner',
+  name: 'BannerProductEditor_End_user',
   
   components: { 
     CopyOutlined, PicRightOutlined, FileDoneOutlined, DownloadOutlined,
     LinkOutlined, DownOutlined, DeleteOutlined, UploadOutlined, ReloadOutlined  // Add these two
   },
   
-   props:{
-        access_recieved:Object,
-        business:Object
-    },
   data() {
       return {
         // Filter & Display
@@ -674,13 +681,22 @@ export default {
   },
   
   methods: {
+    async handlePreviewBack() {
+      this.currentStep = 1;
+      await this.$nextTick();
+      await this.loadTemplateForEditing();
+    },
+    base_url(){return window.location.origin+'/'
+},
      shortenUrl(url) {
       if (!url) return '';
       if (url.length <= 40) return url;
       return url.slice(0, 20) + '...' + url.slice(-15);
     },
     copyEmbedCode() {
-      const code = `<img src="${this.selectedBanner.final_banner}" alt="" srcset="">`;
+      const code = `<a href="${this.base_url()+"start-new-catalogue?brand="+this.selectedBanner.business_slug}"><img src="${this.$store.state.root_media_api+ this.selectedBanner.final_banner}" alt="" srcset=""></a>`;
+
+      // const code = `<a href="${this.base_url()+this.selectedBanner.business_slug}"><img src="${this.$store.state.root_media_api+ this.selectedBanner.final_banner}" alt="" srcset=""></a>`;
       navigator.clipboard.writeText(code);
       this.$message.success('Embed code copied!');
     },
@@ -859,6 +875,7 @@ this.selectedBanner=banner
       try {
         const response = await fetch(
           `${this.$store.state.root_api}access-engine/api/generate-banner/my-banners/?access-id=`+this.$route.query.access_id,
+          
           {
             method: 'GET',
             headers: { 'Authorization': `Token ${localStorage.getItem('token')}` }
@@ -881,7 +898,6 @@ this.selectedBanner=banner
       try {
         const response = await fetch(
           `${this.$store.state.root_api}generate_banner/api/banner/list/`,
-          
           {
             method: 'GET',
             headers: { 'Authorization': `Token ${localStorage.getItem('token')}` }
@@ -893,7 +909,7 @@ this.selectedBanner=banner
           this.templateBanners = data.data.map(banner => ({
             id: banner.id,
             banner_id: banner.banner_id,
-            banner_image: banner.banner_image,
+            banner_image: this.$store.state.root_media_api+banner.banner_image,
             ratio: banner.ratio,
             is_active: banner.is_active,
             text_data: banner.text_data
@@ -949,7 +965,7 @@ this.selectedBanner=banner
             : (fullBanner.text_data || []);
           
           // Load banner image FIRST
-          await this.loadWorkingBannerImage(fullBanner.banner_image);
+          await this.loadWorkingBannerImage(this.$store.state.root_media_api+fullBanner.banner_image);
           
           // Initialize canvas IMMEDIATELY after image loads
           await this.$nextTick();
@@ -958,7 +974,7 @@ this.selectedBanner=banner
           // Load binary masks
           const maskUrls = fullBanner.binary_masks
             .sort((a, b) => a.order - b.order)
-            .map(mask => mask.image);
+            .map(mask => this.$store.state.root_media_api+mask.image);
           
           await this.loadWorkingMaskImages(maskUrls);
           
@@ -1423,6 +1439,9 @@ async saveGeneratedBanner() {
     // Example API call — adjust endpoint and payload to match your backend
     const response = await fetch(
       `${this.$store.state.root_api}access-engine/api/generate-banner/save-banner/?access-id=`+this.$route.query.access_id, {
+        // `${this.$store.state.root_api}generate_banner/api/save-banner/`, {
+        
+
       method: 'POST',
       headers: {
         'Authorization': `Token ${localStorage.getItem('token')}`,
@@ -1493,8 +1512,9 @@ async saveGeneratedBanner() {
         onOk: async () => {
           try {
             const response = await fetch(
-              
+              // `${this.$store.state.root_api}generate_banner/api/generate-banner/${bannerId}/`,
               `${this.$store.state.root_api}access-engine/api/generate-banner/generate-banner/${bannerId}/?access-id=`+this.$route.query.access_id,
+
               {
                 method: 'DELETE',
                 headers: { 'Authorization': `Token ${localStorage.getItem('token')}` }
@@ -1558,5 +1578,31 @@ async saveGeneratedBanner() {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
+}
+
+
+
+
+
+
+
+
+
+
+
+@media screen and (max-width: 1190px) {
+  .banner-image {
+    height: 70%;
+  }
+}
+@media screen and (max-width: 1048px) {
+  .banner-image {
+    height: 65%;
+  }
+}
+@media screen and (max-width: 768px) {
+  .banner-image {
+    height: 73%;
+  }
 }
 </style>

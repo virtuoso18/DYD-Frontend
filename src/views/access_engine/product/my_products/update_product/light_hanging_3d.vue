@@ -19,7 +19,7 @@
           {{ isSaving ? 'Saving...' : 'Save' }}
         </a-button>
       </div>
-    </div>
+    </div> 
 
     <a-row style="padding: 0 24px;">
       <!-- Left Column - 3D Model -->
@@ -514,7 +514,9 @@ export default {
     async togglePrimaryImage(imageId) {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/images/${imageId}/set-primary/`, {
+        const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/images/${imageId}/set-primary/?access-id=`+this.$route.query.access_id, {
+
+        // const response = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/images/${imageId}/set-primary/`, {
           method: 'PATCH',
           headers: { 'Authorization': `Token ${token}` }
         });
@@ -544,7 +546,9 @@ export default {
       
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/colors/`, {
+        // const response = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/colors/`, {
+        const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/colors/?access-id=`+this.$route.query.access_id, {
+
           method: 'POST', headers: { 'Authorization': `Token ${token}`, 'Content-Type': 'application/json' },
           body: JSON.stringify({ color: colorHex })
         });
@@ -569,7 +573,9 @@ export default {
         const formData = new FormData();
         formData.append('texture', textureFile);
 
-        const response = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/textures/`, {
+        // const response = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/textures/`, {
+        const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/textures/?access-id=`+this.$route.query.access_id, {
+
           method: 'POST', headers: { 'Authorization': `Token ${token}` }, body: formData
         });
 
@@ -594,7 +600,8 @@ export default {
         onOk: async () => {
           try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/images/${imageId}/`, {
+            const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/images/${imageId}/?access-id=`+this.$route.query.access_id, {
+            // const response = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/images/${imageId}/`, {
               method: 'DELETE', headers: { 'Authorization': `Token ${token}` }
             });
 
@@ -621,7 +628,8 @@ export default {
         onOk: async () => {
           try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/colors/${colorId}/`, {
+            const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/colors/${colorId}/?access-id=`+this.$route.query.access_id, {
+            // const response = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/colors/${colorId}/`, {
               method: 'DELETE', headers: { 'Authorization': `Token ${token}` }
             });
 
@@ -648,7 +656,8 @@ export default {
         onOk: async () => {
           try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/textures/${textureId}/`, {
+            const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/textures/${textureId}/?access-id=`+this.$route.query.access_id, {
+            // const response = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/textures/${textureId}/`, {
               method: 'DELETE', headers: { 'Authorization': `Token ${token}` }
             });
 
@@ -721,8 +730,8 @@ export default {
             formData.append('images', preview.file);
             preview.uploading = true;
           });
-
-          const imageResponse = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/images/`, {
+          const imageResponse = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/images/?access-id=`+this.$route.query.access_id, {
+          // const imageResponse = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/images/`, {
             method: 'POST', headers: { 'Authorization': `Token ${token}` }, body: formData
           });
 
@@ -760,7 +769,8 @@ export default {
           productData.append('model_file', this.pending3DModel);
         }
 
-        const response = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/`, {
+        const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/?access-id=`+this.$route.query.access_id, {
+          // const response = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/`, {
           method: 'PUT', headers: { 'Authorization': `Token ${token}` }, body: productData
         });
 
