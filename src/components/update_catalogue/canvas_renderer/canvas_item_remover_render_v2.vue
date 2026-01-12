@@ -70,19 +70,7 @@
     @removal-success="handleRemovalSuccess"
     @cancel="draw_removal_modal = false"
   />
- <!-- SWITCH FURNITURE MODAL COMPONENT -->
-    <SwitchFurnitureModal
-      :visible="switchFurnitureModalVisible"
-      :base-image="baseImage"
-      :base-key="selectedObjectForSwitch"
-      :selected-objects="selectedObjects"
-      :object-mask-regions="objectMaskRegions"
-      :object-mask-image-data="objectMaskImageData"
-      :is-loading="isLoading"
-      @update:visible="switchFurnitureModalVisible = $event"
-      @apply-changes="handleFurnitureSwitching"
-      @close="closeSwitchFurnitureModal"
-    />
+
   <div class="canvas-container" ref="canvasContainer">
     <!-- Loading Overlay -->
     <div
@@ -306,20 +294,13 @@
       v-if="!isLoading && objectMaskCacheReady && !drawingMode"
       class="selection-controls"
     >
-      <!-- <a-button
+      <a-button
         v-if="canShowSwitchButton"
         class="toolbar-btn primary-btn"
         @click="openSwitchFurnitureMode"
       >
         🔄 Switch Furniture
-      </a-button> -->
-        <a-button
-          v-if="canShowSwitchButton"
-          class="toolbar-btn primary-btn"
-          @click="openSwitchFurnitureModal"
-        >
-          🔄 Switch Furniture
-        </a-button>
+      </a-button>
 
       <a-button class="toolbar-btn primary-btn" @click="make_room_empty">
         Remove All Furniture
@@ -672,7 +653,6 @@ import DrawRemovalModal from "@/components/update_catalogue/canvas_renderer/draw
 import switch_furniture from "@/components/update_catalogue/bottom_drawer_item_components/switch_furniture.vue";
 import { DotLottieVue } from "@lottiefiles/dotlottie-vue";
 import { DeleteOutlined ,RedoOutlined  } from '@ant-design/icons-vue';
-import SwitchFurnitureModal from '@/components/update_catalogue/canvas_renderer/switch_furniture.vue';
 
 export default {
   name: "item_remove_renderer",
@@ -718,7 +698,6 @@ export default {
     DotLottieVue,
     DeleteOutlined,
     RedoOutlined ,
-    SwitchFurnitureModal
   },
   data() {
     return {
@@ -825,10 +804,6 @@ export default {
       isDrawing: false,
       isBrushMode: true, // Track if brush is active or deselect mode is active
 
-      
-      // Modal state
-      switchFurnitureModalVisible: false,
-      
       selectedObjectForSwitch: null,
       isDrawingControlsMinimized: false,
 
@@ -883,12 +858,6 @@ export default {
     this.initCanvas();
     this.setupEventListeners();
     this.loadImage();
-
-     // Initialize your component
-    this.canvas = this.$refs.canvas;
-    if (this.canvas) {
-      this.ctx = this.canvas.getContext('2d');
-    }
   },
 
   beforeUnmount() {
@@ -980,176 +949,6 @@ export default {
   },
 
   methods: {
-       openSwitchFurnitureModal() {
-      if (this.selectedObjects.length === 0) return;
-
-      const firstSelectedKey = this.selectedObjects[0];
-      const baseKey = this.getBaseKeyName(firstSelectedKey);
-
-      // Select all objects with the same base key
-      const allMatchingKeys = this.objectMaskRegions
-        .map((region) => region.objectKey)
-        .filter((key) => this.getBaseKeyName(key) === baseKey);
-
-      this.selectedObjects = [...new Set(allMatchingKeys)];
-      this.selectedObjectForSwitch = baseKey;
-
-      // Open the modal
-      this.switchFurnitureModalVisible = true;
-    },
-
-    /**
-     * Close the modal
-     */
-    closeSwitchFurnitureModal() {
-      this.switchFurnitureModalVisible = false;
-      this.selectedObjectForSwitch = null;
-    },
-
-
-    async handleFurnitureSwitching(changeData) {
-      try {
-        const { drawingBlob, selectedObjects, baseKey } = changeData;
-
-        console.log('Furniture switching initiated:', {
-          selectedObjects,
-          baseKey,
-          drawingBlobSize: drawingBlob.size,
-        });
-
-        // Create FormData for backend API
-        const formData = new FormData();
-        formData.append('mask', drawingBlob, 'refined-mask.png');
-        formData.append('product_selected', 'YOUR_PRODUCT_ID'); // TODO: Get from user selection
-        formData.append('room_id', this.$route.params.id);
-        formData.append('object_keys', JSON.stringify(selectedObjects));
-        formData.append('base_key', baseKey);
-        formData.append(
-          'original_mask_paths',
-          JSON.stringify(
-            selectedObjects.reduce((acc, key) => {
-              acc[key] = this.objectMasks[key];
-              return acc;
-            }, {})
-          )
-        );
-        formData.append('canvas_dimensions', JSON.stringify(this.getCanvasDimensions()));
-
-        // Send to backend API
-        const response = await fetch(
-          `${this.$store.state.root_api}engine/furniture-switch/`,
-          {
-            method: 'POST',
-            body: formData,
-            headers: {
-              Authorization: `Token ${localStorage.getItem('token')}`,
-            },
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error(`Backend error: ${response.statusText}`);
-        }
-
-        const result = await response.json();
-
-        // Emit success event to parent or handle result
-        this.$emit('furniture-switched', {
-          objectKeys: selectedObjects,
-          baseKey: baseKey,
-          result: result,
-        });
-
-        this.$message.success('Furniture switched successfully!');
-      } catch (error) {
-        console.error('Error during furniture switching:', error);
-        this.$message.error('Failed to switch furniture. Please try again.');
-      }
-    },
-
-
-    async handleFurnitureSwitching(changeData) {
-      try {
-        const { drawingBlob, selectedObjects, baseKey } = changeData;
-
-        console.log('Furniture switching initiated:', {
-          selectedObjects,
-          baseKey,
-          drawingBlobSize: drawingBlob.size,
-        });
-
-        // Create FormData for backend API
-        const formData = new FormData();
-        formData.append('mask', drawingBlob, 'refined-mask.png');
-        formData.append('product_selected', 'YOUR_PRODUCT_ID'); // TODO: Get from user selection
-        formData.append('room_id', this.$route.params.id);
-        formData.append('object_keys', JSON.stringify(selectedObjects));
-        formData.append('base_key', baseKey);
-        formData.append(
-          'original_mask_paths',
-          JSON.stringify(
-            selectedObjects.reduce((acc, key) => {
-              acc[key] = this.objectMasks[key];
-              return acc;
-            }, {})
-          )
-        );
-        formData.append('canvas_dimensions', JSON.stringify(this.getCanvasDimensions()));
-
-        // Send to backend API
-        const response = await fetch(
-          `${this.$store.state.root_api}engine/furniture-switch/`,
-          {
-            method: 'POST',
-            body: formData,
-            headers: {
-              Authorization: `Token ${localStorage.getItem('token')}`,
-            },
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error(`Backend error: ${response.statusText}`);
-        }
-
-        const result = await response.json();
-
-        // Emit success event to parent or handle result
-        this.$emit('furniture-switched', {
-          objectKeys: selectedObjects,
-          baseKey: baseKey,
-          result: result,
-        });
-
-        this.$message.success('Furniture switched successfully!');
-      } catch (error) {
-        console.error('Error during furniture switching:', error);
-        this.$message.error('Failed to switch furniture. Please try again.');
-      }
-    },
-
-    
-    // ============== UTILITY METHODS ==============
-
-    /**
-     * Extract base key name from object key
-     * e.g., "sofa_1" -> "sofa"
-     */
-    getBaseKeyName(key) {
-      return key.replace(/_\d+$/, '');
-    },
-
-    /**
-     * Get current canvas dimensions
-     */
-    getCanvasDimensions() {
-      return {
-        width: this.canvas?.width || 800,
-        height: this.canvas?.height || 600,
-      };
-    },
-
-
     // Update syncOverlayTransform to use the new method
     syncOverlayTransform() {
       if (!this.overlayCtx) return;
