@@ -9,15 +9,35 @@
     :footer="null"
     @cancel="handleClose"
   >
-    <a-row>
-      <a-col :span="18">
+    <a-row style="height: 100%">
+      <a-col style="height: 100%" :span="18">
+        <div class="canvas-wrapper" ref="container">
+          <!-- Base image canvas -->
+          <canvas ref="imageCanvas"></canvas>
+
+          <!-- Drawing canvas -->
+          <canvas
+            ref="drawCanvas"
+            class="draw-layer"
+            @mousedown="startDraw"
+            @mousemove="draw"
+            @mouseup="stopDraw"
+            @mouseleave="stopDraw"
+          ></canvas>
+        </div>
         <!-- Canvas Container -->
-        <div
+        <!-- <div
           class="modal-canvas-container"
           ref="modalCanvasContainer"
-          style="flex: 1; position: relative; overflow: hidden; border-radius: 8px; background: #f5f5f5;"
+          style="
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            background: #f5f5f5;
+          "
         >
-          <!-- Main Canvas (Image) -->
+          <!-- Main Canvas (Image) 
           <canvas
             ref="modalCanvas"
             :width="modalCanvasWidth"
@@ -26,42 +46,68 @@
             :class="{ disabled: isLoading }"
           ></canvas>
 
-          <!-- Overlay Canvas (Highlights) -->
+          <!-- Overlay Canvas (Highlights) 
           <canvas
             ref="modalOverlayCanvas"
             :width="modalCanvasWidth"
             :height="modalCanvasHeight"
             class="modal-overlay-canvas"
             :class="{ disabled: isLoading }"
-            style="position: absolute; top: 0; left: 0; z-index: 2; pointer-events: none;"
+            style="
+              position: absolute;
+              top: 0;
+              left: 0;
+              z-index: 2;
+              pointer-events: none;
+            "
           ></canvas>
 
-          <!-- Drawing Canvas (User Brush Strokes) -->
+          <!-- Drawing Canvas (User Brush Strokes) 
           <canvas
             ref="drawingCanvasRef"
             :width="modalCanvasWidth"
             :height="modalCanvasHeight"
             class="modal-drawing-canvas"
             :class="{ disabled: isLoading }"
-            style="position: absolute; top: 0; left: 0; z-index: 3; cursor: crosshair;"
+            style="
+              position: absolute;
+              top: 0;
+              left: 0;
+              z-index: 3;
+              cursor: crosshair;
+            "
           ></canvas>
 
-          <!-- Zoom Controls -->
+          <!-- Zoom Controls 
           <div class="modal-zoom-controls">
-            <button @click="modalZoomIn" class="modal-zoom-btn" title="Zoom In">+</button>
-            <span class="modal-zoom-level">{{ Math.round(modalZoom * 100) }}%</span>
-            <button @click="modalZoomOut" class="modal-zoom-btn" title="Zoom Out">−</button>
-            <button @click="modalResetZoomAndPan" class="modal-zoom-btn reset-btn" title="Reset View">
+            <button @click="modalZoomIn" class="modal-zoom-btn" title="Zoom In">
+              +
+            </button>
+            <span class="modal-zoom-level"
+              >{{ Math.round(modalZoom * 100) }}%</span
+            >
+            <button
+              @click="modalZoomOut"
+              class="modal-zoom-btn"
+              title="Zoom Out"
+            >
+              −
+            </button>
+            <button
+              @click="modalResetZoomAndPan"
+              class="modal-zoom-btn reset-btn"
+              title="Reset View"
+            >
               ⌂
             </button>
           </div>
-        </div>
+        </div> -->
       </a-col>
-      <a-col :span="6">
+      <a-col style="height: 100%" :span="6">
         <!-- Control Panel -->
         <div class="modal-control-panel">
           <!-- Mode Toggle -->
-          <div style="display: flex; gap: 8px;">
+          <div style="display: flex; gap: 8px">
             <button
               @click="isBrushMode = true"
               :class="['modal-mode-btn', { active: isBrushMode }]"
@@ -77,71 +123,108 @@
               ✕ Deselect
             </button>
           </div>
-
-          <!-- Brush Size Control (only in brush mode) -->
-          <div v-if="isBrushMode" style="display: flex; gap: 8px; align-items: center;">
-            <label style="font-size: 12px; font-weight: 600; min-width: 60px;">Brush:</label>
-            <input
-              type="range"
-              min="5"
-              max="50"
-              :value="brushSize"
-              @input="changeBrushSize($event.target.value)"
-              class="modal-brush-slider"
-              style="flex: 1;"
-            />
-            <span style="font-size: 11px; min-width: 30px; text-align: right;">{{ brushSize }}px</span>
-          </div>
-
-          <!-- Action Buttons -->
-          <div style="display: flex; gap: 8px;">
-            <button
-              @click="undoDrawing"
-              :disabled="!canUndo || !isBrushMode"
-              class="modal-action-btn undo-btn"
-              title="Undo"
+          <!-- <div > -->
+            <!-- <FurnitureMaskOverlay 
+             v-for="selectedObj in selectedObjects"
+            :selectedImage="baseImage"
+            :maskPath="maskWithUrl[selectedObj]"
+            />  -->
+            <!-- {{ selectedObjects }}
+            {{ maskWithUrl }} -->
+            <a-row>
+              <a-col  :span="24"  v-if = "selectedObjects"
+                    v-for="selectedObj in selectedObjects">
+                      <selectedImage_mask_overlay
+                      :selectedImage="baseImage "
+                      :maskPath="maskWithUrl[selectedObj]"
+                      :title="selectedObj"  
+                      />
+                  </a-col>
+            </a-row>
+                    <!-- :handleRemoveObject="removeObject" -->
+            <!-- <a-button
+              class="unselectObjecBtn"
+              v-for="selectedObj in selectedObjects"
+              @click="toggleObjectSelection(selectedObj)"
+              :key="selectedObj"
             >
-              ↶ Undo
-            </button>
-
-            <button
-              @click="redoDrawing"
-              :disabled="!canRedo || !isBrushMode"
-              class="modal-action-btn redo-btn"
-              title="Redo"
+              {{ selectedObj }} <span>x</span>
+            </a-button> -->
+          <!-- </div> -->
+          <div class="control-button-sec">
+            <!-- Brush Size Control (only in brush mode) -->
+            <div
+              v-if="isBrushMode"
+              style="display: flex; gap: 8px; align-items: center"
             >
-              ↷ Redo
-            </button>
+              <label style="font-size: 12px; font-weight: 600; min-width: 60px"
+                >Brush:</label
+              >
+              <input
+                type="range"
+                min="5"
+                max="50"
+                :value="brushSize"
+                @input="changeBrushSize($event.target.value)"
+                class="modal-brush-slider"
+                style="flex: 1"
+              />
+              <span style="font-size: 11px; min-width: 30px; text-align: right"
+                >{{ brushSize }}px</span
+              >
+            </div>
 
-            <button
-              @click="resetDrawing"
-              class="modal-action-btn reset-btn"
-              title="Reset"
-            >
-              🔄 Reset
-            </button>
-          </div>
+            <!-- Action Buttons -->
+            <div class="action-button-sec" style="display: flex; gap: 8px">
+              <button
+                @click="undoDrawing"
+                :disabled="!canUndo || !isBrushMode"
+                class="modal-action-btn undo-btn"
+                title="Undo"
+              >
+                ↶ Undo
+              </button>
 
-          <!-- Submit Actions -->
-          <div style="display: flex; gap: 8px;">
-            <a-button
-              type="primary"
-              class="modal-submit-btn"
-              @click="handleApplyChanges"
-              :loading="isProcessing"
-              style="flex: 1;"
-            >
-              ✓ Apply & Select Furniture
-            </a-button>
+              <button
+                @click="redoDrawing"
+                :disabled="!canRedo || !isBrushMode"
+                class="modal-action-btn redo-btn"
+                title="Redo"
+              >
+                ↷ Redo
+              </button>
 
-            <a-button
-              danger
-              style="flex: 1;"
-              @click="handleClose"
-              :disabled="isProcessing"
-            >
-              ✕ Cancel
-            </a-button>
+              <button
+                @click="resetDrawing"
+                class="modal-action-btn reset-btn"
+                title="Reset"
+              >
+                🔄 Reset
+              </button>
+            </div>
+
+            <!-- Submit Actions -->
+            <div style="display: flex; flex-direction: column; gap: 8px">
+              <a-button
+                type="primary"
+                class="modal-submit-btn"
+                @click="handleApplyChanges"
+                :loading="isProcessing"
+                style="flex: 1"
+              >
+                ✓ Apply & Select Furniture
+              </a-button>
+
+              <a-button
+                class="cancel-button"
+                danger
+                style="flex: 1"
+                @click="handleClose"
+                :disabled="isProcessing"
+              >
+                ✕ Cancel
+              </a-button>
+            </div>
           </div>
         </div>
       </a-col>
@@ -150,89 +233,42 @@
 </template>
 
 <script>
+import selectedImage_mask_overlay from "@/components/update_catalogue/canvas_renderer/canvasMaskRendererForSwitchFurniture.vue";
 export default {
-  name: 'SwitchFurnitureModal',
-  props: {
-    visible: {
-      type: Boolean,
-      default: false,
-    },
-    baseImage: {
-      type: String,
-      required: true,
-    },
-    baseKey: {
-      type: String,
-      required: true,
-    },
-    selectedObjects: {
-      type: Array,
-      required: true,
-    },
-    objectMaskRegions: {
-      type: Array,
-      required: true,
-    },
-    objectMaskImageData: {
-      type: Array,
-      required: true,
-    },
-    isLoading: {
-      type: Boolean,
-      default: false,
-    },
+  name: "SwitchFurnitureModal",
+  components: {
+    selectedImage_mask_overlay
   },
-  emits: ['update:visible', 'apply-changes', 'close'],
+  props: {
+    visible: Boolean,
+    baseImage: String,
+    baseKey: String,
+    selectedObjects: Array,
+    objectMaskRegions: Array,
+    objectMaskImageData: Array,
+    isLoading: Boolean,
+    toggleObjectSelection: Function,
+    TotalObjects: Object,
+  },
+  emits: ["update:visible", "apply-changes", "close"],
   data() {
     return {
-      // ========== PERFORMANCE & PIXELATION SETTINGS ==========
-      highlightPixelStep: 3,
-      hoverPixelStep: 3,
+      imageCanvas: null,
+      drawCanvas: null,
+      imageCtx: null,
+      drawCtx: null,
 
-      // Canvas references
-      modalCanvas: null,
-      modalCanvasCtx: null,
-      modalOverlayCanvas: null,
-      modalOverlayCtx: null,
-      drawingCanvas: null,
-      drawingCtx: null,
-      modalCanvasWidth: 800,
-      modalCanvasHeight: 600,
-      resizeObserver: null,
+      img: null,
+      canvasWidth: 0,
+      canvasHeight: 0,
 
-      // Image rendering
-      baseImg: null,
-      modalRenderWidth: 800,
-      modalRenderHeight: 600,
-      modalRenderOffsetX: 0,
-      modalRenderOffsetY: 0,
-      modalScaleX: 1,
-      modalScaleY: 1,
-
-      // Zoom and pan
-      modalZoom: 1,
-      modalMinZoom: 1.0,
-      modalMaxZoom: 5,
-      modalPanX: 0,
-      modalPanY: 0,
-      modalIsDragging: false,
-      modalDragStartX: 0,
-      modalDragStartY: 0,
-      modalDragStartPanX: 0,
-      modalDragStartPanY: 0,
-
-      // Drawing
-      drawingHistory: [],
-      currentDrawingHistoryIndex: -1,
-      brushSize: 10,
+      isBrushMode: false,
       isDrawing: false,
-      isBrushMode: true,
-      lastDrawX: 0,
-      lastDrawY: 0,
+      brushSize: 10,
 
-      // State
-      isProcessing: false,
-      hoveredObject: null,
+      /* ✅ MASKING STATE */
+      maskImages: {}, // key -> Image
+      maskWithUrl:{}
     };
   },
 
@@ -241,710 +277,303 @@ export default {
       get() {
         return this.visible;
       },
-      set(value) {
-        this.$emit('update:visible', value);
+      set(val) {
+        this.$emit("update:visible", val);
       },
-    },
-
-    canUndo() {
-      return this.currentDrawingHistoryIndex > 0;
-    },
-
-    canRedo() {
-      return this.currentDrawingHistoryIndex < this.drawingHistory.length - 1;
     },
   },
 
   watch: {
-    visible(newVal) {
-      if (newVal) {
+    visible(val) {
+      if (val) {
         this.$nextTick(() => {
-          this.initializeModal();
+          requestAnimationFrame(async () => {
+            await this.initCanvas();
+            await this.loadSelectedMasks();
+            this.renderBaseWithMasks();
+          });
         });
-      } else {
-        this.cleanupModal();
-      }
-    },
-
-    baseImage() {
-      if (this.visible) {
-        this.loadImage();
       }
     },
   },
 
   methods: {
-    // ============== INITIALIZATION ==============
+    /* ================= CANVAS INIT ================= */
 
-    async initializeModal() {
-      try {
-        await this.loadImage();
-        this.$nextTick(() => {
-          this.initializeCanvases();
-          this.setupEventListeners();
-          this.renderImage();
-          this.drawSelectedFurnitureHighlight();
-          this.saveDrawingState();
-        });
-      } catch (error) {
-        console.error('Error initializing modal:', error);
-        this.$message.error('Failed to initialize modal');
-      }
-    },
-
-    cleanupModal() {
-      this.removeEventListeners();
-      if (this.resizeObserver) {
-        this.resizeObserver.disconnect();
-        this.resizeObserver = null;
-      }
-      if (this.drawingCtx) {
-        this.drawingCtx.clearRect(0, 0, this.modalCanvasWidth, this.modalCanvasHeight);
-      }
-      if (this.modalOverlayCtx) {
-        this.modalOverlayCtx.clearRect(0, 0, this.modalCanvasWidth, this.modalCanvasHeight);
-      }
-      this.drawingHistory = [];
-      this.currentDrawingHistoryIndex = -1;
-      this.modalZoom = 1;
-      this.modalPanX = 0;
-      this.modalPanY = 0;
-      this.isDrawing = false;
-      this.hoveredObject = null;
-    },
-
-    // ============== CANVAS INITIALIZATION ==============
-
-    initializeCanvases() {
-      const container = this.$refs.modalCanvasContainer;
+    async initCanvas() {
+      const container = this.$refs.container;
       if (!container) return;
 
       const rect = container.getBoundingClientRect();
-      this.modalCanvasWidth = Math.floor(rect.width);
-      this.modalCanvasHeight = Math.floor(rect.height);
+      this.canvasWidth = rect.width;
+      this.canvasHeight = rect.height;
 
-      this.modalCanvas = this.$refs.modalCanvas;
-      this.modalOverlayCanvas = this.$refs.modalOverlayCanvas;
-      this.drawingCanvas = this.$refs.drawingCanvasRef;
+      this.imageCanvas = this.$refs.imageCanvas;
+      this.drawCanvas = this.$refs.drawCanvas;
 
-      if (!this.modalCanvas || !this.modalOverlayCanvas || !this.drawingCanvas) {
-        console.error('Canvas refs not found');
-        return;
-      }
+      this.imageCanvas.width = this.canvasWidth;
+      this.imageCanvas.height = this.canvasHeight;
+      this.drawCanvas.width = this.canvasWidth;
+      this.drawCanvas.height = this.canvasHeight;
 
-      this.modalCanvasCtx = this.modalCanvas.getContext('2d');
-      this.modalOverlayCtx = this.modalOverlayCanvas.getContext('2d');
-      this.drawingCtx = this.drawingCanvas.getContext('2d');
+      this.imageCtx = this.imageCanvas.getContext("2d");
+      this.drawCtx = this.drawCanvas.getContext("2d");
 
-      // Set physical sizes - MUST match display size
-      this.modalCanvas.width = this.modalCanvasWidth;
-      this.modalCanvas.height = this.modalCanvasHeight;
-      this.modalOverlayCanvas.width = this.modalCanvasWidth;
-      this.modalOverlayCanvas.height = this.modalCanvasHeight;
-      this.drawingCanvas.width = this.modalCanvasWidth;
-      this.drawingCanvas.height = this.modalCanvasHeight;
-
-      // Setup resize observer to handle modal resizing
-      this.setupResizeObserver();
+      await this.loadImage();
     },
 
-    setupResizeObserver() {
-      if (typeof ResizeObserver === 'undefined' || !this.$refs.modalCanvasContainer) return;
-
-      this.resizeObserver = new ResizeObserver(() => {
-        const rect = this.$refs.modalCanvasContainer.getBoundingClientRect();
-        const newWidth = Math.floor(rect.width);
-        const newHeight = Math.floor(rect.height);
-
-        // Only update if size actually changed
-        if (newWidth !== this.modalCanvasWidth || newHeight !== this.modalCanvasHeight) {
-          this.modalCanvasWidth = newWidth;
-          this.modalCanvasHeight = newHeight;
-
-          // Resize all canvases
-          if (this.modalCanvas) {
-            this.modalCanvas.width = this.modalCanvasWidth;
-            this.modalCanvas.height = this.modalCanvasHeight;
-          }
-          if (this.modalOverlayCanvas) {
-            this.modalOverlayCanvas.width = this.modalCanvasWidth;
-            this.modalOverlayCanvas.height = this.modalCanvasHeight;
-          }
-          if (this.drawingCanvas) {
-            this.drawingCanvas.width = this.modalCanvasWidth;
-            this.drawingCanvas.height = this.modalCanvasHeight;
-          }
-
-          // Re-render everything
-          this.$nextTick(() => {
-            this.renderImage();
-            this.drawSelectedFurnitureHighlight();
-            this.syncOverlayTransform();
-          });
-        }
-      });
-
-      this.resizeObserver.observe(this.$refs.modalCanvasContainer);
-    },
-
-    // ============== IMAGE LOADING ==============
-
-    async loadImage() {
-      if (!this.baseImage) {
-        console.warn('No base image provided');
-        return;
-      }
-
-      try {
-        this.baseImg = await this.createImageFromSrc(this.baseImage);
-        this.calculateImageDimensions();
-        // Re-render highlight after image loads
-        this.$nextTick(() => {
-          this.drawSelectedFurnitureHighlight();
-        });
-      } catch (error) {
-        console.error('Error loading image:', error);
-        this.$message.error('Failed to load image');
-      }
-    },
-
-    createImageFromSrc(src) {
+    loadImage() {
       return new Promise((resolve, reject) => {
         const img = new Image();
-        img.crossOrigin = 'anonymous';
-
-        img.onload = () => resolve(img);
-        img.onerror = (error) => reject(new Error(`Failed to load image: ${src}`));
-
-        img.src = src;
+        img.crossOrigin = "anonymous";
+        img.onload = () => {
+          this.img = img;
+          resolve();
+        };
+        img.onerror = reject;
+        img.src = this.baseImage;
       });
     },
 
-    calculateImageDimensions() {
-      if (!this.baseImg) return;
+    /* ================= MASK LOADING ================= */
 
-      const maxWidth = this.modalCanvasWidth;
-      const maxHeight = this.modalCanvasHeight;
+    loadSelectedMasks() {
+      this.maskImages = {};
+    
+      const promises = this.selectedObjects.map((key) => {
+        return new Promise((resolve) => {
+          const maskImg = new Image();
+          maskImg.crossOrigin = "anonymous";
+          maskImg.src = this.$store.state.root_api + this.TotalObjects[key];
 
-      const imgAspectRatio = this.baseImg.width / this.baseImg.height;
-      const canvasAspectRatio = maxWidth / maxHeight;
+          maskImg.onload = () => {
+            this.maskImages[key] = maskImg;
+            this.maskWithUrl[key]= this.$store.state.root_api + this.TotalObjects[key];
+            resolve();
+          };
 
-      if (imgAspectRatio > canvasAspectRatio) {
-        this.modalRenderWidth = maxWidth;
-        this.modalRenderHeight = Math.round(maxWidth / imgAspectRatio);
-        this.modalRenderOffsetX = 0;
-        this.modalRenderOffsetY = Math.round((maxHeight - this.modalRenderHeight) / 2);
-      } else {
-        this.modalRenderHeight = maxHeight;
-        this.modalRenderWidth = Math.round(maxHeight * imgAspectRatio);
-        this.modalRenderOffsetX = Math.round((maxWidth - this.modalRenderWidth) / 2);
-        this.modalRenderOffsetY = 0;
-      }
-
-      this.modalScaleX = this.modalRenderWidth / this.baseImg.width;
-      this.modalScaleY = this.modalRenderHeight / this.baseImg.height;
-    },
-
-    // ============== RENDERING ==============
-
-    renderImage() {
-      if (!this.modalCanvas || !this.modalCanvasCtx) return;
-
-      this.modalCanvasCtx.clearRect(0, 0, this.modalCanvasWidth, this.modalCanvasHeight);
-      this.modalCanvasCtx.fillStyle = '#f5f5f5';
-      this.modalCanvasCtx.fillRect(0, 0, this.modalCanvasWidth, this.modalCanvasHeight);
-
-      if (!this.baseImg) return;
-
-      this.modalCanvasCtx.save();
-      this.modalCanvasCtx.translate(this.modalPanX, this.modalPanY);
-      this.modalCanvasCtx.scale(this.modalZoom, this.modalZoom);
-
-      try {
-        this.modalCanvasCtx.drawImage(
-          this.baseImg,
-          this.modalRenderOffsetX,
-          this.modalRenderOffsetY,
-          this.modalRenderWidth,
-          this.modalRenderHeight
-        );
-      } catch (error) {
-        console.error('Error rendering image:', error);
-      }
-
-      this.modalCanvasCtx.restore();
-    },
-
-    drawSelectedFurnitureHighlight() {
-      if (!this.drawingCtx || !this.selectedObjects.length || !this.objectMaskImageData.length) return;
-
-      // Clear drawing canvas first
-      this.drawingCtx.clearRect(0, 0, this.modalCanvasWidth, this.modalCanvasHeight);
-
-      this.selectedObjects.forEach((objectKey) => {
-        // Find by objectKey in the region, then use that index
-        const region = this.objectMaskRegions.find((r) => r.objectKey === objectKey);
-        
-        if (region && region.index !== undefined && this.objectMaskImageData[region.index]) {
-          const imageData = this.objectMaskImageData[region.index].imageData;
-          
-          // Verify imageData dimensions match canvas
-          if (imageData.width !== this.modalCanvasWidth || imageData.height !== this.modalCanvasHeight) {
-            console.warn(`Image data size mismatch for ${objectKey}: expected ${this.modalCanvasWidth}x${this.modalCanvasHeight}, got ${imageData.width}x${imageData.height}`);
-            return;
-          }
-
-          const data = imageData.data;
-
-          // Red highlight for selected objects
-          this.drawingCtx.fillStyle = 'rgba(255, 100, 100, 0.25)';
-
-          const step = 1; // Smooth highlight on drawing canvas
-
-          for (let y = 0; y < this.modalCanvasHeight; y += step) {
-            let startX = -1;
-            for (let x = 0; x < this.modalCanvasWidth; x += step) {
-              const index = (y * this.modalCanvasWidth + x) * 4;
-              const r = data[index];
-              const g = data[index + 1];
-              const b = data[index + 2];
-
-              if (r > 200 && g > 200 && b > 200) {
-                if (startX === -1) startX = x;
-              } else {
-                if (startX !== -1) {
-                  this.drawingCtx.fillRect(startX, y, x - startX, step);
-                  startX = -1;
-                }
-              }
-            }
-            if (startX !== -1) {
-              this.drawingCtx.fillRect(startX, y, this.modalCanvasWidth - startX, step);
-            }
-          }
-        }
-      });
-    },
-
-    drawPersistentSelectionHighlight() {
-      if (!this.modalOverlayCtx || this.selectedObjects.length === 0) return;
-
-      this.modalOverlayCtx.clearRect(0, 0, this.modalCanvasWidth, this.modalCanvasHeight);
-
-      this.modalOverlayCtx.save();
-      this.modalOverlayCtx.translate(this.modalPanX, this.modalPanY);
-      this.modalOverlayCtx.scale(this.modalZoom, this.modalZoom);
-
-      this.selectedObjects.forEach((objectKey) => {
-        const region = this.objectMaskRegions.find((r) => r.objectKey === objectKey);
-
-        if (region && region.imageData) {
-          const imageData = region.imageData;
-          const data = imageData.data;
-
-          this.modalOverlayCtx.fillStyle = 'rgba(255, 0, 0, 0.4)';
-
-          const step = this.highlightPixelStep;
-
-          for (let y = 0; y < this.modalCanvasHeight; y += step) {
-            let startX = -1;
-            for (let x = 0; x < this.modalCanvasWidth; x += step) {
-              const index = (y * this.modalCanvasWidth + x) * 4;
-              const r = data[index];
-              const g = data[index + 1];
-              const b = data[index + 2];
-
-              if (r > 200 && g > 200 && b > 200) {
-                if (startX === -1) startX = x;
-              } else {
-                if (startX !== -1) {
-                  this.modalOverlayCtx.fillRect(startX, y, x - startX, step);
-                  startX = -1;
-                }
-              }
-            }
-            if (startX !== -1) {
-              this.modalOverlayCtx.fillRect(startX, y, this.modalCanvasWidth - startX, step);
-            }
-          }
-        }
+          maskImg.onerror = () => resolve();
+        });
       });
 
-      this.modalOverlayCtx.restore();
+      return Promise.all(promises);
     },
 
-    drawHoverHighlight(objectKey) {
-      const region = this.objectMaskRegions.find((r) => r.objectKey === objectKey);
-      if (!region || !this.modalOverlayCtx) return;
+    /* ================= RENDER ================= */
 
-      this.modalOverlayCtx.save();
-      this.modalOverlayCtx.translate(this.modalPanX, this.modalPanY);
-      this.modalOverlayCtx.scale(this.modalZoom, this.modalZoom);
+    // renderBaseWithMasks() {
+    //   if (!this.imageCtx || !this.img) return;
 
-      const imageData = region.imageData;
-      const data = imageData.data;
+    //   const ctx = this.imageCtx;
+    //   ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
 
-      this.modalOverlayCtx.fillStyle = 'rgba(255, 165, 0, 0.4)';
+    //   // 1️⃣ Base image
+    //   const scale = Math.min(
+    //     this.canvasWidth / this.img.width,
+    //     this.canvasHeight / this.img.height
+    //   );
 
-      const step = this.hoverPixelStep;
+    //   const w = this.img.width * scale;
+    //   const h = this.img.height * scale;
+    //   const x = (this.canvasWidth - w) / 2;
+    //   const y = (this.canvasHeight - h) / 2;
 
-      for (let y = 0; y < this.modalCanvasHeight; y += step) {
-        let startX = -1;
-        for (let x = 0; x < this.modalCanvasWidth; x += step) {
-          const index = (y * this.modalCanvasWidth + x) * 4;
-          const r = data[index];
-          const g = data[index + 1];
-          const b = data[index + 2];
+    //   ctx.drawImage(this.img, x, y, w, h);
 
-          if (r > 200 && g > 200 && b > 200) {
-            if (startX === -1) startX = x;
+    //   // 2️⃣ Highlight selected object masks
+    //   ctx.save();
+    //   ctx.globalAlpha = 0.45;
+
+    //   this.selectedObjects.forEach((key) => {
+    //     const mask = this.maskImages[key];
+    //     if (!mask) return;
+
+    //     ctx.drawImage(mask, 0, 0, this.canvasWidth, this.canvasHeight);
+    //   });
+
+    //   ctx.restore();
+    // },
+    //  renderBaseWithMasks() {
+    //   if (!this.imageCtx || !this.img) return;
+
+    //   const ctx = this.imageCtx;
+    //   ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+
+    //   /* Draw base image */
+    //   const scale = Math.min(
+    //     this.canvasWidth / this.img.width,
+    //     this.canvasHeight / this.img.height
+    //   );
+
+    //   const w = this.img.width * scale;
+    //   const h = this.img.height * scale;
+    //   const x = (this.canvasWidth - w) / 2;
+    //   const y = (this.canvasHeight - h) / 2;
+
+    //   ctx.drawImage(this.img, x, y, w, h);
+
+    //   /* Draw CLEAN red masks */
+    //   this.selectedObjects.forEach((key) => {
+    //     const mask = this.maskImages[key];
+    //     if (!mask) return;
+
+    //     // --- offscreen canvas ---
+    //     const off = document.createElement("canvas");
+    //     off.width = this.canvasWidth;
+    //     off.height = this.canvasHeight;
+    //     const offCtx = off.getContext("2d");
+
+    //     // Draw raw mask
+    //     offCtx.drawImage(mask, 0, 0, off.width, off.height);
+
+    //     // Extract pixels
+    //     const imgData = offCtx.getImageData(0, 0, off.width, off.height);
+    //     const data = imgData.data;
+
+    //     // CLEAN THE MASK (CRITICAL STEP)
+    //     for (let i = 0; i < data.length; i += 4) {
+    //       const r = data[i];     // red channel
+    //       const g = data[i + 1];
+    //       const b = data[i + 2];
+
+    //       // treat bright pixels as object
+    //       const isObject = r > 200 && g > 200 && b > 200;
+
+    //       if (isObject) {
+    //         // solid red
+    //         data[i] = 255;
+    //         data[i + 1] = 0;
+    //         data[i + 2] = 0;
+    //         data[i + 3] = 180; // opacity
+    //       } else {
+    //         // FULLY TRANSPARENT
+    //         data[i + 3] = 0;
+    //       }
+    //     }
+
+    //     offCtx.putImageData(imgData, 0, 0);
+
+    //     // Draw clean result on main canvas
+    //     ctx.drawImage(off, 0, 0);
+    //   });
+    // }
+    renderBaseWithMasks() {
+      if (!this.imageCtx || !this.img) return;
+
+      const ctx = this.imageCtx;
+      ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+
+      /* 1️⃣ Base image */
+      const scale = Math.min(
+        this.canvasWidth / this.img.width,
+        this.canvasHeight / this.img.height
+      );
+
+      const w = this.img.width * scale;
+      const h = this.img.height * scale;
+      const x = (this.canvasWidth - w) / 2;
+      const y = (this.canvasHeight - h) / 2;
+
+      // ✅ STORE TRANSFORM
+      this._imgTransform = { x, y, w, h };
+
+      ctx.drawImage(this.img, x, y, w, h);
+
+      /* 2️⃣ Draw masks */
+      this.drawMasks();
+    },
+
+    drawMasks() {
+      const { x, y, w, h } = this._imgTransform;
+      const ctx = this.imageCtx;
+
+      this.selectedObjects.forEach((key) => {
+        const mask = this.maskImages[key];
+        if (!mask) return;
+
+        const off = document.createElement("canvas");
+        off.width = w;
+        off.height = h;
+
+        const offCtx = off.getContext("2d");
+
+        // ✅ Draw mask with SAME size as base image
+        offCtx.drawImage(mask, 0, 0, w, h);
+
+        const imgData = offCtx.getImageData(0, 0, w, h);
+        const data = imgData.data;
+
+        for (let i = 0; i < data.length; i += 4) {
+          const r = data[i];
+          const g = data[i + 1];
+          const b = data[i + 2];
+
+          const isObject = r > 200 && g > 200 && b > 200;
+
+          if (isObject) {
+            data[i] = 255;
+            data[i + 1] = 0;
+            data[i + 2] = 0;
+            data[i + 3] = 180;
           } else {
-            if (startX !== -1) {
-              this.modalOverlayCtx.fillRect(startX, y, x - startX, step);
-              startX = -1;
-            }
+            data[i + 3] = 0;
           }
         }
-        if (startX !== -1) {
-          this.modalOverlayCtx.fillRect(startX, y, this.modalCanvasWidth - startX, step);
-        }
-      }
 
-      this.modalOverlayCtx.restore();
+        offCtx.putImageData(imgData, 0, 0);
+
+        // ✅ DRAW AT SAME OFFSET AS IMAGE
+        ctx.drawImage(off, x, y);
+      });
+    },
+    /* ================= DRAW (UNCHANGED) ================= */
+
+    startDraw(e) {
+      if (!this.isBrushMode) return;
+      this.isDrawing = true;
+      this.drawCtx.beginPath();
+      this.drawCtx.moveTo(e.offsetX, e.offsetY);
     },
 
-    syncOverlayTransform() {
-      if (!this.modalOverlayCtx) return;
+    draw(e) {
+      if (!this.isDrawing || !this.isBrushMode) return;
 
-      if (this.selectedObjects.length > 0) {
-        this.drawPersistentSelectionHighlight();
-      } else if (this.hoveredObject) {
-        this.drawHoverHighlight(this.hoveredObject);
-      } else {
-        this.modalOverlayCtx.clearRect(0, 0, this.modalCanvasWidth, this.modalCanvasHeight);
-      }
+      this.drawCtx.strokeStyle = "rgba(255,0,0,0.5)";
+      this.drawCtx.lineWidth = this.brushSize;
+      this.drawCtx.lineCap = "round";
+      this.drawCtx.lineJoin = "round";
+
+      this.drawCtx.lineTo(e.offsetX, e.offsetY);
+      this.drawCtx.stroke();
     },
 
-    // ============== DRAWING FUNCTIONS ==============
-
-    drawBrushStroke(x, y, isStart = false) {
-      if (!this.drawingCtx) return;
-
-      this.drawingCtx.globalAlpha = 0.4;
-      this.drawingCtx.strokeStyle = '#FF4444';
-      this.drawingCtx.lineWidth = this.brushSize;
-      this.drawingCtx.lineCap = 'round';
-      this.drawingCtx.lineJoin = 'round';
-
-      if (isStart) {
-        this.drawingCtx.beginPath();
-        this.drawingCtx.moveTo(x, y);
-      } else {
-        this.drawingCtx.lineTo(x, y);
-        this.drawingCtx.stroke();
-      }
-
-      this.drawingCtx.globalAlpha = 1.0;
+    stopDraw() {
+      if (!this.isDrawing) return;
+      this.isDrawing = false;
+      this.drawCtx.closePath();
     },
 
-    saveDrawingState() {
-      if (!this.drawingCanvas) return;
-
-      const imageData = this.drawingCtx.getImageData(0, 0, this.modalCanvasWidth, this.modalCanvasHeight);
-
-      if (this.currentDrawingHistoryIndex < this.drawingHistory.length - 1) {
-        this.drawingHistory = this.drawingHistory.slice(0, this.currentDrawingHistoryIndex + 1);
-      }
-
-      this.drawingHistory.push(imageData);
-      this.currentDrawingHistoryIndex = this.drawingHistory.length - 1;
-    },
-
-    undoDrawing() {
-      if (!this.canUndo) return;
-
-      this.currentDrawingHistoryIndex--;
-      this.restoreDrawingState();
-    },
-
-    redoDrawing() {
-      if (!this.canRedo) return;
-
-      this.currentDrawingHistoryIndex++;
-      this.restoreDrawingState();
-    },
-
-    restoreDrawingState() {
-      if (!this.drawingCtx || this.currentDrawingHistoryIndex < 0) return;
-
-      this.drawingCtx.clearRect(0, 0, this.modalCanvasWidth, this.modalCanvasHeight);
-      this.drawSelectedFurnitureHighlight();
-
-      const imageData = this.drawingHistory[this.currentDrawingHistoryIndex];
-      const tempCanvas = document.createElement('canvas');
-      tempCanvas.width = this.modalCanvasWidth;
-      tempCanvas.height = this.modalCanvasHeight;
-      const tempCtx = tempCanvas.getContext('2d');
-      tempCtx.putImageData(imageData, 0, 0);
-
-      this.drawingCtx.drawImage(tempCanvas, 0, 0);
-    },
-
-    resetDrawing() {
-      if (!this.drawingCtx) return;
-
-      this.drawingCtx.clearRect(0, 0, this.modalCanvasWidth, this.modalCanvasHeight);
-      this.drawSelectedFurnitureHighlight();
-      this.drawingHistory = [];
-      this.currentDrawingHistoryIndex = -1;
-      this.saveDrawingState();
-    },
-
-    changeBrushSize(newSize) {
-      this.brushSize = parseInt(newSize);
-    },
-
-    // ============== ZOOM & PAN ==============
-
-    setupEventListeners() {
-      if (!this.drawingCanvas || !this.modalCanvas) return;
-
-      this.boundHandleWheel = this.handleWheel.bind(this);
-      this.boundHandleMouseDown = this.handleMouseDown.bind(this);
-      this.boundHandleMouseMove = this.handleMouseMove.bind(this);
-      this.boundHandleMouseUp = this.handleMouseUp.bind(this);
-      this.boundHandleMouseLeave = this.handleMouseLeave.bind(this);
-
-      // Zoom on main canvas
-      this.modalCanvas.addEventListener('wheel', this.boundHandleWheel, { passive: false });
-      this.modalCanvas.addEventListener('mousedown', this.boundHandleMouseDown);
-      this.modalCanvas.addEventListener('mousemove', this.boundHandleMouseMove);
-      this.modalCanvas.addEventListener('mouseup', this.boundHandleMouseUp);
-      this.modalCanvas.addEventListener('mouseleave', this.boundHandleMouseLeave);
-
-      // Drawing on drawing canvas
-      this.drawingCanvas.addEventListener('mousedown', this.boundHandleMouseDown);
-      this.drawingCanvas.addEventListener('mousemove', this.boundHandleMouseMove);
-      this.drawingCanvas.addEventListener('mouseup', this.boundHandleMouseUp);
-      this.drawingCanvas.addEventListener('mouseleave', this.boundHandleMouseLeave);
-    },
-
-    removeEventListeners() {
-      if (!this.modalCanvas || !this.drawingCanvas) return;
-
-      this.modalCanvas.removeEventListener('wheel', this.boundHandleWheel);
-      this.modalCanvas.removeEventListener('mousedown', this.boundHandleMouseDown);
-      this.modalCanvas.removeEventListener('mousemove', this.boundHandleMouseMove);
-      this.modalCanvas.removeEventListener('mouseup', this.boundHandleMouseUp);
-      this.modalCanvas.removeEventListener('mouseleave', this.boundHandleMouseLeave);
-
-      this.drawingCanvas.removeEventListener('mousedown', this.boundHandleMouseDown);
-      this.drawingCanvas.removeEventListener('mousemove', this.boundHandleMouseMove);
-      this.drawingCanvas.removeEventListener('mouseup', this.boundHandleMouseUp);
-      this.drawingCanvas.removeEventListener('mouseleave', this.boundHandleMouseLeave);
-    },
-
-    handleWheel(e) {
-      e.preventDefault();
-
-      const rect = this.modalCanvas.getBoundingClientRect();
-      const mouseX = e.clientX - rect.left;
-      const mouseY = e.clientY - rect.top;
-
-      const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
-      const newZoom = Math.max(this.modalMinZoom, Math.min(this.modalMaxZoom, this.modalZoom * zoomFactor));
-
-      if (newZoom !== this.modalZoom) {
-        const imageX = (mouseX - this.modalPanX) / this.modalZoom;
-        const imageY = (mouseY - this.modalPanY) / this.modalZoom;
-
-        this.modalZoom = newZoom;
-        this.modalPanX = mouseX - imageX * this.modalZoom;
-        this.modalPanY = mouseY - imageY * this.modalZoom;
-
-        this.constrainPan();
-        this.renderImage();
-        this.syncOverlayTransform();
-      }
-    },
-
-    handleMouseDown(e) {
-      const rect = this.drawingCanvas.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-
-      if (this.isBrushMode && e.target === this.drawingCanvas) {
-        this.isDrawing = true;
-        this.lastDrawX = x;
-        this.lastDrawY = y;
-        this.drawBrushStroke(x, y, true);
-        e.preventDefault();
-      } else if (!this.isBrushMode) {
-        this.modalIsDragging = true;
-        this.modalDragStartX = e.clientX;
-        this.modalDragStartY = e.clientY;
-        this.modalDragStartPanX = this.modalPanX;
-        this.modalDragStartPanY = this.modalPanY;
-        this.drawingCanvas.style.cursor = 'grabbing';
-        e.preventDefault();
-      }
-    },
-
-    handleMouseMove(e) {
-      const rect = this.drawingCanvas.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-
-      if (this.isDrawing && this.isBrushMode) {
-        this.drawBrushStroke(x, y, false);
-      } else if (this.modalIsDragging && !this.isBrushMode) {
-        const deltaX = e.clientX - this.modalDragStartX;
-        const deltaY = e.clientY - this.modalDragStartY;
-
-        this.modalPanX = this.modalDragStartPanX + deltaX;
-        this.modalPanY = this.modalDragStartPanY + deltaY;
-
-        this.constrainPan();
-        this.renderImage();
-        this.syncOverlayTransform();
-        e.preventDefault();
-      }
-    },
-
-    handleMouseUp(e) {
-      if (this.isDrawing) {
-        this.isDrawing = false;
-        this.saveDrawingState();
-        e.preventDefault();
-      }
-
-      if (this.modalIsDragging) {
-        this.modalIsDragging = false;
-        this.drawingCanvas.style.cursor = this.isBrushMode ? 'crosshair' : (this.modalZoom > 1 ? 'grab' : 'default');
-        e.preventDefault();
-      }
-    },
-
-    handleMouseLeave(e) {
-      if (this.isDrawing) {
-        this.isDrawing = false;
-        this.saveDrawingState();
-      }
-      this.handleMouseUp(e);
-    },
-
-    constrainPan() {
-      if (!this.baseImg) return;
-
-      const zoomedImageWidth = this.modalRenderWidth * this.modalZoom;
-      const zoomedImageHeight = this.modalRenderHeight * this.modalZoom;
-      const zoomedImageLeft = this.modalRenderOffsetX * this.modalZoom;
-      const zoomedImageTop = this.modalRenderOffsetY * this.modalZoom;
-
-      const maxPanX = Math.max(0, zoomedImageWidth + zoomedImageLeft - this.modalCanvasWidth);
-      const minPanX = Math.min(0, -zoomedImageLeft);
-      const maxPanY = Math.max(0, zoomedImageHeight + zoomedImageTop - this.modalCanvasHeight);
-      const minPanY = Math.min(0, -zoomedImageTop);
-
-      this.modalPanX = Math.max(-maxPanX, Math.min(minPanX, this.modalPanX));
-      this.modalPanY = Math.max(-maxPanY, Math.min(minPanY, this.modalPanY));
-    },
-
-    modalZoomIn() {
-      const newZoom = Math.min(this.modalMaxZoom, this.modalZoom * 1.2);
-      if (newZoom !== this.modalZoom) {
-        this.zoomToCenter(newZoom);
-      }
-    },
-
-    modalZoomOut() {
-      const newZoom = Math.max(this.modalMinZoom, this.modalZoom / 1.2);
-      if (newZoom !== this.modalZoom) {
-        this.zoomToCenter(newZoom);
-      }
-    },
-
-    zoomToCenter(newZoom) {
-      const centerX = this.modalCanvasWidth / 2;
-      const centerY = this.modalCanvasHeight / 2;
-
-      const imageX = (centerX - this.modalPanX) / this.modalZoom;
-      const imageY = (centerY - this.modalPanY) / this.modalZoom;
-
-      this.modalZoom = newZoom;
-      this.modalPanX = centerX - imageX * this.modalZoom;
-      this.modalPanY = centerY - imageY * this.modalZoom;
-
-      this.constrainPan();
-      this.renderImage();
-      this.syncOverlayTransform();
-    },
-
-    modalResetZoomAndPan() {
-      this.modalZoom = 1;
-      this.modalPanX = 0;
-      this.modalPanY = 0;
-      this.renderImage();
-      this.syncOverlayTransform();
-    },
-
-    // ============== EVENT HANDLERS ==============
-
-    async handleApplyChanges() {
-      try {
-        this.isProcessing = true;
-
-        const drawingBlob = await new Promise((resolve) => {
-          this.drawingCanvas.toBlob(resolve, 'image/png');
-        });
-
-        this.$emit('apply-changes', {
-          drawingBlob,
-          selectedObjects: this.selectedObjects,
-          baseKey: this.baseKey,
-        });
-
-        this.$message.success('Furniture refined successfully!');
-        this.handleClose();
-      } catch (error) {
-        console.error('Error applying changes:', error);
-        this.$message.error('Failed to apply changes');
-      } finally {
-        this.isProcessing = false;
-      }
-    },
+    /* ================= UI ================= */
 
     handleClose() {
-      this.$emit('close');
+      this.$emit("close");
       this.isVisible = false;
     },
 
-    formatObjectName(objectKey) {
-      if (!objectKey) return '';
-      return objectKey.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
+    formatObjectName(key) {
+      if (!key) return "";
+      return key.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
+    },
+
+    changeBrushSize(val) {
+      this.brushSize = val;
     },
   },
+  
 };
 </script>
 
 <style scoped>
-.modal-canvas-container {
-  position: relative;
-  width: 100%;
-  background: #f5f5f5;
-  border-radius: 8px;
-  overflow: hidden;
-  height: 100%;
-}
-
-.modal-main-canvas {
-  width: 100%;
-  height: 100%;
-  display: block;
-  position: relative;
-  z-index: 1;
-}
-
 .modal-overlay-canvas {
   border-radius: 8px;
   pointer-events: none;
@@ -1013,6 +642,17 @@ export default {
   border: 1px solid #e0e0e0;
   height: 100%;
   overflow-y: auto;
+  justify-content: space-between;
+}
+.control-button-sec {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.action-button-sec {
+  width: 100%;
+  justify-content: space-around;
+  margin: 10px 2px;
 }
 
 .modal-mode-btn {
@@ -1109,14 +749,13 @@ export default {
 }
 
 .modal-submit-btn {
+  width: 100%;
   border-radius: 6px;
   font-weight: 600;
   height: 36px;
 }
-
-.modal-main-canvas.disabled {
-  opacity: 0.5;
-  pointer-events: none;
+.cancel-button {
+  width: 100%;
 }
 
 .modal-overlay-canvas.disabled {
@@ -1126,5 +765,39 @@ export default {
 .modal-drawing-canvas.disabled {
   opacity: 0.5;
   pointer-events: none;
+}
+.unselectObjecBtn {
+  background-color: black;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+}
+.unselectObjecBtn:hover {
+  background-color: #333;
+  color: white;
+}
+.unselectObjecBtn > span {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: red;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  /* margin-right: 10px; */
+  /* min-width: 70vw; */
+  /*  min-height: 50vh; */
+}
+.canvas-wrapper canvas {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 </style>

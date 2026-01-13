@@ -82,6 +82,9 @@
       @update:visible="switchFurnitureModalVisible = $event"
       @apply-changes="handleFurnitureSwitching"
       @close="closeSwitchFurnitureModal"
+      
+      :TotalObjects="objectMasks"
+      @toggleObjectSelection="toggleObjectSelection"
     />
   <div class="canvas-container" ref="canvasContainer">
     <!-- Loading Overlay -->
