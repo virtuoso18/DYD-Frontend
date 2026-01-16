@@ -1311,6 +1311,7 @@ export default {
       );
       this.closeSwitchFurnitureMode();
       this.closeSwitchDrawer();
+      this.switchFurnitureModalVisible();
 
       const response = await fetch(
         `${this.$store.state.root_api}engine/furniture-switch/`,

@@ -182,6 +182,10 @@ export default {
       /* MASKING STATE */
       maskImages: {}, // key -> Image
       maskWithUrl: {},
+      //history stack
+      undoStack: [],
+      redoStack: [],
+      maxHistory: 100,
     };
   },
 
@@ -193,6 +197,14 @@ export default {
       set(val) {
         this.$emit("update:visible", val);
       },
+    },
+
+    canUndo() {
+      return this.undoStack.length > 0;
+    },
+
+    canRedo() {
+      return this.redoStack.length > 0;
     },
   },
 
@@ -221,6 +233,21 @@ export default {
     },
   },
   methods: {
+    saveState() {
+      if (!this.drawCanvas) return;
+
+      const snapshot = this.drawCanvas.toDataURL();
+
+      this.undoStack.push(snapshot);
+
+      // limit memory
+      if (this.undoStack.length > this.maxHistory) {
+        this.undoStack.shift();
+      }
+
+      // once new draw happens → redo is invalid
+      this.redoStack = [];
+    },
     /* ================= CANVAS INIT ================= */
 
     async initCanvas() {
@@ -388,6 +415,7 @@ export default {
       if (!this.isDrawing) return;
       this.isDrawing = false;
       this.drawCtx.closePath();
+      this.saveState();
     },
 
     /* ================= UI ================= */
@@ -544,7 +572,7 @@ export default {
       const canvas = this.createCombinedMaskCanvas({ inverse: false });
       canvas.toBlob((blob) => {
         this.openSelectFurnitureModel(blob);
-      })
+      });
     },
     applyAndDownloadNormalMask() {
       const canvas = this.createCombinedMaskCanvas({ inverse: false });
@@ -561,6 +589,53 @@ export default {
 
         URL.revokeObjectURL(url);
       }, "image/png");
+    },
+    //==== undo redo and reset section =====
+    undoDrawing() {
+      if (!this.canUndo) return;
+
+      const lastState = this.undoStack.pop();
+
+      // save current for redo
+      this.redoStack.push(this.drawCanvas.toDataURL());
+
+      this.restoreCanvas(lastState);
+    },
+    redoDrawing() {
+      if (!this.canRedo) return;
+
+      const nextState = this.redoStack.pop();
+
+      // save current for undo
+      this.undoStack.push(this.drawCanvas.toDataURL());
+
+      this.restoreCanvas(nextState);
+    },
+    restoreCanvas(dataUrl) {
+      const img = new Image();
+      img.onload = () => {
+        this.drawCtx.clearRect(
+          0,
+          0,
+          this.drawCanvas.width,
+          this.drawCanvas.height
+        );
+        this.drawCtx.drawImage(img, 0, 0);
+      };
+      img.src = dataUrl;
+    },
+    resetDrawing() {
+      if (!this.drawCanvas) return;
+
+      this.drawCtx.clearRect(
+        0,
+        0,
+        this.drawCanvas.width,
+        this.drawCanvas.height
+      );
+
+      this.undoStack = [];
+      this.redoStack = [];
     },
   },
 };

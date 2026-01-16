@@ -20,13 +20,11 @@
             <canvas
               ref="drawCanvas"
               class="draw-layer"
-              @mousedown="startDraw"
-              @mousemove="draw"
-              @mouseup="stopDraw"
-              @mouseleave="stopDraw"
-              @touchstart.prevent="startDraw"
-              @touchmove.prevent="draw"
-              @touchend.prevent="stopDraw"
+              @pointerdown="startDraw"
+              @pointermove="draw"
+              @pointerup="stopDraw"
+              @pointercancel="stopDraw"
+              @pointerleave="stopDraw"
             ></canvas>
           </div>
         </a-col>
@@ -200,6 +198,11 @@ export default {
       /* MASKING STATE */
       maskImages: {}, // key -> Image
       maskWithUrl: {},
+
+      //undo redo state
+      undoStack: [],
+      redoStack: [],
+      maxHistory: 100,
     };
   },
   components: {
@@ -213,6 +216,14 @@ export default {
       set(val) {
         this.$emit("update:swithcFurnitureDrawerForMobileVisible", val);
       },
+    },
+
+    canUndo() {
+      return this.undoStack.length > 0;
+    },
+
+    canRedo() {
+      return this.redoStack.length > 0;
     },
   },
 
@@ -241,6 +252,22 @@ export default {
     },
   },
   methods: {
+    saveState() {
+      if (!this.drawCanvas) return;
+
+      const snapshot = this.drawCanvas.toDataURL("image/png");
+
+      if (this.undoStack[this.undoStack.length - 1] === snapshot) return;
+
+      this.undoStack.push(snapshot);
+
+      if (this.undoStack.length > this.maxHistory) {
+        this.undoStack.shift();
+      }
+
+      this.redoStack = [];
+    },
+
     /* ================= CANVAS INIT ================= */
 
     async initCanvas() {
@@ -395,18 +422,20 @@ export default {
 
     startDraw(e) {
       if (!this.isBrushMode) return;
+      e.preventDefault();
 
-      // block right click only for mouse
       if (e.button !== undefined && e.button !== 0) return;
 
       const { x, y } = this.getEventPosition(e);
-
       if (!this.isInsideImage(x, y)) return;
+
+      this.saveState(); // ✅ CRITICAL (from working code)
 
       this.isDrawing = true;
       this.drawCtx.beginPath();
       this.drawCtx.moveTo(x, y);
     },
+
     // draw(e) {
     //   if (!this.isDrawing || !this.isBrushMode) return;
     //   let x,y;
@@ -439,12 +468,10 @@ export default {
     draw(e) {
       if (!this.isDrawing || !this.isBrushMode) return;
 
+      e.preventDefault();
+
       const { x, y } = this.getEventPosition(e);
-
-      const inside = this.isInsideImage(x, y);
-      this.drawCanvas.style.cursor = inside ? "crosshair" : "not-allowed";
-
-      if (!inside) {
+      if (!this.isInsideImage(x, y)) {
         this.stopDraw();
         return;
       }
@@ -466,6 +493,7 @@ export default {
 
     stopDraw() {
       if (!this.isDrawing) return;
+
       this.isDrawing = false;
       this.drawCtx.closePath();
     },
@@ -473,18 +501,27 @@ export default {
     getEventPosition(e) {
       const rect = this.drawCanvas.getBoundingClientRect();
 
-      if (e.touches && e.touches.length > 0) {
-        return {
-          x: e.touches[0].clientX - rect.left,
-          y: e.touches[0].clientY - rect.top,
-        };
-      }
-
       return {
-        x: e.offsetX,
-        y: e.offsetY,
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top,
       };
     },
+
+    // getEventPosition(e) {
+    //   const rect = this.drawCanvas.getBoundingClientRect();
+
+    //   if (e.touches && e.touches.length > 0) {
+    //     return {
+    //       x: e.touches[0].clientX - rect.left,
+    //       y: e.touches[0].clientY - rect.top,
+    //     };
+    //   }
+
+    //   return {
+    //     x: e.offsetX,
+    //     y: e.offsetY,
+    //   };
+    // },
     /* ================= UI ================= */
 
     handleClose() {
@@ -635,11 +672,11 @@ export default {
 
       return canvas;
     },
-     handleSwitchFurniture() {
+    handleSwitchFurniture() {
       const canvas = this.createCombinedMaskCanvas({ inverse: false });
       canvas.toBlob((blob) => {
         this.openSelectFurnitureModel(blob);
-      })
+      });
     },
     applyAndDownloadNormalMask() {
       const canvas = this.createCombinedMaskCanvas({ inverse: false });
@@ -656,6 +693,53 @@ export default {
 
         URL.revokeObjectURL(url);
       }, "image/png");
+    },
+    undoDrawing() {
+      if (!this.canUndo) return;
+
+      const current = this.drawCanvas.toDataURL("image/png");
+      const prev = this.undoStack.pop();
+
+      this.redoStack.push(current);
+      this.restoreCanvas(prev);
+    },
+
+    redoDrawing() {
+      if (!this.canRedo) return;
+
+      const current = this.drawCanvas.toDataURL("image/png");
+      const next = this.redoStack.pop();
+
+      this.undoStack.push(current);
+      this.restoreCanvas(next);
+    },
+
+    restoreCanvas(dataUrl) {
+      const img = new Image();
+      img.onload = () => {
+        this.drawCtx.clearRect(
+          0,
+          0,
+          this.drawCanvas.width,
+          this.drawCanvas.height
+        );
+        this.drawCtx.drawImage(img, 0, 0);
+      };
+      img.src = dataUrl;
+    },
+    resetDrawing() {
+      if (!this.drawCanvas) return;
+
+      this.drawCtx.clearRect(
+        0,
+        0,
+        this.drawCanvas.width,
+        this.drawCanvas.height
+      );
+
+      this.undoStack = [];
+      this.redoStack = [];
+      this.saveState();
     },
   },
 };
