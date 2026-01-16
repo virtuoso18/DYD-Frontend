@@ -119,7 +119,7 @@
               <a-button
                 type="primary"
                 class="modal-submit-btn"
-                @click="handleSwitchFurniture"
+                @click="applyAndDownloadNormalMask"
                 :loading="isProcessing"
                 style="flex: 1"
               >
@@ -160,7 +160,6 @@ export default {
     isLoading: Boolean,
     toggleObjectSelection: Function,
     TotalObjects: Object,
-    openSelectFurnitureModel: Function,
   },
   emits: ["update:visible", "apply-changes", "close"],
   data() {
@@ -539,12 +538,6 @@ export default {
       }
 
       return canvas;
-    },
-    handleSwitchFurniture() {
-      const canvas = this.createCombinedMaskCanvas({ inverse: false });
-      canvas.toBlob((blob) => {
-        this.openSelectFurnitureModel(blob);
-      })
     },
     applyAndDownloadNormalMask() {
       const canvas = this.createCombinedMaskCanvas({ inverse: false });
