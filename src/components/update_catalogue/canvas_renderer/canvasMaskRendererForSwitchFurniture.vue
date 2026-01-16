@@ -1,9 +1,5 @@
 <template>
-
   <div class="mask-overlay-container">
-    <!-- {{ selectedImage }}
-    {{ maskPath }} -->
-    <h2 class="text-md font-bold italic pl-4" style="font-size:12px; margin: 0;text-align: start;">{{ title }}</h2>
     <div class="image-wrapper">
       <!-- Canvas Section -->
       <div class="canvas-section">
@@ -20,7 +16,7 @@
         ></canvas>
       </div>
       <button
-        @click="removeObject(index)"
+        @click="toggleObjectSelection(selectedObjectKey)"
         class="p-2 hover:bg-red-100 text-red-600 rounded-lg transition-colors bg-white absolute right-4 bottom-4 cursor-pointer"
       >
         <svg
@@ -64,14 +60,13 @@ export default {
       type: String,
       required: true,
     },
-    handleRemoveObject: {
+    toggleObjectSelection: {
       type: Function,
       required: false,
     },
-    title: {
+    selectedObjectKey: {
       type: String,
-      required: false,
-      default: "Mask Overlay",
+      required: true,
     },
   },
   data() {
@@ -270,7 +265,7 @@ export default {
 .mask-overlay-container {
   display: flex;
   flex-direction: column;
-  width: 50%;
+  width: 100%;
   box-sizing: border-box;
 }
 

@@ -70,22 +70,39 @@
     @removal-success="handleRemovalSuccess"
     @cancel="draw_removal_modal = false"
   />
- <!-- SWITCH FURNITURE MODAL COMPONENT -->
-    <SwitchFurnitureModal
-      :visible="switchFurnitureModalVisible"
-      :base-image="baseImage"
-      :base-key="selectedObjectForSwitch"
-      :selected-objects="selectedObjects"
-      :object-mask-regions="objectMaskRegions"
-      :object-mask-image-data="objectMaskImageData"
-      :is-loading="isLoading"
-      @update:visible="switchFurnitureModalVisible = $event"
-      @apply-changes="handleFurnitureSwitching"
-      @close="closeSwitchFurnitureModal"
-      
-      :TotalObjects="objectMasks"
-      @toggleObjectSelection="toggleObjectSelection"
-    />
+  <!-- SWITCH FURNITURE MODAL COMPONENT -->
+  <SwitchFurnitureModal
+    :visible="switchFurnitureModalVisible"
+    :base-image="baseImage"
+    :base-key="selectedObjectForSwitch"
+    :selected-objects="selectedObjects"
+    :object-mask-regions="objectMaskRegions"
+    :object-mask-image-data="objectMaskImageData"
+    :is-loading="isLoading"
+    @update:visible="switchFurnitureModalVisible = $event"
+    @apply-changes="handleFurnitureSwitching"
+    @close="closeSwitchFurnitureModal"
+    :TotalObjects="objectMasks"
+    :toggleObjectSelection="toggleObjectSelection"
+    :openSelectFurnitureModel="openSelectFurnitureModel"
+  />
+  <SwitchFurnitureDrawerForMobile
+    :swithcFurnitureDrawerForMobileVisible="
+      swithcFurnitureDrawerForMobileVisible
+    "
+    :closeSwitchDrawer="closeSwitchDrawer"
+    :base-image="baseImage"
+    :base-key="selectedObjectForSwitch"
+    :selected-objects="selectedObjects"
+    :object-mask-regions="objectMaskRegions"
+    :object-mask-image-data="objectMaskImageData"
+    :is-loading="isLoading"
+    @update:visible="switchFurnitureModalVisible = $event"
+    @apply-changes="handleFurnitureSwitching"
+    :TotalObjects="objectMasks"
+    :toggleObjectSelection="toggleObjectSelection"
+    :openSelectFurnitureModel="openSelectFurnitureModel"
+  />
   <div class="canvas-container" ref="canvasContainer">
     <!-- Loading Overlay -->
     <div
@@ -316,13 +333,13 @@
       >
         🔄 Switch Furniture
       </a-button> -->
-        <a-button
-          v-if="canShowSwitchButton"
-          class="toolbar-btn primary-btn"
-          @click="openSwitchFurnitureModal"
-        >
-          🔄 Switch Furniture
-        </a-button>
+      <a-button
+        v-if="canShowSwitchButton"
+        class="toolbar-btn primary-btn"
+        @click="openSwitchFurnitureModal"
+      >
+        🔄 Switch Furniture
+      </a-button>
 
       <a-button class="toolbar-btn primary-btn" @click="make_room_empty">
         Remove All Furniture
@@ -342,16 +359,6 @@
         ⌂
       </button>
     </div>
-
-    <!-- Pan Instructions -->
-    <!-- <div v-if="zoom > 1 && !isLoading" class="instructions">
-      <span v-if="!drawingMode"
-        >Click and drag to pan • Mouse wheel to zoom • Click objects to
-        select</span
-      >
-      <span v-else>Draw on the furniture area to refine its boundaries</span>
-    </div> -->
-
     <!-- Debug Info -->
     <div v-if="showDebugInfo" class="debug-info">
       <div>Objects detected: {{ Object.keys(objectMasks || {}).length }}</div>
@@ -396,73 +403,120 @@
         <a-button
           @click="toggleSelection"
           type="default"
-          style="display: flex;gap:5px;justify-content: center;align-items: center;"
+          style="
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+            align-items: center;
+          "
           :disabled="objectMaskRegions.length === 0 || drawingMode"
         >
-        <svg v-if=" selectedObjects.length != objectMaskRegions.length" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#000000" height="20px" width="20px" version="1.1" id="Layer_1" viewBox="0 0 512 512" xml:space="preserve">
-<g>
-	<g>
-		<path d="M503.467,247.467H264.533V8.533C264.533,3.823,260.719,0,256,0s-8.533,3.823-8.533,8.533v238.933H8.533    C3.814,247.467,0,251.29,0,256s3.814,8.533,8.533,8.533h238.933v238.933c0,4.71,3.814,8.533,8.533,8.533s8.533-3.823,8.533-8.533    V264.533h238.933c4.719,0,8.533-3.823,8.533-8.533S508.186,247.467,503.467,247.467z"/>
-	</g>
-</g>
-<g>
-	<g>
-		<path d="M384,281.6h-93.867c-4.719,0-8.533,3.823-8.533,8.533V384c0,4.71,3.814,8.533,8.533,8.533H384    c4.719,0,8.533-3.823,8.533-8.533v-93.867C392.533,285.423,388.719,281.6,384,281.6z"/>
-	</g>
-</g>
-<g>
-	<g>
-		<path d="M221.867,281.6H128c-4.719,0-8.533,3.823-8.533,8.533V384c0,4.71,3.814,8.533,8.533,8.533h93.867    c4.719,0,8.533-3.823,8.533-8.533v-93.867C230.4,285.423,226.586,281.6,221.867,281.6z"/>
-	</g>
-</g>
-<g>
-	<g>
-		<path d="M221.867,119.467H128c-4.719,0-8.533,3.823-8.533,8.533v93.867c0,4.71,3.814,8.533,8.533,8.533h93.867    c4.719,0,8.533-3.823,8.533-8.533V128C230.4,123.29,226.586,119.467,221.867,119.467z"/>
-	</g>
-</g>
-<g>
-	<g>
-		<path d="M384,119.467h-93.867c-4.719,0-8.533,3.823-8.533,8.533v93.867c0,4.71,3.814,8.533,8.533,8.533H384    c4.719,0,8.533-3.823,8.533-8.533V128C392.533,123.29,388.719,119.467,384,119.467z"/>
-	</g>
-</g>
-</svg>
+          <svg
+            v-if="selectedObjects.length != objectMaskRegions.length"
+            xmlns="http://www.w3.org/2000/svg"
+            xmlns:xlink="http://www.w3.org/1999/xlink"
+            fill="#000000"
+            height="20px"
+            width="20px"
+            version="1.1"
+            id="Layer_1"
+            viewBox="0 0 512 512"
+            xml:space="preserve"
+          >
+            <g>
+              <g>
+                <path
+                  d="M503.467,247.467H264.533V8.533C264.533,3.823,260.719,0,256,0s-8.533,3.823-8.533,8.533v238.933H8.533    C3.814,247.467,0,251.29,0,256s3.814,8.533,8.533,8.533h238.933v238.933c0,4.71,3.814,8.533,8.533,8.533s8.533-3.823,8.533-8.533    V264.533h238.933c4.719,0,8.533-3.823,8.533-8.533S508.186,247.467,503.467,247.467z"
+                />
+              </g>
+            </g>
+            <g>
+              <g>
+                <path
+                  d="M384,281.6h-93.867c-4.719,0-8.533,3.823-8.533,8.533V384c0,4.71,3.814,8.533,8.533,8.533H384    c4.719,0,8.533-3.823,8.533-8.533v-93.867C392.533,285.423,388.719,281.6,384,281.6z"
+                />
+              </g>
+            </g>
+            <g>
+              <g>
+                <path
+                  d="M221.867,281.6H128c-4.719,0-8.533,3.823-8.533,8.533V384c0,4.71,3.814,8.533,8.533,8.533h93.867    c4.719,0,8.533-3.823,8.533-8.533v-93.867C230.4,285.423,226.586,281.6,221.867,281.6z"
+                />
+              </g>
+            </g>
+            <g>
+              <g>
+                <path
+                  d="M221.867,119.467H128c-4.719,0-8.533,3.823-8.533,8.533v93.867c0,4.71,3.814,8.533,8.533,8.533h93.867    c4.719,0,8.533-3.823,8.533-8.533V128C230.4,123.29,226.586,119.467,221.867,119.467z"
+                />
+              </g>
+            </g>
+            <g>
+              <g>
+                <path
+                  d="M384,119.467h-93.867c-4.719,0-8.533,3.823-8.533,8.533v93.867c0,4.71,3.814,8.533,8.533,8.533H384    c4.719,0,8.533-3.823,8.533-8.533V128C392.533,123.29,388.719,119.467,384,119.467z"
+                />
+              </g>
+            </g>
+          </svg>
 
-
-
-<svg v-else xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 24 24" fill="none">
-<path d="M16 4H16.01M16 12H16.01M12 4H12.01M12 8H12.01M12 12H12.01M12 16H12.01M12 20H12.01M16 20H16.01M8 4H8.01M8 12H8.01M4 4H4.01M4 8H4.01M4 12H4.01M4 16H4.01M4 20H4.01M8 20H8.01M20 4H20.01M20 8H20.01M20 12H20.01M20 16H20.01M20 20H20.01" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
-        <!-- <span v-if="selectedObjects.length === objectMaskRegions.length">
+          <svg
+            v-else
+            xmlns="http://www.w3.org/2000/svg"
+            width="20px"
+            height="20px"
+            viewBox="0 0 24 24"
+            fill="none"
+          >
+            <path
+              d="M16 4H16.01M16 12H16.01M12 4H12.01M12 8H12.01M12 12H12.01M12 16H12.01M12 20H12.01M16 20H16.01M8 4H8.01M8 12H8.01M4 4H4.01M4 8H4.01M4 12H4.01M4 16H4.01M4 20H4.01M8 20H8.01M20 4H20.01M20 8H20.01M20 12H20.01M20 16H20.01M20 20H20.01"
+              stroke="#000000"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          <!-- <span v-if="selectedObjects.length === objectMaskRegions.length">
           {{selectedObjects.length}} 
         </span> -->
-            
         </a-button>
 
         <!-- class="control-btn remove" -->
         <a-button
           @click="removeSelectedObjects"
-          style="display: flex;justify-content: center;align-items: center;background-color:red;color:white"
+          style="
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: red;
+            color: white;
+          "
           :style="{
-    color: 'white',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: selectedObjects.length === 0 ? 'rgb(285, 85, 96)' : 'red'
-  }"
+            color: 'white',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor:
+              selectedObjects.length === 0 ? 'rgb(285, 85, 96)' : 'red',
+          }"
           :disabled="selectedObjects.length === 0 || drawingMode"
         >
-         <DeleteOutlined/> {{ selectedObjects.length }}
+          <DeleteOutlined /> {{ selectedObjects.length }}
         </a-button>
 
         <a-button
           type="primary"
           class="toolbar-btn primary-btn"
-          style="display:flex;justify-content:center;align-items: center;gap:5px;"
-
+          style="
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+          "
           @click="reset_entire_room"
           :disabled="isLoading || drawingMode"
         >
-        <RedoOutlined />
+          <RedoOutlined />
           Reset room
         </a-button>
       </div>
@@ -479,12 +533,11 @@
       </div>
     </div>
   </div>
-  <div class="md:hidden bg-white " style="width:100%">
+  <div class="md:hidden bg-white" style="width: 100%">
     <!-- Left Buttons -->
     <div class="flex flex-col gap-2 pt-1 px-2">
       <div className="flex flex-row gap-6 justify-center">
-        
-         <a-button
+        <a-button
           @click="DrawRemoval_model"
           style="display: flex; gap: 5px; gap: 10px"
         >
@@ -507,81 +560,120 @@
         <a-button
           @click="toggleSelection"
           type="default"
-          style="display: flex;gap:5px;justify-content: center;align-items: center;"
+          style="
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+            align-items: center;
+          "
           :disabled="objectMaskRegions.length === 0 || drawingMode"
         >
-        <svg v-if=" selectedObjects.length != objectMaskRegions.length" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#000000" height="20px" width="20px" version="1.1" id="Layer_1" viewBox="0 0 512 512" xml:space="preserve">
-<g>
-	<g>
-		<path d="M503.467,247.467H264.533V8.533C264.533,3.823,260.719,0,256,0s-8.533,3.823-8.533,8.533v238.933H8.533    C3.814,247.467,0,251.29,0,256s3.814,8.533,8.533,8.533h238.933v238.933c0,4.71,3.814,8.533,8.533,8.533s8.533-3.823,8.533-8.533    V264.533h238.933c4.719,0,8.533-3.823,8.533-8.533S508.186,247.467,503.467,247.467z"/>
-	</g>
-</g>
-<g>
-	<g>
-		<path d="M384,281.6h-93.867c-4.719,0-8.533,3.823-8.533,8.533V384c0,4.71,3.814,8.533,8.533,8.533H384    c4.719,0,8.533-3.823,8.533-8.533v-93.867C392.533,285.423,388.719,281.6,384,281.6z"/>
-	</g>
-</g>
-<g>
-	<g>
-		<path d="M221.867,281.6H128c-4.719,0-8.533,3.823-8.533,8.533V384c0,4.71,3.814,8.533,8.533,8.533h93.867    c4.719,0,8.533-3.823,8.533-8.533v-93.867C230.4,285.423,226.586,281.6,221.867,281.6z"/>
-	</g>
-</g>
-<g>
-	<g>
-		<path d="M221.867,119.467H128c-4.719,0-8.533,3.823-8.533,8.533v93.867c0,4.71,3.814,8.533,8.533,8.533h93.867    c4.719,0,8.533-3.823,8.533-8.533V128C230.4,123.29,226.586,119.467,221.867,119.467z"/>
-	</g>
-</g>
-<g>
-	<g>
-		<path d="M384,119.467h-93.867c-4.719,0-8.533,3.823-8.533,8.533v93.867c0,4.71,3.814,8.533,8.533,8.533H384    c4.719,0,8.533-3.823,8.533-8.533V128C392.533,123.29,388.719,119.467,384,119.467z"/>
-	</g>
-</g>
-</svg>
+          <svg
+            v-if="selectedObjects.length != objectMaskRegions.length"
+            xmlns="http://www.w3.org/2000/svg"
+            xmlns:xlink="http://www.w3.org/1999/xlink"
+            fill="#000000"
+            height="20px"
+            width="20px"
+            version="1.1"
+            id="Layer_1"
+            viewBox="0 0 512 512"
+            xml:space="preserve"
+          >
+            <g>
+              <g>
+                <path
+                  d="M503.467,247.467H264.533V8.533C264.533,3.823,260.719,0,256,0s-8.533,3.823-8.533,8.533v238.933H8.533    C3.814,247.467,0,251.29,0,256s3.814,8.533,8.533,8.533h238.933v238.933c0,4.71,3.814,8.533,8.533,8.533s8.533-3.823,8.533-8.533    V264.533h238.933c4.719,0,8.533-3.823,8.533-8.533S508.186,247.467,503.467,247.467z"
+                />
+              </g>
+            </g>
+            <g>
+              <g>
+                <path
+                  d="M384,281.6h-93.867c-4.719,0-8.533,3.823-8.533,8.533V384c0,4.71,3.814,8.533,8.533,8.533H384    c4.719,0,8.533-3.823,8.533-8.533v-93.867C392.533,285.423,388.719,281.6,384,281.6z"
+                />
+              </g>
+            </g>
+            <g>
+              <g>
+                <path
+                  d="M221.867,281.6H128c-4.719,0-8.533,3.823-8.533,8.533V384c0,4.71,3.814,8.533,8.533,8.533h93.867    c4.719,0,8.533-3.823,8.533-8.533v-93.867C230.4,285.423,226.586,281.6,221.867,281.6z"
+                />
+              </g>
+            </g>
+            <g>
+              <g>
+                <path
+                  d="M221.867,119.467H128c-4.719,0-8.533,3.823-8.533,8.533v93.867c0,4.71,3.814,8.533,8.533,8.533h93.867    c4.719,0,8.533-3.823,8.533-8.533V128C230.4,123.29,226.586,119.467,221.867,119.467z"
+                />
+              </g>
+            </g>
+            <g>
+              <g>
+                <path
+                  d="M384,119.467h-93.867c-4.719,0-8.533,3.823-8.533,8.533v93.867c0,4.71,3.814,8.533,8.533,8.533H384    c4.719,0,8.533-3.823,8.533-8.533V128C392.533,123.29,388.719,119.467,384,119.467z"
+                />
+              </g>
+            </g>
+          </svg>
 
-
-
-<svg v-else xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 24 24" fill="none">
-<path d="M16 4H16.01M16 12H16.01M12 4H12.01M12 8H12.01M12 12H12.01M12 16H12.01M12 20H12.01M16 20H16.01M8 4H8.01M8 12H8.01M4 4H4.01M4 8H4.01M4 12H4.01M4 16H4.01M4 20H4.01M8 20H8.01M20 4H20.01M20 8H20.01M20 12H20.01M20 16H20.01M20 20H20.01" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
-        <!-- <span v-if="selectedObjects.length === objectMaskRegions.length">
+          <svg
+            v-else
+            xmlns="http://www.w3.org/2000/svg"
+            width="20px"
+            height="20px"
+            viewBox="0 0 24 24"
+            fill="none"
+          >
+            <path
+              d="M16 4H16.01M16 12H16.01M12 4H12.01M12 8H12.01M12 12H12.01M12 16H12.01M12 20H12.01M16 20H16.01M8 4H8.01M8 12H8.01M4 4H4.01M4 8H4.01M4 12H4.01M4 16H4.01M4 20H4.01M8 20H8.01M20 4H20.01M20 8H20.01M20 12H20.01M20 16H20.01M20 20H20.01"
+              stroke="#000000"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          <!-- <span v-if="selectedObjects.length === objectMaskRegions.length">
           {{selectedObjects.length}} 
         </span> -->
-            
         </a-button>
 
-         <!-- Remove Selected -->
-      <a-button
-  @click="removeSelectedObjects"
-  danger
-   :style="{
-    color: 'white',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: selectedObjects.length === 0 ? 'rgb(285, 85, 96)' : 'red'
-  }"
-  :disabled="selectedObjects.length === 0 || drawingMode"
->
-  <DeleteOutlined />
-  {{ selectedObjects.length }}
-</a-button>
+        <!-- Remove Selected -->
+        <a-button
+          @click="removeSelectedObjects"
+          danger
+          :style="{
+            color: 'white',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor:
+              selectedObjects.length === 0 ? 'rgb(285, 85, 96)' : 'red',
+          }"
+          :disabled="selectedObjects.length === 0 || drawingMode"
+        >
+          <DeleteOutlined />
+          {{ selectedObjects.length }}
+        </a-button>
 
         <!-- Reset Room -->
         <a-button
           type="primary"
-          style="display:flex;justify-content:center;align-items: center;gap:5px;"
+          style="
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+          "
           @click="reset_entire_room"
-          
           :disabled="isLoading || drawingMode"
         >
-        <RedoOutlined />
+          <RedoOutlined />
           Reset room
         </a-button>
       </div>
 
       <!-- Draw Removal -->
-
-     
 
       <!-- Add above the Apply Changes button section -->
       <!-- <div class="flex items-center space-x-6 mb-4 justify-center">
@@ -674,8 +766,9 @@
 import DrawRemovalModal from "@/components/update_catalogue/canvas_renderer/draw_removal_area_room.vue";
 import switch_furniture from "@/components/update_catalogue/bottom_drawer_item_components/switch_furniture.vue";
 import { DotLottieVue } from "@lottiefiles/dotlottie-vue";
-import { DeleteOutlined ,RedoOutlined  } from '@ant-design/icons-vue';
-import SwitchFurnitureModal from '@/components/update_catalogue/canvas_renderer/switch_furniture.vue';
+import { DeleteOutlined, RedoOutlined } from "@ant-design/icons-vue";
+import SwitchFurnitureModal from "@/components/update_catalogue/canvas_renderer/switch_furniture.vue";
+import SwitchFurnitureDrawerForMobile from "@/components/update_catalogue/canvas_renderer/SwitchFurnitureDrawerForMobile.vue";
 
 export default {
   name: "item_remove_renderer",
@@ -720,8 +813,9 @@ export default {
     switch_furniture,
     DotLottieVue,
     DeleteOutlined,
-    RedoOutlined ,
-    SwitchFurnitureModal
+    RedoOutlined,
+    SwitchFurnitureModal,
+    SwitchFurnitureDrawerForMobile,
   },
   data() {
     return {
@@ -771,6 +865,7 @@ export default {
       objectMaskImageData: [],
       hoveredObject: null,
       selectedObjects: [],
+      objectMaskBlob: null,
 
       // Object mask caching system
       objectMaskCache: new Map(),
@@ -828,10 +923,10 @@ export default {
       isDrawing: false,
       isBrushMode: true, // Track if brush is active or deselect mode is active
 
-      
       // Modal state
       switchFurnitureModalVisible: false,
-      
+      swithcFurnitureDrawerForMobileVisible: false,
+
       selectedObjectForSwitch: null,
       isDrawingControlsMinimized: false,
 
@@ -887,10 +982,10 @@ export default {
     this.setupEventListeners();
     this.loadImage();
 
-     // Initialize your component
+    // Initialize your component
     this.canvas = this.$refs.canvas;
     if (this.canvas) {
-      this.ctx = this.canvas.getContext('2d');
+      this.ctx = this.canvas.getContext("2d");
     }
   },
 
@@ -983,7 +1078,7 @@ export default {
   },
 
   methods: {
-       openSwitchFurnitureModal() {
+    openSwitchFurnitureModal() {
       if (this.selectedObjects.length === 0) return;
 
       const firstSelectedKey = this.selectedObjects[0];
@@ -996,9 +1091,14 @@ export default {
 
       this.selectedObjects = [...new Set(allMatchingKeys)];
       this.selectedObjectForSwitch = baseKey;
+      let size = window.innerWidth;
+      if (size > 768) {
+        this.switchFurnitureModalVisible = true;
+      } else {
+        this.swithcFurnitureDrawerForMobileVisible = true;
+      }
 
       // Open the modal
-      this.switchFurnitureModalVisible = true;
     },
 
     /**
@@ -1009,12 +1109,11 @@ export default {
       this.selectedObjectForSwitch = null;
     },
 
-
     async handleFurnitureSwitching(changeData) {
       try {
         const { drawingBlob, selectedObjects, baseKey } = changeData;
 
-        console.log('Furniture switching initiated:', {
+        console.log("Furniture switching initiated:", {
           selectedObjects,
           baseKey,
           drawingBlobSize: drawingBlob.size,
@@ -1022,13 +1121,13 @@ export default {
 
         // Create FormData for backend API
         const formData = new FormData();
-        formData.append('mask', drawingBlob, 'refined-mask.png');
-        formData.append('product_selected', 'YOUR_PRODUCT_ID'); // TODO: Get from user selection
-        formData.append('room_id', this.$route.params.id);
-        formData.append('object_keys', JSON.stringify(selectedObjects));
-        formData.append('base_key', baseKey);
+        formData.append("mask", drawingBlob, "refined-mask.png");
+        formData.append("product_selected", "YOUR_PRODUCT_ID"); // TODO: Get from user selection
+        formData.append("room_id", this.$route.params.id);
+        formData.append("object_keys", JSON.stringify(selectedObjects));
+        formData.append("base_key", baseKey);
         formData.append(
-          'original_mask_paths',
+          "original_mask_paths",
           JSON.stringify(
             selectedObjects.reduce((acc, key) => {
               acc[key] = this.objectMasks[key];
@@ -1036,16 +1135,19 @@ export default {
             }, {})
           )
         );
-        formData.append('canvas_dimensions', JSON.stringify(this.getCanvasDimensions()));
+        formData.append(
+          "canvas_dimensions",
+          JSON.stringify(this.getCanvasDimensions())
+        );
 
         // Send to backend API
         const response = await fetch(
           `${this.$store.state.root_api}engine/furniture-switch/`,
           {
-            method: 'POST',
+            method: "POST",
             body: formData,
             headers: {
-              Authorization: `Token ${localStorage.getItem('token')}`,
+              Authorization: `Token ${localStorage.getItem("token")}`,
             },
           }
         );
@@ -1057,25 +1159,24 @@ export default {
         const result = await response.json();
 
         // Emit success event to parent or handle result
-        this.$emit('furniture-switched', {
+        this.$emit("furniture-switched", {
           objectKeys: selectedObjects,
           baseKey: baseKey,
           result: result,
         });
 
-        this.$message.success('Furniture switched successfully!');
+        this.$message.success("Furniture switched successfully!");
       } catch (error) {
-        console.error('Error during furniture switching:', error);
-        this.$message.error('Failed to switch furniture. Please try again.');
+        console.error("Error during furniture switching:", error);
+        this.$message.error("Failed to switch furniture. Please try again.");
       }
     },
-
 
     async handleFurnitureSwitching(changeData) {
       try {
         const { drawingBlob, selectedObjects, baseKey } = changeData;
 
-        console.log('Furniture switching initiated:', {
+        console.log("Furniture switching initiated:", {
           selectedObjects,
           baseKey,
           drawingBlobSize: drawingBlob.size,
@@ -1083,13 +1184,13 @@ export default {
 
         // Create FormData for backend API
         const formData = new FormData();
-        formData.append('mask', drawingBlob, 'refined-mask.png');
-        formData.append('product_selected', 'YOUR_PRODUCT_ID'); // TODO: Get from user selection
-        formData.append('room_id', this.$route.params.id);
-        formData.append('object_keys', JSON.stringify(selectedObjects));
-        formData.append('base_key', baseKey);
+        formData.append("mask", drawingBlob, "refined-mask.png");
+        formData.append("product_selected", "YOUR_PRODUCT_ID"); // TODO: Get from user selection
+        formData.append("room_id", this.$route.params.id);
+        formData.append("object_keys", JSON.stringify(selectedObjects));
+        formData.append("base_key", baseKey);
         formData.append(
-          'original_mask_paths',
+          "original_mask_paths",
           JSON.stringify(
             selectedObjects.reduce((acc, key) => {
               acc[key] = this.objectMasks[key];
@@ -1097,16 +1198,19 @@ export default {
             }, {})
           )
         );
-        formData.append('canvas_dimensions', JSON.stringify(this.getCanvasDimensions()));
+        formData.append(
+          "canvas_dimensions",
+          JSON.stringify(this.getCanvasDimensions())
+        );
 
         // Send to backend API
         const response = await fetch(
           `${this.$store.state.root_api}engine/furniture-switch/`,
           {
-            method: 'POST',
+            method: "POST",
             body: formData,
             headers: {
-              Authorization: `Token ${localStorage.getItem('token')}`,
+              Authorization: `Token ${localStorage.getItem("token")}`,
             },
           }
         );
@@ -1118,20 +1222,19 @@ export default {
         const result = await response.json();
 
         // Emit success event to parent or handle result
-        this.$emit('furniture-switched', {
+        this.$emit("furniture-switched", {
           objectKeys: selectedObjects,
           baseKey: baseKey,
           result: result,
         });
 
-        this.$message.success('Furniture switched successfully!');
+        this.$message.success("Furniture switched successfully!");
       } catch (error) {
-        console.error('Error during furniture switching:', error);
-        this.$message.error('Failed to switch furniture. Please try again.');
+        console.error("Error during furniture switching:", error);
+        this.$message.error("Failed to switch furniture. Please try again.");
       }
     },
 
-    
     // ============== UTILITY METHODS ==============
 
     /**
@@ -1139,7 +1242,7 @@ export default {
      * e.g., "sofa_1" -> "sofa"
      */
     getBaseKeyName(key) {
-      return key.replace(/_\d+$/, '');
+      return key.replace(/_\d+$/, "");
     },
 
     /**
@@ -1151,7 +1254,6 @@ export default {
         height: this.canvas?.height || 600,
       };
     },
-
 
     // Update syncOverlayTransform to use the new method
     syncOverlayTransform() {
@@ -1169,26 +1271,27 @@ export default {
       const selectedFurniture =
         this.$refs.switchFurnitureRef.selected_furniture;
       console.log("Selected furniture:", selectedFurniture);
-      this.openSelectFurnitureModel();
+      // this.openSelectFurnitureModel();
       this.renderFurnitureSwitching(selectedFurniture);
       // Use the selected furniture as needed
     },
     // render the furniture switching
     async renderFurnitureSwitching(product_selected) {
-      if (!this.drawingCanvas || !this.selectedObjectForSwitch) return;
+      console.log("api");
+      if (!this.selectedObjectForSwitch) return;
 
       this.switchingInProgress = true;
 
       // Create a merged binary mask of all selected objects + drawing
-      const mergedMaskBlob = await this.createMergedBinaryMask();
+      // const mergedMaskBlob = await this.createMergedBinaryMask();
 
-      if (!mergedMaskBlob) {
+      if (!this.objectMaskBlob) {
         throw new Error("Failed to create merged mask");
       }
 
       this.$emit("furniture-switching-started", true);
       const formData = new FormData();
-      formData.append("mask", mergedMaskBlob, "refined-mask.png");
+      formData.append("mask", this.objectMaskBlob, "refined-mask.png");
       formData.append("product_selected", product_selected.id);
       formData.append("room_id", this.$route.params.id);
       formData.append("object_keys", JSON.stringify(this.selectedObjects));
@@ -1206,6 +1309,8 @@ export default {
         "canvas_dimensions",
         JSON.stringify(this.getCanvasDimensions())
       );
+      this.closeSwitchFurnitureMode();
+      this.closeSwitchDrawer();
 
       const response = await fetch(
         `${this.$store.state.root_api}engine/furniture-switch/`,
@@ -1274,6 +1379,15 @@ export default {
       this.drawingHistory = [];
       this.currentDrawingHistoryIndex = -1;
 
+      this.render();
+    },
+    closeSwitchDrawer() {
+      this.drawingMode = false;
+      this.selectedObjectForSwitch = null;
+      this.clearDrawingCanvas();
+      this.drawingHistory = [];
+      this.currentDrawingHistoryIndex = -1;
+      this.swithcFurnitureDrawerForMobileVisible = false;
       this.render();
     },
 
@@ -1773,7 +1887,8 @@ export default {
     //   }
     // },
 
-    openSelectFurnitureModel() {
+    openSelectFurnitureModel(maskBlob) {
+      this.objectMaskBlob = maskBlob;
       this.openSelectObjectModal = !this.openSelectObjectModal;
     },
     // Replace submitDrawnMask with this
@@ -2280,7 +2395,7 @@ export default {
       // console.log("g1");
       if (!this.canvas) return;
       // Prevent scroll/pinch on mobile
-      
+
       // this.canvas.style.touchAction = "none";
 
       // WHEEL (desktop zoom)
@@ -2417,7 +2532,7 @@ export default {
 
     handleTouchMove(e) {
       if (this.isLoading) return;
-     // e.preventDefault();
+      // e.preventDefault();
 
       if (this.isDragging && e.touches.length === 1) {
         const touch = e.touches[0];
@@ -2434,7 +2549,7 @@ export default {
 
     handleTouchEnd(e) {
       if (this.isLoading) return;
-     // e.preventDefault();
+      // e.preventDefault();
       this.isDragging = false;
       this.removeObjectHighlight();
     },
@@ -3143,7 +3258,7 @@ export default {
         }
       }
     },
- drawHoverHighlight(objectKey) {
+    drawHoverHighlight(objectKey) {
       const region = this.objectMaskRegions.find(
         (r) => r.objectKey === objectKey
       );
@@ -3367,20 +3482,15 @@ export default {
     // },
 
     removeObjectHighlight() {
-  this.hoveredObject = null;
-  if (this.overlayCtx) {
-    this.overlayCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-    // Redraw selected objects after clearing
-    if (this.selectedObjects.length > 0) {
-      this.drawPersistentSelectionHighlight();
-    }
-  }
-},
-
-
-
-
-
+      this.hoveredObject = null;
+      if (this.overlayCtx) {
+        this.overlayCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+        // Redraw selected objects after clearing
+        if (this.selectedObjects.length > 0) {
+          this.drawPersistentSelectionHighlight();
+        }
+      }
+    },
 
     // =================== RENDERING ===================
 
@@ -3543,11 +3653,11 @@ export default {
 }
 
 .main-canvas {
-  width:100%;
+  width: 100%;
   display: block;
   transition: opacity 0.3s ease;
   position: absolute;
-   top: 0;
+  top: 0;
   left: 0;
 }
 
@@ -3800,7 +3910,7 @@ export default {
   height: 100%;
   z-index: 1;
   background: rgba(20, 20, 20, 0.55);
-  backdrop-filter: blur(0.1px); 
+  backdrop-filter: blur(0.1px);
 }
 
 .wave-overlay {
@@ -4194,9 +4304,9 @@ export default {
 }
 
 @media screen and (max-width: 500px) {
- .zoom-controls {
-  top: 16px;right: 5px;
-}
-
+  .zoom-controls {
+    top: 16px;
+    right: 5px;
+  }
 }
 </style>

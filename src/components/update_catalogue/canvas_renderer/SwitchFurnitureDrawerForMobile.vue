@@ -1,157 +1,174 @@
-<!-- SwitchFurnitureModal.vue - Improved Child Component -->
 <template>
-  <a-modal
-    v-model:visible="isVisible"
-    :title="`Refine ${formatObjectName(baseKey)} Boundaries`"
-    width="90%"
-    :centered="true"
-    :body-style="{ padding: '12px', height: '80vh', overflow: 'hidden' }"
-    :footer="null"
-    @cancel="handleClose"
-  >
-    <a-row style="height: 100%">
-      <a-col style="height: 100%" :span="18">
-        <div class="canvas-wrapper" ref="container">
-          <!-- Base image canvas -->
-          <canvas ref="imageCanvas"></canvas>
-
-          <!-- Drawing canvas -->
-          <canvas
-            ref="drawCanvas"
-            class="draw-layer"
-            @mousedown="startDraw"
-            @mousemove="draw"
-            @mouseup="stopDraw"
-            @mouseleave="stopDraw"
-          ></canvas>
-        </div>
-      </a-col>
-      <a-col style="height: 100%" :span="6">
-        <!-- Control Panel -->
-        <div class="modal-control-panel">
-          <!-- Mode Toggle -->
-          <div style="display: flex; gap: 8px">
-            <button
-              @click="isBrushMode = true"
-              :class="['modal-mode-btn', { active: isBrushMode }]"
-              title="Brush Mode"
-            >
-              🖌️ Brush
-            </button>
-            <button
-              @click="isBrushMode = false"
-              :class="['modal-mode-btn', { active: !isBrushMode }]"
-              title="Deselect Mode"
-            >
-              ✕ Deselect
-            </button>
+  <div class="switch-furniture-drawer">
+    <a-drawer
+      :title="`Refine ${formatObjectName(baseKey)} Boundaries`"
+      :placement="placement"
+      :closable="true"
+      :open="swithcFurnitureDrawerForMobileVisible"
+      @close="closeSwitchDrawer"
+      class="instagram-drawer"
+      :body-style="{
+        padding: '10px',
+      }"
+    >
+      <a-row style="margin: 0px; padding: 0px">
+        <a-col style="" :span="24">
+          <div class="canvas-wrapper" ref="container">
+            <!-- Base image canvas -->
+            <canvas ref="imageCanvas"></canvas>
+            <!-- Drawing canvas -->
+            <canvas
+              ref="drawCanvas"
+              class="draw-layer"
+              @mousedown="startDraw"
+              @mousemove="draw"
+              @mouseup="stopDraw"
+              @mouseleave="stopDraw"
+              @touchstart.prevent="startDraw"
+              @touchmove.prevent="draw"
+              @touchend.prevent="stopDraw"
+            ></canvas>
           </div>
-
-          <a-row style="overflow-y: scroll">
-            <a-col
-              :span="24"
-              v-if="selectedObjects"
-              v-for="selectedObj in selectedObjects"
-            >
-              <selectedImage_mask_overlay
-                :selectedImage="baseImage"
-                :maskPath="maskWithUrl[selectedObj]"
-                :selectedObjectKey="selectedObj"
-                :toggleObjectSelection="toggleObjectSelection"
-              />
-            </a-col>
-          </a-row>
-
-          <div class="control-button-sec">
-            <!-- Brush Size Control (only in brush mode) -->
-            <div
-              v-if="isBrushMode"
-              style="display: flex; gap: 8px; align-items: center"
-            >
-              <label style="font-size: 12px; font-weight: 600; min-width: 60px"
-                >Brush:</label
-              >
-              <input
-                type="range"
-                min="5"
-                max="50"
-                :value="brushSize"
-                @input="changeBrushSize($event.target.value)"
-                class="modal-brush-slider"
-                style="flex: 1"
-              />
-              <span style="font-size: 11px; min-width: 30px; text-align: right"
-                >{{ brushSize }}px</span
-              >
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="action-button-sec" style="display: flex">
+        </a-col>
+      </a-row>
+      <a-row>
+        <a-col style="height: 100%; width: 100%; margin-top: 10px">
+          <!-- Control Panel -->
+          <div class="modal-control-panel">
+            <!-- Mode Toggle -->
+            <div style="display: flex; gap: 8px">
               <button
-                @click="undoDrawing"
-                :disabled="!canUndo || !isBrushMode"
-                class="modal-action-btn undo-btn"
-                title="Undo"
+                @click="isBrushMode = true"
+                :class="['modal-mode-btn', { active: isBrushMode }]"
+                title="Brush Mode"
               >
-                ↶ Undo
+                🖌️ Brush
               </button>
-
               <button
-                @click="redoDrawing"
-                :disabled="!canRedo || !isBrushMode"
-                class="modal-action-btn redo-btn"
-                title="Redo"
+                @click="isBrushMode = false"
+                :class="['modal-mode-btn', { active: !isBrushMode }]"
+                title="Deselect Mode"
               >
-                ↷ Redo
-              </button>
-
-              <button
-                @click="resetDrawing"
-                class="modal-action-btn reset-btn"
-                title="Reset"
-              >
-                🔄 Reset
+                ✕ Deselect
               </button>
             </div>
 
-            <!-- Submit Actions -->
-            <div style="display: flex; flex-direction: column; gap: 8px">
-              <a-button
-                type="primary"
-                class="modal-submit-btn"
-                @click="handleSwitchFurniture"
-                :loading="isProcessing"
-                style="flex: 1"
-              >
-                ✓ Apply & Select Furniture
-              </a-button>
+            <a-collapse v-model:activeKey="activeKey" accordion>
+              <a-collapse-panel key="1" header="Detected Objects">
+                <a-row style="overflow-y: scroll">
+                  <a-col
+                    :span="24"
+                    v-if="selectedObjects"
+                    v-for="selectedObj in selectedObjects"
+                  >
+                    <selectedImage_mask_overlay
+                      :selectedImage="baseImage"
+                      :maskPath="maskWithUrl[selectedObj]"
+                      :selectedObjectKey="selectedObj"
+                      :toggleObjectSelection="toggleObjectSelection"
+                    />
+                  </a-col>
+                </a-row>
+              </a-collapse-panel>
+            </a-collapse>
 
-              <a-button
-                class="cancel-button"
-                danger
-                style="flex: 1"
-                @click="handleClose"
-                :disabled="isProcessing"
+            <div class="control-button-sec">
+              <!-- Brush Size Control (only in brush mode) -->
+              <div
+                v-if="isBrushMode"
+                style="display: flex; gap: 8px; align-items: center"
               >
-                ✕ Cancel
-              </a-button>
+                <label
+                  style="font-size: 12px; font-weight: 600; min-width: 60px"
+                  >Brush:</label
+                >
+                <input
+                  type="range"
+                  min="5"
+                  max="50"
+                  :value="brushSize"
+                  @input="changeBrushSize($event.target.value)"
+                  class="modal-brush-slider"
+                  style="flex: 1"
+                />
+                <span
+                  style="font-size: 11px; min-width: 30px; text-align: right"
+                  >{{ brushSize }}px</span
+                >
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="action-button-sec" style="display: flex">
+                <button
+                  @click="undoDrawing"
+                  :disabled="!canUndo || !isBrushMode"
+                  class="modal-action-btn undo-btn"
+                  title="Undo"
+                >
+                  ↶ Undo
+                </button>
+
+                <button
+                  @click="redoDrawing"
+                  :disabled="!canRedo || !isBrushMode"
+                  class="modal-action-btn redo-btn"
+                  title="Redo"
+                >
+                  ↷ Redo
+                </button>
+
+                <button
+                  @click="resetDrawing"
+                  class="modal-action-btn reset-btn"
+                  title="Reset"
+                >
+                  🔄 Reset
+                </button>
+              </div>
+
+              <!-- Submit Actions -->
+              <div style="display: flex; flex-direction: column; gap: 8px">
+                <a-button
+                  type="primary"
+                  class="modal-submit-btn"
+                  @click="handleSwitchFurniture"
+                  :loading="isProcessing"
+                  style="flex: 1"
+                >
+                  ✓ Apply & Select Furniture
+                </a-button>
+
+                <a-button
+                  class="cancel-button"
+                  danger
+                  style="flex: 1"
+                  @click="handleClose"
+                  :disabled="isProcessing"
+                >
+                  ✕ Cancel
+                </a-button>
+              </div>
             </div>
           </div>
-        </div>
-      </a-col>
-    </a-row>
-  </a-modal>
+        </a-col>
+      </a-row>
+    </a-drawer>
+  </div>
 </template>
 
 <script>
 import selectedImage_mask_overlay from "@/components/update_catalogue/canvas_renderer/canvasMaskRendererForSwitchFurniture.vue";
 export default {
-  name: "SwitchFurnitureModal",
-  components: {
-    selectedImage_mask_overlay,
-  },
+  name: "SwitchFurnitureDrawerForMobile",
   props: {
-    visible: Boolean,
+    swithcFurnitureDrawerForMobileVisible: {
+      type: Boolean,
+      required: true,
+    },
+    closeSwitchDrawer: {
+      type: Function,
+      required: true,
+    },
     baseImage: String,
     baseKey: String,
     selectedObjects: Array,
@@ -162,9 +179,10 @@ export default {
     TotalObjects: Object,
     openSelectFurnitureModel: Function,
   },
-  emits: ["update:visible", "apply-changes", "close"],
   data() {
     return {
+      placement: "bottom",
+      //---------------
       imageCanvas: null,
       drawCanvas: null,
       imageCtx: null,
@@ -184,20 +202,22 @@ export default {
       maskWithUrl: {},
     };
   },
-
+  components: {
+    selectedImage_mask_overlay,
+  },
   computed: {
     isVisible: {
       get() {
-        return this.visible;
+        return this.swithcFurnitureDrawerForMobileVisible;
       },
       set(val) {
-        this.$emit("update:visible", val);
+        this.$emit("update:swithcFurnitureDrawerForMobileVisible", val);
       },
     },
   },
 
   watch: {
-    visible(val) {
+    swithcFurnitureDrawerForMobileVisible(val) {
       if (val) {
         this.$nextTick(() => {
           requestAnimationFrame(async () => {
@@ -353,24 +373,78 @@ export default {
     },
     /* ================= DRAW (UNCHANGED) ================= */
 
+    // startDraw(e) {
+    //   if (!this.isBrushMode) return;
+    //   let x,y;
+    //    if (e.touches && e.touches.length > 0) {
+    //     const rect = this.drawCanvas.getBoundingClientRect();
+    //     x = e.touches[0].clientX - rect.left;
+    //     y = e.touches[0].clientY - rect.top;
+    //   } else {
+    //     x = e.offsetX;
+    //     y = e.offsetY;
+    //   }
+    //   // if()
+    //   // const x = e.offsetX;
+    //   // const y = e.offsetY;
+    //   if (!this.isInsideImage(x, y)) return;
+    //   this.isDrawing = true;
+    //   this.drawCtx.beginPath();
+    //   this.drawCtx.moveTo(e.offsetX, e.offsetY);
+    // },
+
     startDraw(e) {
       if (!this.isBrushMode) return;
-      const x = e.offsetX;
-      const y = e.offsetY;
+
+      // block right click only for mouse
+      if (e.button !== undefined && e.button !== 0) return;
+
+      const { x, y } = this.getEventPosition(e);
+
       if (!this.isInsideImage(x, y)) return;
+
       this.isDrawing = true;
       this.drawCtx.beginPath();
-      this.drawCtx.moveTo(e.offsetX, e.offsetY);
+      this.drawCtx.moveTo(x, y);
     },
+    // draw(e) {
+    //   if (!this.isDrawing || !this.isBrushMode) return;
+    //   let x,y;
+    //   if (e.touches && e.touches.length > 0) {
+    //     const rect = this.drawCanvas.getBoundingClientRect();
+    //     x = e.touches[0].clientX - rect.left;
+    //     y = e.touches[0].clientY - rect.top;
+    //   } else {
+    //     x = e.offsetX;
+    //     y = e.offsetY;
+    //   }
+
+    //   const inside = this.isInsideImage(x, y);
+    //   this.drawCanvas.style.cursor = inside ? "crosshair" : "not-allowed";
+
+    //   if (!this.isInsideImage(x, y)) {
+    //     this.stopDraw();
+    //     return;
+    //   }
+
+    //   this.drawCtx.strokeStyle = "rgba(255,0,0,0.5)";
+    //   this.drawCtx.lineWidth = this.brushSize;
+    //   this.drawCtx.lineCap = "round";
+    //   this.drawCtx.lineJoin = "round";
+
+    //   this.drawCtx.lineTo(x,y);
+    //   this.drawCtx.stroke();
+    // },
 
     draw(e) {
       if (!this.isDrawing || !this.isBrushMode) return;
-      const inside = this.isInsideImage(e.offsetX, e.offsetY);
+
+      const { x, y } = this.getEventPosition(e);
+
+      const inside = this.isInsideImage(x, y);
       this.drawCanvas.style.cursor = inside ? "crosshair" : "not-allowed";
 
-      const x = e.offsetX;
-      const y = e.offsetY;
-      if (!this.isInsideImage(x, y)) {
+      if (!inside) {
         this.stopDraw();
         return;
       }
@@ -380,9 +454,15 @@ export default {
       this.drawCtx.lineCap = "round";
       this.drawCtx.lineJoin = "round";
 
-      this.drawCtx.lineTo(e.offsetX, e.offsetY);
+      this.drawCtx.lineTo(x, y);
       this.drawCtx.stroke();
     },
+
+    // stopDraw() {
+    //   if (!this.isDrawing) return;
+    //   this.isDrawing = false;
+    //   this.drawCtx.closePath();
+    // },
 
     stopDraw() {
       if (!this.isDrawing) return;
@@ -390,6 +470,21 @@ export default {
       this.drawCtx.closePath();
     },
 
+    getEventPosition(e) {
+      const rect = this.drawCanvas.getBoundingClientRect();
+
+      if (e.touches && e.touches.length > 0) {
+        return {
+          x: e.touches[0].clientX - rect.left,
+          y: e.touches[0].clientY - rect.top,
+        };
+      }
+
+      return {
+        x: e.offsetX,
+        y: e.offsetY,
+      };
+    },
     /* ================= UI ================= */
 
     handleClose() {
@@ -540,7 +635,7 @@ export default {
 
       return canvas;
     },
-    handleSwitchFurniture() {
+     handleSwitchFurniture() {
       const canvas = this.createCombinedMaskCanvas({ inverse: false });
       canvas.toBlob((blob) => {
         this.openSelectFurnitureModel(blob);
@@ -566,7 +661,41 @@ export default {
 };
 </script>
 
+<!-- <style scoped>
+:deep(.ant-drawer-body) {
+  padding: 10px !important;
+  /* overflow: hidden; */
+}
+
+.switch-furniture-drawer {
+  padding: 20px;
+}
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  height: 400px;
+  line-height: 0px;
+  /* margin-right: 10px; */
+  /* min-width: 70vw; */
+  /*  min-height: 50vh; */
+}
+.canvas-wrapper canvas {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+</style> -->
+
 <style scoped>
+:deep(.ant-drawer-body) {
+  padding: 10px !important;
+  /* overflow: hidden; */
+}
+:deep(.ant-collapse-content-box) {
+  padding: 0px !important;
+}
 .modal-overlay-canvas {
   border-radius: 8px;
   pointer-events: none;
@@ -782,7 +911,7 @@ export default {
 .canvas-wrapper {
   position: relative;
   width: 100%;
-  height: 100%;
+  height: 300px;
   /* margin-right: 10px; */
   /* min-width: 70vw; */
   /*  min-height: 50vh; */
@@ -793,5 +922,9 @@ export default {
   position: absolute;
   top: 0;
   left: 0;
+}
+.draw-layer {
+  touch-action: none;
+  cursor: crosshair;
 }
 </style>
