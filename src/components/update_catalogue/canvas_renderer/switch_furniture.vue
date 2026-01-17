@@ -10,12 +10,10 @@
     @cancel="handleClose"
   >
     <a-row style="height: 100%">
-      <a-col style="height: 100%" :span="18">
+      <a-col style="height: 100%; position: relative" :span="16">
         <div class="canvas-wrapper" ref="container">
-          <!-- Base image canvas -->
           <canvas ref="imageCanvas"></canvas>
 
-          <!-- Drawing canvas -->
           <canvas
             ref="drawCanvas"
             class="draw-layer"
@@ -24,9 +22,39 @@
             @mouseup="stopDraw"
             @mouseleave="stopDraw"
           ></canvas>
+
+          <!-- TOOLBAR -->
+          <div v-if="isBrushMode" class="canvas-toolbar">
+            <!-- Brush value -->
+            <div class="brush-value">{{ brushSize }}px</div>
+
+            <!-- Vertical range -->
+            <input
+              type="range"
+              min="5"
+              max="50"
+              :value="brushSize"
+              @input="changeBrushSize($event.target.value)"
+              class="vertical-slider"
+            />
+
+            <!-- Actions -->
+            <div class="tool-actions">
+              <button @click="undoDrawing" :disabled="!canUndo" title="Undo">
+                ↶
+              </button>
+
+              <button @click="redoDrawing" :disabled="!canRedo" title="Redo">
+                ↷
+              </button>
+
+              <button @click="resetDrawing" title="Reset">🔄</button>
+            </div>
+          </div>
         </div>
       </a-col>
-      <a-col style="height: 100%" :span="6">
+
+      <a-col style="height: 100%" :span="8">
         <!-- Control Panel -->
         <div class="modal-control-panel">
           <!-- Mode Toggle -->
@@ -43,14 +71,26 @@
               :class="['modal-mode-btn', { active: !isBrushMode }]"
               title="Deselect Mode"
             >
-              ✕ Deselect
+              ✕ Un-select
             </button>
           </div>
 
           <a-row style="overflow-y: scroll">
             <a-col
-              :span="24"
-              v-if="selectedObjects"
+              :span="12"
+              v-if="catalogItems_Furnitures?.length > 0 && isBrushMode"
+              v-for="product in catalogItems_Furnitures"
+            >
+              <SuggestetdSwitchFurniture
+                :product="product"
+                :selected_furniture="selected_furniture"
+                :selectFurniture="selectFurniture"
+              />
+            </a-col>
+
+            <a-col
+              :span="12"
+              v-if="selectedObjects && !isBrushMode"
               v-for="selectedObj in selectedObjects"
             >
               <selectedImage_mask_overlay
@@ -63,70 +103,21 @@
           </a-row>
 
           <div class="control-button-sec">
-            <!-- Brush Size Control (only in brush mode) -->
-            <div
-              v-if="isBrushMode"
-              style="display: flex; gap: 8px; align-items: center"
-            >
-              <label style="font-size: 12px; font-weight: 600; min-width: 60px"
-                >Brush:</label
-              >
-              <input
-                type="range"
-                min="5"
-                max="50"
-                :value="brushSize"
-                @input="changeBrushSize($event.target.value)"
-                class="modal-brush-slider"
-                style="flex: 1"
-              />
-              <span style="font-size: 11px; min-width: 30px; text-align: right"
-                >{{ brushSize }}px</span
-              >
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="action-button-sec" style="display: flex">
-              <button
-                @click="undoDrawing"
-                :disabled="!canUndo || !isBrushMode"
-                class="modal-action-btn undo-btn"
-                title="Undo"
-              >
-                ↶ Undo
-              </button>
-
-              <button
-                @click="redoDrawing"
-                :disabled="!canRedo || !isBrushMode"
-                class="modal-action-btn redo-btn"
-                title="Redo"
-              >
-                ↷ Redo
-              </button>
-
-              <button
-                @click="resetDrawing"
-                class="modal-action-btn reset-btn"
-                title="Reset"
-              >
-                🔄 Reset
-              </button>
-            </div>
-
             <!-- Submit Actions -->
             <div style="display: flex; flex-direction: column; gap: 8px">
+              <a-alert v-if="!selected_furniture" message="Please Select Furniture Product" type="info" />
               <a-button
                 type="primary"
                 class="modal-submit-btn"
                 @click="handleSwitchFurniture"
                 :loading="isProcessing"
                 style="flex: 1"
+                :disabled="!selected_furniture"
               >
                 ✓ Apply & Select Furniture
               </a-button>
 
-              <a-button
+              <!-- <a-button
                 class="cancel-button"
                 danger
                 style="flex: 1"
@@ -134,7 +125,7 @@
                 :disabled="isProcessing"
               >
                 ✕ Cancel
-              </a-button>
+              </a-button> -->
             </div>
           </div>
         </div>
@@ -144,11 +135,13 @@
 </template>
 
 <script>
+import SuggestetdSwitchFurniture from "./SuggestetdSwitchFurniture.vue";
 import selectedImage_mask_overlay from "@/components/update_catalogue/canvas_renderer/canvasMaskRendererForSwitchFurniture.vue";
 export default {
   name: "SwitchFurnitureModal",
   components: {
     selectedImage_mask_overlay,
+    SuggestetdSwitchFurniture,
   },
   props: {
     visible: Boolean,
@@ -161,6 +154,8 @@ export default {
     toggleObjectSelection: Function,
     TotalObjects: Object,
     openSelectFurnitureModel: Function,
+    handleSwitchFurnitureClicked: Function,
+    renderFurnitureSwitching:Function
   },
   emits: ["update:visible", "apply-changes", "close"],
   data() {
@@ -174,7 +169,7 @@ export default {
       canvasWidth: 0,
       canvasHeight: 0,
 
-      isBrushMode: false,
+      isBrushMode: true,
       isDrawing: false,
       brushSize: 10,
       _imgTransform: {},
@@ -186,6 +181,11 @@ export default {
       undoStack: [],
       redoStack: [],
       maxHistory: 100,
+
+      //furniture
+      selected_furniture: null,
+      catalogItems_Furnitures: [],
+      catalogItems_Lights: [],
     };
   },
 
@@ -231,6 +231,14 @@ export default {
       },
       deep: true,
     },
+  },
+  mounted() {
+    if (this.$route.query.brand) {
+      this.fetchCatalogItems(this.$route.query.brand);
+    } else {
+      this.fetchCatalogItems();
+    }
+    this.fetchLights();
   },
   methods: {
     saveState() {
@@ -571,7 +579,8 @@ export default {
     handleSwitchFurniture() {
       const canvas = this.createCombinedMaskCanvas({ inverse: false });
       canvas.toBlob((blob) => {
-        this.openSelectFurnitureModel(blob);
+        this.renderFurnitureSwitching(this.selected_furniture,blob);
+        // this.openSelectFurnitureModel(blob);
       });
     },
     applyAndDownloadNormalMask() {
@@ -637,6 +646,61 @@ export default {
       this.undoStack = [];
       this.redoStack = [];
     },
+    async fetchCatalogItems(brand = null) {
+      try {
+        let url = `${this.$store.state.root_api}product/api/3d-products/`;
+        if (brand) {
+          url = `${this.$store.state.root_api}product/api/load-brand-products/3d-products/${brand}`;
+        }
+
+        const response = await fetch(url, {
+          method: "GET",
+          // body: formData,
+          headers: {
+            Authorization: `Token ${localStorage.getItem("token")}`,
+          },
+        });
+        const data = await response.json();
+        console.log("Furniture Data:", data);
+
+        if (data && data.data) {
+          this.catalogItems_Furnitures = data.data;
+        }
+      } catch (error) {
+        console.error("Failed to fetch furniture:", error);
+      }
+    },
+    async fetchLights(brand = null) {
+      try {
+        let url = `${this.$store.state.root_api}product/api/lights/`;
+        if (brand) {
+          url = `${this.$store.state.root_api}product/api/load-brand-products/lights/${brand}`;
+        }
+
+        const response = await fetch(url, {
+          method: "GET",
+          // body: formData,
+          headers: {
+            Authorization: `Token ${localStorage.getItem("token")}`,
+          },
+        });
+        const data = await response.json();
+        console.log("Lights Data:", data);
+
+        if (data && data.data) {
+          this.catalogItems_Lights = data.data;
+        }
+      } catch (error) {
+        console.error("Failed to fetch lights:", error);
+      }
+    },
+    viewProduct(product) {
+      console.log("Product detail clicked:", product);
+      // Handle product detail navigation
+    },
+    selectFurniture(product) {
+      this.selected_furniture = product;
+    },
   },
 };
 </script>
@@ -701,7 +765,7 @@ export default {
 }
 
 .modal-control-panel {
-  background: #f5f5f5;
+  /* background: #f5f5f5; */
   padding: 12px;
   border-radius: 8px;
   display: flex;
@@ -868,5 +932,77 @@ export default {
   position: absolute;
   top: 0;
   left: 0;
+}
+
+.canvas-toolbar {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  width: 48px;
+
+  /* background: rgba(255, 255, 255, 0.95); */
+  border-radius: 12px;
+  padding: 8px 6px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+
+  /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12); */
+  z-index: 10;
+}
+
+/* Brush size label */
+.brush-value {
+  font-size: 11px;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+}
+
+/* Vertical slider */
+.vertical-slider {
+  writing-mode: bt-lr; /* Firefox */
+  -webkit-appearance: slider-vertical; /* Chrome / Edge */
+  width: 6px;
+  height: 120px;
+  cursor: pointer;
+}
+
+/* Action buttons */
+.tool-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tool-actions button {
+  width: 32px;
+  height: 32px;
+
+  border-radius: 8px;
+  border: none;
+  background: #f5f5f5;
+
+  font-size: 16px;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: all 0.2s ease;
+}
+
+.tool-actions button:hover:not(:disabled) {
+  background: #e6f0ff;
+  color: #2952eb;
+}
+
+.tool-actions button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 </style>

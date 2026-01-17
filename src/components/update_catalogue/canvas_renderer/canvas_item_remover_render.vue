@@ -1,4 +1,5 @@
 <template>
+  <contextHolder />
   <a-drawer
     v-if="selectedObjectForSwitch"
     :title="
@@ -85,6 +86,8 @@
     :TotalObjects="objectMasks"
     :toggleObjectSelection="toggleObjectSelection"
     :openSelectFurnitureModel="openSelectFurnitureModel"
+    :handleSwitchFurnitureClicked="handleSwitchFurnitureClicked"
+    :renderFurnitureSwitching="renderFurnitureSwitching"
   />
   <SwitchFurnitureDrawerForMobile
     :swithcFurnitureDrawerForMobileVisible="
@@ -102,6 +105,7 @@
     :TotalObjects="objectMasks"
     :toggleObjectSelection="toggleObjectSelection"
     :openSelectFurnitureModel="openSelectFurnitureModel"
+    :renderFurnitureSwitching="renderFurnitureSwitching"
   />
   <div class="canvas-container" ref="canvasContainer">
     <!-- Loading Overlay -->
@@ -759,10 +763,12 @@
     </div>
 
     <!-- Apply Changes -->
+     
   </div>
 </template>
 
 <script>
+  import { notification } from 'ant-design-vue';
 import DrawRemovalModal from "@/components/update_catalogue/canvas_renderer/draw_removal_area_room.vue";
 import switch_furniture from "@/components/update_catalogue/bottom_drawer_item_components/switch_furniture.vue";
 import { DotLottieVue } from "@lottiefiles/dotlottie-vue";
@@ -934,7 +940,18 @@ export default {
       switchingInProgress: false,
     };
   },
-
+  setup() {
+  const [api, contextHolder] = notification.useNotification();
+  const showNotification = (message = 'Notification', description = '...') => {
+    api.info({
+      message,
+      description,
+      placement: 'topCenter',  // ✅ CORRECT
+      duration: 3,  // Auto-close after 3 seconds
+    });
+  };
+  return { contextHolder, showNotification };
+},
   computed: {
     // canShowSwitchButton() {
     //   return this.selectedObjects.length >= 1 && !this.drawingMode;
@@ -1272,26 +1289,32 @@ export default {
         this.$refs.switchFurnitureRef.selected_furniture;
       console.log("Selected furniture:", selectedFurniture);
       // this.openSelectFurnitureModel();
-      this.renderFurnitureSwitching(selectedFurniture);
+      // this.renderFurnitureSwitching(selectedFurniture);
       // Use the selected furniture as needed
     },
     // render the furniture switching
-    async renderFurnitureSwitching(product_selected) {
+    async renderFurnitureSwitching(product_selected,maskblob) {
       console.log("api");
+      if(!product_selected){
+         this.showNotification(
+    'Warning',
+    'Kindly Select Object to switch!'
+  );
+         return;
+      }
       if (!this.selectedObjectForSwitch) return;
-
       this.switchingInProgress = true;
 
       // Create a merged binary mask of all selected objects + drawing
       // const mergedMaskBlob = await this.createMergedBinaryMask();
 
-      if (!this.objectMaskBlob) {
+      if (!maskblob) {
         throw new Error("Failed to create merged mask");
       }
 
       this.$emit("furniture-switching-started", true);
       const formData = new FormData();
-      formData.append("mask", this.objectMaskBlob, "refined-mask.png");
+      formData.append("mask", maskblob, "refined-mask.png");
       formData.append("product_selected", product_selected.id);
       formData.append("room_id", this.$route.params.id);
       formData.append("object_keys", JSON.stringify(this.selectedObjects));
@@ -1309,9 +1332,9 @@ export default {
         "canvas_dimensions",
         JSON.stringify(this.getCanvasDimensions())
       );
-      this.closeSwitchFurnitureMode();
+      this.closeSwitchFurnitureModal();
       this.closeSwitchDrawer();
-      this.switchFurnitureModalVisible();
+      // this.switchFurnitureModalVisible();
 
       const response = await fetch(
         `${this.$store.state.root_api}engine/furniture-switch/`,
@@ -1374,7 +1397,7 @@ export default {
     },
 
     closeSwitchFurnitureMode() {
-      this.drawingMode = false;
+        this.drawingMode = false;
       this.selectedObjectForSwitch = null;
       this.clearDrawingCanvas();
       this.drawingHistory = [];
