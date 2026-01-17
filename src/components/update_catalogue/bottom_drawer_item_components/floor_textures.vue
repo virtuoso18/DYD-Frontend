@@ -238,7 +238,7 @@
         </div>
       </a-col>
 
-      <a-col style="margin: 5px 15px" :sm="24" :md="24" :lg="18">
+      <a-col  :sm="24" :md="24" :lg="20">
         <!-- Results Header -->
         <div
           v-if="!loading"

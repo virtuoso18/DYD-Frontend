@@ -318,18 +318,13 @@
   </div> -->
 
   <!-- RIGHT SIDE -->
-  <div class="pt-2">
-  <button
-  type="primary"
-  class="toolbar-btn primary-btn bg-[#4e70f9] whitespace-nowrap !text-white rounded-md !px-2 !py-[6px] !text-[12px] btn-text-style"
-  @click="$emit('Apply-Changes', 'Walls-Renerer')"
-  :disabled="isLoading"
->
-  Apply Changes
-</button>
+  <div class="pt-2 ">
+ <a-button type="primary" @click="$emit('Apply-Changes', 'Walls-Renerer')" :disabled="isLoading">
+           Finalise Changes
+         </a-button>
 
+</div>
 
-  </div>
 
 <FlatSurfaceModal
       :isVisible="showFlatSurfaceModal"

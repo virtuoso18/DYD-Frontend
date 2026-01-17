@@ -468,7 +468,7 @@ export default {
             id: comment.id,
             name: comment.comment_owner?.username || 'Anonymous',
             avatar: comment.comment_owner?.user_profile 
-                    ? `http://localhost:8000${comment.comment_owner.user_profile}`
+                    ? `${this.$store.state.root_media_api}${comment.comment_owner.user_profile}`
                     : 'https://via.placeholder.com/40',
             time: this.formatTime(comment.created_at),
             text: comment.content

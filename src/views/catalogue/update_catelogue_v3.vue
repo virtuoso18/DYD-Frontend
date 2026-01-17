@@ -860,7 +860,6 @@ Switch Furniture</a-button> -->
                     :brand_data="brand_data"
                    @products-see-all=furnituresSeeAll
                    @trigger-render-3d-object="execute3DRederer"
-                   @trigger-switch-furniture="executeswitchFurniture"
                    ref="furniture_products_list"
                 @change-3d-model=change3dModel
                 />
@@ -1038,8 +1037,6 @@ Switch Furniture</a-button> -->
                     :brand_data="brand_data"
                    @products-see-all="furnituresSeeAll"
                    @trigger-render-3d-object="execute3DRederer"
-                   @trigger-switch-furniture="executeswitchFurniture"
-
                    ref="furniture_products_list"
                 @change-3d-model=change3dModel
                 />
@@ -3516,10 +3513,6 @@ async fetchSingleProductType(productType, dataKey, brand, endpointMap) {
 
     execute3DRederer() {
       this.$refs.floor_item_3d_renderer.renderItem();
-    },
-    executeswitchFurniture() {
-      console.log("execute switch furniture")
-      this.$refs.floor_item_3d_renderer.switchFurniture();
     },
 
     // ==========================================

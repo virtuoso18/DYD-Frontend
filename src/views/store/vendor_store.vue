@@ -76,7 +76,8 @@
 </div>
 <div v-else>
 
-    <a-button style="margin-top:10px;"  @click="startchat_with_buisness_user()"
+    <a-button                 style="margin-top:10px;display: flex;justify-content: center;align-items: center;" 
+ @click="startchat_with_buisness_user()"
     type="primary"
     size="medium"
     v-if="canMessageBusiness"
@@ -85,7 +86,7 @@
     Message Business
 </a-button>
 <a-button v-else
-                style="margin-top:10px;" 
+                style="margin-top:10px;display: flex;justify-content: center;align-items: center;" 
                 type="primary"
                 @click="$router.push('/login')"
                 size="medium">
@@ -457,7 +458,7 @@
                       <div style="padding: 5px">
                         <!-- Actions Row -->
                         <a-row style="align-items: center">
-                          <a-col :span="14" style="display:flex;gap:10px;">
+                          <a-col :span="19" style="display:flex;gap:10px;">
                             <img
                               :src="
                                 this.$store.state.root_media_api + post.user_profile
@@ -474,7 +475,7 @@
                               truncateText(post.post_by, 15)
                             }}</span>
                           </a-col>
-                          <a-col :span="10" style="display: flex">
+                          <a-col :span="5" style="display: flex;justify-content: end;">
                             <!-- Post Stats -->
                             <div class="post-stats">
                               <div class="stat-item" >
@@ -494,12 +495,12 @@
                                   formatNumber(post.comment_count)
                                 }}</span>
                               </div>
-                              <div class="stat-item" @click="sharePost(post)">
+                              <!-- <div class="stat-item" @click="sharePost(post)">
                                 <ShareAltOutlined />
                                 <span>{{
                                   formatNumber(post.share_count)
                                 }}</span>
-                              </div>
+                              </div> -->
                             </div>
                            
                           </a-col>

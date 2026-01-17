@@ -31,7 +31,7 @@
               <div class="left-section">
                 <!-- Image -->
                 <div class="image-wrapper">
-                  <img
+                  <a-image
                     :src="mediaBase + room.image"
                     :alt="room.name || 'Room image'"
                     class="room-image"

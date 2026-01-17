@@ -917,6 +917,8 @@
       <!-- Back to edit button - Left -->
       <a-col :xs="12" :sm="12" :md="12" style="display: flex; align-items: center">
         <button
+         @click="$router.back()"
+
           style="
             background: none;
             border: none;
@@ -1426,7 +1428,7 @@
     </a-row>
     <a-button v-if="is_Posted_On_Community"
       type="default"
-      @click="openShareOnComunity()"
+      @click="gotoMyCommunity"
       block
       style="
         display: flex;
@@ -1451,6 +1453,7 @@
       type="primary"
       @click="openShareOnComunity()"
       block
+      :disabled="loading"
       style="
         display: flex;
         justify-content: center;
@@ -1587,7 +1590,7 @@
 </svg> Saved To My Designes
         </a-button>
 
-        <a-button type="primary" @click="open_SaveToMyDesignes=true" v-else style="
+        <a-button type="primary" @click="open_SaveToMyDesignes=true" v-else :disabled="loading" style="
           display: flex;
           justify-content: center;
           align-items: center;
@@ -1762,7 +1765,7 @@
           >
           <a-row style="margin-bottom: 10px;">
             <a-col :span="20">
-                <a-button type="primary" @click="open_SaveToMyDesignes=true" style="
+                <a-button type="primary" @click="open_SaveToMyDesignes=true" :disabled="loading" style="
                 display: flex;
                 justify-content: center;
                 align-items: center;
@@ -1958,6 +1961,14 @@ export default {
     }
     if (this.user.user_type=="User"){
       this.$router.push('/user-dashboard/my-designs')
+    }
+   },
+    gotoMyCommunity(){
+    if (this.user.user_type=="Business"){
+      this.$router.push('/business-dashboard/comunity')
+    }
+    if (this.user.user_type=="Professional"){
+      this.$router.push('/professional-dashboard/comunity')
     }
    },
     async AddRoomitemstocart() {
@@ -2297,7 +2308,7 @@ export default {
       this.loading = true;
       this.imageLoading = true;
       this.error.room = null;
-
+      
       try {
         const roomId = this.$route.params.id;
         const url = `${this.$store.state.root_api}engine/render-final-result/${roomId}`;
