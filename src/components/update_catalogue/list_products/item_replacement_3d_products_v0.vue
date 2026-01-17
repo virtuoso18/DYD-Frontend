@@ -1,21 +1,7 @@
 <template>
-<a-modal :open="swichFurnitureModel" centered>
-  <p>
-    Furniture switching will replace all similar furniture in the room with the selected item.
-    If the room does not already contain this type of furniture, the AI will rearrange or remove
-    existing items to create enough space for it.
-  </p>
-
-  <template #title>Switch Furniture</template>
-  <template #footer>
-    <a-button type="primary" @click="startFurrnitureSwitch">
-      Start Furniture Switch
-    </a-button>
-  </template>
-</a-modal>
 <div class="pt-wrapper">
  <div class="apply-section md:hidden">
-    <!-- <a-button
+    <a-button
       type="primary"
       size="large"
       block
@@ -32,20 +18,7 @@
       "
     >
       Apply
-    </a-button> -->
-     <a-row>
-      <a-col :span="12"style="padding:0px 0px 0px 5px">
-      <a-button type="default" size="large" block  @click="showSwitchFurnitureModel" :disabled="!selected_item">
-              Switch Furniture
-            </a-button>
-      </a-col>
-<a-col :span="12"style="padding:0px 0px 0px 5px"> <a-button type="primary" size="large" block  @click="$emit('trigger-render-3d-object')">
-        Apply 3D Object
-      </a-button></a-col>
-      
-     
-      
-    </a-row>
+    </a-button>
     <br>
   </div>
     <div class="ai-catalog-section !mx-1  py-2 ">
@@ -227,21 +200,11 @@
   
       <!-- Fixed Apply Button -->
   <div class="apply-section hidden md:block">
-    <a-row>
-      <a-col :span="12"style="padding:0px 0px 0px 5px">
-      <a-button type="default" size="large" block  @click="showSwitchFurnitureModel" :disabled="!selected_item">
-              Switch Furniture
-            </a-button>
-      </a-col>
-<a-col :span="12"style="padding:0px 0px 0px 5px"> <a-button type="primary" size="large" block  @click="$emit('trigger-render-3d-object')">
-        Add 3D Object
-      </a-button></a-col>
-      
-     
-      
-    </a-row>
-
-    </div>
+        <a-button type="primary" size="large" block  @click="$emit('trigger-render-3d-object')">
+          Apply
+        </a-button>
+        
+      </div>
     </div>
   </div>
 </template>
@@ -257,7 +220,6 @@ export default {
   },
   data() {
     return {
-      swichFurnitureModel:false,
       searchText: '',
       selected_item: '',
       loading: false,
@@ -294,13 +256,6 @@ export default {
     }
   },
   methods: {
-    startFurrnitureSwitch(){
-    this.showSwitchFurnitureModel()  
-      this.$emit('trigger-switch-furniture')
-    },
-    showSwitchFurnitureModel(){
-            this.swichFurnitureModel = !this.swichFurnitureModel
-    },
       truncateChars(text, limit = 11) {
   if (!text) return ''
   return text.length > limit

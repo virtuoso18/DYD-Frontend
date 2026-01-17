@@ -1,12 +1,11 @@
 <template>
   <div class="w-full px-4 py-8">
-
     <!-- PAGE TITLE -->
+    
     <h1 class="text-2xl font-semibold text-start mb-6">
       #{{ tag }}
     </h1>
-
-    <!-- LOADING -->
+      <!-- LOADING -->
     <!-- <div v-if="loading" class="text-center py-12 text-gray-500">
       Loading posts...
     </div> -->
@@ -19,25 +18,26 @@
     <!-- POSTS GRID -->
     <div
       v-else
-      class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6"
+      class="grid grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6"
     >
-      <a-row>
-        <a-col v-for="post in posts" :sm="24" :xs="24" :md="24" :lg="24">
-          <!-- {{ post.tags }} -->
-            <DesignCard
-              :key="post.id"
-              :image="this.$store.state.root_media_api+getPostImage(post)"
-              :avatar="this.$store.state.root_media_api+getUserAvatar(post)"
-              :tags="post.tags"
-              :name="post.post_owner.username"
-              :likes="post.like_count"
-              :views="post.view_count"
-              :comments="post.comment_count"
-              :is_liked="post.is_liked"
-              @click.stop="openPost(post)"
-              />
-        </a-col>
-      </a-row>
+      <div
+        v-for="post in posts"
+        :key="post.id"
+        class="col-span-1"
+      >
+       <!-- {{ post.tags }} -->
+        <DesignCard
+          :image="$store.state.root_media_api + getPostImage(post)"
+          :avatar="$store.state.root_media_api + getUserAvatar(post)"
+          :tags="post.tags"
+          :name="post.post_owner.username"
+          :likes="post.like_count"
+          :views="post.view_count"
+          :comments="post.comment_count"
+          :is_liked="post.is_liked"
+          @click.stop="openPost(post)"
+        />
+      </div>
     </div>
 
     <!-- PAGINATION -->
@@ -63,9 +63,9 @@
       @comment-added="handleCommentAdded" 
       @like-toggled="handleLikeToggled" 
     />
-
-  </div>
+    </div>
 </template>
+
 
 <script>
 import DesignCard from "@/components/Includes/DesignCard_tag_comunity_post.vue";

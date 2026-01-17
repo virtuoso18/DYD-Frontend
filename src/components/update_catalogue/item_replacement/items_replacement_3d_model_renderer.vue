@@ -467,7 +467,38 @@ applyModelScale() {
     //     this.isLoading = false;
     //   }
     // },
+remove3DObjectFromScene() {
+  if (!this.scene) return;
 
+  // Remove model
+  if (this.model) {
+    this.scene.remove(this.model);
+    this.model.traverse((child) => {
+      if (child.isMesh) {
+        child.geometry?.dispose();
+        if (child.material?.map) child.material.map.dispose();
+        child.material?.dispose();
+      }
+    });
+    this.model = null;
+  }
+
+  // Remove rotation ring
+  if (this.rotationRing) {
+    this.scene.remove(this.rotationRing);
+    this.rotationRing = null;
+    this.rotationArrows = [];
+  }
+
+  // Optional: hide grid
+  if (this.gridHelper) {
+    this.gridHelper.visible = false;
+  }
+
+  this.modelLoaded = false;
+
+  console.log("✅ 3D object removed from scene");
+},
     // Replace your existing renderItem method with this:
     async renderItem() {
       if (!this.model || !this.currentBackgroundTexture) {
@@ -520,6 +551,74 @@ applyModelScale() {
           },
           body: formData,
         });
+
+        if (response.status == 402) {
+          const result = await response.json();
+          this.$emit("insufficient-credits", result.msg);
+          return;
+        }
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        
+// 🔥 REMOVE 3D OBJECT AFTER SUCCESSFUL RENDER
+this.remove3DObjectFromScene();
+
+
+        this.$emit("rendered-comfyui-workflow", result.final_output);
+
+        console.log(
+          "Composite image and binary mask sent successfully:",
+          result
+        );
+        console.log(`Images generated with dimensions: ${bgWidth}x${bgHeight}`);
+
+        return result;
+      } catch (error) {
+        console.error("Error rendering item:", error);
+        throw error;
+      } finally {
+        this.isLoading = false;
+      }
+    },
+
+    
+    // Replace your existing renderItem method with this:
+    async switchFurniture() {
+      if (!this.model || !this.currentBackgroundTexture) {
+        console.warn("Model or background not loaded");
+        return;
+      }
+
+      try {
+        this.isLoading = true;
+        
+this.remove3DObjectFromScene();
+
+        this.loadingText = "Rendering Item...";
+
+        const roomId = this.$route.params.id;
+        const prod_id = this.product_id;
+        const url = `${this.$store.state.root_api}engine/switch-furniture-ref/`;
+
+        // Prepare form data with BOTH images
+        const formData = new FormData();
+        formData.append("room_id", roomId);
+        formData.append("prod_id", prod_id);
+
+        this.loadingText = "Switching Product of Your Room...";
+
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            Authorization: `Token ${localStorage.getItem("token")}`,
+          },
+          body: formData,
+        });
+
+this.remove3DObjectFromScene();
 
         if (response.status == 402) {
           const result = await response.json();

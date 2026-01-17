@@ -238,8 +238,9 @@ export default {
 
 .products-section {
   /* padding: 16px 0; */
-  max-height: 60vh;
-  overflow-y: auto;
+  /* max-height: 60vh; */
+  /* overflow-y: auto; */
+  width:100%
 }
 
 .products-section::-webkit-scrollbar {
