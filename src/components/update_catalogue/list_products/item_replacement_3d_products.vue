@@ -1,5 +1,7 @@
 <template>
-<a-modal :open="swichFurnitureModel" centered>
+<a-modal :open="swichFurnitureModel" centered @cancel="showSwitchFurnitureModel()">
+
+
   <p>
     Furniture switching will replace all similar furniture in the room with the selected item.
     If the room does not already contain this type of furniture, the AI will rearrange or remove
@@ -39,8 +41,9 @@
               Switch Furniture
             </a-button>
       </a-col>
-<a-col :span="12"style="padding:0px 0px 0px 5px"> <a-button type="primary" size="large" block  @click="$emit('trigger-render-3d-object')">
-        Apply 3D Object
+<a-col  :span="12"style="padding:0px 0px 0px 5px"> 
+  <a-button :disabled="!selected_item" type="primary" size="large" block  @click="$emit('trigger-render-3d-object')">
+        Add 3D Object
       </a-button></a-col>
       
      
@@ -233,7 +236,8 @@
               Switch Furniture
             </a-button>
       </a-col>
-<a-col :span="12"style="padding:0px 0px 0px 5px"> <a-button type="primary" size="large" block  @click="$emit('trigger-render-3d-object')">
+<a-col :span="12"style="padding:0px 0px 0px 5px"> 
+  <a-button :disabled="!selected_item" type="primary" size="large" block  @click="$emit('trigger-render-3d-object')">
         Add 3D Object
       </a-button></a-col>
       

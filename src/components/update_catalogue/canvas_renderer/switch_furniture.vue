@@ -936,6 +936,7 @@ export default {
 
 .canvas-toolbar {
   position: absolute;
+  background-color: rgba(255,255,255,0.6);
   top: 50%;
   right: 12px;
   transform: translateY(-50%);
