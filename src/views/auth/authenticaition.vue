@@ -18,8 +18,8 @@
       </a-col>
       <a-col span="8" :xs="24" :sm="24" :md="8" class="form-section">
         <!-- {{this.$route.fullPath == '/signin'}} -->
-        <signin v-if ="this.$route.fullPath == '/login'"/>
-        <signup v-if ="this.$route.fullPath == '/signup'"/>
+        <signin v-if ="this.$route.path== '/login'"/>
+        <signup v-if ="this.$route.path == '/signup'"/>
       </a-col>
     </a-row>
   </div>

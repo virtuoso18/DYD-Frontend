@@ -31,7 +31,7 @@
         </div>
         <router-link
           to="/forgot-password"
-          style="display: flex; justify-content: end"
+          style="display: flex; justify-content: end" 
           ><a-button type="text">Forgot Password</a-button></router-link
         >
         <!-- <div class="input-group">
@@ -166,7 +166,9 @@ export default {
           });
 
           // Redirect to dashboard
-          this.$router.push({ name: "dashboard" });
+          // this.$router.push({ name: "dashboard" });
+           const redirectPath = this.$route.query.redirect || "/dashboard";
+          this.$router.push(redirectPath);
         }
       } catch (error) {
         console.error("Login error:", error);

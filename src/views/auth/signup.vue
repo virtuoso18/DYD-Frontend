@@ -1030,7 +1030,7 @@ export default {
     
     goToLogin() {
       this.$emit('switch-to-login');
-      this.$router.push('/login')
+      this.$router.go(-1);
     },
     
     validateEmail(email) {
