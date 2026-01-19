@@ -224,6 +224,7 @@ const router = createRouter({
       path: '/admin-generate-banner',
       name: 'admin_generate_banner',
       component: Generate_Banner_Admin,
+       meta: { requiresAuth: true }
     },
     
     // =========================================== 
@@ -231,6 +232,7 @@ const router = createRouter({
       path: '/aivirtualtour',
       name: 'aivirtualtour',
       component: Aivirtualtour,
+       meta: { requiresAuth: true }
     },
     {
       path: '/',
@@ -265,17 +267,20 @@ const router = createRouter({
       path: '/cart',
       name: 'cart',
       component: cart,
+       meta: { requiresAuth: true }
     },
     {
       path: '/ai-catalog',
       name: 'ai_catalog',
       component: ai_catalog,
+       meta: { requiresAuth: true }
     },
 
     {
       path: '/make-payment/:plan_type',
       name: 'make_payment',
       component: make_payment,
+       meta: { requiresAuth: true }
     },
     {
       path: '/comunity',
@@ -392,16 +397,19 @@ const router = createRouter({
       path: '/start-new-catalogue',
       name: 'new_catelogue',
       component: start_new_catalogue,
+       meta: { requiresAuth: true }
     },
      {
       path: '/:buisness_name',
       name: 'buisness_name',
       component: buisness_page,
+       meta: { requiresAuth: true }
     },
      {
       path: '/:buisness_name/:product_type/:product_id',
       name: 'buisness_product',
       component: buisness_product,
+       meta: { requiresAuth: true }
     },
     
     {
@@ -414,6 +422,7 @@ const router = createRouter({
       path: '/update-catalogue/:id?',
       name: 'update_catelogue',
       component: update_catelogue,
+       meta: { requiresAuth: true }
     },
     {
       path: '/update-catalogue/render-results/:id?',
@@ -425,6 +434,7 @@ const router = createRouter({
       path: '/dashboard',
       name: 'dashboard',
       component: dashboard_manager,
+       meta: { requiresAuth: true }
     },
     
         {
@@ -821,5 +831,35 @@ const router = createRouter({
     },
   ],
 })
+
+router.beforeEach((to, from, next) => {
+  const isLoggedIn = !!localStorage.getItem("token");
+
+  const requiresAuth = to.matched.some(
+    (route) => route.meta.requiresAuth
+  );
+
+  //  User NOT logged in & route requires auth
+  if (requiresAuth && !isLoggedIn) {
+    next({
+      path: "/login",
+      query: { redirect: to.fullPath },
+    });
+    return;
+  }
+
+  //  User logged in trying to visit login/signup
+  if (
+    isLoggedIn &&
+    (to.path === "/login" || to.path === "/signup")
+  ) {
+    next("/dashboard");
+    return;
+  }
+
+  // Allow navigation
+  next();
+});
+
 
 export default router
