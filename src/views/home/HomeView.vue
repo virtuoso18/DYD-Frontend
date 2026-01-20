@@ -741,9 +741,19 @@
               <span class="step-number step1-number"
                 ><img src="/01 (1).svg" alt="Share"
               /></span>
-              <img src="/upload-04.svg" alt="Share" />
-              <span class="drag-text">Drag and drop</span>
-              <div class="overlay-box"></div>
+              <div class="upload-sec">
+                <img src="/upload-04.svg" alt="Share" />
+                <div class="upload-instruction">
+                  <span class="drag-text">Drag and drop</span>
+                </div>
+              </div>
+              <div class="overlay-box">
+                <img
+                  class="phase-1-image"
+                  src="../../assets/homePhase1.png"
+                  alt="phase one image"
+                />
+              </div>
             </div>
           </div>
 
@@ -759,6 +769,13 @@
               <span class="step-number step2-number"
                 ><img src="/02.svg" alt="Share"
               /></span>
+              <div>
+                <img
+                  class="second-phase-image"
+                  src="../../assets/homePhase2.png"
+                  alt=""
+                />
+              </div>
               <div class="ai-badge">
                 <span><img src="/addingfurniture.svg" alt="Share" /></span>
                 Adding furniture..
@@ -800,6 +817,13 @@
               <span class="step-number step3-number"
                 ><img src="/03.svg" alt="Share"
               /></span>
+              <div>
+                <img
+                  class="phase-3-image"
+                  src="../../assets/homePhase3.png"
+                  alt=""
+                />
+              </div>
               <!-- Buttons half inside / half outside -->
               <div class="action-buttons">
                 <button class="action-btn">
@@ -1887,6 +1911,14 @@ import "swiper/css/scrollbar";
 
 import catalog from "@/views/newhome/catalog.vue";
 import ServicesShowcase from "@/views/newhome/ServicesShowcase.vue";
+import virtualStaggingbeforeImg from "@/assets/virtual-stagging-before.png";
+import virtualStaggingAfterImg from "@/assets/virtual-stagging-after.png";
+import ThreeDRenderingBefore  from "@/assets/3dRenderingBefore.png";
+import ThreeDRenderingAfter from "@/assets/3dRenderginAfter.png";
+import  room2BeforeVS from '@/assets/room2BeforeVS.jpg';
+import  room2AfterVS from '@/assets/room2AfterVS.jpg';
+import room3BeforeVs from "@/assets/room3BeforeVS.jpg";
+import room3AfterVS from "@/assets/room3AfterVS.jpg";
 
 export default {
   name: "Home",
@@ -1899,23 +1931,23 @@ export default {
   },
 
   setup() {
-    // ✅ initialize vue-i18n for translations
+    // initialize vue-i18n for translations
     const { t } = useI18n();
 
     const onSwiper = (swiper) => console.log(swiper);
     const onSlideChange = () => console.log("slide change");
 
     return {
-      t, // ✅ expose translation function to template
+      t,
       onSwiper,
       onSlideChange,
       modules: [Navigation, Pagination, Scrollbar, A11y, Autoplay],
-    };
+    }; 
   },
 
   data() {
     return {
-      isLogedIn: localStorage.getItem("token") ? true : false,
+      isLogedIn: localStorage.getItem("token") ? true : false, 
       bannerImage,
       swiper_bg,
       expand_faq: "1",
@@ -1973,29 +2005,23 @@ export default {
       isDragging: null,
 
       // Current displayed images
-      virtualStagingImages: [
-        "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=800&q=80",
-        "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=800&q=80",
-      ],
+      virtualStagingImages: [virtualStaggingAfterImg, virtualStaggingbeforeImg],
 
       rendering3DImages: [
-        "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&q=80",
-        "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=800&q=80",
+        ThreeDRenderingAfter,
+        ThreeDRenderingBefore
       ],
 
       // Image sets for navigation
       virtualStagingImageSet: [
+        [virtualStaggingAfterImg, virtualStaggingbeforeImg],
         [
-          "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=800&q=80",
-          "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=800&q=80",
+          room2AfterVS,
+          room2BeforeVS,
         ],
         [
-          "https://images.unsplash.com/photo-1618219878480-432e9b0e8b26?w=800&q=80",
-          "https://images.unsplash.com/photo-1615529182904-14819c35db37?w=800&q=80",
-        ],
-        [
-          "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80",
-          "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800&q=80",
+          room3AfterVS,
+          room3BeforeVs
         ],
       ],
 
@@ -2305,6 +2331,19 @@ export default {
   border-radius: 26px;
 }
 
+.upload-sec {
+  width: 175px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.upload-instruction {
+  width: 100%;
+}
+
+.second-phase-image {
+  border-radius: 22px;
+}
 .step1-number {
   font-size: 125px;
   font-weight: 300;
@@ -2322,14 +2361,21 @@ export default {
 
 .overlay-box {
   position: absolute;
-  top: 64px;
-  left: 320px;
+  top: 80px;
+  left: 225px;
   width: 274px;
   height: 213px;
   background-image: url("/thirdcardbg.svg");
   border-radius: 16px;
   transform: translateY(24px);
   overflow: visible;
+}
+
+.phase-1-image {
+  position: absolute;
+  border-radius: 22px;
+  width: 100%;
+  height: 100%;
 }
 
 /* SVG Lines */
@@ -2438,6 +2484,10 @@ export default {
   color: #4b5563;
   line-height: 1;
   font-family: "Rubik", sans-serif;
+}
+
+.phase-3-image {
+  border-radius: 22px;
 }
 
 .action-buttons {
