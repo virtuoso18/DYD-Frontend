@@ -908,8 +908,16 @@
                 <!-- Overlay Box Positioned Bottom Right -->
                 <div
                   class="absolute -bottom-8 -right-8 w-2/3 h-48 rounded-2xl bg-cover bg-no-repeat bg-bottom pointer-events-none"
-                  style="background-image: url(&quot;/thirdcardbg.svg&quot;)"
-                ></div>
+                  style="background-image: url(../../assets/homePhase1.png)"
+                >
+                <!-- <div class="overlay-box">
+                <img
+                  class="phase-1-image"
+                  src="../../assets/homePhase1.png"
+                  alt="phase one image"
+                />
+              </div> -->
+              </div>
               </div>
             </div>
           </div>
@@ -1527,6 +1535,168 @@
             </div>
           </div>
         </div>
+
+        <!-- object removing -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 !mt-4 mb-20">
+          <!-- Image with Before/After Slider -->
+          <div class="lg:col-span-6 order-2 lg:order-1">
+            <div
+              ref="objectRemovalContainer"
+              class="relative w-full h-[350px] md:h-[400px] rounded-2xl overflow-hidden shadow-lg cursor-col-resize"
+              @mousedown="startDrag('objectRemoval', $event)"
+              @touchstart="startDrag('objectRemoval', $event)"
+            >
+              <!-- Before Image -->
+              <img
+                :src="RemovingObjectImages[0]"
+                alt="Before Virtual Staging"
+                class="absolute inset-0 w-full h-full object-cover select-none"
+                draggable="false"
+              />
+
+              <!-- After Image (Clipped) -->
+              <div
+                class="absolute inset-0 overflow-hidden"
+                :style="{
+                  clipPath: `inset(0 ${100 - removeObjectSliderPosition}% 0 0)`,
+                }"
+              >
+                <img
+                  :src="RemovingObjectImages[1]"
+                  alt="After Virtual Staging"
+                  class="absolute inset-0 w-full h-full object-cover select-none"
+                  draggable="false"
+                />
+              </div>
+
+              <!-- Slider Handle -->
+              <div
+                class="absolute top-0 bottom-0 w-1 bg-white shadow-lg z-10 cursor-col-resize"
+                :style="{ left: removeObjectSliderPosition + '%' }"
+              >
+                <div
+                  class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-white rounded-full shadow-xl flex items-center justify-center"
+                >
+                  <svg
+                    class="w-4 h-4 text-gray-600 absolute left-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="3"
+                      d="M15 19l-7-7 7-7"
+                    />
+                  </svg>
+                  <svg
+                    class="w-4 h-4 text-gray-600 absolute right-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="3"
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </div>
+              </div>
+
+              <!-- Navigation Arrows -->
+              <div class="absolute top-4 left-4 z-20">
+                <button
+                  @click="prevRemoveObectImage"
+                  class="bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full p-2 shadow-lg transition-all"
+                >
+                  <svg
+                    class="w-5 h-5 text-gray-800"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M15 19l-7-7 7-7"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              <div class="absolute top-4 right-4 z-20">
+                <button
+                  @click="nextRemoveObjectImage"
+                  class="bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full p-2 shadow-lg transition-all"
+                >
+                  <svg
+                    class="w-5 h-5 text-gray-800"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              <!-- Before/After Labels -->
+            </div>
+          </div>
+
+          <!-- Content -->
+          <div
+            class="lg:col-span-6 order-1 lg:order-2 flex flex-col justify-center"
+          >
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              Object Removal
+            </h2>
+
+            <p class="text-gray-600 text-base md:text-lg leading-relaxed mb-6">
+              With the help of object removal, you can eliminate unwanted
+              furniture, clutter, or distractions from room images, creating
+              clean and spacious interiors that highlight the true potential of
+              any space.
+            </p>
+
+            <button
+              class="w-fit bg-blue-600 !text-white px-6 py-3 rounded-lg flex items-center gap-2 hover:bg-blue-700 transition-all duration-200 shadow-md hover:shadow-lg font-medium"
+              @click="handleAuthorizeClick('tryVirtualStagging')"
+            >
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 16 16"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M9.28387 8.51768L7.85167 7.08548C7.65647 6.89028 7.55887 6.79268 7.45353 6.74048C7.2532 6.64119 7.018 
+              6.64119 6.8176 6.74048C6.71233 6.79268 6.61471 6.89028 6.41949 7.08548C6.22425 7.28075 6.12664 7.37835 
+              6.07446 7.48361C5.97518 7.68401 5.97518 7.91921 6.07446 8.11955C6.12664 8.22488 6.22425 8.32248 6.41949 
+              8.51768L7.85167 9.94988M9.28387 8.51768L13.5805 12.8143C13.7757 13.0095 13.8733 13.1071 13.9255 13.2125C14.0248 
+              13.4128 14.0248 13.648 13.9255 13.8484C13.8733 13.9537 13.7757 14.0513 13.5805 14.2465C13.3853 14.4417 
+              13.2877 14.5393 13.1824 14.5915C12.982 14.6908 12.7468 14.6908 12.5465 14.5915C12.4411 14.5393 12.3435 
+              14.4417 12.1483 14.2465L7.85167 9.94988M9.28387 8.51768L7.85167 9.94988"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              Try Clean Room
+            </button>
+          </div>
+        </div>
       </div>
     </div>
     <br /><br />
@@ -1913,12 +2083,22 @@ import catalog from "@/views/newhome/catalog.vue";
 import ServicesShowcase from "@/views/newhome/ServicesShowcase.vue";
 import virtualStaggingbeforeImg from "@/assets/virtual-stagging-before.png";
 import virtualStaggingAfterImg from "@/assets/virtual-stagging-after.png";
-import ThreeDRenderingBefore  from "@/assets/3dRenderingBefore.png";
+import ThreeDRenderingBefore from "@/assets/3dRenderingBefore.png";
 import ThreeDRenderingAfter from "@/assets/3dRenderginAfter.png";
-import  room2BeforeVS from '@/assets/room2BeforeVS.jpg';
-import  room2AfterVS from '@/assets/room2AfterVS.jpg';
+import room2BeforeVS from "@/assets/room2BeforeVS.jpg";
+import room2AfterVS from "@/assets/room2AfterVS.jpg";
 import room3BeforeVs from "@/assets/room3BeforeVS.jpg";
 import room3AfterVS from "@/assets/room3AfterVS.jpg";
+import room1BeforeOR from "@/assets/room1BeforeRO.jpg";
+import room1AfterOR from "@/assets/room1AfterRO.jpg";
+import room2BeforeOR from "@/assets/room2BeforeOR.jpg";
+import room2AfterOR from "@/assets/room2AfterOR.jpg";
+import room3BeforeOR from "@/assets/room3BeforeOR.jpg";
+import room3AfterOR from "@/assets/room3AfterOR.jpg";
+import room2Before3d from "@/assets/room2Before3d.png";
+import room2After3D from "@/assets/room2After3D.jpg";
+import room3Before3d from "@/assets/room3Before3d.png";
+import room3After3d from "@/assets/room3After3d.jpg";
 
 export default {
   name: "Home",
@@ -1942,12 +2122,12 @@ export default {
       onSwiper,
       onSlideChange,
       modules: [Navigation, Pagination, Scrollbar, A11y, Autoplay],
-    }; 
+    };
   },
 
   data() {
     return {
-      isLogedIn: localStorage.getItem("token") ? true : false, 
+      isLogedIn: localStorage.getItem("token") ? true : false,
       bannerImage,
       swiper_bg,
       expand_faq: "1",
@@ -2002,46 +2182,46 @@ export default {
       // Image slider functionality
       virtualStagingSliderPosition: 50,
       rendering3DSliderPosition: 50,
+      removeObjectSliderPosition: 50,
       isDragging: null,
 
       // Current displayed images
       virtualStagingImages: [virtualStaggingAfterImg, virtualStaggingbeforeImg],
 
-      rendering3DImages: [
-        ThreeDRenderingAfter,
-        ThreeDRenderingBefore
-      ],
+      rendering3DImages: [ThreeDRenderingAfter, ThreeDRenderingBefore],
+      RemovingObjectImages: [room1AfterOR, room1BeforeOR],
 
       // Image sets for navigation
       virtualStagingImageSet: [
         [virtualStaggingAfterImg, virtualStaggingbeforeImg],
-        [
-          room2AfterVS,
-          room2BeforeVS,
-        ],
-        [
-          room3AfterVS,
-          room3BeforeVs
-        ],
+        [room2AfterVS, room2BeforeVS],
+        [room3AfterVS, room3BeforeVs],
       ],
 
       rendering3DImageSet: [
         [
-          "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&q=80",
-          "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=800&q=80",
+          room2After3D,
+          room2Before3d,
         ],
         [
-          "https://images.unsplash.com/photo-1615529328331-f8917597711f?w=800&q=80",
-          "https://images.unsplash.com/photo-1616137466211-f939a420be84?w=800&q=80",
+          room3After3d,
+          room3Before3d
         ],
         [
-          "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80",
-          "https://images.unsplash.com/photo-1615876234886-fd9a39fda97f?w=800&q=80",
+          ThreeDRenderingAfter,
+          ThreeDRenderingBefore,
         ],
+      ],
+
+      removeObjectImageSet: [
+        [room1AfterOR, room1BeforeOR],
+        [room3AfterOR,room3BeforeOR],
+        [room2AfterOR, room2BeforeOR],
       ],
 
       virtualStagingImageIndex: 0,
       rendering3DImageIndex: 0,
+      removeObjectImageIndex: 0,
       redictConfig: {
         tryDemo: "/start-new-catalogue?brand=sdlc",
         processPhoto: "/start-new-catalogue?brand=sdlc",
@@ -2091,26 +2271,32 @@ export default {
     },
 
     handleDrag(slider, event) {
-      const container =
-        slider === "virtualStaging"
-          ? this.$refs.virtualStagingContainer
-          : this.$refs.rendering3DContainer;
+      const containerMap = {
+        virtualStaging: this.$refs.virtualStagingContainer,
+        rendering3D: this.$refs.rendering3DContainer,
+        objectRemoval: this.$refs.objectRemovalContainer,
+      };
 
+      const positionMap = {
+        virtualStaging: "virtualStagingSliderPosition",
+        rendering3D: "rendering3DSliderPosition",
+        objectRemoval: "removeObjectSliderPosition",
+      };
+
+      const container = containerMap[slider];
+      console.log("container:",slider);
       if (!container) return;
 
       const rect = container.getBoundingClientRect();
       const x = event.type.includes("mouse")
         ? event.clientX
         : event.touches[0].clientX;
+
       const position = ((x - rect.left) / rect.width) * 100;
-
       const clampedPosition = Math.max(0, Math.min(100, position));
+      console.log("poooo",clampedPosition);
 
-      if (slider === "virtualStaging") {
-        this.virtualStagingSliderPosition = clampedPosition;
-      } else {
-        this.rendering3DSliderPosition = clampedPosition;
-      }
+      this[positionMap[slider]] = clampedPosition;
     },
 
     stopDrag() {
@@ -2158,6 +2344,24 @@ export default {
       this.rendering3DImages =
         this.rendering3DImageSet[this.rendering3DImageIndex];
       this.rendering3DSliderPosition = 50;
+    },
+
+    nextRemoveObjectImage() {
+      this.removeObjectImageIndex =
+        (this.removeObjectImageIndex + 1) % this.removeObjectImageSet.length;
+      this.RemovingObjectImages =
+        this.removeObjectImageSet[this.removeObjectImageIndex];
+      this.removeObjectSliderPosition = 50;
+    },
+
+    prevRemoveObectImage() {
+      this.removeObjectImageIndex =
+        this.removeObjectImageIndex === 0
+          ? this.removeObjectImageSet.length - 1
+          : this.removeObjectImageIndex - 1;
+      this.RemovingObjectImages =
+        this.removeObjectImageSet[this.removeObjectImageIndex];
+      this.removeObjectSliderPosition = 50;
     },
 
     tryVirtualStaging() {
@@ -2632,6 +2836,12 @@ export default {
 @media (min-width: 1024px) {
   .banner-text {
     font-size: 44px; /* larger screens */
+  }
+}
+@media screen and (max-width:1023px) {
+  .overlay-box{
+        top: -40px;
+    left: 30px;
   }
 }
 </style>
