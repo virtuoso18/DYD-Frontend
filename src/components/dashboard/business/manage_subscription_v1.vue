@@ -196,6 +196,16 @@
           </div>
         </div>
 
+        <!-- Cancel Subscription (Mobile Only - Below Card) -->
+        <!-- <div class=" md:hidden text-center mt-3">
+          <a-button 
+            type="link" 
+            class="p-0 !text-[#ff4d4f] text-sm font-medium"
+            @click="handleCancelSubscription"
+          >
+            ✕ Cancel Subscription
+          </a-button>
+        </div> -->
       </div>
 
       <!-- Credits Section -->
@@ -264,55 +274,6 @@
             </div>
           </div>
         </div>
-      <div class="bg-white rounded-xl p-4 border-2 border-[rgba(79,124,255,0.1)]">
-  <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
-    <div class="flex items-start gap-3 flex-row">
-      <div class="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0">
-        <svg
-          width="33"
-          height="33"
-          viewBox="0 0 33 33"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            fill-rule="evenodd"
-            clip-rule="evenodd"
-            d="M16.5 0C7.38705 0 0 7.38705 0 16.5C0 25.6129 7.38705 33 16.5 33C25.6129 33 33 25.6129 33 16.5C33 7.38705 25.6129 0 16.5 0ZM16.5 1.65C16.5 5.58846 14.9355 9.36562 12.1505 12.1505C9.36562 14.9355 5.58846 16.5 1.65 16.5C5.58846 16.5 9.36562 18.0645 12.1505 20.8495C14.9355 23.6344 16.5 27.4115 16.5 31.35C16.5 27.4115 18.0645 23.6344 20.8495 20.8495C23.6344 18.0645 27.4115 16.5 31.35 16.5C27.4115 16.5 23.6344 14.9355 20.8495 12.1505C18.0645 9.36562 16.5 5.58846 16.5 1.65Z"
-            fill="#3B63FB"
-          />
-        </svg>
-      </div>
-
-      <div class="flex-1 min-w-0">
-        <h4 class="m-0 mb-2 !font-[Poppins] !font-medium !text-[16px] !leading-[24px] !tracking-[0] text-[#262626]">
-          Get Free Credits
-        </h4>
-        <p class="m-0 !font-[Poppins] !font-normal !text-[10px] md:w-80 !leading-[16px] !tracking-[0] text-[#8c8c8c]">
-          Claim your free credits bonus now and start using premium features instantly!
-        </p>
-      </div>
-    </div>
-
-    <div class="flex items-center px-4 justify-between text-center md:text-right">
-      <button
-        @click="handleBuyFreeCredits"
-        :disabled="freeCreditsLoading || !isEligibleForFreeCredits"
-        class="!font-[Poppins] !font-normal bg-[#3B63FB] !text-white rounded-lg px-6 py-2.5 transition-all duration-[800ms] ease-out hover:bg-[#3b63fb] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-      >
-        <span v-if="!freeCreditsLoading">Get Free Credits</span>
-        <span v-else class="flex items-center gap-2">
-          <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-          </svg>
-          Loading...
-        </span>
-      </button>
-    </div>
-  </div>
-</div>
-
       </div>
 
       <!-- History Section -->
@@ -691,17 +652,12 @@
 </template>
 
 <script>
-import { notification } from "ant-design-vue";
-
 export default {
   name: "ManageSubscription",
   data() {
     return {
       loading: true,
       activeTab: "subscription",
-      freeCreditsLoading: false,
-      successMessage: "",
-      errorMessage: "",
       columns: [],
       columns_credits_table: [
         {
@@ -727,7 +683,6 @@ export default {
   mounted() {
     this.fetch_my_subscriptions();
     this.fetch_my_credits();
-    this.checkFreeCreditsEligibility();
   },
   methods: {
     handleTabChange(tab) {
@@ -822,83 +777,6 @@ export default {
         }
       } finally {
         this.loading = false;
-      }
-    },
-    async handleBuyFreeCredits() {
-      try {
-        this.freeCreditsLoading = true;
-        this.successMessage = "";
-        this.errorMessage = "";
-        
-        const token = localStorage.getItem("token");
-
-        const response = await fetch(
-          `${this.$store.state.root_api}subscription/api/free-credits-data/`,
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Token ${token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        const result = await response.json();
-
-        if (response.ok) {
-          notification.success({
-            message: "Free Credits Claimed 🎉",
-            description: result.message || "Free credits claimed successfully!",
-            placement: "bottomRight",
-            duration: 3,
-          });
-
-          this.fetch_my_credits();
-        } else {
-          notification.error({
-            message: "ERROR",
-            description: result.message || "Free credits CAnnot be claimed",
-            placement: "bottomRight",
-            duration: 3,
-          });
-        }
-      } catch (error) {
-        console.error("Error claiming free credits:", error);
-        this.errorMessage = "An error occurred while claiming free credits. Please try again.";
-        setTimeout(() => {
-          this.errorMessage = "";
-        }, 3000);
-      } finally {
-        this.freeCreditsLoading = false;
-      }
-    },
-    async checkFreeCreditsEligibility() {
-      try {
-        const token = localStorage.getItem("token");
-
-        const response = await fetch(
-          `${this.$store.state.root_api}subscription/api/check-free-credits-eligibility/`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Token ${token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        const result = await response.json();
-
-        if (response.ok && result.success) {
-          this.isEligibleForFreeCredits = result.is_eligible;
-          this.freeCreditsMessage = result.message;
-        } else {
-          this.isEligibleForFreeCredits = false;
-          this.freeCreditsMessage = result.message || "Unable to check eligibility";
-        }
-      } catch (error) {
-        console.error("Error checking free credits eligibility:", error);
-        this.isEligibleForFreeCredits = false;
       }
     },
     handleBuyCredits() {

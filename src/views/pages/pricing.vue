@@ -16,14 +16,14 @@
     <div class="pricing-section">
       <div class="free-credits-banner">
         <div class="credits-info">
-          <h3>Get daily free credits</h3>
-          <p>You will get 10 credits daily to generate image or create<br>3d models & edit image</p>
+          <h3>{{ this.freecreditdata?.title }}</h3>
+          <p>{{this.freecreditdata?.description}}</p>
         </div>
         <div class="credits-badge">
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path fill-rule="evenodd" clip-rule="evenodd" d="M10 0C4.477 0 0 4.477 0 10C0 15.523 4.477 20 10 20C15.523 20 20 15.523 20 10C20 4.477 15.523 0 10 0ZM10 1C10 3.38695 9.05179 5.67613 7.36396 7.36396C5.67613 9.05179 3.38695 10 1 10C3.38695 10 5.67613 10.9482 7.36396 12.636C9.05179 14.3239 10 16.6131 10 19C10 16.6131 10.9482 14.3239 12.636 12.636C14.3239 10.9482 16.6131 10 19 10C16.6131 10 14.3239 9.05179 12.636 7.36396C10.9482 5.67613 10 3.38695 10 1Z" fill="#3B63FB"/>
           </svg>
-          <span class="credits-number">10</span>
+          <span class="credits-number">{{this.freecreditdata?.credits_count}}</span>
         </div>
       </div>
 
@@ -42,11 +42,10 @@
             </div>
             <button class="get-started-btn basic-btn" @click="this.$router.push('/make-payment/'+'basic')">Get Started</button>
             <div class="features-list">
-              <div class="feature-item"><span class="checkmark">✓</span><span>1000 monthly credits recharge</span></div>
-              <div class="feature-item"><span class="checkmark">✓</span><span>10 task working in queue</span></div>
-              <div class="feature-item"><span class="checkmark">✓</span><span>4 free retries per generation</span></div>
-              <div class="feature-item"><span class="checkmark">✓</span><span>Multi-view image to 3D</span></div>
-              <div class="feature-item"><span class="checkmark">✓</span><span>Download community models</span></div>
+              <div v-for="(feature, index) in data.basic.description_list" :key="index" class="feature-item">
+                <span class="checkmark">✓</span>
+                <span>{{ feature }}</span>
+              </div>
             </div>
           </div>
 
@@ -62,11 +61,10 @@
             </div>
             <button class="get-started-btn pro-btn" @click="this.$router.push('/make-payment/'+'pro')">Get Started</button>
             <div class="features-list">
-              <div class="feature-item"><span class="checkmark">✓</span><span>4000 monthly credits recharge</span></div>
-              <div class="feature-item"><span class="checkmark">✓</span><span>30 task working in queue</span></div>
-              <div class="feature-item"><span class="checkmark">✓</span><span>8 free retries per generation</span></div>
-              <div class="feature-item"><span class="checkmark">✓</span><span>Multi-view image to 3D</span></div>
-              <div class="feature-item"><span class="checkmark">✓</span><span>Download community model</span></div>
+              <div v-for="(feature, index) in data.pro.description_list" :key="index" class="feature-item">
+                <span class="checkmark">✓</span>
+                <span>{{ feature }}</span>
+              </div>
             </div>
           </div>
 
@@ -82,11 +80,10 @@
             </div>
             <button class="get-started-btn enterprise-btn" @click="this.$router.push('/make-payment/'+'enterprise')">Get Started</button>
             <div class="features-list">
-              <div class="feature-item"><span class="checkmark">✓</span><span>Customizable balance</span></div>
-              <div class="feature-item"><span class="checkmark">✓</span><span>50+ task working in queue</span></div>
-              <div class="feature-item"><span class="checkmark">✓</span><span>20 free retries per generation</span></div>
-              <div class="feature-item"><span class="checkmark">✓</span><span>Multi-view image to 3D</span></div>
-              <div class="feature-item"><span class="checkmark">✓</span><span>Download community model</span></div>
+              <div v-for="(feature, index) in data.enterprise.description_list" :key="index" class="feature-item">
+                <span class="checkmark">✓</span>
+                <span>{{ feature }}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -112,13 +109,10 @@
             </div>
             <button class="get-started-btn basic-btn" @click="this.$router.push('/login')">Start 7-days Free Trial</button>
             <div class="features-list">
-              <div class="feature-item"><span class="checkmark">✓</span><span>1000 monthly credits</span></div>
-              <div class="feature-item"><span class="checkmark">✓</span><span>10 task queue</span></div>
-              <div class="feature-item"><span class="checkmark">✓</span><span>4 free retries</span></div>
-              <div class="feature-item"><span class="checkmark">✓</span><span>Multi-view image to 3D</span></div>
-              <div class="feature-item"><span class="checkmark">✓</span><span>Download community models</span></div>
-              <div class="feature-item disabled"><span class="crossmark">✕</span><span>Advanced analytics</span></div>
-              <div class="feature-item disabled"><span class="crossmark">✕</span><span>Priority support</span></div>
+              <div v-for="(feature, index) in data.business_plan_list.basic.description_list" :key="index" class="feature-item">
+                <span class="checkmark">✓</span>
+                <span>{{ feature }}</span>
+              </div>
             </div>
           </div>
 
@@ -136,13 +130,10 @@
             </div>
             <button class="get-started-btn pro-btn" @click="this.$router.push('/login')">Start 7-days Free Trial</button>
             <div class="features-list">
-              <div class="feature-item"><span class="checkmark">✓</span><span>4000 monthly credits</span></div>
-              <div class="feature-item"><span class="checkmark">✓</span><span>30 task queue</span></div>
-              <div class="feature-item"><span class="checkmark">✓</span><span>8 free retries</span></div>
-              <div class="feature-item"><span class="checkmark">✓</span><span>Multi-view image to 3D</span></div>
-              <div class="feature-item"><span class="checkmark">✓</span><span>Download community model</span></div>
-              <div class="feature-item"><span class="checkmark">✓</span><span>Advanced analytics</span></div>
-              <div class="feature-item"><span class="checkmark">✓</span><span>Priority support</span></div>
+              <div v-for="(feature, index) in data.business_plan_list.pro.description_list" :key="index" class="feature-item">
+                <span class="checkmark">✓</span>
+                <span>{{ feature }}</span>
+              </div>
             </div>
           </div>
 
@@ -158,13 +149,10 @@
             </div>
             <button class="get-started-btn enterprise-btn" @click="this.$router.push('/login')">Start 7-days Free Trial</button>
             <div class="features-list">
-              <div class="feature-item"><span class="checkmark">✓</span><span>Customizable balance</span></div>
-              <div class="feature-item"><span class="checkmark">✓</span><span>50+ task queue</span></div>
-              <div class="feature-item"><span class="checkmark">✓</span><span>20 free retries</span></div>
-              <div class="feature-item"><span class="checkmark">✓</span><span>Multi-view image to 3D</span></div>
-              <div class="feature-item"><span class="checkmark">✓</span><span>Download community model</span></div>
-              <div class="feature-item"><span class="checkmark">✓</span><span>Advanced analytics</span></div>
-              <div class="feature-item"><span class="checkmark">✓</span><span>Priority support</span></div>
+              <div v-for="(feature, index) in data.business_plan_list.enterprise.description_list" :key="index" class="feature-item">
+                <span class="checkmark">✓</span>
+                <span>{{ feature }}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -182,13 +170,10 @@
             </div>
             <button class="get-started-btn basic-btn" @click="this.$router.push('/login')">Start 7-days Free Trial</button>
             <div class="features-list">
-              <div class="feature-item"><span class="checkmark">✓</span><span>1000 monthly credits</span></div>
-              <div class="feature-item"><span class="checkmark">✓</span><span>10 task queue</span></div>
-              <div class="feature-item"><span class="checkmark">✓</span><span>4 free retries</span></div>
-              <div class="feature-item"><span class="checkmark">✓</span><span>Multi-view image to 3D</span></div>
-              <div class="feature-item"><span class="checkmark">✓</span><span>Download community models</span></div>
-              <div class="feature-item disabled"><span class="crossmark">✕</span><span>Advanced analytics</span></div>
-              <div class="feature-item disabled"><span class="crossmark">✕</span><span>Priority support</span></div>
+              <div v-for="(feature, index) in data.professional_plan_list.basic.description_list" :key="index" class="feature-item">
+                <span class="checkmark">✓</span>
+                <span>{{ feature }}</span>
+              </div>
             </div>
           </div>
 
@@ -206,13 +191,10 @@
             </div>
             <button class="get-started-btn pro-btn" @click="this.$router.push('/login')">Start 7-days Free Trial</button>
             <div class="features-list">
-              <div class="feature-item"><span class="checkmark">✓</span><span>4000 monthly credits</span></div>
-              <div class="feature-item"><span class="checkmark">✓</span><span>30 task queue</span></div>
-              <div class="feature-item"><span class="checkmark">✓</span><span>8 free retries</span></div>
-              <div class="feature-item"><span class="checkmark">✓</span><span>Multi-view image to 3D</span></div>
-              <div class="feature-item"><span class="checkmark">✓</span><span>Download community model</span></div>
-              <div class="feature-item"><span class="checkmark">✓</span><span>Advanced analytics</span></div>
-              <div class="feature-item"><span class="checkmark">✓</span><span>Priority support</span></div>
+              <div v-for="(feature, index) in data.professional_plan_list.pro.description_list" :key="index" class="feature-item">
+                <span class="checkmark">✓</span>
+                <span>{{ feature }}</span>
+              </div>
             </div>
           </div>
 
@@ -228,13 +210,10 @@
             </div>
             <button class="get-started-btn enterprise-btn" @click="this.$router.push('/login')">Start 7-days Free Trial</button>
             <div class="features-list">
-              <div class="feature-item"><span class="checkmark">✓</span><span>Customizable balance</span></div>
-              <div class="feature-item"><span class="checkmark">✓</span><span>50+ task queue</span></div>
-              <div class="feature-item"><span class="checkmark">✓</span><span>20 free retries</span></div>
-              <div class="feature-item"><span class="checkmark">✓</span><span>Multi-view image to 3D</span></div>
-              <div class="feature-item"><span class="checkmark">✓</span><span>Download community model</span></div>
-              <div class="feature-item"><span class="checkmark">✓</span><span>Advanced analytics</span></div>
-              <div class="feature-item"><span class="checkmark">✓</span><span>Priority support</span></div>
+              <div v-for="(feature, index) in data.professional_plan_list.enterprise.description_list" :key="index" class="feature-item">
+                <span class="checkmark">✓</span>
+                <span>{{ feature }}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -253,12 +232,37 @@
         </div>
         <div class="topup-offer">
           <div class="credits-amount">1,000 <span class="credits-label">credits</span></div>
-          <button class="buy-btn">$50 Buy</button>
+          <button class="buy-btn" @click="showCreditTopupModal = true">Explore and Buy</button>
         </div>
       </div>
       <br><br>
     </div>
     <br><br>
+
+    <!-- Credit Top-up Modal -->
+    <a-modal
+      v-model:visible="showCreditTopupModal"
+      title="Credit Top-up Plans"
+      width="900px"
+      :footer="null"
+      @cancel="showCreditTopupModal = false"
+    >
+      <a-table
+        :columns="creditTopupColumns"
+        :data-source="credittopupplan"
+        :pagination="{ pageSize: 10 }"
+        :loading="loadingTopupPlans"
+        rowKey="id"
+      >
+        <template #bodyCell="{ column, record }">
+          <template v-if="column.key === 'action'">
+            <a-button type="primary" @click="handleBuyCredit(record)">
+              Buy Now
+            </a-button>
+          </template>
+        </template>
+      </a-table>
+    </a-modal>
   </div>
 </template>
 
@@ -268,13 +272,42 @@ export default {
   data(){ 
     return {
       data: null,
+      freecreditdata: null,
+      credittopupplan: null,
       token: null,
-      activePlanType: 'business'
+      activePlanType: 'business',
+      showCreditTopupModal: false,
+      loadingTopupPlans: false,
+      creditTopupColumns: [
+        {
+          title: 'Credits',
+          dataIndex: 'credits_count',
+          key: 'credits',
+          width: '20%',
+          render: (text) => `${text} credits`
+        },
+        {
+          title: 'Price',
+          dataIndex: 'price',
+          key: 'price',
+          width: '20%',
+          render: (text) => `$${text}`
+        },
+       
+        {
+          title: 'Action',
+          key: 'action',
+          width: '10%',
+          align: 'center'
+        }
+      ]
     }
   },
   mounted(){
     this.token = localStorage.getItem('token')
     this.fetchPricingPlans()
+    this.fetchfreecreditplan()
+    this.fetchCreditTopUpPlan()
   },
   methods: {
     async fetchPricingPlans(){
@@ -298,8 +331,53 @@ export default {
     },
     calculateOriginalPrice(discountedPrice) {
       return (discountedPrice / 0.73).toFixed(0);
+    },
+    async fetchfreecreditplan(){
+      try {
+        let header = {}
+        const token = this.token
+        if (token){
+          header['Authorization'] = `Token ${token}`
+        }
+        const response = await fetch(`${this.$store.state.root_api}subscription/free-credits/`, {
+            method: 'GET',
+            headers: header
+        });
+        const result = await response.json();
+        if (Array.isArray(result)) {
+          this.freecreditdata = result[0] || {};
+        }
+      } catch (error) {
+          console.error('Error loading pricing plans:', error);
+      }
+    },
+    async fetchCreditTopUpPlan(){
+       try {
+        this.loadingTopupPlans = true;
+        let header = {}
+        const token = this.token
+        if (token){
+          header['Authorization'] = `Token ${token}`
+        }
+        const response = await fetch(`${this.$store.state.root_api}subscription/credit-topup-plans/`, {
+            method: 'GET',
+            headers: header
+        });
+        const result = await response.json();
+        if (Array.isArray(result)) {
+          this.credittopupplan = result;
+        }
+        this.loadingTopupPlans = false;
+      } catch (error) {
+          console.error('Error loading pricing plans:', error);
+          this.loadingTopupPlans = false;
+      }
+    },
+    handleBuyCredit(record) {
+      // Redirect to make-payment page with credit topup plan id
+      this.$router.push(`/make-payment-credit-topup/${record.id}`);
     }
-  }
+  },
 }
 </script>
 
@@ -447,13 +525,12 @@ export default {
   padding: 32px 24px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   border: 1px solid rgba(0, 0, 0, 0.05);
-  /* transition: all 0.3s ease; */
   position: relative;
 }
 
 .pricing-card:hover {
-  /* transform: translateY(-2px); */
-  /* box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12); */
+   transform: translateY(-2px); 
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
 }
 
 .basic-card, .enterprise-card {

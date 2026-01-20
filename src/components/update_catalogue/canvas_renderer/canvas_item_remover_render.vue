@@ -169,33 +169,38 @@
         "
       ></canvas>
     </div>
-
+    
     <!-- Object Selection Indicators -->
     <div
-      v-if="!isLoading && selectedObjects.length > 0"
-      class="object-indicators"
-      :style="{ width: canvasWidth + 'px', height: canvasHeight + 'px' }"
-    >
-      <div
-        v-for="(objectKey, index) in selectedObjects"
-        :key="objectKey"
-        class="object-indicator"
-        :style="{
-          left: '20px',
-          top: 20 + index * 35 + 'px',
-        }"
-      >
-        <span class="object-name">{{ formatObjectName(objectKey) }}</span>
-        <button
-          class="remove-object-btn"
-          @click="toggleObjectSelection(objectKey)"
-          title="Remove selection"
-        >
-          ×
-        </button>
-      </div>
-    </div>
+    v-if="!isLoading && selectedObjects.length > 0"
+   class="object-indicators"
+   :style="{ width: canvasWidth + 'px', height: canvasHeight + 'px' }"
+   >
+    <a-row>
+       <a-col :sm="0" :xs="0" :md="24" :lg="24">
 
+         <div
+         v-for="(objectKey, index) in selectedObjects"
+         :key="objectKey"
+         class="object-indicator"
+         :style="{
+           left: '20px',
+           top: 20 + index * 35 + 'px',
+         }"
+         >
+         <span class="object-name">{{ formatObjectName(objectKey) }}</span>
+         <button
+             class="remove-object-btn"
+             @click="toggleObjectSelection(objectKey)"
+             title="Remove selection"
+           >
+             ×
+           </button>
+         </div>
+    </a-col>
+  </a-row>
+  
+</div>
     <!-- Drawing Mode Controls -->
 
     <!-- Updated Drawing Mode Controls Template -->
@@ -345,9 +350,10 @@
         🔄 Switch Furniture
       </a-button>
 
-      <a-button class="toolbar-btn primary-btn" @click="make_room_empty">
+      
+      <a-button class="toolbar-btn primary-btn" @click="make_room_empty" v-if="!isLoading && selectedObjects.length === 0" >
         Remove All Furniture
-      </a-button>
+      </a-button> 
     </div>
 
     <!-- Zoom Controls -->
@@ -561,7 +567,7 @@
         </a-button>
         <!-- class="control-btn" -->
 
-        <a-button
+        <!-- <a-button
           @click="toggleSelection"
           type="default"
           style="
@@ -637,10 +643,10 @@
               stroke-linejoin="round"
             />
           </svg>
-          <!-- <span v-if="selectedObjects.length === objectMaskRegions.length">
+           <span v-if="selectedObjects.length === objectMaskRegions.length">
           {{selectedObjects.length}} 
-        </span> -->
-        </a-button>
+        </span> 
+        </a-button> -->
 
         <!-- Remove Selected -->
         <a-button
@@ -3710,7 +3716,7 @@ export default {
 
 .object-indicators {
   position: absolute;
-  top: 0;
+  top: 40px;
   left: 0;
   pointer-events: none;
   z-index: 5;

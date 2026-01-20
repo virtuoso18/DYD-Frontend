@@ -1968,7 +1968,7 @@ export default {
       this.$router.push('/business-dashboard/comunity')
     }
     if (this.user.user_type=="Professional"){
-      this.$router.push('/professional-dashboard/comunity')
+      this.$router.push('/professional-dashboard/my-community-posts')
     }
    },
     async AddRoomitemstocart() {

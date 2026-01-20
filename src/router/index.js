@@ -213,6 +213,9 @@ import Interiordesigner from '@/views/pages/interiordesigner.vue'
 import Realestateagent from '@/views/pages/realestateagent.vue'
 import Aivirtualtour from '@/views/pages/aivirtualtour.vue'
 
+import make_payment_credittopup from '@/views/pages/make_payment_credittopup.vue'
+
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -281,6 +284,11 @@ const router = createRouter({
       name: 'make_payment',
       component: make_payment,
        meta: { requiresAuth: true }
+    },
+    {
+      path: '/make-payment-credit-topup/:uuid',
+      name: 'make_payment_credittopup',
+      component: make_payment_credittopup,
     },
     {
       path: '/comunity',

@@ -10,6 +10,7 @@
       :body-style="{
         padding: '10px',
       }"
+      height="90%"
     >
       <a-row style="margin: 0px; padding: 0px">
         <a-col style="" :span="24">

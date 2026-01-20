@@ -1187,7 +1187,7 @@
         <h1
           class="text-center text-black mb-12"
           style="
-            font-family: &quot;Proza Libre&quot;;
+            font-family: Proza Libre;
             font-weight: 700;
             font-style: normal;
             font-size: 48px;

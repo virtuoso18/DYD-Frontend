@@ -254,7 +254,8 @@
     <div class="flex gap-3 pt-1 pr-1">
 
       <!-- Select / Deselect All -->
-      <button
+
+      <!-- <button
   class="flex items-center gap-[3px] !px-4 !py-[6px] bg-[#4e70f9] !text-white whitespace-nowrap rounded-md btn-text-style !text-[12px]"
   :class="{ 'active': allWallsSelected }"
   @click="toggleSelectAll"
@@ -266,7 +267,7 @@
   </svg>
 
   {{ allWallsSelected ? 'Deselect All' : 'Select All' }}
-</button>
+</button> -->
 
 
       <!-- Clear Button -->
@@ -318,10 +319,11 @@
   </div> -->
 
   <!-- RIGHT SIDE -->
-  <div class="pt-2 ">
+  <div class="p-2 ">
  <a-button type="primary" @click="$emit('Apply-Changes', 'Walls-Renerer')" :disabled="isLoading">
            Finalise Changes
          </a-button>
+         
 
 </div>
 

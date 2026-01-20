@@ -75,6 +75,7 @@
 <div class="flex justify-between items-center py-2 px-2 bg-white w-full gap-2">
   <!-- Left: Reset -->
   <button
+  v-if="glbUrl"
     className="bg-gray-300 px-6 py-1 rounded-md"
     @click="reset_entire_room"
     :disabled="isLoading"
