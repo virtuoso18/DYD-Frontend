@@ -751,7 +751,6 @@
                 <img
                   class="phase-1-image"
                   :src="step3Img"
-                  :src="step3Img"
                   alt="phase one image"
                 />
               </div>
