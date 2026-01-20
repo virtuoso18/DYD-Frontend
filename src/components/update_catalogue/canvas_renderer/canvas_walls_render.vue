@@ -68,7 +68,7 @@
            :class="{ 'active': allWallsSelected }"
            @click="toggleSelectAll"
            :disabled="isLoading"
-           :title="allWallsSelected ? 'Deselect All' : 'Select All'"
+           :title="allWallsSelected ? 'Unselect All' : 'Select All'"
          >
            <!-- <svg  width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
              <path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16zm3.5-5L7 6.5 4.5 9 3 7.5 7 3.5 13 9.5 11.5 11z"/>
@@ -95,7 +95,7 @@
   color: white;
   font-weight: bold;
 ">✓</div>
-           {{ allWallsSelected ? 'Deselect All' : 'Select All' }} 
+           {{ allWallsSelected ? 'Unselect All' : 'Select All' }} 
 
          </a-button>
     </div>
