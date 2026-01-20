@@ -770,11 +770,7 @@
                 ><img src="/02.svg" alt="Share"
               /></span>
               <div>
-                <img
-                  class="second-phase-image"
-                  :src="step2Img"
-                  alt=""
-                />
+                <img class="second-phase-image" :src="step2Img" alt="" />
               </div>
               <div class="ai-badge">
                 <span><img src="/addingfurniture.svg" alt="Share" /></span>
@@ -818,11 +814,7 @@
                 ><img src="/03.svg" alt="Share"
               /></span>
               <div>
-                <img
-                  class="phase-3-image"
-                  :src="step3Img"
-                  alt=""
-                />
+                <img class="phase-3-image" :src="step3Img" alt="" />
               </div>
               <!-- Buttons half inside / half outside -->
               <div class="action-buttons">
@@ -910,14 +902,14 @@
                   class="absolute -bottom-8 -right-8 w-2/3 h-48 rounded-2xl bg-cover bg-no-repeat bg-bottom pointer-events-none"
                   :style="{ backgroundImage: `url(${step1Img})` }"
                 >
-                <!-- <div class="overlay-box">
+                  <!-- <div class="overlay-box">
                 <img
                   class="phase-1-image"
                   src="../../assets/homePhase1.png"
                   alt="phase one image"
                 />
               </div> -->
-              </div>
+                </div>
               </div>
             </div>
           </div>
@@ -1697,6 +1689,180 @@
             </button>
           </div>
         </div>
+
+        <!-- change floor  -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <!-- Content -->
+          <div class="lg:col-span-6 flex flex-col justify-center">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              Floor Changing
+            </h2>
+
+            <p class="text-gray-600 text-base md:text-lg leading-relaxed mb-6">
+              We help you change the look of your floors by updating materials,
+              colors, and styles, creating clean, modern, and realistic
+              interiors that feel fresh and inviting.
+            </p>
+
+            <button
+              class="w-fit bg-blue-600 !text-white px-6 py-3 rounded-lg flex items-center gap-2 hover:bg-blue-700 transition-all duration-200 shadow-md hover:shadow-lg font-medium"
+              @click="handleAuthorizeClick('try3DRendering')"
+            >
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 16 16"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M9.28387 8.51768L7.85167 7.08548C7.65647 6.89028 7.55887 6.79268 7.45353 6.74048C7.2532 6.64119 
+              7.018 6.64119 6.8176 6.74048C6.71233 6.79268 6.61471 6.89028 6.41949 7.08548C6.22425 7.28075 6.12664 
+              7.37835 6.07446 7.48361C5.97518 7.68401 5.97518 7.91921 6.07446 8.11955C6.12664 8.22488 6.22425 8.32248 
+              6.41949 8.51768L7.85167 9.94988M9.28387 8.51768L13.5805 12.8143C13.7757 13.0095 13.8733 13.1071 
+              13.9255 13.2125C14.0248 13.4128 14.0248 13.648 13.9255 13.8484C13.8733 13.9537 13.7757 14.0513 
+              13.5805 14.2465C13.3853 14.4417 13.2877 14.5393 13.1824 14.5915C12.982 14.6908 12.7468 14.6908 
+              12.5465 14.5915C12.4411 14.5393 12.3435 14.4417 12.1483 14.2465L7.85167 9.94988M9.28387 8.51768L7.85167 9.94988"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              Try Change Floor
+            </button>
+          </div>
+
+          <!-- Image with Before/After Slider -->
+          <div class="lg:col-span-6">
+            <div
+              ref="FloorRemovalContainer"
+              class="relative w-full h-[350px] md:h-[400px] rounded-2xl shadow-lg cursor-col-resize"
+              @mousedown="startDrag('floorChange', $event)"
+              @touchstart="startDrag('floorChange', $event)"
+            >
+              <!-- Before Image -->
+              <img
+                :src="FloorChangeImages[0]"
+                alt="Before 3D Rendering"
+                class="absolute inset-0 w-full h-full object-cover select-none rounded-xl"
+                draggable="false"
+              />
+              <img
+                class="floor-image"
+                :src="FloorChangeConfig[this.floorChangeImageIndex]"
+                alt=" "
+              />
+
+              <!-- After Image (Clipped) -->
+              <div
+                class="absolute inset-0 overflow-hidden"
+                :style="{
+                  clipPath: `inset(0 ${100 - floorChangeSliderPosition}% 0 0)`,
+                }"
+              >
+                <img
+                  :src="FloorChangeImages[1]"
+                  alt="After 3D Rendering"
+                  class="absolute inset-0 w-full h-full object-cover select-none rounded-xl"
+                  draggable="false"
+                />
+              </div>
+
+              <!-- Slider Handle -->
+              <div
+                class="absolute top-0 bottom-0 w-1 bg-white shadow-lg z-10 cursor-col-resize"
+                :style="{ left: floorChangeSliderPosition + '%' }"
+              >
+                <div
+                  class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-white rounded-full shadow-xl flex items-center justify-center"
+                >
+                  <svg
+                    class="w-4 h-4 text-gray-600 absolute left-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="3"
+                      d="M15 19l-7-7 7-7"
+                    />
+                  </svg>
+                  <svg
+                    class="w-4 h-4 text-gray-600 absolute right-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="3"
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </div>
+              </div>
+
+              <!-- Navigation Arrows -->
+              <div class="absolute top-4 left-4 z-20">
+                <button
+                  @click="prevRenderingFloorImage"
+                  class="bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full p-2 shadow-lg transition-all"
+                >
+                  <svg
+                    class="w-5 h-5 text-gray-800"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M15 19l-7-7 7-7"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              <div class="absolute top-4 right-4 z-20">
+                <button
+                  @click="nextRenderingFloorImage"
+                  class="bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full p-2 shadow-lg transition-all"
+                >
+                  <svg
+                    class="w-5 h-5 text-gray-800"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              <!-- Before/After Labels -->
+              <div
+                class="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-1 rounded-md text-sm font-semibold"
+              >
+                Before
+              </div>
+              <div
+                class="absolute bottom-4 right-4 bg-black/70 text-white px-3 py-1 rounded-md text-sm font-semibold"
+              >
+                After
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <br /><br />
@@ -2102,6 +2268,14 @@ import room2Before3d from "@/assets/room2Before3d.png";
 import room2After3D from "@/assets/room2After3D.jpg";
 import room3Before3d from "@/assets/room3Before3d.png";
 import room3After3d from "@/assets/room3After3d.jpg";
+import room1BeforeFC from "@/assets/room1BeforeFC.jpg";
+import room1AfterFC from "@/assets/room1AfterFC.jpg";
+import room1TileFC from "@/assets/room1Floor.png";
+import room2BeforeFC from "@/assets/room2BeforeFC.jpg";
+import room2AfterFC from "@/assets/room2AfterFC.png";
+import room2Floor from "@/assets/room2Floor.png";
+import room3After from "@/assets/room3AfterFC.jpg";
+import room3TileFC from "@/assets/room3TileFC.png";
 
 export default {
   name: "Home",
@@ -2190,13 +2364,15 @@ export default {
       virtualStagingSliderPosition: 50,
       rendering3DSliderPosition: 50,
       removeObjectSliderPosition: 50,
+      floorChangeSliderPosition: 50,
       isDragging: null,
 
       // Current displayed images
       virtualStagingImages: [virtualStaggingAfterImg, virtualStaggingbeforeImg],
-
       rendering3DImages: [ThreeDRenderingAfter, ThreeDRenderingBefore],
       RemovingObjectImages: [room1AfterOR, room1BeforeOR],
+      FloorChangeImages: [room1AfterFC, room1BeforeFC],
+      FloorChangeConfig: [room1TileFC, room2Floor, room3TileFC],
 
       // Image sets for navigation
       virtualStagingImageSet: [
@@ -2206,29 +2382,27 @@ export default {
       ],
 
       rendering3DImageSet: [
-        [
-          room2After3D,
-          room2Before3d,
-        ],
-        [
-          room3After3d,
-          room3Before3d
-        ],
-        [
-          ThreeDRenderingAfter,
-          ThreeDRenderingBefore,
-        ],
+        [room2After3D, room2Before3d],
+        [room3After3d, room3Before3d],
+        [ThreeDRenderingAfter, ThreeDRenderingBefore],
       ],
 
       removeObjectImageSet: [
         [room1AfterOR, room1BeforeOR],
-        [room3AfterOR,room3BeforeOR],
+        [room3AfterOR, room3BeforeOR],
         [room2AfterOR, room2BeforeOR],
+      ],
+
+      renderingFloorImageSet: [
+        [room1AfterFC, room1BeforeFC],
+        [room2AfterFC, room2BeforeFC],
+        [room3After, room1BeforeFC],
       ],
 
       virtualStagingImageIndex: 0,
       rendering3DImageIndex: 0,
       removeObjectImageIndex: 0,
+      floorChangeImageIndex: 0,
       redictConfig: {
         tryDemo: "/start-new-catalogue?brand=sdlc",
         processPhoto: "/start-new-catalogue?brand=sdlc",
@@ -2282,18 +2456,20 @@ export default {
         virtualStaging: this.$refs.virtualStagingContainer,
         rendering3D: this.$refs.rendering3DContainer,
         objectRemoval: this.$refs.objectRemovalContainer,
+        floorChange: this.$refs.FloorRemovalContainer,
       };
 
       const positionMap = {
         virtualStaging: "virtualStagingSliderPosition",
         rendering3D: "rendering3DSliderPosition",
         objectRemoval: "removeObjectSliderPosition",
+        floorChange: "floorChangeSliderPosition",
       };
 
       const container = containerMap[slider];
-      console.log("container:",slider);
+      console.log("container:", slider);
       if (!container) return;
-
+      console.log("container:****", container);
       const rect = container.getBoundingClientRect();
       const x = event.type.includes("mouse")
         ? event.clientX
@@ -2301,7 +2477,7 @@ export default {
 
       const position = ((x - rect.left) / rect.width) * 100;
       const clampedPosition = Math.max(0, Math.min(100, position));
-      console.log("poooo",clampedPosition);
+      console.log("poooo", clampedPosition);
 
       this[positionMap[slider]] = clampedPosition;
     },
@@ -2369,6 +2545,26 @@ export default {
       this.RemovingObjectImages =
         this.removeObjectImageSet[this.removeObjectImageIndex];
       this.removeObjectSliderPosition = 50;
+    },
+
+    //remove floor
+    // 3D Rendering Navigation
+    nextRenderingFloorImage() {
+      this.floorChangeImageIndex =
+        (this.floorChangeImageIndex + 1) % this.renderingFloorImageSet.length;
+      this.FloorChangeImages =
+        this.renderingFloorImageSet[this.floorChangeImageIndex];
+      this.floorChangeSliderPosition = 50;
+    },
+
+    prevRenderingFloorImage() {
+      this.floorChangeImageIndex =
+        this.floorChangeImageIndex === 0
+          ? this.renderingFloorImageSet.length - 1
+          : this.floorChangeImageIndex - 1;
+      this.FloorChangeImages =
+        this.renderingFloorImageSet[this.floorChangeImageIndex];
+      this.floorChangeSliderPosition = 50;
     },
 
     tryVirtualStaging() {
@@ -2839,15 +3035,26 @@ export default {
   color: black;
   font-size: 32px; /* default for smaller screens */
 }
+.floor-image {
+  width: 180px;
+  height: 130px;
+  object-fit: cover;
+  position: absolute;
+  z-index: 11;
+  left: 37%;
+  top: -67px;
+  border-radius: 16px;
+  border: 0.5px solid gainsboro;
+}
 
 @media (min-width: 1024px) {
   .banner-text {
     font-size: 44px; /* larger screens */
   }
 }
-@media screen and (max-width:1023px) {
-  .overlay-box{
-        top: -40px;
+@media screen and (max-width: 1023px) {
+  .overlay-box {
+    top: -40px;
     left: 30px;
   }
 }
