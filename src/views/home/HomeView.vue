@@ -750,7 +750,7 @@
               <div class="overlay-box">
                 <img
                   class="phase-1-image"
-                  src="../../assets/homePhase1.png"
+                  :src="step3Img"
                   alt="phase one image"
                 />
               </div>
@@ -772,7 +772,7 @@
               <div>
                 <img
                   class="second-phase-image"
-                  src="../../assets/homePhase2.png"
+                  :src="step2Img"
                   alt=""
                 />
               </div>
@@ -820,7 +820,7 @@
               <div>
                 <img
                   class="phase-3-image"
-                  src="../../assets/homePhase3.png"
+                  :src="step3Img"
                   alt=""
                 />
               </div>
@@ -908,7 +908,7 @@
                 <!-- Overlay Box Positioned Bottom Right -->
                 <div
                   class="absolute -bottom-8 -right-8 w-2/3 h-48 rounded-2xl bg-cover bg-no-repeat bg-bottom pointer-events-none"
-                  style="background-image: url(../../assets/homePhase1.png)"
+                  :style="{ backgroundImage: `url(${step1Img})` }"
                 >
                 <!-- <div class="overlay-box">
                 <img
@@ -962,7 +962,7 @@
               <!-- Image Box -->
               <div
                 class="rounded-2xl w-full aspect-video sm:aspect-auto sm:h-64 flex items-center justify-center relative bg-cover bg-center"
-                style="background-image: url(&quot;/thirdcardbg.svg&quot;)"
+                :style="{ backgroundImage: `url(${step2Img})` }"
               >
                 <!-- AI Badge -->
                 <div
@@ -1019,7 +1019,7 @@
               <!-- Image Box -->
               <div
                 class="rounded-2xl w-full aspect-video sm:aspect-auto sm:h-64 flex items-center justify-center relative bg-cover bg-center"
-                style="background-image: url(&quot;/thirdcardbg.svg&quot;)"
+                :style="{ backgroundImage: `url(${step3Img})` }"
               >
                 <!-- Action Buttons -->
                 <div
@@ -2081,6 +2081,9 @@ import "swiper/css/scrollbar";
 
 import catalog from "@/views/newhome/catalog.vue";
 import ServicesShowcase from "@/views/newhome/ServicesShowcase.vue";
+import step3Img from "@/assets/homePhase3.png";
+import step2Img from "@/assets/homePhase2.png";
+import step1Img from "@/assets/homePhase1.png";
 import virtualStaggingbeforeImg from "@/assets/virtual-stagging-before.png";
 import virtualStaggingAfterImg from "@/assets/virtual-stagging-after.png";
 import ThreeDRenderingBefore from "@/assets/3dRenderingBefore.png";
@@ -2132,6 +2135,10 @@ export default {
       swiper_bg,
       expand_faq: "1",
       slidesPerView: window.innerWidth <= 768 ? 1 : 4,
+      //stepper image---
+      step3Img,
+      step2Img,
+      step1Img,
 
       // Form data
       form: {
