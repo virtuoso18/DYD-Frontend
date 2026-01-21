@@ -188,6 +188,7 @@
           <a-row :gutter="12">
             <a-col :span="12">
               <a-button 
+              style="display: flex;justify-content: center;align-items: center;"
                 type="primary" 
                 block
                 @click="editProduct()"
@@ -200,6 +201,7 @@
             </a-col>
             <a-col :span="12">
               <a-button 
+              style="display: flex;justify-content: center;align-items: center;"
                 type="default" 
                 danger
                 block

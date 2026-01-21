@@ -209,6 +209,7 @@
           <a-row :gutter="12">
             <a-col :span="12">
               <a-button 
+               style="display: flex;justify-content: center;align-items: center;"
                 type="primary" 
                 block
                 @click="editTexture()"
@@ -225,6 +226,7 @@
                 danger
                 block
                 @click="deleteTexture()"
+                style="display: flex;justify-content: center;align-items: center;"
               > 
                 <template #icon> 
                   <DeleteOutlined/>
