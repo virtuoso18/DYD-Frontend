@@ -82,10 +82,10 @@
                             <MessageOutlined />
                             <span>{{ formatNumber(post.comment_count) }}</span>
                           </div>
-                          <div class="stat-item" @click="sharePost(post)">
+                          <!-- <div class="stat-item" @click="sharePost(post)">
                             <ShareAltOutlined />
                             <span>{{ formatNumber(post.share_count) }}</span>
-                          </div>
+                          </div> -->
                         </div>
                         <!-- Dropdown Menu -->
                         <!-- <a-dropdown :trigger="['click']" placement="bottomRight">
@@ -1658,6 +1658,7 @@ export default {
 
 .post-stats {
   display: flex;
+  justify-content: end;
   gap: 8px;
 }
 
