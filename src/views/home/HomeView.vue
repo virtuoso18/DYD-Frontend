@@ -1209,10 +1209,10 @@
         <!-- Virtual Staging Section -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-20">
           <!-- Image with Before/After Slider -->
-          <div class="lg:col-span-6 order-2 lg:order-1">
+          <div class="lg:col-span-6 order-1">
             <div
               ref="virtualStagingContainer"
-              class="relative w-full h-[350px] md:h-[400px] rounded-2xl overflow-hidden shadow-lg cursor-col-resize"
+              class="md-room-size relative w-full h-[350px] md:h-[400px] rounded-2xl overflow-hidden shadow-lg cursor-col-resize"
               @mousedown="startDrag('virtualStaging', $event)"
               @touchstart="startDrag('virtualStaging', $event)"
             >
@@ -1325,7 +1325,7 @@
 
           <!-- Content -->
           <div
-            class="lg:col-span-6 order-1 lg:order-2 flex flex-col justify-center"
+            class="lg:col-span-6 order-2 !mb-4 flex flex-col justify-center"
           >
             <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
               Virtual Staging
@@ -1370,7 +1370,7 @@
         <!-- 3D Rendering Section -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <!-- Content -->
-          <div class="lg:col-span-6 flex flex-col justify-center">
+          <div class="lg:col-span-6 order-2 md:order-1 flex flex-col justify-center">
             <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
               3D Rendering
             </h2>
@@ -1411,10 +1411,10 @@
           </div>
 
           <!-- Image with Before/After Slider -->
-          <div class="lg:col-span-6">
+          <div class="lg:col-span-6 order-1 md:order-2">
             <div
               ref="rendering3DContainer"
-              class="relative w-full h-[350px] md:h-[400px] rounded-2xl overflow-hidden shadow-lg cursor-col-resize"
+              class="md-room-size relative w-full h-[350px] md:h-[400px] rounded-2xl overflow-hidden shadow-lg cursor-col-resize"
               @mousedown="startDrag('rendering3D', $event)"
               @touchstart="startDrag('rendering3D', $event)"
             >
@@ -1539,10 +1539,10 @@
         <!-- object removing -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 !mt-4 mb-20">
           <!-- Image with Before/After Slider -->
-          <div class="lg:col-span-6 order-2 lg:order-1">
+          <div class="lg:col-span-6 order-1">
             <div
               ref="objectRemovalContainer"
-              class="relative w-full h-[350px] md:h-[400px] rounded-2xl overflow-hidden shadow-lg cursor-col-resize"
+              class="md-room-size relative w-full h-[350px] md:h-[400px] rounded-2xl overflow-hidden shadow-lg cursor-col-resize"
               @mousedown="startDrag('objectRemoval', $event)"
               @touchstart="startDrag('objectRemoval', $event)"
             >
@@ -1655,7 +1655,7 @@
 
           <!-- Content -->
           <div
-            class="lg:col-span-6 order-1 lg:order-2 flex flex-col justify-center"
+            class="lg:col-span-6 order-2 flex flex-col justify-center"
           >
             <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
               Object Removal
@@ -1699,9 +1699,9 @@
         </div>
 
         <!-- change floor  -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div class="floor-change-sec grid grid-cols-1 lg:grid-cols-12 gap-8">
           <!-- Content -->
-          <div class="lg:col-span-6 flex flex-col justify-center">
+          <div class="lg:col-span-6 order-2 md:order-1 flex flex-col justify-center">
             <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
               Floor Changing
             </h2>
@@ -1742,10 +1742,10 @@
           </div>
 
           <!-- Image with Before/After Slider -->
-          <div class="lg:col-span-6">
+          <div class="lg:col-span-6 order-1 md:order-2">
             <div
               ref="FloorRemovalContainer"
-              class="relative w-full h-[350px] md:h-[400px] rounded-2xl shadow-lg cursor-col-resize"
+              class="floor-repersentation-sec md-room-size relative w-full h-[350px] md:h-[400px] rounded-2xl shadow-lg cursor-col-resize"
               @mousedown="startDrag('floorChange', $event)"
               @touchstart="startDrag('floorChange', $event)"
             >
@@ -2279,11 +2279,13 @@ import room3After3d from "@/assets/room3After3d.jpg";
 import room1BeforeFC from "@/assets/room1BeforeFC.jpg";
 import room1AfterFC from "@/assets/room1AfterFC.jpg";
 import room1TileFC from "@/assets/room1Floor.png";
-import room2BeforeFC from "@/assets/room2BeforeFC.jpg";
-import room2AfterFC from "@/assets/room2AfterFC.png";
+// import room2BeforeFC from "@/assets/room2BeforeFC.jpg";
+import room2AfterFC from "@/assets/room2AfterFC.jpg";
 import room2Floor from "@/assets/room2Floor.png";
 import room3After from "@/assets/room3AfterFC.jpg";
 import room3TileFC from "@/assets/room3TileFC.png";
+import room4AfterFC from "@/assets/room4AfterFC.jpg";
+import room4Tile from "@/assets/room4Tile.png";
 
 export default {
   name: "Home",
@@ -2377,10 +2379,10 @@ export default {
 
       // Current displayed images
       virtualStagingImages: [virtualStaggingAfterImg, virtualStaggingbeforeImg],
-      rendering3DImages: [ThreeDRenderingAfter, ThreeDRenderingBefore],
+      rendering3DImages: [room2After3D, room2Before3d],
       RemovingObjectImages: [room1AfterOR, room1BeforeOR],
       FloorChangeImages: [room1AfterFC, room1BeforeFC],
-      FloorChangeConfig: [room1TileFC, room2Floor, room3TileFC],
+      FloorChangeConfig: [room1TileFC, room2Floor, room3TileFC,room4Tile],
 
       // Image sets for navigation
       virtualStagingImageSet: [
@@ -2403,8 +2405,9 @@ export default {
 
       renderingFloorImageSet: [
         [room1AfterFC, room1BeforeFC],
-        [room2AfterFC, room2BeforeFC],
+        [room2AfterFC, room1BeforeFC],
         [room3After, room1BeforeFC],
+        [room4AfterFC,room1BeforeFC]
       ],
 
       virtualStagingImageIndex: 0,
@@ -3045,12 +3048,12 @@ export default {
 }
 .floor-image {
   width: 180px;
-  height: 130px;
+  height: 180px;
   object-fit: cover;
   position: absolute;
-  z-index: 11;
-  left: 37%;
-  top: -67px;
+  z-index: -1;
+  right: -80px;
+  top: -65px;
   border-radius: 16px;
   border: 0.5px solid gainsboro;
 }
@@ -3064,6 +3067,27 @@ export default {
   .overlay-box {
     top: -40px;
     left: 30px;
+  }
+  .floor-repersentation-sec{
+    margin-top: 50px;
+    width: 85%;
+  }
+}
+@media screen and (max-width: 768px) {
+  .md-room-size{ 
+    height: 220px;
+    margin-bottom: 10px;
+  }
+  .floor-repersentation-sec{
+    margin-top: 30px;
+  }
+}
+@media screen and (max-width:480px){
+  .floor-image{
+    width: 100px;
+    height: 100px;
+    top:-50px;
+    right:-50px;
   }
 }
 </style>
