@@ -1,12 +1,12 @@
 <template>
-   <div
+  <div
     v-if="isLoading"
     class="spinner-sec w-full h-[80vh] flex justify-center items-center"
   >
     <a-spin tip="Loading..."> </a-spin>
   </div>
   <div
-   v-else
+    v-else
     class="sm:main sm:border border-gray-200 bg-white !mb-5 sm:translate-y-3 sm:rounded-2xl min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh]"
   >
     <a-row v-if="view_type == 'all'">
@@ -117,40 +117,63 @@
           </button>
 
           <!-- Right Side Buttons -->
-          <div class="flex items-center gap-3">
+          <div class="flex items-center gap-3 hide-below-md">
             <!-- Edit Button -->
             <button
               v-if="!start_edit"
               @click="edit_Design"
-              class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 flex items-center gap-2 border border-gray-300"
+              class="px-4 py-2 !text-[#3B63FB] !font-medium rounded-lg hover:bg-gray-200 flex items-center gap-2 !cursor-pointer"
+              style="font-family: var(--font-family-main)"
+            >
+              <svg
+                width="13"
+                height="13"
+                viewBox="0 0 13 13"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M1.44444 11.5556H2.47361L9.53333 4.49583L8.50417 3.46667L1.44444 10.5264V11.5556ZM0.722222 13C0.517593 13 0.346185 12.9307 0.208 12.792C0.0698149 12.6533 0.000481481 12.4819 0 12.2778V10.5264C0 10.3338 0.0361112 10.1501 0.108333 9.97533C0.180556 9.80056 0.28287 9.6472 0.415278 9.51528L9.53333 0.415278C9.67778 0.28287 9.83739 0.180556 10.0122 0.108333C10.1869 0.0361112 10.3704 0 10.5625 0C10.7546 0 10.9412 0.0361112 11.1222 0.108333C11.3033 0.180556 11.4597 0.288889 11.5917 0.433333L12.5847 1.44444C12.7292 1.57685 12.8344 1.73333 12.9003 1.91389C12.9663 2.09444 12.9995 2.275 13 2.45556C13 2.64815 12.9668 2.83183 12.9003 3.00661C12.8339 3.18139 12.7287 3.34076 12.5847 3.48472L3.48472 12.5847C3.35231 12.7171 3.19872 12.8194 3.02394 12.8917C2.84917 12.9639 2.66572 13 2.47361 13H0.722222ZM9.00972 3.99028L8.50417 3.46667L9.53333 4.49583L9.00972 3.99028Z"
+                  fill="#3B63FB"
+                />
+              </svg>
+
+              Edit
+            </button>
+            <!-- <button
+              v-if="!start_edit"
+              @click="edit_Design"
+              class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 flex items-center gap-2"
               style="
                 font-family: var(--font-family-main);
-                color: var(--text-color);
+                color: var(--text-color-secondary);
+                outline: none;
               "
             >
               <svg
-                class="w-4 h-4"
+                width="13"
+                height="13"
+                viewBox="0 0 13 13"
                 fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                <path d="M12 20h9"></path>
                 <path
-                  d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4 12.5-12.5z"
-                ></path>
+                  d="M1.44444 11.5556H2.47361L9.53333 4.49583L8.50417 3.46667L1.44444 10.5264V11.5556ZM0.722222 13C0.517593 13 0.346185 12.9307 0.208 12.792C0.0698149 12.6533 0.000481481 12.4819 0 12.2778V10.5264C0 10.3338 0.0361112 10.1501 0.108333 9.97533C0.180556 9.80056 0.28287 9.6472 0.415278 9.51528L9.53333 0.415278C9.67778 0.28287 9.83739 0.180556 10.0122 0.108333C10.1869 0.0361112 10.3704 0 10.5625 0C10.7546 0 10.9412 0.0361112 11.1222 0.108333C11.3033 0.180556 11.4597 0.288889 11.5917 0.433333L12.5847 1.44444C12.7292 1.57685 12.8344 1.73333 12.9003 1.91389C12.9663 2.09444 12.9995 2.275 13 2.45556C13 2.64815 12.9668 2.83183 12.9003 3.00661C12.8339 3.18139 12.7287 3.34076 12.5847 3.48472L3.48472 12.5847C3.35231 12.7171 3.19872 12.8194 3.02394 12.8917C2.84917 12.9639 2.66572 13 2.47361 13H0.722222ZM9.00972 3.99028L8.50417 3.46667L9.53333 4.49583L9.00972 3.99028Z"
+                  fill="#3B63FB"
+                />
               </svg>
+
               Edit
-            </button>
+            </button> -->
 
             <!-- Save Button -->
-            <button
+            <a-button
+             type="primary"
               v-if="start_edit"
               @click="save_Design"
-              class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2"
+              class="  !flex items-center"
               style="
                 font-family: var(--font-family-main);
-                color: var(--text-color);
               "
             >
               <svg
@@ -163,7 +186,7 @@
                 <path d="M5 13l4 4L19 7"></path>
               </svg>
               Save
-            </button>
+            </a-button>
 
             <!-- Close Button -->
             <button
@@ -172,7 +195,7 @@
               class="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 flex items-center gap-2"
               style="
                 font-family: var(--font-family-main);
-                color: var(--text-color);
+                color: var(--text-color-secondary);
               "
             >
               <svg
@@ -189,8 +212,9 @@
 
             <!-- Delete Button -->
             <button
+              v-if="!start_edit"
               @click="delete_Design"
-              class="px-4 py-2 !text-red-600 hover:text-red-700 border rounded-md flex items-center gap-2"
+              class="px-4 py-2 !text-red-600 hover:text-red-700 hover:bg-gray-200 rounded-lg flex items-center gap-2 !cursor-pointer"
             >
               <svg
                 width="15"
@@ -255,17 +279,38 @@
           <span
             style="
               font-family: var(--font-family-main);
-              color: var(--text-color);
+              color: var(--text-color-secondary);
             "
           >
             {{ selected_design.data.room_description }}
           </span>
 
           <br /><br />
-          <a-tag>{{ selected_design.data.room_type }}</a-tag>
-          <a-tag>{{ selected_design.data.room_design_type }}</a-tag>
+          <a-tag class="!bg-[#F2F2F2]">{{
+            selected_design.data.room_type
+          }}</a-tag>
+          <a-tag class="!bg-[#F2F2F2]">{{
+            selected_design.data.room_design_type
+          }}</a-tag>
 
-          <br />
+          <div class="control-button-sec !mt-4 hide-above-md flex gap-2">
+            <a-button
+              v-if="!start_edit"
+              type="primary"
+              @click="edit_Design"
+              class="w-[193px] bg-[#3B63FB]"
+              >Edit</a-button
+            >
+            <a-button
+              v-if="!start_edit"
+              type="primary"
+              class="w-[193px] bg-[#E33827] flex items-center"
+              danger
+              @click="delete_Design"
+            >
+              Delete
+            </a-button>
+          </div>
           <br />
           <p
             style="
@@ -328,7 +373,7 @@
                   class="text-xl font-bold text-gray-900 mb-2"
                   style="
                     font-family: var(--font-family-main);
-                    color: var(--text-color);
+                    color: var(--text-color-secondary);
                   "
                 >
                   Share your project
@@ -346,6 +391,7 @@
               size="large"
               block
               style="
+                background-color: #3b63fb;
                 margin-top: 10px;
                 display: flex;
                 justify-content: center;
@@ -435,13 +481,59 @@
               </a-select>
               <!-- {{ room_design_type || 'Modern' }} -->
             </span>
+
             <span v-if="products_used"
               ><strong>Products:</strong> {{ products_used.length }} items</span
             >
           </div>
+          <div class="!flex gap-2 !my-2 md:!hidden">
+            <a-button
+             type="primary"
+              @click="save_Design"
+              class="  !flex items-center cursor-pointer"
+              style="
+                font-family: var(--font-family-main);
+                
+              "
+            >
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path d="M5 13l4 4L19 7"></path>
+              </svg>
+              Save
+            </a-button>
+
+            <a-button
+              @click="close_Design"
+              class="!flex items-center cursor-pointer"
+              style="
+                font-family: var(--font-family-main);
+                color: var(--text-color-secondary);
+              "
+            >
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+              Close
+            </a-button>
+          </div>
         </a-col>
 
         <a-col :span="24">
+          <h3 class="px-4 my-4 text-[20px] text-[#1A1A1A]">
+            Product used to create room
+          </h3>
           <a-row>
             <a-col
               v-for="product in selected_design.data.products_used"
@@ -485,7 +577,7 @@
                     <div
                       v-for="(color, index) in product.product_colors.slice(
                         0,
-                        2
+                        2,
                       )"
                       :key="index"
                       style="
@@ -541,7 +633,7 @@
                         @click="goto_product_Route(product)"
                         class="w-full py-2 px-4 bg-white border border-gray-300 rounded hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500 transition-colors whitespace-nowrap"
                         style="
-                          font-family: 'Poppins', sans-serif;
+                          font-family: &quot;Poppins&quot;, sans-serif;
                           font-size: 12px;
                         "
                       >
@@ -556,7 +648,7 @@
                           toggleFavorite(
                             product.product_id,
                             product.product_type,
-                            product
+                            product,
                           )
                         "
                         class="bg-white !py-2.5 border border-gray-300 rounded hover:bg-gray-50 hover:border-blue-500 transition-colors flex items-center justify-center"
@@ -595,7 +687,7 @@ export default {
   name: "my_designes",
   data() {
     return {
-      isLoading:true,
+      isLoading: true,
       my_designes: [],
       view_type: "all",
       selected_design: null,
@@ -640,7 +732,7 @@ export default {
               id: product_id,
               type: product_type,
             }),
-          }
+          },
         );
         // debugger
         const data = await response.json();
@@ -709,7 +801,7 @@ export default {
 
             if (!response.ok) {
               throw new Error(
-                `HTTP ${response.status}: ${response.statusText}`
+                `HTTP ${response.status}: ${response.statusText}`,
               );
             }
 
@@ -723,7 +815,7 @@ export default {
               await this.loadMyDesignes(); // Reload the designs list
             } else {
               throw new Error(
-                responseData.message || "Failed to delete design"
+                responseData.message || "Failed to delete design",
               );
             }
           } catch (error) {
@@ -835,7 +927,7 @@ export default {
               Authorization: `Token ${token}`,
               "Content-Type": "application/json",
             },
-          }
+          },
         );
 
         const result = await response.json();
@@ -849,13 +941,13 @@ export default {
       } catch (error) {
         console.error("Error loading business profile:", error);
         this.$message.error("Network error while loading profile");
-      }finally {
+      } finally {
         this.isLoading = false;
       }
     },
 
     show_design_details(design_id) {
-      (this.view_type = "details"), this.loadDesignDetails(design_id);
+      ((this.view_type = "details"), this.loadDesignDetails(design_id));
     },
 
     async loadDesignDetails(design_id) {
@@ -874,7 +966,7 @@ export default {
               design_id: design_id,
               type: "design_details",
             }),
-          }
+          },
         );
 
         const result = await response.json();
@@ -1000,6 +1092,16 @@ export default {
   .product-responsive {
     width: 20%;
     flex: 0 0 20%;
+  }
+}
+@media screen and (max-width: 768px) {
+  .hide-below-md {
+    display: none;
+  }
+}
+@media screen and (min-width: 769px) {
+  .hide-above-md {
+    display: none;
   }
 }
 </style>
