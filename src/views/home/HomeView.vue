@@ -1370,7 +1370,7 @@
         <!-- 3D Rendering Section -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <!-- Content -->
-          <div class="lg:col-span-6 order-2 md:order-1 flex flex-col justify-center">
+          <div class="lg:col-span-6 order-2 lg:order-1 flex flex-col justify-center">
             <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
               3D Rendering
             </h2>
@@ -1411,7 +1411,7 @@
           </div>
 
           <!-- Image with Before/After Slider -->
-          <div class="lg:col-span-6 order-1 md:order-2">
+          <div class="lg:col-span-6 order-1 lg:order-2">
             <div
               ref="rendering3DContainer"
               class="md-room-size relative w-full h-[350px] md:h-[400px] rounded-2xl overflow-hidden shadow-lg cursor-col-resize"
@@ -1701,7 +1701,7 @@
         <!-- change floor  -->
         <div class="floor-change-sec grid grid-cols-1 lg:grid-cols-12 gap-8">
           <!-- Content -->
-          <div class="lg:col-span-6 order-2 md:order-1 flex flex-col justify-center">
+          <div class="lg:col-span-6 order-2 lg:order-1 flex flex-col justify-center">
             <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
               Floor Changing
             </h2>
@@ -1742,7 +1742,7 @@
           </div>
 
           <!-- Image with Before/After Slider -->
-          <div class="lg:col-span-6 order-1 md:order-2">
+          <div class="lg:col-span-6 order-1 lg:order-2">
             <div
               ref="FloorRemovalContainer"
               class="floor-repersentation-sec md-room-size relative w-full h-[350px] md:h-[400px] rounded-2xl shadow-lg cursor-col-resize"
