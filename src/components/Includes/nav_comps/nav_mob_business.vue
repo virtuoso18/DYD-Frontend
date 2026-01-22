@@ -181,6 +181,53 @@
       </svg>
     </router-link>
 
+    <!-- my likes  -->
+    <router-link
+      to="/business-dashboard/my-likes"
+      class="flex items-center gap-4 px-2 py-2 rounded-xl text-gray-700 font-medium transition-all duration-200 relative overflow-hidden group hover:bg-gray-50 hover:text-blue-600"
+      :class="{ 'nav-active': $route.name === 'business_my_likes' }"
+      @click="closeMobileMenu"
+    >
+      <div
+        class="flex-shrink-0 w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center transition-all duration-200 group-hover:bg-blue-100"
+      >
+        <svg
+          width="19"
+          height="19"
+          viewBox="0 0 19 19"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M4.10156 14.8786C4.21739 16.0562 4.47917 16.8488 5.07078 17.4404C6.13193 18.5016 7.8398 18.5016 11.2556 18.5016C14.6713 18.5016 16.3793 18.5016 17.4404 17.4404C18.5016 16.3793 18.5016 14.6713 18.5016 11.2556C18.5016 7.8398 18.5016 6.13193 17.4404 5.07078C16.8488 4.47917 16.0562 4.21739 14.8786 4.10156"
+            stroke="currentColor"
+          />
+          <path
+            d="M0.5 7.7C0.5 4.30588 0.5 2.60883 1.55441 1.55441C2.60883 0.5 4.30588 0.5 7.7 0.5C11.0941 0.5 12.7912 0.5 13.8456 1.55441C14.9 2.60883 14.9 4.30588 14.9 7.7C14.9 11.0941 14.9 12.7912 13.8456 13.8456C12.7912 14.9 11.0941 14.9 7.7 14.9C4.30588 14.9 2.60883 14.9 1.55441 13.8456C0.5 12.7912 0.5 11.0941 0.5 7.7Z"
+            stroke="currentColor"
+          />
+          <path
+            d="M3.19922 14.8992C6.27777 10.623 9.73745 4.95193 14.8992 9.20524"
+            stroke="currentColor"
+          />
+        </svg>
+      </div>
+      <span class="flex-1 text-sm !font-family-poppins">My Likes</span>
+      <svg
+        class="w-5 h-5 opacity-0 transform -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M9 18l6-6-6-6"
+        />
+      </svg>
+    </router-link>
+
     <!-- My Products -->
     <router-link
       to="/business-dashboard/my-products?p=true"
