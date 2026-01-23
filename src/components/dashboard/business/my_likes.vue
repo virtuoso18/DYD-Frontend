@@ -135,12 +135,17 @@
                         <!-- {{ product }} -->
     
                         <a-col span="18">
-                            <a-button block @click="goto_product_Route(product)">Product Details</a-button>
+                            <a-button 
+                            style="
+                              display: flex;
+                              justify-content: end;
+                              font-size: 12px;;
+                            "  @click="goto_product_Route(product)">Product Details</a-button>
                         </a-col>
     
     
                         <!-- ❤️ Dynamic Favorite Button -->
-                        <a-col span="6" style="display: flex;justify-content: end;">
+                        <a-col span="6" style="padding-left:10px;display: flex;justify-content: end;">
                         <a-button @click="toggleFavorite(product)" style="display: flex;justify-content: center;align-items: center;">
                             <template v-if="product.is_favorited">
                             <HeartFilled style="color: red" />
@@ -222,24 +227,23 @@
                       <div class="category-badge">{{ product.category }}</div>
                     </div>
                     <!-- {{ truncateText(product.description || 'No description available', 8) }} -->
-
+<div style="height:7px;"></div>
                     <a-row>
-                      <a-col span="24">
-                        <!-- <b>{{product.name}}</b> -->
+                      <!-- <a-col span="24">
                         <b>{{
                           truncateText(product.name || "No name available", 19)
                         }}</b>
-                      </a-col>
+                      </a-col> -->
 
                       <a-col span="17">
-                        <a-button block @click="viewRoom(product)"
-                          >Product Details</a-button
+                        <a-button block @click="viewRoom(product)" style="display: flex;font-size: 12px;; justify-content: center;align-items: center;"
+                          >Room Details</a-button
                         >
                       </a-col>
 
                       <a-col span="1"></a-col>
                       <a-col span="4">
-                        <a-button @click="toggleFavorite(product)">
+                        <a-button @click="toggleFavorite(product)" style="display: flex;justify-content: center;align-items: center;">
                           <template v-if="product.is_favorited">
                             <HeartFilled style="color: red" />
                           </template>
@@ -475,7 +479,7 @@
                               {{ truncateText(post.post_by, 15) }}
                             </span>
                           </a-col>
-                          <a-col :span="8" style="display: flex">
+                          <a-col :span="8" style="display: flex;justify-content: end; align-items: end;">
                             <!-- Post Stats -->
                             <div style="display: flex">
                               <div

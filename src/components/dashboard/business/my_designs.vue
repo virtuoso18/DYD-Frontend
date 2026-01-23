@@ -132,7 +132,7 @@
                     {{ design.community_posts[0].post_owner }}
                   </div>
                 </div>
-                <div class="flex justify-around w-1/2 items-center gap-2">
+                <div class="flex justify-around w-1/2 items-center gap-1">
                   <div class="flex gap-1 items-center min-w-0">
                     <img
                       src="../../../assets/icons/commentIcon.svg"

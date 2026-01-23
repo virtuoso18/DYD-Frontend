@@ -434,7 +434,7 @@ export default {
 .modal-content {
   overflow-y: auto;
   flex: 1;
-  padding: 1.5rem;
+  padding: 0.5rem;
 }
 
 @media (min-width: 768px) {

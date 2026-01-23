@@ -700,8 +700,9 @@ export default {
     },
 async downloadMyBanner(banner) {
   try {
+  
     // Fetch the image as a blob
-    const response = await fetch(banner.final_banner);
+    const response = await fetch(this.$store.state.root_media_api+banner.final_banner);
     const blob = await response.blob();
     
     // Create a temporary URL for the blob
