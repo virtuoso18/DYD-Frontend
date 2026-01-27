@@ -94,8 +94,8 @@
                   </div>
 
                   <div
-                    class="view-count-sec absolute right-4 top-1 flex drop-shadow-md"
-                    style="z-index: 10; gap: 1px"
+                    class="view-count-sec absolute right-5 top-1 flex drop-shadow-md"
+                    style="z-index: 10; gap: 4px"
                   >
                     <img
                       src="../../../assets/icons/eye.svg"
@@ -103,7 +103,7 @@
                       alt=""
                     />
                     <span
-                      class="flex items-center text-white  drop-shadow-md text-xs sm:text-sm"
+                      class="flex items-center text-white drop-shadow-md text-xs sm:text-sm"
                       >{{ design.community_posts[0].view_count }}</span
                     >
                   </div>
@@ -114,7 +114,7 @@
                   style="
                     width: 100%;
                     border-radius: 10px;
-                    height: 240px;
+                    height: 100%;
                     object-fit: cover;
                   "
                   @click="handleImageClick(design)"
@@ -697,7 +697,7 @@
                         @click="goto_product_Route(product)"
                         class="w-full py-2 px-4 bg-white border border-gray-300 rounded hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500 transition-colors whitespace-nowrap"
                         style="
-                          font-family: Poppins, sans-serif;
+                          font-family: &quot;Poppins&quot;, sans-serif;
                           font-size: 12px;
                         "
                       >

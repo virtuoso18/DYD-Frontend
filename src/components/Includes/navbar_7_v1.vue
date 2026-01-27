@@ -99,26 +99,10 @@
           </button>
         </div>
 
-       <div class="user-avatar" @click="this.$router.push({name:'dashboard'})">
-  <!-- Hidden image to detect load -->
-  <img
-    :src="this.$store.state.root_media_api + profile.profile_picture"
-    @load="onHeaderAvatarLoad"
-    class="hidden"
-    alt=""
-  />
-  
-  <!-- Skeleton -->
-  <div v-if="!headerAvatarLoaded" class="header-avatar-skeleton"></div>
-  
-  <!-- Actual Image -->
-  <img
-    :src="this.$store.state.root_media_api + profile.profile_picture"
-    :class="['header-avatar-img', headerAvatarLoaded ? 'avatar-visible' : 'avatar-hidden']"
-    alt="User"
-  />
-</div>
-
+        <div class="user-avatar" @click="this.$router.push({name:'dashboard'})">
+          <img :src="this.$store.state.root_media_api+profile.profile_picture"
+            alt="User" />
+        </div>
       </div>
     </div>
   </nav>
@@ -205,26 +189,10 @@
 </svg>
           </button>
         </div>
-       <div class="user-avatar" @click="this.$router.push({name:'dashboard'})">
-  <!-- Hidden image to detect load -->
-  <img
-    :src="this.$store.state.root_media_api + profile.profile_picture"
-    @load="onHeaderAvatarLoad"
-    class="hidden"
-    alt=""
-  />
-  
-  <!-- Skeleton -->
-  <div v-if="!headerAvatarLoaded" class="header-avatar-skeleton"></div>
-  
-  <!-- Actual Image -->
-  <img
-    :src="this.$store.state.root_media_api + profile.profile_picture"
-    :class="['header-avatar-img', headerAvatarLoaded ? 'avatar-visible' : 'avatar-hidden']"
-    alt="User"
-  />
-</div>
-
+        <div class="user-avatar" @click="this.$router.push({name:'dashboard'})">
+          <img :src="this.$store.state.root_media_api+profile.profile_picture"
+            alt="User" />
+        </div>
       </div>
     </div>
   </nav>
@@ -263,8 +231,7 @@ export default {
       profile: JSON.parse(localStorage.getItem('profile')),
       business_info: JSON.parse(localStorage.getItem('business_profile') || '{}'),
       openMobileDrawer: false,
-      smallAvatarLoaded: false,
-     headerAvatarLoaded:false,
+
       // Credits tracking
       liveCredits: 0,
 
@@ -324,13 +291,6 @@ if (savedLang) {
       this.openMobileDrawer = false
       console.log('✅ Mobile drawer closed')
     },
-
-     onHeaderAvatarLoad() {
-    this.headerAvatarLoaded = false;
-    setTimeout(() => {
-      this.headerAvatarLoaded = true;
-    }, 1000); // 1 second skeleton
-  },
 
 
     // ============ CREDITS METHODS ============
@@ -708,8 +668,8 @@ if (savedLang) {
   background: #EF4444;
   color: white;
   border-radius: 50%;
-  width: 18px;
-  height: 18px;
+  width:20px;
+  height:20px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -729,44 +689,6 @@ if (savedLang) {
   }
 }
 
-.header-avatar-skeleton {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background: linear-gradient(
-    110deg,
-    #e0e7ff 8%,
-    #f8fafc 18%,
-    #e0e7ff 33%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 1.6s infinite linear;
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-.header-avatar-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: opacity 0.3s ease;
-}
-
-.avatar-visible {
-  opacity: 1;
-}
-
-.avatar-hidden {
-  opacity: 0;
-}
-
-@keyframes shimmer {
-  to {
-    background-position-x: -200%;
-  }
-}
-
 .user-avatar {
   width: 42px;
   height: 42px;
@@ -775,15 +697,17 @@ if (savedLang) {
   border: 2px solid #e5e7eb;
   cursor: pointer;
   transition: border-color 0.2s ease;
-    position: relative;  /* ⬅️ ADD THIS */
-
 }
 
 .user-avatar:hover {
   border-color: #3B63FB;
 }
 
-
+.user-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 
 /* Responsive Design */
 @media (max-width: 768px) {

@@ -6,26 +6,13 @@
       <a-col :xs="24" :sm="24" :md="24" :lg="24" class="content-area" >
         <div class="sm:content-wrapper " style="">
           <!-- Wavy Background Header -->
-<div 
-  class="wavy-header relative  !overflow-visible !sm:rounded-t-3xl"
-  :class="!wavyHeaderLoaded ? 'header-skeleton' : ''"
-  :style="'background: url('+this.$store.state.root_media_api+profile.background_picture+') center/cover no-repeat;'"
->
-
- <img
-    v-if="profile.background_picture"
-    :src="this.$store.state.root_media_api + profile.background_picture"
-    @load="onWavyHeaderLoad"
-    class="hidden "
-    alt=""
-  />
-
+          <div class="wavy-header  !sm:rounded-t-3xl" :style="'background: url('+this.$store.state.root_media_api+profile.background_picture+') center/cover no-repeat;'">
             <!-- Background Edit Button -->
-         <button 
-    v-if="isEditing"
-    @click="handleBackgroundClick"
-    class="absolute top-5 left-5 bg-blue-600 hover:bg-blue-700 text-white w-7 h-7 flex items-center justify-center rounded-full shadow-md transition"
-  >
+           <button 
+  v-if="isEditing"
+  @click="handleBackgroundClick"
+  class="absolute top-5 left-5 bg-blue-600 hover:bg-blue-700 text-white w-7 h-7 flex items-center justify-center rounded-full shadow-md transition"
+>
   <svg 
     width="16" 
     height="16" 
@@ -53,34 +40,13 @@
             
             <!-- Profile Avatar in Header -->
             <div class="header-profile">
-              <div class="header-avatar ">
- <img
-    v-if="profile.profile_picture"
-    :src="this.$store.state.root_media_api + profile.profile_picture"
-    @load="onProfileImageLoad"
-    class="hidden "
-    alt=""
-  />
-                 
-  <div
-    v-if="!isProfileImageLoaded"
-    class="avatar-skeleton "
-  ></div>
-
-    <img
-    v-show="isProfileImageLoaded"
-    :src="this.$store.state.root_media_api + profile.profile_picture"
-    @load="onProfileImageLoad"
-    class="profile-img "
-    alt=""
-  />
-
-
-                    <button
-    v-if="isEditing"
-    @click="handleCameraClick"
-    class="camera-icon bg-blue-600 hover:bg-blue-700 text-white w-10 h-10 flex items-center justify-center rounded-full shadow-md transition"
-  >
+              <div class="header-avatar">
+                <img :src="this.$store.state.root_media_api+profile.profile_picture" alt="Profile Picture" />
+                <button
+  v-if="isEditing"
+  @click="handleCameraClick"
+  class="camera-icon bg-blue-600 hover:bg-blue-700 text-white w-10 h-10 flex items-center justify-center rounded-full shadow-md transition"
+>
   <!-- SVG -->
   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none">
     <path opacity="0.5" d="M9.77778 21H14.2222C17.3433 21 18.9038 21 20.0248 20.2646C20.51 19.9462 20.9267 19.5371 21.251 19.0607C22 17.9601 22 16.4279 22 13.3636C22 10.2994 22 8.76721 21.251 7.6666C20.9267 7.19014 20.51 6.78104 20.0248 6.46268C19.3044 5.99013 18.4027 5.82123 17.022 5.76086C16.3631 5.76086 15.7959 5.27068 15.6667 4.63636C15.4728 3.68489 14.6219 3 13.6337 3H10.3663C9.37805 3 8.52715 3.68489 8.33333 4.63636C8.20412 5.27068 7.63685 5.76086 6.978 5.76086C5.59733 5.82123 4.69555 5.99013 3.97524 6.46268C3.48995 6.78104 3.07328 7.19014 2.74902 7.6666C2 8.76721 2 10.2994 2 13.3636C2 16.4279 2 17.9601 2.74902 19.0607C3.07328 19.5371 3.48995 19.9462 3.97524 20.2646C5.09624 21 6.65675 21 9.77778 21Z" 
@@ -198,9 +164,6 @@ export default {
     return {
       isEditing: false,
       loading: false,
-      isProfileImageLoaded: false,
-    wavyHeaderLoaded: false,
-      isProfileImageLoaded: false,
       user_info: { ...this.user }, // Create a copy to avoid mutating props directly
       selectedProfilePicture: null,
       selectedBackgroundPicture: null
@@ -226,21 +189,6 @@ export default {
         this.isEditing = !this.isEditing;
       }
     },
-
-     onProfileImageLoad() {
-    // Always show skeleton for 1 second
-    this.isProfileImageLoaded = false;
-    setTimeout(() => {
-      this.isProfileImageLoaded = true;
-    }, 1000);
-  },
-
-      onWavyHeaderLoad() {
-    this.wavyHeaderLoaded = false;
-    setTimeout(() => {
-      this.wavyHeaderLoaded = true;
-    }, 1000); // 1 second skeleton
-  },
 
     async updateProfile() {
       this.loading = true;
@@ -467,51 +415,11 @@ export default {
 }
 .wavy-header {
   position: relative;
-  overflow: visible !important;
   height: 200px;
-   z-index: 999;
   
   background: url("../../../assets/pricing-banner.png") center/cover no-repeat;
   
 }
-
-/* Header Skeleton (same as before) */
-.header-skeleton {
-  position: relative;
-  overflow: hidden;
-}
-
-.header-skeleton::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    110deg,
-    #e5e7eb 8%,
-    #f9fafb 18%,
-    #e5e7eb 33%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 1.6s infinite linear;
-z-index: 1 !important; }
-
-/* Profile image skeleton already exists - keep it */
-
-/* Ensure profile floats above */
-.header-profile {
-  position: absolute;
-  bottom: -40px;
-  left: 40px;
-  z-index: 1000; /* ⬅️ ENSURE THIS IS HIGH */
-}
-
-.header-avatar {
-  position: relative;
-  width: 150px;
-  height: 150px;
-  z-index: 1001; /* ⬅️ ADD THIS */
-}
-
 
 .header-profile {
   position: absolute;
@@ -533,52 +441,6 @@ z-index: 1 !important; }
   border: 4px solid #fff;
   object-fit: cover;
   box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-}
-
-.profile-img {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 4px solid white;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-}
-
-.profile-img {
-  position: relative;
-  z-index: 70 !important;  /* ⬅️ SAME AS SKELETON */
-}
-
-.avatar-skeleton {
-  position: relative;
-  z-index: 70 !important;  /* ⬅️ HIGHEST */
-}
-
-.avatar-skeleton,
-.profile-img {
-  position: relative !important;
-  z-index: 1002 !important;
-}
-
-.avatar-skeleton {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background: linear-gradient(
-    110deg,
-    #e0e7ff 8%,
-    #f8fafc 18%,
-    #e0e7ff 33%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 1.6s linear infinite;
-  border: 4px solid white;
-}
-
-@keyframes shimmer {
-  to {
-    background-position-x: -200%;
-  }
 }
 
 
@@ -624,7 +486,6 @@ z-index: 1 !important; }
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 80 !important;
   color: white;
   cursor: pointer;
   transition: all 0.3s ease;

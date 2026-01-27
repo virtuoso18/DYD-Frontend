@@ -16,7 +16,7 @@
       </a-col>
       <a-col :xs="12" :sm="12" :md="6">
         <div class="stat-card total-simulations">
-          <div class="whitespace-nowrap stat-label">Total Credits Consumed</div>
+          <div class="stat-label">Total Credits Consumed</div>
           <div class="stat-value">{{ creditStats ? Math.abs(creditStats.total_consumed) : '...' }}</div>
         </div>
       </a-col>
@@ -32,34 +32,23 @@
     <a-row :gutter="[16, 16]" class="mb-6">
       <a-col :span="24">
         <div class="chart-card">
-         <div
-  class="!flex !flex-col md:!flex-row !justify-between !items-start md:!items-center !mb-5 !gap-3"
->
-  <!-- Title -->
-  <h3 class="!text-base !font-semibold !text-[#1A1A1A]">
-    Daily Credit Consumption
-  </h3>
-
-  <!-- Filters -->
-  <div
-    class="!flex !flex-col sm:!flex-row !gap-2 !items-stretch sm:!items-center w-full sm:w-auto"
-  >
-    <a-date-picker
-      v-model:value="creditChartDateRange[0]"
-      placeholder="Start Date"
-      class="!w-full sm:!w-[150px]"
-      @change="fetchDailyCreditConsumption"
-    />
-
-    <a-date-picker
-      v-model:value="creditChartDateRange[1]"
-      placeholder="End Date"
-      class="!w-full sm:!w-[150px]"
-      @change="fetchDailyCreditConsumption"
-    />
-  </div>
-</div>
-
+          <div class="chart-header">
+            <h3>Daily Credit Consumption</h3>
+            <div class="chart-filters">
+              <a-date-picker
+                v-model:value="creditChartDateRange[0]"
+                placeholder="Start Date"
+                style="width: 150px; margin-right: 8px;"
+                @change="fetchDailyCreditConsumption"
+              />
+              <a-date-picker
+                v-model:value="creditChartDateRange[1]"
+                placeholder="End Date"
+                style="width: 150px;"
+                @change="fetchDailyCreditConsumption"
+              />
+            </div>
+          </div>
           
           <!-- Daily Credit Stats Summary -->
           <div v-if="dailyCreditData" class="credit-summary">
@@ -89,34 +78,23 @@
     <a-row :gutter="[16, 16]" class="mb-6">
   <a-col :span="24">
     <div class="chart-card">
-     <div
-  class="!flex !flex-col md:!flex-row !justify-between !items-start md:!items-center !mb-5 !gap-3"
->
-  <!-- Title -->
-  <h3 class="!text-base !font-semibold !text-[#1A1A1A]">
-    Favorite product
-  </h3>
-
-  <!-- Filters -->
-  <div
-    class="!flex !flex-col sm:!flex-row !gap-2 !items-stretch sm:!items-center w-full sm:w-auto"
-  >
-    <a-date-picker
-      v-model:value="favoriteChartDateRange[0]"
-      placeholder="Start Date"
-      class="!w-full sm:!w-[150px]"
-      @change="fetchFavoriteChartData"
-    />
-
-    <a-date-picker
-      v-model:value="favoriteChartDateRange[1]"
-      placeholder="End Date"
-      class="!w-full sm:!w-[150px]"
-      @change="fetchFavoriteChartData"
-    />
-  </div>
-</div>
-
+      <div class="chart-header">
+        <h3>Favorite product</h3>
+        <div class="chart-filters">
+          <a-date-picker
+            v-model:value="favoriteChartDateRange[0]"
+            placeholder="Start Date"
+            style="width: 150px; margin-right: 8px;"
+            @change="fetchFavoriteChartData"
+          />
+          <a-date-picker
+            v-model:value="favoriteChartDateRange[1]"
+            placeholder="End Date"
+            style="width: 150px;"
+            @change="fetchFavoriteChartData"
+          />
+        </div>
+      </div>
       
       <!-- Chart -->
       <div class="chart-container">
@@ -1509,12 +1487,6 @@ gradient.addColorStop(1, 'rgba(59, 99, 251, 0.05)')
   font-weight: 500;
 }
 
-@media (max-width:400px){
-  .stat-label {
-     font-size: 12px;
-  }
-}
-
 .stat-value {
   font-size: 32px;
   font-weight: 700;
@@ -1593,8 +1565,8 @@ gradient.addColorStop(1, 'rgba(59, 99, 251, 0.05)')
 @media screen and (max-width: 570px) {
   .product-listed-sec {
     gap: 5px;
-     justify-content: flex-start; /* ✅ KEY FIX */
-    align-items: flex-start;
+    justify-content: center;
+    align-items: center;
     min-width: 370px;
   }
   .table-card {

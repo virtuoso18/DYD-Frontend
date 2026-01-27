@@ -380,25 +380,13 @@
 </div> -->
           <div class="user-info">
             <div class="user-avatar">
-  <!-- Hidden image to detect load -->
-  <img
-    :src="this.$store.state.root_media_api + profile.profile_picture"
-    @load="onUserAvatarLoad"
-    class="hidden"
-    alt=""
-  />
-  
-  <!-- Skeleton -->
-  <div v-if="!userAvatarLoaded" class="user-avatar-skeleton"></div>
-  
-  <!-- Actual Image -->
-  <img
-    :src="this.$store.state.root_media_api + profile.profile_picture"
-    :class="['user-avatar-img', userAvatarLoaded ? 'avatar-visible' : 'avatar-hidden']"
-    alt="John Doe"
-  />
-</div>
-
+              <img
+                :src="
+                  this.$store.state.root_media_api + profile.profile_picture
+                "
+                alt="John Doe"
+              />
+            </div>
             <h3
               class="font-[Poppins] font-medium text-[18px] leading-[28px] tracking-[0] text-center"
             >
@@ -925,7 +913,6 @@ export default {
       menu_view_mobile: false,
       mobileMenuOpen: false,
       isMobile: false,
-       userAvatarLoaded: false,
 
       // Profile Completion Modal
       showCompletionModal: false,
@@ -1071,13 +1058,6 @@ export default {
     toggleMobileMenu() {
       this.mobileMenuOpen = !this.mobileMenuOpen;
     },
-
-     onUserAvatarLoad() {
-    this.userAvatarLoaded = false;
-    setTimeout(() => {
-      this.userAvatarLoaded = true;
-    }, 1000); // 1 second skeleton
-  },
 
     closeMobileMenu() {
       this.mobileMenuOpen = false;
@@ -1531,21 +1511,6 @@ export default {
   flex-shrink: 0;
 }
 
-.user-avatar-skeleton {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  border: 3px solid #e9ecef;
-  background: linear-gradient(
-    110deg,
-    #e0e7ff 8%,
-    #f8fafc 18%,
-    #e0e7ff 33%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 1.6s infinite linear;
-}
-
 .user-avatar {
   width: 100px;
   height: 100px;
@@ -1560,21 +1525,6 @@ export default {
   border-radius: 50%;
   object-fit: cover;
   border: 3px solid #e9ecef;
-  transition: opacity 0.3s ease;
-}
-
-.avatar-visible {
-  opacity: 1;
-}
-
-.avatar-hidden {
-  opacity: 0;
-}
-
-@keyframes shimmer {
-  to {
-    background-position-x: -200%;
-  }
 }
 
 .user-info h3 {

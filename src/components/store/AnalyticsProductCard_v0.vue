@@ -201,12 +201,6 @@ export default {
   color: rgb(51, 51, 51);
 }
 
-@media (max-width: 500px) {
-  .dimension-values {
-    font-size: 10px;
-  }
-}
-
 .dimension-values span {
   margin: 0 2px;
 }
