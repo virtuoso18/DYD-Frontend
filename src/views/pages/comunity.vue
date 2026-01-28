@@ -27,20 +27,59 @@
 
       <!-- Hero Images -->
       <div class="hero-images hidden sm:block">
-        <div class="image-card image-left sm:translate-y-60">
-          <img
-            src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
-            alt="Modern living room"
-          />
-        </div>
+  
+  <!-- LEFT IMAGE -->
+  <div class="image-card image-left sm:translate-y-60 relative" style="overflow:hidden;">
+    
+    <!-- Skeleton -->
+    <div
+      v-if="!imageLoadedMap['hero_left']"
+      class="hero-skeleton"
+    ></div>
 
-        <div class="image-card image-right -translate-y-10">
-          <img
-            src="https://images.unsplash.com/photo-1631889993959-41b4e9c6e3c5?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
-            alt="Elegant interior"
-          />
-        </div>
-      </div>
+    <!-- Preload image -->
+    <img
+      src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
+      style="position:absolute;width:0;height:0;opacity:0;"
+      @load="onHeroImageLoad('hero_left')"
+      alt=""
+    />
+
+    <!-- Visible image -->
+    <img
+      v-show="imageLoadedMap['hero_left']"
+      src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
+      alt="Modern living room"
+    />
+  </div>
+
+  <!-- RIGHT IMAGE -->
+  <div class="image-card image-right -translate-y-10 relative" style="overflow:hidden;">
+    
+    <!-- Skeleton -->
+    <div
+      v-if="!imageLoadedMap['hero_right']"
+      class="hero-skeleton"
+    ></div>
+
+    <!-- Preload image -->
+    <img
+      src="https://images.unsplash.com/photo-1631889993959-41b4e9c6e3c5?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
+      style="position:absolute;width:0;height:0;opacity:0;"
+      @load="onHeroImageLoad('hero_right')"
+      alt=""
+    />
+
+    <!-- Visible image -->
+    <img
+      v-show="imageLoadedMap['hero_right']"
+      src="https://images.unsplash.com/photo-1631889993959-41b4e9c6e3c5?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
+      alt="Elegant interior"
+    />
+  </div>
+
+</div>
+
       <div class="relative">
         <!-- Hero Images -->
         <div class="sm:hidden block">
@@ -871,6 +910,7 @@ export default {
     tagResults: [],
     tagPage: 1,
     tagPageSize: 8,
+    imageLoadedMap: {},
     tagHasNext: false,
     tagLoading: false,
     showTagDropdown: false,
@@ -1450,6 +1490,13 @@ export default {
     this.tagLoading = false
   }
 },
+
+ onHeroImageLoad(key) {
+    this.imageLoadedMap[key] = false
+    setTimeout(() => {
+      this.imageLoadedMap[key] = true
+    }, 2000)
+  },
 
 
   loadMoreTags() {
@@ -2048,6 +2095,32 @@ export default {
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   z-index: 4;
 }
+
+.hero-skeleton {
+  width: 100%;
+  height: 100%;
+  min-height: 200px; /* safe default for hero cards */
+  border-radius: 8px;
+  max-height: 200px;
+    min-width: 250px;
+     max-width: 250px;
+
+  background: linear-gradient(
+    110deg,
+    #e5e7eb 8%,
+    #f9fafb 18%,
+    #e5e7eb 33%
+  );
+  background-size: 200% 100%;
+  animation: hero-shimmer 1.6s infinite linear;
+}
+
+@keyframes hero-shimmer {
+  to {
+    background-position-x: -200%;
+  }
+}
+
 
 .hero-subtitle {
   color: rgba(255, 255, 255, 0.9);

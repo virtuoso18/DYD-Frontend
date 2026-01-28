@@ -390,9 +390,31 @@ Switch Furniture</a-button> -->
       <div class="example-images">
         <a-row>
         <a-col span="8" v-for="histry_card in your_history_change_room" :key="id" style="padding:5px;">
-          <!-- <router-link :to="'/update-catalogue/'+histry_card.id"> -->
-            <img   @click="goToCatalogue(histry_card.id)"  :src="this.$store.state.root_media_api+histry_card.image" class="example-image" />
-          <!-- </router-link> -->
+         <div class="relative" style="overflow:hidden;">
+        
+        <!-- Skeleton -->
+        <div
+          v-if="!imageLoadedMap[histry_card.id]"
+          class="example-skeleton"
+        ></div>
+
+        <!-- Preload image -->
+        <img
+          :src="$store.state.root_media_api + histry_card.image"
+          style="position:absolute;width:0;height:0;opacity:0;"
+          @load="onHistoryImageLoad(histry_card.id)"
+          alt=""
+        />
+
+        <!-- Visible image -->
+        <img
+          v-show="imageLoadedMap[histry_card.id]"
+          @click="goToCatalogue(histry_card.id)"
+          :src="$store.state.root_media_api + histry_card.image"
+          class="example-image"
+        />
+
+      </div>
           </a-col>
         </a-row>
         </div>
@@ -1985,6 +2007,7 @@ isCollapsed: false,
       // UI State
       select_replace: 'All',
       current_tab: 'image',
+       imageLoadedMap: {},
       active_tab_image: 'item_replacement',
       selectedlightuuid: '',
       selected_light_type: '',
@@ -2223,6 +2246,13 @@ this.canvasLoading=e
           console.error('Failed to switch room brand:', error);
         }
       },
+
+       onHistoryImageLoad(id) {
+    this.imageLoadedMap[id] = false
+    setTimeout(() => {
+      this.imageLoadedMap[id] = true
+    }, 2000)
+  },
 
     goto_home_design_show(){
       this.active_tab_image='home_design'
@@ -3892,6 +3922,36 @@ UserDeleteOutlined,
   max-width: 1300px;
   margin: auto;
 }
+
+.example-skeleton {
+  width: 100%;
+  height: 240px; /* match .example-image height */
+  border-radius: 8px;
+  background: linear-gradient(
+    110deg,
+    #e5e7eb 8%,
+    #f9fafb 18%,
+    #e5e7eb 33%
+  );
+  background-size: 200% 100%;
+  animation: example-shimmer 1.6s infinite linear;
+}
+
+@keyframes example-shimmer {
+  to {
+    background-position-x: -200%;
+  }
+}
+
+/* keep your existing image styling */
+.example-image {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
 
 .example-image {
   width: 100%;

@@ -30,7 +30,7 @@
           font-weight: 700;
           font-style: normal;
           font-size: 16px;
-          line-height: 20px;
+          line-height: 18px;
           letter-spacing: 0;margin-top:-6px
           ">AI Catalog</span>
         </div>

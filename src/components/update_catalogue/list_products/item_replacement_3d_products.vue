@@ -133,9 +133,28 @@
             :style="selected_item===item.id ? 'border:1px solid blue': ''">
           <!-- {{item['dimensions']['width']}},{{item['dimensions']['height']}},{{item['dimensions']['length'] }}   -->
             <div class="product-item">
-              <div class="product-image" style="position:relative;">
-                <img :src="this.$store.state.root_media_api + item.primary_image"
-                     :alt="item.name" />
+              <div class="product-image" style="position:relative; overflow: hidden;">
+  <!-- Skeleton -->
+  <div
+    v-if="!imageLoadedMap[item.id]"
+    class="product-primary-skeleton"
+  ></div>
+
+  <!-- Preload image -->
+  <img
+    :src="$store.state.root_media_api + item.primary_image"
+    style="position:absolute;width:0;height:0;opacity:0;"
+    @load="onProductImageLoad(item.id)"
+    alt=""
+  />
+
+  <!-- Visible image -->
+  <img
+    v-show="imageLoadedMap[item.id]"
+    :src="$store.state.root_media_api + item.primary_image"
+    :alt="item.name"
+    class="product-primary-image"
+  />
   
                 <!-- Tags -->
                 <div style="
@@ -269,6 +288,7 @@ export default {
       error: null,
       catalogItems: [],
       showGrid: true,
+      imageLoadedMap: {},
       currentPage: 1,
       pageSize: 20,
       paginationInfo: {
@@ -311,6 +331,15 @@ export default {
     ? text.slice(0, limit) + '...'
     : text
 },
+
+onProductImageLoad(id) {
+    this.imageLoadedMap[id] = false;
+    setTimeout(() => {
+      this.imageLoadedMap[id] = true;
+    }, 1000);
+  },
+
+
     async fetchCatalogItems(brand = null, page = 1, isLoadMore = false) {
       if (page === 1 && !isLoadMore) {
         this.loading = true;
@@ -598,6 +627,34 @@ export default {
   /* box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12); */
   /* transform: translateY(-2px); */
 }
+
+.product-primary-skeleton {
+  width: 100%;
+  height: 240px; /* match your image height */
+  border-radius: 8px;
+  background: linear-gradient(
+    110deg,
+    #e5e7eb 8%,
+    #f9fafb 18%,
+    #e5e7eb 33%
+  );
+  background-size: 200% 100%;
+  animation: product-shimmer 1.6s infinite linear;
+}
+
+@keyframes product-shimmer {
+  to {
+    background-position-x: -200%;
+  }
+}
+
+.product-primary-image {
+  width: 100%;
+  height: 240px; /* match skeleton */
+  object-fit: cover;
+  border-radius: 8px;
+}
+
 
 .list-view .product-item {
   display: flex;

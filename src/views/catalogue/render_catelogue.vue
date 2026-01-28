@@ -622,25 +622,33 @@
 </div>
 
 <!-- Actual Image -->
-<img
-  v-show="!imageLoading"
-  :src="displayImage"
-  alt="Room Render"
-  style="
-    width: 100%;
-    max-width: 800px;
-    min-width: 300px;
-    height: 100%;
-    max-height: 500px;
-     min-height: 300px;
-    object-fit: cover;
-    display: block;
-    border-radius: 8px;
-    transition: opacity 0.3s ease-in-out;
-  "
-  @error="handleImageError"
-  @load="handleImageLoad"
-/>
+<div class="relative" style="overflow:hidden; width:100%; max-width:800px; min-width:300px;">
+
+  <!-- Skeleton -->
+  <div
+    v-if="!imageLoadedMap['room']"
+    class="room-render-skeleton"
+  ></div>
+
+  <!-- Preload image -->
+  <img
+    :src="displayImage"
+    style="position:absolute;width:0;height:0;opacity:0;"
+    @load="onRoomImageLoad"
+    @error="handleImageError"
+    alt=""
+  />
+
+  <!-- Visible image -->
+  <img
+    v-show="imageLoadedMap['room']"
+    :src="displayImage"
+    alt="Room Render"
+    class="room-render-image"
+  />
+
+</div>
+
 <!-- {{ this.$store.state.root_media_api+brand_banner_logo }} -->
   <img 
     :src="this.$store.state.root_media_api+brand_banner_logo" 
@@ -1881,6 +1889,7 @@ export default {
       brand_name:'',
       brand_avatar_logo:'',
       brand_banner_logo:'',
+       imageLoadedMap: {},
 
       showRatingModal: false,
       openSeeAll_used_products:false,
@@ -2282,6 +2291,13 @@ export default {
 
       window.open(url, "_blank", "width=600,height=400");
     },
+
+     onRoomImageLoad() {
+    this.imageLoadedMap['room'] = false
+    setTimeout(() => {
+      this.imageLoadedMap['room'] = true
+    }, 1000)
+  },
 
     handleImageError() {
         this.imageLoading = false;  // Add this line
@@ -2693,6 +2709,41 @@ async toggleLikeRoom(){
   border-radius: 10px;
   overflow: hidden;
 }
+
+
+.room-render-skeleton {
+  width: 100%;
+  min-height: 500px;
+  max-width: 700px;
+  min-width: 700px;
+  max-height: 500px;
+  border-radius: 8px;
+  background: linear-gradient(
+    110deg,
+    #e5e7eb 8%,
+    #f9fafb 18%,
+    #e5e7eb 33%
+  );
+  background-size: 200% 100%;
+  animation: room-shimmer 1.6s infinite linear;
+}
+
+@keyframes room-shimmer {
+  to { background-position-x: -200%; }
+}
+
+.room-render-image {
+  width: 100%;
+  max-width: 800px;
+  min-width: 300px;
+  height: 100%;
+  max-height: 500px;
+  min-height: 300px;
+  object-fit: cover;
+  display: block;
+  border-radius: 8px;
+}
+
 
 .loading-screen {
   position: relative;

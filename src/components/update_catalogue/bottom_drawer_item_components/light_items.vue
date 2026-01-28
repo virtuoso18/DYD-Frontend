@@ -338,19 +338,38 @@
               style="padding: 5px"
             >
               <div class="product">
-                <div class="product-image-container">
-                  <img
-                    :src="getProductImage(product)"
-                    :alt="product.name"
-                    class="product-image"
-                  />
-                  <!-- Category Badge -->
-                  <div class="category-badge">
-                    {{ product.light_type || product.furniture_type }}
-                  </div>
-                  <!-- AR Badge -->
-                  <div v-if="product['3d_model']" class="ar-badge">AR</div>
-                </div>
+               <div class="product-image-container" style="position: relative; overflow: hidden;">
+  <!-- Skeleton -->
+  <div
+    v-if="!imageLoadedMap[product.id]"
+    class="product-skeleton"
+  ></div>
+
+  <!-- Preload image (calls your getProductImage method) -->
+  <img
+    :src="getProductImage(product)"
+    style="position:absolute;width:0;height:0;opacity:0;"
+    @load="onProductImageLoad(product.id)"
+    alt=""
+  />
+
+  <!-- Visible image -->
+  <img
+    v-show="imageLoadedMap[product.id]"
+    :src="getProductImage(product)"
+    :alt="product.name"
+    class="product-image"
+  />
+
+  <!-- Category Badge (stays on top) -->
+  <div class="category-badge">
+    {{ product.light_type || product.furniture_type }}
+  </div>
+  
+  <!-- AR Badge (stays on top) -->
+  <div v-if="product['3d_model']" class="ar-badge">AR</div>
+</div>
+
 
                 <a-row>
                   <a-col span="24">
@@ -456,6 +475,8 @@ export default {
       loading: false,
       loadingFilters: false,
       availableColors: [],
+      imageLoadedMap: {},
+
       availableCategories: [],
       availableFurnitureTypes: [],
       pagination: {
@@ -521,6 +542,14 @@ export default {
         this.loadingFilters = false;
       }
     },
+
+    onProductImageLoad(id) {
+  this.imageLoadedMap[id] = false;
+  setTimeout(() => {
+    this.imageLoadedMap[id] = true;
+  }, 1000);
+},
+
 
     /**
      * Toggle color filter selection
@@ -753,6 +782,34 @@ export default {
 .see-all-section {
   display: flex;
 }
+
+
+.product-skeleton {
+  width: 100%;
+  height: 240px; /* match your product-image height */
+  border-radius: 12px;
+  background: linear-gradient(
+    110deg,
+    #e5e7eb 8%,
+    #f9fafb 18%,
+    #e5e7eb 33%
+  );
+  background-size: 200% 100%;
+  animation: product-shimmer 1.6s infinite linear;
+}
+
+@keyframes product-shimmer {
+  to { background-position-x: -200%; }
+}
+
+/* Ensure badges stay above skeleton */
+.category-badge,
+.ar-badge {
+  position: absolute;
+  z-index: 20;
+}
+
+
 
 .product {
   padding: 10px;

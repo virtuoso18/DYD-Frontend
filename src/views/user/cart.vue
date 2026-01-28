@@ -89,9 +89,32 @@
   style="display: grid; grid-template-columns: 100px 1fr; gap: 16px; padding: 16px; border-radius: 8px; border: 1px solid #f0f0f0; background-color: #fff;margin-bottom:10px;"
 >
   <!-- Product Image -->
-  <div >
-    <img :src="this.$store.state.root_media_api+item.product_image" style="width: 100px; border-radius: 4px; background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);" />
-  </div>
+  <div class="relative" style="width:100px; height:100px; overflow:hidden;">
+  
+  <!-- Skeleton -->
+  <div
+    v-if="!imageLoadedMap[item.id]"
+    class="product-thumb-skeleton"
+  ></div>
+
+  <!-- Preload image -->
+  <img
+    :src="$store.state.root_media_api + item.product_image"
+    style="position:absolute;width:0;height:0;opacity:0;"
+    @load="onProductThumbLoad(item.id)"
+    alt=""
+  />
+
+  <!-- Visible image -->
+  <img
+    v-show="imageLoadedMap[item.id]"
+    :src="$store.state.root_media_api + item.product_image"
+    style="width:100px;height:100px;border-radius:4px;object-fit:cover;"
+    alt=""
+  />
+
+</div>
+
 
   <!-- Product Details -->
   <div style="display: flex; flex-direction: column; justify-content: space-between;">
@@ -239,11 +262,13 @@ export default {
   name: 'CartPage',
   data() {
     return {
+      imageLoadedMap: {},
       cart: {
         id: '',
         user: '',
         items: [],
         total_items: 0,
+        
         subtotal: '0.00',
         shipping_charges: '0.00',
         total_payment: '0.00',
@@ -271,6 +296,14 @@ export default {
     getToken() {
       return localStorage.getItem('token') || sessionStorage.getItem('token');
     },
+
+
+     onProductThumbLoad(id) {
+    this.imageLoadedMap[id] = false
+    setTimeout(() => {
+      this.imageLoadedMap[id] = true
+    }, 3000)
+  },
 
     handleBusinessClick(item){
        if (item.business_cart_url) {
@@ -517,6 +550,27 @@ export default {
 
   overflow: hidden;
 }
+
+.product-thumb-skeleton {
+  width: 100px;
+  height: 100px;
+  border-radius: 4px;
+  background: linear-gradient(
+    110deg,
+    #e5e7eb 8%,
+    #f9fafb 18%,
+    #e5e7eb 33%
+  );
+  background-size: 200% 100%;
+  animation: thumb-shimmer 1.6s infinite linear;
+}
+
+@keyframes thumb-shimmer {
+  to {
+    background-position-x: -200%;
+  }
+}
+
 
 .wave-pattern {
   position: absolute;

@@ -283,17 +283,34 @@
               style="padding: 3px"
             >
               <div class="product">
-                <div class="product-image-container">
-                  <img
-                    :src="getProductImage(product)"
-                    :alt="product.title"
-                    class="product-image"
-                  />
-                  <!-- Category Badge -->
-                  <div class="category-badge">Floor</div>
-                  <!-- AR Badge -->
-                  <div class="ar-badge">AR</div>
-                </div>
+               <div class="product-image-container" style="position: relative; overflow: hidden;">
+  <!-- Skeleton (YOUR EXACT CSS) -->
+  <div
+    v-if="!imageLoadedMap[product.id]"
+    class="product-skeleton"
+  ></div>
+
+  <!-- Preload -->
+  <img
+    :src="getProductImage(product)"
+    style="position:absolute;width:0;height:0;opacity:0;"
+    @load="onProductImageLoad(product.id)"
+    alt=""
+  />
+
+  <!-- Visible -->
+  <img
+    v-show="imageLoadedMap[product.id]"
+    :src="getProductImage(product)"
+    :alt="product.title"
+    class="product-image"
+  />
+
+  <!-- Badges -->
+  <div class="category-badge">Floor</div>
+  <div class="ar-badge">AR</div>
+</div>
+
 
                 <a-row>
                   <a-col span="24">
@@ -401,6 +418,7 @@ export default {
       products: [],
       wishlisted: new Set(),
       loading: false,
+      imageLoadedMap: {},
       loadingColors: false,
       availableColors: [],
       pagination: {
@@ -481,6 +499,14 @@ export default {
         this.loadingColors = false;
       }
     },
+
+    onProductImageLoad(id) {
+    this.imageLoadedMap[id] = false;
+    setTimeout(() => {
+      this.imageLoadedMap[id] = true;
+    }, 1000);
+  },
+
 
     /**
      * Toggle color filter selection
@@ -736,6 +762,26 @@ export default {
   border-radius: 12px;
   transition: transform 0.3s ease;
 }
+
+
+.product-skeleton {
+  width: 100%;
+  height: 240px;
+  border-radius: 12px;
+  background: linear-gradient(
+    110deg,
+    #e5e7eb 8%,
+    #f9fafb 18%,
+    #e5e7eb 33%
+  );
+  background-size: 200% 100%;
+  animation: product-shimmer 1.6s infinite linear;
+}
+
+@keyframes product-shimmer {
+  to { background-position-x: -200%; }
+}
+
 
 .category-badge {
   position: absolute;
