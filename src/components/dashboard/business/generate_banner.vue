@@ -143,7 +143,7 @@
                @mouseleave="hoveredBanner = null">
                
                <img :src="this.$store.state.root_media_api+banner.final_banner" @click="openBannerModal(banner)"
-                    style=" width: 100%; height: 100%; object-fit: contain; border-radius: 12px;border: 1px solid #e5e7eb;" 
+                    style=" width: 100%; height: 200px; object-fit: contain; border-radius: 12px;border: 1px solid #e5e7eb;" 
                     alt="Generated Banner">
                
             <!-- <div style="position: relative; width: 100%; padding-top: 75%; background: #f3f4f6; overflow: hidden;">

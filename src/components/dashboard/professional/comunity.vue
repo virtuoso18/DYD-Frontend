@@ -46,22 +46,39 @@
                   ><div style="padding: 2px">
                     <div class="post-card">
                       <!-- Post Image -->
-                      <div style="position: relative">
-                        <img
-                          :src="
-                            $store.state.root_media_api + post.post_image ||
-                            require('../../../assets/home_main_banner.jpg')
-                          "
-                          style="
-                            width: 100%;
-                            height: 200px;
-                            object-fit: cover;
-                            border-radius: 10px;padding:5px;
-                            cursor: pointer;
-                          "
-                          :alt="post.title"
-                          @click="viewPost(post)"
-                        />
+<div style="position: relative; overflow: hidden; border-radius: 10px;">
+
+
+
+                       <div
+    v-if="!imageLoadedMap[post.id]"
+    class="post-image-skeleton"
+  ></div>
+
+  <!-- Preload image -->
+  <img
+    :src="$store.state.root_media_api + post.post_image || require('../../../assets/home_main_banner.jpg')"
+    style="position:absolute;width:0;height:0;opacity:0;"
+    @load="onPostImageLoad(post.id)"
+    alt=""
+  />
+
+  <!-- Visible image -->
+  <img
+    v-show="imageLoadedMap[post.id]"
+    :src="$store.state.root_media_api + post.post_image || require('../../../assets/home_main_banner.jpg')"
+    style="
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 10px;
+      padding: 5px;
+      cursor: pointer;
+      display: block;
+    "
+    :alt="post.title"
+    @click="viewPost(post)"
+  />
 
                         <!-- Tags - Fixed for string array -->
                         <div class="tags-overlay">
@@ -946,6 +963,7 @@ export default {
       loadingMore: false,
       updating: false,
       hasMore: false,
+      imageLoadedMap: {},
       currentPage: 1,
 
       
@@ -1037,6 +1055,13 @@ export default {
       this.modalComments = [];
       this.newModalComment = "";
     },
+
+      onPostImageLoad(id) {
+    this.imageLoadedMap[id] = false;
+    setTimeout(() => {
+      this.imageLoadedMap[id] = true;
+    }, 1000);
+  },
 
     // Load comments for modal
     async loadModalComments(postId, page = 1) {
@@ -1717,6 +1742,27 @@ export default {
   gap: 4px;
   z-index: 2;
 }
+
+.post-image-skeleton {
+  width: 100%;
+  height: 200px;
+  border-radius: 10px;
+  background: linear-gradient(
+    110deg,
+    #e5e7eb 8%,
+    #f9fafb 18%,
+    #e5e7eb 33%
+  );
+  background-size: 200% 100%;
+  animation: post-shimmer 1.6s infinite linear;
+}
+
+@keyframes post-shimmer {
+  to {
+    background-position-x: -200%;
+  }
+}
+
 
 .post-stats {
   display: flex;

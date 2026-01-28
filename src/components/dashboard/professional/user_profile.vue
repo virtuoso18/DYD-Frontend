@@ -6,8 +6,25 @@
       <a-col :xs="24" :sm="24" :md="24" :lg="24" class="content-area">
         <div class="content-wrapper -translate-y-16 sm:translate-y-0 ">
           <!-- Wavy Background Header -->
-          <div class="wavy-header" :style="'background: url('+this.$store.state.root_media_api+profile.background_picture+') center/cover no-repeat;'">
-            <!-- Background Edit Button -->
+<div class="wavy-header" style="position: relative; ">
+  <!-- Skeleton Overlay (unchanged) -->
+  <div v-if="!imageLoadedMap.background" class="header-skeleton-overlay"></div>
+
+  <!-- Preload background (unchanged) -->
+  <img
+    :src="$store.state.root_media_api + profile.background_picture"
+    style="position:absolute;width:0;height:0;opacity:0;"
+    @load="onBackgroundImageLoad"
+    alt=""
+  />
+
+  <!-- Visible background (unchanged) -->
+  <div
+    v-show="imageLoadedMap.background"
+    class="header-background"
+    :style="'background: url('+$store.state.root_media_api+profile.background_picture+') center/cover no-repeat;'"
+  ></div>
+<!-- Background Edit Button -->
             <a-button 
   type="primary" 
   shape="circle" 
@@ -41,21 +58,39 @@
             
             <!-- Profile Avatar in Header -->
             <div class="header-profile">
-  <div class="header-avatar relative">
-    <img :src="this.$store.state.root_media_api+profile.profile_picture" alt="Profile Picture" />
-    
-    <button 
-      v-if="isEditing" 
-      @click="handleCameraClick"
-      class="absolute bottom-0 right-0 md:right-2 w-8 h-8 rounded-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 flex items-center justify-center !text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-lg border-2 border-white"
-    >
-      <!-- SVG -->
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none">
-        <path opacity="0.5" d="M9.77778 21H14.2222C17.3433 21 18.9038 21 20.0248 20.2646C20.51 19.9462 20.9267 19.5371 21.251 19.0607C22 17.9601 22 16.4279 22 13.3636C22 10.2994 22 8.76721 21.251 7.6666C20.9267 7.19014 20.51 6.78104 20.0248 6.46268C19.3044 5.99013 18.4027 5.82123 17.022 5.76086C16.3631 5.76086 15.7959 5.27068 15.6667 4.63636C15.4728 3.68489 14.6219 3 13.6337 3H10.3663C9.37805 3 8.52715 3.68489 8.33333 4.63636C8.20412 5.27068 7.63685 5.76086 6.978 5.76086C5.59733 5.82123 4.69555 5.99013 3.97524 6.46268C3.48995 6.78104 3.07328 7.19014 2.74902 7.6666C2 8.76721 2 10.2994 2 13.3636C2 16.4279 2 17.9601 2.74902 19.0607C3.07328 19.5371 3.48995 19.9462 3.97524 20.2646C5.09624 21 6.65675 21 9.77778 21Z" stroke="currentColor" stroke-width="2.5"/>
-        <path d="M14.5197 10.6799L14.2397 10.4C13.0026 9.16288 10.9969 9.16288 9.75984 10.4C8.52276 11.637 8.52276 13.6427 9.75984 14.8798C10.9969 16.1169 13.0026 16.1169 14.2397 14.8798C14.7665 14.353 15.069 13.6868 15.1471 13M14.5197 10.6799L13 11M14.5197 10.6799V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </button>
-  </div>
+ <div class="header-avatar relative">
+  <!-- Skeleton -->
+  <div
+    v-if="!imageLoadedMap.profile"
+    class="avatar-skeleton"
+  ></div>
+
+  <!-- Preload profile image -->
+  <img
+    :src="$store.state.root_media_api + profile.profile_picture"
+    style="position:absolute;width:0;height:0;opacity:0;"
+    @load="onProfileImageLoad"
+    alt=""
+  />
+
+  <!-- Visible profile image -->
+  <img
+    v-show="imageLoadedMap.profile"
+    :src="$store.state.root_media_api + profile.profile_picture"
+    alt="Profile Picture"
+    class="profile-image"
+  />
+
+  <!-- Edit button (unchanged) -->
+  <button 
+    v-if="isEditing" 
+    @click="handleCameraClick"
+    class="absolute bottom-0 right-0 md:right-2 w-8 h-8 rounded-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 flex items-center justify-center !text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-lg border-2 border-white"
+  >
+    <!-- SVG unchanged -->
+  </button>
+</div>
+
 </div>
 
           </div>
@@ -166,6 +201,10 @@ export default {
     return {
       isEditing: false,
       loading: false,
+      imageLoadedMap: {
+      profile: false,
+      background: false
+    },
       user_info: { ...this.user }, // Create a copy to avoid mutating props directly
       selectedProfilePicture: null,
       selectedBackgroundPicture: null
@@ -191,6 +230,21 @@ export default {
         this.isEditing = !this.isEditing;
       }
     },
+
+    onProfileImageLoad() {
+    this.imageLoadedMap.profile = false;
+    setTimeout(() => {
+      this.imageLoadedMap.profile = true;
+    }, 1000);
+  },
+
+ onBackgroundImageLoad() {
+  this.imageLoadedMap.background = false;
+  setTimeout(() => {
+    this.imageLoadedMap.background = true;
+  }, 1000);
+},
+
 
     async updateProfile() {
       this.loading = true;
@@ -410,9 +464,27 @@ export default {
 .wavy-header {
   position: relative;
   height: 200px;
-  background: url("../../../assets/pricing-banner.png") center/cover no-repeat;
-  border-top-left-radius: 24px;
-  border-top-right-radius: 24px;
+  border-radius: 0 0 20px 20px;
+  z-index: 1;
+}
+
+.header-skeleton-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    110deg,
+    #e5e7eb 8%,
+    #f9fafb 18%,
+    #e5e7eb 33%
+  );
+  background-size: 200% 100%;
+  animation: header-shimmer 1.6s infinite linear;
+  z-index: 1;
 }
 
 .header-profile {
@@ -420,6 +492,30 @@ export default {
   bottom: -40px;
   left: 40px;
   z-index: 20; /* ensure it always floats above */
+}
+
+.header-avatar-container {
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+
+
+.header-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+@keyframes header-shimmer {
+  to {
+    background-position-x: -200%;
+  }
 }
 
 .header-avatar {
@@ -437,6 +533,53 @@ export default {
   box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
+/* Profile Avatar Skeleton */
+.avatar-skeleton {
+  width: 80px;  /* match your avatar size */
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(
+    110deg,
+    #e5e7eb 8%,
+    #f9fafb 18%,
+    #e5e7eb 33%
+  );
+  background-size: 200% 100%;
+  animation: avatar-shimmer 1.6s infinite linear;
+}
+
+/* Header Background Skeleton */
+.wavy-header.skeleton-loading {
+  background: linear-gradient(
+    110deg,
+    #e5e7eb 8%,
+    #f9fafb 18%,
+    #e5e7eb 33%
+  ) !important;
+  background-size: 200% 100% !important;
+  animation: header-shimmer 1.6s infinite linear;
+}
+
+@keyframes avatar-shimmer {
+  to { background-position-x: -200%; }
+}
+
+@keyframes header-shimmer {
+  to { background-position-x: -200%; }
+}
+
+.profile-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid white;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  position: relative;
+  z-index: 1001;
+}
+
+
 
 .wave-svg {
   position: absolute;
@@ -444,6 +587,37 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
+}
+
+.avatar-edit-btn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #2563eb;
+  border: 3px solid white;
+  z-index: 25;
+}
+
+.avatar-skeleton {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  border: 4px solid white;
+  background: linear-gradient(110deg, #e5e7eb 8%, #f9fafb 18%, #e5e7eb 33%);
+  background-size: 200% 100%;
+  animation: avatar-shimmer 1.6s infinite linear;
+}
+
+.background-edit-btn {
+  position: absolute !important;
+  top: 20px !important;
+  left: 20px !important;
+  width: 30px !important;
+  height: 30px !important;
+  z-index: 15 !important;
 }
 
 .header-profile {

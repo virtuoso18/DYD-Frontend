@@ -1225,24 +1225,42 @@
                     class="product-responsive p-1 sm:p-2"
                   >
                     <div class="product">
-                      <div
-                        class="product-image-container"
-                        @click="viewProduct(product)"
-                      >
-                        <img
-                          :src="
-                            $store.state.root_media_api + product.primary_image
-                          "
-                          :alt="product.name"
-                          class="product-image"
-                        />
-                        <!-- Category Badge -->
-                        <div class="category-badge">
-                          {{ product.category.name }}
-                        </div>
-                        <!-- AR Badge -->
-                        <div class="ar-badge">AR</div>
-                      </div>
+                     <div
+  class="product-image-container"
+  @click="viewProduct(product)"
+  style="position: relative; overflow: hidden;"
+>
+  <!-- Skeleton -->
+  <div
+    v-if="!imageLoadedMap[product.id]"
+    class="product-image-skeleton"
+  ></div>
+
+  <!-- Preload image -->
+  <img
+    :src="$store.state.root_media_api + product.primary_image"
+    style="position:absolute;width:0;height:0;opacity:0;"
+    @load="onProductImageLoad(product.id)"
+    alt=""
+  />
+
+  <!-- Visible image -->
+  <img
+    v-show="imageLoadedMap[product.id]"
+    :src="$store.state.root_media_api + product.primary_image"
+    :alt="product.name"
+    class="product-image"
+  />
+
+  <!-- Category Badge (stays on top) -->
+  <div class="category-badge">
+    {{ product.category.name }}
+  </div>
+  
+  <!-- AR Badge (stays on top) -->
+  <div class="ar-badge">AR</div>
+</div>
+
                       <!-- {{ truncateText(product.description || 'No description available', 8) }} -->
 
                       <a-row>
@@ -3225,6 +3243,7 @@ export default {
       active_tab: "Furniture",
       searchQuery: "",
       isLoading: false,
+      imageLoadedMap: {},
       selectedProduct: null,
 
       // popup for the add new product where user will need to choose the local 3d model or the DYD generated 3d model there
@@ -3393,6 +3412,15 @@ export default {
         this.$message.error("Failed to prepare variation data");
       }
     },
+
+    onProductImageLoad(id) {
+    this.imageLoadedMap[id] = false;
+    setTimeout(() => {
+      this.imageLoadedMap[id] = true;
+    }, 1000);
+  },
+
+
     handleVariantSelection(variantId) {
       // Call your existing fetchProductDetails method with the variant ID
       this.fetchProductDetails(variantId);
@@ -4025,6 +4053,34 @@ export default {
   justify-content: center;
   /* padding: 16px; */
 }
+
+.product-image-skeleton {
+  width: 100%;
+  height: 240px; /* match your product-image height */
+  border-radius: 12px;
+  background: linear-gradient(
+    110deg,
+    #e5e7eb 8%,
+    #f9fafb 18%,
+    #e5e7eb 33%
+  );
+  background-size: 200% 100%;
+  animation: product-shimmer 1.6s infinite linear;
+}
+
+@keyframes product-shimmer {
+  to {
+    background-position-x: -200%;
+  }
+}
+
+/* Ensure badges stay on top */
+.category-badge,
+.ar-badge {
+  position: absolute;
+  z-index: 10;
+}
+
 
 .product-image {
   width: 100%;

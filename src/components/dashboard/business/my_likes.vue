@@ -56,17 +56,36 @@
                 style="padding: 5px"
               >
                 <div class="product">
-                  <div
-                    class="product-image-container"
-                    @click="goto_product_Route(product)"
-                  >
-                    <img
-                      :src="$store.state.root_media_api + product.image"
-                      :alt="product.name"
-                      class="product-image"
-                    />
-                    <div class="category-badge">{{ product.category }}</div>
-                  </div>
+                 <div
+  class="product-image-container"
+  @click="goto_product_Route(product)"
+  style="position: relative; overflow: hidden;"
+>
+  <!-- Skeleton -->
+  <div
+    v-if="!productImageLoadedMap[product.id]"
+    class="product-image-skeleton"
+  ></div>
+
+  <!-- Preload image (invisible but triggers @load) -->
+  <img
+    :src="$store.state.root_media_api + product.image"
+    :alt="product.name"
+    style="position:absolute;width:0;height:0;opacity:0;"
+    @load="onProductImageLoad(product.id)"
+  />
+
+  <!-- Visible image -->
+  <img
+    v-show="productImageLoadedMap[product.id]"
+    :src="$store.state.root_media_api + product.image"
+    :alt="product.name"
+    class="product-image"
+  />
+
+  <div class="category-badge">{{ product.category }}</div>
+</div>
+
 
                   <a-row>
                         <a-col span="24">
@@ -664,6 +683,7 @@ export default {
       rooms: [],
       roomModalVisible: false,
       selectedRoom: null,
+      productImageLoadedMap: {},
       community_posts: [],
       tabRefreshKey: 0,
       showModal: false,
@@ -723,6 +743,13 @@ export default {
       this.showModal = false;
       this.selectedPost = null;
     },
+
+    onProductImageLoad(id) {
+    this.productImageLoadedMap[id] = false;
+    setTimeout(() => {
+      this.productImageLoadedMap[id] = true;
+    }, 1000); // 1s skeleton
+  },
 
     handleTabClick(key) {
       this.active_tab = key;
@@ -1080,6 +1107,34 @@ export default {
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
+
+.product-image {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.product-image-skeleton {
+  width: 100%;
+  height: 240px;
+  border-radius: 10px;
+  background: linear-gradient(
+    110deg,
+    #e5e7eb 8%,
+    #f9fafb 18%,
+    #e5e7eb 33%
+  );
+  background-size: 200% 100%;
+  animation: product-shimmer 1.6s infinite linear;
+}
+
+@keyframes product-shimmer {
+  to {
+    background-position-x: -200%;
+  }
+}
+
 
 .ar-badge {
   position: absolute;

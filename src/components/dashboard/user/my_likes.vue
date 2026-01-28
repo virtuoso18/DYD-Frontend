@@ -56,17 +56,36 @@
                 style="padding: 5px"
               >
                 <div class="product">
-                  <div
-                    class="product-image-container"
-                    @click="goto_product_Route(product)"
-                  >
-                    <img
-                      :src="$store.state.root_media_api + product.image"
-                      :alt="product.name"
-                      class="product-image"
-                    />
-                    <div class="category-badge">{{ product.category }}</div>
-                  </div>
+                 <div
+  class="product-image-container"
+  @click="goto_product_Route(product)"
+  style="position: relative; overflow: hidden;"
+>
+  <!-- Skeleton -->
+  <div
+    v-if="!imageLoadedMap[product.id]"
+    class="product-image-skeleton"
+  ></div>
+
+  <!-- Preload image -->
+  <img
+    :src="$store.state.root_media_api + product.image"
+    style="position:absolute;width:0;height:0;opacity:0;"
+    @load="onProductImageLoad(product.id)"
+    alt=""
+  />
+
+  <!-- Visible image -->
+  <img
+    v-show="imageLoadedMap[product.id]"
+    :src="$store.state.root_media_api + product.image"
+    :alt="product.name"
+    class="product-image"
+  />
+
+  <div class="category-badge">{{ product.category }}</div>
+</div>
+
 
                   <a-row>
                         <a-col span="24">
@@ -341,6 +360,7 @@ export default {
       roomModalVisible: false,
       selectedRoom: null,
       community_posts: [],
+      imageLoadedMap: {},
       tabRefreshKey: 0,
       showModal: false,
       selectedPost: null,
@@ -411,6 +431,13 @@ export default {
       }
       this.tabRefreshKey++; // Force re-render
     },
+
+     onProductImageLoad(id) {
+    this.imageLoadedMap[id] = false;
+    setTimeout(() => {
+      this.imageLoadedMap[id] = true;
+    }, 1000);
+  },
 
     viewRoom(room) {
       // room object already looks like:
@@ -756,6 +783,27 @@ export default {
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
+
+.product-image-skeleton {
+  width: 100%;
+  height: 240px; /* match your image height */
+  border-radius: 10px;
+  background: linear-gradient(
+    110deg,
+    #e5e7eb 8%,
+    #f9fafb 18%,
+    #e5e7eb 33%
+  );
+  background-size: 200% 100%;
+  animation: product-shimmer 1.6s infinite linear;
+}
+
+@keyframes product-shimmer {
+  to {
+    background-position-x: -200%;
+  }
+}
+
 
 .ar-badge {
   position: absolute;

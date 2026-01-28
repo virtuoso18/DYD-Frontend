@@ -35,9 +35,30 @@
         <div class="sidebar">
            
           <div class="user-info">
-            <div class="user-avatar">
-              <img :src="this.$store.state.root_media_api+profile.profile_picture" alt="John Doe" />
-            </div>
+           <div class="user-avatar" style="position: relative; overflow: hidden;">
+  <!-- Skeleton -->
+  <div
+    v-if="!imageLoadedMap['profile']"
+    class="avatar-skeleton"
+  ></div>
+
+  <!-- Preload image -->
+  <img
+    :src="$store.state.root_media_api + profile.profile_picture"
+    style="position:absolute;width:0;height:0;opacity:0;"
+    @load="onAvatarImageLoad"
+    alt=""
+  />
+
+  <!-- Visible image -->
+  <img
+    v-show="imageLoadedMap['profile']"
+    :src="$store.state.root_media_api + profile.profile_picture"
+    alt="Profile Picture"
+    class="avatar-image"
+  />
+</div>
+
                        <h3 class="text-center" style="font-family: Poppins; font-weight: 500; font-style: normal; font-size: 16px; line-height: 24px; letter-spacing: 0;">
 {{ user?.full_name || 'John Doe' }}</h3>
                         <p class="user-email text-center" style="font-family: Poppins; font-weight: 400; font-style: normal; font-size: 12px; line-height: 20px; letter-spacing: 0;">
@@ -853,6 +874,7 @@ export default {
       
       // Profile Completion Modal
       showCompletionModal: false,
+      imageLoadedMap: {},
       profileSteps: [
         {
           id: 1,
@@ -947,6 +969,15 @@ export default {
       // Optional: Reload profile data or redirect
       this.fetchProfileStatus();
     },
+
+    onAvatarImageLoad() {
+    this.imageLoadedMap['profile'] = false;
+    setTimeout(() => {
+      this.imageLoadedMap['profile'] = true;
+    }, 1000);
+  },
+
+
     async fetchOnboardingProgress() {
       try {
         const token = localStorage.getItem("token");
@@ -1066,6 +1097,39 @@ export default {
   background: #f8f9fa;
   min-height: 100vh;
 }
+
+.avatar-skeleton {
+  width: 90px;  /* match your avatar size */
+  height: 90px;
+  border-radius: 80%;
+  background: linear-gradient(
+    110deg,
+    #e5e7eb 8%,
+    #f9fafb 18%,
+    #e5e7eb 33%
+  );
+  background-size: 200% 100%;
+  animation: avatar-shimmer 1.6s infinite linear;
+}
+
+@keyframes avatar-shimmer {
+  to {
+    background-position-x: -200%;
+  }
+}
+
+/* Update your existing .user-avatar styles */
+.user-avatar {
+  /* your existing styles */
+}
+
+.avatar-image {
+  width: 80px;  /* match your avatar size */
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
 
 /* Mobile Header Styles */
 .mobile-header {

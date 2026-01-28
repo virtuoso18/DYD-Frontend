@@ -1233,24 +1233,40 @@
                     >
                       <div class="product" style="padding: 5px">
                         <div
-                          class="product-image-container"
-                          @click="viewProduct(product)"
-                        >
-                          <img
-                            :src="
-                              $store.state.root_media_api +
-                              product.primary_image
-                            "
-                            :alt="product.name"
-                            class="product-image"
-                          />
-                          <!-- Category Badge -->
-                          <div class="category-badge">
-                            {{ product.category.name }}
-                          </div>
-                          <!-- AR Badge -->
-                          <div class="ar-badge">AR</div>
-                        </div>
+  class="product-image-container"
+  @click="viewProduct(product)"
+  style="position: relative; overflow: hidden;"
+>
+  <!-- Skeleton -->
+  <div
+    v-if="!productImageLoadedMap[product.id]"
+    class="product-image-skeleton"
+  ></div>
+
+  <!-- Preload image -->
+  <img
+    :src="$store.state.root_media_api + product.primary_image"
+    :alt="product.name"
+    style="position:absolute;width:0;height:0;opacity:0;"
+    @load="onProductImageLoad(product.id)"
+  />
+
+  <!-- Visible image -->
+  <img
+    v-show="productImageLoadedMap[product.id]"
+    :src="$store.state.root_media_api + product.primary_image"
+    :alt="product.name"
+    class="product-image"
+  />
+
+  <!-- Category Badge -->
+  <div class="category-badge">
+    {{ product.category.name }}
+  </div>
+  <!-- AR Badge -->
+  <div class="ar-badge">AR</div>
+</div>
+
                         <!-- {{ truncateText(product.description || 'No description available', 8) }} -->
 
                         <a-row>
@@ -1422,26 +1438,40 @@
                                 > -->
 
                       <div
-                        class="product-image-container"
-                        @click="viewProduct(product)"
-                      >
-                        <img
-                          :src="
-                            $store.state.root_media_api +
-                            (product.product_images.length > 0
-                              ? product.product_images[0].image
-                              : product.texture_image)
-                          "
-                          :alt="product.title"
-                          class="product-image"
-                        />
-                        <!-- Category Badge -->
-                        <div class="category-badge">
-                          {{ product.texture_style }}
-                        </div>
-                        <!-- AR Badge -->
-                        <div class="ar-badge">AR</div>
-                      </div>
+  class="product-image-container"
+  @click="viewProduct(product)"
+  style="position: relative; overflow: hidden;"
+>
+  <!-- Skeleton -->
+  <div
+    v-if="!textureImageLoadedMap[product.id]"
+    class="texture-image-skeleton"
+  ></div>
+
+  <!-- Preload image -->
+  <img
+    :src="$store.state.root_media_api + (product.product_images.length > 0 ? product.product_images[0].image : product.texture_image)"
+    :alt="product.title"
+    style="position:absolute;width:0;height:0;opacity:0;"
+    @load="onTextureImageLoad(product.id)"
+  />
+
+  <!-- Visible image -->
+  <img
+    v-show="textureImageLoadedMap[product.id]"
+    :src="$store.state.root_media_api + (product.product_images.length > 0 ? product.product_images[0].image : product.texture_image)"
+    :alt="product.title"
+    class="product-image"
+  />
+
+  <!-- Category Badge -->
+  <div class="category-badge">
+    {{ product.texture_style }}
+  </div>
+  <!-- AR Badge -->
+  <div class="ar-badge">AR</div>
+</div>
+
                       <!-- </div> -->
 
                       <!-- Product details -->
@@ -3260,6 +3290,8 @@ export default {
       searchQuery: "",
       isLoading: false,
       selectedProduct: null,
+      textureImageLoadedMap: {},
+      productImageLoadedMap: {},
 
       // popup for the add new product where user will need to choose the local 3d model or the DYD generated 3d model there
       open_add_newProductModal: false,
@@ -3427,6 +3459,23 @@ export default {
         this.$message.error("Failed to prepare variation data");
       }
     },
+
+     onProductImageLoad(id) {
+    this.productImageLoadedMap[id] = false;
+    setTimeout(() => {
+      this.productImageLoadedMap[id] = true;
+    }, 1000); // 1s skeleton
+  },
+
+  onTextureImageLoad(id) {
+    this.textureImageLoadedMap[id] = false;
+    setTimeout(() => {
+      this.textureImageLoadedMap[id] = true;
+    }, 1000); // 1s skeleton
+  },
+
+
+
     handleVariantSelection(variantId) {
       // Call your existing fetchProductDetails method with the variant ID
       this.fetchProductDetails(variantId);
@@ -4065,11 +4114,59 @@ export default {
 
 .product-image {
   width: 100%;
+  height: 240px; /* or whatever your height is */
+  object-fit: cover;
+}
+
+.product-image-skeleton {
+  width: 100%;
+  height: 240px; /* match your image height */
+  border-radius: 10px; /* match your image radius */
+  background: linear-gradient(
+    110deg,
+    #e5e7eb 8%,
+    #f9fafb 18%,
+    #e5e7eb 33%
+  );
+  background-size: 200% 100%;
+  animation: product-shimmer 1.6s infinite linear;
+}
+
+@keyframes product-shimmer {
+  to {
+    background-position-x: -200%;
+  }
+}
+
+
+.product-image {
+  width: 100%;
   height: 100%;
   object-fit: cover;
   border-radius: 12px;
   transition: transform 0.3s ease;
 }
+
+.texture-image-skeleton {
+  width: 100%;
+  height: 240px; /* match your product image height */
+  background: linear-gradient(
+    110deg,
+    #e5e7eb 8%,
+    #f9fafb 18%,
+    #e5e7eb 33%
+  );
+  background-size: 200% 100%;
+  animation: texture-shimmer 1.6s infinite linear;
+  border-radius: 10px; /* match your image radius */
+}
+
+@keyframes texture-shimmer {
+  to {
+    background-position-x: -200%;
+  }
+}
+
 
 .category-badge {
   position: absolute;
