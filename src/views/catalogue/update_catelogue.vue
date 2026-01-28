@@ -701,6 +701,8 @@ Switch Furniture</a-button> -->
               <items_replacement_renderer 
                     v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Furniture'" 
                     :glbUrl="item_replacement_renderer_3d_model_url"
+                    @update:isLoading="StartEndCanvasLoading"
+                    :isLoading="canvasLoading"
                     :is_resizable="is_resizable"
                     :product_id="selected_3d_product_model"
                     :modelDimensions="{ width: selected_model_width, height: selected_model_height, depth: selected_model_depth }"
@@ -712,7 +714,7 @@ Switch Furniture</a-button> -->
                     :pitch="floor_pitch"
                     :yaw="floor_yaw"
                     ref="floor_item_3d_renderer"
-                    @rendered-comfyui-workflow="updateBaskeImageURL_CANVAS"
+                    @add-3d-furniture-to-room-start-polling="updateBaskeImageURL_CANVAS"
                     @Apply-Changes="ApplyChanges"
                     @insufficient-credits="throw_Insufficient_credits"
                />
@@ -1743,6 +1745,9 @@ Switch Furniture</a-button> -->
                     v-if="current_tab=='image' && active_tab_image ==='item_replacement' && select_replace==='Furniture'" 
                     :glbUrl="item_replacement_renderer_3d_model_url"
                     :is_resizable="is_resizable"
+                    @update:isLoading="StartEndCanvasLoading"
+                    :isLoading="canvasLoading"
+
                     :product_id="selected_3d_product_model"
                     :modelDimensions="{ width: selected_model_width, height: selected_model_height, depth: selected_model_depth }"
                     :baseImageUrl=base_image_url
@@ -1753,7 +1758,7 @@ Switch Furniture</a-button> -->
                     :pitch="floor_pitch"
                     :yaw="floor_yaw"
                     ref="floor_item_3d_renderer"
-                    @rendered-comfyui-workflow="updateBaskeImageURL_CANVAS"
+                    @add-3d-furniture-to-room-start-polling="updateBaskeImageURL_CANVAS"
                                 @Apply-Changes="ApplyChanges"
                                 @insufficient-credits="throw_Insufficient_credits"
                />
@@ -2192,7 +2197,9 @@ isCollapsed: false,
   },
 
   methods: {
-
+StartEndCanvasLoading(e){
+this.canvasLoading=e
+},
    async switchRoomBrand(brand_slug) {
         try {
           const url = `${this.$store.state.root_api}room/api/switch-room-brand/${this.$route.params.id}/${brand_slug}/`;
@@ -2461,6 +2468,8 @@ async  rescaleWallMask(e){
             this.floor_Mask= this.$store.state.root_media_api + responseData.data.floor_mask;
             
             this.roomLoadingProgress = 100;
+            // console.log("===================================================")
+            // console.log(this.$store.state.root_media_api + responseData.data.floor_3d_model_grid)
             this.load_the_fileData(this.$store.state.root_media_api + responseData.data.floor_3d_model_grid)
             
             if (this.roomPollingInterval) {
@@ -2483,24 +2492,43 @@ async  rescaleWallMask(e){
     },
 
     
-    async load_the_fileData(floor_3d_model_grid_url){
-        this.isLoading = true;
+//     async load_the_fileData(floor_3d_model_grid_url){
+//         this.isLoading = true;
   
+//   try {
+//     const response = await fetch(floor_3d_model_grid_url)
+    
+//     if (!response.ok) {
+//       throw new Error(`HTTP error! status: ${response.status}`)
+//     }
+    
+//     this.floor_3d_model_grid = await response.json()
+//     console.log("--------------------------------------------")
+//     console.log("--------------------------------------------"+this.floor_3d_model_grid_url)
+//   } catch (error) {
+//     console.error('Error loading floor data:', error)
+//   }
+//       this.isLoading = false;
+
+// },
+async load_the_fileData(floor_3d_model_grid_url) {
+  this.isLoading = true
+
   try {
     const response = await fetch(floor_3d_model_grid_url)
-    
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)
     }
-    
+
     this.floor_3d_model_grid = await response.json()
-    // console.log("--------------------------------------------")
-    // console.log(this.floor_3d_model_grid)
+    console.log("Loaded floor grid:", this.floor_3d_model_grid)
+
   } catch (error) {
     console.error('Error loading floor data:', error)
+  } finally {
+    this.isLoading = false
   }
-      this.isLoading = false;
-
 },
 
     startRoomPolling() {
@@ -2961,6 +2989,69 @@ async  rescaleWallMask(e){
         console.error('Cache refresh failed:', error);
       }
     },
+    
+   
+
+    // ==========================================
+    // Start Polling 
+    // ==========================================
+
+    startPolling(jobId) {
+  if (!jobId) return Promise.reject("Invalid job id")
+
+  this.stopPolling()
+  this.loading = true
+  this.jobId = jobId
+
+  return new Promise((resolve, reject) => {
+    const poll = async () => {
+      try {
+        const res = await fetch(
+          `${this.$store.state.root_api}renderer/checkout-renderer/${jobId}/`
+        )
+
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+
+        const data = await res.json()
+
+        if (data.status === "Completed") {
+          this.loading = false
+          this.stopPolling()
+          resolve(data.finalised_result_wall_processed_image)
+          return
+        }
+
+        if (data.status === "failed") {
+          this.loading = false
+          this.stopPolling()
+          reject("Rendering failed")
+          return
+        }
+
+        console.log("⏳ Rendering in progress...")
+
+      } catch (err) {
+        this.loading = false
+        this.stopPolling()
+        reject(err)
+      }
+    }
+
+    // run immediately
+    poll()
+
+    // then every 3s
+    this.pollTimer = setInterval(poll, 3000)
+  })
+},
+
+stopPolling() {
+  if (this.pollTimer) {
+    clearInterval(this.pollTimer)
+    this.pollTimer = null
+  }
+},
+
 
     // ==========================================
     // WALL & FLOOR TEXTURES
@@ -3001,12 +3092,23 @@ async  rescaleWallMask(e){
           return;
         }
 
+        
+          if (responseData.renderer_id) {
+            // ⏳ WAIT until polling completes
+            const finalImage = await this.startPolling(responseData.renderer_id)
 
-        if (responseData?.final_output) {
-          this.base_image_url = this.$store.state.root_media_api + responseData.final_output + '?t=' + Date.now();
-          this.forceCanvasUpdate();
-          this.$message.success('Wall texture applied!');
-        }
+            // ✅ ONLY NOW update canvas
+            this.base_image_url =
+              this.$store.state.root_media_api +
+              finalImage +
+              '?t=' +
+              Date.now()
+
+            this.forceCanvasUpdate()
+            this.$message.success('Wall texture applied!')
+          }
+
+
       } catch (error) {
         console.error('❌ Wall texture failed:', error);
         this.showError('Failed to Apply Wall Texture', error.message);
@@ -3044,11 +3146,27 @@ async  rescaleWallMask(e){
           return;
         }
         
-        if (responseData?.final_output) {
-          this.base_image_url = this.$store.state.root_media_api + responseData.final_output + '?t=' + Date.now();
-          this.forceCanvasUpdate();
-          this.$message.success('Floor texture applied!');
-        }
+        // if (responseData?.final_output) {
+        //   this.base_image_url = this.$store.state.root_media_api + responseData.final_output + '?t=' + Date.now();
+        //   this.forceCanvasUpdate();
+        //   this.$message.success('Floor texture applied!');
+        // }
+        
+          if (responseData.renderer_id) {
+            // ⏳ WAIT until polling completes
+            const finalImage = await this.startPolling(responseData.renderer_id)
+
+            // ✅ ONLY NOW update canvas
+            this.base_image_url =
+              this.$store.state.root_media_api +
+              finalImage +
+              '?t=' +
+              Date.now()
+
+            this.forceCanvasUpdate()
+            this.$message.success('Floor texture applied!')
+          }
+
       } catch (error) {
         console.error('❌ Floor texture failed:', error);
         this.showError('Failed to Apply Floor Texture', error.message);
@@ -3605,9 +3723,24 @@ async fetchSingleProductType(productType, dataKey, brand, endpointMap) {
       }
     },
 
-    updateBaskeImageURL_CANVAS(imageUrl) {
-      this.base_image_url = this.$store.state.root_media_api + imageUrl;
-      this.forceCanvasUpdate();
+    async updateBaskeImageURL_CANVAS(renderer_id) {
+
+      // ⏳ WAIT until polling completes
+      const finalImage = await this.startPolling(renderer_id)
+
+      // ✅ ONLY NOW update canvas
+      this.base_image_url =
+        this.$store.state.root_media_api +
+        finalImage +
+        '?t=' +
+        Date.now()
+
+      this.forceCanvasUpdate()
+
+       this.canvasLoading = false;
+      
+      // this.base_image_url = this.$store.state.root_media_api + imageUrl;
+      // this.forceCanvasUpdate();
     },
 
     // ==========================================
@@ -3653,8 +3786,9 @@ async fetchSingleProductType(productType, dataKey, brand, endpointMap) {
     },
 
     ApplyChanges() {
-            console.log("======================================================")
-            console.log(this.$route.query.client_request ==='true')
+            // console.log("======================================================")
+            // console.log(this.$route.query.client_request ==='true')
+            
       // this.$router.push('/update-catalogue/render-results/' + this.$route.params.id+'?brand='+this.$route.query.brand+((this.$route.query.client_request ==='true')?'&client_request=true':"") );
       this.$router.push({
   name: 'render_catelogue', // Use route name, not path

@@ -1,55 +1,104 @@
 <template>
-  <!-- {{ isLoading }} -->
-  
-<div
-  class="main-canvas max-h-[300px] md:max-h-[95vh] mx-auto"
-  ref="canvasContainer"
->
-  <!-- ✅ LOADING OVERLAY - Always rendered on top when isLoading=true -->
-  <div v-if="isLoading" class="scanning-loading-overlay">
-    <div 
-      class="loading-screen" 
-      :style="{ backgroundImage: baseImageUrl ? `url(${baseImageUrl})` : 'none' }"
-    >
-      <div class="wave-overlay"></div>
-      <div class="loading-text">
-        <div class="process-text">{{ loadingText }}</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ✅ CONTENT AREA - Show based on state -->
-  <div v-show="!isLoading" class="content-area">
-    <!-- Show background image when no GLB -->
-    <div 
-      v-if="!glbUrl || glbUrl === ''" 
-      class="text-center flex items-center justify-center text-gray-600"
-    >
-      <img 
-        :src="baseImageUrl" 
-        alt="" 
+  <div v-if="!glbUrl || glbUrl === ''">
+    <div class="text-center flex items-center justify-center text-gray-600">
+      <img
+        :src="this.baseImageUrl"
+        alt=""
         class="max-w-full max-h-[54vh] md:max-h-[83vh] mx-auto"
       />
     </div>
-
-    <!-- 3D Viewer Container -->
-    <div 
-      id="viewer" 
-      ref="viewer" 
-      v-show="glbUrl && glbUrl !== ''"
-    ></div>
   </div>
-</div>
- 
-<div 
-    class="flex justify-between items-center py-2 px-2 bg-white w-full gap-2" 
+  <div
+    v-else
+    style="
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    "
+  >
+    <!-- {{ currentModelDimensions }} -->
+    <div
+      class="main-canvas max-h-[300px] md:max-h-[95vh] mx-auto"
+      ref="canvasContainer"
+    >
+      <!-- Loading Overlay -->
+      <div v-if="isLoading" class="scanning-loading-overlay">
+        <div class="loading-screen">
+          <div class="wave-overlay"></div>
+          <div class="loading-text">
+            <div class="process-text">{{ loadingText }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3D Viewer Container -->
+      <div id="viewer" ref="viewer"></div>
+    </div>
+    <span
+      style="
+        background: white;
+        border-radius: 5px;
+        padding-left: 5px;
+        padding-right: 5px;
+        font-size: 12px;
+        font-weight: 600;
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+      "
+      >W-{{ currentModelDimensions.width }}m X H-{{
+        currentModelDimensions.height
+      }}m X D-{{ currentModelDimensions.depth }}m</span
+    >
+  </div>
+  <!-- 
+  <div class="flex justify-between items-center py-2 px-2 bg-white w-full">
+    
+    <button
+      className="bg-gray-300 px-6 py-1 rounded-md"
+      @click="reset_entire_room"
+      :disabled="isLoading"
+      style="
+        font-family: Poppins;
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 20px;
+        letter-spacing: 0%;
+        text-align: center;
+      "
+    >
+      Reset
+    </button>
+
+    
+    <button
+      className="pt-[10px] !text-white px-2  bg-blue-500 rounded-md py-1"
+      type="primary"
+      @click="$emit('Apply-Changes', 'item-replacement-3d-renderer')"
+      :disabled="isLoading"
+      style="
+        font-family: Poppins;
+        font-weight: 500;
+        font-size: 13px;
+        line-height: 20px;
+        letter-spacing: 0%;
+        text-align: center;
+      "
+    >
+      Apply Changes
+    </button>
+  </div> -->
+
+  <div
+    class="flex justify-between items-center py-2 px-2 bg-white w-full gap-2"
   >
     <!-- Left: Reset -->
     <button
-      
+      v-if="glbUrl"
       className="bg-gray-300 px-6 py-1 rounded-md"
       @click="reset_entire_room"
-      :disabled="glbUrl && isLoading"
+      :disabled="isLoading"
       style="
         font-family: Poppins;
         font-weight: 500;
@@ -156,31 +205,18 @@ export default {
     product_id: { type: String, required: true },
     baseImageUrl: { type: String, required: true },
     is_resizable: { type: Boolean, required: true },
-    isLoading: {
-    type: Boolean,
-    required: true,
-  },
     floorData: Object,
     modelDimensions: {
       type: Object,
       default: () => ({ width: 1.4, height: 1.2, depth: 1.5 }),
     },
   },
-computed: {
-  loadingProxy: {
-    get() {
-      return this.isLoading
-    },
-    set(val) {
-      this.$emit('update:isLoading', val)
-    }
-  }
-},
-  emits: ["rendered-comfyui-workflow", "Apply-Changes",'update:isLoading',],
+
+  emits: ["rendered-comfyui-workflow", "Apply-Changes"],
 
   data() {
     return {
-      // isLoading: false,
+      isLoading: false,
       loadingText: "Initializing...",
       modelLoaded: false,
       viewerInitialized: false,
@@ -415,7 +451,7 @@ computed: {
     //   }
 
     //   try {
-    //     this.loadingProxy= true;
+    //     this.isLoading = true;
     //     this.loadingText = 'Rendering Item...';
 
     //     const roomId = this.$route.params.id;
@@ -469,7 +505,7 @@ computed: {
     //     console.error('Error rendering item:', error);
     //     throw error;
     //   } finally {
-    //     this.loadingProxy= false;
+    //     this.isLoading = false;
     //   }
     // },
     remove3DObjectFromScene() {
@@ -513,9 +549,7 @@ computed: {
       }
 
       try {
-        this.$emit('update:isLoading', true);
-
-
+        this.isLoading = true;
         this.loadingText = "Rendering Item...";
 
         const roomId = this.$route.params.id;
@@ -573,13 +607,10 @@ computed: {
         console.log("====================================");
         console.log(result);
         console.log("====================================");
-          if (result.renderer_id) {
-            this.remove3DObjectFromScene();
-            this.$emit("add-3d-furniture-to-room-start-polling", result.renderer_id);
-          }
-
         // 🔥 REMOVE 3D OBJECT AFTER SUCCESSFUL RENDER
+        this.remove3DObjectFromScene();
 
+        this.$emit("rendered-comfyui-workflow", result.final_output);
 
         console.log(
           "Composite image and binary mask sent successfully:",
@@ -591,10 +622,9 @@ computed: {
       } catch (error) {
         console.error("Error rendering item:", error);
         throw error;
-      } 
-      // finally {
-      //   this.$emit('update:isLoading', false);
-      // }
+      } finally {
+        this.isLoading = false;
+      }
     },
 
     // Replace your existing renderItem method with this:
@@ -605,7 +635,7 @@ computed: {
       }
 
       try {
-this.$emit('update:isLoading', true);
+        this.isLoading = true;
 
         this.remove3DObjectFromScene();
 
@@ -655,7 +685,7 @@ this.$emit('update:isLoading', true);
         console.error("Error rendering item:", error);
         throw error;
       } finally {
-this.$emit('update:isLoading', false);
+        this.isLoading = false;
       }
     },
 
@@ -802,7 +832,7 @@ this.$emit('update:isLoading', false);
     async handleGlbUrlChange() {
       try {
         this.resetComponentState();
-this.$emit('update:isLoading', true);
+        this.isLoading = true;
         this.loadingText = "Initializing 3D Viewer...";
         await this.$nextTick();
 
@@ -840,13 +870,13 @@ this.$emit('update:isLoading', true);
       this.loadingText = "Loading new model...";
       await this.loadModel();
       this.fitCameraToModel();
-this.$emit('update:isLoading', false);
+      this.isLoading = false;
       // Recreate rotation ring for new model
       this.createRotationRing();
       this.updateRotationRingPosition();
 
       this.fitCameraToModel();
-this.$emit('update:isLoading', false);
+      this.isLoading = false;
     },
 
     async initializeViewer() {
@@ -859,7 +889,7 @@ this.$emit('update:isLoading', false);
       }
 
       try {
-this.$emit('update:isLoading', true);
+        this.isLoading = true;
         this.loadingText = "Setting up 3D environment...";
 
         this.parseFloorData();
@@ -1279,7 +1309,7 @@ this.$emit('update:isLoading', true);
             this.updateRotationRingPosition();
             this.fitCameraToModel();
 
-this.$emit('update:isLoading', false);
+            this.isLoading = false;
             this.modelLoaded = true;
             console.log("Model loaded successfully");
             resolve();
@@ -1294,7 +1324,7 @@ this.$emit('update:isLoading', false);
           },
           (error) => {
             console.error("Failed to load model", error);
-this.$emit('update:isLoading', false);
+            this.isLoading = false;
             this.modelLoaded = false;
             reject(error);
           },
@@ -1679,7 +1709,7 @@ this.$emit('update:isLoading', false);
     },
 
     showErrorState() {
-this.$emit('update:isLoading', false);
+      this.isLoading = false;
       this.loadingText = "Error loading model";
       this.modelLoaded = false;
       console.error("An error occurred in the 3D viewer");
@@ -1718,18 +1748,13 @@ this.$emit('update:isLoading', false);
 
       this.viewerInitialized = false;
       this.modelLoaded = false;
-      // this.$emit('update:isLoading', false);
+      this.isLoading = false;
     },
   },
 };
 </script>
 
 <style scoped>
-.content-area {
-  width: 100%;
-  height: 100%;
-  position: relative;
-}
 .main-canvas {
   display: block;
   margin: 0 auto;
