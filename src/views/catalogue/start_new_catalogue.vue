@@ -582,36 +582,45 @@
   class="p-[5px]"
 >
   <div 
-    @click="openImageDrawer(histry_card)" 
-    class="cursor-pointer hover:opacity-80 transition-opacity"
+  @click="openImageDrawer(histry_card)" 
+  class="cursor-pointer hover:opacity-80 transition-opacity"
+>
+  <div
+    class="history-image-wrapper"
   >
-  <!-- {{ histry_card.brand }} -->
-    <div style="position: relative; display: inline-block;">
-  <img
-    :src="$store.state.root_media_api + histry_card.image"
-    alt="Example"
-    class="example-image rounded-lg"
-    style="display: block;"
-  />
+    <!-- Skeleton -->
+    <div
+      v-if="!imageLoadedMap[histry_card.id]"
+      class="history-image-skeleton"
+    ></div>
 
-  <div v-if="histry_card.brand_banner"
-    style="
-      position: absolute;
-      bottom: 10px;
-      right: 10px;
-      z-index: 2;
-      color: white;
-      font-weight: bold;
-      background: rgba(0,0,0,0.5);
-      padding: 4px 8px;
-      border-radius: 6px;
-    "
-  >
-    <a-avatar :src="this.$store.state.root_media_api+histry_card.brand_banner"></a-avatar>
+    <!-- Preload image -->
+    <img
+      :src="$store.state.root_media_api + histry_card.image"
+      style="position:absolute;width:0;height:0;opacity:0;"
+      @load="onHistoryImageLoad(histry_card.id)"
+      alt=""
+    />
+
+    <!-- Visible image -->
+    <img
+      v-show="imageLoadedMap[histry_card.id]"
+      :src="$store.state.root_media_api + histry_card.image"
+      alt="Example"
+      class="example-image rounded-lg"
+      style="display:block;width:100%;height:200px;object-fit:cover;"
+    />
+
+    <!-- Brand badge (unchanged, stays on top) -->
+    <div
+      v-if="histry_card.brand_banner"
+      class="history-brand-badge"
+    >
+      <a-avatar :src="$store.state.root_media_api + histry_card.brand_banner"></a-avatar>
+    </div>
   </div>
 </div>
 
-  </div>
 </div>
 
       </div>
@@ -651,26 +660,46 @@
       :key="example.id"
       class="relative"
     >
-      <div 
-        class="image-wrapper cursor-pointer" 
-        @click="openImageDrawer_test_room(example)"
-      >
-        <img
-          :src="$store.state.root_media_api + example.image"
-          :alt="example.demo_room_type || 'Room'"
-          class="w-full h-32 sm:h-48 object-cover rounded-xl shadow-md hover:shadow-lg transition-shadow"
-          :class="{ 'opacity-40': loading }"
-        />
-        
-        <!-- Room Type Badge on Image -->
-        <div class="absolute top-2 left-2 bg-blue-600 text-white px-3 py-1 rounded-lg text-xs font-semibold">
-          {{ example.demo_room_type }}
-        </div>
-        
-        <div v-if="loading" class="loader-overlay">
-          <a-spin />
-        </div>
-      </div>
+     <div 
+  class="image-wrapper cursor-pointer" 
+  @click="openImageDrawer_test_room(example)"
+>
+  <div class="example-image-container">
+    <!-- Skeleton -->
+    <div
+      v-if="!imageLoadedMap[example.id]"
+      class="example-image-skeleton"
+    ></div>
+
+    <!-- Preload image -->
+    <img
+      :src="$store.state.root_media_api + example.image"
+      style="position:absolute;width:0;height:0;opacity:0;"
+      @load="onExampleImageLoad(example.id)"
+      alt=""
+    />
+
+    <!-- Visible image -->
+    <img
+      v-show="imageLoadedMap[example.id]"
+      :src="$store.state.root_media_api + example.image"
+      :alt="example.demo_room_type || 'Room'"
+      class="w-full h-32 sm:h-48 object-cover rounded-xl shadow-md hover:shadow-lg transition-shadow"
+      :class="{ 'opacity-40': loading }"
+    />
+
+    <!-- Room Type Badge (stays on top) -->
+    <div class="absolute top-2 left-2 bg-blue-600 text-white px-3 py-1 rounded-lg text-xs font-semibold z-10">
+      {{ example.demo_room_type }}
+    </div>
+
+    <!-- Existing spinner overlay (unchanged) -->
+    <div v-if="loading" class="loader-overlay">
+      <a-spin />
+    </div>
+  </div>
+</div>
+
     </div>
   </div>
 
@@ -706,6 +735,7 @@ export default {
       selectedImage: null,
       detectedObjects: [],
       loading: false,
+      imageLoadedMap: {},
       loading_Example_rooms: true,
       loading_user_history_rooms: true,
       fileList: [],
@@ -798,6 +828,20 @@ export default {
       this.modalFile = null;
       this.$refs.modalFileInput.value = '';
     },
+
+     onHistoryImageLoad(id) {
+    this.imageLoadedMap[id] = false;
+    setTimeout(() => {
+      this.imageLoadedMap[id] = true;
+    }, 3000);
+  },
+
+   onExampleImageLoad(id) {
+    this.imageLoadedMap[id] = false;
+    setTimeout(() => {
+      this.imageLoadedMap[id] = true;
+    }, 3000);
+  },
 
     // NEW METHOD: Save and continue - fires the API with the selected image
     async saveAndContinue() {
@@ -1377,6 +1421,79 @@ export default {
 .sample-image:hover {
   transform: scale(1.02);
 }
+
+
+.history-image-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  height: 200px;              /* match your image height */
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.history-image-skeleton {
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  background: linear-gradient(
+    110deg,
+    #e5e7eb 8%,
+    #f9fafb 18%,
+    #e5e7eb 33%
+  );
+  background-size: 200% 100%;
+  animation: history-shimmer 1.6s infinite linear;
+}
+
+@keyframes history-shimmer {
+  to {
+    background-position-x: -200%;
+  }
+}
+
+.history-brand-badge {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  z-index: 2;
+  color: white;
+  font-weight: bold;
+  background: rgba(0,0,0,0.5);
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.example-image-container {
+  position: relative;
+  width: 100%;
+  height: 128px;        /* h-32 base */
+  height: 192px;        /* sm:h-48 */
+  border-radius: 12px;  /* rounded-xl */
+  overflow: hidden;
+}
+
+.example-image-skeleton {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  background: linear-gradient(
+    110deg,
+    #e5e7eb 8%,
+    #f9fafb 18%,
+    #e5e7eb 33%
+  );
+  background-size: 200% 100%;
+  animation: example-shimmer 1.6s infinite linear;
+}
+
+@keyframes example-shimmer {
+  to {
+    background-position-x: -200%;
+  }
+}
+
+
 
 .sample-image img {
   width: 160px;

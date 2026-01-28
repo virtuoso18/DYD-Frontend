@@ -40,25 +40,48 @@
             
             <a-row>
                 <a-col :span="24"> 
-                    <h2>{{ business_info.name }}</h2>
+                    <h2 className="text-[20px] !font-poppins">{{ business_info.name }}</h2>
                 </a-col>
             </a-row>
+
+
+            <div
+  class="business-hero"
+  style="position: relative; overflow: hidden; height: 250px;"
+>
             
             <!-- Banner Section -->
-            <div 
-                :style="`
-                    background: linear-gradient(
-                        rgba(0,0,0,0.3), 
-                        rgba(0,0,0,0.3)
-                    ), url(${this.$store.state.root_media_api}${business_info.business_picture}) center/cover no-repeat;
-                    height:250px;
-                    display:flex;
-                    justify-content:center;
-                    align-items:center;
-                `"
-            >
+  <div
+    v-if="!imageLoadedMap['business']"
+    class="business-hero-skeleton"
+  ></div>
+
+
+              <img
+    :src="this.$store.state.root_media_api + business_info.business_picture"
+    style="position:absolute;width:0;height:0;opacity:0;"
+    @load="onBusinessImageLoad"
+    alt=""
+  />
+
+
+            <div
+    v-show="imageLoadedMap['business']"
+    :style="`
+      background: linear-gradient(
+        rgba(0,0,0,0.3),
+        rgba(0,0,0,0.3)
+      ),
+      url(${this.$store.state.root_media_api}${business_info.business_picture})
+      center/cover no-repeat;
+      height:250px;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+    `"
+  >
                 <div style="text-align:center">
-                    <div style="display:flex;justify-content: center;">
+                    <div style="display:flex;justify-content: center;padding-top: 30px;">
                         <img 
                         :src="this.$store.state.root_media_api + business_info.banner_picture" 
                         style="width:70px;height:70px;border-radius:50%" 
@@ -72,8 +95,20 @@
                         {{ business_info.description }}
                     </div>
 <div v-if="this.userProfile?.id === this.currentUser?.id">
-      <a-alert message=" Your Business Public Page" type="info" />
+  <div
+    class="
+      inline-flex items-center justify-center
+      !h-[38px] min-w-[80px] px-1.5
+      text-[14px] font-semibold leading-none
+      rounded-md
+      bg-sky-100 text-sky-700
+      whitespace-nowrap
+    "
+  >
+    Your bussiness Public Page
+  </div>
 </div>
+
 <div v-else>
 
     <a-button                 style="margin-top:10px;display: flex;justify-content: center;align-items: center;" 
@@ -96,7 +131,7 @@
     </div>
             </div>
             
-           
+          </div> 
             <br>
             <div style="max-width:1200px;margin:auto">
             <!-- Business Info Section -->
@@ -393,22 +428,42 @@
                   <div style="padding: 2px">
                     <div class="post-card">
                       <!-- Post Image -->
-                      <div style="position: relative">
-                        <img
-                          :src="
-                            $store.state.root_media_api + post.post_image ||
-                            require('../../../assets/home_main_banner.jpg')
-                          "
-                          style="
-                            width: 100%;
-                            height: 200px;
-                            object-fit: cover;
-                            border-radius: 10px;padding:5px;
-                            cursor: pointer;
-                          "
-                          :alt="post.title"
-                          @click="viewPost(post)"
-                        />
+                     <div style="position: relative; overflow: hidden;">
+  <!-- Skeleton -->
+  <div
+    v-if="!imageLoadedMap[post.id]"
+    class="post-skeleton"
+  ></div>
+
+  <!-- Preload image -->
+  <img
+    :src="
+      $store.state.root_media_api + post.post_image ||
+      require('../../../assets/home_main_banner.jpg')
+    "
+    style="position:absolute;width:0;height:0;opacity:0;"
+    @load="onPostImageLoad(post.id)"
+    alt=""
+  />
+
+  <!-- Visible image -->
+  <img
+    v-show="imageLoadedMap[post.id]"
+    :src="
+      $store.state.root_media_api + post.post_image ||
+      require('../../../assets/home_main_banner.jpg')
+    "
+    :alt="post.title"
+    style="
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 10px;
+      padding: 5px;
+      cursor: pointer;
+    "
+    @click="viewPost(post)"
+  />
 
                         <!-- Tags - Fixed for string array -->
                         <div class="tags-overlay">
@@ -586,6 +641,8 @@ export default {
     },
     data() {
         return {
+            
+            imageLoadedMap: {},
            businessRatings: {
              average: 0,
              unique_users: 0,
@@ -681,6 +738,21 @@ export default {
         this.$message.error('Error loading community posts');
     }
 },
+
+  onPostImageLoad(id) {
+    this.imageLoadedMap[id] = false;
+    setTimeout(() => {
+      this.imageLoadedMap[id] = true;
+    }, 2000);
+  },
+
+    onBusinessImageLoad() {
+    this.imageLoadedMap['business'] = false;
+    setTimeout(() => {
+      this.imageLoadedMap['business'] = true;
+    }, 4000);
+  },
+
 
 async handlePostsPageChange(page) {
     this.postsPagination.currentPage = page;
@@ -1315,6 +1387,61 @@ sharePost(post) {
   gap: 6px;
   max-width: 60%;
 }
+
+.post-skeleton {
+  width: 100%;
+  height: 100%;
+
+  /* HARD SIZE — REQUIRED */
+  min-height: 200px;
+  max-height: 200px;
+  min-width: 100%;
+  max-width: 100%;
+
+  border-radius: 10px;
+  padding: 5px;
+
+  background: linear-gradient(
+    110deg,
+    #e5e7eb 8%,
+    #f9fafb 18%,
+    #e5e7eb 33%
+  );
+  background-size: 200% 100%;
+  animation: post-shimmer 1.6s infinite linear;
+}
+
+@keyframes post-shimmer {
+  to {
+    background-position-x: -200%;
+  }
+}
+
+
+.business-hero-skeleton {
+  width: 100%;
+  height: 100%;
+
+  min-height: 250px;
+  max-height: 250px;
+
+  background: linear-gradient(
+    110deg,
+    #e5e7eb 8%,
+    #f9fafb 18%,
+    #e5e7eb 33%
+  );
+  background-size: 200% 100%;
+  animation: hero-bg-shimmer 1.6s infinite linear;
+}
+
+@keyframes hero-bg-shimmer {
+  to {
+    background-position-x: -200%;
+  }
+}
+
+
 
 .post-detail-actions {
   display: flex;
