@@ -10,7 +10,12 @@
   </div>
   <div
     v-else
-    style="display: flex; justify-content: center; align-items: center;position:relative"
+    style="
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    "
   >
     <!-- {{ currentModelDimensions }} -->
     <div
@@ -29,11 +34,25 @@
 
       <!-- 3D Viewer Container -->
       <div id="viewer" ref="viewer"></div>
-      
     </div>
-    <span style="background:white;border-radius:5px;padding-left: 5px;padding-right: 5px; font-size:12px;font-weight: 600;position:absolute;bottom:10px;left:10px">W-{{ currentModelDimensions.width }}m X H-{{ currentModelDimensions.height }}m X D-{{ currentModelDimensions.depth }}m</span>
+    <span
+      style="
+        background: white;
+        border-radius: 5px;
+        padding-left: 5px;
+        padding-right: 5px;
+        font-size: 12px;
+        font-weight: 600;
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+      "
+      >W-{{ currentModelDimensions.width }}m X H-{{
+        currentModelDimensions.height
+      }}m X D-{{ currentModelDimensions.depth }}m</span
+    >
   </div>
-<!-- 
+  <!-- 
   <div class="flex justify-between items-center py-2 px-2 bg-white w-full">
     
     <button
@@ -71,87 +90,87 @@
     </button>
   </div> -->
 
-  
-<div class="flex justify-between items-center py-2 px-2 bg-white w-full gap-2">
-  <!-- Left: Reset -->
-  <button
-  v-if="glbUrl"
-    className="bg-gray-300 px-6 py-1 rounded-md"
-    @click="reset_entire_room"
-    :disabled="isLoading"
-    style="
-      font-family: Poppins;
-      font-weight: 500;
-      font-size: 14px;
-      line-height: 20px;
-      letter-spacing: 0%;
-      text-align: center;
-    "
+  <div
+    class="flex justify-between items-center py-2 px-2 bg-white w-full gap-2"
   >
-    Reset
-  </button>
-
-  <!-- Center: Scale Controls -->
-  <div class="flex items-center gap-2" v-show="is_resizable">
-    <!-- Minus Button -->
+    <!-- Left: Reset -->
     <button
-      className="bg-red-100 hover:bg-red-200 !text-black px-3 py-1 rounded-md"
-      @click="scaleDown"
-      :disabled="isLoading || !modelLoaded"
-      style="
-        font-family: Poppins;
-        font-weight: 600;
-        font-size: 16px;
-        line-height: 20px;
-        text-align: center;
-        min-width: 40px;
-      "
-    >
-      −
-    </button>
-
-    <!-- Scale Display -->
-    <div
-      class="bg-gray-100 px-3 py-1 rounded-md text-center"
+      v-if="glbUrl"
+      className="bg-gray-300 px-6 py-1 rounded-md"
+      @click="reset_entire_room"
+      :disabled="isLoading"
       style="
         font-family: Poppins;
         font-weight: 500;
-        font-size: 12px;
-        min-width: 60px;
+        font-size: 14px;
+        line-height: 20px;
+        letter-spacing: 0%;
+        text-align: center;
       "
     >
-      {{ (modelScale * 100).toFixed(0) }}%
+      Reset
+    </button>
+
+    <!-- Center: Scale Controls -->
+    <div class="flex items-center gap-2" v-show="is_resizable">
+      <!-- Minus Button -->
+      <button
+        className="bg-red-100 hover:bg-red-200 !text-black px-3 py-1 rounded-md"
+        @click="scaleDown"
+        :disabled="isLoading || !modelLoaded"
+        style="
+          font-family: Poppins;
+          font-weight: 600;
+          font-size: 16px;
+          line-height: 20px;
+          text-align: center;
+          min-width: 40px;
+        "
+      >
+        −
+      </button>
+
+      <!-- Scale Display -->
+      <div
+        class="bg-gray-100 px-3 py-1 rounded-md text-center"
+        style="
+          font-family: Poppins;
+          font-weight: 500;
+          font-size: 12px;
+          min-width: 60px;
+        "
+      >
+        {{ (modelScale * 100).toFixed(0) }}%
+      </div>
+
+      <!-- Plus Button -->
+      <button
+        className="bg-green-100 hover:bg-green-200 !text-black px-3 py-1 rounded-md"
+        @click="scaleUp"
+        :disabled="isLoading || !modelLoaded"
+        style="
+          font-family: Poppins;
+          font-weight: 600;
+          font-size: 16px;
+          line-height: 20px;
+          text-align: center;
+          min-width: 40px;
+        "
+      >
+        +
+      </button>
     </div>
 
-    <!-- Plus Button -->
-    <button
-      className="bg-green-100 hover:bg-green-200 !text-black px-3 py-1 rounded-md"
-      @click="scaleUp"
-      :disabled="isLoading || !modelLoaded"
-      style="
-        font-family: Poppins;
-        font-weight: 600;
-        font-size: 16px;
-        line-height: 20px;
-        text-align: center;
-        min-width: 40px;
-      "
+    <!-- Right: Apply Changes -->
+    <a-button
+      className="pt-[10px] !text-white px-2  bg-blue-500 rounded-md py-1"
+      type="primary"
+      @click="$emit('Apply-Changes', 'item-replacement-3d-renderer')"
+      :disabled="isLoading"
     >
-      +
-    </button>
+      Finalise Changes
+    </a-button>
   </div>
-
-  <!-- Right: Apply Changes -->
-  <a-button
-    className="pt-[10px] !text-white px-2  bg-blue-500 rounded-md py-1"
-    type="primary"
-    @click="$emit('Apply-Changes', 'item-replacement-3d-renderer')"
-    :disabled="isLoading"
-    
-  >
-    Finalise Changes
-  </a-button>
-</div>
 
   <!-- <div class="apply-section md:hidden">
     <a-button
@@ -213,17 +232,17 @@ export default {
       // Floor data from JSON
       // floorData: {}
       // ... your existing data ...
-      modelScale: 1.0,           // Track current scale multiplier
-      minScale: 0.5,             // Minimum scale (50%)
-      maxScale: 3.0,             // Maximum scale (300%)
-      scaleStep: 0.02,            // Step size for +/- buttons (10%)
+      modelScale: 1.0, // Track current scale multiplier
+      minScale: 0.5, // Minimum scale (50%)
+      maxScale: 3.0, // Maximum scale (300%)
+      scaleStep: 0.02, // Step size for +/- buttons (10%)
 
-    // Store the base dimensions separately
-    currentModelDimensions: {
-      width: 0,
-      height: 0,
-      depth: 0
-    }
+      // Store the base dimensions separately
+      currentModelDimensions: {
+        width: 0,
+        height: 0,
+        depth: 0,
+      },
     };
   },
 
@@ -266,128 +285,149 @@ export default {
     this.floorBounds = null;
     this.baseModelScale = 1.0;
   },
-// CORRECT PLACEMENT - Replace your entire watch section with this:
+  // CORRECT PLACEMENT - Replace your entire watch section with this:
 
-watch: {
-  glbUrl: {
-    handler(newUrl, oldUrl) {
-      if (newUrl && newUrl !== "" && newUrl !== oldUrl) {
-        this.$nextTick(() => {
-          this.handleGlbUrlChange();
-        });
-      }
-    },
-    immediate: false,
-  },
-  baseImageUrl: {
-    handler(newUrl, oldUrl) {
-      if (newUrl && newUrl !== oldUrl && this.viewerInitialized) {
-        this.initializeBackground();
-      }
-    },
-  },
-  modelDimensions: {
-    handler(newDimensions, oldDimensions) {
-      if (newDimensions && newDimensions !== oldDimensions) {
-        // Update currentModelDimensions with the new prop values, scaled by current modelScale
-        this.currentModelDimensions.width = parseFloat((newDimensions.width * this.modelScale).toFixed(2));
-        this.currentModelDimensions.height = parseFloat((newDimensions.height * this.modelScale).toFixed(2));
-        this.currentModelDimensions.depth = parseFloat((newDimensions.depth * this.modelScale).toFixed(2));
-        
-        console.log("ModelDimensions updated:", this.currentModelDimensions);
-        
-        // If model is loaded, recalculate scale based on new dimensions
-        if (this.model && this.modelBoundingBox) {
-          this.setupModelBounds();
-          this.applyModelScale();
+  watch: {
+    glbUrl: {
+      handler(newUrl, oldUrl) {
+        if (newUrl && newUrl !== "" && newUrl !== oldUrl) {
+          this.$nextTick(() => {
+            this.handleGlbUrlChange();
+          });
         }
-      }
+      },
+      immediate: false,
     },
-    deep: true,
-  },
-},
-mounted() {
-  if (this.glbUrl && this.glbUrl !== "") {
-    // Initialize currentModelDimensions from props
-    this.currentModelDimensions = {
-      width: parseFloat(this.modelDimensions.width),
-      height: parseFloat(this.modelDimensions.height),
-      depth: parseFloat(this.modelDimensions.depth)
-    };
-    
-    this.$nextTick(() => {
-      this.handleGlbUrlChange();
-      this.load_the_fileData();
-    });
-  }
-},
+    baseImageUrl: {
+      handler(newUrl, oldUrl) {
+        if (newUrl && newUrl !== oldUrl && this.viewerInitialized) {
+          this.initializeBackground();
+        }
+      },
+    },
+    modelDimensions: {
+      handler(newDimensions, oldDimensions) {
+        if (newDimensions && newDimensions !== oldDimensions) {
+          // Update currentModelDimensions with the new prop values, scaled by current modelScale
+          this.currentModelDimensions.width = parseFloat(
+            (newDimensions.width * this.modelScale).toFixed(2),
+          );
+          this.currentModelDimensions.height = parseFloat(
+            (newDimensions.height * this.modelScale).toFixed(2),
+          );
+          this.currentModelDimensions.depth = parseFloat(
+            (newDimensions.depth * this.modelScale).toFixed(2),
+          );
 
+          console.log("ModelDimensions updated:", this.currentModelDimensions);
+
+          // If model is loaded, recalculate scale based on new dimensions
+          if (this.model && this.modelBoundingBox) {
+            this.setupModelBounds();
+            this.applyModelScale();
+          }
+        }
+      },
+      deep: true,
+    },
+  },
+  mounted() {
+    if (this.glbUrl && this.glbUrl !== "") {
+      // Initialize currentModelDimensions from props
+      this.currentModelDimensions = {
+        width: parseFloat(this.modelDimensions.width),
+        height: parseFloat(this.modelDimensions.height),
+        depth: parseFloat(this.modelDimensions.depth),
+      };
+
+      this.$nextTick(() => {
+        this.handleGlbUrlChange();
+        this.load_the_fileData();
+      });
+    }
+  },
 
   beforeUnmount() {
     this.cleanup();
   },
 
   methods: {
-    
-  scaleUp() {
-  if (!this.model || this.modelScale >= this.maxScale) return;
-  this.modelScale = Math.min(this.maxScale, this.modelScale + this.scaleStep);
-  
-  // Update the dimension display
-  this.currentModelDimensions.width = (this.modelDimensions.width * this.modelScale).toFixed(2);
-  this.currentModelDimensions.height = (this.modelDimensions.height * this.modelScale).toFixed(2);
-  this.currentModelDimensions.depth = (this.modelDimensions.depth * this.modelScale).toFixed(2);
-  
-  this.applyModelScale();
-},
+    scaleUp() {
+      if (!this.model || this.modelScale >= this.maxScale) return;
+      this.modelScale = Math.min(
+        this.maxScale,
+        this.modelScale + this.scaleStep,
+      );
 
-  
-scaleDown() {
-  if (!this.model || this.modelScale <= this.minScale) return;
-  this.modelScale = Math.max(this.minScale, this.modelScale - this.scaleStep);
-  
-  // Update the dimension display
-  this.currentModelDimensions.width = (this.modelDimensions.width * this.modelScale).toFixed(2);
-  this.currentModelDimensions.height = (this.modelDimensions.height * this.modelScale).toFixed(2);
-  this.currentModelDimensions.depth = (this.modelDimensions.depth * this.modelScale).toFixed(2);
-  
-  this.applyModelScale();
-},
+      // Update the dimension display
+      this.currentModelDimensions.width = (
+        this.modelDimensions.width * this.modelScale
+      ).toFixed(2);
+      this.currentModelDimensions.height = (
+        this.modelDimensions.height * this.modelScale
+      ).toFixed(2);
+      this.currentModelDimensions.depth = (
+        this.modelDimensions.depth * this.modelScale
+      ).toFixed(2);
 
-applyModelScale() {
-  if (!this.model || !this.modelBoundingBox) return;
+      this.applyModelScale();
+    },
 
-  // Apply the combined scale (base scale * user scale)
-  const finalScale = this.baseModelScale * this.modelScale;
-  this.model.scale.setScalar(finalScale);
+    scaleDown() {
+      if (!this.model || this.modelScale <= this.minScale) return;
+      this.modelScale = Math.max(
+        this.minScale,
+        this.modelScale - this.scaleStep,
+      );
 
-  // Get the current world position before we recalculate
-  const currentWorldPos = this.model.position.clone();
+      // Update the dimension display
+      this.currentModelDimensions.width = (
+        this.modelDimensions.width * this.modelScale
+      ).toFixed(2);
+      this.currentModelDimensions.height = (
+        this.modelDimensions.height * this.modelScale
+      ).toFixed(2);
+      this.currentModelDimensions.depth = (
+        this.modelDimensions.depth * this.modelScale
+      ).toFixed(2);
 
-  // Update bounding box for accurate positioning
-  this.modelBoundingBox.setFromObject(this.model);
-  this.modelSize = this.modelBoundingBox.getSize(new THREE.Vector3());
+      this.applyModelScale();
+    },
 
-  // IMPORTANT: Calculate the model's bottom in LOCAL space (before scaling affected it)
-  // The bounding box min.y is in local space, so we need to account for the actual scale
-  const modelBottomLocal = this.modelBoundingBox.min.y;
-  
-  // Get the floor height at the model's current X, Z position
-  const floorY = this.getFloorHeightAtPosition(currentWorldPos);
+    applyModelScale() {
+      if (!this.model || !this.modelBoundingBox) return;
 
-  // Position the model so its bottom touches the floor
-  // We place the model's origin at: floorHeight - (modelBottomLocal * finalScale)
-  // This ensures the actual bottom of the scaled model sits on the floor
-  const modelBottomWorldOffset = modelBottomLocal * finalScale;
-  this.model.position.y = floorY - modelBottomWorldOffset;
+      // Apply the combined scale (base scale * user scale)
+      const finalScale = this.baseModelScale * this.modelScale;
+      this.model.scale.setScalar(finalScale);
 
-  // Keep X and Z positions unchanged
-  this.model.position.x = currentWorldPos.x;
-  this.model.position.z = currentWorldPos.z;
+      // Get the current world position before we recalculate
+      const currentWorldPos = this.model.position.clone();
 
-  // Update rotation ring size
-  this.updateRotationRingPosition();
-},
+      // Update bounding box for accurate positioning
+      this.modelBoundingBox.setFromObject(this.model);
+      this.modelSize = this.modelBoundingBox.getSize(new THREE.Vector3());
+
+      // IMPORTANT: Calculate the model's bottom in LOCAL space (before scaling affected it)
+      // The bounding box min.y is in local space, so we need to account for the actual scale
+      const modelBottomLocal = this.modelBoundingBox.min.y;
+
+      // Get the floor height at the model's current X, Z position
+      const floorY = this.getFloorHeightAtPosition(currentWorldPos);
+
+      // Position the model so its bottom touches the floor
+      // We place the model's origin at: floorHeight - (modelBottomLocal * finalScale)
+      // This ensures the actual bottom of the scaled model sits on the floor
+      const modelBottomWorldOffset = modelBottomLocal * finalScale;
+      this.model.position.y = floorY - modelBottomWorldOffset;
+
+      // Keep X and Z positions unchanged
+      this.model.position.x = currentWorldPos.x;
+      this.model.position.z = currentWorldPos.z;
+
+      // Update rotation ring size
+      this.updateRotationRingPosition();
+    },
 
     async load_the_fileData() {
       try {
@@ -468,38 +508,39 @@ applyModelScale() {
     //     this.isLoading = false;
     //   }
     // },
-remove3DObjectFromScene() {
-  if (!this.scene) return;
+    remove3DObjectFromScene() {
+      if (!this.scene) return;
 
-  // Remove model
-  if (this.model) {
-    this.scene.remove(this.model);
-    this.model.traverse((child) => {
-      if (child.isMesh) {
-        child.geometry?.dispose();
-        if (child.material?.map) child.material.map.dispose();
-        child.material?.dispose();
+      // Remove model
+      if (this.model) {
+        this.scene.remove(this.model);
+        this.model.traverse((child) => {
+          if (child.isMesh) {
+            child.geometry?.dispose();
+            if (child.material?.map) child.material.map.dispose();
+            child.material?.dispose();
+          }
+        });
+        this.model = null;
       }
-    });
-    this.model = null;
-  }
 
-  // Remove rotation ring
-  if (this.rotationRing) {
-    this.scene.remove(this.rotationRing);
-    this.rotationRing = null;
-    this.rotationArrows = [];
-  }
+      // Remove rotation ring
+      if (this.rotationRing) {
+        this.scene.remove(this.rotationRing);
+        this.rotationRing = null;
+        this.rotationArrows = [];
+      }
 
-  // Optional: hide grid
-  if (this.gridHelper) {
-    this.gridHelper.visible = false;
-  }
+      // Optional: hide grid
+      if (this.gridHelper) {
+        this.gridHelper.visible = false;
+      }
 
-  this.modelLoaded = false;
+      this.modelLoaded = false;
 
-  console.log("✅ 3D object removed from scene");
-},
+      console.log("✅ 3D object removed from scene");
+    },
+
     // Replace your existing renderItem method with this:
     async renderItem() {
       if (!this.model || !this.currentBackgroundTexture) {
@@ -525,7 +566,7 @@ remove3DObjectFromScene() {
         // Create composite by rendering 3D object and blending with background
         const compositeBlob = await this.createCompositeImageBlob(
           bgWidth,
-          bgHeight
+          bgHeight,
         );
 
         this.loadingText = "Creating binary mask...";
@@ -537,7 +578,7 @@ remove3DObjectFromScene() {
         formData.append(
           "composite_image",
           compositeBlob,
-          "composite_image.png"
+          "composite_image.png",
         );
         formData.append("binary_mask", maskBlob, "binary_mask.png");
         formData.append("room_id", roomId);
@@ -563,16 +604,17 @@ remove3DObjectFromScene() {
         }
 
         const result = await response.json();
-        
-// 🔥 REMOVE 3D OBJECT AFTER SUCCESSFUL RENDER
-this.remove3DObjectFromScene();
-
+        console.log("====================================");
+        console.log(result);
+        console.log("====================================");
+        // 🔥 REMOVE 3D OBJECT AFTER SUCCESSFUL RENDER
+        this.remove3DObjectFromScene();
 
         this.$emit("rendered-comfyui-workflow", result.final_output);
 
         console.log(
           "Composite image and binary mask sent successfully:",
-          result
+          result,
         );
         console.log(`Images generated with dimensions: ${bgWidth}x${bgHeight}`);
 
@@ -585,7 +627,6 @@ this.remove3DObjectFromScene();
       }
     },
 
-    
     // Replace your existing renderItem method with this:
     async switchFurniture() {
       if (!this.model || !this.currentBackgroundTexture) {
@@ -595,8 +636,8 @@ this.remove3DObjectFromScene();
 
       try {
         this.isLoading = true;
-        
-this.remove3DObjectFromScene();
+
+        this.remove3DObjectFromScene();
 
         this.loadingText = "Rendering Item...";
 
@@ -619,7 +660,7 @@ this.remove3DObjectFromScene();
           body: formData,
         });
 
-this.remove3DObjectFromScene();
+        this.remove3DObjectFromScene();
 
         if (response.status == 402) {
           const result = await response.json();
@@ -635,7 +676,7 @@ this.remove3DObjectFromScene();
 
         console.log(
           "Composite image and binary mask sent successfully:",
-          result
+          result,
         );
         console.log(`Images generated with dimensions: ${bgWidth}x${bgHeight}`);
 
@@ -680,7 +721,7 @@ this.remove3DObjectFromScene();
       const hemisphereLight = new THREE.HemisphereLight(
         0xffffff,
         0x444444,
-        1.9
+        1.9,
       );
       objectScene.add(hemisphereLight);
 
@@ -889,13 +930,13 @@ this.remove3DObjectFromScene();
       this.floorNormal.set(
         fd.floor_plane.normal[0],
         fd.floor_plane.normal[1],
-        fd.floor_plane.normal[2]
+        fd.floor_plane.normal[2],
       );
 
       this.floorPoint.set(
         fd.floor_plane.center[0],
         fd.floor_plane.center[1],
-        fd.floor_plane.center[2]
+        fd.floor_plane.center[2],
       );
 
       this.floorBounds = {
@@ -906,12 +947,12 @@ this.remove3DObjectFromScene();
       // FIX: Handle missing floor_boundary
       if (fd.floor_boundary) {
         this.floorBoundary = fd.floor_boundary.map(
-          (p) => new THREE.Vector3(p[0], p[1], p[2])
+          (p) => new THREE.Vector3(p[0], p[1], p[2]),
         );
       } else if (fd.floor_mesh && fd.floor_mesh.vertices) {
         // Use floor mesh vertices as boundary if no explicit boundary provided
         this.floorBoundary = fd.floor_mesh.vertices.map(
-          (v) => new THREE.Vector3(v[0], v[1], v[2])
+          (v) => new THREE.Vector3(v[0], v[1], v[2]),
         );
       } else {
         this.floorBoundary = [];
@@ -934,7 +975,7 @@ this.remove3DObjectFromScene();
         fov,
         container.clientWidth / container.clientHeight,
         0.1,
-        1000
+        1000,
       );
 
       this.renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -978,7 +1019,7 @@ this.remove3DObjectFromScene();
           console.warn("Background image failed to load, using fallback");
           this.currentBackgroundTexture = fallbackTexture;
           this.updateBackground(fallbackTexture);
-        }
+        },
       );
     },
 
@@ -1033,7 +1074,7 @@ this.remove3DObjectFromScene();
       const lookAtPoint = new THREE.Vector3(
         this.floorPoint.x,
         floorHeight,
-        this.floorPoint.z - 20 // Look 3 meters ahead
+        this.floorPoint.z - 20, // Look 3 meters ahead
       );
 
       this.controls.target.copy(lookAtPoint);
@@ -1081,7 +1122,7 @@ this.remove3DObjectFromScene();
 
         geometry.setAttribute(
           "position",
-          new THREE.Float32BufferAttribute(positions, 3)
+          new THREE.Float32BufferAttribute(positions, 3),
         );
         geometry.computeVertexNormals();
 
@@ -1110,7 +1151,7 @@ this.remove3DObjectFromScene();
         const up = new THREE.Vector3(0, 1, 0);
         const quaternion = new THREE.Quaternion().setFromUnitVectors(
           up,
-          this.floorNormal
+          this.floorNormal,
         );
         this.floorPlane.quaternion.copy(quaternion);
         this.floorPlane.position.copy(this.floorPoint);
@@ -1120,7 +1161,7 @@ this.remove3DObjectFromScene();
 
       this.dragPlane.setFromNormalAndCoplanarPoint(
         this.floorNormal,
-        this.floorPoint
+        this.floorPoint,
       );
     },
     // Replace your createVisualGrid method with this:
@@ -1139,13 +1180,13 @@ this.remove3DObjectFromScene();
             line.start[2],
             line.end[0],
             line.end[1],
-            line.end[2]
+            line.end[2],
           );
         });
 
         gridGeometry.setAttribute(
           "position",
-          new THREE.Float32BufferAttribute(gridVertices, 3)
+          new THREE.Float32BufferAttribute(gridVertices, 3),
         );
         const gridMaterial = new THREE.LineBasicMaterial({
           color: 0x888888,
@@ -1276,7 +1317,7 @@ this.remove3DObjectFromScene();
           (progress) => {
             if (progress.total > 0) {
               const percentage = Math.round(
-                (progress.loaded / progress.total) * 100
+                (progress.loaded / progress.total) * 100,
               );
               this.loadingText = `Loading Model... ${percentage}%`;
             }
@@ -1286,7 +1327,7 @@ this.remove3DObjectFromScene();
             this.isLoading = false;
             this.modelLoaded = false;
             reject(error);
-          }
+          },
         );
       });
     },
@@ -1342,7 +1383,7 @@ this.remove3DObjectFromScene();
       // Convert to Three.js NDC space (-1 to 1)
       const mouse = new THREE.Vector2(
         screenX * 2 - 1,
-        -(screenY * 2 - 1) // Flip Y axis
+        -(screenY * 2 - 1), // Flip Y axis
       );
 
       this.raycaster.setFromCamera(mouse, this.camera);
@@ -1428,7 +1469,7 @@ this.remove3DObjectFromScene();
       if (this.rotationRing && this.showRotationRing) {
         const arrowIntersects = this.raycaster.intersectObject(
           this.rotationRing,
-          true
+          true,
         );
         if (arrowIntersects.length > 0) {
           const hitPoint = arrowIntersects[0].point.clone();
@@ -1456,7 +1497,7 @@ this.remove3DObjectFromScene();
           this.dragStartMouse.copy(mouse);
           this.dragStartPosition.set(
             this.model.position.x,
-            this.model.position.z
+            this.model.position.z,
           );
           // -----------------------------------------------
           // :white_check_mark: FIX: Keep pointer coordinate locked to same spot
@@ -1466,12 +1507,12 @@ this.remove3DObjectFromScene();
           this.dragPlane = new THREE.Plane();
           this.dragPlane.setFromNormalAndCoplanarPoint(
             new THREE.Vector3(0, 1, 0),
-            hitPoint
+            hitPoint,
           );
           // Store offset between model origin & hit point
           this.dragOffset = new THREE.Vector3().subVectors(
             hitPoint,
-            this.model.position
+            this.model.position,
           );
           // -----------------------------------------------
           return;
@@ -1495,35 +1536,36 @@ this.remove3DObjectFromScene();
       mouse.x = ((clientX - rect.left) / rect.width) * 2 - 1;
       mouse.y = -((clientY - rect.top) / rect.height) * 2 + 1;
       // MODEL DRAGGING
-      
-if (this.isDraggingModel) {
-  this.raycaster.setFromCamera(mouse, this.camera);
-  const worldPoint = new THREE.Vector3();
-  
-  if (this.raycaster.ray.intersectPlane(this.dragPlane, worldPoint)) {
-    worldPoint.sub(this.dragOffset);
-    
-    this.model.position.x = worldPoint.x;
-    this.model.position.z = worldPoint.z;
-    
-    // FIXED: Use the same calculation as applyModelScale
-    const { a, b, c, d } = this.planeEquation;
-    let floorY;
-    if (Math.abs(b) > 0.001) {
-      floorY = -(a * worldPoint.x + c * worldPoint.z + d) / b;
-    } else {
-      floorY = this.floorData.floor_plane.height;
-    }
-    
-    // FIXED: Account for current model scale when positioning
-    const finalScale = this.baseModelScale * this.modelScale;
-    const modelBottomWorldOffset = this.modelBoundingBox.min.y * finalScale;
-    this.model.position.y = floorY - modelBottomWorldOffset;
-    
-    this.updateRotationRingPosition();
-    this.isOnValidFloor = true;
-  }
-}
+
+      if (this.isDraggingModel) {
+        this.raycaster.setFromCamera(mouse, this.camera);
+        const worldPoint = new THREE.Vector3();
+
+        if (this.raycaster.ray.intersectPlane(this.dragPlane, worldPoint)) {
+          worldPoint.sub(this.dragOffset);
+
+          this.model.position.x = worldPoint.x;
+          this.model.position.z = worldPoint.z;
+
+          // FIXED: Use the same calculation as applyModelScale
+          const { a, b, c, d } = this.planeEquation;
+          let floorY;
+          if (Math.abs(b) > 0.001) {
+            floorY = -(a * worldPoint.x + c * worldPoint.z + d) / b;
+          } else {
+            floorY = this.floorData.floor_plane.height;
+          }
+
+          // FIXED: Account for current model scale when positioning
+          const finalScale = this.baseModelScale * this.modelScale;
+          const modelBottomWorldOffset =
+            this.modelBoundingBox.min.y * finalScale;
+          this.model.position.y = floorY - modelBottomWorldOffset;
+
+          this.updateRotationRingPosition();
+          this.isOnValidFloor = true;
+        }
+      }
 
       // ------------------------------------------------------------
       // MODEL ROTATION
@@ -1608,36 +1650,35 @@ if (this.isDraggingModel) {
       this.backgroundScene.add(this.bgMesh);
     },
 
-    
-reset_entire_room() {
-  if (!this.model) return;
+    reset_entire_room() {
+      if (!this.model) return;
 
-  // Reset scale
-  this.modelScale = 1.0;
-  
-  // Reset dimensions to original
-  this.currentModelDimensions = {
-    width: this.modelDimensions.width,
-    height: this.modelDimensions.height,
-    depth: this.modelDimensions.depth
-  };
+      // Reset scale
+      this.modelScale = 1.0;
 
-  const initialPos = this.floorPoint.clone();
-  this.model.position.x = initialPos.x;
-  this.model.position.z = initialPos.z;
+      // Reset dimensions to original
+      this.currentModelDimensions = {
+        width: this.modelDimensions.width,
+        height: this.modelDimensions.height,
+        depth: this.modelDimensions.depth,
+      };
 
-  const floorY = this.getFloorHeightAtPosition(initialPos);
-  
-  const finalScale = this.baseModelScale * this.modelScale;
-  const modelBottomWorldOffset = this.modelBoundingBox.min.y * finalScale;
-  this.model.position.y = floorY - modelBottomWorldOffset;
+      const initialPos = this.floorPoint.clone();
+      this.model.position.x = initialPos.x;
+      this.model.position.z = initialPos.z;
 
-  this.modelRotation.y = 0;
-  this.model.rotation.y = 0;
+      const floorY = this.getFloorHeightAtPosition(initialPos);
 
-  this.applyPerspectiveScaling();
-  this.updateRotationRingPosition();
-},
+      const finalScale = this.baseModelScale * this.modelScale;
+      const modelBottomWorldOffset = this.modelBoundingBox.min.y * finalScale;
+      this.model.position.y = floorY - modelBottomWorldOffset;
+
+      this.modelRotation.y = 0;
+      this.model.rotation.y = 0;
+
+      this.applyPerspectiveScaling();
+      this.updateRotationRingPosition();
+    },
 
     animate() {
       this.animationId = requestAnimationFrame(this.animate);
@@ -1776,7 +1817,7 @@ reset_entire_room() {
   width: 100%;
   height: 100%;
   background: rgba(20, 20, 20, 0.55);
-  backdrop-filter: blur(0.1px); 
+  backdrop-filter: blur(0.1px);
   z-index: 1;
 }
 
@@ -1796,7 +1837,8 @@ reset_entire_room() {
     rgba(0, 102, 255, 0.1) 50%,
     rgba(0, 102, 255, 0) 100%
   );
-  animation: moveWaveLeftToRight 3s linear infinite,
+  animation:
+    moveWaveLeftToRight 3s linear infinite,
     waveFade 3s ease-in-out infinite;
   z-index: 2;
 }

@@ -668,10 +668,10 @@
 
   <!-- Texture Grid -->
   <div>
-    <div className="flex !flex-row flex-wrap gap-8 gap-y-2">
+    <a-row>
       <a-col v-if="textures_available.length > 0" span="4" v-for="(texture, index) in textures_available" 
         :key="index">
-      <div 
+      <div
         style="
           position: relative;
           border-radius: 8px;
@@ -681,7 +681,6 @@
           cursor: pointer;
           margin-left:5px;
           width: 80px; 
-          
           height: 80px; 
           aspect-ratio: 1;
         "
@@ -696,7 +695,6 @@
             width: 100%; 
             height: 100%; 
             object-fit: cover;
-           
           "
         />
 
@@ -718,20 +716,34 @@
             color: #52c41a;
           "
         >
-         <svg xmlns="http://www.w3.org/2000/svg" width="800px" height="800px" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" fill="currentColor" fill-opacity="0.24"/><path d="M8.5 11L10.7929 13.2929C11.1834 13.6834 11.8166 13.6834 12.2071 13.2929L19.5 6" stroke="#52c41a" stroke-width="1.6" stroke-linecap="round"/></svg>
+          ✅
         </div>
 
         <!-- Delete Button - Top Right Corner -->
-       <div
-  class="delete-fab"
-  @click.stop="deleteTexture(index)"
->
-  <DeleteOutlined />
-</div>
-
+        <div 
+          style="
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            z-index: 10;
+          "
+          @click.stop="deleteTexture(index)"
+        >
+          <a-button 
+            type="primary" 
+            danger
+            size="small"
+            shape="circle"
+            style="width: 28px; height: 28px; padding: 0;"
+          >
+            <template #icon>
+              <DeleteOutlined />
+            </template>
+          </a-button>
+        </div>
       </div>
       </a-col>
-    </div>
+    </a-row>
   </div>
 
   <!-- Empty State -->
@@ -3032,30 +3044,6 @@ getQueueStatusColor(status) {
   display: flex;
   gap: 4px;
 }
-
-.delete-fab {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  width: 22px;
-  height: 22px;
-  border-radius: 9999px;
-  background: rgb(242, 15, 15);
-  backdrop-filter: blur(6px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  cursor: pointer;
-  transition: all 0.25s ease;
-  z-index: 10;
-}
-
-.delete-fab:hover {
-  background: rgba(239, 68, 68, 0.9);
-  transform: scale(1.1);
-}
-
 
 .multiview-queue-info {
   margin: 16px 0;
