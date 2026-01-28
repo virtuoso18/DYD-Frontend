@@ -10,17 +10,40 @@
           style="padding:5px;text-align: start;"
         >
           <div class="product">
-            <div class="product-image-container" @click="goto_product_Route(product)">
-              <img
-                :src="this.$store.state.root_media_api + product.product_image"
-                :alt="product.product_title"
-                class="product-image"
-              />
-              <!-- Category Badge -->
-              <div class="category-badge">{{ product.category_name }}</div>
-              <!-- AR Badge -->
-              <div class="ar-badge">AR</div>
-            </div>
+            <div
+  class="product-image-container relative"
+  style="overflow: hidden;"
+  @click="goto_product_Route(product)"
+>
+  <!-- Skeleton -->
+  <div
+    v-if="!imageLoadedMap[product.id]"
+    class="product-skeleton"
+  ></div>
+
+  <!-- Preload image (hidden) -->
+  <img
+    :src="$store.state.root_media_api + product.product_image"
+    style="position:absolute;width:0;height:0;opacity:0;"
+    @load="onProductImageLoad(product.id)"
+    alt=""
+  />
+
+  <!-- Visible image -->
+  <img
+    v-show="imageLoadedMap[product.id]"
+    :src="$store.state.root_media_api + product.product_image"
+    :alt="product.product_title"
+    class="product-image"
+  />
+
+  <!-- Category Badge -->
+  <div class="category-badge">{{ product.category_name }}</div>
+
+  <!-- AR Badge -->
+  <div class="ar-badge">AR</div>
+</div>
+
 
             <a-row>
               <a-col :span="24" style="padding-top:10px;">
@@ -89,8 +112,10 @@ export default {
     products: Object
   },
   data() {
-    return {}
-  },
+  return {
+    imageLoadedMap: {},
+  };
+},
    watch: {
   '$route.params.product_id'(newVal, oldVal) {
     if (newVal !== oldVal) {
@@ -131,6 +156,13 @@ export default {
       console.log('Add product clicked');
       // Handle add product functionality
     },
+
+     onProductImageLoad(id) {
+    this.imageLoadedMap[id] = false;
+    setTimeout(() => {
+      this.imageLoadedMap[id] = true;
+    }, 2000);
+  },
     
     handleProductDetail(product) {
       console.log('Product detail clicked:', product);
@@ -210,6 +242,35 @@ export default {
 .products-list {
   padding-bottom: 20px;
 }
+
+.product-skeleton {
+  width: 100%;
+  height: 100%;
+
+  /* FIXED BOUNDS — REQUIRED */
+  min-height: 180px;
+  max-height: 180px;
+  min-width: 100%;
+  max-width: 100%;
+
+  border-radius: 12px;
+
+  background: linear-gradient(
+    110deg,
+    #e5e7eb 8%,
+    #f9fafb 18%,
+    #e5e7eb 33%
+  );
+  background-size: 200% 100%;
+  animation: product-shimmer 1.6s infinite linear;
+}
+
+@keyframes product-shimmer {
+  to {
+    background-position-x: -200%;
+  }
+}
+
 
 .product-image-container {
   position: relative;

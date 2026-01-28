@@ -74,8 +74,7 @@ border-radius: 4px;
 padding:5px;" @click="selectTexture(item.id)"
 :style="selected_texture===item.id ? 'border:1px solid blue': ''">
          <div class="product-item relative">
-  <div class="product-image relative">
-    
+<div class="product-image relative" style="overflow: hidden;">    
     <!-- Badges on Image -->
     <div class="absolute top-2 left-2 z-10"
          style="background-color: grey;color:white;border-radius:5px;
@@ -91,7 +90,26 @@ padding:5px;" @click="selectTexture(item.id)"
       AR
     </div>
 
-    <img :src="this.$store.state.root_media_api+item.texture_image" :alt="item.title" />
+  <div
+    v-if="!imageLoadedMap[item.id]"
+    class="texture-skeleton"
+  ></div>
+
+  <!-- Preload image -->
+  <img
+    :src="$store.state.root_media_api + item.texture_image"
+    style="position:absolute;width:0;height:0;opacity:0;"
+    @load="onTextureImageLoad(item.id)"
+    alt=""
+  />
+
+  <!-- Visible image -->
+  <img
+    v-show="imageLoadedMap[item.id]"
+    :src="$store.state.root_media_api + item.texture_image"
+    :alt="item.title"
+    class="texture-loaded-image"
+  />
   </div>
 
   <div class="product-info">
@@ -176,6 +194,7 @@ export default {
       loading: false,
       loadingMore: false,
       error: null,
+      imageLoadedMap: {},
       selected_texture: null,
       catalogItems: [],
       showGrid: true,
@@ -217,6 +236,16 @@ export default {
     ? text.slice(0, limit) + '...'
     : text
 },
+
+ onTextureImageLoad(id) {
+    this.imageLoadedMap[id] = false;
+    setTimeout(() => {
+      this.imageLoadedMap[id] = true;
+    }, 1000);
+  },
+
+
+
     async fetchCatalogItems(brand = null, page = 1, isLoadMore = false) {
       if (page === 1 && !isLoadMore) {
         this.loading = true;
@@ -433,6 +462,33 @@ export default {
   gap: 12px;
   flex: 1;
 }
+
+
+.texture-skeleton {
+  width: 100%;
+  height: 240px; /* match your image height */
+  border-radius: 8px;
+  background: linear-gradient(
+    110deg,
+    #e5e7eb 8%,
+    #f9fafb 18%,
+    #e5e7eb 33%
+  );
+  background-size: 200% 100%;
+  animation: texture-shimmer 1.6s infinite linear;
+}
+
+.texture-loaded-image {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+@keyframes texture-shimmer {
+  to { background-position-x: -200%; }
+}
+
 
 .product-container.list-view {
   display: flex;

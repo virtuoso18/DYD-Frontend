@@ -310,19 +310,38 @@
               style="padding: 5px"
             >
               <div class="product">
-                <div class="product-image-container">
-                  <img
-                    :src="getProductImage(product)"
-                    :alt="product.title"
-                    class="product-image"
-                  />
-                  <!-- Category Badge -->
-                  <div class="category-badge">
-                    {{ product.texture_style || "Wall" }}
-                  </div>
-                  <!-- AR Badge -->
-                  <div class="ar-badge">AR</div>
-                </div>
+               <div class="product-image-container" style="position: relative; overflow: hidden;">
+  <!-- Skeleton -->
+  <div
+    v-if="!imageLoadedMap[product.id]"
+    class="texture-product-skeleton"
+  ></div>
+
+  <!-- Preload (uses your getProductImage) -->
+  <img
+    :src="getProductImage(product)"
+    style="position:absolute;width:0;height:0;opacity:0;"
+    @load="onProductImageLoad(product.id)"
+    alt=""
+  />
+
+  <!-- Visible image -->
+  <img
+    v-show="imageLoadedMap[product.id]"
+    :src="getProductImage(product)"
+    :alt="product.title"
+    class="product-image"
+  />
+
+  <!-- Category Badge -->
+  <div class="category-badge">
+    {{ product.texture_style || "Wall" }}
+  </div>
+  
+  <!-- AR Badge -->
+  <div class="ar-badge">AR</div>
+</div>
+
 
                 <a-row>
                   <a-col span="24">
@@ -428,6 +447,8 @@ export default {
       wishlisted: new Set(),
       loading: false,
       loadingColors: false,
+      imageLoadedMap: {},
+
       availableColors: [],
       pagination: {
         current_page: 1,
@@ -504,6 +525,14 @@ export default {
         this.loadingColors = false;
       }
     },
+
+    onProductImageLoad(id) {
+  this.imageLoadedMap[id] = false;
+  setTimeout(() => {
+    this.imageLoadedMap[id] = true;
+  }, 2000);
+},
+
 
     /**
      * Toggle color filter selection
@@ -751,6 +780,25 @@ export default {
   display: flex;
   justify-content: space-between;
 }
+
+.texture-product-skeleton {
+  width: 100%;
+  height: 240px; /* match your product-image height */
+  border-radius: 12px;
+  background: linear-gradient(
+    110deg,
+    #e5e7eb 8%,
+    #f9fafb 18%,
+    #e5e7eb 33%
+  );
+  background-size: 200% 100%;
+  animation: product-shimmer 1.6s infinite linear;
+}
+
+@keyframes product-shimmer {
+  to { background-position-x: -200%; }
+}
+
 
 .product {
   padding: 10px;

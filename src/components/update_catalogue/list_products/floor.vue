@@ -78,9 +78,30 @@ padding:5px;
 :style="selected_texture===item.id ? 'border:1px solid blue': ''">
           <div class="product-item">
 
-            <div class="product-image">
-              <img :src="this.$store.state.root_media_api+item.texture_image" :alt="item.title" />
-            </div>
+           <div class="product-image" style="position: relative; overflow: hidden;">
+  <!-- Skeleton -->
+  <div
+    v-if="!imageLoadedMap[item.id]"
+    class="texture-image-skeleton"
+  ></div>
+
+  <!-- Preload image -->
+  <img
+    :src="$store.state.root_media_api + item.texture_image"
+    style="position:absolute;width:0;height:0;opacity:0;"
+    @load="onTextureImageLoad(item.id)"
+    alt=""
+  />
+
+  <!-- Visible image -->
+  <img
+    v-show="imageLoadedMap[item.id]"
+    :src="$store.state.root_media_api + item.texture_image"
+    :alt="item.title"
+    class="texture-image"
+  />
+</div>
+
             <div class="product-info">
               <div style="display:flex;justify-content: space-between;" class="">
                 <div style="background-color: grey;color :white;border-radius:5px;padding-left:5px;padding-right:5px;padding-top:1px;height:22px;font-size:12px">
@@ -159,6 +180,7 @@ export default {
       loading: false,
       loadingMore: false,
       error: null,
+      imageLoadedMap: {},
       catalogItems: [],
       showGrid: true,
       currentPage: 1,
@@ -196,6 +218,16 @@ export default {
     ? text.slice(0, limit) + '...'
     : text
 },
+
+ onTextureImageLoad(id) {
+    this.imageLoadedMap[id] = false;
+    setTimeout(() => {
+      this.imageLoadedMap[id] = true;
+    }, 1000);
+  },
+
+
+
     async fetchCatalogItems(brand = null, page = 1, isLoadMore = false) {
       if (page === 1 && !isLoadMore) {
         this.loading = true;
@@ -433,6 +465,37 @@ export default {
   grid-template-columns: 1fr 1fr;
   gap: 12px;
 }
+
+
+.texture-image-skeleton {
+  width: 100%;
+  height: 200px; /* adjust to match your product-image height */
+  border-radius: 8px;
+  background: linear-gradient(
+    110deg,
+    #e5e7eb 8%,
+    #f9fafb 18%,
+    #e5e7eb 33%
+  );
+  background-size: 200% 100%;
+  animation: texture-shimmer 1.6s infinite linear;
+}
+
+@keyframes texture-shimmer {
+  to {
+    background-position-x: -200%;
+  }
+}
+
+.texture-image {
+  width: 100%;
+  height: 200px; /* match skeleton height */
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+
+
 
 .filter-btn {
   padding: 3px;

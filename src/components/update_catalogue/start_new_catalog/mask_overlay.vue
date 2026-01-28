@@ -5,19 +5,22 @@
     <h2 class="text-md font-bold italic pl-4" style="font-size:12px; margin: 0;text-align: start;">{{ title }}</h2>
     <div class="image-wrapper">
       <!-- Canvas Section -->
-      <div class="canvas-section">
-        <!-- Binary Mask Overlay Canvas -->
-        <canvas
-          ref="maskCanvas"
-          class="mask-overlay"
-          :style="{
-            cursor: 'crosshair',
-            display: 'block',
-            width: '100%',
-            height: 'auto',
-          }"
-        ></canvas>
-      </div>
+     <div class="canvas-section">
+  <!-- Skeleton Overlay -->
+  <div 
+    v-if="!imagesLoaded" 
+    class="canvas-skeleton-overlay"
+    style="position:absolute;top:0;left:0;right:0;bottom:0;z-index:5;"
+  ></div>
+  
+  <!-- Your canvas (unchanged) -->
+  <canvas
+    ref="maskCanvas"
+    class="mask-overlay"
+    :style="{ cursor: 'crosshair', display: 'block', width: '100%', height: 'auto' }"
+  ></canvas>
+</div>
+
       <!-- <button
         @click="removeObject(index)"
         class="p-2 hover:bg-red-100 text-red-600 rounded-lg transition-colors bg-white absolute right-4 bottom-4 cursor-pointer"
@@ -77,6 +80,7 @@ export default {
     return {
       maskOpacity: 1,
       baseImage: null,
+      imagesLoaded: false,
       maskImage: null,
       canvasWidth: 800,
       canvasHeight: 600,
@@ -103,36 +107,33 @@ export default {
     window.removeEventListener("resize", this.handleResize);
   },
   methods: {
-    loadImages() {
-      // Load base image
-      const baseImg = new Image();
-      baseImg.crossOrigin = "anonymous";
-      baseImg.src = `${this.$store.state.root_media_api}${this.selectedImage.image}`;
-      console.log("image :", `${this.selectedImage.image}`);
-
-      baseImg.onload = () => {
-        this.baseImage = baseImg;
+     loadImages() {
+    this.imagesLoaded = false; // ⬅️ SHOW SKELETON
+    
+    const baseImg = new Image();
+    baseImg.onload = () => {
+      this.baseImage = baseImg;
+      this.checkImagesLoaded(); // ⬅️ CHECK BOTH
+    };
+    baseImg.src = `${this.$store.state.root_media_api}${this.selectedImage.image}`;
+    
+    const maskImg = new Image();
+    maskImg.onload = () => {
+      this.maskImage = maskImg;
+      this.checkImagesLoaded(); // ⬅️ CHECK BOTH
+    };
+    maskImg.src = `${this.$store.state.root_api}${this.maskPath}`;
+  },
+  
+  checkImagesLoaded() {
+    if (this.baseImage && this.maskImage) {
+      this.$nextTick(() => {
+        this.imagesLoaded = true; // ⬅️ HIDE SKELETON
         this.setupCanvas();
-      };
-
-      baseImg.onerror = (e) => {
-        console.error("Failed to load base image:", e);
-      };
-
-      // Load mask image
-      const maskImg = new Image();
-      maskImg.crossOrigin = "anonymous";
-      maskImg.src = `${this.$store.state.root_api}${this.maskPath}`;
-
-      maskImg.onload = () => {
-        this.maskImage = maskImg;
         this.drawOverlay();
-      };
-
-      maskImg.onerror = (e) => {
-        console.error("Failed to load mask image:", e);
-      };
-    },
+      });
+    }
+  },
 
     setupCanvas() {
       if (!this.$refs.maskCanvas || !this.baseImage) {
@@ -298,6 +299,25 @@ export default {
   display: block;
   /* border-radius: 8px; */
 }
+
+.canvas-skeleton-overlay {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  background: linear-gradient(
+    110deg,
+    #e5e7eb 8%,
+    #f9fafb 18%,
+    #e5e7eb 33%
+  );
+  background-size: 200% 100%;
+  animation: product-shimmer 1.6s infinite linear;
+}
+
+@keyframes product-shimmer {
+  to { background-position-x: -200%; }
+}
+
 
 .controls {
   position: absolute;

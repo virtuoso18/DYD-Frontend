@@ -5,11 +5,30 @@
   >
 
     <!-- Image + tags -->
-<div 
+<div
   class="relative rounded-xl overflow-hidden"
   :style="{ width: imageWidth, height: imageHeight }"
 >
-      <img :src="image" class="w-full h-full object-cover" />
+  <!-- Skeleton -->
+  <div
+    v-if="!imageLoadedMap[image]"
+    class="hero-skeleton"
+  ></div>
+
+  <!-- Preload image -->
+  <img
+    :src="image"
+    style="position:absolute;width:0;height:0;opacity:0;"
+    @load="onImageLoad(image)"
+    alt=""
+  />
+
+  <!-- Visible image -->
+  <img
+    v-show="imageLoadedMap[image]"
+    :src="image"
+    class="w-full h-full object-cover"
+  />
 
       <!-- Tags -->
       <div class="absolute top-3 left-3 flex gap-1 sm:gap-2">
@@ -124,6 +143,13 @@
 export default {
   name: "DesignCard",
 
+  data() {
+  return {
+    imageLoadedMap: {},
+  }
+},
+
+
   props: {
     image: String,
     avatar: String,
@@ -144,6 +170,13 @@ export default {
       if (num >= 1000) return (num / 1000).toFixed(1) + "k";
       return num;
     },
+
+     onImageLoad(key) {
+    this.imageLoadedMap[key] = false
+    setTimeout(() => {
+      this.imageLoadedMap[key] = true
+    }, 8000)
+  },
   
   }
 
@@ -151,4 +184,30 @@ export default {
 </script>
 
 <style scoped>
+
+.hero-skeleton {
+  width: 100%;
+  height: 100%;
+  min-height: 240px;
+  max-height: 240px;
+  min-width: 240px;
+  max-width: 340px;
+  border-radius: 8px;
+
+  background: linear-gradient(
+    110deg,
+    #e5e7eb 8%,
+    #f9fafb 18%,
+    #e5e7eb 33%
+  );
+  background-size: 200% 100%;
+  animation: hero-shimmer 1.6s infinite linear;
+}
+
+@keyframes hero-shimmer {
+  to {
+    background-position-x: -200%;
+  }
+}
+
 </style>

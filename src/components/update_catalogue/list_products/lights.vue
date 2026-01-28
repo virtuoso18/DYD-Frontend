@@ -90,9 +90,30 @@ border-radius: 4px;
 padding:5px;"
             :style="selected_light===item.id ? 'border:1px solid blue': ''">
             <div class="product-item">
-              <div class="product-image">
-                <img :src="this.$store.state.root_media_api + item.primary_image" :alt="item.name" />
-              </div>
+            <div class="product-image" style="position: relative; overflow: hidden;">
+  <!-- Skeleton -->
+  <div
+    v-if="!imageLoadedMap[item.id]"
+    class="catalog-product-skeleton"
+  ></div>
+
+  <!-- Preload -->
+  <img
+    :src="$store.state.root_media_api + item.primary_image"
+    style="position:absolute;width:0;height:0;opacity:0;"
+    @load="onProductImageLoad(item.id)"
+    alt=""
+  />
+
+  <!-- Visible image -->
+  <img
+    v-show="imageLoadedMap[item.id]"
+    :src="$store.state.root_media_api + item.primary_image"
+    :alt="item.name"
+    class="catalog-product-image"
+  />
+</div>
+
               <div class="product-info">
                 <div style="display:flex;justify-content: space-between;" class="">
                   <div style="background-color: grey;color :white;border-radius:5px;padding-left:5px;padding-right:5px;padding-top:1px;height:22px;font-size:12px">
@@ -176,6 +197,8 @@ export default {
       loading: false,
       loadingMore: false,
       error: null,
+      imageLoadedMap: {},
+
       catalogItems: [],
       showGrid: true,
       currentPage: 1,
@@ -217,6 +240,16 @@ export default {
     ? text.slice(0, limit) + '...'
     : text
 },
+
+onProductImageLoad(id) {
+  this.imageLoadedMap[id] = false;
+  setTimeout(() => {
+    this.imageLoadedMap[id] = true;
+  }, 1000);
+},
+
+
+
     async fetchLights(brand = null, page = 1, isLoadMore = false) {
       if (page === 1 && !isLoadMore) {
         this.loading = true;
@@ -482,6 +515,34 @@ export default {
   /* box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12); */
   /* transform: translateY(-2px); */
 }
+
+.catalog-product-skeleton {
+  width: 100%;
+  height: 280px; /* matches your card height from screenshot */
+  border-radius: 12px;
+  background: linear-gradient(
+    110deg,
+    #e5e7eb 8%,
+    #f9fafb 18%,
+    #e5e7eb 33%
+  );
+  background-size: 200% 100%;
+  animation: catalog-shimmer 1.6s infinite linear;
+}
+
+.catalog-product-image {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+@keyframes catalog-shimmer {
+  to { background-position-x: -200%; }
+}
+
+
+
 
 .list-view .product-item {
   display: flex;
