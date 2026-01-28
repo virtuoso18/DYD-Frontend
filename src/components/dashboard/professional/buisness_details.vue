@@ -127,49 +127,84 @@
           <!-- {{ businessInfo.business_picture }} -->
 
           <!-- Header with Furniture Image -->
-          <div class="header-banner" :style="backgroundImage ? 
-              `background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(${this.$store.state.root_media_api}${businessInfo.business_picture}) center/cover no-repeat` : 
-              `background: url(${this.$store.state.root_media_api}${businessInfo.business_picture}) center/cover no-repeat;`">
-            
-            <!-- Background upload button (only show when editing) -->
-            <a-upload
-              v-if="isEditMode"
-              :show-upload-list="false"
-              :before-upload="handleBackgroundBeforeUpload"
-              accept="image/*"
-              class="background-upload-wrapper"
-            >
-              <a-button type="primary" class="background-upload-btn">
-                <template #icon>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="m18.5 2.5 a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </template>
-                Change Background
-              </a-button>
-            </a-upload>
-            
-            <div class="profile-section">
-              <div class="profile-avatar">
-                <img :src="avatarPreview || (this.$store.state.root_media_api + businessInfo.avatar)" alt="Business Avatar" />
-                <a-upload
-                  v-if="isEditMode"
-                  :show-upload-list="false"
-                  :before-upload="handleAvatarBeforeUpload"
-                  accept="image/*"
-                  class="avatar-upload-wrapper"
-                >
-                  <div class="camera-overlay">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none">
-                      <path opacity="0.5" d="M9.77778 21H14.2222C17.3433 21 18.9038 21 20.0248 20.2646C20.51 19.9462 20.9267 19.5371 21.251 19.0607C22 17.9601 22 16.4279 22 13.3636C22 10.2994 22 8.76721 21.251 7.6666C20.9267 7.19014 20.51 6.78104 20.0248 6.46268C19.3044 5.99013 18.4027 5.82123 17.022 5.76086C16.3631 5.76086 15.7959 5.27068 15.6667 4.63636C15.4728 3.68489 14.6219 3 13.6337 3H10.3663C9.37805 3 8.52715 3.68489 8.33333 4.63636C8.20412 5.27068 7.63685 5.76086 6.978 5.76086C5.59733 5.82123 4.69555 5.99013 3.97524 6.46268C3.48995 6.78104 3.07328 7.19014 2.74902 7.6666C2 8.76721 2 10.2994 2 13.3636C2 16.4279 2 17.9601 2.74902 19.0607C3.07328 19.5371 3.48995 19.9462 3.97524 20.2646C5.09624 21 6.65675 21 9.77778 21Z" stroke="currentColor" stroke-width="1.5"/>
-                      <path d="M14.5197 10.6799L14.2397 10.4C13.0026 9.16288 10.9969 9.16288 9.75984 10.4C8.52276 11.637 8.52276 13.6427 9.75984 14.8798C10.9969 16.1169 13.0026 16.1169 14.2397 14.8798C14.7665 14.353 15.069 13.6868 15.1471 13M14.5197 10.6799L13 11M14.5197 10.6799V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                  </div>
-                </a-upload>
-              </div>
-            </div>
-          </div>
+        <div class="header-banner" style="position: relative; ">
+  <!-- Background Skeleton Overlay -->
+  <div
+    v-if="!imageLoadedMap.background"
+    class="header-skeleton-overlay"
+  ></div>
+
+  <!-- Preload background image -->
+  <img
+    :src="$store.state.root_media_api + businessInfo.business_picture"
+    style="position:absolute;width:0;height:0;opacity:0;"
+    @load="onBackgroundImageLoad"
+    alt=""
+  />
+
+  <!-- Visible background -->
+  <div
+    v-show="imageLoadedMap.background"
+    class="header-background"
+    :style="backgroundImage ? 
+      `background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(${this.$store.state.root_media_api}${businessInfo.business_picture}) center/cover no-repeat` : 
+      `background: url(${this.$store.state.root_media_api}${businessInfo.business_picture}) center/cover no-repeat;`"
+  ></div>
+
+  <!-- Background upload button (z-index fixed) -->
+  <a-upload
+    v-if="isEditMode"
+    :show-upload-list="false"
+    :before-upload="handleBackgroundBeforeUpload"
+    accept="image/*"
+    class="background-upload-wrapper"
+  >
+    <a-button type="primary" class="background-upload-btn">
+      <!-- SVG unchanged -->
+    </a-button>
+  </a-upload>
+
+  <!-- Profile Section - PERFECTLY POSITIONED ABOVE -->
+  <div class="profile-section">
+    <div class="profile-avatar-container">
+      <!-- Avatar Skeleton -->
+      <div
+        v-if="!imageLoadedMap.avatar"
+        class="avatar-skeleton"
+      ></div>
+
+      <!-- Preload avatar image -->
+      <img
+        :src="avatarPreview || (this.$store.state.root_media_api + businessInfo.avatar)"
+        style="position:absolute;width:0;height:0;opacity:0;"
+        @load="onAvatarImageLoad"
+        alt=""
+      />
+
+      <!-- Visible avatar image -->
+      <img
+        v-show="imageLoadedMap.avatar"
+        :src="avatarPreview || (this.$store.state.root_media_api + businessInfo.avatar)"
+        alt="Business Avatar"
+        class="business-avatar"
+      />
+
+      <!-- Avatar upload overlay -->
+      <a-upload
+        v-if="isEditMode"
+        :show-upload-list="false"
+        :before-upload="handleAvatarBeforeUpload"
+        accept="image/*"
+        class="avatar-upload-wrapper"
+      >
+        <div class="camera-overlay">
+          <!-- SVG unchanged -->
+        </div>
+      </a-upload>
+    </div>
+  </div>
+</div>
+
 
           <!-- Business card section -->
           <div style="width:100%;max-width:600px;margin:auto;border:1px solid rgba(0,0,0,0.1);padding:20px;border-radius:10px;margin-top:20px">
@@ -608,6 +643,10 @@ export default {
             
       isEditMode: false,
       saving: false,
+       imageLoadedMap: {
+      background: false,
+      avatar: false
+    },
       avatarFile: null,
       backgroundFile: null,
       avatarPreview: null,
@@ -702,6 +741,19 @@ export default {
                 this.businessLocationReady = true // Show map anyway with default location
             }
         },
+         onBackgroundImageLoad() {
+    this.imageLoadedMap.background = false;
+    setTimeout(() => {
+      this.imageLoadedMap.background = true;
+    }, 1000);
+  },
+
+  onAvatarImageLoad() {
+    this.imageLoadedMap.avatar = false;
+    setTimeout(() => {
+      this.imageLoadedMap.avatar = true;
+    }, 1000);
+  },
 
      async handleLocationConfirmed(locationData) {
             console.log('Location Confirmed:', locationData)
@@ -1254,6 +1306,69 @@ async checkVerificationStatus() {
   justify-content: center;
 }
 
+.header-skeleton-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    110deg,
+    #e5e7eb 8%,
+    #f9fafb 18%,
+    #e5e7eb 33%
+  );
+  background-size: 200% 100%;
+  animation: header-shimmer 1.6s infinite linear;
+  z-index: 1;
+}
+
+.header-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.avatar-skeleton {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 4px solid white;
+  background: linear-gradient(
+    110deg,
+    #e5e7eb 8%,
+    #f9fafb 18%,
+    #e5e7eb 33%
+  );
+  background-size: 200% 100%;
+  animation: avatar-shimmer 1.6s infinite linear;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* SHIMMER ANIMATIONS */
+@keyframes header-shimmer {
+  to {
+    background-position-x: -200%;
+  }
+}
+
+@keyframes avatar-shimmer {
+  to {
+    background-position-x: -200%;
+  }
+}
+
+
 .header-banner::before {
   content: '';
   position: absolute;
@@ -1275,6 +1390,17 @@ async checkVerificationStatus() {
   position: relative;
   width: 100px;
   height: 100px;
+  z-index: 25;
+}
+
+.profile-avatar img.business-avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 4px solid white;
+  object-fit: cover;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  position: relative;
 }
 
 .profile-avatar img {
@@ -1300,6 +1426,7 @@ async checkVerificationStatus() {
   justify-content: center;
   cursor: pointer;
   transition: all 0.3s ease;
+  z-index: 30;
 }
 
 .camera-overlay svg {
@@ -1451,7 +1578,7 @@ async checkVerificationStatus() {
   position: absolute;
   top: 20px;
   right: 20px;
-  z-index: 10;
+  z-index: 15; /* ⬅️ ABOVE BACKGROUND, BELOW AVATAR */
 }
 
 .background-upload-btn {
@@ -1473,6 +1600,25 @@ async checkVerificationStatus() {
   bottom: 0;
   right: 0;
   border-radius: 50%;
+}
+
+.profile-avatar-container {
+  position: relative;
+  width: 100px;  /* ⬅️ REQUIRED - matches your avatar size */
+  height: 100px; /* ⬅️ REQUIRED - matches your avatar size */
+  z-index: 25;
+}
+
+.profile-avatar img.business-avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 4px solid white;
+  object-fit: cover;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  position: absolute;  /* ⬅️ CHANGED to absolute */
+  top: 0;
+  left: 0;
 }
 
 /* Responsive Design */

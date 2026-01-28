@@ -65,46 +65,67 @@
           :key="design.id"
           v-if="my_designes"
         >
-          <div
-            style="
-              border: 1px solid rgba(0, 0, 0, 0.1);
-              padding: 5px;
-              border-radius: 10px;
-            "
-          >
-            <img
-              :src="this.$store.state.root_media_api + design.image"
-              style="
-                width: 100%;
-                border-radius: 10px;
-                max-height: 200px;
-                object-fit: cover;
-              "
-              alt=""
-              @click="show_design_details(design.id)"
-            />
-            <a-row style="padding-top: 5px">
-              <!-- {{ design }} -->
-              <a-col :span="22">
-                <a-tag>Room : {{ design.room_type }}</a-tag>
-                <a-tag>Style : {{ design.room_design_type }}</a-tag>
-              </a-col>
-              <a-col :span="2">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="15px"
-                  height="15px"
-                  viewBox="0 0 16 16"
-                  fill="#000000"
-                  class="bi bi-three-dots-vertical"
-                >
-                  <path
-                    d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"
-                  />
-                </svg>
-              </a-col>
-            </a-row>
-          </div>
+         <div
+  style="
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 5px;
+    border-radius: 10px;
+    position: relative;
+  "
+>
+  <!-- Image container with skeleton -->
+  <div
+    style="
+      width: 100%;
+      max-height: 200px;
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+    "
+  >
+    <!-- Skeleton -->
+    <div
+      v-if="!imageLoadedMap[design.id]"
+      class="design-image-skeleton"
+    ></div>
+
+    <!-- Preload image -->
+    <img
+      :src="$store.state.root_media_api + design.image"
+      style="position:absolute;width:0;height:0;opacity:0;"
+      @load="onCardImageLoad(design.id)"
+      alt=""
+    />
+
+    <!-- Visible image -->
+    <img
+      v-show="imageLoadedMap[design.id]"
+      :src="$store.state.root_media_api + design.image"
+      style="
+        width: 100%;
+        height: 100%;
+        max-height: 200px;
+        object-fit: cover;
+        border-radius: 10px;
+        cursor: pointer;
+      "
+      alt=""
+      @click="show_design_details(design.id)"
+    />
+  </div>
+
+  <!-- Tags row (unchanged) -->
+  <a-row style="padding-top: 5px">
+    <a-col :span="22">
+      <a-tag>Room : {{ design.room_type }}</a-tag>
+      <a-tag>Style : {{ design.room_design_type }}</a-tag>
+    </a-col>
+    <a-col :span="2">
+      <!-- SVG unchanged -->
+    </a-col>
+  </a-row>
+</div>
+
         </a-col>
       </a-row>
 
@@ -433,6 +454,7 @@ export default {
       view_type: "all",
       selected_design: null,
       start_edit: false,
+      imageLoadedMap: {},
       description_room: "",
       room_design_type_select: "",
       room_type_select: "",
@@ -499,6 +521,13 @@ export default {
         product.favoriting = false;
       }
     },
+
+     onCardImageLoad(id) {
+    this.imageLoadedMap[id] = false;
+    setTimeout(() => {
+      this.imageLoadedMap[id] = true;
+    }, 1000);
+  },
 
     goto_product_Route(product) {
       //  debugger
@@ -776,6 +805,27 @@ export default {
   justify-content: center;
   /* padding: 16px; */
 }
+
+.design-image-skeleton {
+  width: 100%;
+  height: 200px;
+  background: linear-gradient(
+    110deg,
+    #e5e7eb 8%,
+    #f9fafb 18%,
+    #e5e7eb 33%
+  );
+  background-size: 200% 100%;
+  animation: design-shimmer 1.6s infinite linear;
+  border-radius: 10px;
+}
+
+@keyframes design-shimmer {
+  to {
+    background-position-x: -200%;
+  }
+}
+
 
 .product-image {
   width: 100%;

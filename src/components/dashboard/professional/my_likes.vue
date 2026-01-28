@@ -56,17 +56,37 @@
                 style="padding: 5px"
               >
                 <div class="product">
-                  <div
-                    class="product-image-container"
-                    @click="goto_product_Route(product)"
-                  >
-                    <img
-                      :src="$store.state.root_media_api + product.image"
-                      :alt="product.name"
-                      class="product-image"
-                    />
-                    <div class="category-badge">{{ product.category }}</div>
-                  </div>
+                 <div
+  class="product-image-container"
+  @click="goto_product_Route(product)"
+  style="position: relative; overflow: hidden;"
+>
+  <!-- Skeleton -->
+  <div
+    v-if="!imageLoadedMap[product.id]"
+    class="product-image-skeleton"
+  ></div>
+
+  <!-- Preload image -->
+  <img
+    :src="$store.state.root_media_api + product.image"
+    style="position:absolute;width:0;height:0;opacity:0;"
+    @load="onProductImageLoad(product.id)"
+    alt=""
+  />
+
+  <!-- Visible image -->
+  <img
+    v-show="imageLoadedMap[product.id]"
+    :src="$store.state.root_media_api + product.image"
+    :alt="product.name"
+    class="product-image"
+  />
+
+  <!-- Category badge (stays on top) -->
+  <div class="category-badge">{{ product.category }}</div>
+</div>
+
 
                   <a-row>
                         <a-col span="24">
@@ -659,6 +679,7 @@ export default {
       products: [],
       rooms: [],
       roomModalVisible: false,
+      imageLoadedMap: {},
       selectedRoom: null,
       community_posts: [],
       tabRefreshKey: 0,
@@ -731,6 +752,13 @@ export default {
       }
       this.tabRefreshKey++; // Force re-render
     },
+
+     onProductImageLoad(id) {
+    this.imageLoadedMap[id] = false;
+    setTimeout(() => {
+      this.imageLoadedMap[id] = true;
+    }, 1000);
+  },
 
     viewRoom(room) {
       // room object already looks like:
@@ -1036,6 +1064,37 @@ export default {
   display: flex;
   justify-content: space-between;
 }
+
+.product-image-skeleton {
+  width: 100%;
+  height: 240px; /* match your product-image height */
+  border-radius: 12px;
+  background: linear-gradient(
+    110deg,
+    #e5e7eb 8%,
+    #f9fafb 18%,
+    #e5e7eb 33%
+  );
+  background-size: 200% 100%;
+  animation: product-shimmer 1.6s infinite linear;
+}
+
+@keyframes product-shimmer {
+  to {
+    background-position-x: -200%;
+  }
+}
+
+/* Ensure category badge stays on top */
+.category-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 10;
+}
+
+
+
 .product {
   padding: 10px;
   margin-bottom: 10px;

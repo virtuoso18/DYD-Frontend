@@ -7,9 +7,19 @@
 <div class=" sm:bg-white sm:rounded-[24px] sm:border border-[#e9ecef] overflow-hidden sm:h-[800px]">
           <!-- Wavy Background Header -->
 <div
-  class="wavy-header sm:rounded-tl-[24px] sm:rounded-tr-[24px] border w-full h-[200px]"
+  class="wavy-header sm:rounded-tl-[24px] sm:rounded-tr-[24px]  w-full h-[200px] relative "
+  :class="!wavyHeaderLoaded ? 'header-skeleton' : ''"
   :style="`background: url(${this.$store.state.root_media_api + profile.background_picture}) center/cover no-repeat;`"
->            <!-- Background Edit Button -->
+>          <!-- Background Edit Button -->
+ <img
+    v-if="profile.background_picture"
+    :src="$store.state.root_media_api + profile.background_picture"
+    style="position:absolute;width:0;height:0;opacity:0;"
+     class="!z-999"
+    @load="onWavyHeaderLoad"
+    alt=""
+  />
+
             <a-button 
   type="primary" 
   shape="circle" 
@@ -27,16 +37,36 @@
             
             <!-- Profile Avatar in Header -->
             <div class="header-profile">
-              <div class="header-avatar">
-                <img :src="this.$store.state.root_media_api+profile.profile_picture" alt="Profile Picture" />
-                <a-button  v-if="isEditing" type="primary" shape="circle" class="camera-icon" @click="handleCameraClick">
-                  <!-- SVG -->
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 24 24" fill="none">
-                    <path opacity="0.5" d="M9.77778 21H14.2222C17.3433 21 18.9038 21 20.0248 20.2646C20.51 19.9462 20.9267 19.5371 21.251 19.0607C22 17.9601 22 16.4279 22 13.3636C22 10.2994 22 8.76721 21.251 7.6666C20.9267 7.19014 20.51 6.78104 20.0248 6.46268C19.3044 5.99013 18.4027 5.82123 17.022 5.76086C16.3631 5.76086 15.7959 5.27068 15.6667 4.63636C15.4728 3.68489 14.6219 3 13.6337 3H10.3663C9.37805 3 8.52715 3.68489 8.33333 4.63636C8.20412 5.27068 7.63685 5.76086 6.978 5.76086C5.59733 5.82123 4.69555 5.99013 3.97524 6.46268C3.48995 6.78104 3.07328 7.19014 2.74902 7.6666C2 8.76721 2 10.2994 2 13.3636C2 16.4279 2 17.9601 2.74902 19.0607C3.07328 19.5371 3.48995 19.9462 3.97524 20.2646C5.09624 21 6.65675 21 9.77778 21Z" stroke="CurrentColor" stroke-width="2.5"/>
-                    <path d="M14.5197 10.6799L14.2397 10.4C13.0026 9.16288 10.9969 9.16288 9.75984 10.4C8.52276 11.637 8.52276 13.6427 9.75984 14.8798C10.9969 16.1169 13.0026 16.1169 14.2397 14.8798C14.7665 14.353 15.069 13.6868 15.1471 13M14.5197 10.6799L13 11M14.5197 10.6799V9" stroke="CurrentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </a-button>
-              </div>
+             <div class="header-avatar" style="position: relative;">
+  <!-- Skeleton -->
+  <div
+    v-if="!profileAvatarLoaded"
+    class="profile-avatar-skeleton"
+  ></div>
+
+  <!-- Preload image -->
+  <img
+    :src="$store.state.root_media_api + profile.profile_picture"
+    style="position:absolute;width:0;height:0;opacity:0;"
+    class="profile-avatar-img !z-1001"
+    @load="onProfileAvatarLoad"
+    alt=""
+  />
+
+  <!-- Visible image -->
+  <img
+    v-show="profileAvatarLoaded"
+    :src="$store.state.root_media_api + profile.profile_picture"
+    class="profile-avatar-img !z-1001 "
+    alt="Profile Picture"
+  />
+
+  <!-- Camera button (stays on top) -->
+  <a-button v-if="isEditing" type="primary" shape="circle" class="camera-icon" @click="handleCameraClick">
+    <!-- SVG unchanged -->
+  </a-button>
+</div>
+
             </div>
           </div>
           
@@ -175,6 +205,8 @@ export default {
     return {
       isEditing: false,
       loading: false,
+      profileAvatarLoaded: false, 
+      wavyHeaderLoaded: false, 
       user_info: { ...this.user }, // Create a copy to avoid mutating props directly
       selectedProfilePicture: null,
       selectedBackgroundPicture: null
@@ -200,6 +232,20 @@ export default {
         this.isEditing = !this.isEditing;
       }
     },
+
+     onProfileAvatarLoad() {
+    this.profileAvatarLoaded = false;
+    setTimeout(() => {
+      this.profileAvatarLoaded = true;
+    }, 1000); // 1s skeleton
+  },
+
+   onWavyHeaderLoad() {
+    this.wavyHeaderLoaded = false;
+    setTimeout(() => {
+      this.wavyHeaderLoaded = true;
+    }, 1000); // 1s skeleton
+  },
 
     async updateProfile() {
       this.loading = true;
@@ -444,6 +490,43 @@ export default {
   box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
+.profile-avatar-skeleton {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: linear-gradient(
+    110deg,
+    #e0e7ff 8%,
+    #f8fafc 18%,
+    #e0e7ff 33%
+  );
+  background-size: 200% 100%;
+  animation: profile-shimmer 1.6s infinite linear;
+}
+
+.profile-avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  transition: opacity 0.3s ease;
+}
+
+@keyframes profile-shimmer {
+  to {
+    background-position-x: -200%;
+  }
+}
+
+/* Ensure camera stays on top */
+.camera-icon {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  z-index: 10;
+}
+
+
 
 .wave-svg {
   position: absolute;
@@ -491,6 +574,32 @@ export default {
   cursor: pointer;
   transition: all 0.3s ease;
 }
+
+.header-skeleton {
+  position: relative;
+}
+
+.header-skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    110deg,
+    #e5e7eb 8%,
+    #f9fafb 18%,
+    #e5e7eb 33%
+  );
+  background-size: 200% 100%;
+  animation: header-shimmer 1.6s infinite linear;
+  z-index: 5;
+}
+
+@keyframes header-shimmer {
+  to {
+    background-position-x: -200%;
+  }
+}
+
 
 .camera-icon:hover {
   background: #9ac4fe;

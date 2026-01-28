@@ -32,12 +32,32 @@
           </button>
 
           <div class="user-info">
-            <div class="user-avatar">
-              <img
-                :src="this.$store.state.root_media_api + profile.profile_picture"
-                alt="John Doe"
-              />
-            </div>
+           <div class="user-avatar">
+  <!-- Hidden preload image -->
+  <img
+    v-if="profile.profile_picture"
+    :src="this.$store.state.root_media_api + profile.profile_picture"
+    @load="onSidebarAvatarLoad"
+    style="position:absolute;width:0;height:0;opacity:0;"
+    class="!z-999"
+    alt=""
+  />
+  
+  <!-- Skeleton loader -->
+  <div
+    v-if="!sidebarAvatarLoaded"
+    class="sidebar-avatar-skeleton"
+  ></div>
+  
+  <!-- Visible image -->
+  <img
+    v-show="sidebarAvatarLoaded"
+    :src="this.$store.state.root_media_api + profile.profile_picture"
+    class="sidebar-avatar-img"
+    alt="User Avatar"
+  />
+</div>
+
             <h3 class="text-center" style="font-family: Poppins; font-weight: 500; font-style: normal; font-size: 16px; line-height: 24px; letter-spacing: 0;">
               {{ user?.full_name || "John Doe" }}
             </h3>
@@ -441,6 +461,7 @@ export default {
       employee_owner_business_access_id: null,
       user: JSON.parse(localStorage.getItem("user")),
       profile: JSON.parse(localStorage.getItem("profile")),
+      sidebarAvatarLoaded: false,
       showSidebar: true,
       isMobile: false
     };
@@ -485,6 +506,13 @@ export default {
         this.showSidebar = false;
       }
     },
+
+     onSidebarAvatarLoad() {
+    this.sidebarAvatarLoaded = false;
+    setTimeout(() => {
+      this.sidebarAvatarLoaded = true;
+    }, 1000);  // 1s skeleton - same as profile/wavy
+  },
 
     handleAccessBusinessClick() {
       this.$router.push({
@@ -558,6 +586,39 @@ export default {
   align-items: center;
   gap: 16px;
 }
+
+.user-avatar {
+  position: relative;  /* ⬅️ CRITICAL for stacking */
+}
+
+.sidebar-avatar-skeleton {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: linear-gradient(
+    110deg,
+    #e0e7ff 8%,
+    #f8fafc 18%,
+    #e0e7ff 33%
+  );
+  background-size: 200% 100%;
+  animation: sidebar-shimmer 1.6s infinite linear;
+}
+
+.sidebar-avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  transition: opacity 0.3s ease;
+}
+
+@keyframes sidebar-shimmer {
+  to {
+    background-position-x: -200%;
+  }
+}
+
 
 .mobile-menu-btn {
   background: none;

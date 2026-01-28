@@ -46,22 +46,36 @@
                   ><div style="padding: 4px">
                     <div class="post-card">
                       <!-- Post Image -->
-                      <div style="position: relative">
-                        <img
-                          :src="
-                            $store.state.root_media_api + post.post_image ||
-                            require('../../../assets/home_main_banner.jpg')
-                          "
-                          style="
-                            width: 100%;
-                            height: 200px;
-                            object-fit: cover;
-                            border-radius: 16px;
-                            cursor: pointer;
-                          "
-                          :alt="post.title"
-                          @click="viewPost(post)"
-                        />
+                      <div class="post-image-container" style="position: relative; overflow: hidden; border-radius: 16px;">
+  <!-- Skeleton -->
+  <div
+    v-if="!postImageLoadedMap[post.id]"
+    class="post-image-skeleton"
+  ></div>
+
+  <!-- Preload image -->
+  <img
+    :src="$store.state.root_media_api + post.post_image || require('../../../assets/home_main_banner.jpg')"
+    style="position:absolute;width:0;height:0;opacity:0;"
+    @load="onPostImageLoad(post.id)"
+    alt=""
+  />
+
+  <!-- Visible image -->
+  <img
+    v-show="postImageLoadedMap[post.id]"
+    :src="$store.state.root_media_api + post.post_image || require('../../../assets/home_main_banner.jpg')"
+    style="
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 16px;
+      cursor: pointer;
+      display: block;
+    "
+    :alt="post.title"
+    @click="viewPost(post)"
+  />
 
                         <!-- Tags - Fixed for string array -->
                         <div class="tags-overlay">
@@ -867,6 +881,7 @@ export default {
       loadingMore: false,
       showCommentsDrawer: false,
       updating: false,
+      postImageLoadedMap: {},
       hasMore: false,
       currentPage: 1,
 
@@ -927,6 +942,14 @@ export default {
       this.scrollToComments();
     }
   },
+
+   onPostImageLoad(id) {
+    this.postImageLoadedMap[id] = false;
+    setTimeout(() => {
+      this.postImageLoadedMap[id] = true;
+    }, 1000); // 1s skeleton
+  },
+  
     goto_product_Route(product){
       let produuct_type='product'
       if (product.product_type=='light'){
@@ -1798,6 +1821,42 @@ handleLikeToggled() {
   padding: 0px 0;
   border-bottom: 1px solid #f0f0f0;
 }
+
+.post-image-container {
+  width: 100%;
+  height: 200px;
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.post-image-skeleton {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    110deg,
+    #e5e7eb 8%,
+    #f9fafb 18%,
+    #e5e7eb 33%
+  );
+  background-size: 200% 100%;
+  animation: post-shimmer 1.6s infinite linear;
+  border-radius: 16px;
+}
+
+@keyframes post-shimmer {
+  to {
+    background-position-x: -200%;
+  }
+}
+
+/* Ensure overlays stay on top */
+.tags-overlay,
+.view-count-overlay,
+.pinned-badge {
+  z-index: 10;
+}
+
 
 .post-description {
   padding: 0 0 20px 0;
