@@ -710,7 +710,7 @@
 
     <br />
 
-    <div className="listing-step hidden lg:block" ref="listingStep">
+    <div className="listing-step hidden lg:block">
       <div class="header">
         <h1 class="header-title">Get listing-ready results in seconds</h1>
         <p class="header-text">
@@ -1835,7 +1835,7 @@
               <!-- Navigation Arrows -->
               <div class="absolute top-4 left-4 z-20">
                 <button
-                  @click.stop="prevRenderingFloorImage"
+                  @click.stop ="prevRenderingFloorImage"
                   class="bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full p-2 shadow-lg transition-all"
                 >
                   <svg
@@ -2350,8 +2350,6 @@ export default {
       step2WaveKey: 0,
       step2Fading: false,
       step2ShowNewImg: false,
-      isListingStepInView: false,
-      observer: null,
 
       // Form data
       form: {
@@ -2400,31 +2398,11 @@ export default {
       ],
 
       // Image slider functionality
-      isDragging: null,
-
-      // current VS slider position
-      stepVSSliderIndex: 0,
-      stepVSSliderPoints: [50, 25, 85],
       virtualStagingSliderPosition: 50,
-      stepVSSliderIntervalId: null,
-
-      step3DSliderIndex: 0,
-      step3DSliderPoints: [85, 25],
-      rendering3DSliderPosition: 85,
-      step3DSliderIntervalId: null,
-      step3DSliderAnimFrameId: null,
-
-      objectRemovalSliderIndex: 0,
-      objectRemovalSliderPoints: [25, 85],
+      rendering3DSliderPosition: 50,
       removeObjectSliderPosition: 50,
-      objectRemovalSliderIntervalId: null,
-      objectRemovalSliderAnimFrameId: null,
-
-      floorChangeSliderIndex: 1,
-      floorChangeSliderPoints: [85, 25],
-      floorChangeSliderPosition: 85,
-      floorChangeSliderIntervalId: null,
-      floorChangeSliderAnimFrameId: null,
+      floorChangeSliderPosition: 50,
+      isDragging: null,
 
       // Current displayed images
       virtualStagingImages: [virtualStaggingAfterImg, virtualStaggingbeforeImg],
@@ -2475,310 +2453,24 @@ export default {
     };
   },
   mounted() {
-    this.startServiceSection();
-    this.observer = new IntersectionObserver(
-      ([entry]) => {
-        this.isListingStepInView = entry.isIntersecting;
-        if (this.isListingStepInView) {
-          this.startStepAnimation();
-        } else {
-          this.stopStepAnimation();
-        }
-      },
-      { threshold: 0.3 },
-    );
+    this.runCycle();
+    this.step2RunWave();
 
-    this.observer.observe(this.$refs.listingStep);
+    this.intervalId = setInterval(this.runCycle, 8000);
   },
 
   beforeUnmount() {
-    if (this.observer) this.observer.disconnect();
+    clearInterval(this.intervalId);
   },
 
   methods: {
-    // start services sliding window animation
-    // start service section Animation
-    startServiceSection() {
-      this.startStepVSSliderAnimation();
-      this.startStep3DSliderAnimation();
-      this.startObjectRemovalSliderAnimation();
-      this.startFloorChangeSliderAnimation();
-    },
-    //vs
-    startStepVSSliderAnimation() {
-      if (this.stepVSSliderIntervalId) return;
-
-      this.virtualStagingSliderPosition = 25;
-      this.stepVSSliderPoints = [25, 85];
-      this.stepVSSliderIndex = 1;
-
-      const pauseTime = 1000;
-      const moveDuration = 1500;
-
-      const smoothMoveEaseOutEnds = (
-        target,
-        duration = moveDuration,
-        onDone,
-      ) => {
-        cancelAnimationFrame(this.stepVSSliderAnimFrameId);
-
-        const start = this.virtualStagingSliderPosition;
-        const diff = target - start;
-        const startTime = performance.now();
-
-        const animate = (now) => {
-          const t = Math.min((now - startTime) / duration, 1);
-
-          const ease =
-            t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-
-          this.virtualStagingSliderPosition = +(start + diff * ease).toFixed(2);
-
-          if (t < 1) {
-            this.stepVSSliderAnimFrameId = requestAnimationFrame(animate);
-          } else {
-            onDone && onDone();
-          }
-        };
-
-        this.stepVSSliderAnimFrameId = requestAnimationFrame(animate);
-      };
-
-      const runNext = () => {
-        const nextValue = this.stepVSSliderPoints[this.stepVSSliderIndex];
-        this.stepVSSliderIndex =
-          (this.stepVSSliderIndex + 1) % this.stepVSSliderPoints.length;
-
-        setTimeout(() => {
-          smoothMoveEaseOutEnds(nextValue, moveDuration, runNext);
-        }, pauseTime);
-      };
-
-      setTimeout(() => {
-        smoothMoveEaseOutEnds(85, moveDuration, runNext);
-      }, pauseTime);
-
-      this.stepVSSliderIntervalId = true;
-    },
-
-    stopStepVSSliderAnimation() {
-      this.stepVSSliderIntervalId = null;
-      cancelAnimationFrame(this.stepVSSliderAnimFrameId);
-      this.stepVSSliderAnimFrameId = null;
-    },
-    //end VS
-
-    // 3D rendering start
-    startStep3DSliderAnimation() {
-      if (this.step3DSliderIntervalId) return;
-
-      this.rendering3DSliderPosition = 85;
-      this.step3DSliderPoints = [85, 25];
-      this.step3DSliderIndex = 1;
-
-      const pauseTime = 1000;
-      const moveDuration = 1500;
-
-      const smoothMoveEaseOutEnds = (
-        target,
-        duration = moveDuration,
-        onDone,
-      ) => {
-        cancelAnimationFrame(this.step3DSliderAnimFrameId);
-
-        const start = this.rendering3DSliderPosition;
-        const diff = target - start;
-        const startTime = performance.now();
-
-        const animate = (now) => {
-          const t = Math.min((now - startTime) / duration, 1);
-
-          const ease =
-            t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-
-          this.rendering3DSliderPosition = +(start + diff * ease).toFixed(2);
-
-          if (t < 1) {
-            this.step3DSliderAnimFrameId = requestAnimationFrame(animate);
-          } else {
-            onDone && onDone();
-          }
-        };
-
-        this.step3DSliderAnimFrameId = requestAnimationFrame(animate);
-      };
-
-      const runNext = () => {
-        const nextValue = this.step3DSliderPoints[this.step3DSliderIndex];
-        this.step3DSliderIndex =
-          (this.step3DSliderIndex + 1) % this.step3DSliderPoints.length;
-
-        setTimeout(() => {
-          smoothMoveEaseOutEnds(nextValue, moveDuration, runNext);
-        }, pauseTime);
-      };
-
-      setTimeout(() => {
-        smoothMoveEaseOutEnds(25, moveDuration, runNext);
-      }, pauseTime);
-
-      this.step3DSliderIntervalId = true;
-    },
-
-    stopStep3DSliderAnimation() {
-      this.step3DSliderIntervalId = null;
-      cancelAnimationFrame(this.step3DSliderAnimFrameId);
-      this.step3DSliderAnimFrameId = null;
-    },
-    // 3d rendering end
-
-    //object removal start
-    startObjectRemovalSliderAnimation() {
-      if (this.objectRemovalSliderIntervalId) return;
-
-      // Start at mid position
-      this.removeObjectSliderPosition = 50;
-      this.objectRemovalSliderPoints = [25, 85];
-      this.objectRemovalSliderIndex = 0; // next move → 25
-
-      const pauseTime = 1000; // ⭐ pause at ends
-      const moveDuration = 1500; // ⭐ move duration
-
-      const smoothMove = (target, duration = moveDuration, onDone) => {
-        cancelAnimationFrame(this.objectRemovalSliderAnimFrameId);
-
-        const start = this.removeObjectSliderPosition;
-        const diff = target - start;
-        const startTime = performance.now();
-
-        const animate = (now) => {
-          const t = Math.min((now - startTime) / duration, 1);
-          const ease =
-            t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-
-          this.removeObjectSliderPosition = +(start + diff * ease).toFixed(2);
-
-          if (t < 1) {
-            this.objectRemovalSliderAnimFrameId =
-              requestAnimationFrame(animate);
-          } else {
-            onDone && onDone();
-          }
-        };
-
-        this.objectRemovalSliderAnimFrameId = requestAnimationFrame(animate);
-      };
-
-      const runNext = () => {
-        const nextValue =
-          this.objectRemovalSliderPoints[this.objectRemovalSliderIndex];
-        this.objectRemovalSliderIndex =
-          (this.objectRemovalSliderIndex + 1) %
-          this.objectRemovalSliderPoints.length;
-
-        setTimeout(() => {
-          smoothMove(nextValue, moveDuration, runNext);
-        }, pauseTime);
-      };
-
-      // Start first move from 50 → 25
-      smoothMove(25, moveDuration, runNext);
-
-      this.objectRemovalSliderIntervalId = true;
-    },
-
-    stopObjectRemovalSliderAnimation() {
-      this.objectRemovalSliderIntervalId = null;
-      cancelAnimationFrame(this.objectRemovalSliderAnimFrameId);
-      this.objectRemovalSliderAnimFrameId = null;
-    },
-    //end object removal end
-
-    // start floor chage
-    startFloorChangeSliderAnimation() {
-      if (this.floorChangeSliderIntervalId) return;
-
-      // Start at the end like 3D slider
-      this.floorChangeSliderPosition = 85;
-      this.floorChangeSliderPoints = [85, 25];
-      this.floorChangeSliderIndex = 1; // next move → 25
-
-      const pauseTime = 1000; // pause at ends
-      const moveDuration = 1500; // move duration
-
-      const smoothMoveFloorChange = (
-        target,
-        duration = moveDuration,
-        onDone,
-      ) => {
-        cancelAnimationFrame(this.floorChangeSliderAnimFrameId);
-
-        const start = this.floorChangeSliderPosition;
-        const diff = target - start;
-        const startTime = performance.now();
-
-        const animate = (now) => {
-          const t = Math.min((now - startTime) / duration, 1);
-          const ease =
-            t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-
-          this.floorChangeSliderPosition = +(start + diff * ease).toFixed(2);
-
-          if (t < 1) {
-            this.floorChangeSliderAnimFrameId = requestAnimationFrame(animate);
-          } else {
-            onDone && onDone();
-          }
-        };
-
-        this.floorChangeSliderAnimFrameId = requestAnimationFrame(animate);
-      };
-
-      const runNext = () => {
-        const nextValue =
-          this.floorChangeSliderPoints[this.floorChangeSliderIndex];
-        this.floorChangeSliderIndex =
-          (this.floorChangeSliderIndex + 1) %
-          this.floorChangeSliderPoints.length;
-
-        setTimeout(() => {
-          smoothMoveFloorChange(nextValue, moveDuration, runNext);
-        }, pauseTime);
-      };
-
-      // Start first move: 85 → 25 after pause
-      setTimeout(() => {
-        smoothMoveFloorChange(25, moveDuration, runNext);
-      }, pauseTime);
-
-      this.floorChangeSliderIntervalId = true;
-    },
-
-    stopFloorChangeSliderAnimation() {
-      this.floorChangeSliderIntervalId = null;
-      cancelAnimationFrame(this.floorChangeSliderAnimFrameId);
-      this.floorChangeSliderAnimFrameId = null;
-    },
-    //  end floor chage
-
-    // end services sliding window animation
-    //start steper animation
-    stopStepAnimation() {
-      clearInterval(this.intervalId);
-    },
-    startStepAnimation() {
-      this.runCycle();
-      this.step2RunWave();
-
-      this.intervalId = setInterval(this.runCycle, 8000);
-    },
     step2RunWave() {
-      this.step2ShowNewImg = false;
+      this.step2ShowNewImg = false; // reset to old image
       this.step2ShowWave = false;
 
       setTimeout(() => {
         this.step2ShowWave = true;
-        this.step2WaveKey++;
+        this.step2WaveKey++; // restart wave animation
       }, 1000);
     },
 
@@ -2821,7 +2513,6 @@ export default {
         this.overlayShrink = false;
       }, 8000);
     },
-    // end step animation
     handleAuthorizeClick(action) {
       if (!this.isLogedIn) {
         this.$router.push({
@@ -2837,20 +2528,9 @@ export default {
       console.log("Form submitted:", this.form);
       alert("Message sent!");
     },
-    stopCorrespondingAnimation(slider) {
-      if (slider === "virtualStaging") {
-        this.stopStepVSSliderAnimation();
-      } else if (slider === "rendering3D") {
-        this.stopStep3DSliderAnimation();
-      } else if (slider === "objectRemoval") {
-        this.stopObjectRemovalSliderAnimation();
-      } else if (slider === "floorChange") {
-        this.stopFloorChangeSliderAnimation();
-      }
-    },
+
     // Image slider drag functionality
     startDrag(slider, event) {
-      this.stopCorrespondingAnimation(slider);
       this.isDragging = slider;
       this.handleDrag(slider, event);
 
@@ -2943,7 +2623,6 @@ export default {
           : this.rendering3DImageIndex - 1;
       this.rendering3DImages =
         this.rendering3DImageSet[this.rendering3DImageIndex];
-      310310;
       this.rendering3DSliderPosition = 50;
     },
 
@@ -3509,7 +3188,6 @@ export default {
     margin-top: 30px;
   }
 }
-
 @media screen and (max-width: 480px) {
   .floor-image {
     width: 100px;
@@ -3591,18 +3269,19 @@ export default {
   left: -80px;
   width: 80px;
   height: 100%;
-  z-index: 10;
-  background: linear-gradient(
-    90deg,
-    rgba(0, 123, 255, 0),
-    rgba(0, 123, 255, 0.4),
-    rgba(0, 123, 255, 0.9)
-  );
+z-index: 10;
+ background: linear-gradient(
+  90deg,
+  rgba(0, 123, 255, 0),
+  rgba(0, 123, 255, 0.4),
+  rgba(0, 123, 255, 0.9)
+);
 
   animation: step2WaveMove 2.5s ease-in-out forwards;
 }
 
 @keyframes actionBtnFloat {
+  
   0%,
   15% {
     transform: translate(-50%, 50%);
