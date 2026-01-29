@@ -6,63 +6,90 @@
           v-for="product in products"
           :key="product.product_id"
           class="product-responsive"
-          style="padding:5px;text-align: start;"
+          style="padding: 5px; text-align: start"
         >
           <div class="product">
-            <div class="product-image-container" @click="goto_product_Route(product)">
+            <div
+              class="product-image-container relative"
+              style="overflow: hidden"
+              @click="goto_product_Route(product)"
+            >
+              <!-- Skeleton -->
+              <div
+                v-if="!imageLoadedMap[product.id]"
+                class="product-skeleton"
+              ></div>
+
+              <!-- Preload image -->
               <img
+                :src="this.$store.state.root_media_api + product.product_image"
+                style="position: absolute; width: 0; height: 0; opacity: 0"
+                @load="onProductImageLoad(product.id)"
+                alt=""
+              />
+
+              <!-- Visible image -->
+              <img
+                v-show="imageLoadedMap[product.id]"
                 :src="this.$store.state.root_media_api + product.product_image"
                 :alt="product.product_title"
                 class="product-image"
               />
+
               <!-- Category Badge -->
               <div class="category-badge">{{ product.category_name }}</div>
+
               <!-- AR Badge -->
               <div class="ar-badge">AR</div>
             </div>
 
             <a-row>
-              <a-col :span="24" style="padding-top:10px;">
-                <b>{{ truncateText(product.product_title || 'No title available', 22) }}</b>
+              <a-col :span="24" style="padding-top: 10px">
+                <b>{{
+                  truncateText(
+                    product.product_title || "No title available",
+                    22,
+                  )
+                }}</b>
               </a-col>
 
-              <a-col :span="18">
-                Colors
-              </a-col>
+              <a-col :span="18"> Colors </a-col>
 
               <a-col
                 span="6"
-                style="display: flex; justify-content: end; gap: 4px;"
+                style="display: flex; justify-content: end; gap: 4px"
               >
                 <div
-                  v-for="(c, i) in product.product_colors.slice(0,2)"
+                  v-for="(c, i) in product.product_colors.slice(0, 2)"
                   :key="i"
-                  style="width:20px;height:20px;border-radius:20px;"
+                  style="width: 20px; height: 20px; border-radius: 20px"
                   :style="{ background: c.color || c.color_hex }"
                 ></div>
               </a-col>
 
-              <a-col span="12">
-                Price
-              </a-col>
+              <a-col span="12"> Price </a-col>
 
-              <a-col span="12" style="text-align: end;">
+              <a-col span="12" style="text-align: end">
                 <b>${{ product.product_price }}</b>
               </a-col>
 
-               <a-col span="17">
-  <a-button
-    @click="goto_product_Route(product)"
-    class="w-full  !text-[12px]"
-    style="font-family: var(--font-family-main); "
-  >
-    Product Details
-  </a-button>
- </a-col>
+              <a-col span="17">
+                <a-button
+                  @click="goto_product_Route(product)"
+                  class="w-full !text-[12px]"
+                  style="font-family: var(--font-family-main)"
+                >
+                  Product Details
+                </a-button>
+              </a-col>
 
               <a-col span="1"></a-col>
               <a-col span="4">
-                <a-button @click="toggleFavorite(product.product_id, product.type, product)">
+                <a-button
+                  @click="
+                    toggleFavorite(product.product_id, product.type, product)
+                  "
+                >
                   <template v-if="product.is_favorited">
                     <HeartFilled style="color: red" />
                   </template>
@@ -80,104 +107,116 @@
 </template>
 
 <script>
-import { HeartOutlined, HeartFilled } from '@ant-design/icons-vue'
+import { HeartOutlined, HeartFilled } from "@ant-design/icons-vue";
 
 export default {
-  name: 'buisnes_products_sailing',
+  name: "buisnes_products_sailing",
   components: {
     HeartOutlined,
-    HeartFilled
+    HeartFilled,
   },
   props: {
-    products: Object
+    products: Object,
   },
   data() {
-    return {}
+    return {
+      imageLoadedMap: {},
+    };
   },
   methods: {
-    goto_product_Route(product){
-      let produuct_type='product'
-      if (product.type=='light'){
-        produuct_type='product'
-      }else if (product.type=='floor_texture'){
-        produuct_type='floor'
-      }else if (product.type=='wall_texture'){
-        produuct_type='wall'
-      }
-      else{
-        produuct_type=product.type
+    goto_product_Route(product) {
+      let produuct_type = "product";
+      if (product.type == "light") {
+        produuct_type = "product";
+      } else if (product.type == "floor_texture") {
+        produuct_type = "floor";
+      } else if (product.type == "wall_texture") {
+        produuct_type = "wall";
+      } else {
+        produuct_type = product.type;
       }
       this.$router.push({
-      name: 'buisness_product',
-      params: {
-        buisness_name: product.business_slug,
-        product_type: produuct_type,
-        product_id: product.product_id
-      }
-    })
-  
+        name: "buisness_product",
+        params: {
+          buisness_name: product.business_slug,
+          product_type: produuct_type,
+          product_id: product.product_id,
+        },
+      });
     },
     truncateText(text, charLimit = 18) {
-      if (!text) return '';
+      if (!text) return "";
       if (text.length <= charLimit) return text;
-      return text.slice(0, charLimit) + '...';
+      return text.slice(0, charLimit) + "...";
     },
-    
+
+    onProductImageLoad(id) {
+      this.imageLoadedMap[id] = false;
+      setTimeout(() => {
+        this.imageLoadedMap[id] = true;
+      }, 1000);
+    },
+
     handleAddProduct() {
-      console.log('Add product clicked');
+      console.log("Add product clicked");
       // Handle add product functionality
     },
-    
+
     handleProductDetail(product) {
-      console.log('Product detail clicked:', product);
+      console.log("Product detail clicked:", product);
       // Navigate to product detail page
       this.$router.push(
-        '/' + this.$route.params.buisness_name + '/' + 
-        product.product_type + '/' + product.product_id
+        "/" +
+          this.$route.params.buisness_name +
+          "/" +
+          product.product_type +
+          "/" +
+          product.product_id,
       );
     },
-    
+
     async toggleFavorite(product_id, product_type, product) {
       try {
-        const token = localStorage.getItem('token');
-        
+        const token = localStorage.getItem("token");
+
         // Check if user is authenticated
         if (!token) {
-          this.$message.warning('Please login to add favorites');
+          this.$message.warning("Please login to add favorites");
           return;
         }
-        
+
         const response = await fetch(
           `${this.$store.state.root_api}likes/favorites/toggle/`,
           {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              "Authorization": `Token ${token}`,
+              Authorization: `Token ${token}`,
             },
             body: JSON.stringify({
               id: product_id,
               type: product_type,
             }),
-          }
+          },
         );
         // debugger
         const data = await response.json();
 
         // Update the product's favorite status
         product.is_favorited = data.favorited;
-        
-        // Show success message
-        const message = data.favorited ? 'Added to favorites' : 'Removed from favorites';
-        this.$message.success(message);
 
+        // Show success message
+        const message = data.favorited
+          ? "Added to favorites"
+          : "Removed from favorites";
+        this.$message.success(message);
       } catch (error) {
         console.error("Favorite toggle failed", error);
-        this.$message.error('Failed to update favorite');
+        this.$message.error("Failed to update favorite");
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -216,6 +255,27 @@ export default {
   justify-content: center;
   cursor: pointer;
   /* padding: 16px; */
+}
+
+.product-skeleton {
+  width: 100%;
+  height: 100%;
+
+  /* MUST MATCH CONTAINER HEIGHT */
+  min-height: 180px;
+  max-height: 180px;
+
+  border-radius: 12px;
+
+  background: linear-gradient(110deg, #e5e7eb 8%, #f9fafb 18%, #e5e7eb 33%);
+  background-size: 200% 100%;
+  animation: product-shimmer 1.6s infinite linear;
+}
+
+@keyframes product-shimmer {
+  to {
+    background-position-x: -200%;
+  }
 }
 
 .product-image {

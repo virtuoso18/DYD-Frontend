@@ -34,17 +34,40 @@
           </template>
           
           <template v-else-if="column.key === 'room_photo'">
-            <div class="room-photo">
-              <img 
-                v-if="record.image_url" 
-                :src="this.$store.state.root_media_api + record.image_url" 
-                alt="Room"
-              />
-              <div v-else class="no-image">No Image</div>
-              <div class="request-text">
-                {{ truncateText(record.message, 50) }}
-              </div>
-            </div>
+           <div class="room-photo">
+  <div v-if="record.image_url" style="position: relative; overflow: hidden;">
+    <!-- SKELETON -->
+    <div
+      v-if="!imageLoadedMap[record.id]"
+      class="room-photo-skeleton"
+    ></div>
+
+    <!-- PRELOAD (INVISIBLE) -->
+    <img
+      :src="$store.state.root_media_api + record.image_url"
+      style="position:absolute;width:0;height:0;opacity:0;"
+      @load="onRoomImageLoad(record.id)"
+      alt=""
+    />
+
+    <!-- REAL IMAGE -->
+    <img
+      v-show="imageLoadedMap[record.id]"
+      :src="$store.state.root_media_api + record.image_url"
+      alt="Room"
+     
+    />
+  </div>
+
+  <!-- NO IMAGE FALLBACK -->
+  <div v-else class="no-image">No Image</div>
+
+  <!-- REQUEST TEXT (UNCHANGED) -->
+  <div class="request-text">
+    {{ truncateText(record.message, 50) }}
+  </div>
+</div>
+
           </template>
           
          <template v-else-if="column.key === 'generated_room'">
@@ -282,6 +305,8 @@ export default {
   },
   data() {
     return {
+
+      imageLoadedMap: {},
       columns: [
         {
           title: 'ID',
@@ -333,6 +358,15 @@ export default {
         }
       };
     },
+
+     onRoomImageLoad(id) {
+    this.imageLoadedMap[id] = false;
+    setTimeout(() => {
+      this.imageLoadedMap[id] = true;
+    }, 1000); // 1s shimmer
+  },
+
+
     formatDate(dateString) {
       if (!dateString) return '-'
       const date = new Date(dateString)
@@ -421,6 +455,29 @@ export default {
   font-size: 12px;
   color: #999;
 }
+
+
+.room-photo-skeleton {
+  position: absolute;
+  inset: 0;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(
+    110deg,
+    #e5e7eb 8%,
+    #f9fafb 18%,
+    #e5e7eb 33%
+  );
+  background-size: 200% 100%;
+  animation: room-shimmer 1.6s infinite linear;
+}
+
+@keyframes room-shimmer {
+  to {
+    background-position-x: -200%;
+  }
+}
+
 
 .request-text {
   flex: 1;

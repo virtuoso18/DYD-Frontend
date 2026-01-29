@@ -372,20 +372,43 @@
               </template>
 
               <template v-if="column.key === 'product'">
-                <div style="display: flex; gap: 12px; align-items: center; cursor: pointer;">
-                  <img 
-                    :src="getImageUrl(record.image)"
-                    style="width: 60px; height: 60px; border-radius: 8px; object-fit: cover;"
-                  >
-                  <div>
-                    <div style="font-weight: 600; color: #333; margin-bottom: 4px;">
-                      {{ truncateText(record.name || 'No title available', 13) }}
-                    </div>
-                    <div style="font-size: 12px; color: #666; margin-top: 2px;">
-                      {{ truncateText(record.description || 'No description available', 19) }}
-                    </div>
-                  </div>
-                </div>
+               <div style="display: flex; gap: 12px; align-items: center; cursor: pointer;">
+  <!-- IMAGE CONTAINER with SKELETON -->
+  <div style="position: relative; width: 60px; height: 60px; overflow: hidden; border-radius: 8px; flex-shrink: 0;">
+    <!-- SKELETON -->
+    <div
+      v-if="!imageLoadedMap[record.id]"
+      class="thumbnail-skeleton"
+    ></div>
+
+    <!-- PRELOAD (INVISIBLE) -->
+    <img
+      :src="getImageUrl(record.image)"
+      style="position:absolute;width:0;height:0;opacity:0;"
+      @load="onThumbnailLoad(record.id)"
+      alt=""
+    />
+
+    <!-- REAL IMAGE -->
+    <img
+      v-show="imageLoadedMap[record.id]"
+      :src="getImageUrl(record.image)"
+      style="width: 100%; height: 100%; border-radius: 8px; object-fit: cover;"
+      alt=""
+    />
+  </div>
+
+  <!-- TEXT (UNCHANGED) -->
+  <div>
+    <div style="font-weight: 600; color: #333; margin-bottom: 4px;">
+      {{ truncateText(record.name || 'No title available', 13) }}
+    </div>
+    <div style="font-size: 12px; color: #666; margin-top: 2px;">
+      {{ truncateText(record.description || 'No description available', 19) }}
+    </div>
+  </div>
+</div>
+
               </template>
 
               <template v-if="column.key === 'category'">
@@ -478,6 +501,7 @@ export default {
     return {
       current_user:JSON.parse(localStorage.getItem('user')),
       chart: null,
+       imageLoadedMap: {},
       loading: false,
       creditChart: null,
       dailyCreditData: null,
@@ -700,6 +724,15 @@ export default {
   this.drawerVisible = true
   await this.fetchUserTransactionDetails(user)
 },
+
+ onThumbnailLoad(id) {
+    this.imageLoadedMap[id] = false;
+    setTimeout(() => {
+      this.imageLoadedMap[id] = true;
+    }, 1000); // 1s shimmer
+  },
+
+
     truncateText(text, charLimit = 13) {
       if (!text) return ''
       if (text.length <= charLimit) return text
@@ -1535,6 +1568,29 @@ gradient.addColorStop(1, 'rgba(59, 99, 251, 0.05)')
   align-items: center;
   margin-bottom: 20px;
 }
+
+.thumbnail-skeleton {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  background: linear-gradient(
+    110deg,
+    #e5e7eb 8%,
+    #f9fafb 18%,
+    #e5e7eb 33%
+  );
+  background-size: 200% 100%;
+  animation: thumbnail-shimmer 1.6s infinite linear;
+}
+
+@keyframes thumbnail-shimmer {
+  to {
+    background-position-x: -200%;
+  }
+}
+
 
 .chart-header h3 {
   margin: 0;
