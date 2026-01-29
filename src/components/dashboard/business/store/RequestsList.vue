@@ -35,18 +35,32 @@
           </template>
           
           <template v-else-if="column.key === 'room_photo'">
-            <div class="room-photo">
-              <img 
-                v-if="record.image_url" 
-                :src="$store.state.root_media_api + record.image_url" 
-                alt="Room"
-              />
-              <div v-else class="no-image">No Image</div>
-              <div class="request-text">
-                {{ truncateText(record.message, 50) }}
-              </div>
-            </div>
-          </template>
+  <div class="room-photo">
+    <!-- SHIMMER OVERLAY (exact same position as img) -->
+    <div
+      v-if="record.image_url && !imageLoadedMap[record.id]"
+      class="room-photo-shimmer"
+    ></div>
+    
+    <!-- YOUR ORIGINAL IMG -->
+    <img 
+      v-if="record.image_url" 
+      :src="$store.state.root_media_api + record.image_url" 
+      :class="{ 'image-loaded': imageLoadedMap[record.id] }"
+      @load="onRoomPhotoLoad(record.id)"
+      alt="Room"
+    />
+    
+    <!-- YOUR ORIGINAL FALLBACK -->
+    <div v-else class="no-image">No Image</div>
+    
+    <!-- YOUR ORIGINAL TEXT (unchanged position) -->
+    <div class="request-text">
+      {{ truncateText(record.message, 50) }}
+    </div>
+  </div>
+</template>
+
           
           <template v-else-if="column.key === 'generated_room'">
             <!-- {{record}} -->
@@ -281,22 +295,36 @@
           <div class="flex items-start justify-between gap-3">
             <p class="label-text text-sm font-medium text-gray-700">Room photo:</p>
             
-            <div class="flex-shrink-0 w-[245px]">
-              <img 
-                v-if="request.image_url" 
-                :src="$store.state.root_media_api + request.image_url" 
-                alt="Room"
-                class="w-full h-[160px] rounded-lg mb-4 object-cover border border-gray-200"
-              />
-              <div v-else class="w-full h-[160px] rounded-lg bg-gray-100 flex items-center justify-center border border-gray-200 mb-4">
-                <span class="text-xs text-gray-400">No Image</span>
-              </div>
-              
-              <!-- Description below image -->
-              <p class="text-[12px] font-family-poppins tracking-tight text-gray-600 line-clamp-3 text-left">
-                {{ request.message || 'No message provided' }}
-              </p>
-            </div>
+           <div class="flex-shrink-0 w-[245px] relative">
+  <!-- SHIMMER (covers entire image area) -->
+  <div
+    v-if="request.image_url"
+    class="absolute inset-0 w-full h-[160px] rounded-lg border border-gray-200 z-10"
+    :class="{ 'opacity-0 transition-opacity duration-300': imageLoadedMap[request.id] }"
+  >
+    <div class="image-shimmer w-full h-full rounded-lg"></div>
+  </div>
+  
+  <!-- YOUR ORIGINAL IMG (always rendered underneath) -->
+  <img 
+    v-if="request.image_url" 
+    :src="$store.state.root_media_api + request.image_url" 
+    @load="onImageLoad(request.id)"
+    alt="Room"
+    class="w-full h-[160px] rounded-lg mb-4 object-cover border border-gray-200"
+  />
+  
+  <!-- YOUR ORIGINAL FALLBACK -->
+  <div v-else class="w-full h-[160px] rounded-lg bg-gray-100 flex items-center justify-center border border-gray-200 mb-4">
+    <span class="text-xs text-gray-400">No Image</span>
+  </div>
+  
+  <!-- DESCRIPTION (unchanged) -->
+  <p class="text-[12px] font-family-poppins tracking-tight text-gray-600 line-clamp-3 text-left">
+    {{ request.message || 'No message provided' }}
+  </p>
+</div>
+
           </div>
         </div>
 
@@ -448,7 +476,7 @@ export default {
       processingIds: [],
       regeneratingIds: [],
       rejectingIds: [],
-      
+      imageLoadedMap: {},
       // Reject modal state
       rejectModalVisible: false,
       selectedRequest: null,
@@ -520,6 +548,20 @@ export default {
         }
       };
     },
+onRoomPhotoLoad(id) {
+    this.imageLoadedMap[id] = false;
+    setTimeout(() => {
+      this.imageLoadedMap[id] = true;
+    }, 1000); // 1s shimmer
+  },
+
+  onImageLoad(id) {
+     this.imageLoadedMap[id] = false;
+    setTimeout(() => {
+      this.imageLoadedMap[id] = true;
+    }, 1000);
+  },
+  
     formatDate(dateString) {
       if (!dateString) return '-'
       const date = new Date(dateString)
@@ -729,6 +771,37 @@ export default {
   gap: 12px;
 }
 
+/* ADD THESE 3 RULES ONLY */
+.room-photo-shimmer {
+  position: absolute;
+  top: 4;
+  left: 4;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(
+    110deg,
+    #e5e7eb 8%,
+    #f9fafb 18%,
+    #e5e7eb 33%
+  );
+  background-size: 200% 100%;
+  border-radius: 8px;
+  border: 1px solid #e8e8e8;
+  animation: shimmer 1.6s infinite linear;
+  z-index: 1;
+}
+
+@keyframes shimmer {
+  to {
+    background-position-x: -200%;
+  }
+}
+
+.room-photo img.image-loaded {
+  z-index: 2;
+}
+
+
 .room-photo img {
   width: 60px;
   height: 60px;
@@ -748,6 +821,25 @@ export default {
   font-size: 12px;
   color: #999;
 }
+.image-shimmer {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    110deg,
+    #f3f4f6 8%,
+    #e5e7eb 18%,
+    #f3f4f6 33%
+  );
+  background-size: 200% 100%;
+  border-radius: inherit;
+  animation: shimmer 1.5s infinite linear;
+}
+
+@keyframes shimmer {
+  0% { background-position-x: 0%; }
+  100% { background-position-x: -200%; }
+}
+
 
 .request-text {
   flex: 1;
