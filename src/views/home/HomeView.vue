@@ -710,7 +710,7 @@
 
     <br />
 
-    <div className="hidden lg:block">
+    <div className="listing-step hidden lg:block">
       <div class="header">
         <h1 class="header-title">Get listing-ready results in seconds</h1>
         <p class="header-text">
@@ -737,22 +737,26 @@
           <!-- Step 1 Image -->
           <div class="step-image-container">
             <div class="image-box step1-box">
-              <!-- Step Number on Top Left -->
-              <span class="step-number step1-number"
-                ><img src="/01 (1).svg" alt="Share"
-              /></span>
+              <!-- Step Number -->
+              <span class="step-number step1-number">
+                <img src="/01 (1).svg" alt="Share" />
+              </span>
+
+              <!-- Normal content always visible -->
               <div class="upload-sec">
                 <img src="/upload-04.svg" alt="Share" />
                 <div class="upload-instruction">
                   <span class="drag-text">Drag and drop</span>
                 </div>
               </div>
-              <div class="overlay-box">
-                <img
-                  class="phase-1-image"
-                  :src="step3Img"
-                  alt="phase one image"
-                />
+
+              <!-- Overlay: initially not present -->
+              <div
+                v-if="overlayVisible"
+                class="overlay-box"
+                :class="{ shrink: overlayShrink }"
+              >
+                <img class="overlay-img" :src="step1Img" alt="overlay" />
               </div>
             </div>
           </div>
@@ -769,13 +773,27 @@
               <span class="step-number step2-number"
                 ><img src="/02.svg" alt="Share"
               /></span>
-              <div>
+              <div class="step-2-wave-container">
+                <!-- OLD image stays behind -->
+                <img class="step2-img base" :src="step2Img" alt="" />
+
+                <!-- NEW image fades in on top -->
                 <img
-                  class="second-phase-image"
-                  src="../../assets/homePhase2.png"
+                  class="step2-img top"
+                  :class="{ show: step2ShowNewImg }"
+                  :src="step3Img"
                   alt=""
                 />
+
+                <!-- wave overlay -->
+                <div
+                  v-if="step2ShowWave"
+                  class="step2-wave-overlay"
+                  :key="step2WaveKey"
+                  @animationend="step2OnWaveEnd"
+                ></div>
               </div>
+
               <div class="ai-badge">
                 <span><img src="/addingfurniture.svg" alt="Share" /></span>
                 Adding furniture..
@@ -1279,7 +1297,7 @@
               <!-- Navigation Arrows -->
               <div class="absolute top-4 left-4 z-20">
                 <button
-                  @click="prevVirtualStagingImage"
+                  @click.stop="prevVirtualStagingImage"
                   class="bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full p-2 shadow-lg transition-all"
                 >
                   <svg
@@ -1300,7 +1318,7 @@
 
               <div class="absolute top-4 right-4 z-20">
                 <button
-                  @click="nextVirtualStagingImage"
+                  @click.stop="nextVirtualStagingImage"
                   class="bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full p-2 shadow-lg transition-all"
                 >
                   <svg
@@ -1324,9 +1342,7 @@
           </div>
 
           <!-- Content -->
-          <div
-            class="lg:col-span-6 order-2 !mb-4 flex flex-col justify-center"
-          >
+          <div class="lg:col-span-6 order-2 !mb-4 flex flex-col justify-center">
             <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
               Virtual Staging
             </h2>
@@ -1370,7 +1386,9 @@
         <!-- 3D Rendering Section -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <!-- Content -->
-          <div class="lg:col-span-6 order-2 lg:order-1 flex flex-col justify-center">
+          <div
+            class="lg:col-span-6 order-2 lg:order-1 flex flex-col justify-center"
+          >
             <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
               3D Rendering
             </h2>
@@ -1481,7 +1499,7 @@
               <!-- Navigation Arrows -->
               <div class="absolute top-4 left-4 z-20">
                 <button
-                  @click="prevRendering3DImage"
+                  @click.stop="prevRendering3DImage"
                   class="bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full p-2 shadow-lg transition-all"
                 >
                   <svg
@@ -1502,7 +1520,7 @@
 
               <div class="absolute top-4 right-4 z-20">
                 <button
-                  @click="nextRendering3DImage"
+                  @click.stop="nextRendering3DImage"
                   class="bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full p-2 shadow-lg transition-all"
                 >
                   <svg
@@ -1609,7 +1627,7 @@
               <!-- Navigation Arrows -->
               <div class="absolute top-4 left-4 z-20">
                 <button
-                  @click="prevRemoveObectImage"
+                  @click.stop="prevRemoveObectImage"
                   class="bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full p-2 shadow-lg transition-all"
                 >
                   <svg
@@ -1630,7 +1648,7 @@
 
               <div class="absolute top-4 right-4 z-20">
                 <button
-                  @click="nextRemoveObjectImage"
+                  @click.stop="nextRemoveObjectImage"
                   class="bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full p-2 shadow-lg transition-all"
                 >
                   <svg
@@ -1654,9 +1672,7 @@
           </div>
 
           <!-- Content -->
-          <div
-            class="lg:col-span-6 order-2 flex flex-col justify-center"
-          >
+          <div class="lg:col-span-6 order-2 flex flex-col justify-center">
             <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
               Object Removal
             </h2>
@@ -1701,7 +1717,9 @@
         <!-- change floor  -->
         <div class="floor-change-sec grid grid-cols-1 lg:grid-cols-12 gap-8">
           <!-- Content -->
-          <div class="lg:col-span-6 order-2 lg:order-1 flex flex-col justify-center">
+          <div
+            class="lg:col-span-6 order-2 lg:order-1 flex flex-col justify-center"
+          >
             <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
               Floor Changing
             </h2>
@@ -1817,7 +1835,7 @@
               <!-- Navigation Arrows -->
               <div class="absolute top-4 left-4 z-20">
                 <button
-                  @click="prevRenderingFloorImage"
+                  @click.stop ="prevRenderingFloorImage"
                   class="bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full p-2 shadow-lg transition-all"
                 >
                   <svg
@@ -1838,7 +1856,7 @@
 
               <div class="absolute top-4 right-4 z-20">
                 <button
-                  @click="nextRenderingFloorImage"
+                  @click.stop="nextRenderingFloorImage"
                   class="bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full p-2 shadow-lg transition-all"
                 >
                   <svg
@@ -2324,6 +2342,15 @@ export default {
       step2Img,
       step1Img,
 
+      overlayVisible: false,
+      overlayShrink: false,
+      // 2nd step----------
+      step2CurrentImg: step2Img,
+      step2ShowWave: false,
+      step2WaveKey: 0,
+      step2Fading: false,
+      step2ShowNewImg: false,
+
       // Form data
       form: {
         name: "",
@@ -2382,7 +2409,7 @@ export default {
       rendering3DImages: [room2After3D, room2Before3d],
       RemovingObjectImages: [room1AfterOR, room1BeforeOR],
       FloorChangeImages: [room1AfterFC, room1BeforeFC],
-      FloorChangeConfig: [room1TileFC, room2Floor, room3TileFC,room4Tile],
+      FloorChangeConfig: [room1TileFC, room2Floor, room3TileFC, room4Tile],
 
       // Image sets for navigation
       virtualStagingImageSet: [
@@ -2407,7 +2434,7 @@ export default {
         [room1AfterFC, room1BeforeFC],
         [room2AfterFC, room1BeforeFC],
         [room3After, room1BeforeFC],
-        [room4AfterFC,room1BeforeFC]
+        [room4AfterFC, room1BeforeFC],
       ],
 
       virtualStagingImageIndex: 0,
@@ -2425,8 +2452,67 @@ export default {
       },
     };
   },
+  mounted() {
+    this.runCycle();
+    this.step2RunWave();
+
+    this.intervalId = setInterval(this.runCycle, 8000);
+  },
+
+  beforeUnmount() {
+    clearInterval(this.intervalId);
+  },
 
   methods: {
+    step2RunWave() {
+      this.step2ShowNewImg = false; // reset to old image
+      this.step2ShowWave = false;
+
+      setTimeout(() => {
+        this.step2ShowWave = true;
+        this.step2WaveKey++; // restart wave animation
+      }, 1000);
+    },
+
+    step2OnWaveEnd() {
+      // show new image smoothly (crossfade)
+      this.step2ShowNewImg = true;
+
+      // remove wave
+      this.step2ShowWave = false;
+
+      // loop again after 2 sec
+      setTimeout(() => {
+        this.step2RunWave();
+      }, 2000);
+    },
+    runCycle() {
+      // Step 1: start hidden
+      this.overlayVisible = false;
+      this.overlayShrink = false;
+
+      // Step 2: show full
+      setTimeout(() => {
+        this.overlayVisible = true;
+        this.overlayShrink = false;
+      }, 2000);
+
+      // Step 3: shrink to small
+      setTimeout(() => {
+        this.overlayShrink = true;
+      }, 4000);
+
+      // Step 4: go back to full again
+      setTimeout(() => {
+        this.overlayShrink = false; // full again
+      }, 6000);
+
+      // Step 5: hide
+      setTimeout(() => {
+        this.overlayVisible = false;
+        this.overlayShrink = false;
+      }, 8000);
+    },
     handleAuthorizeClick(action) {
       if (!this.isLogedIn) {
         this.$router.push({
@@ -2587,6 +2673,9 @@ export default {
       console.log("Try 3D Rendering clicked");
       // Add your navigation or action here
     },
+  },
+  beforeUnmount() {
+    clearInterval(this.timer);
   },
 
   beforeUnmount() {
@@ -2778,15 +2867,29 @@ export default {
 }
 
 .overlay-box {
+  width: 100%;
+  height: 100%;
   position: absolute;
-  top: 80px;
-  left: 225px;
-  width: 274px;
-  height: 213px;
-  background-image: url("/thirdcardbg.svg");
+  top: -24px;
+  left: 0;
+  transition:
+    transform 0.9s ease,
+    width 0.9s ease,
+    height 0.9s ease,
+    top 0.9s ease,
+    left 0.9s ease;
+  /* top: 80px;
+  left: 225px; */
+  /* width: 274px;
+  height: 213px; */
+  /* background-image: url("/thirdcardbg.svg"); */
   border-radius: 16px;
   transform: translateY(24px);
-  overflow: visible;
+  overflow: hidden;
+}
+.overlay-img {
+  width: 100%;
+  height: 100%;
 }
 
 .phase-1-image {
@@ -2915,6 +3018,8 @@ export default {
   transform: translate(-50%, 50%);
   display: flex;
   gap: 10px;
+
+  animation: actionBtnFloat 2.5s ease-in-out infinite;
 }
 
 .action-btn {
@@ -2930,6 +3035,7 @@ export default {
 /* Step Number */
 .step-number {
   position: absolute;
+  z-index: 9;
 }
 
 .no-scrollbar {
@@ -3044,7 +3150,7 @@ export default {
 .banner-text {
   font-weight: 700;
   color: black;
-  font-size: 32px; /* default for smaller screens */
+  font-size: 32px;
 }
 .floor-image {
   width: 180px;
@@ -3060,7 +3166,7 @@ export default {
 
 @media (min-width: 1024px) {
   .banner-text {
-    font-size: 44px; /* larger screens */
+    font-size: 44px;
   }
 }
 @media screen and (max-width: 1023px) {
@@ -3068,26 +3174,124 @@ export default {
     top: -40px;
     left: 30px;
   }
-  .floor-repersentation-sec{
+  .floor-repersentation-sec {
     margin-top: 50px;
     width: 85%;
   }
 }
 @media screen and (max-width: 768px) {
-  .md-room-size{ 
+  .md-room-size {
     height: 220px;
     margin-bottom: 10px;
   }
-  .floor-repersentation-sec{
+  .floor-repersentation-sec {
     margin-top: 30px;
   }
 }
-@media screen and (max-width:480px){
-  .floor-image{
+@media screen and (max-width: 480px) {
+  .floor-image {
     width: 100px;
     height: 100px;
-    top:-50px;
-    right:-50px;
+    top: -50px;
+    right: -50px;
+  }
+}
+
+.overlay-box.shrink {
+  width: 274px;
+  height: 213px;
+
+  top: 80px;
+  left: 225px;
+
+  border-radius: 14px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+
+  /* IMPORTANT: keep transform scale 1, because we are resizing width/height */
+  transform: scale(1);
+}
+
+.step-2-wave-container {
+  position: relative;
+  width: 100%;
+  height: 275px;
+  overflow: hidden;
+  border-radius: 14px;
+}
+.step2-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* old image always visible */
+.step2-img.base {
+  opacity: 1;
+  z-index: 1;
+}
+
+/* new image starts hidden */
+.step2-img.top {
+  opacity: 0;
+  z-index: 2;
+  transition: opacity 0.5s ease-in-out;
+}
+
+/* when wave ends, new image fades in */
+.step2-img.top.show {
+  opacity: 1;
+}
+
+.step2-wave-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.3s ease-in-out;
+}
+.step2-wave-image.img-fade {
+  opacity: 0;
+}
+
+@keyframes step2WaveMove {
+  0% {
+    left: -80px;
+  }
+  100% {
+    left: 110%;
+  }
+}
+
+.step2-wave-overlay {
+  position: absolute;
+  top: 0;
+  left: -80px;
+  width: 80px;
+  height: 100%;
+z-index: 10;
+ background: linear-gradient(
+  90deg,
+  rgba(0, 123, 255, 0),
+  rgba(0, 123, 255, 0.4),
+  rgba(0, 123, 255, 0.9)
+);
+
+  animation: step2WaveMove 2.5s ease-in-out forwards;
+}
+
+@keyframes actionBtnFloat {
+  
+  0%,
+  15% {
+    transform: translate(-50%, 50%);
+  }
+  50% {
+    transform: translate(-50%, -100%);
+  }
+  85%,
+  100% {
+    transform: translate(-50%, 50%);
   }
 }
 </style>

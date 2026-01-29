@@ -1,41 +1,22 @@
 <template>
   <div className="pt-3 sm:pt-2">
     <!-- Header -->
-    <!-- <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px; background: white; border-bottom: 1px solid #f0f0f0;">
-      <span 
-     
-        style="
-          font-family: Poppins;
-          font-weight: 500;
-          font-style: normal;
-          font-size: 14px;
-          line-height: 20px;
-          letter-spacing: 0;
-        "
-    
-      
-      >AI Catalog</span>
-      <a-button size="small" type="default" @click="$emit('see-all-products', true)">See all</a-button>
-    </div> -->
-<!-- {{ brand_data }} -->
     <div class="ai-catalog-header pt-2 !mx-1 ">
-    <div class=" flex gap-2">
-      <!-- <a-button tooltip="switch brand" @click="$emit('switch-brand-profesional', true)" style="display: flex;justify-content: center;align-items:center;" shape="circle"><SwapOutlined /></a-button> -->
-
-      <router-link :to="'/'+$route.query.brand">
-        <div style="display: flex;gap:10px;">
-          <a-avatar size="medium" style="border:1px solid rgba(0,0,0,0.2)" :src="this.$store.state.root_media_api+brand_data.business_picture"></a-avatar>
-          <span class="!text-gray-700 py-3"  style="
-          font-family: Poppins;
-          font-weight: 700;
-          font-style: normal;
-          font-size: 16px;
-          line-height: 18px;
-          letter-spacing: 0;margin-top:-6px
-          ">AI Catalog</span>
-        </div>
-      </router-link>
-    </div>
+      <div class=" flex gap-2">
+        <router-link :to="'/'+$route.query.brand">
+          <div style="display: flex;gap:10px;">
+            <a-avatar size="medium" style="border:1px solid rgba(0,0,0,0.2)" :src="this.$store.state.root_media_api+brand_data.business_picture"></a-avatar>
+            <span class="!text-gray-700 py-3"  style="
+            font-family: Poppins;
+            font-weight: 700;
+            font-style: normal;
+            font-size: 16px;
+            line-height: 18px;
+            letter-spacing: 0;margin-top:-6px
+            ">AI Catalog</span>
+          </div>
+        </router-link>
+      </div>
 
       <a-button size='small' type="default" class="see-all-link"  @click="$emit('see-all-products', true)">See all</a-button>
     </div>
@@ -69,7 +50,7 @@
     <div class="overflow-y-auto p-[5px] bg-[#fafafa] md:h-[calc(76vh-80px)]">
       
       <!-- Furniture -->
-      <a-collapse v-model:activeKey="productsActiveKey" style="margin-bottom: 12px;" v-if="furniture_products.length > 0">
+      <a-collapse v-model:activeKey="productsActiveKey" style="margin-bottom: 12px;" v-if="furniture_products.length > 0 || initialLoadingFurniture">
         <a-collapse-panel key="products">
           <template #header>
             <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
@@ -77,18 +58,45 @@
               <a-badge :count="furnitureProductsPagination.total_count" />
             </div>
           </template>
-          <a-empty v-if="!furniture_products.length" :image="simpleImage" />
+          
+          <!-- Skeleton Loader for Furniture -->
+          <div v-if="initialLoadingFurniture" :class="showGrid ? 'grid' : 'list'">
+            <div v-for="n in 6" :key="'skeleton-furniture-' + n" class="skeleton-card">
+              <div class="shimmer-skeleton"></div>
+            </div>
+          </div>
+
+          <a-empty v-else-if="!furniture_products.length" :image="simpleImage" />
+          
           <div v-else :class="showGrid ? 'grid' : 'list'">
-            <div v-for="item in filterItems(furniture_products, 'name')" :key="item.id"
-                 class="item" :class="{selected: selected_texture === item.id}"
-                 @click="selectfurnitureProduct('product', item.id, item['3d_model'], item.dimensions)">
-              <img :src="$store.state.root_media_api + item.primary_image" :alt="item.name" />
+            <div v-for="item in filterItems(furniture_products, 'name')" 
+              :key="item.id"
+              class="item relative overflow-hidden w-full h-[120px] cursor-pointer"
+              :class="{ 'ring-2 ring-blue-500 shadow-lg': selected_texture === item.id }"
+              @click="selectfurnitureProduct('product', item.id, item['3d_model'], item.dimensions)"
+              style="position:relative !important; overflow:hidden !important;"
+            >
+              <!-- Image Shimmer -->
+              <div 
+                v-if="!imageLoadedMap[item.id]"
+                class="absolute inset-0 z-[100] shimmer-effect"
+              ></div>
+
+              <!-- Image -->
+              <img 
+                :src="$store.state.root_media_api + item.primary_image"
+                :alt="item.name"
+                class="furniture-image absolute inset-0 w-full h-full object-contain z-[50]"
+                @load="onImageLoad(item.id)"
+              />
+
               <div style="padding: 8px;">
                 <div style="font-weight: 600; font-size: 13px;">{{ item.name }}</div>
                 <div style="font-size: 11px; color: #999;">{{ truncate(item.description) }}</div>
               </div>
             </div>
           </div>
+          
           <!-- Load More for Furniture -->
           <div v-if="furnitureProductsPagination.has_next" style="padding: 12px; text-align: center;">
             <a-button :loading="loadingFurniture" @click="loadMoreFurniture">
@@ -99,7 +107,7 @@
       </a-collapse>
 
       <!-- Lights -->
-      <a-collapse v-model:activeKey="lightsActiveKey" v-if="lights.length > 0" style="margin-bottom: 12px;">
+      <a-collapse v-model:activeKey="lightsActiveKey" v-if="lights.length > 0 || initialLoadingLights" style="margin-bottom: 12px;">
         <a-collapse-panel key="lights">
           <template #header>
             <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
@@ -107,18 +115,42 @@
               <a-badge :count="lightsPagination.total_count" />
             </div>
           </template>
-          <a-empty v-if="!lights.length" :image="simpleImage" />
+          
+          <!-- Skeleton Loader for Lights -->
+          <div v-if="initialLoadingLights" :class="showGrid ? 'grid' : 'list'">
+            <div v-for="n in 6" :key="'skeleton-lights-' + n" class="skeleton-card">
+              <div class="shimmer-skeleton"></div>
+            </div>
+          </div>
+
+          <a-empty v-else-if="!lights.length" :image="simpleImage" />
+          
           <div v-else :class="showGrid ? 'grid' : 'list'">
             <div v-for="item in filterItems(lights, 'name')" :key="item.id"
-                 class="item" :class="{selected: selected_texture === item.id}"
-                 @click="selectTexture('light', item.id, item['3d_model'], item.light_type)">
-              <img :src="$store.state.root_media_api + item.primary_image" :alt="item.name" />
+                 class="item relative overflow-hidden w-full h-[120px] cursor-pointer" 
+                 :class="{selected: selected_texture === item.id}"
+                 @click="selectTexture('light', item.id, item['3d_model'], item.light_type)"
+                 style="position:relative !important; overflow:hidden !important;">
+              
+              <!-- Image Shimmer -->
+              <div 
+                v-if="!imageLoadedMap[item.id]"
+                class="absolute inset-0 z-[100] shimmer-effect"
+              ></div>
+
+              <img 
+                :src="$store.state.root_media_api + item.primary_image" 
+                :alt="item.name"
+                class="furniture-image absolute inset-0 w-full h-full object-contain z-[50]"
+                @load="onImageLoad(item.id)" />
+              
               <div style="padding: 8px;">
                 <div style="font-weight: 600; font-size: 13px;">{{ item.name }}</div>
                 <div style="font-size: 11px; color: #999;">{{ truncate(item.description) }}</div>
               </div>
             </div>
           </div>
+          
           <!-- Load More for Lights -->
           <div v-if="lightsPagination.has_next" style="padding: 12px; text-align: center;">
             <a-button :loading="loadingLights" @click="loadMoreLights">
@@ -129,7 +161,7 @@
       </a-collapse>
       
       <!-- Floors -->
-      <a-collapse v-model:activeKey="floorsActiveKey" style="margin-bottom: 12px;" v-if="floors.length > 0">
+      <a-collapse v-model:activeKey="floorsActiveKey" style="margin-bottom: 12px;" v-if="floors.length > 0 || initialLoadingFloors">
         <a-collapse-panel key="floors">
           <template #header>
             <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
@@ -137,18 +169,42 @@
               <a-badge :count="floorsPagination.total_count" />
             </div>
           </template>
-          <a-empty v-if="!floors.length" :image="simpleImage" />
+          
+          <!-- Skeleton Loader for Floors -->
+          <div v-if="initialLoadingFloors" :class="showGrid ? 'grid' : 'list'">
+            <div v-for="n in 6" :key="'skeleton-floors-' + n" class="skeleton-card">
+              <div class="shimmer-skeleton"></div>
+            </div>
+          </div>
+
+          <a-empty v-else-if="!floors.length" :image="simpleImage" />
+          
           <div v-else :class="showGrid ? 'grid' : 'list'">
             <div v-for="item in filterItems(floors)" :key="item.id" 
-                 class="item" :class="{selected: selected_texture === item.id}"
-                 @click="selectTexture('floor', item.id)">
-              <img :src="$store.state.root_media_api + item.texture_image" :alt="item.title" />
+                 class="item relative overflow-hidden w-full h-[120px] cursor-pointer" 
+                 :class="{selected: selected_texture === item.id}"
+                 @click="selectTexture('floor', item.id)"
+                 style="position:relative !important; overflow:hidden !important;">
+              
+              <!-- Image Shimmer -->
+              <div 
+                v-if="!imageLoadedMap[item.id]"
+                class="absolute inset-0 z-[100] shimmer-effect"
+              ></div>
+
+              <img 
+                :src="$store.state.root_media_api + item.texture_image" 
+                :alt="item.title"
+                class="furniture-image absolute inset-0 w-full h-full object-contain z-[50]"
+                @load="onImageLoad(item.id)" />
+              
               <div style="padding: 8px;">
                 <div style="font-weight: 600; font-size: 13px;">{{ item.title }}</div>
                 <div style="font-size: 11px; color: #999;">{{ truncate(item.description) }}</div>
               </div>
             </div>
           </div>
+          
           <!-- Load More for Floors -->
           <div v-if="floorsPagination.has_next" style="padding: 12px; text-align: center;">
             <a-button :loading="loadingFloors" @click="loadMoreFloors">
@@ -159,7 +215,7 @@
       </a-collapse>
 
       <!-- Walls -->
-      <a-collapse v-model:activeKey="wallsActiveKey" style="margin-bottom: 12px;" v-if="walls.length > 0">
+      <a-collapse v-model:activeKey="wallsActiveKey" style="margin-bottom: 12px;" v-if="walls.length > 0 || initialLoadingWalls">
         <a-collapse-panel key="walls">
           <template #header>
             <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
@@ -167,18 +223,42 @@
               <a-badge :count="wallsPagination.total_count" />
             </div>
           </template>
-          <a-empty v-if="!walls.length" :image="simpleImage" />
+          
+          <!-- Skeleton Loader for Walls -->
+          <div v-if="initialLoadingWalls" :class="showGrid ? 'grid' : 'list'">
+            <div v-for="n in 6" :key="'skeleton-walls-' + n" class="skeleton-card">
+              <div class="shimmer-skeleton"></div>
+            </div>
+          </div>
+
+          <a-empty v-else-if="!walls.length" :image="simpleImage" />
+          
           <div v-else :class="showGrid ? 'grid' : 'list'">
             <div v-for="item in filterItems(walls)" :key="item.id"
-                 class="item" :class="{selected: selected_texture === item.id}"
-                 @click="selectTexture('wall', item.id)">
-              <img :src="$store.state.root_media_api + item.texture_image" :alt="item.title" />
+                 class="item relative overflow-hidden w-full h-[120px] cursor-pointer" 
+                 :class="{selected: selected_texture === item.id}"
+                 @click="selectTexture('wall', item.id)"
+                 style="position:relative !important; overflow:hidden !important;">
+              
+              <!-- Image Shimmer -->
+              <div 
+                v-if="!imageLoadedMap[item.id]"
+                class="absolute inset-0 z-[100] shimmer-effect"
+              ></div>
+
+              <img 
+                :src="$store.state.root_media_api + item.texture_image" 
+                :alt="item.title"
+                class="furniture-image absolute inset-0 w-full h-full object-contain z-[50]"
+                @load="onImageLoad(item.id)" />
+              
               <div style="padding: 8px;">
                 <div style="font-weight: 600; font-size: 13px;">{{ item.title }}</div>
                 <div style="font-size: 11px; color: #999;">{{ truncate(item.description) }}</div>
               </div>
             </div>
           </div>
+          
           <!-- Load More for Walls -->
           <div v-if="wallsPagination.has_next" style="padding: 12px; text-align: center;">
             <a-button :loading="loadingWalls" @click="loadMoreWalls">
@@ -195,9 +275,7 @@
 <script>
 import { Empty } from 'ant-design-vue';
 
-
 export default {
- 
   data() {
     return {
       searchText: '',
@@ -205,6 +283,7 @@ export default {
       selected_texture: null,
       simpleImage: Empty.PRESENTED_IMAGE_SIMPLE,
       floors: [],
+      imageLoadedMap: {},
       walls: [],
       furniture_products: [],
       lights: [],
@@ -225,6 +304,12 @@ export default {
       loadingWalls: false,
       loadingFurniture: false,
       loadingLights: false,
+      
+      // Initial loading states for skeleton
+      initialLoadingFloors: true,
+      initialLoadingWalls: true,
+      initialLoadingFurniture: true,
+      initialLoadingLights: true,
       
       // Pagination info
       floorsPagination: {
@@ -252,9 +337,10 @@ export default {
     };
   },
   
-  props:{
-    brand_data:Object
+  props: {
+    brand_data: Object
   },
+  
   mounted() {
     const route = this.$route;
     this.catalogueId = route.params.id;
@@ -268,27 +354,29 @@ export default {
       this.fetchData();
     }
   },
+  
   methods: {
-      truncateChars(text, limit = 11) {
-  if (!text) return ''
-  return text.length > limit
-    ? text.slice(0, limit) + '...'
-    : text
-},
+    truncateChars(text, limit = 11) {
+      if (!text) return ''
+      return text.length > limit
+        ? text.slice(0, limit) + '...'
+        : text
+    },
+    
     async fetchData(brand = null) {
       const endpoints = brand ? [
-        { key: 'floors', url: `room/api/load-brand-products/floors/${brand}`, pagination: 'floorsPagination' },
-        { key: 'walls', url: `room/api/load-brand-products/walls/${brand}`, pagination: 'wallsPagination' },
-        { key: 'furniture_products', url: `product/api/load-brand-products/3d-products/${brand}`, pagination: 'furnitureProductsPagination' },
-        { key: 'lights', url: `product/api/load-brand-products/lights/${brand}`, pagination: 'lightsPagination' }
+        { key: 'floors', url: `room/api/load-brand-products/floors/${brand}`, pagination: 'floorsPagination', loading: 'initialLoadingFloors' },
+        { key: 'walls', url: `room/api/load-brand-products/walls/${brand}`, pagination: 'wallsPagination', loading: 'initialLoadingWalls' },
+        { key: 'furniture_products', url: `product/api/load-brand-products/3d-products/${brand}`, pagination: 'furnitureProductsPagination', loading: 'initialLoadingFurniture' },
+        { key: 'lights', url: `product/api/load-brand-products/lights/${brand}`, pagination: 'lightsPagination', loading: 'initialLoadingLights' }
       ] : [
-        { key: 'floors', url: 'room/api/floors/', pagination: 'floorsPagination' },
-        { key: 'walls', url: 'room/api/walls/', pagination: 'wallsPagination' },
-        { key: 'furniture_products', url: 'product/api/3d-products/', pagination: 'furnitureProductsPagination' },
-        { key: 'lights', url: 'product/api/lights/', pagination: 'lightsPagination' }
+        { key: 'floors', url: 'room/api/floors/', pagination: 'floorsPagination', loading: 'initialLoadingFloors' },
+        { key: 'walls', url: 'room/api/walls/', pagination: 'wallsPagination', loading: 'initialLoadingWalls' },
+        { key: 'furniture_products', url: 'product/api/3d-products/', pagination: 'furnitureProductsPagination', loading: 'initialLoadingFurniture' },
+        { key: 'lights', url: 'product/api/lights/', pagination: 'lightsPagination', loading: 'initialLoadingLights' }
       ];
 
-      const requests = endpoints.map(async ({ key, url, pagination }) => {
+      const requests = endpoints.map(async ({ key, url, pagination, loading }) => {
         try {
           const res = await fetch(`${this.$store.state.root_api}${url}?page=1&page_size=${this.pageSize}`, {
             headers: {
@@ -296,10 +384,7 @@ export default {
             }
           });
           const data = await res.json();
-          // console.log("=========================================================================")
-          // console.log(key)
-          // console.log("=========================================================================")
-          // console.log(data)
+          
           if (data?.data) {
             this[key] = data.data;
           }
@@ -307,8 +392,12 @@ export default {
           if (data?.pagination) {
             this[pagination] = data.pagination;
           }
+          
+          // Set loading to false after data is fetched
+          this[loading] = false;
         } catch (e) {
           console.error(`Failed to fetch ${key}:`, e);
+          this[loading] = false;
         }
       });
 
@@ -320,6 +409,10 @@ export default {
         'furniture_products': this.furniture_products,
         'lights': this.lights
       });
+    },
+
+    onImageLoad(id) {
+      this.$set(this.imageLoadedMap, id, true);
     },
 
     async loadMoreFloors() {
@@ -389,6 +482,12 @@ export default {
     handleSearchChange() {
       clearTimeout(this.searchTimeout);
       this.searchTimeout = setTimeout(() => {
+        // Reset initial loading states for search
+        this.initialLoadingFloors = true;
+        this.initialLoadingWalls = true;
+        this.initialLoadingFurniture = true;
+        this.initialLoadingLights = true;
+        
         this.floorsCurrentPage = 1;
         this.wallsCurrentPage = 1;
         this.furnitureCurrentPage = 1;
@@ -447,9 +546,66 @@ export default {
   flex-shrink: 0;
 }
 
+/* Shimmer Effect for Images */
+.shimmer-effect {
+  background: linear-gradient(
+    110deg,
+    #e5e7eb 8%,
+    #f9fafb 18%,
+    #e5e7eb 33%
+  ) !important;
+  background-size: 200% 100% !important;
+  animation: shimmer 8s infinite linear !important;
+  border-radius: 8px !important;
+}
+
+/* Skeleton Card Container */
+.skeleton-card {
+  background: white;
+  border: 2px solid #f0f0f0;
+  border-radius: 8px;
+  overflow: hidden;
+  width: 100%;
+  height: 120px;
+}
+
+.grid .skeleton-card {
+  width: 100%;
+  aspect-ratio: 95/100;
+  height: auto;
+}
+
+.list .skeleton-card {
+  width: 100%;
+  height: 120px;
+}
+
+/* Shimmer Skeleton for Loading State */
+.shimmer-skeleton {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    110deg,
+    #e5e7eb 8%,
+    #f9fafb 18%,
+    #e5e7eb 33%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 8s infinite linear;
+  border-radius: 8px;
+}
+
+@keyframes shimmer {
+  0% { background-position-x: 0%; }
+  100% { background-position-x: -200%; }
+}
+
+.furniture-image {
+  border-radius: 8px !important;
+}
+
 .see-all-link {
   color: #1890ff;
   text-decoration: none;
 }
-
 </style>
