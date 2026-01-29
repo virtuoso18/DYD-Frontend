@@ -38,6 +38,23 @@
       ref="viewer" 
       v-show="glbUrl && glbUrl !== ''"
     ></div>
+
+    <span
+      style="
+        background: white;
+        border-radius: 5px;
+        padding-left: 5px;
+        padding-right: 5px;
+        font-size: 12px;
+        font-weight: 600;
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+      "
+      >W-{{ currentModelDimensions.width }}m X H-{{
+        currentModelDimensions.height
+      }}m X D-{{ currentModelDimensions.depth }}m</span
+    >
   </div>
 </div>
  

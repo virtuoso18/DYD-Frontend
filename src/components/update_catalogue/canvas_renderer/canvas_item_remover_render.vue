@@ -2941,51 +2941,108 @@ export default {
       });
     },
 
+    // processSingleObjectMask(maskData, index) {
+    //   try {
+    //     const tempCanvas = document.createElement("canvas");
+    //     tempCanvas.width = this.canvasWidth;
+    //     tempCanvas.height = this.canvasHeight;
+    //     const tempCtx = tempCanvas.getContext("2d");
+
+    //     tempCtx.fillStyle = "#000000";
+    //     tempCtx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+
+    //     tempCtx.drawImage(
+    //       maskData.img,
+    //       this.renderOffsetX,
+    //       this.renderOffsetY,
+    //       this.renderWidth,
+    //       this.renderHeight
+    //     );
+
+    //     const imageData = tempCtx.getImageData(
+    //       0,
+    //       0,
+    //       this.canvasWidth,
+    //       this.canvasHeight
+    //     );
+
+    //     this.objectMaskImageData[index] = {
+    //       imageData: imageData,
+    //       objectKey: maskData.objectKey,
+    //       index: index,
+    //     };
+
+    //     const bounds = this.findObjectBoundsOptimized(imageData);
+
+    //     if (bounds) {
+    //       this.objectMaskRegions.push({
+    //         objectKey: maskData.objectKey,
+    //         index: index,
+    //         bounds: bounds,
+    //         imageData: imageData,
+    //       });
+    //     }
+    //   } catch (error) {
+    //     console.error(`Error processing mask ${index}:`, error);
+    //   }
+    // },
+
     processSingleObjectMask(maskData, index) {
-      try {
-        const tempCanvas = document.createElement("canvas");
-        tempCanvas.width = this.canvasWidth;
-        tempCanvas.height = this.canvasHeight;
-        const tempCtx = tempCanvas.getContext("2d");
+  try {
+    if (
+      !this.canvasWidth ||
+      !this.canvasHeight ||
+      !this.renderWidth ||
+      !this.renderHeight
+    ) {
+      console.warn("Canvas/render size not ready", index);
+      return;
+    }
 
-        tempCtx.fillStyle = "#000000";
-        tempCtx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+    const tempCanvas = document.createElement("canvas");
+    tempCanvas.width = this.canvasWidth;
+    tempCanvas.height = this.canvasHeight;
 
-        tempCtx.drawImage(
-          maskData.img,
-          this.renderOffsetX,
-          this.renderOffsetY,
-          this.renderWidth,
-          this.renderHeight
-        );
+    const tempCtx = tempCanvas.getContext("2d");
 
-        const imageData = tempCtx.getImageData(
-          0,
-          0,
-          this.canvasWidth,
-          this.canvasHeight
-        );
+    tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
 
-        this.objectMaskImageData[index] = {
-          imageData: imageData,
-          objectKey: maskData.objectKey,
-          index: index,
-        };
+    tempCtx.drawImage(
+      maskData.img,
+      this.renderOffsetX,
+      this.renderOffsetY,
+      this.renderWidth,
+      this.renderHeight
+    );
 
-        const bounds = this.findObjectBoundsOptimized(imageData);
+    const imageData = tempCtx.getImageData(
+      0,
+      0,
+      tempCanvas.width,
+      tempCanvas.height
+    );
 
-        if (bounds) {
-          this.objectMaskRegions.push({
-            objectKey: maskData.objectKey,
-            index: index,
-            bounds: bounds,
-            imageData: imageData,
-          });
-        }
-      } catch (error) {
-        console.error(`Error processing mask ${index}:`, error);
-      }
-    },
+    this.objectMaskImageData[index] = {
+      imageData,
+      objectKey: maskData.objectKey,
+      index,
+    };
+
+    const bounds = this.findObjectBoundsOptimized(imageData);
+
+    if (bounds) {
+      this.objectMaskRegions.push({
+        objectKey: maskData.objectKey,
+        index,
+        bounds,
+        imageData,
+      });
+    }
+
+  } catch (err) {
+    console.error(`Error processing mask ${index}`, err);
+  }
+},
 
     findObjectBoundsOptimized(imageData) {
       const data = imageData.data;

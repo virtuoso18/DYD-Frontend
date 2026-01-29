@@ -305,6 +305,7 @@
               <strong>Completed:</strong> {{ formatQueueTime(item.completed_at) }}
             </p>
             <p v-if="item.error_message" style="margin: 0 0 8px 0; font-size: 12px; color: #ff4d4f;">
+              <!-- {{ item.error_message }} -->
               🔴 Failed (Error)
             </p>
           </div>

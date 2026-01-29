@@ -411,9 +411,12 @@ export default {
       });
     },
 
+    // onImageLoad(id) {
+    //   this.$set(this.imageLoadedMap, id, true);
+    // },
     onImageLoad(id) {
-      this.$set(this.imageLoadedMap, id, true);
-    },
+this.imageLoadedMap[id] = true;
+},
 
     async loadMoreFloors() {
       await this.loadMore('floors', 'room/api/load-brand-products/floors/', 'room/api/floors/', 'floorsCurrentPage', 'loadingFloors', 'floorsPagination');

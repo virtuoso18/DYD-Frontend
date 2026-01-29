@@ -3758,12 +3758,14 @@ async fetchSingleProductType(productType, dataKey, brand, endpointMap) {
       // ⏳ WAIT until polling completes
       const finalImage = await this.startPolling(renderer_id)
 
+
       // ✅ ONLY NOW update canvas
       this.base_image_url =
         this.$store.state.root_media_api +
         finalImage +
         '?t=' +
         Date.now()
+        console.log("===============> "+this.base_image_url)
 
       this.forceCanvasUpdate()
 

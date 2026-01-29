@@ -26,6 +26,7 @@
       >
       
         <a-col :span="5">
+          {{  getMainImage(model) }}
           <img 
             :src="this.$store.state.root_media_api+ getMainImage(model)" 
             style="width:60px;height:60px;object-fit:cover;border-radius:4px;border:1px solid rgba(0,0,0,0.2)" 
