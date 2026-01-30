@@ -1,6 +1,7 @@
 <template>
   <div class="dashboard-manager">
     <!-- Show loading while checking user type and redirecting -->
+    
     <div v-if="isLoading" class="loading-container">
       <a-spin size="large" />
       <p>Redirecting to your dashboard...</p>
@@ -15,9 +16,8 @@
         :profile="profile"
         :business_info="business_info"
       />
-      
       <!-- Floating action button for creating new catalogue -->
-      <router-link :to="'/start-new-catalogue'" v-if="this.user.user_type=='Business'">
+      <router-link :to="'/start-new-catalogue?brand='+business_info.slug" v-if="this.user.user_type=='Business'">
         <a-float-button>
           <template #icon>
             <FormatPainterOutlined />
