@@ -155,7 +155,7 @@
                         <!-- {{ product }} -->
     
                         <a-col span="18">
-                            <a-button block @click="goto_product_Route(product)">Product Details</a-button>
+                            <a-button block @click="goto_product_Route(product)"  class="product-details-btn">Product Details</a-button>
                         </a-col>
     
     
@@ -1183,6 +1183,11 @@ export default {
   }
   .like-button{
     padding: 4px 7px !important;
+  }
+  .product-details-btn{
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 }
 </style>
