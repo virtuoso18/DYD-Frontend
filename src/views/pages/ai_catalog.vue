@@ -1,49 +1,83 @@
 <template>
   <div class="business-profiles-container">
     <h2>All Business Accounts Here</h2>
-    
+
     <!-- Business Profiles List -->
     <div class="profiles-list">
       <div v-if="all_businesses.length > 0" class="profiles-grid">
-        <div v-for="business in all_businesses" :key="business.id" class="business-card">
+        <div
+          v-for="business in all_businesses"
+          :key="business.id"
+          class="business-card"
+        >
           <!-- Your business card content here -->
           <!-- Background image covering 100% width of card with centered overlay image -->
-<div 
-  :style="{
-    backgroundImage: `url(${this.$store.state.root_media_api}/media/${business.business_picture})`,
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    backgroundRepeat: 'no-repeat',
-    height: '150px',
-    borderRadius: '10px',
-    width: '100%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'relative'
-  }"
->
-  <!-- Centered banner picture with negative margin -->
-  <img 
-    :src="`${this.$store.state.root_media_api}/media/${business.banner_picture}`" 
-    style="width: 70px; height: 70px;border:1px solid rgba(0,0,0,0.2); margin-bottom: -45%;margin-left: -75%; position: relative; z-index: 10; border-radius: 50%; object-fit: cover;"
-    alt="Business Banner"
-  >
-</div>
-           <!-- {{business.business_picture}} -->
-<!-- <br><br> -->
- <div>
-<a-row>
-  <a-col :span="6"></a-col>
-  <a-col :span="18">
+          <div
+            class="business-bg-container relative"
+            :class="{ 'image-loaded': imageLoadedMap[business.id] }"
+          >
+            <!-- FULL CONTAINER SHIMMER -->
+            <div
+              v-if="!imageLoadedMap[business.id]"
+              class="business-bg-shimmer"
+            ></div>
 
-    <h3 style="color:black">{{ business.name }}</h3>
-    <!-- {{ business.slug }} -->
+            <!-- YOUR ORIGINAL BG + IMG -->
+            <div
+              :style="{
+                backgroundImage: `url(${this.$store.state.root_media_api}/media/${business.business_picture})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+                height: '150px',
+                borderRadius: '10px',
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                position: 'relative',
+              }"
+            >
+              <!-- YOUR ORIGINAL BANNER IMG -->
+              <img
+                :src="`${this.$store.state.root_media_api}/media/${business.banner_picture}`"
+                @load="onBusinessImagesLoad(business.id)"
+                style="
+                  width: 70px;
+                  height: 70px;
+                  border: 1px solid rgba(0, 0, 0, 0.2);
+                  margin-bottom: -45%;
+                  margin-left: -75%;
+                  position: relative;
+                  z-index: 10001;
+                  border-radius: 50%;
+                  object-fit: cover;
+                "
+                alt="Business Banner"
+              />
+            </div>
+          </div>
 
-    <a-button @click="$router.push('/explore-business-cataloges/'+business.slug)" type="primary" block >Show Products </a-button>
-  </a-col>
-</a-row>
- </div>
+          <!-- {{business.business_picture}} -->
+          <!-- <br><br> -->
+          <div>
+            <a-row>
+              <a-col :span="6"></a-col>
+              <a-col :span="18">
+                <h3 style="color: black">{{ business.name }}</h3>
+                <!-- {{ business.slug }} -->
+
+                <a-button
+                  @click="
+                    $router.push('/explore-business-cataloges/' + business.slug)
+                  "
+                  type="primary"
+                  block
+                  >Show Products
+                </a-button>
+              </a-col>
+            </a-row>
+          </div>
         </div>
       </div>
       <div v-else class="no-data">
@@ -53,25 +87,29 @@
 
     <!-- Pagination Controls -->
     <div class="pagination-container" v-if="total_pages > 1">
-      <button 
-        @click="previous_page" 
+      <button
+        @click="previous_page"
         :disabled="current_page === 1"
         class="btn btn-prev"
       >
         Previous
       </button>
-      
+
       <div class="page-info">
         <span>Page {{ current_page }} of {{ total_pages }}</span>
-        <select v-model.number="current_page" @change="fetch_All_Business_Accounts" class="page-select">
+        <select
+          v-model.number="current_page"
+          @change="fetch_All_Business_Accounts"
+          class="page-select"
+        >
           <option v-for="page in total_pages" :key="page" :value="page">
             Go to page {{ page }}
           </option>
         </select>
       </div>
 
-      <button 
-        @click="next_page" 
+      <button
+        @click="next_page"
         :disabled="current_page === total_pages"
         class="btn btn-next"
       >
@@ -82,9 +120,9 @@
     <!-- Items per page selector -->
     <div class="items-per-page">
       <label for="items-select">Items per page:</label>
-      <select 
+      <select
         id="items-select"
-        v-model.number="items_per_page" 
+        v-model.number="items_per_page"
         @change="reset_and_fetch"
         class="items-select"
       >
@@ -100,10 +138,10 @@
 </template>
 
 <script>
-import { HeartOutlined, HeartFilled } from '@ant-design/icons-vue';
+import { HeartOutlined, HeartFilled } from "@ant-design/icons-vue";
 
 export default {
-  name: 'ai_catalog',
+  name: "ai_catalog",
   components: {
     HeartOutlined,
     HeartFilled,
@@ -112,6 +150,7 @@ export default {
     return {
       all_businesses: [],
       current_page: 1,
+      imageLoadedMap: {},
       total_pages: 1,
       items_per_page: 10,
       total_count: 0,
@@ -134,12 +173,12 @@ export default {
               Authorization: `Token ${localStorage.getItem("token")}`,
               "Content-Type": "application/json",
             },
-          }
+          },
         );
 
         const data = await response.json();
         console.log(data);
-        
+
         if (data.success) {
           this.all_businesses = data.data;
           this.total_count = data.total_count;
@@ -151,6 +190,24 @@ export default {
       } finally {
         this.loading = false;
       }
+    },
+
+    onBusinessImagesLoad(id) {
+      // Preload BG image first
+      const bgImg = new Image();
+      bgImg.onload = () => {
+        // Wait 2s minimum, then show images
+        setTimeout(() => {
+          this.imageLoadedMap[id] = true;
+        }, 2000);
+      };
+      bgImg.onerror = () => {
+        // Even on error, wait 2s
+        setTimeout(() => {
+          this.imageLoadedMap[id] = true;
+        }, 2000);
+      };
+      bgImg.src = `${this.$store.state.root_media_api}/media/${this.all_businesses.find((b) => b.id === id)?.business_picture}`;
     },
 
     next_page() {
@@ -236,6 +293,34 @@ h2 {
   gap: 15px;
   margin: 30px 0;
   flex-wrap: wrap;
+}
+
+.business-bg-container {
+  height: 150px;
+  border-radius: 10px;
+}
+
+.business-bg-shimmer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(110deg, #f3f4f6 8%, #e5e7eb 18%, #f3f4f6 33%);
+  background-size: 200% 100%;
+  border-radius: 10px;
+  animation: shimmer 1.6s infinite linear;
+  z-index: 20;
+}
+
+@keyframes shimmer {
+  to {
+    background-position-x: -200%;
+  }
+}
+
+.business-bg-container.image-loaded .business-bg-shimmer {
+  opacity: 0;
+  transition: opacity 0.3s ease-out;
 }
 
 .btn {

@@ -855,9 +855,9 @@ this.$emit('update:isLoading', true);
 
     async reinitializeWithNewModel() {
       this.loadingText = "Loading new model...";
+      this.$emit('update:isLoading', false);
       await this.loadModel();
       this.fitCameraToModel();
-this.$emit('update:isLoading', false);
       // Recreate rotation ring for new model
       this.createRotationRing();
       this.updateRotationRingPosition();

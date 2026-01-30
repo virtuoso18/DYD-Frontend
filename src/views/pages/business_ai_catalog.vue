@@ -1,32 +1,54 @@
 <template>
   <div>
     <!-- Hero Section -->
-    <div 
-      class="hero-section"
-      :style="{
-        backgroundImage: `url(${this.$store.state.root_media_api+businessProfile?.business_picture || heroBgImage})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        backgroundAttachment: 'fixed',
-        height: '350px',
-        width: '100%',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        position: 'relative',
-      }"
-    >
-      <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.3);"></div>
-      <div style="text-align: center; color: white; position: relative; z-index: 1;">
-        <h1 style="color: white; font-size: 48px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); margin: 0;">
-          {{ businessProfile?.name || 'Business Catalog' }}
-        </h1>
-        <p style="font-size: 18px; margin-top: 12px;">
-          {{ businessProfile?.description || 'Explore our premium collection' }}
-        </p>
-      </div>
+   <div style="position: relative; overflow: hidden; height: 350px; width: 100%;">
+  <!-- SKELETON -->
+  <div
+    v-if="!imageLoadedMap.heroBg"
+    class="hero-skeleton"
+  ></div>
+
+  <!-- PRELOAD BACKGROUND IMAGE (INVISIBLE) -->
+  <img
+    :src="$store.state.root_media_api + businessProfile?.business_picture || heroBgImage"
+    style="position:absolute;width:0;height:0;opacity:0;"
+    @load="onHeroImageLoad"
+    alt=""
+  />
+
+  <!-- REAL HERO SECTION -->
+  <div
+    v-show="imageLoadedMap.heroBg"
+    class="hero-section"
+    :style="{
+      backgroundImage: `url(${$store.state.root_media_api + businessProfile?.business_picture || heroBgImage})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      backgroundAttachment: 'fixed',
+      height: '350px',
+      width: '100%',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      position: 'relative',
+    }"
+  >
+    <!-- Dark overlay -->
+    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.3);"></div>
+    
+    <!-- Content -->
+    <div style="text-align: center; color: white; position: relative; z-index: 1;">
+      <h1 style="color: white; font-size: 48px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); margin: 0;">
+        {{ businessProfile?.name || 'Business Catalog' }}
+      </h1>
+      <p style="font-size: 18px; margin-top: 12px;">
+        {{ businessProfile?.description || 'Explore our premium collection' }}
+      </p>
     </div>
+  </div>
+</div>
+
 
     <!-- Main Container -->
     <a-row class="ai-catalog-container" style="min-height: 100vh; margin: 0; background-color: #f5f5f5;">
@@ -184,17 +206,34 @@
                 :lg="6"
               >
                 <div class="product">
-                  <div class="product-image-container">
-                    <img
-                      :src="this.$store.state.root_media_api + product.image"
-                      :alt="product.name"
-                      class="product-image"
-                    />
-                    <!-- Category Badge -->
-                    <div class="category-badge">{{ product.category_name || product.category }}</div>
-                    <!-- AR Badge -->
-                    <div class="ar-badge">AR</div>
-                  </div>
+                 <div class="product-image-container" style="position: relative; overflow: hidden;">
+  <!-- SKELETON -->
+  <div
+    v-if="!imageLoadedMap[product.id]"
+    class="product-card-skeleton"
+  ></div>
+
+  <!-- PRELOAD (INVISIBLE) -->
+  <img
+    :src="$store.state.root_media_api + product.image"
+    style="position:absolute;width:0;height:0;opacity:0;"
+    @load="onProductImageLoad(product.id)"
+    alt=""
+  />
+
+  <!-- REAL IMAGE -->
+  <img
+    v-show="imageLoadedMap[product.id]"
+    :src="$store.state.root_media_api + product.image"
+    :alt="product.name"
+    class="product-image"
+  />
+
+  <!-- BADGES (stay on top with z-index) -->
+  <div class="category-badge">{{ product.category_name || product.category }}</div>
+  <div class="ar-badge">AR</div>
+</div>
+
 
                   <a-row>
                     <a-col :span="24" style="padding-top: 10px">
@@ -291,6 +330,10 @@ export default {
   data() {
     return {
       heroBgImage,
+      imageLoadedMap: {},
+      imageLoadedMap: {
+      heroBg: false, // ⬅️ ADD THIS
+    },
       businessProfile: null,
       categories: [],
       products: [],
@@ -353,6 +396,22 @@ export default {
         }
       });
     },
+
+     onProductImageLoad(id) {
+    this.imageLoadedMap[id] = false;
+    setTimeout(() => {
+      this.imageLoadedMap[id] = true;
+    }, 1000); // 1s shimmer
+  },
+
+   onHeroImageLoad() {
+    this.imageLoadedMap.heroBg = false;
+    setTimeout(() => {
+      this.imageLoadedMap.heroBg = true;
+    }, 1000); // 1s shimmer
+  },
+
+
     async loadBusinessProfile() {
       try {
         const response = await fetch(
@@ -558,6 +617,62 @@ export default {
   border-radius: 10px;
   background: #ffffff;
 }
+
+
+.product-image-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.product-card-skeleton {
+  width: 100%;
+  height: 240px; /* match your product-image height */
+  border-radius: 12px;
+  background: linear-gradient(
+    110deg,
+    #e5e7eb 8%,
+    #f9fafb 18%,
+    #e5e7eb 33%
+  );
+  background-size: 200% 100%;
+  animation: product-shimmer 1.6s infinite linear;
+}
+
+@keyframes product-shimmer {
+  to {
+    background-position-x: -200%;
+  }
+}
+
+/* ENSURE BADGES STAY ON TOP */
+.category-badge,
+.ar-badge {
+  position: absolute;
+  z-index: 20;
+}
+
+.hero-skeleton {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    110deg,
+    #e5e7eb 8%,
+    #f9fafb 18%,
+    #e5e7eb 33%
+  );
+  background-size: 200% 100%;
+  animation: hero-shimmer 1.6s infinite linear;
+}
+
+@keyframes hero-shimmer {
+  to {
+    background-position-x: -200%;
+  }
+}
+
+
 
 .products-list {
   padding-bottom: 20px;

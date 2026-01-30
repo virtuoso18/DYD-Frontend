@@ -68,59 +68,76 @@
                 overflow: hidden;
               "
             >
-              <div class="h-9/10" style="flex-shrink: 0">
-                <!-- Only On Community Posted Design Counter Number Of Views -->
-                <div
-                  v-if="
-                    design.shared_on_community_my_design &&
-                    design.community_posts &&
-                    design.community_posts.length > 0
-                  "
-                >
-                  <div
-                    class="tag-sec absolute left-2 top-1 flex gap-1 px-2 py-1"
-                    style="z-index: 10; flex-wrap: wrap"
-                  >
-                    <div
-                      class="px-2 py-1 bg-[#181A1B80] text-white rounded-md text-xs sm:text-sm"
-                    >
-                      {{ design.room_type }}
-                    </div>
-                    <div
-                      class="px-2 py-1 bg-[#181A1B80] text-white rounded-md text-xs sm:text-sm"
-                    >
-                      {{ design.room_design_type }}
-                    </div>
-                  </div>
+             <div class="h-9/10 relative" style="flex-shrink: 0">
+  <!-- API SKELETON (shows when isLoading=true) -->
+  <div
+    v-if="isLoading"
+    class="design-skeleton w-full h-[240px] rounded-lg bg-gradient-to-r"
+  ></div>
+  
+  <!-- Only On Community Posted Design Counter Number Of Views -->
+  <div
+    v-if="
+      design.shared_on_community_my_design &&
+      design.community_posts &&
+      design.community_posts.length > 0
+    "
+  >
+    <div
+      class="tag-sec absolute left-2 top-1 flex gap-1 px-2 py-1"
+      style="z-index: 10; flex-wrap: wrap"
+    >
+      <div
+        class="px-2 py-1 bg-[#181A1B80] text-white rounded-md text-xs sm:text-sm"
+      >
+        {{ design.room_type }}
+      </div>
+      <div
+        class="px-2 py-1 bg-[#181A1B80] text-white rounded-md text-xs sm:text-sm"
+      >
+        {{ design.room_design_type }}
+      </div>
+    </div>
 
-                  <div
-                    class="view-count-sec absolute right-4 top-1 flex drop-shadow-md"
-                    style="z-index: 10; gap: 1px"
-                  >
-                    <img
-                      src="../../../assets/icons/eye.svg"
-                      style="width: 32px; height: 28px"
-                      alt=""
-                    />
-                    <span
-                      class="flex items-center text-white  drop-shadow-md text-xs sm:text-sm"
-                      >{{ design.community_posts[0].view_count }}</span
-                    >
-                  </div>
-                </div>
+    <div
+      class="view-count-sec absolute right-4 top-1 flex drop-shadow-md"
+      style="z-index: 10; gap: 1px"
+    >
+      <img
+        src="../../../assets/icons/eye.svg"
+        style="width: 32px; height: 28px"
+        alt=""
+      />
+      <span
+        class="flex items-center text-white  drop-shadow-md text-xs sm:text-sm"
+        >{{ design.community_posts[0].view_count }}</span
+      >
+    </div>
+  </div>
 
-                <img
-                  :src="this.$store.state.root_media_api + design.image"
-                  style="
-                    width: 100%;
-                    border-radius: 10px;
-                    height: 240px;
-                    object-fit: cover;
-                  "
-                  @click="handleImageClick(design)"
-                  alt=""
-                />
-              </div>
+  <!-- IMAGE SKELETON OVERLAY -->
+  <div
+    v-if="!isLoading && design.image && !imageLoadedMap[design.id]"
+    class="image-skeleton-overlay absolute inset-0 w-full h-[240px] rounded-lg z-10"
+  ></div>
+
+  <!-- YOUR ORIGINAL IMG -->
+  <img
+    v-if="!isLoading && design.image"
+    :src="this.$store.state.root_media_api + design.image"
+    :class="{ 'image-loaded': imageLoadedMap[design.id] }"
+    @load="onImageLoad(design.id)"
+    style="
+      width: 100%;
+      border-radius: 10px;
+      height: 240px;
+      object-fit: cover;
+    "
+    @click="handleImageClick(design)"
+    alt=""
+  />
+</div>
+
 
               <div
                 v-if="
@@ -780,6 +797,7 @@ export default {
     return {
       my_designes: [],
       view_type: "all",
+      imageLoadedMap: {},
       selected_design: null,
       start_edit: false,
       description_room: "",
@@ -821,6 +839,10 @@ export default {
         this.show_design_details(design.id);
       }
     },
+
+     onImageLoad(id) {
+    this.imageLoadedMap[id] = true;
+  },
 
     // Transform design data to post format for CommentsModal
     viewPost(design) {
@@ -1172,6 +1194,39 @@ export default {
   display: flex;
   justify-content: space-between;
 }
+
+.design-skeleton {
+  background: linear-gradient(
+    110deg,
+    #f0f0f0 8%,
+    #e0e0e0 18%,
+    #f0f0f0 33%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.6s infinite linear;
+}
+
+.image-skeleton-overlay {
+  background: linear-gradient(
+    110deg,
+    #f0f0f0 8%,
+    #e0e0e0 18%,
+    #f0f0f0 33%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.6s infinite linear;
+}
+
+@keyframes skeleton-shimmer {
+  to {
+    background-position-x: -200%;
+  }
+}
+
+.image-loaded {
+  z-index: 5;
+}
+
 
 .product {
   padding: 10px;

@@ -4,57 +4,54 @@
            w-full h-full flex flex-col"
   >
     <!-- Image + tags -->
-    <div class="relative rounded-xl overflow-hidden w-full aspect-[4/3] sm:aspect-[4/3]">
-      <img :src="image" class="w-full h-full object-cover" />
+   <div class="relative rounded-xl overflow-hidden w-full aspect-[4/3] sm:aspect-[4/3]">
+  <!-- IMAGE SKELETON OVERLAY -->
+  <div
+    v-if="image && !imageLoadedMap"
+    class="image-skeleton absolute inset-0 w-full h-full z-10"
+  ></div>
 
-      <!-- Tags -->
-      <div class="absolute top-3 left-3 flex gap-1 sm:gap-2">
-<!-- {{ tags }} -->
-          <span
-          v-for="(tag, index) in tags"
-          :key="index"
-          class="bg-black/60 text-white px-1 sm:px-2 py-1 text-[7px] sm:text-xs rounded-md"
-        >
-          {{ tag }}
-        </span>
-      </div>
+  <!-- YOUR ORIGINAL IMG -->
+  <img 
+    :src="image" 
+    :class="{ 'image-loaded': imageLoadedMap }"
+    @load="onImageLoad"
+    class="w-full h-full object-cover" 
+  />
 
-      <!-- View Count -->
-      <div
-        v-if="views !== null && views !== undefined"
-        class="absolute top-3 right-3 flex items-center  text-white px-1 sm:px-2 py-1 sm:text-sm text-[10px] rounded-md"
-      >
-        <svg width="24" height="20" viewBox="0 0 24 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <g filter="url(#filter0_d_9924_32849)">
-           <path d="M6.5 10C6.5 10 8.5 6.5 12 6.5C15.5 6.5 17.5 10 17.5 10C17.5 10 15.5 13.5 12 13.5C8.5 13.5 6.5 10 6.5 10Z" stroke="white" stroke-linecap="round" stroke-linejoin="round" shape-rendering="crispEdges"/>
-<path d="M12 11.3125C12.8284 11.3125 13.5 10.7249 13.5 10C13.5 9.27513 12.8284 8.6875 12 8.6875C11.1716 8.6875 10.5 9.27513 10.5 10C10.5 10.7249 11.1716 11.3125 12 11.3125Z" stroke="white" stroke-linecap="round" stroke-linejoin="round" shape-rendering="crispEdges"/>
+  <!-- Tags (show skeleton placeholders) -->
+  <div class="absolute top-3 left-3 flex gap-1 sm:gap-2">
+    <div
+      v-if="!imageLoadedMap"
+      v-for="n in 2"
+      :key="n"
+      class="tag-skeleton bg-gray-400/50 w-12 h-5 sm:w-16 sm:h-6 rounded-md"
+    ></div>
+    <span
+      v-else
+      v-for="(tag, index) in tags"
+      :key="index"
+      class="bg-black/60 text-white px-1 sm:px-2 py-1 text-[7px] sm:text-xs rounded-md"
+    >
+      {{ tag }}
+    </span>
+  </div>
 
-          </g>
-          <defs>
-         <filter id="filter0_d_9924_32849" x="0" y="0" width="24" height="20" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+  <!-- View Count (show skeleton placeholder) -->
+  <div
+    v-if="!imageLoadedMap || (views !== null && views !== undefined)"
+    class="absolute top-3 right-3 flex items-center text-white px-1 sm:px-2 py-1 sm:text-sm text-[10px] rounded-md"
+  >
+    <!-- Skeleton eye icon area -->
+    <div v-if="!imageLoadedMap" class="w-6 h-5 bg-gray-400/50 rounded mr-1"></div>
+    <svg v-else width="24" height="20" viewBox="0 0 24 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- your SVG unchanged -->
+    </svg>
+    <span v-if="imageLoadedMap">{{ views }}</span>
+    <span v-else class="w-6 h-4 bg-gray-400/50 rounded ml-1"></span>
+  </div>
+</div>
 
-              <feFlood flood-opacity="0" result="BackgroundImageFix" />
-              <feColorMatrix
-                in="SourceAlpha"
-                type="matrix"
-                values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-                result="hardAlpha"
-              />
-              <feOffset />
-              <feGaussianBlur stdDeviation="3" />
-              <feComposite in2="hardAlpha" operator="out" />
-              <feColorMatrix
-                type="matrix"
-                values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0"
-              />
-              <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_9924_32849" />
-              <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_9924_32849" result="shape" />
-            </filter>
-          </defs>
-        </svg>
-        {{ views }}
-      </div>
-    </div>
 
     <!-- Bottom Person + Likes + Comments -->
     <div class="px-3 py-2 flex items-center justify-between">
@@ -148,11 +145,23 @@ export default {
   imageHeight: { type: String, default: "218px" }
   },
 
+  data() {
+    return {
+      imageLoadedMap: false // ⬅️ ADD THIS
+    }
+  },
+
   methods: {
     formatNumber(num) {
       if (num >= 1000) return (num / 1000).toFixed(1) + "k";
       return num;
     },
+
+   onImageLoad() {
+  setTimeout(() => {
+    this.imageLoadedMap = true;
+  }, 1000);
+},
   
   }
 
@@ -160,4 +169,31 @@ export default {
 </script>
 
 <style scoped>
+
+.image-skeleton {
+  background: linear-gradient(
+    110deg,
+    #f0f0f0 8%,
+    #e0e0e0 18%,
+    #f0f0f0 33%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.6s infinite linear;
+}
+
+@keyframes skeleton-shimmer {
+  to {
+    background-position-x: -200%;
+  }
+}
+
+.image-loaded {
+  z-index: 5;
+}
+
+.tag-skeleton,
+.view-skeleton {
+  animation: pulse 1.5s infinite;
+}
+
 </style>

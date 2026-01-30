@@ -172,10 +172,10 @@ export default {
     },
 
      onImageLoad(key) {
-    this.imageLoadedMap[key] = false
-    setTimeout(() => {
-      this.imageLoadedMap[key] = true
-    }, 8000)
+    // this.imageLoadedMap[key] = false
+    this.imageLoadedMap[key] = true
+    // setTimeout(() => {
+    // }, 8000)
   },
   
   }
