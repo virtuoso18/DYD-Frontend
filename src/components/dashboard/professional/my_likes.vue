@@ -155,13 +155,13 @@
                         <!-- {{ product }} -->
     
                         <a-col span="18">
-                            <a-button block @click="goto_product_Route(product)">Product Details</a-button>
+                            <a-button block @click="goto_product_Route(product)"  class="product-details-btn">Product Details</a-button>
                         </a-col>
     
     
                         <!-- ❤️ Dynamic Favorite Button -->
                         <a-col span="6" style="display: flex;justify-content: end;">
-                        <a-button @click="toggleFavorite(product)" style="display: flex;justify-content: center;align-items: center;">
+                        <a-button @click="toggleFavorite(product)" class="like-button" style="display: flex;justify-content: center;align-items: center;">
                             <template v-if="product.is_favorited">
                             <HeartFilled style="color: red" />
                             </template>
@@ -1175,6 +1175,19 @@ export default {
   .product-responsive {
     width: 20%;
     flex: 0 0 20%;
+  }
+}
+@media screen and (max-width: 585px) {
+  .product{
+    padding: 5px;
+  }
+  .like-button{
+    padding: 4px 7px !important;
+  }
+  .product-details-btn{
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 }
 </style>
