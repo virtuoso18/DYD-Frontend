@@ -1382,6 +1382,17 @@ export default {
     },
   },
   methods: {
+    async urlToBase64(url) {
+  const res = await fetch(url);
+  const blob = await res.blob();
+
+  return await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result); // full base64 (data:image/...;base64,...)
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+},
     startPolling(jobId) {
       if (!jobId) return Promise.reject("Invalid job id");
 
@@ -2611,21 +2622,24 @@ export default {
         const imagesToUpload = [];
 
         if (!this.multiView && this.mainImage) {
-          imagesToUpload.push({ type: "main", data: this.mainImage });
+          const base64Img=await this.urlToBase64(this.mainImage);
+          imagesToUpload.push({ type: "main", data: base64Img });
         }
 
         if (this.multiView) {
-          this.views.forEach((view, index) => {
+          this.views.forEach(async (view, index) => {
             if (view.image) {
-              imagesToUpload.push({ type: `view-${index}`, data: view.image });
+              const base64Img=await this.urlToBase64(view.image);
+              imagesToUpload.push({ type: `view-${index}`, data: base64Img });
             }
           });
 
-          this.extraViews.forEach((view, index) => {
+          this.extraViews.forEach(async(view, index) => {
             if (view.image) {
+              const base64Img=await this.urlToBase64(view.image);
               imagesToUpload.push({
                 type: `extra-view-${index}`,
-                data: view.image,
+                data: base64Img,
               });
             }
           });
