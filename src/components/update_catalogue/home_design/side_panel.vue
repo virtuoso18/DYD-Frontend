@@ -133,6 +133,69 @@ watch: {
   }
   },
   methods: {
+    startPolling(jobId) {
+      if (!jobId) return Promise.reject("Invalid job id");
+
+      this.stopPolling();
+      this.loading = true;
+      this.jobId = jobId;
+
+      return new Promise((resolve, reject) => {
+        const poll = async () => {
+          try {
+            this.generating = true
+            const res = await fetch(
+              `${this.$store.state.root_api}renderer/checkout-renderer/${jobId}/`,
+            );
+
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+            const data = await res.json();
+
+            if (data.status === "Completed") {
+              this.loading = false;
+              this.stopPolling();
+              resolve(data);
+              this.$emit('home-design-generation-complete', data);
+              this.$message.success('Image generated successfully!');
+              this.generating = false
+              return;
+            }
+
+            if (data.status === "failed") {
+              this.loading = false;
+              this.stopPolling();
+              reject("Rendering failed");
+              this.$message.success('Image generated successfully!');
+              this.generating = false;
+              return;
+            }
+
+            console.log("⏳ Rendering in progress...");
+          } catch (err) {
+            this.loading = false;
+            this.stopPolling();
+            reject(err);
+            this.generating = false
+          }finally{
+            //this.generating = false
+          }
+        };
+
+        // run immediately
+        poll();
+
+        // then every 3s
+        this.pollTimer = setInterval(poll, 3000);
+      });
+    },
+
+    stopPolling() {
+      if (this.pollTimer) {
+        clearInterval(this.pollTimer);
+        this.pollTimer = null;
+      }
+    },
      deleteImage() {
     this.uploadedImage = ''
     this.fileList = []
@@ -180,20 +243,27 @@ watch: {
       throw new Error(`HTTP error! status: ${response.status}`)
     }
     
-    const result = await response.json()
+    const result = await response.json();
+    if (result?.renderer_id) {
+          // ⏳ WAIT until polling completes
+          // const finalImage = await this.startPolling(result.renderer_id);
+
+      this.startPolling(result?.renderer_id);
+          // ✅ ONLYJ() NOW update canvas
+          
+        }
     // Handle successful response
-    console.log('Generation successful:', result)
-    this.$message.success('Image generated successfully!')
+    // console.log('Generation successful:', result)
+    // this.$message.success('Image generated successfully!')
     
     // Emit event to parent component or handle result as needed
-    this.$emit('home-design-generation-complete', result)
+    // this.$emit('home-design-generation-complete', result)
     
   } catch (error) {
     console.error('Generation failed:', error)
-    this.$message.error('Failed to generate image. Please try again.')
-  } finally {
-    this.generating = false // Reset loading state
-  }
+    this.$message.error('Failed to generate image. Please try again.');
+    this.generating = false
+  } 
 },
     beforeUpload(file) {
       this.uploading = true
