@@ -353,39 +353,141 @@
           for your needs.
         </div>
         <br />
-        <div style="position: relative; display: flex; justify-items: center">
-          <img
-            src="../../assets/home_main_banner.jpg"
-            style="
-              max-width: 900px;
-              width: 100%;
-              border-radius: 20px;
-              max-height: 600px;
-              margin: auto;
-            "
-            alt=""
-          />
-          <a-button
-            type="primary"
-            @click="handleAuthorizeClick('processPhoto')"
-            style="
-              position: absolute;
-              bottom: 30px;
-              left: 50%;
-              transform: translateX(-50%);
-              width: 309px;
-              background: #3b63fb;
-              border-color: #3b63fb;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              gap: 8px;
-            "
+
+
+
+<div 
+  class="relative w-full max-w-[900px] rounded-3xl overflow-hidden shadow-2xl" 
+  :style="{
+    'max-height': '600px',
+    'margin-left': imageContainerFullWidth ? '0' : 'auto',     
+    'margin-right': imageContainerFullWidth ? '0' : 'auto'   
+  }"
+>
+
+
+
+<!-- ORIGINAL IMAGE -->
+  <img
+src="../../assets/homepagegenrated.png"
+    class="w-full h-auto max-h-[600px] object-cover rounded-3xl z-10"
+    alt="Room image"
+  />
+  
+  <!-- BINARY MASK OVERLAY (blue furniture) -->
+<img
+  v-if="showFurnitureMask"
+  src="../../assets/gen4.png"
+  class="absolute inset-0 w-full -translate-x-[0.4%] h-full object-cover cursor-pointer
+         mix-blend-multiply"
+  style="
+    filter: brightness(0.9) saturate(4.8);
+  "
+@click="showProductModal = true; toggleImageContainerWidth()"/>
+
+
+<!-- Product Selection Modal -->
+
+
+
+  
+  <!-- SHIMMER (MEDIUM z-30 - over image during processing) -->
+  <!-- SHIMMER (MEDIUM z-30) -->
+<div
+ v-if="isProcessing"
+  :key="stepKey"
+  class="absolute inset-0 animate-shimmer-overlay !z-30"
+></div>
+
+  
+  <!-- PROCESS BUTTON (HIGH z-50 - always on top) -->
+<a-button
+  type="primary"
+  @click="handleAuthorizeClick('processPhoto')"
+  class="ai-glow-btn !absolute sm:!bottom-14 bottom-2 left-1/2 -translate-x-1/2
+         sm:w-[309px] sm:h-14 h-10 !z-10
+         !flex !items-center !justify-center
+         gap-[2px]
+         !border-none
+         backdrop-blur-sm
+         transition-all duration-500 group
+         hover:text-gray-700"
+  :class="{ 'animate-auto-glow opacity-90 scale-[0.98]': isProcessing }"
+>
+  <span class="text-white sm:font-semibold sm:text-base tracking-wide z-10 hover:text-gray-700">
+    Process photo
+  </span>
+
+  <img
+    src="/ai-generative.svg"
+    alt="AI"
+    class="w-6 h-6 flex-shrink-0 z-10
+           group-hover:brightness-0 group-hover:invert"
+  />
+</a-button>
+
+
+
+
+
+
+  
+  <!-- DETECTING BUTTON (HIGHEST z-60) -->
+  <!-- WRAPPER for button positioning -->
+<div class="absolute inset-0 flex items-center justify-center z-60 pointer-events-none">
+  <a-button
+    v-if="isProcessing"
+    type="primary"
+    class="w-[280px] !h-10 bg-gradient-to-r from-gray-400 to-gray-500 animate-pulse-flash border-none text-white !text-lg !font-poppins rounded-2xl shadow-2xl backdrop-blur-lg  flex items-center justify-center pointer-events-auto !mx-auto"
+  >
+    Detecting Furniture...
+  </a-button>
+</div>
+
+
+</div>
+
+ <div 
+    v-if="showProductModal" 
+    class="lg:hidden w-full !mt-2 z-30 pb-6"
+  >
+    <div 
+      class="w-full !bg-[#f2f2f2]  !rounded-3xl  max-h-[380px] overflow-scroll no-scrollbar border border-gray-300 transform transition-all duration-300"
+      :class="showProductModal ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-4'"
+    >
+      <!-- Mobile Header -->
+      <div class="!px-6 !py-2 border-b border-gray-800 flex items-center justify-between">
+        <h2 class="!text-[16px] !font-poppins font-normal !text-gray-700">Select Product to replace</h2>
+        <button 
+          @click="closeProductTab"
+          class="!text-gray-700 hover:scale-105 !text-4xl leading-none"
+        >
+          ×
+        </button>
+      </div>
+
+      <!-- 2-Grid Products -->
+      <div class=" !overflow-y-auto no-scrollbar !px-6 !py-4">
+        <div class="grid grid-cols-2 gap-4">
+          <div 
+            v-for="(product, index) in products.slice(0, 4)"
+            :key="index"
+            class="bg-white !rounded-xl !p-3 border border-gray-300 hover:border-gray-400 cursor-pointer transition-all hover:scale-[1.02]"
           >
-            Process photo
-            <img src="/ai-generative.svg" alt="Share" />
-          </a-button>
+            <div class="w-full h-24 bg-white !rounded-lg overflow-hidden !mb-3">
+              <img :src="product.image" class="!w-full !h-full object-cover" />
+            </div>
+            <h3 class="!text-gray-700 !text-sm !font-semibold !mb-1">{{ product.name }}</h3>
+            <p class="!text-gray-400 !text-xs !mb-2">{{ product.color }}</p>
+            <p class="!text-blue-500 !text-sm !font-bold">{{ product.price }}</p>
+          </div>
         </div>
+      </div>
+    </div>
+  </div>
+ 
+
+
         <br />
       </a-col>
     </a-row>
@@ -2245,6 +2347,90 @@
     <br />
     <br />
   </div>
+<!-- DESKTOP: Compact Right Tab -->
+<div 
+  v-if="showProductModal" 
+  class="hidden lg:block absolute right-8 top-325 w-[500px] h-[580px] z-40 pointer-events-auto"
+>
+ <div 
+    class="w-full h-full bg-[#f2f2f2] !rounded-xl  transform transition-all duration-300 overflow-hidden"
+    :class="showProductModal ? 'translate-x-0' : 'translate-x-full'"
+  >
+    <!-- Desktop Header -->
+    <div class="!px-6 !py-5 border-b border-gray-400">
+  <div class="flex items-center justify-between mb-3">
+    <h2 class="!text-md !text-gray-700">Select Product to replace</h2>
+    <button 
+      @click="closeProductTab"  
+      class="!text-gray-700 hover:scale-105 !text-4xl leading-none"
+    >
+      ×
+    </button>
+  </div>
+</div>
+
+
+    <!-- Desktop Product Cards -->
+    <div class="h-[calc(100%-100px)] overflow-y-auto no-scrollbar !px-6 !py-4 space-y-4">
+      <div 
+        v-for="(product, index) in products" 
+        :key="index" 
+        class="bg-white !rounded-xl !p-2 !mt-2 border border-gray-200 hover:border-blue-500 transition-all"
+      >
+        <!-- Product Row -->
+        <div class="flex gap-4 mb-4">
+          <!-- Product Image -->
+          <div class="w-34 h-38 bg-white !rounded-lg flex-shrink-0 overflow-hidden">
+            <img 
+              :src="product.image" 
+              :alt="product.name"
+              class="!w-full !h-full object-cover"
+            />
+          </div>
+          
+          <!-- Product Info -->
+          <div class="flex-1">
+            <h3 class="!text-gray-600 !text-medium mb-1">{{ product.name }}</h3>
+            <p class="!text-gray-400 !text-sm mb-2">{{ product.color }}</p>
+            
+            <!-- Color Selector -->
+            <div class="flex items-center gap-2 mb-2">
+              <span class="!text-gray-400 !text-xs">Color</span>
+              <div class="flex gap-1 !p-1">
+                <div class="w-4 h-4 bg-gray-500 !rounded-full border-2 border-white cursor-pointer"></div>
+                <div class="w-4 h-4 bg-white !rounded-full border-2 border-gray-600 cursor-pointer"></div>
+              </div>
+            </div>
+            
+            <!-- Price -->
+            <div class="flex flex-row gap-4 !pt-3">
+              <p class="!text-gray-400 !text-xs mb-1">Price :</p>
+              <p class="!text-blue-500 !text-md ">{{ product.price }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Actions -->
+        <div class="w-full flex items-center justify-between !mt-3 !pt-3 border-t border-gray-300">
+          <button class="w-full !mr-2 !py-2 bg-gray-700 hover:bg-gray-600 !rounded-lg !text-white !text-sm !font-medium transition-colors">
+            Product Detail
+          </button>
+          
+          <button class="flex items-center gap-2 !text-gray-700 hover:!text-red-500 transition-colors">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
 </template>
 
 <script>
@@ -2341,6 +2527,15 @@ export default {
       step3Img,
       step2Img,
       step1Img,
+          imageContainerFullWidth: false, // 👈 Add this
+
+       showProductModal: false,
+    selectedProduct: 'Modern Chair', // Dynamic from mask area
+       isProcessing: false, // ⬅️ ADD THIS
+       showFurnitureMask: false,
+    imageSrc: '../../assets/home_main_banner.jpg', // ⬅️ your image
+    altText: 'Room image',
+    
 
       overlayVisible: false,
       overlayShrink: false,
@@ -2348,10 +2543,14 @@ export default {
       step2CurrentImg: step2Img,
       step2ShowWave: false,
       step2WaveKey: 0,
+            stepKey: 0,
+
       step2Fading: false,
       step2ShowNewImg: false,
       isListingStepInView: false,
       observer: null,
+
+      
 
       // Form data
       form: {
@@ -2398,6 +2597,12 @@ export default {
             "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png",
         },
       ],
+
+       products: [
+      { name: 'Chamaro Sky', color: 'Chamaro Sky', price: '$60', image: 'https://cdn.decornation.in/wp-content/uploads/2020/07/modern-dining-table-chairs.jpg' },
+      { name: 'Chamaro Sky', color: 'Chamaro Sky', price: '$60', image: 'https://imagecdn.99acres.com//microsite/wp-content/blogs.dir/6161/files/2024/05/Armchair-Home-Interiors.jpg' },
+      { name: 'Modern Chair', color: 'Chamaro Sky', price: '$60', image: 'chair3.jpg' }
+    ],
 
       // Image slider functionality
       isDragging: null,
@@ -2823,15 +3028,56 @@ export default {
     },
     // end step animation
     handleAuthorizeClick(action) {
-      if (!this.isLogedIn) {
-        this.$router.push({
-          path: "/login",
-          query: { redirect: this.redictConfig[action] },
-        });
-      } else {
-        this.$router.push(this.redictConfig[action]);
-      }
-    },
+    if (action === 'processPhoto') {
+      // Show processing state
+      this.isProcessing = true;
+      
+      // Simulate processing (replace with your API call)
+      setTimeout(() => {
+        this.isProcessing = false;
+        // Your navigation logic here
+        this.$router.push(this.redictConfig);
+      }, 9000); // 4s processing demo
+      
+      return; // Don't trigger original login logic
+    }
+    
+    // Original logic for other actions
+    if (!this.isLogedIn) {
+      this.$router.push({
+        path: "/login",
+        query: { redirect: this.redictConfig[action] },
+      });
+    } else {
+      this.$router.push(this.redictConfig[action]);
+    }
+  },
+
+ handleAuthorizeClick(action) {
+    if (action === 'processPhoto') {
+      this.isProcessing = true;
+      
+      // Simulate AI detection
+      setTimeout(() => {
+        this.showFurnitureMask = true;  // Show blue mask
+        setTimeout(() => {
+          this.isProcessing = false;
+        }, 1500);
+      }, 2500);
+    }
+  },
+
+  toggleImageContainerWidth() {
+    this.imageContainerFullWidth = true;  // 👈 true = full width (no mx-auto)
+  },
+  
+  closeProductTab() {
+    this.showProductModal = false;
+    this.imageContainerFullWidth = false;  // 👈 false = mx-auto (centered)
+  },
+
+
+
     // Form submission
     submitForm() {
       console.log("Form submitted:", this.form);
@@ -3266,6 +3512,16 @@ export default {
   transform: translate(50%, -50%);
 }
 
+/* Blue furniture glow */
+.home_main_banner_mask {
+  filter: 
+    hue-rotate(220deg)      /* Blue tint */
+    brightness(1.4)         /* Brighter */
+    saturate(1.8)           /* Vivid */
+    drop-shadow(0 0 15px rgba(59, 130, 246, 0.8));
+}
+
+
 .ai-badge {
   position: absolute;
   left: 50%;
@@ -3282,6 +3538,82 @@ export default {
   font-weight: 600;
   z-index: 10;
 }
+
+/* @keyframes shimmer-single-line {
+  0% {
+    transform: translateX(-7960%);
+    box-shadow: 
+      0 0 25px rgba(103, 58, 183, 0.8),     
+      -120px 0 80px rgba(237, 6, 245, 0.3),
+      -200px 0 120px rgba(237, 6, 245, 0.1),
+      0 60px 85px rgba(59, 130, 246, 0.8);
+  }
+  
+  50% {
+    transform: translateX(7920%);
+    box-shadow: 
+      0 0 25px rgba(103, 58, 183, 0.8),     
+      120px 0 80px rgba(59, 130, 246, 0.3),
+      200px 0 120px rgba(59, 130, 246, 0.1),
+      0 60px 85px rgba(59, 130, 246, 0.8);
+  }
+  
+  100% {
+    transform: translateX(-7920%);
+    box-shadow: 
+      0 0 25px rgba(103, 58, 183, 0.8),
+      -120px 0 80px rgba(237, 6, 245, 0.3),
+      -200px 0 120px rgba(237, 6, 245, 0.1),
+      0 60px 85px rgba(59, 130, 246, 0.8);
+  }
+} */
+
+@keyframes shimmer-single-line {
+  0% {
+    left: -80px;       /* Start LEFT */
+  }
+  48% {
+    left: 110%;        /* Go RIGHT */
+  }
+  52% {
+    left: 110%;        /* Pause RIGHT */
+  }
+  100% {
+    left: -80px;       /* Return LEFT */
+  }
+}
+
+
+
+/* overlay container */
+.animate-shimmer-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  /* IMPORTANT: no background / no background-size here */
+}
+
+/* the moving line */
+.animate-shimmer-overlay {
+  position: absolute;
+  top: 0;
+  left: -80px;              /* Animation controls this */
+  width: 80px;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(0, 123, 255, 0),
+    rgba(50, 36, 243, 0.4),
+    rgba(0, 123, 255, 0.9)
+  );
+  animation: shimmer-single-line 4s ease-in-out infinite; /* 4s full cycle */
+  border-radius: 2px;
+  pointer-events: none;
+}
+
+
+
+
 
 .step2-text {
   transform: translateX(40px);
@@ -3316,6 +3648,25 @@ export default {
   height: 274px;
 }
 
+@keyframes pulse-flash {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(156, 163, 175, 0.5);
+    transform: scale(1);
+    background: linear-gradient(to right, #9ca3af, #6b7280);
+  }
+  50% {
+    transform: scale(1.00);
+    background: linear-gradient(to right, #6b7280, #0168f7);
+  }
+}
+
+.animate-pulse-flash {
+  animation: pulse-flash 1.2s ease-in-out infinite;
+}
+
+
+
+
 .step3-number {
   position: absolute;
   left: 0;
@@ -3342,6 +3693,45 @@ export default {
 
   animation: actionBtnFloat 2.5s ease-in-out infinite;
 }
+.ai-glow-btn {
+  background: linear-gradient(
+    120deg,
+    #0332ed,
+    #207ded,
+    #3b63fb
+  );
+  background-size: 200% 200%;
+  animation: gradient-shine 8s ease infinite;
+
+  
+}
+
+/* Soft breathing glow */
+.ai-glow-btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: inherit;
+  filter: blur(14px);
+  opacity: 0.35;
+  z-index: 0;
+  animation: glow-pulse 4s ease-in-out infinite;
+}
+
+/* Gradient movement */
+@keyframes gradient-shine {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Very subtle glow pulse */
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 0.4; }
+}
+
 
 .action-btn {
   background: transparent !important;
@@ -3363,6 +3753,20 @@ export default {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }
+
+.product-card {
+  background-color: #111827;        /* gray-900 */
+  border-radius: 12px;              /* rounded-xl */
+  padding: 16px;                    /* p-4 */
+  border: 1px solid #1f2937;        /* gray-800 */
+  transition: all 0.2s ease;
+}
+
+.product-card:hover {
+  border-color: #4b5563;            /* gray-600 */
+  transform: translateY(-2px);
+}
+
 
 .dyad-button {
   position: relative;

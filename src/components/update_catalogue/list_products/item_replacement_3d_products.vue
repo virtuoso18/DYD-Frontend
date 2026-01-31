@@ -17,6 +17,7 @@
 </a-modal>
 <div class="pt-wrapper">
  <div class="apply-section md:hidden">
+
     <!-- <a-button
       type="primary"
       size="large"
@@ -35,6 +36,7 @@
     >
       Apply
     </a-button> -->
+
      <a-row>
       <a-col :span="12"style="padding:0px 0px 0px 5px">
       <a-button type="default" size="large" block  @click="showSwitchFurnitureModel" :disabled="!selected_item">
@@ -77,6 +79,7 @@
             line-height: 20px;
             letter-spacing: 0;margin-top:-6px
             ">AI Catalog</span>
+            
           <!-- {{ brand_data }} -->
             <!-- <b>  {{truncateChars(brand_data.name,limit=15)}}</b> -->
           </div>
@@ -325,19 +328,20 @@ export default {
     showSwitchFurnitureModel(){
             this.swichFurnitureModel = !this.swichFurnitureModel
     },
-      truncateChars(text, limit = 11) {
-  if (!text) return ''
-  return text.length > limit
-    ? text.slice(0, limit) + '...'
-    : text
-},
+    
+    truncateChars(text, limit = 11) {
+      if (!text) return ''
+      return text.length > limit
+        ? text.slice(0, limit) + '...'
+        : text
+    },
 
-onProductImageLoad(id) {
-    this.imageLoadedMap[id] = false;
-    setTimeout(() => {
-      this.imageLoadedMap[id] = true;
-    }, 1000);
-  },
+    onProductImageLoad(id) {
+      this.imageLoadedMap[id] = false;
+      setTimeout(() => {
+        this.imageLoadedMap[id] = true;
+      }, 1000);
+    },
 
 
     async fetchCatalogItems(brand = null, page = 1, isLoadMore = false) {

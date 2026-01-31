@@ -562,7 +562,6 @@ export default {
   }
 };
 </script>
-
 <style scoped>
 .dashboard-container {
   min-height: 100vh;
@@ -667,6 +666,7 @@ export default {
   padding: 24px;
   border: 1px solid #e9ecef;
   height: 100%;
+
 }
 
 .user-info {
@@ -827,12 +827,10 @@ export default {
   }
 
   .sidebar-col {
-    position: fixed;
-    top: 0;
-    left: 0;
+    
     width: 100% !important;  /* ✅ ADD THIS LINE */
-    height: 100vh;
-    z-index: 1000;
+  
+   
     padding: 0;
     background: white;
   }
@@ -855,8 +853,8 @@ export default {
 
   .sidebar {
     border-radius: 0;
-    height: 100vh;
-    overflow-y: auto;
+    height: auto;
+    
   }
 }
 
