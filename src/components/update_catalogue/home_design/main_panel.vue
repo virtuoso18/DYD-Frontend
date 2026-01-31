@@ -140,7 +140,7 @@ export default {
   watch: {
     home_design_images: {
       handler(newVal) {
-        if (newVal && newVal.images) {
+        if (newVal && newVal.image_paths) {
           this.updateImages();
         }
       },
@@ -159,10 +159,11 @@ computed: {
   },
   methods: {
     updateImages() {
-  if (this.home_design_images && this.home_design_images.images) {
+  if (this.home_design_images && this.home_design_images.image_paths) {
     const imageUrls = Object.values(this.home_design_images.image_paths || {})
       .filter(url => url !== null && url !== undefined && url !== ""); // filter invalid
     this.allImages = imageUrls;
+    console.log("geeeetttttImgeeeeee",imageUrls);
     this.images = imageUrls;
   } else {
     this.allImages = [];
