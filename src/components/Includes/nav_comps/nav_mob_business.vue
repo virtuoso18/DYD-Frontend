@@ -40,7 +40,7 @@
       @click="closeMobileMenu"
     >
       <div
-        class="flex-shrink-0 w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center transition-all duration-200 group-hover:bg-blue-100"
+        class="flex-shrink-0 w-10 h-10 rounded-lg  flex items-center justify-center transition-all duration-200 group-hover:bg-blue-100"
       >
         <svg
           width="17"
@@ -84,7 +84,7 @@
       @click="closeMobileMenu"
     >
       <div
-        class="flex-shrink-0 w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center transition-all duration-200 group-hover:bg-blue-100"
+        class="flex-shrink-0 w-10 h-10 rounded-lg  flex items-center justify-center transition-all duration-200 group-hover:bg-blue-100"
       >
         <svg
           class="w-5 h-5"
@@ -118,7 +118,7 @@
           />
         </svg>
       </div>
-      <span class="flex-1 text-sm !font-family-poppins">Business Detail</span>
+      <span class="flex-1 text-sm  text-[#333333] !font-family-poppins">Business Detail</span>
       <svg
         class="w-5 h-5 opacity-0 transform -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
         fill="none"
@@ -142,7 +142,7 @@
       @click="closeMobileMenu"
     >
       <div
-        class="flex-shrink-0 w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center transition-all duration-200 group-hover:bg-blue-100"
+        class="flex-shrink-0 w-10 h-10 rounded-lg  flex items-center justify-center transition-all duration-200 group-hover:bg-blue-100"
       >
         <svg
           width="19"
@@ -189,7 +189,7 @@
       @click="closeMobileMenu"
     >
       <div
-        class="flex-shrink-0 w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center transition-all duration-200 group-hover:bg-blue-100"
+        class="flex-shrink-0 w-10 h-10 rounded-lg  flex items-center justify-center transition-all duration-200 group-hover:bg-blue-100"
       >
         <svg
           width="19"
@@ -236,7 +236,7 @@
       @click="closeMobileMenu"
     >
       <div
-        class="flex-shrink-0 w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center transition-all duration-200 group-hover:bg-blue-100"
+        class="flex-shrink-0 w-10 h-10 rounded-lg  flex items-center justify-center transition-all duration-200 group-hover:bg-blue-100"
       >
         <svg
           width="19"
@@ -282,7 +282,7 @@
       @click="closeMobileMenu"
     >
       <div
-        class="flex-shrink-0 w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center transition-all duration-200 group-hover:bg-blue-100"
+        class="flex-shrink-0 w-10 h-10 rounded-lg  flex items-center justify-center transition-all duration-200 group-hover:bg-blue-100"
       >
         <svg
           width="20"
@@ -321,7 +321,7 @@
       @click="closeMobileMenu"
     >
       <div
-        class="flex-shrink-0 w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center transition-all duration-200 group-hover:bg-blue-100"
+        class="flex-shrink-0 w-10 h-10 rounded-lg  flex items-center justify-center transition-all duration-200 group-hover:bg-blue-100"
       >
         <svg
           width="18"
@@ -372,7 +372,7 @@
       @click="closeMobileMenu"
     >
       <div
-        class="flex-shrink-0 w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center transition-all duration-200 group-hover:bg-blue-100"
+        class="flex-shrink-0 w-10 h-10 rounded-lg  flex items-center justify-center transition-all duration-200 group-hover:bg-blue-100"
       >
         <svg
           width="20"
@@ -415,7 +415,7 @@
       @click="closeMobileMenu"
     >
       <div
-        class="flex-shrink-0 w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center transition-all duration-200 group-hover:bg-blue-100"
+        class="flex-shrink-0 w-10 h-10 rounded-lg  flex items-center justify-center transition-all duration-200 group-hover:bg-blue-100"
       >
         <svg
           class="w-5 h-5"
@@ -502,10 +502,16 @@ export default {
     },
 
     logoutAndClose() {
-      console.log("Logging out...");
-      this.closeMobileMenu();
-      // Add your logout logic
-    },
+      this.$store.dispatch("logout");
+      localStorage.removeItem("profile");
+      localStorage.removeItem("business_profile");
+      this.$router.push("/login");
+
+      notification.success({
+        message: "Logout Successful",
+        placement: "bottomRight",
+      });
+    }
   },
 };
 </script>

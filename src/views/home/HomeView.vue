@@ -118,8 +118,8 @@
               "
             >
               <h1
-                class="card-number"
-                style="font-size: 48px; margin: 0; font-weight: 600"
+                class="card-number sm:!text-[48px] !text-[44px]"
+                style=" margin: 0; font-weight: 600"
               >
                 95%
               </h1>
@@ -144,6 +144,7 @@
                 height: 223px;
                 border: 1px solid #cccccc;
                 border-radius: 10px;
+                overflow: hidden;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
@@ -151,8 +152,8 @@
               "
             >
               <h1
-                class="card-number"
-                style="font-size: 48px; margin: 0; font-weight: 600"
+                class="card-number sm:!text-[48px] !text-[44px]"
+                style=" margin: 0; font-weight: 600 ; white-space: nowrap;   "
               >
                 10,000+
               </h1>
@@ -3282,7 +3283,7 @@ export default {
 .card-number {
   font-family: "Public Sans", sans-serif !important;
   font-weight: 700;
-  font-size: 48px;
+  font-size: 46px;
   line-height: 52px;
   letter-spacing: -2%;
   color: #3b63fb;
