@@ -2719,12 +2719,13 @@ export default {
 
 <style scoped>
 .image-to-3d-container {
+  margin: 5px;
   padding: 16px;
   max-width: 400px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  height: 160vh; /* below md */
+  /* justify-content: space-between; */
+  height: auto; /* below md */
   margin: 0 auto;
 }
 
