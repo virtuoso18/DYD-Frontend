@@ -138,6 +138,76 @@ watch: {
   }
   },
   methods: {
+      startPolling(jobId) {
+      if (!jobId) return Promise.reject("Invalid job id");
+
+      this.stopPolling();
+      this.loading = true;
+      this.jobId = jobId;
+
+      return new Promise((resolve, reject) => {
+        const poll = async () => {
+          try {
+            const res = await fetch(
+              `${this.$store.state.root_api}renderer/checkout-renderer/${jobId}/`,
+            );
+
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+            const data = await res.json();
+
+            if (data.status === "Completed") {
+              this.canvasLoading = false;
+              this.loading = false;
+              this.generating=false;
+               // Emit event to parent component or handle result as needed
+             this.$emit('product-mockup-generation-complete', data);
+              // this.stopPolling();
+              // resolve(data.finalised_result_wall_processed_image);
+              // this.base_image_url =
+              //   this.$store.state.root_media_api +
+              //   data.finalised_result_wall_processed_image +
+              //   "?t=" +
+              //   Date.now();
+
+              // this.forceCanvasUpdate();
+              this.$message.success("Applied Effect successfully!");
+               this.stopPolling();
+              return;
+            }
+
+            if (data.status === "failed") {
+              this.canvasLoading = false;
+              this.loading = false;
+
+              this.stopPolling();
+              reject("Rendering failed");
+              return;
+            }
+
+            console.log("⏳ Rendering in progress...");
+          } catch (err) {
+            this.loading = false;
+            this.stopPolling();
+            reject(err);
+            this.canvasLoading = false;
+          }
+        };
+
+        // run immediately
+        poll();
+
+        // then every 3s
+        this.pollTimer = setInterval(poll, 3000);
+      });
+    },
+
+    stopPolling() {
+      if (this.pollTimer) {
+        clearInterval(this.pollTimer);
+        this.pollTimer = null;
+      }
+    },
      deleteImage() {
     this.uploadedImage = ''
     this.fileList = []
@@ -184,19 +254,14 @@ watch: {
     }
 
     const result = await response.json()
-    
+    this.startPolling(result?.renderer_id);
     // Handle successful response
-    console.log('Generation successful:', result)
-    this.$message.success('Image generated successfully!')
-    
-    // Emit event to parent component or handle result as needed
-    this.$emit('product-mockup-generation-complete', result)
+    // console.log('Generation successful:', result)
+    //this.$message.success('Image generated successfully!')
     
   } catch (error) {
     console.error('Generation failed:', error)
     this.$message.error('Failed to generate image. Please try again.')
-  } finally {
-    this.generating = false // Reset loading state
   }
 },
     beforeUpload(file) {

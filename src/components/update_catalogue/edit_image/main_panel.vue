@@ -1,15 +1,14 @@
 <template>
-    
-    <!-- Updated child component -->
-    <add_new_product_mockup
-      :open_AddToProduct="open_AddToProduct"
-      :product_mockup_images="product_mockup_images" 
-      :selected_product_mockups_group="selected_product_mockups_group"
-      @update:open_AddToProduct="open_AddToProduct = $event"
-      @apply-mockup="handleApplyMockup"
-    />
-   
-<div class="share-section">
+  <!-- Updated child component -->
+  <add_new_product_mockup
+    :open_AddToProduct="open_AddToProduct"
+    :product_mockup_images="product_mockup_images"
+    :selected_product_mockups_group="selected_product_mockups_group"
+    @update:open_AddToProduct="open_AddToProduct = $event"
+    @apply-mockup="handleApplyMockup"
+  />
+
+  <div class="share-section">
     <div class="collapse-controller-sec">
       <!-- collapse controller sec -->
       <div
@@ -60,11 +59,11 @@
         <a-button
           style="
             border: none;
-            background: #F9F9F9;
+            background: #f9f9f9;
             padding: 5px 12px;
             border-radius: 6px;
             cursor: pointer;
-            color: #2A5AFC;
+            color: #2a5afc;
             display: flex;
             align-items: center;
             gap: 6px;
@@ -93,51 +92,79 @@
               stroke-linejoin="round"
             />
           </svg>
-          Download 
+          Download
         </a-button>
       </div>
     </div>
   </div>
 
-
-
-<div class="main-panel" :style="{ minHeight: panelHeight }">
-            <div class="image-grid" :class="gridClass">
-
-      <div 
-        v-for="(image, index) in images"  
+  <div class="main-panel" :style="{ minHeight: panelHeight }">
+    <div class="image-grid" :class="gridClass">
+      <div
+        v-for="(image, index) in images"
         :key="index"
         class="image-container"
         :class="getImageClass(index)"
       >
-        <a-image :src="this.$store.state.root_media_api+image" :alt="`Generated image ${index + 1}`" />
+        <a-image
+          :src="this.$store.state.root_media_api + image"
+          :alt="`Generated image ${index + 1}`"
+        />
         <!-- <a-image :src="this.$store.state.root_media_api+'/'+image" :alt="`Generated image ${index + 1}`" /> -->
       </div>
     </div>
-    
-    <div style="display:flex;justify-content:space-between" v-if="selected_product_mockups_group">
-       <a-button type="primary" @click="addToProduct()">
-          <a-space>
-              <svg width="20" height="20" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M8.4987 5.83398V11.1673M11.1654 8.50065H5.83203" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M2.16797 8.49935C2.16797 5.51379 2.16797 4.02101 3.09546 3.09351C4.02296 2.16602 5.51574 2.16602 8.5013 2.16602C11.4868 2.16602 12.9796 2.16602 13.9072 3.09351C14.8346 4.02101 14.8346 5.51379 14.8346 8.49935C14.8346 11.4849 14.8346 12.9777 13.9072 13.9052C12.9796 14.8327 11.4868 14.8327 8.5013 14.8327C5.51574 14.8327 4.02296 14.8327 3.09546 13.9052C2.16797 12.9777 2.16797 11.4849 2.16797 8.49935Z" stroke="white"/>
-</svg>
 
-             Add To Product
-            </a-space>
-            </a-button>
+    <div
+      style="display: flex; justify-content: space-between"
+      v-if="selected_product_mockups_group"
+    >
+      <a-button type="primary" @click="addToProduct()">
+        <a-space>
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 17 17"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M8.4987 5.83398V11.1673M11.1654 8.50065H5.83203"
+              stroke="white"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M2.16797 8.49935C2.16797 5.51379 2.16797 4.02101 3.09546 3.09351C4.02296 2.16602 5.51574 2.16602 8.5013 2.16602C11.4868 2.16602 12.9796 2.16602 13.9072 3.09351C14.8346 4.02101 14.8346 5.51379 14.8346 8.49935C14.8346 11.4849 14.8346 12.9777 13.9072 13.9052C12.9796 14.8327 11.4868 14.8327 8.5013 14.8327C5.51574 14.8327 4.02296 14.8327 3.09546 13.9052C2.16797 12.9777 2.16797 11.4849 2.16797 8.49935Z"
+              stroke="white"
+            />
+          </svg>
 
-        <a-button type="text" @click="regenerateImages">
-          <a-space>
-              <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
-                  <path d="M13.5 3.5C12.2 2.2 10.2 1.5 8 1.5C4.1 1.5 1 4.6 1 8.5C1 12.4 4.1 15.5 8 15.5C11.4 15.5 14.2 13.1 14.9 9.9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-                  <path d="M11 1.5L13.5 3.5L11.5 6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                Regenerate
-            </a-space>
-            </a-button>
+          Add To Product
+        </a-space>
+      </a-button>
+
+      <a-button type="text" @click="regenerateImages">
+        <a-space>
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+            <path
+              d="M13.5 3.5C12.2 2.2 10.2 1.5 8 1.5C4.1 1.5 1 4.6 1 8.5C1 12.4 4.1 15.5 8 15.5C11.4 15.5 14.2 13.1 14.9 9.9"
+              stroke="currentColor"
+              stroke-width="1.2"
+              stroke-linecap="round"
+            />
+            <path
+              d="M11 1.5L13.5 3.5L11.5 6"
+              stroke="currentColor"
+              stroke-width="1.2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          Regenerate
+        </a-space>
+      </a-button>
     </div>
-    
+
     <!-- Demo controls for testing different image counts -->
     <!-- <div class="demo-controls">
       <button @click="setImageCount(1)" class="demo-btn">1 Image</button>
@@ -149,178 +176,189 @@
 </template>
 
 <script>
-import add_new_product_mockup from '@/components/update_catalogue/edit_image/add_product_image.vue'
+import add_new_product_mockup from "@/components/update_catalogue/edit_image/add_product_image.vue";
 export default {
   name: "AdaptiveImageGrid",
-  components:{
-    add_new_product_mockup 
+  components: {
+    add_new_product_mockup,
   },
-  props:{
+  props: {
     product_mockup_images: {
       type: Object,
-      default: () => ({})
+      default: () => ({}),
     },
     selected_product_mockups_group: {
       type: Object,
-      default: () => ({})
-    }
+      default: () => ({}),
+    },
   },
   data() {
     return {
       isCollapsed: false,
 
       closeShareMenu: true,
-      allImages:[],
+      allImages: [],
       images: [],
 
       // add to product modal
-      open_AddToProduct:false,
-    }
+      open_AddToProduct: false,
+    };
   },
   watch: {
     product_mockup_images: {
       handler(newVal) {
-        if (newVal && newVal.images) {
+        if (newVal && newVal.image_paths) {
           this.updateImages();
         }
       },
       immediate: true,
-      deep: true
-    }
+      deep: true,
+    },
   },
-computed: {
-  
-      panelHeight() {
-        return this.closeShareMenu ? 'calc(90vh - 50px)' : '90vh';
-      },
+
+  computed: {
+    panelHeight() {
+      return this.closeShareMenu ? "calc(90vh - 50px)" : "90vh";
+    },
     gridClass() {
       const count = this.images.length;
       return `grid-${count}`;
-    }
+    },
   },
   methods: {
     toggleSocialShare() {
       this.isCollapsed = !this.isCollapsed;
     },
-    addToProduct(){
-      this.open_AddToProduct=true
-  },
-  
+    addToProduct() {
+      this.open_AddToProduct = true;
+    },
+
     handleApplyMockup(result) {
-      console.log('Apply mockup:', result);
+      console.log("Apply mockup:", result);
       // Handle the result from child component
       // result contains: mockup_image, product, mockup_group
       // Example: Send to API or update state
       this.applyMockupToProduct(result);
     },
-    
-    async applyMockupToProduct(data) {
-  console.log('Applying mockup with data:', data);
-  
-  try {
-    // Validate required data
-    if (!data.product || !data.product.id) {
-      throw new Error('Product information is missing');
-    }
-    
-    if (!data.mockup_group || !data.mockup_group.id) {
-      throw new Error('Mockup group information is missing');
-    }
-    
-    if (!data.mockup_indices || !Array.isArray(data.mockup_indices) || data.mockup_indices.length === 0) {
-      throw new Error('No mockup indices selected');
-    }
-    
-    // Prepare the payload to match your backend expectations
-    const payload = {
-      product: {
-        id: data.product.id,
-        title: data.product.title,
-        category: data.product.category,
-        product_type: data.product.product_type,
-        image: data.product.image,
-        price: data.product.price,
-        is_active: data.product.is_active,
-        description: data.product.description
-      },
-      mockup_group: {
-        id: data.mockup_group.id,
-        date: data.mockup_group.date,
-        input_image: data.mockup_group.input_image,
-        images: data.mockup_group.images
-      },
-      mockup_indices: data.mockup_indices,
-      mockup_images: data.mockup_images || []
-    };
-    
-    console.log('Sending payload:', payload);
-    
-    // Make API call using fetch
-    const response = await fetch(
-      `${this.$store.state.root_api}engine/apply-new-mockups-to-product/`, 
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Token ${localStorage.getItem('token')}` // Adjust based on your auth setup
-        },
-        body: JSON.stringify(payload)
-      }
-    );
-    
-    // Check if response is ok
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.error || errorData.message || `HTTP ${response.status}: ${response.statusText}`);
-    }
-    
-    const responseData = await response.json();
-    console.log('Response:', responseData);
-    
-    // Handle success response
-    if (responseData && responseData.created_images) {
-      this.$message.success(`Mockup applied successfully! Created ${responseData.total_created} new product images.`);
-      
-      // Optionally emit event or update local state
-      this.$emit('mockup-applied', {
-        productId: data.product.id,
-        createdImages: responseData.created_images
-      });
-      
-      return responseData;
-    } else {
-      this.$message.success('Mockup applied to product successfully!');
-      return responseData;
-    }
-    
-  } catch (error) {
-    console.error('Error applying mockup:', error);
-    
-    // Handle different types of errors
-    if (error.name === 'TypeError' && error.message.includes('fetch')) {
-      // Network error
-      this.$message.error('Network error: Please check your connection');
-    } else {
-      // Server error or validation error
-      this.$message.error(error.message || 'Failed to apply mockup to product');
-    }
-    
-    throw error; // Re-throw for caller to handle if needed
-  }
-},
 
-    
+    async applyMockupToProduct(data) {
+      console.log("Applying mockup with data:", data);
+
+      try {
+        // Validate required data
+        if (!data.product || !data.product.id) {
+          throw new Error("Product information is missing");
+        }
+
+        if (!data.mockup_group || !data.mockup_group.id) {
+          throw new Error("Mockup group information is missing");
+        }
+
+        if (
+          !data.mockup_indices ||
+          !Array.isArray(data.mockup_indices) ||
+          data.mockup_indices.length === 0
+        ) {
+          throw new Error("No mockup indices selected");
+        }
+
+        // Prepare the payload to match your backend expectations
+        const payload = {
+          product: {
+            id: data.product.id,
+            title: data.product.title,
+            category: data.product.category,
+            product_type: data.product.product_type,
+            image: data.product.image,
+            price: data.product.price,
+            is_active: data.product.is_active,
+            description: data.product.description,
+          },
+          mockup_group: {
+            id: data.mockup_group.id,
+            date: data.mockup_group.date,
+            input_image: data.mockup_group.input_image,
+            images: data.mockup_group.images,
+          },
+          mockup_indices: data.mockup_indices,
+          mockup_images: data.mockup_images || [],
+        };
+
+        console.log("Sending payload:", payload);
+
+        // Make API call using fetch
+        const response = await fetch(
+          `${this.$store.state.root_api}engine/apply-new-mockups-to-product/`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Token ${localStorage.getItem("token")}`, // Adjust based on your auth setup
+            },
+            body: JSON.stringify(payload),
+          },
+        );
+
+        // Check if response is ok
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(
+            errorData.error ||
+              errorData.message ||
+              `HTTP ${response.status}: ${response.statusText}`,
+          );
+        }
+
+        const responseData = await response.json();
+        console.log("Response:", responseData);
+
+        // Handle success response
+        if (responseData && responseData.created_images) {
+          this.$message.success(
+            `Mockup applied successfully! Created ${responseData.total_created} new product images.`,
+          );
+
+          // Optionally emit event or update local state
+          this.$emit("mockup-applied", {
+            productId: data.product.id,
+            createdImages: responseData.created_images,
+          });
+
+          return responseData;
+        } else {
+          this.$message.success("Mockup applied to product successfully!");
+          return responseData;
+        }
+      } catch (error) {
+        console.error("Error applying mockup:", error);
+
+        // Handle different types of errors
+        if (error.name === "TypeError" && error.message.includes("fetch")) {
+          // Network error
+          this.$message.error("Network error: Please check your connection");
+        } else {
+          // Server error or validation error
+          this.$message.error(
+            error.message || "Failed to apply mockup to product",
+          );
+        }
+
+        throw error; // Re-throw for caller to handle if needed
+      }
+    },
+
     updateImages() {
-  if (this.product_mockup_images && this.product_mockup_images.images) {
-    const imageUrls = Object.values(this.product_mockup_images.image_paths || {})
-      .filter(url => url !== null && url !== undefined && url !== ""); // filter invalid
-    this.allImages = imageUrls;
-    this.images = imageUrls;
-  } else {
-    this.allImages = [];
-    this.images = [];
-  }
-},
+      if (this.product_mockup_images && this.product_mockup_images.image_paths) {
+        const imageUrls = Object.values(
+          this.product_mockup_images.image_paths || {},
+        ).filter((url) => url !== null && url !== undefined && url !== ""); // filter invalid
+        this.allImages = imageUrls;
+        this.images = imageUrls;
+      } else {
+        this.allImages = [];
+        this.images = [];
+      }
+    },
 
     setImageCount(count) {
       this.images = this.allImages.slice(0, count);
@@ -329,29 +367,31 @@ computed: {
       const count = this.images.length;
       // Special classes for 3-image layout
       if (count === 3) {
-        return index === 0 ? 'large-image' : 'small-image';
+        return index === 0 ? "large-image" : "small-image";
       }
-      return '';
+      return "";
     },
     regenerateImages() {
       // Simulate regeneration by shuffling images
       const shuffled = [...this.allImages].sort(() => Math.random() - 0.5);
       this.images = shuffled.slice(0, this.images.length);
-    }
+    },
   },
   mounted() {
     // Initialize images when component is mounted
     this.updateImages();
-  }
-}
+  },
+};
 </script>
 
 <style scoped>
 /* Fade transition for image grid */
-.fade-enter-active, .fade-leave-active {
+.fade-enter-active,
+.fade-leave-active {
   transition: opacity 0.5s ease;
 }
-.fade-enter-from, .fade-leave-to {
+.fade-enter-from,
+.fade-leave-to {
   opacity: 0;
 }
 
@@ -382,8 +422,12 @@ computed: {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .loading-overlay p {
@@ -395,7 +439,7 @@ computed: {
 .main-panel {
   flex: 1;
   padding: 24px;
-  margin-top:30px;
+  margin-top: 30px;
   display: flex;
   flex-direction: column;
   transition: min-height 0.3s ease;
@@ -407,7 +451,9 @@ computed: {
 }
 
 .panel-collapsed {
-  min-height: calc(100vh - 50px); /* Reduced height when share menu is visible */
+  min-height: calc(
+    100vh - 50px
+  ); /* Reduced height when share menu is visible */
 }
 .image-grid {
   display: grid;
@@ -417,7 +463,7 @@ computed: {
   width: 100%;
   max-width: 900px;
   /* max-height: 300px;   restrict grid height */
-  overflow-y: auto;    /* allow scrolling if content exceeds 700px */
+  overflow-y: auto; /* allow scrolling if content exceeds 700px */
   margin-left: auto;
   margin-right: auto;
 }
@@ -447,7 +493,6 @@ computed: {
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
   max-height: 450px;
-
 }
 
 .image-container {
@@ -579,33 +624,33 @@ computed: {
   .main-panel {
     padding: 16px;
   }
-  
+
   .image-grid {
     gap: 12px;
     max-width: 100%;
     margin-bottom: 24px;
   }
-  
+
   .grid-2,
   .grid-3,
   .grid-4 {
     grid-template-columns: 1fr;
     grid-template-rows: auto;
   }
-  
+
   .grid-3 .large-image {
     grid-row: auto;
     min-height: 200px;
   }
-  
+
   .grid-3 .small-image {
     min-height: 200px;
   }
-  
+
   .image-container {
     min-height: 200px;
   }
-  
+
   .demo-controls {
     flex-wrap: wrap;
     gap: 8px;
@@ -616,11 +661,11 @@ computed: {
   .main-panel {
     padding: 12px;
   }
-  
+
   .image-grid {
     gap: 8px;
   }
-  
+
   .image-container {
     min-height: 180px;
     border-radius: 8px;
@@ -652,10 +697,18 @@ computed: {
   animation-fill-mode: both;
 }
 
-.image-container:nth-child(1) { animation-delay: 0.1s; }
-.image-container:nth-child(2) { animation-delay: 0.2s; }
-.image-container:nth-child(3) { animation-delay: 0.3s; }
-.image-container:nth-child(4) { animation-delay: 0.4s; }
+.image-container:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.image-container:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.image-container:nth-child(3) {
+  animation-delay: 0.3s;
+}
+.image-container:nth-child(4) {
+  animation-delay: 0.4s;
+}
 
 @keyframes fadeInUp {
   from {
@@ -667,12 +720,6 @@ computed: {
     transform: translateY(0);
   }
 }
-
-
-
-
-
-
 
 .share-section {
   display: flex;
