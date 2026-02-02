@@ -618,10 +618,16 @@ export default {
     },
 
     logout_user() {
-      console.log("Logging out...");
-      this.closeMobileMenu();
-      // Add your logout logic here
-    },
+      this.$store.dispatch("logout");
+      localStorage.removeItem("profile");
+      localStorage.removeItem("business_profile");
+      this.$router.push("/login");
+
+      notification.success({
+        message: "Logout Successful",
+        placement: "bottomRight",
+      });
+    }
   },
 };
 </script>
