@@ -191,11 +191,11 @@
                   </div> -->
                 </div>
               </div>
-              <div class="h-1/10" v-else>
-                <a-tag style="border: none; background: #f3f7f5"
+              <div class="h-8  !mx-2" v-else>
+                <a-tag style="border: none; background: #F2F2F2"
                   >Room : {{ design.room_type }}</a-tag
                 >
-                <a-tag style="border: none; background: #f3f7f5"
+                <a-tag style="border: none; background: #F2F2F2"
                   >Style : {{ design.room_design_type }}</a-tag
                 >
               </div>

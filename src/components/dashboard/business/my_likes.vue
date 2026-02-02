@@ -152,19 +152,21 @@
                             ${{ product.product_price }}
                           </a-col>
                         <!-- {{ product }} -->
-    
-                        <a-col span="18">
-                            <a-button 
-                            style="
-                              display: flex;
-                              justify-content: end;
-                              font-size: 12px;;
-                            "  @click="goto_product_Route(product)">Product Details</a-button>
-                        </a-col>
+    <div class="flex justify-end items-center gap-0 w-full">
+
+                        <a-col span="18" class="flex justify-end">
+  <a-button
+    @click="goto_product_Route(product)"
+    class="!px-2 !py-1 !text-[12px] h-7 flex items-center"
+  >
+    Product Details
+  </a-button>
+</a-col>
+
     
     
                         <!-- ❤️ Dynamic Favorite Button -->
-                        <a-col span="6" style="padding-left:10px;display: flex;justify-content: end;">
+                        <a-col span="6" style="padding-left:2px;display: flex;justify-content: end;">
                         <a-button @click="toggleFavorite(product)" style="display: flex;justify-content: center;align-items: center;">
                             <template v-if="product.is_favorited">
                             <HeartFilled style="color: red" />
@@ -174,6 +176,8 @@
                             </template>
                         </a-button>
                         </a-col>
+
+                        </div>
     
             </a-row>
                 </div>
@@ -231,16 +235,16 @@
                   class="product-responsive"
                   style="padding: 5px"
                 >
-                  <div class="product">
+                  <div class="product ">
                     <!-- {{ product }} -->
                     <div
-                      class="product-image-container"
+                      class=""
                       @click="viewRoom(product)"
                     >
                       <img
                         :src="$store.state.root_media_api + product.image"
                         :alt="product.name"
-                        class="product-image"
+                        class="product-image "
                       />
                       <!-- Category Badge -->
                       <div class="category-badge">{{ product.category }}</div>
