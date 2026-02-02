@@ -214,7 +214,7 @@ import Realestateagent from '@/views/pages/realestateagent.vue'
 import Aivirtualtour from '@/views/pages/aivirtualtour.vue'
 
 import make_payment_credittopup from '@/views/pages/make_payment_credittopup.vue'
-
+import terms_and_conditions from '@/views/pages/tnc/terms_and_conditions.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -271,6 +271,12 @@ const router = createRouter({
       name: 'cart',
       component: cart,
        meta: { requiresAuth: true }
+    },
+    {
+      path: '/terms-and-conditions',
+      name: 'terms_and_conditions',
+      component: terms_and_conditions,
+       
     },
     {
       path: '/ai-catalog',

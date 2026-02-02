@@ -536,10 +536,10 @@ watch: {
       console.log('Continue with flat surface detection')
     },
     
-    rescaleRoomLayout() {
+    // rescaleRoomLayout() {
       // Your existing rescale logic
-      console.log('Rescaling room layout...')
-    },
+      // console.log('Rescaling room layout...')
+    // },
     // ===================
     // INITIALIZATION
     // ===================
