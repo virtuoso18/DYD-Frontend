@@ -2362,9 +2362,7 @@ Switch Furniture</a-button> -->
                       font-size: 16px;
                     "
                   >
-                    <span style="font-size: 16px; color: #444"
-                      >Share on social:</span
-                    >
+                    <span style="font-size: 16px; color: #444">Share on social:</span>
                     <svg
                       width="20"
                       height="20"
