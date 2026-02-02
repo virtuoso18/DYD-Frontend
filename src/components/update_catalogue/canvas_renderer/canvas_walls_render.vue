@@ -1517,7 +1517,6 @@ imageDataToCanvas(imageData) {
     // ===================
     rescaleRoomLayout(){
       this.$emit('rescale-room-layout', true);
-
     },
     emitSelectionChange() {
       const selectionData = {

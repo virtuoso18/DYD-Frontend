@@ -3518,10 +3518,11 @@ export default {
         );
 
         if (responseData) {
-          await this.fetchBinaryWallMasks(); // This will refresh object masks too
-          this.forceCanvasUpdate();
-
-          this.$message.success("Floor texture applied successfully!");
+          
+          // await this.fetchBinaryWallMasks(); 
+         // this.forceCanvasUpdate();
+          this.startPollingResetWallBinaryMask(responseData?.renderer_id);
+          // this.$message.success("Floor texture applied successfully!");
         } else {
           throw new Error("No final output received from server");
         }
@@ -3533,9 +3534,7 @@ export default {
             "An error occurred while applying the floor texture.",
           () => this.floorTextureSelected(texture_id),
         );
-      } finally {
-        this.canvasLoading = false;
-      }
+      } 
     },
     // ==========================================
     // INITIALIZATION
@@ -4312,8 +4311,70 @@ export default {
                 "?t=" +
                 Date.now();
 
-              this.forceCanvasUpdate();
-              this.$message.success("Applied Effect successfully!");
+               this.forceCanvasUpdate(); 
+              return;
+            }
+
+            if (data.status === "failed") {
+              this.canvasLoading = false;
+
+              this.stopPolling();
+              reject("Rendering failed");
+              return;
+            }
+
+            console.log("⏳ Rendering in progress...");
+          } catch (err) {
+            this.loading = false;
+            this.stopPolling();
+            reject(err);
+            this.canvasLoading = false;
+          }
+        };
+
+        // run immediately
+        poll();
+
+        // then every 3s
+        this.pollTimer = setInterval(poll, 3000);
+      });
+    },
+
+    stopPolling() {
+      if (this.pollTimer) {
+        clearInterval(this.pollTimer);
+        this.pollTimer = null;
+      }
+    },
+
+     startPollingResetWallBinaryMask(jobId) {
+      if (!jobId) return Promise.reject("Invalid job id");
+
+      this.stopPolling();
+      this.loading = true;
+      this.jobId = jobId;
+
+      return new Promise((resolve, reject) => {
+        const poll = async () => {
+          try {
+            const res = await fetch(
+              `${this.$store.state.root_api}renderer/rescale-room-layout/${jobId}/`,
+            );
+
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+            const data = await res.json();
+
+            if (data.status === "Completed") {
+              this.canvasLoading = false;
+              //this.stopPolling();
+              //resolve(data.finalised_result_wall_processed_image);
+              //this.base_image_url =
+                //this.$store.state.root_media_api +
+                //data.finalised_result_wall_processed_image +
+                //"?t=" +
+                //Date.now();
+              this.fetchBinaryWallMasks();
               return;
             }
 
