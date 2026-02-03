@@ -169,38 +169,36 @@
         "
       ></canvas>
     </div>
-    
+
     <!-- Object Selection Indicators -->
     <div
-    v-if="!isLoading && selectedObjects.length > 0"
-   class="object-indicators"
-   :style="{ width: canvasWidth + 'px', height: canvasHeight + 'px' }"
-   >
-    <a-row>
-       <a-col :sm="0" :xs="0" :md="24" :lg="24">
-
-         <div
-         v-for="(objectKey, index) in selectedObjects"
-         :key="objectKey"
-         class="object-indicator"
-         :style="{
-           left: '20px',
-           top: 20 + index * 35 + 'px',
-         }"
-         >
-         <span class="object-name">{{ formatObjectName(objectKey) }}</span>
-         <button
-             class="remove-object-btn"
-             @click="toggleObjectSelection(objectKey)"
-             title="Remove selection"
-           >
-             ×
-           </button>
-         </div>
-    </a-col>
-  </a-row>
-  
-</div>
+      v-if="!isLoading && selectedObjects.length > 0"
+      class="object-indicators"
+      :style="{ width: canvasWidth + 'px', height: canvasHeight + 'px' }"
+    >
+      <a-row>
+        <a-col :sm="0" :xs="0" :md="24" :lg="24">
+          <div
+            v-for="(objectKey, index) in selectedObjects"
+            :key="objectKey"
+            class="object-indicator"
+            :style="{
+              left: '20px',
+              top: 20 + index * 35 + 'px',
+            }"
+          >
+            <span class="object-name">{{ formatObjectName(objectKey) }}</span>
+            <button
+              class="remove-object-btn"
+              @click="toggleObjectSelection(objectKey)"
+              title="Remove selection"
+            >
+              ×
+            </button>
+          </div>
+        </a-col>
+      </a-row>
+    </div>
     <!-- Drawing Mode Controls -->
 
     <!-- Updated Drawing Mode Controls Template -->
@@ -350,10 +348,13 @@
         🔄 Switch Furniture
       </a-button>
 
-      
-      <a-button class="toolbar-btn primary-btn" @click="make_room_empty" v-if="!isLoading && selectedObjects.length === 0" >
+      <a-button
+        class="toolbar-btn primary-btn"
+        @click="make_room_empty"
+        v-if="!isLoading && selectedObjects.length === 0"
+      >
         Remove All Furniture
-      </a-button> 
+      </a-button>
     </div>
 
     <!-- Zoom Controls -->
@@ -769,12 +770,11 @@
     </div>
 
     <!-- Apply Changes -->
-     
   </div>
 </template>
 
 <script>
-  import { notification } from 'ant-design-vue';
+import { notification } from "ant-design-vue";
 import DrawRemovalModal from "@/components/update_catalogue/canvas_renderer/draw_removal_area_room.vue";
 import switch_furniture from "@/components/update_catalogue/bottom_drawer_item_components/switch_furniture.vue";
 import { DotLottieVue } from "@lottiefiles/dotlottie-vue";
@@ -915,6 +915,10 @@ export default {
       // Resize observer
       resizeObserver: null,
 
+      // Touch/pinch zoom state
+      lastTouchDistance: 0,
+      lastPinchZoom: 1,
+
       // Processing states
       processingObjects: false,
       processingCurrent: 0,
@@ -947,17 +951,20 @@ export default {
     };
   },
   setup() {
-  const [api, contextHolder] = notification.useNotification();
-  const showNotification = (message = 'Notification', description = '...') => {
-    api.info({
-      message,
-      description,
-      placement: 'topCenter',  // ✅ CORRECT
-      duration: 3,  // Auto-close after 3 seconds
-    });
-  };
-  return { contextHolder, showNotification };
-},
+    const [api, contextHolder] = notification.useNotification();
+    const showNotification = (
+      message = "Notification",
+      description = "...",
+    ) => {
+      api.info({
+        message,
+        description,
+        placement: "topCenter", // ✅ CORRECT
+        duration: 3, // Auto-close after 3 seconds
+      });
+    };
+    return { contextHolder, showNotification };
+  },
   computed: {
     // canShowSwitchButton() {
     //   return this.selectedObjects.length >= 1 && !this.drawingMode;
@@ -975,7 +982,7 @@ export default {
 
         // All selected objects must have the same base key
         const allSameCategory = this.selectedObjects.every(
-          (key) => this.getBaseKeyName(key) === baseKey
+          (key) => this.getBaseKeyName(key) === baseKey,
         );
 
         return allSameCategory;
@@ -1078,7 +1085,10 @@ export default {
       deep: true,
     },
     zoom: {
-      handler() {
+      handler(newZoom) {
+        if (newZoom === 1) {
+          this.isDragging = false;
+        }
         this.$nextTick(() => {
           this.syncOverlayTransform();
         });
@@ -1155,12 +1165,12 @@ export default {
             selectedObjects.reduce((acc, key) => {
               acc[key] = this.objectMasks[key];
               return acc;
-            }, {})
-          )
+            }, {}),
+          ),
         );
         formData.append(
           "canvas_dimensions",
-          JSON.stringify(this.getCanvasDimensions())
+          JSON.stringify(this.getCanvasDimensions()),
         );
 
         // Send to backend API
@@ -1172,7 +1182,7 @@ export default {
             headers: {
               Authorization: `Token ${localStorage.getItem("token")}`,
             },
-          }
+          },
         );
 
         if (!response.ok) {
@@ -1218,12 +1228,12 @@ export default {
             selectedObjects.reduce((acc, key) => {
               acc[key] = this.objectMasks[key];
               return acc;
-            }, {})
-          )
+            }, {}),
+          ),
         );
         formData.append(
           "canvas_dimensions",
-          JSON.stringify(this.getCanvasDimensions())
+          JSON.stringify(this.getCanvasDimensions()),
         );
 
         // Send to backend API
@@ -1235,7 +1245,7 @@ export default {
             headers: {
               Authorization: `Token ${localStorage.getItem("token")}`,
             },
-          }
+          },
         );
 
         if (!response.ok) {
@@ -1299,14 +1309,11 @@ export default {
       // Use the selected furniture as needed
     },
     // render the furniture switching
-    async renderFurnitureSwitching(product_selected,maskblob) {
+    async renderFurnitureSwitching(product_selected, maskblob) {
       console.log("api");
-      if(!product_selected){
-         this.showNotification(
-    'Warning',
-    'Kindly Select Object to switch!'
-  );
-         return;
+      if (!product_selected) {
+        this.showNotification("Warning", "Kindly Select Object to switch!");
+        return;
       }
       if (!this.selectedObjectForSwitch) return;
       this.switchingInProgress = true;
@@ -1331,12 +1338,12 @@ export default {
           this.selectedObjects.reduce((acc, key) => {
             acc[key] = this.objectMasks[key];
             return acc;
-          }, {})
-        )
+          }, {}),
+        ),
       );
       formData.append(
         "canvas_dimensions",
-        JSON.stringify(this.getCanvasDimensions())
+        JSON.stringify(this.getCanvasDimensions()),
       );
       this.closeSwitchFurnitureModal();
       this.closeSwitchDrawer();
@@ -1350,7 +1357,7 @@ export default {
           headers: {
             Authorization: `Token ${localStorage.getItem("token")}`,
           },
-        }
+        },
       );
 
       if (!response.ok) {
@@ -1371,12 +1378,12 @@ export default {
       }
 
       const baseKeys = new Set(
-        this.selectedObjects.map((key) => this.getBaseKeyName(key))
+        this.selectedObjects.map((key) => this.getBaseKeyName(key)),
       );
 
       if (baseKeys.size > 1) {
         this.$message.error(
-          "Please select furniture items from the same category"
+          "Please select furniture items from the same category",
         );
         return false;
       }
@@ -1403,7 +1410,7 @@ export default {
     },
 
     closeSwitchFurnitureMode() {
-        this.drawingMode = false;
+      this.drawingMode = false;
       this.selectedObjectForSwitch = null;
       this.clearDrawingCanvas();
       this.drawingHistory = [];
@@ -1500,7 +1507,7 @@ export default {
       // Highlight ONLY selected objects
       this.selectedObjects.forEach((objectKey) => {
         const region = this.objectMaskRegions.find(
-          (r) => r.objectKey === objectKey
+          (r) => r.objectKey === objectKey,
         );
 
         if (region && region.imageData) {
@@ -1534,7 +1541,7 @@ export default {
                 startX,
                 y,
                 this.canvasWidth - startX,
-                step
+                step,
               );
             }
           }
@@ -1562,30 +1569,30 @@ export default {
 
       this.drawingCanvas.addEventListener(
         "mousedown",
-        this.handleDrawingMouseDown
+        this.handleDrawingMouseDown,
       );
       this.drawingCanvas.addEventListener(
         "mousemove",
-        this.handleDrawingMouseMove
+        this.handleDrawingMouseMove,
       );
       this.drawingCanvas.addEventListener("mouseup", this.handleDrawingMouseUp);
       this.drawingCanvas.addEventListener(
         "mouseleave",
-        this.handleDrawingMouseLeave
+        this.handleDrawingMouseLeave,
       );
       this.drawingCanvas.addEventListener(
         "touchstart",
         this.handleDrawingTouchStart,
-        { passive: false }
+        { passive: false },
       );
       this.drawingCanvas.addEventListener(
         "touchmove",
         this.handleDrawingTouchMove,
-        { passive: false }
+        { passive: false },
       );
       this.drawingCanvas.addEventListener(
         "touchend",
-        this.handleDrawingTouchEnd
+        this.handleDrawingTouchEnd,
       );
     },
 
@@ -1594,31 +1601,31 @@ export default {
 
       this.drawingCanvas.removeEventListener(
         "mousedown",
-        this.handleDrawingMouseDown
+        this.handleDrawingMouseDown,
       );
       this.drawingCanvas.removeEventListener(
         "mousemove",
-        this.handleDrawingMouseMove
+        this.handleDrawingMouseMove,
       );
       this.drawingCanvas.removeEventListener(
         "mouseup",
-        this.handleDrawingMouseUp
+        this.handleDrawingMouseUp,
       );
       this.drawingCanvas.removeEventListener(
         "mouseleave",
-        this.handleDrawingMouseLeave
+        this.handleDrawingMouseLeave,
       );
       this.drawingCanvas.removeEventListener(
         "touchstart",
-        this.handleDrawingTouchStart
+        this.handleDrawingTouchStart,
       );
       this.drawingCanvas.removeEventListener(
         "touchmove",
-        this.handleDrawingTouchMove
+        this.handleDrawingTouchMove,
       );
       this.drawingCanvas.removeEventListener(
         "touchend",
-        this.handleDrawingTouchEnd
+        this.handleDrawingTouchEnd,
       );
     },
 
@@ -1789,14 +1796,14 @@ export default {
         0,
         0,
         this.canvasWidth,
-        this.canvasHeight
+        this.canvasHeight,
       );
 
       // Remove any redo history if we're at the end
       if (this.currentDrawingHistoryIndex < this.drawingHistory.length - 1) {
         this.drawingHistory = this.drawingHistory.slice(
           0,
-          this.currentDrawingHistoryIndex + 1
+          this.currentDrawingHistoryIndex + 1,
         );
       }
 
@@ -1938,7 +1945,7 @@ export default {
         // Download the merged mask
         this.downloadMask(
           mergedMaskBlob,
-          `${this.selectedObjectForSwitch}-merged-mask.png`
+          `${this.selectedObjectForSwitch}-merged-mask.png`,
         );
 
         // Optionally, also send to backend if needed
@@ -2100,7 +2107,7 @@ export default {
         // Merge all selected object masks
         this.selectedObjects.forEach((objectKey) => {
           const region = this.objectMaskRegions.find(
-            (r) => r.objectKey === objectKey
+            (r) => r.objectKey === objectKey,
           );
 
           if (region && region.imageData) {
@@ -2137,7 +2144,7 @@ export default {
                       scaledX,
                       scaledY,
                       scaledWidth,
-                      scaledHeight
+                      scaledHeight,
                     );
                     startX = -1;
                   }
@@ -2147,7 +2154,7 @@ export default {
                 const scaledX = Math.round(startX * scaleX);
                 const scaledY = Math.round(y * scaleY);
                 const scaledWidth = Math.round(
-                  (this.canvasWidth - startX) * scaleX
+                  (this.canvasWidth - startX) * scaleX,
                 );
                 const scaledHeight = Math.round(scaleY);
 
@@ -2162,7 +2169,7 @@ export default {
           0,
           0,
           this.canvasWidth,
-          this.canvasHeight
+          this.canvasHeight,
         );
         const drawingData = drawingImageData.data;
 
@@ -2170,7 +2177,7 @@ export default {
           0,
           0,
           this.baseImg.width,
-          this.baseImg.height
+          this.baseImg.height,
         );
         const mergedData = mergedImageData.data;
 
@@ -2316,7 +2323,7 @@ export default {
     selectAllObjects() {
       if (this.isLoading || this.objectMasksLoading) return;
       this.selectedObjects = this.objectMaskRegions.map(
-        (region) => region.objectKey
+        (region) => region.objectKey,
       );
     },
 
@@ -2422,32 +2429,84 @@ export default {
     //   this.canvas.addEventListener('touchend', this.handleTouchEnd);
     // },
     setupEventListeners() {
-      // console.log("g1");
       if (!this.canvas) return;
-      // Prevent scroll/pinch on mobile
-
-      // this.canvas.style.touchAction = "none";
 
       // WHEEL (desktop zoom)
       this.canvas.addEventListener("wheel", this.handleWheel, {
         passive: false,
       });
-      // :three_button_mouse: Mouse events (still keep)
+      // Mouse events
       this.canvas.addEventListener("mousedown", this.handleMouseDown);
       this.canvas.addEventListener("mousemove", this.handleMouseMove);
       this.canvas.addEventListener("mouseup", this.handleMouseUp);
       this.canvas.addEventListener("mouseleave", this.handleMouseLeave);
       this.canvas.addEventListener("click", this.handleObjectClick);
       this.canvas.addEventListener("contextmenu", (e) => e.preventDefault());
-      // :star: POINTER EVENTS — MOBILE + DESKTOP (FULL FIX)
-      this.canvas.addEventListener("pointerdown", this.handleMouseDown);
-      this.canvas.addEventListener("pointermove", this.handleMouseMove);
-      this.canvas.addEventListener("pointerup", this.handleMouseUp);
-      this.canvas.addEventListener("pointerleave", this.handleMouseLeave);
-      // :x: REMOVE these — they break pointer events in Android
-      // this.canvas.addEventListener("touchstart", ...)
-      // this.canvas.addEventListener("touchmove", ...)
-      // this.canvas.addEventListener("touchend", ...)
+      // Touch events for pinch-zoom and pan
+      this.canvas.addEventListener("touchstart", this.handleTouchStart, {
+        passive: false,
+      });
+      this.canvas.addEventListener("touchmove", this.handleTouchMove, {
+        passive: false,
+      });
+      this.canvas.addEventListener("touchend", this.handleTouchEnd, {
+        passive: false,
+      });
+
+      // Allow page scroll when not zoomed
+      document.addEventListener("touchmove", this.handlePageTouchMove, {
+        passive: false,
+      });
+    },
+
+    handlePageTouchMove(e) {
+      // Allow page scroll only when:
+      // 1. Canvas is not zoomed (zoom === 1)
+      // 2. Touch is with 1 finger (not pinch zoom)
+      // 3. Touch is not on canvas or is on canvas but not zoomed
+
+      if (this.zoom === 1 && e.touches.length === 1) {
+        // Allow default scroll behavior when not zoomed
+        return;
+      }
+
+      // If canvas is zoomed or multi-touch, prevent page scroll
+      if (e.touches.length > 1 || this.zoom > 1) {
+        if (e.target === this.canvas || this.canvas.contains(e.target)) {
+          e.preventDefault();
+        }
+      }
+
+      if (!this.canvas) return;
+
+      this.canvas.style.touchAction = "none";
+
+      // WHEEL (desktop zoom)
+      this.canvas.addEventListener("wheel", this.handleWheel, {
+        passive: false,
+      });
+      // Mouse events
+      this.canvas.addEventListener("mousedown", this.handleMouseDown);
+      this.canvas.addEventListener("mousemove", this.handleMouseMove);
+      this.canvas.addEventListener("mouseup", this.handleMouseUp);
+      this.canvas.addEventListener("mouseleave", this.handleMouseLeave);
+      this.canvas.addEventListener("click", this.handleObjectClick);
+      this.canvas.addEventListener("contextmenu", (e) => e.preventDefault());
+      // Touch events for pinch-zoom and pan
+      this.canvas.addEventListener("touchstart", this.handleTouchStart, {
+        passive: false,
+      });
+      this.canvas.addEventListener("touchmove", this.handleTouchMove, {
+        passive: false,
+      });
+      this.canvas.addEventListener("touchend", this.handleTouchEnd, {
+        passive: false,
+      });
+
+      // Allow page scroll when not zoomed
+      document.addEventListener("touchmove", this.handlePageTouchMove, {
+        passive: false,
+      });
     },
 
     removeEventListeners() {
@@ -2481,7 +2540,7 @@ export default {
       const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
       const newZoom = Math.max(
         this.minZoom,
-        Math.min(this.maxZoom, this.zoom * zoomFactor)
+        Math.min(this.maxZoom, this.zoom * zoomFactor),
       );
 
       if (newZoom !== this.zoom) {
@@ -2548,23 +2607,48 @@ export default {
 
     handleTouchStart(e) {
       if (this.isLoading) return;
-      // e.preventDefault();
+      if (this.zoom === 1 && e.touches.length === 1) {
+        // Don't prevent default - allow normal page scroll
+        this.isDragging = false; 
+        return;
+      }
+      e.preventDefault();
 
       if (e.touches.length === 1) {
+        // Single finger - prepare for panning
         const touch = e.touches[0];
         this.isDragging = true;
         this.dragStartX = touch.clientX;
         this.dragStartY = touch.clientY;
         this.dragStartPanX = this.panX;
         this.dragStartPanY = this.panY;
+      } else if (e.touches.length === 2) {
+        // Two fingers - prepare for pinch zoom
+        e.preventDefault();
+        this.isDragging = false;
+        const touch1 = e.touches[0];
+        const touch2 = e.touches[1];
+        const dx = touch2.clientX - touch1.clientX;
+        const dy = touch2.clientY - touch1.clientY;
+        this.lastTouchDistance = Math.sqrt(dx * dx + dy * dy);
+        this.lastPinchZoom = this.zoom;
       }
     },
-
     handleTouchMove(e) {
       if (this.isLoading) return;
-      // e.preventDefault();
 
-      if (this.isDragging && e.touches.length === 1) {
+      // Allow page scroll when NOT zoomed (zoom === 1) with single touch
+      if (this.zoom === 1 && e.touches.length === 1 && !this.isDragging) {
+        // Don't prevent default - allow normal page scroll
+        //this.isDragging = false; 
+        return;
+      }
+
+      // Prevent default for zoom > 1 or multi-touch
+      e.preventDefault();
+
+      if (e.touches.length === 1 && this.isDragging) {
+        // Single finger pan (only when zoomed)
         const touch = e.touches[0];
         const deltaX = touch.clientX - this.dragStartX;
         const deltaY = touch.clientY - this.dragStartY;
@@ -2574,18 +2658,76 @@ export default {
 
         this.constrainPan();
         this.render();
+      } else if (e.touches.length === 2) {
+        // Two finger pinch zoom
+        this.isDragging = false;
+        const touch1 = e.touches[0];
+        const touch2 = e.touches[1];
+        const dx = touch2.clientX - touch1.clientX;
+        const dy = touch2.clientY - touch1.clientY;
+        const currentDistance = Math.sqrt(dx * dx + dy * dy);
+
+        if (this.lastTouchDistance > 0) {
+          const zoomFactor = currentDistance / this.lastTouchDistance;
+          const newZoom = Math.max(
+            this.minZoom,
+            Math.min(this.maxZoom, this.lastPinchZoom * zoomFactor),
+          );
+
+          if (newZoom !== this.zoom) {
+            // Zoom towards center of two touches
+            const centerX = (touch1.clientX + touch2.clientX) / 2;
+            const centerY = (touch1.clientY + touch2.clientY) / 2;
+            const rect = this.canvas.getBoundingClientRect();
+            const canvasCenterX = centerX - rect.left;
+            const canvasCenterY = centerY - rect.top;
+
+            const imageX = (canvasCenterX - this.panX) / this.zoom;
+            const imageY = (canvasCenterY - this.panY) / this.zoom;
+
+            this.zoom = newZoom;
+            this.panX = canvasCenterX - imageX * this.zoom;
+            this.panY = canvasCenterY - imageY * this.zoom;
+
+            this.constrainPan();
+            this.render();
+          }
+        }
       }
     },
+  //   handleTouchEnd(e) {
+  //     if (this.isLoading) return;
+  //     if (this.zoom === 1) {
+  //   this.isDragging = false;
+  //   this.lastTouchDistance = 0;
+  //   return; // Allow scroll
+  // }
+  //     e.preventDefault();
 
-    handleTouchEnd(e) {
-      if (this.isLoading) return;
-      // e.preventDefault();
-      this.isDragging = false;
-      this.removeObjectHighlight();
-    },
+  //     this.isDragging = false;
+  //     this.lastTouchDistance = 0;
+  //     this.removeObjectHighlight();
+  //   },
 
     // =================== ZOOM & PAN CONTROLS ===================
+handleTouchEnd(e) {
+  if (this.isLoading) return;
 
+  // CRITICAL FIX: Reset dragging when zoom = 1
+  if (this.zoom === 1) {
+    this.isDragging = false;
+    this.lastTouchDistance = 0;
+    return; // Allow scroll
+  }
+
+  e.preventDefault();
+  
+  if (e.touches.length === 0) {
+    this.isDragging = false;
+    this.lastTouchDistance = 0;
+    this.removeObjectHighlight();
+  }
+},
     constrainPan() {
       if (!this.baseImg) return;
 
@@ -2596,12 +2738,12 @@ export default {
 
       const maxPanX = Math.max(
         0,
-        zoomedImageWidth + zoomedImageLeft - this.canvasWidth
+        zoomedImageWidth + zoomedImageLeft - this.canvasWidth,
       );
       const minPanX = Math.min(0, -zoomedImageLeft);
       const maxPanY = Math.max(
         0,
-        zoomedImageHeight + zoomedImageTop - this.canvasHeight
+        zoomedImageHeight + zoomedImageTop - this.canvasHeight,
       );
       const minPanY = Math.min(0, -zoomedImageTop);
 
@@ -2702,33 +2844,33 @@ export default {
     },
 
     calculateImageDimensions() {
-  if (!this.baseImg) return;
+      if (!this.baseImg) return;
 
-  const maxWidth = this.canvasWidth;
-  const maxHeight = this.canvasHeight;
+      const maxWidth = this.canvasWidth;
+      const maxHeight = this.canvasHeight;
 
-  const imgAspectRatio = this.baseImg.width / this.baseImg.height;
-  const canvasAspectRatio = maxWidth / maxHeight;
+      const imgAspectRatio = this.baseImg.width / this.baseImg.height;
+      const canvasAspectRatio = maxWidth / maxHeight;
 
-  // Always fit to width first (100% width)
-  this.renderWidth = maxWidth;
-  this.renderHeight = Math.round(maxWidth / imgAspectRatio);
-  this.renderOffsetX = 0;
-  
-  // If calculated height exceeds available height, fit to height instead
-  if (this.renderHeight > maxHeight) {
-    this.renderHeight = maxHeight;
-    this.renderWidth = Math.round(maxHeight * imgAspectRatio);
-    this.renderOffsetX = Math.round((maxWidth - this.renderWidth) / 2);
-    this.renderOffsetY = 0;
-  } else {
-    // Center vertically if height is less than container
-    this.renderOffsetY = Math.round((maxHeight - this.renderHeight) / 2);
-  }
+      // Always fit to width first (100% width)
+      this.renderWidth = maxWidth;
+      this.renderHeight = Math.round(maxWidth / imgAspectRatio);
+      this.renderOffsetX = 0;
 
-  this.scaleX = this.renderWidth / this.baseImg.width;
-  this.scaleY = this.renderHeight / this.baseImg.height;
-},
+      // If calculated height exceeds available height, fit to height instead
+      if (this.renderHeight > maxHeight) {
+        this.renderHeight = maxHeight;
+        this.renderWidth = Math.round(maxHeight * imgAspectRatio);
+        this.renderOffsetX = Math.round((maxWidth - this.renderWidth) / 2);
+        this.renderOffsetY = 0;
+      } else {
+        // Center vertically if height is less than container
+        this.renderOffsetY = Math.round((maxHeight - this.renderHeight) / 2);
+      }
+
+      this.scaleX = this.renderWidth / this.baseImg.width;
+      this.scaleY = this.renderHeight / this.baseImg.height;
+    },
 
     // =================== OBJECT MASK CACHING ===================
 
@@ -2771,17 +2913,17 @@ export default {
               });
 
               this.objectMasksLoadingProgress = Math.round(
-                ((index + 1) / totalMasks) * 100
+                ((index + 1) / totalMasks) * 100,
               );
               return { success: true, objectKey };
             } catch (error) {
               console.error(
                 `Failed to cache mask ${objectKey}:`,
-                error.message
+                error.message,
               );
               return { success: false, objectKey, error: error.message };
             }
-          }
+          },
         );
 
         await Promise.allSettled(loadingPromises);
@@ -2848,7 +2990,7 @@ export default {
       });
 
       console.log(
-        `Loaded ${loadedFromParentCache} object masks from parent cache`
+        `Loaded ${loadedFromParentCache} object masks from parent cache`,
       );
 
       await this.processObjectMaskRegions();
@@ -2992,61 +3134,60 @@ export default {
     // },
 
     processSingleObjectMask(maskData, index) {
-  try {
-    if (
-      !this.canvasWidth ||
-      !this.canvasHeight ||
-      !this.renderWidth ||
-      !this.renderHeight
-    ) {
-      console.warn("Canvas/render size not ready", index);
-      return;
-    }
+      try {
+        if (
+          !this.canvasWidth ||
+          !this.canvasHeight ||
+          !this.renderWidth ||
+          !this.renderHeight
+        ) {
+          console.warn("Canvas/render size not ready", index);
+          return;
+        }
 
-    const tempCanvas = document.createElement("canvas");
-    tempCanvas.width = this.canvasWidth;
-    tempCanvas.height = this.canvasHeight;
+        const tempCanvas = document.createElement("canvas");
+        tempCanvas.width = this.canvasWidth;
+        tempCanvas.height = this.canvasHeight;
 
-    const tempCtx = tempCanvas.getContext("2d");
+        const tempCtx = tempCanvas.getContext("2d");
 
-    tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+        tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
 
-    tempCtx.drawImage(
-      maskData.img,
-      this.renderOffsetX,
-      this.renderOffsetY,
-      this.renderWidth,
-      this.renderHeight
-    );
+        tempCtx.drawImage(
+          maskData.img,
+          this.renderOffsetX,
+          this.renderOffsetY,
+          this.renderWidth,
+          this.renderHeight,
+        );
 
-    const imageData = tempCtx.getImageData(
-      0,
-      0,
-      tempCanvas.width,
-      tempCanvas.height
-    );
+        const imageData = tempCtx.getImageData(
+          0,
+          0,
+          tempCanvas.width,
+          tempCanvas.height,
+        );
 
-    this.objectMaskImageData[index] = {
-      imageData,
-      objectKey: maskData.objectKey,
-      index,
-    };
+        this.objectMaskImageData[index] = {
+          imageData,
+          objectKey: maskData.objectKey,
+          index,
+        };
 
-    const bounds = this.findObjectBoundsOptimized(imageData);
+        const bounds = this.findObjectBoundsOptimized(imageData);
 
-    if (bounds) {
-      this.objectMaskRegions.push({
-        objectKey: maskData.objectKey,
-        index,
-        bounds,
-        imageData,
-      });
-    }
-
-  } catch (err) {
-    console.error(`Error processing mask ${index}`, err);
-  }
-},
+        if (bounds) {
+          this.objectMaskRegions.push({
+            objectKey: maskData.objectKey,
+            index,
+            bounds,
+            imageData,
+          });
+        }
+      } catch (err) {
+        console.error(`Error processing mask ${index}`, err);
+      }
+    },
 
     findObjectBoundsOptimized(imageData) {
       const data = imageData.data;
@@ -3178,7 +3319,7 @@ export default {
 
       this.selectedObjects.forEach((objectKey) => {
         const region = this.objectMaskRegions.find(
-          (r) => r.objectKey === objectKey
+          (r) => r.objectKey === objectKey,
         );
 
         if (region && region.imageData) {
@@ -3211,7 +3352,7 @@ export default {
                 startX,
                 y,
                 this.canvasWidth - startX,
-                step
+                step,
               );
             }
           }
@@ -3336,7 +3477,7 @@ export default {
               0,
               0,
               this.canvasWidth,
-              this.canvasHeight
+              this.canvasHeight,
             );
           }
           // If there are selected objects, they're already drawn above
@@ -3351,7 +3492,7 @@ export default {
     },
     drawHoverHighlight(objectKey) {
       const region = this.objectMaskRegions.find(
-        (r) => r.objectKey === objectKey
+        (r) => r.objectKey === objectKey,
       );
       if (!region || !this.overlayCtx) return;
       this.overlayCtx.save();
@@ -3461,7 +3602,7 @@ export default {
     // Replace highlightObject with this
     highlightObject(objectKey) {
       const region = this.objectMaskRegions.find(
-        (r) => r.objectKey === objectKey
+        (r) => r.objectKey === objectKey,
       );
       if (!region || !this.overlayCtx) return;
 
@@ -3607,7 +3748,7 @@ export default {
           this.renderOffsetX,
           this.renderOffsetY,
           this.renderWidth,
-          this.renderHeight
+          this.renderHeight,
         );
 
         this.ctx.strokeStyle = "rgba(0, 0, 0, 0.1)";
@@ -3616,7 +3757,7 @@ export default {
           this.renderOffsetX,
           this.renderOffsetY,
           this.renderWidth,
-          this.renderHeight
+          this.renderHeight,
         );
 
         // REMOVED: this.drawSelectedObjectOutlines(); - NO MORE BOUNDING BOXES
@@ -3636,7 +3777,7 @@ export default {
 
       this.selectedObjects.forEach((objectKey) => {
         const region = this.objectMaskRegions.find(
-          (r) => r.objectKey === objectKey
+          (r) => r.objectKey === objectKey,
         );
         if (region && region.bounds) {
           const { minX, maxX, minY, maxY } = region.bounds;
@@ -3644,7 +3785,7 @@ export default {
             minX / this.zoom,
             minY / this.zoom,
             (maxX - minX) / this.zoom,
-            (maxY - minY) / this.zoom
+            (maxY - minY) / this.zoom,
           );
         }
       });
@@ -3661,7 +3802,7 @@ export default {
       this.ctx.fillText(
         "Error loading image",
         this.canvasWidth / 2,
-        this.canvasHeight / 2
+        this.canvasHeight / 2,
       );
     },
 
@@ -3738,7 +3879,9 @@ export default {
 .canvas-container {
   position: relative;
   width: 100%;
-  height: calc(100vh - 140px); /* Adjust 140px based on your header/footer height */
+  height: calc(
+    100vh - 140px
+  ); /* Adjust 140px based on your header/footer height */
   overflow: hidden;
   background: #f5f5f5;
 }
@@ -4020,7 +4163,8 @@ export default {
     rgba(0, 102, 255, 0.1) 50%,
     rgba(0, 102, 255, 0) 100%
   );
-  animation: moveWaveLeftToRight 3s linear infinite,
+  animation:
+    moveWaveLeftToRight 3s linear infinite,
     waveFade 3s ease-in-out infinite;
   z-index: 2;
 }
