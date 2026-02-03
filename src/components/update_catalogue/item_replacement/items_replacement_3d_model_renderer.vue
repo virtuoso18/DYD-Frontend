@@ -1589,32 +1589,28 @@ export default {
     },
 
     adjustCanvasToImageAspectRatio(texture) {
-      if (!texture.image || !this.$refs.canvasContainer) return;
+  if (!texture.image || !this.$refs.canvasContainer) return;
 
-      const containerRect = this.$refs.canvasContainer.getBoundingClientRect();
-      const availableWidth = Math.floor(containerRect.width);
-      const availableHeight = Math.floor(containerRect.height);
+  const containerRect = this.$refs.canvasContainer.getBoundingClientRect();
+  const availableWidth = Math.floor(containerRect.width);
+  const availableHeight = Math.floor(containerRect.height);
 
-      const maxWidth = Math.min(availableWidth, 900);
-      const maxHeight = Math.min(availableHeight, 600);
+  const imgAspect = texture.image.width / texture.image.height;
 
-      const imgAspect = texture.image.width / texture.image.height;
-      const maxAspect = maxWidth / maxHeight;
+  // Always fit to width first (100% width)
+  let canvasWidth = availableWidth;
+  let canvasHeight = Math.round(canvasWidth / imgAspect);
 
-      let canvasWidth, canvasHeight;
+  // If calculated height exceeds available height, fit to height instead
+  if (canvasHeight > availableHeight) {
+    canvasHeight = availableHeight;
+    canvasWidth = Math.round(canvasHeight * imgAspect);
+  }
 
-      if (imgAspect > maxAspect) {
-        canvasWidth = maxWidth;
-        canvasHeight = Math.round(maxWidth / imgAspect);
-      } else {
-        canvasHeight = maxHeight;
-        canvasWidth = Math.round(maxHeight * imgAspect);
-      }
-
-      this.renderer.setSize(canvasWidth, canvasHeight);
-      this.camera.aspect = canvasWidth / canvasHeight;
-      this.camera.updateProjectionMatrix();
-    },
+  this.renderer.setSize(canvasWidth, canvasHeight);
+  this.camera.aspect = canvasWidth / canvasHeight;
+  this.camera.updateProjectionMatrix();
+},
 
     updateBackground(texture) {
       texture.minFilter = THREE.LinearFilter;
@@ -1748,9 +1744,35 @@ export default {
   display: block;
   margin: 0 auto;
   width: 100%;
-  height: 82vh;
+  height: calc(100vh - 140px); /* Responsive height */
+  min-height: 400px;
+  max-height: calc(100vh - 140px);
   position: relative;
   text-align: center;
+}
+
+/* Desktop */
+@media (min-width: 769px) {
+  .main-canvas {
+    height: calc(100vh - 140px);
+    max-height: calc(100vh - 140px);
+  }
+}
+
+/* Tablet */
+@media (min-width: 400px) and (max-width: 768px) {
+  .main-canvas {
+    height: calc(100vh - 180px);
+    max-height: calc(100vh - 180px);
+  }
+}
+
+/* Mobile */
+@media (max-width: 399px) {
+  .main-canvas {
+    height: calc(100vh - 220px);
+    max-height: calc(100vh - 220px);
+  }
 }
 
 #viewer {
@@ -1880,4 +1902,5 @@ export default {
     height: 100%;
   }
 }
+
 </style>

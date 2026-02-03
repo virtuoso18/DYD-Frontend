@@ -497,31 +497,32 @@ export default {
     },
 
     calculateImageDimensions() {
-      if (!this.baseImg) return;
-      
-      const maxWidth = this.canvasWidth;
-      const maxHeight = this.canvasHeight;
-      
-      const imgAspectRatio = this.baseImg.width / this.baseImg.height;
-      const canvasAspectRatio = maxWidth / maxHeight;
-      
-      if (imgAspectRatio > canvasAspectRatio) {
-        // Image is wider than canvas
-        this.renderWidth = maxWidth;
-        this.renderHeight = Math.round(maxWidth / imgAspectRatio);
-        this.renderOffsetX = 0;
-        this.renderOffsetY = Math.round((maxHeight - this.renderHeight) / 2);
-      } else {
-        // Image is taller than canvas
-        this.renderHeight = maxHeight;
-        this.renderWidth = Math.round(maxHeight * imgAspectRatio);
-        this.renderOffsetX = Math.round((maxWidth - this.renderWidth) / 2);
-        this.renderOffsetY = 0;
-      }
-      
-      this.scaleX = this.renderWidth / this.baseImg.width;
-      this.scaleY = this.renderHeight / this.baseImg.height;
-    },
+  if (!this.baseImg) return;
+  
+  const maxWidth = this.canvasWidth;
+  const maxHeight = this.canvasHeight;
+  
+  const imgAspectRatio = this.baseImg.width / this.baseImg.height;
+  
+  // Always fit to width first (100% width)
+  this.renderWidth = maxWidth;
+  this.renderHeight = Math.round(maxWidth / imgAspectRatio);
+  this.renderOffsetX = 0;
+  
+  // If calculated height exceeds available height, fit to height instead
+  if (this.renderHeight > maxHeight) {
+    this.renderHeight = maxHeight;
+    this.renderWidth = Math.round(maxHeight * imgAspectRatio);
+    this.renderOffsetX = Math.round((maxWidth - this.renderWidth) / 2);
+    this.renderOffsetY = 0;
+  } else {
+    // Center vertically if height is less than container
+    this.renderOffsetY = Math.round((maxHeight - this.renderHeight) / 2);
+  }
+  
+  this.scaleX = this.renderWidth / this.baseImg.width;
+  this.scaleY = this.renderHeight / this.baseImg.height;
+},
 
     // ===================
     // RENDERING
@@ -631,28 +632,34 @@ export default {
   .apply-wrapper {
   
 }
-
-/* apply translate ONLY below 400px */
-@media (max-width: 400px) {
-  .apply-wrapper {
-    /* transform: translateY(0.5rem); */
-    /* height:60px; */
-  }
-  .canvas-container{
-    height: 100%;
-  }
-}
 .canvas-container {
   position: relative;
   width: 100%;
-  height: 92%;
+  height: calc(100vh - 140px); /* Adjust based on your header/footer */
   min-height: 300px;
   overflow: hidden;
   background: #f5f5f5;
-  /* border-radius: 8px; */
   border: 1px solid #e1e5e9;
 }
 
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .canvas-container {
+    height: calc(100vh - 180px);
+  }
+}
+
+@media screen and (min-width:400px) and (max-width:770px){
+  .canvas-container{
+    height: calc(100vh - 160px);
+  }
+}
+
+@media screen and (min-width:200px) and (max-width:400px){
+  .canvas-container{
+    height: calc(100vh - 190px);
+  }
+}
 .loading-overlay {
   position: absolute;
   top: 0;
@@ -943,15 +950,4 @@ export default {
   text-transform: uppercase;
 }
 
-
-@media screen and (min-width:400px) and (max-width:770px){
-  .canvas-container{
-    height: 90%;
-  }
-}
-@media screen and (min-width:200px) and (max-width:400px){
-  .canvas-container{
-    height: 71%;
-  }
-}
 </style>

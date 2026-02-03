@@ -1738,8 +1738,7 @@ Switch Furniture</a-button> -->
                         d="M15.32 7.70C14.48 7.70 13.79 8.39 13.79 9.23V10.77C13.79 11.40 13.66 11.53 13.03 11.53H5.36C4.73 11.53 4.59 11.40 4.59 10.77V9.23C4.59 8.39 3.91 7.70 3.06 7.70C2.21 7.70 1.53 8.39 1.53 9.23C1.53 9.80 1.84 10.30 2.29 10.56V10.77C2.29 12.21 2.29 12.93 2.74 13.38C3.19 13.83 3.92 13.83 5.36 13.83H13.03C14.47 13.83 15.19 13.83 15.64 13.38C16.09 12.93 16.09 12.21 16.09 10.77V10.56C16.55 10.30 16.86 9.80 16.86 9.23C16.86 8.39 16.17 7.70 15.32 7.70Z"
                         stroke="currentColor"
                         stroke-width="1.5"
-                      /></svg
-                    >&nbsp; Item Replace
+                      /></svg>&nbsp; Item Replace
                   </div>
                   <div
                     :class="
@@ -1771,8 +1770,7 @@ Switch Furniture</a-button> -->
                         stroke="currentColor"
                         stroke-width="1.5"
                         stroke-linecap="round"
-                      /></svg
-                    >&nbsp; Home Design
+                      /></svg>&nbsp; Home Design
                   </div>
                 </div>
 
@@ -4374,7 +4372,9 @@ export default {
                 //data.finalised_result_wall_processed_image +
                 //"?t=" +
                 //Date.now();
-              this.fetchBinaryWallMasks();
+              // this.fetchBinaryWallMasks(); 
+            
+              window.location.reload();
               return;
             }
 

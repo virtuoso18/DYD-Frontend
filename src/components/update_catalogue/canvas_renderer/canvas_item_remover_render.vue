@@ -2702,29 +2702,33 @@ export default {
     },
 
     calculateImageDimensions() {
-      if (!this.baseImg) return;
+  if (!this.baseImg) return;
 
-      const maxWidth = this.canvasWidth;
-      const maxHeight = this.canvasHeight;
+  const maxWidth = this.canvasWidth;
+  const maxHeight = this.canvasHeight;
 
-      const imgAspectRatio = this.baseImg.width / this.baseImg.height;
-      const canvasAspectRatio = maxWidth / maxHeight;
+  const imgAspectRatio = this.baseImg.width / this.baseImg.height;
+  const canvasAspectRatio = maxWidth / maxHeight;
 
-      if (imgAspectRatio > canvasAspectRatio) {
-        this.renderWidth = maxWidth;
-        this.renderHeight = Math.round(maxWidth / imgAspectRatio);
-        this.renderOffsetX = 0;
-        this.renderOffsetY = Math.round((maxHeight - this.renderHeight) / 2);
-      } else {
-        this.renderHeight = maxHeight;
-        this.renderWidth = Math.round(maxHeight * imgAspectRatio);
-        this.renderOffsetX = Math.round((maxWidth - this.renderWidth) / 2);
-        this.renderOffsetY = 0;
-      }
+  // Always fit to width first (100% width)
+  this.renderWidth = maxWidth;
+  this.renderHeight = Math.round(maxWidth / imgAspectRatio);
+  this.renderOffsetX = 0;
+  
+  // If calculated height exceeds available height, fit to height instead
+  if (this.renderHeight > maxHeight) {
+    this.renderHeight = maxHeight;
+    this.renderWidth = Math.round(maxHeight * imgAspectRatio);
+    this.renderOffsetX = Math.round((maxWidth - this.renderWidth) / 2);
+    this.renderOffsetY = 0;
+  } else {
+    // Center vertically if height is less than container
+    this.renderOffsetY = Math.round((maxHeight - this.renderHeight) / 2);
+  }
 
-      this.scaleX = this.renderWidth / this.baseImg.width;
-      this.scaleY = this.renderHeight / this.baseImg.height;
-    },
+  this.scaleX = this.renderWidth / this.baseImg.width;
+  this.scaleY = this.renderHeight / this.baseImg.height;
+},
 
     // =================== OBJECT MASK CACHING ===================
 
@@ -3729,12 +3733,12 @@ export default {
 .main-canvas-sec {
   position: relative;
   width: 100%;
-  height: 35vh;
+  height: 100%;
 }
 .canvas-container {
   position: relative;
   width: 100%;
-  height: 92%;
+  height: calc(100vh - 140px); /* Adjust 140px based on your header/footer height */
   overflow: hidden;
   background: #f5f5f5;
 }
@@ -4379,17 +4383,25 @@ export default {
   background: #40a9ff;
   border-color: #40a9ff;
 }
-@media screen and (min-width: 400px) and (max-width: 770px) {
+
+/* For mobile */
+@media screen and (max-width: 768px) {
   .canvas-container {
-    height: 70%;
-  }
-}
-@media screen and (min-width: 200px) and (max-width: 400px) {
-  .canvas-container {
-    height: 71%;
+    height: calc(100vh - 200px); /* Adjust based on mobile toolbar height */
   }
 }
 
+@media screen and (min-width: 400px) and (max-width: 770px) {
+  .canvas-container {
+    height: calc(100vh - 180px);
+  }
+}
+
+@media screen and (min-width: 200px) and (max-width: 400px) {
+  .canvas-container {
+    height: calc(100vh - 190px);
+  }
+}
 @media screen and (max-width: 500px) {
   .zoom-controls {
     top: 16px;

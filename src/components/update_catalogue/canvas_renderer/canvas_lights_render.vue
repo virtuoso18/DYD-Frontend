@@ -171,8 +171,11 @@
             </div>
               </a-col>
               
-            <a-col :sm="8" :xs="8" :lg="0" :md="0" style="display: flex;flex-direction: column;justify-content: end;">
-          <a-button type="primary" @click="openLightEditorModal">Set Light Size</a-button>
+            <a-col :sm="8" :xs="8" :lg="0" :md="0" >
+              <div style="display: flex;flex-direction: column;justify-content: end;">
+
+                <a-button type="primary" @click="openLightEditorModal">Set Light Size</a-button>
+              </div>
 
               </a-col>
             </a-row>
@@ -831,21 +834,21 @@ function calculateImageDimensions() {
 
   const imgAspectRatio =
     backgroundImage.value.width / backgroundImage.value.height;
-  const canvasAspectRatio = maxWidth / maxHeight;
 
-  // Use "contain" behavior - fit entire image within canvas (like background-size: contain)
-  if (imgAspectRatio > canvasAspectRatio) {
-    // Image is wider - fit to canvas width
-    renderWidth.value = maxWidth;
-    renderHeight.value = Math.round(maxWidth / imgAspectRatio);
-    renderOffsetX.value = 0;
-    renderOffsetY.value = Math.round((maxHeight - renderHeight.value) / 2);
-  } else {
-    // Image is taller - fit to canvas height
+  // Always fit to width first (100% width)
+  renderWidth.value = maxWidth;
+  renderHeight.value = Math.round(maxWidth / imgAspectRatio);
+  renderOffsetX.value = 0;
+
+  // If calculated height exceeds available height, fit to height instead
+  if (renderHeight.value > maxHeight) {
     renderHeight.value = maxHeight;
     renderWidth.value = Math.round(maxHeight * imgAspectRatio);
     renderOffsetX.value = Math.round((maxWidth - renderWidth.value) / 2);
     renderOffsetY.value = 0;
+  } else {
+    // Center vertically if height is less than container
+    renderOffsetY.value = Math.round((maxHeight - renderHeight.value) / 2);
   }
 }
 
@@ -2050,8 +2053,10 @@ defineExpose({
   flex: 1;
   background: #f5f5f5;
   overflow: hidden;
-  height: 90%;
+  height: calc(100vh - 140px); /* Responsive height */
+  min-height: 400px;
 }
+
 
 .main-canvas {
   display: block;
@@ -2864,19 +2869,33 @@ defineExpose({
   gap: 16px;
 }
 
-@media (max-width: 768px) {
-.canvas-container{
-  height: 70%;
+
+/* Desktop */
+@media (min-width: 769px) {
+  .canvas-container {
+    height: calc(100vh - 140px);
+  }
 }
+
+/* Tablet */
+@media (min-width: 400px) and (max-width: 768px) {
+  .canvas-container {
+    height: calc(100vh - 180px);
+  }
+}
+
+/* Mobile */
+@media (max-width: 399px) {
+  .canvas-container {
+    height: calc(100vh - 220px);
+  }
+}
+
+@media (max-width: 768px) {
+
   .stats-and-actions {
     flex-direction: column;
     gap: 8px;
   }
-}
-@media (max-width: 400px) {
-
-.canvas-container{
-  height: 60%;
-}
 }
 </style>

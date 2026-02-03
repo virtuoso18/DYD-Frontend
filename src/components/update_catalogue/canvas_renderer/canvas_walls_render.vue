@@ -914,31 +914,32 @@ async loadImages() {
     },
 
     calculateImageDimensions() {
-      if (!this.baseImg) return;
-      
-      const maxWidth = this.canvasWidth;
-      const maxHeight = this.canvasHeight;
-      
-      const imgAspectRatio = this.baseImg.width / this.baseImg.height;
-      const canvasAspectRatio = maxWidth / maxHeight;
-      
-      if (imgAspectRatio > canvasAspectRatio) {
-        // Image is wider than canvas
-        this.renderWidth = maxWidth;
-        this.renderHeight = Math.round(maxWidth / imgAspectRatio);
-        this.renderOffsetX = 0;
-        this.renderOffsetY = Math.round((maxHeight - this.renderHeight) / 2);
-      } else {
-        // Image is taller than canvas
-        this.renderHeight = maxHeight;
-        this.renderWidth = Math.round(maxHeight * imgAspectRatio);
-        this.renderOffsetX = Math.round((maxWidth - this.renderWidth) / 2);
-        this.renderOffsetY = 0;
-      }
-      
-      this.scaleX = this.renderWidth / this.baseImg.width;
-      this.scaleY = this.renderHeight / this.baseImg.height;
-    },
+  if (!this.baseImg) return;
+  
+  const maxWidth = this.canvasWidth;
+  const maxHeight = this.canvasHeight;
+  
+  const imgAspectRatio = this.baseImg.width / this.baseImg.height;
+  
+  // Always fit to width first (100% width)
+  this.renderWidth = maxWidth;
+  this.renderHeight = Math.round(maxWidth / imgAspectRatio);
+  this.renderOffsetX = 0;
+  
+  // If calculated height exceeds available height, fit to height instead
+  if (this.renderHeight > maxHeight) {
+    this.renderHeight = maxHeight;
+    this.renderWidth = Math.round(maxHeight * imgAspectRatio);
+    this.renderOffsetX = Math.round((maxWidth - this.renderWidth) / 2);
+    this.renderOffsetY = 0;
+  } else {
+    // Center vertically if height is less than container
+    this.renderOffsetY = Math.round((maxHeight - this.renderHeight) / 2);
+  }
+  
+  this.scaleX = this.renderWidth / this.baseImg.width;
+  this.scaleY = this.renderHeight / this.baseImg.height;
+},
 
     // ===================
     // MASK PROCESSING
@@ -1640,14 +1641,12 @@ imageDataToCanvas(imageData) {
 .canvas-container {
   position: relative;
   width: 100%;
-  height: 83vh;
+  height: calc(100vh - 140px); /* Responsive height */
   min-height: 300px;
   overflow: hidden;
   background: #f5f5f5;
-  /* border-radius: 8px; */
   border: 1px solid #e1e5e9;
 }
-
 .loading-overlay {
   position: absolute;
   top: 0;
@@ -1811,10 +1810,29 @@ imageDataToCanvas(imageData) {
   }
 }
 
-@media (max-width: 480px) {
+/* Desktop */
+@media (min-width: 769px) {
   .canvas-container {
-    min-height: 250px;
+    height: calc(100vh - 140px);
   }
+}
+
+/* Tablet */
+@media (min-width: 400px) and (max-width: 768px) {
+  .canvas-container {
+    height: calc(100vh - 180px);
+  }
+}
+
+/* Mobile */
+@media (max-width: 399px) {
+  .canvas-container {
+    height: calc(100vh - 200px);
+  }
+}
+
+@media (max-width: 480px) {
+ 
   
   .zoom-controls {
     top: 4px;
@@ -2158,9 +2176,6 @@ imageDataToCanvas(imageData) {
     top: 10px;
     left: 10px;
   }
-.canvas-container {
-    height: 100%;
-}
   .control-btn {
     padding: 6px 10px;
     font-size: 11px;

@@ -1027,6 +1027,59 @@ function restoreUIState(
 // Corrected adjustCanvasToImageAspectRatio function with 800px max width
 
 // 2. Update the adjustCanvasToImageAspectRatio function:
+// function adjustCanvasToImageAspectRatio(texture) {
+//   if (!texture.image || !canvasContainer.value) return;
+
+//   const imgAspect = texture.image.width / texture.image.height;
+
+//   // Get the parent container's dimensions
+//   const containerRect = canvasContainer.value.getBoundingClientRect();
+//   const availableWidth = containerRect.width;
+//   const availableHeight = containerRect.height;
+
+//   // Calculate dimensions based on available space and image aspect ratio
+//   let newCanvasWidth, newCanvasHeight;
+
+//   // Try to fit by width first
+//   newCanvasWidth = availableWidth;
+//   newCanvasHeight = availableWidth / imgAspect;
+
+//   // If height exceeds available space, fit by height instead
+//   if (newCanvasHeight > availableHeight) {
+//     newCanvasHeight = availableHeight;
+//     newCanvasWidth = availableHeight * imgAspect;
+//   }
+
+//   // Ensure minimum dimensions
+//   // newCanvasWidth = Math.max(newCanvasWidth, 400);
+//   // newCanvasHeight = Math.max(newCanvasHeight, 500);
+
+//   // Update reactive variables
+//   canvasWidth.value = newCanvasWidth;
+//   canvasHeight.value = newCanvasHeight;
+
+//   // Update container styling
+//   canvasContainer.value.style.width = `${newCanvasWidth}px`;
+//   canvasContainer.value.style.height = `${newCanvasHeight}px`;
+//   canvasContainer.value.style.margin = "0 auto"; // Center the canvas
+
+//   // Update Three.js renderer
+//   if (renderer) {
+//     renderer.setSize(newCanvasWidth, newCanvasHeight);
+//   }
+
+//   // Update camera aspect ratio
+//   if (camera) {
+//     camera.aspect = imgAspect;
+//     camera.updateProjectionMatrix();
+//   }
+
+//   console.log(
+//     `Canvas resized to: ${newCanvasWidth}x${newCanvasHeight} (aspect: ${imgAspect.toFixed(
+//       2
+//     )})`
+//   );
+// }
 function adjustCanvasToImageAspectRatio(texture) {
   if (!texture.image || !canvasContainer.value) return;
 
@@ -1037,22 +1090,15 @@ function adjustCanvasToImageAspectRatio(texture) {
   const availableWidth = containerRect.width;
   const availableHeight = containerRect.height;
 
-  // Calculate dimensions based on available space and image aspect ratio
-  let newCanvasWidth, newCanvasHeight;
+  // Always fit to width first (100% width)
+  let newCanvasWidth = availableWidth;
+  let newCanvasHeight = availableWidth / imgAspect;
 
-  // Try to fit by width first
-  newCanvasWidth = availableWidth;
-  newCanvasHeight = availableWidth / imgAspect;
-
-  // If height exceeds available space, fit by height instead
+  // If calculated height exceeds available height, fit to height instead
   if (newCanvasHeight > availableHeight) {
     newCanvasHeight = availableHeight;
     newCanvasWidth = availableHeight * imgAspect;
   }
-
-  // Ensure minimum dimensions
-  // newCanvasWidth = Math.max(newCanvasWidth, 400);
-  // newCanvasHeight = Math.max(newCanvasHeight, 500);
 
   // Update reactive variables
   canvasWidth.value = newCanvasWidth;
@@ -1075,12 +1121,9 @@ function adjustCanvasToImageAspectRatio(texture) {
   }
 
   console.log(
-    `Canvas resized to: ${newCanvasWidth}x${newCanvasHeight} (aspect: ${imgAspect.toFixed(
-      2
-    )})`
+    `Canvas resized to: ${newCanvasWidth}x${newCanvasHeight} (aspect: ${imgAspect.toFixed(2)})`
   );
 }
-
 function loadCeilingMask() {
   // Changed from loadFloorMask
   const loader = new THREE.TextureLoader();
@@ -1399,36 +1442,76 @@ function updateRotationControlsPosition() {
   rotationControlsGroup.scale.setScalar(scale);
 }
 
+// function initializeControls() {
+//   controls = new OrbitControls(camera, renderer.domElement);
+
+//   controls.enableRotate = false;
+//   controls.enableZoom = true; // Enable zoom
+//   controls.enablePan = false;
+
+//   // Set zoom limits
+//   controls.minDistance = 5;
+//   controls.maxDistance = 50;
+
+//   // NEW: Position camera to view top area of canvas
+//   const topAreaY = props.ceilingHeight + 3; // Higher Y position
+//   camera.position.set(8, topAreaY - 1, 8); // Slightly below the top area
+//   controls.target.set(0, topAreaY, 0); // Look at the top area
+//   controls.update();
+// }
+
 function initializeControls() {
   controls = new OrbitControls(camera, renderer.domElement);
 
   controls.enableRotate = false;
-  controls.enableZoom = true; // Enable zoom
-  controls.enablePan = false;
+  controls.enableZoom = true;
+  controls.enablePan = true; // ✅ Enable panning
 
   // Set zoom limits
   controls.minDistance = 5;
   controls.maxDistance = 50;
 
-  // NEW: Position camera to view top area of canvas
-  const topAreaY = props.ceilingHeight + 3; // Higher Y position
-  camera.position.set(8, topAreaY - 1, 8); // Slightly below the top area
-  controls.target.set(0, topAreaY, 0); // Look at the top area
+  // ✅ Enable touch controls for mobile
+  controls.touches = {
+    ONE: THREE.TOUCH.PAN,      // One finger = pan
+    TWO: THREE.TOUCH.DOLLY_PAN // Two fingers = zoom + pan
+  };
+
+  // Position camera to view top area of canvas
+  const topAreaY = props.ceilingHeight + 3;
+  camera.position.set(8, topAreaY - 1, 8);
+  controls.target.set(0, topAreaY, 0);
   controls.update();
 }
 
+// function initializeDragControls() {
+//   const canvas = renderer.domElement;
+//   canvas.addEventListener("mousedown", onMouseDown);
+//   canvas.addEventListener("mousemove", onMouseMove);
+//   canvas.addEventListener("mouseup", onMouseUp);
+//   canvas.addEventListener("mouseleave", onMouseUp);
+
+//   //for mobile touch
+//   canvas.addEventListener("touchstart", onMouseDown, { passive: false });
+//   canvas.addEventListener("touchmove", onMouseMove, { passive: false });
+//   canvas.addEventListener("touchend", onMouseUp);
+//   canvas.addEventListener("touchcancel", onMouseUp);
+// }
+
 function initializeDragControls() {
   const canvas = renderer.domElement;
+  
+  // Mouse events
   canvas.addEventListener("mousedown", onMouseDown);
   canvas.addEventListener("mousemove", onMouseMove);
   canvas.addEventListener("mouseup", onMouseUp);
   canvas.addEventListener("mouseleave", onMouseUp);
 
-  //for mobile touch
+  // ✅ Updated touch events with proper passive handling
   canvas.addEventListener("touchstart", onMouseDown, { passive: false });
   canvas.addEventListener("touchmove", onMouseMove, { passive: false });
-  canvas.addEventListener("touchend", onMouseUp);
-  canvas.addEventListener("touchcancel", onMouseUp);
+  canvas.addEventListener("touchend", onMouseUp, { passive: false });
+  canvas.addEventListener("touchcancel", onMouseUp, { passive: false });
 }
 
 // Enhanced ceiling position validation with proper coordinate mapping
@@ -2030,23 +2113,37 @@ defineExpose({
   display: block;
   margin: auto;
   width: 100%;
-  height: 100%;
-  min-height: 300px;
-  position: relative; /* ADD THIS */
-  z-index: 1; /* ADD THIS - Lower than header */
+  height: calc(100vh - 140px); /* Responsive height */
+  min-height: 400px;
+  position: relative;
+  z-index: 1;
 }
 
-/* apply styles ONLY above 740px */
-@media (min-width: 741px) {
+/* Desktop */
+@media (min-width: 769px) {
   .main-canvas {
-    display: block;
-    margin: auto;
-    width: 100%;
-    height: 100%;
+    height: calc(100vh - 140px);
     min-height: 400px;
   }
 }
 
+/* Tablet */
+@media (min-width: 741px) and (max-width: 768px) {
+  .main-canvas {
+    height: calc(100vh - 180px);
+    min-height: 400px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 740px) {
+  .main-canvas {
+    height: calc(100vh - 220px);
+    min-height: 300px;
+    max-height: calc(100vh - 200px);
+    overflow: hidden;
+  }
+}
 #viewer {
   position: relative;
   width: 100%;
@@ -2065,6 +2162,51 @@ defineExpose({
   z-index: 0; /* ADD THIS - Lowest z-index */
 }
 
+
+/* Mobile specific touch improvements */
+@media (max-width: 767px) {
+  .header-wrapper {
+    position: relative;
+    z-index: 100;
+    background: white;
+    padding: 8px 10px;
+  }
+  
+  .header-wrapper button {
+    pointer-events: auto !important;
+    z-index: 101 !important;
+  }
+  
+  .main-canvas {
+    max-height: calc(100vh - 200px);
+    overflow: hidden;
+    touch-action: none; /* ✅ Let Three.js handle touch */
+  }
+  
+  #viewer {
+    pointer-events: auto;
+    touch-action: none; /* ✅ Let OrbitControls handle gestures */
+  }
+  
+  #viewer canvas {
+    pointer-events: auto;
+    touch-action: pan-x pan-y pinch-zoom; /* ✅ Enable specific gestures */
+    -webkit-user-select: none;
+    user-select: none;
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  #viewer canvas {
+    touch-action: pan-x pan-y pinch-zoom;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  .main-canvas {
+    -webkit-overflow-scrolling: touch;
+  }
+}
 #loading {
   position: absolute;
   top: 50%;
