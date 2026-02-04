@@ -192,30 +192,82 @@ export default {
       });
     },
     
+    // updateCanvasDimensions() {
+    //   if (this.$refs.canvasContainer) {
+    //     const rect = this.$refs.canvasContainer.getBoundingClientRect();
+    //     this.containerWidth = Math.floor(rect.width);
+    //     this.containerHeight = Math.floor(rect.height);
+    //     this.canvasWidth = this.containerWidth;
+    //     this.canvasHeight = this.containerHeight;
+    //   }
+    // },
     updateCanvasDimensions() {
-      if (this.$refs.canvasContainer) {
-        const rect = this.$refs.canvasContainer.getBoundingClientRect();
-        this.containerWidth = Math.floor(rect.width);
-        this.containerHeight = Math.floor(rect.height);
-        this.canvasWidth = this.containerWidth;
-        this.canvasHeight = this.containerHeight;
+  if (this.$refs.canvasContainer) {
+    const rect = this.$refs.canvasContainer.getBoundingClientRect();
+    this.containerWidth = Math.floor(rect.width);
+    this.containerHeight = Math.floor(rect.height);
+    this.canvasWidth = this.containerWidth;
+    this.canvasHeight = this.containerHeight;
+    
+    // ===== ADD DPI SCALING WHEN DIMENSIONS CHANGE =====
+    if (this.canvas) {
+      const dpr = window.devicePixelRatio || 1;
+      
+      // Update canvas resolution
+      this.canvas.width = this.canvasWidth * dpr;
+      this.canvas.height = this.canvasHeight * dpr;
+      
+      // Update display size
+      this.canvas.style.width = this.canvasWidth + 'px';
+      this.canvas.style.height = this.canvasHeight + 'px';
+      
+      // Re-apply context scaling
+      if (this.ctx) {
+        this.ctx.scale(dpr, dpr);
+        this.ctx.imageSmoothingEnabled = true;
+        this.ctx.imageSmoothingQuality = "high";
       }
-    },
+    }
+    // ===== END DPI SCALING SECTION =====
+  }
+},
 
     initCanvas() {
-      this.canvas = this.$refs.canvas;
-      
-      if (!this.canvas) {
-        console.error('Canvas ref not found');
-        return;
-      }
-      
-      this.ctx = this.canvas.getContext('2d');
-      
-      // Set initial background
-      this.ctx.fillStyle = '#f0f0f0';
-      this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
-    },
+  this.canvas = this.$refs.canvas;
+  
+  if (!this.canvas) {
+    console.error('Canvas ref not found');
+    return;
+  }
+  
+  // ===== ADD HIGH-DPI SUPPORT =====
+  const dpr = window.devicePixelRatio || 1;
+  
+  // Set canvas internal resolution (physical pixels)
+  this.canvas.width = this.canvasWidth * dpr;
+  this.canvas.height = this.canvasHeight * dpr;
+  
+  // Set display size (CSS pixels)
+  this.canvas.style.width = this.canvasWidth + 'px';
+  this.canvas.style.height = this.canvasHeight + 'px';
+  
+  this.ctx = this.canvas.getContext('2d', { 
+    alpha: false,
+    willReadFrequently: false 
+  });
+  
+  // Scale context to match DPI
+  this.ctx.scale(dpr, dpr);
+  
+  // Enable high-quality image rendering
+  this.ctx.imageSmoothingEnabled = true;
+  this.ctx.imageSmoothingQuality = "high";
+  // ===== END HIGH-DPI SECTION =====
+  
+  // Set initial background
+  this.ctx.fillStyle = '#f0f0f0';
+  this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+},
 
     // ===================
     // EVENT LISTENERS
@@ -496,13 +548,93 @@ export default {
       });
     },
 
-    calculateImageDimensions() {
+//     calculateImageDimensions() {
+//   if (!this.baseImg) return;
+  
+//   const maxWidth = this.canvasWidth;
+//   const maxHeight = this.canvasHeight;
+  
+//   const imgAspectRatio = this.baseImg.width / this.baseImg.height;
+  
+//   // Always fit to width first (100% width)
+//   this.renderWidth = maxWidth;
+//   this.renderHeight = Math.round(maxWidth / imgAspectRatio);
+//   this.renderOffsetX = 0;
+  
+//   // If calculated height exceeds available height, fit to height instead
+//   if (this.renderHeight > maxHeight) {
+//     this.renderHeight = maxHeight;
+//     this.renderWidth = Math.round(maxHeight * imgAspectRatio);
+//     this.renderOffsetX = Math.round((maxWidth - this.renderWidth) / 2);
+//     this.renderOffsetY = 0;
+//   } else {
+//     // Center vertically if height is less than container
+//     this.renderOffsetY = Math.round((maxHeight - this.renderHeight) / 2);
+//   }
+  
+//   this.scaleX = this.renderWidth / this.baseImg.width;
+//   this.scaleY = this.renderHeight / this.baseImg.height;
+// },
+
+    // ===================
+    // RENDERING
+    // ===================
+    
+    // render() {
+    //   if (!this.canvas || !this.ctx) return;
+
+    //   // Clear canvas
+    //   this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+      
+    //   // Fill background
+    //   this.ctx.fillStyle = '#f5f5f5';
+    //   this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+      
+    //   if (!this.baseImg) return;
+      
+    //   this.ctx.save();
+      
+    //   // Apply transformations
+    //   this.ctx.translate(this.panX, this.panY);
+    //   this.ctx.scale(this.zoom, this.zoom);
+      
+    //   try {
+    //     // Draw image
+    //     this.ctx.drawImage(
+    //       this.baseImg,
+    //       this.renderOffsetX,
+    //       this.renderOffsetY,
+    //       this.renderWidth,
+    //       this.renderHeight
+    //     );
+        
+    //     // Add subtle border
+    //     this.ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
+    //     this.ctx.lineWidth = 1 / this.zoom;
+    //     this.ctx.strokeRect(
+    //       this.renderOffsetX,
+    //       this.renderOffsetY,
+    //       this.renderWidth,
+    //       this.renderHeight
+    //     );
+        
+    //   } catch (error) {
+    //     console.error('Error rendering image:', error);
+    //     this.showErrorState();
+    //   }
+      
+    //   this.ctx.restore();
+    // },
+
+calculateImageDimensions() {
   if (!this.baseImg) return;
   
   const maxWidth = this.canvasWidth;
   const maxHeight = this.canvasHeight;
   
-  const imgAspectRatio = this.baseImg.width / this.baseImg.height;
+  // ===== USE naturalWidth/naturalHeight FOR ACCURACY =====
+  const imgAspectRatio = this.baseImg.naturalWidth / this.baseImg.naturalHeight;
+  // ===== END =====
   
   // Always fit to width first (100% width)
   this.renderWidth = maxWidth;
@@ -520,60 +652,61 @@ export default {
     this.renderOffsetY = Math.round((maxHeight - this.renderHeight) / 2);
   }
   
-  this.scaleX = this.renderWidth / this.baseImg.width;
-  this.scaleY = this.renderHeight / this.baseImg.height;
+  // ===== USE naturalWidth/naturalHeight FOR SCALING =====
+  this.scaleX = this.renderWidth / this.baseImg.naturalWidth;
+  this.scaleY = this.renderHeight / this.baseImg.naturalHeight;
+  // ===== END =====
 },
-
-    // ===================
-    // RENDERING
-    // ===================
-    
     render() {
-      if (!this.canvas || !this.ctx) return;
+  if (!this.canvas || !this.ctx) return;
 
-      // Clear canvas
-      this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-      
-      // Fill background
-      this.ctx.fillStyle = '#f5f5f5';
-      this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
-      
-      if (!this.baseImg) return;
-      
-      this.ctx.save();
-      
-      // Apply transformations
-      this.ctx.translate(this.panX, this.panY);
-      this.ctx.scale(this.zoom, this.zoom);
-      
-      try {
-        // Draw image
-        this.ctx.drawImage(
-          this.baseImg,
-          this.renderOffsetX,
-          this.renderOffsetY,
-          this.renderWidth,
-          this.renderHeight
-        );
-        
-        // Add subtle border
-        this.ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
-        this.ctx.lineWidth = 1 / this.zoom;
-        this.ctx.strokeRect(
-          this.renderOffsetX,
-          this.renderOffsetY,
-          this.renderWidth,
-          this.renderHeight
-        );
-        
-      } catch (error) {
-        console.error('Error rendering image:', error);
-        this.showErrorState();
-      }
-      
-      this.ctx.restore();
-    },
-
+  // Clear canvas
+  this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+  
+  // Fill background
+  this.ctx.fillStyle = '#f5f5f5';
+  this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+  
+  if (!this.baseImg) return;
+  
+  this.ctx.save();
+  
+  // Apply transformations
+  this.ctx.translate(this.panX, this.panY);
+  this.ctx.scale(this.zoom, this.zoom);
+  
+  // ===== HIGH QUALITY SETTINGS =====
+  this.ctx.imageSmoothingEnabled = true;
+  this.ctx.imageSmoothingQuality = "high";
+  // ===== END QUALITY SETTINGS =====
+  
+  try {
+    // Draw image
+    this.ctx.drawImage(
+      this.baseImg,
+      this.renderOffsetX,
+      this.renderOffsetY,
+      this.renderWidth,
+      this.renderHeight
+    );
+    
+    // Add subtle border
+    this.ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
+    this.ctx.lineWidth = 1 / this.zoom;
+    this.ctx.strokeRect(
+      this.renderOffsetX,
+      this.renderOffsetY,
+      this.renderWidth,
+      this.renderHeight
+    );
+    
+  } catch (error) {
+    console.error('Error rendering image:', error);
+    this.showErrorState();
+  }
+  
+  this.ctx.restore();
+},
     showErrorState() {
       if (!this.ctx) return;
       
@@ -635,11 +768,16 @@ export default {
 .canvas-container {
   position: relative;
   width: 100%;
-  height: calc(100vh - 140px); /* Adjust based on your header/footer */
+  height: calc(100vh - 140px);
   min-height: 300px;
   overflow: hidden;
   background: #f5f5f5;
   border: 1px solid #e1e5e9;
+  /* ===== ADD FOR MOBILE OPTIMIZATION ===== */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  /* ===== END ===== */
 }
 
 /* Mobile adjustments */
@@ -695,11 +833,14 @@ export default {
   font-size: 14px;
   font-weight: 500;
 }
-
 .main-canvas {
   display: block;
   transition: opacity 0.2s ease;
   cursor: default;
+  /* ===== ADD THESE FOR CRISP RENDERING ===== */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  /* ===== END ===== */
 }
 
 .main-canvas.disabled {
@@ -867,7 +1008,7 @@ export default {
   width: 100%;
   height: 100%;
   z-index: 10;
-  border-radius: 10px;
+  /* border-radius: 10px; */
   overflow: hidden;
 }
 
@@ -882,7 +1023,7 @@ export default {
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  border-radius: 10px;
+  /* border-radius: 10px; */
 }
 
 .loading-screen::before {

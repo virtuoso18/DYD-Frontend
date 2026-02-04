@@ -784,14 +784,58 @@ function findLightAtPosition(pos, threshold = 20) {
 // INITIALIZATION
 // ===================
 
+// async function initializeCanvas() {
+//   await nextTick();
+//   if (canvas.value) {
+//     ctx.value = canvas.value.getContext("2d");
+//   }
+//   if (depthCanvas.value) {
+//     depthCtx.value = depthCanvas.value.getContext("2d");
+//   }
+//   handleResize();
+// }
 async function initializeCanvas() {
   await nextTick();
+  
   if (canvas.value) {
-    ctx.value = canvas.value.getContext("2d");
+    // ===== ADD HIGH-DPI SUPPORT =====
+    const dpr = window.devicePixelRatio || 1;
+    
+    // Set canvas internal resolution (physical pixels)
+    canvas.value.width = canvasWidth.value * dpr;
+    canvas.value.height = canvasHeight.value * dpr;
+    canvas.value.style.width = canvasWidth.value + 'px';
+    canvas.value.style.height = canvasHeight.value + 'px';
+    
+    ctx.value = canvas.value.getContext('2d', {
+      alpha: false,
+      willReadFrequently: false
+    });
+    
+    // Scale context to match DPI
+    ctx.value.scale(dpr, dpr);
+    
+    // Enable high-quality image rendering
+    ctx.value.imageSmoothingEnabled = true;
+    ctx.value.imageSmoothingQuality = "high";
+    // ===== END HIGH-DPI SECTION =====
   }
+  
   if (depthCanvas.value) {
-    depthCtx.value = depthCanvas.value.getContext("2d");
+    const dpr = window.devicePixelRatio || 1;
+    
+    depthCanvas.value.width = canvasWidth.value * dpr;
+    depthCanvas.value.height = canvasHeight.value * dpr;
+    depthCanvas.value.style.width = canvasWidth.value + 'px';
+    depthCanvas.value.style.height = canvasHeight.value + 'px';
+    
+    depthCtx.value = depthCanvas.value.getContext('2d');
+    
+    depthCtx.value.scale(dpr, dpr);
+    depthCtx.value.imageSmoothingEnabled = true;
+    depthCtx.value.imageSmoothingQuality = "high";
   }
+  
   handleResize();
 }
 
@@ -816,11 +860,27 @@ async function loadImages() {
   }
 }
 
+// function loadImage(src) {
+//   return new Promise((resolve, reject) => {
+//     const img = new Image();
+//     img.crossOrigin = "anonymous";
+//     img.onload = () => resolve(img);
+//     img.onerror = () => reject(new Error(`Failed to load image: ${src}`));
+//     img.src = src;
+//   });
+// }
 function loadImage(src) {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.crossOrigin = "anonymous";
-    img.onload = () => resolve(img);
+    
+    img.onload = () => {
+      // ===== LOG IMAGE QUALITY INFO =====
+      console.log(`✅ Image loaded - Natural size: ${img.naturalWidth}x${img.naturalHeight}`);
+      // ===== END LOGGING =====
+      resolve(img);
+    };
+    
     img.onerror = () => reject(new Error(`Failed to load image: ${src}`));
     img.src = src;
   });
@@ -832,8 +892,13 @@ function calculateImageDimensions() {
   const maxWidth = canvasWidth.value;
   const maxHeight = canvasHeight.value;
 
-  const imgAspectRatio =
-    backgroundImage.value.width / backgroundImage.value.height;
+  // const imgAspectRatio =
+  //   backgroundImage.value.width / backgroundImage.value.height;
+
+  // ===== USE naturalWidth/naturalHeight FOR ACCURACY =====
+const imgAspectRatio = backgroundImage.value.naturalWidth / backgroundImage.value.naturalHeight;
+// ===== END =====
+
 
   // Always fit to width first (100% width)
   renderWidth.value = maxWidth;
@@ -894,10 +959,57 @@ function removeEventListeners() {
   document.removeEventListener("mouseup", handleGlobalMouseUp);
 }
 
+// function handleResize() {
+//   if (canvasContainer.value) {
+//     canvasWidth.value = canvasContainer.value.offsetWidth;
+//     canvasHeight.value = canvasContainer.value.offsetHeight;
+
+//     if (backgroundImage.value) {
+//       calculateImageDimensions();
+//     }
+
+//     redrawCanvas();
+//   }
+// }
+
 function handleResize() {
   if (canvasContainer.value) {
     canvasWidth.value = canvasContainer.value.offsetWidth;
     canvasHeight.value = canvasContainer.value.offsetHeight;
+
+    // ===== ADD DPI SCALING WHEN DIMENSIONS CHANGE =====
+    if (canvas.value) {
+      const dpr = window.devicePixelRatio || 1;
+      
+      // Update canvas resolution
+      canvas.value.width = canvasWidth.value * dpr;
+      canvas.value.height = canvasHeight.value * dpr;
+      canvas.value.style.width = canvasWidth.value + 'px';
+      canvas.value.style.height = canvasHeight.value + 'px';
+      
+      // Re-apply context scaling
+      if (ctx.value) {
+        ctx.value.scale(dpr, dpr);
+        ctx.value.imageSmoothingEnabled = true;
+        ctx.value.imageSmoothingQuality = "high";
+      }
+    }
+    
+    if (depthCanvas.value) {
+      const dpr = window.devicePixelRatio || 1;
+      
+      depthCanvas.value.width = canvasWidth.value * dpr;
+      depthCanvas.value.height = canvasHeight.value * dpr;
+      depthCanvas.value.style.width = canvasWidth.value + 'px';
+      depthCanvas.value.style.height = canvasHeight.value + 'px';
+      
+      if (depthCtx.value) {
+        depthCtx.value.scale(dpr, dpr);
+        depthCtx.value.imageSmoothingEnabled = true;
+        depthCtx.value.imageSmoothingQuality = "high";
+      }
+    }
+    // ===== END DPI SCALING SECTION =====
 
     if (backgroundImage.value) {
       calculateImageDimensions();
@@ -1813,6 +1925,11 @@ function redrawCanvas() {
   ctx.value.translate(panX.value, panY.value);
   ctx.value.scale(zoom.value, zoom.value);
 
+  // ===== ADD THESE LINES =====
+  ctx.value.imageSmoothingEnabled = true;
+  ctx.value.imageSmoothingQuality = "high";
+  // ===== END =====
+
   // Draw background image
   if (backgroundImage.value) {
     ctx.value.drawImage(
@@ -1943,6 +2060,11 @@ function redrawCanvas() {
 function drawTrack(track) {
   if (!ctx.value) return;
 
+  // ===== HIGH QUALITY SETTINGS =====
+  ctx.value.imageSmoothingEnabled = true;
+  ctx.value.imageSmoothingQuality = "high";
+  ctx.value.lineJoin = "round";
+  // ===== END =====
   // Track shadow/glow effect - BLACK
   ctx.value.strokeStyle = "rgba(0, 0, 0, 0.3)";
   ctx.value.lineWidth = 8 / zoom.value;
@@ -1972,6 +2094,25 @@ function drawTrack(track) {
   ctx.value.fill();
 }
 
+// function redrawDepthCanvas() {
+//   if (!depthCtx.value || !depthMaskImage.value) return;
+
+//   depthCtx.value.clearRect(0, 0, canvasWidth.value, canvasHeight.value);
+
+//   depthCtx.value.save();
+//   depthCtx.value.translate(panX.value, panY.value);
+//   depthCtx.value.scale(zoom.value, zoom.value);
+
+//   depthCtx.value.drawImage(
+//     depthMaskImage.value,
+//     renderOffsetX.value,
+//     renderOffsetY.value,
+//     renderWidth.value,
+//     renderHeight.value
+//   );
+
+//   depthCtx.value.restore();
+// }
 function redrawDepthCanvas() {
   if (!depthCtx.value || !depthMaskImage.value) return;
 
@@ -1980,6 +2121,11 @@ function redrawDepthCanvas() {
   depthCtx.value.save();
   depthCtx.value.translate(panX.value, panY.value);
   depthCtx.value.scale(zoom.value, zoom.value);
+
+  // ===== ADD HIGH QUALITY SETTINGS =====
+  depthCtx.value.imageSmoothingEnabled = true;
+  depthCtx.value.imageSmoothingQuality = "high";
+  // ===== END =====
 
   depthCtx.value.drawImage(
     depthMaskImage.value,
@@ -2055,6 +2201,11 @@ defineExpose({
   overflow: hidden;
   height: calc(100vh - 140px); /* Responsive height */
   min-height: 400px;
+    /* ===== ADD THESE LINES ===== */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  /* ===== END ===== */
 }
 
 
@@ -2063,6 +2214,10 @@ defineExpose({
   cursor: grab;
   transition: opacity 0.3s ease;
   height: 100%;
+   /* ===== ADD THESE LINES ===== */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  /* ===== END ===== */
 }
 
 .main-canvas:active {
@@ -2081,6 +2236,10 @@ defineExpose({
   pointer-events: none;
   opacity: 0.6;
   mix-blend-mode: multiply;
+  /* ===== ADD THESE LINES ===== */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  /* ===== END ===== */
 }
 
 /* Light Fixtures */
@@ -2712,7 +2871,7 @@ defineExpose({
   width: 100%;
   height: 100%;
   z-index: 10;
-  border-radius: 10px;
+  /* border-radius: 10px; */
   overflow: hidden;
 }
 
@@ -2727,7 +2886,7 @@ defineExpose({
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  border-radius: 10px;
+  /* border-radius: 10px; */
 }
 
 .loading-screen::before {

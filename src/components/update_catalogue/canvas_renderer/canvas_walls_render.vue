@@ -571,36 +571,125 @@ watch: {
       });
     },
     
-    updateCanvasDimensions() {
-      if (this.$refs.canvasContainer) {
-        const rect = this.$refs.canvasContainer.getBoundingClientRect();
-        this.containerWidth = Math.floor(rect.width);
-        this.containerHeight = Math.floor(rect.height);
-        this.canvasWidth = this.containerWidth;
-        this.canvasHeight = this.containerHeight;
+    // updateCanvasDimensions() {
+    //   if (this.$refs.canvasContainer) {
+    //     const rect = this.$refs.canvasContainer.getBoundingClientRect();
+    //     this.containerWidth = Math.floor(rect.width);
+    //     this.containerHeight = Math.floor(rect.height);
+    //     this.canvasWidth = this.containerWidth;
+    //     this.canvasHeight = this.containerHeight;
+    //   }
+    // },
+updateCanvasDimensions() {
+  if (this.$refs.canvasContainer) {
+    const rect = this.$refs.canvasContainer.getBoundingClientRect();
+    this.containerWidth = Math.floor(rect.width);
+    this.containerHeight = Math.floor(rect.height);
+    this.canvasWidth = this.containerWidth;
+    this.canvasHeight = this.containerHeight;
+    
+    // ===== ADD DPI SCALING WHEN DIMENSIONS CHANGE =====
+    if (this.canvas && this.overlayCanvas) {
+      const dpr = window.devicePixelRatio || 1;
+      
+      // Update canvas resolution
+      this.canvas.width = this.canvasWidth * dpr;
+      this.canvas.height = this.canvasHeight * dpr;
+      this.canvas.style.width = this.canvasWidth + 'px';
+      this.canvas.style.height = this.canvasHeight + 'px';
+      
+      this.overlayCanvas.width = this.canvasWidth * dpr;
+      this.overlayCanvas.height = this.canvasHeight * dpr;
+      this.overlayCanvas.style.width = this.canvasWidth + 'px';
+      this.overlayCanvas.style.height = this.canvasHeight + 'px';
+      
+      // Re-apply context scaling
+      if (this.ctx) {
+        this.ctx.scale(dpr, dpr);
+        this.ctx.imageSmoothingEnabled = true;
+        this.ctx.imageSmoothingQuality = "high";
       }
-    },
-
-    initCanvas() {
-      this.canvas = this.$refs.canvas;
-      this.overlayCanvas = this.$refs.overlayCanvas;
-      
-      if (!this.canvas) {
-        console.error('Canvas ref not found');
-        return;
+      if (this.overlayCtx) {
+        this.overlayCtx.scale(dpr, dpr);
+        this.overlayCtx.imageSmoothingEnabled = true;
+        this.overlayCtx.imageSmoothingQuality = "high";
       }
+    }
+    // ===== END DPI SCALING SECTION =====
+  }
+},
+    // initCanvas() {
+    //   this.canvas = this.$refs.canvas;
+    //   this.overlayCanvas = this.$refs.overlayCanvas;
       
-      this.ctx = this.canvas.getContext('2d');
+    //   if (!this.canvas) {
+    //     console.error('Canvas ref not found');
+    //     return;
+    //   }
       
-      if (this.overlayCanvas) {
-        this.overlayCtx = this.overlayCanvas.getContext('2d');
-      }
+    //   this.ctx = this.canvas.getContext('2d');
       
-      // Set initial background
-      this.ctx.fillStyle = '#f0f0f0';
-      this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
-    },
-
+    //   if (this.overlayCanvas) {
+    //     this.overlayCtx = this.overlayCanvas.getContext('2d');
+    //   }
+      
+    //   // Set initial background
+    //   this.ctx.fillStyle = '#f0f0f0';
+    //   this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+    // },
+initCanvas() {
+  this.canvas = this.$refs.canvas;
+  this.overlayCanvas = this.$refs.overlayCanvas;
+  
+  if (!this.canvas) {
+    console.error('Canvas ref not found');
+    return;
+  }
+  
+  // ===== ADD HIGH-DPI SUPPORT =====
+  const dpr = window.devicePixelRatio || 1;
+  
+  // Set canvas internal resolution (physical pixels)
+  this.canvas.width = this.canvasWidth * dpr;
+  this.canvas.height = this.canvasHeight * dpr;
+  this.canvas.style.width = this.canvasWidth + 'px';
+  this.canvas.style.height = this.canvasHeight + 'px';
+  
+  if (this.overlayCanvas) {
+    this.overlayCanvas.width = this.canvasWidth * dpr;
+    this.overlayCanvas.height = this.canvasHeight * dpr;
+    this.overlayCanvas.style.width = this.canvasWidth + 'px';
+    this.overlayCanvas.style.height = this.canvasHeight + 'px';
+  }
+  
+  this.ctx = this.canvas.getContext('2d', {
+    alpha: false,
+    willReadFrequently: true
+  });
+  
+  if (this.overlayCanvas) {
+    this.overlayCtx = this.overlayCanvas.getContext('2d');
+  }
+  
+  // Scale context to match DPI
+  this.ctx.scale(dpr, dpr);
+  if (this.overlayCtx) {
+    this.overlayCtx.scale(dpr, dpr);
+  }
+  
+  // Enable high-quality image rendering
+  this.ctx.imageSmoothingEnabled = true;
+  this.ctx.imageSmoothingQuality = "high";
+  if (this.overlayCtx) {
+    this.overlayCtx.imageSmoothingEnabled = true;
+    this.overlayCtx.imageSmoothingQuality = "high";
+  }
+  // ===== END HIGH-DPI SECTION =====
+  
+  // Set initial background
+  this.ctx.fillStyle = '#f0f0f0';
+  this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+},
     // ===================
     // EVENT LISTENERS
     // ===================
@@ -919,8 +1008,9 @@ async loadImages() {
   const maxWidth = this.canvasWidth;
   const maxHeight = this.canvasHeight;
   
-  const imgAspectRatio = this.baseImg.width / this.baseImg.height;
-  
+  // const imgAspectRatio = this.baseImg.width / this.baseImg.height;
+  const imgAspectRatio = this.baseImg.naturalWidth / this.baseImg.naturalHeight;
+
   // Always fit to width first (100% width)
   this.renderWidth = maxWidth;
   this.renderHeight = Math.round(maxWidth / imgAspectRatio);
@@ -937,8 +1027,13 @@ async loadImages() {
     this.renderOffsetY = Math.round((maxHeight - this.renderHeight) / 2);
   }
   
-  this.scaleX = this.renderWidth / this.baseImg.width;
-  this.scaleY = this.renderHeight / this.baseImg.height;
+  // this.scaleX = this.renderWidth / this.baseImg.width;
+  // this.scaleY = this.renderHeight / this.baseImg.height;
+  
+  // ===== USE naturalWidth/naturalHeight FOR SCALING =====
+  this.scaleX = this.renderWidth / this.baseImg.naturalWidth;
+  this.scaleY = this.renderHeight / this.baseImg.naturalHeight;
+  // ===== END =====
 },
 
     // ===================
@@ -1305,6 +1400,12 @@ drawWallHighlight(maskIndex) {
   ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
   ctx.save();
 
+  // ===== ADD HIGH QUALITY SETTINGS =====
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = "high";
+  // ===== END =====
+
+ 
   // 1️⃣ Same pan + zoom as base image
   ctx.translate(this.panX, this.panY);
   ctx.scale(this.zoom, this.zoom);
@@ -1354,7 +1455,6 @@ drawWallHighlight(maskIndex) {
 
   ctx.restore();
 }
-
 ,
 imageDataToCanvas(imageData) {
   const c = document.createElement('canvas');
@@ -1389,6 +1489,10 @@ imageDataToCanvas(imageData) {
       this.ctx.translate(this.panX, this.panY);
       this.ctx.scale(this.zoom, this.zoom);
       
+      // ===== ADD THESE LINES =====
+      this.ctx.imageSmoothingEnabled = true;
+      this.ctx.imageSmoothingQuality = "high";
+      // ===== END =====
       try {
         // Draw image
         this.ctx.drawImage(
@@ -1638,14 +1742,31 @@ imageDataToCanvas(imageData) {
 </script>
 
 <style scoped>
-.canvas-container {
+/* .canvas-container {
   position: relative;
   width: 100%;
-  height: calc(100vh - 140px); /* Responsive height */
+  height: calc(100vh - 140px); 
   min-height: 300px;
   overflow: hidden;
   background: #f5f5f5;
   border: 1px solid #e1e5e9;
+} */
+
+
+/* Canvas Container */
+.canvas-container {
+  position: relative;
+  width: 100%;
+  height: calc(100vh - 140px);
+  min-height: 300px;
+  overflow: hidden;
+  background: #f5f5f5;
+  border: 1px solid #e1e5e9;
+  /* ===== ADD THESE LINES ===== */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  /* ===== END ===== */
 }
 .loading-overlay {
   position: absolute;
@@ -1691,11 +1812,14 @@ imageDataToCanvas(imageData) {
   line-height: 14px;
   letter-spacing: 0%;
 }
-
 .main-canvas {
   display: block;
   transition: opacity 0.2s ease;
   cursor: default;
+  /* ===== ADD THESE LINES ===== */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  /* ===== END ===== */
 }
 
 .main-canvas.disabled {
@@ -2143,7 +2267,12 @@ imageDataToCanvas(imageData) {
 /* Overlay Canvas */
 .overlay-canvas {
   pointer-events: none;
+  /* ===== ADD THESE LINES ===== */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  /* ===== END ===== */
 }
+
 
 .overlay-canvas.disabled {
   opacity: 0.5;
@@ -2266,7 +2395,7 @@ imageDataToCanvas(imageData) {
   width: 100%;
   height: 100%;
   z-index: 10;
-  border-radius: 10px;
+  /* border-radius: 10px; */
   overflow: hidden;
 }
 
@@ -2281,7 +2410,7 @@ imageDataToCanvas(imageData) {
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  border-radius: 10px;
+  /* border-radius: 10px; */
 }
 
 .loading-screen::before {

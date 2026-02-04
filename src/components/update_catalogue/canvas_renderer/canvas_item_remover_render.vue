@@ -1470,33 +1470,68 @@ export default {
     },
 
     // Replace initializeDrawingCanvas with this to show highlight on all selected objects
-    initializeDrawingCanvas() {
-      if (!this.drawingCanvas) {
-        this.drawingCanvas = document.createElement("canvas");
-        this.drawingCanvas.width = this.canvasWidth;
-        this.drawingCanvas.height = this.canvasHeight;
-        this.drawingCanvas.className = "drawing-overlay-canvas";
-        this.drawingCanvas.style.position = "absolute";
-        this.drawingCanvas.style.top = "0";
-        this.drawingCanvas.style.left = "0";
-        this.drawingCanvas.style.zIndex = "3";
-        this.drawingCanvas.style.cursor = "crosshair";
-        this.drawingCanvas.style.pointerEvents = "auto";
+    // initializeDrawingCanvas() {
+    //   if (!this.drawingCanvas) {
+    //     this.drawingCanvas = document.createElement("canvas");
+    //     this.drawingCanvas.width = this.canvasWidth;
+    //     this.drawingCanvas.height = this.canvasHeight;
+    //     this.drawingCanvas.className = "drawing-overlay-canvas";
+    //     this.drawingCanvas.style.position = "absolute";
+    //     this.drawingCanvas.style.top = "0";
+    //     this.drawingCanvas.style.left = "0";
+    //     this.drawingCanvas.style.zIndex = "3";
+    //     this.drawingCanvas.style.cursor = "crosshair";
+    //     this.drawingCanvas.style.pointerEvents = "auto";
 
-        this.$refs.canvasContainer.appendChild(this.drawingCanvas);
-      }
+    //     this.$refs.canvasContainer.appendChild(this.drawingCanvas);
+    //   }
 
-      this.drawingCtx = this.drawingCanvas.getContext("2d");
-      this.drawingCanvas.width = this.canvasWidth;
-      this.drawingCanvas.height = this.canvasHeight;
+    //   this.drawingCtx = this.drawingCanvas.getContext("2d");
+    //   this.drawingCanvas.width = this.canvasWidth;
+    //   this.drawingCanvas.height = this.canvasHeight;
 
-      // Draw highlight for all selected objects on the drawing canvas
-      this.drawSelectedFurnitureHighlight();
+    //   // Draw highlight for all selected objects on the drawing canvas
+    //   this.drawSelectedFurnitureHighlight();
 
-      this.saveDrawingState();
-      this.setupDrawingEventListeners();
-    },
+    //   this.saveDrawingState();
+    //   this.setupDrawingEventListeners();
+    // },
+initializeDrawingCanvas() {
+  if (!this.drawingCanvas) {
+    this.drawingCanvas = document.createElement("canvas");
+    
+    // ===== ADD HIGH-DPI SUPPORT =====
+    const dpr = window.devicePixelRatio || 1;
+    this.drawingCanvas.width = this.canvasWidth * dpr;
+    this.drawingCanvas.height = this.canvasHeight * dpr;
+    this.drawingCanvas.style.width = this.canvasWidth + 'px';
+    this.drawingCanvas.style.height = this.canvasHeight + 'px';
+    // ===== END =====
+    
+    this.drawingCanvas.className = "drawing-overlay-canvas";
+    this.drawingCanvas.style.position = "absolute";
+    this.drawingCanvas.style.top = "0";
+    this.drawingCanvas.style.left = "0";
+    this.drawingCanvas.style.zIndex = "3";
+    this.drawingCanvas.style.cursor = "crosshair";
+    this.drawingCanvas.style.pointerEvents = "auto";
 
+    this.$refs.canvasContainer.appendChild(this.drawingCanvas);
+  }
+
+  this.drawingCtx = this.drawingCanvas.getContext("2d");
+  
+  // ===== ADD THIS =====
+  const dpr = window.devicePixelRatio || 1;
+  this.drawingCtx.scale(dpr, dpr);
+  // ===== END =====
+
+  this.drawingCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+
+  this.drawSelectedFurnitureHighlight();
+  this.saveDrawingState();
+  this.setupDrawingEventListeners();
+},
     // Add this new method to highlight all selected furniture
     drawSelectedFurnitureHighlight() {
       if (!this.drawingCtx) return;
@@ -2387,30 +2422,64 @@ export default {
     },
 
     updateCanvasDimensions() {
-      if (this.$refs.canvasContainer) {
-        const rect = this.$refs.canvasContainer.getBoundingClientRect();
-        this.containerWidth = Math.floor(rect.width);
-        this.containerHeight = Math.floor(rect.height);
-        this.canvasWidth = this.containerWidth;
-        this.canvasHeight = this.containerHeight;
-      }
-    },
+  if (this.$refs.canvasContainer) {
+    const rect = this.$refs.canvasContainer.getBoundingClientRect();
+    this.containerWidth = Math.floor(rect.width);
+    this.containerHeight = Math.floor(rect.height);
+    
+    // ===== ADD THIS =====
+    // Ensure canvas matches container pixel-perfectly
+    this.canvasWidth = this.containerWidth;
+    this.canvasHeight = this.containerHeight;
+    
+    // Force re-initialization with new DPI settings
+    if (this.canvas) {
+      const dpr = window.devicePixelRatio || 1;
+      this.canvas.width = this.canvasWidth * dpr;
+      this.canvas.height = this.canvasHeight * dpr;
+      this.canvas.style.width = this.canvasWidth + 'px';
+      this.canvas.style.height = this.canvasHeight + 'px';
+      this.ctx.scale(dpr, dpr);
+    }
+    // ===== END =====
+  }
+},
 
     initCanvas() {
-      this.canvas = this.$refs.canvas;
-      this.overlayCanvas = this.$refs.overlayCanvas;
+  this.canvas = this.$refs.canvas;
+  this.overlayCanvas = this.$refs.overlayCanvas;
 
-      if (!this.canvas || !this.overlayCanvas) {
-        console.error("Canvas refs not found");
-        return;
-      }
+  if (!this.canvas || !this.overlayCanvas) {
+    console.error("Canvas refs not found");
+    return;
+  }
 
-      this.ctx = this.canvas.getContext("2d");
-      this.overlayCtx = this.overlayCanvas.getContext("2d");
+  // ===== ADD THIS SECTION =====
+  const dpr = window.devicePixelRatio || 1;
+  
+  // Set canvas size with device pixel ratio
+  this.canvas.width = this.canvasWidth * dpr;
+  this.canvas.height = this.canvasHeight * dpr;
+  this.overlayCanvas.width = this.canvasWidth * dpr;
+  this.overlayCanvas.height = this.canvasHeight * dpr;
+  
+  // Set display size (CSS pixels)
+  this.canvas.style.width = this.canvasWidth + 'px';
+  this.canvas.style.height = this.canvasHeight + 'px';
+  this.overlayCanvas.style.width = this.canvasWidth + 'px';
+  this.overlayCanvas.style.height = this.canvasHeight + 'px';
 
-      this.ctx.fillStyle = "#f0f0f0";
-      this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
-    },
+  this.ctx = this.canvas.getContext("2d");
+  this.overlayCtx = this.overlayCanvas.getContext("2d");
+
+  // Scale context to account for device pixel ratio
+  this.ctx.scale(dpr, dpr);
+  this.overlayCtx.scale(dpr, dpr);
+  // ===== END OF NEW SECTION =====
+
+  this.ctx.fillStyle = "#f0f0f0";
+  this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+},
 
     // =================== EVENT LISTENERS ===================
 
@@ -2795,22 +2864,47 @@ handleTouchEnd(e) {
 
     // =================== IMAGE LOADING ===================
 
-    async loadImage() {
-      if (!this.baseImage) {
-        console.warn("No base image provided");
-        return;
-      }
+    // async loadImage() {
+    //   if (!this.baseImage) {
+    //     console.warn("No base image provided");
+    //     return;
+    //   }
 
-      try {
-        this.baseImg = await this.createImageFromSrc(this.baseImage);
-        this.calculateImageDimensions();
-        this.render();
-        await this.processInitialObjectMasks();
-      } catch (error) {
-        console.error("Error loading image:", error);
-        this.showErrorState();
-      }
-    },
+    //   try {
+    //     this.baseImg = await this.createImageFromSrc(this.baseImage);
+    //     this.calculateImageDimensions();
+    //     this.render();
+    //     await this.processInitialObjectMasks();
+    //   } catch (error) {
+    //     console.error("Error loading image:", error);
+    //     this.showErrorState();
+    //   }
+    // },
+    async loadImage() {
+  if (!this.baseImage) {
+    console.warn("No base image provided");
+    return;
+  }
+
+  try {
+    this.baseImg = await this.createImageFromSrc(this.baseImage);
+    
+    // ===== ADD THIS =====
+    // Don't downscale the image quality
+    // Let the canvas handle scaling instead
+    if (this.baseImg.naturalWidth > 4000 || this.baseImg.naturalHeight > 4000) {
+      console.log("Large image detected, maintaining quality");
+    }
+    // ===== END =====
+    
+    this.calculateImageDimensions();
+    this.render();
+    await this.processInitialObjectMasks();
+  } catch (error) {
+    console.error("Error loading image:", error);
+    this.showErrorState();
+  }
+},
 
     async processInitialObjectMasks() {
       this.currentObjectMasksHash = this.objectMasksHash;
@@ -2844,33 +2938,36 @@ handleTouchEnd(e) {
     },
 
     calculateImageDimensions() {
-      if (!this.baseImg) return;
+  if (!this.baseImg) return;
 
-      const maxWidth = this.canvasWidth;
-      const maxHeight = this.canvasHeight;
+  const maxWidth = this.canvasWidth;
+  const maxHeight = this.canvasHeight;
 
-      const imgAspectRatio = this.baseImg.width / this.baseImg.height;
-      const canvasAspectRatio = maxWidth / maxHeight;
+  const imgAspectRatio = this.baseImg.width / this.baseImg.height;
+  const canvasAspectRatio = maxWidth / maxHeight;
 
-      // Always fit to width first (100% width)
-      this.renderWidth = maxWidth;
-      this.renderHeight = Math.round(maxWidth / imgAspectRatio);
-      this.renderOffsetX = 0;
+  // Always fit to width first (100% width)
+  this.renderWidth = maxWidth;
+  this.renderHeight = Math.round(maxWidth / imgAspectRatio);
+  this.renderOffsetX = 0;
 
-      // If calculated height exceeds available height, fit to height instead
-      if (this.renderHeight > maxHeight) {
-        this.renderHeight = maxHeight;
-        this.renderWidth = Math.round(maxHeight * imgAspectRatio);
-        this.renderOffsetX = Math.round((maxWidth - this.renderWidth) / 2);
-        this.renderOffsetY = 0;
-      } else {
-        // Center vertically if height is less than container
-        this.renderOffsetY = Math.round((maxHeight - this.renderHeight) / 2);
-      }
+  // If calculated height exceeds available height, fit to height instead
+  if (this.renderHeight > maxHeight) {
+    this.renderHeight = maxHeight;
+    this.renderWidth = Math.round(maxHeight * imgAspectRatio);
+    this.renderOffsetX = Math.round((maxWidth - this.renderWidth) / 2);
+    this.renderOffsetY = 0;
+  } else {
+    // Center vertically if height is less than container
+    this.renderOffsetY = Math.round((maxHeight - this.renderHeight) / 2);
+  }
 
-      this.scaleX = this.renderWidth / this.baseImg.width;
-      this.scaleY = this.renderHeight / this.baseImg.height;
-    },
+  // ===== ADD THIS FOR BETTER QUALITY =====
+  // Use natural dimensions to avoid quality loss
+  this.scaleX = this.renderWidth / this.baseImg.naturalWidth;
+  this.scaleY = this.renderHeight / this.baseImg.naturalHeight;
+  // ===== END =====
+},
 
     // =================== OBJECT MASK CACHING ===================
 
@@ -3730,7 +3827,9 @@ handleTouchEnd(e) {
     render() {
       if (!this.canvas || !this.ctx) return;
 
-      this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+      // Clear with proper scaling
+      const dpr = window.devicePixelRatio || 1;
+      this.ctx.clearRect(0, 0, this.canvasWidth * dpr, this.canvasHeight * dpr);
 
       this.ctx.fillStyle = "#f5f5f5";
       this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
@@ -3739,10 +3838,16 @@ handleTouchEnd(e) {
 
       this.ctx.save();
 
+      // Apply transformations
       this.ctx.translate(this.panX, this.panY);
       this.ctx.scale(this.zoom, this.zoom);
 
+      // CRITICAL: Set image smoothing for better quality
+      this.ctx.imageSmoothingEnabled = true;
+      this.ctx.imageSmoothingQuality = "high"; // Options: "low", "medium", "high"
+
       try {
+        // Draw the base image
         this.ctx.drawImage(
           this.baseImg,
           this.renderOffsetX,
@@ -3751,6 +3856,7 @@ handleTouchEnd(e) {
           this.renderHeight,
         );
 
+        // Draw border
         this.ctx.strokeStyle = "rgba(0, 0, 0, 0.1)";
         this.ctx.lineWidth = 1 / this.zoom;
         this.ctx.strokeRect(
@@ -3759,8 +3865,6 @@ handleTouchEnd(e) {
           this.renderWidth,
           this.renderHeight,
         );
-
-        // REMOVED: this.drawSelectedObjectOutlines(); - NO MORE BOUNDING BOXES
       } catch (error) {
         console.error("Error rendering image:", error);
         this.showErrorState();
@@ -3893,6 +3997,10 @@ handleTouchEnd(e) {
   position: absolute;
   top: 0;
   left: 0;
+  /* ===== ADD THESE LINES ===== */
+  image-rendering: crisp-edges;
+  image-rendering: -webkit-optimize-contrast;
+  /* ===== END ===== */
 }
 
 .main-canvas.disabled {
@@ -3904,6 +4012,15 @@ handleTouchEnd(e) {
   cursor: crosshair;
 }
 
+/* .overlay-canvas {
+  border-radius: 10px;
+  transition: opacity 0.3s ease;
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 2;
+} */
 .overlay-canvas {
   border-radius: 10px;
   transition: opacity 0.3s ease;
@@ -3912,8 +4029,11 @@ handleTouchEnd(e) {
   left: 0;
   pointer-events: none;
   z-index: 2;
+  /* ===== ADD THESE LINES ===== */
+  image-rendering: crisp-edges;
+  image-rendering: -webkit-optimize-contrast;
+  /* ===== END ===== */
 }
-
 .overlay-canvas.disabled {
   opacity: 0.5;
 }
@@ -4117,7 +4237,7 @@ handleTouchEnd(e) {
   width: 100%;
   height: 100%;
   z-index: 10;
-  border-radius: 10px;
+  /* border-radius: 10px; */
   overflow: hidden;
 }
 
@@ -4132,7 +4252,7 @@ handleTouchEnd(e) {
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  border-radius: 10px;
+  /* border-radius: 10px; */
 }
 
 .loading-screen::before {

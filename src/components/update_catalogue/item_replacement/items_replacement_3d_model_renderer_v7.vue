@@ -30,7 +30,8 @@
         <img
           :src="baseImageUrl"
           alt=""
-          class="max-w-full max-h-[54vh] md:max-h-[80vh] mx-auto"/>
+          class="max-w-full max-h-[54vh] md:max-h-[83vh] mx-auto"
+        />
       </div>
 
       <!-- 3D Viewer Container -->
@@ -70,7 +71,8 @@
         line-height: 20px;
         letter-spacing: 0%;
         text-align: center;
-      " >
+      "
+    >
       Reset
     </button>
 
@@ -1800,7 +1802,7 @@ export default {
   width: 100%;
   height: 100%;
   z-index: 10;
-  /* border-radius: 10px; */
+  border-radius: 10px;
   overflow: hidden;
 }
 
@@ -1815,7 +1817,7 @@ export default {
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  /* border-radius: 10px; */
+  border-radius: 10px;
 }
 
 .loading-screen::before {
