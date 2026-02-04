@@ -199,19 +199,42 @@
             margin: '0'
           }">
             <li :style="{ marginBottom: '12px' }">
-              <a href="#/" :style="{
+              <a href="/terms-and-conditions" :style="{
                 color: '#666',
                 textDecoration: 'none',
                 fontSize: '15px'
               }">Terms of Service</a>
             </li>
             <li :style="{ marginBottom: '12px' }">
-              <a href="#/" :style="{
+              <a href="/privacy-policy" :style="{
                 color: '#666',
                 textDecoration: 'none',
                 fontSize: '15px'
               }">Privacy Policy</a>
             </li>
+            <li :style="{ marginBottom: '12px' }">
+              <a href="/accessibility-statement" :style="{
+                color: '#666',
+                textDecoration: 'none',
+                fontSize: '15px'
+              }">Accessibility Statement</a>
+            </li>
+            <li :style="{ marginBottom: '12px' }">
+              <a href="/service-charter" :style="{
+                color: '#666',
+                textDecoration: 'none',
+                fontSize: '15px'
+              }">Service Charter</a>
+            </li>
+            <li :style="{ marginBottom: '12px' }">
+              <a href="/software-license-agreement" :style="{
+                color: '#666',
+                textDecoration: 'none',
+                fontSize: '15px'
+              }">Software License Agreement</a>
+            </li>
+             
+
           </ul>
         </div>
 
