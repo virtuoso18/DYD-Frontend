@@ -961,7 +961,7 @@ src="../../assets/homepagegenrated.png"
     </div>
     <br />
 
-    <div class="lg:hidden w-full bg-white py-12 px-4 sm:px-6 lg:px-8">
+    <div class="lg:hidden w-full bg-white py-12 px-4 sm:px-6 lg:px-8" ref="listingStepMobile">
       <!-- Header Section -->
       <div class="text-center mb-16">
         <h1
@@ -1014,32 +1014,25 @@ src="../../assets/homepagegenrated.png"
           <div class="w-full lg:w-1/2 flex justify-center">
             <div class="relative w-full max-w-md">
               <!-- Image Box -->
-              <div
-                class="bg-black rounded-3xl w-full aspect-video sm:aspect-auto h-64 flex flex-col items-center justify-center relative"
-              >
-                <img
-                  src="/upload-04.svg"
-                  alt="Upload"
-                  class="w-6 h-6 -translate-x-18"
-                />
-                <span class="text-gray-400 text-sm -translate-x-18 font-poppins"
-                  >Drag and drop</span
-                >
-
-                <!-- Overlay Box Positioned Bottom Right -->
-                <div
-                  class="absolute -bottom-8 -right-8 w-2/3 h-48 rounded-2xl bg-cover bg-no-repeat bg-bottom pointer-events-none"
-                  :style="{ backgroundImage: `url(${step1Img})` }"
-                >
-                  <!-- <div class="overlay-box">
-                <img
-                  class="phase-1-image"
-                  src="../../assets/homePhase1.png"
-                  alt="phase one image"
-                />
-              </div> -->
+               <div class="image-box step1-box">
+              <!-- Step Number -->
+              <!-- Normal content always visible -->
+              <div class="upload-sec">
+                <img src="/upload-04.svg" alt="Share" />
+                <div class="upload-instruction">
+                  <span class="drag-text">Drag and drop</span>
                 </div>
               </div>
+
+              <!-- Overlay: initially not present -->
+              <div
+                v-if="overlayVisible"
+                class="overlay-box"
+                :class="{ shrink: overlayShrink }"
+              >
+                <img class="overlay-img" :src="step1Img" alt="overlay" />
+              </div>
+            </div>
             </div>
           </div>
         </div>
@@ -1083,8 +1076,28 @@ src="../../assets/homepagegenrated.png"
               <!-- Image Box -->
               <div
                 class="rounded-2xl w-full aspect-video sm:aspect-auto sm:h-64 flex items-center justify-center relative bg-cover bg-center"
-                :style="{ backgroundImage: `url(${step2Img})` }"
+                
               >
+              <div class="step-2-wave-container">
+                <!-- OLD image stays behind -->
+                <img class="step2-img base" :src="step2Img" alt="" />
+
+                <!-- NEW image fades in on top -->
+                <img
+                  class="step2-img top"
+                  :class="{ show: step2ShowNewImg }"
+                  :src="step3Img"
+                  alt=""
+                />
+
+                <!-- wave overlay -->
+                <div
+                  v-if="step2ShowWave"
+                  class="step2-wave-overlay"
+                  :key="step2WaveKey"
+                  @animationend="step2OnWaveEnd"
+                ></div>
+              </div>
                 <!-- AI Badge -->
                 <div
                   class="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 font-poppins text-sm font-semibold shadow-lg z-30"
@@ -1143,30 +1156,14 @@ src="../../assets/homepagegenrated.png"
                 :style="{ backgroundImage: `url(${step3Img})` }"
               >
                 <!-- Action Buttons -->
-                <div
-                  class="absolute -bottom-8 left-1/2 transform -translate-x-1/2 flex gap-3 z-30"
-                >
-                  <button
-                    class="bg-transparent border-0 cursor-pointer p-0 flex items-center justify-center hover:scale-110 transition-transform"
-                    aria-label="Download"
-                  >
-                    <img
-                      src="/download.svg"
-                      alt="Download"
-                      class="w-10 h-10 sm:w-12 sm:h-12"
-                    />
-                  </button>
-                  <button
-                    class="bg-transparent border-0 cursor-pointer p-0 flex items-center justify-center hover:scale-110 transition-transform"
-                    aria-label="Share"
-                  >
-                    <img
-                      src="/share.svg"
-                      alt="Share"
-                      class="w-10 h-10 sm:w-12 sm:h-12"
-                    />
-                  </button>
-                </div>
+                <div class="action-buttons">
+                <button class="action-btn">
+                  <img src="/download.svg" alt="Download" />
+                </button>
+                <button class="action-btn">
+                  <img src="/share.svg" alt="Share" />
+                </button>
+              </div>
               </div>
             </div>
           </div>
@@ -2680,8 +2677,14 @@ export default {
       },
     };
   },
-  mounted() {
-    this.startServiceSection();
+ mounted() {
+  this.startServiceSection();
+  
+  // Auto-start animation on mobile
+  if (window.innerWidth < 1024) {
+    this.startStepAnimation();
+  } else {
+    // Use observer only on desktop
     this.observer = new IntersectionObserver(
       ([entry]) => {
         this.isListingStepInView = entry.isIntersecting;
@@ -2693,9 +2696,12 @@ export default {
       },
       { threshold: 0.3 },
     );
-
-    this.observer.observe(this.$refs.listingStep);
-  },
+    
+    if (this.$refs.listingStep) {
+      this.observer.observe(this.$refs.listingStep);
+    }
+  }
+},
 
   beforeUnmount() {
     if (this.observer) this.observer.disconnect();
@@ -3403,7 +3409,7 @@ export default {
 /* Step 1 Specific */
 .step1-box {
   background-color: black;
-  border-radius: 26px;
+  border-radius: 16px;
 }
 
 .upload-sec {
@@ -3897,13 +3903,18 @@ export default {
 }
 @media screen and (max-width: 1023px) {
   .overlay-box {
-    top: -40px;
-    left: 30px;
+    top: -24px;
+    left: 0px;
   }
   .floor-repersentation-sec {
     margin-top: 50px;
     width: 85%;
   }
+  /* .overlay-box.shrink{
+     top: 80px;        
+    left: auto;       
+    right: -100px;
+  } */
 }
 @media screen and (max-width: 768px) {
   .md-room-size {
@@ -3913,23 +3924,46 @@ export default {
   .floor-repersentation-sec {
     margin-top: 30px;
   }
+   .overlay-box.shrink{
+    width: 218px;
+    height: 180px;
+     top: 120px !important;        
+    left: auto;       
+    right: 0px !important;
+    /* transform: scale(1); */
+  }
 }
 
-@media screen and (max-width: 480px) {
-  .floor-image {
+@media screen and (max-width: 480px) and (min-width: 320px) {
+  /* .floor-image {
     width: 100px;
     height: 100px;
     top: -50px;
     right: -50px;
+  } */
+   .image-box{
+        width: 301px !important;
+    height: 219px;
+  } 
+  
+  /* .overlay-box{
+    width: 100%;
+    height:100%;
+  } */
+ 
+   .overlay-box.shrink{
+    width: 218px;
+    height: 170px;
+     top: 80px !important;        
+     left: auto !important;
+     right:-10px !important;
+    transform: scale(1);
   }
 }
 
 .overlay-box.shrink {
-  width: 274px;
-  height: 213px;
-
-  top: 80px;
-  left: 225px;
+  top: 40px;
+  left: 230px;
 
   border-radius: 14px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
@@ -4013,7 +4047,7 @@ export default {
     transform: translate(-50%, 50%);
   }
   50% {
-    transform: translate(-50%, -100%);
+    transform: translate(-50%, -10%);
   }
   85%,
   100% {
