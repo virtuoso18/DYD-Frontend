@@ -208,29 +208,29 @@
           <!-- Action Buttons -->
           <a-row :gutter="12">
             <a-col :span="12">
-              <a-button 
-                type="primary" 
-                block
-                @click="editTexture()"
-              > 
-                <template #icon> 
-                  <EditOutlined/>
-                </template>
-                Edit Texture
-              </a-button>
+             <a-button 
+  type="primary" 
+  block
+  @click="editTexture"
+  class="!flex !items-center !justify-center !gap-2"
+>
+  <EditOutlined />
+  <span>Edit Texture</span>
+</a-button>
+
             </a-col>
             <a-col :span="12">
-              <a-button 
-                type="default" 
-                danger
-                block
-                @click="deleteTexture()"
-              > 
-                <template #icon> 
-                  <DeleteOutlined/>
-                </template>
-                Delete Texture
-              </a-button>
+             <a-button  
+  type="default"
+  danger
+  block
+  @click="deleteTexture"
+  class="!flex !items-center !justify-center !gap-2"
+>
+  <DeleteOutlined />
+  <span>Delete Texture</span>
+</a-button>
+
             </a-col>
           </a-row>
         </a-card>

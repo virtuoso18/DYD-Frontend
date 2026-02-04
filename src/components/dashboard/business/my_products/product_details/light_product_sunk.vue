@@ -187,29 +187,29 @@
           <!-- Action Buttons -->
           <a-row :gutter="12">
             <a-col :span="12">
-              <a-button 
-                type="primary" 
-                block
-                @click="editProduct()"
-              > 
-                <template #icon> 
-                  <EditOutlined/>
-                </template>
-                Edit Product
-              </a-button>
+             <a-button 
+  type="primary"
+  block
+  @click="editProduct()"
+  class="!flex !items-center !justify-center !gap-2"
+>
+  <EditOutlined />
+  <span>Edit Product</span>
+</a-button>
+
             </a-col>
             <a-col :span="12">
-              <a-button 
-                type="default" 
-                danger
-                block
-                @click="deleteProduct()"
-              > 
-                <template #icon> 
-                  <DeleteOutlined/>
-                </template>
-                Delete Product
-              </a-button>
+             <a-button 
+  type="default"
+  danger
+  block
+  @click="deleteProduct()"
+  class="!flex !items-center !justify-center !gap-2"
+>
+  <DeleteOutlined />
+  <span>Delete Product</span>
+</a-button>
+
             </a-col>
           </a-row>
         </a-card>

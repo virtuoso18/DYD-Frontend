@@ -510,9 +510,12 @@
                       {{ formatDate(comment.created_at) }}
                     </span>
                   </div>
-                  <p class="text-sm text-gray-600 leading-relaxed">
-                    {{ comment.content }}
-                  </p>
+                  <p
+  class="text-sm text-gray-600 leading-relaxed break-words overflow-hidden"
+>
+  {{ comment.content }}
+</p>
+
 
                   <!-- Replies -->
                   <div
@@ -691,9 +694,12 @@
                       {{ formatDate(comment.created_at) }}
                     </span>
                   </div>
-                  <p class="text-sm text-gray-600 leading-relaxed">
-                    {{ comment.content }}
-                  </p>
+                <p
+  class="text-sm text-gray-600 leading-relaxed break-words overflow-hidden"
+>
+  {{ comment.content }}
+</p>
+
 
                   <!-- Replies -->
                   <div

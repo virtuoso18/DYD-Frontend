@@ -13,7 +13,7 @@
           @click.stop
         >
           <!-- Left Section - Image & Details -->
-          <div class="w-1/2 overflow-y-auto p-6">
+          <div class="w-1/2 overflow-y-auto no-scrollbar p-6">
             <div class="flex items-center justify-between mb-4">
               <div class="flex items-center gap-3">
                 <img 
@@ -136,7 +136,7 @@
             </div>
 
             <!-- Comments List -->
-            <div class="flex-1 overflow-y-auto px-6 py-4">
+<div class="flex-1 min-w-0 px-4 py-3">
               <!-- Loading State -->
               <div v-if="loadingComments" class="text-center py-8">
                 <div class="loading-spinner mx-auto mb-2"></div>
@@ -155,22 +155,29 @@
                 :key="comment.id"
                 class="mb-6 pb-6 border-b border-gray-100 last:border-0"
               >
-                <div class="flex gap-3">
-                  <img 
-                    :src="comment.avatar" 
-                    alt="" 
-                    class="w-10 h-10 rounded-full flex-shrink-0"
-                  />
-                  <div class="flex-1">
-                    <div class="flex items-center justify-between mb-2">
-                      <h3 class="font-semibold text-gray-900">{{ comment.name }}</h3>
-                      <span class="text-xs text-gray-400">{{ comment.time }}</span>
-                    </div>
-                    <p class="text-sm text-gray-600 leading-relaxed">
-                      {{ comment.text }}
-                    </p>
-                  </div>
-                </div>
+               <div class="flex gap-3">
+  <img 
+    :src="comment.avatar" 
+    alt="" 
+    class="w-10 h-10 rounded-full flex-shrink-0"
+  />
+
+  <div class="flex-1 min-w-0">
+    <div class="flex items-center justify-between mb-2">
+      <h3 class="font-semibold text-gray-900">
+        {{ comment.name }}
+      </h3>
+      <span class="text-xs text-gray-400">
+        {{ comment.time }}
+      </span>
+    </div>
+
+    <p class="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap break-words">
+      {{ comment.text }}
+    </p>
+  </div>
+</div>
+
               </div>
 
               <!-- Load More Button -->
@@ -242,16 +249,16 @@
           </div>
 
           <!-- Content -->
-          <div class="flex-1 overflow-y-auto px-4 py-4">
+          <div class="flex-1 min-w-0 px-4 py-4">
             <!-- Image -->
             <img 
               :src="post.image" 
               alt="Post" 
-              class="w-full h-auto rounded-lg mb-4"
+              class="w-full h-auto rounded-lg !mb-2"
             />
 
             <!-- Stats -->
-            <div class="flex items-center gap-4 mb-4">
+            <div class="flex items-center gap-4 !mb-4">
                 <button class="flex items-center gap-1 text-gray-700" @click="toggleLike">
                 <svg class="w-6 h-6" :fill="localIsLiked ? 'red' : 'none'" :stroke="localIsLiked ? 'red' : 'currentColor'" viewBox="0 0 24 24">
                   <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
@@ -309,22 +316,29 @@
               :key="comment.id"
               class="mb-4 pb-4 border-b border-gray-100 last:border-0"
             >
-              <div class="flex gap-3">
-                <img 
-                  :src="comment.avatar" 
-                  alt="" 
-                  class="w-9 h-9 rounded-full flex-shrink-0"
-                />
-                <div class="flex-1">
-                  <div class="flex items-center justify-between mb-1">
-                    <h4 class="font-semibold text-sm text-gray-900">{{ comment.name }}</h4>
-                    <span class="text-xs text-gray-400">{{ comment.time }}</span>
-                  </div>
-                  <p class="text-sm text-gray-600 leading-relaxed">
-                    {{ comment.text }}
-                  </p>
-                </div>
-              </div>
+           <div class="flex gap-3 !p-2">
+  <img 
+    :src="comment.avatar" 
+    alt="" 
+    class="w-9 h-9 rounded-full flex-shrink-0"
+  />
+
+  <div class="flex-1 min-w-0">
+    <div class="flex items-center justify-between mb-1">
+      <h4 class="font-semibold text-sm text-gray-900">
+        {{ comment.name }}
+      </h4>
+      <span class="text-xs text-gray-400">
+        {{ comment.time }}
+      </span>
+    </div>
+
+    <p class="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap break-words">
+      {{ comment.text }}
+    </p>
+  </div>
+</div>
+
             </div>
 
             <!-- Load More Button for Mobile -->

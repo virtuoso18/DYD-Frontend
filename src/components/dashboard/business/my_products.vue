@@ -1046,7 +1046,7 @@
                     'flex items-center px-3 py-2 font-semibold text-xs transition ',
                     viewMode === 'table'
                       ? 'bg-blue-600 text-white'
-                      : 'bg-white text-gray-600',
+                      : 'bg-white !text-gray-600',
                   ]"
                   style="font-family: var(--font-family-main); color: white"
                 >

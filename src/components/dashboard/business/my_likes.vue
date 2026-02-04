@@ -152,32 +152,37 @@
                             ${{ product.product_price }}
                           </a-col>
                         <!-- {{ product }} -->
-    <div class="flex justify-end items-center gap-0 w-full">
+    <div class="flex items-center gap-1 w-full">
 
-                        <a-col span="18" class="flex justify-end">
-  <a-button
-    @click="goto_product_Route(product)"
-    class="!px-2 !py-1 !text-[12px] h-7 flex items-center"
-  >
-    Product Details
-  </a-button>
-</a-col>
+  <!-- Product Details (fills remaining space) -->
+  <a-col class="flex-1">
+    <a-button
+      block
+      @click="goto_product_Route(product)"
+      class="!px-2 !py-1 !text-[12px] h-7 flex items-center whitespace-nowrap"
+    >
+      Product Details
+    </a-button>
+  </a-col>
 
-    
-    
-                        <!-- ❤️ Dynamic Favorite Button -->
-                        <a-col span="6" style="padding-left:2px;display: flex;justify-content: end;">
-                        <a-button @click="toggleFavorite(product)" style="display: flex;justify-content: center;align-items: center;">
-                            <template v-if="product.is_favorited">
-                            <HeartFilled style="color: red" />
-                            </template>
-                            <template v-else>
-                            <HeartOutlined />
-                            </template>
-                        </a-button>
-                        </a-col>
+  <!-- ❤️ Favorite Button (auto width) -->
+  <a-col class="flex-shrink-0">
+    <a-button
+  @click="toggleFavorite(product)"
+  class="flex items-center justify-center h-7 !px-2 leading-none"
+>
+  <template v-if="product.is_favorited">
+    <HeartFilled class="!text-red-500 text-[16px] -translate-y-1 leading-none" />
+  </template>
+  <template v-else>
+    <HeartOutlined class="text-[16px] leading-none" />
+  </template>
+</a-button>
 
-                        </div>
+  </a-col>
+
+</div>
+
     
             </a-row>
                 </div>
