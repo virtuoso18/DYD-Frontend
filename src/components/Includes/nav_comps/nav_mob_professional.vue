@@ -136,7 +136,7 @@ export default {
 
 <template>
   <div>
-    <nav class="px-1 pb-6 space-y-1">
+    <nav class=" pb-6 space-y-1">
       <!-- Profile -->
       <router-link
         to="/professional-dashboard/my-profile"
@@ -145,7 +145,7 @@ export default {
         @click="closeMobileMenu"
       >
         <div
-          class="flex-shrink-0 w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center transition-all duration-200 group-hover:bg-blue-100"
+          class="flex-shrink-0 w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center transition-all duration-200 group-hover:bg-blue-100"
         >
           <svg
             width="17"
@@ -156,20 +156,20 @@ export default {
           >
             <path
               d="M0.5 14.5C0.5 13.4391 0.921427 12.4217 1.67157 11.6716C2.42172 10.9214 3.43913 10.5 4.5 10.5H12.5C13.5609 10.5 14.5783 10.9214 15.3284 11.6716C16.0786 12.4217 16.5 13.4391 16.5 14.5C16.5 15.0304 16.2893 15.5391 15.9142 15.9142C15.5391 16.2893 15.0304 16.5 14.5 16.5H2.5C1.96957 16.5 1.46086 16.2893 1.08579 15.9142C0.710714 15.5391 0.5 15.0304 0.5 14.5Z"
-              stroke="currentColor"
+              stroke="#333333"
               stroke-linejoin="round"
             />
             <path
               d="M8.5 6.5C10.1569 6.5 11.5 5.15685 11.5 3.5C11.5 1.84315 10.1569 0.5 8.5 0.5C6.84315 0.5 5.5 1.84315 5.5 3.5C5.5 5.15685 6.84315 6.5 8.5 6.5Z"
-              stroke="currentColor"
+              stroke="#333333"
             />
           </svg>
         </div>
-        <span class="flex-1 text-sm !font-family-poppins">Profile</span>
+        <span class="flex-1 text-sm text-[#333333]  !font-family-poppins">Profile</span>
         <svg
           class="w-5 h-5 opacity-0 transform -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
           fill="none"
-          stroke="currentColor"
+          stroke="#333333"
           viewBox="0 0 24 24"
         >
           <path
@@ -189,13 +189,13 @@ export default {
         @click="closeMobileMenu"
       >
         <div
-          class="flex-shrink-0 w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center transition-all duration-200 group-hover:bg-blue-100"
+          class="flex-shrink-0 w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center transition-all duration-200 group-hover:bg-blue-100"
         >
           <svg
             class="w-5 h-5"
             viewBox="0 0 19 19"
             fill="none"
-            stroke="currentColor"
+            stroke="#333333"
           >
             <path
               d="M7.90304 15.1577C5.7611 13.556 1.51758 9.89416 1.51758 6.59893C1.51758 4.42091 3.11591 2.65527 5.31361 2.65527C6.45242 2.65527 7.59123 3.03488 9.10965 4.55329C10.6281 3.03488 11.7669 2.65527 12.9057 2.65527C15.1034 2.65527 16.7017 4.42091 16.7017 6.59893C16.7017 9.89416 12.4582 13.556 10.3163 15.1577C9.59546 15.6966 8.62383 15.6966 7.90304 15.1577Z"
@@ -205,11 +205,11 @@ export default {
             />
           </svg>
         </div>
-        <span class="flex-1 text-sm !font-family-poppins">My Likes</span>
+        <span class="flex-1 text-sm text-[#333333]  !font-family-poppins">My Likes</span>
         <svg
           class="w-5 h-5 opacity-0 transform -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
           fill="none"
-          stroke="currentColor"
+          stroke="#333333"
           viewBox="0 0 24 24"
         >
           <path
@@ -229,7 +229,7 @@ export default {
         @click="closeMobileMenu"
       >
         <div
-          class="flex-shrink-0 w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center transition-all duration-200 group-hover:bg-blue-100"
+          class="flex-shrink-0 w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center transition-all duration-200 group-hover:bg-blue-100"
         >
           <svg
             width="24"
@@ -240,24 +240,24 @@ export default {
           >
             <path
               d="M4 12.2C4 8.80588 4 7.10883 5.05441 6.05441C6.10883 5 7.80588 5 11.2 5C14.5941 5 16.2912 5 17.3456 6.05441C18.4 7.10883 18.4 8.80588 18.4 12.2C18.4 15.5941 18.4 17.2912 17.3456 18.3456C16.2912 19.4 14.5941 19.4 11.2 19.4C7.80588 19.4 6.10883 19.4 5.05441 18.3456C4 17.2912 4 15.5941 4 12.2Z"
-              stroke="currentColor"
+              stroke="#333333"
             />
             <path
               d="M6.69922 19.3992C9.77777 15.123 13.2374 9.45193 18.3992 13.7052"
-              stroke="currentColor"
+              stroke="#333333"
             />
             <path
               d="M14.999 7.5C15.2639 7.50009 15.5185 7.60474 15.7061 7.79199C15.8936 7.97927 15.9989 8.23387 15.999 8.49902V9.58008C16.8103 9.6975 18.002 9.98053 19.0713 10.6807C20.3948 11.5473 21.5 13.0336 21.5 15.4912H21.499C21.5013 15.7003 21.4386 15.9049 21.3184 16.0762C21.1959 16.2505 21.0211 16.3812 20.8193 16.4492L20.8145 16.4512C20.6164 16.5157 20.4028 16.5166 20.2041 16.4541C20.0167 16.3951 19.852 16.2812 19.7285 16.1289V16.1299C19.2563 15.5906 18.6721 15.1605 18.0166 14.8691C17.3815 14.5869 16.6937 14.4425 15.999 14.4434V15.4932C15.9982 15.6897 15.9394 15.8817 15.8301 16.0449C15.7207 16.2082 15.5651 16.3355 15.3838 16.4111C15.2025 16.4867 15.0025 16.5077 14.8096 16.4707C14.6169 16.4336 14.4391 16.3404 14.2988 16.2031L14.2949 16.1992L10.7969 12.7041C10.7032 12.6113 10.628 12.5016 10.5771 12.3799C10.5263 12.258 10.5 12.1271 10.5 11.9951C10.5 11.8631 10.5263 11.7322 10.5771 11.6104C10.628 11.4886 10.7022 11.378 10.7959 11.2852H10.7969L14.2949 7.79102L14.2969 7.79004C14.4832 7.60549 14.7349 7.5011 14.9971 7.5H14.999Z"
               fill="white"
-              stroke="currentColor"
+              stroke="#333333"
             />
           </svg>
         </div>
-        <span class="flex-1 text-sm !font-family-poppins">Requests</span>
+        <span class="flex-1 text-sm text-[#333333]  !font-family-poppins">Requests</span>
         <svg
           class="w-5 h-5 opacity-0 transform -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
           fill="none"
-          stroke="currentColor"
+          stroke="#333333"
           viewBox="0 0 24 24"
         >
           <path
@@ -277,13 +277,13 @@ export default {
         @click="closeMobileMenu"
       >
         <div
-          class="flex-shrink-0 w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center transition-all duration-200 group-hover:bg-blue-100"
+          class="flex-shrink-0 w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center transition-all duration-200 group-hover:bg-blue-100"
         >
           <svg
             class="w-5 h-5"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="currentColor"
+            stroke="#333333"
           >
             <path
               d="M9.19992 13.4739H14.8001M9.19992 9.52659H12M13.736 18.5186C17.0833 18.2999 19.749 15.6315 19.9682 12.2818C20.0106 11.6266 20.0106 10.9476 19.9682 10.2924C19.749 6.94346 17.0833 4.27665 13.736 4.05639C12.5799 3.9812 11.4201 3.9812 10.2639 4.05639C6.91666 4.27586 4.25099 6.94346 4.03178 10.2932C3.98941 10.9557 3.98941 11.6201 4.03178 12.2826C4.11179 13.5023 4.6582 14.6321 5.30222 15.5857C5.67583 16.2528 5.42942 17.0857 5.03981 17.8144C4.7598 18.3394 4.619 18.6015 4.7318 18.791C4.84381 18.9804 5.09581 18.9868 5.59903 18.9986C6.59505 19.0223 7.26627 18.7444 7.79908 18.3568C8.10069 18.1365 8.25189 18.0268 8.3559 18.0141C8.4599 18.0015 8.6655 18.0852 9.07512 18.251C9.44313 18.401 9.87114 18.4933 10.2631 18.5194C11.4032 18.5936 12.5944 18.5936 13.7368 18.5194"
@@ -292,11 +292,11 @@ export default {
             />
           </svg>
         </div>
-        <span class="flex-1 text-sm !font-family-poppins">Messages</span>
+        <span class="flex-1 text-sm text-[#333333]  !font-family-poppins">Messages</span>
         <svg
           class="w-5 h-5 opacity-0 transform -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
           fill="none"
-          stroke="currentColor"
+          stroke="#333333"
           viewBox="0 0 24 24"
         >
           <path
@@ -318,7 +318,7 @@ export default {
         @click="closeMobileMenu"
       >
         <div
-          class="flex-shrink-0 w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center transition-all duration-200 group-hover:bg-blue-100"
+          class="flex-shrink-0 w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center transition-all duration-200 group-hover:bg-blue-100"
         >
           <svg
             width="20"
@@ -329,19 +329,19 @@ export default {
           >
             <path
               d="M5.44 5.445H14.06M5.44 5.445H0.5M5.44 5.445L9.09 15.496M5.44 5.445L7.84 1.512L8.39 0.5M14.06 5.445H19M14.06 5.445L10.41 15.496M14.06 5.445L11.66 1.512L11.094 0.5M0.5 5.445C0.5 5.865 0.579 6.285 0.736 6.681C0.948 7.216 1.378 7.709 2.236 8.694L5.703 12.67C7.1 14.272 7.798 15.074 8.626 15.368C8.77867 15.422 8.93333 15.4647 9.09 15.496M0.5 5.445C0.5 5.025 0.579 4.605 0.736 4.208C0.948 3.673 1.378 3.181 2.236 2.195C2.703 1.661 2.936 1.394 3.206 1.187C3.60742 0.881067 4.0726 0.669496 4.567 0.568C4.901 0.5 5.255 0.5 5.964 0.5H8.39M9.09 15.496C9.52578 15.5822 9.97422 15.5822 10.41 15.496M8.39 0.5H11.094M19 5.445C19 5.865 18.921 6.285 18.764 6.681C18.552 7.216 18.122 7.709 17.264 8.694L13.797 12.67C12.4 14.272 11.702 15.074 10.874 15.368C10.7226 15.4216 10.5675 15.4643 10.41 15.496M19 5.445C19 5.025 18.921 4.605 18.764 4.208C18.552 3.673 18.122 3.181 17.264 2.195C16.797 1.661 16.564 1.394 16.294 1.187C15.8926 0.881067 15.4274 0.669496 14.933 0.568C14.599 0.5 14.245 0.5 13.536 0.5H11.094"
-              stroke="currentColor"
+              stroke="#333333"
               stroke-linecap="round"
               stroke-linejoin="round"
             />
           </svg>
         </div>
-        <span class="flex-1 text-sm !font-family-poppins"
+        <span class="flex-1 text-sm text-[#333333]  !font-family-poppins"
           >Manage Subscription</span
         >
         <svg
           class="w-5 h-5 opacity-0 transform -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
           fill="none"
-          stroke="currentColor"
+          stroke="#333333"
           viewBox="0 0 24 24"
         >
           <path
@@ -360,7 +360,7 @@ export default {
         @click="closeMobileMenu"
       >
         <div
-          class="flex-shrink-0 w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center transition-all duration-200 group-hover:bg-blue-100"
+          class="flex-shrink-0 w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center transition-all duration-200 group-hover:bg-blue-100"
         >
            <svg
                     width="24"
@@ -371,23 +371,23 @@ export default {
                   >
                     <path
                       d="M6.59961 17.3767C6.71544 18.5542 6.97721 19.3468 7.56883 19.9384C8.62997 20.9996 10.3378 20.9996 13.7536 20.9996C17.1694 20.9996 18.8773 20.9996 19.9384 19.9384C20.9996 18.8773 20.9996 17.1694 20.9996 13.7536C20.9996 10.3378 20.9996 8.62997 19.9384 7.56883C19.3468 6.97721 18.5542 6.71544 17.3767 6.59961"
-                      stroke="currentColor"
+                      stroke="#333333"
                     />
                     <path
                       d="M3 10.2C3 6.80588 3 5.10883 4.05441 4.05441C5.10883 3 6.80588 3 10.2 3C13.5941 3 15.2912 3 16.3456 4.05441C17.4 5.10883 17.4 6.80588 17.4 10.2C17.4 13.5941 17.4 15.2912 16.3456 16.3456C15.2912 17.4 13.5941 17.4 10.2 17.4C6.80588 17.4 5.10883 17.4 4.05441 16.3456C3 15.2912 3 13.5941 3 10.2Z"
-                      stroke="currentColor"
+                      stroke="#333333"
                     />
                     <path
                       d="M5.69922 17.3992C8.77777 13.123 12.2374 7.45193 17.3992 11.7052"
-                      stroke="currentColor"
+                      stroke="#333333"
                     />
                   </svg>
         </div>
-        <span class="flex-1 text-sm !font-family-poppins">My Designs</span>
+        <span class="flex-1 text-sm text-[#333333]  !font-family-poppins">My Designs</span>
         <svg
           class="w-5 h-5 opacity-0 transform -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
           fill="none"
-          stroke="currentColor"
+          stroke="#333333"
           viewBox="0 0 24 24"
         >
           <path
@@ -407,7 +407,7 @@ export default {
         @click="closeMobileMenu"
       >
         <div
-          class="flex-shrink-0 w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center transition-all duration-200 group-hover:bg-blue-100"
+          class="flex-shrink-0 w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center transition-all duration-200 group-hover:bg-blue-100"
         >
           <svg
                     width="24"
@@ -418,15 +418,15 @@ export default {
                   >
                     <path
                       d="M12 4.25C11.4696 4.25 10.9609 4.46071 10.5858 4.83578C10.2107 5.21086 10 5.71956 10 6.24999C10 6.78043 10.2107 7.28913 10.5858 7.66421C10.9609 8.03928 11.4696 8.24999 12 8.24999C12.5304 8.24999 13.0391 8.03928 13.4142 7.66421C13.7893 7.28913 14 6.78043 14 6.24999C14 5.71956 13.7893 5.21086 13.4142 4.83578C13.0391 4.46071 12.5304 4.25 12 4.25ZM8.75 6.24999C8.75 5.38804 9.09241 4.56139 9.7019 3.9519C10.3114 3.34241 11.138 3 12 3C12.862 3 13.6886 3.34241 14.2981 3.9519C14.9076 4.56139 15.25 5.38804 15.25 6.24999C15.25 7.11195 14.9076 7.9386 14.2981 8.54809C13.6886 9.15758 12.862 9.49999 12 9.49999C11.138 9.49999 10.3114 9.15758 9.7019 8.54809C9.09241 7.9386 8.75 7.11195 8.75 6.24999ZM4.75 6.24999C4.35218 6.24999 3.97064 6.40803 3.68934 6.68933C3.40804 6.97064 3.25 7.35217 3.25 7.74999C3.25 8.14782 3.40804 8.52935 3.68934 8.81065C3.97064 9.09196 4.35218 9.24999 4.75 9.24999C5.14782 9.24999 5.52936 9.09196 5.81066 8.81065C6.09196 8.52935 6.25 8.14782 6.25 7.74999C6.25 7.35217 6.09196 6.97064 5.81066 6.68933C5.52936 6.40803 5.14782 6.24999 4.75 6.24999ZM2 7.74999C2 7.02065 2.28973 6.32118 2.80546 5.80545C3.32118 5.28973 4.02065 5 4.75 5C5.47935 5 6.17882 5.28973 6.69454 5.80545C7.21027 6.32118 7.5 7.02065 7.5 7.74999C7.5 8.47934 7.21027 9.17881 6.69454 9.69453C6.17882 10.2103 5.47935 10.5 4.75 10.5C4.02065 10.5 3.32118 10.2103 2.80546 9.69453C2.28973 9.17881 2 8.47934 2 7.74999ZM17.75 7.74999C17.75 7.35217 17.908 6.97064 18.1893 6.68933C18.4706 6.40803 18.8522 6.24999 19.25 6.24999C19.6478 6.24999 20.0294 6.40803 20.3107 6.68933C20.592 6.97064 20.75 7.35217 20.75 7.74999C20.75 8.14782 20.592 8.52935 20.3107 8.81065C20.0294 9.09196 19.6478 9.24999 19.25 9.24999C18.8522 9.24999 18.4706 9.09196 18.1893 8.81065C17.908 8.52935 17.75 8.14782 17.75 7.74999ZM19.25 5C18.5207 5 17.8212 5.28973 17.3055 5.80545C16.7897 6.32118 16.5 7.02065 16.5 7.74999C16.5 8.47934 16.7897 9.17881 17.3055 9.69453C17.8212 10.2103 18.5207 10.5 19.25 10.5C19.9793 10.5 20.6788 10.2103 21.1945 9.69453C21.7103 9.17881 22 8.47934 22 7.74999C22 7.02065 21.7103 6.32118 21.1945 5.80545C20.6788 5.28973 19.9793 5 19.25 5ZM7.5 12.625C7.5 12.194 7.67121 11.7807 7.97595 11.4759C8.2807 11.1712 8.69402 11 9.125 11H14.875C15.306 11 15.7193 11.1712 16.024 11.4759C16.3288 11.7807 16.5 12.194 16.5 12.625V16.5C16.5 17.6935 16.0259 18.838 15.182 19.682C14.3381 20.5259 13.1935 21 12 21C10.8065 21 9.66193 20.5259 8.81802 19.682C7.97411 18.838 7.5 17.6935 7.5 16.5V12.625ZM9.125 12.25C9.02554 12.25 8.93016 12.2895 8.85983 12.3598C8.78951 12.4301 8.75 12.5255 8.75 12.625V16.5C8.75 17.3619 9.09241 18.1886 9.7019 18.7981C10.3114 19.4076 11.138 19.75 12 19.75C12.862 19.75 13.6886 19.4076 14.2981 18.7981C14.9076 18.1886 15.25 17.3619 15.25 16.5V12.625C15.25 12.5255 15.2105 12.4301 15.1402 12.3598C15.0698 12.2895 14.9745 12.25 14.875 12.25H9.125ZM6.576 11.995C6.52567 12.197 6.50033 12.407 6.5 12.625V13.309L3.53 14.105C3.43403 14.1308 3.35221 14.1936 3.30252 14.2796C3.25283 14.3657 3.23934 14.468 3.265 14.564L4.009 17.341C4.21174 18.0981 4.68126 18.7564 5.33104 19.1947C5.98082 19.6329 6.76709 19.8216 7.545 19.726C7.8299 20.1194 8.16565 20.4733 8.5435 20.7785C8.46783 20.8035 8.39117 20.8261 8.3135 20.8465C7.74268 20.9995 7.14729 21.0386 6.56135 20.9616C5.97541 20.8845 5.41039 20.6928 4.89854 20.3974C4.3867 20.1019 3.93806 19.7086 3.57825 19.2398C3.21844 18.7709 2.9545 18.2358 2.8015 17.665L2.057 14.888C2.00181 14.6818 1.98776 14.4668 2.01566 14.2553C2.04356 14.0437 2.11285 13.8397 2.2196 13.6549C2.32634 13.4701 2.46843 13.3082 2.63777 13.1783C2.8071 13.0484 3.00036 12.9532 3.2065 12.898L6.576 11.995ZM15.456 20.7785C15.532 20.8035 15.6088 20.8261 15.6865 20.8465C16.2573 20.9994 16.8527 21.0385 17.4386 20.9614C18.0245 20.8842 18.5895 20.6925 19.1013 20.397C19.6131 20.1015 20.0617 19.7081 20.4214 19.2393C20.7812 18.7704 21.0451 18.2353 21.198 17.6645L21.942 14.8875C22.0535 14.4712 21.9951 14.0277 21.7796 13.6545C21.5641 13.2814 21.2092 13.009 20.793 12.8975L17.424 11.9945C17.4743 12.1968 17.4997 12.4068 17.5 12.6245V13.3095L20.4695 14.1045C20.5171 14.1172 20.5618 14.1393 20.6009 14.1693C20.64 14.1993 20.6728 14.2368 20.6974 14.2795C20.722 14.3222 20.738 14.3694 20.7443 14.4183C20.7507 14.4672 20.7474 14.5169 20.7345 14.5645L19.9905 17.341C19.7878 18.098 19.3183 18.7562 18.6687 19.1945C18.019 19.6327 17.2328 19.8215 16.455 19.726C16.1701 20.1194 15.8338 20.4733 15.456 20.7785Z"
-                      fill="currentColor"
+                      fill="#333333"
                     />
                   </svg>
         </div>
-        <span class="flex-1 text-sm !font-family-poppins">Comunity</span>
+        <span class="flex-1 text-sm text-[#333333]  !font-family-poppins">Comunity</span>
         <svg
           class="w-5 h-5 opacity-0 transform -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
           fill="none"
-          stroke="currentColor"
+          stroke="#333333"
           viewBox="0 0 24 24"
         >
           <path
@@ -448,35 +448,35 @@ export default {
         @click="closeMobileMenu"
       >
         <div
-          class="flex-shrink-0 w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center transition-all duration-200 group-hover:bg-blue-100"
+          class="flex-shrink-0 w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center transition-all duration-200 group-hover:bg-blue-100"
         >
           <svg
             class="w-5 h-5"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="currentColor"
+            stroke="#333333"
           >
             <path
               d="M3 21H21M5 21V7L13 2L21 7V21M9 9V21M15 9V21"
-              stroke-width="2"
+              stroke-width="1"
               stroke-linecap="round"
               stroke-linejoin="round"
             />
           </svg>
         </div>
-        <span class="flex-1 text-sm !font-family-poppins"
+        <span class="flex-1 text-sm text-[#333333]  !font-family-poppins"
           >Business Details</span
         >
         <svg
           class="w-5 h-5 opacity-0 transform -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
           fill="none"
-          stroke="currentColor"
+          stroke="#333333"
           viewBox="0 0 24 24"
         >
           <path
             stroke-linecap="round"
             stroke-linejoin="round"
-            stroke-width="2"
+            stroke-width="1"
             d="M9 18l6-6-6-6"
           />
         </svg>
@@ -490,13 +490,13 @@ export default {
         @click="closeMobileMenu"
       >
         <div
-          class="flex-shrink-0 w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center transition-all duration-200 group-hover:bg-blue-100"
+          class="flex-shrink-0 w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center transition-all duration-200 group-hover:bg-blue-100"
         >
           <svg
             class="w-5 h-5"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="currentColor"
+            stroke="#333333"
           >
             <path
               d="M20 10H4L9.5 4M4 14H20L14.5 20"
@@ -505,11 +505,11 @@ export default {
             />
           </svg>
         </div>
-        <span class="flex-1 text-sm !font-family-poppins">Transactions</span>
+        <span class="flex-1 text-sm text-[#333333]  !font-family-poppins">Transactions</span>
         <svg
           class="w-5 h-5 opacity-0 transform -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
           fill="none"
-          stroke="currentColor"
+          stroke="#333333"
           viewBox="0 0 24 24"
         >
           <path
@@ -529,13 +529,13 @@ export default {
         @click="closeMobileMenu"
       >
         <div
-          class="flex-shrink-0 w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center transition-all duration-200 group-hover:bg-blue-100"
+          class="flex-shrink-0 w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center transition-all duration-200 group-hover:bg-blue-100"
         >
           <svg
             class="w-5 h-5"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="currentColor"
+            stroke="#333333"
           >
             <path
               d="M12.5 14.0909C13.9309 14.0909 15.0909 12.9309 15.0909 11.5C15.0909 10.0691 13.9309 8.90909 12.5 8.90909C11.0691 8.90909 9.90909 10.0691 9.90909 11.5C9.90909 12.9309 11.0691 14.0909 12.5 14.0909Z"
@@ -549,11 +549,11 @@ export default {
             />
           </svg>
         </div>
-        <span class="flex-1 text-sm !font-family-poppins">Settings</span>
+        <span class="flex-1 text-sm text-[#333333]  !font-family-poppins">Settings</span>
         <svg
           class="w-5 h-5 opacity-0 transform -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
           fill="none"
-          stroke="currentColor"
+          stroke="#333333"
           viewBox="0 0 24 24"
         >
           <path
@@ -568,13 +568,192 @@ export default {
       <!-- Divider -->
       <div class="h-px bg-gray-200 my-4"></div>
 
+      
+<!-- Community -->
+<router-link
+  to="/comunity"
+  class="flex items-center gap-4 px-2 py-2 rounded-xl text-gray-700 font-medium transition-all duration-200 relative overflow-hidden group hover:bg-gray-50 hover:text-blue-600"
+  :class="{ 'nav-active': $route.path === '/community' }"
+  @click="closeMobileMenu"
+>
+  <div
+    class="flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center transition-all duration-200 group-hover:bg-blue-100"
+  >
+    <svg
+      class="w-5 h-5"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="#333333"
+    >
+      <path
+        d="M12 3L4 7v6c0 4.418 3.582 8 8 8s8-3.582 8-8V7l-8-4z"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <path
+        d="M10 11h4M10 15h2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  </div>
+  <span class="flex-1 text-sm text-[#333333] !font-family-poppins">
+    Community
+  </span>
+  <svg
+    class="w-5 h-5 opacity-0 transform -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
+    fill="none"
+    stroke="#333333"
+    viewBox="0 0 24 24"
+  >
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M9 18l6-6-6-6"
+    />
+  </svg>
+</router-link>
+
+<!-- Pricing -->
+<router-link
+  to="/pricing"
+  class="flex items-center gap-4 px-2 py-2 rounded-xl text-gray-700 font-medium transition-all duration-200 relative overflow-hidden group hover:bg-gray-50 hover:text-blue-600"
+  :class="{ 'nav-active': $route.path === '/pricing' }"
+  @click="closeMobileMenu"
+>
+  <div
+    class="flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center transition-all duration-200 group-hover:bg-blue-100"
+  >
+    <svg
+      class="w-5 h-5"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="#333333"
+    >
+      <path
+        d="M12 3L4 7v6c0 4.418 3.582 8 8 8s8-3.582 8-8V7l-8-4z"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <path
+        d="M10 11h4M10 15h2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  </div>
+  <span class="flex-1 text-sm text-[#333333] !font-family-poppins">
+    Pricing
+  </span>
+  <svg
+    class="w-5 h-5 opacity-0 transform -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
+    fill="none"
+    stroke="#333333"
+    viewBox="0 0 24 24"
+  >
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M9 18l6-6-6-6"
+    />
+  </svg>
+</router-link>
+
+<!-- Contact Us -->
+<router-link
+  to="/contact-us"
+  class="flex items-center gap-4 px-2 py-2 rounded-xl text-gray-700 font-medium transition-all duration-200 relative overflow-hidden group hover:bg-gray-50 hover:text-blue-600"
+  :class="{ 'nav-active': $route.path === '/contact-us' }"
+  @click="closeMobileMenu"
+>
+  <div
+    class="flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center transition-all duration-200 group-hover:bg-blue-100"
+  >
+    <svg
+      class="w-5 h-5"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="#333333"
+    >
+      <path
+        d="M3 5h18v10H5l-2 2V5z"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  </div>
+  <span class="flex-1 text-sm text-[#333333] !font-family-poppins">
+    Contact Us
+  </span>
+  <svg
+    class="w-5 h-5 opacity-0 transform -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
+    fill="none"
+    stroke="#333333"
+    viewBox="0 0 24 24"
+  >
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M9 18l6-6-6-6"
+    />
+  </svg>
+</router-link>
+
+<!-- AI Catalog -->
+<router-link
+  to="/ai-catalog"
+  class="flex items-center gap-4 px-2 py-2 rounded-xl text-gray-700 font-medium transition-all duration-200 relative overflow-hidden group hover:bg-gray-50 hover:text-blue-600"
+  :class="{ 'nav-active': $route.path === '/ai-catalog' }"
+  @click="closeMobileMenu"
+>
+  <div
+    class="flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center transition-all duration-200 group-hover:bg-blue-100"
+  >
+    <svg
+      class="w-5 h-5"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="#333333"
+    >
+      <path
+        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  </div>
+  <span class="flex-1 text-sm text-[#333333] !font-family-poppins">
+    AI Catalog
+  </span>
+  <svg
+    class="w-5 h-5 opacity-0 transform -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
+    fill="none"
+    stroke="#333333"
+    viewBox="0 0 24 24"
+  >
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M9 18l6-6-6-6"
+    />
+  </svg>
+</router-link>
+
+
+            <div class="h-px bg-gray-200 my-4"></div>
+
+
       <!-- Logout -->
       <button
         @click="logout_user"
         class="flex items-center gap-4 px-2 py-2 rounded-xl !text-red-600 font-medium transition-all duration-200 relative overflow-hidden group hover:bg-red-50 w-full text-left"
       >
         <div
-          class="flex-shrink-0 w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center transition-all duration-200 group-hover:bg-red-100"
+          class="flex-shrink-0 w-7 h-7 rounded-lg bg-red-50 flex items-center justify-center transition-all duration-200 group-hover:bg-red-100"
         >
           <svg class="w-5 h-5" viewBox="0 0 16 16" fill="currentColor">
             <path
@@ -582,11 +761,11 @@ export default {
             />
           </svg>
         </div>
-        <span class="flex-1 text-sm !font-family-poppins">Logout</span>
+        <span class="flex-1 text-sm text-[#333333]  !font-family-poppins">Logout</span>
         <svg
           class="w-5 h-5 opacity-0 transform -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
           fill="none"
-          stroke="currentColor"
+          stroke="#333333"
           viewBox="0 0 24 24"
         >
           <path
@@ -647,7 +826,6 @@ export default {
   top: 0;
   bottom: 0;
   width: 4px;
-  background-color: #2563eb;
   border-radius: 0 4px 4px 0;
 }
 

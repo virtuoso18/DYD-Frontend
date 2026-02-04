@@ -65,46 +65,36 @@
       <!-- Apply & Cancel buttons -->
       <div style="display: flex; gap: 8px">
         <a-button block @click="closeTextureModal()"> Cancel </a-button>
-        <a-button
-          type="primary"
-          block
-          @click="applyTextureToImage()"
-          :disabled="!textureImage"
-          :loading="isApplyingTexture"
-          ><div
-            style="
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              gap: 10px;
-            "
-          >
-            Apply Texture
-            <span
-              style="
-                display: flex;
-                justify-content: center;
-                align-items: center;
-              "
-            >
-              (&nbsp;
-              <svg
-                width="17"
-                height="18"
-                viewBox="0 0 17 18"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  fill-rule="evenodd"
-                  clip-rule="evenodd"
-                  d="M8.5013 1.91602C4.58918 1.91602 1.41797 5.08722 1.41797 8.99935C1.41797 12.9115 4.58918 16.0827 8.5013 16.0827C12.4134 16.0827 15.5846 12.9115 15.5846 8.99935C15.5846 5.08722 12.4134 1.91602 8.5013 1.91602ZM8.5013 2.62435C8.5013 4.3151 7.82965 5.93661 6.63411 7.13215C5.43856 8.3277 3.81706 8.99935 2.1263 8.99935C3.81706 8.99935 5.43856 9.671 6.63411 10.8665C7.82965 12.0621 8.5013 13.6836 8.5013 15.3743C8.5013 13.6836 9.17295 12.0621 10.3685 10.8665C11.564 9.671 13.1855 8.99935 14.8763 8.99935C13.1855 8.99935 11.564 8.3277 10.3685 7.13215C9.17295 5.93661 8.5013 4.3151 8.5013 2.62435Z"
-                  fill="currentColor"
-                /></svg
-              >20 )</span
-            >
-          </div>
-        </a-button>
+       <a-button
+  type="primary"
+  block
+  @click="applyTextureToImage()"
+  :disabled="!textureImage"
+  :loading="isApplyingTexture"
+  class="!flex !items-center !justify-center !gap-2"
+>
+  <span>Apply Texture</span>
+
+  <span class="!flex !items-center !gap-1">
+    (
+    <svg
+      class="w-4 h-4"
+      viewBox="0 0 17 18"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        fill-rule="evenodd"
+        clip-rule="evenodd"
+        d="M8.5013 1.91602C4.58918 1.91602 1.41797 5.08722 1.41797 8.99935C1.41797 12.9115 4.58918 16.0827 8.5013 16.0827C12.4134 16.0827 15.5846 12.9115 15.5846 8.99935C15.5846 5.08722 12.4134 1.91602 8.5013 1.91602Z"
+        fill="currentColor"
+      />
+    </svg>
+    20
+    )
+  </span>
+</a-button>
+
       </div>
     </div>
   </a-modal>
@@ -542,7 +532,7 @@
     </div>
   </a-modal>
 
-  <div class="image-to-3d-container">
+  <div class="image-to-3d-container ">
     <!-- Edit Image Modal -->
     <a-modal
       v-model:open="openEditImage_modal"
@@ -666,24 +656,29 @@
 
             <div class="image-actions" v-if="!isProcessingBg">
               <a-button
-                type="primary"
-                shape="circle"
-                @click.stop="editImage('main')"
-              >
-                <template #icon>
-                  <EditOutlined />
-                </template>
-              </a-button>
-              <a-button
-                type="primary"
-                :danger="true"
-                shape="circle"
-                @click.stop="removeImage('main')"
-              >
-                <template #icon>
-                  <DeleteOutlined />
-                </template>
-              </a-button>
+  type="primary"
+  shape="circle"
+  @click.stop="editImage('main')"
+  class="!flex !items-center !justify-center !p-0"
+>
+  <template #icon>
+    <EditOutlined class="!text-white !text-base" />
+  </template>
+</a-button>
+
+             <a-button
+  type="text"
+  danger
+  shape="circle"
+  @click.stop="removeImage('main')"
+  class="!flex !items-center !justify-center
+         !w-8 !h-8
+         !bg-red-500 hover:!bg-red-600
+         !text-white"
+>
+  <DeleteOutlined />
+</a-button>
+
             </div>
           </div>
         </div>
@@ -770,89 +765,98 @@
   </div>
 </a-col> -->
 
-              <a-col
-                v-if="textures_available.length > 0"
-                span="4"
-                style=""
-                v-for="(texture, index) in textures_available"
-                :key="index"
-              >
-                <div
-                  style="
-                    position: relative;
-                    border-radius: 8px;
-                    overflow: hidden;
-                    border: 2px solid #e8e8e8;
-                    transition: all 0.3s;
-                    cursor: pointer;
-                    margin-left: 5px;
-                    width: 80px;
-                    height: 80px;
-                    aspect-ratio: 1;
-                  "
-                  :style="
-                    texture.is_active
-                      ? {
-                          borderColor: '#52c41a',
-                          boxShadow: '0 0 0 2px #f6ffed',
-                        }
-                      : {}
-                  "
-                  @click="activateTexture(index)"
-                >
-                  <!-- Texture Image -->
-                  <img
-                    :src="texture.main_image_texture_applied"
-                    alt="Texture result"
-                    style="width: 100%; height: 100%; object-fit: cover"
-                  />
+              <!-- FLEX WRAPPER (IMPORTANT) -->
+<div class="flex flex-row flex-wrap gap-2">
+  <a-col
+    v-if="textures_available.length > 0"
+    span="auto"
+    v-for="(texture, index) in textures_available"
+    :key="index"
+    class="!flex-shrink-0"
+  >
+    <div
+      style="
+        position: relative;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 2px solid #e8e8e8;
+        transition: all 0.3s;
+        cursor: pointer;
+        width: 80px;
+        height: 80px;
+        aspect-ratio: 1;
+      "
+      :style="
+        texture.is_active
+          ? {
+              borderColor: '#52c41a',
+              boxShadow: '0 0 0 2px #f6ffed',
+            }
+          : {}
+      "
+      @click="activateTexture(index)"
+    >
+      <!-- Texture Image -->
+      <img
+        :src="texture.main_image_texture_applied"
+        alt="Texture result"
+        style="width: 100%; height: 100%; object-fit: cover"
+      />
 
-                  <!-- Active Checkmark Overlay -->
-                  <div
-                    v-if="texture.is_active"
-                    @click.stop="deactivateTexture(index)"
-                    style="
-                      position: absolute;
-                      top: 0;
-                      left: 0;
-                      right: 0;
-                      bottom: 0;
-                      background: rgba(82, 196, 26, 0.2);
-                      display: flex;
-                      align-items: center;
-                      justify-content: center;
-                      font-size: 32px;
-                      color: #52c41a;
-                    "
-                  >
-                    ✅
-                  </div>
+      <!-- Active Checkmark Overlay -->
+     <div
+  v-if="texture.is_active"
+  @click.stop="deactivateTexture(index)"
+  class="absolute inset-0
+         bg-green-500/20
+         flex items-center justify-center"
+>
+  <div
+    class="w-10 h-10 rounded-full
+           bg-white/10  
+           
+           flex items-center justify-center"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      class="w-6 h-6"
+    >
+      <path
+        d="M5 13l4 4L19 7"
+        stroke="#22c55e"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  </div>
+</div>
 
-                  <!-- Delete Button - Top Right Corner -->
-                  <div
-                    style="
-                      position: absolute;
-                      top: 4px;
-                      right: 4px;
-                      z-index: 10;
-                    "
-                    @click.stop="deleteTexture(index)"
-                  >
-                    <a-button
-                      type="primary"
-                      danger
-                      size="small"
-                      shape="circle"
-                      style="width: 28px; height: 28px; padding: 0"
-                    >
-                      <template #icon>
-                        <DeleteOutlined />
-                      </template>
-                    </a-button>
-                  </div>
 
-                  <!-- Hover Overlay with Deactivate Button -->
-                  <!-- <div 
+
+      <!-- Delete Button - Top Right Corner -->
+      <div
+        class="absolute top-1 right-1 z-10"
+        @click.stop="deleteTexture(index)"
+      >
+        <a-button
+          type="text"
+          danger
+          size="small"
+          shape="circle"
+          class="!flex !items-center !justify-center
+                 !w-6 !h-6
+                 !bg-red-500 hover:!bg-red-600
+                 !text-white"
+        >
+          <DeleteOutlined />
+        </a-button>
+      </div>
+
+      <!-- Hover Overlay with Deactivate Button -->
+      <!-- <div 
         v-if="texture.is_active"
         style="
           position: absolute;
@@ -875,8 +879,10 @@
           Deactivate
         </a-button>
       </div> -->
-                </div>
-              </a-col>
+    </div>
+  </a-col>
+</div>
+
             </a-row>
           </div>
 
@@ -1061,7 +1067,7 @@
       </div>
     </div>
 
-    <div>
+    <div className="">
       <!-- Credit Display -->
       <div class="credits">
         <svg
@@ -1082,7 +1088,7 @@
       </div>
 
       <!-- Generate Button -->
-      <div class="generate-section">
+      <div class="generate-section !mb-8 ">
         <a-button
           type="primary"
           block
@@ -3093,8 +3099,8 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  margin: 10px 0;
+  gap: 6px;
+  margin: 6px 0;
   color: #1890ff;
 }
 
