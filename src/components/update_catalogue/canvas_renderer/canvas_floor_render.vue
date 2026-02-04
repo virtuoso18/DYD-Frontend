@@ -2,7 +2,14 @@
   <div class="canvas-container" ref="canvasContainer">
     <!-- Loading Overlay -->
     <div v-if="isLoading" class="scanning-loading-overlay">
-      <div class="loading-screen" :style="{ backgroundImage: backgroundImageUrl ? `url(${backgroundImageUrl})` : 'none' }">
+      <div
+        class="loading-screen"
+        :style="{
+          backgroundImage: backgroundImageUrl
+            ? `url(${backgroundImageUrl})`
+            : 'none',
+        }"
+      >
         <div class="wave-overlay"></div>
         <div class="loading-text">
           <div class="process-text">{{ loadingMessage }}</div>
@@ -16,7 +23,7 @@
       :width="canvasWidth"
       :height="canvasHeight"
       class="main-canvas"
-      :class="{ 'disabled': isLoading }"
+      :class="{ disabled: isLoading }"
     ></canvas>
 
     <!-- Zoom Controls -->
@@ -24,68 +31,98 @@
       <button @click="zoomIn" class="zoom-btn" title="Zoom In">+</button>
       <span class="zoom-level">{{ Math.round(zoom * 100) }}%</span>
       <button @click="zoomOut" class="zoom-btn" title="Zoom Out">-</button>
-      <button @click="resetZoomAndPan" class="zoom-btn reset-btn" title="Reset View">⌂</button>
+      <button
+        @click="resetZoomAndPan"
+        class="zoom-btn reset-btn"
+        title="Reset View"
+      >
+        ⌂
+      </button>
     </div>
 
     <!-- Pan Instructions -->
-    <div v-if="zoom > 1 && !isLoading" class="instructions">
+    <div v-if="zoom > 1 && !isLoading && !isTouchDevice" class="instructions">
       Click and drag to pan • Mouse wheel to zoom
     </div>
+    <div v-else="zoom > 1 && !isLoading && isTouchDevice" class="instructions">
+      Pinch in to zoom in & Pinch out to zoom out
+    </div>
   </div>
-   <div class="apply-wrapper" style="display:flex;justify-content: space-between;padding-left:10px;padding-right:10px;">
-     
-  <div style="display:flex;gap:5px;padding-top:10px;">
-
-      <a-button  :disabled="isLoading" class="toolbar-btn primary-btn" @click="reset_entire_room">
+  <div
+    class="apply-wrapper"
+    style="
+      display: flex;
+      justify-content: space-between;
+      padding-left: 10px;
+      padding-right: 10px;
+    "
+  >
+    <div style="display: flex; gap: 5px; padding-top: 10px">
+      <a-button
+        :disabled="isLoading"
+        class="toolbar-btn primary-btn"
+        @click="reset_entire_room"
+      >
         Before
       </a-button>
-      <a-button  :disabled="isLoading"type="primary" class="toolbar-btn primary-btn" @click="reset_entire_room">
-          After
-       </a-button>
-      </div>
-      <div style="padding-top:10px;">
-        <a-button :disabled="isLoading" type="primary" class="toolbar-btn primary-btn"   @click="$emit('Apply-Changes', 'floor-Renerer')">
-          Finalise Changes
-        </a-button>
-      </div>
+      <a-button
+        :disabled="isLoading"
+        type="primary"
+        class="toolbar-btn primary-btn"
+        @click="reset_entire_room"
+      >
+        After
+      </a-button>
     </div>
+    <div style="padding-top: 10px">
+      <a-button
+        :disabled="isLoading"
+        type="primary"
+        class="toolbar-btn primary-btn"
+        @click="$emit('Apply-Changes', 'floor-Renerer')"
+      >
+        Finalise Changes
+      </a-button>
+    </div>
+  </div>
 </template>
 
 <script>
 export default {
-  name: 'floor_renderer',
+  name: "floor_renderer",
   props: {
     baseImage: {
       type: String,
-      required: true
+      required: true,
     },
     isLoading: {
       type: Boolean,
-      default: false
+      default: false,
     },
     backgroundImageUrl: {
       type: String,
-      default: ''
+      default: "",
     },
     loadingMessage: {
       type: String,
-      default: 'Loading Room...'
-    }
+      default: "Loading Room...",
+    },
   },
 
   data() {
     return {
+      isTouchDevice: false,
       canvas: null,
       ctx: null,
       baseImg: null,
-      internalLoading: false, // Separate internal loading state
-      
+      internalLoading: false,
+
       // Canvas dimensions
       canvasWidth: 800,
       canvasHeight: 500,
       containerWidth: 800,
       containerHeight: 500,
-      
+
       // Image rendering properties
       renderWidth: 800,
       renderHeight: 500,
@@ -93,7 +130,7 @@ export default {
       renderOffsetY: 0,
       scaleX: 1,
       scaleY: 1,
-      
+
       // Zoom and pan functionality
       zoom: 1,
       minZoom: 1.0,
@@ -105,42 +142,43 @@ export default {
       dragStartY: 0,
       dragStartPanX: 0,
       dragStartPanY: 0,
-      
+
       // Resize observer
-      resizeObserver: null
-    }
+      resizeObserver: null,
+    };
   },
 
   computed: {
     // Combined loading state - either from parent or internal
     isCurrentlyLoading() {
       return this.isLoading || this.internalLoading;
-    }
+    },
   },
-  
+
   mounted() {
     this.setupResizeObserver();
     this.updateCanvasDimensions();
     this.initCanvas();
     this.setupEventListeners();
     this.loadImage();
+    this.isTouchDevice = this.checkTouchDevice();
   },
-  
+
   beforeUnmount() {
     if (this.resizeObserver) {
       this.resizeObserver.disconnect();
     }
     this.removeEventListeners();
   },
-  
+
   watch: {
     baseImage() {
       this.loadImage();
     },
-    
+
     // Watch for loading state changes to update event listeners
     isLoading(newVal) {
-      console.log('Floor renderer loading state changed from parent:', newVal);
+      console.log("Floor renderer loading state changed from parent:", newVal);
       if (newVal) {
         this.removeEventListeners();
       } else {
@@ -151,7 +189,7 @@ export default {
     },
 
     internalLoading(newVal) {
-      console.log('Floor renderer internal loading state changed:', newVal);
+      console.log("Floor renderer internal loading state changed:", newVal);
       if (newVal) {
         this.removeEventListeners();
       } else {
@@ -159,29 +197,38 @@ export default {
           this.setupEventListeners();
         });
       }
-    }
+    },
   },
-  
+
   methods: {
+    checkTouchDevice() {
+      return (
+        (navigator.maxTouchPoints && navigator.maxTouchPoints > 0) ||
+        (navigator.msMaxTouchPoints && navigator.msMaxTouchPoints > 0) ||
+        ("ontouchstart" in window &&
+          window.matchMedia &&
+          window.matchMedia("(pointer: coarse)").matches)
+      );
+    },
     // ===================
     // INITIALIZATION
     // ===================
-    
+
     setupResizeObserver() {
-      if (typeof ResizeObserver !== 'undefined') {
+      if (typeof ResizeObserver !== "undefined") {
         this.resizeObserver = new ResizeObserver(() => {
           this.updateCanvasDimensions();
           this.$nextTick(() => {
             this.render();
           });
         });
-        
+
         if (this.$refs.canvasContainer) {
           this.resizeObserver.observe(this.$refs.canvasContainer);
         }
       } else {
         // Fallback for older browsers
-        window.addEventListener('resize', this.handleWindowResize);
+        window.addEventListener("resize", this.handleWindowResize);
       }
     },
 
@@ -191,7 +238,7 @@ export default {
         this.render();
       });
     },
-    
+
     // updateCanvasDimensions() {
     //   if (this.$refs.canvasContainer) {
     //     const rect = this.$refs.canvasContainer.getBoundingClientRect();
@@ -202,143 +249,148 @@ export default {
     //   }
     // },
     updateCanvasDimensions() {
-  if (this.$refs.canvasContainer) {
-    const rect = this.$refs.canvasContainer.getBoundingClientRect();
-    this.containerWidth = Math.floor(rect.width);
-    this.containerHeight = Math.floor(rect.height);
-    this.canvasWidth = this.containerWidth;
-    this.canvasHeight = this.containerHeight;
-    
-    // ===== ADD DPI SCALING WHEN DIMENSIONS CHANGE =====
-    if (this.canvas) {
-      const dpr = window.devicePixelRatio || 1;
-      
-      // Update canvas resolution
-      this.canvas.width = this.canvasWidth * dpr;
-      this.canvas.height = this.canvasHeight * dpr;
-      
-      // Update display size
-      this.canvas.style.width = this.canvasWidth + 'px';
-      this.canvas.style.height = this.canvasHeight + 'px';
-      
-      // Re-apply context scaling
-      if (this.ctx) {
-        this.ctx.scale(dpr, dpr);
-        this.ctx.imageSmoothingEnabled = true;
-        this.ctx.imageSmoothingQuality = "high";
+      if (this.$refs.canvasContainer) {
+        const rect = this.$refs.canvasContainer.getBoundingClientRect();
+        this.containerWidth = Math.floor(rect.width);
+        this.containerHeight = Math.floor(rect.height);
+        this.canvasWidth = this.containerWidth;
+        this.canvasHeight = this.containerHeight;
+
+        // ===== ADD DPI SCALING WHEN DIMENSIONS CHANGE =====
+        if (this.canvas) {
+          const dpr = window.devicePixelRatio || 1;
+
+          // Update canvas resolution
+          this.canvas.width = this.canvasWidth * dpr;
+          this.canvas.height = this.canvasHeight * dpr;
+
+          // Update display size
+          this.canvas.style.width = this.canvasWidth + "px";
+          this.canvas.style.height = this.canvasHeight + "px";
+
+          // Re-apply context scaling
+          if (this.ctx) {
+            this.ctx.scale(dpr, dpr);
+            this.ctx.imageSmoothingEnabled = true;
+            this.ctx.imageSmoothingQuality = "high";
+          }
+        }
+        // ===== END DPI SCALING SECTION =====
       }
-    }
-    // ===== END DPI SCALING SECTION =====
-  }
-},
+    },
 
     initCanvas() {
-  this.canvas = this.$refs.canvas;
-  
-  if (!this.canvas) {
-    console.error('Canvas ref not found');
-    return;
-  }
-  
-  // ===== ADD HIGH-DPI SUPPORT =====
-  const dpr = window.devicePixelRatio || 1;
-  
-  // Set canvas internal resolution (physical pixels)
-  this.canvas.width = this.canvasWidth * dpr;
-  this.canvas.height = this.canvasHeight * dpr;
-  
-  // Set display size (CSS pixels)
-  this.canvas.style.width = this.canvasWidth + 'px';
-  this.canvas.style.height = this.canvasHeight + 'px';
-  
-  this.ctx = this.canvas.getContext('2d', { 
-    alpha: false,
-    willReadFrequently: false 
-  });
-  
-  // Scale context to match DPI
-  this.ctx.scale(dpr, dpr);
-  
-  // Enable high-quality image rendering
-  this.ctx.imageSmoothingEnabled = true;
-  this.ctx.imageSmoothingQuality = "high";
-  // ===== END HIGH-DPI SECTION =====
-  
-  // Set initial background
-  this.ctx.fillStyle = '#f0f0f0';
-  this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
-},
+      this.canvas = this.$refs.canvas;
+
+      if (!this.canvas) {
+        console.error("Canvas ref not found");
+        return;
+      }
+
+      // ===== ADD HIGH-DPI SUPPORT =====
+      const dpr = window.devicePixelRatio || 1;
+
+      // Set canvas internal resolution (physical pixels)
+      this.canvas.width = this.canvasWidth * dpr;
+      this.canvas.height = this.canvasHeight * dpr;
+
+      // Set display size (CSS pixels)
+      this.canvas.style.width = this.canvasWidth + "px";
+      this.canvas.style.height = this.canvasHeight + "px";
+
+      this.ctx = this.canvas.getContext("2d", {
+        alpha: false,
+        willReadFrequently: false,
+      });
+
+      // Scale context to match DPI
+      this.ctx.scale(dpr, dpr);
+
+      // Enable high-quality image rendering
+      this.ctx.imageSmoothingEnabled = true;
+      this.ctx.imageSmoothingQuality = "high";
+      // ===== END HIGH-DPI SECTION =====
+
+      // Set initial background
+      this.ctx.fillStyle = "#f0f0f0";
+      this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+    },
 
     // ===================
     // EVENT LISTENERS
     // ===================
-    
+
     setupEventListeners() {
       if (!this.canvas || this.isCurrentlyLoading) return;
-      
-      console.log('Setting up floor renderer event listeners');
-      
+
+      console.log("Setting up floor renderer event listeners");
+
       // Mouse events
-      this.canvas.addEventListener('wheel', this.handleWheel, { passive: false });
-      this.canvas.addEventListener('mousedown', this.handleMouseDown);
-      this.canvas.addEventListener('mousemove', this.handleMouseMove);
-      this.canvas.addEventListener('mouseup', this.handleMouseUp);
-      this.canvas.addEventListener('mouseleave', this.handleMouseUp);
-      this.canvas.addEventListener('contextmenu', (e) => e.preventDefault());
-      
+      this.canvas.addEventListener("wheel", this.handleWheel, {
+        passive: false,
+      });
+      this.canvas.addEventListener("mousedown", this.handleMouseDown);
+      this.canvas.addEventListener("mousemove", this.handleMouseMove);
+      this.canvas.addEventListener("mouseup", this.handleMouseUp);
+      this.canvas.addEventListener("mouseleave", this.handleMouseUp);
+      this.canvas.addEventListener("contextmenu", (e) => e.preventDefault());
+
       // Touch events for mobile
-      this.canvas.addEventListener('touchstart', this.handleTouchStart);
-      this.canvas.addEventListener('touchmove', this.handleTouchMove);
-      this.canvas.addEventListener('touchend', this.handleTouchEnd);
+      this.canvas.addEventListener("touchstart", this.handleTouchStart);
+      this.canvas.addEventListener("touchmove", this.handleTouchMove);
+      this.canvas.addEventListener("touchend", this.handleTouchEnd);
     },
 
     removeEventListeners() {
       if (!this.canvas) return;
-      
-      console.log('Removing floor renderer event listeners');
-      
-      this.canvas.removeEventListener('wheel', this.handleWheel);
-      this.canvas.removeEventListener('mousedown', this.handleMouseDown);
-      this.canvas.removeEventListener('mousemove', this.handleMouseMove);
-      this.canvas.removeEventListener('mouseup', this.handleMouseUp);
-      this.canvas.removeEventListener('mouseleave', this.handleMouseUp);
-      this.canvas.removeEventListener('touchstart', this.handleTouchStart);
-      this.canvas.removeEventListener('touchmove', this.handleTouchMove);
-      this.canvas.removeEventListener('touchend', this.handleTouchEnd);
-      
-      if (typeof ResizeObserver === 'undefined') {
-        window.removeEventListener('resize', this.handleWindowResize);
+
+      console.log("Removing floor renderer event listeners");
+
+      this.canvas.removeEventListener("wheel", this.handleWheel);
+      this.canvas.removeEventListener("mousedown", this.handleMouseDown);
+      this.canvas.removeEventListener("mousemove", this.handleMouseMove);
+      this.canvas.removeEventListener("mouseup", this.handleMouseUp);
+      this.canvas.removeEventListener("mouseleave", this.handleMouseUp);
+      this.canvas.removeEventListener("touchstart", this.handleTouchStart);
+      this.canvas.removeEventListener("touchmove", this.handleTouchMove);
+      this.canvas.removeEventListener("touchend", this.handleTouchEnd);
+
+      if (typeof ResizeObserver === "undefined") {
+        window.removeEventListener("resize", this.handleWindowResize);
       }
     },
 
     // ===================
     // MOUSE & TOUCH HANDLERS
     // ===================
-    
+
     handleWheel(e) {
       if (this.isCurrentlyLoading) {
         e.preventDefault();
         return;
       }
-      
+
       e.preventDefault();
-      
+
       const rect = this.canvas.getBoundingClientRect();
       const mouseX = e.clientX - rect.left;
       const mouseY = e.clientY - rect.top;
-      
+
       const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
-      const newZoom = Math.max(this.minZoom, Math.min(this.maxZoom, this.zoom * zoomFactor));
-      
+      const newZoom = Math.max(
+        this.minZoom,
+        Math.min(this.maxZoom, this.zoom * zoomFactor),
+      );
+
       if (newZoom !== this.zoom) {
         // Zoom towards mouse position
         const imageX = (mouseX - this.panX) / this.zoom;
         const imageY = (mouseY - this.panY) / this.zoom;
-        
+
         this.zoom = newZoom;
         this.panX = mouseX - imageX * this.zoom;
         this.panY = mouseY - imageY * this.zoom;
-        
+
         this.constrainPan();
         this.render();
       }
@@ -349,14 +401,15 @@ export default {
         e.preventDefault();
         return;
       }
-      
-      if (e.button === 0 || e.button === 2) { // Left or right click
+
+      if (e.button === 0 || e.button === 2) {
+        // Left or right click
         this.isDragging = true;
         this.dragStartX = e.clientX;
         this.dragStartY = e.clientY;
         this.dragStartPanX = this.panX;
         this.dragStartPanY = this.panY;
-        this.canvas.style.cursor = 'grabbing';
+        this.canvas.style.cursor = "grabbing";
         e.preventDefault();
       }
     },
@@ -366,20 +419,20 @@ export default {
         e.preventDefault();
         return;
       }
-      
+
       if (this.isDragging) {
         const deltaX = e.clientX - this.dragStartX;
         const deltaY = e.clientY - this.dragStartY;
-        
+
         this.panX = this.dragStartPanX + deltaX;
         this.panY = this.dragStartPanY + deltaY;
-        
+
         this.constrainPan();
         this.render();
         e.preventDefault();
       } else {
         // Update cursor based on zoom level
-        this.canvas.style.cursor = this.zoom > 1 ? 'grab' : 'default';
+        this.canvas.style.cursor = this.zoom > 1 ? "grab" : "default";
       }
     },
 
@@ -388,82 +441,169 @@ export default {
         e.preventDefault();
         return;
       }
-      
+
       if (this.isDragging) {
         this.isDragging = false;
-        this.canvas.style.cursor = this.zoom > 1 ? 'grab' : 'default';
+        this.canvas.style.cursor = this.zoom > 1 ? "grab" : "default";
         e.preventDefault();
       }
     },
 
     // Touch events for mobile devices
     handleTouchStart(e) {
-      if (this.isCurrentlyLoading) {
-      //  e.preventDefault();
-        return;
-      }
-      
-     // e.preventDefault();
-      
+      if (this.isLoading) return;
+
+      // ALWAYS allow page scroll with single touch
       if (e.touches.length === 1) {
-        const touch = e.touches[0];
-        this.isDragging = true;
-        this.dragStartX = touch.clientX;
-        this.dragStartY = touch.clientY;
+        this.isDragging = false;
+        return; // Don't prevent default - allow scroll
+      }
+
+      e.preventDefault(); // Prevent ONLY for two-finger gestures
+
+      if (e.touches.length === 2) {
+        // Two fingers - prepare for zoom OR pan
+        this.isDragging = false;
+        const touch1 = e.touches[0];
+        const touch2 = e.touches[1];
+
+        // Calculate initial distance
+        const dx = touch2.clientX - touch1.clientX;
+        const dy = touch2.clientY - touch1.clientY;
+        this.lastTouchDistance = Math.sqrt(dx * dx + dy * dy);
+        this.initialTouchDistance = this.lastTouchDistance;
+        this.lastPinchZoom = this.zoom;
+
+        // Store center point for two-finger panning
+        this.twoFingerPanStartX = (touch1.clientX + touch2.clientX) / 2;
+        this.twoFingerPanStartY = (touch1.clientY + touch2.clientY) / 2;
         this.dragStartPanX = this.panX;
         this.dragStartPanY = this.panY;
+        this.twoFingerPanning = false;
       }
     },
 
     handleTouchMove(e) {
-      if (this.isCurrentlyLoading) {
-      //  e.preventDefault();
-        return;
+      if (this.isLoading) return;
+
+      // ALWAYS allow page scroll with single touch
+      if (e.touches.length === 1) {
+        return; // Don't prevent default - allow scroll
       }
-      
-    //  e.preventDefault();
-      
-      if (this.isDragging && e.touches.length === 1) {
-        const touch = e.touches[0];
-        const deltaX = touch.clientX - this.dragStartX;
-        const deltaY = touch.clientY - this.dragStartY;
-        
-        this.panX = this.dragStartPanX + deltaX;
-        this.panY = this.dragStartPanY + deltaY;
-        
-        this.constrainPan();
-        this.render();
+
+      e.preventDefault(); // Prevent ONLY for two-finger gestures
+
+      if (e.touches.length === 2) {
+        // Two fingers - detect zoom OR pan
+        const touch1 = e.touches[0];
+        const touch2 = e.touches[1];
+
+        // Calculate current distance
+        const dx = touch2.clientX - touch1.clientX;
+        const dy = touch2.clientY - touch1.clientY;
+        const currentDistance = Math.sqrt(dx * dx + dy * dy);
+
+        // Calculate distance change threshold (5% of initial distance)
+        const distanceThreshold = this.initialTouchDistance * 0.05;
+        const distanceChange = Math.abs(
+          currentDistance - this.initialTouchDistance,
+        );
+
+        if (distanceChange > distanceThreshold) {
+          // ZOOM MODE - distance changed significantly
+          this.twoFingerPanning = false;
+
+          if (this.lastTouchDistance > 0) {
+            const zoomFactor = currentDistance / this.lastTouchDistance;
+            const newZoom = Math.max(
+              this.minZoom,
+              Math.min(this.maxZoom, this.lastPinchZoom * zoomFactor),
+            );
+
+            if (newZoom !== this.zoom) {
+              const centerX = (touch1.clientX + touch2.clientX) / 2;
+              const centerY = (touch1.clientY + touch2.clientY) / 2;
+              const rect = this.canvas.getBoundingClientRect();
+              const canvasCenterX = centerX - rect.left;
+              const canvasCenterY = centerY - rect.top;
+
+              const imageX = (canvasCenterX - this.panX) / this.zoom;
+              const imageY = (canvasCenterY - this.panY) / this.zoom;
+
+              this.zoom = newZoom;
+              this.panX = canvasCenterX - imageX * this.zoom;
+              this.panY = canvasCenterY - imageY * this.zoom;
+
+              this.constrainPan();
+              this.render();
+            }
+          }
+        } else {
+          // PAN MODE - distance stayed constant
+          this.twoFingerPanning = true;
+
+          const centerX = (touch1.clientX + touch2.clientX) / 2;
+          const centerY = (touch1.clientY + touch2.clientY) / 2;
+
+          const deltaX = centerX - this.twoFingerPanStartX;
+          const deltaY = centerY - this.twoFingerPanStartY;
+
+          this.panX = this.dragStartPanX + deltaX;
+          this.panY = this.dragStartPanY + deltaY;
+
+          this.constrainPan();
+          this.render();
+        }
       }
     },
 
     handleTouchEnd(e) {
-      if (this.isCurrentlyLoading) {
-      //  e.preventDefault();
-        return;
+      if (this.isLoading) return;
+
+      // ALWAYS allow scroll with single touch
+      if (e.touches.length <= 1) {
+        this.isDragging = false;
+        this.lastTouchDistance = 0;
+        this.twoFingerPanning = false;
+        this.initialTouchDistance = 0;
+        return; // Don't prevent default
       }
-      
-      // e.preventDefault();
-      this.isDragging = false;
+
+      e.preventDefault(); // Prevent ONLY when still using two fingers
+
+      if (e.touches.length === 0) {
+        this.isDragging = false;
+        this.lastTouchDistance = 0;
+        this.twoFingerPanning = false;
+        this.initialTouchDistance = 0;
+        this.removeObjectHighlight();
+      }
     },
 
     // ===================
     // ZOOM & PAN CONTROLS
     // ===================
-    
+
     constrainPan() {
       if (!this.baseImg) return;
-      
+
       const zoomedImageWidth = this.renderWidth * this.zoom;
       const zoomedImageHeight = this.renderHeight * this.zoom;
       const zoomedImageLeft = this.renderOffsetX * this.zoom;
       const zoomedImageTop = this.renderOffsetY * this.zoom;
-      
+
       // Calculate boundaries
-      const maxPanX = Math.max(0, zoomedImageWidth + zoomedImageLeft - this.canvasWidth);
+      const maxPanX = Math.max(
+        0,
+        zoomedImageWidth + zoomedImageLeft - this.canvasWidth,
+      );
       const minPanX = Math.min(0, -zoomedImageLeft);
-      const maxPanY = Math.max(0, zoomedImageHeight + zoomedImageTop - this.canvasHeight);
+      const maxPanY = Math.max(
+        0,
+        zoomedImageHeight + zoomedImageTop - this.canvasHeight,
+      );
       const minPanY = Math.min(0, -zoomedImageTop);
-      
+
       // Apply constraints
       this.panX = Math.max(-maxPanX, Math.min(minPanX, this.panX));
       this.panY = Math.max(-maxPanY, Math.min(minPanY, this.panY));
@@ -471,7 +611,7 @@ export default {
 
     zoomIn() {
       if (this.isCurrentlyLoading) return;
-      
+
       const newZoom = Math.min(this.maxZoom, this.zoom * 1.2);
       if (newZoom !== this.zoom) {
         this.zoomToCenter(newZoom);
@@ -480,7 +620,7 @@ export default {
 
     zoomOut() {
       if (this.isCurrentlyLoading) return;
-      
+
       const newZoom = Math.max(this.minZoom, this.zoom / 1.2);
       if (newZoom !== this.zoom) {
         this.zoomToCenter(newZoom);
@@ -490,21 +630,21 @@ export default {
     zoomToCenter(newZoom) {
       const centerX = this.canvasWidth / 2;
       const centerY = this.canvasHeight / 2;
-      
+
       const imageX = (centerX - this.panX) / this.zoom;
       const imageY = (centerY - this.panY) / this.zoom;
-      
+
       this.zoom = newZoom;
       this.panX = centerX - imageX * this.zoom;
       this.panY = centerY - imageY * this.zoom;
-      
+
       this.constrainPan();
       this.render();
     },
 
     resetZoomAndPan() {
       if (this.isCurrentlyLoading) return;
-      
+
       this.zoom = 1;
       this.panX = 0;
       this.panY = 0;
@@ -514,22 +654,22 @@ export default {
     // ===================
     // IMAGE LOADING
     // ===================
-    
+
     async loadImage() {
       if (!this.baseImage) {
-        console.warn('No base image provided');
+        console.warn("No base image provided");
         return;
       }
-      
+
       // Use internal loading state for image loading only
       this.internalLoading = true;
-      
+
       try {
         this.baseImg = await this.createImageFromSrc(this.baseImage);
         this.calculateImageDimensions();
         this.render();
       } catch (error) {
-        console.error('Error loading image:', error);
+        console.error("Error loading image:", error);
         this.showErrorState();
       } finally {
         this.internalLoading = false;
@@ -539,65 +679,66 @@ export default {
     createImageFromSrc(src) {
       return new Promise((resolve, reject) => {
         const img = new Image();
-        img.crossOrigin = 'anonymous';
-        
+        img.crossOrigin = "anonymous";
+
         img.onload = () => resolve(img);
-        img.onerror = (error) => reject(new Error(`Failed to load image: ${src}`));
-        
+        img.onerror = (error) =>
+          reject(new Error(`Failed to load image: ${src}`));
+
         img.src = src;
       });
     },
 
-//     calculateImageDimensions() {
-//   if (!this.baseImg) return;
-  
-//   const maxWidth = this.canvasWidth;
-//   const maxHeight = this.canvasHeight;
-  
-//   const imgAspectRatio = this.baseImg.width / this.baseImg.height;
-  
-//   // Always fit to width first (100% width)
-//   this.renderWidth = maxWidth;
-//   this.renderHeight = Math.round(maxWidth / imgAspectRatio);
-//   this.renderOffsetX = 0;
-  
-//   // If calculated height exceeds available height, fit to height instead
-//   if (this.renderHeight > maxHeight) {
-//     this.renderHeight = maxHeight;
-//     this.renderWidth = Math.round(maxHeight * imgAspectRatio);
-//     this.renderOffsetX = Math.round((maxWidth - this.renderWidth) / 2);
-//     this.renderOffsetY = 0;
-//   } else {
-//     // Center vertically if height is less than container
-//     this.renderOffsetY = Math.round((maxHeight - this.renderHeight) / 2);
-//   }
-  
-//   this.scaleX = this.renderWidth / this.baseImg.width;
-//   this.scaleY = this.renderHeight / this.baseImg.height;
-// },
+    //     calculateImageDimensions() {
+    //   if (!this.baseImg) return;
+
+    //   const maxWidth = this.canvasWidth;
+    //   const maxHeight = this.canvasHeight;
+
+    //   const imgAspectRatio = this.baseImg.width / this.baseImg.height;
+
+    //   // Always fit to width first (100% width)
+    //   this.renderWidth = maxWidth;
+    //   this.renderHeight = Math.round(maxWidth / imgAspectRatio);
+    //   this.renderOffsetX = 0;
+
+    //   // If calculated height exceeds available height, fit to height instead
+    //   if (this.renderHeight > maxHeight) {
+    //     this.renderHeight = maxHeight;
+    //     this.renderWidth = Math.round(maxHeight * imgAspectRatio);
+    //     this.renderOffsetX = Math.round((maxWidth - this.renderWidth) / 2);
+    //     this.renderOffsetY = 0;
+    //   } else {
+    //     // Center vertically if height is less than container
+    //     this.renderOffsetY = Math.round((maxHeight - this.renderHeight) / 2);
+    //   }
+
+    //   this.scaleX = this.renderWidth / this.baseImg.width;
+    //   this.scaleY = this.renderHeight / this.baseImg.height;
+    // },
 
     // ===================
     // RENDERING
     // ===================
-    
+
     // render() {
     //   if (!this.canvas || !this.ctx) return;
 
     //   // Clear canvas
     //   this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-      
+
     //   // Fill background
     //   this.ctx.fillStyle = '#f5f5f5';
     //   this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
-      
+
     //   if (!this.baseImg) return;
-      
+
     //   this.ctx.save();
-      
+
     //   // Apply transformations
     //   this.ctx.translate(this.panX, this.panY);
     //   this.ctx.scale(this.zoom, this.zoom);
-      
+
     //   try {
     //     // Draw image
     //     this.ctx.drawImage(
@@ -607,7 +748,7 @@ export default {
     //       this.renderWidth,
     //       this.renderHeight
     //     );
-        
+
     //     // Add subtle border
     //     this.ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
     //     this.ctx.lineWidth = 1 / this.zoom;
@@ -617,115 +758,115 @@ export default {
     //       this.renderWidth,
     //       this.renderHeight
     //     );
-        
+
     //   } catch (error) {
     //     console.error('Error rendering image:', error);
     //     this.showErrorState();
     //   }
-      
+
     //   this.ctx.restore();
     // },
 
-calculateImageDimensions() {
-  if (!this.baseImg) return;
-  
-  const maxWidth = this.canvasWidth;
-  const maxHeight = this.canvasHeight;
-  
-  // ===== USE naturalWidth/naturalHeight FOR ACCURACY =====
-  const imgAspectRatio = this.baseImg.naturalWidth / this.baseImg.naturalHeight;
-  // ===== END =====
-  
-  // Always fit to width first (100% width)
-  this.renderWidth = maxWidth;
-  this.renderHeight = Math.round(maxWidth / imgAspectRatio);
-  this.renderOffsetX = 0;
-  
-  // If calculated height exceeds available height, fit to height instead
-  if (this.renderHeight > maxHeight) {
-    this.renderHeight = maxHeight;
-    this.renderWidth = Math.round(maxHeight * imgAspectRatio);
-    this.renderOffsetX = Math.round((maxWidth - this.renderWidth) / 2);
-    this.renderOffsetY = 0;
-  } else {
-    // Center vertically if height is less than container
-    this.renderOffsetY = Math.round((maxHeight - this.renderHeight) / 2);
-  }
-  
-  // ===== USE naturalWidth/naturalHeight FOR SCALING =====
-  this.scaleX = this.renderWidth / this.baseImg.naturalWidth;
-  this.scaleY = this.renderHeight / this.baseImg.naturalHeight;
-  // ===== END =====
-},
-    render() {
-  if (!this.canvas || !this.ctx) return;
+    calculateImageDimensions() {
+      if (!this.baseImg) return;
 
-  // Clear canvas
-  this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-  
-  // Fill background
-  this.ctx.fillStyle = '#f5f5f5';
-  this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
-  
-  if (!this.baseImg) return;
-  
-  this.ctx.save();
-  
-  // Apply transformations
-  this.ctx.translate(this.panX, this.panY);
-  this.ctx.scale(this.zoom, this.zoom);
-  
-  // ===== HIGH QUALITY SETTINGS =====
-  this.ctx.imageSmoothingEnabled = true;
-  this.ctx.imageSmoothingQuality = "high";
-  // ===== END QUALITY SETTINGS =====
-  
-  try {
-    // Draw image
-    this.ctx.drawImage(
-      this.baseImg,
-      this.renderOffsetX,
-      this.renderOffsetY,
-      this.renderWidth,
-      this.renderHeight
-    );
-    
-    // Add subtle border
-    this.ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
-    this.ctx.lineWidth = 1 / this.zoom;
-    this.ctx.strokeRect(
-      this.renderOffsetX,
-      this.renderOffsetY,
-      this.renderWidth,
-      this.renderHeight
-    );
-    
-  } catch (error) {
-    console.error('Error rendering image:', error);
-    this.showErrorState();
-  }
-  
-  this.ctx.restore();
-},
+      const maxWidth = this.canvasWidth;
+      const maxHeight = this.canvasHeight;
+
+      // ===== USE naturalWidth/naturalHeight FOR ACCURACY =====
+      const imgAspectRatio =
+        this.baseImg.naturalWidth / this.baseImg.naturalHeight;
+      // ===== END =====
+
+      // Always fit to width first (100% width)
+      this.renderWidth = maxWidth;
+      this.renderHeight = Math.round(maxWidth / imgAspectRatio);
+      this.renderOffsetX = 0;
+
+      // If calculated height exceeds available height, fit to height instead
+      if (this.renderHeight > maxHeight) {
+        this.renderHeight = maxHeight;
+        this.renderWidth = Math.round(maxHeight * imgAspectRatio);
+        this.renderOffsetX = Math.round((maxWidth - this.renderWidth) / 2);
+        this.renderOffsetY = 0;
+      } else {
+        // Center vertically if height is less than container
+        this.renderOffsetY = Math.round((maxHeight - this.renderHeight) / 2);
+      }
+
+      // ===== USE naturalWidth/naturalHeight FOR SCALING =====
+      this.scaleX = this.renderWidth / this.baseImg.naturalWidth;
+      this.scaleY = this.renderHeight / this.baseImg.naturalHeight;
+      // ===== END =====
+    },
+    render() {
+      if (!this.canvas || !this.ctx) return;
+
+      // Clear canvas
+      this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+
+      // Fill background
+      this.ctx.fillStyle = "#f5f5f5";
+      this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+
+      if (!this.baseImg) return;
+
+      this.ctx.save();
+
+      // Apply transformations
+      this.ctx.translate(this.panX, this.panY);
+      this.ctx.scale(this.zoom, this.zoom);
+
+      // ===== HIGH QUALITY SETTINGS =====
+      this.ctx.imageSmoothingEnabled = true;
+      this.ctx.imageSmoothingQuality = "high";
+      // ===== END QUALITY SETTINGS =====
+
+      try {
+        // Draw image
+        this.ctx.drawImage(
+          this.baseImg,
+          this.renderOffsetX,
+          this.renderOffsetY,
+          this.renderWidth,
+          this.renderHeight,
+        );
+
+        // Add subtle border
+        this.ctx.strokeStyle = "rgba(0, 0, 0, 0.1)";
+        this.ctx.lineWidth = 1 / this.zoom;
+        this.ctx.strokeRect(
+          this.renderOffsetX,
+          this.renderOffsetY,
+          this.renderWidth,
+          this.renderHeight,
+        );
+      } catch (error) {
+        console.error("Error rendering image:", error);
+        this.showErrorState();
+      }
+
+      this.ctx.restore();
+    },
     showErrorState() {
       if (!this.ctx) return;
-      
-      this.ctx.fillStyle = '#ffcccc';
+
+      this.ctx.fillStyle = "#ffcccc";
       this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
-      this.ctx.fillStyle = '#cc0000';
-      this.ctx.font = '20px Arial';
-      this.ctx.textAlign = 'center';
+      this.ctx.fillStyle = "#cc0000";
+      this.ctx.font = "20px Arial";
+      this.ctx.textAlign = "center";
       this.ctx.fillText(
-        'Error loading image',
+        "Error loading image",
         this.canvasWidth / 2,
-        this.canvasHeight / 2
+        this.canvasHeight / 2,
       );
     },
 
     // ===================
     // PUBLIC METHODS
     // ===================
-    
+
     updateImage(newImageSrc) {
       this.baseImage = newImageSrc;
       this.loadImage();
@@ -741,29 +882,28 @@ calculateImageDimensions() {
         renderWidth: this.renderWidth,
         renderHeight: this.renderHeight,
         renderOffsetX: this.renderOffsetX,
-        renderOffsetY: this.renderOffsetY
+        renderOffsetY: this.renderOffsetY,
       };
     },
 
     // ===================
     // UTILITY METHODS
     // ===================
-    
+
     // Method to get current loading status
     getLoadingStatus() {
       return {
         isLoading: this.isLoading, // From parent
         internalLoading: this.internalLoading, // Internal
-        isCurrentlyLoading: this.isCurrentlyLoading // Combined
+        isCurrentlyLoading: this.isCurrentlyLoading, // Combined
       };
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style scoped>
-  .apply-wrapper {
-  
+.apply-wrapper {
 }
 .canvas-container {
   position: relative;
@@ -787,14 +927,14 @@ calculateImageDimensions() {
   }
 }
 
-@media screen and (min-width:400px) and (max-width:770px){
-  .canvas-container{
+@media screen and (min-width: 400px) and (max-width: 770px) {
+  .canvas-container {
     height: calc(100vh - 160px);
   }
 }
 
-@media screen and (min-width:200px) and (max-width:400px){
-  .canvas-container{
+@media screen and (min-width: 200px) and (max-width: 400px) {
+  .canvas-container {
     height: calc(100vh - 190px);
   }
 }
@@ -823,8 +963,12 @@ calculateImageDimensions() {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .loading-text {
@@ -919,20 +1063,21 @@ calculateImageDimensions() {
   .zoom-controls {
     top: 8px;
     right: 8px;
-    padding: 6px 8px;gap: 6px;
+    padding: 6px 8px;
+    gap: 6px;
   }
-  
+
   .zoom-btn {
     width: 24px;
     height: 24px;
     font-size: 12px;
   }
-  
+
   .zoom-level {
     font-size: 11px;
     min-width: 32px;
   }
-  
+
   .instructions {
     bottom: 8px;
     font-size: 10px;
@@ -944,25 +1089,25 @@ calculateImageDimensions() {
   .canvas-container {
     min-height: 280px;
   }
-  
+
   .zoom-controls {
     top: 2px;
     right: 2px;
     padding: 4px 6px;
     gap: 4px;
   }
-  
+
   .zoom-btn {
     width: 20px;
     height: 20px;
     font-size: 10px;
   }
-  
+
   .zoom-level {
     font-size: 10px;
     min-width: 28px;
   }
-  
+
   .instructions {
     bottom: 4px;
     font-size: 9px;
@@ -977,28 +1122,11 @@ calculateImageDimensions() {
     height: 32px;
     font-size: 14px;
   }
-  
+
   .main-canvas {
     touch-action: pan-y;
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /* Updated scanning loading overlay to fit canvas only */
 .scanning-loading-overlay {
@@ -1027,7 +1155,7 @@ calculateImageDimensions() {
 }
 
 .loading-screen::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -1036,7 +1164,7 @@ calculateImageDimensions() {
   /* background: rgba(0, 0, 0, 0.05); */
   z-index: 1;
   background: rgba(20, 20, 20, 0.55);
-  backdrop-filter: blur(0.1px); 
+  backdrop-filter: blur(0.1px);
 }
 .wave-overlay {
   position: absolute;
@@ -1046,29 +1174,42 @@ calculateImageDimensions() {
   height: 100%;
   background: linear-gradient(
     to left,
-    rgba(0,102,255,1) 0%,   /* bold vertical scanning line */
-    rgba(0,102,255,0.4) 20%,
-    rgba(0,102,255,0.3) 30%, /* fade tail after the bold line */
-    rgba(0,102,255,0.2) 35%,
-    rgba(0,102,255,0.15) 40%,
-    rgba(0,102,255,0.10) 50%,
-    rgba(0,102,255,0.0) 100%
+    rgba(0, 102, 255, 1) 0%,
+    /* bold vertical scanning line */ rgba(0, 102, 255, 0.4) 20%,
+    rgba(0, 102, 255, 0.3) 30%,
+    /* fade tail after the bold line */ rgba(0, 102, 255, 0.2) 35%,
+    rgba(0, 102, 255, 0.15) 40%,
+    rgba(0, 102, 255, 0.1) 50%,
+    rgba(0, 102, 255, 0) 100%
   );
-  animation: moveWaveLeftToRight 3s linear infinite,
-             waveFade 3s ease-in-out infinite; /* fade control */
+  animation:
+    moveWaveLeftToRight 3s linear infinite,
+    waveFade 3s ease-in-out infinite; /* fade control */
   z-index: 2;
 }
 
 @keyframes moveWaveLeftToRight {
-  from { transform: translateX(-100%); }
-  to   { transform: translateX(50%); }
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(50%);
+  }
 }
 
 @keyframes waveFade {
-  0%   { opacity: 0; }   /* invisible before entering */
-  10%  { opacity: 1; }   /* fade in */
-  90%  { opacity: 1; }   /* stay visible */
-  100% { opacity: 0; }   /* fade out before reset */
+  0% {
+    opacity: 0;
+  } /* invisible before entering */
+  10% {
+    opacity: 1;
+  } /* fade in */
+  90% {
+    opacity: 1;
+  } /* stay visible */
+  100% {
+    opacity: 0;
+  } /* fade out before reset */
 }
 
 .loading-text {
@@ -1076,7 +1217,7 @@ calculateImageDimensions() {
   color: #fff;
   text-align: center;
   z-index: 3;
-  text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
   background: rgba(0, 0, 0, 0.3);
   padding: 20px 30px;
   border-radius: 10px;
@@ -1090,5 +1231,4 @@ calculateImageDimensions() {
   letter-spacing: 1px;
   text-transform: uppercase;
 }
-
 </style>

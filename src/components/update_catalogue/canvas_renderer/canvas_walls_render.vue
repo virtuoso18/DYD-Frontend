@@ -1,17 +1,18 @@
-
 <template>
-
-<div class="canvas-container" ref="canvasContainer">
+  <div class="canvas-container" ref="canvasContainer">
     <!-- Loading Overlay -->
-    
-<div v-if="isLoading" class="scanning-loading-overlay">
-  <div class="loading-screen" :style="{ backgroundImage: `url(${backgroundImageUrl})` }">
-    <div class="wave-overlay"></div>
-    <div class="loading-text">
-      <div class="process-text">Loading Room...</div>
+
+    <div v-if="isLoading" class="scanning-loading-overlay">
+      <div
+        class="loading-screen"
+        :style="{ backgroundImage: `url(${backgroundImageUrl})` }"
+      >
+        <div class="wave-overlay"></div>
+        <div class="loading-text">
+          <div class="process-text">Loading Room...</div>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
 
     <!-- Main Canvas -->
     <canvas
@@ -19,8 +20,8 @@
       :width="canvasWidth"
       :height="canvasHeight"
       class="main-canvas"
-      :class="{ 'disabled': isLoading }"
-      style="position: absolute; top: 0; left: 0; z-index: 1;"
+      :class="{ disabled: isLoading }"
+      style="position: absolute; top: 0; left: 0; z-index: 1"
     ></canvas>
 
     <!-- Overlay Canvas for Highlights -->
@@ -29,29 +30,35 @@
       :width="canvasWidth"
       :height="canvasHeight"
       class="overlay-canvas"
-      :class="{ 'disabled': isLoading }"
-      style="position: absolute; top: 0; left: 0; z-index: 2; pointer-events: none;"
+      :class="{ disabled: isLoading }"
+      style="
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 2;
+        pointer-events: none;
+      "
     ></canvas>
 
     <!-- Floating Buttons for Wall Selection -->
-    <div 
-      v-if="showSelectionButtons && !isLoading && isReady" 
-      class="floating-buttons" 
+    <div
+      v-if="showSelectionButtons && !isLoading && isReady"
+      class="floating-buttons"
       :style="{ width: canvasWidth + 'px', height: canvasHeight + 'px' }"
     >
       <button
         v-for="region in maskRegions"
         :key="`wall-${region.maskIndex}`"
         class="wall-button"
-        :class="{ 
-          'selected': internalSelectedMasks.includes(region.maskIndex),
+        :class="{
+          selected: internalSelectedMasks.includes(region.maskIndex),
           'single-mode': selectionMode === 'single',
-          'hovered': hoveredMask === region.maskIndex
+          hovered: hoveredMask === region.maskIndex,
         }"
         :style="{
           left: region.centerX + 'px',
           top: region.centerY + 'px',
-          transform: 'translate(-50%, -50%)'
+          transform: 'translate(-50%, -50%)',
         }"
         @click="toggleWallSelection(region.maskIndex)"
         @mouseenter="highlightWall(region.maskIndex)"
@@ -59,55 +66,71 @@
         :title="`Wall ${region.maskIndex + 1}`"
       >
         <span class="wall-number">{{ region.maskIndex + 1 }}</span>
-        <div v-if="internalSelectedMasks.includes(region.maskIndex)" class="checkmark">✓</div>
+        <div
+          v-if="internalSelectedMasks.includes(region.maskIndex)"
+          class="checkmark"
+        >
+          ✓
+        </div>
       </button>
 
-       <a-button  style="top:20px;margin:auto;pointer-events: all;"
-           class="control-btn"
-           
-           :class="{ 'active': allWallsSelected }"
-           @click="toggleSelectAll"
-           :disabled="isLoading"
-           :title="allWallsSelected ? 'Unselect All' : 'Select All'"
-         >
-           <!-- <svg  width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+      <a-button
+        style="top: 20px; margin: auto; pointer-events: all"
+        class="control-btn"
+        :class="{ active: allWallsSelected }"
+        @click="toggleSelectAll"
+        :disabled="isLoading"
+        :title="allWallsSelected ? 'Unselect All' : 'Select All'"
+      >
+        <!-- <svg  width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
              <path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16zm3.5-5L7 6.5 4.5 9 3 7.5 7 3.5 13 9.5 11.5 11z"/>
             </svg> -->
-            <div v-if="allWallsSelected" style="
-            width:16px;height:16px;
-  background: red;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 8px;
-  color: white;
-  font-weight: bold;
-">X</div>
-            <div v-else style="
-            width:16px;height:16px;
-  background: #52c41a;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 8px;
-  color: white;
-  font-weight: bold;
-">✓</div>
-           {{ allWallsSelected ? 'Unselect All' : 'Select All' }} 
-
-         </a-button>
+        <div
+          v-if="allWallsSelected"
+          style="
+            width: 16px;
+            height: 16px;
+            background: red;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+            color: white;
+            font-weight: bold;
+          "
+        >
+          X
+        </div>
+        <div
+          v-else
+          style="
+            width: 16px;
+            height: 16px;
+            background: #52c41a;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+            color: white;
+            font-weight: bold;
+          "
+        >
+          ✓
+        </div>
+        {{ allWallsSelected ? "Unselect All" : "Select All" }}
+      </a-button>
     </div>
 
     <!-- Selection Controls -->
     <!-- <div v-if="showSelectionButtons && !isLoading && isReady" class="selection-controls"> -->
-      <!-- <div class="control-group"> -->
-      
-      <!-- </div> -->
-      
-      <!-- Selection Info -->
-      <!-- <div class="selection-info" v-if="maskRegions.length > 0">
+    <!-- <div class="control-group"> -->
+
+    <!-- </div> -->
+
+    <!-- Selection Info -->
+    <!-- <div class="selection-info" v-if="maskRegions.length > 0">
         <span class="selection-count">
           {{ internalSelectedMasks.length }} of {{ maskRegions.length }} walls selected
         </span>
@@ -120,9 +143,7 @@
     <div v-if="processingMasks" class="processing-overlay">
       <div class="processing-content">
         <div class="processing-spinner"></div>
-        <div class="processing-text">
-          Processing wall masks...
-        </div>
+        <div class="processing-text">Processing wall masks...</div>
         <div class="processing-progress">
           {{ processingProgress }} / {{ processingTotal }}
         </div>
@@ -134,58 +155,70 @@
       <button @click="zoomIn" class="zoom-btn" title="Zoom In">+</button>
       <span class="zoom-level">{{ Math.round(zoom * 100) }}%</span>
       <button @click="zoomOut" class="zoom-btn" title="Zoom Out">-</button>
-      <button @click="resetZoomAndPan" class="zoom-btn reset-btn" title="Reset View">⌂</button>
-    </div>
-
-    <div class="rescale-controls" >
-
       <button
-      @click="showFlatSurfaceModal = true"
-  class="!px-2 !py-1  whitespace-nowrap !text-black rounded-md btn-text-style flex items-center justify-center"
-  type="primary"
-  :disabled="isLoading"
-  title="Rescale Room Layout"
->
-  <svg
-    width="16"
-    height="16"
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <!-- circular arrow -->
-    <path
-      d="M21 12a9 9 0 1 1-2.64-6.36"
-      stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-    />
-    <path
-      d="M21 3v6h-6"
-      stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-    />
-  </svg>
-</button>
-
+        @click="resetZoomAndPan"
+        class="zoom-btn reset-btn"
+        title="Reset View"
+      >
+        ⌂
+      </button>
     </div>
 
-    
+    <div class="rescale-controls">
+      <button
+        @click="showFlatSurfaceModal = true"
+        class="!px-2 !py-1 whitespace-nowrap !text-black rounded-md btn-text-style flex items-center justify-center"
+        type="primary"
+        :disabled="isLoading"
+        title="Rescale Room Layout"
+      >
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <!-- circular arrow -->
+          <path
+            d="M21 12a9 9 0 1 1-2.64-6.36"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+          />
+          <path
+            d="M21 3v6h-6"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </button>
+    </div>
 
     <!-- Pan Instructions -->
-    <div v-if="zoom > 1 && !isLoading" class="instructions">
+    <div v-if="zoom > 1 && !isLoading && !isTouchDevice" class="instructions">
       Click and drag to pan • Mouse wheel to zoom
     </div>
+    <div v-else="zoom > 1 && !isLoading && isTouchDevice" class="instructions">
+      Pinch in to zoom in & Pinch out to zoom out
+    </div> 
 
     <!-- Empty State -->
     <div v-if="!isLoading && !hasWallMasks && isReady" class="empty-state">
       <div class="empty-content">
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-          <circle cx="8.5" cy="8.5" r="1.5"/>
-          <polyline points="21,15 16,10 5,21"/>
+        <svg
+          width="48"
+          height="48"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+          <circle cx="8.5" cy="8.5" r="1.5" />
+          <polyline points="21,15 16,10 5,21" />
         </svg>
         <h3>No Wall Masks Available</h3>
         <p>Wall masks are required to enable wall selection functionality.</p>
@@ -193,12 +226,19 @@
     </div>
   </div>
   <div className="hidden md:block ">
-
-    <div  class="" style="display:flex;justify-content: space-between;padding-left:10px;padding-right:10px;background: white;">
-      
-   <div style="padding-top:5px;">
- <div style="display:flex;gap:5px;padding-top:5px;">
-     <!-- <a-button 
+    <div
+      class=""
+      style="
+        display: flex;
+        justify-content: space-between;
+        padding-left: 10px;
+        padding-right: 10px;
+        background: white;
+      "
+    >
+      <div style="padding-top: 5px">
+        <div style="display: flex; gap: 5px; padding-top: 5px">
+          <!-- <a-button 
            class="control-btn"
            :class="{ 'active': allWallsSelected }"
            @click="toggleSelectAll"
@@ -210,7 +250,7 @@
            </svg>
            {{ allWallsSelected ? 'Deselect All' : 'Select All' }}
          </a-button> -->
-         <!-- <a-button 
+          <!-- <a-button 
          class="control-btn clear-btn"
          @click="clearAllSelections"
          :disabled="internalSelectedMasks.length === 0 || isLoading"
@@ -222,40 +262,53 @@
          </svg>
          Clear
        </a-button> -->
-       <a-button type='primary' :disabled="isLoading" @click="rescaleRoomLayout()"> 
-         Rescale Room layout
-       </a-button>
- 
- </div>
- </div>
- <div>
-   
- <div style="padding-top:5px;display:flex;gap:10px;">
- 
-   <a-button  class="toolbar-btn primary-btn" @click="reset_entire_room" :disabled="isLoading">
-     Before
-   </a-button>
-   <a-button type="primary" class="toolbar-btn primary-btn" @click="reset_entire_room" :disabled="isLoading">
-     After
-   </a-button>
- </div>
-       </div>
-       <div style="padding-top:10px;">
-         <a-button type="primary" class="toolbar-btn primary-btn" @click="$emit('Apply-Changes', 'Walls-Renerer')" :disabled="isLoading">
-           Finalise Changes
-         </a-button>
-       </div>
-     </div>
+          <a-button
+            type="primary"
+            :disabled="isLoading"
+            @click="rescaleRoomLayout()"
+          >
+            Rescale Room layout
+          </a-button>
+        </div>
+      </div>
+      <div>
+        <div style="padding-top: 5px; display: flex; gap: 10px">
+          <a-button
+            class="toolbar-btn primary-btn"
+            @click="reset_entire_room"
+            :disabled="isLoading"
+          >
+            Before
+          </a-button>
+          <a-button
+            type="primary"
+            class="toolbar-btn primary-btn"
+            @click="reset_entire_room"
+            :disabled="isLoading"
+          >
+            After
+          </a-button>
+        </div>
+      </div>
+      <div style="padding-top: 10px">
+        <a-button
+          type="primary"
+          class="toolbar-btn primary-btn"
+          @click="$emit('Apply-Changes', 'Walls-Renerer')"
+          :disabled="isLoading"
+        >
+          Finalise Changes
+        </a-button>
+      </div>
+    </div>
   </div>
-  <div class="flex flex-wrap md:hidden justify-between px-3  bg-white">
+  <div class="flex flex-wrap md:hidden justify-between px-3 bg-white">
+    <!-- LEFT SIDE -->
+    <div class="pt-1">
+      <div class="flex gap-3 pt-1 pr-1">
+        <!-- Select / Deselect All -->
 
-  <!-- LEFT SIDE -->
-  <div class="pt-1">
-    <div class="flex gap-3 pt-1 pr-1">
-
-      <!-- Select / Deselect All -->
-
-      <!-- <button
+        <!-- <button
   class="flex items-center gap-[3px] !px-4 !py-[6px] bg-[#4e70f9] !text-white whitespace-nowrap rounded-md btn-text-style !text-[12px]"
   :class="{ 'active': allWallsSelected }"
   @click="toggleSelectAll"
@@ -269,9 +322,8 @@
   {{ allWallsSelected ? 'Deselect All' : 'Select All' }}
 </button> -->
 
-
-      <!-- Clear Button -->
-      <!-- <button
+        <!-- Clear Button -->
+        <!-- <button
         class="control-btn clear-btn !px-4 !py-[2px] bg-[#4e70f9] !text-red rounded-md btn-text-style  !text-[12px]"
         @click="clearAllSelections"
         :disabled="internalSelectedMasks.length === 0 || isLoading"
@@ -283,8 +335,8 @@
         Clear
       </button> -->
 
-      <!-- Rescale -->
-      <!-- <button
+        <!-- Rescale -->
+        <!-- <button
         class="!px-1 !py-[1px]  bg-[#4e70f9] whitespace-nowrap !text-white rounded-md btn-text-style  !text-[12px]"
         type="primary"
         :disabled="isLoading"
@@ -292,12 +344,11 @@
       >
         Rescale Room layout
       </button> -->
-
+      </div>
     </div>
-  </div>
 
-  <!-- MIDDLE -->
-  <!-- <div>
+    <!-- MIDDLE -->
+    <!-- <div>
     <div class="!pt-2 flex gap-1  pr-1">
       <button
         class="toolbar-btn primary-btn !px-2 !py-[0px] bg-[#4e70f9] !text-white rounded-md btn-text-style  !text-[12px]"
@@ -318,87 +369,86 @@
     </div>
   </div> -->
 
-  <!-- RIGHT SIDE -->
-  <div class="p-2 ">
- <a-button type="primary" @click="$emit('Apply-Changes', 'Walls-Renerer')" :disabled="isLoading">
-           Finalise Changes
-         </a-button>
-         
+    <!-- RIGHT SIDE -->
+    <div class="p-2">
+      <a-button
+        type="primary"
+        @click="$emit('Apply-Changes', 'Walls-Renerer')"
+        :disabled="isLoading"
+      >
+        Finalise Changes
+      </a-button>
+    </div>
 
-</div>
-
-
-<FlatSurfaceModal
+    <FlatSurfaceModal
       :isVisible="showFlatSurfaceModal"
       @close="showFlatSurfaceModal = false"
       @continue="handleFlatSurfaceContinue"
     />
-
-</div>
-
+  </div>
 </template>
 <script>
-import FlatSurfaceModal from '@/components/update_catalogue/FlatSurfaceModal.vue';
+import FlatSurfaceModal from "@/components/update_catalogue/FlatSurfaceModal.vue";
 
 export default {
-  name: 'walls_renderer',
+  name: "walls_renderer",
   components: {
-    FlatSurfaceModal
+    FlatSurfaceModal,
   },
-  
-// 1. Add maskUpdateTrigger as a prop in child component
-props: {
-  baseImage: {
-    type: String,
-    required: true
-  },
-  binaryMasks: {
-    type: Array,
-    default: () => []
-  },
-  selectedMasks: {
-    type: Array,
-    default: () => []
-  },
-  // ADD THIS NEW PROP
-  maskUpdateTrigger: {
-    type: Number,
-    default: 0
-  },
-  isLoading: {
-    type: Boolean,
-    default: false
-  },
-  selectionMode: {
-    type: String,
-    default: 'multiple',
-    validator: value => ['single', 'multiple'].includes(value)
-  },
-  showSelectionButtons: {
-    type: Boolean,
-    default: true
-  }
-},
 
+  // 1. Add maskUpdateTrigger as a prop in child component
+  props: {
+    baseImage: {
+      type: String,
+      required: true,
+    },
+    binaryMasks: {
+      type: Array,
+      default: () => [],
+    },
+    selectedMasks: {
+      type: Array,
+      default: () => [],
+    },
+    // ADD THIS NEW PROP
+    maskUpdateTrigger: {
+      type: Number,
+      default: 0,
+    },
+    isLoading: {
+      type: Boolean,
+      default: false,
+    },
+    selectionMode: {
+      type: String,
+      default: "multiple",
+      validator: (value) => ["single", "multiple"].includes(value),
+    },
+    showSelectionButtons: {
+      type: Boolean,
+      default: true,
+    },
+  },
 
   data() {
     return {
+      isTouchDevice: false,
       // Canvas elements
       canvas: null,
       ctx: null,
       overlayCanvas: null,
       overlayCtx: null,
-      
+
       // Images
       baseImg: null,
       maskImages: [],
-      
+
       // Canvas dimensions
       canvasWidth: 800,
       canvasHeight: 600,
       containerWidth: 800,
       containerHeight: 600,
-      
+
       // Image rendering properties
       renderWidth: 800,
       renderHeight: 600,
@@ -406,18 +456,18 @@ props: {
       renderOffsetY: 0,
       scaleX: 1,
       scaleY: 1,
-      
+
       // Mask processing
       maskRegions: [],
       maskImageData: [],
       hoveredMask: -1,
       isImagesLoaded: false,
-      
+
       // Processing states
       processingMasks: false,
       processingProgress: 0,
       processingTotal: 0,
-      
+
       // Zoom and pan functionality
       zoom: 1,
       minZoom: 1.0,
@@ -429,44 +479,48 @@ props: {
       dragStartY: 0,
       dragStartPanX: 0,
       dragStartPanY: 0,
-      
+
       // Resize observer
       resizeObserver: null,
       showFlatSurfaceModal: false,
-      
+
       // Internal selected masks (for immediate UI updates)
-      internalSelectedMasks: []
-      
-    }
+      internalSelectedMasks: [],
+    };
   },
 
   computed: {
     hasWallMasks() {
       return this.binaryMasks && this.binaryMasks.length > 0;
     },
-    
+
     isReady() {
       return !this.isLoading && this.baseImg && this.isImagesLoaded;
     },
-    
+
     allWallsSelected() {
-      return this.maskRegions.length > 0 && 
-             this.internalSelectedMasks.length === this.maskRegions.length;
+      return (
+        this.maskRegions.length > 0 &&
+        this.internalSelectedMasks.length === this.maskRegions.length
+      );
     },
-    
+
     someWallsSelected() {
-      return this.internalSelectedMasks.length > 0 && 
-             this.internalSelectedMasks.length < this.maskRegions.length;
-    }
+      return (
+        this.internalSelectedMasks.length > 0 &&
+        this.internalSelectedMasks.length < this.maskRegions.length
+      );
+    },
   },
   mounted() {
-  this.setupResizeObserver();
-  this.updateCanvasDimensions();
-  this.initCanvas();
-  this.setupEventListeners();
-  this.internalSelectedMasks = [...this.selectedMasks];
-  this.loadImages();
-},
+    this.isTouchDevice = this.checkTouchDevice();
+    this.setupResizeObserver();
+    this.updateCanvasDimensions();
+    this.initCanvas();
+    this.setupEventListeners();
+    this.internalSelectedMasks = [...this.selectedMasks];
+    this.loadImages();
+  },
 
   beforeUnmount() {
     if (this.resizeObserver) {
@@ -474,78 +528,88 @@ props: {
     }
     this.removeEventListeners();
   },
-  
-// 2. Enhanced watch handlers in child component
-watch: {
-  baseImage: {
-    handler(newVal, oldVal) {
-      if (newVal !== oldVal) {
-        console.log('🖼️ Base image changed, reloading...');
+
+  // 2. Enhanced watch handlers in child component
+  watch: {
+    baseImage: {
+      handler(newVal, oldVal) {
+        if (newVal !== oldVal) {
+          console.log("🖼️ Base image changed, reloading...");
+          this.loadImages();
+        }
+      },
+      immediate: false,
+    },
+
+    binaryMasks: {
+      handler(newVal, oldVal) {
+        // Check if the arrays are actually different
+        const isDifferent = JSON.stringify(newVal) !== JSON.stringify(oldVal);
+
+        if (isDifferent) {
+          console.log(
+            "🧱 Binary masks changed, reloading...",
+            newVal.length,
+            "masks",
+          );
+          this.loadImages();
+        }
+      },
+      deep: true,
+      immediate: false,
+    },
+
+    // ADD THIS NEW WATCHER FOR THE TRIGGER
+    maskUpdateTrigger: {
+      handler(newVal) {
+        console.log("🔥 Mask update trigger activated:", newVal);
         this.loadImages();
+      },
+      immediate: false,
+    },
+
+    selectedMasks: {
+      handler(newVal) {
+        this.internalSelectedMasks = [...newVal];
+      },
+      deep: true,
+    },
+
+    isLoading(newVal) {
+      if (newVal) {
+        this.removeEventListeners();
+      } else {
+        this.setupEventListeners();
       }
     },
-    immediate: false
   },
-  
-  binaryMasks: {
-    handler(newVal, oldVal) {
-      // Check if the arrays are actually different
-      const isDifferent = JSON.stringify(newVal) !== JSON.stringify(oldVal);
-      
-      if (isDifferent) {
-        console.log('🧱 Binary masks changed, reloading...', newVal.length, 'masks');
-        this.loadImages();
-      }
-    },
-    deep: true,
-    immediate: false
-  },
-  
-  // ADD THIS NEW WATCHER FOR THE TRIGGER
-  maskUpdateTrigger: {
-    handler(newVal) {
-      console.log('🔥 Mask update trigger activated:', newVal);
-      this.loadImages();
-    },
-    immediate: false
-  },
-  
-  selectedMasks: {
-    handler(newVal) {
-      this.internalSelectedMasks = [...newVal];
-    },
-    deep: true
-  },
-  
-  isLoading(newVal) {
-    if (newVal) {
-      this.removeEventListeners();
-    } else {
-      this.setupEventListeners();
-    }
-  }
-},
 
-
-  
   methods: {
-
-     handleFlatSurfaceContinue() {
-      // Your rescale logic here
-      this.rescaleRoomLayout()
-      console.log('Continue with flat surface detection')
+    checkTouchDevice() {
+      return (
+        (navigator.maxTouchPoints && navigator.maxTouchPoints > 0) ||
+        (navigator.msMaxTouchPoints && navigator.msMaxTouchPoints > 0) ||
+        ("ontouchstart" in window &&
+          window.matchMedia &&
+          window.matchMedia("(pointer: coarse)").matches)
+      );
     },
-    
+    handleFlatSurfaceContinue() {
+      // Your rescale logic here
+      this.rescaleRoomLayout();
+      console.log("Continue with flat surface detection");
+    },
+
     // rescaleRoomLayout() {
-      // Your existing rescale logic
-      // console.log('Rescaling room layout...')
+    // Your existing rescale logic
+    // console.log('Rescaling room layout...')
     // },
     // ===================
     // INITIALIZATION
     // ===================
-    
+
     setupResizeObserver() {
-      if (typeof ResizeObserver !== 'undefined') {
+      if (typeof ResizeObserver !== "undefined") {
         this.resizeObserver = new ResizeObserver(() => {
           this.updateCanvasDimensions();
           this.$nextTick(() => {
@@ -553,13 +617,13 @@ watch: {
             this.updateButtonPositions();
           });
         });
-        
+
         if (this.$refs.canvasContainer) {
           this.resizeObserver.observe(this.$refs.canvasContainer);
         }
       } else {
         // Fallback for older browsers
-        window.addEventListener('resize', this.handleWindowResize);
+        window.addEventListener("resize", this.handleWindowResize);
       }
     },
 
@@ -570,7 +634,7 @@ watch: {
         this.updateButtonPositions();
       });
     },
-    
+
     // updateCanvasDimensions() {
     //   if (this.$refs.canvasContainer) {
     //     const rect = this.$refs.canvasContainer.getBoundingClientRect();
@@ -580,178 +644,183 @@ watch: {
     //     this.canvasHeight = this.containerHeight;
     //   }
     // },
-updateCanvasDimensions() {
-  if (this.$refs.canvasContainer) {
-    const rect = this.$refs.canvasContainer.getBoundingClientRect();
-    this.containerWidth = Math.floor(rect.width);
-    this.containerHeight = Math.floor(rect.height);
-    this.canvasWidth = this.containerWidth;
-    this.canvasHeight = this.containerHeight;
-    
-    // ===== ADD DPI SCALING WHEN DIMENSIONS CHANGE =====
-    if (this.canvas && this.overlayCanvas) {
-      const dpr = window.devicePixelRatio || 1;
-      
-      // Update canvas resolution
-      this.canvas.width = this.canvasWidth * dpr;
-      this.canvas.height = this.canvasHeight * dpr;
-      this.canvas.style.width = this.canvasWidth + 'px';
-      this.canvas.style.height = this.canvasHeight + 'px';
-      
-      this.overlayCanvas.width = this.canvasWidth * dpr;
-      this.overlayCanvas.height = this.canvasHeight * dpr;
-      this.overlayCanvas.style.width = this.canvasWidth + 'px';
-      this.overlayCanvas.style.height = this.canvasHeight + 'px';
-      
-      // Re-apply context scaling
-      if (this.ctx) {
-        this.ctx.scale(dpr, dpr);
-        this.ctx.imageSmoothingEnabled = true;
-        this.ctx.imageSmoothingQuality = "high";
+    updateCanvasDimensions() {
+      if (this.$refs.canvasContainer) {
+        const rect = this.$refs.canvasContainer.getBoundingClientRect();
+        this.containerWidth = Math.floor(rect.width);
+        this.containerHeight = Math.floor(rect.height);
+        this.canvasWidth = this.containerWidth;
+        this.canvasHeight = this.containerHeight;
+
+        // ===== ADD DPI SCALING WHEN DIMENSIONS CHANGE =====
+        if (this.canvas && this.overlayCanvas) {
+          const dpr = window.devicePixelRatio || 1;
+
+          // Update canvas resolution
+          this.canvas.width = this.canvasWidth * dpr;
+          this.canvas.height = this.canvasHeight * dpr;
+          this.canvas.style.width = this.canvasWidth + "px";
+          this.canvas.style.height = this.canvasHeight + "px";
+
+          this.overlayCanvas.width = this.canvasWidth * dpr;
+          this.overlayCanvas.height = this.canvasHeight * dpr;
+          this.overlayCanvas.style.width = this.canvasWidth + "px";
+          this.overlayCanvas.style.height = this.canvasHeight + "px";
+
+          // Re-apply context scaling
+          if (this.ctx) {
+            this.ctx.scale(dpr, dpr);
+            this.ctx.imageSmoothingEnabled = true;
+            this.ctx.imageSmoothingQuality = "high";
+          }
+          if (this.overlayCtx) {
+            this.overlayCtx.scale(dpr, dpr);
+            this.overlayCtx.imageSmoothingEnabled = true;
+            this.overlayCtx.imageSmoothingQuality = "high";
+          }
+        }
+        // ===== END DPI SCALING SECTION =====
       }
-      if (this.overlayCtx) {
-        this.overlayCtx.scale(dpr, dpr);
-        this.overlayCtx.imageSmoothingEnabled = true;
-        this.overlayCtx.imageSmoothingQuality = "high";
-      }
-    }
-    // ===== END DPI SCALING SECTION =====
-  }
-},
+    },
     // initCanvas() {
     //   this.canvas = this.$refs.canvas;
     //   this.overlayCanvas = this.$refs.overlayCanvas;
-      
+
     //   if (!this.canvas) {
     //     console.error('Canvas ref not found');
     //     return;
     //   }
-      
+
     //   this.ctx = this.canvas.getContext('2d');
-      
+
     //   if (this.overlayCanvas) {
     //     this.overlayCtx = this.overlayCanvas.getContext('2d');
     //   }
-      
+
     //   // Set initial background
     //   this.ctx.fillStyle = '#f0f0f0';
     //   this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
     // },
-initCanvas() {
-  this.canvas = this.$refs.canvas;
-  this.overlayCanvas = this.$refs.overlayCanvas;
-  
-  if (!this.canvas) {
-    console.error('Canvas ref not found');
-    return;
-  }
-  
-  // ===== ADD HIGH-DPI SUPPORT =====
-  const dpr = window.devicePixelRatio || 1;
-  
-  // Set canvas internal resolution (physical pixels)
-  this.canvas.width = this.canvasWidth * dpr;
-  this.canvas.height = this.canvasHeight * dpr;
-  this.canvas.style.width = this.canvasWidth + 'px';
-  this.canvas.style.height = this.canvasHeight + 'px';
-  
-  if (this.overlayCanvas) {
-    this.overlayCanvas.width = this.canvasWidth * dpr;
-    this.overlayCanvas.height = this.canvasHeight * dpr;
-    this.overlayCanvas.style.width = this.canvasWidth + 'px';
-    this.overlayCanvas.style.height = this.canvasHeight + 'px';
-  }
-  
-  this.ctx = this.canvas.getContext('2d', {
-    alpha: false,
-    willReadFrequently: true
-  });
-  
-  if (this.overlayCanvas) {
-    this.overlayCtx = this.overlayCanvas.getContext('2d');
-  }
-  
-  // Scale context to match DPI
-  this.ctx.scale(dpr, dpr);
-  if (this.overlayCtx) {
-    this.overlayCtx.scale(dpr, dpr);
-  }
-  
-  // Enable high-quality image rendering
-  this.ctx.imageSmoothingEnabled = true;
-  this.ctx.imageSmoothingQuality = "high";
-  if (this.overlayCtx) {
-    this.overlayCtx.imageSmoothingEnabled = true;
-    this.overlayCtx.imageSmoothingQuality = "high";
-  }
-  // ===== END HIGH-DPI SECTION =====
-  
-  // Set initial background
-  this.ctx.fillStyle = '#f0f0f0';
-  this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
-},
+    initCanvas() {
+      this.canvas = this.$refs.canvas;
+      this.overlayCanvas = this.$refs.overlayCanvas;
+
+      if (!this.canvas) {
+        console.error("Canvas ref not found");
+        return;
+      }
+
+      // ===== ADD HIGH-DPI SUPPORT =====
+      const dpr = window.devicePixelRatio || 1;
+
+      // Set canvas internal resolution (physical pixels)
+      this.canvas.width = this.canvasWidth * dpr;
+      this.canvas.height = this.canvasHeight * dpr;
+      this.canvas.style.width = this.canvasWidth + "px";
+      this.canvas.style.height = this.canvasHeight + "px";
+
+      if (this.overlayCanvas) {
+        this.overlayCanvas.width = this.canvasWidth * dpr;
+        this.overlayCanvas.height = this.canvasHeight * dpr;
+        this.overlayCanvas.style.width = this.canvasWidth + "px";
+        this.overlayCanvas.style.height = this.canvasHeight + "px";
+      }
+
+      this.ctx = this.canvas.getContext("2d", {
+        alpha: false,
+        willReadFrequently: true,
+      });
+
+      if (this.overlayCanvas) {
+        this.overlayCtx = this.overlayCanvas.getContext("2d");
+      }
+
+      // Scale context to match DPI
+      this.ctx.scale(dpr, dpr);
+      if (this.overlayCtx) {
+        this.overlayCtx.scale(dpr, dpr);
+      }
+
+      // Enable high-quality image rendering
+      this.ctx.imageSmoothingEnabled = true;
+      this.ctx.imageSmoothingQuality = "high";
+      if (this.overlayCtx) {
+        this.overlayCtx.imageSmoothingEnabled = true;
+        this.overlayCtx.imageSmoothingQuality = "high";
+      }
+      // ===== END HIGH-DPI SECTION =====
+
+      // Set initial background
+      this.ctx.fillStyle = "#f0f0f0";
+      this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+    },
     // ===================
     // EVENT LISTENERS
     // ===================
-    
+
     setupEventListeners() {
       if (!this.canvas || this.isLoading) return;
-      
+
       // Mouse events
-      this.canvas.addEventListener('wheel', this.handleWheel, { passive: false });
-      this.canvas.addEventListener('mousedown', this.handleMouseDown);
-      this.canvas.addEventListener('mousemove', this.handleMouseMove);
-      this.canvas.addEventListener('mouseup', this.handleMouseUp);
-      this.canvas.addEventListener('mouseleave', this.handleMouseUp);
-      this.canvas.addEventListener('contextmenu', (e) => e.preventDefault());
-      
+      this.canvas.addEventListener("wheel", this.handleWheel, {
+        passive: false,
+      });
+      this.canvas.addEventListener("mousedown", this.handleMouseDown);
+      this.canvas.addEventListener("mousemove", this.handleMouseMove);
+      this.canvas.addEventListener("mouseup", this.handleMouseUp);
+      this.canvas.addEventListener("mouseleave", this.handleMouseUp);
+      this.canvas.addEventListener("contextmenu", (e) => e.preventDefault());
+
       // Touch events for mobile
-      this.canvas.addEventListener('touchstart', this.handleTouchStart);
-      this.canvas.addEventListener('touchmove', this.handleTouchMove);
-      this.canvas.addEventListener('touchend', this.handleTouchEnd);
+      this.canvas.addEventListener("touchstart", this.handleTouchStart);
+      this.canvas.addEventListener("touchmove", this.handleTouchMove);
+      this.canvas.addEventListener("touchend", this.handleTouchEnd);
     },
 
     removeEventListeners() {
       if (!this.canvas) return;
-      
-      this.canvas.removeEventListener('wheel', this.handleWheel);
-      this.canvas.removeEventListener('mousedown', this.handleMouseDown);
-      this.canvas.removeEventListener('mousemove', this.handleMouseMove);
-      this.canvas.removeEventListener('mouseup', this.handleMouseUp);
-      this.canvas.removeEventListener('mouseleave', this.handleMouseUp);
-      this.canvas.removeEventListener('touchstart', this.handleTouchStart);
-      this.canvas.removeEventListener('touchmove', this.handleTouchMove);
-      this.canvas.removeEventListener('touchend', this.handleTouchEnd);
-      
-      if (typeof ResizeObserver === 'undefined') {
-        window.removeEventListener('resize', this.handleWindowResize);
+
+      this.canvas.removeEventListener("wheel", this.handleWheel);
+      this.canvas.removeEventListener("mousedown", this.handleMouseDown);
+      this.canvas.removeEventListener("mousemove", this.handleMouseMove);
+      this.canvas.removeEventListener("mouseup", this.handleMouseUp);
+      this.canvas.removeEventListener("mouseleave", this.handleMouseUp);
+      this.canvas.removeEventListener("touchstart", this.handleTouchStart);
+      this.canvas.removeEventListener("touchmove", this.handleTouchMove);
+      this.canvas.removeEventListener("touchend", this.handleTouchEnd);
+
+      if (typeof ResizeObserver === "undefined") {
+        window.removeEventListener("resize", this.handleWindowResize);
       }
     },
 
     // ===================
     // MOUSE & TOUCH HANDLERS
     // ===================
-    
+
     handleWheel(e) {
       if (this.isLoading) return;
       e.preventDefault();
-      
+
       const rect = this.canvas.getBoundingClientRect();
       const mouseX = e.clientX - rect.left;
       const mouseY = e.clientY - rect.top;
-      
+
       const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
-      const newZoom = Math.max(this.minZoom, Math.min(this.maxZoom, this.zoom * zoomFactor));
-      
+      const newZoom = Math.max(
+        this.minZoom,
+        Math.min(this.maxZoom, this.zoom * zoomFactor),
+      );
+
       if (newZoom !== this.zoom) {
         // Zoom towards mouse position
         const imageX = (mouseX - this.panX) / this.zoom;
         const imageY = (mouseY - this.panY) / this.zoom;
-        
+
         this.zoom = newZoom;
         this.panX = mouseX - imageX * this.zoom;
         this.panY = mouseY - imageY * this.zoom;
-        
+
         this.constrainPan();
         this.render();
         this.updateButtonPositions();
@@ -760,44 +829,45 @@ initCanvas() {
 
     handleMouseDown(e) {
       if (this.isLoading) return;
-      
-      if (e.button === 0 || e.button === 2) { // Left or right click
+
+      if (e.button === 0 || e.button === 2) {
+        // Left or right click
         this.isDragging = true;
         this.dragStartX = e.clientX;
         this.dragStartY = e.clientY;
         this.dragStartPanX = this.panX;
         this.dragStartPanY = this.panY;
-        this.canvas.style.cursor = 'grabbing';
+        this.canvas.style.cursor = "grabbing";
         e.preventDefault();
       }
     },
 
     handleMouseMove(e) {
       if (this.isLoading) return;
-      
+
       if (this.isDragging) {
         const deltaX = e.clientX - this.dragStartX;
         const deltaY = e.clientY - this.dragStartY;
-        
+
         this.panX = this.dragStartPanX + deltaX;
         this.panY = this.dragStartPanY + deltaY;
-        
+
         this.constrainPan();
         this.render();
         this.updateButtonPositions();
         e.preventDefault();
       } else {
         // Update cursor based on zoom level
-        this.canvas.style.cursor = this.zoom > 1 ? 'grab' : 'default';
+        this.canvas.style.cursor = this.zoom > 1 ? "grab" : "default";
       }
     },
 
     handleMouseUp(e) {
       if (this.isLoading) return;
-      
+
       if (this.isDragging) {
         this.isDragging = false;
-        this.canvas.style.cursor = this.zoom > 1 ? 'grab' : 'default';
+        this.canvas.style.cursor = this.zoom > 1 ? "grab" : "default";
         e.preventDefault();
       }
     },
@@ -805,60 +875,158 @@ initCanvas() {
     // Touch events for mobile devices
     handleTouchStart(e) {
       if (this.isLoading) return;
-      //e.preventDefault();
-      
+
+      // ALWAYS allow page scroll with single touch
       if (e.touches.length === 1) {
-        const touch = e.touches[0];
-        this.isDragging = true;
-        this.dragStartX = touch.clientX;
-        this.dragStartY = touch.clientY;
+        this.isDragging = false;
+        return; // Don't prevent default - allow scroll
+      }
+
+      e.preventDefault(); // Prevent ONLY for two-finger gestures
+
+      if (e.touches.length === 2) {
+        // Two fingers - prepare for zoom OR pan
+        this.isDragging = false;
+        const touch1 = e.touches[0];
+        const touch2 = e.touches[1];
+
+        // Calculate initial distance
+        const dx = touch2.clientX - touch1.clientX;
+        const dy = touch2.clientY - touch1.clientY;
+        this.lastTouchDistance = Math.sqrt(dx * dx + dy * dy);
+        this.initialTouchDistance = this.lastTouchDistance;
+        this.lastPinchZoom = this.zoom;
+
+        // Store center point for two-finger panning
+        this.twoFingerPanStartX = (touch1.clientX + touch2.clientX) / 2;
+        this.twoFingerPanStartY = (touch1.clientY + touch2.clientY) / 2;
         this.dragStartPanX = this.panX;
         this.dragStartPanY = this.panY;
+        this.twoFingerPanning = false;
       }
     },
 
     handleTouchMove(e) {
       if (this.isLoading) return;
-     // e.preventDefault();
-      
-      if (this.isDragging && e.touches.length === 1) {
-        const touch = e.touches[0];
-        const deltaX = touch.clientX - this.dragStartX;
-        const deltaY = touch.clientY - this.dragStartY;
-        
-        this.panX = this.dragStartPanX + deltaX;
-        this.panY = this.dragStartPanY + deltaY;
-        
-        this.constrainPan();
-        this.render();
-        this.updateButtonPositions();
+
+      // ALWAYS allow page scroll with single touch
+      if (e.touches.length === 1) {
+        return; // Don't prevent default - allow scroll
+      }
+
+      e.preventDefault(); // Prevent ONLY for two-finger gestures
+
+      if (e.touches.length === 2) {
+        // Two fingers - detect zoom OR pan
+        const touch1 = e.touches[0];
+        const touch2 = e.touches[1];
+
+        // Calculate current distance
+        const dx = touch2.clientX - touch1.clientX;
+        const dy = touch2.clientY - touch1.clientY;
+        const currentDistance = Math.sqrt(dx * dx + dy * dy);
+
+        // Calculate distance change threshold (5% of initial distance)
+        const distanceThreshold = this.initialTouchDistance * 0.05;
+        const distanceChange = Math.abs(
+          currentDistance - this.initialTouchDistance,
+        );
+
+        if (distanceChange > distanceThreshold) {
+          // ZOOM MODE - distance changed significantly
+          this.twoFingerPanning = false;
+
+          if (this.lastTouchDistance > 0) {
+            const zoomFactor = currentDistance / this.lastTouchDistance;
+            const newZoom = Math.max(
+              this.minZoom,
+              Math.min(this.maxZoom, this.lastPinchZoom * zoomFactor),
+            );
+
+            if (newZoom !== this.zoom) {
+              const centerX = (touch1.clientX + touch2.clientX) / 2;
+              const centerY = (touch1.clientY + touch2.clientY) / 2;
+              const rect = this.canvas.getBoundingClientRect();
+              const canvasCenterX = centerX - rect.left;
+              const canvasCenterY = centerY - rect.top;
+
+              const imageX = (canvasCenterX - this.panX) / this.zoom;
+              const imageY = (canvasCenterY - this.panY) / this.zoom;
+
+              this.zoom = newZoom;
+              this.panX = canvasCenterX - imageX * this.zoom;
+              this.panY = canvasCenterY - imageY * this.zoom;
+
+              this.constrainPan();
+              this.render();
+            }
+          }
+        } else {
+          // PAN MODE - distance stayed constant
+          this.twoFingerPanning = true;
+
+          const centerX = (touch1.clientX + touch2.clientX) / 2;
+          const centerY = (touch1.clientY + touch2.clientY) / 2;
+
+          const deltaX = centerX - this.twoFingerPanStartX;
+          const deltaY = centerY - this.twoFingerPanStartY;
+
+          this.panX = this.dragStartPanX + deltaX;
+          this.panY = this.dragStartPanY + deltaY;
+
+          this.constrainPan();
+          this.render();
+        }
       }
     },
 
     handleTouchEnd(e) {
       if (this.isLoading) return;
-    //  e.preventDefault();
-      this.isDragging = false;
+
+      // ALWAYS allow scroll with single touch
+      if (e.touches.length <= 1) {
+        this.isDragging = false;
+        this.lastTouchDistance = 0;
+        this.twoFingerPanning = false;
+        this.initialTouchDistance = 0;
+        return; // Don't prevent default
+      }
+
+      e.preventDefault(); // Prevent ONLY when still using two fingers
+
+      if (e.touches.length === 0) {
+        this.isDragging = false;
+        this.lastTouchDistance = 0;
+        this.twoFingerPanning = false;
+        this.initialTouchDistance = 0;
+        this.removeObjectHighlight();
+      }
     },
 
     // ===================
     // ZOOM & PAN CONTROLS
     // ===================
-    
+
     constrainPan() {
       if (!this.baseImg) return;
-      
+
       const zoomedImageWidth = this.renderWidth * this.zoom;
       const zoomedImageHeight = this.renderHeight * this.zoom;
       const zoomedImageLeft = this.renderOffsetX * this.zoom;
       const zoomedImageTop = this.renderOffsetY * this.zoom;
-      
+
       // Calculate boundaries
-      const maxPanX = Math.max(0, zoomedImageWidth + zoomedImageLeft - this.canvasWidth);
+      const maxPanX = Math.max(
+        0,
+        zoomedImageWidth + zoomedImageLeft - this.canvasWidth,
+      );
       const minPanX = Math.min(0, -zoomedImageLeft);
-      const maxPanY = Math.max(0, zoomedImageHeight + zoomedImageTop - this.canvasHeight);
+      const maxPanY = Math.max(
+        0,
+        zoomedImageHeight + zoomedImageTop - this.canvasHeight,
+      );
       const minPanY = Math.min(0, -zoomedImageTop);
-      
+
       // Apply constraints
       this.panX = Math.max(-maxPanX, Math.min(minPanX, this.panX));
       this.panY = Math.max(-maxPanY, Math.min(minPanY, this.panY));
@@ -866,7 +1034,7 @@ initCanvas() {
 
     zoomIn() {
       if (this.isLoading) return;
-      
+
       const newZoom = Math.min(this.maxZoom, this.zoom * 1.2);
       if (newZoom !== this.zoom) {
         this.zoomToCenter(newZoom);
@@ -875,7 +1043,7 @@ initCanvas() {
 
     zoomOut() {
       if (this.isLoading) return;
-      
+
       const newZoom = Math.max(this.minZoom, this.zoom / 1.2);
       if (newZoom !== this.zoom) {
         this.zoomToCenter(newZoom);
@@ -885,14 +1053,14 @@ initCanvas() {
     zoomToCenter(newZoom) {
       const centerX = this.canvasWidth / 2;
       const centerY = this.canvasHeight / 2;
-      
+
       const imageX = (centerX - this.panX) / this.zoom;
       const imageY = (centerY - this.panY) / this.zoom;
-      
+
       this.zoom = newZoom;
       this.panX = centerX - imageX * this.zoom;
       this.panY = centerY - imageY * this.zoom;
-      
+
       this.constrainPan();
       this.render();
       this.updateButtonPositions();
@@ -900,7 +1068,7 @@ initCanvas() {
 
     resetZoomAndPan() {
       if (this.isLoading) return;
-      
+
       this.zoom = 1;
       this.panX = 0;
       this.panY = 0;
@@ -911,58 +1079,61 @@ initCanvas() {
     // ===================
     // IMAGE LOADING
     // ===================
-    
-// 3. Enhanced loadImages method in child component
-async loadImages() {
-  if (!this.baseImage) {
-    console.warn('No base image provided');
-    return;
-  }
-  
-  console.log('🔄 Starting image reload process...');
-  
-  // Reset state immediately
-  this.isImagesLoaded = false;
-  this.maskRegions = [];
-  this.maskImageData = [];
-  
-  // Clear any existing highlights
-  this.removeHighlight();
-  
-  try {
-    // Load base image first
-    console.log('📸 Loading base image...');
-    this.baseImg = await this.createImageFromSrc(this.baseImage);
-    this.calculateImageDimensions();
-    this.render();
-    
-    // Load wall masks if available
-    if (this.hasWallMasks && this.showSelectionButtons) {
-      console.log('🧱 Loading wall masks...', this.binaryMasks.length, 'masks');
-      await this.loadWallMasks();
-    }
-    
-    this.isImagesLoaded = true;
-    
-    // Force re-render
-    this.render();
-    this.updateButtonPositions();
-    
-    console.log('✅ Image loading completed successfully');
-    
-  } catch (error) {
-    console.error('❌ Error loading images:', error);
-    this.showErrorState();
-  }
-},
+
+    // 3. Enhanced loadImages method in child component
+    async loadImages() {
+      if (!this.baseImage) {
+        console.warn("No base image provided");
+        return;
+      }
+
+      console.log("🔄 Starting image reload process...");
+
+      // Reset state immediately
+      this.isImagesLoaded = false;
+      this.maskRegions = [];
+      this.maskImageData = [];
+
+      // Clear any existing highlights
+      this.removeHighlight();
+
+      try {
+        // Load base image first
+        console.log("📸 Loading base image...");
+        this.baseImg = await this.createImageFromSrc(this.baseImage);
+        this.calculateImageDimensions();
+        this.render();
+
+        // Load wall masks if available
+        if (this.hasWallMasks && this.showSelectionButtons) {
+          console.log(
+            "🧱 Loading wall masks...",
+            this.binaryMasks.length,
+            "masks",
+          );
+          await this.loadWallMasks();
+        }
+
+        this.isImagesLoaded = true;
+
+        // Force re-render
+        this.render();
+        this.updateButtonPositions();
+
+        console.log("✅ Image loading completed successfully");
+      } catch (error) {
+        console.error("❌ Error loading images:", error);
+        this.showErrorState();
+      }
+    },
 
     async loadWallMasks() {
-      console.log('🧱 Loading wall masks...');
-      
+      console.log("🧱 Loading wall masks...");
+
       this.processingMasks = true;
       this.processingTotal = this.binaryMasks.length;
       this.processingProgress = 0;
-      
+
       try {
         // Load all mask images in parallel
         const maskPromises = this.binaryMasks.map(async (maskSrc, index) => {
@@ -975,15 +1146,14 @@ async loadImages() {
             return null;
           }
         });
-        
+
         const maskResults = await Promise.all(maskPromises);
-        this.maskImages = maskResults.filter(mask => mask !== null);
-        
+        this.maskImages = maskResults.filter((mask) => mask !== null);
+
         // Process mask regions asynchronously
         await this.processMaskRegions();
-        
       } catch (error) {
-        console.error('Error loading wall masks:', error);
+        console.error("Error loading wall masks:", error);
       } finally {
         this.processingMasks = false;
         this.processingProgress = 0;
@@ -993,101 +1163,103 @@ async loadImages() {
     createImageFromSrc(src) {
       return new Promise((resolve, reject) => {
         const img = new Image();
-        img.crossOrigin = 'anonymous';
-        
+        img.crossOrigin = "anonymous";
+
         img.onload = () => resolve(img);
-        img.onerror = (error) => reject(new Error(`Failed to load image: ${src}`));
-        
+        img.onerror = (error) =>
+          reject(new Error(`Failed to load image: ${src}`));
+
         img.src = src;
       });
     },
 
     calculateImageDimensions() {
-  if (!this.baseImg) return;
-  
-  const maxWidth = this.canvasWidth;
-  const maxHeight = this.canvasHeight;
-  
-  // const imgAspectRatio = this.baseImg.width / this.baseImg.height;
-  const imgAspectRatio = this.baseImg.naturalWidth / this.baseImg.naturalHeight;
+      if (!this.baseImg) return;
 
-  // Always fit to width first (100% width)
-  this.renderWidth = maxWidth;
-  this.renderHeight = Math.round(maxWidth / imgAspectRatio);
-  this.renderOffsetX = 0;
-  
-  // If calculated height exceeds available height, fit to height instead
-  if (this.renderHeight > maxHeight) {
-    this.renderHeight = maxHeight;
-    this.renderWidth = Math.round(maxHeight * imgAspectRatio);
-    this.renderOffsetX = Math.round((maxWidth - this.renderWidth) / 2);
-    this.renderOffsetY = 0;
-  } else {
-    // Center vertically if height is less than container
-    this.renderOffsetY = Math.round((maxHeight - this.renderHeight) / 2);
-  }
-  
-  // this.scaleX = this.renderWidth / this.baseImg.width;
-  // this.scaleY = this.renderHeight / this.baseImg.height;
-  
-  // ===== USE naturalWidth/naturalHeight FOR SCALING =====
-  this.scaleX = this.renderWidth / this.baseImg.naturalWidth;
-  this.scaleY = this.renderHeight / this.baseImg.naturalHeight;
-  // ===== END =====
-},
+      const maxWidth = this.canvasWidth;
+      const maxHeight = this.canvasHeight;
+
+      // const imgAspectRatio = this.baseImg.width / this.baseImg.height;
+      const imgAspectRatio =
+        this.baseImg.naturalWidth / this.baseImg.naturalHeight;
+
+      // Always fit to width first (100% width)
+      this.renderWidth = maxWidth;
+      this.renderHeight = Math.round(maxWidth / imgAspectRatio);
+      this.renderOffsetX = 0;
+
+      // If calculated height exceeds available height, fit to height instead
+      if (this.renderHeight > maxHeight) {
+        this.renderHeight = maxHeight;
+        this.renderWidth = Math.round(maxHeight * imgAspectRatio);
+        this.renderOffsetX = Math.round((maxWidth - this.renderWidth) / 2);
+        this.renderOffsetY = 0;
+      } else {
+        // Center vertically if height is less than container
+        this.renderOffsetY = Math.round((maxHeight - this.renderHeight) / 2);
+      }
+
+      // this.scaleX = this.renderWidth / this.baseImg.width;
+      // this.scaleY = this.renderHeight / this.baseImg.height;
+
+      // ===== USE naturalWidth/naturalHeight FOR SCALING =====
+      this.scaleX = this.renderWidth / this.baseImg.naturalWidth;
+      this.scaleY = this.renderHeight / this.baseImg.naturalHeight;
+      // ===== END =====
+    },
 
     // ===================
     // MASK PROCESSING
     // ===================
-    
-// 2. Add this new method to select all masks after they're processed
-async processMaskRegions() {
-  if (!this.showSelectionButtons) return;
-  
-  console.log('🚀 Processing mask regions...');
-  
-  this.maskRegions = [];
-  this.maskImageData = [];
-  
-  const batchSize = 3;
-  
-  for (let i = 0; i < this.maskImages.length; i += batchSize) {
-    const batch = this.maskImages.slice(i, i + batchSize);
-    
-    // Process batch
-    await this.processMaskBatch(batch, i);
-    
-    // Yield to browser
-    await this.yieldToBrowser();
-  }
-  
-  // Resolve overlapping buttons
-  this.maskRegions = this.resolveOverlappingButtons(this.maskRegions);
-  
-  // NEW: Auto-select all masks if none are currently selected
-  if (this.internalSelectedMasks.length === 0) {
-    this.selectAllWallsOnInit();
-  }
-  
-  console.log(`✅ Processed ${this.maskRegions.length} wall masks`);
-},
 
-// 3. Add this new method for initial selection
-selectAllWallsOnInit() {
-  const allIndices = this.maskRegions.map(region => region.maskIndex);
-  this.internalSelectedMasks = [...allIndices];
-  this.emitSelectionChange();
-  console.log('🔄 Auto-selected all walls on initialization');
-},
+    // 2. Add this new method to select all masks after they're processed
+    async processMaskRegions() {
+      if (!this.showSelectionButtons) return;
+
+      console.log("🚀 Processing mask regions...");
+
+      this.maskRegions = [];
+      this.maskImageData = [];
+
+      const batchSize = 3;
+
+      for (let i = 0; i < this.maskImages.length; i += batchSize) {
+        const batch = this.maskImages.slice(i, i + batchSize);
+
+        // Process batch
+        await this.processMaskBatch(batch, i);
+
+        // Yield to browser
+        await this.yieldToBrowser();
+      }
+
+      // Resolve overlapping buttons
+      this.maskRegions = this.resolveOverlappingButtons(this.maskRegions);
+
+      // NEW: Auto-select all masks if none are currently selected
+      if (this.internalSelectedMasks.length === 0) {
+        this.selectAllWallsOnInit();
+      }
+
+      console.log(`✅ Processed ${this.maskRegions.length} wall masks`);
+    },
+
+    // 3. Add this new method for initial selection
+    selectAllWallsOnInit() {
+      const allIndices = this.maskRegions.map((region) => region.maskIndex);
+      this.internalSelectedMasks = [...allIndices];
+      this.emitSelectionChange();
+      console.log("🔄 Auto-selected all walls on initialization");
+    },
     async processMaskBatch(maskBatch, startIndex) {
       return new Promise((resolve) => {
         setTimeout(() => {
           maskBatch.forEach((maskData, batchIndex) => {
             if (!maskData || !maskData.img) return;
-            
+
             const globalIndex = startIndex + batchIndex;
             const result = this.processSingleMask(maskData, globalIndex);
-            
+
             if (result) {
               this.maskRegions.push(result);
             }
@@ -1103,11 +1275,11 @@ selectAllWallsOnInit() {
     //     tempCanvas.width = this.canvasWidth;
     //     tempCanvas.height = this.canvasHeight;
     //     const tempCtx = tempCanvas.getContext('2d');
-        
+
     //     // Fill with black background
     //     tempCtx.fillStyle = '#000000';
     //     tempCtx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
-        
+
     //     // Draw mask
     //     tempCtx.drawImage(
     //       maskData.img,
@@ -1116,12 +1288,12 @@ selectAllWallsOnInit() {
     //       this.renderWidth,
     //       this.renderHeight
     //     );
-        
+
     //     const imageData = tempCtx.getImageData(0, 0, this.canvasWidth, this.canvasHeight);
     //     this.maskImageData[index] = imageData;
-        
+
     //     const center = this.findMaskCenter(imageData);
-        
+
     //     if (center) {
     //       return {
     //         maskIndex: index,
@@ -1132,9 +1304,9 @@ selectAllWallsOnInit() {
     //         imageData: imageData
     //       };
     //     }
-        
+
     //     return null;
-        
+
     //   } catch (error) {
     //     console.error(`Error processing mask ${index}:`, error);
     //     return null;
@@ -1142,62 +1314,64 @@ selectAllWallsOnInit() {
     // },
 
     processSingleMask(maskData, index) {
-  const imgW = this.baseImg.width;
-  const imgH = this.baseImg.height;
+      const imgW = this.baseImg.width;
+      const imgH = this.baseImg.height;
 
-  const tempCanvas = document.createElement('canvas');
-  tempCanvas.width = imgW;
-  tempCanvas.height = imgH;
+      const tempCanvas = document.createElement("canvas");
+      tempCanvas.width = imgW;
+      tempCanvas.height = imgH;
 
-  const ctx = tempCanvas.getContext('2d');
+      const ctx = tempCanvas.getContext("2d");
 
-  ctx.drawImage(maskData.img, 0, 0, imgW, imgH);
+      ctx.drawImage(maskData.img, 0, 0, imgW, imgH);
 
-  const imageData = ctx.getImageData(0, 0, imgW, imgH);
-  this.maskImageData[index] = imageData;
+      const imageData = ctx.getImageData(0, 0, imgW, imgH);
+      this.maskImageData[index] = imageData;
 
-  const center = this.findMaskCenterImageSpace(imageData, imgW, imgH);
+      const center = this.findMaskCenterImageSpace(imageData, imgW, imgH);
 
-  return {
-    maskIndex: index,
-    imageX: center.x,   // 🔥 IMAGE SPACE
-    imageY: center.y,   // 🔥 IMAGE SPACE
-  };
-},
-findMaskCenterImageSpace(imageData, width, height) {
-  const data = imageData.data;
-  let sx = 0, sy = 0, count = 0;
+      return {
+        maskIndex: index,
+        imageX: center.x, // 🔥 IMAGE SPACE
+        imageY: center.y, // 🔥 IMAGE SPACE
+      };
+    },
+    findMaskCenterImageSpace(imageData, width, height) {
+      const data = imageData.data;
+      let sx = 0,
+        sy = 0,
+        count = 0;
 
-  for (let y = 0; y < height; y += 4) {
-    for (let x = 0; x < width; x += 4) {
-      const i = (y * width + x) * 4;
-      if (data[i] > 200) {
-        sx += x;
-        sy += y;
-        count++;
+      for (let y = 0; y < height; y += 4) {
+        for (let x = 0; x < width; x += 4) {
+          const i = (y * width + x) * 4;
+          if (data[i] > 200) {
+            sx += x;
+            sy += y;
+            count++;
+          }
+        }
       }
-    }
-  }
 
-  if (!count) return null;
-  return { x: sx / count, y: sy / count };
-}
-,
-
+      if (!count) return null;
+      return { x: sx / count, y: sy / count };
+    },
     findMaskCenter(imageData) {
       const data = imageData.data;
-      let totalX = 0, totalY = 0, whitePixels = 0;
-      
+      let totalX = 0,
+        totalY = 0,
+        whitePixels = 0;
+
       // Sample every 4th pixel for performance
       const step = 4;
-      
+
       for (let y = 0; y < this.canvasHeight; y += step) {
         for (let x = 0; x < this.canvasWidth; x += step) {
           const index = (y * this.canvasWidth + x) * 4;
           const r = data[index];
           const g = data[index + 1];
           const b = data[index + 2];
-          
+
           if (r > 200 && g > 200 && b > 200) {
             totalX += x;
             totalY += y;
@@ -1205,14 +1379,14 @@ findMaskCenterImageSpace(imageData, width, height) {
           }
         }
       }
-      
+
       if (whitePixels > 0) {
         return {
           x: Math.round(totalX / whitePixels),
-          y: Math.round(totalY / whitePixels)
+          y: Math.round(totalY / whitePixels),
         };
       }
-      
+
       return null;
     },
 
@@ -1233,7 +1407,7 @@ findMaskCenterImageSpace(imageData, width, height) {
           for (let j = 0; j < resolvedRegions.length; j++) {
             const distance = Math.sqrt(
               Math.pow(currentRegion.centerX - resolvedRegions[j].centerX, 2) +
-              Math.pow(currentRegion.centerY - resolvedRegions[j].centerY, 2)
+                Math.pow(currentRegion.centerY - resolvedRegions[j].centerY, 2),
             );
 
             if (distance < minDistance) {
@@ -1247,14 +1421,24 @@ findMaskCenterImageSpace(imageData, width, height) {
             resolvedRegions.push(currentRegion);
           } else {
             const angle = (attempts * 45) % 360;
-            const offset = Math.min(20 + (attempts * 5), 50);
-            
-            const newX = currentRegion.centerX + Math.cos(angle * Math.PI / 180) * offset;
-            const newY = currentRegion.centerY + Math.sin(angle * Math.PI / 180) * offset;
+            const offset = Math.min(20 + attempts * 5, 50);
+
+            const newX =
+              currentRegion.centerX +
+              Math.cos((angle * Math.PI) / 180) * offset;
+            const newY =
+              currentRegion.centerY +
+              Math.sin((angle * Math.PI) / 180) * offset;
 
             const margin = buttonSize / 2;
-            currentRegion.centerX = Math.max(margin, Math.min(this.canvasWidth - margin, newX));
-            currentRegion.centerY = Math.max(margin, Math.min(this.canvasHeight - margin, newY));
+            currentRegion.centerX = Math.max(
+              margin,
+              Math.min(this.canvasWidth - margin, newX),
+            );
+            currentRegion.centerY = Math.max(
+              margin,
+              Math.min(this.canvasHeight - margin, newY),
+            );
           }
 
           attempts++;
@@ -1265,11 +1449,17 @@ findMaskCenterImageSpace(imageData, width, height) {
           const randomOffsetY = (Math.random() - 0.5) * 40;
           currentRegion.centerX += randomOffsetX;
           currentRegion.centerY += randomOffsetY;
-          
+
           const margin = buttonSize / 2;
-          currentRegion.centerX = Math.max(margin, Math.min(this.canvasWidth - margin, currentRegion.centerX));
-          currentRegion.centerY = Math.max(margin, Math.min(this.canvasHeight - margin, currentRegion.centerY));
-          
+          currentRegion.centerX = Math.max(
+            margin,
+            Math.min(this.canvasWidth - margin, currentRegion.centerX),
+          );
+          currentRegion.centerY = Math.max(
+            margin,
+            Math.min(this.canvasHeight - margin, currentRegion.centerY),
+          );
+
           resolvedRegions.push(currentRegion);
         }
       }
@@ -1278,19 +1468,19 @@ findMaskCenterImageSpace(imageData, width, height) {
     },
 
     yieldToBrowser() {
-      return new Promise(resolve => setTimeout(resolve, 0));
+      return new Promise((resolve) => setTimeout(resolve, 0));
     },
 
     // ===================
     // WALL SELECTION
     // ===================
-    
+
     toggleWallSelection(maskIndex) {
       if (this.isLoading) return;
-      
+
       let updatedMasks = [...this.internalSelectedMasks];
 
-      if (this.selectionMode === 'single') {
+      if (this.selectionMode === "single") {
         updatedMasks = updatedMasks.includes(maskIndex) ? [] : [maskIndex];
       } else {
         const index = updatedMasks.indexOf(maskIndex);
@@ -1307,15 +1497,15 @@ findMaskCenterImageSpace(imageData, width, height) {
 
     selectAllWalls() {
       if (this.isLoading || !this.showSelectionButtons) return;
-      
-      const allIndices = this.maskRegions.map(region => region.maskIndex);
+
+      const allIndices = this.maskRegions.map((region) => region.maskIndex);
       this.internalSelectedMasks = [...allIndices];
       this.emitSelectionChange();
     },
 
     clearAllSelections() {
       if (this.isLoading) return;
-      
+
       this.internalSelectedMasks = [];
       this.removeHighlight();
       this.emitSelectionChange();
@@ -1331,7 +1521,7 @@ findMaskCenterImageSpace(imageData, width, height) {
 
     highlightWall(maskIndex) {
       if (this.isLoading || !this.showSelectionButtons) return;
-      
+
       this.hoveredMask = maskIndex;
       this.drawWallHighlight(maskIndex);
     },
@@ -1348,15 +1538,15 @@ findMaskCenterImageSpace(imageData, width, height) {
 
     //   this.overlayCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
     //   this.overlayCtx.save();
-      
+
     //   this.overlayCtx.translate(this.panX, this.panY);
     //   this.overlayCtx.scale(this.zoom, this.zoom);
-      
+
     //   const imageData = this.maskImageData[maskIndex];
     //   const data = imageData.data;
-      
+
     //   this.overlayCtx.fillStyle = 'rgba(0, 255, 255, 0.3)';
-      
+
     //   // Optimized highlighting - draw rectangles for consecutive pixels
     //   for (let y = 0; y < this.canvasHeight; y += 2) {
     //     let startX = -1;
@@ -1365,15 +1555,15 @@ findMaskCenterImageSpace(imageData, width, height) {
     //       const r = data[index];
     //       const g = data[index + 1];
     //       const b = data[index + 2];
-          
+
     //       if (r > 200 && g > 200 && b > 200) {
     //         if (startX === -1) startX = x;
     //       } else {
     //         if (startX !== -1) {
     //           this.overlayCtx.fillRect(
-    //             startX / this.zoom, 
-    //             y / this.zoom, 
-    //             (x - startX) / this.zoom, 
+    //             startX / this.zoom,
+    //             y / this.zoom,
+    //             (x - startX) / this.zoom,
     //             2 / this.zoom
     //           );
     //           startX = -1;
@@ -1382,113 +1572,100 @@ findMaskCenterImageSpace(imageData, width, height) {
     //     }
     //     if (startX !== -1) {
     //       this.overlayCtx.fillRect(
-    //         startX / this.zoom, 
-    //         y / this.zoom, 
-    //         (this.canvasWidth - startX) / this.zoom, 
+    //         startX / this.zoom,
+    //         y / this.zoom,
+    //         (this.canvasWidth - startX) / this.zoom,
     //         2 / this.zoom
     //       );
     //     }
     //   }
-      
+
     //   this.overlayCtx.restore();
     // },
-drawWallHighlight(maskIndex) {
-  const imageData = this.maskImageData[maskIndex];
-  if (!imageData || !this.overlayCtx) return;
+    drawWallHighlight(maskIndex) {
+      const imageData = this.maskImageData[maskIndex];
+      if (!imageData || !this.overlayCtx) return;
 
-  const ctx = this.overlayCtx;
-  ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-  ctx.save();
+      const ctx = this.overlayCtx;
+      ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+      ctx.save();
 
-  // ===== ADD HIGH QUALITY SETTINGS =====
-  ctx.imageSmoothingEnabled = true;
-  ctx.imageSmoothingQuality = "high";
-  // ===== END =====
+      // ===== ADD HIGH QUALITY SETTINGS =====
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
+      // ===== END =====
 
- 
-  // 1️⃣ Same pan + zoom as base image
-  ctx.translate(this.panX, this.panY);
-  ctx.scale(this.zoom, this.zoom);
+      // 1️⃣ Same pan + zoom as base image
+      ctx.translate(this.panX, this.panY);
+      ctx.scale(this.zoom, this.zoom);
 
-  // 2️⃣ Move to image render position
-  ctx.translate(this.renderOffsetX, this.renderOffsetY);
+      // 2️⃣ Move to image render position
+      ctx.translate(this.renderOffsetX, this.renderOffsetY);
 
-  // 3️⃣ Scale mask to rendered image size
-  const scaleX = this.renderWidth / imageData.width;
-  const scaleY = this.renderHeight / imageData.height;
-  ctx.scale(scaleX, scaleY);
+      // 3️⃣ Scale mask to rendered image size
+      const scaleX = this.renderWidth / imageData.width;
+      const scaleY = this.renderHeight / imageData.height;
+      ctx.scale(scaleX, scaleY);
 
-  const data = imageData.data;
-  ctx.fillStyle = 'rgba(0, 255, 255, 0.3)';
+      const data = imageData.data;
+      ctx.fillStyle = "rgba(0, 255, 255, 0.3)";
 
-  const step = 2;
+      const step = 2;
 
-  for (let y = 0; y < imageData.height; y += step) {
-    let startX = -1;
+      for (let y = 0; y < imageData.height; y += step) {
+        let startX = -1;
 
-    for (let x = 0; x < imageData.width; x += step) {
-      const idx = (y * imageData.width + x) * 4;
-      const r = data[idx];
+        for (let x = 0; x < imageData.width; x += step) {
+          const idx = (y * imageData.width + x) * 4;
+          const r = data[idx];
 
-      if (r > 200) {
-        if (startX === -1) startX = x;
-      } else if (startX !== -1) {
-        ctx.fillRect(
-          startX,
-          y,
-          x - startX,
-          step
-        );
-        startX = -1;
+          if (r > 200) {
+            if (startX === -1) startX = x;
+          } else if (startX !== -1) {
+            ctx.fillRect(startX, y, x - startX, step);
+            startX = -1;
+          }
+        }
+
+        if (startX !== -1) {
+          ctx.fillRect(startX, y, imageData.width - startX, step);
+        }
       }
-    }
 
-    if (startX !== -1) {
-      ctx.fillRect(
-        startX,
-        y,
-        imageData.width - startX,
-        step
-      );
-    }
-  }
-
-  ctx.restore();
-}
-,
-imageDataToCanvas(imageData) {
-  const c = document.createElement('canvas');
-  c.width = imageData.width;
-  c.height = imageData.height;
-  c.getContext('2d').putImageData(imageData, 0, 0);
-  return c;
-}
-,
+      ctx.restore();
+    },
+    imageDataToCanvas(imageData) {
+      const c = document.createElement("canvas");
+      c.width = imageData.width;
+      c.height = imageData.height;
+      c.getContext("2d").putImageData(imageData, 0, 0);
+      return c;
+    },
     // ===================
     // RENDERING
     // ===================
-    
+
     render() {
       if (!this.canvas || !this.ctx) return;
 
       // Clear canvas
       this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-      
+
       // Fill background
-      this.ctx.fillStyle = '#f5f5f5';
+      this.ctx.fillStyle = "#f5f5f5";
       this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
-      
+
       if (!this.baseImg) {
         this.showLoadingState();
         return;
       }
-      
+
       this.ctx.save();
-      
+
       // Apply transformations
       this.ctx.translate(this.panX, this.panY);
       this.ctx.scale(this.zoom, this.zoom);
-      
+
       // ===== ADD THESE LINES =====
       this.ctx.imageSmoothingEnabled = true;
       this.ctx.imageSmoothingQuality = "high";
@@ -1500,134 +1677,150 @@ imageDataToCanvas(imageData) {
           this.renderOffsetX,
           this.renderOffsetY,
           this.renderWidth,
-          this.renderHeight
+          this.renderHeight,
         );
-        
+
         // Add subtle border
-        this.ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
+        this.ctx.strokeStyle = "rgba(0, 0, 0, 0.1)";
         this.ctx.lineWidth = 1 / this.zoom;
         this.ctx.strokeRect(
           this.renderOffsetX,
           this.renderOffsetY,
           this.renderWidth,
-          this.renderHeight
+          this.renderHeight,
         );
-        
+
         // Show processing indicator if needed
         if (this.processingMasks) {
           this.drawProcessingIndicator();
         }
-        
       } catch (error) {
-        console.error('Error rendering image:', error);
+        console.error("Error rendering image:", error);
         this.showErrorState();
       }
-      
+
       this.ctx.restore();
     },
 
     showLoadingState() {
-      this.ctx.fillStyle = '#f0f0f0';
+      this.ctx.fillStyle = "#f0f0f0";
       this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
-      this.ctx.fillStyle = '#666';
-      this.ctx.font = '18px Arial';
-      this.ctx.textAlign = 'center';
-      this.ctx.fillText('Loading image...', this.canvasWidth / 2, this.canvasHeight / 2);
+      this.ctx.fillStyle = "#666";
+      this.ctx.font = "18px Arial";
+      this.ctx.textAlign = "center";
+      this.ctx.fillText(
+        "Loading image...",
+        this.canvasWidth / 2,
+        this.canvasHeight / 2,
+      );
     },
 
     showErrorState() {
-      this.ctx.fillStyle = '#ffcccc';
+      this.ctx.fillStyle = "#ffcccc";
       this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
-      this.ctx.fillStyle = '#cc0000';
-      this.ctx.font = '20px Arial';
-      this.ctx.textAlign = 'center';
+      this.ctx.fillStyle = "#cc0000";
+      this.ctx.font = "20px Arial";
+      this.ctx.textAlign = "center";
       this.ctx.fillText(
-        'Error loading image',
+        "Error loading image",
         this.canvasWidth / 2,
-        this.canvasHeight / 2
+        this.canvasHeight / 2,
       );
     },
 
     drawProcessingIndicator() {
       this.ctx.save();
       this.ctx.setTransform(1, 0, 0, 1, 0, 0);
-      
+
       const padding = 20;
       const x = this.canvasWidth - 250 - padding;
       const y = padding;
       const width = 250;
       const height = 35;
-      
+
       // Background
-      this.ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+      this.ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
       this.ctx.roundRect(x, y, width, height, 15);
       this.ctx.fill();
-      
+
       // Progress bar
       const progressX = x + 15;
       const progressY = y + 8;
       const progressWidth = width - 80;
       const progressHeight = 6;
-      
-      this.ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
-      this.ctx.roundRect(progressX, progressY, progressWidth, progressHeight, 3);
+
+      this.ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
+      this.ctx.roundRect(
+        progressX,
+        progressY,
+        progressWidth,
+        progressHeight,
+        3,
+      );
       this.ctx.fill();
-      
-      const progressPercent = this.processingTotal > 0 ? 
-        (this.processingProgress / this.processingTotal) * 100 : 0;
+
+      const progressPercent =
+        this.processingTotal > 0
+          ? (this.processingProgress / this.processingTotal) * 100
+          : 0;
       const fillWidth = (progressWidth * progressPercent) / 100;
-      
-      this.ctx.fillStyle = '#52c41a';
+
+      this.ctx.fillStyle = "#52c41a";
       this.ctx.roundRect(progressX, progressY, fillWidth, progressHeight, 3);
       this.ctx.fill();
-      
+
       // Text
-      this.ctx.fillStyle = 'white';
-      this.ctx.font = '12px Arial';
-      this.ctx.textAlign = 'left';
-      this.ctx.fillText('Processing walls...', progressX, progressY - 2);
-      
-      this.ctx.textAlign = 'right';
-      this.ctx.fillText(`${Math.round(progressPercent)}%`, x + width - 15, y + 21);
-      
+      this.ctx.fillStyle = "white";
+      this.ctx.font = "12px Arial";
+      this.ctx.textAlign = "left";
+      this.ctx.fillText("Processing walls...", progressX, progressY - 2);
+
+      this.ctx.textAlign = "right";
+      this.ctx.fillText(
+        `${Math.round(progressPercent)}%`,
+        x + width - 15,
+        y + 21,
+      );
+
       this.ctx.restore();
     },
 
     // updateButtonPositions() {
     //   if (!this.showSelectionButtons) return;
-      
+
     //   this.maskRegions.forEach(region => {
     //     if (!region.originalCenterX) {
     //       region.originalCenterX = region.centerX;
     //       region.originalCenterY = region.centerY;
     //     }
-        
+
     //     region.centerX = region.originalCenterX * this.zoom + this.panX;
     //     region.centerY = region.originalCenterY * this.zoom + this.panY;
     //   });
     // },
     updateButtonPositions() {
-  this.maskRegions.forEach(r => {
-    r.centerX =
-      (r.imageX * this.scaleX + this.renderOffsetX) * this.zoom + this.panX;
+      this.maskRegions.forEach((r) => {
+        r.centerX =
+          (r.imageX * this.scaleX + this.renderOffsetX) * this.zoom + this.panX;
 
-    r.centerY =
-      (r.imageY * this.scaleY + this.renderOffsetY) * this.zoom + this.panY;
-  });
-},
-
+        r.centerY =
+          (r.imageY * this.scaleY + this.renderOffsetY) * this.zoom + this.panY;
+      });
+    },
 
     // ===================
     // EVENT EMISSION
     // ===================
-    rescaleRoomLayout(){
-      this.$emit('rescale-room-layout', true);
+    rescaleRoomLayout() {
+      this.$emit("rescale-room-layout", true);
     },
     emitSelectionChange() {
       const selectionData = {
         selectedMasks: [...this.internalSelectedMasks],
         selectionMode: this.selectionMode,
-        maskSources: this.internalSelectedMasks.map(index => this.binaryMasks[index]),
+        maskSources: this.internalSelectedMasks.map(
+          (index) => this.binaryMasks[index],
+        ),
         canvasDimensions: {
           width: this.canvasWidth,
           height: this.canvasHeight,
@@ -1639,27 +1832,27 @@ imageDataToCanvas(imageData) {
           scaleY: this.scaleY,
           zoom: this.zoom,
           panX: this.panX,
-          panY: this.panY
+          panY: this.panY,
         },
-        maskRegions: this.maskRegions.filter(region => 
-          this.internalSelectedMasks.includes(region.maskIndex)
-        )
+        maskRegions: this.maskRegions.filter((region) =>
+          this.internalSelectedMasks.includes(region.maskIndex),
+        ),
       };
-      
+
       // Emit to parent component
-      this.$emit('selection-changed', selectionData);
-      this.$emit('update:selectedMasks', this.internalSelectedMasks);
-      
-      console.log('🔄 Wall selection changed:', {
+      this.$emit("selection-changed", selectionData);
+      this.$emit("update:selectedMasks", this.internalSelectedMasks);
+
+      console.log("🔄 Wall selection changed:", {
         selected: this.internalSelectedMasks.length,
-        total: this.maskRegions.length
+        total: this.maskRegions.length,
       });
     },
 
     // ===================
     // UTILITY METHODS
     // ===================
-    
+
     getCanvasState() {
       return {
         zoom: this.zoom,
@@ -1672,26 +1865,28 @@ imageDataToCanvas(imageData) {
         renderOffsetX: this.renderOffsetX,
         renderOffsetY: this.renderOffsetY,
         selectedMasks: [...this.internalSelectedMasks],
-        maskRegions: this.maskRegions
+        maskRegions: this.maskRegions,
       };
     },
 
     getSelectedWallsData() {
       return {
         selectedMasks: [...this.internalSelectedMasks],
-        selectedRegions: this.maskRegions.filter(region => 
-          this.internalSelectedMasks.includes(region.maskIndex)
+        selectedRegions: this.maskRegions.filter((region) =>
+          this.internalSelectedMasks.includes(region.maskIndex),
         ),
-        maskSources: this.internalSelectedMasks.map(index => this.binaryMasks[index])
+        maskSources: this.internalSelectedMasks.map(
+          (index) => this.binaryMasks[index],
+        ),
       };
     },
 
     // ===================
     // PUBLIC METHODS
     // ===================
-    
+
     refreshCanvas() {
-      console.log('🔄 Refreshing walls canvas...');
+      console.log("🔄 Refreshing walls canvas...");
       this.loadImages();
     },
 
@@ -1706,11 +1901,11 @@ imageDataToCanvas(imageData) {
     },
 
     setSelectionMode(mode) {
-      if (['single', 'multiple'].includes(mode)) {
+      if (["single", "multiple"].includes(mode)) {
         this.selectionMode = mode;
-        
+
         // If switching to single mode and multiple are selected, keep only the first
-        if (mode === 'single' && this.internalSelectedMasks.length > 1) {
+        if (mode === "single" && this.internalSelectedMasks.length > 1) {
           this.internalSelectedMasks = [this.internalSelectedMasks[0]];
           this.emitSelectionChange();
         }
@@ -1720,9 +1915,9 @@ imageDataToCanvas(imageData) {
     // ===================
     // DEBUG METHODS
     // ===================
-    
+
     debugCanvasState() {
-      console.log('🐛 Canvas Debug State:', {
+      console.log("🐛 Canvas Debug State:", {
         hasBaseImage: !!this.baseImg,
         maskCount: this.maskImages.length,
         regionCount: this.maskRegions.length,
@@ -1733,12 +1928,11 @@ imageDataToCanvas(imageData) {
         canvasDimensions: `${this.canvasWidth}x${this.canvasHeight}`,
         renderDimensions: `${this.renderWidth}x${this.renderHeight}`,
         zoom: this.zoom,
-        pan: `${this.panX}, ${this.panY}`
+        pan: `${this.panX}, ${this.panY}`,
       });
-    }
-  }
-}
-
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -1751,7 +1945,6 @@ imageDataToCanvas(imageData) {
   background: #f5f5f5;
   border: 1px solid #e1e5e9;
 } */
-
 
 /* Canvas Container */
 .canvas-container {
@@ -1793,8 +1986,12 @@ imageDataToCanvas(imageData) {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .loading-text {
@@ -1848,7 +2045,7 @@ imageDataToCanvas(imageData) {
   display: flex;
   align-items: center;
   gap: 8px;
-  background:rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.6);
   padding: 8px 12px;
   border-radius: 20px;
   /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45); */
@@ -1915,18 +2112,18 @@ imageDataToCanvas(imageData) {
     padding: 6px 8px;
     gap: 6px;
   }
-  
+
   .zoom-btn {
     width: 24px;
     height: 24px;
     font-size: 12px;
   }
-  
+
   .zoom-level {
     font-size: 11px;
     min-width: 32px;
   }
-  
+
   .instructions {
     bottom: 8px;
     font-size: 10px;
@@ -1956,26 +2153,24 @@ imageDataToCanvas(imageData) {
 }
 
 @media (max-width: 480px) {
- 
-  
   .zoom-controls {
     top: 4px;
     right: 4px;
     padding: 4px 6px;
     gap: 4px;
   }
-  
+
   .zoom-btn {
     width: 20px;
     height: 20px;
     font-size: 10px;
   }
-  
+
   .zoom-level {
     font-size: 10px;
     min-width: 28px;
   }
-  
+
   .instructions {
     bottom: 4px;
     font-size: 9px;
@@ -1990,7 +2185,7 @@ imageDataToCanvas(imageData) {
     height: 32px;
     font-size: 14px;
   }
-  
+
   .main-canvas {
     touch-action: pan-y;
   }
@@ -2077,22 +2272,21 @@ imageDataToCanvas(imageData) {
   bottom: 20px;
   left: 50%;
   transform: translateX(-50%); /* shifts box back by half its width */
-  
+
   display: flex;
   flex-direction: row;
   justify-content: center; /* centers buttons inside */
   align-items: center;
-  
+
   gap: 8px;
   z-index: 6;
   background-color: rgba(255, 255, 255, 0.136);
   backdrop-filter: blur(5px);
   max-width: 500px;
-  width: 100%;     /* optional: ensures responsive shrink */
+  width: 100%; /* optional: ensures responsive shrink */
   padding: 10px;
   border-radius: 8px; /* optional: looks cleaner */
 }
-
 
 .control-group {
   display: flex;
@@ -2273,7 +2467,6 @@ imageDataToCanvas(imageData) {
   /* ===== END ===== */
 }
 
-
 .overlay-canvas.disabled {
   opacity: 0.5;
 }
@@ -2309,21 +2502,19 @@ imageDataToCanvas(imageData) {
     padding: 6px 10px;
     font-size: 11px;
   }
-  
+
   .wall-button {
     width: 28px;
     height: 28px;
     font-size: 11px;
   }
-  
-  
-  
+
   .zoom-btn {
     width: 28px;
     height: 28px;
     font-size: 14px;
   }
-  
+
   .instructions {
     bottom: 50px;
     right: 10px;
@@ -2333,8 +2524,12 @@ imageDataToCanvas(imageData) {
 
 /* Animation */
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Loading Spinner (if not already defined) */
@@ -2369,24 +2564,6 @@ imageDataToCanvas(imageData) {
   font-weight: 500;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* Updated scanning loading overlay to fit canvas only */
 .scanning-loading-overlay {
   position: absolute;
@@ -2414,7 +2591,7 @@ imageDataToCanvas(imageData) {
 }
 
 .loading-screen::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -2423,7 +2600,7 @@ imageDataToCanvas(imageData) {
   /* background: rgba(0, 0, 0, 0.05); */
   z-index: 1;
   background: rgba(20, 20, 20, 0.55);
-  backdrop-filter: blur(0.1px); 
+  backdrop-filter: blur(0.1px);
 }
 .wave-overlay {
   position: absolute;
@@ -2433,29 +2610,42 @@ imageDataToCanvas(imageData) {
   height: 100%;
   background: linear-gradient(
     to left,
-    rgba(0,102,255,1) 0%,   /* bold vertical scanning line */
-    rgba(0,102,255,0.4) 20%,
-    rgba(0,102,255,0.3) 30%, /* fade tail after the bold line */
-    rgba(0,102,255,0.2) 35%,
-    rgba(0,102,255,0.15) 40%,
-    rgba(0,102,255,0.10) 50%,
-    rgba(0,102,255,0.0) 100%
+    rgba(0, 102, 255, 1) 0%,
+    /* bold vertical scanning line */ rgba(0, 102, 255, 0.4) 20%,
+    rgba(0, 102, 255, 0.3) 30%,
+    /* fade tail after the bold line */ rgba(0, 102, 255, 0.2) 35%,
+    rgba(0, 102, 255, 0.15) 40%,
+    rgba(0, 102, 255, 0.1) 50%,
+    rgba(0, 102, 255, 0) 100%
   );
-  animation: moveWaveLeftToRight 3s linear infinite,
-             waveFade 3s ease-in-out infinite; /* fade control */
+  animation:
+    moveWaveLeftToRight 3s linear infinite,
+    waveFade 3s ease-in-out infinite; /* fade control */
   z-index: 2;
 }
 
 @keyframes moveWaveLeftToRight {
-  from { transform: translateX(-100%); }
-  to   { transform: translateX(50%); }
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(50%);
+  }
 }
 
 @keyframes waveFade {
-  0%   { opacity: 0; }   /* invisible before entering */
-  10%  { opacity: 1; }   /* fade in */
-  90%  { opacity: 1; }   /* stay visible */
-  100% { opacity: 0; }   /* fade out before reset */
+  0% {
+    opacity: 0;
+  } /* invisible before entering */
+  10% {
+    opacity: 1;
+  } /* fade in */
+  90% {
+    opacity: 1;
+  } /* stay visible */
+  100% {
+    opacity: 0;
+  } /* fade out before reset */
 }
 
 .loading-text {
@@ -2463,7 +2653,7 @@ imageDataToCanvas(imageData) {
   color: #fff;
   text-align: center;
   z-index: 3;
-  text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
   background: rgba(0, 0, 0, 0.3);
   padding: 20px 30px;
   border-radius: 10px;
@@ -2477,5 +2667,4 @@ imageDataToCanvas(imageData) {
   letter-spacing: 1px;
   text-transform: uppercase;
 }
-
 </style>

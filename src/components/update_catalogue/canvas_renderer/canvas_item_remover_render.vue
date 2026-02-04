@@ -2523,60 +2523,60 @@ initializeDrawingCanvas() {
       });
 
       // Allow page scroll when not zoomed
-      document.addEventListener("touchmove", this.handlePageTouchMove, {
-        passive: false,
-      });
+      // document.addEventListener("touchmove", this.handlePageTouchMove, {
+      //   passive: false,
+      // });
     },
 
-    handlePageTouchMove(e) {
-      // Allow page scroll only when:
-      // 1. Canvas is not zoomed (zoom === 1)
-      // 2. Touch is with 1 finger (not pinch zoom)
-      // 3. Touch is not on canvas or is on canvas but not zoomed
+    // handlePageTouchMove(e) {
+    //   // Allow page scroll only when:
+    //   // 1. Canvas is not zoomed (zoom === 1)
+    //   // 2. Touch is with 1 finger (not pinch zoom)
+    //   // 3. Touch is not on canvas or is on canvas but not zoomed
 
-      if (this.zoom === 1 && e.touches.length === 1) {
-        // Allow default scroll behavior when not zoomed
-        return;
-      }
+    //   if (this.zoom === 1 && e.touches.length === 1) {
+    //     // Allow default scroll behavior when not zoomed
+    //     return;
+    //   }
 
-      // If canvas is zoomed or multi-touch, prevent page scroll
-      if (e.touches.length > 1 || this.zoom > 1) {
-        if (e.target === this.canvas || this.canvas.contains(e.target)) {
-          e.preventDefault();
-        }
-      }
+    //   // If canvas is zoomed or multi-touch, prevent page scroll
+    //   if (e.touches.length > 1 || this.zoom > 1) {
+    //     if (e.target === this.canvas || this.canvas.contains(e.target)) {
+    //       e.preventDefault();
+    //     }
+    //   }
 
-      if (!this.canvas) return;
+    //   if (!this.canvas) return;
 
-      this.canvas.style.touchAction = "none";
+    //   this.canvas.style.touchAction = "none";
 
-      // WHEEL (desktop zoom)
-      this.canvas.addEventListener("wheel", this.handleWheel, {
-        passive: false,
-      });
-      // Mouse events
-      this.canvas.addEventListener("mousedown", this.handleMouseDown);
-      this.canvas.addEventListener("mousemove", this.handleMouseMove);
-      this.canvas.addEventListener("mouseup", this.handleMouseUp);
-      this.canvas.addEventListener("mouseleave", this.handleMouseLeave);
-      this.canvas.addEventListener("click", this.handleObjectClick);
-      this.canvas.addEventListener("contextmenu", (e) => e.preventDefault());
-      // Touch events for pinch-zoom and pan
-      this.canvas.addEventListener("touchstart", this.handleTouchStart, {
-        passive: false,
-      });
-      this.canvas.addEventListener("touchmove", this.handleTouchMove, {
-        passive: false,
-      });
-      this.canvas.addEventListener("touchend", this.handleTouchEnd, {
-        passive: false,
-      });
+    //   // WHEEL (desktop zoom)
+    //   this.canvas.addEventListener("wheel", this.handleWheel, {
+    //     passive: false,
+    //   });
+    //   // Mouse events
+    //   this.canvas.addEventListener("mousedown", this.handleMouseDown);
+    //   this.canvas.addEventListener("mousemove", this.handleMouseMove);
+    //   this.canvas.addEventListener("mouseup", this.handleMouseUp);
+    //   this.canvas.addEventListener("mouseleave", this.handleMouseLeave);
+    //   this.canvas.addEventListener("click", this.handleObjectClick);
+    //   this.canvas.addEventListener("contextmenu", (e) => e.preventDefault());
+    //   // Touch events for pinch-zoom and pan
+    //   this.canvas.addEventListener("touchstart", this.handleTouchStart, {
+    //     passive: false,
+    //   });
+    //   this.canvas.addEventListener("touchmove", this.handleTouchMove, {
+    //     passive: false,
+    //   });
+    //   this.canvas.addEventListener("touchend", this.handleTouchEnd, {
+    //     passive: false,
+    //   });
 
-      // Allow page scroll when not zoomed
-      document.addEventListener("touchmove", this.handlePageTouchMove, {
-        passive: false,
-      });
-    },
+    //   // Allow page scroll when not zoomed
+    //   document.addEventListener("touchmove", this.handlePageTouchMove, {
+    //     passive: false,
+    //   });
+    // },
 
     removeEventListeners() {
       if (!this.canvas) return;
@@ -2674,96 +2674,109 @@ initializeDrawingCanvas() {
       this.removeObjectHighlight();
     },
 
-    handleTouchStart(e) {
-      if (this.isLoading) return;
-      if (this.zoom === 1 && e.touches.length === 1) {
-        // Don't prevent default - allow normal page scroll
-        this.isDragging = false; 
-        return;
-      }
-      e.preventDefault();
+handleTouchStart(e) {
+  if (this.isLoading) return;
 
-      if (e.touches.length === 1) {
-        // Single finger - prepare for panning
-        const touch = e.touches[0];
-        this.isDragging = true;
-        this.dragStartX = touch.clientX;
-        this.dragStartY = touch.clientY;
-        this.dragStartPanX = this.panX;
-        this.dragStartPanY = this.panY;
-      } else if (e.touches.length === 2) {
-        // Two fingers - prepare for pinch zoom
-        e.preventDefault();
-        this.isDragging = false;
-        const touch1 = e.touches[0];
-        const touch2 = e.touches[1];
-        const dx = touch2.clientX - touch1.clientX;
-        const dy = touch2.clientY - touch1.clientY;
-        this.lastTouchDistance = Math.sqrt(dx * dx + dy * dy);
-        this.lastPinchZoom = this.zoom;
-      }
-    },
-    handleTouchMove(e) {
-      if (this.isLoading) return;
+  // ALWAYS allow page scroll with single touch
+  if (e.touches.length === 1) {
+    this.isDragging = false;
+    return; // Don't prevent default - allow scroll
+  }
 
-      // Allow page scroll when NOT zoomed (zoom === 1) with single touch
-      if (this.zoom === 1 && e.touches.length === 1 && !this.isDragging) {
-        // Don't prevent default - allow normal page scroll
-        //this.isDragging = false; 
-        return;
-      }
+  e.preventDefault(); // Prevent ONLY for two-finger gestures
 
-      // Prevent default for zoom > 1 or multi-touch
-      e.preventDefault();
+  if (e.touches.length === 2) {
+    // Two fingers - prepare for zoom OR pan
+    this.isDragging = false;
+    const touch1 = e.touches[0];
+    const touch2 = e.touches[1];
+    
+    // Calculate initial distance
+    const dx = touch2.clientX - touch1.clientX;
+    const dy = touch2.clientY - touch1.clientY;
+    this.lastTouchDistance = Math.sqrt(dx * dx + dy * dy);
+    this.initialTouchDistance = this.lastTouchDistance;
+    this.lastPinchZoom = this.zoom;
+    
+    // Store center point for two-finger panning
+    this.twoFingerPanStartX = (touch1.clientX + touch2.clientX) / 2;
+    this.twoFingerPanStartY = (touch1.clientY + touch2.clientY) / 2;
+    this.dragStartPanX = this.panX;
+    this.dragStartPanY = this.panY;
+    this.twoFingerPanning = false;
+  }
+},
+handleTouchMove(e) {
+  if (this.isLoading) return;
 
-      if (e.touches.length === 1 && this.isDragging) {
-        // Single finger pan (only when zoomed)
-        const touch = e.touches[0];
-        const deltaX = touch.clientX - this.dragStartX;
-        const deltaY = touch.clientY - this.dragStartY;
+  // ALWAYS allow page scroll with single touch
+  if (e.touches.length === 1) {
+    return; // Don't prevent default - allow scroll
+  }
 
-        this.panX = this.dragStartPanX + deltaX;
-        this.panY = this.dragStartPanY + deltaY;
+  e.preventDefault(); // Prevent ONLY for two-finger gestures
 
-        this.constrainPan();
-        this.render();
-      } else if (e.touches.length === 2) {
-        // Two finger pinch zoom
-        this.isDragging = false;
-        const touch1 = e.touches[0];
-        const touch2 = e.touches[1];
-        const dx = touch2.clientX - touch1.clientX;
-        const dy = touch2.clientY - touch1.clientY;
-        const currentDistance = Math.sqrt(dx * dx + dy * dy);
+  if (e.touches.length === 2) {
+    // Two fingers - detect zoom OR pan
+    const touch1 = e.touches[0];
+    const touch2 = e.touches[1];
+    
+    // Calculate current distance
+    const dx = touch2.clientX - touch1.clientX;
+    const dy = touch2.clientY - touch1.clientY;
+    const currentDistance = Math.sqrt(dx * dx + dy * dy);
+    
+    // Calculate distance change threshold (5% of initial distance)
+    const distanceThreshold = this.initialTouchDistance * 0.05;
+    const distanceChange = Math.abs(currentDistance - this.initialTouchDistance);
+    
+    if (distanceChange > distanceThreshold) {
+      // ZOOM MODE - distance changed significantly
+      this.twoFingerPanning = false;
+      
+      if (this.lastTouchDistance > 0) {
+        const zoomFactor = currentDistance / this.lastTouchDistance;
+        const newZoom = Math.max(
+          this.minZoom,
+          Math.min(this.maxZoom, this.lastPinchZoom * zoomFactor)
+        );
 
-        if (this.lastTouchDistance > 0) {
-          const zoomFactor = currentDistance / this.lastTouchDistance;
-          const newZoom = Math.max(
-            this.minZoom,
-            Math.min(this.maxZoom, this.lastPinchZoom * zoomFactor),
-          );
+        if (newZoom !== this.zoom) {
+          const centerX = (touch1.clientX + touch2.clientX) / 2;
+          const centerY = (touch1.clientY + touch2.clientY) / 2;
+          const rect = this.canvas.getBoundingClientRect();
+          const canvasCenterX = centerX - rect.left;
+          const canvasCenterY = centerY - rect.top;
 
-          if (newZoom !== this.zoom) {
-            // Zoom towards center of two touches
-            const centerX = (touch1.clientX + touch2.clientX) / 2;
-            const centerY = (touch1.clientY + touch2.clientY) / 2;
-            const rect = this.canvas.getBoundingClientRect();
-            const canvasCenterX = centerX - rect.left;
-            const canvasCenterY = centerY - rect.top;
+          const imageX = (canvasCenterX - this.panX) / this.zoom;
+          const imageY = (canvasCenterY - this.panY) / this.zoom;
 
-            const imageX = (canvasCenterX - this.panX) / this.zoom;
-            const imageY = (canvasCenterY - this.panY) / this.zoom;
+          this.zoom = newZoom;
+          this.panX = canvasCenterX - imageX * this.zoom;
+          this.panY = canvasCenterY - imageY * this.zoom;
 
-            this.zoom = newZoom;
-            this.panX = canvasCenterX - imageX * this.zoom;
-            this.panY = canvasCenterY - imageY * this.zoom;
-
-            this.constrainPan();
-            this.render();
-          }
+          this.constrainPan();
+          this.render();
         }
       }
-    },
+    } else {
+      // PAN MODE - distance stayed constant
+      this.twoFingerPanning = true;
+      
+      const centerX = (touch1.clientX + touch2.clientX) / 2;
+      const centerY = (touch1.clientY + touch2.clientY) / 2;
+      
+      const deltaX = centerX - this.twoFingerPanStartX;
+      const deltaY = centerY - this.twoFingerPanStartY;
+      
+      this.panX = this.dragStartPanX + deltaX;
+      this.panY = this.dragStartPanY + deltaY;
+      
+      this.constrainPan();
+      this.render();
+    }
+  }
+},
   //   handleTouchEnd(e) {
   //     if (this.isLoading) return;
   //     if (this.zoom === 1) {
@@ -2782,18 +2795,22 @@ initializeDrawingCanvas() {
 handleTouchEnd(e) {
   if (this.isLoading) return;
 
-  // CRITICAL FIX: Reset dragging when zoom = 1
-  if (this.zoom === 1) {
+  // ALWAYS allow scroll with single touch
+  if (e.touches.length <= 1) {
     this.isDragging = false;
     this.lastTouchDistance = 0;
-    return; // Allow scroll
+    this.twoFingerPanning = false;
+    this.initialTouchDistance = 0;
+    return; // Don't prevent default
   }
 
-  e.preventDefault();
-  
+  e.preventDefault(); // Prevent ONLY when still using two fingers
+
   if (e.touches.length === 0) {
     this.isDragging = false;
     this.lastTouchDistance = 0;
+    this.twoFingerPanning = false;
+    this.initialTouchDistance = 0;
     this.removeObjectHighlight();
   }
 },
