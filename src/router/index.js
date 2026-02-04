@@ -215,6 +215,10 @@ import Aivirtualtour from '@/views/pages/aivirtualtour.vue'
 
 import make_payment_credittopup from '@/views/pages/make_payment_credittopup.vue'
 import terms_and_conditions from '@/views/pages/tnc/terms_and_conditions.vue'
+import Privacy_policy from '@/views/pages/tnc/privacy_policy.vue'
+import Accessibility_statement from '@/views/pages/tnc/accessibility_statement.vue'
+import Service_charter from '@/views/pages/tnc/service_charter.vue'
+import Software_license_agreement from '@/views/pages/tnc/software_license_agreement.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -278,6 +282,26 @@ const router = createRouter({
       component: terms_and_conditions,
        
     },
+    {
+  path: '/privacy-policy',
+  name: 'privacy_policy',
+  component: Privacy_policy,
+},
+{
+  path: '/accessibility-statement',
+  name: 'accessibility_statement',
+  component: Accessibility_statement,
+},
+{
+  path: '/service-charter',
+  name: 'service_charter',
+  component: Service_charter,
+},
+{
+  path: '/software-license-agreement',
+  name: 'software_license_agreement',
+  component: Software_license_agreement,
+},
     {
       path: '/ai-catalog',
       name: 'ai_catalog',
