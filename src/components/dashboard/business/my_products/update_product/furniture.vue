@@ -497,29 +497,27 @@
   ></div>
 
   <!-- Perfect Center X -->
-  <div 
-    @click.stop="deleteTexture(texture.id)"
-    style="
-      position: absolute;
-      top: -6px;
-      right: -6px;
-      background: #ef4444;
-      color: #fff;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 14px;
-      font-weight: bold;
-      line-height: 1; /* keeps X centered */
-      cursor: pointer;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    "
+  <div
+  @click.stop="deleteTexture(texture.id)"
+  class="absolute -top-2 -right-3
+         flex items-center justify-center
+         bg-red-500 text-white
+         w-5 h-5 rounded-full
+         cursor-pointer
+         shadow-md"
+>
+  <svg
+    class="w-3 h-3"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="3"
   >
-    ×
-  </div>
+    <line x1="18" y1="6" x2="6" y2="18" />
+    <line x1="6" y1="6" x2="18" y2="18" />
+  </svg>
+</div>
+
 
 </div>
 

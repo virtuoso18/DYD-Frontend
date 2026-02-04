@@ -68,15 +68,29 @@
             <!-- Primary Badge -->
             <div v-if="img.is_primary" style="position: absolute; top: -6px; left: -6px; background: #10b981; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 10px;">★</div>
             <!-- Delete Button -->
-            <a-button type="text" danger size="small" @click.stop="deleteImage(img.id)"
-              style="position: absolute; top: -6px; right: -6px; background: #ef4444; color: white; border-radius: 50%; width: 20px; height: 20px; padding: 0; min-width: 20px;">
-              <template #icon>
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-              </template>
-            </a-button>
+           <a-button
+  type="text"
+  danger
+  size="small"
+  @click.stop="deleteImage(img.id)"
+  class="!absolute -top-1.5 -right-1.5
+         !flex !items-center !justify-center
+         !bg-red-500 !text-white
+         !rounded-full
+         !w-5 !h-5 !min-w-5 !p-0"
+>
+  <svg
+    class="w-3 h-3"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+  >
+    <line x1="18" y1="6" x2="6" y2="18" />
+    <line x1="6" y1="6" x2="18" y2="18" />
+  </svg>
+</a-button>
+
           </div>
 
           <!-- Preview Images (Not yet saved) -->
@@ -126,7 +140,7 @@
           </div>
 
           <!-- Basic Info -->
-          <a-row  style="margin-bottom: 20px;">
+          <a-row :gutter="6"  style="margin-bottom: 20px;">
             <a-col :span="12">
               <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151;">Furniture Type</label>
               <a-select v-model:value="productForm.furniture_type" style="width: 100%;" size="large" placeholder="Select Type">
@@ -144,7 +158,7 @@
           <!-- Dimensions -->
           <div style="margin-bottom: 24px;">
             <h4 style="margin-bottom: 16px; font-weight: 500; font-size: 14px; color: #1f2937;">Dimensions</h4>
-            <a-row >
+            <a-row :gutter="6">
               <a-col :span="8">
                 <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 13px; color: #6b7280;">Width (cm)</label>
                 <a-input-number v-model:value="productForm.dimensions.width" :min="0.01" :step="0.01" placeholder="0.00" style="width: 100%; border-radius: 6px;" />
@@ -231,19 +245,28 @@
                     }"
                   ></div>
                   <!-- Remove color button -->
-                  <a-button 
-                    type="text" 
-                    size="small" 
-                    @click="deleteColor(color.id)"
-                    style="position: absolute; top: -8px; right: -8px; background: #ef4444; color: white; border-radius: 50%; width: 20px; height: 20px; padding: 0; min-width: 20px;"
-                  >
-                    <template #icon>
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                      </svg>
-                    </template>
-                  </a-button>
+                  <a-button
+  type="text"
+  size="small"
+  @click="deleteColor(color.id)"
+  class="!absolute -top-2 -right-2
+         !flex !items-center !justify-center
+         !bg-red-500 !text-white
+         !rounded-full
+         !w-5 !h-5 !min-w-5 !p-0"
+>
+  <svg
+    class="w-3 h-3"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="3"
+  >
+    <line x1="18" y1="6" x2="6" y2="18" />
+    <line x1="6" y1="6" x2="18" y2="18" />
+  </svg>
+</a-button>
+
                 </div>
               </div>
             </div>
