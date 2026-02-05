@@ -4663,6 +4663,11 @@ export default {
     selectCategory(category) {
       this.select_replace = category;
 
+     this.item_replacement_renderer_3d_model_url ="";
+      this.selected_model_width = 0.00;
+      this.selected_model_height = 0.00;
+      this.selected_model_depth = 0.00;
+      
       if (category === "All") {
         this.showSelectionButtons = false;
         this.selectedMasks = [];
@@ -4697,6 +4702,7 @@ export default {
     },
 
     switchToFurnitureModeWithCache() {
+      
       this.$nextTick(() => {
         if (this.cachedObjectImages && this.cachedObjectImages.size > 0) {
           this.$message?.destroy();

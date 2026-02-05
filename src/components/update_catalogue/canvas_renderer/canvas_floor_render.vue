@@ -32,19 +32,20 @@
       <span class="zoom-level">{{ Math.round(zoom * 100) }}%</span>
       <button @click="zoomOut" class="zoom-btn" title="Zoom Out">-</button>
       <button
-        @click="resetZoomAndPan"
-        class="zoom-btn reset-btn"
-        title="Reset View"
+      @click="resetZoomAndPan"
+      class="zoom-btn reset-btn"
+      title="Reset View"
       >
-        ⌂
-      </button>
-    </div>
+      ⌂
+    </button>
+  </div>
+    
 
     <!-- Pan Instructions -->
     <div v-if="zoom > 1 && !isLoading && !isTouchDevice" class="instructions">
       Click and drag to pan • Mouse wheel to zoom
     </div>
-    <div v-else="zoom > 1 && !isLoading && isTouchDevice" class="instructions">
+    <div v-else-if="zoom > 1 && !isLoading && isTouchDevice" class="instructions">
       Pinch in to zoom in & Pinch out to zoom out
     </div>
   </div>
@@ -1051,7 +1052,7 @@ export default {
   background: rgba(0, 0, 0, 0.75);
   color: white;
   padding: 8px 16px;
-  border-radius: 20px;
+  border-radius: 10px;
   font-size: 12px;
   text-align: center;
   z-index: 5;
@@ -1091,10 +1092,11 @@ export default {
   }
 
   .zoom-controls {
-    top: 2px;
+    display:none
+    /* top: 2px;
     right: 2px;
     padding: 4px 6px;
-    gap: 4px;
+    gap: 4px; */
   }
 
   .zoom-btn {
