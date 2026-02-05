@@ -183,7 +183,7 @@
 
     <!-- my likes  -->
     <router-link
-      to="/business-dashboard/my-likes"
+      to="/business-dashboard/my-likes?p=true"
       class="flex items-center gap-4 px-2 py-2 rounded-xl text-gray-700 font-medium transition-all duration-200 relative overflow-hidden group hover:bg-gray-50 hover:text-blue-600"
       :class="{ 'nav-active': $route.name === 'business_my_likes' }"
       @click="closeMobileMenu"
