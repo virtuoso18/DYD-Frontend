@@ -1,100 +1,106 @@
 <template>
-  <div class="main">
-    <div class="products-list">
-      <a-row>
-        <a-col 
-        
+  <div class=" md:!p-3 !bg-white !rounded-xl !border-2 !border-gray-200/20">
+    <div class="products-list !pb-5 md:!pb-6">
+      <!-- Responsive Grid - 2 mobile, 4 tablet, 5 desktop -->
+      <div class="grid-container ">
+        <div 
           v-for="product in products"
           :key="product.product_id"
-          class="product-responsive"
-          style="padding:5px;text-align: start;"
+          class="product-card-wrapper"
         >
-          <div class="product">
+          <div class="!p-3 md:!p-4 !bg-gray-50/50 !rounded-lg !mb-2 !shadow-sm hover:!shadow-md transition-all">
+            <!-- Product Image -->
             <div
-  class="product-image-container relative"
-  style="overflow: hidden;"
-  @click="goto_product_Route(product)"
->
-  <!-- Skeleton -->
-  <div
-    v-if="!imageLoadedMap[product.id]"
-    class="product-skeleton"
-  ></div>
+              class="product-image-container !relative !overflow-hidden !h-[160px] md:!h-[180px] !w-full !rounded-lg !cursor-pointer !mx-auto"
+              @click="goto_product_Route(product)"
+            >
+              <!-- Skeleton -->
+              <div
+                v-if="!imageLoadedMap[product.id]"
+                class="!absolute !inset-0 !w-full !h-full !rounded-lg !bg-gradient-to-r !from-gray-200/50 !to-gray-100/50 !animate-pulse"
+              ></div>
 
-  <!-- Preload image (hidden) -->
-  <img
-    :src="$store.state.root_media_api + product.product_image"
-    style="position:absolute;width:0;height:0;opacity:0;"
-    @load="onProductImageLoad(product.id)"
-    alt=""
-  />
+              <!-- Preload -->
+              <img
+                :src="$store.state.root_media_api + product.product_image"
+                style="position:absolute;width:0;height:0;opacity:0;"
+                @load="onProductImageLoad(product.id)"
+                alt=""
+              />
 
-  <!-- Visible image -->
-  <img
-    v-show="imageLoadedMap[product.id]"
-    :src="$store.state.root_media_api + product.product_image"
-    :alt="product.product_title"
-    class="product-image"
-  />
+              <!-- Visible Image -->
+              <img
+                v-show="imageLoadedMap[product.id]"
+                :src="$store.state.root_media_api + product.product_image"
+                :alt="product.product_title"
+                class="!w-full !h-full !object-cover !rounded-lg !transition-transform hover:!scale-105"
+              />
 
-  <!-- Category Badge -->
-  <div class="category-badge">{{ product.category_name }}</div>
+              <!-- Category Badge -->
+              <div class="category-badge">
+                {{ product.category_name }}
+              </div>
 
-  <!-- AR Badge -->
-  <div class="ar-badge">AR</div>
-</div>
+              <!-- AR Badge -->
+              <div class="ar-badge">AR</div>
+            </div>
 
+            <!-- Product Info -->
+            <div class="!mt-3 !space-y-2">
+              <!-- Title -->
+              <div class="!text-left">
+                <h3 class="!font-semibold truncate whitespace-nowrap !text-sm md:!text-base !text-gray-900 !line-clamp-2">
+                  {{ truncateText(product.product_title || 'No title available', 22) }}
+                </h3>
+              </div>
 
-            <a-row>
-              <a-col :span="24" style="padding-top:10px;">
-                <b>{{ truncateText(product.product_title || 'No title available', 22) }}</b>
-              </a-col>
+              <!-- Colors Row -->
+              <div class="!flex !items-center !justify-between !w-full">
+                <span class="!text-xs !text-gray-600 !font-medium">Colors</span>
+                <div class="!flex !gap-1">
+                  <div
+                    v-for="(c, i) in product.product_colors.slice(0,2)"
+                    :key="i"
+                    class="!w-5 !h-5 !rounded-full !border-2 !border-gray-300 !shadow-sm hover:!shadow-md !transition-all !cursor-pointer"
+                    :style="{ background: c.color || c.color_hex }"
+                  ></div>
+                </div>
+              </div>
 
-              <a-col :span="18">
-                Colors
-              </a-col>
+              <!-- Price Row -->
+              <div class="!flex !items-center !justify-between !w-full">
+                <span class="!text-xs !text-gray-600 !font-medium">Price</span>
+                <span class="!text-lg !font-bold !text-gray-900">${{ product.product_price }}</span>
+              </div>
 
-              <a-col
-                span="6"
-                style="display: flex; justify-content: end; gap: 4px;"
-              >
-                <div
-                  v-for="(c, i) in product.product_colors.slice(0,2)"
-                  :key="i"
-                  style="width:20px;height:20px;border-radius:20px;"
-                  :style="{ background: c.color || c.color_hex }"
-                ></div>
-              </a-col>
-
-              <a-col span="12">
-                Price
-              </a-col>
-
-              <a-col span="12" style="text-align: end;">
-                <b>${{ product.product_price }}</b>
-              </a-col>
-
-              <a-col span="17">
-                <a-button block @click="goto_product_Route(product)">
+              <!-- Buttons Row -->
+              <div class="!flex !items-center !gap-2 !w-full !mt-3">
+                <!-- Details Button -->
+                <a-button 
+                  block 
+                  @click="goto_product_Route(product)"
+                  class="!flex-1 !h-10 !text-xs !rounded-lg !font-medium !shadow-sm hover:!shadow-md !transition-all"
+                >
                   Product Details
                 </a-button>
-              </a-col>
-              
-              <a-col span="1"></a-col>
-              <a-col span="4">
-                <a-button @click="toggleFavorite(product.product_id, product.type, product)" style="display: flex;justify-content: center;align-items: center;">
+                
+                <!-- Like Button -->
+                <a-button 
+                  @click="toggleFavorite(product.product_id, product.type, product)" 
+                  class="!w-12 !h-10 !p-[6px] !rounded-lg !flex !items-center !justify-center !shadow-sm hover:!shadow-md !transition-all"
+                >
                   <template v-if="product.is_favorited">
-                    <HeartFilled style="color: red" />
+                    <HeartFilled class="!text-lg !text-red-500" />
                   </template>
                   <template v-else>
-                    <HeartOutlined />
+                    <HeartOutlined class="!text-lg" />
                   </template>
                 </a-button>
-              </a-col>
-            </a-row>
+              </div>
+            </div>
           </div>
-        </a-col>
-      </a-row>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -216,45 +222,92 @@ export default {
 }
 </script>
 
-<style scoped>
-.main {
-  /* padding:10px; */
-  border-radius: 20px;
-  /* height: 100vh; */
-  /* background: white; */
-  /* border:2px solid rgba(128, 128, 128, 0.16); */
-  /* margin-top:10px; */
-  /* margin-bottom:10px; */
+
+<!-- <style scoped>
+.product-image-container {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  position: relative;
+  overflow: hidden;
+  height: 160px;
+  width: 100%;
 }
 
-.head-section {
-  display: flex;
-  justify-content: space-between;
+@media (min-width: 768px) {
+  .product-image-container {
+    height: 180px;
+  }
 }
 
-.product {
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 10px;
-  background: #f3f2f4;
+.category-badge {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  z-index: 20;
 }
 
-.products-list {
-  padding-bottom: 20px;
+.ar-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: rgba(229, 231, 235, 0.8);
+  color: #374151;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  z-index: 20;
 }
 
+/* Fixed Mobile Grid - Stays inside parent */
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  width: 100%;
+  max-width: 100%;
+  padding: 0 4px;  /* Tiny padding for edge spacing */
+  box-sizing: border-box;
+}
+
+.product-card-wrapper {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Tablet: 4 columns */
+@media (min-width: 768px) {
+  .grid-container {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    padding: 0 8px;
+  }
+}
+
+/* Desktop: 5 columns */
+@media (min-width: 1200px) {
+  .grid-container {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    padding: 0 12px;
+  }
+}
+
+/* Skeleton Animation */
 .product-skeleton {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
-
-  /* FIXED BOUNDS — REQUIRED */
-  min-height: 180px;
-  max-height: 180px;
-  min-width: 100%;
-  max-width: 100%;
-
   border-radius: 12px;
-
   background: linear-gradient(
     110deg,
     #e5e7eb 8%,
@@ -262,96 +315,123 @@ export default {
     #e5e7eb 33%
   );
   background-size: 200% 100%;
-  animation: product-shimmer 1.6s infinite linear;
+  animation: shimmer 1.6s infinite linear;
+  z-index: 10;
 }
 
-@keyframes product-shimmer {
+@keyframes shimmer {
   to {
     background-position-x: -200%;
   }
 }
+</style> -->
 
-
+<style scoped>
 .product-image-container {
-  position: relative;
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  height: 180px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  /* padding: 16px; */
-}
-
-.product-image {
+  position: relative;
+  overflow: hidden;
+  height: 160px;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 12px;
-  transition: transform 0.3s ease;
 }
 
-.product-image-container:hover .product-image {
-  transform: scale(1.05);
+@media (min-width: 768px) {
+  .product-image-container {
+    height: 180px;
+  }
+}
+
+/* MOBILE: Exactly 2 cards */
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  width: 100%;
+  padding: 0 4px;
+  box-sizing: border-box;
+  justify-items: center;
+}
+
+.product-card-wrapper {
+  width: 100%;
+  max-width: 170px; /* Mobile & below md */
+}
+
+@media (min-width: 768px) {
+  .product-card-wrapper {
+    max-width: 200px; /* md and above */
+  }
+}
+
+
+/* Tablet: 4 cards */
+@media (min-width: 768px) {
+  .grid-container {
+    grid-template-columns: repeat(4, minmax(170px, 1fr));
+    gap: 12px;
+    padding: 0 8px;
+  }
+}
+
+/* Desktop: 5 cards */
+@media (min-width: 1200px) {
+  .grid-container {
+    grid-template-columns: repeat(5, minmax(170px, 1fr));
+    gap: 1px;
+    padding: 0 12px;
+  }
 }
 
 .category-badge {
   position: absolute;
-  top: 12px;
-  left: 12px;
-  background: rgba(0, 0, 0, 0.75);
+  top: 4px;
+  left: 4px;
+  background: rgba(0, 0, 0, 0.8);
   color: white;
   padding: 4px 8px;
   border-radius: 6px;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  z-index: 20;
 }
 
 .ar-badge {
   position: absolute;
-  top: 12px;
-  right: 12px;
-  background: #e5e7eb;
+  top: 4px;
+  right: 4px;
+  background: rgba(229, 231, 235, 0.8);
   color: #374151;
   padding: 4px 8px;
   border-radius: 6px;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.5px;
+  z-index: 20;
 }
 
-.product-responsive {
-  width: 50%;
-  flex: 0 0 50%;
+.product-skeleton {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  background: linear-gradient(
+    110deg,
+    #e5e7eb 8%,
+    #f9fafb 18%,
+    #e5e7eb 33%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s infinite linear;
+  z-index: 10;
 }
 
-@media (min-width: 576px) {
-  .product-responsive {
-    width: 50%;
-    flex: 0 0 50%;
-  }
-}
-
-@media (min-width: 768px) {
-  .product-responsive {
-    width: 33.333%;
-    flex: 0 0 33.333%;
-  }
-}
-
-@media (min-width: 992px) {
-  .product-responsive {
-    width: 25%;
-    flex: 0 0 25%;
-  }
-}
-
-@media (min-width: 1200px) {
-  .product-responsive {
-    width: 20%;
-    flex: 0 0 20%;
+@keyframes shimmer {
+  to {
+    background-position-x: -200%;
   }
 }
 </style>
+
