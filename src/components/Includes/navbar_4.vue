@@ -15,35 +15,35 @@
 
       <!-- Navigation Links -->
       <div class="navbar-nav">
- <a href="/affiliateprogram" class="text-gray-600 text-sm font-medium hover:text-blue-600 transition-colors whitespace-nowrap">
+ <router-link to="/affiliateprogram" class="text-gray-600 text-sm font-medium hover:text-blue-600 transition-colors whitespace-nowrap">
           Affiliate Program
-        </a>
-        <a href="/interiorMaterialSupplier" class="text-gray-600 text-sm font-medium hover:text-blue-600 transition-colors whitespace-nowrap">
+        </router-link>
+        <router-link to="/interiorMaterialSupplier" class="text-gray-600 text-sm font-medium hover:text-blue-600 transition-colors whitespace-nowrap">
           Interior Supplier
-        </a>
-        <a href="/designcompany" class="text-gray-600 text-sm font-medium hover:text-blue-600 transition-colors whitespace-nowrap">
+        </router-link>
+        <router-link to="/designcompany" class="text-gray-600 text-sm font-medium hover:text-blue-600 transition-colors whitespace-nowrap">
           Design
-        </a>
-        <a href="/furnitureretail" class="text-gray-600 text-sm font-medium hover:text-blue-600 transition-colors whitespace-nowrap">
+        </router-link>
+        <router-link to="/furnitureretail" class="text-gray-600 text-sm font-medium hover:text-blue-600 transition-colors whitespace-nowrap">
           Furniture
-        </a>
-        <!-- <a href="/interiordesigner" class="text-gray-600 text-sm font-medium hover:text-blue-600 transition-colors whitespace-nowrap">
+        </router-link>
+        <!-- <a to="/interiordesigner" class="text-gray-600 text-sm font-medium hover:text-blue-600 transition-colors whitespace-nowrap">
           Interior Designer
         </a> -->
-        <a href="/blogs" class="text-gray-600 text-sm font-medium hover:text-blue-600 transition-colors whitespace-nowrap">
+        <router-link to="/blogs" class="text-gray-600 text-sm font-medium hover:text-blue-600 transition-colors whitespace-nowrap">
           Blogs
-        </a>
-        <!-- <a href="/tutorial" class="text-gray-600 text-sm font-medium hover:text-blue-600 transition-colors whitespace-nowrap">
+        </router-link>
+        <!-- <a to="/tutorial" class="text-gray-600 text-sm font-medium hover:text-blue-600 transition-colors whitespace-nowrap">
           Tutorial
         </a> -->
-        <a href="/sechdulemeeting" class="text-gray-600 text-sm font-medium hover:text-blue-600 transition-colors whitespace-nowrap">
+        <router-link to="/sechdulemeeting" class="text-gray-600 text-sm font-medium hover:text-blue-600 transition-colors whitespace-nowrap">
           Schedule Meeting
-        </a>
-        <a href="/contact-us" class="text-gray-600 text-sm font-medium hover:text-blue-600 transition-colors whitespace-nowrap">
+        </router-link>
+        <router-link to="/contact-us" class="text-gray-600 text-sm font-medium hover:text-blue-600 transition-colors whitespace-nowrap">
           Contact Us
-        </a>
-         <a href="/comunity" class="nav-link">Community</a>
-        <a href="/pricing" class="nav-link">Pricing</a>
+        </router-link>
+         <router-link to="/comunity" class="nav-link">Community</router-link>
+        <router-link to="/pricing" class="nav-link">Pricing</router-link>
       </div>
 
       <!-- Right Side Actions -->

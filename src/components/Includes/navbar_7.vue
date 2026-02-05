@@ -13,12 +13,12 @@
 
       <!-- Navigation Links -->
       <div class="navbar-nav">
-        <a href="/" class="nav-link">DYD Business</a>
+        <router-link to="/" class="nav-link">DYD Business</router-link>
         
-        <a href="/comunity"   v-if="(user.user_type ==='Professional') || (user.user_type ==='Business')" class="nav-link">Community</a>
-        <a href="/pricing" v-if="(user.user_type ==='Professional') || (user.user_type ==='Business')" class="nav-link">Pricing</a>
-        <a href="/contact-us" class="nav-link">Contact us</a>
-        <a href="/ai-catalog"  v-if="user.user_type ==='Professional'" class="nav-link">AI Catalog</a>
+        <router-link to="/comunity"   v-if="(user.user_type ==='Professional') || (user.user_type ==='Business')" class="nav-link">Community</router-link>
+        <router-link to="/pricing" v-if="(user.user_type ==='Professional') || (user.user_type ==='Business')" class="nav-link">Pricing</router-link>
+        <router-link to="/contact-us" class="nav-link">Contact us</router-link>
+        <router-link to="/ai-catalog"  v-if="user.user_type ==='Professional'" class="nav-link">AI Catalog</router-link>
       </div>
 
       <!-- Right Side Actions -->
