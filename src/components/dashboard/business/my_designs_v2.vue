@@ -816,7 +816,7 @@ export default {
             }),
           }
         );
-        // debugger
+        // 
         const data = await response.json();
 
         // Update the product's favorite status

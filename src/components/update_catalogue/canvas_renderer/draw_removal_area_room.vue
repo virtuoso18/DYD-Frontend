@@ -1436,15 +1436,22 @@ export default {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: 'Token ' + localStorage.getItem('token'),
+
           },
           body: JSON.stringify(requestData),
         });
+        
+        const result = await response.json();
+        if (response.status == 402) {
+          this.$emit("insufficient-credits", result.msg,result.buid);
+          return;
+        }
 
         if (!response.ok) {
           throw new Error(`Server error: ${response.status}`);
         }
 
-        const result = await response.json();
 
         this.$message.success("Object removed successfully!");
         this.$emit("removal-success", result);

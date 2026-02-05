@@ -234,7 +234,7 @@ watch: {
     if(response.status===402){
       let result = await response.json()
       // console.log(result )
-       this.$emit('insufficient-credits',result.msg) 
+       this.$emit('insufficient-credits',result.msg,result.buid) 
       this.generating = false
       return
     }

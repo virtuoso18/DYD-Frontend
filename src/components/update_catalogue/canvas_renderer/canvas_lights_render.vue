@@ -591,14 +591,22 @@ async function saveRoom() {
         }),
       }
     );
-
+    const result = await response.json();
+    
+    // Handle 402 BEFORE restoring state
+    if (result.error) {
+      
+      // THEN emit the insufficient credits event
+      emit("insufficient-credits", result.msg,result.buid);
+      return; // Exit early without emitting model-3d-light-added
+    }
+    
     if (!response.ok) {
       throw new Error(
         `Server error: ${response.status} ${response.statusText}`
       );
     }
 
-    const result = await response.json();
     emit("magentic-lights-added", result);
     console.log("Room saved to server successfully!", result);
 

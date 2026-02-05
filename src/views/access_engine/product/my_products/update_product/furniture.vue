@@ -1759,7 +1759,7 @@ export default {
         }
 
         formData.append("model_file_colored_product", fileToUpload);
-        // debugger
+        // 
         // Add texture association
         if (
           this.editingColor.selected_texture_id !== null &&

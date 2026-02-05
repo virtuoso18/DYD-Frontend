@@ -791,7 +791,7 @@ export default {
                 );
 
                 const data = await response.json();
-                debugger
+                
                 console.log('data---->',data)
 
                 if (data.success) {

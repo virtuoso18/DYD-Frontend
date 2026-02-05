@@ -1283,7 +1283,7 @@ handleLikeToggled() {
             },
           }
         );
-        debugger
+        
         const data = await response.json();
         if (data.success) {
           this.products_used_in_post = data.data;

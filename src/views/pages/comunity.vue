@@ -1957,7 +1957,7 @@ export default {
       this.$router.push(`/design/${design.id}`);
     },
     async fetchCommunityStats() {
-      debugger;
+      ;
       this.statsLoading = true;
       try {
         const response = await fetch(

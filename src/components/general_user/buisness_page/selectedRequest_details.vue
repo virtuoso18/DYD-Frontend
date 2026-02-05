@@ -232,7 +232,7 @@ export default {
       console.log('View product:', product);
     },
      goto_product_Route(product){
-      //  debugger
+      //  
         console.log(product)
         let product_type= product.product_type
         if(product.product_type==='light'){

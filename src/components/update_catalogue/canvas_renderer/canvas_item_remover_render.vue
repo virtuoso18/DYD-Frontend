@@ -68,6 +68,8 @@
     :roomId="this.$route.params.id"
     @update:visible="draw_removal_modal = $event"
     @submit-removal="handleDrawnAreaRemoval"
+    @insufficient-credits="throw_Insufficient_credits"
+
     @removal-success="handleRemovalSuccess"
     @cancel="draw_removal_modal = false"
   />
@@ -1111,6 +1113,12 @@ export default {
   },
 
   methods: {
+    throw_Insufficient_credits(msg,buid){
+      // console.log(msg);
+      // console.log(buid);
+          this.$emit("insufficient-credits",msg,buid);
+      
+    },
     openSwitchFurnitureModal() {
       if (this.selectedObjects.length === 0) return;
 

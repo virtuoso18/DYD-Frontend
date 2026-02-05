@@ -1257,7 +1257,7 @@ export default {
     
   async fetchFavoriteChartData() {
     try {
-      // debugger
+      // 
       const params = new URLSearchParams()
 
       if (this.favoriteChartDateRange[0]) {

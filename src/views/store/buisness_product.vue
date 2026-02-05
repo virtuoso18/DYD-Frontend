@@ -120,10 +120,10 @@ async loadBusinessProducts() {
                     }
                     });
         const result = await response.json();
-                debugger
+                
                 console.log(result)
                 if (result.results.success) {
-                    debugger
+                    
                     this.our_products = result.results.data;
                 } else {
                     this.error = result.message || 'Business not found';

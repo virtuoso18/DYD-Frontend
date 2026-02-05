@@ -919,7 +919,7 @@ async function downloadCurrentSceneImage() {
       );
 
       // THEN emit the insufficient credits event
-      emit("insufficient-credits", result.msg);
+      emit("insufficient-credits", result.msg,result.buid);
       return; // Exit early without emitting model-3d-light-added
     }
 

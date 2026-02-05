@@ -400,7 +400,7 @@ export default {
         },
 
         sendMessage() {
-            debugger
+            
             const message = this.newMessage.trim();
             if (!message || !this.currentRoomId || this.websocket?.readyState !== WebSocket.OPEN) return;
 
@@ -416,7 +416,7 @@ export default {
         },
 
         setupWebSocket() {
-            debugger
+            
             if (!this.currentUser?.id) return;
 
             if (this.websocket && this.websocket.readyState !== WebSocket.CLOSED) {

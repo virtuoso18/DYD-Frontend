@@ -784,7 +784,7 @@ updateCreditChart() {
     async startChatWithCustomer(creditTransaction) {
   try {
     // Get current user from localStorage
-    debugger
+    
     const currentUserData = localStorage.getItem('user')
     if (!currentUserData) {
       this.$message.error('User information not found')

@@ -793,7 +793,7 @@ export default {
 
     // Transform design data to post format for CommentsModal
     viewPost(design) {
-      debugger
+      
       // Use only the first community post
       const firstPost = design.community_posts[0];
       

@@ -457,7 +457,7 @@ export default {
     },
 
     async loadComments(page = 1) {
-      debugger
+      
       if (page === 1) {
         this.loadingComments = true;
       } else {

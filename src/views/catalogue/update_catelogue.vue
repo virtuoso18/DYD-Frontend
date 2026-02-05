@@ -55,7 +55,9 @@
       </p>
 
       <!-- CTA button -->
-      <a-button
+      
+      <!-- CTA button -->
+      <a-button v-if="currentUser.user_type!=='User'"
         type="primary"
         block
         size="large"
@@ -63,6 +65,18 @@
         @click="goToPurchaseCredits"
       >
         Purchase Credits
+      </a-button>
+      
+      <a-button v-else
+        type="primary"
+        block
+        size="large"
+        :loading="LoadingMessageButton"
+        style="height: 46px; font-size: 16px; border-radius: 8px; display: flex;justify-content: center;align-items: center;"
+        @click="startchat_with_buisness_user"
+      >
+        <MessageOutlined style="font-size: 16px;"/>
+    Message Business
       </a-button>
     </div>
   </a-modal>
@@ -1193,6 +1207,9 @@ Switch Furniture</a-button> -->
               @handle_removal_completed="fetchRoom()"
               @furniture-switching-started="furniture_Switching_started"
               @furniture-switched="furniture_Switched"
+
+                  @insufficient-credits="throw_Insufficient_credits"
+
             />
             <!-- @redetect-objects-room="fetch_redetect_ObjectsBinary_Masks" -->
             <!-- ceiling light renderer -->
@@ -1220,6 +1237,8 @@ Switch Furniture</a-button> -->
               :depthMask="depthMask"
               :key="canvasKey"
               @magentic-lights-added="magneticLightsMearjed"
+                @insufficient-credits="throw_Insufficient_credits"
+
               @Apply-Changes="ApplyChanges"
               ref="canvas_sunk_magnetic_lights_render"
             />
@@ -2819,6 +2838,9 @@ Switch Furniture</a-button> -->
                   @handle_removal_completed="fetchRoom()"
                   @furniture-switching-started="furniture_Switching_started"
                   @furniture-switched="furniture_Switched"
+
+                  @insufficient-credits="throw_Insufficient_credits"
+
                 />
                 <!-- @redetect-objects-room="fetch_redetect_ObjectsBinary_Masks" -->
                 <!-- ceiling light renderer -->
@@ -2845,6 +2867,8 @@ Switch Furniture</a-button> -->
                   :selectedlightuuid="selectedlightuuid"
                   :depthMask="depthMask"
                   :key="canvasKey"
+                  @insufficient-credits="throw_Insufficient_credits"
+
                   @magentic-lights-added="magneticLightsMearjed"
                   @Apply-Changes="ApplyChanges"
                   ref="canvas_sunk_magnetic_lights_render"
@@ -3154,6 +3178,8 @@ import {
   CloudUploadOutlined,
   UserDeleteOutlined,
   SwapOutlined,
+          MessageOutlined,
+
 } from "@ant-design/icons-vue";
 import canvas_floor_render from "@/components/update_catalogue/canvas_renderer/canvas_floor_render.vue";
 import canvas_item_remover_render from "@/components/update_catalogue/canvas_renderer/canvas_item_remover_render.vue";
@@ -3190,6 +3216,14 @@ export default {
 
   data() {
     return {
+
+      currentUser:JSON.parse(localStorage.getItem('user')),
+      LoadingMessageButton:false,
+      buid:null,
+      creditErrorMessage: "",
+      showCreditModal: false,
+      
+
       LockCanvasOperation: false,
       brand: "",
       brand_data: {
@@ -3197,8 +3231,6 @@ export default {
         business_picture: "/media/default/banner.jpg",
         banner_picture: "/media/default/banner.jpg",
       },
-      showCreditModal: false,
-      creditErrorMessage: "",
       isCollapsed: false,
       user: JSON.parse(localStorage.getItem("user")),
       // profile: JSON.parse(localStorage.getItem('profile')),
@@ -3415,6 +3447,60 @@ export default {
   },
 
   methods: {
+     async startchat_with_buisness_user() {
+            const selectedUser = this.buid
+            this.LoadingMessageButton=true
+            const payload = JSON.stringify({
+                type: 'DM',
+                members: [this.currentUser.id, parseInt(selectedUser.id)],
+                name: `${this.currentUser.first_name} & ${selectedUser.first_name}`,
+            })
+            try {
+                const response = await fetch(`${this.$store.state.root_api}chat/chats`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: 'Token ' + localStorage.getItem('token'),
+                    },
+                    body: payload,
+                })
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`)
+                }
+
+                const data = await response.json()
+                const room = data.room || data
+
+                // if (this.currentUser.user_type === 'User') {
+                
+                if (this.currentUser.user_type === 'User') {
+                    this.$router.push({
+                        path: '/user-dashboard/my-messages',
+                        query: { chatId: data.room_id }
+                    })
+                }
+
+                if (this.currentUser.user_type === 'Business' ) {
+                    this.$router.push({
+                        path: '/my-store/messages',
+                        query: { chatId: data.room_id }
+                    })
+                }
+                  if (this.currentUser.user_type === 'Professional') {
+                    this.$router.push({
+                        path: '/professional-dashboard/my-messages',
+                        query: { chatId: data.room_id }
+                    })
+                }
+                // }
+
+            } catch (error) {
+                console.error('Error creating/finding room:', error)
+            }
+            this.LoadingMessageButton=false
+      },
+
     StartEndCanvasLoading(e) {
       this.canvasLoading = e;
     },
@@ -3455,15 +3541,16 @@ export default {
     toggleSocialShare() {
       this.isCollapsed = !this.isCollapsed;
     },
-    throw_Insufficient_credits(message) {
+    throw_Insufficient_credits(message,buid=null) {
       // @insufficient-credits="throw_Insufficient_credits"
       // if(response.status==402){
       //    const result = await response.json()
       //    this.$emit('insufficient-credits',result.msg)
       //  }
-
+      this.canvasLoading=false;
       this.processing_generate_is_Loading = false;
       this.creditErrorMessage = message;
+      this.buid=buid
       this.showCreditModal = true;
     },
 
@@ -3514,6 +3601,14 @@ export default {
           },
           "rescale-room-walls-layout",
         );
+
+        if (responseData.error) {
+          this.creditErrorMessage = responseData.msg;
+          this.showCreditModal = true;
+          this.buid=responseData.buid
+
+          return;
+        }
 
         if (responseData) {
           
@@ -4070,6 +4165,7 @@ export default {
         if (result.error) {
           this.creditErrorMessage = result.msg;
           this.showCreditModal = true;
+          this.buid=result.buid
           return;
         }
 
@@ -4205,8 +4301,11 @@ export default {
           body: JSON.stringify(requestBody),
         });
         if (responseData.error) {
+          this.creditErrorMessage = responseData.msg;
+          this.buid=responseData.buid;
+
           this.throw_Insufficient_credits(
-            "Insufficient credits to remove all furniture . This action requires 10 credits. Please top up your balance and try again.",
+            this.creditErrorMessage
           );
         }
 
@@ -4450,6 +4549,8 @@ export default {
         if (responseData.error) {
           this.creditErrorMessage = responseData.msg;
           this.showCreditModal = true;
+          this.buid=responseData.buid
+
           return;
         }
 
@@ -4504,6 +4605,8 @@ export default {
         if (responseData.error) {
           this.creditErrorMessage = responseData.msg;
           this.showCreditModal = true;
+          this.buid=responseData.buid
+
           return;
         }
 
@@ -5241,6 +5344,7 @@ export default {
     BulbOutlined,
     CloudUploadOutlined,
     UserDeleteOutlined,
+        MessageOutlined,
 
     // switch Business
     switch_business,

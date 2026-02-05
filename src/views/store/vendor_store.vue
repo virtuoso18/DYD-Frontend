@@ -711,7 +711,7 @@ export default {
     methods: {
       async fetchCommunityPosts(page = 1) {
     try {
-      debugger
+      
         const token = localStorage.getItem('token');
         const response = await fetch(
             `${this.$store.state.root_api}community/api/business-community-posts/${this.$route.params.buisness_name}?page=${page}&page_size=12`,

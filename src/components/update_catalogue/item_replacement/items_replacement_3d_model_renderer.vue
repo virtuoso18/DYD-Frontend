@@ -573,7 +573,7 @@ export default {
 
         if (response.status == 402) {
           const result = await response.json();
-          this.$emit("insufficient-credits", result.msg);
+          this.$emit("insufficient-credits", result.msg,result.buid);
           return;
         }
         if (!response.ok) {
@@ -643,7 +643,7 @@ export default {
         this.remove3DObjectFromScene();
         if (response.status == 402) {
           const result = await response.json();
-          this.$emit("insufficient-credits", result.msg);
+          this.$emit("insufficient-credits", result.msg,result.buid);
           return;
         }
         if (!response.ok) {
