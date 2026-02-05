@@ -4,12 +4,13 @@
     <a-row>
       <a-col :sm="24" :xs="24" :md="24" :lg="24">
         <div
+        class="!h-[600px] md:!h-[800px]"
           :style="{
             backgroundImage: `url(${bannerImage})`,
             backgroundPosition: 'center 60%',
             backgroundSize: 'cover',
             backgroundRepeat: 'no-repeat',
-            height: '800px',
+           
             width: '100%',
             display: 'flex',
             justifyContent: 'center',
@@ -26,14 +27,61 @@
                 margin-bottom: 24px;
               "
             >
-              <div>
-                <div class="text-2xl font-semibold text-gray-600 my-2">
-                  {{ t("line1") }}
+             <div className="hidden md:block">
+  <div
+    class="my-2 text-center tracking-[-0.02em]"
+    style="
+      font-family: 'Proza Libre', sans-serif;
+      font-weight: 700;
+      font-style: normal;
+      font-size: 44px;
+      line-height: 52px;
+    "
+  >
+    {{ t('line1') }}
+  </div>
+
+  <div
+    class="my-2 text-center tracking-[-0.02em]"
+    style="
+      font-family: 'Proza Libre', sans-serif;
+      font-weight: 700;
+      font-style: normal;
+      font-size: 44px;
+      line-height: 52px;
+    "
+  >
+    {{ t('line2') }}
+  </div>
+</div>
+
+
+              <div className="md:hidden">
+                <div
+                  class="my-2 text-[32px] !font-bold text-[#111111] !text-center !tracking-[-0.02em]"
+                  style="font-family: &quot;Proza Libre&quot;, sans-serif"
+                >
+                  {{ t("line1") }} {{ t("line2") }}
                 </div>
-                <div class="text-center text-2xl text-gray-600 my-2">
+
+                <div
+                  class="hidden lg:block text-center text-2xl text-gray-600 my-2"
+                >
                   {{ t("line2") }}
                 </div>
               </div>
+
+              <!-- <div class="md:hidden inline-flex items-center !mt-4 relative">
+  <span class="bg-[#3b63fb] text-white px-8 py-3 rounded-lg font-bold !text-[28px] relative z-0 shadow-lg">
+    DYD AI Technology
+  </span>
+  
+  <span class="absolute -left-2 -bottom-3 text-white text-xl z-10 -rotate-12">✦</span>
+  
+  <span class="absolute -right-2 bottom-0 text-white !text-xl z-10 rotate-12">✦</span>
+    <span class="absolute -right-3 bottom-4 text-white text-sm z-10 rotate-12">✦</span>
+
+</div> -->
             </div>
 
             <a-button
@@ -80,6 +128,7 @@
             <br />
 
             <div
+              className="hidden md:block"
               style="
                 font-size: 16px;
                 font-weight: 500;
@@ -91,41 +140,36 @@
             >
               Click Try Demo
             </div>
+
+            <div
+              class="md:hidden text-base font-medium text-gray-900 underline md:translate-y-0 -translate-y-0 cursor-pointer"
+              @click="handleAuthorizeClick('tryDemo')"
+            >
+              Click Try Demo
+            </div>
           </div>
         </div>
       </a-col>
       <a-col :sm="24" :xs="24" :md="24" :lg="24">
-        <a-row :gutter="[20, 20]" style="width: 100%">
+        <div></div>
+        <a-row :gutter="[10, 10]" style="width: 100%">
           <!-- First Card - 95% Cheaper -->
           <a-col
             :xs="12"
             :sm="12"
             :md="4"
             :lg="4"
-            style="border-radius: 10px; padding-top: 20px"
+            style="border-radius: 10px; padding-top: 20px; padding-left: 20px"
           >
             <div
-              style="
-                background-color: #f9f9f9;
-                width: 100%;
-                height: 223px;
-                border: 1px solid #cccccc;
-                border-radius: 10px;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-              "
+              class="w-full h-[168px] bg-[#f9f9f9] border border-[#cccccc] rounded-[22px] flex flex-col items-center justify-center"
             >
               <h1
-                class="card-number sm:!text-[48px] !text-[44px]"
-                style=" margin: 0; font-weight: 600"
+                class="card-number sm:!text-[48px] !text-[40px] font-semibold m-0"
               >
                 95%
               </h1>
-              <p class="card-label" style="font-size: 16px; margin: 8px 0 0 0">
-                Cheaper
-              </p>
+              <p class="card-label text-[16px] mt-2">Cheaper</p>
             </div>
           </a-col>
 
@@ -135,15 +179,15 @@
             :sm="12"
             :md="4"
             :lg="4"
-            style="border-radius: 10px; padding-top: 20px"
+            style="border-radius: 22px; padding-top: 20px; padding-left: 5px"
           >
             <div
               style="
                 background-color: #f9f9f9;
                 width: 100%;
-                height: 223px;
+                height: 168px;
                 border: 1px solid #cccccc;
-                border-radius: 10px;
+                border-radius: 22px;
                 overflow: hidden;
                 display: flex;
                 flex-direction: column;
@@ -152,8 +196,8 @@
               "
             >
               <h1
-                class="card-number sm:!text-[48px] !text-[44px]"
-                style=" margin: 0; font-weight: 600 ; white-space: nowrap;   "
+                class="card-number sm:!text-[48px] !text-[40px]"
+                style="margin: 0; font-weight: 600; white-space: nowrap"
               >
                 10,000+
               </h1>
@@ -165,23 +209,23 @@
 
           <!-- Third Card - Features -->
           <a-col
-            :xs="24"
-            :sm="24"
-            :md="16"
-            :lg="16"
-            style="border-radius: 10px; padding-top: 20px; padding-bottom: 40px"
-          >
+  :xs="24"
+  :sm="24"
+  :md="16"
+  :lg="16"
+  class="rounded-[10px] pt-[2px] md:pt-[20px] pb-[40px] pl-[20px] pr-0"
+>
+
             <div
               style="
                 width: 100%;
-                height: 223px;
+                height: 168px;
                 background: #f9f9f9;
                 border: 1px solid #cccccc;
-                border-radius: 10px;
+                border-radius: 22px;
                 display: flex;
                 justify-content: space-around;
                 align-items: center;
-                padding: 20px;
               "
             >
               <!-- Feature 1 -->
@@ -306,7 +350,9 @@
     </a-row>
     <!-- <catalog/> -->
     <!-- Unlock the potential section -->
-    <a-row style="padding-left: 10px; padding-right: 10px">
+    <a-row
+      style="padding-left: 10px; padding-right: 10px; padding-bottom: 10px"
+    >
       <a-col
         :span="24"
         style="
@@ -318,7 +364,7 @@
         "
       >
         <div class="banner-text">Unlock the potential of</div>
-        <div class="banner-text">
+        <div class="banner-text !ml-1">
           <span
             style="
               background-color: #3b63fb;
@@ -355,139 +401,159 @@
         </div>
         <br />
 
-
-
-<div 
-  class="relative w-full max-w-[900px] rounded-3xl overflow-hidden shadow-2xl" 
-  :style="{
-    'max-height': '600px',
-    'margin-left': imageContainerFullWidth ? '0' : 'auto',     
-    'margin-right': imageContainerFullWidth ? '0' : 'auto'   
-  }"
->
-
-
-
-<!-- ORIGINAL IMAGE -->
-  <img
-src="../../assets/homepagegenrated.png"
-    class="w-full h-auto max-h-[600px] object-cover rounded-3xl z-10"
-    alt="Room image"
-  />
-  
-  <!-- BINARY MASK OVERLAY (blue furniture) -->
-<img
-  v-if="showFurnitureMask"
-  src="../../assets/gen4.png"
-  class="absolute inset-0 w-full -translate-x-[0.4%] h-full object-cover cursor-pointer
-         mix-blend-multiply"
-  style="
-    filter: brightness(0.9) saturate(4.8);
-  "
-@click="showProductModal = true; toggleImageContainerWidth()"/>
-
-
-<!-- Product Selection Modal -->
-
-
-
-  
-  <!-- SHIMMER (MEDIUM z-30 - over image during processing) -->
-  <!-- SHIMMER (MEDIUM z-30) -->
-<div
- v-if="isProcessing"
-  :key="stepKey"
-  class="absolute inset-0 animate-shimmer-overlay !z-30"
-></div>
-
-  
-  <!-- PROCESS BUTTON (HIGH z-50 - always on top) -->
-<a-button
-  type="primary"
-  @click="handleAuthorizeClick('processPhoto')"
-  class="ai-glow-btn !absolute sm:!bottom-14 bottom-2 left-1/2 -translate-x-1/2
-         sm:w-[309px] sm:h-14 h-10 !z-10
-         !flex !items-center !justify-center
-         gap-[2px]
-         !border-none
-         backdrop-blur-sm
-         transition-all duration-500 group
-         hover:text-gray-700"
-  :class="{ 'animate-auto-glow opacity-90 scale-[0.98]': isProcessing }"
->
-  <span class="text-white sm:font-semibold sm:text-base tracking-wide z-10 hover:text-gray-700">
-    Process photo
-  </span>
-
-  <img
-    src="/ai-generative.svg"
-    alt="AI"
-    class="w-6 h-6 flex-shrink-0 z-10
-           group-hover:brightness-0 group-hover:invert"
-  />
-</a-button>
-
-
-
-
-
-
-  
-  <!-- DETECTING BUTTON (HIGHEST z-60) -->
-  <!-- WRAPPER for button positioning -->
-<div class="absolute inset-0 flex items-center justify-center z-60 pointer-events-none">
-  <a-button
-    v-if="isProcessing"
-    type="primary"
-    class="w-[280px] !h-10 bg-gradient-to-r from-gray-400 to-gray-500 animate-pulse-flash border-none text-white !text-lg !font-poppins rounded-2xl shadow-2xl backdrop-blur-lg  flex items-center justify-center pointer-events-auto !mx-auto"
-  >
-    Detecting Furniture...
-  </a-button>
-</div>
-
-
-</div>
-
- <div 
-    v-if="showProductModal" 
-    class="lg:hidden w-full !mt-2 z-30 pb-6"
-  >
-    <div 
-      class="w-full !bg-[#f2f2f2]  !rounded-3xl  max-h-[380px] overflow-scroll no-scrollbar border border-gray-300 transform transition-all duration-300"
-      :class="showProductModal ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-4'"
-    >
-      <!-- Mobile Header -->
-      <div class="!px-6 !py-2 border-b border-gray-800 flex items-center justify-between">
-        <h2 class="!text-[16px] !font-poppins font-normal !text-gray-700">Select Product to replace</h2>
-        <button 
-          @click="closeProductTab"
-          class="!text-gray-700 hover:scale-105 !text-4xl leading-none"
+        <div
+          class="relative w-full max-w-[900px] rounded-xl overflow-hidden shadow-2xl"
+          :style="{
+            'max-height': '600px',
+            'margin-left': imageContainerFullWidth ? '0' : 'auto',
+            'margin-right': imageContainerFullWidth ? '0' : 'auto',
+          }"
         >
-          ×
-        </button>
-      </div>
+          <!-- ORIGINAL IMAGE -->
+          <img
+            src="../../assets/homepagegenrated.png"
+            class="w-full h-auto max-h-[600px] object-cover !rounded-md z-10"
+            alt="Room image"
+          />
 
-      <!-- 2-Grid Products -->
-      <div class=" !overflow-y-auto no-scrollbar !px-6 !py-4">
-        <div class="grid grid-cols-2 gap-4">
-          <div 
-            v-for="(product, index) in products.slice(0, 4)"
-            :key="index"
-            class="bg-white !rounded-xl !p-3 border border-gray-300 hover:border-gray-400 cursor-pointer transition-all hover:scale-[1.02]"
+          <!-- BINARY MASK OVERLAY (blue furniture) -->
+          <img
+            v-if="showFurnitureMask"
+            src="../../assets/gen4.png"
+            class="absolute inset-0 w-full -translate-x-[0.4%] h-full object-cover cursor-pointer mix-blend-multiply"
+            style="filter: brightness(0.9) saturate(4.8)"
+            @click="
+              showProductModal = true;
+              toggleImageContainerWidth();
+            "
+          />
+
+          <!-- Product Selection Modal -->
+
+          <!-- SHIMMER (MEDIUM z-30 - over image during processing) -->
+          <!-- SHIMMER (MEDIUM z-30) -->
+          <div
+            v-if="isProcessing"
+            :key="stepKey"
+            class="absolute inset-0 animate-shimmer-overlay !z-30"
+          ></div>
+
+          <!-- PROCESS BUTTON (HIGH z-50 - always on top) -->
+          <div className="hidden md:block">
+            <a-button
+              type="primary"
+              @click="handleAuthorizeClick('processPhoto')"
+              class="ai-glow-btn !absolute sm:!bottom-14 bottom-2 left-1/2 -translate-x-1/2 sm:w-[309px] sm:h-14 h-10 !z-10 !flex !items-center !justify-center gap-[2px] !border-none backdrop-blur-sm transition-all duration-500 group hover:text-gray-700"
+              :class="{
+                'animate-auto-glow opacity-90 scale-[0.98]': isProcessing,
+              }"
+            >
+              <span
+                class="text-white sm:font-semibold sm:text-base tracking-wide z-10 hover:text-gray-700"
+              >
+                Process photo
+              </span>
+
+              <img
+                src="/ai-generative.svg"
+                alt="AI"
+                class="w-6 h-6 flex-shrink-0 z-10 group-hover:brightness-0 group-hover:invert"
+              />
+            </a-button>
+          </div>
+
+          <!-- DETECTING BUTTON (HIGHEST z-60) -->
+          <!-- WRAPPER for button positioning -->
+          <div
+            class="absolute inset-0 flex items-center justify-center z-60 pointer-events-none"
           >
-            <div class="w-full h-24 bg-white !rounded-lg overflow-hidden !mb-3">
-              <img :src="product.image" class="!w-full !h-full object-cover" />
-            </div>
-            <h3 class="!text-gray-700 !text-sm !font-semibold !mb-1">{{ product.name }}</h3>
-            <p class="!text-gray-400 !text-xs !mb-2">{{ product.color }}</p>
-            <p class="!text-blue-500 !text-sm !font-bold">{{ product.price }}</p>
+            <a-button
+              v-if="isProcessing"
+              type="primary"
+              class="w-[280px] !h-10 bg-gradient-to-r from-gray-400 to-gray-500 animate-pulse-flash border-none text-white !text-lg !font-poppins rounded-2xl shadow-2xl backdrop-blur-lg flex items-center justify-center pointer-events-auto !mx-auto"
+            >
+              Detecting Furniture...
+            </a-button>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
- 
 
+        <div className="md:hidden !mt-4">
+          <a-button
+            type="primary"
+            @click="handleAuthorizeClick('processPhoto')"
+            class="ai-glow-btn !absolute sm:!bottom-14 bottom-2 left-1/2 -translate-x-1/2 w-full sm:h-14 h-10 !z-10 !flex !items-center !justify-center gap-[2px] !border-none backdrop-blur-sm transition-all duration-500 group hover:text-gray-700"
+            :class="{
+              'animate-auto-glow opacity-90 scale-[0.98]': isProcessing,
+            }"
+          >
+            <span
+              class="text-white sm:font-semibold sm:text-base tracking-wide z-10 hover:text-gray-700"
+            >
+              Process photo
+            </span>
+
+            <img
+              src="/ai-generative.svg"
+              alt="AI"
+              class="w-6 h-6 flex-shrink-0 z-10 group-hover:brightness-0 group-hover:invert"
+            />
+          </a-button>
+        </div>
+
+        <div v-if="showProductModal" class="lg:hidden w-full !mt-2 z-30 pb-6">
+          <div
+            class="w-full !bg-[#f2f2f2] !rounded-3xl max-h-[380px] overflow-scroll no-scrollbar border border-gray-300 transform transition-all duration-300"
+            :class="
+              showProductModal
+                ? 'opacity-100 scale-100 translate-y-0'
+                : 'opacity-0 scale-95 translate-y-4'
+            "
+          >
+            <!-- Mobile Header -->
+            <div
+              class="!px-6 !py-2 border-b border-gray-800 flex items-center justify-between"
+            >
+              <h2 class="!text-[16px] !font-poppins font-normal !text-gray-700">
+                Select Product to replace
+              </h2>
+              <button
+                @click="closeProductTab"
+                class="!text-gray-700 hover:scale-105 !text-4xl leading-none"
+              >
+                ×
+              </button>
+            </div>
+
+            <!-- 2-Grid Products -->
+            <div class="!overflow-y-auto no-scrollbar !px-6 !py-4">
+              <div class="grid grid-cols-2 gap-4">
+                <div
+                  v-for="(product, index) in products.slice(0, 4)"
+                  :key="index"
+                  class="bg-white !rounded-xl !p-3 border border-gray-300 hover:border-gray-400 cursor-pointer transition-all hover:scale-[1.02]"
+                >
+                  <div
+                    class="w-full h-24 bg-white !rounded-lg overflow-hidden !mb-3"
+                  >
+                    <img
+                      :src="product.image"
+                      class="!w-full !h-full object-cover"
+                    />
+                  </div>
+                  <h3 class="!text-gray-700 !text-sm !font-semibold !mb-1">
+                    {{ product.name }}
+                  </h3>
+                  <p class="!text-gray-400 !text-xs !mb-2">
+                    {{ product.color }}
+                  </p>
+                  <p class="!text-blue-500 !text-sm !font-bold">
+                    {{ product.price }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
         <br />
       </a-col>
@@ -496,22 +562,33 @@ src="../../assets/homepagegenrated.png"
     <!-- Unlock the potential section -->
 
     <a-row style="padding-left: 10px; background: #f2f2f2; padding-right: 10px">
-      <a-col :span="24" style="max-width: 1200px; margin: auto; padding: 20px">
+      <a-col :span="24" style="max-width: 1200px; margin: auto; padding: 10px">
         <div>
           <br />
           <br />
           <br />
 
-          <div style="color: black; margin: 0; padding: 0" class="banner-text">
+          <div
+            style="color: black; margin: 0; padding: 0"
+            class="banner-text !text-[26px] md:!text-[48px]"
+          >
             The Smart Platform for Virtual Staging
           </div>
-          <div style="color: black; margin: 0; padding: 0" class="banner-text">
+          <div
+            style="color: black; margin: 0; padding: 0"
+            class="banner-text !text-[26px] md:!text-[48px]"
+          >
             and Realistic Home Design
           </div>
-          <div style="color: black; margin: 0; padding: 0" class="banner-text">
+          <div
+            style="color: black; margin: 0; padding: 0"
+            class="banner-text !text-[26px] md:!text-[48px]"
+          >
             Visualizations
           </div>
-          <div style="font-size: 20px; color: grey">
+          <div
+            class="text-[14px] md:text-[20px] !mt-4 text-[#333333] font-poppins font-normal leading-[20px] tracking-[0]"
+          >
             DYD is an advanced AI platform for business owners, store owners,
             <br />interior designers, and architects, offering interactive,
             <br />personalized virtual staging visualizations to showcase
@@ -521,121 +598,149 @@ src="../../assets/homepagegenrated.png"
       </a-col>
       <a-col :span="24" style="max-width: 1200px; margin: auto">
         <a-row>
-          <a-col :sm="24" :xs="23" :md="12" :lg="12">
-            <br />
-            <div
-              style="
-                border-radius: 20px;
-                background-color: white;
-                border: 3px dotted grey;
-                height: 350px;
-                width: 100%;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                font-size: 18px;
-              "
-            >
-              <svg
-                width="26"
-                height="26"
-                viewBox="0 0 26 26"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M12.5333 4.70117V15.147M12.5333 4.70117C11.8019 4.70117 10.4353 6.78438 9.92188 7.31262M12.5333 4.70117C13.2647 4.70117 14.6314 6.78438 15.1448 7.31262"
-                  stroke="black"
-                  stroke-width="1.88285"
-                  stroke-linecap="square"
-                  stroke-linejoin="round"
-                />
-                <path
-                  d="M20.8929 17.2363C20.8929 19.829 20.3519 20.3701 17.7592 20.3701H7.31342C4.72078 20.3701 4.17969 19.829 4.17969 17.2363"
-                  stroke="black"
-                  stroke-width="1.88285"
-                  stroke-linecap="square"
-                  stroke-linejoin="round"
-                />
-              </svg>
+          
+
+            <a-col :sm="24" :xs="23" :md="12" :lg="12" class="pl-2">
               <br />
-              Drag & drop Image
-              <br />
-              <br />
-              <a-button
-                @click="handleAuthorizeClick('uploadImage')"
-                type="primary"
-                >Upload Image</a-button
-              >
-            </div>
-          </a-col>
-          <a-col :sm="24" :xs="24" :md="12" :lg="12">
-            <div
-              style="
-                border-radius: 20px;
-                height: 400px;
-                max-width: 450px;
-                width: 90%;
-                margin: auto;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                font-size: 18px;
-                padding: 20px;
-              "
-            >
-              <p>or use an example image</p>
-              <a-space
-                class="no-scrollbar"
-                style="overflow-x: auto; max-width: 320px"
-              >
-                <a-button>Living Room</a-button>
-                <a-button>Kitchen</a-button>
-                <a-button>Bedroom</a-button>
-                <a-button>Dianing Room</a-button>
-                <a-button>Outdoor</a-button>
-              </a-space>
-              <br />
-              <div
+              <div 
                 style="
-                  display: flex;
-                  gap: 10px;
-                  overflow-x: hidden;
+                  border-radius: 20px;
+                  background-color: white;
+                  border: 2px dashed  #B3B3B3;
+                  height: 350px;
                   width: 100%;
+                  display: flex;
+                  flex-direction: column;
+                  justify-content: center;
+                  align-items: center;
+                  font-size: 18px;
+                  font-family: 'Poppins', sans-serif;
                 "
               >
-                <img
-                  src="../../assets/home_main_banner.jpg"
-                  style="border-radius: 10px; width: 150px; height: 100px"
-                  alt=""
-                />
-                <img
-                  src="../../assets/home_main_banner.jpg"
-                  style="border-radius: 10px; width: 150px; height: 100px"
-                  alt=""
-                />
-                <img
-                  src="../../assets/home_main_banner.jpg"
-                  style="border-radius: 10px; width: 150px; height: 100px"
-                  alt=""
-                />
-                <img
-                  src="../../assets/home_main_banner.jpg"
-                  style="border-radius: 10px; width: 150px; height: 100px"
-                  alt=""
-                />
+                <svg
+                  width="26"
+                  height="26"
+                  viewBox="0 0 26 26"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M12.5333 4.70117V15.147M12.5333 4.70117C11.8019 4.70117 10.4353 6.78438 9.92188 7.31262M12.5333 4.70117C13.2647 4.70117 14.6314 6.78438 15.1448 7.31262"
+                    stroke="black"
+                    stroke-width="1.88285"
+                    stroke-linecap="square"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M20.8929 17.2363C20.8929 19.829 20.3519 20.3701 17.7592 20.3701H7.31342C4.72078 20.3701 4.17969 19.829 4.17969 17.2363"
+                    stroke="black"
+                    stroke-width="1.88285"
+                    stroke-linecap="square"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                <br />
+                Drag & drop Image
+                <br />
+                <br />
+                <a-button
+    @click="handleAuthorizeClick('uploadImage')"
+    type="primary"
+    class="font-poppins"
+  >
+    Click to upload
+  </a-button>
+  
+                
               </div>
-              <br />
+            </a-col>
+          
+          <a-col :sm="24" :xs="24" :md="12" :lg="12">
+            <div className="md:pl-12">
 
-              <a-button
-                @click="handleAuthorizeClick('tryForFree')"
-                type="primary"
-                block
-                >Try For Free</a-button
+              <div
+                style="
+                  border-radius: 20px;
+                  height: 400px;
+                  max-width: 450px;
+                  
+                  display: flex;
+                  flex-direction: column;
+                  justify-content: center;
+                  align-items: center;
+                  font-size: 18px;
+                  padding: 0px;
+                "
               >
-              <h6>No Credit Required</h6>
+                <p>or use an example image</p>
+               <div class="">
+   <a-space
+    class="no-scrollbar overflow-x-auto sm:overflow-x-visible"
+    style="max-width: 350px"
+  >
+  
+  <a-button class="!px-2 !py-1 text-sm">
+    Living Room
+  </a-button>
+  <a-button class="!px-1 !py-1 text-sm">
+        Kitchen</a-button>
+      <a-button class="!px-1 !py-1 text-sm">
+  
+        
+        Bedroom</a-button>
+     <a-button class="!px-2 !py-1 text-sm">
+  
+        Dianing Room</a-button>
+     <a-button class="!px-2 !py-1 text-sm">
+  
+        Outdoor</a-button>
+    </a-space>
+  </div>
+  
+                <br />
+<div class="flex gap-[10px] overflow-x-auto md:overflow-x-visible w-full">
+
+                  <img
+                    src="../../assets/home_main_banner.jpg"
+                    style="border-radius: 10px; width: 124px; height: 91px"
+                    alt=""
+                  />
+                  <img
+                    src="../../assets/home_main_banner.jpg"
+                    style="border-radius: 10px; width: 124px; height: 91px"
+                    alt=""
+                  />
+                  <img
+                    src="../../assets/home_main_banner.jpg"
+                    style="border-radius: 10px; width: 124px; height: 91px"
+                    alt=""
+                  />
+                  <img
+                    src="../../assets/home_main_banner.jpg"
+                    style="border-radius: 10px; width: 124px; height: 91px"
+                    alt=""
+                  />
+                </div>
+                <br />
+<div className=" w-full md:pl-18">
+
+  <a-button
+    @click="handleAuthorizeClick('tryForFree')"
+    type="primary"
+    block
+     style="height: 48px; background-color: #3B63FB;font-family: 'Poppins', sans-serif;"
+    >Try For Free</a-button
+  >
+ <h6 class="text-[12px] text-center  text-[#333333] font-poppins font-normal !mt-[20px]">
+  No credit card Needed
+</h6>
+
+</div>
+                
+
+                
+  
+              </div>
             </div>
           </a-col>
         </a-row>
@@ -815,7 +920,7 @@ src="../../assets/homepagegenrated.png"
 
     <div className="listing-step hidden lg:block" ref="listingStep">
       <div class="header">
-        <h1 class="header-title">Get listing-ready results in seconds</h1>
+        <h1 class="banner-text">Get listing-ready results in seconds</h1>
         <p class="header-text">
           Turn your property photos into stunning visuals in three simple
         </p>
@@ -961,11 +1066,14 @@ src="../../assets/homepagegenrated.png"
     </div>
     <br />
 
-    <div class="lg:hidden w-full bg-white py-12 px-4 sm:px-6 lg:px-8" ref="listingStepMobile">
+    <div
+      class="lg:hidden w-full bg-white py-12 px-4 sm:px-6 lg:px-8"
+      ref="listingStepMobile"
+    >
       <!-- Header Section -->
       <div class="text-center mb-16">
         <h1
-          class="!font-proza-libre font-black text-3xl sm:text-4xl lg:text-5xl text-black mb-5"
+          class="banner-text"
         >
           Get listing-ready results in seconds
         </h1>
@@ -987,11 +1095,20 @@ src="../../assets/homepagegenrated.png"
           <div class="flex w-full justify-between pt-12 items-start">
             <!-- LEFT SIDE -->
             <div>
-              <h2
-                class="!font-proza-libre font-semibold text-3xl sm:text-4xl text-black mb-2 mt-20 lg:mt-0"
-              >
-                Upload
-              </h2>
+             <h2
+  class="!text-black !mb-2  lg:!mt-0"
+  style="
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-style: normal; /* 'SemiBold' is not valid in CSS; use weight 600 */
+    font-size: 24px;
+    line-height: 32px;
+    letter-spacing: -0.02em; /* -2% = -0.02em */
+  "
+>
+  Upload
+</h2>
+
               <p class="font-poppins text-gray-500 leading-snug">
                 We support both furnished
               </p>
@@ -1001,7 +1118,7 @@ src="../../assets/homepagegenrated.png"
             </div>
 
             <!-- RIGHT SIDE -->
-            <div>
+            <div className="">
               <img
                 src="/01 (1).svg"
                 alt="Step 1"
@@ -1014,25 +1131,19 @@ src="../../assets/homepagegenrated.png"
           <div class="w-full lg:w-1/2 flex justify-center">
             <div class="relative w-full max-w-md">
               <!-- Image Box -->
-               <div class="image-box step1-box">
-              <!-- Step Number -->
-              <!-- Normal content always visible -->
-              <div class="upload-sec">
-                <img src="/upload-04.svg" alt="Share" />
-                <div class="upload-instruction">
-                  <span class="drag-text">Drag and drop</span>
+              <div class="image-box step1-box">
+                <!-- Step Number -->
+                <!-- Normal content always visible -->
+
+                <!-- Overlay: initially not present -->
+                <div
+                  v-if="overlayVisible"
+                  class="overlay-box"
+                  :class="{ shrink: overlayShrink }"
+                >
+                  <img class="overlay-img" :src="step1Img" alt="overlay" />
                 </div>
               </div>
-
-              <!-- Overlay: initially not present -->
-              <div
-                v-if="overlayVisible"
-                class="overlay-box"
-                :class="{ shrink: overlayShrink }"
-              >
-                <img class="overlay-img" :src="step1Img" alt="overlay" />
-              </div>
-            </div>
             </div>
           </div>
         </div>
@@ -1042,12 +1153,20 @@ src="../../assets/homepagegenrated.png"
           class="flex flex-col lg:flex-row-reverse items-center gap-8 pt-24 relative z-10"
         >
           <!-- Step 2 Text -->
-          <div class="flex w-full justify-between pt-12 items-start">
+          <div class="flex w-full justify-between pt-6 items-start">
             <!-- LEFT SIDE -->
             <div>
-              <h2
-                class="!font-proza-libre font-semibold text-3xl sm:text-4xl text-black mb-2 mt-20 lg:mt-0"
-              >
+                       <h2
+  class="!text-black !mb-2  lg:!mt-0"
+  style="
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-style: normal; /* 'SemiBold' is not valid in CSS; use weight 600 */
+    font-size: 24px;
+    line-height: 32px;
+    letter-spacing: -0.02em; /* -2% = -0.02em */
+  "
+>
                 AI Finished
               </h2>
               <p class="font-poppins text-gray-500 leading-snug">
@@ -1059,7 +1178,7 @@ src="../../assets/homepagegenrated.png"
             </div>
 
             <!-- RIGHT SIDE -->
-            <div>
+            <div className="">
               <img
                 src="/02.svg"
                 alt="Step 1"
@@ -1076,38 +1195,37 @@ src="../../assets/homepagegenrated.png"
               <!-- Image Box -->
               <div
                 class="rounded-2xl w-full aspect-video sm:aspect-auto sm:h-64 flex items-center justify-center relative bg-cover bg-center"
-                
               >
-              <div class="step-2-wave-container">
-                <!-- OLD image stays behind -->
-                <img class="step2-img base" :src="step2Img" alt="" />
+                <div class="step-2-wave-container">
+                  <!-- OLD image stays behind -->
+                  <img class="step2-img base" :src="step2Img" alt="" />
 
-                <!-- NEW image fades in on top -->
-                <img
-                  class="step2-img top"
-                  :class="{ show: step2ShowNewImg }"
-                  :src="step3Img"
-                  alt=""
-                />
+                  <!-- NEW image fades in on top -->
+                  <img
+                    class="step2-img top"
+                    :class="{ show: step2ShowNewImg }"
+                    :src="step3Img"
+                    alt=""
+                  />
 
-                <!-- wave overlay -->
-                <div
-                  v-if="step2ShowWave"
-                  class="step2-wave-overlay"
-                  :key="step2WaveKey"
-                  @animationend="step2OnWaveEnd"
-                ></div>
-              </div>
+                  <!-- wave overlay -->
+                  <div
+                    v-if="step2ShowWave"
+                    class="step2-wave-overlay"
+                    :key="step2WaveKey"
+                    @animationend="step2OnWaveEnd"
+                  ></div>
+                </div>
                 <!-- AI Badge -->
                 <div
-                  class="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 font-poppins text-sm font-semibold shadow-lg z-30"
+                  class="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white !px-4 py-2 rounded-lg flex items-center gap-2 font-poppins text-xs font-semibold shadow-lg z-30"
                 >
                   <img
                     src="/addingfurniture.svg"
                     alt="Adding"
                     class="w-4 h-4"
                   />
-                  <span>Adding furniture..</span>
+                  <span className="whitespace-nowrap">Adding furniture..</span>
                 </div>
               </div>
             </div>
@@ -1122,9 +1240,17 @@ src="../../assets/homepagegenrated.png"
           <div class="flex w-full justify-between pt-12 items-start">
             <!-- LEFT SIDE -->
             <div>
-              <h2
-                class="!font-proza-libre font-semibold text-3xl sm:text-4xl text-black mb-2 mt-20 lg:mt-0"
-              >
+                       <h2
+  class="!text-black !mb-2  lg:!mt-0"
+  style="
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-style: normal; /* 'SemiBold' is not valid in CSS; use weight 600 */
+    font-size: 24px;
+    line-height: 32px;
+    letter-spacing: -0.02em; /* -2% = -0.02em */
+  "
+>
                 Download & Share
               </h2>
               <p class="font-poppins text-gray-500 leading-snug">
@@ -1136,7 +1262,7 @@ src="../../assets/homepagegenrated.png"
             </div>
 
             <!-- RIGHT SIDE -->
-            <div>
+            <div className="">
               <img
                 src="/03.svg"
                 alt="Step 1"
@@ -1157,13 +1283,13 @@ src="../../assets/homepagegenrated.png"
               >
                 <!-- Action Buttons -->
                 <div class="action-buttons">
-                <button class="action-btn">
-                  <img src="/download.svg" alt="Download" />
-                </button>
-                <button class="action-btn">
-                  <img src="/share.svg" alt="Share" />
-                </button>
-              </div>
+                  <button class="action-btn">
+                    <img src="/download.svg" alt="Download" />
+                  </button>
+                  <button class="action-btn">
+                    <img src="/share.svg" alt="Share" />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -1308,7 +1434,7 @@ src="../../assets/homepagegenrated.png"
 
     <br />
     <div class="flex items-center justify-center">
-      <div class="max-w-[1200px] mx-auto px-4 md:px-6 py-16">
+      <div class="max-w-[1200px] mx-auto px-4 md:px-6 py-6 sm:py-12">
         <!-- Header -->
         <h1
           class="text-center text-black mb-12"
@@ -1443,7 +1569,18 @@ src="../../assets/homepagegenrated.png"
 
           <!-- Content -->
           <div class="lg:col-span-6 order-2 !mb-4 flex flex-col justify-center">
-            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+<h2
+  style="
+    text-align: left;
+    color: var(--Black-Black-100, #000000);
+    font-family: 'Proza Libre', serif;
+    font-weight: 700;
+    font-style: normal; /* Bold handled by weight */
+    font-size: 26px;
+    line-height: 34px;
+    letter-spacing: -0.02em; /* -2% */
+  "
+> 
               Virtual Staging
             </h2>
 
@@ -1489,8 +1626,18 @@ src="../../assets/homepagegenrated.png"
           <div
             class="lg:col-span-6 order-2 lg:order-1 flex flex-col justify-center"
           >
-            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              3D Rendering
+<h2
+  style="
+    text-align: left;
+    color: var(--Black-Black-100, #000000);
+    font-family: 'Proza Libre', serif;
+    font-weight: 700;
+    font-style: normal; /* Bold handled by weight */
+    font-size: 26px;
+    line-height: 34px;
+    letter-spacing: -0.02em; /* -2% */
+  "
+>              3D Rendering
             </h2>
 
             <p class="text-gray-600 text-base md:text-lg leading-relaxed mb-6">
@@ -1773,7 +1920,18 @@ src="../../assets/homepagegenrated.png"
 
           <!-- Content -->
           <div class="lg:col-span-6 order-2 flex flex-col justify-center">
-            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+<h2
+  style="
+    text-align: left;
+    color: var(--Black-Black-100, #000000);
+    font-family: 'Proza Libre', serif;
+    font-weight: 700;
+    font-style: normal; /* Bold handled by weight */
+    font-size: 26px;
+    line-height: 34px;
+    letter-spacing: -0.02em; /* -2% */
+  "
+> 
               Object Removal
             </h2>
 
@@ -1785,7 +1943,7 @@ src="../../assets/homepagegenrated.png"
             </p>
 
             <button
-              class="w-fit bg-blue-600 !text-white px-6 py-3 rounded-lg flex items-center gap-2 hover:bg-blue-700 transition-all duration-200 shadow-md hover:shadow-lg font-medium"
+              class="w-fit bg-blue-600 !text-white !px-2 py-3 rounded-lg flex items-center gap-2 hover:bg-blue-700 transition-all duration-200 shadow-md hover:shadow-lg font-medium"
               @click="handleAuthorizeClick('tryVirtualStagging')"
             >
               <svg
@@ -1820,8 +1978,18 @@ src="../../assets/homepagegenrated.png"
           <div
             class="lg:col-span-6 order-2 lg:order-1 flex flex-col justify-center"
           >
-            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Floor Changing
+<h2
+  style="
+    text-align: left;
+    color: var(--Black-Black-100, #000000);
+    font-family: 'Proza Libre', serif;
+    font-weight: 700;
+    font-style: normal; /* Bold handled by weight */
+    font-size: 26px;
+    line-height: 34px;
+    letter-spacing: -0.02em; /* -2% */
+  "
+>               Floor Changing
             </h2>
 
             <p class="text-gray-600 text-base md:text-lg leading-relaxed mb-6">
@@ -1831,7 +1999,7 @@ src="../../assets/homepagegenrated.png"
             </p>
 
             <button
-              class="w-fit bg-blue-600 !text-white px-6 py-3 rounded-lg flex items-center gap-2 hover:bg-blue-700 transition-all duration-200 shadow-md hover:shadow-lg font-medium"
+              class="w-fit bg-blue-600 !text-white !px-3 py-3 rounded-lg flex items-center gap-2 hover:bg-blue-700 transition-all duration-200 shadow-md hover:shadow-lg font-medium"
               @click="handleAuthorizeClick('try3DRendering')"
             >
               <svg
@@ -2113,200 +2281,163 @@ src="../../assets/homepagegenrated.png"
       </div>
     </div>
 
-    <div class="block sm:hidden w-full bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
-      <div class="max-w-6xl mx-auto">
-        <!-- Header -->
-        <h1
-          class="text-3xl sm:text-4xl lg:text-5xl font-bold text-center text-gray-900 mb-12"
-        >
-          See What Customers Love About Us
-        </h1>
+ 
 
-        <!-- Testimonials Grid -->
-        <div
-          class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-2 gap-6 sm:gap-8"
-        >
-          <!-- Testimonial Card 1 -->
-          <div
-            class="bg-white rounded-lg p-6 sm:p-8 shadow-sm hover:shadow-md transition-shadow"
-          >
-            <div class="flex items-center gap-4 mb-6">
-              <img
-                src="https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png"
-                alt="Amy Lang"
-                class="w-12 h-12 sm:w-14 sm:h-14 rounded-full object-cover"
-              />
-              <div>
-                <h3
-                  class="font-poppins font-semibold text-gray-900 [font-size:14px!important] [line-height:20px!important] [letter-spacing:0!important]"
-                >
-                  Amy Lang
-                </h3>
-                <p class="text-gray-600 text-xs sm:text-sm">Home Stager</p>
-              </div>
-            </div>
-            <p
-              class="!font-poppins !font-normal !text-[14px] leading-[20px] tracking-[0px] text-gray-700"
-            >
-              "Even those who are not design-savvy can easily create realistic
-              and inviting virtually staged spaces that attract potential buyers
-              regularly."
-            </p>
-          </div>
-
-          <!-- Testimonial Card 2 -->
-          <div
-            class="bg-white rounded-lg p-6 sm:p-8 shadow-sm hover:shadow-md transition-shadow"
-          >
-            <div class="flex items-center gap-4 mb-6">
-              <img
-                src="https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png"
-                alt="Troy Sinclair"
-                class="w-12 h-12 sm:w-14 sm:h-14 rounded-full object-cover"
-              />
-              <div>
-                <h3 class="font-semibold text-gray-900 text-sm sm:text-base">
-                  Troy Sinclair
-                </h3>
-                <p class="text-gray-600 text-xs sm:text-sm">
-                  Real Estate Photographer
-                </p>
-              </div>
-            </div>
-            <p class="text-gray-700 text-sm sm:text-base leading-relaxed">
-              "Even those who are not design-savvy can easily create realistic
-              and inviting virtually staged spaces that attract potential buyers
-              regularly. It has taken our real estate marketing to the next
-              level!"
-            </p>
-          </div>
-
-          <!-- Testimonial Card 3 -->
-          <div
-            class="bg-white rounded-lg p-6 sm:p-8 shadow-sm hover:shadow-md transition-shadow"
-          >
-            <div class="flex items-center gap-4 mb-6">
-              <img
-                src="https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png"
-                alt="Amy Lang"
-                class="w-12 h-12 sm:w-14 sm:h-14 rounded-full object-cover"
-              />
-              <div>
-                <h3 class="font-semibold text-gray-900 text-sm sm:text-base">
-                  Amy Lang
-                </h3>
-                <p class="text-gray-600 text-xs sm:text-sm">Home Stager</p>
-              </div>
-            </div>
-            <p class="text-gray-700 text-sm sm:text-base leading-relaxed">
-              "Even those who are not design-savvy can easily create realistic
-              and inviting virtually staged spaces that attract potential buyers
-              regularly."
-            </p>
-          </div>
-
-          <!-- Testimonial Card 4 -->
-          <div
-            class="bg-white rounded-lg p-6 sm:p-8 shadow-sm hover:shadow-md transition-shadow"
-          >
-            <div class="flex items-center gap-4 mb-6">
-              <img
-                src="https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png"
-                alt="Amy Lang"
-                class="w-12 h-12 sm:w-14 sm:h-14 rounded-full object-cover"
-              />
-              <div>
-                <h3 class="font-semibold text-gray-900 text-sm sm:text-base">
-                  Amy Lang
-                </h3>
-                <p class="text-gray-600 text-xs sm:text-sm">Home Stager</p>
-              </div>
-            </div>
-            <p class="text-gray-700 text-sm sm:text-base leading-relaxed">
-              "Even those who are not design-savvy can easily create realistic
-              and inviting virtually staged spaces that attract potential buyers
-              regularly."
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
 
     <div style="padding: 10px; max-width: 1200px; margin: auto">
       <br /><br /><br />
-      <h1 style="text-align: center">Got questions? We have answers</h1>
+<h1
+  style="
+    text-align: center;
+    color: var(--Black-Black-100, #000000);
+    font-family: 'Proza Libre', serif;
+    font-weight: 700;
+    font-style: normal; /* Bold handled by weight */
+    font-size: 26px;
+    line-height: 34px;
+    letter-spacing: -0.02em; /* -2% */
+  "
+>
+  Got questions? We have answers
+</h1>
       <br />
-      <div style="margin: 50px auto; padding: 0 20px">
-        <a-collapse
-          v-model:activeKey="expand_faq"
-          accordion
-          style="background: #fff; border: none; font-size: 18px"
-        >
-          <a-collapse-panel key="1" header="What is virtual staging?">
-            <p
-              style="margin: 0; font-size: 15px; line-height: 1.6; color: #444"
-            >
-              Virtual staging is a process of using computer technology to
-              furnish and decorate real estate photos digitally.
-            </p>
-          </a-collapse-panel>
-
-          <a-collapse-panel
-            key="2"
-            header="Why should I pick virtual staging over physical staging?"
+   <div style="margin: 50px auto; padding: 0 20px; max-width: 800px;">
+    <a-collapse
+      v-model:activeKey="expand_faq"
+      accordion
+      class="faq-collapse"
+      style="background: #fff; border: none;"
+    >
+      <a-collapse-panel 
+        key="1" 
+        style="font-size: 18px; font-weight: 400;"
+      >
+        <template #header>
+          <span 
+            :style="{
+              fontSize: expand_faq === '1' ? '20px' : '18px',
+              fontWeight: expand_faq === '1' ? '600' : '400',
+              fontFamily: 'Poppins, sans-serif',
+              transition: 'all 0.3s ease'
+            }"
           >
-            <p
-              style="margin: 0; font-size: 15px; line-height: 1.6; color: #444"
-            >
-              Virtual staging offers several advantages over physical staging.
-              It’s more cost-effective, as it eliminates the need for furniture
-              rentals and setup. It’s also faster, allowing for quicker
-              turnaround times and adjustments to suit different buyer
-              preferences. Additionally, virtual staging is highly flexible,
-              enabling you to create multiple design styles and settings without
-              the physical limitations of a space.
-            </p>
-          </a-collapse-panel>
+            What is virtual staging?
+          </span>
+        </template>
+        <p style="margin: 0; color: #444; font-family: 'Poppins', sans-serif; font-weight: 400; font-size: 16px; line-height: 24px; letter-spacing: 0px;">
+          Virtual staging is a process of using computer technology to furnish and decorate real estate photos digitally.
+        </p>
+      </a-collapse-panel>
 
-          <a-collapse-panel key="3" header="What is AI virtual staging?">
-            <p
-              style="margin: 0; font-size: 15px; line-height: 1.6; color: #444"
-            >
-              AI virtual staging uses artificial intelligence models to
-              automatically place furniture and décor in photos, saving time
-              while creating realistic results.
-            </p>
-          </a-collapse-panel>
-
-          <a-collapse-panel
-            key="4"
-            header="What kind of photos do you support?"
+      <a-collapse-panel 
+        key="2"
+        style="font-size: 18px; font-weight: 400;"
+      >
+        <template #header>
+          <span 
+            :style="{
+              fontSize: expand_faq === '2' ? '20px' : '18px',
+              fontWeight: expand_faq === '2' ? '600' : '400',
+              fontFamily: 'Poppins, sans-serif',
+              transition: 'all 0.3s ease'
+            }"
           >
-            <p
-              style="margin: 0; font-size: 15px; line-height: 1.6; color: #444"
-            >
-              We support wide-angle interior property photos such as living
-              rooms, bedrooms, dining areas, and more.
-            </p>
-          </a-collapse-panel>
+            Why should I pick virtual staging over physical staging?
+          </span>
+        </template>
+        <p style="margin: 0; color: #444; font-family: 'Poppins', sans-serif; font-weight: 400; font-size: 16px; line-height: 24px; letter-spacing: 0px;">
+          Virtual staging offers several advantages over physical staging. It's more cost-effective, as it eliminates the need for furniture rentals and setup. It's also faster, allowing for quicker turnaround times and adjustments to suit different buyer preferences. Additionally, virtual staging is highly flexible, enabling you to create multiple design styles and settings without the physical limitations of a space.
+        </p>
+      </a-collapse-panel>
 
-          <a-collapse-panel
-            key="5"
-            header="How long does it take to virtually stage by AI?"
+      <a-collapse-panel 
+        key="3"
+        style="font-size: 18px; font-weight: 400;"
+      >
+        <template #header>
+          <span 
+            :style="{
+              fontSize: expand_faq === '3' ? '20px' : '18px',
+              fontWeight: expand_faq === '3' ? '600' : '400',
+              fontFamily: 'Poppins, sans-serif',
+              transition: 'all 0.3s ease'
+            }"
           >
-            <p
-              style="margin: 0; font-size: 15px; line-height: 1.6; color: #444"
-            >
-              AI staging usually takes just a few minutes, depending on the
-              complexity of the design and processing load.
-            </p>
-          </a-collapse-panel>
-        </a-collapse>
-      </div>
+            What is AI virtual staging?
+          </span>
+        </template>
+        <p style="margin: 0; color: #444; font-family: 'Poppins', sans-serif; font-weight: 400; font-size: 16px; line-height: 24px; letter-spacing: 0px;">
+          AI virtual staging uses artificial intelligence models to automatically place furniture and décor in photos, saving time while creating realistic results.
+        </p>
+      </a-collapse-panel>
+
+      <a-collapse-panel 
+        key="4"
+        style="font-size: 18px; font-weight: 400;"
+      >
+        <template #header>
+          <span 
+            :style="{
+              fontSize: expand_faq === '4' ? '20px' : '18px',
+              fontWeight: expand_faq === '4' ? '600' : '400',
+              fontFamily: 'Poppins, sans-serif',
+              transition: 'all 0.3s ease'
+            }"
+          >
+            What kind of photos do you support?
+          </span>
+        </template>
+        <p style="margin: 0; color: #444; font-family: 'Poppins', sans-serif; font-weight: 400; font-size: 16px; line-height: 24px; letter-spacing: 0px;">
+          We support wide-angle interior property photos such as living rooms, bedrooms, dining areas, and more.
+        </p>
+      </a-collapse-panel>
+
+      <a-collapse-panel 
+        key="5"
+        style="font-size: 18px; font-weight: 400;"
+      >
+        <template #header>
+          <span 
+            :style="{
+              fontSize: expand_faq === '5' ? '20px' : '18px',
+              fontWeight: expand_faq === '5' ? '600' : '400',
+              fontFamily: 'Poppins, sans-serif',
+              transition: 'all 0.3s ease'
+            }"
+          >
+            How long does it take to virtually stage by AI?
+          </span>
+        </template>
+        <p style="margin: 0; color: #444; font-family: 'Poppins', sans-serif; font-weight: 400; font-size: 16px; line-height: 24px; letter-spacing: 0px;">
+          AI staging usually takes just a few minutes, depending on the complexity of the design and processing load.
+        </p>
+      </a-collapse-panel>
+    </a-collapse>
+  </div>
     </div>
-    <div class="flex justify-center items-center">
+    <div>
+<h1
+  style="
+    text-align: center;
+    color: var(--Black-Black-100, #000000);
+    font-family: 'Proza Libre', serif;
+    font-weight: 700;
+    font-style: normal; /* Bold handled by weight */
+    font-size: 26px;
+    line-height: 34px;
+    letter-spacing: -0.02em; /* -2% */
+  "
+>
+  Feel free to contact us
+</h1>
+
+<p class="font-poppins text-center !mx-4 md:!mx-0 text-gray-500 leading-snug">
+               Revolutionizing Interior Design with Virtual Technology & AI
+              </p>
+    </div>
+    <div class="flex justify-center items-center  !mx-4 ">
       <div
-        class="bg-white p-6 sm:p-6 rounded-xl shadow-[0_20px_60px_rgba(59,130,246,0.4)] max-w-[450px] w-full border-t-[3px] border-blue-500"
+        class="bg-white  p-6 sm:p-6 rounded-xl shadow-[0_20px_60px_rgba(59,130,246,0.7)] max-w-[450px] w-full border-t-[4px] border-blue-500 blue-glow-border"
       >
         <form @submit.prevent="submitForm" class="flex flex-col gap-5">
           <div class="flex gap-2 sm:gap-4">
@@ -2334,7 +2465,7 @@ src="../../assets/homepagegenrated.png"
 
           <button
             type="submit"
-            class="bg-blue-500 text-white py-3.5 border-none rounded-md text-base font-semibold cursor-pointer transition-all duration-300 w-full hover:bg-blue-600 active:scale-95"
+            class="bg-blue-500 !text-white py-3.5 border-none rounded-md text-base font-semibold cursor-pointer transition-all duration-300 w-full hover:bg-blue-600 active:scale-95"
           >
             Send now
           </button>
@@ -2345,90 +2476,104 @@ src="../../assets/homepagegenrated.png"
     <br />
     <br />
   </div>
-<!-- DESKTOP: Compact Right Tab -->
-<div 
-  v-if="showProductModal" 
-  class="hidden lg:block absolute right-8 top-325 w-[500px] h-[580px] z-40 pointer-events-auto"
->
- <div 
-    class="w-full h-full bg-[#f2f2f2] !rounded-xl  transform transition-all duration-300 overflow-hidden"
-    :class="showProductModal ? 'translate-x-0' : 'translate-x-full'"
+  <!-- DESKTOP: Compact Right Tab -->
+  <div
+    v-if="showProductModal"
+    class="hidden lg:block absolute right-8 top-325 w-[500px] h-[580px] z-40 pointer-events-auto"
   >
-    <!-- Desktop Header -->
-    <div class="!px-6 !py-5 border-b border-gray-400">
-  <div class="flex items-center justify-between mb-3">
-    <h2 class="!text-md !text-gray-700">Select Product to replace</h2>
-    <button 
-      @click="closeProductTab"  
-      class="!text-gray-700 hover:scale-105 !text-4xl leading-none"
+    <div
+      class="w-full h-full bg-[#f2f2f2] !rounded-xl transform transition-all duration-300 overflow-hidden"
+      :class="showProductModal ? 'translate-x-0' : 'translate-x-full'"
     >
-      ×
-    </button>
-  </div>
-</div>
+      <!-- Desktop Header -->
+      <div class="!px-6 !py-5 border-b border-gray-400">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="!text-md !text-gray-700">Select Product to replace</h2>
+          <button
+            @click="closeProductTab"
+            class="!text-gray-700 hover:scale-105 !text-4xl leading-none"
+          >
+            ×
+          </button>
+        </div>
+      </div>
 
-
-    <!-- Desktop Product Cards -->
-    <div class="h-[calc(100%-100px)] overflow-y-auto no-scrollbar !px-6 !py-4 space-y-4">
-      <div 
-        v-for="(product, index) in products" 
-        :key="index" 
-        class="bg-white !rounded-xl !p-2 !mt-2 border border-gray-200 hover:border-blue-500 transition-all"
+      <!-- Desktop Product Cards -->
+      <div
+        class="h-[calc(100%-100px)] overflow-y-auto no-scrollbar !px-6 !py-4 space-y-4"
       >
-        <!-- Product Row -->
-        <div class="flex gap-4 mb-4">
-          <!-- Product Image -->
-          <div class="w-34 h-38 bg-white !rounded-lg flex-shrink-0 overflow-hidden">
-            <img 
-              :src="product.image" 
-              :alt="product.name"
-              class="!w-full !h-full object-cover"
-            />
-          </div>
-          
-          <!-- Product Info -->
-          <div class="flex-1">
-            <h3 class="!text-gray-600 !text-medium mb-1">{{ product.name }}</h3>
-            <p class="!text-gray-400 !text-sm mb-2">{{ product.color }}</p>
-            
-            <!-- Color Selector -->
-            <div class="flex items-center gap-2 mb-2">
-              <span class="!text-gray-400 !text-xs">Color</span>
-              <div class="flex gap-1 !p-1">
-                <div class="w-4 h-4 bg-gray-500 !rounded-full border-2 border-white cursor-pointer"></div>
-                <div class="w-4 h-4 bg-white !rounded-full border-2 border-gray-600 cursor-pointer"></div>
+        <div
+          v-for="(product, index) in products"
+          :key="index"
+          class="bg-white !rounded-xl !p-2 !mt-2 border border-gray-200 hover:border-blue-500 transition-all"
+        >
+          <!-- Product Row -->
+          <div class="flex gap-4 mb-4">
+            <!-- Product Image -->
+            <div
+              class="w-34 h-38 bg-white !rounded-lg flex-shrink-0 overflow-hidden"
+            >
+              <img
+                :src="product.image"
+                :alt="product.name"
+                class="!w-full !h-full object-cover"
+              />
+            </div>
+
+            <!-- Product Info -->
+            <div class="flex-1">
+              <h3 class="!text-gray-600 !text-medium mb-1">
+                {{ product.name }}
+              </h3>
+              <p class="!text-gray-400 !text-sm mb-2">{{ product.color }}</p>
+
+              <!-- Color Selector -->
+              <div class="flex items-center gap-2 mb-2">
+                <span class="!text-gray-400 !text-xs">Color</span>
+                <div class="flex gap-1 !p-1">
+                  <div
+                    class="w-4 h-4 bg-gray-500 !rounded-full border-2 border-white cursor-pointer"
+                  ></div>
+                  <div
+                    class="w-4 h-4 bg-white !rounded-full border-2 border-gray-600 cursor-pointer"
+                  ></div>
+                </div>
+              </div>
+
+              <!-- Price -->
+              <div class="flex flex-row gap-4 !pt-3">
+                <p class="!text-gray-400 !text-xs mb-1">Price :</p>
+                <p class="!text-blue-500 !text-md">{{ product.price }}</p>
               </div>
             </div>
-            
-            <!-- Price -->
-            <div class="flex flex-row gap-4 !pt-3">
-              <p class="!text-gray-400 !text-xs mb-1">Price :</p>
-              <p class="!text-blue-500 !text-md ">{{ product.price }}</p>
-            </div>
           </div>
-        </div>
 
-        <!-- Bottom Actions -->
-        <div class="w-full flex items-center justify-between !mt-3 !pt-3 border-t border-gray-300">
-          <button class="w-full !mr-2 !py-2 bg-gray-700 hover:bg-gray-600 !rounded-lg !text-white !text-sm !font-medium transition-colors">
-            Product Detail
-          </button>
-          
-          <button class="flex items-center gap-2 !text-gray-700 hover:!text-red-500 transition-colors">
-            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>
-            </svg>
-          </button>
+          <!-- Bottom Actions -->
+          <div
+            class="w-full flex items-center justify-between !mt-3 !pt-3 border-t border-gray-300"
+          >
+            <button
+              class="w-full !mr-2 !py-2 bg-gray-700 hover:bg-gray-600 !rounded-lg !text-white !text-sm !font-medium transition-colors"
+            >
+              Product Detail
+            </button>
+
+            <button
+              class="flex items-center gap-2 !text-gray-700 hover:!text-red-500 transition-colors"
+            >
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fill-rule="evenodd"
+                  d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
-
-
-
-
-
 </template>
 
 <script>
@@ -2519,21 +2664,20 @@ export default {
       isLogedIn: localStorage.getItem("token") ? true : false,
       bannerImage,
       swiper_bg,
-      expand_faq: "1",
-      slidesPerView: window.innerWidth <= 768 ? 1 : 4,
+      expand_faq: undefined,
+       slidesPerView: window.innerWidth <= 768 ? 1 : 4,
       //stepper image---
       step3Img,
       step2Img,
       step1Img,
-          imageContainerFullWidth: false, // 👈 Add this
+      imageContainerFullWidth: false, // 👈 Add this
 
-       showProductModal: false,
-    selectedProduct: 'Modern Chair', // Dynamic from mask area
-       isProcessing: false, // ⬅️ ADD THIS
-       showFurnitureMask: false,
-    imageSrc: '../../assets/home_main_banner.jpg', // ⬅️ your image
-    altText: 'Room image',
-    
+      showProductModal: false,
+      selectedProduct: "Modern Chair", // Dynamic from mask area
+      isProcessing: false, // ⬅️ ADD THIS
+      showFurnitureMask: false,
+      imageSrc: "../../assets/home_main_banner.jpg", // ⬅️ your image
+      altText: "Room image",
 
       overlayVisible: false,
       overlayShrink: false,
@@ -2541,14 +2685,12 @@ export default {
       step2CurrentImg: step2Img,
       step2ShowWave: false,
       step2WaveKey: 0,
-            stepKey: 0,
+      stepKey: 0,
 
       step2Fading: false,
       step2ShowNewImg: false,
       isListingStepInView: false,
       observer: null,
-
-      
 
       // Form data
       form: {
@@ -2596,11 +2738,28 @@ export default {
         },
       ],
 
-       products: [
-      { name: 'Chamaro Sky', color: 'Chamaro Sky', price: '$60', image: 'https://cdn.decornation.in/wp-content/uploads/2020/07/modern-dining-table-chairs.jpg' },
-      { name: 'Chamaro Sky', color: 'Chamaro Sky', price: '$60', image: 'https://imagecdn.99acres.com//microsite/wp-content/blogs.dir/6161/files/2024/05/Armchair-Home-Interiors.jpg' },
-      { name: 'Modern Chair', color: 'Chamaro Sky', price: '$60', image: 'chair3.jpg' }
-    ],
+      products: [
+        {
+          name: "Chamaro Sky",
+          color: "Chamaro Sky",
+          price: "$60",
+          image:
+            "https://cdn.decornation.in/wp-content/uploads/2020/07/modern-dining-table-chairs.jpg",
+        },
+        {
+          name: "Chamaro Sky",
+          color: "Chamaro Sky",
+          price: "$60",
+          image:
+            "https://imagecdn.99acres.com//microsite/wp-content/blogs.dir/6161/files/2024/05/Armchair-Home-Interiors.jpg",
+        },
+        {
+          name: "Modern Chair",
+          color: "Chamaro Sky",
+          price: "$60",
+          image: "chair3.jpg",
+        },
+      ],
 
       // Image slider functionality
       isDragging: null,
@@ -2677,31 +2836,31 @@ export default {
       },
     };
   },
- mounted() {
-  this.startServiceSection();
-  
-  // Auto-start animation on mobile
-  if (window.innerWidth < 1024) {
-    this.startStepAnimation();
-  } else {
-    // Use observer only on desktop
-    this.observer = new IntersectionObserver(
-      ([entry]) => {
-        this.isListingStepInView = entry.isIntersecting;
-        if (this.isListingStepInView) {
-          this.startStepAnimation();
-        } else {
-          this.stopStepAnimation();
-        }
-      },
-      { threshold: 0.3 },
-    );
-    
-    if (this.$refs.listingStep) {
-      this.observer.observe(this.$refs.listingStep);
+  mounted() {
+    this.startServiceSection();
+
+    // Auto-start animation on mobile
+    if (window.innerWidth < 1024) {
+      this.startStepAnimation();
+    } else {
+      // Use observer only on desktop
+      this.observer = new IntersectionObserver(
+        ([entry]) => {
+          this.isListingStepInView = entry.isIntersecting;
+          if (this.isListingStepInView) {
+            this.startStepAnimation();
+          } else {
+            this.stopStepAnimation();
+          }
+        },
+        { threshold: 0.3 },
+      );
+
+      if (this.$refs.listingStep) {
+        this.observer.observe(this.$refs.listingStep);
+      }
     }
-  }
-},
+  },
 
   beforeUnmount() {
     if (this.observer) this.observer.disconnect();
@@ -3035,55 +3194,53 @@ export default {
     },
     // end step animation
     handleAuthorizeClick(action) {
-    if (action === 'processPhoto') {
-      // Show processing state
-      this.isProcessing = true;
-      
-      // Simulate processing (replace with your API call)
-      setTimeout(() => {
-        this.isProcessing = false;
-        // Your navigation logic here
-        this.$router.push(this.redictConfig);
-      }, 9000); // 4s processing demo
-      
-      return; // Don't trigger original login logic
-    }
-    
-    // Original logic for other actions
-    if (!this.isLogedIn) {
-      this.$router.push({
-        path: "/login",
-        query: { redirect: this.redictConfig[action] },
-      });
-    } else {
-      this.$router.push(this.redictConfig[action]);
-    }
-  },
+      if (action === "processPhoto") {
+        // Show processing state
+        this.isProcessing = true;
 
- handleAuthorizeClick(action) {
-    if (action === 'processPhoto') {
-      this.isProcessing = true;
-      
-      // Simulate AI detection
-      setTimeout(() => {
-        this.showFurnitureMask = true;  // Show blue mask
+        // Simulate processing (replace with your API call)
         setTimeout(() => {
           this.isProcessing = false;
-        }, 1500);
-      }, 2500);
-    }
-  },
+          // Your navigation logic here
+          this.$router.push(this.redictConfig);
+        }, 9000); // 4s processing demo
 
-  toggleImageContainerWidth() {
-    this.imageContainerFullWidth = true;  // 👈 true = full width (no mx-auto)
-  },
-  
-  closeProductTab() {
-    this.showProductModal = false;
-    this.imageContainerFullWidth = false;  // 👈 false = mx-auto (centered)
-  },
+        return; // Don't trigger original login logic
+      }
 
+      // Original logic for other actions
+      if (!this.isLogedIn) {
+        this.$router.push({
+          path: "/login",
+          query: { redirect: this.redictConfig[action] },
+        });
+      } else {
+        this.$router.push(this.redictConfig[action]);
+      }
+    },
 
+    handleAuthorizeClick(action) {
+      if (action === "processPhoto") {
+        this.isProcessing = true;
+
+        // Simulate AI detection
+        setTimeout(() => {
+          this.showFurnitureMask = true; // Show blue mask
+          setTimeout(() => {
+            this.isProcessing = false;
+          }, 1500);
+        }, 2500);
+      }
+    },
+
+    toggleImageContainerWidth() {
+      this.imageContainerFullWidth = true; // 👈 true = full width (no mx-auto)
+    },
+
+    closeProductTab() {
+      this.showProductModal = false;
+      this.imageContainerFullWidth = false; // 👈 false = mx-auto (centered)
+    },
 
     // Form submission
     submitForm() {
@@ -3269,6 +3426,12 @@ export default {
   font-weight: 900; /* Use 800 or 900 as needed */
 }
 
+@media (min-width: 450px) {
+  .banner-text {
+    font-size: 26px;
+  }
+}
+
 /* Tablet */
 @media (min-width: 768px) {
   .banner-text {
@@ -3279,7 +3442,7 @@ export default {
 /* Desktop */
 @media (min-width: 1024px) {
   .banner-text {
-    font-size: 44px;
+    font-size: 48px;
   }
 }
 
@@ -3291,7 +3454,6 @@ export default {
   font-weight: 700;
   font-size: 46px;
   line-height: 52px;
-  letter-spacing: -2%;
   color: #3b63fb;
   margin: 0;
   text-align: center;
@@ -3318,6 +3480,12 @@ export default {
   line-height: 24px;
   margin-top: 10px;
   text-align: center;
+}
+
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap");
+
+:deep(.font-poppins) {
+  font-family: "Poppins", sans-serif !important;
 }
 
 @import url("https://fonts.googleapis.com/css2?family=Proza+Libre:wght@400;600;700&family=Rubik:wght@500&display=swap");
@@ -3521,13 +3689,9 @@ export default {
 
 /* Blue furniture glow */
 .home_main_banner_mask {
-  filter: 
-    hue-rotate(220deg)      /* Blue tint */
-    brightness(1.4)         /* Brighter */
-    saturate(1.8)           /* Vivid */
-    drop-shadow(0 0 15px rgba(59, 130, 246, 0.8));
+  filter: hue-rotate(220deg) /* Blue tint */ brightness(1.4) /* Brighter */
+    saturate(1.8) /* Vivid */ drop-shadow(0 0 15px rgba(59, 130, 246, 0.8));
 }
-
 
 .ai-badge {
   position: absolute;
@@ -3545,6 +3709,7 @@ export default {
   font-weight: 600;
   z-index: 10;
 }
+
 
 /* @keyframes shimmer-single-line {
   0% {
@@ -3577,20 +3742,18 @@ export default {
 
 @keyframes shimmer-single-line {
   0% {
-    left: -80px;       /* Start LEFT */
+    left: -80px; /* Start LEFT */
   }
   48% {
-    left: 110%;        /* Go RIGHT */
+    left: 110%; /* Go RIGHT */
   }
   52% {
-    left: 110%;        /* Pause RIGHT */
+    left: 110%; /* Pause RIGHT */
   }
   100% {
-    left: -80px;       /* Return LEFT */
+    left: -80px; /* Return LEFT */
   }
 }
-
-
 
 /* overlay container */
 .animate-shimmer-overlay {
@@ -3604,7 +3767,7 @@ export default {
 .animate-shimmer-overlay {
   position: absolute;
   top: 0;
-  left: -80px;              /* Animation controls this */
+  left: -80px; /* Animation controls this */
   width: 80px;
   height: 100%;
   background: linear-gradient(
@@ -3618,8 +3781,35 @@ export default {
   pointer-events: none;
 }
 
+.faq-collapse.ant-collapse {
+  border: none;
+}
 
+.faq-collapse .ant-collapse-item {
+  border-bottom: none !important;
+}
 
+/* Target each collapse panel */
+.faq-collapse .ant-collapse-item {
+  position: relative;
+}
+
+/* Divider line */
+.faq-collapse .ant-collapse-item:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.35), /* dark left */
+    rgba(0, 0, 0, 0.15) 40%,
+    rgba(0, 0, 0, 0.05) 70%,
+    rgba(0, 0, 0, 0) 100% /* fade right */
+  );
+}
 
 
 .step2-text {
@@ -3656,13 +3846,14 @@ export default {
 }
 
 @keyframes pulse-flash {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 0 20px rgba(156, 163, 175, 0.5);
     transform: scale(1);
     background: linear-gradient(to right, #9ca3af, #6b7280);
   }
   50% {
-    transform: scale(1.00);
+    transform: scale(1);
     background: linear-gradient(to right, #6b7280, #0168f7);
   }
 }
@@ -3670,9 +3861,6 @@ export default {
 .animate-pulse-flash {
   animation: pulse-flash 1.2s ease-in-out infinite;
 }
-
-
-
 
 .step3-number {
   position: absolute;
@@ -3690,6 +3878,11 @@ export default {
   border-radius: 22px;
 }
 
+::v-deep .ant-collapse-header {
+  font-size: 18px !important;
+  font-weight: 400 !important;
+}
+
 .action-buttons {
   position: absolute;
   left: 50%;
@@ -3701,16 +3894,9 @@ export default {
   animation: actionBtnFloat 2.5s ease-in-out infinite;
 }
 .ai-glow-btn {
-  background: linear-gradient(
-    120deg,
-    #0332ed,
-    #207ded,
-    #3b63fb
-  );
+  background: linear-gradient(120deg, #0332ed, #207ded, #3b63fb);
   background-size: 200% 200%;
   animation: gradient-shine 8s ease infinite;
-
-  
 }
 
 /* Soft breathing glow */
@@ -3728,17 +3914,27 @@ export default {
 
 /* Gradient movement */
 @keyframes gradient-shine {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 /* Very subtle glow pulse */
 @keyframes glow-pulse {
-  0%, 100% { opacity: 0.25; }
-  50% { opacity: 0.4; }
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 0.4;
+  }
 }
-
 
 .action-btn {
   background: transparent !important;
@@ -3762,16 +3958,39 @@ export default {
 }
 
 .product-card {
-  background-color: #111827;        /* gray-900 */
-  border-radius: 12px;              /* rounded-xl */
-  padding: 16px;                    /* p-4 */
-  border: 1px solid #1f2937;        /* gray-800 */
+  background-color: #111827; /* gray-900 */
+  border-radius: 12px; /* rounded-xl */
+  padding: 16px; /* p-4 */
+  border: 1px solid #1f2937; /* gray-800 */
   transition: all 0.2s ease;
 }
 
 .product-card:hover {
-  border-color: #4b5563;            /* gray-600 */
+  border-color: #4b5563; /* gray-600 */
   transform: translateY(-2px);
+}
+
+.card-glow-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.card-glow-wrapper::after {
+  content: "";
+  position: absolute;
+  bottom: -40px;
+  width: 85%;
+  height: 120px;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(59, 130, 246, 0.45) 0%,
+    rgba(59, 130, 246, 0.25) 35%,
+    rgba(59, 130, 246, 0.08) 60%,
+    rgba(59, 130, 246, 0) 75%
+  );
+  filter: blur(25px);
+  z-index: 0;
 }
 
 
@@ -3890,7 +4109,7 @@ export default {
   object-fit: cover;
   position: absolute;
   z-index: -1;
-  right: -80px;
+  right: -65px;
   top: -65px;
   border-radius: 16px;
   border: 0.5px solid gainsboro;
@@ -3924,11 +4143,11 @@ export default {
   .floor-repersentation-sec {
     margin-top: 30px;
   }
-   .overlay-box.shrink{
+  .overlay-box.shrink {
     width: 218px;
     height: 180px;
-     top: 120px !important;        
-    left: auto;       
+    top: 120px !important;
+    left: auto;
     right: 0px !important;
     /* transform: scale(1); */
   }
@@ -3941,22 +4160,22 @@ export default {
     top: -50px;
     right: -50px;
   } */
-   .image-box{
-        width: 301px !important;
+  .image-box {
+    width: 301px !important;
     height: 219px;
-  } 
-  
+  }
+
   /* .overlay-box{
     width: 100%;
     height:100%;
   } */
- 
-   .overlay-box.shrink{
+
+  .overlay-box.shrink {
     width: 218px;
     height: 170px;
-     top: 80px !important;        
-     left: auto !important;
-     right:-10px !important;
+    top: 80px !important;
+    left: auto !important;
+    right: -10px !important;
     transform: scale(1);
   }
 }

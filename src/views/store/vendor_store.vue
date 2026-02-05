@@ -36,11 +36,24 @@
             </a-result>
         </div>
         <!-- Business Content -->
-        <div v-else style="background-color: white; padding:10px;border-radius:10px; border:2px solid rgba(128, 128, 128, 0.16);">
+        <div v-else style="background-color: white; padding:10px;">
             
             <a-row>
                 <a-col :span="24"> 
-                    <h2 className="text-[20px] !font-poppins">{{ business_info.name }}</h2>
+<h2
+  style="
+    text-align: left;
+    color: var(--Black-Black-100, #000000);
+    font-family: 'Proza Libre', serif;
+    font-weight: 700;
+    font-style: normal; /* Bold handled by weight */
+    font-size: 26px;
+    line-height: 34px;
+    letter-spacing: -0.02em; /* -2% */
+  "
+>                       
+                      
+                      {{ business_info.name }}</h2>
                 </a-col>
             </a-row>
 
@@ -202,11 +215,11 @@
                           <a-row style="padding-top:50px">
                               <a-col :sm="12" :xs="12" :md="12" :lg="12" style="border-right: 2px solid rgba(0,0,0,0.3) ;display: flex;justify-content: center;align-items: center;padding-top:20px">
                                   <div v-if="!loadingRatings" style="display: flex;flex-direction: column;justify-content: center;align-items: center">
-                                      <h1>
+                                      <h1 className="font-family-poppins">
                                           {{ businessRatings.average }}
                                       </h1>
                                       <a-rate :value="Math.round(businessRatings.average)" disabled></a-rate>
-                                      <h5>({{ businessRatings.unique_users }} {{ businessRatings.unique_users === 1 ? 'User' : 'Users' }})</h5>
+                                      <h5 className="font-family-poppins">({{ businessRatings.unique_users }} {{ businessRatings.unique_users === 1 ? 'User' : 'Users' }})</h5>
                                   </div>
                                   
                                   <!-- Loading state -->
@@ -314,84 +327,82 @@
             <!-- Products Section -->
             <!-- Replace the Products Section in your template with this -->
 <!-- Products Section -->
-<div style="padding:10px;background-color: white;border-radius:10px;border:2px solid rgba(128, 128, 128, 0.16);" v-if="!this.business_info.is_profesional_user_site">
-    <h1>Our Products</h1>
-    
-    <div style="text-align: center; padding: 10px;">
-        <!-- Loading State for first page -->
-        <div v-if="loading && productsPage === 1" style="text-align: center; padding: 30px;">
-            <a-spin size="large" />
-            <p style="margin-top: 10px;">Loading products...</p>
-        </div>
-
-        <!-- Error State -->
-        <div v-else-if="error && productsPage === 1" style="padding: 20px;">
-            <a-alert 
-                :message="error" 
-                type="error" 
-                show-icon
-                closable
-            />
-        </div>
-
-        <!-- Empty State -->
-        <div v-else-if="our_products.length === 0 && !loading" style="padding: 40px;">
-            <a-empty 
-                description="No products available"
-                style="margin: 20px 0;"
-            />
-        </div>
-
-        <!-- Products Display -->
-        <div v-else>
-            <!-- Debug info (remove in production) -->
-            <!-- <div style="background: #f0f0f0; padding: 10px; margin-bottom: 10px; border-radius: 5px; text-align: left; font-size: 12px;">
-                <p>Total Products: {{ our_products.length }} | Page: {{ productsPage }} | Has More: {{ hasMoreProducts }}</p>
-            </div> -->
-
-            <!-- Products Grid Component -->
-            <buisnes_products_sailing 
-                v-if="our_products.length > 0"
-                :products="our_products"
-            />
-
-            <!-- Fallback: Display products as list if component fails -->
-            <div v-if="our_products.length === 0" style="padding: 20px;">
-                <p>No products to display</p>
-            </div>
-
-            <!-- Load More Button -->
-            <div v-if="our_products.length > 0" style="margin-top: 30px; text-align: center;">
-                <div v-if="hasMoreProducts" style="margin-bottom: 20px;">
-                    <a-button
-                        type="primary"
-                        size="large"
-                        @click="loadMoreProducts"
-                        :loading="isLoadingMoreProducts"
-                        >
-                        <!-- style="padding: 10px 40px; border-radius: 8px; font-weight: 600;" -->
-                        <span v-if="!isLoadingMoreProducts">
-                            Show More Products ({{ totalProducts - our_products.length }} remaining)
-                        </span>
-                        <span v-else>
-                            Loading...
-                        </span>
-                    </a-button>
-                </div>
-
-                <!-- Pagination Info -->
-                <div style="color: #666; font-size: 14px; margin-top: 10px;">
-                    <p v-if="hasMoreProducts">
-                        Showing {{ our_products.length }} of {{ totalProducts }} products
-                    </p>
-                    <p v-else style="color: #999;">
-                        <a-icon type="check-circle" /> All {{ totalProducts }} products loaded
-                    </p>
-                </div>
-            </div>
-        </div>
+<div 
+  class=" md:!p-5 !bg-white !rounded-lg !border-2 !border-gray-200/20" 
+  v-if="!this.business_info.is_profesional_user_site"
+>
+  <h1 class="!text-lg md:!text-xl !font-bold !text-gray-900 !mb-4 !px-2">Our Products</h1>
+  
+  <div class="!text-center !p-0 md:!p-2">
+    <!-- Loading State -->
+    <div v-if="loading && productsPage === 1" class="!text-center !py-8">
+      <a-spin size="large" />
+      <p class="!mt-3 !text-gray-600">Loading products...</p>
     </div>
+
+    <!-- Error State -->
+    <div v-else-if="error && productsPage === 1" class="!p-4">
+      <a-alert 
+        :message="error" 
+        type="error" 
+        show-icon
+        closable
+      />
+    </div>
+
+    <!-- Empty State -->
+    <div v-else-if="our_products.length === 0 && !loading" class="!py-10">
+      <a-empty 
+        description="No products available"
+        class="!my-5"
+      />
+    </div>
+
+    <!-- Products Display -->
+    <div v-else class="!w-full">
+      <!-- Products Grid Component -->
+      <buisnes_products_sailing 
+        v-if="our_products.length > 0"
+        :products="our_products"
+        class="!w-full !px-0"
+      />
+
+      <!-- Fallback -->
+      <div v-if="our_products.length === 0" class="!p-5">
+        <p class="!text-gray-500">No products to display</p>
+      </div>
+
+      <!-- Load More Section -->
+      <div v-if="our_products.length > 0" class="!mt-6 md:!mt-8 !text-center !px-2">
+        <div v-if="hasMoreProducts" class="!mb-4">
+          <a-button
+            type="primary"
+            size="large"
+            @click="loadMoreProducts"
+            :loading="isLoadingMoreProducts"
+            class="!px-6 md:!px-10 !py-2 !rounded-lg !font-semibold"
+          >
+            <span v-if="!isLoadingMoreProducts">
+              Show More Products ({{ totalProducts - our_products.length }} remaining)
+            </span>
+            <span v-else>Loading...</span>
+          </a-button>
+        </div>
+
+        <!-- Pagination Info -->
+        <div class="!text-gray-600 !text-sm !mt-3">
+          <p v-if="hasMoreProducts">
+            Showing {{ our_products.length }} of {{ totalProducts }} products
+          </p>
+          <p v-else class="!text-gray-400">
+            <a-icon type="check-circle" /> All {{ totalProducts }} products loaded
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
+
 
             <br>
 
