@@ -71,7 +71,7 @@
         letter-spacing: 0%;
         text-align: center;
       " >
-      Reset
+      Re-center
     </button>
 
     <!-- Center: Scale Controls -->
