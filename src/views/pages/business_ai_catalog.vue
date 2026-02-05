@@ -1,5 +1,89 @@
 <template>
   <div>
+    <a-drawer
+      title="Filters"
+      placement="bottom"
+      :open="isFilterDrawerOpen"
+      :height="'70vh'"
+      :closable="true"
+      @close="closeFilterDrawer"
+    >
+      <div class="filter-sec">
+               <!-- Product Type Filter -->
+          <div style="margin-bottom: 24px;">
+            <h3 style="font-size: 13px; font-weight: 600; color: #262626; margin-bottom: 8px; margin-top: 0;">Product Type</h3>
+            <a-select
+              v-model:value="selectedType"
+              placeholder="All Types"
+              style="width: 100%"
+              @change="handleFilterChange"
+            >
+              <a-select-option value="">All Types</a-select-option>
+              <a-select-option value="product">Furniture</a-select-option>
+              <a-select-option value="wall">Wall Textures</a-select-option>
+              <a-select-option value="floor">Floor Textures</a-select-option>
+            </a-select>
+          </div>
+
+          <!-- Category Filter - Checkboxes -->
+          <div style="margin-bottom: 24px;">
+            <h3 style="font-size: 13px; font-weight: 600; color: #262626; margin-bottom: 12px; margin-top: 0;">
+              Categories ({{ categories.length }})
+            </h3>
+            <a-spin v-if="categoriesLoading" :spinning="categoriesLoading" />
+            <a-checkbox-group 
+              v-else
+              v-model:value="selectedCategories" 
+              style="width: 100%; display: flex; flex-direction: column; gap: 10px"
+              @change="handleFilterChange"
+            >
+              <a-checkbox 
+                v-for="cat in categories" 
+                :key="cat.slug" 
+                :value="cat.slug"
+              >
+                <span style="font-size: 13px;">{{ cat.name }} ({{ cat.count }})</span>
+              </a-checkbox>
+            </a-checkbox-group>
+          </div>
+
+          <a-divider />
+
+          <!-- Price Range Filter -->
+          <div style="margin-bottom: 24px;">
+            <h3 style="font-size: 13px; font-weight: 600; color: #262626; margin-bottom: 12px; margin-top: 0;">
+              Price Range
+            </h3>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <a-input-number
+                v-model:value="priceRange.min"
+                placeholder="Min"
+                :min="0"
+                style="width: 100%"
+                @change="handleFilterChange"
+              />
+              <span>-</span>
+              <a-input-number
+                v-model:value="priceRange.max"
+                placeholder="Max"
+                :min="0"
+                style="width: 100%"
+                @change="handleFilterChange"
+              />
+            </div>
+          </div>
+
+          <!-- Clear Filters Button -->
+          <a-button 
+            type="primary"
+            danger
+            style="width: 100%;" 
+            @click="clearFilters"
+          >
+            Clear All Filters
+          </a-button>
+            </div>
+    </a-drawer>
     <!-- Hero Section -->
    <div style="position: relative; overflow: hidden; height: 350px; width: 100%;">
   <!-- SKELETON -->
@@ -76,16 +160,7 @@
             <h1 style="font-size: 24px; font-weight: 700; color: #000; margin-bottom: 24px; margin-top: 0;">Filters</h1>
             <!-- <router-link :to="'/start-new-catalogue'"> -->
               
-        <a-button @click="this.$router.push({
-      name: 'new_catelogue',
-      query: {
-        brand: this.$route.params.business_slug,
-      }
-    })" size="large" type="primary" shape="circle" style="display: flex;justify-content: center;;align-items: center;">
-          <template #icon>
-            <FormatPainterOutlined style="font-size:16px"/>
-          </template>
-        </a-button>
+        
       <!-- </router-link> -->
             
           </div>
@@ -165,14 +240,39 @@
           
         </div>
       </a-col>
+      <a-col :xs="24" 
+    :sm="24" 
+    :md="0" 
+    :lg="0" >
+
+      </a-col>
 
       <!-- Main Content Area -->
       <a-col :xs="24" :sm="24" :md="18" :lg="19" style="padding: 0; min-height: 100vh;">
         <div style="padding: 24px; background-color: #f5f5f5;">
           <!-- Header with Search & Info -->
           <div style="display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 32px; flex-wrap: wrap;">
-            <div>
-              <h2 style="font-size: 28px; font-weight: 700; color: #000; margin: 0;">AI Catalog</h2>
+            <div class="w-full">
+              <div class="!flex  !justify-between">
+              <h2 style="font-size: 28px; font-weight: 700; color: #000; margin: 0;">AI Catalog</h2> 
+              <div class="!flex gap-3">
+<a-button  @click="this.$router.push({
+      name: 'new_catelogue',
+      query: {
+        brand: this.$route.params.business_slug,
+      }
+    })" size="large" type="primary"  style="display: flex;justify-content: center; height: 40px; align-items: center;">
+          <template #icon>
+            <FormatPainterOutlined style="font-size:16px"/>
+          </template>Start Simulation
+        </a-button>
+        <a-button size="large">
+         <img  class="w-[20px] cursor-pointer" src="../../assets/icons/clearFilterIcon.svg"  @click="openFilterDrawer" />
+        </a-button>
+        
+              </div>
+              
+        </div>
               <p style="color: #8a8a8a; margin: 8px 0 0 0;">
                 Total: {{ pagination.total_items }} items
               </p>
@@ -183,11 +283,12 @@
               v-model:value="searchQuery"
               placeholder="Search products..."
               allow-clear
-              style="width: 300px"
+               class="w-full sm:!w-[300px]"
               :loading="productsLoading"
               @input="handleSearch"
               @clear="handleSearch"
             />
+            
           </div>
 
           <!-- Loading State -->
@@ -329,6 +430,7 @@ export default {
   },
   data() {
     return {
+      isFilterDrawerOpen: false,
       heroBgImage,
       imageLoadedMap: {},
       imageLoadedMap: {
@@ -381,6 +483,13 @@ export default {
     await this.loadProducts();
   },
   methods: {
+   openFilterDrawer() {
+      this.isFilterDrawerOpen = true
+    },
+
+    closeFilterDrawer() {
+      this.isFilterDrawerOpen = false
+    },
     truncateText(text, charLimit = 7) {
       if (!text) return '';
       if (text.length <= charLimit) return text;
