@@ -570,20 +570,40 @@
             >
               <!-- {{product.product_colors}} -->
               <div class="product">
-                <div
-                  class="product-image-container"
-                  @click="viewProduct(product)"
-                >
-                  <img
-                    :src="$store.state.root_media_api + product.product_image"
-                    :alt="product.product_title"
-                    class="product-image"
-                  />
-                  <!-- Category Badge -->
-                  <div class="category-badge">{{ product.category_name }}</div>
-                  <!-- AR Badge -->
-                  <div class="ar-badge">AR</div>
-                </div>
+               <div
+    class="product-image-container"
+    @click="viewProduct(product)"
+    style="position: relative; overflow: hidden;"
+  >
+    <!-- SKELETON -->
+    <div
+      v-if="!imageLoadedMap[product.id]"
+      class="product-image-skeleton"
+    ></div>
+
+    <!-- PRELOAD IMAGE (INVISIBLE) -->
+    <img
+      :src="$store.state.root_media_api + product.product_image"
+      style="position:absolute;width:0;height:0;opacity:0;"
+      @load="onProductImageLoad(product.id)"
+      alt=""
+    />
+
+    <!-- REAL IMAGE -->
+    <img
+      v-show="imageLoadedMap[product.id]"
+      :src="$store.state.root_media_api + product.product_image"
+      :alt="product.product_title"
+      class="product-image"
+    />
+
+    <!-- CATEGORY BADGE -->
+    <div class="category-badge">{{ product.category_name }}</div>
+
+    <!-- AR BADGE -->
+    <div class="ar-badge">AR</div>
+  </div>
+
                 <!-- {{ truncateText(product.description || 'No description available', 8) }} -->
 
                 <a-row>
@@ -660,7 +680,7 @@
                         @click="goto_product_Route(product)"
                         class="w-full py-2 px-4 bg-white border border-gray-300 rounded hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500 transition-colors whitespace-nowrap"
                         style="
-                          font-family: &quot;Poppins&quot;, sans-serif;
+                          font-family: Poppins;
                           font-size: 12px;
                         "
                       >
@@ -717,6 +737,7 @@ export default {
       isLoading: true,
       my_designes: [],
       view_type: "all",
+       imageLoadedMap: {},
       selected_design: null,
       start_edit: false,
       imageLoadedMap: {},
@@ -798,6 +819,15 @@ export default {
         },
       });
     },
+
+    onProductImageLoad(id) {
+    // mark as loading first
+    this.imageLoadedMap[id] = false;
+
+    setTimeout(() => {
+      this.imageLoadedMap[id] = true;
+    }, 2000);
+  },
 
     onDesignImageLoad(id) {
     this.imageLoadedMap[id] = false;

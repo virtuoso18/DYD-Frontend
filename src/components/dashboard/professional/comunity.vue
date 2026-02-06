@@ -239,18 +239,18 @@
     </div>
 
     <!-- Main Content Area -->
-    <div class="max-w-7xl mx-auto px-4 md:px-6 py-6">
+    <div class="max-w-7xl md:mx-auto  md:px-6 py-6">
   <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
     
     <!-- Left Column - Post Details -->
     <div class="lg:col-span-7 lg:pr-4">
       
       <!-- Post Image -->
-      <div class="relative rounded-2xl overflow-hidden mb-4">
+      <div class="relative  overflow-hidden mb-4">
         <img
           :src="$store.state.root_media_api + selectedPost.post_image || require('../../../assets/home_main_banner.jpg')"
           :alt="selectedPost.title"
-          class="w-full h-auto object-cover"
+          class="w-full h-auto object-cover rounded-2xl  !px-2 "
         />
 
         <!-- Pinned Badge -->
@@ -298,7 +298,7 @@
       </div>
 
       <!-- Post Description -->
-      <div class="py-4">
+      <div class="py-4 px-2 sm:px-0">
         <h3 class="text-xl md:text-2xl font-semibold text-gray-900 mb-3">
           {{ selectedPost.title }}
         </h3>

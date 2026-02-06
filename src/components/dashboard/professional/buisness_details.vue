@@ -207,7 +207,7 @@
 
 
           <!-- Business card section -->
-          <div style="width:100%;max-width:600px;margin:auto;border:1px solid rgba(0,0,0,0.1);padding:20px;border-radius:10px;margin-top:20px">
+<div class="w-full !max-w-[600px] !mx-auto border border-black/10 !p-[20px] !rounded-[10px] !mt-[60px]">
             <h2>Upload Room Photo</h2>
             <p>Share the link with your customer for generating there room photo</p>
 

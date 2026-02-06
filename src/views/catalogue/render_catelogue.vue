@@ -1473,53 +1473,57 @@
         margin-top: -25px;
       "
     >
-      <div
-        style="
-          padding: 15px;
-          border: 1px solid rgba(0, 0, 0, 0.1);
-          border-radius: 12px;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-          background: white;
-        "
-      >
-        <div style="position: relative; display: inline-block">
-          <!-- Loading Skeleton -->
-          <div
-            v-if="imageLoading"
-            style="
-              width: 100%;
-              max-width: 800px;
-              height: 500px;
-              background: linear-gradient(
-                90deg,
-                #f0f0f0 25%,
-                #e0e0e0 50%,
-                #f0f0f0 75%
-              );
-              background-size: 200% 100%;
-              animation: skeleton-loading 1.5s infinite;
-              border-radius: 8px;
-            "
-          ></div>
+     <div
+  style="
+    padding: 15px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    background: white;
+  "
+>
+  <div style="position: relative; display: inline-block; width: 100%;">
+    <!-- Skeleton - EXACT same dimensions as visible image -->
+    <div
+      v-if="!imageLoadedMap['room']"
+      class=""
+      style="
+        width: 100%;
+        max-width: 800px;
+        height: 200px !important;
+        aspect-ratio: 16/10;
+        max-height: 300px;
+        object-fit: cover;
+        display: block;
+        border-radius: 8px;
+      "
+    ></div>
 
-          <!-- Actual Image -->
-          <img
-            v-show="!imageLoading"
-            :src="displayImage"
-            alt="Room Render"
-            style="
-              width: 100%;
-              max-width: 800px;
-              height: 100%;
-              max-height: 500px;
-              object-fit: cover;
-              display: block;
-              border-radius: 8px;
-              transition: opacity 0.3s ease-in-out;
-            "
-            @error="handleImageError"
-            @load="handleImageLoad"
-          />
+    <!-- Preload image (hidden) -->
+    <img
+      :src="displayImage"
+      style="position: absolute; width: 0; height: 0; opacity: 0"
+      @load="onRoomImageLoad"
+      @error="handleImageError"
+      alt=""
+    />
+
+    <!-- Visible image -->
+    <img
+      v-show="imageLoadedMap['room']"
+      :src="displayImage"
+      alt="Room Render"
+      style="
+        width: 100%;
+        max-width: 800px;
+        height: auto;
+        max-height: 500px;
+        object-fit: cover;
+        display: block;
+        border-radius: 8px;
+        transition: opacity 0.3s ease-in-out;
+      "
+    />
 
           <!-- Before/After Toggle - Positioned on Image -->
           <div
@@ -1760,7 +1764,7 @@
   </a-button>
 </div> -->
         <div
-          class="relative inline-flex items-center translate-y-6 bg-gray-100 rounded-xl p-1 w-full max-w-[150px] z-[2]"
+          class="relative inline-flex items-center translate-y-6 bg-gray-100 rounded-xl p-1 w-full max-w-[150px] z-[200]"
         >
           <!-- Sliding background indicator -->
           <div
@@ -1816,7 +1820,7 @@
         <div style="display: flex; flex-direction: column">
           <div
             v-if="loading"
-            class="scanning-loading-overlay"
+            class="scanning-loading-overlay !w-full !max-w-[800px] h-[500px] max-h-[70vh] !p-2.5 border border-black/10 rounded-[10px] !overflow-hidden z-10 mx-auto"
             style="
               padding: 10px;
               border: 1px solid rgba(0, 0, 0, 0.1);
@@ -1825,8 +1829,10 @@
               height: 500px;
             "
           >
-            <div
-              class="loading-screen"
+
+ <div class="w-full h-full">
+              <div
+              class="loading-screen "
               :style="{
                 backgroundImage: base_image_url
                   ? `url(${base_image_url})`
@@ -1840,6 +1846,7 @@
                 </div>
               </div>
             </div>
+          </div>
           </div>
 
           <div style="position: relative; display: inline-block" v-else>

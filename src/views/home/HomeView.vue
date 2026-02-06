@@ -213,7 +213,7 @@
   :sm="24"
   :md="16"
   :lg="16"
-  class="rounded-[10px] pt-[2px] md:pt-[20px] pb-[40px] pl-[20px] pr-0"
+  class="rounded-[10px] pt-[2px] md:pt-[20px] pb-[40px]  !pr-2"
 >
 
             <div
