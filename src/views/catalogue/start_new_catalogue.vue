@@ -687,8 +687,8 @@
       v-show="imageLoadedMap[histry_card.id]"
       :src="$store.state.root_media_api + histry_card.image"
       alt="Example"
-      class="example-image rounded-lg"
-      style="display:block;width:100%;height:200px;object-fit:cover;"
+      class="example-image w-full !h-32 sm:!h-48 object-cover rounded-lg"
+      style="display:block;"
     />
 
     <!-- Brand badge (unchanged, stays on top) -->
@@ -1002,14 +1002,14 @@ export default {
     this.imageLoadedMap[id] = false;
     setTimeout(() => {
       this.imageLoadedMap[id] = true;
-    }, 3000);
+    }, 1000);
   },
 
    onExampleImageLoad(id) {
     this.imageLoadedMap[id] = false;
     setTimeout(() => {
       this.imageLoadedMap[id] = true;
-    }, 3000);
+    }, 1000);
   },
 
     // NEW METHOD: Save and continue - fires the API with the selected image
@@ -1618,6 +1618,15 @@ export default {
   overflow: hidden;
 }
 
+@media (max-width:450px) {
+
+  .history-image-wrapper {
+
+     height: 130px;
+  }
+
+}
+
 .history-image-skeleton {
   width: 100%;
   height: 100%;
@@ -1645,10 +1654,19 @@ export default {
   z-index: 2;
   color: white;
   font-weight: bold;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   padding: 4px 8px;
   border-radius: 6px;
 }
+
+/* BELOW 450px */
+@media (max-width: 450px) {
+  .history-brand-badge {
+    bottom: 10px;
+    padding: 4px 4px;
+  }
+}
+
 
 .example-image-container {
   position: relative;

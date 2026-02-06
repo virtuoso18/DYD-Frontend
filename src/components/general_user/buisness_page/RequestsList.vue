@@ -34,15 +34,18 @@
           </template>
           
           <template v-else-if="column.key === 'room_photo'">
-           <div class="room-photo">
-  <div v-if="record.image_url" style="position: relative; overflow: hidden;">
+         <div class="room-photo">
+  <div
+    v-if="record.image_url"
+    style="position: relative; overflow: hidden;"
+  >
     <!-- SKELETON -->
     <div
       v-if="!imageLoadedMap[record.id]"
       class="room-photo-skeleton"
     ></div>
 
-    <!-- PRELOAD (INVISIBLE) -->
+    <!-- PRELOAD (INVISIBLE, triggers load + 2000ms delay in method) -->
     <img
       :src="$store.state.root_media_api + record.image_url"
       style="position:absolute;width:0;height:0;opacity:0;"
@@ -52,21 +55,24 @@
 
     <!-- REAL IMAGE -->
     <img
-      v-show="imageLoadedMap[record.id]"
+      v-if="imageLoadedMap[record.id]"
       :src="$store.state.root_media_api + record.image_url"
       alt="Room"
-     
+      class="room-photo-img"
     />
   </div>
 
   <!-- NO IMAGE FALLBACK -->
-  <div v-else class="no-image">No Image</div>
+  <div v-else class="no-image">
+    No Image
+  </div>
 
-  <!-- REQUEST TEXT (UNCHANGED) -->
+  <!-- REQUEST TEXT -->
   <div class="request-text">
     {{ truncateText(record.message, 50) }}
   </div>
 </div>
+
 
           </template>
           
@@ -191,23 +197,48 @@
     <p class="label-text text-sm font-medium text-gray-700">Room photo:</p>
     
     <!-- Right: Image and Description wrapper -->
-    <div class="flex-shrink-0 w-[245px]">
-      <!-- Image -->
-      <img 
-        v-if="request.image_url" 
-        :src="this.$store.state.root_media_api + request.image_url" 
-        alt="Room"
-        class="w-full h-[160px] rounded-lg !mb-2 object-cover border border-gray-200"
-      />
-      <div v-else class="w-full h-[160px] rounded-lg bg-gray-100 flex items-center justify-center border border-gray-200">
-        <span class="text-xs text-gray-400">No Image</span>
-      </div>
-      
-      <!-- Description below image - same width -->
-      <p class="text-[12px]  font-family-poppins tracking-tight text-gray-600 mt-3 line-clamp-3 text-left">
-        {{ request.message || 'Please create my space with you best sofa and chair...' }}
-      </p>
+  <div class="flex-shrink-0 w-[245px]">
+  <!-- Image wrapper -->
+  <div class="image-wrapper">
+    <!-- Skeleton -->
+    <div
+      v-if="!imageLoaded"
+      class="skeleton"
+    ></div>
+
+    <!-- Hidden preload image -->
+    <img
+      v-if="request.image_url"
+      :src="$store.state.root_media_api + request.image_url"
+      alt="Room"
+      class="preload-img"
+      @load="onImageLoad"
+    />
+
+    <!-- Actual visible image -->
+    <img
+      v-if="request.image_url && imageLoaded"
+      :src="$store.state.root_media_api + request.image_url"
+      alt="Room"
+      class="final-img"
+    />
+
+    <!-- No image fallback -->
+    <div
+      v-if="!request.image_url"
+      class="no-img"
+    >
+      <span>No Image</span>
     </div>
+  </div>
+
+  <!-- Description -->
+  <p class="desc">
+    {{ request.message || 'Please create my space with your best sofa and chair...' }}
+  </p>
+</div>
+
+
   </div>
 </div>
 
@@ -307,6 +338,7 @@ export default {
     return {
 
       imageLoadedMap: {},
+      imageLoaded: false,
       columns: [
         {
           title: 'ID',
@@ -358,6 +390,13 @@ export default {
         }
       };
     },
+
+     onImageLoad() {
+      setTimeout(() => {
+        this.imageLoaded = true;
+      }, 1000); // 2000ms delay
+    },
+  
 
      onRoomImageLoad(id) {
     this.imageLoadedMap[id] = false;
@@ -413,6 +452,87 @@ export default {
 .list-view {
   background: white;
 }
+
+.image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 160px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+}
+
+/* Skeleton shimmer */
+.skeleton {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    #f3f4f6 25%,
+    #e5e7eb 37%,
+    #f3f4f6 63%
+  );
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+/* Hidden preload image */
+.preload-img {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+}
+
+/* Visible image */
+.final-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation: fadeIn 0.3s ease-in;
+}
+
+/* No image */
+.no-img {
+  width: 100%;
+  height: 100%;
+  background: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+/* Description */
+.desc {
+  font-size: 12px;
+  font-family: Poppins, sans-serif;
+  color: #4b5563;
+  margin-top: 12px;
+  line-height: 1.4;
+  text-align: left;
+}
+
+/* Fade animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 
 .line-clamp-3 {
   display: -webkit-box;
