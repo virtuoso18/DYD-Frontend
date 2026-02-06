@@ -201,7 +201,7 @@
     <div v-if="zoom > 1 && !isLoading && !isTouchDevice" class="instructions">
       Click and drag to pan • Mouse wheel to zoom
     </div>
-    <div v-else="zoom > 1 && !isLoading && isTouchDevice" class="instructions">
+    <div v-else-if="zoom > 1 && !isLoading && isTouchDevice" class="instructions">
       Pinch in to zoom in & Pinch out to zoom out
     </div> 
 
@@ -2097,7 +2097,7 @@ export default {
   background: rgba(0, 0, 0, 0.75);
   color: white;
   padding: 8px 16px;
-  border-radius: 20px;
+  border-radius: 10px;
   font-size: 12px;
   text-align: center;
   z-index: 5;
@@ -2107,6 +2107,7 @@ export default {
 /* Responsive design */
 @media (max-width: 768px) {
   .zoom-controls {
+    
     top: 8px;
     right: 8px;
     padding: 6px 8px;
@@ -2154,6 +2155,7 @@ export default {
 
 @media (max-width: 480px) {
   .zoom-controls {
+    display:none;
     top: 4px;
     right: 4px;
     padding: 4px 6px;
@@ -2479,18 +2481,6 @@ export default {
   text-align: center;
 }
 
-/* Instructions */
-.instructions {
-  position: absolute;
-  bottom: 70px;
-  right: 20px;
-  padding: 8px 12px;
-  background: rgba(0, 0, 0, 0.75);
-  color: white;
-  border-radius: 6px;
-  font-size: 11px;
-  z-index: 20;
-}
 
 /* Responsive Design */
 @media (max-width: 768px) {

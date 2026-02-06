@@ -1,11 +1,19 @@
-<template>
-  <!-- {{ isLoading }} -->
+<!-- Key fixes for touch device composite image rendering:
 
+1. Added proper touch event handling with preventDefault
+2. Force render update after touch interactions end
+3. Ensure model position/rotation are applied before capturing composite
+4. Added debounced position update to handle rapid touch movements
+5. Fixed renderer size to match actual display dimensions
+
+Changes marked with 🔧 comments -->
+
+<template>
   <div
     class="main-canvas max-h-[300px] md:max-h-[95vh] mx-auto"
     ref="canvasContainer"
   >
-    <!-- ✅ LOADING OVERLAY - Always rendered on top when isLoading=true -->
+    <!-- LOADING OVERLAY -->
     <div v-if="isLoading" class="scanning-loading-overlay">
       <div
         class="loading-screen"
@@ -20,7 +28,7 @@
       </div>
     </div>
 
-    <!-- ✅ CONTENT AREA - Show based on state -->
+    <!-- CONTENT AREA -->
     <div v-show="!isLoading" class="content-area">
       <!-- Show background image when no GLB -->
       <div
@@ -30,8 +38,7 @@
         <img
           :src="baseImageUrl"
           alt=""
-          class="max-w-full max-h-[54vh] md:max-h-[83vh] mx-auto"
-        />
+          class="max-w-full max-h-[54vh] md:max-h-[80vh] mx-auto"/>
       </div>
 
       <!-- 3D Viewer Container -->
@@ -71,14 +78,12 @@
         line-height: 20px;
         letter-spacing: 0%;
         text-align: center;
-      "
-    >
-      Reset
+      " >
+      Re-center
     </button>
 
     <!-- Center: Scale Controls -->
     <div class="flex items-center gap-2" v-show="is_resizable">
-      <!-- Minus Button -->
       <button
         className="bg-red-100 hover:bg-red-200 !text-black px-3 py-1 rounded-md"
         @click="scaleDown"
@@ -95,7 +100,6 @@
         −
       </button>
 
-      <!-- Scale Display -->
       <div
         class="bg-gray-100 px-3 py-1 rounded-md text-center"
         style="
@@ -108,7 +112,6 @@
         {{ (modelScale * 100).toFixed(0) }}%
       </div>
 
-      <!-- Plus Button -->
       <button
         className="bg-green-100 hover:bg-green-200 !text-black px-3 py-1 rounded-md"
         @click="scaleUp"
@@ -136,25 +139,6 @@
       Finalise Changes
     </a-button>
   </div>
-
-  <!-- <div class="apply-section md:hidden">
-    <a-button
-      type="primary"
-      size="large"
-      block
-      @click="$emit('trigger-render-3d-object')"
-      style="
-        font-family: Poppins;
-        font-weight: 500;
-        font-size: 14px;
-        line-height: 20px;
-        letter-spacing: 0%;
-        text-align: center;
-      "
-    >
-      Apply
-    </a-button>
-  </div> -->
 </template>
 
 <script>
@@ -194,7 +178,6 @@ export default {
 
   data() {
     return {
-      // isLoading: false,
       loadingText: "Initializing...",
       modelLoaded: false,
       viewerInitialized: false,
@@ -206,21 +189,23 @@ export default {
       isOnValidFloor: true,
       modelPosition: { x: 0, y: 0 },
       modelRotation: { y: 0 },
-
-      // Floor data from JSON
-      // floorData: {}
-      // ... your existing data ...
-      modelScale: 1.0, // Track current scale multiplier
-      minScale: 0.5, // Minimum scale (50%)
-      maxScale: 3.0, // Maximum scale (300%)
-      scaleStep: 0.02, // Step size for +/- buttons (10%)
-
-      // Store the base dimensions separately
+      modelScale: 1.0,
+      // 🔧 NEW: Store actual 3D position/rotation for rendering
+      lastKnownModelPosition: null,
+      lastKnownModelRotation: null,
+      lastKnownModelScale: null,
+      minScale: 0.5,
+      maxScale: 3.0,
+      scaleStep: 0.02,
       currentModelDimensions: {
         width: 0,
         height: 0,
         depth: 0,
       },
+      // 🔧 NEW: Track if we need to update rendering after touch interaction
+      needsRenderUpdate: false,
+      // 🔧 NEW: Debounce timer for position updates
+      positionUpdateTimer: null,
     };
   },
 
@@ -242,7 +227,6 @@ export default {
     this.modelSize = null;
     this.currentBackgroundTexture = null;
 
-    // Rotation ring controls
     this.rotationRing = null;
     this.rotationArrows = [];
 
@@ -257,13 +241,11 @@ export default {
     this.floorNormal = new THREE.Vector3();
     this.floorPoint = new THREE.Vector3();
 
-    // Parsed floor data
     this.planeEquation = null;
     this.floorBoundary = null;
     this.floorBounds = null;
     this.baseModelScale = 1.0;
   },
-  // CORRECT PLACEMENT - Replace your entire watch section with this:
 
   watch: {
     glbUrl: {
@@ -286,7 +268,6 @@ export default {
     modelDimensions: {
       handler(newDimensions, oldDimensions) {
         if (newDimensions && newDimensions !== oldDimensions) {
-          // Update currentModelDimensions with the new prop values, scaled by current modelScale
           this.currentModelDimensions.width = parseFloat(
             (newDimensions.width * this.modelScale).toFixed(2),
           );
@@ -297,9 +278,6 @@ export default {
             (newDimensions.depth * this.modelScale).toFixed(2),
           );
 
-          console.log("ModelDimensions updated:", this.currentModelDimensions);
-
-          // If model is loaded, recalculate scale based on new dimensions
           if (this.model && this.modelBoundingBox) {
             this.setupModelBounds();
             this.applyModelScale();
@@ -309,9 +287,9 @@ export default {
       deep: true,
     },
   },
+
   mounted() {
     if (this.glbUrl && this.glbUrl !== "") {
-      // Initialize currentModelDimensions from props
       this.currentModelDimensions = {
         width: parseFloat(this.modelDimensions.width),
         height: parseFloat(this.modelDimensions.height),
@@ -326,6 +304,10 @@ export default {
   },
 
   beforeUnmount() {
+    // 🔧 Clear any pending timers
+    if (this.positionUpdateTimer) {
+      clearTimeout(this.positionUpdateTimer);
+    }
     this.cleanup();
   },
 
@@ -371,7 +353,6 @@ export default {
         this.modelScale + this.scaleStep,
       );
 
-      // Update the dimension display
       this.currentModelDimensions.width = (
         this.modelDimensions.width * this.modelScale
       ).toFixed(2);
@@ -383,6 +364,7 @@ export default {
       ).toFixed(2);
 
       this.applyModelScale();
+      this.needsRenderUpdate = true; // 🔧 Mark for update
     },
 
     scaleDown() {
@@ -392,7 +374,6 @@ export default {
         this.modelScale - this.scaleStep,
       );
 
-      // Update the dimension display
       this.currentModelDimensions.width = (
         this.modelDimensions.width * this.modelScale
       ).toFixed(2);
@@ -404,40 +385,26 @@ export default {
       ).toFixed(2);
 
       this.applyModelScale();
+      this.needsRenderUpdate = true; // 🔧 Mark for update
     },
 
     applyModelScale() {
       if (!this.model || !this.modelBoundingBox) return;
 
-      // Apply the combined scale (base scale * user scale)
       const finalScale = this.baseModelScale * this.modelScale;
       this.model.scale.setScalar(finalScale);
 
-      // Get the current world position before we recalculate
       const currentWorldPos = this.model.position.clone();
-
-      // Update bounding box for accurate positioning
       this.modelBoundingBox.setFromObject(this.model);
       this.modelSize = this.modelBoundingBox.getSize(new THREE.Vector3());
 
-      // IMPORTANT: Calculate the model's bottom in LOCAL space (before scaling affected it)
-      // The bounding box min.y is in local space, so we need to account for the actual scale
       const modelBottomLocal = this.modelBoundingBox.min.y;
-
-      // Get the floor height at the model's current X, Z position
       const floorY = this.getFloorHeightAtPosition(currentWorldPos);
-
-      // Position the model so its bottom touches the floor
-      // We place the model's origin at: floorHeight - (modelBottomLocal * finalScale)
-      // This ensures the actual bottom of the scaled model sits on the floor
       const modelBottomWorldOffset = modelBottomLocal * finalScale;
       this.model.position.y = floorY - modelBottomWorldOffset;
-
-      // Keep X and Z positions unchanged
       this.model.position.x = currentWorldPos.x;
       this.model.position.z = currentWorldPos.z;
 
-      // Update rotation ring size
       this.updateRotationRingPosition();
     },
 
@@ -455,75 +422,9 @@ export default {
       }
     },
 
-    // // Replace your existing renderItem method with this:
-    // async renderItem() {
-    //   if (!this.model || !this.currentBackgroundTexture) {
-    //     console.warn("Model or background not loaded");
-    //     return;
-    //   }
-
-    //   try {
-    //     this.loadingProxy= true;
-    //     this.loadingText = 'Rendering Item...';
-
-    //     const roomId = this.$route.params.id;
-    //     const prod_id = this.product_id;
-    //     const url = `${this.$store.state.root_api}engine/inpaint-item-ref/`;
-
-    //     // Use original background image dimensions
-    //     const bgWidth = this.currentBackgroundTexture.image.width;
-    //     const bgHeight = this.currentBackgroundTexture.image.height;
-
-    //     console.log(`Rendering at dimensions: ${bgWidth}x${bgHeight}`);
-
-    //     this.loadingText = 'Creating composite image...';
-    //     // Create composite by rendering 3D object and blending with background
-    //     const compositeBlob = await this.createCompositeImageBlob(bgWidth, bgHeight);
-
-    //     this.loadingText = 'Creating binary mask...';
-    //     // Create binary mask at same resolution
-    //     const maskBlob = await this.createBinaryMaskBlob(bgWidth, bgHeight);
-
-    //     // Prepare form data with BOTH images
-    //     const formData = new FormData();
-    //     formData.append('composite_image', compositeBlob, 'composite_image.png');
-    //     formData.append('binary_mask', maskBlob, 'binary_mask.png');
-    //     formData.append('room_id', roomId);
-    //     formData.append('prod_id', prod_id);
-
-    //     this.loadingText = 'Adding Product to Your Room...';
-
-    //     const response = await fetch(url, {
-    //       method: 'POST',
-    //       headers: {
-    //         'Authorization': `Token ${localStorage.getItem('token')}`,
-    //       },
-    //       body: formData
-    //     });
-
-    //     if (!response.ok) {
-    //       throw new Error(`HTTP error! status: ${response.status}`);
-    //     }
-
-    //     const result = await response.json();
-    //     this.$emit('rendered-comfyui-workflow', result.final_output);
-
-    //     console.log('Composite image and binary mask sent successfully:', result);
-    //     console.log(`Images generated with dimensions: ${bgWidth}x${bgHeight}`);
-
-    //     return result;
-
-    //   } catch (error) {
-    //     console.error('Error rendering item:', error);
-    //     throw error;
-    //   } finally {
-    //     this.loadingProxy= false;
-    //   }
-    // },
     remove3DObjectFromScene() {
       if (!this.scene) return;
 
-      // Remove model
       if (this.model) {
         this.scene.remove(this.model);
         this.model.traverse((child) => {
@@ -536,117 +437,231 @@ export default {
         this.model = null;
       }
 
-      // Remove rotation ring
       if (this.rotationRing) {
         this.scene.remove(this.rotationRing);
         this.rotationRing = null;
         this.rotationArrows = [];
       }
 
-      // Optional: hide grid
       if (this.gridHelper) {
         this.gridHelper.visible = false;
       }
 
       this.modelLoaded = false;
-
       console.log("✅ 3D object removed from scene");
     },
 
-    // Replace your existing renderItem method with this:
-    // async renderItem() {
-    //   if (!this.model || !this.currentBackgroundTexture) {
-    //     console.warn("Model or background not loaded");
-    //     return;
-    //   }
+    // // 🔧 FIXED: Ensure model updates are applied before rendering
+//     async renderItem() {
+//       if (!this.model || !this.currentBackgroundTexture) {
+//         console.warn("Model or background not loaded");
+//         return;
+//       }
 
-    //   try {
-    //     this.$emit("update:isLoading", true);
+//       try {
+//         // 🔧 CRITICAL: Use last known position if available (from drag/rotate)
+//         let currentPosition, currentRotation, currentScale;
+        
+//         if (this.lastKnownModelPosition && this.lastKnownModelRotation && this.lastKnownModelScale) {
+//           console.log("🔄 Using LAST KNOWN position from drag/rotate");
+//           currentPosition = this.lastKnownModelPosition.clone();
+//           currentRotation = this.lastKnownModelRotation.clone();
+//           currentScale = this.lastKnownModelScale.clone();
+          
+//           // 🔧 Apply the last known position to model (in case it was reset)
+//           this.model.position.copy(currentPosition);
+//           this.model.rotation.copy(currentRotation);
+//           this.model.scale.copy(currentScale);
+//         } else {
+//           console.log("⚠️ No last known position, using current model state");
+//           currentPosition = this.model.position.clone();
+//           currentRotation = this.model.rotation.clone();
+//           currentScale = this.model.scale.clone();
+//         }
+        
+//         console.log(`📸 CAPTURED model state - Position: x=${currentPosition.x.toFixed(2)}, y=${currentPosition.y.toFixed(2)}, z=${currentPosition.z.toFixed(2)}`);
+//         console.log(`📸 CAPTURED model state - Rotation: ${currentRotation.y.toFixed(2)} radians`);
+        
+//         // 🔧 Force a render cycle to ensure all updates are applied
+//         await this.$nextTick();
+//         if (this.renderer && this.scene && this.camera) {
+//           this.renderer.render(this.scene, this.camera);
+//         }
 
-    //     this.loadingText = "Rendering Item...";
+//         // 🔧 CRITICAL: Restore model state in case it changed during $nextTick
+//         this.model.position.copy(currentPosition);
+//         this.model.rotation.copy(currentRotation);
+//         this.model.scale.copy(currentScale);
 
-    //     const roomId = this.$route.params.id;
-    //     const prod_id = this.product_id;
-    //     const url = `${this.$store.state.root_api}engine/inpaint-item-ref/`;
+//         // 🔧 Get actual canvas dimensions - use clientWidth/clientHeight if canvas dimensions are 0
+//         const canvas = this.renderer.domElement;
+//         let renderWidth = canvas.width;
+//         let renderHeight = canvas.height;
 
-    //     // Use original background image dimensions
-    //     const bgWidth = this.currentBackgroundTexture.image.width;
-    //     const bgHeight = this.currentBackgroundTexture.image.height;
+//         // Fallback to background texture dimensions if canvas is not properly sized
+//         if (renderWidth === 0 || renderHeight === 0) {
+//           console.warn("Canvas not properly sized, using background texture dimensions");
+//           if (this.currentBackgroundTexture && this.currentBackgroundTexture.image) {
+//             renderWidth = this.currentBackgroundTexture.image.width;
+//             renderHeight = this.currentBackgroundTexture.image.height;
+//           } else {
+//             // Last resort: use container dimensions
+//             const container = this.$refs.viewer;
+//             if (container) {
+//               renderWidth = container.clientWidth || 800;
+//               renderHeight = container.clientHeight || 600;
+//             } else {
+//               renderWidth = 800;
+//               renderHeight = 600;
+//             }
+//           }
+//         }
 
-    //     console.log(`Rendering at dimensions: ${bgWidth}x${bgHeight}`);
+//         console.log(`Rendering at dimensions: ${renderWidth}x${renderHeight}`);
+//         console.log(`🔍 BEFORE RENDER - Model position: x=${this.model.position.x.toFixed(2)}, y=${this.model.position.y.toFixed(2)}, z=${this.model.position.z.toFixed(2)}`);
+//         console.log(`🔍 BEFORE RENDER - Model rotation: ${this.model.rotation.y.toFixed(2)} radians (${THREE.MathUtils.radToDeg(this.model.rotation.y).toFixed(2)} degrees)`);
+//         console.log(`🔍 BEFORE RENDER - Model scale: ${this.model.scale.x.toFixed(2)}`);
 
-    //     this.loadingText = "Creating composite image...";
-    //     // Create composite by rendering 3D object and blending with background
-    //     const compositeBlob = await this.createCompositeImageBlob(
-    //       bgWidth,
-    //       bgHeight,
-    //     );
+//         this.loadingText = "Creating composite image...";
+//         const compositeBlob = await this.createCompositeImageBlob(
+//           renderWidth,
+//           renderHeight,
+//         );
 
-    //     this.loadingText = "Creating binary mask...";
-    //     // Create binary mask at same resolution
-    //     const maskBlob = await this.createBinaryMaskBlob(bgWidth, bgHeight);
+//         // 🔧 Validate blob before creating URL
+//         if (!compositeBlob || compositeBlob.size === 0) {
+//           throw new Error("Failed to create composite image blob");
+//         }
 
-    //     // Prepare form data with BOTH images
-    //     const formData = new FormData();
-    //     formData.append(
-    //       "composite_image",
-    //       compositeBlob,
-    //       "composite_image.png",
-    //     );
-    //     formData.append("binary_mask", maskBlob, "binary_mask.png");
-    //     formData.append("room_id", roomId);
-    //     formData.append("prod_id", prod_id);
+//         // Download composite image
+//         let downloadUrl = URL.createObjectURL(compositeBlob);
+//         let a = document.createElement("a");
+//         a.href = downloadUrl;
+//         a.download = "composite_image.png";
+//         document.body.appendChild(a);
+//         a.click();
+//         document.body.removeChild(a);
+//         URL.revokeObjectURL(downloadUrl);
 
-    //     this.loadingText = "Adding Product to Your Room...";
+//         this.loadingText = "Creating binary mask...";
+//         const maskBlob = await this.createBinaryMaskBlob(renderWidth, renderHeight);
 
-    //     const response = await fetch(url, {
-    //       method: "POST",
-    //       headers: {
-    //         Authorization: `Token ${localStorage.getItem("token")}`,
-    //       },
-    //       body: formData,
-    //     });
+//         // 🔧 Validate mask blob before creating URL
+//         if (!maskBlob || maskBlob.size === 0) {
+//           throw new Error("Failed to create mask blob");
+//         }
 
-    //     if (response.status == 402) {
-    //       const result = await response.json();
-    //       this.$emit("insufficient-credits", result.msg);
-    //       return;
-    //     }
-    //     if (!response.ok) {
-    //       throw new Error(`HTTP error! status: ${response.status}`);
-    //     }
+//         // Download mask
+//         downloadUrl = URL.createObjectURL(maskBlob);
+//         a = document.createElement("a");
+//         a.href = downloadUrl;
+//         a.download = "mask.png";
+//         document.body.appendChild(a);
+//         a.click();
+//         document.body.removeChild(a);
+//         URL.revokeObjectURL(downloadUrl);
 
-    //     const result = await response.json();
-    //     console.log("====================================");
-    //     console.log(result);
-    //     console.log("====================================");
-    //     if (result.renderer_id) {
-    //       this.remove3DObjectFromScene();
-    //       this.$emit(
-    //         "add-3d-furniture-to-room-start-polling",
-    //         result.renderer_id,
-    //       );
-    //     }
+//         console.log("✅ Composite and mask generated successfully");
 
-    //     // 🔥 REMOVE 3D OBJECT AFTER SUCCESSFUL RENDER
+//       } catch (error) {
+//         console.error("Error rendering item:", error);
+//         throw error;
+//       }
+//     },
 
-    //     console.log(
-    //       "Composite image and binary mask sent successfully:",
-    //       result,
-    //     );
-    //     console.log(`Images generated with dimensions: ${bgWidth}x${bgHeight}`);
+// async renderItem() {
+//       if (!this.model || !this.currentBackgroundTexture) {
+//         console.warn("Model or background not loaded");
+//         return;
+//       }
 
-    //     return result;
-    //   } catch (error) {
-    //     console.error("Error rendering item:", error);
-    //     throw error;
-    //   }
-    //   // finally {
-    //   //   this.$emit('update:isLoading', false);
-    //   // }
-    // },
+//       try {
+//         this.$emit("update:isLoading", true);
 
-    async renderItem() {
+//         this.loadingText = "Rendering Item...";
+
+//         const roomId = this.$route.params.id;
+//         const prod_id = this.product_id;
+//         const url = `${this.$store.state.root_api}engine/inpaint-item-ref/`;
+
+//         // Use original background image dimensions
+//         const bgWidth = this.currentBackgroundTexture.image.width;
+//         const bgHeight = this.currentBackgroundTexture.image.height;
+
+//         console.log(`Rendering at dimensions: ${bgWidth}x${bgHeight}`);
+
+//         this.loadingText = "Creating composite image...";
+//         // Create composite by rendering 3D object and blending with background
+//         const compositeBlob = await this.createCompositeImageBlob(
+//           bgWidth,
+//           bgHeight,
+//         );
+
+//         this.loadingText = "Creating binary mask...";
+//         // Create binary mask at same resolution
+//         const maskBlob = await this.createBinaryMaskBlob(bgWidth, bgHeight);
+
+//         // Prepare form data with BOTH images
+//         const formData = new FormData();
+//         formData.append(
+//           "composite_image",
+//           compositeBlob,
+//           "composite_image.png",
+//         );
+//         formData.append("binary_mask", maskBlob, "binary_mask.png");
+//         formData.append("room_id", roomId);
+//         formData.append("prod_id", prod_id);
+
+//         this.loadingText = "Adding Product to Your Room...";
+
+//         const response = await fetch(url, {
+//           method: "POST",
+//           headers: {
+//             Authorization: `Token ${localStorage.getItem("token")}`,
+//           },
+//           body: formData,
+//         });
+
+//         if (response.status == 402) {
+//           const result = await response.json();
+//           this.$emit("insufficient-credits", result.msg,result.buid);
+//           return;
+//         }
+//         if (!response.ok) {
+//           throw new Error(`HTTP error! status: ${response.status}`);
+//         }
+
+//         const result = await response.json();
+//         console.log("====================================");
+//         console.log(result);
+//         console.log("====================================");
+//         if (result.renderer_id) {
+//           this.remove3DObjectFromScene();
+//           this.$emit(
+//             "add-3d-furniture-to-room-start-polling",
+//             result.renderer_id,
+//           );
+//         }
+
+//         // 🔥 REMOVE 3D OBJECT AFTER SUCCESSFUL RENDER
+
+//         console.log(
+//           "Composite image and binary mask sent successfully:",
+//           result,
+//         );
+//         console.log(`Images generated with dimensions: ${bgWidth}x${bgHeight}`);
+
+//         return result;
+//       } catch (error) {
+//         console.error("Error rendering item:", error);
+//         throw error;
+//       }
+//       // finally {
+//       //   this.$emit('update:isLoading', false);
+//       // }
+//     },
+
+async renderItem() {
   if (!this.model || !this.currentBackgroundTexture) {
     console.warn("Model or background not loaded");
     return;
@@ -802,8 +817,6 @@ export default {
     throw error;
   }
 },
-
-    // Replace your existing renderItem method with this:
     async switchFurniture() {
       if (!this.model || !this.currentBackgroundTexture) {
         console.warn("Model or background not loaded");
@@ -811,16 +824,13 @@ export default {
       }
       try {
         this.$emit("update:isLoading", true);
-
         this.remove3DObjectFromScene();
-
         this.loadingText = "Rendering Item...";
 
         const roomId = this.$route.params.id;
         const prod_id = this.product_id;
         const url = `${this.$store.state.root_api}engine/switch-furniture-ref/`;
 
-        // Prepare form data with BOTH images
         const formData = new FormData();
         formData.append("room_id", roomId);
         formData.append("prod_id", prod_id);
@@ -836,7 +846,7 @@ export default {
         this.remove3DObjectFromScene();
         if (response.status == 402) {
           const result = await response.json();
-          this.$emit("insufficient-credits", result.msg);
+          this.$emit("insufficient-credits", result.msg, result.buid);
           return;
         }
         if (!response.ok) {
@@ -848,25 +858,20 @@ export default {
         }
 
         this.$emit("rendered-comfyui-workflow", result.final_output);
-
-        // console.log(
-        //   "Composite image and binary mask sent successfully:",
-        //   result,
-        // );
-        // console.log(`Images generated with dimensions: ${bgWidth}x${bgHeight}`);
-
         return result;
       } catch (error) {
         console.error("Error rendering item:", error);
         throw error;
-      } finally {
-        // this.$emit("update:isLoading", false);
       }
     },
 
-    // NEW METHOD: Create composite with 3D object and transparent background
     async createCompositeImageBlob(bgWidth, bgHeight) {
-      // Create canvas for 3D object rendering (transparent background)
+      // 🔧 Validate dimensions
+      if (!bgWidth || !bgHeight || bgWidth <= 0 || bgHeight <= 0) {
+        console.error("Invalid dimensions for composite image:", bgWidth, bgHeight);
+        throw new Error(`Invalid dimensions: ${bgWidth}x${bgHeight}`);
+      }
+
       const objectCanvas = document.createElement("canvas");
       objectCanvas.width = bgWidth;
       objectCanvas.height = bgHeight;
@@ -876,44 +881,36 @@ export default {
         antialias: true,
         preserveDrawingBuffer: true,
         alpha: true,
-        precision: "highp", // Better quality
+        precision: "highp",
       });
       objectRenderer.setSize(bgWidth, bgHeight);
       objectRenderer.setPixelRatio(1);
       objectRenderer.outputColorSpace = THREE.SRGBColorSpace;
-      objectRenderer.setClearColor(0x000000, 0); // Transparent background
+      objectRenderer.setClearColor(0x000000, 0);
       objectRenderer.shadowMap.enabled = true;
       objectRenderer.shadowMap.type = THREE.PCFShadowMap;
 
-      // Create scene with only the 3D model
       const objectScene = new THREE.Scene();
-
-      // Clone the model
+      
       // 🔧 FIX: Use deep clone and apply world matrix to preserve exact transform
-      const modelClone = this.model.clone(true);
+      const modelClone = this.model.clone(true); // true = recursive clone
       
       // Copy world matrix to preserve exact position/rotation/scale
       this.model.updateWorldMatrix(true, true);
       modelClone.position.copy(this.model.position);
-      modelClone.rotation.copy(this.model.rotation); // 🔧 This now includes all rotation axes
+      modelClone.rotation.copy(this.model.rotation);
       modelClone.scale.copy(this.model.scale);
       modelClone.updateMatrix();
       
       console.log(`🎯 COMPOSITE - Cloning model at position: x=${modelClone.position.x.toFixed(2)}, y=${modelClone.position.y.toFixed(2)}, z=${modelClone.position.z.toFixed(2)}`);
-      console.log(`🎯 COMPOSITE - Cloning model rotation (radians): x=${modelClone.rotation.x.toFixed(2)}, y=${modelClone.rotation.y.toFixed(2)}, z=${modelClone.rotation.z.toFixed(2)}`);
-      console.log(`🎯 COMPOSITE - Cloning model rotation (degrees): x=${THREE.MathUtils.radToDeg(modelClone.rotation.x).toFixed(2)}°, y=${THREE.MathUtils.radToDeg(modelClone.rotation.y).toFixed(2)}°, z=${THREE.MathUtils.radToDeg(modelClone.rotation.z).toFixed(2)}°`);
+      console.log(`🎯 COMPOSITE - Cloning model rotation: ${modelClone.rotation.y.toFixed(2)} radians (${THREE.MathUtils.radToDeg(modelClone.rotation.y).toFixed(2)}°)`);
+      console.log(`🎯 COMPOSITE - Original model position: x=${this.model.position.x.toFixed(2)}, y=${this.model.position.y.toFixed(2)}, z=${this.model.position.z.toFixed(2)}`);
       
       objectScene.add(modelClone);
 
-      // Enhanced lighting for more brightness and clarity (matching initializeLighting)
-      const hemisphereLight = new THREE.HemisphereLight(
-        0xffffff,
-        0x444444,
-        1.9,
-      );
+      const hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1.9);
       objectScene.add(hemisphereLight);
 
-      // Main directional light - BRIGHTER
       const dirLight = new THREE.DirectionalLight(0xffffff, 9);
       dirLight.position.set(10, 15, 5);
       dirLight.castShadow = true;
@@ -927,50 +924,56 @@ export default {
       dirLight.shadow.camera.bottom = -30;
       objectScene.add(dirLight);
 
-      // Fill light - BRIGHTER
       const fillLight = new THREE.DirectionalLight(0xffffff, 1.8);
       fillLight.position.set(-10, 5, -5);
       objectScene.add(fillLight);
 
-      // Key light from different angle - BRIGHTER
       const keyLight = new THREE.DirectionalLight(0xffffff, 1.8);
       keyLight.position.set(5, 10, 10);
       objectScene.add(keyLight);
 
-      // Rim light for edge definition - BRIGHTER
       const rimLight = new THREE.DirectionalLight(0xffffff, 1.4);
       rimLight.position.set(-5, 5, -10);
       objectScene.add(rimLight);
 
-      // Additional bright fill light for extra brightness
       const extraFillLight = new THREE.DirectionalLight(0xffffff, 1.2);
       extraFillLight.position.set(8, 8, 8);
       objectScene.add(extraFillLight);
 
-      // Point light for close-range illumination
       const pointLight = new THREE.PointLight(0xffffff, 1.5, 150);
       pointLight.position.set(12, 12, 12);
       objectScene.add(pointLight);
 
-      // Use exact camera from viewer
       const objectCamera = this.camera.clone();
       objectCamera.aspect = bgWidth / bgHeight;
       objectCamera.updateProjectionMatrix();
 
-      // Render the 3D object with transparent background
       objectRenderer.render(objectScene, objectCamera);
 
-      // Get image data and convert to PNG blob directly
-      const blob = await new Promise((resolve) => {
-        objectCanvas.toBlob(resolve, "image/png");
+      // 🔧 Create blob with error handling
+      const blob = await new Promise((resolve, reject) => {
+        objectCanvas.toBlob((blob) => {
+          if (blob && blob.size > 0) {
+            resolve(blob);
+          } else {
+            reject(new Error("Canvas.toBlob returned empty or null blob"));
+          }
+        }, "image/png");
       });
 
       objectRenderer.dispose();
+      
+      console.log(`✅ Composite blob created: ${blob.size} bytes`);
       return blob;
     },
 
-    // UPDATED: Create binary mask at original dimensions
     async createBinaryMaskBlob(bgWidth, bgHeight) {
+      // 🔧 Validate dimensions
+      if (!bgWidth || !bgHeight || bgWidth <= 0 || bgHeight <= 0) {
+        console.error("Invalid dimensions for mask:", bgWidth, bgHeight);
+        throw new Error(`Invalid mask dimensions: ${bgWidth}x${bgHeight}`);
+      }
+
       const tempCanvas = document.createElement("canvas");
       tempCanvas.width = bgWidth;
       tempCanvas.height = bgHeight;
@@ -981,42 +984,59 @@ export default {
         preserveDrawingBuffer: true,
       });
       tempRenderer.setSize(bgWidth, bgHeight);
-      tempRenderer.setPixelRatio(1); // Don't use device pixel ratio
-      tempRenderer.setClearColor(0x000000, 1); // Black background
+      tempRenderer.setPixelRatio(1);
+      tempRenderer.setClearColor(0x000000, 1);
 
       const tempScene = new THREE.Scene();
-
-      // Clone the model for mask
-      const modelClone = this.model.clone();
+      
+      // 🔧 FIX: Use deep clone and apply world matrix to preserve exact transform
+      const modelClone = this.model.clone(true); // true = recursive clone
+      
+      // Copy world matrix to preserve exact position/rotation/scale
+      this.model.updateWorldMatrix(true, true);
+      modelClone.position.copy(this.model.position);
+      modelClone.rotation.copy(this.model.rotation);
+      modelClone.scale.copy(this.model.scale);
+      modelClone.updateMatrix();
+      
+      console.log(`🎯 MASK - Cloning model at position: x=${modelClone.position.x.toFixed(2)}, y=${modelClone.position.y.toFixed(2)}, z=${modelClone.position.z.toFixed(2)}`);
+      
       tempScene.add(modelClone);
 
-      // Add basic lighting
       tempScene.add(new THREE.HemisphereLight(0xffffff, 0xffffff, 1.0));
       const dirLight = new THREE.DirectionalLight(0xffffff, 1.0);
       dirLight.position.set(10, 15, 5);
       tempScene.add(dirLight);
 
-      // Create white material for all meshes
       modelClone.traverse((child) => {
         if (child.isMesh) {
           child.material = new THREE.MeshBasicMaterial({ color: 0xffffff });
         }
       });
 
-      // Use same camera
       const tempCamera = this.camera.clone();
       tempCamera.aspect = bgWidth / bgHeight;
       tempCamera.updateProjectionMatrix();
 
       tempRenderer.render(tempScene, tempCamera);
 
-      const blob = await new Promise((resolve) => {
-        tempCanvas.toBlob(resolve, "image/png");
+      // 🔧 Create blob with error handling
+      const blob = await new Promise((resolve, reject) => {
+        tempCanvas.toBlob((blob) => {
+          if (blob && blob.size > 0) {
+            resolve(blob);
+          } else {
+            reject(new Error("Canvas.toBlob returned empty or null blob for mask"));
+          }
+        }, "image/png");
       });
 
       tempRenderer.dispose();
+      
+      console.log(`✅ Mask blob created: ${blob.size} bytes`);
       return blob;
     },
+
     async handleGlbUrlChange() {
       try {
         this.resetComponentState();
@@ -1035,38 +1055,108 @@ export default {
       }
     },
 
-    resetComponentState() {
-      this.modelLoaded = false;
-      this.modelPosition = { x: 0, y: 0 };
-      this.modelRotation = { y: 0 };
+    // resetComponentState() {
+    //   this.modelLoaded = false;
+    //   this.modelPosition = { x: 0, y: 0 };
+    //   this.modelRotation = { y: 0 };
 
-      if (this.model && this.scene) {
-        this.scene.remove(this.model);
-        this.model = null;
-        this.modelBoundingBox = null;
-        this.modelSize = null;
-      }
+    //   if (this.model && this.scene) {
+    //     this.scene.remove(this.model);
+    //     this.model = null;
+    //     this.modelBoundingBox = null;
+    //     this.modelSize = null;
+    //   }
 
-      if (this.rotationRing && this.scene) {
-        this.scene.remove(this.rotationRing);
-        this.rotationRing = null;
-        this.rotationArrows = [];
-      }
+    //   if (this.rotationRing && this.scene) {
+    //     this.scene.remove(this.rotationRing);
+    //     this.rotationRing = null;
+    //     this.rotationArrows = [];
+    //   }
+    // },
+     resetComponentState() {
+        this.modelLoaded = false;
+        this.modelPosition = { x: 0, y: 0 };
+        this.modelRotation = { y: 0 };
+
+        // 🔧 FIXED: Properly remove and cleanup rotation ring first
+        this.removeRotationRing();
+
+        if (this.model && this.scene) {
+            this.scene.remove(this.model);
+            this.model.traverse((child) => {
+                if (child.isMesh) {
+                    child.geometry?.dispose();
+                    if (child.material?.map) child.material.map.dispose();
+                    child.material?.dispose();
+                }
+            });
+            this.model = null;
+            this.modelBoundingBox = null;
+            this.modelSize = null;
+        }
+
+        if (this.gridHelper) {
+            this.gridHelper.visible = false;
+        }
     },
 
+    // 🔧 NEW: Dedicated method to remove rotation ring
+    removeRotationRing() {
+        if (this.rotationRing && this.scene) {
+            this.scene.remove(this.rotationRing);
+            
+            // Dispose geometries and materials
+            this.rotationRing.traverse((child) => {
+                if (child.isMesh) {
+                    child.geometry?.dispose();
+                    if (Array.isArray(child.material)) {
+                        child.material.forEach(m => m.dispose());
+                    } else {
+                        child.material?.dispose();
+                    }
+                }
+            });
+            
+            this.rotationRing = null;
+            this.rotationArrows = [];
+            console.log("✅ Rotation ring removed");
+        }
+    },
+
+
+    // async reinitializeWithNewModel() {
+    //   this.loadingText = "Loading new model...";
+    //   this.$emit("update:isLoading", false);
+    //   await this.loadModel();
+    //   this.fitCameraToModel();
+    //   this.createRotationRing();
+    //   this.updateRotationRingPosition();
+    //   this.fitCameraToModel();
+    //   this.$emit("update:isLoading", false);
+    // },
+
+    
     async reinitializeWithNewModel() {
-      this.loadingText = "Loading new model...";
-      this.$emit("update:isLoading", false);
-      await this.loadModel();
-      this.fitCameraToModel();
-      // Recreate rotation ring for new model
-      this.createRotationRing();
-      this.updateRotationRingPosition();
-
-      this.fitCameraToModel();
-      this.$emit("update:isLoading", false);
+        this.loadingText = "Loading new model...";
+        this.$emit("update:isLoading", false);
+        
+        // 🔧 FIXED: Ensure rotation ring is removed before loading new model
+        this.removeRotationRing();
+        
+        await this.loadModel();
+        this.fitCameraToModel();
+        
+        // 🔧 FIXED: Only create ring if it doesn't exist
+        if (!this.rotationRing) {
+            this.createRotationRing();
+        }
+        
+        this.updateRotationRingPosition();
+        this.fitCameraToModel();
+        this.$emit("update:isLoading", false);
     },
 
+    
     async initializeViewer() {
       await this.$nextTick();
       const container = this.$refs.viewer;
@@ -1132,24 +1222,17 @@ export default {
         max: new THREE.Vector3(...fd.floor_bounds.max),
       };
 
-      // FIX: Handle missing floor_boundary
       if (fd.floor_boundary) {
         this.floorBoundary = fd.floor_boundary.map(
           (p) => new THREE.Vector3(p[0], p[1], p[2]),
         );
       } else if (fd.floor_mesh && fd.floor_mesh.vertices) {
-        // Use floor mesh vertices as boundary if no explicit boundary provided
         this.floorBoundary = fd.floor_mesh.vertices.map(
           (v) => new THREE.Vector3(v[0], v[1], v[2]),
         );
       } else {
         this.floorBoundary = [];
       }
-
-      console.log("Floor data parsed:");
-      console.log("  Normal:", this.floorNormal);
-      console.log("  Center:", this.floorPoint);
-      console.log("  Height:", fd.floor_plane.height);
     },
 
     initializeScene(container) {
@@ -1182,9 +1265,6 @@ export default {
       const canvas = document.createElement("canvas");
       canvas.width = 512;
       canvas.height = 512;
-      canvas.style.position = "absolute";
-      canvas.style.top = "0";
-      canvas.style.left = "0";
       const ctx = canvas.getContext("2d");
 
       const gradient = ctx.createLinearGradient(0, 0, 0, 512);
@@ -1212,10 +1292,8 @@ export default {
     },
 
     initializeLighting() {
-      // Ambient light for overall brightness
       this.scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 1.9));
 
-      // Main directional light
       const dirLight = new THREE.DirectionalLight(0xffffff, 9);
       dirLight.position.set(10, 15, 5);
       dirLight.castShadow = true;
@@ -1229,17 +1307,14 @@ export default {
       dirLight.shadow.camera.bottom = -20;
       this.scene.add(dirLight);
 
-      // Fill light
       const fillLight = new THREE.DirectionalLight(0xffffff, 1.8);
       fillLight.position.set(-10, 5, -5);
       this.scene.add(fillLight);
 
-      // Key light from different angle
       const keyLight = new THREE.DirectionalLight(0xffffff, 1.8);
       keyLight.position.set(5, 10, 10);
       this.scene.add(keyLight);
 
-      // Rim light for edge definition
       const rimLight = new THREE.DirectionalLight(0xffffff, 1.4);
       rimLight.position.set(-5, 5, -10);
       this.scene.add(rimLight);
@@ -1251,18 +1326,16 @@ export default {
       this.controls.enableZoom = false;
       this.controls.enablePan = false;
 
-      // FIX: Calculate proper camera height
       const floorHeight = this.floorData.floor_plane.height;
-      const cameraHeight = 1.5; // Typical eye height in meters
+      const cameraHeight = 1.5;
       const cameraY = floorHeight + cameraHeight;
 
       this.camera.position.set(0, cameraY, 0);
 
-      // Point camera at a spot on the floor ahead
       const lookAtPoint = new THREE.Vector3(
         this.floorPoint.x,
         floorHeight,
-        this.floorPoint.z - 20, // Look 3 meters ahead
+        this.floorPoint.z - 20,
       );
 
       this.controls.target.copy(lookAtPoint);
@@ -1276,21 +1349,18 @@ export default {
       canvas.addEventListener("mousemove", this.onMouseMove);
       canvas.addEventListener("mouseup", this.onMouseUp);
       canvas.addEventListener("mouseleave", this.onMouseUp);
-      // Touch Events (MOBILE SUPPORT)
-      canvas.addEventListener("touchstart", this.onMouseDown, {
-        passive: false,
-      });
-      canvas.addEventListener("touchmove", this.onMouseMove, {
-        passive: false,
-      });
-      canvas.addEventListener("touchend", this.onMouseUp);
-      canvas.addEventListener("touchcancel", this.onMouseUp);
+      
+      // 🔧 FIXED: Touch Events with proper passive handling
+      canvas.addEventListener("touchstart", this.onMouseDown, { passive: false });
+      canvas.addEventListener("touchmove", this.onMouseMove, { passive: false });
+      canvas.addEventListener("touchend", this.onMouseUp, { passive: false });
+      canvas.addEventListener("touchcancel", this.onMouseUp, { passive: false });
     },
+
     createFloorFromJSON() {
       this.gridGroup = new THREE.Group();
       this.scene.add(this.gridGroup);
 
-      // Create floor mesh from backend data
       if (this.floorData.floor_mesh) {
         const vertices = this.floorData.floor_mesh.vertices;
         const faces = this.floorData.floor_mesh.faces;
@@ -1325,7 +1395,6 @@ export default {
         this.floorPlane.name = "dragFloor";
         this.gridGroup.add(this.floorPlane);
       } else {
-        // Fallback to plane
         const floorGeometry = new THREE.PlaneGeometry(20, 20);
         const floorMaterial = new THREE.MeshLambertMaterial({
           color: 0xcccccc,
@@ -1352,11 +1421,10 @@ export default {
         this.floorPoint,
       );
     },
-    // Replace your createVisualGrid method with this:
+
     createVisualGrid() {
       if (this.gridHelper) this.gridGroup.remove(this.gridHelper);
 
-      // Create grid lines from backend data
       if (this.floorData.grid_lines && this.floorData.grid_lines.length > 0) {
         const gridGeometry = new THREE.BufferGeometry();
         const gridVertices = [];
@@ -1398,15 +1466,14 @@ export default {
         transparent: true,
         opacity: 0.8,
         side: THREE.DoubleSide,
-        depthTest: true, // ← Change from false to true
-        depthWrite: true, // ← Add this
+        depthTest: true,
+        depthWrite: true,
       });
       const ring = new THREE.Mesh(ringGeometry, ringMaterial);
       ring.rotation.x = -Math.PI / 2;
       ring.name = "rotationRingMesh";
       this.rotationRing.add(ring);
 
-      // Create 4 rotation arrows
       const arrowPositions = [0, Math.PI / 2, Math.PI, (3 * Math.PI) / 2];
 
       arrowPositions.forEach((angle, index) => {
@@ -1416,7 +1483,7 @@ export default {
       });
 
       this.rotationRing.visible = this.showRotationRing;
-      this.rotationRing.renderOrder = 999; // Render on top
+      this.rotationRing.renderOrder = 999;
       this.scene.add(this.rotationRing);
     },
 
@@ -1445,26 +1512,21 @@ export default {
       return arrowGroup;
     },
 
-    // FIXED: Update rotation ring to maintain circular shape
     updateRotationRingPosition() {
       if (!this.rotationRing || !this.model || !this.modelSize) return;
 
-      // Position at model center
       this.rotationRing.position.copy(this.model.position);
 
-      // Calculate scale based on model size (larger models = larger ring)
       const avgSize = (this.modelSize.x + this.modelSize.z) / 2;
       const baseScale = Math.max(0.8, avgSize * 1.2);
       this.rotationRing.scale.setScalar(baseScale);
 
-      // Keep ring horizontal (don't tilt with floor)
-      // This ensures it stays circular in screen space
       this.rotationRing.rotation.set(0, 0, 0);
 
-      // Offset ring slightly above model
       const offset = this.modelSize.y * 0.05;
       this.rotationRing.position.y += offset;
     },
+
     async loadModel() {
       if (!this.glbUrl || this.glbUrl === "") {
         console.warn("No glbUrl provided");
@@ -1523,55 +1585,45 @@ export default {
     setupModelBounds() {
       const bbox = new THREE.Box3().setFromObject(this.model);
       const size = bbox.getSize(new THREE.Vector3());
-      const center = bbox.getCenter(new THREE.Vector3());
 
       const dims = this.modelDimensions;
-      const targetSize = Math.max(dims.width, dims.height, dims.depth);
-      const currentMaxDim = Math.max(size.x, size.y, size.z);
-      this.baseModelScale = targetSize / currentMaxDim;
+      
+      const scaleX = dims.width / size.x;
+      const scaleY = dims.height / size.y;
+      const scaleZ = dims.depth / size.z;
+      
+      this.baseModelScale = Math.min(scaleX, scaleY, scaleZ);
+      this.baseModelScale = Math.max(0.001, Math.min(100, this.baseModelScale));
 
       this.model.scale.setScalar(this.baseModelScale);
 
-      // BEFORE centering - get the bounding box
       const scaledBox = new THREE.Box3().setFromObject(this.model);
       this.modelSize = scaledBox.getSize(new THREE.Vector3());
 
-      // Center the model at origin first
       const scaledCenter = scaledBox.getCenter(new THREE.Vector3());
       this.model.position.sub(scaledCenter);
 
-      // NOW get bounding box in LOCAL space (centered at origin)
       this.modelBoundingBox = new THREE.Box3().setFromObject(this.model);
-
-      // console.log('=== MODEL SETUP DEBUG ===');
-      // console.log('Model size:', this.modelSize);
-      // console.log('Model bounds:', this.modelBoundingBox);
-      // console.log('Model bounds min.y:', this.modelBoundingBox.min.y);
-      // console.log('Model bounds max.y:', this.modelBoundingBox.max.y);
-      // console.log('Model position after centering:', this.model.position);
     },
+
     positionModelOnFloor() {
       if (!this.model) return;
 
       const floorY = this.floorData.floor_plane.height;
 
-      // Place model 3-4 meters in front of camera
       this.model.position.x = 0;
-      this.model.position.z = -3.5; // Negative Z = in front of camera
+      this.model.position.z = -3.5;
 
       const modelBottom = this.modelBoundingBox.min.y * this.baseModelScale;
       this.model.position.y = floorY - modelBottom;
 
       console.log("Model positioned at:", this.model.position);
-      console.log("Floor height:", floorY);
-      console.log("Camera height:", this.camera.position.y);
     },
+
     screenToWorld(screenX, screenY) {
-      // screenX, screenY are normalized (0 to 1)
-      // Convert to Three.js NDC space (-1 to 1)
       const mouse = new THREE.Vector2(
         screenX * 2 - 1,
-        -(screenY * 2 - 1), // Flip Y axis
+        -(screenY * 2 - 1),
       );
 
       this.raycaster.setFromCamera(mouse, this.camera);
@@ -1583,26 +1635,12 @@ export default {
 
       return null;
     },
+
     applyPerspectiveScaling() {
       if (!this.model) return;
 
-      const cameraPos = new THREE.Vector3(...this.floorData.camera.position);
-      const modelPos = this.model.position.clone();
-      const distance = cameraPos.distanceTo(modelPos);
-      const refDistance = cameraPos.distanceTo(this.floorPoint);
+      this.model.scale.setScalar(this.baseModelScale * this.modelScale);
 
-      // OPTION 1: Disable perspective scaling entirely (recommended)
-      // Just keep the base scale constant
-      this.model.scale.setScalar(this.baseModelScale);
-
-      /* OPTION 2: If you really want perspective scaling, use smoother approach
-  const scaleFactor = Math.pow(refDistance / distance, 0.05);  // Very subtle
-  const clampedScale = Math.max(0.95, Math.min(1.05, scaleFactor));
-  const finalScale = this.baseModelScale * clampedScale;
-  this.model.scale.setScalar(finalScale);
-  */
-
-      // IMPORTANT: Only update bounding box when scale actually changes
       const currentScale = this.model.scale.x;
       if (Math.abs(currentScale - this.lastAppliedScale) > 0.001) {
         this.modelBoundingBox.setFromObject(this.model);
@@ -1636,8 +1674,10 @@ export default {
       return true;
     },
 
+    // 🔧 FIXED: Proper touch/mouse event handling
     onMouseDown(event) {
-      event.preventDefault();
+      event.preventDefault(); // 🔧 Prevent default touch behavior
+      
       let clientX, clientY;
       if (event.touches && event.touches.length > 0) {
         clientX = event.touches[0].clientX;
@@ -1646,21 +1686,21 @@ export default {
         clientX = event.clientX;
         clientY = event.clientY;
       }
+
       const mouse = new THREE.Vector2();
       const rect = this.renderer.domElement.getBoundingClientRect();
       mouse.x = ((clientX - rect.left) / rect.width) * 2 - 1;
       mouse.y = -((clientY - rect.top) / rect.height) * 2 + 1;
+
       this.raycaster.setFromCamera(mouse, this.camera);
-      // -----------------------------------------------
-      // ROTATION ARROWS
-      // -----------------------------------------------
+
+      // Check rotation arrows
       if (this.rotationRing && this.showRotationRing) {
         const arrowIntersects = this.raycaster.intersectObject(
           this.rotationRing,
           true,
         );
         if (arrowIntersects.length > 0) {
-          const hitPoint = arrowIntersects[0].point.clone();
           const intersected = arrowIntersects[0].object;
           if (intersected.userData.isRotationArrow) {
             this.controls.enabled = false;
@@ -1673,9 +1713,8 @@ export default {
           }
         }
       }
-      // -----------------------------------------------
-      // MODEL DRAGGING
-      // -----------------------------------------------
+
+      // Check model dragging
       if (this.model) {
         const intersects = this.raycaster.intersectObject(this.model, true);
         if (intersects.length > 0) {
@@ -1687,30 +1726,28 @@ export default {
             this.model.position.x,
             this.model.position.z,
           );
-          // -----------------------------------------------
-          // :white_check_mark: FIX: Keep pointer coordinate locked to same spot
-          // -----------------------------------------------
+
           const hitPoint = intersects[0].point.clone();
-          // Ground plane for drag
           this.dragPlane = new THREE.Plane();
           this.dragPlane.setFromNormalAndCoplanarPoint(
             new THREE.Vector3(0, 1, 0),
             hitPoint,
           );
-          // Store offset between model origin & hit point
           this.dragOffset = new THREE.Vector3().subVectors(
             hitPoint,
             this.model.position,
           );
-          // -----------------------------------------------
           return;
         }
       }
     },
+
+    // 🔧 FIXED: Handle touch movement with proper updates
     onMouseMove(event) {
       if (!this.isDraggingModel && !this.isRotatingModel) return;
-      event.preventDefault();
-      // READ POINTER (mouse / touch)
+      
+      event.preventDefault(); // 🔧 Prevent scrolling during drag
+
       let clientX, clientY;
       if (event.touches && event.touches.length > 0) {
         clientX = event.touches[0].clientX;
@@ -1719,11 +1756,11 @@ export default {
         clientX = event.clientX;
         clientY = event.clientY;
       }
+
       const mouse = new THREE.Vector2();
       const rect = this.renderer.domElement.getBoundingClientRect();
       mouse.x = ((clientX - rect.left) / rect.width) * 2 - 1;
       mouse.y = -((clientY - rect.top) / rect.height) * 2 + 1;
-      // MODEL DRAGGING
 
       if (this.isDraggingModel) {
         this.raycaster.setFromCamera(mouse, this.camera);
@@ -1735,7 +1772,6 @@ export default {
           this.model.position.x = worldPoint.x;
           this.model.position.z = worldPoint.z;
 
-          // FIXED: Use the same calculation as applyModelScale
           const { a, b, c, d } = this.planeEquation;
           let floorY;
           if (Math.abs(b) > 0.001) {
@@ -1744,50 +1780,29 @@ export default {
             floorY = this.floorData.floor_plane.height;
           }
 
-          // FIXED: Account for current model scale when positioning
           const finalScale = this.baseModelScale * this.modelScale;
-          const modelBottomWorldOffset =
-            this.modelBoundingBox.min.y * finalScale;
+          const modelBottomWorldOffset = this.modelBoundingBox.min.y * finalScale;
           this.model.position.y = floorY - modelBottomWorldOffset;
 
           this.updateRotationRingPosition();
           this.isOnValidFloor = true;
+          
+          // 🔧 Mark that we need to update rendering
+          this.needsRenderUpdate = true;
         }
-      }
-
-      // ------------------------------------------------------------
-      // MODEL ROTATION
-      // ------------------------------------------------------------
-      else if (this.isRotatingModel) {
+      } else if (this.isRotatingModel) {
         const deltaX = mouse.x - this.rotationStartMouse.x;
         this.modelRotation.y = this.rotationStartAngle + deltaX * 180;
         this.model.rotation.y = THREE.MathUtils.degToRad(this.modelRotation.y);
+        
+        // 🔧 Mark that we need to update rendering
+        this.needsRenderUpdate = true;
       }
     },
-    // onMouseUp(event) {
-    //   if (this.isDraggingModel) {
-    //     this.controls.enabled = true;
-    //     this.isDraggingModel = false;
-    //     this.isDragging = false;
-        
-    //   }
 
-    //   if (this.isRotatingModel) {
-    //     this.controls.enabled = true;
-    //     this.isRotatingModel = false;
-    //     this.isRotating = false;
-
-    //     this.rotationArrows.forEach((group) => {
-    //       group.children.forEach((arrow) => {
-    //         if (arrow.userData.isRotationArrow) {
-    //           arrow.material.color.setHex(arrow.userData.originalColor);
-    //         }
-    //       });
-    //     });
-    //   }
-    // },
-
-    onMouseUp(event) {
+    // 🔧 FIXED: Handle touch end with position update
+   // In onMouseUp method
+onMouseUp(event) {
   const wasDragging = this.isDraggingModel;
   const wasRotating = this.isRotatingModel;
 
@@ -1895,34 +1910,30 @@ export default {
 },
 
     fitCameraToModel() {
-      // Keep camera position fixed to match background image
-      // Don't move camera to fit model
       return;
     },
 
     adjustCanvasToImageAspectRatio(texture) {
-  if (!texture.image || !this.$refs.canvasContainer) return;
+      if (!texture.image || !this.$refs.canvasContainer) return;
 
-  const containerRect = this.$refs.canvasContainer.getBoundingClientRect();
-  const availableWidth = Math.floor(containerRect.width);
-  const availableHeight = Math.floor(containerRect.height);
+      const containerRect = this.$refs.canvasContainer.getBoundingClientRect();
+      const availableWidth = Math.floor(containerRect.width);
+      const availableHeight = Math.floor(containerRect.height);
 
-  const imgAspect = texture.image.width / texture.image.height;
+      const imgAspect = texture.image.width / texture.image.height;
 
-  // Always fit to width first (100% width)
-  let canvasWidth = availableWidth;
-  let canvasHeight = Math.round(canvasWidth / imgAspect);
+      let canvasWidth = availableWidth;
+      let canvasHeight = Math.round(canvasWidth / imgAspect);
 
-  // If calculated height exceeds available height, fit to height instead
-  if (canvasHeight > availableHeight) {
-    canvasHeight = availableHeight;
-    canvasWidth = Math.round(canvasHeight * imgAspect);
-  }
+      if (canvasHeight > availableHeight) {
+        canvasHeight = availableHeight;
+        canvasWidth = Math.round(canvasHeight * imgAspect);
+      }
 
-  this.renderer.setSize(canvasWidth, canvasHeight);
-  this.camera.aspect = canvasWidth / canvasHeight;
-  this.camera.updateProjectionMatrix();
-},
+      this.renderer.setSize(canvasWidth, canvasHeight);
+      this.camera.aspect = canvasWidth / canvasHeight;
+      this.camera.updateProjectionMatrix();
+    },
 
     updateBackground(texture) {
       texture.minFilter = THREE.LinearFilter;
@@ -1945,10 +1956,8 @@ export default {
     reset_entire_room() {
       if (!this.model) return;
 
-      // Reset scale
       this.modelScale = 1.0;
 
-      // Reset dimensions to original
       this.currentModelDimensions = {
         width: this.modelDimensions.width,
         height: this.modelDimensions.height,
@@ -1960,7 +1969,6 @@ export default {
       this.model.position.z = initialPos.z;
 
       const floorY = this.getFloorHeightAtPosition(initialPos);
-
       const finalScale = this.baseModelScale * this.modelScale;
       const modelBottomWorldOffset = this.modelBoundingBox.min.y * finalScale;
       this.model.position.y = floorY - modelBottomWorldOffset;
@@ -1970,6 +1978,11 @@ export default {
 
       this.applyPerspectiveScaling();
       this.updateRotationRingPosition();
+      
+      // 🔧 Update stored values
+      this.modelPosition.x = this.model.position.x;
+      this.modelPosition.y = this.model.position.z;
+      this.needsRenderUpdate = true;
     },
 
     animate() {
@@ -2008,6 +2021,10 @@ export default {
     },
 
     cleanup() {
+      if (this.positionUpdateTimer) {
+        clearTimeout(this.positionUpdateTimer);
+      }
+
       if (this.animationId) {
         cancelAnimationFrame(this.animationId);
         this.animationId = null;
@@ -2040,7 +2057,6 @@ export default {
 
       this.viewerInitialized = false;
       this.modelLoaded = false;
-      // this.$emit('update:isLoading', false);
     },
   },
 };
@@ -2052,18 +2068,22 @@ export default {
   height: 100%;
   position: relative;
 }
+
 .main-canvas {
   display: block;
   margin: 0 auto;
   width: 100%;
-  height: calc(100vh - 140px); /* Responsive height */
+  height: calc(100vh - 140px);
   min-height: 400px;
   max-height: calc(100vh - 140px);
   position: relative;
   text-align: center;
+  /* 🔧 Prevent touch scrolling on the canvas */
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
-/* Desktop */
 @media (min-width: 769px) {
   .main-canvas {
     height: calc(100vh - 140px);
@@ -2071,7 +2091,6 @@ export default {
   }
 }
 
-/* Tablet */
 @media (min-width: 400px) and (max-width: 768px) {
   .main-canvas {
     height: calc(100vh - 180px);
@@ -2079,7 +2098,6 @@ export default {
   }
 }
 
-/* Mobile */
 @media (max-width: 399px) {
   .main-canvas {
     height: calc(100vh - 220px);
@@ -2095,6 +2113,8 @@ export default {
   align-items: center;
   width: 100%;
   height: 100%;
+  /* 🔧 Prevent touch interactions from propagating */
+  touch-action: none;
 }
 
 .action-buttons {
@@ -2114,7 +2134,6 @@ export default {
   width: 100%;
   height: 100%;
   z-index: 10;
-  border-radius: 10px;
   overflow: hidden;
 }
 
@@ -2129,7 +2148,6 @@ export default {
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  /* border-radius: 10px; */
 }
 
 .loading-screen::before {
@@ -2209,10 +2227,10 @@ export default {
   letter-spacing: 1px;
   text-transform: uppercase;
 }
+
 @media screen and (min-width: 768px) {
   #viewer {
     height: 100%;
   }
 }
-
 </style>

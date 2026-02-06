@@ -1043,7 +1043,6 @@ Switch Furniture</a-button> -->
             <!-- Left: Share section -->
             <div class="flex items-center gap-2">
               <span class="text-[16px] text-gray-700">Share on social:</span>
-              <!-- SVGs as images -->
               <img src="/whatsapp.svg" alt="Whatsapp" class="w-5 h-5" />
               <img src="/logos_facebook.svg" alt="Facebook" class="w-5 h-5" />
               <img src="/instagram.svg" alt="Instagram" class="w-5 h-5" />
@@ -1051,6 +1050,7 @@ Switch Furniture</a-button> -->
 
             <!-- Middle: Buttons -->
             <div class="flex items-center gap-3">
+              
               <button
                 class="border-none bg-[#f9f9f9] px-3 py-1.5 rounded-md flex items-center gap-1.5 cursor-pointer !text-blue-800 !text-[12px] hover:bg-[#eaeaea] transition"
                 @click="downloadImage"
@@ -1073,15 +1073,7 @@ Switch Furniture</a-button> -->
                 </svg>
                 Download
               </button>
-              <!-- <button 
-      @click="Change_Room_SeeAll()"  
-      class="border-none bg-[#f9f9f9] px-3 py-1.5 rounded-md flex items-center gap-1.5 cursor-pointer !text-blue-600  !text-[12px] hover:bg-[#eaeaea] transition"
-    >
-      <svg class="w-5 h-5" fill="none" viewBox="0 0 19 20">
-        <path d="M16.625 15.5417V10.2114C16.625 9.78192 16.5376 9.35689 16.3682 8.9622C16.1987 8.56752 15.9508 8.21143 15.6394 7.9156L10.5909 3.12048C10.2967 2.84093 9.90627 2.68506 9.5004 2.68506C9.09452 2.68506 8.70414 2.84093 8.40988 3.12048L3.36062 7.9156C3.04922 8.21143 2.80126 8.56752 2.63182 8.9622C2.46238 9.35689 2.375 9.78192 2.375 10.2114V15.5417C2.375 15.9617 2.54181 16.3644 2.83875 16.6613C3.13568 16.9582 3.53841 17.1251 3.95833 17.1251H15.0417C15.4616 17.1251 15.8643 16.9582 16.1613 16.6613C16.4582 16.3644 16.625 15.9617 16.625 15.5417Z" stroke="#3B63FB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-      Change Room 
-    </button> -->
+              
             </div>
 
             <!-- Right: Close button -->
@@ -1099,35 +1091,6 @@ Switch Furniture</a-button> -->
   </div> -->
           </div>
 
-          <!-- Show loading state when room is not ready -->
-          <!-- <div v-if="!is_ready || canvasLoading" class="canvas-loading-container">
-              <div class="loading-content">
-                <a-spin size="large" />
-                <h3 style="margin-top: 16px;">
-                  {{ roomLoadingMessage }}
-                </h3>
-                <p v-if="roomRetryCount > 0" style="margin-top: 8px; color: #666;">
-                  Retry attempt: {{ roomRetryCount }}
-                </p>
-                <div v-if="roomLoadingProgress" style="margin-top: 12px; width: 300px;">
-                  <a-progress :percent="roomLoadingProgress" status="active" />
-                </div>
-              </div>
-            </div>
-  
-            <template v-else>
-              
-            </template> -->
-          <!-- {{this.base_image_url}} -->
-          <!-- {{ this.binaryMaskList }} -->
-          <!-- {{ this.binaryMasks_objects_detected }} -->
-
-          <!-- Alternative: If you want to show loading for all canvas components -->
-          <!-- :style="{
-      width: '100%',
-      height: closeShareMenu
-        ? 'calc(100% - 40px)': '100%'
-    }" -->
           <div
             v-if="LockCanvasOperation === false"
             class="canvas-painting-sec"
@@ -1305,6 +1268,8 @@ Switch Furniture</a-button> -->
                 active_tab_image === 'item_replacement' &&
                 select_replace === 'Furniture'
               "
+                @model-transform-updated="handle3DModelTransformUpdate"
+
               :glbUrl="item_replacement_renderer_3d_model_url"
               @update:isLoading="StartEndCanvasLoading"
               :isLoading="canvasLoading"
@@ -2936,6 +2901,8 @@ Switch Furniture</a-button> -->
                     active_tab_image === 'item_replacement' &&
                     select_replace === 'Furniture'
                   "
+                    @model-transform-updated="handle3DModelTransformUpdate"
+
                   :glbUrl="item_replacement_renderer_3d_model_url"
                   :is_resizable="is_resizable"
                   @update:isLoading="StartEndCanvasLoading"
@@ -3223,6 +3190,7 @@ export default {
       creditErrorMessage: "",
       showCreditModal: false,
       
+       preserved3DModelTransform: null,
 
       LockCanvasOperation: false,
       brand: "",
@@ -3447,6 +3415,10 @@ export default {
   },
 
   methods: {
+    handle3DModelTransformUpdate(transform) {
+    this.preserved3DModelTransform = transform;
+    console.log('📌 Preserved 3D transform:', transform);
+  },
      async startchat_with_buisness_user() {
             const selectedUser = this.buid
             this.LoadingMessageButton=true
@@ -4663,6 +4635,11 @@ export default {
     selectCategory(category) {
       this.select_replace = category;
 
+     this.item_replacement_renderer_3d_model_url ="";
+      this.selected_model_width = 0.00;
+      this.selected_model_height = 0.00;
+      this.selected_model_depth = 0.00;
+
       if (category === "All") {
         this.showSelectionButtons = false;
         this.selectedMasks = [];
@@ -4697,6 +4674,7 @@ export default {
     },
 
     switchToFurnitureModeWithCache() {
+      
       this.$nextTick(() => {
         if (this.cachedObjectImages && this.cachedObjectImages.size > 0) {
           this.$message?.destroy();
@@ -5133,21 +5111,41 @@ export default {
       this.processing_generate_is_Loading = true;
     },
 
-    change3dModel(e) {
-      // console.log("-------------------")
-      // console.log(e)
-      this.item_replacement_renderer_3d_model_url =
-        this.$store.state.root_media_api + e.model_url;
-      this.is_resizable = e.is_resizable;
-      this.selected_3d_product_model = e.model_uuid;
-      this.selected_model_width = e.width;
-      this.selected_model_height = e.height;
-      this.selected_model_depth = e.depth;
-    },
+   change3dModel(e) {
+  // ✅ Parse and validate dimensions
+  const width = parseFloat(e.width) || 1.0;
+  const height = parseFloat(e.height) || 1.0;
+  const depth = parseFloat(e.depth) || 1.0;
+  
+  // ✅ Safety check: reject unrealistic dimensions
+  if (width > 50 || height > 50 || depth > 50) {
+    console.warn('Unrealistic dimensions detected:', { width, height, depth });
+    this.$message.warning('This product has unusual dimensions');
+  }
+  
+  this.selected_model_width = width;
+  this.selected_model_height = height;
+  this.selected_model_depth = depth;
+  this.item_replacement_renderer_3d_model_url =
+    this.$store.state.root_media_api + e.model_url;
+  this.is_resizable = e.is_resizable;
+  this.selected_3d_product_model = e.model_uuid;
+},
 
-    execute3DRederer() {
+    // execute3DRederer() {
+    //   this.$refs.floor_item_3d_renderer.renderItem();
+    // },
+     execute3DRederer() {
+    if (this.$refs.floor_item_3d_renderer) {
+      // Pass preserved state to child before rendering
+      if (this.preserved3DModelTransform) {
+        this.$refs.floor_item_3d_renderer.restoreModelTransform(
+          this.preserved3DModelTransform
+        );
+      }
       this.$refs.floor_item_3d_renderer.renderItem();
-    },
+    }
+  },
     executeswitchFurniture() {
       console.log("execute switch furniture");
       this.$refs.floor_item_3d_renderer.switchFurniture();
@@ -5779,14 +5777,12 @@ export default {
   font-size: 16px;
 }
 
-/* Canvas Panel Styles */
 .canvas-panel {
-  /* background: #000; */
-  /* padding:10px; */
-
   position: relative;
   width: 100%;
-  height: 100%;
+  height: 100%; /* ✅ Ensure full height */
+  display: flex;
+  flex-direction: column;
 }
 
 /* Tab Content Placeholder */

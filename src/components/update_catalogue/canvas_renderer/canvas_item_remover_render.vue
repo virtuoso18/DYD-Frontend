@@ -4693,6 +4693,7 @@ handleTouchEnd(e) {
 }
 @media screen and (max-width: 500px) {
   .zoom-controls {
+    display:none;
     top: 16px;
     right: 5px;
   }

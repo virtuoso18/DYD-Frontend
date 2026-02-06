@@ -3054,7 +3054,7 @@ defineExpose({
 /* Mobile */
 @media (max-width: 399px) {
   .canvas-container {
-    height: calc(100vh - 220px);
+    height: calc(100vh - 350px);
   }
 }
 

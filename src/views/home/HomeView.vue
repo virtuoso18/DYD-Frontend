@@ -59,7 +59,7 @@
               <div className="md:hidden">
                 <div
                   class="my-2 text-[32px] !font-bold text-[#111111] !text-center !tracking-[-0.02em]"
-                  style="font-family: &quot;Proza Libre&quot;, sans-serif"
+                  style="font-family: Proza Libre, sans-serif"
                 >
                   {{ t("line1") }} {{ t("line2") }}
                 </div>
@@ -159,7 +159,7 @@
             :sm="12"
             :md="4"
             :lg="4"
-            style="border-radius: 10px; padding-top: 20px; padding-left: 20px"
+            style="border-radius: 10px; padding-top: 20px; padding-left: 12px"
           >
             <div
               class="w-full h-[168px] bg-[#f9f9f9] border border-[#cccccc] rounded-[22px] flex flex-col items-center justify-center"
@@ -213,7 +213,8 @@
   :sm="24"
   :md="16"
   :lg="16"
-  class="rounded-[10px] pt-[2px] md:pt-[20px] pb-[40px]  !pr-2"
+  class="rounded-[10px] pt-[2px] md:pt-[20px] pb-[40px] pr-0" style="padding-left: 12px"
+
 >
 
             <div
@@ -607,7 +608,7 @@
                   border-radius: 20px;
                   background-color: white;
                   border: 2px dashed  #B3B3B3;
-                  height: 350px;
+                  height: 220px;
                   width: 100%;
                   display: flex;
                   flex-direction: column;
@@ -1439,10 +1440,10 @@
         <h1
           class="text-center text-black mb-12"
           style="
-            font-family: Proza Libre;
+    font-family: 'Poppins', sans-serif;
             font-weight: 700;
             font-style: normal;
-            font-size: 48px;
+            font-size: 30px;
             line-height: 52px;
             letter-spacing: -0.02em;
           "
@@ -1573,8 +1574,8 @@
   style="
     text-align: left;
     color: var(--Black-Black-100, #000000);
-    font-family: 'Proza Libre', serif;
-    font-weight: 700;
+        font-family: 'Poppins', sans-serif;
+
     font-style: normal; /* Bold handled by weight */
     font-size: 26px;
     line-height: 34px;
@@ -1630,8 +1631,9 @@
   style="
     text-align: left;
     color: var(--Black-Black-100, #000000);
-    font-family: 'Proza Libre', serif;
-    font-weight: 700;
+        font-family: 'Poppins', sans-serif;
+
+    
     font-style: normal; /* Bold handled by weight */
     font-size: 26px;
     line-height: 34px;
@@ -1924,8 +1926,8 @@
   style="
     text-align: left;
     color: var(--Black-Black-100, #000000);
-    font-family: 'Proza Libre', serif;
-    font-weight: 700;
+        font-family: 'Poppins', sans-serif;
+
     font-style: normal; /* Bold handled by weight */
     font-size: 26px;
     line-height: 34px;
@@ -1982,8 +1984,8 @@
   style="
     text-align: left;
     color: var(--Black-Black-100, #000000);
-    font-family: 'Proza Libre', serif;
-    font-weight: 700;
+        font-family: 'Poppins', sans-serif;
+
     font-style: normal; /* Bold handled by weight */
     font-size: 26px;
     line-height: 34px;
@@ -2290,7 +2292,8 @@
   style="
     text-align: center;
     color: var(--Black-Black-100, #000000);
-    font-family: 'Proza Libre', serif;
+        font-family: 'Poppins', sans-serif;
+
     font-weight: 700;
     font-style: normal; /* Bold handled by weight */
     font-size: 26px;
@@ -2301,7 +2304,7 @@
   Got questions? We have answers
 </h1>
       <br />
-   <div style="margin: 50px auto; padding: 0 20px; max-width: 800px;">
+   <div style="margin: 50px auto; max-width: 800px;">
     <a-collapse
       v-model:activeKey="expand_faq"
       accordion
@@ -2420,7 +2423,8 @@
   style="
     text-align: center;
     color: var(--Black-Black-100, #000000);
-    font-family: 'Proza Libre', serif;
+        font-family: 'Poppins', sans-serif;
+
     font-weight: 700;
     font-style: normal; /* Bold handled by weight */
     font-size: 26px;
@@ -3420,10 +3424,10 @@ export default {
 @import url("https://fonts.googleapis.com/css2?family=Proza+Libre:wght@400;500;600;700;800;900&display=swap");
 
 .banner-text {
-  font-family: "Proza Libre", sans-serif !important;
+      font-family: 'Poppins', sans-serif;
+
   font-size: 26px;
   line-height: 1.2;
-  font-weight: 900; /* Use 800 or 900 as needed */
 }
 
 @media (min-width: 450px) {
