@@ -223,67 +223,10 @@ export default {
 </script>
 
 <style scoped>
-
-/* Shimmer Effect for Images */
-.shimmer-effect {
-  background: linear-gradient(
-    110deg,
-    #e5e7eb 8%,
-    #f9fafb 18%,
-    #e5e7eb 33%
-  ) !important;
-  background-size: 200% 100% !important;
-  animation: shimmer 8s infinite linear !important;
-  border-radius: 8px !important;
-}
-
-/* Skeleton Card Container */
-.skeleton-card {
-  background: white;
-  border: 2px solid #f0f0f0;
-  border-radius: 8px;
-  overflow: hidden;
-  width: 100%;
-  height: 120px;
-}
-
-.grid .skeleton-card {
-  width: 100%;
-  aspect-ratio: 95/100;
-  height: auto;
-}
-
-.list .skeleton-card {
-  width: 100%;
-  height: 120px;
-}
-
-/* Shimmer Skeleton for Loading State */
-.shimmer-skeleton {
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    110deg,
-    #e5e7eb 8%,
-    #f9fafb 18%,
-    #e5e7eb 33%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 8s infinite linear;
-  border-radius: 8px;
-}
-
+/* Shimmer animation for skeleton */
 @keyframes shimmer {
-  0% { background-position-x: 0%; }
-  100% { background-position-x: -200%; }
-}
-
-.furniture-image {
-  border-radius: 8px !important;
-}
-
-.see-all-link {
-  color: #1890ff;
-  text-decoration: none;
+  to {
+    background-position-x: -200%;
+  }
 }
 </style>

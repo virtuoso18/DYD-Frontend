@@ -469,139 +469,46 @@ show-search
       <!-- Textures Section -->
       <div style="margin-bottom: 20px;">
         <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #374151;">Texture Images</label>
-                                  
-          <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 12px;">
-            
-            <!-- Select from pre-uploaded textures -->
-            <a-popover trigger="click" placement="bottom">
-              <!-- Upload custom texture -->
-            
-              <template #title>
-                <a-button 
-              @click="uploadTexture"
-              style="border-radius: 6px; border: 2px dashed #d1d5db;"
-            >
-              <template #icon>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <line x1="12" y1="5" x2="12" y2="19"></line>
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
-              </template>
-              Upload Custom
-            </a-button>
-                <div style="display: flex; align-items: center; justify-content: space-between;">
-                  <span>Select Texture from Library</span>
-                  <a-spin v-if="loadingTextures" size="small" style="margin-left: 8px;" />
-                </div>
-              </template>
-              <template #content>
-                <div v-if="loadingTextures" style="text-align: center; padding: 20px;">
-                  <a-spin />
-                </div>
-                <div v-else-if="availableTextures.length === 0" style="text-align: center; padding: 20px; color: #6b7280;">
-                  <p style="font-size: 12px; margin: 0;">No textures available</p>
-                </div>
-                <div v-else style="display: grid; grid-template-columns: repeat(4, 60px); gap: 8px; max-height: 300px; overflow-y: auto; padding: 8px;">
-                  <div
-                    v-for="(texture, index) in availableTextures"
-                    :key="index"
-                    @click="addPresetTexture(texture)"
-                    :style="{
-                      width: '60px',
-                      height: '60px',
-                      borderRadius: '8px',
-                      backgroundImage: `url('${getTextureUrl(texture.url)}')`,
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center',
-                      cursor: 'pointer',
-                      border: selectedTextures.some(t => t.id === texture.id) ? '2px solid #22c55e' : '2px solid #e5e7eb',
-                      opacity: selectedTextures.some(t => t.id === texture.id) ? 0.6 : 1,
-                      transition: 'all 0.2s ease'
-                    }"
-                    :title="texture.name"
-                  >
-                    <div v-if="selectedTextures.some(t => t.id === texture.id)" 
-                      style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.3); border-radius: 6px;">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2">
-                        <polyline points="20 6 9 17 4 12"></polyline>
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-              </template>
-              <a-button style="border-radius: 6px; border: 2px dashed #d1d5db;">
-                <template #icon>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="12" y1="8" x2="12" y2="16"></line>
-                    <line x1="8" y1="12" x2="16" y2="12"></line>
-                  </svg>
-                </template>
-                Select Texture
-              </a-button>
-            </a-popover>
-
-            <!-- Upload custom texture -->
-            <!-- <a-button 
-              @click="uploadTexture"
-              style="border-radius: 6px; border: 2px dashed #d1d5db;"
-            >
-              <template #icon>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <line x1="12" y1="5" x2="12" y2="19"></line>
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
-              </template>
-              Upload Custom
-            </a-button> -->
-          </div>
-                    
-                                  <!-- Selected textures display -->
-          <div v-if="selectedTextures.length > 0" style="margin-top: 12px;">
-            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-              <div 
-                v-for="(texture, index) in selectedTextures" 
-                :key="index" 
-                style="position: relative;"
-              >
-                <div 
-                  :style="{ 
-                    width: '60px', 
-                    height: '60px', 
-                    backgroundImage: `url('${getTextureUrl(texture.url)}')`, 
-                    backgroundSize: 'cover', 
-                    backgroundPosition: 'center', 
-                    borderRadius: '8px', 
-                    border: '2px solid #e5e7eb', 
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease'
-                  }"
-                  :title="texture.name || 'Texture'"
-                ></div>
-                <!-- Custom texture indicator (uploaded by user) -->
-                <div 
-                  v-if="!texture.id"
-                  style="position: absolute; left: -5px; bottom: -5px; background: #8b5cf6; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 10px; box-shadow: 0 2px 4px rgba(139, 92, 246, 0.3);"
-                  title="Custom uploaded texture"
-                >
-                  📤
-                </div>
-                <a-button 
-                  type="text" 
-                  size="small" 
-                  @click="removeTexture(index)"
-                  style="position: absolute; top: -8px; right: -8px; background: #ef4444; color: white; border-radius: 50%; width: 20px; height: 20px; padding: 0; min-width: 20px;"
-                >
-                  <template #icon>
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                      <line x1="18" y1="6" x2="6" y2="18"></line>
-                      <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
-                  </template>
-                </a-button>
-              </div>
+        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+          <!-- Add Texture Button -->
+          <div style="cursor: pointer;" @click="uploadTexture">
+            <div style="width: 48px; height: 40px; background: #f3f4f6; border: 2px dashed #d1d5db; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
             </div>
           </div>
+
+          <!-- Selected Textures -->
+          <div v-for="(texture, index) in selectedTextures" :key="index" style="position: relative;">
+            <div 
+              :style="{ 
+                width: '48px', 
+                height: '40px', 
+                backgroundImage: `url(${texture.url})`, 
+                backgroundSize: 'cover', 
+                backgroundPosition: 'center', 
+                borderRadius: '8px', 
+                border: '2px solid #e5e7eb', 
+                cursor: 'pointer' 
+              }"
+            ></div>
+            <a-button 
+              type="text" 
+              size="small" 
+              @click="removeTexture(index)"
+              style="position: absolute; top: -6px; right: -6px; background: #ef4444; color: white; border-radius: 50%; width: 18px; height: 18px; padding: 0; min-width: 18px;"
+            >
+              <template #icon>
+                <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </template>
+            </a-button>
+          </div>
+        </div>
       </div>
 
       <!-- PBR Files Section -->
@@ -691,9 +598,7 @@ export default {
       modelDetails: null,
       error: { general: null },
       categories_available: [],
-       // Texture library
-      availableTextures: [],
-      loadingTextures: false,
+      
       productForm: {
         name: '',
         description: '',
@@ -741,14 +646,11 @@ export default {
   },
 
   watch: {
-   visible(newValue) {
-    if (!newValue) {
-      this.resetForm();
-    } else {
-      
-      this.loadAvailableTextures();
-    }
-  },
+    visible(newValue) {
+      if (!newValue) {
+        this.resetForm();
+      }
+    },
     rendered_modal_3D_id(newId, oldId) {
       if (newId && newId !== oldId) {
         console.log('🔄 Modal ID changed, refetching details...', { newId, oldId });
@@ -769,79 +671,6 @@ export default {
   },
 
   methods: {
-
-     async loadAvailableTextures() {
-    try {
-      this.loadingTextures = true;
-      const store = this.$store;
-      const token = localStorage.getItem('token');
-      
-      const response = await fetch(`${store.state.root_api}product/api/products/user-textures/`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Token ${token}`
-        }
-      });
-      
-      const result = await response.json();
-      console.log('📦 Available textures:', result);
-      
-      if (result) {
-        // Map textures to include proper URL format
-        this.availableTextures = (result.data || []).map(texture => ({
-          id: texture?.id,
-    
-          url: texture?.image_url || texture.url, // Adjust based on API response
-      
-        }));
-        
-        console.log('✅ Textures loaded:', this.availableTextures.length);
-      } else {
-        console.warn('⚠️ Failed to load textures:', result.message);
-        this.availableTextures = [];
-      }
-    } catch (error) {
-      console.error('❌ Error loading textures:', error);
-      this.availableTextures = [];
-    } finally {
-      this.loadingTextures = false;
-    }
-  },
-
-  // Add preset texture from library
-  addPresetTexture(texture) {
-    // Check if texture is already selected
-    if (!this.selectedTextures.some(t => t.id === texture.id)) {
-      this.selectedTextures.push({
-        id: texture?.id,
-    
-        url: texture?.url,
-   
-      });
-      
-    } else {
-      // Remove if already selected (toggle)
-      const index = this.selectedTextures.findIndex(t => t.id === texture.id);
-      if (index > -1) {
-        this.selectedTextures.splice(index, 1);
-    
-      }
-    }
-  },
-   getTextureUrl(texture) {
-
-  
-      if (texture && texture.startsWith('data:')) {
-        return texture;
-      }
-  
-      if (texture) {
-        return `${this.$store.state.root_media_api}${texture}`;
-      }
-      return '';
-    }, 
-
     handleResizableChange(value) {    
     this.is_resizable = value;    
   },
@@ -1241,9 +1070,7 @@ removeColor(index) {
           const reader = new FileReader();
           reader.onload = (e) => {
             this.selectedTextures.push({ 
-              id: null, // Mark as custom uploaded file
               file, 
-              name: file.name,
               url: e.target.result 
             });
           };
@@ -1298,256 +1125,106 @@ removeColor(index) {
       return true;
     },
 
-    // async handleSave() {
-    //   if (!this.validateForm()) return;
+    async handleSave() {
+      if (!this.validateForm()) return;
 
-    //   this.isSaving = true;
+      this.isSaving = true;
 
-    //   try {
-    //     const store = this.$store;
-    //     const token = localStorage.getItem('token');
-    //     const formData = new FormData();
+      try {
+        const store = this.$store;
+        const token = localStorage.getItem('token');
+        const formData = new FormData();
 
-    //     formData.append('name', this.productForm.name);
-    //     formData.append('description', this.productForm.description || '');
-    //     formData.append('category_name', this.productForm.category_name);
-    //     if (this.productForm.furniture_type) {
-    //       formData.append('furniture_type', this.productForm.furniture_type);
-    //     }
-    //     formData.append('price', this.productForm.pricing.price);
-
-    //     if (this.rendered_modal_3D_id) {
-    //       formData.append('rendered_modal_3d_id', this.rendered_modal_3D_id);
-    //     }
-
-    //     if (this.productForm.dimensions.height) {
-    //       formData.append('height', this.productForm.dimensions.height);
-    //     }
-    //     if (this.productForm.dimensions.length) {
-    //       formData.append('length', this.productForm.dimensions.length);
-    //     }
-    //     if (this.productForm.dimensions.width) {
-    //       formData.append('width', this.productForm.dimensions.width);
-    //     }
-
-    //     this.selectedImages.forEach((image, index) => {
-    //       formData.append('images', image.file);
-    //       if (image.isPrimary) {
-    //         formData.append('primary_image_index', index);
-    //       }
-    //     });
-
-    //     this.selectedPbrFiles.forEach(pbrFile => {
-    //       formData.append('pbr_files', pbrFile.file);
-    //     });
-
-    //     if (this.selectedColors.length > 0) {
-    //     const colorsData = this.selectedColors.map(c => ({
-    //       value: c.value,
-    //       isPrimary: c.isPrimary
-    //     }));
-    //     formData.append('available_colors', JSON.stringify(colorsData));
-    //   }
-
-    //     // this.selectedTextures.forEach(texture => {
-    //     //   formData.append('textures', texture.file);
-    //     // });
-        
-    //     // Handle textures - separate uploaded files from library textures
-    //     const textureIds = [];
-
-    //     this.selectedTextures.forEach((texture) => {
-    //       if (texture.file) {
-    //         formData.append('textures', texture.file);
-    //       } else if (texture.id) {
-    //         textureIds.push(texture.id);
-    //       }
-    //     });
-
-    //     if (textureIds.length > 0) {
-    //       formData.append('texture_ids', JSON.stringify(textureIds));
-    //     }
-
-    //     formData.append('is_resizable', this.is_resizable ? 'True' : 'False');
-
-
-    //     console.log('📤 Sending product data:', {
-    //       name: this.productForm.name,
-    //       category_name: this.productForm.category_name,
-    //       rendered_modal_3D_id: this.rendered_modal_3D_id,
-    //       images_count: this.selectedImages.length,
-    //       colors_count: this.selectedColors.length,
-    //       textures_count: this.selectedTextures.length,
-    //       pbr_files_count: this.selectedPbrFiles.length
-    //     });
-
-    //     const response = await fetch(`${store.state.root_api}product/api-product-owner/products/`, {
-    //       method: 'POST',
-    //       headers: { 
-    //         'Authorization': `Token ${token}` 
-    //       },
-    //       body: formData
-    //     });
-
-    //     const result = await response.json();
-
-    //     if (response.ok && result.success) {
-    //       console.log('✅ Product created successfully:', result.data);
-    //       console.log('Product created successfully!');
-          
-    //       this.$emit('product-created', result.data);
-    //       this.$emit('update:visible', false);
-    //       this.resetForm();
-          
-    //     } else {
-    //       console.error('❌ API Error:', result.message || 'Failed to create product');
-    //       throw new Error(result.message || 'Failed to create product');
-    //     }
-
-    //   } catch (error) {
-    //     console.error('❌ Error creating product:', error);
-    //     console.error('Error creating product. Please try again.');
-        
-    //   } finally {
-    //     this.isSaving = false;
-    //   }
-    // },
-
-
-    // Replace this section in your handleSave() method around line 320
-// ✅ IMPROVED Frontend Fix for handleSave() method
-
-async handleSave() {
-  if (!this.validateForm()) return;
-
-  this.isSaving = true;
-
-  try {
-    const store = this.$store;
-    const token = localStorage.getItem('token');
-    const formData = new FormData();
-
-    formData.append('name', this.productForm.name);
-    formData.append('description', this.productForm.description || '');
-    formData.append('category_name', this.productForm.category_name);
-    if (this.productForm.furniture_type) {
-      formData.append('furniture_type', this.productForm.furniture_type);
-    }
-    formData.append('price', this.productForm.pricing.price);
-
-    if (this.rendered_modal_3D_id) {
-      formData.append('rendered_modal_3d_id', this.rendered_modal_3D_id);
-    }
-
-    if (this.productForm.dimensions.height) {
-      formData.append('height', this.productForm.dimensions.height);
-    }
-    if (this.productForm.dimensions.length) {
-      formData.append('length', this.productForm.dimensions.length);
-    }
-    if (this.productForm.dimensions.width) {
-      formData.append('width', this.productForm.dimensions.width);
-    }
-
-    // Handle product images
-    this.selectedImages.forEach((image, index) => {
-      formData.append('images', image.file);
-      if (image.isPrimary) {
-        formData.append('primary_image_index', index);
-      }
-    });
-
-    // Handle PBR files
-    this.selectedPbrFiles.forEach(pbrFile => {
-      formData.append('pbr_files', pbrFile.file);
-    });
-
-    // Handle colors
-    if (this.selectedColors.length > 0) {
-      const colorsData = this.selectedColors.map(c => ({
-        value: c.value,
-        isPrimary: c.isPrimary
-      }));
-      formData.append('available_colors', JSON.stringify(colorsData));
-    }
-
-    // ✅ IMPROVED: Handle textures with proper validation
-    const textureIds = [];
-    let uploadedTexturesCount = 0;
-
-    this.selectedTextures.forEach((texture) => {
-      if (texture.file) {
-        // Append uploaded texture files
-        formData.append('textures', texture.file);
-        uploadedTexturesCount++;
-        console.log('✅ Appending uploaded texture:', texture.name);
-      } else if (texture.id) {
-        // Collect library texture IDs (only if valid)
-        if (texture.id && texture.id !== null && texture.id !== undefined) {
-          textureIds.push(texture.id);
-          console.log('✅ Collecting library texture ID:', texture.id);
+        formData.append('name', this.productForm.name);
+        formData.append('description', this.productForm.description || '');
+        formData.append('category_name', this.productForm.category_name);
+        if (this.productForm.furniture_type) {
+          formData.append('furniture_type', this.productForm.furniture_type);
         }
+        formData.append('price', this.productForm.pricing.price);
+
+        if (this.rendered_modal_3D_id) {
+          formData.append('rendered_modal_3d_id', this.rendered_modal_3D_id);
+        }
+
+        if (this.productForm.dimensions.height) {
+          formData.append('height', this.productForm.dimensions.height);
+        }
+        if (this.productForm.dimensions.length) {
+          formData.append('length', this.productForm.dimensions.length);
+        }
+        if (this.productForm.dimensions.width) {
+          formData.append('width', this.productForm.dimensions.width);
+        }
+
+        this.selectedImages.forEach((image, index) => {
+          formData.append('images', image.file);
+          if (image.isPrimary) {
+            formData.append('primary_image_index', index);
+          }
+        });
+
+        this.selectedPbrFiles.forEach(pbrFile => {
+          formData.append('pbr_files', pbrFile.file);
+        });
+
+        if (this.selectedColors.length > 0) {
+        const colorsData = this.selectedColors.map(c => ({
+          value: c.value,
+          isPrimary: c.isPrimary
+        }));
+        formData.append('available_colors', JSON.stringify(colorsData));
       }
-    });
 
-    // ✅ IMPORTANT: Only append texture_ids if there are IDs to send
-    // This prevents sending empty/null values that cause JSON parsing errors
-    if (textureIds.length > 0) {
-      const textureIdsJson = JSON.stringify(textureIds);
-      formData.append('texture_ids', textureIdsJson);
-      console.log('✅ Texture IDs to send:', textureIds);
-    } else {
-      console.log('ℹ️ No library textures to send');
-      // Optionally send empty array as valid JSON
-      formData.append('texture_ids', JSON.stringify([]));
-    }
+        this.selectedTextures.forEach(texture => {
+          formData.append('textures', texture.file);
+        });
 
-    formData.append('is_resizable', this.is_resizable ? 'True' : 'False');
+        formData.append('is_resizable', this.is_resizable ? 'True' : 'False');
 
-    console.log('📤 Sending product data:', {
-      name: this.productForm.name,
-      category_name: this.productForm.category_name,
-      rendered_modal_3D_id: this.rendered_modal_3D_id,
-      images_count: this.selectedImages.length,
-      colors_count: this.selectedColors.length,
-      textures_count: this.selectedTextures.length,
-      pbr_files_count: this.selectedPbrFiles.length,
-      uploaded_textures: uploadedTexturesCount,
-      library_textures: textureIds.length
-    });
 
-    const response = await fetch(`${store.state.root_api}product/api-product-owner/products/`, {
-      method: 'POST',
-      headers: { 
-        'Authorization': `Token ${token}` 
-      },
-      body: formData
-    });
+        console.log('📤 Sending product data:', {
+          name: this.productForm.name,
+          category_name: this.productForm.category_name,
+          rendered_modal_3D_id: this.rendered_modal_3D_id,
+          images_count: this.selectedImages.length,
+          colors_count: this.selectedColors.length,
+          textures_count: this.selectedTextures.length,
+          pbr_files_count: this.selectedPbrFiles.length
+        });
 
-    const result = await response.json();
+        const response = await fetch(`${store.state.root_api}product/api-product-owner/products/`, {
+          method: 'POST',
+          headers: { 
+            'Authorization': `Token ${token}` 
+          },
+          body: formData
+        });
 
-    if (response.ok && result.success) {
-      console.log('✅ Product created successfully:', result.data);
-      this.$message.success('Product created successfully!');
-      
-      this.$emit('product-created', result.data);
-      this.$emit('update:visible', false);
-      this.resetForm();
-      
-    } else {
-      console.error('❌ API Error:', result.message || 'Failed to create product');
-      this.$message.error(result.message || 'Failed to create product');
-      throw new Error(result.message || 'Failed to create product');
-    }
+        const result = await response.json();
 
-  } catch (error) {
-    console.error('❌ Error creating product:', error);
-    this.$message.error('Error creating product. Please try again.');
-    
-  } finally {
-    this.isSaving = false;
-  }
-},
+        if (response.ok && result.success) {
+          console.log('✅ Product created successfully:', result.data);
+          console.log('Product created successfully!');
+          
+          this.$emit('product-created', result.data);
+          this.$emit('update:visible', false);
+          this.resetForm();
+          
+        } else {
+          console.error('❌ API Error:', result.message || 'Failed to create product');
+          throw new Error(result.message || 'Failed to create product');
+        }
+
+      } catch (error) {
+        console.error('❌ Error creating product:', error);
+        console.error('Error creating product. Please try again.');
+        
+      } finally {
+        this.isSaving = false;
+      }
+    },
+
     handleCancel() {
       this.resetForm();
       this.$emit('update:visible', false);

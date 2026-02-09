@@ -325,7 +325,7 @@
                                     <a-select 
                                       v-model:value="productForm.furniture_type" 
                                       placeholder="Modern"
-                                      style="width: 100%;"  
+                                      style="width: 100%;"
                                       :style="{ background: '#f3f4f6' }"
                                     >
                                       <a-select-option v-for="type in types" :key="type" :value="type">{{ type }}</a-select-option>
@@ -495,137 +495,42 @@
                                 <!-- Textures Section -->
                                 <div style="margin-bottom: 20px;">
                                   <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #374151;">Texture Images</label>
-                                  
-                                  <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 12px;">
-                                    
-                                    <!-- Select from pre-uploaded textures -->
-                                    <a-popover trigger="click" placement="bottom">
-                                      <!-- Upload custom texture -->
-                                    
-                                      <template #title>
-                                        <a-button 
-                                      @click="uploadTexture"
-                                      style="border-radius: 6px; border: 2px dashed #d1d5db;"
-                                    >
-                                      <template #icon>
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                  <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                                    <div style="cursor: pointer;" @click="uploadTexture">
+                                      <div style="width: 48px; height: 40px; background: #f3f4f6; border: 2px dashed #d1d5db; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2">
                                           <line x1="12" y1="5" x2="12" y2="19"></line>
                                           <line x1="5" y1="12" x2="19" y2="12"></line>
                                         </svg>
-                                      </template>
-                                      Upload Custom
-                                    </a-button>
-                                        <div style="display: flex; align-items: center; justify-content: space-between;">
-                                          <span>Select Texture from Library</span>
-                                          <a-spin v-if="loadingTextures" size="small" style="margin-left: 8px;" />
-                                        </div>
-                                      </template>
-                                      <template #content>
-                                        <div v-if="loadingTextures" style="text-align: center; padding: 20px;">
-                                          <a-spin />
-                                        </div>
-                                        <div v-else-if="availableTextures.length === 0" style="text-align: center; padding: 20px; color: #6b7280;">
-                                          <p style="font-size: 12px; margin: 0;">No textures available</p>
-                                        </div>
-                                        <div v-else style="display: grid; grid-template-columns: repeat(4, 60px); gap: 8px; max-height: 300px; overflow-y: auto; padding: 8px;">
-                                          <div
-                                            v-for="(texture, index) in availableTextures"
-                                            :key="index"
-                                            @click="addPresetTexture(texture)"
-                                            :style="{
-                                              width: '60px',
-                                              height: '60px',
-                                              borderRadius: '8px',
-                                              backgroundImage: `url('${getTextureUrl(texture.url)}')`,
-                                              backgroundSize: 'cover',
-                                              backgroundPosition: 'center',
-                                              cursor: 'pointer',
-                                              border: selectedTextures.some(t => t.id === texture.id) ? '2px solid #22c55e' : '2px solid #e5e7eb',
-                                              opacity: selectedTextures.some(t => t.id === texture.id) ? 0.6 : 1,
-                                              transition: 'all 0.2s ease'
-                                            }"
-                                            :title="texture.name"
-                                          >
-                                            <div v-if="selectedTextures.some(t => t.id === texture.id)" 
-                                              style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.3); border-radius: 6px;">
-                                              <svg width="20" height="20" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2">
-                                                <polyline points="20 6 9 17 4 12"></polyline>
-                                              </svg>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </template>
-                                      <a-button style="border-radius: 6px; border: 2px dashed #d1d5db;">
+                                      </div>
+                                    </div>
+                    
+                                    <div v-for="(texture, index) in selectedTextures" :key="index" style="position: relative;">
+                                      <div 
+                                        :style="{ 
+                                          width: '48px', 
+                                          height: '40px', 
+                                          backgroundImage: `url(${texture.url})`, 
+                                          backgroundSize: 'cover', 
+                                          backgroundPosition: 'center', 
+                                          borderRadius: '8px', 
+                                          border: '2px solid #e5e7eb', 
+                                          cursor: 'pointer' 
+                                        }"
+                                      ></div>
+                                      <a-button 
+                                        type="text" 
+                                        size="small" 
+                                        @click="removeTexture(index)"
+                                        style="position: absolute; top: -6px; right: -6px; background: #ef4444; color: white; border-radius: 50%; width: 18px; height: 18px; padding: 0; min-width: 18px;"
+                                      >
                                         <template #icon>
-                                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <circle cx="12" cy="12" r="10"></circle>
-                                            <line x1="12" y1="8" x2="12" y2="16"></line>
-                                            <line x1="8" y1="12" x2="16" y2="12"></line>
+                                          <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                                            <line x1="6" y1="6" x2="18" y2="18"></line>
                                           </svg>
                                         </template>
-                                        Select Texture
                                       </a-button>
-                                    </a-popover>
-
-                                    <!-- Upload custom texture -->
-                                    <!-- <a-button 
-                                      @click="uploadTexture"
-                                      style="border-radius: 6px; border: 2px dashed #d1d5db;"
-                                    >
-                                      <template #icon>
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                          <line x1="12" y1="5" x2="12" y2="19"></line>
-                                          <line x1="5" y1="12" x2="19" y2="12"></line>
-                                        </svg>
-                                      </template>
-                                      Upload Custom
-                                    </a-button> -->
-                                  </div>
-                    
-                                  <!-- Selected textures display -->
-                                  <div v-if="selectedTextures.length > 0" style="margin-top: 12px;">
-                                    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-                                      <div 
-                                        v-for="(texture, index) in selectedTextures" 
-                                        :key="index" 
-                                        style="position: relative;"
-                                      >
-                                        <div 
-                                          :style="{ 
-                                            width: '60px', 
-                                            height: '60px', 
-                                            backgroundImage: `url('${getTextureUrl(texture.url)}')`, 
-                                            backgroundSize: 'cover', 
-                                            backgroundPosition: 'center', 
-                                            borderRadius: '8px', 
-                                            border: '2px solid #e5e7eb', 
-                                            cursor: 'pointer',
-                                            transition: 'all 0.2s ease'
-                                          }"
-                                          :title="texture.name || 'Texture'"
-                                        ></div>
-                                        <!-- Custom texture indicator (uploaded by user) -->
-                                        <div 
-                                          v-if="!texture.id"
-                                          style="position: absolute; left: -5px; bottom: -5px; background: #8b5cf6; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 10px; box-shadow: 0 2px 4px rgba(139, 92, 246, 0.3);"
-                                          title="Custom uploaded texture"
-                                        >
-                                          📤
-                                        </div>
-                                        <a-button 
-                                          type="text" 
-                                          size="small" 
-                                          @click="removeTexture(index)"
-                                          style="position: absolute; top: -8px; right: -8px; background: #ef4444; color: white; border-radius: 50%; width: 20px; height: 20px; padding: 0; min-width: 20px;"
-                                        >
-                                          <template #icon>
-                                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                                              <line x1="18" y1="6" x2="6" y2="18"></line>
-                                              <line x1="6" y1="6" x2="18" y2="18"></line>
-                                            </svg>
-                                          </template>
-                                        </a-button>
-                                      </div>
                                     </div>
                                   </div>
                                 </div>
@@ -740,10 +645,6 @@ export default {
     modelDetails: null,
     error: { general: null },
     
-    // Texture library
-    availableTextures: [],
-    loadingTextures: false,
-    
     // Form data - initialized with defaultValues
     productForm: {
       name: this.defaultValues.name || '',
@@ -804,9 +705,6 @@ watch: {
   visible(newValue) {
     if (!newValue) {
       this.resetForm();
-    } else {
-      // Load available textures when modal opens
-      this.loadAvailableTextures();
     }
   },
   rendered_modal_3D_id(newId, oldId) {
@@ -837,26 +735,9 @@ watch: {
     console.warn('⚠️ No rendered_modal_3D_id provided on mount');
   }
   this.loadInitialCategories();
-  this.loadAvailableTextures();
 },
 
   methods: {
-    getImageUrl(imagePath) {
-      console.log(`${this.$store.state.root_media_api}${imagePath}`)
-      return `${this.$store.state.root_media_api}${imagePath}`;
-    },
-    getTextureUrl(texture) {
-
-  
-      if (texture && texture.startsWith('data:')) {
-        return texture;
-      }
-  
-      if (texture) {
-        return `${this.$store.state.root_media_api}${texture}`;
-      }
-      return '';
-    }, 
 
     handleResizableChange(value) {
     
@@ -1117,68 +998,7 @@ async loadInitialCategories() {
     
     console.log('Final value stored:', this.productForm.category_name);
   },
-
-  // Load available textures from API
-  async loadAvailableTextures() {
-    try {
-      this.loadingTextures = true;
-      const store = this.$store;
-      const token = localStorage.getItem('token');
-      
-      const response = await fetch(`${store.state.root_api}product/api/products/user-textures/`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Token ${token}`
-        }
-      });
-      
-      const result = await response.json();
-      console.log('📦 Available textures:', result);
-      
-      if (result) {
-        // Map textures to include proper URL format
-        this.availableTextures = (result.data || []).map(texture => ({
-          id: texture?.id,
-    
-          url: texture?.image_url || texture.url, // Adjust based on API response
-      
-        }));
-        
-        console.log('✅ Textures loaded:', this.availableTextures.length);
-      } else {
-        console.warn('⚠️ Failed to load textures:', result.message);
-        this.availableTextures = [];
-      }
-    } catch (error) {
-      console.error('❌ Error loading textures:', error);
-      this.availableTextures = [];
-    } finally {
-      this.loadingTextures = false;
-    }
-  },
-
-  // Add preset texture from library
-  addPresetTexture(texture) {
-    // Check if texture is already selected
-    if (!this.selectedTextures.some(t => t.id === texture.id)) {
-      this.selectedTextures.push({
-        id: texture?.id,
-    
-        url: texture?.url,
-   
-      });
-      
-    } else {
-      // Remove if already selected (toggle)
-      const index = this.selectedTextures.findIndex(t => t.id === texture.id);
-      if (index > -1) {
-        this.selectedTextures.splice(index, 1);
-    
-      }
-    }
-  },
-    
+  
     // 3D Model Upload Methods
     upload3dModel() {
       this.$refs.modelInput?.click();
@@ -1478,9 +1298,7 @@ removeColor(index) {
           const reader = new FileReader();
           reader.onload = (e) => {
             this.selectedTextures.push({ 
-              id: null, // Mark as custom uploaded file
               file, 
-              name: file.name,
               url: e.target.result 
             });
           };
@@ -1591,20 +1409,10 @@ removeColor(index) {
         formData.append('available_colors', JSON.stringify(colorsData));
       }
         
-        // Handle textures - separate uploaded files from library textures
-        const textureIds = [];
 
-        this.selectedTextures.forEach((texture) => {
-          if (texture.file) {
-            formData.append('textures', texture.file);
-          } else if (texture.id) {
-            textureIds.push(texture.id);
-          }
+        this.selectedTextures.forEach(texture => {
+          formData.append('textures', texture.file);
         });
-
-        if (textureIds.length > 0) {
-          formData.append('texture_ids', JSON.stringify(textureIds));
-        }
 
         formData.append('is_resizable', this.is_resizable ? 'True' : 'False');
 

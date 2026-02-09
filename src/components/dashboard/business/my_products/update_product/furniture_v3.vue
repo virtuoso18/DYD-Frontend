@@ -600,13 +600,13 @@
       <div style="display:flex;justify-content:center">
 
        
-      <!-- <div>
+      <div>
 
         <a-radio-group v-model:value="upload3dModelFrom">
           <a-radio-button value="LocalDevice">Local System</a-radio-button>
           <a-radio-button value="Generated3d_Models_History">DYD AI Generated</a-radio-button>
         </a-radio-group>
-      </div> -->
+      </div>
       
     </div>
     
@@ -822,7 +822,7 @@ export default {
       selected_color_model_url:'',
       model_instance_id_generated_history:'',
 
-      upload3dModelFrom:'Generated3d_Models_History',
+      upload3dModelFrom:'LocalDevice',
       editingColor: null,
       uploaded3dModelFile: null,
       colorModelDragOver: false,

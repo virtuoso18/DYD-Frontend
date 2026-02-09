@@ -496,18 +496,35 @@ export default {
       }, 500);
     },
     
-    selectfurnitureProduct(type, id, model_url, dimensions = null) {
-      this.selected_texture = id;
-      this.$emit('product-selected', {
-        'id': id,
-        'type': type,
-        'model_url': model_url,
-        'width': dimensions?.width,
-        'height': dimensions?.height,
-        'depth': dimensions?.length
-      });
-    },
-
+    // selectfurnitureProduct(type, id, model_url, dimensions = null) {
+    //   this.selected_texture = id;
+    //   this.$emit('product-selected', {
+    //     'id': id,
+    //     'type': type,
+    //     'model_url': model_url,
+    //     'width': dimensions?.width,
+    //     'height': dimensions?.height,
+    //     'depth': dimensions?.length
+    //   });
+    // },
+selectfurnitureProduct(type, id, model_url, dimensions = null) {
+  this.selected_texture = id;
+  
+  console.log('📦 Product selected:', {
+    id,
+    type,
+    dimensions
+  });
+  
+  this.$emit('product-selected', {
+    'id': id,
+    'type': type,
+    'model_url': model_url,
+    'width': dimensions?.width || 1.0,
+    'height': dimensions?.height || 1.0,
+    'depth': dimensions?.length || dimensions?.depth || 1.0  // ✅ Check both fields
+  });
+},
     selectTexture(type, id, model_url = null, light_type = null) {
       this.selected_texture = id;
       this.$emit('product-selected', {

@@ -330,6 +330,40 @@ export default {
   },
 
   methods: {
+    restoreModelTransform(transform) {
+  if (!transform || !this.model) return;
+  
+  // Restore position
+  this.lastKnownModelPosition = new THREE.Vector3(
+    transform.position.x,
+    transform.position.y,
+    transform.position.z
+  );
+  
+  // 🔧 Restore rotation with all axes
+  this.lastKnownModelRotation = new THREE.Euler(
+    transform.rotation.x,
+    transform.rotation.y,
+    transform.rotation.z
+  );
+  
+  // Restore scale
+  this.lastKnownModelScale = new THREE.Vector3(
+    transform.scale.x,
+    transform.scale.y,
+    transform.scale.z
+  );
+  
+  console.log('🔄 Restored transform from parent:');
+  console.log('  Position:', transform.position);
+  console.log('  Rotation (radians):', transform.rotation);
+  console.log('  Rotation (degrees):', {
+    x: THREE.MathUtils.radToDeg(transform.rotation.x).toFixed(2),
+    y: THREE.MathUtils.radToDeg(transform.rotation.y).toFixed(2),
+    z: THREE.MathUtils.radToDeg(transform.rotation.z).toFixed(2)
+  });
+  console.log('  Scale:', transform.scale);
+},
     scaleUp() {
       if (!this.model || this.modelScale >= this.maxScale) return;
       this.modelScale = Math.min(
@@ -486,158 +520,288 @@ export default {
     //     this.loadingProxy= false;
     //   }
     // },
-  
-  
-    // remove3DObjectFromScene() {
-    //   if (!this.scene) return;
+    remove3DObjectFromScene() {
+      if (!this.scene) return;
 
-    //   // Remove model
-    //   if (this.model) {
-    //     this.scene.remove(this.model);
-    //     this.model.traverse((child) => {
-    //       if (child.isMesh) {
-    //         child.geometry?.dispose();
-    //         if (child.material?.map) child.material.map.dispose();
-    //         child.material?.dispose();
-    //       }
+      // Remove model
+      if (this.model) {
+        this.scene.remove(this.model);
+        this.model.traverse((child) => {
+          if (child.isMesh) {
+            child.geometry?.dispose();
+            if (child.material?.map) child.material.map.dispose();
+            child.material?.dispose();
+          }
+        });
+        this.model = null;
+      }
+
+      // Remove rotation ring
+      if (this.rotationRing) {
+        this.scene.remove(this.rotationRing);
+        this.rotationRing = null;
+        this.rotationArrows = [];
+      }
+
+      // Optional: hide grid
+      if (this.gridHelper) {
+        this.gridHelper.visible = false;
+      }
+
+      this.modelLoaded = false;
+
+      console.log("✅ 3D object removed from scene");
+    },
+
+    // Replace your existing renderItem method with this:
+    // async renderItem() {
+    //   if (!this.model || !this.currentBackgroundTexture) {
+    //     console.warn("Model or background not loaded");
+    //     return;
+    //   }
+
+    //   try {
+    //     this.$emit("update:isLoading", true);
+
+    //     this.loadingText = "Rendering Item...";
+
+    //     const roomId = this.$route.params.id;
+    //     const prod_id = this.product_id;
+    //     const url = `${this.$store.state.root_api}engine/inpaint-item-ref/`;
+
+    //     // Use original background image dimensions
+    //     const bgWidth = this.currentBackgroundTexture.image.width;
+    //     const bgHeight = this.currentBackgroundTexture.image.height;
+
+    //     console.log(`Rendering at dimensions: ${bgWidth}x${bgHeight}`);
+
+    //     this.loadingText = "Creating composite image...";
+    //     // Create composite by rendering 3D object and blending with background
+    //     const compositeBlob = await this.createCompositeImageBlob(
+    //       bgWidth,
+    //       bgHeight,
+    //     );
+
+    //     this.loadingText = "Creating binary mask...";
+    //     // Create binary mask at same resolution
+    //     const maskBlob = await this.createBinaryMaskBlob(bgWidth, bgHeight);
+
+    //     // Prepare form data with BOTH images
+    //     const formData = new FormData();
+    //     formData.append(
+    //       "composite_image",
+    //       compositeBlob,
+    //       "composite_image.png",
+    //     );
+    //     formData.append("binary_mask", maskBlob, "binary_mask.png");
+    //     formData.append("room_id", roomId);
+    //     formData.append("prod_id", prod_id);
+
+    //     this.loadingText = "Adding Product to Your Room...";
+
+    //     const response = await fetch(url, {
+    //       method: "POST",
+    //       headers: {
+    //         Authorization: `Token ${localStorage.getItem("token")}`,
+    //       },
+    //       body: formData,
     //     });
-    //     this.model = null;
+
+    //     if (response.status == 402) {
+    //       const result = await response.json();
+    //       this.$emit("insufficient-credits", result.msg);
+    //       return;
+    //     }
+    //     if (!response.ok) {
+    //       throw new Error(`HTTP error! status: ${response.status}`);
+    //     }
+
+    //     const result = await response.json();
+    //     console.log("====================================");
+    //     console.log(result);
+    //     console.log("====================================");
+    //     if (result.renderer_id) {
+    //       this.remove3DObjectFromScene();
+    //       this.$emit(
+    //         "add-3d-furniture-to-room-start-polling",
+    //         result.renderer_id,
+    //       );
+    //     }
+
+    //     // 🔥 REMOVE 3D OBJECT AFTER SUCCESSFUL RENDER
+
+    //     console.log(
+    //       "Composite image and binary mask sent successfully:",
+    //       result,
+    //     );
+    //     console.log(`Images generated with dimensions: ${bgWidth}x${bgHeight}`);
+
+    //     return result;
+    //   } catch (error) {
+    //     console.error("Error rendering item:", error);
+    //     throw error;
     //   }
-
-    //   // Remove rotation ring
-    //   if (this.rotationRing) {
-    //     this.scene.remove(this.rotationRing);
-    //     this.rotationRing = null;
-    //     this.rotationArrows = [];
-    //   }
-
-    //   // Optional: hide grid
-    //   if (this.gridHelper) {
-    //     this.gridHelper.visible = false;
-    //   }
-
-    //   this.modelLoaded = false;
-
-    //   console.log("✅ 3D object removed from scene");
+    //   // finally {
+    //   //   this.$emit('update:isLoading', false);
+    //   // }
     // },
 
-    remove3DObjectFromScene() {
-        if (!this.scene) return;
-
-        if (this.model) {
-            this.scene.remove(this.model);
-            this.model.traverse((child) => {
-                if (child.isMesh) {
-                    child.geometry?.dispose();
-                    if (child.material?.map) child.material.map.dispose();
-                    child.material?.dispose();
-                }
-            });
-            this.model = null;
-        }
-
-        // 🔧 FIXED: Use dedicated method to remove ring
-        this.removeRotationRing();
-
-        if (this.gridHelper) {
-            this.gridHelper.visible = false;
-        }
-
-        this.modelLoaded = false;
-        console.log("✅ 3D object removed from scene");
-    },
-    // Replace your existing renderItem method with this:
     async renderItem() {
-      if (!this.model || !this.currentBackgroundTexture) {
-        console.warn("Model or background not loaded");
-        return;
+  if (!this.model || !this.currentBackgroundTexture) {
+    console.warn("Model or background not loaded");
+    return;
+  }
+
+  try {
+    // 🔧 CRITICAL: Use last known position if available (from drag/rotate)
+    let currentPosition, currentRotation, currentScale;
+    
+    if (this.lastKnownModelPosition && this.lastKnownModelRotation && this.lastKnownModelScale) {
+      console.log("🔄 Using LAST KNOWN transform from drag/rotate");
+      currentPosition = this.lastKnownModelPosition.clone();
+      currentRotation = this.lastKnownModelRotation.clone();
+      currentScale = this.lastKnownModelScale.clone();
+      
+      // 🔧 Apply the last known transform to model (in case it was reset)
+      this.model.position.copy(currentPosition);
+      this.model.rotation.copy(currentRotation);
+      this.model.scale.copy(currentScale);
+    } else {
+      console.log("⚠️ No last known position, using current model state");
+      currentPosition = this.model.position.clone();
+      currentRotation = this.model.rotation.clone();
+      currentScale = this.model.scale.clone();
+    }
+    
+    console.log(`📸 CAPTURED model state - Position: x=${currentPosition.x.toFixed(2)}, y=${currentPosition.y.toFixed(2)}, z=${currentPosition.z.toFixed(2)}`);
+    console.log(`📸 CAPTURED model state - Rotation: ${currentRotation.y.toFixed(2)} radians (${THREE.MathUtils.radToDeg(currentRotation.y).toFixed(2)}°)`);
+    
+    // 🔧 Force a render cycle to ensure all updates are applied
+    await this.$nextTick();
+    if (this.renderer && this.scene && this.camera) {
+      this.renderer.render(this.scene, this.camera);
+    }
+
+    // 🔧 CRITICAL: Restore model state in case it changed during $nextTick
+    this.model.position.copy(currentPosition);
+    this.model.rotation.copy(currentRotation);
+    this.model.scale.copy(currentScale);
+
+    this.$emit("update:isLoading", true);
+    this.loadingText = "Rendering Item...";
+
+    const roomId = this.$route.params.id;
+    const prod_id = this.product_id;
+    const url = `${this.$store.state.root_api}engine/inpaint-item-ref/`;
+
+    // 🔧 Get actual canvas dimensions (what's displayed on screen)
+    const canvas = this.renderer.domElement;
+    let renderWidth = canvas.width;
+    let renderHeight = canvas.height;
+
+    // Fallback to background texture dimensions if canvas is not properly sized
+    if (renderWidth === 0 || renderHeight === 0) {
+      console.warn("Canvas not properly sized, using background texture dimensions");
+      if (this.currentBackgroundTexture && this.currentBackgroundTexture.image) {
+        renderWidth = this.currentBackgroundTexture.image.width;
+        renderHeight = this.currentBackgroundTexture.image.height;
+      } else {
+        // Last resort: use container dimensions
+        const container = this.$refs.viewer;
+        if (container) {
+          renderWidth = container.clientWidth || 800;
+          renderHeight = container.clientHeight || 600;
+        } else {
+          renderWidth = 800;
+          renderHeight = 600;
+        }
       }
+    }
 
-      try {
-        this.$emit("update:isLoading", true);
+    console.log(`Rendering at dimensions: ${renderWidth}x${renderHeight}`);
+    console.log(`🔍 BEFORE RENDER - Model position: x=${this.model.position.x.toFixed(2)}, y=${this.model.position.y.toFixed(2)}, z=${this.model.position.z.toFixed(2)}`);
+    console.log(`🔍 BEFORE RENDER - Model rotation: ${this.model.rotation.y.toFixed(2)} radians (${THREE.MathUtils.radToDeg(this.model.rotation.y).toFixed(2)} degrees)`);
+    console.log(`🔍 BEFORE RENDER - Model scale: ${this.model.scale.x.toFixed(2)}`);
 
-        this.loadingText = "Rendering Item...";
+    this.loadingText = "Creating composite image...";
+    const compositeBlob = await this.createCompositeImageBlob(
+      renderWidth,
+      renderHeight,
+    );
 
-        const roomId = this.$route.params.id;
-        const prod_id = this.product_id;
-        const url = `${this.$store.state.root_api}engine/inpaint-item-ref/`;
+    // 🔧 Validate blob before creating URL
+    if (!compositeBlob || compositeBlob.size === 0) {
+      throw new Error("Failed to create composite image blob");
+    }
 
-        // Use original background image dimensions
-        const bgWidth = this.currentBackgroundTexture.image.width;
-        const bgHeight = this.currentBackgroundTexture.image.height;
+    this.loadingText = "Creating binary mask...";
+    const maskBlob = await this.createBinaryMaskBlob(renderWidth, renderHeight);
 
-        console.log(`Rendering at dimensions: ${bgWidth}x${bgHeight}`);
+    // 🔧 Validate mask blob before creating URL
+    if (!maskBlob || maskBlob.size === 0) {
+      throw new Error("Failed to create mask blob");
+    }
 
-        this.loadingText = "Creating composite image...";
-        // Create composite by rendering 3D object and blending with background
-        const compositeBlob = await this.createCompositeImageBlob(
-          bgWidth,
-          bgHeight,
-        );
+    console.log(`✅ Composite blob created: ${compositeBlob.size} bytes`);
+    console.log(`✅ Mask blob created: ${maskBlob.size} bytes`);
 
-        this.loadingText = "Creating binary mask...";
-        // Create binary mask at same resolution
-        const maskBlob = await this.createBinaryMaskBlob(bgWidth, bgHeight);
+    // Prepare form data with BOTH images
+    const formData = new FormData();
+    formData.append(
+      "composite_image",
+      compositeBlob,
+      "composite_image.png",
+    );
+    formData.append("binary_mask", maskBlob, "binary_mask.png");
+    formData.append("room_id", roomId);
+    formData.append("prod_id", prod_id);
 
-        // Prepare form data with BOTH images
-        const formData = new FormData();
-        formData.append(
-          "composite_image",
-          compositeBlob,
-          "composite_image.png",
-        );
-        formData.append("binary_mask", maskBlob, "binary_mask.png");
-        formData.append("room_id", roomId);
-        formData.append("prod_id", prod_id);
+    this.loadingText = "Adding Product to Your Room...";
 
-        this.loadingText = "Adding Product to Your Room...";
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `Token ${localStorage.getItem("token")}`,
+      },
+      body: formData,
+    });
 
-        const response = await fetch(url, {
-          method: "POST",
-          headers: {
-            Authorization: `Token ${localStorage.getItem("token")}`,
-          },
-          body: formData,
-        });
+    if (response.status == 402) {
+      const result = await response.json();
+      this.$emit("insufficient-credits", result.msg, result.buid);
+      return;
+    }
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
 
-        if (response.status == 402) {
-          const result = await response.json();
-          this.$emit("insufficient-credits", result.msg);
-          return;
-        }
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+    const result = await response.json();
+    console.log("====================================");
+    console.log(result);
+    console.log("====================================");
+    
+    if (result.renderer_id) {
+      this.remove3DObjectFromScene();
+      this.$emit(
+        "add-3d-furniture-to-room-start-polling",
+        result.renderer_id,
+      );
+    }
 
-        const result = await response.json();
-        console.log("====================================");
-        console.log(result);
-        console.log("====================================");
-        if (result.renderer_id) {
-          this.remove3DObjectFromScene();
-          this.$emit(
-            "add-3d-furniture-to-room-start-polling",
-            result.renderer_id,
-          );
-        }
+    console.log(
+      "Composite image and binary mask sent successfully:",
+      result,
+    );
+    console.log(`Images generated with dimensions: ${renderWidth}x${renderHeight}`);
 
-        // 🔥 REMOVE 3D OBJECT AFTER SUCCESSFUL RENDER
-
-        console.log(
-          "Composite image and binary mask sent successfully:",
-          result,
-        );
-        console.log(`Images generated with dimensions: ${bgWidth}x${bgHeight}`);
-
-        return result;
-      } catch (error) {
-        console.error("Error rendering item:", error);
-        throw error;
-      }
-      // finally {
-      //   this.$emit('update:isLoading', false);
-      // }
-    },
+    return result;
+  } catch (error) {
+    console.error("Error rendering item:", error);
+    this.$emit("update:isLoading", false);
+    throw error;
+  }
+},
 
     // Replace your existing renderItem method with this:
     async switchFurniture() {
@@ -725,7 +889,20 @@ export default {
       const objectScene = new THREE.Scene();
 
       // Clone the model
-      const modelClone = this.model.clone();
+      // 🔧 FIX: Use deep clone and apply world matrix to preserve exact transform
+      const modelClone = this.model.clone(true);
+      
+      // Copy world matrix to preserve exact position/rotation/scale
+      this.model.updateWorldMatrix(true, true);
+      modelClone.position.copy(this.model.position);
+      modelClone.rotation.copy(this.model.rotation); // 🔧 This now includes all rotation axes
+      modelClone.scale.copy(this.model.scale);
+      modelClone.updateMatrix();
+      
+      console.log(`🎯 COMPOSITE - Cloning model at position: x=${modelClone.position.x.toFixed(2)}, y=${modelClone.position.y.toFixed(2)}, z=${modelClone.position.z.toFixed(2)}`);
+      console.log(`🎯 COMPOSITE - Cloning model rotation (radians): x=${modelClone.rotation.x.toFixed(2)}, y=${modelClone.rotation.y.toFixed(2)}, z=${modelClone.rotation.z.toFixed(2)}`);
+      console.log(`🎯 COMPOSITE - Cloning model rotation (degrees): x=${THREE.MathUtils.radToDeg(modelClone.rotation.x).toFixed(2)}°, y=${THREE.MathUtils.radToDeg(modelClone.rotation.y).toFixed(2)}°, z=${THREE.MathUtils.radToDeg(modelClone.rotation.z).toFixed(2)}°`);
+      
       objectScene.add(modelClone);
 
       // Enhanced lighting for more brightness and clarity (matching initializeLighting)
@@ -858,146 +1035,36 @@ export default {
       }
     },
 
-    // resetComponentState() {
-    //   this.modelLoaded = false;
-    //   this.modelPosition = { x: 0, y: 0 };
-    //   this.modelRotation = { y: 0 };
-
-    //   if (this.model && this.scene) {
-    //     this.scene.remove(this.model);
-    //     this.model = null;
-    //     this.modelBoundingBox = null;
-    //     this.modelSize = null;
-    //   }
-
-    //   if (this.rotationRing && this.scene) {
-    //     this.scene.remove(this.rotationRing);
-    //     this.rotationRing = null;
-    //     this.rotationArrows = [];
-    //   }
-    // },
     resetComponentState() {
-        this.modelLoaded = false;
-        this.modelPosition = { x: 0, y: 0 };
-        this.modelRotation = { y: 0 };
+      this.modelLoaded = false;
+      this.modelPosition = { x: 0, y: 0 };
+      this.modelRotation = { y: 0 };
 
-        // 🔧 FIXED: Properly remove and cleanup rotation ring first
-        this.removeRotationRing();
+      if (this.model && this.scene) {
+        this.scene.remove(this.model);
+        this.model = null;
+        this.modelBoundingBox = null;
+        this.modelSize = null;
+      }
 
-        if (this.model && this.scene) {
-            this.scene.remove(this.model);
-            this.model.traverse((child) => {
-                if (child.isMesh) {
-                    child.geometry?.dispose();
-                    if (child.material?.map) child.material.map.dispose();
-                    child.material?.dispose();
-                }
-            });
-            this.model = null;
-            this.modelBoundingBox = null;
-            this.modelSize = null;
-        }
-
-        if (this.gridHelper) {
-            this.gridHelper.visible = false;
-        }
+      if (this.rotationRing && this.scene) {
+        this.scene.remove(this.rotationRing);
+        this.rotationRing = null;
+        this.rotationArrows = [];
+      }
     },
 
-    // 🔧 NEW: Dedicated method to remove rotation ring
-    removeRotationRing() {
-        if (this.rotationRing && this.scene) {
-            this.scene.remove(this.rotationRing);
-            
-            // Dispose geometries and materials
-            this.rotationRing.traverse((child) => {
-                if (child.isMesh) {
-                    child.geometry?.dispose();
-                    if (Array.isArray(child.material)) {
-                        child.material.forEach(m => m.dispose());
-                    } else {
-                        child.material?.dispose();
-                    }
-                }
-            });
-            
-            this.rotationRing = null;
-            this.rotationArrows = [];
-            console.log("✅ Rotation ring removed");
-        }
-    },
-
-
-
-    // async reinitializeWithNewModel() {
-    //   this.loadingText = "Loading new model...";
-    //   this.$emit("update:isLoading", false);
-    //   await this.loadModel();
-    //   this.fitCameraToModel();
-    //   // Recreate rotation ring for new model
-    //   this.createRotationRing();
-    //   this.updateRotationRingPosition();
-
-    //   this.fitCameraToModel();
-    //   this.$emit("update:isLoading", false);
-    // },
-    
     async reinitializeWithNewModel() {
-        this.loadingText = "Loading new model...";
-        this.$emit("update:isLoading", false);
-        
-        // 🔧 FIXED: Ensure rotation ring is removed before loading new model
-        this.removeRotationRing();
-        
-        await this.loadModel();
-        this.fitCameraToModel();
-        
-        // 🔧 FIXED: Only create ring if it doesn't exist
-        if (!this.rotationRing) {
-            this.createRotationRing();
-        }
-        
-        this.updateRotationRingPosition();
-        this.fitCameraToModel();
-        this.$emit("update:isLoading", false);
-    },
+      this.loadingText = "Loading new model...";
+      this.$emit("update:isLoading", false);
+      await this.loadModel();
+      this.fitCameraToModel();
+      // Recreate rotation ring for new model
+      this.createRotationRing();
+      this.updateRotationRingPosition();
 
-createRotationRing() {
-        // 🔧 GUARD: Don't create if already exists
-        if (this.rotationRing) {
-            console.log("⚠️ Rotation ring already exists, skipping creation");
-            return;
-        }
-
-        this.rotationRing = new THREE.Group();
-        this.rotationRing.name = "rotationRing";
-
-        const ringGeometry = new THREE.RingGeometry(0.8, 0.85, 64);
-        const ringMaterial = new THREE.MeshBasicMaterial({
-            color: 0x00ffff,
-            transparent: true,
-            opacity: 0.8,
-            side: THREE.DoubleSide,
-            depthTest: true,
-            depthWrite: true,
-        });
-        const ring = new THREE.Mesh(ringGeometry, ringMaterial);
-        ring.rotation.x = -Math.PI / 2;
-        ring.name = "rotationRingMesh";
-        this.rotationRing.add(ring);
-
-        const arrowPositions = [0, Math.PI / 2, Math.PI, (3 * Math.PI) / 2];
-
-        arrowPositions.forEach((angle, index) => {
-            const arrowGroup = this.createRotationArrow(angle, index);
-            this.rotationRing.add(arrowGroup);
-            this.rotationArrows.push(arrowGroup);
-        });
-
-        this.rotationRing.visible = this.showRotationRing;
-        this.rotationRing.renderOrder = 999;
-        this.scene.add(this.rotationRing);
-        
-        console.log("✅ Rotation ring created");
+      this.fitCameraToModel();
+      this.$emit("update:isLoading", false);
     },
 
     async initializeViewer() {
@@ -1453,122 +1520,52 @@ createRotationRing() {
       });
     },
 
-    // setupModelBounds() {
-    //   const bbox = new THREE.Box3().setFromObject(this.model);
-    //   const size = bbox.getSize(new THREE.Vector3());
-    //   const center = bbox.getCenter(new THREE.Vector3());
-
-    //   const dims = this.modelDimensions;
-    //   const targetSize = Math.max(dims.width, dims.height, dims.depth);
-    //   const currentMaxDim = Math.max(size.x, size.y, size.z);
-    //   this.baseModelScale = targetSize / currentMaxDim;
-
-    //   this.model.scale.setScalar(this.baseModelScale);
-
-    //   // BEFORE centering - get the bounding box
-    //   const scaledBox = new THREE.Box3().setFromObject(this.model);
-    //   this.modelSize = scaledBox.getSize(new THREE.Vector3());
-
-    //   // Center the model at origin first
-    //   const scaledCenter = scaledBox.getCenter(new THREE.Vector3());
-    //   this.model.position.sub(scaledCenter);
-
-    //   // NOW get bounding box in LOCAL space (centered at origin)
-    //   this.modelBoundingBox = new THREE.Box3().setFromObject(this.model);
-
-    //   // console.log('=== MODEL SETUP DEBUG ===');
-    //   // console.log('Model size:', this.modelSize);
-    //   // console.log('Model bounds:', this.modelBoundingBox);
-    //   // console.log('Model bounds min.y:', this.modelBoundingBox.min.y);
-    //   // console.log('Model bounds max.y:', this.modelBoundingBox.max.y);
-    //   // console.log('Model position after centering:', this.model.position);
-    // },
     setupModelBounds() {
-      // First, get the raw model bounding box
-      const rawBbox = new THREE.Box3().setFromObject(this.model);
-      const rawSize = rawBbox.getSize(new THREE.Vector3());
-      
-      // Get desired dimensions from props (in meters)
-      const targetWidth = this.modelDimensions.width;   // e.g., 1.4m
-      const targetHeight = this.modelDimensions.height; // e.g., 1.2m
-      const targetDepth = this.modelDimensions.depth;   // e.g., 1.5m
-      
-      console.log('=== SCALE CALCULATION ===');
-      console.log('Raw model size:', rawSize);
-      console.log('Target dimensions (meters):', { targetWidth, targetHeight, targetDepth });
-      
-      // Calculate scale factors for each dimension
-      const scaleX = targetWidth / rawSize.x;
-      const scaleY = targetHeight / rawSize.y;
-      const scaleZ = targetDepth / rawSize.z;
-      
-      // Use the AVERAGE scale to maintain proportions
-      // (or use the smallest if you want to ensure it fits)
-      this.baseModelScale = (scaleX + scaleY + scaleZ) / 3;
-      
-      // Alternative: Use smallest scale to guarantee fit
-      // this.baseModelScale = Math.min(scaleX, scaleY, scaleZ);
-      
-      console.log('Scale factors:', { scaleX, scaleY, scaleZ });
-      console.log('Final baseModelScale:', this.baseModelScale);
-      
-      // Apply the scale
+      const bbox = new THREE.Box3().setFromObject(this.model);
+      const size = bbox.getSize(new THREE.Vector3());
+      const center = bbox.getCenter(new THREE.Vector3());
+
+      const dims = this.modelDimensions;
+      const targetSize = Math.max(dims.width, dims.height, dims.depth);
+      const currentMaxDim = Math.max(size.x, size.y, size.z);
+      this.baseModelScale = targetSize / currentMaxDim;
+
       this.model.scale.setScalar(this.baseModelScale);
-      
-      // Recalculate bounding box after scaling
+
+      // BEFORE centering - get the bounding box
       const scaledBox = new THREE.Box3().setFromObject(this.model);
       this.modelSize = scaledBox.getSize(new THREE.Vector3());
-      
-      console.log('Scaled model size (should match target):', this.modelSize);
-      
-      // Center the model at origin
+
+      // Center the model at origin first
       const scaledCenter = scaledBox.getCenter(new THREE.Vector3());
       this.model.position.sub(scaledCenter);
-      
-      // Get final bounding box in LOCAL space (centered at origin)
+
+      // NOW get bounding box in LOCAL space (centered at origin)
       this.modelBoundingBox = new THREE.Box3().setFromObject(this.model);
-      
-      console.log('Final bounds:', this.modelBoundingBox);
-      console.log('Model bottom Y:', this.modelBoundingBox.min.y);
+
+      // console.log('=== MODEL SETUP DEBUG ===');
+      // console.log('Model size:', this.modelSize);
+      // console.log('Model bounds:', this.modelBoundingBox);
+      // console.log('Model bounds min.y:', this.modelBoundingBox.min.y);
+      // console.log('Model bounds max.y:', this.modelBoundingBox.max.y);
+      // console.log('Model position after centering:', this.model.position);
     },
-    // positionModelOnFloor() {
-    //   if (!this.model) return;
-
-    //   const floorY = this.floorData.floor_plane.height;
-
-    //   // Place model 3-4 meters in front of camera
-    //   this.model.position.x = 0;
-    //   this.model.position.z = -3.5; // Negative Z = in front of camera
-
-    //   const modelBottom = this.modelBoundingBox.min.y * this.baseModelScale;
-    //   this.model.position.y = floorY - modelBottom;
-
-    //   console.log("Model positioned at:", this.model.position);
-    //   console.log("Floor height:", floorY);
-    //   console.log("Camera height:", this.camera.position.y);
-    // },
     positionModelOnFloor() {
-  if (!this.model) return;
+      if (!this.model) return;
 
-  // Use actual floor height from MOGE-2 data
-  const floorY = this.floorData.floor_plane.height;
-  
-  console.log('=== POSITIONING MODEL ===');
-  console.log('Floor height from MOGE-2:', floorY);
-  
-  // Place model 3-4 meters in front of camera (adjust based on room depth)
-  this.model.position.x = 0;
-  this.model.position.z = -3.5;
-  
-  // Calculate the bottom of the model in world space
-  const modelBottom = this.modelBoundingBox.min.y * this.baseModelScale;
-  
-  // Position so bottom touches floor
-  this.model.position.y = floorY - modelBottom;
-  
-  console.log('Model position:', this.model.position);
-  console.log('Model will appear', -this.model.position.z, 'meters from camera');
-},
+      const floorY = this.floorData.floor_plane.height;
+
+      // Place model 3-4 meters in front of camera
+      this.model.position.x = 0;
+      this.model.position.z = -3.5; // Negative Z = in front of camera
+
+      const modelBottom = this.modelBoundingBox.min.y * this.baseModelScale;
+      this.model.position.y = floorY - modelBottom;
+
+      console.log("Model positioned at:", this.model.position);
+      console.log("Floor height:", floorY);
+      console.log("Camera height:", this.camera.position.y);
+    },
     screenToWorld(screenX, screenY) {
       // screenX, screenY are normalized (0 to 1)
       // Convert to Three.js NDC space (-1 to 1)
@@ -1767,27 +1764,135 @@ createRotationRing() {
         this.model.rotation.y = THREE.MathUtils.degToRad(this.modelRotation.y);
       }
     },
+    // onMouseUp(event) {
+    //   if (this.isDraggingModel) {
+    //     this.controls.enabled = true;
+    //     this.isDraggingModel = false;
+    //     this.isDragging = false;
+        
+    //   }
+
+    //   if (this.isRotatingModel) {
+    //     this.controls.enabled = true;
+    //     this.isRotatingModel = false;
+    //     this.isRotating = false;
+
+    //     this.rotationArrows.forEach((group) => {
+    //       group.children.forEach((arrow) => {
+    //         if (arrow.userData.isRotationArrow) {
+    //           arrow.material.color.setHex(arrow.userData.originalColor);
+    //         }
+    //       });
+    //     });
+    //   }
+    // },
+
     onMouseUp(event) {
-      if (this.isDraggingModel) {
-        this.controls.enabled = true;
-        this.isDraggingModel = false;
-        this.isDragging = false;
-      }
+  const wasDragging = this.isDraggingModel;
+  const wasRotating = this.isRotatingModel;
 
-      if (this.isRotatingModel) {
-        this.controls.enabled = true;
-        this.isRotatingModel = false;
-        this.isRotating = false;
+  if (this.isDraggingModel) {
+    this.controls.enabled = true;
+    this.isDraggingModel = false;
+    this.isDragging = false;
+    
+    if (this.model) {
+      this.modelPosition.x = this.model.position.x;
+      this.modelPosition.y = this.model.position.z;
+      
+      this.lastKnownModelPosition = this.model.position.clone();
+      this.lastKnownModelRotation = this.model.rotation.clone();
+      this.lastKnownModelScale = this.model.scale.clone();
+      
+      console.log("✅ Position updated after drag:", {
+        x: this.modelPosition.x.toFixed(2),
+        z: this.modelPosition.y.toFixed(2)
+      });
+      console.log("✅ 3D Position stored:", {
+        x: this.lastKnownModelPosition.x.toFixed(2),
+        y: this.lastKnownModelPosition.y.toFixed(2),
+        z: this.lastKnownModelPosition.z.toFixed(2)
+      });
+      
+      // 🔧 EMIT to parent
+      this.$emit('model-transform-updated', {
+        position: {
+          x: this.model.position.x,
+          y: this.model.position.y,
+          z: this.model.position.z
+        },
+        rotation: {
+          x: this.model.rotation.x,
+          y: this.model.rotation.y,
+          z: this.model.rotation.z
+        },
+        scale: {
+          x: this.model.scale.x,
+          y: this.model.scale.y,
+          z: this.model.scale.z
+        }
+      });
+    }
+  }
 
-        this.rotationArrows.forEach((group) => {
-          group.children.forEach((arrow) => {
-            if (arrow.userData.isRotationArrow) {
-              arrow.material.color.setHex(arrow.userData.originalColor);
-            }
-          });
-        });
+  if (this.isRotatingModel) {
+    this.controls.enabled = true;
+    this.isRotatingModel = false;
+    this.isRotating = false;
+
+    if (this.model) {
+      this.modelRotation.y = THREE.MathUtils.radToDeg(this.model.rotation.y);
+      
+      this.lastKnownModelRotation = this.model.rotation.clone();
+      this.lastKnownModelPosition = this.model.position.clone();
+      this.lastKnownModelScale = this.model.scale.clone();
+      
+      console.log("✅ Rotation updated:", this.modelRotation.y.toFixed(2), "degrees");
+      console.log("✅ Rotation stored (radians):", {
+        x: this.lastKnownModelRotation.x.toFixed(2),
+        y: this.lastKnownModelRotation.y.toFixed(2),
+        z: this.lastKnownModelRotation.z.toFixed(2)
+      });
+      
+      // 🔧 EMIT to parent after rotation
+      this.$emit('model-transform-updated', {
+        position: {
+          x: this.model.position.x,
+          y: this.model.position.y,
+          z: this.model.position.z
+        },
+        rotation: {
+          x: this.model.rotation.x,
+          y: this.model.rotation.y,
+          z: this.model.rotation.z
+        },
+        scale: {
+          x: this.model.scale.x,
+          y: this.model.scale.y,
+          z: this.model.scale.z
+        }
+      });
+    }
+
+    this.rotationArrows.forEach((group) => {
+      group.children.forEach((arrow) => {
+        if (arrow.userData.isRotationArrow) {
+          arrow.material.color.setHex(arrow.userData.originalColor);
+        }
+      });
+    });
+  }
+
+  // Force a render update if interaction just ended
+  if ((wasDragging || wasRotating) && this.needsRenderUpdate) {
+    this.$nextTick(() => {
+      if (this.renderer && this.scene && this.camera) {
+        this.renderer.render(this.scene, this.camera);
       }
-    },
+      this.needsRenderUpdate = false;
+    });
+  }
+},
 
     fitCameraToModel() {
       // Keep camera position fixed to match background image
@@ -1837,73 +1942,36 @@ createRotationRing() {
       this.backgroundScene.add(this.bgMesh);
     },
 
-    // reset_entire_room() {
-    //   if (!this.model) return;
-
-    //   // Reset scale
-    //   this.modelScale = 1.0;
-
-    //   // Reset dimensions to original
-    //   this.currentModelDimensions = {
-    //     width: this.modelDimensions.width,
-    //     height: this.modelDimensions.height,
-    //     depth: this.modelDimensions.depth,
-    //   };
-
-    //   const initialPos = this.floorPoint.clone();
-    //   this.model.position.x = initialPos.x;
-    //   this.model.position.z = initialPos.z;
-
-    //   const floorY = this.getFloorHeightAtPosition(initialPos);
-
-    //   const finalScale = this.baseModelScale * this.modelScale;
-    //   const modelBottomWorldOffset = this.modelBoundingBox.min.y * finalScale;
-    //   this.model.position.y = floorY - modelBottomWorldOffset;
-
-    //   this.modelRotation.y = 0;
-    //   this.model.rotation.y = 0;
-
-    //   this.applyPerspectiveScaling();
-    //   this.updateRotationRingPosition();
-    // },
-
-    
-    // 🔧 FIXED: Ensure single ring on reset
     reset_entire_room() {
-        if (!this.model) return;
+      if (!this.model) return;
 
-        this.modelScale = 1.0;
+      // Reset scale
+      this.modelScale = 1.0;
 
-        this.currentModelDimensions = {
-            width: this.modelDimensions.width,
-            height: this.modelDimensions.height,
-            depth: this.modelDimensions.depth,
-        };
+      // Reset dimensions to original
+      this.currentModelDimensions = {
+        width: this.modelDimensions.width,
+        height: this.modelDimensions.height,
+        depth: this.modelDimensions.depth,
+      };
 
-        const initialPos = this.floorPoint.clone();
-        this.model.position.x = initialPos.x;
-        this.model.position.z = initialPos.z;
+      const initialPos = this.floorPoint.clone();
+      this.model.position.x = initialPos.x;
+      this.model.position.z = initialPos.z;
 
-        const floorY = this.getFloorHeightAtPosition(initialPos);
-        const finalScale = this.baseModelScale * this.modelScale;
-        const modelBottomWorldOffset = this.modelBoundingBox.min.y * finalScale;
-        this.model.position.y = floorY - modelBottomWorldOffset;
+      const floorY = this.getFloorHeightAtPosition(initialPos);
 
-        this.modelRotation.y = 0;
-        this.model.rotation.y = 0;
+      const finalScale = this.baseModelScale * this.modelScale;
+      const modelBottomWorldOffset = this.modelBoundingBox.min.y * finalScale;
+      this.model.position.y = floorY - modelBottomWorldOffset;
 
-        this.applyPerspectiveScaling();
-        
-        // 🔧 FIXED: Remove and recreate ring to ensure clean state
-        this.removeRotationRing();
-        this.createRotationRing();
-        this.updateRotationRingPosition();
-        
-        // Update stored values
-        this.modelPosition.x = this.model.position.x;
-        this.modelPosition.y = this.model.position.z;
-        this.needsRenderUpdate = true;
+      this.modelRotation.y = 0;
+      this.model.rotation.y = 0;
+
+      this.applyPerspectiveScaling();
+      this.updateRotationRingPosition();
     },
+
     animate() {
       this.animationId = requestAnimationFrame(this.animate);
 
@@ -2046,7 +2114,7 @@ createRotationRing() {
   width: 100%;
   height: 100%;
   z-index: 10;
-  border-radius: 10px;
+  /* border-radius: 10px; */
   overflow: hidden;
 }
 
@@ -2061,7 +2129,7 @@ createRotationRing() {
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  border-radius: 10px;
+  /* border-radius: 10px; */
 }
 
 .loading-screen::before {
