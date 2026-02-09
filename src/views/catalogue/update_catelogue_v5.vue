@@ -690,7 +690,7 @@ Switch Furniture</a-button> -->
           class="category-section"
           v-if="active_tab_image === 'item_replacement'"
         >
-          <div class="category-tabs" style="padding-bottom:5px">
+          <div class="category-tabs">
             <div
               :class="
                 select_replace === 'All'
@@ -1032,24 +1032,24 @@ Switch Furniture</a-button> -->
             </div>
           </div>
 
-          <!-- <div
+          <div
             class="bg-[#f3f3f6] flex items-center justify-between px-2.5 py-1.5 h-10"
             v-if="
               current_tab === 'image' &&
               closeShareMenu &&
               !(current_tab === 'image' && active_tab_image === 'home_design')
             "
-          > -->
+          >
             <!-- Left: Share section -->
-            <!-- <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2">
               <span class="text-[16px] text-gray-700">Share on social:</span>
               <img src="/whatsapp.svg" alt="Whatsapp" class="w-5 h-5" />
               <img src="/logos_facebook.svg" alt="Facebook" class="w-5 h-5" />
               <img src="/instagram.svg" alt="Instagram" class="w-5 h-5" />
-            </div> -->
+            </div>
 
-            <!-- // Middle: Buttons  -->
-            <!-- <div class="flex items-center gap-3">
+            <!-- Middle: Buttons -->
+            <div class="flex items-center gap-3">
               
               <button
                 class="border-none bg-[#f9f9f9] px-3 py-1.5 rounded-md flex items-center gap-1.5 cursor-pointer !text-blue-800 !text-[12px] hover:bg-[#eaeaea] transition"
@@ -1074,12 +1074,7 @@ Switch Furniture</a-button> -->
                 Download
               </button>
               
-            </div> -->
-
-
-
-
-
+            </div>
 
             <!-- Right: Close button -->
             <!-- <div>
@@ -1094,7 +1089,7 @@ Switch Furniture</a-button> -->
       </svg>
     </button>
   </div> -->
-          <!-- </div> -->
+          </div>
 
           <div
             v-if="LockCanvasOperation === false"
@@ -3820,49 +3815,24 @@ export default {
     //       this.isLoading = false;
 
     // },
-    // async load_the_fileData(floor_3d_model_grid_url) {
-    //   this.isLoading = true;
-
-    //   try {
-    //     const response = await fetch(floor_3d_model_grid_url);
-
-    //     if (!response.ok) {
-    //       throw new Error(`HTTP error! status: ${response.status}`);
-    //     }
-
-    //     this.floor_3d_model_grid = await response.json();
-    //     console.log("Loaded floor grid:", this.floor_3d_model_grid);
-    //   } catch (error) {
-    //     console.error("Error loading floor data:", error);
-    //   } finally {
-    //     this.isLoading = false;
-    //   }
-    // },
     async load_the_fileData(floor_3d_model_grid_url) {
-  this.isLoading = true;
+      this.isLoading = true;
 
-  try {
-    const response = await fetch(floor_3d_model_grid_url);
+      try {
+        const response = await fetch(floor_3d_model_grid_url);
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
-    this.floor_3d_model_grid = await response.json();
-    
-    // 🔍 DIAGNOSTIC: Log floor dimensions
-    console.log('=== FLOOR DATA LOADED ===');
-    console.log('Floor plane height:', this.floor_3d_model_grid.floor_plane?.height);
-    console.log('Floor bounds:', this.floor_3d_model_grid.floor_bounds);
-    console.log('Camera position:', this.floor_3d_model_grid.camera?.position);
-    console.log('Full floor data:', this.floor_3d_model_grid);
-    
-  } catch (error) {
-    console.error('Error loading floor data:', error);
-  } finally {
-    this.isLoading = false;
-  }
-},
+        this.floor_3d_model_grid = await response.json();
+        console.log("Loaded floor grid:", this.floor_3d_model_grid);
+      } catch (error) {
+        console.error("Error loading floor data:", error);
+      } finally {
+        this.isLoading = false;
+      }
+    },
 
     startRoomPolling() {
       if (this.roomPollingInterval) {
@@ -5141,39 +5111,26 @@ export default {
       this.processing_generate_is_Loading = true;
     },
 
-
-    change3dModel(e) {
-      console.log('🔧 Changing 3D model with dimensions:', e);
-      
-      // ✅ Parse dimensions safely
-      const width = parseFloat(e.width) || 1.0;
-      const height = parseFloat(e.height) || 1.0;
-      const depth = parseFloat(e.depth) || 1.0;
-      
-      // ✅ Safety check for unrealistic dimensions
-      if (width > 50 || height > 50 || depth > 50) {
-        console.warn('⚠️ Unrealistic dimensions detected:', { width, height, depth });
-        this.$message.warning('This product has unusual dimensions');
-      }
-      
-      console.log('📏 Setting dimensions:', { width, height, depth });
-      
-      // ✅ Set dimensions
-      this.selected_model_width = width;
-      this.selected_model_height = height;
-      this.selected_model_depth = depth;
-      this.is_resizable = e.is_resizable;
-      this.selected_3d_product_model = e.model_uuid;
-      
-      // ✅ CRITICAL: Clear the model URL first to force unmount
-      this.item_replacement_renderer_3d_model_url = '';
-      
-      // ✅ Then set the new URL on next tick to force remount
-      this.$nextTick(() => {
-        console.log('🎨 Loading model URL:', e.model_url);
-        this.item_replacement_renderer_3d_model_url = this.$store.state.root_media_api + e.model_url;
-      });
-    },
+   change3dModel(e) {
+  // ✅ Parse and validate dimensions
+  const width = parseFloat(e.width) || 1.0;
+  const height = parseFloat(e.height) || 1.0;
+  const depth = parseFloat(e.depth) || 1.0;
+  
+  // ✅ Safety check: reject unrealistic dimensions
+  if (width > 50 || height > 50 || depth > 50) {
+    console.warn('Unrealistic dimensions detected:', { width, height, depth });
+    this.$message.warning('This product has unusual dimensions');
+  }
+  
+  this.selected_model_width = width;
+  this.selected_model_height = height;
+  this.selected_model_depth = depth;
+  this.item_replacement_renderer_3d_model_url =
+    this.$store.state.root_media_api + e.model_url;
+  this.is_resizable = e.is_resizable;
+  this.selected_3d_product_model = e.model_uuid;
+},
 
     // execute3DRederer() {
     //   this.$refs.floor_item_3d_renderer.renderItem();

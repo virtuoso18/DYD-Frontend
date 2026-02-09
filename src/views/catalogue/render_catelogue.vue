@@ -2058,7 +2058,7 @@
             border-radius: 12px;
             margin-bottom: 10px;
             padding: 20px;
-            font-family: &quot;Inter&quot;, sans-serif;
+            font-family: Inter, sans-serif;
             color: #111;
             flex: 1;
             overflow-y: auto;

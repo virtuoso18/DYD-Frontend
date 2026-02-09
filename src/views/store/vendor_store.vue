@@ -16,7 +16,7 @@
       @submit="handleSubmit"
     />
 
-    <div style="padding:10px">
+    <div class="!p-0  ">
         <!-- Loading State -->
         <div v-if="loading" style="text-align: center; padding: 50px;">
             <a-spin size="large" />
@@ -36,11 +36,11 @@
             </a-result>
         </div>
         <!-- Business Content -->
-        <div v-else style="background-color: white; padding:10px;">
+        <div v-else class="!p-0 md:!p-2" style="background-color: white; padding:10px;">
             
-            <a-row>
+            <!-- <a-row>
                 <a-col :span="24"> 
-<h2
+<h2 class="!p-2"
   style="
     text-align: left;
     color: var(--Black-Black-100, #000000);
@@ -55,7 +55,7 @@
                       
                       {{ business_info.name }}</h2>
                 </a-col>
-            </a-row>
+            </a-row> -->
 
 
             <div
@@ -405,9 +405,10 @@
 
 
             <br>
+              <div class="!p-2">
 
-            <!-- User Generated Content -->
-            <div style="padding:10px;background-color: white;border-radius:10px;border:2px solid rgba(128, 128, 128, 0.16);"  v-if="currentUser.user_type !='User'">
+                <!-- User Generated Content -->
+            <div class="!p-2" style="background-color: white;border-radius:10px;border:2px solid rgba(128, 128, 128, 0.16);"  v-if="currentUser.user_type !='User'">
                 <!-- <div style="padding:10px;background: #f2f2f3;border-radius:10px">
                     <h3>Gallery</h3>
                     <p>Business showcase and user content</p>
@@ -597,6 +598,8 @@
     
 
             </div>
+              </div>
+
         </div>
         </div>
     </div>

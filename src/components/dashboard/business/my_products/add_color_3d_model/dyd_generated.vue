@@ -21,38 +21,20 @@
 
         </div>
       <a-row 
-        v-for="(model, index) in list_history_generated_3d_models" 
+        
+      >
+      
+        <a-col :span="6" v-for="(model, index) in list_history_generated_3d_models" 
         :key="model.id"
         style="border-bottom:1px solid #f0f0f0;align-items:center;"
         @click="this.$emit('clicked-model', {'new3d_model_instance':model.id,'media_url':model.model_file_url})"
-        class="card-history"
-      >
-      
-        <a-col :span="3">
+        class="card-history">
           <img 
             :src="this.$store.state.root_media_api+ getMainImage(model)" 
-            style="width:60px;height:60px;object-fit:cover;border-radius:4px;border:1px solid rgba(0,0,0,0.2)" 
+            style="width:100%;height:auto;max-height:80px;object-fit:cover;border-radius:4px;border:1px solid rgba(0,0,0,0.2)" 
           />
         </a-col>
-        <a-col :span="5">
-          <div style="font-size:14px;font-weight:500;margin-bottom:4px;">Generated</div>
-          <div style="font-size:12px;color:#666;">{{ formatDate(model.created_at) }}</div>
-        </a-col>
-        <a-col :span="16" style="display: flex;justify-content: end;">
-             <a-button 
-            type="text" 
-            size="small" 
-            style="display:flex;align-items:end;gap:6px;padding:4px 8px;color:#3B63FB;font-size:13px;height:auto;border:none;"
-            >
-            <!-- @click.stop="addProduct(model)"  -->
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M8.0026 5.33203V10.6654M10.6693 7.9987H5.33594" stroke="#3B63FB" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M1.66406 8.0013C1.66406 5.01574 1.66406 3.52296 2.59156 2.59546C3.51906 1.66797 5.01184 1.66797 7.9974 1.66797C10.9829 1.66797 12.4757 1.66797 13.4033 2.59546C14.3307 3.52296 14.3307 5.01574 14.3307 8.0013C14.3307 10.9868 14.3307 12.4796 13.4033 13.4072C12.4757 14.3346 10.9829 14.3346 7.9974 14.3346C5.01184 14.3346 3.51906 14.3346 2.59156 13.4072C1.66406 12.4796 1.66406 10.9868 1.66406 8.0013Z" stroke="#3B63FB"/>
-            </svg>
-            Show Product
-          </a-button>
            
-        </a-col>
       </a-row>
     </div>
   </div>
@@ -105,7 +87,7 @@ export default {
     border-radius:10px;
     background-color: #fdfdfd;
     padding:5px;
-    margin-bottom:10px;
+    
     cursor: pointer;
 }
 
@@ -113,6 +95,5 @@ export default {
     border-radius:10px;
     background-color: #f3f2f2;
     padding:5px;
-    margin-bottom:10px;
 }
 </style>

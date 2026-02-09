@@ -588,9 +588,7 @@
           style="
             display: flex;
             justify-content: space-between;
-            justify-content: space-between;
-          "
-        >
+          ">
           <span>Edit Photo</span>
           <div class="">
             <a-button @click="resetCanvas" type="default"> Reset </a-button>
@@ -2528,8 +2526,7 @@ export default {
                       processedImage.type.split("-")[1],
                     );
                     if (this.views[viewIndex]) {
-                      this.views[viewIndex].image =
-                        processedImage.data_removed_bg;
+                      this.views[viewIndex].image = processedImage.data_removed_bg;
                     }
                   }
 
@@ -2601,6 +2598,120 @@ export default {
         reader.readAsDataURL(blob);
       });
     },
+
+    // async generateObject() {
+    //   // If in multi-view mode and no images, show multi-view queue modal
+    //   if (this.multiView && !this.hasAnyImage) {
+    //     this.showMultiViewQueueModal();
+    //     return;
+    //   }
+
+    //   // If in single-view mode and no main image, show single view queue modal
+    //   if (!this.multiView && !this.mainImage) {
+    //     this.showAddToQueueModal();
+    //     return;
+    //   }
+
+    //   // Continue with existing immediate generation logic
+    //   this.isGenerating = true;
+    //   this.$emit("processing-generate", true);
+
+    //   try {
+    //     const imagesToUpload = [];
+
+    //     if (!this.multiView && this.mainImage) {
+    //       const base64Img=await this.urlToBase64(this.mainImage);
+    //       imagesToUpload.push({ type: "main", data: base64Img });
+    //     }
+
+    //     if (this.multiView) {
+    //       this.views.forEach(async (view, index) => {
+    //         if (view.image) {
+    //           const base64Img=await this.urlToBase64(view.image);
+    //           imagesToUpload.push({ type: `view-${index}`, data: base64Img });
+    //         }
+    //       });
+
+    //       this.extraViews.forEach(async(view, index) => {
+    //         if (view.image) {
+    //           const base64Img=await this.urlToBase64(view.image);
+    //           imagesToUpload.push({
+    //             type: `extra-view-${index}`,
+    //             data: base64Img,
+    //           });
+    //         }
+    //       });
+    //     }
+
+    //     if (imagesToUpload.length === 0) {
+    //       this.$message.warning("Please upload at least one image");
+    //       return;
+    //     }
+
+    //     const payload = {
+    //       images: imagesToUpload,
+    //       multiView: this.multiView,
+    //       credits: this.credits,
+    //       room_id: this.$route.params.id,
+    //     };
+    //     const token = localStorage.getItem("token");
+
+    //     console.log(payload);
+    //     let response = null;
+
+    //     if (this.multiView) {
+    //       response = await fetch(
+    //         this.$store.state.root_api +
+    //           "engine/hy-2.0-mv-3D-gen-add-new-product/",
+    //         {
+    //           method: "POST",
+    //           headers: {
+    //             "Content-Type": "application/json",
+    //             Authorization: `Token ${token}`,
+    //           },
+    //           body: JSON.stringify(payload),
+    //         },
+    //       );
+    //     } else {
+    //       response = await fetch(
+    //         this.$store.state.root_api +
+    //           "engine/hy-2.0-sv-3D-gen-add-new-product/",
+    //         {
+    //           method: "POST",
+    //           headers: {
+    //             "Content-Type": "application/json",
+    //             Authorization: `Token ${token}`,
+    //           },
+    //           body: JSON.stringify(payload),
+    //         },
+    //       );
+    //     }
+
+    //     if (response.status === 402) {
+    //       this.openTextureModal = false;
+    //       const result = await response.json();
+    //       this.$emit("insufficient-credits", result.msg);
+    //       return;
+    //     }
+    //     if (response.ok) {
+    //       const result = await response.json();
+    //       console.log(result);
+    //       this.$message.success("Item added to queue successfully!");
+    //       // this.fetchQueueStatus()
+    //       this.$emit("generated", result);
+    //     } else {
+    //       const errorData = await response.json();
+    //       throw new Error(errorData.msg || "Generation failed");
+    //     }
+    //   } catch (error) {
+    //     console.error("Generation error:", error);
+    //     this.$message.error(error.message || "Failed to add to queue");
+    //   } finally {
+    //     this.isGenerating = false;
+    //     this.$emit("processing-generate", false);
+    //   }
+    // },
+    
     async generateObject() {
       // If in multi-view mode and no images, show multi-view queue modal
       if (this.multiView && !this.hasAnyImage) {
@@ -2622,31 +2733,37 @@ export default {
         const imagesToUpload = [];
 
         if (!this.multiView && this.mainImage) {
-          const base64Img=await this.urlToBase64(this.mainImage);
+          const base64Img = await this.urlToBase64(this.mainImage);
           imagesToUpload.push({ type: "main", data: base64Img });
         }
 
         if (this.multiView) {
-          this.views.forEach(async (view, index) => {
+          // ✅ FIXED: Use for...of loop instead of forEach to properly await
+          for (let index = 0; index < this.views.length; index++) {
+            const view = this.views[index];
             if (view.image) {
-              const base64Img=await this.urlToBase64(view.image);
+              const base64Img = await this.urlToBase64(view.image);
               imagesToUpload.push({ type: `view-${index}`, data: base64Img });
             }
-          });
+          }
 
-          this.extraViews.forEach(async(view, index) => {
+          // ✅ FIXED: Same fix for extraViews
+          for (let index = 0; index < this.extraViews.length; index++) {
+            const view = this.extraViews[index];
             if (view.image) {
-              const base64Img=await this.urlToBase64(view.image);
+              const base64Img = await this.urlToBase64(view.image);
               imagesToUpload.push({
                 type: `extra-view-${index}`,
                 data: base64Img,
               });
             }
-          });
+          }
         }
 
         if (imagesToUpload.length === 0) {
           this.$message.warning("Please upload at least one image");
+          this.isGenerating = false;
+          this.$emit("processing-generate", false);
           return;
         }
 
@@ -2712,7 +2829,7 @@ export default {
         this.isGenerating = false;
         this.$emit("processing-generate", false);
       }
-    },
+    }
   },
 };
 </script>

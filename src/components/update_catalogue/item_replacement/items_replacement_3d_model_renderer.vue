@@ -73,7 +73,7 @@
         text-align: center;
       "
     >
-      Reset
+      Recenter
     </button>
 
     <!-- Center: Scale Controls -->
@@ -177,7 +177,7 @@ export default {
     floorData: Object,
     modelDimensions: {
       type: Object,
-      default: () => ({ width: 1.4, height: 1.2, depth: 1.5 }),
+      default: () => ({ width: 0.00, height: 0.00, depth: 0.00 }),
     },
   },
   computed: {
@@ -267,15 +267,31 @@ export default {
 
   watch: {
     glbUrl: {
-      handler(newUrl, oldUrl) {
-        if (newUrl && newUrl !== "" && newUrl !== oldUrl) {
-          this.$nextTick(() => {
-            this.handleGlbUrlChange();
-          });
+    handler(newUrl, oldUrl) {
+      console.log('👀 glbUrl changed:', { old: oldUrl, new: newUrl });
+      
+      // Skip if URL is being cleared (empty string)
+      if (newUrl === '') {
+        console.log('🧹 Clearing previous model...');
+        if (this.model) {
+          this.scene.remove(this.model);
+          this.model = null;
         }
-      },
-      immediate: false,
+        return;
+      }
+      
+      // Load new model if URL is valid and different
+      if (newUrl && newUrl !== oldUrl) {
+        console.log('📦 Loading new model:', newUrl);
+        console.log('📏 With dimensions:', this.modelDimensions);
+        
+        this.$nextTick(() => {
+          this.handleGlbUrlChange();
+        });
+      }
     },
+    immediate: false,
+  },
     baseImageUrl: {
       handler(newUrl, oldUrl) {
         if (newUrl && newUrl !== oldUrl && this.viewerInitialized) {
@@ -283,34 +299,41 @@ export default {
         }
       },
     },
-    modelDimensions: {
-      handler(newDimensions, oldDimensions) {
-        if (newDimensions && newDimensions !== oldDimensions) {
-          // Update currentModelDimensions with the new prop values, scaled by current modelScale
-          this.currentModelDimensions.width = parseFloat(
-            (newDimensions.width * this.modelScale).toFixed(2),
-          );
-          this.currentModelDimensions.height = parseFloat(
-            (newDimensions.height * this.modelScale).toFixed(2),
-          );
-          this.currentModelDimensions.depth = parseFloat(
-            (newDimensions.depth * this.modelScale).toFixed(2),
-          );
+      modelDimensions: {
+    handler(newDimensions, oldDimensions) {
+      if (newDimensions && newDimensions !== oldDimensions) {
+        console.log('📐 ModelDimensions changed:', {
+          old: oldDimensions,
+          new: newDimensions
+        });
+        
+        // Update currentModelDimensions with the new prop values
+        this.currentModelDimensions.width = parseFloat(
+          (newDimensions.width * this.modelScale).toFixed(2)
+        );
+        this.currentModelDimensions.height = parseFloat(
+          (newDimensions.height * this.modelScale).toFixed(2)
+        );
+        this.currentModelDimensions.depth = parseFloat(
+          (newDimensions.depth * this.modelScale).toFixed(2)
+        );
 
-          console.log("ModelDimensions updated:", this.currentModelDimensions);
+        console.log('✅ CurrentModelDimensions updated:', this.currentModelDimensions);
 
-          // If model is loaded, recalculate scale based on new dimensions
-          if (this.model && this.modelBoundingBox) {
-            this.setupModelBounds();
-            this.applyModelScale();
-          }
+        // If model is loaded, recalculate scale based on new dimensions
+        if (this.model && this.modelBoundingBox) {
+          console.log('♻️ Recalculating model scale...');
+          this.setupModelBounds();
+          this.applyModelScale();
         }
-      },
-      deep: true,
+      }
     },
+    deep: true,
+    immediate: true  // ✅ Add this to trigger on mount
+  }
   },
   mounted() {
-    if (this.glbUrl && this.glbUrl !== "") {
+    if (this.glbUrl !== "" && this.modelDimensions.width && this.modelDimensions.height && this.modelDimensions.depth) {
       // Initialize currentModelDimensions from props
       this.currentModelDimensions = {
         width: parseFloat(this.modelDimensions.width),
@@ -1465,107 +1488,277 @@ export default {
       const offset = this.modelSize.y * 0.05;
       this.rotationRing.position.y += offset;
     },
+    // async loadModel() {
+    //   if (!this.glbUrl || this.glbUrl === "") {
+    //     console.warn("No glbUrl provided");
+    //     return Promise.resolve();
+    //   }
+
+    //   return new Promise((resolve, reject) => {
+    //     this.loadingText = "Loading 3D Model...";
+
+    //     const loader = new GLTFLoader();
+    //     loader.load(
+    //       this.glbUrl,
+    //       (gltf) => {
+    //         if (this.model) this.scene.remove(this.model);
+
+    //         this.model = gltf.scene;
+
+    //         this.model.traverse((child) => {
+    //           if (child.isMesh) {
+    //             child.castShadow = true;
+    //             child.receiveShadow = true;
+    //             child.userData.draggable = true;
+    //           }
+    //         });
+
+    //         this.setupModelBounds();
+    //         this.positionModelOnFloor();
+
+    //         this.scene.add(this.model);
+    //         this.updateRotationRingPosition();
+    //         this.fitCameraToModel();
+
+    //         this.$emit("update:isLoading", false);
+    //         this.modelLoaded = true;
+    //         console.log("Model loaded successfully");
+    //         resolve();
+    //       },
+    //       (progress) => {
+    //         if (progress.total > 0) {
+    //           const percentage = Math.round(
+    //             (progress.loaded / progress.total) * 100,
+    //           );
+    //           this.loadingText = `Loading Model... ${percentage}%`;
+    //         }
+    //       },
+    //       (error) => {
+    //         console.error("Failed to load model", error);
+    //         this.$emit("update:isLoading", false);
+    //         this.modelLoaded = false;
+    //         reject(error);
+    //       },
+    //     );
+    //   });
+    // },
+
+
     async loadModel() {
-      if (!this.glbUrl || this.glbUrl === "") {
-        console.warn("No glbUrl provided");
-        return Promise.resolve();
-      }
+  if (!this.glbUrl || this.glbUrl === "") {
+    console.warn("No glbUrl provided");
+    return Promise.resolve();
+  }
 
-      return new Promise((resolve, reject) => {
-        this.loadingText = "Loading 3D Model...";
+  return new Promise((resolve, reject) => {
+    this.loadingText = "Loading 3D Model...";
 
-        const loader = new GLTFLoader();
-        loader.load(
-          this.glbUrl,
-          (gltf) => {
-            if (this.model) this.scene.remove(this.model);
+    const loader = new GLTFLoader();
+    loader.load(
+      this.glbUrl,
+      (gltf) => {
+        if (this.model) this.scene.remove(this.model);
 
-            this.model = gltf.scene;
+        this.model = gltf.scene;
 
-            this.model.traverse((child) => {
-              if (child.isMesh) {
-                child.castShadow = true;
-                child.receiveShadow = true;
-                child.userData.draggable = true;
-              }
-            });
+        this.model.traverse((child) => {
+          if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+            child.userData.draggable = true;
+          }
+        });
 
-            this.setupModelBounds();
-            this.positionModelOnFloor();
+        // ✅ CRITICAL: Setup bounds BEFORE positioning
+        console.log('🎯 Setting up model with dimensions:', this.modelDimensions);
+        this.setupModelBounds();
+        
+        // ✅ Position AFTER scaling is applied
+        this.positionModelOnFloor();
 
-            this.scene.add(this.model);
-            this.updateRotationRingPosition();
-            this.fitCameraToModel();
+        this.scene.add(this.model);
+        this.updateRotationRingPosition();
+        this.fitCameraToModel();
 
-            this.$emit("update:isLoading", false);
-            this.modelLoaded = true;
-            console.log("Model loaded successfully");
-            resolve();
-          },
-          (progress) => {
-            if (progress.total > 0) {
-              const percentage = Math.round(
-                (progress.loaded / progress.total) * 100,
-              );
-              this.loadingText = `Loading Model... ${percentage}%`;
-            }
-          },
-          (error) => {
-            console.error("Failed to load model", error);
-            this.$emit("update:isLoading", false);
-            this.modelLoaded = false;
-            reject(error);
-          },
-        );
-      });
-    },
+        this.$emit("update:isLoading", false);
+        this.modelLoaded = true;
+        console.log("✅ Model loaded successfully");
+        resolve();
+      },
+      (progress) => {
+        if (progress.total > 0) {
+          const percentage = Math.round(
+            (progress.loaded / progress.total) * 100,
+          );
+          this.loadingText = `Loading Model... ${percentage}%`;
+        }
+      },
+      (error) => {
+        console.error("Failed to load model", error);
+        this.$emit("update:isLoading", false);
+        this.modelLoaded = false;
+        reject(error);
+      },
+    );
+  });
+},
 
-    setupModelBounds() {
-      const bbox = new THREE.Box3().setFromObject(this.model);
-      const size = bbox.getSize(new THREE.Vector3());
-      const center = bbox.getCenter(new THREE.Vector3());
+    // setupModelBounds() {
+    //   const bbox = new THREE.Box3().setFromObject(this.model);
+    //   const size = bbox.getSize(new THREE.Vector3());
+    //   const center = bbox.getCenter(new THREE.Vector3());
 
-      const dims = this.modelDimensions;
-      const targetSize = Math.max(dims.width, dims.height, dims.depth);
-      const currentMaxDim = Math.max(size.x, size.y, size.z);
-      this.baseModelScale = targetSize / currentMaxDim;
+    //   const dims = this.modelDimensions;
+    //   const targetSize = Math.max(dims.width, dims.height, dims.depth);
+    //   const currentMaxDim = Math.max(size.x, size.y, size.z);
+    //   this.baseModelScale = targetSize / currentMaxDim;
 
-      this.model.scale.setScalar(this.baseModelScale);
+    //   this.model.scale.setScalar(this.baseModelScale);
 
-      // BEFORE centering - get the bounding box
-      const scaledBox = new THREE.Box3().setFromObject(this.model);
-      this.modelSize = scaledBox.getSize(new THREE.Vector3());
+    //   // BEFORE centering - get the bounding box
+    //   const scaledBox = new THREE.Box3().setFromObject(this.model);
+    //   this.modelSize = scaledBox.getSize(new THREE.Vector3());
 
-      // Center the model at origin first
-      const scaledCenter = scaledBox.getCenter(new THREE.Vector3());
-      this.model.position.sub(scaledCenter);
+    //   // Center the model at origin first
+    //   const scaledCenter = scaledBox.getCenter(new THREE.Vector3());
+    //   this.model.position.sub(scaledCenter);
 
-      // NOW get bounding box in LOCAL space (centered at origin)
-      this.modelBoundingBox = new THREE.Box3().setFromObject(this.model);
+    //   // NOW get bounding box in LOCAL space (centered at origin)
+    //   this.modelBoundingBox = new THREE.Box3().setFromObject(this.model);
 
-      // console.log('=== MODEL SETUP DEBUG ===');
-      // console.log('Model size:', this.modelSize);
-      // console.log('Model bounds:', this.modelBoundingBox);
-      // console.log('Model bounds min.y:', this.modelBoundingBox.min.y);
-      // console.log('Model bounds max.y:', this.modelBoundingBox.max.y);
-      // console.log('Model position after centering:', this.model.position);
-    },
-    positionModelOnFloor() {
-      if (!this.model) return;
+    //   // console.log('=== MODEL SETUP DEBUG ===');
+    //   // console.log('Model size:', this.modelSize);
+    //   // console.log('Model bounds:', this.modelBoundingBox);
+    //   // console.log('Model bounds min.y:', this.modelBoundingBox.min.y);
+    //   // console.log('Model bounds max.y:', this.modelBoundingBox.max.y);
+    //   // console.log('Model position after centering:', this.model.position);
+    // },
+   setupModelBounds() {
+  console.log('=== 📐 SETUP MODEL BOUNDS ===');
+  
+  // Get raw bounding box BEFORE any scaling
+  const rawBbox = new THREE.Box3().setFromObject(this.model);
+  const rawSize = rawBbox.getSize(new THREE.Vector3());
+  
+  console.log('📦 Raw model size (before scaling):', {
+    x: rawSize.x.toFixed(4),
+    y: rawSize.y.toFixed(4),
+    z: rawSize.z.toFixed(4)
+  });
+  
+  // Get target dimensions from props (in meters)
+  const targetWidth = parseFloat(this.modelDimensions.width);
+  const targetHeight = parseFloat(this.modelDimensions.height);
+  const targetDepth = parseFloat(this.modelDimensions.depth);
+  
+  console.log('🎯 Target dimensions (in meters):', {
+    width: targetWidth,
+    height: targetHeight,
+    depth: targetDepth
+  });
+  
+  // ✅ CRITICAL: Calculate scale for each dimension
+  const scaleX = targetWidth / rawSize.x;
+  const scaleY = targetHeight / rawSize.y;
+  const scaleZ = targetDepth / rawSize.z;
+  
+  console.log('📊 Scale factors needed:', {
+    X: scaleX.toFixed(4),
+    Y: scaleY.toFixed(4),
+    Z: scaleZ.toFixed(4)
+  });
+  
+  // ✅ Use MINIMUM scale to ensure object fits within target dimensions
+  // This prevents the object from being too large in any dimension
+  this.baseModelScale = Math.min(scaleX, scaleY, scaleZ);
+  
+  console.log('⚖️ Using MINIMUM scale:', this.baseModelScale.toFixed(4));
+  
+  // ✅ Apply the scale to the model
+  this.model.scale.set(
+    this.baseModelScale,
+    this.baseModelScale,
+    this.baseModelScale
+  );
+  
+  // Recalculate bounding box after scaling
+  this.modelBoundingBox = new THREE.Box3().setFromObject(this.model);
+  this.modelSize = this.modelBoundingBox.getSize(new THREE.Vector3());
+  
+  console.log('✅ Final scaled size:', {
+    width: this.modelSize.x.toFixed(3) + 'm',
+    height: this.modelSize.y.toFixed(3) + 'm',
+    depth: this.modelSize.z.toFixed(3) + 'm'
+  });
+  
+  // ✅ Verify the scaling worked
+  const maxDim = Math.max(this.modelSize.x, this.modelSize.y, this.modelSize.z);
+  const targetMax = Math.max(targetWidth, targetHeight, targetDepth);
+  
+  if (Math.abs(maxDim - targetMax) > 0.01) {
+    console.warn('⚠️ Scaling verification failed!');
+    console.warn('Expected max dimension:', targetMax, 'Got:', maxDim);
+  } else {
+    console.log('✅ Scaling verified successfully!');
+  }
+  
+  // Center the model at origin
+  const center = this.modelBoundingBox.getCenter(new THREE.Vector3());
+  this.model.position.sub(center);
+  
+  // Update bounding box one final time
+  this.modelBoundingBox = new THREE.Box3().setFromObject(this.model);
+  
+  console.log('📍 Model bottom Y:', this.modelBoundingBox.min.y.toFixed(3));
+  console.log('======================\n');
+},
+    // positionModelOnFloor() {
+    //   if (!this.model) return;
 
-      const floorY = this.floorData.floor_plane.height;
+    //   const floorY = this.floorData.floor_plane.height;
 
-      // Place model 3-4 meters in front of camera
-      this.model.position.x = 0;
-      this.model.position.z = -3.5; // Negative Z = in front of camera
+    //   // Place model 3-4 meters in front of camera
+    //   this.model.position.x = 0;
+    //   this.model.position.z = -3.5; // Negative Z = in front of camera
 
-      const modelBottom = this.modelBoundingBox.min.y * this.baseModelScale;
-      this.model.position.y = floorY - modelBottom;
+    //   const modelBottom = this.modelBoundingBox.min.y * this.baseModelScale;
+    //   this.model.position.y = floorY - modelBottom;
 
-      console.log("Model positioned at:", this.model.position);
-      console.log("Floor height:", floorY);
-      console.log("Camera height:", this.camera.position.y);
-    },
+    //   console.log("Model positioned at:", this.model.position);
+    //   console.log("Floor height:", floorY);
+    //   console.log("Camera height:", this.camera.position.y);
+    // },
+   positionModelOnFloor() {
+  if (!this.model || !this.modelBoundingBox) return;
+
+  const floorY = this.floorData.floor_plane.height;
+  
+  console.log('=== 📍 POSITION MODEL ON FLOOR ===');
+  console.log('Floor height:', floorY);
+  
+  // Place model 3.5 meters in front of camera
+  this.model.position.x = 0;
+  this.model.position.z = -3.5;
+  
+  // ✅ Get the bottom of the model in WORLD space
+  // Since we centered the model at origin, min.y is in local coords
+  // We need to account for the current scale
+  const modelBottomLocal = this.modelBoundingBox.min.y;
+  const modelBottomWorld = modelBottomLocal * this.baseModelScale;
+  
+  console.log('Model bottom (local):', modelBottomLocal.toFixed(3));
+  console.log('Model bottom (world):', modelBottomWorld.toFixed(3));
+  
+  // Position so the bottom touches the floor
+  this.model.position.y = floorY - modelBottomWorld;
+  
+  console.log('Final position:', {
+    x: this.model.position.x.toFixed(2),
+    y: this.model.position.y.toFixed(2),
+    z: this.model.position.z.toFixed(2)
+  });
+  console.log('================================\n');
+},
     screenToWorld(screenX, screenY) {
       // screenX, screenY are normalized (0 to 1)
       // Convert to Three.js NDC space (-1 to 1)
@@ -2114,7 +2307,7 @@ export default {
   width: 100%;
   height: 100%;
   z-index: 10;
-  border-radius: 10px;
+  /* border-radius: 10px; */
   overflow: hidden;
 }
 

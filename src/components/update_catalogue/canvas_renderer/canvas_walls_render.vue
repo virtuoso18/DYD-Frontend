@@ -1973,7 +1973,7 @@ export default {
   justify-content: center;
   background: rgba(255, 255, 255, 0.9);
   z-index: 10;
-  border-radius: 8px;
+  /* border-radius: 8px; */
 }
 
 .spinner {
@@ -2545,7 +2545,7 @@ export default {
   align-items: center;
   justify-content: center;
   z-index: 50;
-  border-radius: 10px;
+  /* border-radius: 10px; */
 }
 
 .loading-text {
