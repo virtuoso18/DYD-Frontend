@@ -227,28 +227,55 @@
       </div>
     </div>
 
-    <div>
-      <a-button type="text" @click="regenerateImages">
-        <a-space>
-          <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
-            <path
-              d="M13.5 3.5C12.2 2.2 10.2 1.5 8 1.5C4.1 1.5 1 4.6 1 8.5C1 12.4 4.1 15.5 8 15.5C11.4 15.5 14.2 13.1 14.9 9.9"
-              stroke="currentColor"
-              stroke-width="1.2"
-              stroke-linecap="round"
-            />
-            <path
-              d="M11 1.5L13.5 3.5L11.5 6"
-              stroke="currentColor"
-              stroke-width="1.2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-          Regenerate
-        </a-space>
-      </a-button>
-    </div>
+    <div class="flex justify-between items-center w-full">
+  <!-- Apply Changes Button (Blue - Routes to new page) -->
+  <button 
+    type="primary"
+    @click="$router.push('/home-design-apply-changes')"
+    class="!bg-blue-600 hover:!bg-blue-600 !border-none font-poppins !rounded-lg !px-5 !whitespace-nowrap !py-2 !h-10 !text-white !font-medium !text-[15px] flex items-center gap-2"
+  >
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+      <path
+        d="M13.5 3.5C12.2 2.2 10.2 1.5 8 1.5C4.1 1.5 1 4.6 1 8.5C1 12.4 4.1 15.5 8 15.5C11.4 15.5 14.2 13.1 14.9 9.9"
+        stroke="currentColor"
+        stroke-width="1.2"
+        stroke-linecap="round"
+      />
+      <path
+        d="M11 1.5L13.5 3.5L11.5 6"
+        stroke="currentColor"
+        stroke-width="1.2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+    Apply Changes
+  </button>
+
+  <!-- Regenerate (Text only - calls method) -->
+  <button 
+    @click="regenerateImages"
+    class="flex items-center gap-2 text-gray-700 hover:text-gray-900 font-medium text-[15px] cursor-pointer bg-transparent border-none"
+  >
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" class="text-gray-600">
+      <path
+        d="M13.5 3.5C12.2 2.2 10.2 1.5 8 1.5C4.1 1.5 1 4.6 1 8.5C1 12.4 4.1 15.5 8 15.5C11.4 15.5 14.2 13.1 14.9 9.9"
+        stroke="currentColor"
+        stroke-width="1.2"
+        stroke-linecap="round"
+      />
+      <path
+        d="M11 1.5L13.5 3.5L11.5 6"
+        stroke="currentColor"
+        stroke-width="1.2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+    Regenerate
+  </button>
+</div>
+
 
     <!-- Demo controls for testing different image counts -->
     <!-- <div class="demo-controls">

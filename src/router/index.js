@@ -219,6 +219,7 @@ import Privacy_policy from '@/views/pages/tnc/privacy_policy.vue'
 import Accessibility_statement from '@/views/pages/tnc/accessibility_statement.vue'
 import Service_charter from '@/views/pages/tnc/service_charter.vue'
 import Software_license_agreement from '@/views/pages/tnc/software_license_agreement.vue'
+import Home_design_apply from '@/components/update_catalogue/home_design/home_design_apply.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -280,6 +281,13 @@ const router = createRouter({
       path: '/terms-and-conditions',
       name: 'terms_and_conditions',
       component: terms_and_conditions,
+       
+    },
+
+     {
+      path: '/home-design-apply-changes',
+      name: 'home_design_apply',
+      component: Home_design_apply,
        
     },
     {
