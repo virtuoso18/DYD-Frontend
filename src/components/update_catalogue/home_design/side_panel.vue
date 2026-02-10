@@ -411,7 +411,7 @@ watch: {
   color: #1890ff;
   font-size: 16px;
   font-weight: 500;
-  /* margin: auto 0 24px 0; */
+  margin: auto 0 24px 0;
   gap: 8px;
 }
 

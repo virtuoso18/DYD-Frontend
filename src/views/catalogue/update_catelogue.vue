@@ -55,10 +55,9 @@
       </p>
 
       <!-- CTA button -->
-
+      
       <!-- CTA button -->
-      <a-button
-        v-if="currentUser.user_type !== 'User'"
+      <a-button v-if="currentUser.user_type!=='User'"
         type="primary"
         block
         size="large"
@@ -67,38 +66,21 @@
       >
         Purchase Credits
       </a-button>
-
-      <a-button
-        v-else
+      
+      <a-button v-else
         type="primary"
         block
         size="large"
         :loading="LoadingMessageButton"
-        style="
-          height: 46px;
-          font-size: 16px;
-          border-radius: 8px;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        "
+        style="height: 46px; font-size: 16px; border-radius: 8px; display: flex;justify-content: center;align-items: center;"
         @click="startchat_with_buisness_user"
       >
-        <MessageOutlined style="font-size: 16px" />
-        Message Business
+        <MessageOutlined style="font-size: 16px;"/>
+    Message Business
       </a-button>
     </div>
   </a-modal>
- <a-modal
-    v-model:open="isShowInstructionModal"
-    title="Instructions"
-    @ok="closeInstructionModal"
-    :width="500"
-  >
-    <div class="instruction-item">
-      <p>Kindly Select Light Listed Below</p>
-    </div>
-  </a-modal>
+
   <!-- Walls Drawer -->
   <a-drawer
     :placement="'bottom'"
@@ -708,7 +690,7 @@ Switch Furniture</a-button> -->
           class="category-section"
           v-if="active_tab_image === 'item_replacement'"
         >
-          <div class="category-tabs" style="padding-bottom: 5px">
+          <div class="category-tabs" style="padding-bottom:5px">
             <div
               :class="
                 select_replace === 'All'
@@ -1058,16 +1040,16 @@ Switch Furniture</a-button> -->
               !(current_tab === 'image' && active_tab_image === 'home_design')
             "
           > -->
-          <!-- Left: Share section -->
-          <!-- <div class="flex items-center gap-2">
+            <!-- Left: Share section -->
+            <!-- <div class="flex items-center gap-2">
               <span class="text-[16px] text-gray-700">Share on social:</span>
               <img src="/whatsapp.svg" alt="Whatsapp" class="w-5 h-5" />
               <img src="/logos_facebook.svg" alt="Facebook" class="w-5 h-5" />
               <img src="/instagram.svg" alt="Instagram" class="w-5 h-5" />
             </div> -->
 
-          <!-- // Middle: Buttons  -->
-          <!-- <div class="flex items-center gap-3">
+            <!-- // Middle: Buttons  -->
+            <!-- <div class="flex items-center gap-3">
               
               <button
                 class="border-none bg-[#f9f9f9] px-3 py-1.5 rounded-md flex items-center gap-1.5 cursor-pointer !text-blue-800 !text-[12px] hover:bg-[#eaeaea] transition"
@@ -1094,8 +1076,13 @@ Switch Furniture</a-button> -->
               
             </div> -->
 
-          <!-- Right: Close button -->
-          <!-- <div>
+
+
+
+
+
+            <!-- Right: Close button -->
+            <!-- <div>
     <button 
       class="p-0 outline-none m-0 cursor-pointer" 
       @click="onClose_drawer_modal"
@@ -1188,23 +1175,12 @@ Switch Furniture</a-button> -->
               @handle_removal_completed="fetchRoom()"
               @furniture-switching-started="furniture_Switching_started"
               @furniture-switched="furniture_Switched"
-              @insufficient-credits="throw_Insufficient_credits"
+
+                  @insufficient-credits="throw_Insufficient_credits"
+
             />
             <!-- @redetect-objects-room="fetch_redetect_ObjectsBinary_Masks" -->
             <!-- ceiling light renderer -->
-            <img
-              v-if="
-                current_tab == 'image' &&
-                active_tab_image === 'item_replacement' &&
-                select_replace === 'Lights' &&
-                selected_light_type === ''
-              "
-              class="absolute top-[95px] right-[10px] cursor-pointer z-9 w-[25px]"
-              src="../../assets/icons/informationIcon.svg"
-              alt="instruction"
-              @click="showInstructionModal"
-              title="see instruction"
-            />
             <img
               :src="this.base_image_url"
               style="width: 100%; height: 100%; object-fit: contain"
@@ -1229,7 +1205,8 @@ Switch Furniture</a-button> -->
               :depthMask="depthMask"
               :key="canvasKey"
               @magentic-lights-added="magneticLightsMearjed"
-              @insufficient-credits="throw_Insufficient_credits"
+                @insufficient-credits="throw_Insufficient_credits"
+
               @Apply-Changes="ApplyChanges"
               ref="canvas_sunk_magnetic_lights_render"
             />
@@ -1296,7 +1273,8 @@ Switch Furniture</a-button> -->
                 active_tab_image === 'item_replacement' &&
                 select_replace === 'Furniture'
               "
-              @model-transform-updated="handle3DModelTransformUpdate"
+                @model-transform-updated="handle3DModelTransformUpdate"
+
               :glbUrl="item_replacement_renderer_3d_model_url"
               @update:isLoading="StartEndCanvasLoading"
               :isLoading="canvasLoading"
@@ -1749,8 +1727,7 @@ Switch Furniture</a-button> -->
                         d="M15.32 7.70C14.48 7.70 13.79 8.39 13.79 9.23V10.77C13.79 11.40 13.66 11.53 13.03 11.53H5.36C4.73 11.53 4.59 11.40 4.59 10.77V9.23C4.59 8.39 3.91 7.70 3.06 7.70C2.21 7.70 1.53 8.39 1.53 9.23C1.53 9.80 1.84 10.30 2.29 10.56V10.77C2.29 12.21 2.29 12.93 2.74 13.38C3.19 13.83 3.92 13.83 5.36 13.83H13.03C14.47 13.83 15.19 13.83 15.64 13.38C16.09 12.93 16.09 12.21 16.09 10.77V10.56C16.55 10.30 16.86 9.80 16.86 9.23C16.86 8.39 16.17 7.70 15.32 7.70Z"
                         stroke="currentColor"
                         stroke-width="1.5"
-                      /></svg
-                    >&nbsp; Item Replace
+                      /></svg>&nbsp; Item Replace
                   </div>
                   <div
                     :class="
@@ -1782,8 +1759,7 @@ Switch Furniture</a-button> -->
                         stroke="currentColor"
                         stroke-width="1.5"
                         stroke-linecap="round"
-                      /></svg
-                    >&nbsp; Home Design
+                      /></svg>&nbsp; Home Design
                   </div>
                 </div>
 
@@ -2373,9 +2349,7 @@ Switch Furniture</a-button> -->
                       font-size: 16px;
                     "
                   >
-                    <span style="font-size: 16px; color: #444"
-                      >Share on social:</span
-                    >
+                    <span style="font-size: 16px; color: #444">Share on social:</span>
                     <svg
                       width="20"
                       height="20"
@@ -2834,7 +2808,9 @@ Switch Furniture</a-button> -->
                   @handle_removal_completed="fetchRoom()"
                   @furniture-switching-started="furniture_Switching_started"
                   @furniture-switched="furniture_Switched"
+
                   @insufficient-credits="throw_Insufficient_credits"
+
                 />
                 <!-- @redetect-objects-room="fetch_redetect_ObjectsBinary_Masks" -->
                 <!-- ceiling light renderer -->
@@ -2862,6 +2838,7 @@ Switch Furniture</a-button> -->
                   :depthMask="depthMask"
                   :key="canvasKey"
                   @insufficient-credits="throw_Insufficient_credits"
+
                   @magentic-lights-added="magneticLightsMearjed"
                   @Apply-Changes="ApplyChanges"
                   ref="canvas_sunk_magnetic_lights_render"
@@ -2929,7 +2906,8 @@ Switch Furniture</a-button> -->
                     active_tab_image === 'item_replacement' &&
                     select_replace === 'Furniture'
                   "
-                  @model-transform-updated="handle3DModelTransformUpdate"
+                    @model-transform-updated="handle3DModelTransformUpdate"
+
                   :glbUrl="item_replacement_renderer_3d_model_url"
                   :is_resizable="is_resizable"
                   @update:isLoading="StartEndCanvasLoading"
@@ -2994,6 +2972,8 @@ Switch Furniture</a-button> -->
                       "
                       :home_design_images="home_design_images"
                     />
+  
+
                   </a-col>
 
                   <a-col :sm="0" :xs="0" :md="8" :lg="8">
@@ -3172,7 +3152,8 @@ import {
   CloudUploadOutlined,
   UserDeleteOutlined,
   SwapOutlined,
-  MessageOutlined,
+          MessageOutlined,
+
 } from "@ant-design/icons-vue";
 import canvas_floor_render from "@/components/update_catalogue/canvas_renderer/canvas_floor_render.vue";
 import canvas_item_remover_render from "@/components/update_catalogue/canvas_renderer/canvas_item_remover_render.vue";
@@ -3203,21 +3184,20 @@ import light_items_bottom_drawer_menu from "@/components/update_catalogue/bottom
 import fetch_all_drawer_component from "@/components/update_catalogue/bottom_drawer_item_components/fetchAllDrawer.vue";
 
 import ai_catalog_item_replacement_3d_products from "@/components/update_catalogue/list_products/item_replacement_3d_products.vue";
-import ZoomInIcon from "@/assets/icons/zoomout.png";
-import ZoomOutIcon from "@/assets/icons/zoomin.png";
 
 export default {
   name: "update_catelogue",
 
   data() {
     return {
-      currentUser: JSON.parse(localStorage.getItem("user")),
-      LoadingMessageButton: false,
-      buid: null,
+
+      currentUser:JSON.parse(localStorage.getItem('user')),
+      LoadingMessageButton:false,
+      buid:null,
       creditErrorMessage: "",
       showCreditModal: false,
-
-      preserved3DModelTransform: null,
+      
+       preserved3DModelTransform: null,
 
       LockCanvasOperation: false,
       brand: "",
@@ -3372,14 +3352,6 @@ export default {
       processingProgress: 0,
 
       openSeeAll_brands_panel: false,
-      isShowInstructionModal: false,
-      instructionConfig: [
-        {
-          key: "Pinch up zoom out",
-          value: ZoomInIcon,
-        },
-        { key: "Pinch to zoom", value: ZoomOutIcon },
-      ],
     };
   },
 
@@ -3450,71 +3422,63 @@ export default {
   },
 
   methods: {
-     showInstructionModal() {
-      this.isShowInstructionModal = true;
-    },
-    closeInstructionModal() {
-      this.isShowInstructionModal = false;
-    },
     handle3DModelTransformUpdate(transform) {
-      this.preserved3DModelTransform = transform;
-      console.log("📌 Preserved 3D transform:", transform);
-    },
-    async startchat_with_buisness_user() {
-      const selectedUser = this.buid;
-      this.LoadingMessageButton = true;
-      const payload = JSON.stringify({
-        type: "DM",
-        members: [this.currentUser.id, parseInt(selectedUser.id)],
-        name: `${this.currentUser.first_name} & ${selectedUser.first_name}`,
-      });
-      try {
-        const response = await fetch(
-          `${this.$store.state.root_api}chat/chats`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: "Token " + localStorage.getItem("token"),
-            },
-            body: payload,
-          },
-        );
+    this.preserved3DModelTransform = transform;
+    console.log('📌 Preserved 3D transform:', transform);
+  },
+     async startchat_with_buisness_user() {
+            const selectedUser = this.buid
+            this.LoadingMessageButton=true
+            const payload = JSON.stringify({
+                type: 'DM',
+                members: [this.currentUser.id, parseInt(selectedUser.id)],
+                name: `${this.currentUser.first_name} & ${selectedUser.first_name}`,
+            })
+            try {
+                const response = await fetch(`${this.$store.state.root_api}chat/chats`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: 'Token ' + localStorage.getItem('token'),
+                    },
+                    body: payload,
+                })
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`)
+                }
 
-        const data = await response.json();
-        const room = data.room || data;
+                const data = await response.json()
+                const room = data.room || data
 
-        // if (this.currentUser.user_type === 'User') {
+                // if (this.currentUser.user_type === 'User') {
+                
+                if (this.currentUser.user_type === 'User') {
+                    this.$router.push({
+                        path: '/user-dashboard/my-messages',
+                        query: { chatId: data.room_id }
+                    })
+                }
 
-        if (this.currentUser.user_type === "User") {
-          this.$router.push({
-            path: "/user-dashboard/my-messages",
-            query: { chatId: data.room_id },
-          });
-        }
+                if (this.currentUser.user_type === 'Business' ) {
+                    this.$router.push({
+                        path: '/my-store/messages',
+                        query: { chatId: data.room_id }
+                    })
+                }
+                  if (this.currentUser.user_type === 'Professional') {
+                    this.$router.push({
+                        path: '/professional-dashboard/my-messages',
+                        query: { chatId: data.room_id }
+                    })
+                }
+                // }
 
-        if (this.currentUser.user_type === "Business") {
-          this.$router.push({
-            path: "/my-store/messages",
-            query: { chatId: data.room_id },
-          });
-        }
-        if (this.currentUser.user_type === "Professional") {
-          this.$router.push({
-            path: "/professional-dashboard/my-messages",
-            query: { chatId: data.room_id },
-          });
-        }
-        // }
-      } catch (error) {
-        console.error("Error creating/finding room:", error);
-      }
-      this.LoadingMessageButton = false;
-    },
+            } catch (error) {
+                console.error('Error creating/finding room:', error)
+            }
+            this.LoadingMessageButton=false
+      },
 
     StartEndCanvasLoading(e) {
       this.canvasLoading = e;
@@ -3556,16 +3520,16 @@ export default {
     toggleSocialShare() {
       this.isCollapsed = !this.isCollapsed;
     },
-    throw_Insufficient_credits(message, buid = null) {
+    throw_Insufficient_credits(message,buid=null) {
       // @insufficient-credits="throw_Insufficient_credits"
       // if(response.status==402){
       //    const result = await response.json()
       //    this.$emit('insufficient-credits',result.msg)
       //  }
-      this.canvasLoading = false;
+      this.canvasLoading=false;
       this.processing_generate_is_Loading = false;
       this.creditErrorMessage = message;
-      this.buid = buid;
+      this.buid=buid
       this.showCreditModal = true;
     },
 
@@ -3620,14 +3584,15 @@ export default {
         if (responseData.error) {
           this.creditErrorMessage = responseData.msg;
           this.showCreditModal = true;
-          this.buid = responseData.buid;
+          this.buid=responseData.buid
 
           return;
         }
 
         if (responseData) {
-          // await this.fetchBinaryWallMasks();
-          // this.forceCanvasUpdate();
+          
+          // await this.fetchBinaryWallMasks(); 
+         // this.forceCanvasUpdate();
           this.startPollingResetWallBinaryMask(responseData?.renderer_id);
           // this.$message.success("Floor texture applied successfully!");
         } else {
@@ -3641,7 +3606,7 @@ export default {
             "An error occurred while applying the floor texture.",
           () => this.floorTextureSelected(texture_id),
         );
-      }
+      } 
     },
     // ==========================================
     // INITIALIZATION
@@ -3876,35 +3841,30 @@ export default {
     //   }
     // },
     async load_the_fileData(floor_3d_model_grid_url) {
-      this.isLoading = true;
+  this.isLoading = true;
 
-      try {
-        const response = await fetch(floor_3d_model_grid_url);
+  try {
+    const response = await fetch(floor_3d_model_grid_url);
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
 
-        this.floor_3d_model_grid = await response.json();
-
-        // 🔍 DIAGNOSTIC: Log floor dimensions
-        console.log("=== FLOOR DATA LOADED ===");
-        console.log(
-          "Floor plane height:",
-          this.floor_3d_model_grid.floor_plane?.height,
-        );
-        console.log("Floor bounds:", this.floor_3d_model_grid.floor_bounds);
-        console.log(
-          "Camera position:",
-          this.floor_3d_model_grid.camera?.position,
-        );
-        console.log("Full floor data:", this.floor_3d_model_grid);
-      } catch (error) {
-        console.error("Error loading floor data:", error);
-      } finally {
-        this.isLoading = false;
-      }
-    },
+    this.floor_3d_model_grid = await response.json();
+    
+    // 🔍 DIAGNOSTIC: Log floor dimensions
+    console.log('=== FLOOR DATA LOADED ===');
+    console.log('Floor plane height:', this.floor_3d_model_grid.floor_plane?.height);
+    console.log('Floor bounds:', this.floor_3d_model_grid.floor_bounds);
+    console.log('Camera position:', this.floor_3d_model_grid.camera?.position);
+    console.log('Full floor data:', this.floor_3d_model_grid);
+    
+  } catch (error) {
+    console.error('Error loading floor data:', error);
+  } finally {
+    this.isLoading = false;
+  }
+},
 
     startRoomPolling() {
       if (this.roomPollingInterval) {
@@ -4209,7 +4169,7 @@ export default {
         if (result.error) {
           this.creditErrorMessage = result.msg;
           this.showCreditModal = true;
-          this.buid = result.buid;
+          this.buid=result.buid
           return;
         }
 
@@ -4346,9 +4306,11 @@ export default {
         });
         if (responseData.error) {
           this.creditErrorMessage = responseData.msg;
-          this.buid = responseData.buid;
+          this.buid=responseData.buid;
 
-          this.throw_Insufficient_credits(this.creditErrorMessage);
+          this.throw_Insufficient_credits(
+            this.creditErrorMessage
+          );
         }
 
         if (responseData?.renderer_id) {
@@ -4450,7 +4412,7 @@ export default {
                 "?t=" +
                 Date.now();
 
-              this.forceCanvasUpdate();
+               this.forceCanvasUpdate(); 
               return;
             }
 
@@ -4486,7 +4448,7 @@ export default {
       }
     },
 
-    startPollingResetWallBinaryMask(jobId) {
+     startPollingResetWallBinaryMask(jobId) {
       if (!jobId) return Promise.reject("Invalid job id");
 
       this.stopPolling();
@@ -4509,12 +4471,12 @@ export default {
               //this.stopPolling();
               //resolve(data.finalised_result_wall_processed_image);
               //this.base_image_url =
-              //this.$store.state.root_media_api +
-              //data.finalised_result_wall_processed_image +
-              //"?t=" +
-              //Date.now();
-              // this.fetchBinaryWallMasks();
-
+                //this.$store.state.root_media_api +
+                //data.finalised_result_wall_processed_image +
+                //"?t=" +
+                //Date.now();
+              // this.fetchBinaryWallMasks(); 
+            
               window.location.reload();
               return;
             }
@@ -4591,7 +4553,7 @@ export default {
         if (responseData.error) {
           this.creditErrorMessage = responseData.msg;
           this.showCreditModal = true;
-          this.buid = responseData.buid;
+          this.buid=responseData.buid
 
           return;
         }
@@ -4647,7 +4609,7 @@ export default {
         if (responseData.error) {
           this.creditErrorMessage = responseData.msg;
           this.showCreditModal = true;
-          this.buid = responseData.buid;
+          this.buid=responseData.buid
 
           return;
         }
@@ -4705,10 +4667,10 @@ export default {
     selectCategory(category) {
       this.select_replace = category;
 
-      this.item_replacement_renderer_3d_model_url = "";
-      this.selected_model_width = 0.0;
-      this.selected_model_height = 0.0;
-      this.selected_model_depth = 0.0;
+     this.item_replacement_renderer_3d_model_url ="";
+      this.selected_model_width = 0.00;
+      this.selected_model_height = 0.00;
+      this.selected_model_depth = 0.00;
 
       if (category === "All") {
         this.showSelectionButtons = false;
@@ -4744,6 +4706,7 @@ export default {
     },
 
     switchToFurnitureModeWithCache() {
+      
       this.$nextTick(() => {
         if (this.cachedObjectImages && this.cachedObjectImages.size > 0) {
           this.$message?.destroy();
@@ -5180,58 +5143,54 @@ export default {
       this.processing_generate_is_Loading = true;
     },
 
-    change3dModel(e) {
-      console.log("🔧 Changing 3D model with dimensions:", e);
 
+    change3dModel(e) {
+      console.log('🔧 Changing 3D model with dimensions:', e);
+      
       // ✅ Parse dimensions safely
       const width = parseFloat(e.width) || 1.0;
       const height = parseFloat(e.height) || 1.0;
       const depth = parseFloat(e.depth) || 1.0;
-
+      
       // ✅ Safety check for unrealistic dimensions
       if (width > 50 || height > 50 || depth > 50) {
-        console.warn("⚠️ Unrealistic dimensions detected:", {
-          width,
-          height,
-          depth,
-        });
-        this.$message.warning("This product has unusual dimensions");
+        console.warn('⚠️ Unrealistic dimensions detected:', { width, height, depth });
+        this.$message.warning('This product has unusual dimensions');
       }
-
-      console.log("📏 Setting dimensions:", { width, height, depth });
-
+      
+      console.log('📏 Setting dimensions:', { width, height, depth });
+      
       // ✅ Set dimensions
       this.selected_model_width = width;
       this.selected_model_height = height;
       this.selected_model_depth = depth;
       this.is_resizable = e.is_resizable;
       this.selected_3d_product_model = e.model_uuid;
-
+      
       // ✅ CRITICAL: Clear the model URL first to force unmount
-      this.item_replacement_renderer_3d_model_url = "";
-
+      this.item_replacement_renderer_3d_model_url = '';
+      
       // ✅ Then set the new URL on next tick to force remount
       this.$nextTick(() => {
-        console.log("🎨 Loading model URL:", e.model_url);
-        this.item_replacement_renderer_3d_model_url =
-          this.$store.state.root_media_api + e.model_url;
+        console.log('🎨 Loading model URL:', e.model_url);
+        this.item_replacement_renderer_3d_model_url = this.$store.state.root_media_api + e.model_url;
       });
     },
 
     // execute3DRederer() {
     //   this.$refs.floor_item_3d_renderer.renderItem();
     // },
-    execute3DRederer() {
-      if (this.$refs.floor_item_3d_renderer) {
-        // Pass preserved state to child before rendering
-        if (this.preserved3DModelTransform) {
-          this.$refs.floor_item_3d_renderer.restoreModelTransform(
-            this.preserved3DModelTransform,
-          );
-        }
-        this.$refs.floor_item_3d_renderer.renderItem();
+     execute3DRederer() {
+    if (this.$refs.floor_item_3d_renderer) {
+      // Pass preserved state to child before rendering
+      if (this.preserved3DModelTransform) {
+        this.$refs.floor_item_3d_renderer.restoreModelTransform(
+          this.preserved3DModelTransform
+        );
       }
-    },
+      this.$refs.floor_item_3d_renderer.renderItem();
+    }
+  },
     executeswitchFurniture() {
       console.log("execute switch furniture");
       this.$refs.floor_item_3d_renderer.switchFurniture();
@@ -5269,7 +5228,7 @@ export default {
     // ==========================================
     // HOME DESIGN METHODS
     // ==========================================
-    home_design_history_clicked(images, id) {
+    home_design_history_clicked(images,id) {
       this.home_design_images = {
         error: false,
         home_design_id: id,
@@ -5428,7 +5387,7 @@ export default {
     BulbOutlined,
     CloudUploadOutlined,
     UserDeleteOutlined,
-    MessageOutlined,
+        MessageOutlined,
 
     // switch Business
     switch_business,
