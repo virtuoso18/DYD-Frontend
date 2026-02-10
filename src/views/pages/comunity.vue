@@ -432,7 +432,7 @@
 
       <!-- Community Section -->
       <div class="w-full mx-auto px-4">
-        <h1 class="text-[28px] sm:text-4xl font-semibold !text-gray-700 text-center !py-10">
+        <h1 class="!text-[28px] sm:!text-4xl font-semibold !text-gray-700 text-center !py-10">
           Community
         </h1>
 
@@ -478,7 +478,7 @@
 
         <!-- Mobile Grid -->
         <div
-          class="grid grid-cols-2 gap-8 sm:grid-cols-2 !pt-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 sm:hidden block place-items-center !px-4 gap-x-10 gap-6 community-section"
+          class="grid grid-cols-2 gap-6 sm:grid-cols-2 !pt-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 sm:hidden block place-items-center !px-6 gap-x-10 gap-6 community-section"
           v-if="apiData.length > 0"
         >
           <DesignCard
@@ -2576,7 +2576,7 @@ export default {
   .tab-text {
     font-family: inherit;
     font-weight: 400;
-    font-size: 8px !important; /* base size = 8px */
+    font-size: 12px !important; /* base size = 8px */
     line-height: 1 !important;
     text-align: center;
   }

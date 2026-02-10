@@ -655,11 +655,11 @@
        <div v-if="your_history.length">
 
       <p class="history-label pl-2"><a-spin v-if="loading_user_history_rooms" /> Your History </p>
-      <div class="grid grid-cols-3 sm:grid-cols-3 gap-1 sm:gap-2 px-5 max-w-[1300px]">
+      <div class="grid grid-cols-3 !space-y-2 sm:grid-cols-3 gap-1 sm:gap-2 sm:px-5 max-w-[1300px]">
        <div
   v-for="histry_card in your_history"
   :key="histry_card.id"
-  class="p-[5px]"
+  class="px-[5px]"
 >
   <div 
   @click="openImageDrawer(histry_card)" 
@@ -1671,11 +1671,18 @@ export default {
 .example-image-container {
   position: relative;
   width: 100%;
-  height: 128px;        /* h-32 base */
-  height: 192px;        /* sm:h-48 */
-  border-radius: 12px;  /* rounded-xl */
+  height: 128px;        /* default: mobile */
+  border-radius: 12px; /* rounded-xl */
   overflow: hidden;
 }
+
+/* md and above */
+@media (min-width: 768px) {
+  .example-image-container {
+    height: 192px;
+  }
+}
+
 
 .example-image-skeleton {
   width: 100%;

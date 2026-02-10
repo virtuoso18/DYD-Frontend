@@ -610,23 +610,33 @@ export default {
 }
 
 /* Products Wrapper - Constrain BusinessProductsSailing */
+/* Default (mobile): NO overflow */
 .products-wrapper {
-  overflow-y: auto;
-  max-height: 600px;
+  overflow-y: visible;
+  max-height: none;
 }
 
-/* Mobile: 2x2 Grid for products */
+/* Mobile grid */
 @media (max-width: 767px) {
   .products-wrapper :deep(.products-grid) {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
   }
-  
+
   .products-wrapper :deep(.product-card) {
     max-width: 100%;
   }
 }
+
+/* md and above: enable scrolling */
+@media (min-width: 768px) {
+  .products-wrapper {
+    overflow-y: auto;
+    max-height: 600px;
+  }
+}
+
 
 /* Loading State */
 .loading-state {
