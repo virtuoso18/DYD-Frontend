@@ -252,7 +252,7 @@
                         class="product-image "
                       />
                       <!-- Category Badge -->
-                      <div class="category-badge">{{ product.category }}</div>
+                      <!-- <div class="category-badge">{{ product.category }}</div> -->
                     </div>
                     <!-- {{ truncateText(product.description || 'No description available', 8) }} -->
 <div style="height:7px;"></div>

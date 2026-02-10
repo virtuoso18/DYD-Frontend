@@ -285,7 +285,7 @@ const router = createRouter({
     },
 
      {
-      path: '/home-design-apply-changes',
+      path: '/home-design-apply-changes/:id',
       name: 'home_design_apply',
       component: Home_design_apply,
        

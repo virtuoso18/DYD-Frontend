@@ -13,7 +13,7 @@
     <!-- History List -->
     <div v-else>
       <div v-for="(item, index) in historyList" :key="index" style="margin-bottom:24px;">
-        
+
         <!-- Date Header -->
         <div style="font-size:14px;color:#666;margin-bottom:8px;font-weight:500;">
           {{ item.date }}
@@ -33,7 +33,7 @@
         <!-- <img :src="this.$store.state.root_api+item.input_image" @click="clicked_history(item.images)" style="width:100%;height:100%;object-fit:cover;width:76px;height:76px;border-radius:6px;overflow:hidden;margin-bottom:10px;;" class="main-image"/> -->
          <img 
   :src="`${$store.state.root_media_api}${item.input_image}?t=${Date.now()}&id=${index}`"
-  @click="clicked_history(item.images)" 
+  @click="clicked_history(item.images,item.id)" 
   style="width:76px;height:76px;object-fit:cover;border-radius:6px;overflow:hidden;margin-bottom:10px;" 
   class="main-image"
 />
@@ -89,7 +89,7 @@ export default {
             console.log("========================================================-------------------")
             console.log(item)
             // Pass only the images array, not the entire item
-            this.clicked_history(item.images)
+            this.clicked_history(item.images,id)
         } catch(error) {
             console.error('Error loading home design item:', error)
         }}
@@ -132,8 +132,8 @@ export default {
         this.loading = false;
     }
 },
-      clicked_history(item){
-        this.$emit('home-design-history-clicked',item)
+      clicked_history(item,id){
+        this.$emit('home-design-history-clicked',item,id)
       },
         async fetchGenerateHistory() {
             if (!this.roomId) {

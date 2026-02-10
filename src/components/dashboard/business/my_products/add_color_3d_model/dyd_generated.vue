@@ -3,8 +3,12 @@
     <div className="bg-white h-full sm:h-[60vh] p-2.5 sm:overflow-y-scroll">
 
       <div style="display: flex;justify-content: space-between;">
-        <div style="display: flex;gap:10px;"> <HistoryOutlined style="margin-top:-6px"/><h4 >Generate History</h4></div>
-        <a-button size="small" type="primary" >+ Create New </a-button>
+        <a-row>
+          <a-col :span="4"><HistoryOutlined /></a-col>
+          <a-col :span="20"><h4 >Generate History</h4></a-col>
+        </a-row>
+        
+        <router-link to="/my-products/add-new-furniture"> <a-button size="small" type="primary" >+ Create New </a-button></router-link>
     </div>
     
     <div v-if="loading_generated_models_history" style="text-align:center;padding:50px;">

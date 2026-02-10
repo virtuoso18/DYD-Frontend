@@ -2972,6 +2972,8 @@ Switch Furniture</a-button> -->
                       "
                       :home_design_images="home_design_images"
                     />
+  
+
                   </a-col>
 
                   <a-col :sm="0" :xs="0" :md="8" :lg="8">
@@ -5226,10 +5228,10 @@ export default {
     // ==========================================
     // HOME DESIGN METHODS
     // ==========================================
-    home_design_history_clicked(images) {
+    home_design_history_clicked(images,id) {
       this.home_design_images = {
         error: false,
-        home_design_id: null,
+        home_design_id: id,
         prompt_id: null,
         generated_count: images.length,
         images: images,
