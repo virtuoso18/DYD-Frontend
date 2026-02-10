@@ -789,7 +789,7 @@ export default {
       
       if (result) {
         // Map textures to include proper URL format
-        this.availableTextures = (result.data || []).map(texture => ({
+        this.availableTextures = (result.results.data || []).map(texture => ({
           id: texture?.id,
     
           url: texture?.image_url || texture.url, // Adjust based on API response

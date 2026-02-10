@@ -211,6 +211,7 @@
       </div>
     </a-col>
   </a-row>
+  
 
   <div class="main-panel">
     <div class="image-grid" :class="gridClass">
@@ -226,12 +227,13 @@
         />
       </div>
     </div>
-
-    <div class="flex justify-between items-center w-full">
+               
+    <div class="flex justify-between items-center w-full" v-show="home_design_images">
   <!-- Apply Changes Button (Blue - Routes to new page) -->
-  <button 
+   <router-link :to="'/home-design-apply-changes/'+home_design_images?.home_design_id">
+<button 
     type="primary"
-    @click="$router.push('/home-design-apply-changes')"
+    
     class="!bg-blue-600 hover:!bg-blue-600 !border-none font-poppins !rounded-lg !px-5 !whitespace-nowrap !py-2 !h-10 !text-white !font-medium !text-[15px] flex items-center gap-2"
   >
     <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
@@ -252,6 +254,8 @@
     Apply Changes
   </button>
 
+   </router-link>
+  
   <!-- Regenerate (Text only - calls method) -->
   <button 
     @click="regenerateImages"
@@ -275,8 +279,11 @@
     Regenerate
   </button>
 </div>
-
-
+<br>
+   <a-alert
+  type="info" style="padding:10px"
+  description="AI placement may not always be accurate, and some items may appear misaligned in the home design."
+></a-alert>
     <!-- Demo controls for testing different image counts -->
     <!-- <div class="demo-controls">
       <button @click="setImageCount(1)" class="demo-btn">1 Image</button>
@@ -441,7 +448,7 @@ export default {
   width: 100%;
   max-width: 900px;
   /* max-height: 300px;   restrict grid height */
-  overflow-y: auto; /* allow scrolling if content exceeds 700px */
+  /* overflow-y: auto;  */
   margin-left: auto;
   margin-right: auto;
 }

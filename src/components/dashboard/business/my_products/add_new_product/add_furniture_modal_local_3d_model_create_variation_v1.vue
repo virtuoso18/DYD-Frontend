@@ -10,7 +10,6 @@
     :mask-closable="false"
     class="add-product-modal"
   >
-  
     <!-- Custom Header -->
     <template #title>
       <div style="display: flex; align-items: center; justify-content: space-between; padding: 0;">
@@ -37,19 +36,19 @@
     <div style="padding: 0;">
         <div className="flex flex-col sm:flex-row justify-evenly">
 
-          <a-row>
+          <div>
   
             <!-- Left Column - 3D Model Preview -->
                         <a-col
       :xs="24"
       :sm="24"
-      :md="10"
-      :lg="10"
+      :md="24"
+      :lg="24"
     >
               <div style="position: relative; padding:10px;">
     
                 <!-- 3D Model Upload Area (shown when no model is uploaded) -->
-                <!-- <div 
+                <div 
                   v-if="!local3dModelUrl"
                   @drop.prevent="handleModelDrop"
                   @dragover.prevent="isDragging = true"
@@ -77,32 +76,7 @@
                   <p style="font-size: 14px; color: #374151; font-weight: 500; margin-bottom: 8px;">Drag and drop 3D model here or click to upload</p>
                   <p style="font-size: 12px; color: #6b7280; margin: 0;">Supported file format: .gltf / .glb</p>
                   <p style="font-size: 12px; color: #6b7280; margin: 4px 0 0 0;">File size: 50MB</p>
-                </div> -->
-    <router-link 
-                  v-if="!local3dModelUrl"
-                  :to="'/my-products/add-new-furniture'"
-                  :style="{
-                    border: isDragging ? '2px solid #3b82f6' : '2px dashed #d1d5db',
-                    borderRadius: '12px',
-                    padding: '40px 16px',
-                    background: isDragging ? '#f8faff' : '#f9fafb',
-                    minHeight: '250px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease'
-                  }"
-                >
-                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" style="margin-bottom: 16px;">
-                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-                    <polyline points="3.27,6.96 12,12.01 20.73,6.96"></polyline>
-                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
-                  </svg>
-                  <p style="font-size: 14px; color: #374151; font-weight: 500; margin-bottom: 8px;">please pick your already generated 3d models  3D model here or click to upload</p>
-                  <p style="font-size: 12px; color: #6b7280; margin: 4px 0 0 0;">or create new one </p>
-                </router-link>
+                </div>
     
                 <!-- 3D Model Renderer (shown when model is uploaded) -->
                 <div v-else style="position: relative;">
@@ -144,9 +118,6 @@
                         <div>
                           <div style="font-size: 12px; font-weight: 500; color: #1f2937;">{{ uploaded3dModelFile?.name }}</div>
                           <div style="font-size: 11px; color: #6b7280;">{{ uploaded3dModelFile?.size }}</div>
-                          <div v-if="uploaded3dModelFile?.isGenerated" style="font-size: 10px; color: #10b981; font-weight: 500; margin-top: 2px;">
-                            📤 Generated Model
-                          </div>
                         </div>
                       </div>
                       <a-button 
@@ -217,21 +188,17 @@
       />
     </div>
               </div>
-               <select3d_model_for_color 
-                 :list_history_generated_3d_models="list_history_generated_3d_models"
-                 :loading_generated_models_history="loading_generated_models_history" 
-                 @clicked-model="clickedModel"
-               />
             </a-col>
+          </div>
           
-          
+          <div>
   
             <!-- Right Column - Product Details (keeping existing code) -->
                         <a-col
       :xs="24"
       :sm="24"
-      :md="14"
-      :lg="14"
+      :md="24"
+      :lg="24"
     >
               <div style="padding-left: 12px;">
                 <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px; color: #1f2937;">Product Details</h3>
@@ -515,142 +482,47 @@
                                     </div>
     
                 <!-- Textures Section -->
-                 <div style="margin-bottom: 20px;">
-        <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #374151;">Texture Images</label>
-                                  
-          <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 12px;">
-            
-            <!-- Select from pre-uploaded textures -->
-            <a-popover trigger="click" placement="bottom">
-              <!-- Upload custom texture -->
-            
-              <template #title>
-                <a-button 
-              @click="uploadTexture"
-              style="border-radius: 6px; border: 2px dashed #d1d5db;"
-            >
-              <template #icon>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <line x1="12" y1="5" x2="12" y2="19"></line>
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
-              </template>
-              Upload Custom
-            </a-button>
-                <div style="display: flex; align-items: center; justify-content: space-between;">
-                  <span>Select Texture from Library</span>
-                  <a-spin v-if="loadingTextures" size="small" style="margin-left: 8px;" />
-                </div>
-              </template>
-              <template #content>
-                <div v-if="loadingTextures" style="text-align: center; padding: 20px;">
-                  <a-spin />
-                </div>
-                <div v-else-if="availableTextures.length === 0" style="text-align: center; padding: 20px; color: #6b7280;">
-                  <p style="font-size: 12px; margin: 0;">No textures available</p>
-                </div>
-                <div v-else style="display: grid; grid-template-columns: repeat(4, 60px); gap: 8px; max-height: 300px; overflow-y: auto; padding: 8px;">
-                  <div
-                    v-for="(texture, index) in availableTextures"
-                    :key="index"
-                    @click="addPresetTexture(texture)"
-                    :style="{
-                      width: '60px',
-                      height: '60px',
-                      borderRadius: '8px',
-                      backgroundImage: `url('${getTextureUrl(texture.url)}')`,
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center',
-                      cursor: 'pointer',
-                      border: selectedTextures.some(t => t.id === texture.id) ? '2px solid #22c55e' : '2px solid #e5e7eb',
-                      opacity: selectedTextures.some(t => t.id === texture.id) ? 0.6 : 1,
-                      transition: 'all 0.2s ease'
-                    }"
-                    :title="texture.name"
-                  >
-                    <div v-if="selectedTextures.some(t => t.id === texture.id)" 
-                      style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.3); border-radius: 6px;">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2">
-                        <polyline points="20 6 9 17 4 12"></polyline>
-                      </svg>
+                <div style="margin-bottom: 20px;">
+                  <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #374151;">Texture Images</label>
+                  <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                    <div style="cursor: pointer;" @click="uploadTexture">
+                      <div style="width: 48px; height: 40px; background: #f3f4f6; border: 2px dashed #d1d5db; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2">
+                          <line x1="12" y1="5" x2="12" y2="19"></line>
+                          <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                      </div>
+                    </div>
+    
+                    <div v-for="(texture, index) in selectedTextures" :key="index" style="position: relative;">
+                      <div 
+                        :style="{ 
+                          width: '48px', 
+                          height: '40px', 
+                          backgroundImage: `url(${texture.url})`, 
+                          backgroundSize: 'cover', 
+                          backgroundPosition: 'center', 
+                          borderRadius: '8px', 
+                          border: '2px solid #e5e7eb', 
+                          cursor: 'pointer' 
+                        }"
+                      ></div>
+                      <a-button 
+                        type="text" 
+                        size="small" 
+                        @click="removeTexture(index)"
+                        style="position: absolute; top: -6px; right: -6px; background: #ef4444; color: white; border-radius: 50%; width: 18px; height: 18px; padding: 0; min-width: 18px;"
+                      >
+                        <template #icon>
+                          <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                          </svg>
+                        </template>
+                      </a-button>
                     </div>
                   </div>
                 </div>
-              </template>
-              <a-button style="border-radius: 6px; border: 2px dashed #d1d5db;">
-                <template #icon>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="12" y1="8" x2="12" y2="16"></line>
-                    <line x1="8" y1="12" x2="16" y2="12"></line>
-                  </svg>
-                </template>
-                Select Texture
-              </a-button>
-            </a-popover>
-
-            <!-- Upload custom texture -->
-            <!-- <a-button 
-              @click="uploadTexture"
-              style="border-radius: 6px; border: 2px dashed #d1d5db;"
-            >
-              <template #icon>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <line x1="12" y1="5" x2="12" y2="19"></line>
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
-              </template>
-              Upload Custom
-            </a-button> -->
-          </div>
-                    
-                                  <!-- Selected textures display -->
-          <div v-if="selectedTextures.length > 0" style="margin-top: 12px;">
-            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-              <div 
-                v-for="(texture, index) in selectedTextures" 
-                :key="index" 
-                style="position: relative;"
-              >
-                <div 
-                  :style="{ 
-                    width: '60px', 
-                    height: '60px', 
-                    backgroundImage: `url('${getTextureUrl(texture.url)}')`, 
-                    backgroundSize: 'cover', 
-                    backgroundPosition: 'center', 
-                    borderRadius: '8px', 
-                    border: '2px solid #e5e7eb', 
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease'
-                  }"
-                  :title="texture.name || 'Texture'"
-                ></div>
-                <!-- Custom texture indicator (uploaded by user) -->
-                <div 
-                  v-if="!texture.id"
-                  style="position: absolute; left: -5px; bottom: -5px; background: #8b5cf6; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 10px; box-shadow: 0 2px 4px rgba(139, 92, 246, 0.3);"
-                  title="Custom uploaded texture"
-                >
-                  📤
-                </div>
-                <a-button 
-                  type="text" 
-                  size="small" 
-                  @click="removeTexture(index)"
-                  style="position: absolute; top: -8px; right: -8px; background: #ef4444; color: white; border-radius: 50%; width: 20px; height: 20px; padding: 0; min-width: 20px;"
-                >
-                  <template #icon>
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                      <line x1="18" y1="6" x2="6" y2="18"></line>
-                      <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
-                  </template>
-                </a-button>
-              </div>
-            </div>
-          </div>
-      </div>
     
                 <!-- PBR Files Section -->
                 <div style="margin-bottom: 20px;">
@@ -697,7 +569,7 @@
                 </div>
               </div>
             </a-col>
-          </a-row>
+          </div>
         </div>
      
     </div>
@@ -715,10 +587,9 @@ import { computed } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import canvas_3d_model_renderer from "@/components/store/canvas_3d_model_renderer.vue"
-import select3d_model_for_color from '@/components/dashboard/business/my_products/add_color_3d_model/dyd_generated.vue'
 
 export default {
-  name: "AddNewProduct_variation_modal",
+  name: "AddNewProduct_modal",
  props: {
   visible: { type: Boolean, default: false },
   rendered_modal_3D_id: { type: String, default: "" },
@@ -746,7 +617,7 @@ export default {
   },
 },
   components: {
-    canvas_3d_model_renderer,select3d_model_for_color
+    canvas_3d_model_renderer,
   },
   emits: ['update:visible', 'product-created', 'cancel'],
   
@@ -759,24 +630,25 @@ export default {
     // 3D Model refs
     local3dModelUrl: this.defaultValues.modelUrl || null,
     uploaded3dModelFile: null,
-    model_data_instance_id:'',
-
     loading3dModelDetails: false,
     modelDetails: null,
     error: { general: null },
-    availableTextures: [],
-    loadingTextures: false,
-    loading_generated_models_history:true,
-    list_history_generated_3d_models:[],
+    
     // Form data - initialized with defaultValues
     productForm: {
-        name: '',
-        description: '',
-        category_name: [],
-        furniture_type: '',
-        pricing: { price: null },
-        dimensions: { height: null, length: null, width: null }
+      name: this.defaultValues.name || '',
+      description: this.defaultValues.description || '',
+      category_name: this.defaultValues.category_name || [],
+      furniture_type: this.defaultValues.furniture_type || '',
+      pricing: { 
+        price: this.defaultValues.pricing?.price || null 
       },
+      dimensions: { 
+        height: this.defaultValues.dimensions?.height || null,
+        length: this.defaultValues.dimensions?.length || null,
+        width: this.defaultValues.dimensions?.width || null
+      }
+    },
     
     // Collections - initialized with defaultValues
     selectedImages: this.defaultValues.images || [],
@@ -818,12 +690,9 @@ export default {
   },
 
 watch: {
-    visible(newValue) {
+  visible(newValue) {
     if (!newValue) {
       this.resetForm();
-    } else {
-      
-      this.loadAvailableTextures();
     }
   },
   rendered_modal_3D_id(newId, oldId) {
@@ -857,193 +726,9 @@ watch: {
     console.warn('⚠️ No rendered_modal_3D_id provided on mount');
   }
   this.loadInitialCategories();
-  this.loadAvailableTextures();
-  this.fetch3d_models_generated_by_user();
 },
 
   methods: {
-    // ✅ FIXED: Proper 3D model selection from history
-    async clickedModel(modelData) {
-  console.log(' Model clicked:', modelData);
-  
-  if (!modelData) {
-    console.warn(' No model data provided');
-    return;
-  }
-  this.model_data_instance_id=  modelData.new3d_model_instance
-  const mediaUrl = modelData.media_url || modelData.url;
-  if (!mediaUrl) {
-    console.error(' No media URL in model data');
-    return;
-  }
-
-  const fixedUrl = mediaUrl.replace(/\\/g, '/');
-  const fullUrl = this.$store.state.root_media_api + fixedUrl;
-  
-  console.log(' Fetching model file from:', fullUrl);
-
-  try {
-    const response = await fetch(fullUrl);
-    
-    if (!response.ok) {
-      throw new Error(`Failed to fetch model: HTTP ${response.status}`);
-    }
-
-    const blob = await response.blob();
-    console.log(' File fetched, size:', blob.size, 'bytes');
-
-    const fileName = modelData.name || 'model.glb';
-    const file = new File([blob], fileName, { type: blob.type });
-    
-    console.log('File object created:', {
-      name: file.name,
-      size: file.size,
-      type: file.type
-    });
-
-    this.local3dModelUrl = fullUrl;
-    
-    this.uploaded3dModelFile = {
-      file: file,
-      name: modelData.name || 'Generated Model',
-      size: (blob.size / 1024 / 1024).toFixed(2) + ' MB',
-      isGenerated: true,
-      generatedUrl: fixedUrl,
-      modelId: modelData.id
-    };
-
-    console.log('✅ 3D Model loaded and ready to upload:', {
-      url: this.local3dModelUrl,
-      fileName: this.uploaded3dModelFile.name,
-      fileSize: this.uploaded3dModelFile.size,
-      canUpload: !!this.uploaded3dModelFile.file
-    });
-
-  } catch (error) {
-    console.error('❌ Error fetching model file:', error);
-    this.$message.error('Failed to load model file: ' + error.message);
-  }
-},
-
-    async fetch3d_models_generated_by_user() {
-  this.loading_generated_models_history = true;
-
-  try {
-    const url = `${this.$store.state.root_api}engine/generated-3d-models-user-history/`;
-
-    console.log('📡 Fetching generated 3D models history...');
-
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Token ${localStorage.getItem('token')}`,
-        'Accept': 'application/json'
-      }
-    });
-
-    
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
-
-   
-    const responseData = await response.json();
-
-    
-    this.list_history_generated_3d_models = responseData.models ?? [];
-
-  } catch (error) {
-    console.error(' Failed to fetch history generated 3D Models:', error);
-
-    this.error.general = error.message;
-
-    this.showError(
-      'Failed to fetch history generated 3D Models',
-      error.message,
-      () => this.fetch3d_models_generated_by_user()
-    );
-
-  } finally {
-    this.loading_generated_models_history = false;
-  }
-},
-       async loadAvailableTextures() {
-    try {
-      this.loadingTextures = true;
-      const store = this.$store;
-      const token = localStorage.getItem('token');
-      
-      const response = await fetch(`${store.state.root_api}product/api/products/user-textures/`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Token ${token}`
-        }
-      });
-      
-      const result = await response.json();
-      console.log('📦 Available textures:', result);
-      
-      if (result.results?.success) {
-      const textureArray = result.results.data || [];
-      
-      console.log('📦 Texture array from API:', textureArray);
-      console.log('📦 Texture count:', textureArray.length);
-      
-      this.availableTextures = textureArray.map(texture => ({
-        id: texture?.id,
-        
-        url: texture?.image_url || texture?.url,
-      }));
-      
-      console.log('✅ Processed textures:', this.availableTextures);
-      console.log('✅ Total textures available:', this.availableTextures.length);
-      
-    } else {
-      console.warn('⚠️ API returned success: false');
-      console.warn('Message:', result.results?.message || 'Unknown error');
-      this.availableTextures = [];
-    }
-    } catch (error) {
-      console.error('❌ Error loading textures:', error);
-      this.availableTextures = [];
-    } finally {
-      this.loadingTextures = false;
-    }
-  },
-
-  // Add preset texture from library
-  addPresetTexture(texture) {
-    // Check if texture is already selected
-    if (!this.selectedTextures.some(t => t.id === texture.id)) {
-      this.selectedTextures.push({
-        id: texture?.id,
-    
-        url: texture?.url,
-   
-      });
-      
-    } else {
-      // Remove if already selected (toggle)
-      const index = this.selectedTextures.findIndex(t => t.id === texture.id);
-      if (index > -1) {
-        this.selectedTextures.splice(index, 1);
-    
-      }
-    }
-  },
-   getTextureUrl(texture) {
-
-  
-      if (texture && texture.startsWith('data:')) {
-        return texture;
-      }
-  
-      if (texture) {
-        return `${this.$store.state.root_media_api}${texture}`;
-      }
-      return '';
-    }, 
 
     
   // Handle paste event
@@ -1164,7 +849,7 @@ async loadInitialCategories() {
     this.loadingCategories = true;
     const store = this.$store;
     const token = localStorage.getItem('token');
-    
+    debugger
     const response = await fetch(`${store.state.root_api}product/api/categories/`, {
       method: 'GET',
       headers: {
@@ -1604,9 +1289,7 @@ async loadInitialCategories() {
           const reader = new FileReader();
           reader.onload = (e) => {
             this.selectedTextures.push({ 
-              id: null, // Mark as custom uploaded file
               file, 
-              name: file.name,
               url: e.target.result 
             });
           };
@@ -1680,15 +1363,13 @@ async loadInitialCategories() {
           formData.append('furniture_type', this.productForm.furniture_type);
         }
         formData.append('price', this.productForm.pricing.price);
-        
+
         // Add 3D model - either uploaded file or existing rendered model ID
         if (this.uploaded3dModelFile) {
-          // formData.append('model_file', this.uploaded3dModelFile.file);
-          formData.append('rendered_modal_3d_id', this.model_data_instance_id);
-        } 
-        // else if (this.rendered_modal_3D_id) {
-        //   formData.append('rendered_modal_3d_id', this.rendered_modal_3D_id);
-        // }
+          formData.append('model_file', this.uploaded3dModelFile.file);
+        } else if (this.rendered_modal_3D_id) {
+          formData.append('rendered_modal_3d_id', this.rendered_modal_3D_id);
+        }
 
         if (this.productForm.dimensions.height) {
           formData.append('height', this.productForm.dimensions.height);
@@ -1719,25 +1400,11 @@ async loadInitialCategories() {
         formData.append('available_colors', JSON.stringify(colorsData));
       }
 
-        // this.selectedTextures.forEach(texture => {
-        //   formData.append('textures', texture.file);
-        // });
-
-         const textureIds = [];
-
-        this.selectedTextures.forEach((texture) => {
-          if (texture.file) {
-            formData.append('textures', texture.file);
-          } else if (texture.id) {
-            textureIds.push(texture.id);
-          }
+        this.selectedTextures.forEach(texture => {
+          formData.append('textures', texture.file);
         });
 
-        if (textureIds.length > 0) {
-          formData.append('texture_ids', JSON.stringify(textureIds));
-        }
-
-        console.log(' Sending product data:', {
+        console.log('📤 Sending product data:', {
           name: this.productForm.name,
           category_name: this.productForm.category_name,
           has_local_model: !!this.uploaded3dModelFile,
