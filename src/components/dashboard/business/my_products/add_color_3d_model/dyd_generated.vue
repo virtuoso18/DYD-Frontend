@@ -24,9 +24,7 @@
 </svg>
 
         </div>
-      <a-row 
-        
-      >
+      <a-row >
       
         <a-col :span="6" v-for="(model, index) in list_history_generated_3d_models" 
         :key="model.id"

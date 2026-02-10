@@ -1759,7 +1759,8 @@ getQueueStatusColor(status) {
         images: imagesToUpload,
         multiView: this.multiView,
         credits: this.credits,
-        room_id: this.$route.params.id
+        room_id: this.$route.params.id,
+        is_3d_model_ceiling_light:true
       }
         const token = localStorage.getItem('token');
 

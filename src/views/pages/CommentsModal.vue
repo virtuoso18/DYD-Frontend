@@ -136,7 +136,7 @@
             </div>
 
             <!-- Comments List -->
-<div class="flex-1 min-w-0 px-4 py-3">
+<div class="flex-1 min-w-0 overflow-y-auto px-4 py-3">
               <!-- Loading State -->
               <div v-if="loadingComments" class="text-center py-8">
                 <div class="loading-spinner mx-auto mb-2"></div>
@@ -172,9 +172,27 @@
       </span>
     </div>
 
-    <p class="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap break-words">
-      {{ comment.text }}
-    </p>
+   <!-- Desktop comment -->
+<p class="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap break-words">
+  <span v-if="!expandedComments.has(comment.id)">
+    {{ truncateComment(comment.text, 250) }}
+    <span v-if="comment.text.length > 250" 
+          class="text-gray-900 hover:text-blue-700 cursor-pointer font-medium ml-1"
+          @click="toggleComment(comment.id)">
+      ... Show more
+    </span>
+  </span>
+  <span v-else>
+    {{ comment.text }}
+    <span class="text-gray-900 hover:text-blue-700 cursor-pointer font-medium ml-1"
+          @click="toggleComment(comment.id)">
+      Show less
+    </span>
+  </span>
+</p>
+
+
+
   </div>
 </div>
 
@@ -197,6 +215,7 @@
                 <input
                   v-model="newComment"
                   type="text"
+                  maxlength="500"
                   placeholder="Type your comment..."
                   class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   @keyup.enter="addComment"
@@ -220,10 +239,17 @@
 
         <!-- Mobile Modal - Updated with API data -->
       <!-- Mobile Modal - FULLY FIXED -->
-<div class="md:hidden bg-white rounded-t-3xl w-full flex flex-col absolute bottom-0 left-0 right-0 max-h-[90vh] click.stop">
-
-  <!-- Handle -->
-  <div class="flex justify-center py-3 border-b border-gray-200">
+<div
+  class="md:hidden bg-white rounded-t-3xl w-full flex flex-col absolute left-0 right-0 click.stop"
+  :class="isMobileExpanded ? 'bottom-0 h-[100vh]' : 'bottom-0 h-[80vh]'"  
+>
+  <!-- Handle (drag area) -->
+  <div
+    class="flex justify-center py-3 border-b border-gray-200"
+    @touchstart="onHandleTouchStart"
+    @touchmove="onHandleTouchMove"
+    @touchend="onHandleTouchEnd"
+  >
     <div class="w-12 h-1 bg-gray-300 rounded-full"></div>
   </div>
 
@@ -266,7 +292,7 @@
     </div>
 
     <!-- Comments Header + List (scrollable) -->
-    <div class="flex-1 min-w-0 px-4 overflow-y-auto no-scrollbar max-h-[20vh]">
+    <div class="flex-1 min-w-0 px-4 overflow-y-auto no-scrollbar max-h-[50vh]">
       <h3 class="text-lg font-semibold text-gray-900 mb-4">Comments</h3>
       
       <!-- Loading -->
@@ -290,8 +316,23 @@
                 <h4 class="font-semibold text-sm text-gray-900">{{ comment.name }}</h4>
                 <span class="text-xs text-gray-400">{{ comment.time }}</span>
               </div>
-              <p class="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap break-words">{{ comment.text }}</p>
-            </div>
+<p class="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap break-words">
+  <span v-if="!expandedComments.has(comment.id)">
+    {{ truncateComment(comment.text, 250) }}
+    <span v-if="comment.text.length > 250" 
+          class="text-gray-900 hover:text-blue-700 cursor-pointer font-medium ml-1"
+          @click="toggleComment(comment.id)">
+      ... Show more
+    </span>
+  </span>
+  <span v-else>
+    {{ comment.text }}
+    <span class="text-gray-900 hover:text-blue-700 cursor-pointer font-medium ml-1"
+          @click="toggleComment(comment.id)">
+      Show less
+    </span>
+  </span>
+</p>            </div>
           </div>
         </div>
         
@@ -305,12 +346,12 @@
   </div>
 
   <!-- STICKY INPUT - ALWAYS VISIBLE -->
-  <div class="border-t border-gray-200 px-4 py-3 bg-white shrink-0">
-    <div class="flex items-center gap-3">
-      <img :src="post.userAvatar" alt="" class="w-8 h-8 rounded-full flex-shrink-0" />
+<div class="border-t border-gray-200 px-4 py-3 bg-white shrink-0" @click.stop>    <div class="flex items-center gap-3">
+      <img :src="post.userAvatar" alt="" class="w-8 h-8 rounded-full flex-shrink-0"  />
       <input 
         v-model="newComment" 
         type="text" 
+        maxlength="500"
         placeholder="Type your comment..." 
         class="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         @keyup.enter="addComment"
@@ -358,6 +399,9 @@ export default {
       loadingMoreComments: false,
       addingComment: false,
       commentsPage: 1,
+      isMobileExpanded: false,
+      dragStartY: null,
+    expandedComments: new Set(),
       mobileModalHeight: '85vh',
       hasMoreComments: false,
       totalPages: 1,
@@ -403,6 +447,44 @@ export default {
       document.body.style.overflow = 'auto'
       this.$emit('close');
     },
+
+     onHandleTouchStart(e) {
+    this.dragStartY = e.touches[0].clientY;
+    },
+
+   
+  onHandleTouchMove(e) {
+    if (this.dragStartY === null) return;
+    const currentY = e.touches[0].clientY;
+    const diff = this.dragStartY - currentY; // positive = drag up
+
+    // if user drags up more than 40px → expand
+    if (diff > 60 && !this.isMobileExpanded) {
+      this.isMobileExpanded = true;
+    }
+
+    // if user drags down more than 40px → collapse
+    if (diff < -60 && this.isMobileExpanded) {
+      this.isMobileExpanded = false;
+    }
+    },
+
+     truncateComment(text, maxLength = 250) {
+    if (!text) return '';
+    return text.length > maxLength ? text.substring(0, maxLength) : text;
+  },
+
+  toggleComment(commentId) {
+    if (this.expandedComments.has(commentId)) {
+      this.expandedComments.delete(commentId);
+    } else {
+      this.expandedComments.add(commentId);
+    }
+  },
+
+  onHandleTouchEnd() {
+    this.dragStartY = null;
+  },
 
      setupMobileKeyboard() {
     // Listen for keyboard show/hide

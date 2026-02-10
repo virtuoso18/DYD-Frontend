@@ -65,11 +65,9 @@
           position: absolute;
           bottom: 10px;
           left: 10px;
-        "
-        >W-{{ currentModelDimensions.width }}m X H-{{
-          currentModelDimensions.height
-        }}m X D-{{ currentModelDimensions.depth }}m</span
-      >
+"
+        >W-{{ currentModelDimensions.width }}m X H-{{currentModelDimensions.height}}m X D-{{ currentModelDimensions.depth }}m</span
+>
     </div>
   </div>
 

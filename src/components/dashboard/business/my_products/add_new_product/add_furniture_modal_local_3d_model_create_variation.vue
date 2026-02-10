@@ -79,30 +79,35 @@
                   <p style="font-size: 12px; color: #6b7280; margin: 4px 0 0 0;">File size: 50MB</p>
                 </div> -->
     <router-link 
-                  v-if="!local3dModelUrl"
-                  :to="'/my-products/add-new-furniture'"
-                  :style="{
-                    border: isDragging ? '2px solid #3b82f6' : '2px dashed #d1d5db',
-                    borderRadius: '12px',
-                    padding: '40px 16px',
-                    background: isDragging ? '#f8faff' : '#f9fafb',
-                    minHeight: '250px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease'
-                  }"
-                >
-                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" style="margin-bottom: 16px;">
-                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-                    <polyline points="3.27,6.96 12,12.01 20.73,6.96"></polyline>
-                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
-                  </svg>
-                  <p style="font-size: 14px; color: #374151; font-weight: 500; margin-bottom: 8px;">please pick your already generated 3d models  3D model here or click to upload</p>
-                  <p style="font-size: 12px; color: #6b7280; margin: 4px 0 0 0;">or create new one </p>
-                </router-link>
+  v-if="!local3dModelUrl"
+  :to="'/my-products/add-new-furniture'"
+  :style="{
+    border: isDragging ? '2px solid #3b82f6' : '2px dashed #d1d5db',
+    borderRadius: '12px',
+    padding: '40px 16px',
+    background: isDragging ? '#f8faff' : '#f9fafb',
+    minHeight: '250px',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease'
+  }"
+>
+  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" style="margin-bottom: 16px;">
+    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+    <polyline points="3.27,6.96 12,12.01 20.73,6.96"></polyline>
+    <line x1="12" y1="22.08" x2="12" y2="12"></line>
+  </svg>
+
+  <p style="font-size: 14px; color: #374151; font-weight: 500; margin-bottom: 8px;text-align:center">
+    Select an existing 3D model or click <br>to Generate with DYD AI
+  </p>
+  <!-- <p style="font-size: 12px; color: #6b7280; margin: 0;">
+    Or create a new model
+  </p> -->
+</router-link>
     
                 <!-- 3D Model Renderer (shown when model is uploaded) -->
                 <div v-else style="position: relative;">
@@ -222,6 +227,40 @@
                  :loading_generated_models_history="loading_generated_models_history" 
                  @clicked-model="clickedModel"
                />
+               <div v-if="list_history_generated_3d_models.length > 0" style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #e5e7eb;">
+  <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+    <p style="font-size: 12px; color: #6b7280; margin: 0;">
+      Showing {{ list_history_generated_3d_models.length }} of {{ pagination.totalCount }} models
+    </p>
+    
+    <a-button 
+      v-if="pagination.hasMoreModels"
+      @click="loadMoreModels"
+      :loading="loadingMoreModels"
+      style="border-radius: 6px;"
+    >
+      <template #icon>
+        <svg 
+          v-if="!loadingMoreModels"
+          width="16" 
+          height="16" 
+          viewBox="0 0 24 24" 
+          fill="none" 
+          stroke="currentColor" 
+          stroke-width="2"
+        >
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+      </template>
+      {{ loadingMoreModels ? 'Loading...' : 'Load More Models' }}
+    </a-button>
+    
+    <p v-else style="font-size: 12px; color: #10b981; margin: 0;">
+      ✓ All models loaded
+    </p>
+  </div>
+</div>
             </a-col>
           
           
@@ -711,6 +750,10 @@
 </template>
 
 <script>
+// ============================================================================
+// UPDATED SCRIPT SECTION - AddNewProduct_variation_modal.vue
+// ============================================================================
+
 import { computed } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
@@ -719,57 +762,70 @@ import select3d_model_for_color from '@/components/dashboard/business/my_product
 
 export default {
   name: "AddNewProduct_variation_modal",
- props: {
-  visible: { type: Boolean, default: false },
-  rendered_modal_3D_id: { type: String, default: "" },
-  types: { type: Array, default: () => ['Modern','Scandinavian','Classic','Minimalist','Industrial','Rustic','Boho','other'] },
-  // Add this new prop
-  defaultValues: { 
-    type: Object, 
-    default: () => ({
-      name: 'demo product',
-      description: 'description sample',
-      category_name: 'Chair',
-      furniture_type: '',
-      pricing: { price: 10 },
-      dimensions: { height: 1, length: 1, width: 2 },
-      images: [],
-      colors: [],
-      textures: [],
-      pbrFiles: [],
-      modelUrl: null
-    })
+  props: {
+    visible: { type: Boolean, default: false },
+    rendered_modal_3D_id: { type: String, default: "" },
+    types: { type: Array, default: () => ['Modern','Scandinavian','Classic','Minimalist','Industrial','Rustic','Boho','other'] },
+    defaultValues: { 
+      type: Object, 
+      default: () => ({
+        name: 'demo product',
+        description: 'description sample',
+        category_name: 'Chair',
+        furniture_type: '',
+        pricing: { price: 10 },
+        dimensions: { height: 1, length: 1, width: 2 },
+        images: [],
+        colors: [],
+        textures: [],
+        pbrFiles: [],
+        modelUrl: null
+      })
+    },
+    prepopulatedData: { 
+      type: Object, 
+      default: () => null
+    },
   },
-   prepopulatedData: { 
-    type: Object, 
-    default: () => null  // Changed from defaultValues
-  },
-},
+
   components: {
-    canvas_3d_model_renderer,select3d_model_for_color
+    canvas_3d_model_renderer,
+    select3d_model_for_color
   },
+
   emits: ['update:visible', 'product-created', 'cancel'],
   
- data() {
-  return {
-    isSaving: false,
-    tempColor: '#000000',
-    isDragging: false,
-    
-    // 3D Model refs
-    local3dModelUrl: this.defaultValues.modelUrl || null,
-    uploaded3dModelFile: null,
-    model_data_instance_id:'',
+  data() {
+    return {
+      isSaving: false,
+      tempColor: '#000000',
+      isDragging: false,
+      
+      // 3D Model refs
+      local3dModelUrl: this.defaultValues.modelUrl || null,
+      uploaded3dModelFile: null,
+      model_data_instance_id: '',
 
-    loading3dModelDetails: false,
-    modelDetails: null,
-    error: { general: null },
-    availableTextures: [],
-    loadingTextures: false,
-    loading_generated_models_history:true,
-    list_history_generated_3d_models:[],
-    // Form data - initialized with defaultValues
-    productForm: {
+      loading3dModelDetails: false,
+      modelDetails: null,
+      error: { general: null },
+      availableTextures: [],
+      loadingTextures: false,
+      loading_generated_models_history: true,
+      list_history_generated_3d_models: [],
+
+      // ========== NEW: Pagination Properties ==========
+      pagination: {
+        currentOffset: 0,      // Current pagination offset
+        pageSize: 8,          // Models per page
+        totalCount: 0,         // Total available models
+        hasMoreModels: false   // Whether more models exist
+      },
+      loadingMoreModels: false, // Loading state for "Load More" button
+      // ===============================================
+
+      // Form data
+      productForm: {
         name: '',
         description: '',
         category_name: [],
@@ -777,534 +833,574 @@ export default {
         pricing: { price: null },
         dimensions: { height: null, length: null, width: null }
       },
-    
-    // Collections - initialized with defaultValues
-    selectedImages: this.defaultValues.images || [],
-    selectedColors: (this.defaultValues.colors || []).map((color, index) => ({
-      value: typeof color === 'string' ? color : color.value,
-      isPrimary: index === 0
-    })),
-    selectedTextures: this.defaultValues.textures || [],
-    selectedPbrFiles: this.defaultValues.pbrFiles || [],
-    categories_available: [],
+      
+      // Collections
+      selectedImages: this.defaultValues.images || [],
+      selectedColors: (this.defaultValues.colors || []).map((color, index) => ({
+        value: typeof color === 'string' ? color : color.value,
+        isPrimary: index === 0
+      })),
+      selectedTextures: this.defaultValues.textures || [],
+      selectedPbrFiles: this.defaultValues.pbrFiles || [],
+      categories_available: [],
 
-    // Category search related
-    categoryOptions: [],
-    allCategories: [],
-    loadingCategories: false,
-    categorySearchError: null,
-    categorySearchTimeout: null,
-    
-    presetColors: [
-      '#000000', '#FFFFFF', '#FF0000', '#00FF00', '#0000FF', '#FFFF00',
-      '#FF00FF', '#00FFFF', '#C0C0C0', '#808080', '#800000', '#808000',
-      '#008000', '#800080', '#008080', '#000080', '#FFA500', '#FFC0CB',
-      '#A52A2A', '#DDA0DD', '#98FB98', '#F0E68C', '#DEB887', '#D2691E',
-      '#FF6347', '#40E0D0', '#EE82EE', '#90EE90', '#FFB6C1', '#87CEEB'
-    ]
-  }
-},
+      // Category search related
+      categoryOptions: [],
+      allCategories: [],
+      loadingCategories: false,
+      categorySearchError: null,
+      categorySearchTimeout: null,
+      
+      presetColors: [
+        '#000000', '#FFFFFF', '#FF0000', '#00FF00', '#0000FF', '#FFFF00',
+        '#FF00FF', '#00FFFF', '#C0C0C0', '#808080', '#800000', '#808000',
+        '#008000', '#800080', '#008080', '#000080', '#FFA500', '#FFC0CB',
+        '#A52A2A', '#DDA0DD', '#98FB98', '#F0E68C', '#DEB887', '#D2691E',
+        '#FF6347', '#40E0D0', '#EE82EE', '#90EE90', '#FFB6C1', '#87CEEB'
+      ]
+    }
+  },
+
   computed: {
     primaryImage() {
       return this.selectedImages.find(img => img.isPrimary) || this.selectedImages[0] || null;
     },
-    // Display the selected category as string (not array)
-  categoryNameDisplay() {
-    if (Array.isArray(this.productForm.category_name)) {
-      return this.productForm.category_name[0] || '';
+    categoryNameDisplay() {
+      if (Array.isArray(this.productForm.category_name)) {
+        return this.productForm.category_name[0] || '';
+      }
+      return this.productForm.category_name || '';
     }
-    return this.productForm.category_name || '';
-  }
   },
 
-watch: {
+  watch: {
     visible(newValue) {
-    if (!newValue) {
-      this.resetForm();
-    } else {
-      
-      this.loadAvailableTextures();
-    }
-  },
-  rendered_modal_3D_id(newId, oldId) {
-    if (newId && newId !== oldId) {
-      console.log('🔄 Modal ID changed, refetching details...', { newId, oldId });
-      this.get3dRenderedModelDetails(newId);
-      this.loadInitialCategories();
-    }
-  },
-  // Add watcher for defaultValues
-  defaultValues: {
-    handler(newValues) {
-      this.initializeFormWithDefaults(newValues);
+      if (!newValue) {
+        this.resetForm();
+      } else {
+        // ========== NEW: Reset pagination when modal opens ==========
+        this.pagination.currentOffset = 0;
+        this.pagination.totalCount = 0;
+        this.pagination.hasMoreModels = false;
+        this.list_history_generated_3d_models = [];
+        // ===========================================================
+        
+        this.loadAvailableTextures();
+        this.fetch3d_models_generated_by_user(); // Load first batch
+      }
     },
-    deep: true,
-    immediate: true
-  }
-},
+    rendered_modal_3D_id(newId, oldId) {
+      if (newId && newId !== oldId) {
+        console.log('🔄 Modal ID changed, refetching details...', { newId, oldId });
+        this.get3dRenderedModelDetails(newId);
+        this.loadInitialCategories();
+      }
+    },
+    defaultValues: {
+      handler(newValues) {
+        this.initializeFormWithDefaults(newValues);
+      },
+      deep: true,
+      immediate: true
+    }
+  },
 
- mounted() {
-  // Initialize with default values first
-  if (this.prepopulatedData){
-
-    this.initializeFormWithDefaults(this.prepopulatedData);
-  }
-  
-  if (this.rendered_modal_3D_id) {
-    console.log('🚀 Component mounted, fetching 3D model details...');
-    this.get3dRenderedModelDetails(this.rendered_modal_3D_id);
-  } else {
-    console.warn('⚠️ No rendered_modal_3D_id provided on mount');
-  }
-  this.loadInitialCategories();
-  this.loadAvailableTextures();
-  this.fetch3d_models_generated_by_user();
-},
+  mounted() {
+    if (this.prepopulatedData) {
+      this.initializeFormWithDefaults(this.prepopulatedData);
+    }
+    
+    if (this.rendered_modal_3D_id) {
+      console.log('🚀 Component mounted, fetching 3D model details...');
+      this.get3dRenderedModelDetails(this.rendered_modal_3D_id);
+    }
+    
+    this.loadInitialCategories();
+    this.loadAvailableTextures();
+    
+    // ========== NEW: Initialize pagination ==========
+    this.pagination.currentOffset = 0;
+    this.fetch3d_models_generated_by_user(); // Load first batch
+    // =============================================
+  },
 
   methods: {
-    // ✅ FIXED: Proper 3D model selection from history
-    async clickedModel(modelData) {
-  console.log(' Model clicked:', modelData);
-  
-  if (!modelData) {
-    console.warn(' No model data provided');
-    return;
-  }
-  this.model_data_instance_id=  modelData.new3d_model_instance
-  const mediaUrl = modelData.media_url || modelData.url;
-  if (!mediaUrl) {
-    console.error(' No media URL in model data');
-    return;
-  }
-
-  const fixedUrl = mediaUrl.replace(/\\/g, '/');
-  const fullUrl = this.$store.state.root_media_api + fixedUrl;
-  
-  console.log(' Fetching model file from:', fullUrl);
-
-  try {
-    const response = await fetch(fullUrl);
-    
-    if (!response.ok) {
-      throw new Error(`Failed to fetch model: HTTP ${response.status}`);
-    }
-
-    const blob = await response.blob();
-    console.log(' File fetched, size:', blob.size, 'bytes');
-
-    const fileName = modelData.name || 'model.glb';
-    const file = new File([blob], fileName, { type: blob.type });
-    
-    console.log('File object created:', {
-      name: file.name,
-      size: file.size,
-      type: file.type
-    });
-
-    this.local3dModelUrl = fullUrl;
-    
-    this.uploaded3dModelFile = {
-      file: file,
-      name: modelData.name || 'Generated Model',
-      size: (blob.size / 1024 / 1024).toFixed(2) + ' MB',
-      isGenerated: true,
-      generatedUrl: fixedUrl,
-      modelId: modelData.id
-    };
-
-    console.log('✅ 3D Model loaded and ready to upload:', {
-      url: this.local3dModelUrl,
-      fileName: this.uploaded3dModelFile.name,
-      fileSize: this.uploaded3dModelFile.size,
-      canUpload: !!this.uploaded3dModelFile.file
-    });
-
-  } catch (error) {
-    console.error('❌ Error fetching model file:', error);
-    this.$message.error('Failed to load model file: ' + error.message);
-  }
-},
-
-    async fetch3d_models_generated_by_user() {
-  this.loading_generated_models_history = true;
-
-  try {
-    const url = `${this.$store.state.root_api}engine/generated-3d-models-user-history/`;
-
-    console.log('📡 Fetching generated 3D models history...');
-
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Token ${localStorage.getItem('token')}`,
-        'Accept': 'application/json'
+    // ========== NEW: Load More Models Method ==========
+    /**
+     * Loads the next batch of 3D models from the API
+     * Appends them to the existing list for infinite scroll effect
+     */
+    async loadMoreModels() {
+      // Prevent multiple simultaneous requests
+      if (this.loadingMoreModels || !this.pagination.hasMoreModels) {
+        console.warn('⚠️ Cannot load more: already loading or no more models');
+        return;
       }
-    });
 
-    
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
+      this.loadingMoreModels = true;
 
-   
-    const responseData = await response.json();
-
-    
-    this.list_history_generated_3d_models = responseData.models ?? [];
-
-  } catch (error) {
-    console.error(' Failed to fetch history generated 3D Models:', error);
-
-    this.error.general = error.message;
-
-    this.showError(
-      'Failed to fetch history generated 3D Models',
-      error.message,
-      () => this.fetch3d_models_generated_by_user()
-    );
-
-  } finally {
-    this.loading_generated_models_history = false;
-  }
-},
-       async loadAvailableTextures() {
-    try {
-      this.loadingTextures = true;
-      const store = this.$store;
-      const token = localStorage.getItem('token');
-      
-      const response = await fetch(`${store.state.root_api}product/api/products/user-textures/`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Token ${token}`
-        }
-      });
-      
-      const result = await response.json();
-      console.log('📦 Available textures:', result);
-      
-      if (result.results?.success) {
-      const textureArray = result.results.data || [];
-      
-      console.log('📦 Texture array from API:', textureArray);
-      console.log('📦 Texture count:', textureArray.length);
-      
-      this.availableTextures = textureArray.map(texture => ({
-        id: texture?.id,
+      try {
+        const limit = this.pagination.pageSize;
+        const offset = this.pagination.currentOffset;
         
-        url: texture?.image_url || texture?.url,
-      }));
-      
-      console.log('✅ Processed textures:', this.availableTextures);
-      console.log('✅ Total textures available:', this.availableTextures.length);
-      
-    } else {
-      console.warn('⚠️ API returned success: false');
-      console.warn('Message:', result.results?.message || 'Unknown error');
-      this.availableTextures = [];
-    }
-    } catch (error) {
-      console.error('❌ Error loading textures:', error);
-      this.availableTextures = [];
-    } finally {
-      this.loadingTextures = false;
-    }
-  },
+        const url = `${this.$store.state.root_api}engine/generated-3d-models-list/?limit=${limit}&offset=${offset}`;
 
-  // Add preset texture from library
-  addPresetTexture(texture) {
-    // Check if texture is already selected
-    if (!this.selectedTextures.some(t => t.id === texture.id)) {
-      this.selectedTextures.push({
-        id: texture?.id,
-    
-        url: texture?.url,
-   
-      });
-      
-    } else {
-      // Remove if already selected (toggle)
-      const index = this.selectedTextures.findIndex(t => t.id === texture.id);
-      if (index > -1) {
-        this.selectedTextures.splice(index, 1);
-    
+        console.log('📡 Loading more 3D models...', { 
+          offset: offset,
+          limit: limit,
+          currentTotal: this.list_history_generated_3d_models.length
+        });
+
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Token ${localStorage.getItem('token')}`,
+            'Accept': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const responseData = await response.json();
+
+        // Append new models to the list
+        if (!responseData.results?.error && responseData.results?.models) {
+          const newModels = responseData.results.models;
+          const previousCount = this.list_history_generated_3d_models.length;
+          
+          // Append new models
+          this.list_history_generated_3d_models.push(...newModels);
+
+          // Update offset for next request
+          this.pagination.currentOffset += this.pagination.pageSize;
+
+          // Check if more models exist
+          this.pagination.hasMoreModels = this.list_history_generated_3d_models.length < this.pagination.totalCount;
+
+          console.log('✅ More models loaded:', {
+            newModelsCount: newModels.length,
+            previousCount: previousCount,
+            totalLoaded: this.list_history_generated_3d_models.length,
+            totalAvailable: this.pagination.totalCount,
+            hasMore: this.pagination.hasMoreModels
+          });
+
+          this.$message.success(`Loaded ${newModels.length} more models`);
+
+        } else {
+          throw new Error(responseData.results?.message || 'Failed to parse response');
+        }
+
+      } catch (error) {
+        console.error('❌ Error loading more models:', error);
+        this.$message.error('Failed to load more models: ' + error.message);
+
+      } finally {
+        this.loadingMoreModels = false;
       }
-    }
-  },
-   getTextureUrl(texture) {
+    },
+    // ================================================
 
-  
+    /**
+     * Handle model selection from the history list
+     */
+    async clickedModel(modelData) {
+      console.log('🎯 Model clicked:', modelData);
+      
+      if (!modelData) {
+        console.warn('⚠️ No model data provided');
+        return;
+      }
+
+      this.model_data_instance_id = modelData.new3d_model_instance;
+      const mediaUrl = modelData.media_url || modelData.url;
+
+      if (!mediaUrl) {
+        console.error('❌ No media URL in model data');
+        return;
+      }
+
+      const fixedUrl = mediaUrl.replace(/\\/g, '/');
+      const fullUrl = this.$store.state.root_media_api + fixedUrl;
+      
+      console.log('📥 Fetching model file from:', fullUrl);
+
+      try {
+        const response = await fetch(fullUrl);
+        
+        if (!response.ok) {
+          throw new Error(`Failed to fetch model: HTTP ${response.status}`);
+        }
+
+        const blob = await response.blob();
+        console.log('✅ File fetched, size:', blob.size, 'bytes');
+
+        const fileName = modelData.name || 'model.glb';
+        const file = new File([blob], fileName, { type: blob.type });
+        
+        this.local3dModelUrl = fullUrl;
+        this.uploaded3dModelFile = {
+          file: file,
+          name: modelData.name || 'Generated Model',
+          size: (blob.size / 1024 / 1024).toFixed(2) + ' MB',
+          isGenerated: true,
+          generatedUrl: fixedUrl,
+          modelId: modelData.id
+        };
+
+        console.log('✅ 3D Model loaded successfully');
+
+      } catch (error) {
+        console.error('❌ Error fetching model file:', error);
+        this.$message.error('Failed to load model file: ' + error.message);
+      }
+    },
+
+    /**
+     * Fetch generated 3D models with pagination support
+     */
+    async fetch3d_models_generated_by_user() {
+      this.loading_generated_models_history = true;
+
+      try {
+        debugger
+        const limit = this.pagination.pageSize;
+        const offset = this.pagination.currentOffset;
+        
+        const url = `${this.$store.state.root_api}engine/generated-3d-models-list/?limit=${limit}&offset=${offset}`;
+
+        console.log('📡 Fetching 3D models history...', { 
+          offset: offset,
+          limit: limit 
+        });
+
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Token ${localStorage.getItem('token')}`,
+            'Accept': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const responseData = await response.json();
+        
+        console.log('✅ API Response received:', {
+          totalCount: responseData.count,
+          modelsCount: responseData.results?.models?.length || 0
+        });
+
+        // ========== NEW: Handle paginated response ==========
+        if (!responseData.results?.error) {
+          // On first load (offset=0), initialize the list
+          if (this.pagination.currentOffset === 0) {
+            this.list_history_generated_3d_models = responseData.results.models || [];
+            console.log('📌 First batch loaded');
+          } else {
+            // On "Load More", append to existing list
+            this.list_history_generated_3d_models.push(...(responseData.results.models || []));
+            console.log('📌 Additional batch appended');
+          }
+
+          // Update pagination info from API response
+          this.pagination.totalCount = responseData.count || 0;
+
+          // Calculate if more models exist
+          this.pagination.hasMoreModels = this.list_history_generated_3d_models.length < this.pagination.totalCount;
+          this.pagination.currentOffset = this.pagination.currentOffset + this.pagination.pageSize
+          console.log('✅ Pagination Status:', {
+            loaded: this.list_history_generated_3d_models.length,
+            total: this.pagination.totalCount,
+            hasMore: this.pagination.hasMoreModels,
+            // nextOffset: this.pagination.currentOffset + this.pagination.pageSize
+          });
+
+        } else {
+          throw new Error(responseData.results?.message || 'Failed to fetch models');
+        }
+
+      } catch (error) {
+        console.error('❌ Failed to fetch 3D models:', error);
+        this.error.general = error.message;
+        this.$message.error('Failed to fetch 3D models: ' + error.message);
+
+      } finally {
+        this.loading_generated_models_history = false;
+      }
+    },
+
+    /**
+     * Load available textures for the product
+     */
+    async loadAvailableTextures() {
+      try {
+        this.loadingTextures = true;
+        const store = this.$store;
+        const token = localStorage.getItem('token');
+        
+        const response = await fetch(`${store.state.root_api}product/api/products/user-textures/`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${token}`
+          }
+        });
+        
+        const result = await response.json();
+        console.log('📦 Available textures:', result);
+        
+        if (result.results?.success) {
+          const textureArray = result.results.data || [];
+          this.availableTextures = textureArray.map(texture => ({
+            id: texture?.id,
+            url: texture?.image_url || texture?.url,
+          }));
+          
+          console.log('✅ Textures loaded:', this.availableTextures.length);
+        }
+      } catch (error) {
+        console.error('❌ Error loading textures:', error);
+        this.availableTextures = [];
+      } finally {
+        this.loadingTextures = false;
+      }
+    },
+
+    addPresetTexture(texture) {
+      if (!this.selectedTextures.some(t => t.id === texture.id)) {
+        this.selectedTextures.push({
+          id: texture?.id,
+          url: texture?.url,
+        });
+      } else {
+        const index = this.selectedTextures.findIndex(t => t.id === texture.id);
+        if (index > -1) {
+          this.selectedTextures.splice(index, 1);
+        }
+      }
+    },
+
+    getTextureUrl(texture) {
       if (texture && texture.startsWith('data:')) {
         return texture;
       }
-  
       if (texture) {
         return `${this.$store.state.root_media_api}${texture}`;
       }
       return '';
-    }, 
+    },
 
-    
-  // Handle paste event
-  handlePaste(e) {
-    e.preventDefault();
-    const pastedText = (e.clipboardData || window.clipboardData).getData('text');
-    
-    // Clean the pasted text
-    let cleanValue = pastedText.replace(/[^0-9.]/g, '');
-    
-    // Ensure only one decimal point
-    const parts = cleanValue.split('.');
-    if (parts.length > 2) {
-      cleanValue = parts[0] + '.' + parts.slice(1).join('');
-    }
-    
-    // Insert cleaned value
-    const input = e.target;
-    const start = input.selectionStart;
-    const end = input.selectionEnd;
-    const currentValue = input.value;
-    
-    input.value = currentValue.substring(0, start) + cleanValue + currentValue.substring(end);
-    
-    // Trigger input event to update v-model
-    input.dispatchEvent(new Event('input'));
-  },
-  // Prevent non-numeric keys
-  allowOnlyDecimal(e) {
-    const char = String.fromCharCode(e.keyCode);
-    const value = e.target.value;
-    
-    // Allow: numbers, decimal point (only one), backspace, delete, tab, escape, enter
-    if (!/[0-9]/.test(char) && char !== '.') {
+    handlePaste(e) {
       e.preventDefault();
-      return;
-    }
-    
-    // Prevent multiple decimal points
-    if (char === '.' && value.includes('.')) {
-      e.preventDefault();
-      return;
-    }
-  },
-    // Load all categories on component mount
-    initializeFormWithDefaults(defaults) {
-    // Update form fields
-    console.log("defaults")
-    console.log(defaults)
-    this.productForm = {
-      name: defaults.name || '',
-      description: defaults.description || '',
-      category_name: defaults.category_name || [],
-      furniture_type: defaults.furniture_type || '',
-      pricing: { 
-        price: defaults.price || null 
-      },
-      dimensions: { 
-        height: defaults.height || null,
-        length: defaults.length || null,
-        width: defaults.width || null
-      },
-
-    };
-
-    // Update collections
-    this.selectedImages = defaults.images || [];
-    this.selectedColors = (defaults.colors || []).map((color, index) => ({
-      value: typeof color === 'string' ? color : color.value,
-      isPrimary: index === 0
-    }));
-    this.selectedTextures = defaults.textures || [];
-    this.selectedPbrFiles = defaults.pbrFiles || [];
-    
-    // Set 3D model URL if provided
-    if (defaults.modelUrl) {
-      this.local3dModelUrl = defaults.modelUrl;
-    }
-
-    // Handle category if provided
-    if (defaults.category_name) {
-      // If category_name is a string, convert to array for the select component
-      if (typeof defaults.category_name === 'string') {
-        this.productForm.category_name = [defaults.category_name];
+      const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+      let cleanValue = pastedText.replace(/[^0-9.]/g, '');
+      
+      const parts = cleanValue.split('.');
+      if (parts.length > 2) {
+        cleanValue = parts[0] + '.' + parts.slice(1).join('');
       }
       
-      // Pre-select in dropdown if needed
-      this.handleCategoryPreSelect(defaults.category_name);
-    }
-  },
-
-  async handleCategoryPreSelect(categoryName) {
-    // If we already have categories loaded, find and select it
-    if (this.allCategories.length > 0) {
-      const foundCategory = this.allCategories.find(
-        cat => cat.name === categoryName
-      );
+      const input = e.target;
+      const start = input.selectionStart;
+      const end = input.selectionEnd;
+      const currentValue = input.value;
       
-      if (foundCategory) {
-        // Ensure it's in the options
-        const exists = this.categoryOptions.some(
-          opt => opt.value === foundCategory.name
+      input.value = currentValue.substring(0, start) + cleanValue + currentValue.substring(end);
+      input.dispatchEvent(new Event('input'));
+    },
+
+    allowOnlyDecimal(e) {
+      const char = String.fromCharCode(e.keyCode);
+      const value = e.target.value;
+      
+      if (!/[0-9]/.test(char) && char !== '.') {
+        e.preventDefault();
+        return;
+      }
+      
+      if (char === '.' && value.includes('.')) {
+        e.preventDefault();
+        return;
+      }
+    },
+
+    initializeFormWithDefaults(defaults) {
+      this.productForm = {
+        name: defaults.name || '',
+        description: defaults.description || '',
+        category_name: defaults.category_name || [],
+        furniture_type: defaults.furniture_type || '',
+        pricing: { 
+          price: defaults.price || null 
+        },
+        dimensions: { 
+          height: defaults.height || null,
+          length: defaults.length || null,
+          width: defaults.width || null
+        },
+      };
+
+      this.selectedImages = defaults.images || [];
+      this.selectedColors = (defaults.colors || []).map((color, index) => ({
+        value: typeof color === 'string' ? color : color.value,
+        isPrimary: index === 0
+      }));
+      this.selectedTextures = defaults.textures || [];
+      this.selectedPbrFiles = defaults.pbrFiles || [];
+      
+      if (defaults.modelUrl) {
+        this.local3dModelUrl = defaults.modelUrl;
+      }
+
+      if (defaults.category_name) {
+        if (typeof defaults.category_name === 'string') {
+          this.productForm.category_name = [defaults.category_name];
+        }
+        this.handleCategoryPreSelect(defaults.category_name);
+      }
+    },
+
+    async handleCategoryPreSelect(categoryName) {
+      if (this.allCategories.length > 0) {
+        const foundCategory = this.allCategories.find(
+          cat => cat.name === categoryName
         );
         
-        if (!exists) {
-          this.categoryOptions.unshift({
-            label: foundCategory.name,
-            value: foundCategory.name,
-            data: foundCategory
-          });
+        if (foundCategory) {
+          const exists = this.categoryOptions.some(
+            opt => opt.value === foundCategory.name
+          );
+          
+          if (!exists) {
+            this.categoryOptions.unshift({
+              label: foundCategory.name,
+              value: foundCategory.name,
+              data: foundCategory
+            });
+          }
         }
       }
-    }
-  },
-    
-async loadInitialCategories() {
-  try {
-    this.loadingCategories = true;
-    const store = this.$store;
-    const token = localStorage.getItem('token');
-    
-    const response = await fetch(`${store.state.root_api}product/api/categories/`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Token ${token}`
-      }
-    });
-    
-    const result = await response.json();
-    console.log("API Response:", result);
-    
-    if (result.success) {
-      // ✅ CORRECT: result.data is already an array
-      this.allCategories = result.data || [];
-      
-      console.log('✅ All categories:', this.allCategories);
-      
-      // Map to format needed by a-select
-      this.categoryOptions = this.allCategories.map(cat => ({
-        label: cat.name,
-        value: cat.name,
-        data: cat
-      }));
-      
-      console.log('✅ Category options for dropdown:', this.categoryOptions);
-      console.log('✅ Total categories loaded:', this.allCategories.length);
-      
-    } else {
-      throw new Error(result.message || 'Failed to load categories');
-    }
-  } catch (error) {
-    console.error('❌ Error loading categories:', error);
-    this.categorySearchError = 'Error loading categories';
-  } finally {
-    this.loadingCategories = false;
-  }
-},
+    },
 
-  // Handle search with API
-  async handleCategorySearch(searchValue) {
-    console.log('🔍 Searching categories:', searchValue);
-    
-    if (this.categorySearchTimeout) {
-      clearTimeout(this.categorySearchTimeout);
-    }
-    
-    // If empty, show all categories
-    if (!searchValue || searchValue.trim().length === 0) {
-      this.categoryOptions = this.allCategories.map(cat => ({
-        label: cat.name,
-        value: cat.name,
-        data: cat
-      }));
-      return;
-    }
-    
-    this.loadingCategories = true;
-    this.categorySearchError = null;
-    
-    // Debounce the search
-    this.categorySearchTimeout = setTimeout(async () => {
+    async loadInitialCategories() {
       try {
+        this.loadingCategories = true;
         const store = this.$store;
         const token = localStorage.getItem('token');
         
-        const response = await fetch(
-          `${store.state.root_api}product/api/categories/search/?q=${encodeURIComponent(searchValue)}`,
-          {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Token ${token}`
-            }
+        const response = await fetch(`${store.state.root_api}product/api/categories/`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${token}`
           }
-        );
+        });
         
         const result = await response.json();
         
         if (result.success) {
-          // Format search results as options
-          this.categoryOptions = result.data.map(cat => ({
+          this.allCategories = result.data || [];
+          this.categoryOptions = this.allCategories.map(cat => ({
             label: cat.name,
             value: cat.name,
             data: cat
           }));
-          console.log('✅ Search results found:', this.categoryOptions.length);
-        } else {
-          this.categoryOptions = [];
-          console.log('ℹ️ No categories found for search:', searchValue);
+          
+          console.log('✅ Categories loaded:', this.allCategories.length);
         }
-        
       } catch (error) {
-        console.error('❌ Error searching categories:', error);
-        this.categorySearchError = 'Error searching categories';
-        this.categoryOptions = [];
+        console.error('❌ Error loading categories:', error);
+        this.categorySearchError = 'Error loading categories';
       } finally {
         this.loadingCategories = false;
       }
-    }, 300); // 300ms debounce
-  },
+    },
 
-   // Handle when user focuses on the select
-  handleSelectFocus() {
-    console.log('🔍 Select focused - showing all categories');
-    if (this.categoryOptions.length === 0) {
-      this.categoryOptions = this.allCategories.map(cat => ({
-        label: cat.name,
-        value: cat.name,
-        data: cat
-      }));
-    }
-  },
-  
-  // Handle category selection - ONLY ALLOW ONE
-  handleCategoryChange(value) {
-    console.log('📌 Category changed:', value);
-    this.categorySearchError = null;
-    
-    // mode="tags" returns an array, but we want only one
-    if (Array.isArray(value)) {
-      // Keep only the last selected item (single select)
-      if (value.length > 1) {
-        console.log('⚠️ Only one category allowed, keeping last selected');
-        this.productForm.category_name = [value[value.length - 1]];
-      } else if (value.length === 1) {
-        console.log('✅ Category selected:', value[0]);
-        this.productForm.category_name = value;
-      } else {
-        console.log('🗑️ Category cleared');
-        this.productForm.category_name = [];
+    async handleCategorySearch(searchValue) {
+      console.log('🔍 Searching categories:', searchValue);
+      
+      if (this.categorySearchTimeout) {
+        clearTimeout(this.categorySearchTimeout);
       }
-    } else {
-      // If somehow it's a string, convert to array
-      this.productForm.category_name = value ? [value] : [];
-    }
+      
+      if (!searchValue || searchValue.trim().length === 0) {
+        this.categoryOptions = this.allCategories.map(cat => ({
+          label: cat.name,
+          value: cat.name,
+          data: cat
+        }));
+        return;
+      }
+      
+      this.loadingCategories = true;
+      this.categorySearchError = null;
+      
+      this.categorySearchTimeout = setTimeout(async () => {
+        try {
+          const store = this.$store;
+          const token = localStorage.getItem('token');
+          
+          const response = await fetch(
+            `${store.state.root_api}product/api/categories/search/?q=${encodeURIComponent(searchValue)}`,
+            {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Token ${token}`
+              }
+            }
+          );
+          
+          const result = await response.json();
+          
+          if (result.success) {
+            this.categoryOptions = result.data.map(cat => ({
+              label: cat.name,
+              value: cat.name,
+              data: cat
+            }));
+          }
+        } catch (error) {
+          console.error('❌ Error searching categories:', error);
+          this.categorySearchError = 'Error searching categories';
+          this.categoryOptions = [];
+        } finally {
+          this.loadingCategories = false;
+        }
+      }, 300);
+    },
+
+    handleSelectFocus() {
+      if (this.categoryOptions.length === 0) {
+        this.categoryOptions = this.allCategories.map(cat => ({
+          label: cat.name,
+          value: cat.name,
+          data: cat
+        }));
+      }
+    },
     
-    console.log('Final value stored:', this.productForm.category_name);
-  },
-  
-    // 3D Model Upload Methods
+    handleCategoryChange(value) {
+      this.categorySearchError = null;
+      
+      if (Array.isArray(value)) {
+        if (value.length > 1) {
+          this.productForm.category_name = [value[value.length - 1]];
+        } else if (value.length === 1) {
+          this.productForm.category_name = value;
+        } else {
+          this.productForm.category_name = [];
+        }
+      } else {
+        this.productForm.category_name = value ? [value] : [];
+      }
+    },
+    
     upload3dModel() {
       this.$refs.modelInput?.click();
     },
@@ -1331,12 +1427,12 @@ async loadInitialCategories() {
       const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
 
       if (!validTypes.includes(fileExtension)) {
-        console.error(`Invalid file type for ${file.name}. Please upload GLTF or GLB files only.`);
+        console.error(`Invalid file type: ${file.name}`);
         return false;
       }
 
       if (file.size > maxSize) {
-        console.error(`File ${file.name} is too large. Please upload files smaller than 50MB.`);
+        console.error(`File too large: ${file.name}`);
         return false;
       }
 
@@ -1351,7 +1447,7 @@ async loadInitialCategories() {
         name: file.name,
         size: (file.size / 1024 / 1024).toFixed(2) + ' MB'
       };
-      console.log('✅ 3D Model loaded locally:', file.name);
+      console.log('✅ 3D Model loaded:', file.name);
     },
 
     remove3dModel() {
@@ -1376,13 +1472,7 @@ async loadInitialCategories() {
         }
 
         const url = `${store.state.root_api}product/api-product-owner/get-rendered-3d-model-details/${renderedModal3dId}/`;
-        
-        console.log('📡 Fetching generated 3d models history...', { generated3dModelId, renderedModal3dId });
-        
         const token = localStorage.getItem('token');
-        if (!token) {
-          throw new Error('No authentication token found');
-        }
 
         const response = await fetch(url, {
           method: 'GET',
@@ -1403,73 +1493,26 @@ async loadInitialCategories() {
           console.log('✅ 3D Model Details:', details);
           this.modelDetails = details;
           return details;
-        } else {
-          throw new Error(responseData.message || 'Failed to fetch 3D model details');
         }
         
       } catch (error) {
-        console.error("❌ Failed to fetch 3D model details:", error);
+        console.error("❌ Error fetching 3D model details:", error);
         this.error.general = error.message;
       } finally {
         this.loading3dModelDetails = false;
       }
     },
 
-    async fetch_Categories_available() {
-      try {
-        const store = this.$store;
-        const url = `${store.state.root_api}product/api/categories/`;
-        
-        console.log('📡 Fetching Product categories Available history...');
-        
-        const token = localStorage.getItem('token');
-        if (!token) {
-          throw new Error('No authentication token found');
-        }
-
-        const response = await fetch(url, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Token ${token}`
-          }
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const responseData = await response.json();
-        console.log('Categories Available:', responseData);
-        
-        if (responseData.success) {
-          
-          const details = responseData.data || {};
-          console.log('Categories Available:', details);
-          this.categories_available = details;
-          return details;
-        } else {
-          throw new Error(responseData.message || 'Failed to categories Available model details');
-        }
-        
-      } catch (error) {
-        console.error("❌ Failed to categories Available model details:", error);
-      } 
+    resetForm() {
+      this.initializeFormWithDefaults(this.defaultValues);
+      
+      if (!this.defaultValues.modelUrl && this.local3dModelUrl) {
+        URL.revokeObjectURL(this.local3dModelUrl);
+        this.local3dModelUrl = null;
+        this.uploaded3dModelFile = null;
+      }
     },
 
-  resetForm() {
-  // Reset to default values instead of empty
-  this.initializeFormWithDefaults(this.defaultValues);
-  
-  // Clear 3D model if no default model URL
-  if (!this.defaultValues.modelUrl && this.local3dModelUrl) {
-    URL.revokeObjectURL(this.local3dModelUrl);
-    this.local3dModelUrl = null;
-    this.uploaded3dModelFile = null;
-  }
-},
-
-    // Image Upload Methods
     uploadImages() {
       this.$refs.imageInput?.click();
     },
@@ -1513,45 +1556,41 @@ async loadInitialCategories() {
       }
     },
 
-    // Color Methods
     addAvailableColor() {
-    if (this.tempColor && !this.selectedColors.some(c => c.value === this.tempColor)) {
-      // Create color object with isPrimary flag
-      const colorObj = {
-        value: this.tempColor,
-        isPrimary: this.selectedColors.length === 0 // First color is primary
-      };
-      this.selectedColors.push(colorObj);
-      this.tempColor = '#000000';
-    }
-  },
+      if (this.tempColor && !this.selectedColors.some(c => c.value === this.tempColor)) {
+        const colorObj = {
+          value: this.tempColor,
+          isPrimary: this.selectedColors.length === 0
+        };
+        this.selectedColors.push(colorObj);
+        this.tempColor = '#000000';
+      }
+    },
 
-   addPresetColor(color) {
-  if (!this.selectedColors.some(c => c.value === color)) {  // ✅ Check using .some()
-    const colorObj = {
-      value: color,
-      isPrimary: this.selectedColors.length === 0
-    };
-    this.selectedColors.push(colorObj);  // ✅ Push object, not string
-  }
-},
+    addPresetColor(color) {
+      if (!this.selectedColors.some(c => c.value === color)) {
+        const colorObj = {
+          value: color,
+          isPrimary: this.selectedColors.length === 0
+        };
+        this.selectedColors.push(colorObj);
+      }
+    },
 
-  setPrimaryColor(color) {
-    this.selectedColors.forEach(c => c.isPrimary = false);
-    color.isPrimary = true;
-  },
+    setPrimaryColor(color) {
+      this.selectedColors.forEach(c => c.isPrimary = false);
+      color.isPrimary = true;
+    },
 
-  removeColor(index) {
-    const removedColor = this.selectedColors[index];
-    this.selectedColors.splice(index, 1);
-    
-    // If removed color was primary and there are colors left, make first one primary
-    if (removedColor.isPrimary && this.selectedColors.length > 0) {
-      this.selectedColors[0].isPrimary = true;
-    }
-  },
+    removeColor(index) {
+      const removedColor = this.selectedColors[index];
+      this.selectedColors.splice(index, 1);
+      
+      if (removedColor.isPrimary && this.selectedColors.length > 0) {
+        this.selectedColors[0].isPrimary = true;
+      }
+    },
 
-    // PBR File Methods
     uploadPbr() {
       this.$refs.pbrInput?.click();
     },
@@ -1576,12 +1615,12 @@ async loadInitialCategories() {
       const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
 
       if (!validTypes.includes(fileExtension)) {
-        console.error(`Invalid file type for ${file.name}. Please upload PBR, ZIP, RAR, 7Z, TAR, or GZ files only.`);
+        console.error(`Invalid PBR file type: ${file.name}`);
         return false;
       }
 
       if (file.size > maxSize) {
-        console.error(`File ${file.name} is too large. Please upload files smaller than 50MB.`);
+        console.error(`PBR file too large: ${file.name}`);
         return false;
       }
 
@@ -1592,7 +1631,6 @@ async loadInitialCategories() {
       this.selectedPbrFiles.splice(index, 1);
     },
 
-    // Texture Methods
     uploadTexture() {
       this.$refs.textureInput?.click();
     },
@@ -1604,7 +1642,7 @@ async loadInitialCategories() {
           const reader = new FileReader();
           reader.onload = (e) => {
             this.selectedTextures.push({ 
-              id: null, // Mark as custom uploaded file
+              id: null,
               file, 
               name: file.name,
               url: e.target.result 
@@ -1625,19 +1663,18 @@ async loadInitialCategories() {
       const maxSize = 10 * 1024 * 1024;
 
       if (!validTypes.includes(file.type)) {
-        console.error(`Invalid file type for ${file.name}. Please upload JPEG, JPG, or PNG files only.`);
+        console.error(`Invalid image file type: ${file.name}`);
         return false;
       }
 
       if (file.size > maxSize) {
-        console.error(`File ${file.name} is too large. Please upload files smaller than 10MB.`);
+        console.error(`Image file too large: ${file.name}`);
         return false;
       }
 
       return true;
     },
 
-    // Form Validation & Save
     validateForm() {
       if (!this.productForm.name?.trim()) {
         console.error('Product name is required');
@@ -1653,11 +1690,10 @@ async loadInitialCategories() {
       }
       if (this.selectedImages.length === 0) {
         this.$message.error('At least one product image is required');
-        console.error('At least one product image is required');
         return false;
       }
       if (!this.local3dModelUrl && !this.rendered_modal_3D_id) {
-        console.error('3D model is required (either upload a new one or use existing)');
+        console.error('3D model is required');
         return false;
       }
       return true;
@@ -1672,23 +1708,21 @@ async loadInitialCategories() {
         const store = this.$store;
         const token = localStorage.getItem('token');
         const formData = new FormData();
-        formData.append('variation_id',this.prepopulatedData.id);
+        
+        formData.append('variation_id', this.prepopulatedData.id);
         formData.append('name', this.productForm.name);
         formData.append('description', this.productForm.description || '');
         formData.append('category_name', this.categoryNameDisplay);
+        
         if (this.productForm.furniture_type) {
           formData.append('furniture_type', this.productForm.furniture_type);
         }
+        
         formData.append('price', this.productForm.pricing.price);
         
-        // Add 3D model - either uploaded file or existing rendered model ID
         if (this.uploaded3dModelFile) {
-          // formData.append('model_file', this.uploaded3dModelFile.file);
           formData.append('rendered_modal_3d_id', this.model_data_instance_id);
-        } 
-        // else if (this.rendered_modal_3D_id) {
-        //   formData.append('rendered_modal_3d_id', this.rendered_modal_3D_id);
-        // }
+        }
 
         if (this.productForm.dimensions.height) {
           formData.append('height', this.productForm.dimensions.height);
@@ -1712,19 +1746,14 @@ async loadInitialCategories() {
         });
 
         if (this.selectedColors.length > 0) {
-        const colorsData = this.selectedColors.map(c => ({
-          value: c.value,
-          isPrimary: c.isPrimary
-        }));
-        formData.append('available_colors', JSON.stringify(colorsData));
-      }
+          const colorsData = this.selectedColors.map(c => ({
+            value: c.value,
+            isPrimary: c.isPrimary
+          }));
+          formData.append('available_colors', JSON.stringify(colorsData));
+        }
 
-        // this.selectedTextures.forEach(texture => {
-        //   formData.append('textures', texture.file);
-        // });
-
-         const textureIds = [];
-
+        const textureIds = [];
         this.selectedTextures.forEach((texture) => {
           if (texture.file) {
             formData.append('textures', texture.file);
@@ -1737,17 +1766,6 @@ async loadInitialCategories() {
           formData.append('texture_ids', JSON.stringify(textureIds));
         }
 
-        console.log(' Sending product data:', {
-          name: this.productForm.name,
-          category_name: this.productForm.category_name,
-          has_local_model: !!this.uploaded3dModelFile,
-          rendered_modal_3D_id: this.rendered_modal_3D_id,
-          images_count: this.selectedImages.length,
-          colors_count: this.selectedColors.length,
-          textures_count: this.selectedTextures.length,
-          pbr_files_count: this.selectedPbrFiles.length
-        });
-
         const response = await fetch(`${store.state.root_api}product/api-product-owner/products/`, {
           method: 'POST',
           headers: { 
@@ -1759,22 +1777,17 @@ async loadInitialCategories() {
         const result = await response.json();
 
         if (response.ok && result.success) {
-          console.log('✅ Product created successfully:', result.data);
-          console.log('Product created successfully!');
-          
+          console.log('✅ Product created:', result.data);
           this.$emit('product-created', result.data);
           this.$emit('update:visible', false);
           this.resetForm();
-          
         } else {
-          console.error('❌ API Error:', result.message || 'Failed to create product');
           throw new Error(result.message || 'Failed to create product');
         }
 
       } catch (error) {
         console.error('❌ Error creating product:', error);
-        console.error('Error creating product. Please try again.');
-        
+        this.$message.error('Error creating product. Please try again.');
       } finally {
         this.isSaving = false;
       }
@@ -1788,7 +1801,6 @@ async loadInitialCategories() {
   }
 };
 </script>
-
 
 <style scoped>
 .add-product-modal :deep(.ant-modal-header) {
