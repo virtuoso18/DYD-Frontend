@@ -1,58 +1,152 @@
 <template>
   <div class="ai-catalog-section">
-
-    <div class="apply-section md:hidden ">
-      <a-button type="primary" size="large" block class="apply-button" @click="updateItemRendering()">
+    <div class="apply-section md:hidden">
+      <a-button
+        type="primary"
+        size="large"
+        :disabled="selected_texture === null"
+        block
+        class="apply-button"
+        @click="updateItemRendering()"
+      >
         Apply
       </a-button>
     </div>
-   
-    <div class="ai-catalog-header ">
-      <router-link :to="'/'+$route.query.brand">
-        <div style="display: flex;gap:10px;">
-          <a-avatar size="medium" style="border:1px solid rgba(0,0,0,0.2)" :src="this.$store.state.root_media_api+brand_data.business_picture"></a-avatar>
-          <span class="!text-gray-700 py-3"  style="
-          font-family: Poppins;
-          font-weight: 700;
-          font-style: normal;
-          font-size: 16px;
-          line-height: 20px;
-          letter-spacing: 0;margin-top:-6px
-          ">AI Catalog</span>
-        <!-- {{ brand_data }} -->
+
+    <div class="ai-catalog-header">
+      <router-link :to="'/' + $route.query.brand">
+        <div style="display: flex; gap: 10px">
+          <a-avatar
+            size="medium"
+            style="border: 1px solid rgba(0, 0, 0, 0.2)"
+            :src="
+              this.$store.state.root_media_api + brand_data.business_picture
+            "
+          ></a-avatar>
+          <span
+            class="!text-gray-700 py-3"
+            style="
+              font-family: Poppins;
+              font-weight: 700;
+              font-style: normal;
+              font-size: 16px;
+              line-height: 20px;
+              letter-spacing: 0;
+              margin-top: -6px;
+            "
+            >AI Catalog</span
+          >
+          <!-- {{ brand_data }} -->
           <!-- <b>  {{truncateChars(brand_data.name,limit=15)}}</b> -->
         </div>
       </router-link>
-      <a-button size='small' type="default" class="see-all-link" @click="seeAllClicked">See all</a-button>
+      <a-button
+        size="small"
+        type="default"
+        class="see-all-link"
+        @click="seeAllClicked"
+        >See all</a-button
+      >
     </div>
-    
+
     <!-- Fixed Search Bar -->
     <div class="search-section">
-      <a-input 
-        v-model:value="searchText" 
+      <a-input
+        v-model:value="searchText"
         placeholder="Search"
         class="search-input"
         @input="handleSearchChange"
       >
         <template #prefix>
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path d="M7.33333 12.6667C10.2789 12.6667 12.6667 10.2789 12.6667 7.33333C12.6667 4.38781 10.2789 2 7.33333 2C4.38781 2 2 4.38781 2 7.33333C2 10.2789 4.38781 12.6667 7.33333 12.6667Z" stroke="#999" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M14 14L11.1 11.1" stroke="#999" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+          >
+            <path
+              d="M7.33333 12.6667C10.2789 12.6667 12.6667 10.2789 12.6667 7.33333C12.6667 4.38781 10.2789 2 7.33333 2C4.38781 2 2 4.38781 2 7.33333C2 10.2789 4.38781 12.6667 7.33333 12.6667Z"
+              stroke="#999"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M14 14L11.1 11.1"
+              stroke="#999"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
           </svg>
         </template>
       </a-input>
       <div class="filter-icons">
-        <button @click="showGrid = false" class="filter-btn" :class="{ active: !showGrid }">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <path d="M5 10H15M2.5 5H17.5M7.5 15H12.5" stroke="#666" stroke-width="1.5" stroke-linecap="round"/>
+        <button
+          @click="showGrid = false"
+          class="filter-btn"
+          :class="{ active: !showGrid }"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 20 20"
+            fill="none"
+          >
+            <path
+              d="M5 10H15M2.5 5H17.5M7.5 15H12.5"
+              stroke="#666"
+              stroke-width="1.5"
+              stroke-linecap="round"
+            />
           </svg>
         </button>
-        <button @click="showGrid = true" class="filter-btn" :class="{ active: showGrid }">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <rect x="3" y="3" width="6" height="6" stroke="#666" stroke-width="1.5"/>
-            <rect x="11" y="3" width="6" height="6" stroke="#666" stroke-width="1.5"/>
-            <rect x="3" y="11" width="6" height="6" stroke="#666" stroke-width="1.5"/>
-            <rect x="11" y="11" width="6" height="6" stroke="#666" stroke-width="1.5"/>
+        <button
+          @click="showGrid = true"
+          class="filter-btn"
+          :class="{ active: showGrid }"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 20 20"
+            fill="none"
+          >
+            <rect
+              x="3"
+              y="3"
+              width="6"
+              height="6"
+              stroke="#666"
+              stroke-width="1.5"
+            />
+            <rect
+              x="11"
+              y="3"
+              width="6"
+              height="6"
+              stroke="#666"
+              stroke-width="1.5"
+            />
+            <rect
+              x="3"
+              y="11"
+              width="6"
+              height="6"
+              stroke="#666"
+              stroke-width="1.5"
+            />
+            <rect
+              x="11"
+              y="11"
+              width="6"
+              height="6"
+              stroke="#666"
+              stroke-width="1.5"
+            />
           </svg>
         </button>
       </div>
@@ -66,71 +160,153 @@
       </div>
 
       <!-- Product Grid/List -->
-      <div v-if="!loading || catalogItems.length > 0" class="product-container" :class="{ 'grid-view': showGrid, 'list-view': !showGrid }">
-        
-        <div v-for="(item, index) in catalogItems" :key="index" style="
-background: #f2f2f2;
-border: none;
-border-radius: 4px;
-padding:5px;
-"
- @click="selectTexture(item.id)"
-:style="selected_texture===item.id ? 'border:1px solid blue': ''">
+      <div
+        v-if="!loading || catalogItems.length > 0"
+        class="product-container"
+        :class="{ 'grid-view': showGrid, 'list-view': !showGrid }"
+      >
+        <div
+          v-for="(item, index) in catalogItems"
+          :key="index"
+          style="
+            background: #f2f2f2;
+            border: none;
+            border-radius: 4px;
+            padding: 5px;
+          "
+          @click="selectTexture(item.id)"
+          :style="selected_texture === item.id ? 'border:1px solid blue' : ''"
+        >
           <div class="product-item">
+            <div
+              class="product-image"
+              style="position: relative; overflow: hidden"
+            >
+              <!-- Skeleton -->
+              <div
+                v-if="!imageLoadedMap[item.id]"
+                class="texture-image-skeleton"
+              ></div>
 
-           <div class="product-image" style="position: relative; overflow: hidden;">
-  <!-- Skeleton -->
-  <div
-    v-if="!imageLoadedMap[item.id]"
-    class="texture-image-skeleton"
-  ></div>
+              <!-- Preload image -->
+              <img
+                :src="$store.state.root_media_api + item.texture_image"
+                style="position: absolute; width: 0; height: 0; opacity: 0"
+                @load="onTextureImageLoad(item.id)"
+                alt=""
+              />
 
-  <!-- Preload image -->
-  <img
-    :src="$store.state.root_media_api + item.texture_image"
-    style="position:absolute;width:0;height:0;opacity:0;"
-    @load="onTextureImageLoad(item.id)"
-    alt=""
-  />
-
-  <!-- Visible image -->
-  <img
-    v-show="imageLoadedMap[item.id]"
-    :src="$store.state.root_media_api + item.texture_image"
-    :alt="item.title"
-    class="texture-image"
-  />
-</div>
+              <!-- Visible image -->
+              <img
+                v-show="imageLoadedMap[item.id]"
+                :src="$store.state.root_media_api + item.texture_image"
+                :alt="item.title"
+                class="texture-image"
+              />
+            </div>
 
             <div class="product-info">
-              <div style="display:flex;justify-content: space-between;" class="">
-                <div style="background-color: grey;color :white;border-radius:5px;padding-left:5px;padding-right:5px;padding-top:1px;height:22px;font-size:12px">
+              <div
+                style="display: flex; justify-content: space-between"
+                class=""
+              >
+                <div
+                  style="
+                    background-color: grey;
+                    color: white;
+                    border-radius: 5px;
+                    padding-left: 5px;
+                    padding-right: 5px;
+                    padding-top: 1px;
+                    height: 22px;
+                    font-size: 12px;
+                  "
+                >
                   Floor
                 </div>
-                <div class="!text-gray-700" style="padding:3px;border:1px solid grey;border-radius:5px;padding-left:5px;padding-right:5px;padding-top:1px;height:22px;font-size:12px">AR</div>
-              </div>
-              <div class="product-name">{{ truncateText( item.title || 'No description available', 3) }}</div>
-              
-              <div class="product-details" style="display:flex;justify-content: space-between;">
-                <span class="product-color">Colors </span>
-                <div style="display: flex; gap: 4px; align-items: center; margin-left: 8px;">
-                  <div v-for="color in item.colors_available.slice(0, 3)" :key="color.id" class="color-dot" :style="{ backgroundColor: color.color_hex }"></div>
+                <div
+                  class="!text-gray-700"
+                  style="
+                    padding: 3px;
+                    border: 1px solid grey;
+                    border-radius: 5px;
+                    padding-left: 5px;
+                    padding-right: 5px;
+                    padding-top: 1px;
+                    height: 22px;
+                    font-size: 12px;
+                  "
+                >
+                  AR
                 </div>
               </div>
-              <div class="product-price">Price <span style="font-weight: 600;">$ {{ item.sale_price_per_sqm || 0 }}</span></div>
+              <div class="product-name">
+                {{ truncateText(item.title || "No description available", 3) }}
+              </div>
+
+              <div
+                class="product-details"
+                style="display: flex; justify-content: space-between"
+              >
+                <span class="product-color">Colors </span>
+                <div
+                  style="
+                    display: flex;
+                    gap: 4px;
+                    align-items: center;
+                    margin-left: 8px;
+                  "
+                >
+                  <div
+                    v-for="color in item.colors_available.slice(0, 3)"
+                    :key="color.id"
+                    class="color-dot"
+                    :style="{ backgroundColor: color.color_hex }"
+                  ></div>
+                </div>
+              </div>
+              <div class="product-price">
+                Price
+                <span style="font-weight: 600"
+                  >$ {{ item.sale_price_per_sqm || 0 }}</span
+                >
+              </div>
             </div>
           </div>
 
           <a-row>
-            <a-col :span="18" style="padding-right:5px">
-              <a-button  block type="default" @click.stop="this.$router.push('/'+item.business_slug+'/'+'floor'+'/'+item.id)"  style=" border: none;">
+            <a-col :span="18" style="padding-right: 5px">
+              <a-button
+                block
+                type="default"
+                @click.stop="
+                  this.$router.push(
+                    '/' + item.business_slug + '/' + 'floor' + '/' + item.id,
+                  )
+                "
+                style="border: none"
+              >
                 Product Detail
               </a-button>
             </a-col>
             <a-col :span="6" style="">
-              <a-button  block type="default" style="padding:0;display: flex;justify-content: center;align-items: center; border: none;" @click.stop="toggleLike(item.id, index)">
-                  <HeartFilled v-if="item.is_liked" style="color: red; font-size: 18px;" />
-                  <HeartOutlined v-else style="font-size: 18px;" />
+              <a-button
+                block
+                type="default"
+                style="
+                  padding: 0;
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  border: none;
+                "
+                @click.stop="toggleLike(item.id, index)"
+              >
+                <HeartFilled
+                  v-if="item.is_liked"
+                  style="color: red; font-size: 18px"
+                />
+                <HeartOutlined v-else style="font-size: 18px" />
               </a-button>
             </a-col>
           </a-row>
@@ -138,16 +314,19 @@ padding:5px;
       </div>
 
       <!-- Load More Button -->
-      <div v-if="catalogItems.length > 0 && paginationInfo.has_next" class="load-more-container">
-        <a-button 
-          block 
-          type="default" 
+      <div
+        v-if="catalogItems.length > 0 && paginationInfo.has_next"
+        class="load-more-container"
+      >
+        <a-button
+          block
+          type="default"
           size="large"
           :loading="loadingMore"
           @click="loadMoreItems"
           class="load-more-btn"
         >
-          {{ loadingMore ? 'Loading...' : 'Load More' }}
+          {{ loadingMore ? "Loading..." : "Load More" }}
         </a-button>
       </div>
 
@@ -156,8 +335,16 @@ padding:5px;
         <p>No products found</p>
       </div>
     </div>
-<div class="apply-section hidden md:block">
-      <a-button type="primary" size="large" block class="apply-button" @click="updateItemRendering()">
+    <div class="apply-section hidden md:block">
+      <p>idddd{{ this.selected_texture }}</p>
+      <a-button
+        type="primary"
+        size="large"
+        :disabled="selected_texture === null"
+        block
+        class="apply-button"
+        @click="updateItemRendering()"
+      >
         Apply
       </a-button>
     </div>
@@ -165,18 +352,18 @@ padding:5px;
 </template>
 
 <script>
-import { HeartFilled, HeartOutlined } from '@ant-design/icons-vue';
+import { HeartFilled, HeartOutlined } from "@ant-design/icons-vue";
 
 export default {
-  name: 'AiCatalog',
-  
-  props:{
-    brand_data:Object
+  name: "AiCatalog",
+
+  props: {
+    brand_data: Object,
   },
   data() {
     return {
-      searchText: '',
-      selected_texture: '',
+      searchText: "",
+      selected_texture: null,
       loading: false,
       loadingMore: false,
       error: null,
@@ -197,36 +384,32 @@ export default {
   },
   components: {
     HeartFilled,
-    HeartOutlined
+    HeartOutlined,
   },
   mounted() {
     const route = this.$route;
     this.brand = route.query.brand;
 
     if (this.brand) {
-      console.log('Loading catalogue for brand:', this.brand);
+      console.log("Loading catalogue for brand:", this.brand);
       this.fetchCatalogItems(this.brand, 1);
     } else {
-      console.log('Loading self products');
+      console.log("Loading self products");
       this.fetchCatalogItems(null, 1);
     }
   },
   methods: {
-      truncateChars(text, limit = 11) {
-  if (!text) return ''
-  return text.length > limit
-    ? text.slice(0, limit) + '...'
-    : text
-},
+    truncateChars(text, limit = 11) {
+      if (!text) return "";
+      return text.length > limit ? text.slice(0, limit) + "..." : text;
+    },
 
- onTextureImageLoad(id) {
-    this.imageLoadedMap[id] = false;
-    setTimeout(() => {
-      this.imageLoadedMap[id] = true;
-    }, 1000);
-  },
-
-
+    onTextureImageLoad(id) {
+      this.imageLoadedMap[id] = false;
+      setTimeout(() => {
+        this.imageLoadedMap[id] = true;
+      }, 1000);
+    },
 
     async fetchCatalogItems(brand = null, page = 1, isLoadMore = false) {
       if (page === 1 && !isLoadMore) {
@@ -238,13 +421,13 @@ export default {
 
       try {
         let url = `${this.$store.state.root_api}room/api/floors/`;
-        
+
         if (brand) {
           url = `${this.$store.state.root_api}room/api/load-brand-products/floors/${brand}`;
         }
 
         // Add pagination parameters
-        const separator = url.includes('?') ? '&' : '?';
+        const separator = url.includes("?") ? "&" : "?";
         url += `${separator}page=${page}&page_size=${this.pageSize}`;
 
         // Add search parameter if exists
@@ -254,8 +437,8 @@ export default {
 
         const response = await fetch(url, {
           headers: {
-            'Authorization': `Token ${localStorage.getItem('token')}`
-          }
+            Authorization: `Token ${localStorage.getItem("token")}`,
+          },
         });
 
         const data = await response.json();
@@ -278,7 +461,7 @@ export default {
         }
       } catch (error) {
         console.error("Failed to fetch:", error);
-        this.$message.error('Failed to load products');
+        this.$message.error("Failed to load products");
       } finally {
         this.loading = false;
         this.loadingMore = false;
@@ -300,14 +483,14 @@ export default {
     },
 
     truncateText(text, wordLimit) {
-      if (!text) return '';
-      const words = text.split(' ');
+      if (!text) return "";
+      const words = text.split(" ");
       if (words.length <= wordLimit) return text;
-      return words.slice(0, wordLimit).join(' ') + '...';
+      return words.slice(0, wordLimit).join(" ") + "...";
     },
 
     seeAllClicked() {
-      this.$emit('floor-see-all', true);
+      this.$emit("floor-see-all", true);
     },
 
     selectTexture(uuid) {
@@ -316,16 +499,16 @@ export default {
     },
 
     updateItemRendering() {
-      this.$emit('texture-selected', this.selected_texture);
+      this.$emit("texture-selected", this.selected_texture);
     },
 
     async toggleLike(itemId, itemIndex) {
       try {
-        const token = localStorage.getItem('token');
-        
+        const token = localStorage.getItem("token");
+
         // Check if user is authenticated
         if (!token) {
-          this.$message.warning('Please login to add favorites');
+          this.$message.warning("Please login to add favorites");
           return;
         }
 
@@ -338,33 +521,34 @@ export default {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              "Authorization": `Token ${token}`,
+              Authorization: `Token ${token}`,
             },
             body: JSON.stringify({
               id: itemId,
-              type: 'floor_texture',
+              type: "floor_texture",
             }),
-          }
+          },
         );
 
         const data = await response.json();
 
         // Update the item's like status
         this.catalogItems[itemIndex].is_liked = data.favorited;
-        
-        // Show success message
-        const message = data.favorited ? 'Added to favorites' : 'Removed from favorites';
-        this.$message.success(message);
 
+        // Show success message
+        const message = data.favorited
+          ? "Added to favorites"
+          : "Removed from favorites";
+        this.$message.success(message);
       } catch (error) {
         console.error("Like toggle failed", error);
-        this.$message.error('Failed to update favorite');
+        this.$message.error("Failed to update favorite");
       } finally {
         // Remove from toggling set
         this.likeTogglingIds.delete(itemId);
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -378,7 +562,6 @@ export default {
   .ai-catalog-section {
     height: 77vh;
   }
-  
 }
 
 .ai-catalog-header {
@@ -466,17 +649,11 @@ export default {
   gap: 12px;
 }
 
-
 .texture-image-skeleton {
   width: 100%;
   height: 200px; /* adjust to match your product-image height */
   border-radius: 8px;
-  background: linear-gradient(
-    110deg,
-    #e5e7eb 8%,
-    #f9fafb 18%,
-    #e5e7eb 33%
-  );
+  background: linear-gradient(110deg, #e5e7eb 8%, #f9fafb 18%, #e5e7eb 33%);
   background-size: 200% 100%;
   animation: texture-shimmer 1.6s infinite linear;
 }
@@ -494,9 +671,6 @@ export default {
   border-radius: 8px;
 }
 
-
-
-
 .filter-btn {
   padding: 3px;
   border: 1px solid #d9d9d9;
@@ -509,8 +683,8 @@ export default {
 }
 
 .filter-btn.active {
-  background: #3B63FB;
-  border-color: #3B63FB;
+  background: #3b63fb;
+  border-color: #3b63fb;
 }
 
 .filter-btn.active svg path,
@@ -641,8 +815,8 @@ export default {
 
 .apply-section {
   flex-shrink: 0;
- 
-  padding-top: 8px
+
+  padding-top: 8px;
 }
 
 .apply-button {
@@ -675,8 +849,9 @@ export default {
 
 @media (max-width: 768px) {
   .apply-section {
-  padding-bottom: 20px;}
- 
+    padding-bottom: 20px;
+  }
+
   .list-view .product-image {
     width: 100px;
     height: 100px;

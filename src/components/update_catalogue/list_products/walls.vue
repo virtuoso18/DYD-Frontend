@@ -1,7 +1,7 @@
 <template>
   <div class="ai-catalog-section !pt-8 sm:!pt-0">
     <div class="apply-section md:hidden">
-      <a-button type="primary" size="large" block class="apply-button" @click="updateItemRendering()">
+      <a-button type="primary" size="large" :disabled="selected_texture === null" block class="apply-button" @click="updateItemRendering()">
         Apply
       </a-button>
     </div>
@@ -176,7 +176,7 @@ padding:5px;" @click="selectTexture(item.id)"
     </div>
 
      <div class="apply-section hidden md:block">
-      <a-button type="primary" size="large" block class="apply-button" @click="updateItemRendering()">
+      <a-button type="primary" size="large" :disabled="selected_texture === null" block class="apply-button" @click="updateItemRendering()">
         Apply
       </a-button>
     </div>
