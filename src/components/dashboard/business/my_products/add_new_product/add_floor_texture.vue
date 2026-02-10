@@ -378,7 +378,7 @@
                 
                       <!-- Description Field -->
                       <div style="margin-bottom: 16px;">
-                        <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Description</label>
+                        <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Description<span style="color: red;">*</span></label>
                         <a-textarea 
                           v-model:value="form.description"
                           :rows="3"
@@ -402,7 +402,7 @@
                         </a-col>
                 
                           <a-col :span="12">
-                            <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Sale Price per SQM</label>
+                            <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Sale Price per SQM <span style="color: red;">*</span></label>
                             <a-input-number 
                               v-model:value="form.sale_price_per_sqm" 
                               :min="0"
@@ -487,7 +487,7 @@
                           </a-col> -->
                           
                           <a-col :span="12">
-                            <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Size Width (cm)</label>
+                            <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Size Width (cm) <span style="color: red;">*</span></label>
                             <a-input-number 
                               v-model:value="form.size_width" 
                               :min="0.01"
@@ -497,7 +497,7 @@
                             />
                           </a-col>
                           <a-col :span="12">
-                            <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Size Height (cm)</label>
+                            <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Size Height (cm) <span style="color: red;">*</span></label>
                             <a-input-number 
                               v-model:value="form.size_height" 
                               :min="0.01"
@@ -709,6 +709,22 @@ export default defineComponent({
       if (!form.texture_style) {
         errors.push('Texture Style is required');
       }
+
+       // NEW: sale price per sqm
+  if (form.sale_price_per_sqm === null || form.sale_price_per_sqm === undefined || form.sale_price_per_sqm <= 0) {
+    errors.push('Sale Price per SQM is required and must be greater than 0');
+  }
+
+  // NEW: tile width
+  if (form.size_width === null || form.size_width === undefined || form.size_width <= 0) {
+    errors.push('Tile Width is required and must be greater than 0');
+  }
+
+  // NEW: tile height
+  if (form.size_height === null || form.size_height === undefined || form.size_height <= 0) {
+    errors.push('Tile Height is required and must be greater than 0');
+  }
+ 
       
       if (form.available_colors.length === 0) {
         errors.push('At least one available color is required');

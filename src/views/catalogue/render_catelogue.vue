@@ -844,6 +844,7 @@
       "
     >
       <div
+      
         style="
           padding: 15px;
           border: 1px solid rgba(0, 0, 0, 0.1);
@@ -852,7 +853,7 @@
           background: white;
         "
       >
-        <div style="position: relative; display: inline-block">
+        <div  style="position: relative; display: inline-block">
           <div
             v-if="imageLoading"
             style="
@@ -885,7 +886,7 @@
 
           <!-- Actual Image -->
           <div
-            class="relative"
+            class="relative "
             style="
               overflow: hidden;
               width: 100%;
@@ -913,7 +914,7 @@
               v-show="imageLoadedMap['room']"
               :src="displayImage"
               alt="Room Render"
-              class="room-render-image"
+              class="room-render-image "
             />
           </div>
 
@@ -3630,15 +3631,32 @@ export default {
 
 .room-render-image {
   width: 100%;
-  max-width: 800px;
-  min-width: 300px;
   height: 100%;
-  max-height: 500px;
-  min-height: 300px;
   object-fit: cover;
   display: block;
   border-radius: 8px;
 }
+
+/* Mobile & Tablet */
+@media (max-width: 767px) {
+  .room-render-image {
+    max-width: 800px;
+    min-width: 300px;
+    max-height: 500px;
+    min-height: 300px;
+  }
+}
+
+/* Desktop */
+@media (min-width: 768px) {
+  .room-render-image {
+    max-width: 100%;   /* 🔥 full width */
+    min-width: 100%;
+    max-height: none;  /* optional */
+    min-height: auto;
+  }
+}
+
 
 .loading-screen {
   position: relative;

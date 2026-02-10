@@ -252,7 +252,21 @@
                         class="product-image "
                       />
                       <!-- Category Badge -->
-                      <!-- <div class="category-badge">{{ product.category }}</div> -->
+                     <div class="like-badge">
+  <a-button
+    @click="toggleFavorite(product)"
+    class="like-btn"
+  >
+    <template v-if="product.is_favorited">
+      <HeartFilled style="color: red" />
+    </template>
+    <template v-else>
+      <HeartOutlined />
+    </template>
+  </a-button>
+</div>
+
+                      
                     </div>
                     <!-- {{ truncateText(product.description || 'No description available', 8) }} -->
 <div style="height:7px;"></div>
@@ -263,23 +277,14 @@
                         }}</b>
                       </a-col> -->
 
-                      <a-col span="17">
+                      <a-col span="24">
                         <a-button block @click="viewRoom(product)" style="display: flex;font-size: 12px;; justify-content: center;align-items: center;"
                           >Room Details</a-button
                         >
                       </a-col>
 
-                      <a-col span="1"></a-col>
-                      <a-col span="4">
-                        <a-button @click="toggleFavorite(product)" style="display: flex;justify-content: center;align-items: center;">
-                          <template v-if="product.is_favorited">
-                            <HeartFilled style="color: red" />
-                          </template>
-                          <template v-else>
-                            <HeartOutlined />
-                          </template>
-                        </a-button>
-                      </a-col>
+                      
+                    
                     </a-row>
                   </div>
                 </a-col>
@@ -1116,6 +1121,29 @@ export default {
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
+
+.like-badge {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+}
+
+/* override ant button */
+.like-btn {
+  background: rgba(0, 0, 0, 0.35) !important; /* transparent gray */
+  border: none !important;
+  box-shadow: none !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px !important;
+}
+
+/* hover */
+.like-btn:hover {
+  background: rgba(0, 0, 0, 0.45) !important;
+}
+
 
 .product-image {
   width: 100%;

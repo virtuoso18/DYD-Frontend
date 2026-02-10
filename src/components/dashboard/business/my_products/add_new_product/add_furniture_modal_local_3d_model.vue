@@ -280,7 +280,7 @@
                     
                                 <!-- Description Field -->
                                 <div style="margin-bottom: 16px;">
-                                  <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Description</label>
+                                  <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Description <span style="color: red;">*</span></label>
                                   <a-textarea 
                                     v-model:value="productForm.description"
                                     :rows="3"
@@ -321,7 +321,7 @@
                     </div>
                                   </a-col>
                                   <a-col :span="8">
-                                    <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Type</label>
+                                    <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Type <span style="color: red;">*</span> </label>
                                     <a-select 
                                       v-model:value="productForm.furniture_type" 
                                       placeholder="Modern"
@@ -348,7 +348,7 @@
                                   <h4 style="margin-bottom: 12px; font-size: 14px; font-weight: 500; color: #1f2937;">Dimensions</h4>
                                   <a-row :gutter="8">
                                     <a-col :span="8">
-                                      <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Height</label>
+                                      <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Height <span style="color: red;">*</span> </label>
                                       <div style="display: flex; align-items: center;">
                                         <a-input-number
                                           v-model:value="productForm.dimensions.height" 
@@ -363,7 +363,7 @@
                                       </div>
                                     </a-col>
                                     <a-col :span="8">
-                                      <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Length/Depth</label>
+                                      <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Length/Depth <span style="color: red;">*</span></label>
                                       <div style="display: flex; align-items: center;">
                                         <a-input-number
                                           v-model:value="productForm.dimensions.length" 
@@ -378,7 +378,7 @@
                                       </div>
                                     </a-col>
                                     <a-col :span="8">
-                                      <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Width</label>
+                                      <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Width <span style="color: red;">*</span></label>
                                       <div style="display: flex; align-items: center;">
                                         <a-input-number
                                           v-model:value="productForm.dimensions.width" 
@@ -397,7 +397,7 @@
                     
                                 <!-- Available Colors Section -->
                                 <div style="margin-bottom: 20px;">
-                                  <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #374151;">Available Colors</label>
+                                  <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #374151;">Available Colors<span style="color: red;">*</span></label>
                                   
                                   <a-popover trigger="click" placement="bottom">
                                     <template #title>
@@ -494,7 +494,9 @@
                     
                                 <!-- Textures Section -->
                                 <div style="margin-bottom: 20px;">
-                                  <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #374151;">Texture Images</label>
+<label style="display: block; margin-bottom: 8px; font-size: 13px; color: #374151;">
+  Texture Images <span style="color: red;">*</span>
+</label>
                                   
                                   <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 12px;">
                                     
@@ -692,6 +694,8 @@
 import { computed } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
+import { message } from 'ant-design-vue';
+
 import canvas_3d_model_renderer from "@/components/store/canvas_3d_model_renderer.vue"
 
 export default {
@@ -1513,29 +1517,72 @@ removeColor(index) {
 
     // Form Validation & Save
     validateForm() {
-      if (!this.productForm.name?.trim()) {
-        console.error('Product name is required');
-        return false;
-      }
-      if (!this.productForm.category_name) {
-        console.error('Category is required');
-        return false;
-      }
-      if (!this.productForm.pricing.price || parseFloat(this.productForm.pricing.price) <= 0) {
-        console.error('Valid price is required');
-        return false;
-      }
-      if (this.selectedImages.length === 0) {
-        this.$message.error('At least one product image is required');
-        console.error('At least one product image is required');
-        return false;
-      }
-      if (!this.local3dModelUrl && !this.rendered_modal_3D_id) {
-        console.error('3D model is required (either upload a new one or use existing)');
-        return false;
-      }
-      return true;
-    },
+  if (!this.productForm.name?.trim()) {
+    this.$message.error('Please fill the Name field');
+    return false;
+  }
+  
+  if (!this.productForm.description?.trim()) {
+    this.$message.error('Please fill the Description field');
+    return false;
+  }
+  
+  if (!this.productForm.category_name || this.productForm.category_name.length === 0) {
+    this.$message.error('Please select a Category');
+    return false;
+  }
+  
+  if (!this.productForm.furniture_type) {
+    this.$message.error('Please select a Type');
+    return false;
+  }
+  
+  if (!this.productForm.pricing.price || parseFloat(this.productForm.pricing.price) <= 0) {
+    this.$message.error('Please enter a valid Price greater than 0');
+    return false;
+  }
+  
+  if (this.selectedImages.length === 0) {
+    this.$message.error('Please upload at least one product image');
+    return false;
+  }
+  
+  if (!this.local3dModelUrl && !this.rendered_modal_3D_id) {
+    this.$message.error('Please select or upload a 3D model');
+    return false;
+  }
+
+  // Dimensions
+  if (!this.productForm.dimensions.height || parseFloat(this.productForm.dimensions.height) <= 0) {
+    this.$message.error('Please enter a valid Height greater than 0');
+    return false;
+  }
+  
+  if (!this.productForm.dimensions.length || parseFloat(this.productForm.dimensions.length) <= 0) {
+    this.$message.error('Please enter a valid Length/Depth greater than 0');
+    return false;
+  }
+  
+  if (!this.productForm.dimensions.width || parseFloat(this.productForm.dimensions.width) <= 0) {
+    this.$message.error('Please enter a valid Width greater than 0');
+    return false;
+  }
+
+  if (this.selectedTextures.length === 0) {
+  this.$message.error('Please upload at least one texture image');
+  return false;
+}
+
+
+  // Colors (if you have them)
+  if (this.selectedColors.length === 0) {
+    this.$message.error('Please select at least one available color');
+    return false;
+  }
+
+  return true;
+},
+
 
     async handleSave() {
       if (!this.validateForm()) return;
@@ -1631,7 +1678,7 @@ removeColor(index) {
 
         if (response.ok && result.success) {
           console.log('✅ Product created successfully:', result.data);
-          console.log('Product created successfully!');
+  message.success('Product created successfully!');
           
           this.$emit('product-created', result.data);
           this.$emit('update:visible', false);
@@ -1644,8 +1691,7 @@ removeColor(index) {
 
       } catch (error) {
         console.error('❌ Error creating product:', error);
-        console.error('Error creating product. Please try again.');
-        
+ this.$message.error('Failed to create product. Please check your inputs and try again.');        
       } finally {
         this.isSaving = false;
       }

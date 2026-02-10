@@ -242,7 +242,7 @@
     
                 <!-- Description Field -->
                 <div style="margin-bottom: 16px;">
-                  <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Description</label>
+                  <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Description <span style="color: red;">*</span></label>
                   <a-textarea 
                     v-model:value="form.description"
                     :rows="3"
@@ -338,7 +338,7 @@
                   <h4 style="margin-bottom: 12px; font-size: 14px; font-weight: 500; color: #1f2937;">Dimensions</h4>
                   <a-row :gutter="12">
                     <a-col :span="8">
-                      <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Width (cm)</label>
+                      <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Width (cm)<span style="color: red;">*</span></label>
                       <a-input-number 
                         v-model:value="form.width" 
                         :min="0.01"
@@ -348,7 +348,7 @@
                       />
                     </a-col>
                     <a-col :span="8">
-                      <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Height (cm)</label>
+                      <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Height (cm)<span style="color: red;">*</span></label>
                       <a-input-number 
                         v-model:value="form.height" 
                         :min="0.01"
@@ -358,7 +358,7 @@
                       />
                     </a-col>
                     <a-col :span="8">
-                      <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Length (cm)</label>
+                      <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Length (cm)<span style="color: red;">*</span></label>
                       <a-input-number 
                         v-model:value="form.length" 
                         :min="0.01"
@@ -535,36 +535,58 @@ export default defineComponent({
     };
 
     // Form validation
-    const validateForm = () => {
-      const errors = [];
+   const validateForm = () => {
+  const errors = [];
 
-      if (!form.name?.trim()) {
-        errors.push('Product name is required');
-      }
-      
-      // if (!form.category_name) {
-      //   errors.push('Category is required');
-      // }
-      
-      // if (!form.price || form.price <= 0) {
-      //   errors.push('Regular price must be greater than 0');
-      // }
-      
-      if (form.available_colors.length === 0) {
-        errors.push('At least one available color is required');
-      }
-      
-      if (selectedImages.value.length === 0) {
-        errors.push('At least one product image is required');
-      }
+  // Name
+  if (!form.name?.trim()) {
+    errors.push('Please fill the Product Name field');
+  }
+  
+  // Description
+  if (!form.description?.trim()) {
+    errors.push('Please fill the Description field');
+  }
+  
+  // Type
+  if (!form.furniture_type) {
+    errors.push('Please select a Type');
+  }
+  
+  // Price
+  if (!form.price || form.price <= 0) {
+    errors.push('Please enter a valid Price greater than 0');
+  }
+  
+  // Dimensions
+  if (!form.width || form.width <= 0) {
+    errors.push('Please enter a valid Width greater than 0');
+  }
+  if (!form.height || form.height <= 0) {
+    errors.push('Please enter a valid Height greater than 0');
+  }
+  if (!form.length || form.length <= 0) {
+    errors.push('Please enter a valid Length greater than 0');
+  }
+  
+  // Colors
+  if (form.available_colors.length === 0) {
+    errors.push('Please select at least one available color');
+  }
+  
+  // Images
+  if (selectedImages.value.length === 0) {
+    errors.push('Please upload at least one product image');
+  }
 
-      if (errors.length > 0) {
-        message.error(errors[0]);
-        return false;
-      }
-      
-      return true;
-    };
+  if (errors.length > 0) {
+    message.error(errors[0]);
+    return false;
+  }
+  
+  return true;
+};
+
     
     // Save handler - Updated to use the lights endpoint
     const handleSave = async () => {
@@ -664,13 +686,7 @@ export default defineComponent({
       } catch (error) {
         console.error('Error saving light product:', error);
         
-        if (error.name === 'TypeError' && error.message.includes('fetch')) {
-          message.error('Network error. Please check your internet connection.');
-        } else if (error.message.includes('HTTP error')) {
-          message.error('Server error. Please try again later.');
-        } else {
-          message.error('Failed to create product. Please try again.');
-        }
+        message.error('Failed to create light. Please check your inputs and try again.');
       } finally {
         isSaving.value = false;
       }

@@ -24,9 +24,12 @@
             </div>
 
             <a-row>
-              <a-col :span="24" style="padding-top:10px;">
-                <b>{{ truncateText(product.product_title || 'No title available', 22) }}</b>
-              </a-col>
+             <a-col :span="24" class="pt-[10px]">
+  <b class="block truncate">
+    {{ product.product_title || 'No title available' }}
+  </b>
+</a-col>
+
 
               <a-col :xs="16" :sm="16" :md="16" :lg="12" :xl="12">
                 Colors
@@ -52,9 +55,14 @@
               </a-col>
 
               <a-col :xs="16" :sm="16" :md="16" :lg="17" :xl="17">
-                <a-button block @click="goto_product_Route(product)">
-                  Product Details
-                </a-button>
+                <a-button
+  block
+  @click="goto_product_Route(product)"
+  class="!text-[12px] md:!text-[14px]"
+>
+  Product Details
+</a-button>
+
               </a-col>
               
               <a-col :xs="1" :sm="1" :md="1" :lg="1" :xl="1"></a-col>
