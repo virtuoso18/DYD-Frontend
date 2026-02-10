@@ -1,26 +1,8 @@
 <template>
   <div class="magnetic-light-designer">
     <!-- Loading Overlay -->
-      <a-modal
-    v-model:open="isShowInstructionModal"
-    title="Instructions"
-    @ok="closeInstructionModal"
-    :width="500"
-  >
-    <div class="instruction-item" v-for="item in instructionConfig" :key="item">
-      <span class="instruction">{{ item?.key }}</span>
-      <img :src="item?.value" alt="gesture" class="gesture-icon" />
-    </div>
-  </a-modal>
     <!-- Main Canvas Container -->
     <div class="canvas-container" ref="canvasContainer">
-         <img
-        class="absolute top-[5px] right-[10px] cursor-pointer z-9 w-[25px]"
-        src="../../../assets/icons/informationIcon.svg"
-        alt="instruction"
-        @click="showInstructionModal"
-        title="see instruction"
-      />
       <div v-if="isLoading" class="scanning-loading-overlay">
         <div
           class="loading-screen"
@@ -402,10 +384,6 @@ import { useRoute } from "vue-router";
 import { useStore } from "vuex";
 
 import { defineEmits } from "vue";
- import ZoomInIcon from "@/assets/icons/zoomout.png";
-import ZoomOutIcon from "@/assets/icons/zoomin.png";
-import DrawTrackIcon from "@/assets/icons/tap.png";
-import LongPressIcon from "@/assets/icons/longPressTab.png";
 
 // Define the emit
 const emit = defineEmits(["magentic-lights-added"]);
@@ -515,17 +493,6 @@ const trackModeHelp = computed(() => {
   return "Click first point to start drawing a magnetic track";
 });
 
-let isShowInstructionModal= ref(false);
-    const instructionConfig = [
-        {
-          key: "Pinch out zoom out",
-          value: ZoomInIcon,
-        },
-        { key: "Pinch in to zoom", value: ZoomOutIcon },
-        {key: "Draw tracks",value:DrawTrackIcon },
-        {key:"Long press to add light",value:LongPressIcon}
-      ];
-
 // ===================
 // LIFECYCLE
 // ===================
@@ -557,12 +524,6 @@ watch(
 // ===================
 // Export room Light layer
 // ===================
- function showInstructionModal() {
-      isShowInstructionModal.value = true;
-    };
-    const closeInstructionModal = () => {
-      isShowInstructionModal.value = false;
-    };
 
 async function saveRoom() {
   if (!backgroundImage.value || lights.value.length === 0) {
@@ -3073,30 +3034,6 @@ defineExpose({
 .stats {
   display: flex;
   gap: 16px;
-}
-
-/* modal */
-.instruction-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.instruction-item:last-child {
-  border-bottom: none;
-}
-
-.instruction {
-  font-weight: 500;
-  color: #333;
-  flex: 1;
-}
-
-.gesture-icon {
-  width: 40px;
-  height: 40px;
-  object-fit: contain;
-  margin-left: 20px;
 }
 
 

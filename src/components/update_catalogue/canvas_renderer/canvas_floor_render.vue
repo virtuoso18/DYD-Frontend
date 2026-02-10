@@ -1,23 +1,5 @@
 <template>
-   <a-modal
-    v-model:open="isShowInstructionModal"
-    title="Instructions"
-    @ok="closeInstructionModal"
-    :width="500"
-  >
-    <div class="instruction-item" v-for="item in instructionConfig" :key="item">
-      <span class="instruction">{{ item?.key }}</span>
-      <img :src="item?.value" alt="gesture" class="gesture-icon" />
-    </div>
-  </a-modal>
   <div class="canvas-container" ref="canvasContainer">
-    <img
-        class="absolute top-[5px] right-[10px] cursor-pointer z-9 w-[25px] md:hidden"
-        src="../../../assets/icons/informationIcon.svg"
-        alt="instruction"
-        @click="showInstructionModal"
-        title="see instruction"
-      />
     <!-- Loading Overlay -->
     <div v-if="isLoading" class="scanning-loading-overlay">
       <div
@@ -45,7 +27,7 @@
     ></canvas>
 
     <!-- Zoom Controls -->
-    <!-- <div v-if="!isLoading" class="zoom-controls">
+    <div v-if="!isLoading" class="zoom-controls">
       <button @click="zoomIn" class="zoom-btn" title="Zoom In">+</button>
       <span class="zoom-level">{{ Math.round(zoom * 100) }}%</span>
       <button @click="zoomOut" class="zoom-btn" title="Zoom Out">-</button>
@@ -56,7 +38,7 @@
       >
       ⌂
     </button>
-  </div> -->
+  </div>
     
 
     <!-- Pan Instructions -->
@@ -107,8 +89,6 @@
 </template>
 
 <script>
-import ZoomInIcon from "@/assets/icons/zoomout.png";
-import ZoomOutIcon from "@/assets/icons/zoomin.png";
 export default {
   name: "floor_renderer",
   props: {
@@ -132,14 +112,6 @@ export default {
 
   data() {
     return {
-      isShowInstructionModal: false,
-      instructionConfig: [
-        {
-          key: "Pinch out zoom out",
-          value: ZoomInIcon,
-        },
-        { key: "Pinch in to zoom", value: ZoomOutIcon },
-      ],
       isTouchDevice: false,
       canvas: null,
       ctx: null,
@@ -230,12 +202,6 @@ export default {
   },
 
   methods: {
-     showInstructionModal() {
-      this.isShowInstructionModal = true;
-    },
-    closeInstructionModal() {
-      this.isShowInstructionModal = false;
-    },
     checkTouchDevice() {
       return (
         (navigator.maxTouchPoints && navigator.maxTouchPoints > 0) ||
@@ -1091,30 +1057,6 @@ export default {
   text-align: center;
   z-index: 5;
   pointer-events: none;
-}
-
-/* modal */
-.instruction-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.instruction-item:last-child {
-  border-bottom: none;
-}
-
-.instruction {
-  font-weight: 500;
-  color: #333;
-  flex: 1;
-}
-
-.gesture-icon {
-  width: 40px;
-  height: 40px;
-  object-fit: contain;
-  margin-left: 20px;
 }
 
 /* Responsive design */

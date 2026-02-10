@@ -4,7 +4,7 @@
 
     <div class="ai-catalog-section p-1 ">
       <div class="apply-section  md:hidden">
-        <a-button type="primary" size="large" :disabled="!selected_light" block class="apply-button" @click="$emit('Apply_Light', 'magnetic-light-Renerer-apply')">
+        <a-button type="primary" size="large" block class="apply-button" @click="$emit('Apply_Light', 'magnetic-light-Renerer-apply')">
           Apply
         </a-button>
       </div>
@@ -177,7 +177,7 @@ padding:5px;"
         </div>
       </div>
        <div class="apply-section hidden md:block">
-        <a-button type="primary" size="large" :disabled="!selected_light" block class="apply-button"  @click="$emit('Apply_Light', 'magnetic-light-Renerer-apply')">
+        <a-button type="primary" size="large" block class="apply-button"  @click="$emit('Apply_Light', 'magnetic-light-Renerer-apply')">
           Apply
         </a-button>
       </div>
