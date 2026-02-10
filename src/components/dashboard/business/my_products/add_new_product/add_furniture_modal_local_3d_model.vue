@@ -494,9 +494,7 @@
                     
                                 <!-- Textures Section -->
                                 <div style="margin-bottom: 20px;">
-<label style="display: block; margin-bottom: 8px; font-size: 13px; color: #374151;">
-  Texture Images <span style="color: red;">*</span>
-</label>
+                                  <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #374151;">Texture Images</label>
                                   
                                   <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 12px;">
                                     
