@@ -1067,7 +1067,7 @@
                     <!-- Product Details Button - 75% width -->
                     <div class="w-3/4">
                       <button
-                        @click="goto_product_Route(product)"
+                        @click="goto_product_Route_home_design(product)"
                         class="w-full py-2 px-4 bg-white border border-gray-300 rounded hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500 transition-colors whitespace-nowrap"
                         style="
                           font-family: Poppins, sans-serif;
@@ -1558,6 +1558,7 @@ export default {
     },
 
     goto_product_Route(product) {
+    
       let product_type = "product";
       if (product.product_type == "light") {
         product_type = "product";
@@ -1573,6 +1574,27 @@ export default {
         params: {
           buisness_name: this.selected_design.data.business_slug,
           product_type: product_type,
+          product_id: product.product_id,
+        },
+      });
+    },
+goto_product_Route_home_design(product) {
+    console.log(product);
+      let product_type = "product";
+      if (product.type == "light") {
+        product_type = "product";
+      } else if (product.type == "floor_texture") {
+        product_type = "floor";
+      } else if (product.type == "wall_texture") {
+        product_type = "wall";
+      } else {
+        product_type = product.type;
+      }
+      this.$router.push({
+        name: "buisness_product",
+        params: {
+          buisness_name: product.business_slug,
+          product_type: product.type,
           product_id: product.product_id,
         },
       });
