@@ -19,48 +19,86 @@
     <!-- Main Content -->
     <div class="main-content">
       <!-- 3D Model Viewer with Occlusion Support -->
-       
-      <div class="model-viewer-container" style="position:absolute" v-if="ProductDetails">
-        
 
-<div style="padding:10px;width:100%;position :absolute;z-index:2" v-if="!isAuthenticated">
-  
-  <a-row>
-<a-col span="4">
-    <a-button style="display:flex;justify-content: center;align-items: center;" size="large" type="primary" @click.stop="this.$router.push('/'+ProductDetails.business_slug)"><LeftOutlined /> </a-button>
-   </a-col>
-<a-col span="20"> <a-alert
+      <div
+        class="model-viewer-container"
+        style="position: absolute"
+        v-if="ProductDetails"
+      >
+        <div
+          style="padding: 10px; width: 100%; position: absolute; z-index: 2"
+          v-if="!isAuthenticated"
+        >
+          <a-row>
+            <a-col span="4">
+              <a-button
+                style="
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                "
+                size="large"
+                type="primary"
+                @click.stop="
+                  this.$router.push('/' + ProductDetails.business_slug)
+                "
+                ><LeftOutlined />
+              </a-button>
+            </a-col>
+            <a-col span="20">
+              <a-alert type="info" closable>
+                <!-- description="Info Description Info Description Info Description Info Description" -->
+                <template #message>
+                  <a-space direction="horizontle">
+                    <span>Login required</span>
+                    <a-button
+                      size="small"
+                      type="primary"
+                      @click.stop="this.$router.push('/login')"
+                      >Get Login
+                    </a-button>
+                    <!-- <a-button size="small" danger type="ghost">Decline</a-button> -->
+                  </a-space>
+                </template>
+              </a-alert></a-col
+            >
+          </a-row>
+        </div>
 
-type="info"
-closable
->
-<!-- description="Info Description Info Description Info Description Info Description" -->
-<template #message>
-  <a-space direction="horizontle">
-    <span>Login required</span>
-    <a-button size="small" type="primary" @click.stop="this.$router.push('/login')">Get Login </a-button>
-    <!-- <a-button size="small" danger type="ghost">Decline</a-button> -->
-  </a-space>
-</template>
-</a-alert></a-col>
-  </a-row>
- 
- 
-</div>
-
-<!-- {{ProductDetails.business_slug}} -->
-    <a-button shape="circle" size="large" v-if="isAuthenticated" style="position :absolute;z-index:2;margin-top:20px;margin-left:20px; display:flex;justify-content: center;align-items: center;" type="primary" @click.stop="this.$router.push('/'+ProductDetails.business_slug)"><LeftOutlined /> </a-button>
-
+        <!-- {{ProductDetails.business_slug}} -->
+        <a-button
+          shape="circle"
+          size="large"
+          v-if="isAuthenticated"
+          style="
+            position: absolute;
+            z-index: 2;
+            margin-top: 20px;
+            margin-left: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          "
+          type="primary"
+          @click.stop="this.$router.push('/' + ProductDetails.business_slug)"
+          ><LeftOutlined />
+        </a-button>
         <model-viewer
+          style="width: 100%; height: 100%; pointer-events: auto"
           ref="modelViewer"
-          :src="this.$store.state.root_media_api+selected3DModelUrl"
+          :src="this.$store.state.root_media_api + selected3DModelUrl"
           :ios-src="usdzModelUrl"
           ar
-          ar-modes="webxr scene-viewer quick-look"
+          ar-modes="webxr quick-look"
+          ar-placement="floor"
+          interaction-prompt="none"
+          interaction-prompt-style="wiggle"
           camera-controls
-          touch-action="pan-y"
+          touch-action="none"
+          slot="ar-reticle"
+          interaction-target="model"
           auto-rotate
-          shadow-intensity="1"
+          shadow-intensity="2"
           :alt="ProductDetails.name"
           :ar-scale="`fixed ${ProductDetails.dimensions.width}m ${ProductDetails.dimensions.height}m ${ProductDetails.dimensions.length}m`"
           environment-image="neutral"
@@ -71,12 +109,15 @@ closable
           @ar-status="handleARStatus"
           @load="handleModelLoad"
         >
+          <div slot="ar-reticle" class="custom-reticle">
+            <div class="rect-frame"></div>
+          </div>
           <a-button
             slot="ar-button"
             size="medium"
             type="primary"
             class="ar-button-overlay"
-            style="max-width:70%"
+            style="max-width: 70%"
             @click="prepareARWithOcclusion"
           >
             <span>View in Your Space</span>
@@ -163,7 +204,7 @@ closable
             </div>
             <div class="instruction-text">
               <h4><b>Find a Flat Surface</b></h4>
-              <p style="font-size:12px">
+              <p style="font-size: 12px">
                 Point your camera at a flat surface like a floor or table. Move
                 your device slowly to help it detect the surface.
               </p>
@@ -195,7 +236,7 @@ closable
             </div>
             <div class="instruction-text">
               <h4><b>Place & Interact</b></h4>
-              <p style="font-size:12px">
+              <p style="font-size: 12px">
                 Tap on the screen to place the furniture. You can pinch to
                 resize, and drag with one finger to rotate the item.
               </p>
@@ -204,12 +245,17 @@ closable
         </div>
 
         <!-- Continue Button -->
-        <div style="width:100%;display:flex;justify-content:center">
-          <a-button type="primary" size="medium" style="margin:auto" @click="goToNextInstruction">
+        <div style="width: 100%; display: flex; justify-content: center">
+          <a-button
+            type="primary"
+            size="medium"
+            style="margin: auto"
+            @click="goToNextInstruction"
+          >
             {{ step === 2 ? "Start AR" : "Continue" }}
           </a-button>
         </div>
-        <br><br>
+        <br /><br />
       </div>
     </div>
 
@@ -238,60 +284,102 @@ closable
 
       <!-- Drawer Content -->
       <div class="drawer-content" @click.stop>
-        
         <div class="product-card">
           <div class="product-header">
             <a-row>
+              <a-col :span="23" class="product-info">
+                <h2>{{ ProductDetails.name }}</h2>
+                <div class="price-section">
+                  <span class="current-price"
+                    >${{ ProductDetails.pricing.current_price }}</span
+                  >
+                  <span
+                    v-if="ProductDetails.pricing.is_on_sale"
+                    class="discount"
+                    >SALE</span
+                  >
+                </div>
 
-            <a-col :span="23" class="product-info">
-              <h2>{{ ProductDetails.name }}</h2>
-              <div class="price-section">
-                <span class="current-price">${{ ProductDetails.pricing.current_price }}</span>
-                <span v-if="ProductDetails.pricing.is_on_sale" class="discount">SALE</span>
-              </div>
-              
-
-              <!-- Colors Section -->
-              
-            </a-col>
-            <a-col :span="23">
-              <div style="margin-bottom: 8px; font-weight: 500;">Colors:</div>
-              <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                <div v-for="(color, index) in ProductDetails.colors.available_colors"
-                  :key="color.id"
-                  @click="selectColor(index, color)"
-                  :class="[
-                    'w-6 h-6 rounded-full transition-all cursor-pointer',
-                    color.model_file_colored_product 
-                      ? 'border-2 hover:shadow-md' 
-                      : 'outline outline-2 outline-red-500 outline-offset-2 hover:shadow-[0_0_8px_rgba(239,68,68,0.3)]',
-                    selectedColorIndex === index ? 'border-blue-500 border-2' : 'border-gray-100'
-                  ]"
-                  :style="{ backgroundColor: color.color }"
-                  :title="`${color.color}${!color.model_file_colored_product ? ' (No 3D model)' : ''}`"
-                ></div>
-              </div>
-
-              <div style="margin-bottom: 8px; font-weight: 500;" >Textures:</div>
-
-               <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;margin-top:10px">
-
-                <div v-for="(color, index) in ProductDetails.colors.available_colors">
-
-                  <div v-if="color.product_texture?.texture"
+                <!-- Colors Section -->
+              </a-col>
+              <a-col :span="23">
+                <div style="margin-bottom: 8px; font-weight: 500">Colors:</div>
+                <div
+                  style="
+                    display: flex;
+                    gap: 10px;
+                    align-items: center;
+                    flex-wrap: wrap;
+                  "
+                >
+                  <div
+                    v-for="(color, index) in ProductDetails.colors
+                      .available_colors"
                     :key="color.id"
                     @click="selectColor(index, color)"
-                    class="rounded-full transition-all cursor-pointer"
-                    :class="selectedColorIndex === index ? 'border-blue-500 border-1' : 'border-gray-100'"
+                    :class="[
+                      'w-6 h-6 rounded-full transition-all cursor-pointer',
+                      color.model_file_colored_product
+                        ? 'border-2 hover:shadow-md'
+                        : 'outline outline-2 outline-red-500 outline-offset-2 hover:shadow-[0_0_8px_rgba(239,68,68,0.3)]',
+                      selectedColorIndex === index
+                        ? 'border-blue-500 border-2'
+                        : 'border-gray-100',
+                    ]"
+                    :style="{ backgroundColor: color.color }"
                     :title="`${color.color}${!color.model_file_colored_product ? ' (No 3D model)' : ''}`"
+                  ></div>
+                </div>
+
+                <div style="margin-bottom: 8px; font-weight: 500">
+                  Textures:
+                </div>
+
+                <div
+                  style="
+                    display: flex;
+                    gap: 10px;
+                    align-items: center;
+                    flex-wrap: wrap;
+                    margin-top: 10px;
+                  "
+                >
+                  <div
+                    v-for="(color, index) in ProductDetails.colors
+                      .available_colors"
                   >
-                  <img :src="this.$store.state.root_media_api+color.product_texture?.texture" alt="" style="width:40px;height:40px;border:1px solid rgba(0,0,0,0.2);border-radius: 100%;object-fit :cover">
+                    <div
+                      v-if="color.product_texture?.texture"
+                      :key="color.id"
+                      @click="selectColor(index, color)"
+                      class="rounded-full transition-all cursor-pointer"
+                      :class="
+                        selectedColorIndex === index
+                          ? 'border-blue-500 border-1'
+                          : 'border-gray-100'
+                      "
+                      :title="`${color.color}${!color.model_file_colored_product ? ' (No 3D model)' : ''}`"
+                    >
+                      <img
+                        :src="
+                          this.$store.state.root_media_api +
+                          color.product_texture?.texture
+                        "
+                        alt=""
+                        style="
+                          width: 40px;
+                          height: 40px;
+                          border: 1px solid rgba(0, 0, 0, 0.2);
+                          border-radius: 100%;
+                          object-fit: cover;
+                        "
+                      />
+                    </div>
+                  </div>
                 </div>
-                </div>
-                </div>
-            </a-col>
+              </a-col>
             </a-row>
-        
+
             <div class="cart-controller-sec">
               <a-button
                 type="primary"
@@ -303,7 +391,13 @@ closable
               >
                 <ShoppingCartOutlined style="font-size: 20px" />
               </a-button>
-              <a-button class="cart-button" title="fullscreen mode" type="primary" shape="circle" @click="toggleFullScreen">
+              <a-button
+                class="cart-button"
+                title="fullscreen mode"
+                type="primary"
+                shape="circle"
+                @click="toggleFullScreen"
+              >
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                   <path
                     d="M3 3H8M3 3V8M3 3L8 8"
@@ -343,31 +437,58 @@ closable
             <h3>Product Details</h3>
             <div class="detail-section">
               <h4>Dimensions</h4>
-              <p>Width: {{ProductDetails.dimensions.width}}" | Height: {{ProductDetails.dimensions.height}}" | Depth: {{ProductDetails.dimensions.length}}"</p>
+              <p>
+                Width: {{ ProductDetails.dimensions.width }}" | Height:
+                {{ ProductDetails.dimensions.height }}" | Depth:
+                {{ ProductDetails.dimensions.length }}"
+              </p>
             </div>
           </div>
- <!-- Action Buttons -->
+          <!-- Action Buttons -->
           <div class="action-buttons">
-            <a-button type="primary" @click="goto_product_Route(ProductDetails)" block size="large" style="font-size:20px;display: flex;justify-content: center;align-items:center; width:100%">
+            <a-button
+              type="primary"
+              @click="goto_product_Route(ProductDetails)"
+              block
+              size="large"
+              style="
+                font-size: 20px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 100%;
+              "
+            >
               <IssuesCloseOutlined />See Product
             </a-button>
           </div>
           <!-- Variants Section -->
-          <div v-if="ProductDetails.variants && ProductDetails.variants.length > 0" class="variants-section">
+          <div
+            v-if="ProductDetails.variants && ProductDetails.variants.length > 0"
+            class="variants-section"
+          >
             <h3>Available Variants</h3>
             <a-row>
-              <a-col :span="12" 
-              v-for="variant in ProductDetails.variants"
-              :key="variant.id"
-             style="border:1px solid rgba(0,0,0,0.2);padding:5px;border-radius:10px"
-              :class="{ 'variant-selected': currentProduct.id === variant.id }"
-              @click="selectVariant(variant)"
+              <a-col
+                :span="12"
+                v-for="variant in ProductDetails.variants"
+                :key="variant.id"
+                style="
+                  border: 1px solid rgba(0, 0, 0, 0.2);
+                  padding: 5px;
+                  border-radius: 10px;
+                "
+                :class="{
+                  'variant-selected': currentProduct.id === variant.id,
+                }"
+                @click="selectVariant(variant)"
               >
-              
                 <div class="variant-image-wrapper">
-                  <img 
-                    v-if="variant.primary_image" 
-                    :src="this.$store.state.root_media_api+variant.primary_image" 
+                  <img
+                    v-if="variant.primary_image"
+                    :src="
+                      this.$store.state.root_media_api + variant.primary_image
+                    "
                     :alt="variant.name"
                     class="variant-image"
                   />
@@ -375,30 +496,37 @@ closable
                 </div>
                 <div class="variant-info">
                   <p class="variant-name">{{ variant.name }}</p>
-                  
-                  <a-row>
-                    
-                    <a-col :span="12" >Price</a-col>
-                    <a-col :span="12" style="color:blue;font-weight:bold;text-align:end">${{ variant.pricing.current_price }}</a-col>
 
-                    <a-col :span="12" >Color</a-col>
-                    <a-col :span="12" style="display: flex;justify-content: end;">
-                      <div style="width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  border: 2px solid #e8e8e8;" :style="{ backgroundColor: variant.primary_color }"></div>
+                  <a-row>
+                    <a-col :span="12">Price</a-col>
+                    <a-col
+                      :span="12"
+                      style="color: blue; font-weight: bold; text-align: end"
+                      >${{ variant.pricing.current_price }}</a-col
+                    >
+
+                    <a-col :span="12">Color</a-col>
+                    <a-col
+                      :span="12"
+                      style="display: flex; justify-content: end"
+                    >
+                      <div
+                        style="
+                          width: 24px;
+                          height: 24px;
+                          border-radius: 50%;
+                          border: 2px solid #e8e8e8;
+                        "
+                        :style="{ backgroundColor: variant.primary_color }"
+                      ></div>
                     </a-col>
                   </a-row>
-                  
+
                   <!-- {{ variant }} -->
                 </div>
-                 
               </a-col>
-              </a-row>
-            </div>
-          
-
-         
+            </a-row>
+          </div>
         </div>
       </div>
     </div>
@@ -472,7 +600,13 @@ closable
 </template>
 
 <script>
-import { LeftOutlined ,ArrowLeftOutlined, HeartOutlined, IssuesCloseOutlined, ShoppingCartOutlined } from "@ant-design/icons-vue";
+import {
+  LeftOutlined,
+  ArrowLeftOutlined,
+  HeartOutlined,
+  IssuesCloseOutlined,
+  ShoppingCartOutlined,
+} from "@ant-design/icons-vue";
 
 export default {
   name: "ARProductView",
@@ -480,8 +614,8 @@ export default {
     return {
       step: 0,
       productName: "Modern Accent Chair",
-      hasToken: '',
-      
+      hasToken: "",
+
       // UI State
       showNavbar: false,
       statusMessage: "Ready",
@@ -518,7 +652,7 @@ export default {
       dragVelocity: 0,
       lastY: 0,
       lastTime: 0,
-      
+
       // Product Data
       ProductDetails: null,
       currentProduct: null,
@@ -533,9 +667,9 @@ export default {
   },
 
   components: {
-    LeftOutlined ,
+    LeftOutlined,
     ArrowLeftOutlined,
-    HeartOutlined, 
+    HeartOutlined,
     IssuesCloseOutlined,
     ShoppingCartOutlined,
   },
@@ -544,102 +678,118 @@ export default {
     windowHeight() {
       return window.innerHeight;
     },
-      isAuthenticated() {
-    return !!localStorage.getItem('token')
-  },
+    isAuthenticated() {
+      return !!localStorage.getItem("token");
+    },
     selected3DModelUrl() {
-      if (this.selectedColorIndex !== null && 
-          this.ProductDetails.colors && 
-          this.ProductDetails.colors.available_colors[this.selectedColorIndex]) {
-        
-        const selectedColor = this.ProductDetails.colors.available_colors[this.selectedColorIndex];
-        
+      if (
+        this.selectedColorIndex !== null &&
+        this.ProductDetails.colors &&
+        this.ProductDetails.colors.available_colors[this.selectedColorIndex]
+      ) {
+        const selectedColor =
+          this.ProductDetails.colors.available_colors[this.selectedColorIndex];
+
         if (selectedColor.model_file_colored_product) {
           return selectedColor.model_file_colored_product;
         }
       }
-      
-      return this.ProductDetails['3d_model'];
-    }
+
+      return this.ProductDetails["3d_model"];
+    },
   },
 
   mounted() {
-    this.hasToken = localStorage.getItem('token');
+    this.hasToken = localStorage.getItem("token");
     this.detectDevice();
     this.loadModelViewer();
     this.checkOcclusionSupport();
     this.fetchProductDetails();
+    this.updateARButton();
   },
 
   methods: {
-    
-     selectVariant(variant) {
-      
-      this.$router.push({
-        name: this.$route.name,
-        params: {
-          ...this.$route.params,
-          product_id: variant.id
-        }
-      }).then(() => {
-        
-        window.location.reload();
-      }).catch(err => {
-        console.error("Navigation failed:", err);
-      });
+    // In your methods
+updateARButton() {
+  const viewer = this.$refs.modelViewer;
+  if (viewer) {
+    // This tells Scene Viewer to allow moving without the reticle
+    viewer.arConfig = { 
+      initialScale: 'auto',
+      disableOcclusion: !this.occlusionSupported 
+    };
+  }
+},
+    selectVariant(variant) {
+      this.$router
+        .push({
+          name: this.$route.name,
+          params: {
+            ...this.$route.params,
+            product_id: variant.id,
+          },
+        })
+        .then(() => {
+          window.location.reload();
+        })
+        .catch((err) => {
+          console.error("Navigation failed:", err);
+        });
     },
 
     goto_product_Route(product) {
-      this.$router.push({
-        name: 'buisness_product',
-        params: {
-          buisness_name: product.business_slug,
-          product_type: 'product',
-          product_id: product.id
-        }
-      }).then(() => {
-        window.location.reload();
-      }).catch(err => {
-        console.error("Navigation failed:", err);
-      });
+      this.$router
+        .push({
+          name: "buisness_product",
+          params: {
+            buisness_name: product.business_slug,
+            product_type: "product",
+            product_id: product.id,
+          },
+        })
+        .then(() => {
+          window.location.reload();
+        })
+        .catch((err) => {
+          console.error("Navigation failed:", err);
+        });
     },
 
     async addToCart() {
       if (!this.ProductDetails || !this.ProductDetails.id) {
-        this.$message.error('Product not found');
+        this.$message.error("Product not found");
         return;
       }
 
       this.cartLoading = true;
-      
+
       try {
-        const token = localStorage.getItem('token');
-        const response = await fetch(
-          `${this.$store.state.root_api}cart/add/`,
-          {
-            method: 'POST',
-            headers: {
-              'Authorization': `Token ${token}`,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              product_type: this.ProductDetails.is_ceiling_light_product ? 'light' : 'furniture',
-              product_id: this.ProductDetails.id,
-              quantity: 1
-            })
-          }
-        );
-        
+        const token = localStorage.getItem("token");
+        const response = await fetch(`${this.$store.state.root_api}cart/add/`, {
+          method: "POST",
+          headers: {
+            Authorization: `Token ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            product_type: this.ProductDetails.is_ceiling_light_product
+              ? "light"
+              : "furniture",
+            product_id: this.ProductDetails.id,
+            quantity: 1,
+          }),
+        });
+
         const result = await response.json();
-        
+
         if (response.ok) {
-          this.$message.success('Added to cart!');
+          this.$message.success("Added to cart!");
         } else {
-          this.$message.error(result.error || 'Failed to add to cart');
+          this.$message.error(result.error || "Failed to add to cart");
         }
       } catch (error) {
-        console.error('Error:', error);
-        this.$message.error('Error adding to cart');
+        console.error("Error:", error);
+        this.$message.error("Error adding to cart");
       } finally {
         this.cartLoading = false;
       }
@@ -650,23 +800,23 @@ export default {
         this.isLoading = true;
         const productId = this.$route.params.product_id;
         if (!productId) {
-          throw new Error('Product ID not found in route parameters');
+          throw new Error("Product ID not found in route parameters");
         }
 
-        let token = localStorage.getItem('token');
+        let token = localStorage.getItem("token");
         const apiUrl = `${this.$store.state.root_api}product/api/product-details/${productId}/`;
 
-        console.log('📡 Fetching from:', apiUrl);
+        console.log("📡 Fetching from:", apiUrl);
 
-        const headers = { 'Content-Type': 'application/json' };
+        const headers = { "Content-Type": "application/json" };
         if (token) {
-          headers['Authorization'] = `Token ${token}`;
+          headers["Authorization"] = `Token ${token}`;
         }
 
         const response = await fetch(apiUrl, {
-          method: 'GET',
+          method: "GET",
           headers: headers,
-          credentials: 'omit'
+          credentials: "omit",
         });
 
         if (!response.ok) {
@@ -674,28 +824,32 @@ export default {
         }
 
         const result = await response.json();
-        console.log('Product Details:', result);
+        console.log("Product Details:", result);
 
         if (!result.success || !result.data) {
-          throw new Error(result.message || 'Failed to fetch product details');
+          throw new Error(result.message || "Failed to fetch product details");
         }
 
         this.ProductDetails = result.data;
         this.currentProduct = result.data;
-        
+
         const dimensions = result.data.dimensions || {};
         this.dimensions = {
           width: parseFloat(dimensions.width) || 0.7,
           height: parseFloat(dimensions.height) || 1.2,
-          depth: parseFloat(dimensions.depth || dimensions.length) || 0.6
+          depth: parseFloat(dimensions.depth || dimensions.length) || 0.6,
         };
 
-        console.log('✅ Product Dimensions (meters):', this.dimensions);
-        console.log('✅ Product Data Loaded with', result.data.variants.length, 'variants');
-        
+        console.log("✅ Product Dimensions (meters):", this.dimensions);
+        console.log(
+          "✅ Product Data Loaded with",
+          result.data.variants.length,
+          "variants",
+        );
       } catch (error) {
-        console.error('❌ Error loading product details:', error);
-        this.error = error.message || 'Failed to load product. Please try again.';
+        console.error("❌ Error loading product details:", error);
+        this.error =
+          error.message || "Failed to load product. Please try again.";
       }
       this.isLoading = false;
     },
@@ -742,9 +896,8 @@ export default {
     async checkOcclusionSupport() {
       if (navigator.xr) {
         try {
-          const depthSupported = await navigator.xr.isSessionSupported(
-            "immersive-ar"
-          );
+          const depthSupported =
+            await navigator.xr.isSessionSupported("immersive-ar");
 
           if (depthSupported) {
             console.log("Checking depth-sensing support...");
@@ -915,7 +1068,7 @@ export default {
 
       newHeight = Math.max(
         this.collapsedHeight,
-        Math.min(this.expandedHeight, newHeight)
+        Math.min(this.expandedHeight, newHeight),
       );
 
       this.currentDrawerHeight = newHeight;
@@ -1008,7 +1161,7 @@ export default {
         let newHeight = this.startHeight + deltaY;
         newHeight = Math.max(
           this.collapsedHeight,
-          Math.min(this.expandedHeight, newHeight)
+          Math.min(this.expandedHeight, newHeight),
         );
 
         this.currentDrawerHeight = newHeight;
@@ -1049,6 +1202,11 @@ export default {
     handleModelLoad(event) {
       console.log("Model loaded successfully");
       this.loadingProgress = 100;
+      const viewer = this.$refs.modelViewer;
+
+      if (viewer) {
+        viewer.interpolationDecay = 100;
+      }
 
       // if (this.isIOS || this.isAndroid) {
       //   setTimeout(() => {
@@ -1090,6 +1248,12 @@ export default {
         console.log("AR session started");
         this.statusMessage = "AR Active";
         this.isARActive = true;
+        //adding sensitivity to model
+        const viewer = this.$refs.modelViewer;
+        if (viewer) {
+          // Lower = more sensitive/snappy. Default is 200.
+          viewer.interpolationDecay = 10;
+        }
       } else if (event.detail.status === "failed") {
         this.error = "AR Failed";
         this.errorDetails = "Could not start AR session. Please try again.";
@@ -1114,14 +1278,14 @@ export default {
 
     selectColor(index, color) {
       this.selectedColorIndex = index;
-      
+
       if (!color.model_file_colored_product) {
         this.selectedColorHex = color.color;
         this.showColorAlert = true;
       } else {
         this.showColorAlert = false;
       }
-      
+
       this.updateModelViewerSource();
     },
 
@@ -1130,7 +1294,7 @@ export default {
       if (viewer) {
         const newUrl = this.selected3DModelUrl;
         viewer.src = newUrl;
-        console.log('✅ Model updated to:', newUrl);
+        console.log("✅ Model updated to:", newUrl);
       }
     },
   },
@@ -1190,12 +1354,14 @@ export default {
   width: 100%;
   height: 80vh;
   min-height: 400px;
+  pointer-events: none;
 }
 
 .model-viewer {
   width: 100%;
   height: 100%;
   background: transparent;
+  pointer-events: auto;
 }
 
 .model-loading {
@@ -1243,6 +1409,7 @@ export default {
   position: absolute;
   bottom: 25px;
   left: 50%;
+  pointer-events: auto;
   transform: translateX(-50%);
   display: flex;
   align-items: center;
@@ -1506,7 +1673,7 @@ export default {
   max-height: calc(350px - 5px);
   padding: 0 20px 20px;
   overflow-y: auto;
-  padding-bottom:40px;
+  padding-bottom: 40px;
 }
 
 .product-card {
@@ -1523,7 +1690,6 @@ export default {
 }
 
 .product-info {
- 
 }
 
 .product-info h2 {
@@ -1776,4 +1942,37 @@ export default {
     grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
   }
 }
-</style>
+/* The container that follows the floor plane */
+.custom-reticle {
+  display: block;
+  width: 200px;
+  height: 200px;
+  /* Lays the rectangle flat on the ground */
+  transform: rotateX(90deg);
+}
+
+/* The actual rectangle lines */
+.rect-frame {
+  width: 100%;
+  height: 100%;
+  border: 3px solid #1890ff; /* Use your primary blue */
+  border-radius: 12px;
+  background: rgba(24, 144, 255, 0.1);
+  animation: pulse-border 1.5s infinite;
+}
+
+@keyframes pulse-border {
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+}
+</style> 
