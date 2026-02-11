@@ -1,5 +1,25 @@
 <template>
+  <a-modal
+    v-model:open="isShowInstructionModal"
+    title="Instructions"
+    @ok="closeInstructionModal"
+    :width="500"
+  >
+    <div class="instruction-item" v-for="item in instructionConfig" :key="item">
+      <span class="instruction">{{ item?.key }}</span>
+      <img :src="item?.value" alt="gesture" class="gesture-icon" />
+    </div>
+  </a-modal>
+  
   <div className="">
+     <img
+        class="absolute top-[5px] right-[10px] cursor-pointer z-9 w-[25px]"
+        src="../../../assets/icons/informationIcon.svg"
+        alt="instruction"
+        @click="showInstructionModal"
+        title="see instruction"
+      />
+
     <div class="main-canvas" ref="canvasContainer">
       <div id="viewer" ref="viewer">
         <div id="loading" v-if="loading">
@@ -174,7 +194,9 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
 import { defineEmits } from "vue";
-
+import ZoomInIcon from "@/assets/icons/zoomout.png";
+import ZoomOutIcon from "@/assets/icons/zoomin.png";
+import DragLight from "@/assets/icons/tapAndMove.png";
 // Define the emit
 const emit = defineEmits(["model-3d-light-added", "insufficient-credits"]);
 const route = useRoute();
@@ -344,6 +366,23 @@ const ceilingAngles = reactive({
 const gridSize = ref(0.3);
 const currentCeilingHeight = ref(props.ceilingHeight + 40); // Changed from currentFloorHeight
 
+
+let isShowInstructionModal = ref(false);
+    const  instructionConfig = [
+        {
+          key: "Pinch out zoom out",
+          value: ZoomInIcon,
+        },
+        { key: "Pinch in to zoom", value: ZoomOutIcon },
+        { key: "Drag to move light", value: DragLight },
+      ];
+
+      function showInstructionModal() {
+      isShowInstructionModal.value = true;
+    };
+   function closeInstructionModal() {
+      isShowInstructionModal.value = false;
+    };
 // Ceiling mask data (changed from floor mask)
 let ceilingMaskTexture = null;
 let ceilingMaskCanvas = null;
@@ -2273,6 +2312,33 @@ defineExpose({
     pointer-events: auto;
     touch-action: pan-y pinch-zoom;
   }
+}
+
+
+
+
+/* modal */
+.instruction-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.instruction-item:last-child {
+  border-bottom: none;
+}
+
+.instruction {
+  font-weight: 500;
+  color: #333;
+  flex: 1;
+}
+
+.gesture-icon {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  margin-left: 20px;
 }
 </style>
 

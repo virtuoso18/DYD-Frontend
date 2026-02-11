@@ -1,8 +1,28 @@
 <template>
+  <a-modal
+    v-model:open="isShowInstructionModal"
+    title="Instructions"
+    @ok="closeInstructionModal"
+    :width="500"
+  >
+    <div class="instruction-item" v-for="item in instructionConfig" :key="item">
+      <span class="instruction">{{ item?.key }}</span>
+      <img :src="item?.value" alt="gesture" class="gesture-icon" />
+    </div>
+  </a-modal>
+
+
   <div class="magnetic-light-designer">
     <!-- Loading Overlay -->
     <!-- Main Canvas Container -->
     <div class="canvas-container" ref="canvasContainer">
+      <img
+        class="absolute top-[5px] right-[10px] cursor-pointer z-9 w-[25px]"
+        src="../../../assets/icons/informationIcon.svg"
+        alt="instruction"
+        @click="showInstructionModal"
+        title="see instruction"
+      />
       <div v-if="isLoading" class="scanning-loading-overlay">
         <div
           class="loading-screen"
@@ -372,6 +392,11 @@
 </template>
 
 <script setup>
+ import ZoomInIcon from "@/assets/icons/zoomout.png";
+import ZoomOutIcon from "@/assets/icons/zoomin.png";
+import DrawTrackIcon from "@/assets/icons/tap.png";
+import LongPressIcon from "@/assets/icons/longPressTab.png";
+
 import {
   ref,
   computed,
@@ -405,6 +430,17 @@ const props = defineProps({
     default: null,
   },
 });
+
+let isShowInstructionModal= ref(false);
+const instructionConfig = [
+    {
+      key: "Pinch out zoom out",
+      value: ZoomInIcon,
+    },
+    { key: "Pinch in to zoom", value: ZoomOutIcon },
+    {key: "Draw tracks",value:DrawTrackIcon },
+    {key:"Long press to add light",value:LongPressIcon}
+  ];
 
 // ===================
 // STATE MANAGEMENT
@@ -521,6 +557,12 @@ watch(
   }
 );
 
+function showInstructionModal() {
+      isShowInstructionModal.value = true;
+    };
+    const closeInstructionModal = () => {
+      isShowInstructionModal.value = false;
+    };
 // ===================
 // Export room Light layer
 // ===================
@@ -3065,4 +3107,31 @@ defineExpose({
     gap: 8px;
   }
 }
+
+
+/* modal */
+.instruction-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.instruction-item:last-child {
+  border-bottom: none;
+}
+
+.instruction {
+  font-weight: 500;
+  color: #333;
+  flex: 1;
+}
+
+.gesture-icon {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  margin-left: 20px;
+}
+
+
 </style>

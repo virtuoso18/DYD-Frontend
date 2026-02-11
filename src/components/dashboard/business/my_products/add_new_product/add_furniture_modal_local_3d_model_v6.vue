@@ -46,7 +46,7 @@
                       <div style="position: relative; padding:10px;">
             
                         <!-- 3D Model Upload Area (shown when no model is uploaded) -->
-                        <!-- <div 
+                        <div 
                           v-if="!local3dModelUrl"
                           @drop.prevent="handleModelDrop"
                           @dragover.prevent="isDragging = true"
@@ -74,32 +74,8 @@
                           <p style="font-size: 14px; color: #374151; font-weight: 500; margin-bottom: 8px;">Drag and drop 3D model here or click to upload</p>
                           <p style="font-size: 12px; color: #6b7280; margin: 0;">Supported file format: .gltf / .glb</p>
                           <p style="font-size: 12px; color: #6b7280; margin: 4px 0 0 0;">File size: 50MB</p>
-                        </div> -->
-                           <router-link 
-                  v-if="!local3dModelUrl"
-                  :to="'/my-products/add-new-furniture'"
-                  :style="{
-                    border: isDragging ? '2px solid #3b82f6' : '2px dashed #d1d5db',
-                    borderRadius: '12px',
-                    padding: '40px 16px',
-                    background: isDragging ? '#f8faff' : '#f9fafb',
-                    minHeight: '250px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease'
-                  }"
-                >
-                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" style="margin-bottom: 16px;">
-                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-                    <polyline points="3.27,6.96 12,12.01 20.73,6.96"></polyline>
-                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
-                  </svg>
-                  <p style="font-size: 14px; color: #374151; font-weight: 500; margin-bottom: 8px;">please pick your already generated 3d models  3D model here or click to upload</p>
-                  <p style="font-size: 12px; color: #6b7280; margin: 4px 0 0 0;">or create new one </p>
-                </router-link>
+                        </div>
+            
                         <!-- 3D Model Renderer (shown when model is uploaded) -->
                         <div v-else style="position: relative;">
                           <canvas_3d_model_renderer 
@@ -210,7 +186,7 @@
               />
             </div>
                       </div>
-                       <!-- <div style="margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; padding: 12px; background: #f8faff; border-radius: 8px; border: 1px solid #e5e7eb;">
+                       <div style="margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; padding: 12px; background: #f8faff; border-radius: 8px; border: 1px solid #e5e7eb;">
                     <div style="display: flex; align-items: center; gap: 8px;">
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2">
                         <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
@@ -223,46 +199,7 @@
                       @change="handleResizableChange"
                       style="background-color: #3b82f6;"
                     />
-                       </div> -->
-                        <select3d_model_for_color 
-                 :list_history_generated_3d_models="list_history_generated_3d_models"
-                 :loading_generated_models_history="loading_generated_models_history" 
-                 @clicked-model="clickedModel"
-               />
-               <div v-if="list_history_generated_3d_models.length > 0" style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #e5e7eb;">
-                    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
-                      <p style="font-size: 12px; color: #6b7280; margin: 0;">
-                        Showing {{ list_history_generated_3d_models.length }} of {{ pagination.totalCount }} models
-                      </p>
-                      
-                      <a-button 
-                        v-if="pagination.hasMoreModels"
-                        @click="loadMoreModels"
-                        :loading="loadingMoreModels"
-                        style="border-radius: 6px;"
-                      >
-                        <template #icon>
-                          <svg 
-                            v-if="!loadingMoreModels"
-                            width="16" 
-                            height="16" 
-                            viewBox="0 0 24 24" 
-                            fill="none" 
-                            stroke="currentColor" 
-                            stroke-width="2"
-                          >
-                            <line x1="12" y1="5" x2="12" y2="19"></line>
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                          </svg>
-                        </template>
-                        {{ loadingMoreModels ? 'Loading...' : 'Load More Models' }}
-                      </a-button>
-                      
-                      <p v-else style="font-size: 12px; color: #10b981; margin: 0;">
-                        All models loaded
-                      </p>
-                    </div>
-                </div>
+                       </div>
                     </a-col>
                   
 
@@ -343,7 +280,7 @@
                     
                                 <!-- Description Field -->
                                 <div style="margin-bottom: 16px;">
-                                  <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Description</label>
+                                  <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Description <span style="color: red;">*</span></label>
                                   <a-textarea 
                                     v-model:value="productForm.description"
                                     :rows="3"
@@ -384,7 +321,7 @@
                     </div>
                                   </a-col>
                                   <a-col :span="8">
-                                    <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Type</label>
+                                    <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Type <span style="color: red;">*</span> </label>
                                     <a-select 
                                       v-model:value="productForm.furniture_type" 
                                       placeholder="Modern"
@@ -411,7 +348,7 @@
                                   <h4 style="margin-bottom: 12px; font-size: 14px; font-weight: 500; color: #1f2937;">Dimensions</h4>
                                   <a-row :gutter="8">
                                     <a-col :span="8">
-                                      <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Height</label>
+                                      <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Height <span style="color: red;">*</span> </label>
                                       <div style="display: flex; align-items: center;">
                                         <a-input-number
                                           v-model:value="productForm.dimensions.height" 
@@ -426,7 +363,7 @@
                                       </div>
                                     </a-col>
                                     <a-col :span="8">
-                                      <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Length/Depth</label>
+                                      <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Length/Depth <span style="color: red;">*</span></label>
                                       <div style="display: flex; align-items: center;">
                                         <a-input-number
                                           v-model:value="productForm.dimensions.length" 
@@ -441,7 +378,7 @@
                                       </div>
                                     </a-col>
                                     <a-col :span="8">
-                                      <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Width</label>
+                                      <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Width <span style="color: red;">*</span></label>
                                       <div style="display: flex; align-items: center;">
                                         <a-input-number
                                           v-model:value="productForm.dimensions.width" 
@@ -460,7 +397,7 @@
                     
                                 <!-- Available Colors Section -->
                                 <div style="margin-bottom: 20px;">
-                                  <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #374151;">Available Colors</label>
+                                  <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #374151;">Available Colors<span style="color: red;">*</span></label>
                                   
                                   <a-popover trigger="click" placement="bottom">
                                     <template #title>
@@ -556,14 +493,14 @@
                                 </div>
                     
                                 <!-- Textures Section -->
-                                <!-- <div style="margin-bottom: 20px;">
+                                <div style="margin-bottom: 20px;">
                                   <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #374151;">Texture Images</label>
                                   
                                   <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 12px;">
                                     
-                                   
+                                    <!-- Select from pre-uploaded textures -->
                                     <a-popover trigger="click" placement="bottom">
-                                      
+                                      <!-- Upload custom texture -->
                                     
                                       <template #title>
                                         <a-button 
@@ -629,7 +566,23 @@
                                         Select Texture
                                       </a-button>
                                     </a-popover>
+
+                                    <!-- Upload custom texture -->
+                                    <!-- <a-button 
+                                      @click="uploadTexture"
+                                      style="border-radius: 6px; border: 2px dashed #d1d5db;"
+                                    >
+                                      <template #icon>
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                          <line x1="12" y1="5" x2="12" y2="19"></line>
+                                          <line x1="5" y1="12" x2="19" y2="12"></line>
+                                        </svg>
+                                      </template>
+                                      Upload Custom
+                                    </a-button> -->
                                   </div>
+                    
+                                  <!-- Selected textures display -->
                                   <div v-if="selectedTextures.length > 0" style="margin-top: 12px;">
                                     <div style="display: flex; flex-wrap: wrap; gap: 8px;">
                                       <div 
@@ -651,6 +604,7 @@
                                           }"
                                           :title="texture.name || 'Texture'"
                                         ></div>
+                                        <!-- Custom texture indicator (uploaded by user) -->
                                         <div 
                                           v-if="!texture.id"
                                           style="position: absolute; left: -5px; bottom: -5px; background: #8b5cf6; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 10px; box-shadow: 0 2px 4px rgba(139, 92, 246, 0.3);"
@@ -674,10 +628,10 @@
                                       </div>
                                     </div>
                                   </div>
-                                </div> -->
+                                </div>
                     
                                 <!-- PBR Files Section -->
-                                <!-- <div style="margin-bottom: 20px;">
+                                <div style="margin-bottom: 20px;">
                                   <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #374151;">PBR Files</label>
                                   
                                   <div style="cursor: pointer;" @click="uploadPbr">
@@ -718,7 +672,7 @@
                                       </a-button>
                                     </div>
                                   </div>
-                                </div> -->
+                                </div>
                               </div>
                             </a-col>
                   
@@ -739,8 +693,8 @@ import { computed } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import { message } from 'ant-design-vue';
+
 import canvas_3d_model_renderer from "@/components/store/canvas_3d_model_renderer.vue"
-import select3d_model_for_color from '@/components/dashboard/business/my_products/add_color_3d_model/dyd_generated.vue'
 
 export default {
   name: "AddNewProduct_modal",
@@ -755,7 +709,7 @@ export default {
       name: 'demo product',
       description: 'description sample',
       category_name: 'Chair',
-      furniture_type: 'Modern',
+      furniture_type: '',
       pricing: { price: 10 },
       dimensions: { height: 1, length: 1, width: 2 },
       images: [],
@@ -772,7 +726,6 @@ export default {
 },
   components: {
     canvas_3d_model_renderer,
-    select3d_model_for_color
   },
   emits: ['update:visible', 'product-created', 'cancel'],
   
@@ -792,17 +745,7 @@ export default {
     // Texture library
     availableTextures: [],
     loadingTextures: false,
-    loading_generated_models_history: true,
-    list_history_generated_3d_models: [],
-
-    // ========== NEW: Pagination Properties ==========
-    pagination: {
-        currentOffset: 0,      // Current pagination offset
-        pageSize: 8,          // Models per page
-        totalCount: 0,         // Total available models
-        hasMoreModels: false   // Whether more models exist
-    },
-    loadingMoreModels: false,
+    
     // Form data - initialized with defaultValues
     productForm: {
       name: this.defaultValues.name || '',
@@ -864,13 +807,8 @@ watch: {
     if (!newValue) {
       this.resetForm();
     } else {
-      this.pagination.currentOffset = 0;
-      this.pagination.totalCount = 0;
-      this.pagination.hasMoreModels = false;
-      this.list_history_generated_3d_models = [];
       // Load available textures when modal opens
       this.loadAvailableTextures();
-      this.fetch3d_models_generated_by_user();
     }
   },
   rendered_modal_3D_id(newId, oldId) {
@@ -905,210 +843,6 @@ watch: {
 },
 
   methods: {
-     async loadMoreModels() {
-      // Prevent multiple simultaneous requests
-      if (this.loadingMoreModels || !this.pagination.hasMoreModels) {
-        console.warn('⚠️ Cannot load more: already loading or no more models');
-        return;
-      }
-
-      this.loadingMoreModels = true;
-
-      try {
-        const limit = this.pagination.pageSize;
-        const offset = this.pagination.currentOffset;
-        
-        const url = `${this.$store.state.root_api}engine/generated-3d-models-list/?limit=${limit}&offset=${offset}&is_light_type=true`;
-
-        console.log(' Loading more 3D models...', { 
-          offset: offset,
-          limit: limit,
-          currentTotal: this.list_history_generated_3d_models.length
-        });
-
-        const response = await fetch(url, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Token ${localStorage.getItem('token')}`,
-            'Accept': 'application/json'
-          }
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
-
-        const responseData = await response.json();
-
-        // Append new models to the list
-        if (!responseData.results?.error && responseData.results?.models) {
-          const newModels = responseData.results.models;
-          const previousCount = this.list_history_generated_3d_models.length;
-          
-          // Append new models
-          this.list_history_generated_3d_models.push(...newModels);
-
-          // Update offset for next request
-          this.pagination.currentOffset += this.pagination.pageSize;
-
-          // Check if more models exist
-          this.pagination.hasMoreModels = this.list_history_generated_3d_models.length < this.pagination.totalCount;
-
-          console.log('✅ More models loaded:', {
-            newModelsCount: newModels.length,
-            previousCount: previousCount,
-            totalLoaded: this.list_history_generated_3d_models.length,
-            totalAvailable: this.pagination.totalCount,
-            hasMore: this.pagination.hasMoreModels
-          });
-
-          this.$message.success(`Loaded ${newModels.length} more models`);
-
-        } else {
-          throw new Error(responseData.results?.message || 'Failed to parse response');
-        }
-
-      } catch (error) {
-        console.error('❌ Error loading more models:', error);
-        this.$message.error('Failed to load more models: ' + error.message);
-
-      } finally {
-        this.loadingMoreModels = false;
-      }
-    },
-    // ================================================
-
-    /**
-     * Handle model selection from the history list
-     */
-    async clickedModel(modelData) {
-      console.log('🎯 Model clicked:', modelData);
-      
-      if (!modelData) {
-        console.warn('⚠️ No model data provided');
-        return;
-      }
-
-      this.model_data_instance_id = modelData.new3d_model_instance;
-      const mediaUrl = modelData.media_url || modelData.url;
-
-      if (!mediaUrl) {
-        console.error('❌ No media URL in model data');
-        return;
-      }
-
-      const fixedUrl = mediaUrl.replace(/\\/g, '/');
-      const fullUrl = this.$store.state.root_media_api + fixedUrl;
-      
-      console.log('📥 Fetching model file from:', fullUrl);
-
-      try {
-        const response = await fetch(fullUrl);
-        
-        if (!response.ok) {
-          throw new Error(`Failed to fetch model: HTTP ${response.status}`);
-        }
-
-        const blob = await response.blob();
-        console.log('✅ File fetched, size:', blob.size, 'bytes');
-
-        const fileName = modelData.name || 'model.glb';
-        const file = new File([blob], fileName, { type: blob.type });
-        
-        this.local3dModelUrl = fullUrl;
-        this.uploaded3dModelFile = {
-          file: file,
-          name: modelData.name || 'Generated Model',
-          size: (blob.size / 1024 / 1024).toFixed(2) + ' MB',
-          isGenerated: true,
-          generatedUrl: fixedUrl,
-          modelId: modelData.id
-        };
-
-        console.log('✅ 3D Model loaded successfully');
-
-      } catch (error) {
-        console.error('❌ Error fetching model file:', error);
-        this.$message.error('Failed to load model file: ' + error.message);
-      }
-    },
-
-    /**
-     * Fetch generated 3D models with pagination support
-     */
-    async fetch3d_models_generated_by_user() {
-      this.loading_generated_models_history = true;
-
-      try {
-        debugger
-        const limit = this.pagination.pageSize;
-        const offset = this.pagination.currentOffset;
-        
-        const url = `${this.$store.state.root_api}engine/generated-3d-models-list/?limit=${limit}&offset=${offset}&is_light_type=true`;
-
-        console.log('📡 Fetching 3D models history...', { 
-          offset: offset,
-          limit: limit 
-        });
-
-        const response = await fetch(url, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Token ${localStorage.getItem('token')}`,
-            'Accept': 'application/json'
-          }
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
-
-        const responseData = await response.json();
-        
-        console.log('✅ API Response received:', {
-          totalCount: responseData.count,
-          modelsCount: responseData.results?.models?.length || 0
-        });
-
-        // ========== NEW: Handle paginated response ==========
-        if (!responseData.results?.error) {
-          // On first load (offset=0), initialize the list
-          if (this.pagination.currentOffset === 0) {
-            this.list_history_generated_3d_models = responseData.results.models || [];
-            console.log('📌 First batch loaded');
-          } else {
-            // On "Load More", append to existing list
-            this.list_history_generated_3d_models.push(...(responseData.results.models || []));
-            console.log('📌 Additional batch appended');
-          }
-
-          // Update pagination info from API response
-          this.pagination.totalCount = responseData.count || 0;
-
-          // Calculate if more models exist
-          this.pagination.hasMoreModels = this.list_history_generated_3d_models.length < this.pagination.totalCount;
-          this.pagination.currentOffset = this.pagination.currentOffset + this.pagination.pageSize
-          console.log('✅ Pagination Status:', {
-            loaded: this.list_history_generated_3d_models.length,
-            total: this.pagination.totalCount,
-            hasMore: this.pagination.hasMoreModels,
-            // nextOffset: this.pagination.currentOffset + this.pagination.pageSize
-          });
-
-        } else {
-          throw new Error(responseData.results?.message || 'Failed to fetch models');
-        }
-
-      } catch (error) {
-        console.error('❌ Failed to fetch 3D models:', error);
-        this.error.general = error.message;
-        this.$message.error('Failed to fetch 3D models: ' + error.message);
-
-      } finally {
-        this.loading_generated_models_history = false;
-      }
-    },
-
     getImageUrl(imagePath) {
       console.log(`${this.$store.state.root_media_api}${imagePath}`)
       return `${this.$store.state.root_media_api}${imagePath}`;
@@ -1379,7 +1113,7 @@ async loadInitialCategories() {
         this.productForm.category_name = [];
       }
     } else {
-      
+      // If somehow it's a string, convert to array
       this.productForm.category_name = value ? [value] : [];
     }
     
@@ -1406,7 +1140,7 @@ async loadInitialCategories() {
       
       if (result) {
         // Map textures to include proper URL format
-        this.availableTextures = (result.results.data || []).map(texture => ({
+        this.availableTextures = (result.data || []).map(texture => ({
           id: texture?.id,
     
           url: texture?.image_url || texture.url, // Adjust based on API response
@@ -1779,69 +1513,75 @@ removeColor(index) {
       return true;
     },
 
-  
-  validateForm() {
+    // Form Validation & Save
+    validateForm() {
   if (!this.productForm.name?.trim()) {
     this.$message.error('Please fill the Name field');
     return false;
   }
+  
   if (!this.productForm.description?.trim()) {
-
     this.$message.error('Please fill the Description field');
-
     return false;
-
   }
+  
   if (!this.productForm.category_name || this.productForm.category_name.length === 0) {
-
     this.$message.error('Please select a Category');
-
     return false;
-
   }
+  
   if (!this.productForm.furniture_type) {
-
     this.$message.error('Please select a Type');
-
     return false;
-
   }
+  
   if (!this.productForm.pricing.price || parseFloat(this.productForm.pricing.price) <= 0) {
-   this.$message.error('Please enter a valid Price greater than 0');
+    this.$message.error('Please enter a valid Price greater than 0');
     return false;
   }
+  
   if (this.selectedImages.length === 0) {
     this.$message.error('Please upload at least one product image');
     return false;
   }
+  
   if (!this.local3dModelUrl && !this.rendered_modal_3D_id) {
     this.$message.error('Please select or upload a 3D model');
     return false;
   }
 
+  // Dimensions
   if (!this.productForm.dimensions.height || parseFloat(this.productForm.dimensions.height) <= 0) {
     this.$message.error('Please enter a valid Height greater than 0');
     return false;
-
   }
+  
   if (!this.productForm.dimensions.length || parseFloat(this.productForm.dimensions.length) <= 0) {
     this.$message.error('Please enter a valid Length/Depth greater than 0');
     return false;
   }
+  
   if (!this.productForm.dimensions.width || parseFloat(this.productForm.dimensions.width) <= 0) {
     this.$message.error('Please enter a valid Width greater than 0');
     return false;
   }
+
   if (this.selectedTextures.length === 0) {
   this.$message.error('Please upload at least one texture image');
   return false;
 }
+
+
+  // Colors (if you have them)
   if (this.selectedColors.length === 0) {
     this.$message.error('Please select at least one available color');
     return false;
   }
+
   return true;
 },
+
+
     async handleSave() {
       if (!this.validateForm()) return;
 
@@ -1924,7 +1664,7 @@ removeColor(index) {
           pbr_files_count: this.selectedPbrFiles.length
         });
 
-        const response = await fetch(`${store.state.root_api}product/api-product-owner/lights/`, {
+        const response = await fetch(`${store.state.root_api}product/api-product-owner/products/`, {
           method: 'POST',
           headers: { 
             'Authorization': `Token ${token}` 
@@ -1936,7 +1676,7 @@ removeColor(index) {
 
         if (response.ok && result.success) {
           console.log('✅ Product created successfully:', result.data);
-          console.log('Product created successfully!');
+  message.success('Product created successfully!');
           
           this.$emit('product-created', result.data);
           this.$emit('update:visible', false);
@@ -1949,8 +1689,7 @@ removeColor(index) {
 
       } catch (error) {
         console.error('❌ Error creating product:', error);
-        console.error('Error creating product. Please try again.');
-        
+ this.$message.error('Failed to create product. Please check your inputs and try again.');        
       } finally {
         this.isSaving = false;
       }

@@ -1491,9 +1491,10 @@ Switch Furniture</a-button> -->
               @products-see-all="furnituresSeeAll"
               @trigger-render-3d-object="execute3DRederer"
               @trigger-switch-furniture="executeswitchFurniture"
-              ref="furniture_products_list"
+              ref="furniture_products_list_mobile"
               @change-3d-model="change3dModel"
             />
+            
             <floor
               v-if="
                 current_tab == 'image' &&
@@ -1501,7 +1502,7 @@ Switch Furniture</a-button> -->
                 select_replace === 'Floor'
               "
               @texture-selected="floorTextureSelected"
-              ref="floor_products_list"
+              ref="floor_products_list_mobile"
               :brand_data="brand_data"
               @floor-see-all="floorSeeAll"
             ></floor>
@@ -1512,7 +1513,7 @@ Switch Furniture</a-button> -->
                 select_replace === 'Wall'
               "
               @texture-selected="wallTextureSelected"
-              ref="wall_products_list"
+              ref="wall_products_list_mobile"
               :brand_data="brand_data"
               @walls-see-all="wallsSeeAll"
             ></walls>
@@ -1525,7 +1526,8 @@ Switch Furniture</a-button> -->
               @product-selected="product_selected_all_tabs_section"
               :brand_data="brand_data"
               @see-all-products="SeeAllProducts"
-            >
+
+              @brand-products="get_all_products_tabs_available"            >
             </fernitures>
             <lights
               v-if="
@@ -1534,7 +1536,7 @@ Switch Furniture</a-button> -->
                 select_replace === 'Lights'
               "
               @light-selected="lightSelected"
-              ref="lights_list"
+              ref="lights_list_mobile"
               :brand_data="brand_data"
               @light-see-all="lightsSeeAll"
               @Apply_Light="Apply_ceiling_light"
@@ -3197,7 +3199,7 @@ export default {
       creditErrorMessage: "",
       showCreditModal: false,
       
-       preserved3DModelTransform: null,
+      preserved3DModelTransform: null,
 
       LockCanvasOperation: false,
       brand: "",
@@ -4921,9 +4923,10 @@ export default {
         this.$nextTick(() => {
           if (
             this.select_replace === "Floor" &&
-            this.$refs.floor_products_list
+            (this.$refs.floor_products_list || this.$refs.floor_products_list_mobile) 
           ) {
             this.$refs.floor_products_list.selectTexture(e.id);
+            this.$refs.floor_products_list_mobile.selectTexture(e.id);
           }
         });
       }
@@ -4934,22 +4937,41 @@ export default {
         this.selected_model_width = e.width;
         this.selected_model_height = e.height;
         this.selected_model_depth = e.depth;
+        this.is_resizable = e.is_resizable;
+        this.selected_3d_product_model = e.id;
+        
         console.log(e);
-        console.log(this.selected_model_width);
-        console.log(this.selected_model_height);
-        console.log(this.selected_model_depth);
+        console.log(" >>------------------------------------------> selected_model_width " , this.selected_model_width);
+        console.log(" >>------------------------------------------> selected_model_height " , this.selected_model_height);
+        console.log(" >>------------------------------------------> selected_model_depth " , this.selected_model_depth);
+        console.log(" >>------------------------------------------> selected_3d_product_model " , this.selected_3d_product_model);
+        console.log(" >>------------------------------------------> is_resizable " , this.is_resizable);
+
+       
         this.$nextTick(() => {
           if (
             this.select_replace === "Furniture" &&
-            this.$refs.furniture_products_list
+            (this.$refs.furniture_products_list || this.$refs.furniture_products_list_mobile)
           ) {
+            // this.item_replacement_renderer_3d_model_url = this.$store.state.root_media_api + e.model_url;
+            // console.log(this.item_replacement_renderer_3d_model_url)
             this.$refs.furniture_products_list.updateItemRendering(
               e.id,
               e.model_url,
               e.width,
               e.height,
               e.depth,
+              e.is_resizable
             );
+            this.$refs.furniture_products_list_mobile.updateItemRendering(
+              e.id,
+              e.model_url,
+              e.width,
+              e.height,
+              e.depth,
+              e.is_resizable
+            );
+            
           }
         });
       }
@@ -4961,10 +4983,11 @@ export default {
             this.current_tab === "image" &&
             this.active_tab_image === "item_replacement" &&
             this.select_replace === "Wall" &&
-            this.$refs.wall_products_list
+            (this.$refs.wall_products_list || this.$refs.wall_products_list_mobile)
           ) {
             // console.log(this.$refs)
             this.$refs.wall_products_list.selectTexture(e.id);
+            this.$refs.wall_products_list_mobile.selectTexture(e.id);
           }
         });
       }
@@ -4972,8 +4995,13 @@ export default {
       if (e.type === "light") {
         this.selectCategory("Lights");
         this.$nextTick(() => {
-          if (this.select_replace === "Lights" && this.$refs.lights_list) {
+          if (this.select_replace === "Lights" && (this.$refs.lights_list || this.$refs.lights_list_mobile )) {
             this.$refs.lights_list.updateItemRendering(
+              e.id,
+              e.light_type,
+              e.model_url,
+            );
+            this.$refs.lights_list_mobile.updateItemRendering(
               e.id,
               e.light_type,
               e.model_url,
@@ -5189,6 +5217,7 @@ export default {
         );
       }
       this.$refs.floor_item_3d_renderer.renderItem();
+
     }
   },
     executeswitchFurniture() {

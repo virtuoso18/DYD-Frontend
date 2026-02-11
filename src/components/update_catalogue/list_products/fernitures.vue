@@ -73,9 +73,10 @@
               :key="item.id"
               class="item relative overflow-hidden w-full h-[120px] cursor-pointer"
               :class="{ 'ring-2 ring-blue-500 shadow-lg': selected_texture === item.id }"
-              @click="selectfurnitureProduct('product', item.id, item['3d_model'], item.dimensions)"
+              @click="selectfurnitureProduct('product', item.id, item['3d_model'], item.dimensions,item.is_resizable)"
               style="position:relative !important; overflow:hidden !important;"
-            >
+              >
+
               <!-- Image Shimmer -->
               <div 
                 v-if="!imageLoadedMap[item.id]"
@@ -276,6 +277,7 @@
 import { Empty } from 'ant-design-vue';
 
 export default {
+  name:"AllFurnituresScreen",
   data() {
     return {
       searchText: '',
@@ -507,7 +509,7 @@ export default {
     //     'depth': dimensions?.length
     //   });
     // },
-selectfurnitureProduct(type, id, model_url, dimensions = null) {
+selectfurnitureProduct(type, id, model_url, dimensions = null,is_resizable=false) {
   this.selected_texture = id;
   
   console.log('📦 Product selected:', {
@@ -522,7 +524,8 @@ selectfurnitureProduct(type, id, model_url, dimensions = null) {
     'model_url': model_url,
     'width': dimensions?.width || 1.0,
     'height': dimensions?.height || 1.0,
-    'depth': dimensions?.length || dimensions?.depth || 1.0  // ✅ Check both fields
+    'depth': dimensions?.length || dimensions?.depth || 1.0 , // ✅ Check both fields
+    'is_resizable':is_resizable
   });
 },
     selectTexture(type, id, model_url = null, light_type = null) {
