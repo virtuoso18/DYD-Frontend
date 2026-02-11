@@ -1,11 +1,11 @@
 <template>
   <!-- <div style="background: white;height:90vh;padding:10px;overflow-y: scroll;"> -->
-    <div className="bg-white h-full sm:h-[60vh] p-2.5 sm:overflow-y-scroll">
+    <div className="bg-white h-full sm:h-[70vh] p-2.5 sm:overflow-y-scroll">
 
       <div style="display: flex;justify-content: space-between;">
         <a-row>
           <a-col :span="4"><HistoryOutlined /></a-col>
-          <a-col :span="20"><h4 >Generate History</h4></a-col>
+          <a-col :span="20"><h4 class="whitespace-nowrap !font-poppins" >Generate History</h4></a-col>
         </a-row>
         
         <router-link to="/my-products/add-new-furniture"> <a-button size="small" type="primary" >+ Create New </a-button></router-link>

@@ -14,14 +14,14 @@
     <a-row v-if="view_type == 'all'">
       <a-col :span="24">
         <h2
-          class="!p-4 sm:p-0 !font-[Poppins] font-medium text-[16px] leading-[24px] text-gray-700 tracking-[0]"
+          class="!px-3 !pt-3 sm:translate-y-2 sm:p-0 !font-[Poppins] font-medium text-[16px] leading-[24px] text-gray-700 tracking-[0]"
         >
           My Designes
         </h2>
       </a-col>
 
       <!-- TAB SECTION -->
-      <a-col :span="24" style="padding: 5px 10px">
+      <a-col :span="24" style="padding: 10px 16px">
         <a-tabs v-model:activeKey="activeTab">
           <!-- ROOM DESIGNES TAB -->
           <a-tab-pane key="room_designes" tab="Room Designes">
@@ -847,7 +847,7 @@
                 stroke-linejoin="round"
               />
             </svg>
-            <b>Back</b>
+<h2          class="!p-4 sm:p-0 !font-[Poppins] font-medium text-[16px] leading-[24px] text-gray-700 tracking-[0]">Back</h2>
           </button>
 
           <!-- Regenerate Button -->
@@ -876,26 +876,91 @@
       </a-col>
 
       <!-- Main Large Image -->
-      <a-col :span="24" class="!p-4 flex justify-center">
-        <div class="w-full max-w-4xl rounded-2xl overflow-hidden shadow-lg">
-          <img
-            :src="$store.state.root_media_api + mainHomeDesignImage"
-            alt="Room Design"
-            class="w-full h-auto max-h-[600px] object-cover"
-          />
+      <a-col :span="24" class="!p-4">
+  <div class="flex flex-col lg:flex-row gap-6 max-w-6xl mx-auto">
+    <!-- Image Section - Left -->
+    <div class="w-full lg:w-3/5 order-1">
+      <div class="w-full max-w-4xl rounded-2xl overflow-hidden shadow-lg mx-auto">
+        <img
+          :src="$store.state.root_media_api + mainHomeDesignImage"
+          alt="Room Design"
+          class="w-full h-auto max-h-[600px] object-cover"
+        />
+      </div>
+    </div>
+
+    <!-- Details Section - Right -->
+    <div class="w-full lg:w-2/5 order-2 flex flex-col">
+      <!-- Header Row -->
+      <div class="bg-gray-50 rounded-2xl p-6 lg:p-8 border border-gray-200 mb-6">
+        <div class="flex flex-wrap justify-between items-start gap-4 mb-6">
+          <h3 class="text-xl lg:text-2xl font-bold text-gray-900">Design Details</h3>
+          <div class="flex gap-4 flex-wrap">
+           
+          </div>
         </div>
-      </a-col>
+
+        <!-- All data in horizontal row -->
+        <div class="flex flex-wrap gap-4 items-end">
+          <div class="bg-white p-4 rounded-xl border border-gray-200 flex-1 min-w-[140px]">
+            <p class="text-xs text-gray-500 mb-2 font-medium uppercase">Room Type</p>
+            <p class="font-semibold text-gray-900">{{ selected_home_design.home_design_room_type }}</p>
+          </div>
+          <div class="bg-white p-4 rounded-xl border border-gray-200 flex-1 min-w-[140px]">
+            <p class="text-xs text-gray-500 mb-2 font-medium uppercase">Design Style</p>
+            <p class="font-semibold text-gray-900">{{ selected_home_design.home_design_room_style }}</p>
+          </div>
+          <div class="bg-white p-4 rounded-xl border border-gray-200 flex-1 min-w-[140px]">
+            <p class="text-xs text-gray-500 mb-2 font-medium uppercase">Created At</p>
+            <p class="font-semibold text-gray-900">{{ formatDate(selected_home_design.created_at) }}</p>
+          </div>
+          <div class="bg-white p-[22px] rounded-xl border border-gray-200 flex-1 min-w-[120px]">
+            <p class="text-xs text-gray-500 mb-2 font-medium uppercase">Status</p>
+            <a-tag
+              v-if="selected_home_design.is_my_design_saved"
+              color="green"
+              class="!font-medium"
+            >
+              ✓ Saved
+            </a-tag>
+            <a-tag v-else color="default" class="!font-medium">Not Saved</a-tag>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</a-col>
+
 
       <!-- Thumbnail Gallery -->
-      <a-col :span="24" class="!p-4">
-        <div class="flex justify-center">
-          <div class="flex gap-3 overflow-x-auto pb-2 max-w-4xl w-full px-2">
+      <a-col :span="24" class="sm:!p-4">
+        <div class="flex justify-start">
+          <div class="flex gap-3 overflow-x-auto no-scrollbar pb-2 max-w-3xl w-full px-2">
+             <div
+              v-if="selected_home_design.input_image"
+              @click="mainHomeDesignImage = selected_home_design.input_image"
+              :class="[
+                'flex-shrink-0 w-16 h-16 md:w-24 md:h-24 rounded-lg overflow-hidden border-3 cursor-pointer transition-all relative',
+                mainHomeDesignImage === selected_home_design.input_image
+                  ? 'border-blue-600 shadow-md'
+                  : 'border-gray-300 hover:border-blue-400'
+              ]"
+            >
+              <img
+                :src="$store.state.root_media_api + selected_home_design.input_image"
+                alt="Original Image"
+                class="w-full h-full object-cover"
+              />
+              <div class="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center">
+                <span class="text-white text-xs font-bold">Before</span>
+              </div>
+            </div>
             <!-- Image 0 -->
             <div
               v-if="selected_home_design.image_0"
               @click="mainHomeDesignImage = selected_home_design.image_0"
               :class="[
-                'flex-shrink-0 w-20 h-20 md:w-24 md:h-24 rounded-lg overflow-hidden border-3 cursor-pointer transition-all',
+                'flex-shrink-0 w-16 h-16 md:w-24 md:h-24 rounded-lg overflow-hidden border-3 cursor-pointer transition-all',
                 mainHomeDesignImage === selected_home_design.image_0
                   ? 'border-blue-600 shadow-md'
                   : 'border-gray-300 hover:border-blue-400'
@@ -913,7 +978,7 @@
               v-if="selected_home_design.image_1"
               @click="mainHomeDesignImage = selected_home_design.image_1"
               :class="[
-                'flex-shrink-0 w-20 h-20 md:w-24 md:h-24 rounded-lg overflow-hidden border-3 cursor-pointer transition-all',
+                'flex-shrink-0 w-16 h-16 md:w-24 md:h-24 rounded-lg overflow-hidden border-3 cursor-pointer transition-all',
                 mainHomeDesignImage === selected_home_design.image_1
                   ? 'border-blue-600 shadow-md'
                   : 'border-gray-300 hover:border-blue-400'
@@ -931,7 +996,7 @@
               v-if="selected_home_design.image_2"
               @click="mainHomeDesignImage = selected_home_design.image_2"
               :class="[
-                'flex-shrink-0 w-20 h-20 md:w-24 md:h-24 rounded-lg overflow-hidden border-3 cursor-pointer transition-all',
+                'flex-shrink-0 w-16 h-16 md:w-24 md:h-24 rounded-lg overflow-hidden border-3 cursor-pointer transition-all',
                 mainHomeDesignImage === selected_home_design.image_2
                   ? 'border-blue-600 shadow-md'
                   : 'border-gray-300 hover:border-blue-400'
@@ -949,7 +1014,7 @@
               v-if="selected_home_design.image_3"
               @click="mainHomeDesignImage = selected_home_design.image_3"
               :class="[
-                'flex-shrink-0 w-20 h-20 md:w-24 md:h-24 rounded-lg overflow-hidden border-3 cursor-pointer transition-all',
+                'flex-shrink-0 w-16 h-16 md:w-24 md:h-24 rounded-lg overflow-hidden border-3 cursor-pointer transition-all',
                 mainHomeDesignImage === selected_home_design.image_3
                   ? 'border-blue-600 shadow-md'
                   : 'border-gray-300 hover:border-blue-400'
@@ -963,25 +1028,7 @@
             </div>
 
             <!-- Input Image (Before) -->
-            <div
-              v-if="selected_home_design.input_image"
-              @click="mainHomeDesignImage = selected_home_design.input_image"
-              :class="[
-                'flex-shrink-0 w-20 h-20 md:w-24 md:h-24 rounded-lg overflow-hidden border-3 cursor-pointer transition-all relative',
-                mainHomeDesignImage === selected_home_design.input_image
-                  ? 'border-blue-600 shadow-md'
-                  : 'border-gray-300 hover:border-blue-400'
-              ]"
-            >
-              <img
-                :src="$store.state.root_media_api + selected_home_design.input_image"
-                alt="Original Image"
-                class="w-full h-full object-cover"
-              />
-              <div class="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center">
-                <span class="text-white text-xs font-bold">Before</span>
-              </div>
-            </div>
+           
           </div>
         </div>
       </a-col>
@@ -1000,174 +1047,140 @@
               style="padding: 4px"
             >
               <div class="product" style="padding: 3px">
-                <div
-                  class="product-image-container"
-                  @click="viewProduct(product)"
-                >
-                  <img
-                    :src="$store.state.root_media_api + product.product_image"
-                    :alt="product.product_title"
-                    class="product-image"
-                  />
-                  <!-- Category Badge -->
-                  <div class="category-badge">{{ product.category_name }}</div>
-                  <!-- AR Badge -->
-                  <div class="ar-badge">AR</div>
-                </div>
+  <!-- ✨ FIXED: Added position relative and proper structure -->
+  <div
+    class="product-image-container"
+    @click="viewProduct(product)"
+    style="position: relative; overflow: hidden;"
+  >
+    <!-- ✨ Skeleton Loader -->
+    <div
+      v-if="!imageLoadedMap[product.product_id]"
+      class="product-skeleton"
+    ></div>
 
-                <a-row>
-                  <a-col
-                    :span="24"
-                    class="overflow-x-auto whitespace-nowrap hide-scrollbar"
-                    style="max-width: 200px"
-                  >
-                    <b class="font-light !text-gray-700 inline-block">
-                      {{ product.product_title }}
-                    </b>
-                  </a-col>
+    <!-- ✨ Invisible Preloader -->
+    <img
+      :src="$store.state.root_media_api + product.product_image"
+      style="position: absolute; width: 0; height: 0; opacity: 0"
+      @load="onProductImageLoad(product.product_id)"
+      alt=""
+    />
 
-                  <a-col span="18" class="font-light !text-gray-700">
-                    Color
-                  </a-col>
-                  <a-col span="6" style="display: flex; justify-content: end">
-                    <div
-                      v-for="(color, index) in product.product_colors.slice(
-                        0,
-                        2,
-                      )"
-                      :key="index"
-                      style="
-                        width: 20px;
-                        height: 20px;
-                        border-radius: 20px;
-                        margin-left: 2px;
-                      "
-                      :style="
-                        'background:' +
-                        (color.color_hex ? color.color_hex : color.color)
-                      "
-                    ></div>
-                  </a-col>
+    <!-- ✨ Actual Image with v-show -->
+    <img
+      v-show="imageLoadedMap[product.product_id]"
+      :src="$store.state.root_media_api + product.product_image"
+      :alt="product.product_title"
+      class="product-image"
+    />
 
-                  <a-col class="!text-gray-700" span="12"> Price </a-col>
+    <!-- ✨ Badges - Only show after image loads -->
+    <div 
+      v-show="imageLoadedMap[product.product_id]"
+      class="category-badge"
+    >
+      {{ product.category_name }}
+    </div>
+    
+    <div 
+      v-show="imageLoadedMap[product.product_id]"
+      class="ar-badge"
+    >
+      AR
+    </div>
+  </div>
 
-                  <a-col
-                    class="!text-gray-700"
-                    span="12"
-                    style="
-                      display: flex;
-                      justify-content: end;
-                      font-weight: 700;
-                    "
-                  >
-                    ${{ product.product_price }}
-                  </a-col>
+  <a-row class="p-2">
+    <a-col
+      :span="24"
+      class="overflow-x-auto whitespace-nowrap hide-scrollbar"
+      style="max-width: 200px"
+    >
+      <b class="font-light !text-gray-700 inline-block">
+        {{ product.product_title }}
+      </b>
+    </a-col>
 
-                  <div class="flex items-center gap-2 w-full">
-                    <!-- Product Details Button - 75% width -->
-                    <div class="w-3/4">
-                      <button
-                        @click="goto_product_Route(product)"
-                        class="w-full py-2 px-4 bg-white border border-gray-300 rounded hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500 transition-colors whitespace-nowrap"
-                        style="
-                          font-family: Poppins, sans-serif;
-                          font-size: 12px;
-                        "
-                      >
-                        Product Details
-                      </button>
-                    </div>
+    <a-col span="18" class="font-light !text-gray-700">
+      Color
+    </a-col>
+    <a-col span="6" style="display: flex; justify-content: end">
+      <div
+        v-for="(color, index) in product.product_colors.slice(0, 2)"
+        :key="index"
+        style="
+          width: 20px;
+          height: 20px;
+          border-radius: 20px;
+          margin-left: 2px;
+        "
+        :style="
+          'background:' +
+          (color.color_hex ? color.color_hex : color.color)
+        "
+      ></div>
+    </a-col>
 
-                    <!-- Like Button - 25% width -->
-                    <div class="w-1/4 flex items-end justify-end">
-                      <button
-                        @click="
-                          toggleFavorite(
-                            product.product_id,
-                            product.product_type,
-                            product,
-                          )
-                        "
-                        class="bg-white !py-2.5 border border-gray-300 rounded hover:bg-gray-50 hover:border-blue-500 transition-colors flex items-center justify-center"
-                        style="padding: 2px 12px"
-                      >
-                        <template v-if="product.is_favorited">
-                          <HeartFilled style="color: red" />
-                        </template>
-                        <template v-else>
-                          <HeartOutlined />
-                        </template>
-                      </button>
-                    </div>
-                  </div>
-                </a-row>
-              </div>
+    <a-col class="!text-gray-700" span="12"> Price </a-col>
+
+    <a-col
+      class="!text-gray-700"
+      span="12"
+      style="
+        display: flex;
+        justify-content: end;
+        font-weight: 700;
+      "
+    >
+      ${{ product.product_price }}
+    </a-col>
+
+    <div class="flex items-center gap-2 w-full">
+      <!-- Product Details Button - 75% width -->
+      <div class="w-3/4">
+        <button
+          @click="goto_product_Route_home_design(product)"
+          class="w-full py-2 px-4 bg-white border border-gray-300 rounded hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500 transition-colors whitespace-nowrap"
+          style="
+            font-family: Poppins, sans-serif;
+            font-size: 12px;
+          "
+        >
+          Product Details
+        </button>
+      </div>
+
+      <!-- Like Button - 25% width -->
+      <div class="w-1/4 flex items-end justify-end">
+        <button
+          @click="
+            toggleFavorite(
+              product.product_id,
+              product.product_type,
+              product,
+            )
+          "
+          class="bg-white !py-2.5 border border-gray-300 rounded hover:bg-gray-50 hover:border-blue-500 transition-colors flex items-center justify-center"
+          style="padding: 2px 12px"
+        >
+          <template v-if="product.is_favorited">
+            <HeartFilled style="color: red" />
+          </template>
+          <template v-else>
+            <HeartOutlined />
+          </template>
+        </button>
+      </div>
+    </div>
+  </a-row>
+</div>
+
             </a-col>
           </a-row>
         </a-col>
 
-        <div class="flex justify-center">
-          <div class="w-full max-w-4xl bg-gray-50 rounded-2xl p-6 md:p-8 border border-gray-200">
-            <div class="flex justify-between items-center mb-6 flex-wrap gap-4">
-              <h3 class="text-xl md:text-2xl font-bold text-gray-900">Design Details</h3>
-              <div class="flex gap-4">
-                <div class="text-right">
-                  <p class="text-xs md:text-sm text-gray-500 font-medium">Room Type</p>
-                  <p class="font-semibold text-gray-900 text-sm md:text-base">
-                    {{ selected_home_design.home_design_room_type }}
-                  </p>
-                </div>
-                <div class="text-right">
-                  <p class="text-xs md:text-sm text-gray-500 font-medium">Style</p>
-                  <p class="font-semibold text-gray-900 text-sm md:text-base">
-                    {{ selected_home_design.home_design_room_style }}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <a-row :gutter="[16, 16]">
-              <a-col :xs="24" :sm="12" :md="6">
-                <div class="bg-white p-4 rounded-xl border border-gray-200 h-full">
-                  <p class="text-xs text-gray-500 mb-2 font-medium uppercase">Room Type</p>
-                  <p class="font-semibold text-gray-900">
-                    {{ selected_home_design.home_design_room_type }}
-                  </p>
-                </div>
-              </a-col>
-              <a-col :xs="24" :sm="12" :md="6">
-                <div class="bg-white p-4 rounded-xl border border-gray-200 h-full">
-                  <p class="text-xs text-gray-500 mb-2 font-medium uppercase">Design Style</p>
-                  <p class="font-semibold text-gray-900">
-                    {{ selected_home_design.home_design_room_style }}
-                  </p>
-                </div>
-              </a-col>
-              <a-col :xs="24" :sm="12" :md="6">
-                <div class="bg-white p-4 rounded-xl border border-gray-200 h-full">
-                  <p class="text-xs text-gray-500 mb-2 font-medium uppercase">Created At</p>
-                  <p class="font-semibold text-gray-900">
-                    {{ formatDate(selected_home_design.created_at) }}
-                  </p>
-                </div>
-              </a-col>
-              <a-col :xs="24" :sm="12" :md="6">
-                <div class="bg-white p-4 rounded-xl border border-gray-200 h-full">
-                  <p class="text-xs text-gray-500 mb-2 font-medium uppercase">Status</p>
-                  <a-tag
-                    v-if="selected_home_design.is_my_design_saved"
-                    color="green"
-                    class="!font-medium"
-                  >
-                    ✓ Saved
-                  </a-tag>
-                  <a-tag v-else color="default" class="!font-medium">Not Saved</a-tag>
-                </div>
-              </a-col>
-            </a-row>
-
-          </div>
-        </div>
+      
       </a-col>
     </a-row>
 
@@ -1287,6 +1300,13 @@ export default {
         this.$message.error("Network error while loading designs");
       }
     },
+
+      onProductImageLoad(id) {
+    this.imageLoadedMap[id] = false;
+    setTimeout(() => {
+      this.imageLoadedMap[id] = true;
+    }, 2000);
+  },
 
     async loadHomeDesigns() {
       try {
@@ -1558,6 +1578,7 @@ export default {
     },
 
     goto_product_Route(product) {
+    
       let product_type = "product";
       if (product.product_type == "light") {
         product_type = "product";
@@ -1577,6 +1598,29 @@ export default {
         },
       });
     },
+goto_product_Route_home_design(product) {
+    console.log(product);
+      let product_type = "product";
+      if (product.type == "light") {
+        product_type = "product";
+      } else if (product.type == "floor_texture") {
+        product_type = "floor";
+      } else if (product.type == "wall_texture") {
+        product_type = "wall";
+      } else {
+        product_type = product.type;
+      }
+      this.$router.push({
+        name: "buisness_product",
+        params: {
+          buisness_name: product.business_slug,
+          product_type: product.type,
+          product_id: product.product_id,
+        },
+      });
+    },
+
+    
 
     viewProduct(product) {
       console.log("Viewing product:", product);
@@ -1654,6 +1698,65 @@ export default {
   transition: transform 0.3s ease;
 }
 
+/* Product Skeleton Shimmer */
+.product-skeleton {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(110deg, #e5e7eb 8%, #f9fafb 18%, #e5e7eb 33%);
+  background-size: 200% 100%;
+  animation: product-shimmer 1.6s infinite linear;
+  border-radius: 8px;
+}
+
+@keyframes product-shimmer {
+  to {
+    background-position-x: -200%;
+  }
+}
+
+/* Product Image Container */
+.product-image-container {
+  position: relative;
+  width: 100%;
+  min-height: 200px;
+  overflow: hidden;
+}
+
+.product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Category and AR Badges */
+.category-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  z-index: 10;
+}
+
+.ar-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #333;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  z-index: 10;
+}
+
 .category-badge {
   position: absolute;
   top: 12px;
@@ -1667,6 +1770,16 @@ export default {
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
+
+.no-scrollbar {
+  scrollbar-width: none;      /* Firefox */
+  -ms-overflow-style: none;   /* IE & Edge */
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;              /* Chrome, Safari */
+}
+
 
 .hide-scrollbar {
   scrollbar-width: none;

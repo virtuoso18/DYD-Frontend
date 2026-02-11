@@ -40,189 +40,169 @@
           <a-row>
   
             <!-- Left Column - 3D Model Preview -->
-                        <a-col
-      :xs="24"
-      :sm="24"
-      :md="10"
-      :lg="10"
-    >
-              <div style="position: relative; padding:10px;">
-    
-                <!-- 3D Model Upload Area (shown when no model is uploaded) -->
-                <!-- <div 
-                  v-if="!local3dModelUrl"
-                  @drop.prevent="handleModelDrop"
-                  @dragover.prevent="isDragging = true"
-                  @dragleave.prevent="isDragging = false"
-                  @click="upload3dModel"
-                  :style="{
-                    border: isDragging ? '2px solid #3b82f6' : '2px dashed #d1d5db',
-                    borderRadius: '12px',
-                    padding: '40px 16px',
-                    background: isDragging ? '#f8faff' : '#f9fafb',
-                    minHeight: '250px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease'
-                  }"
-                >
-                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" style="margin-bottom: 16px;">
-                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-                    <polyline points="3.27,6.96 12,12.01 20.73,6.96"></polyline>
-                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
-                  </svg>
-                  <p style="font-size: 14px; color: #374151; font-weight: 500; margin-bottom: 8px;">Drag and drop 3D model here or click to upload</p>
-                  <p style="font-size: 12px; color: #6b7280; margin: 0;">Supported file format: .gltf / .glb</p>
-                  <p style="font-size: 12px; color: #6b7280; margin: 4px 0 0 0;">File size: 50MB</p>
-                </div> -->
-    <router-link 
-                  v-if="!local3dModelUrl"
-                  :to="'/my-products/add-new-furniture'"
-                  :style="{
-                    border: isDragging ? '2px solid #3b82f6' : '2px dashed #d1d5db',
-                    borderRadius: '12px',
-                    padding: '40px 16px',
-                    background: isDragging ? '#f8faff' : '#f9fafb',
-                    minHeight: '250px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease'
-                  }"
-                >
-                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" style="margin-bottom: 16px;">
-                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-                    <polyline points="3.27,6.96 12,12.01 20.73,6.96"></polyline>
-                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
-                  </svg>
-                  <p style="font-size: 14px; color: #374151; font-weight: 500; margin-bottom: 8px;">please pick your already generated 3d models  3D model here or click to upload</p>
-                  <p style="font-size: 12px; color: #6b7280; margin: 4px 0 0 0;">or create new one </p>
-                </router-link>
-    
-                <!-- 3D Model Renderer (shown when model is uploaded) -->
-                <div v-else style="position: relative;">
-                  <canvas_3d_model_renderer 
-                    :glbModelUrl="local3dModelUrl"
-                    :Model_instance_id="'local-preview-' + Date.now()"
-                    :isLoading="false"
-                    style="width: 100%; max-height:250px; height: 100%;border-radius: 10px"
-                  />
-                  <div
-                    style="position: absolute; bottom: 75px; right: 15px; background: white; padding: 8px 12px; border-radius: 6px; border: 1px solid #e9ecef; font-size: 12px; font-weight: 600; cursor: pointer;">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                      stroke-width="2" style="margin-right: 5px; vertical-align: middle;">
-                      <path
-                        d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
-                      </path>
-                      <polyline points="3.27,6.96 12,12.01 20.73,6.96"></polyline>
-                      <line x1="12" y1="22.08" x2="12" y2="12"></line>
-                    </svg>
-                    3D View
-                  </div>
-                  
-                  <!-- Change Model Button -->
-                  <a-button 
-                    @click="upload3dModel"
-                    style="position: absolute; top: 10px; right: 10px; background: white; border-radius: 6px; font-size: 11px;"
-                    size="small"
-                  >
-                    Change Model
-                  </a-button>
-    
-                  <!-- Display uploaded model info -->
-                  <div style="margin-top: 12px; padding: 8px 12px; background: #f8faff; border: 1px solid #e5e7eb; border-radius: 6px;">
-                    <div style="display: flex; align-items: center; justify-content: space-between;">
-                      <div style="display: flex; align-items: center; gap: 8px;">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2">
-                          <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"></path>
-                        </svg>
-                        <div>
-                          <div style="font-size: 12px; font-weight: 500; color: #1f2937;">{{ uploaded3dModelFile?.name }}</div>
-                          <div style="font-size: 11px; color: #6b7280;">{{ uploaded3dModelFile?.size }}</div>
-                          <div v-if="uploaded3dModelFile?.isGenerated" style="font-size: 10px; color: #10b981; font-weight: 500; margin-top: 2px;">
-                            📤 Generated Model
-                          </div>
-                        </div>
-                      </div>
-                      <a-button 
-                        type="text" 
-                        size="small" 
-                        @click="remove3dModel"
-                        style="color: #ef4444; padding: 4px;"
-                      >
-                        <template #icon>
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="18" y1="6" x2="6" y2="18"></line>
-                            <line x1="6" y1="6" x2="18" y2="18"></line>
-                          </svg>
-                        </template>
-                      </a-button>
-                    </div>
-                  </div>
-                </div>
-    
-               <label style="display: block; margin-top: 16px; margin-bottom: 8px; font-size: 13px; color: #374151;">
-      Images used to create 3d model (<b>{{modelDetails?.model_mode || 'N/A'}}</b>) 
-    </label>
-    
-                <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-      <img 
-        v-if="modelDetails?.image_0"
-        :src="this.$store.state.root_media_api + modelDetails.image_0" 
-        :style="{
-          width: '60px',
-          height: '60px',
-          objectFit: 'contain',
-          borderRadius: '8px',
-          border: '2px solid #e5e7eb'
-        }"
-      />
-      <img 
-        v-if="modelDetails?.image_1"
-        :src="this.$store.state.root_media_api + modelDetails.image_1" 
-        :style="{
-          width: '60px',
-          height: '60px',
-          objectFit: 'contain',
-          borderRadius: '8px',
-          border: '2px solid #e5e7eb'
-        }"
-      />
-      <img 
-        v-if="modelDetails?.image_2"
-        :src="this.$store.state.root_media_api + modelDetails.image_2" 
-        :style="{
-          width: '60px',
-          height: '60px',
-          objectFit: 'contain',
-          borderRadius: '8px',
-          border: '2px solid #e5e7eb'
-        }"
-      />
-      <img 
-        v-if="modelDetails?.image_3"
-        :src="this.$store.state.root_media_api + modelDetails.image_3" 
-        :style="{
-          width: '60px',
-          height: '60px',
-          objectFit: 'contain',
-          borderRadius: '8px',
-          border: '2px solid #e5e7eb'
-        }"
-      />
+            <a-col :xs="24" :sm="24" :md="10" :lg="10" class="!p-4">
+  <div class="space-y-4 w-full">
+    <!-- 3D Model Section -->
+    <div class="w-full">
+      <!-- Router Link (no model) - Full width, perfect mobile -->
+      <router-link 
+        v-if="!local3dModelUrl"
+        :to="'/my-products/add-new-furniture'"
+        class="block w-full p-8 rounded-2xl border-2 border-dashed border-gray-300 hover:border-blue-500 bg-gray-50 hover:bg-blue-50 transition-all duration-300 text-center group"
+        :class="{ 'border-blue-500 bg-blue-50': isDragging }"
+      >
+        <svg 
+          width="48" height="48" 
+          viewBox="0 0 24 24" 
+          fill="none" 
+          stroke="currentColor" 
+          stroke-width="2" 
+          class="mx-auto mb-4 group-hover:scale-110 transition-transform"
+          :stroke="isDragging ? '#3b82f6' : '#9ca3af'"
+        >
+          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+          <polyline points="3.27,6.96 12,12.01 20.73,6.96"></polyline>
+          <line x1="12" y1="22.08" x2="12" y2="12"></line>
+        </svg>
+        <p class="text-sm font-semibold text-gray-700 mb-1 leading-relaxed">
+          Select existing 3D model<br>or click to Generate with DYD AI
+        </p>
+      </router-link>
+
+      <!-- 3D Renderer (has model) -->
+      <div v-else class="relative rounded-2xl overflow-hidden bg-white shadow-lg">
+        <canvas_3d_model_renderer 
+          :glbModelUrl="local3dModelUrl"
+          :Model_instance_id="'local-preview-' + Date.now()"
+          :isLoading="false"
+          class="w-full h-[250px] md:h-[300px]"
+        />
+        
+        <!-- 3D View Button -->
+        <div class="absolute bottom-3 right-3 bg-white/90 backdrop-blur-sm p-2 rounded-xl shadow-md border hover:bg-white transition-all">
+          <div class="flex items-center gap-1 text-xs font-semibold text-gray-700 cursor-pointer hover:text-blue-600">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+              <polyline points="3.27,6.96 12,12.01 20.73,6.96"></polyline>
+              <line x1="12" y1="22.08" x2="12" y2="12"></line>
+            </svg>
+            3D View
+          </div>
+        </div>
+
+        <!-- Change Model Button -->
+        <a-button 
+          @click="upload3dModel"
+          class="absolute top-3 right-3 bg-white shadow-md !rounded-lg !px-3 !py-1 !text-xs"
+          size="small"
+        >
+          Change Model
+        </a-button>
+      </div>
+
+      <!-- Model Info Card -->
+      <div v-if="local3dModelUrl" class="bg-blue-50 border border-blue-100 rounded-xl p-4 mt-3">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div class="flex items-center gap-3 flex-1">
+            <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y2="13" x3="16" y3="13"></line>
+              </svg>
+            </div>
+            <div>
+              <p class="font-semibold text-sm text-gray-900 truncate max-w-[200px] sm:max-w-none">
+                {{ uploaded3dModelFile?.name }}
+              </p>
+              <p class="text-xs text-gray-500">{{ uploaded3dModelFile?.size }}</p>
+              <p v-if="uploaded3dModelFile?.isGenerated" class="text-xs text-green-600 font-medium mt-1">
+                📤 Generated Model
+              </p>
+            </div>
+          </div>
+          <a-button 
+            type="text" 
+            size="small" 
+            @click="remove3dModel"
+            class="!text-red-500 hover:!text-red-600 !p-1"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </a-button>
+        </div>
+      </div>
     </div>
-              </div>
-               <select3d_model_for_color 
-                 :list_history_generated_3d_models="list_history_generated_3d_models"
-                 :loading_generated_models_history="loading_generated_models_history" 
-                 @clicked-model="clickedModel"
-               />
-            </a-col>
+
+    <!-- Model Source Images -->
+    <div v-if="modelDetails" class="w-full">
+      <label class="block mb-3 text-sm font-medium text-gray-700">
+        Images used to create 3D model 
+        <span class="font-bold text-gray-900">({{ modelDetails.model_mode || 'N/A' }})</span>
+      </label>
+      <div class="flex flex-wrap gap-2">
+        <img 
+          v-if="modelDetails.image_0"
+          :src="$store.state.root_media_api + modelDetails.image_0" 
+          class="w-16 h-16 object-cover rounded-lg border-2 border-gray-200 hover:border-blue-300 hover:scale-105 transition-all cursor-pointer"
+        />
+        <img 
+          v-if="modelDetails.image_1"
+          :src="$store.state.root_media_api + modelDetails.image_1" 
+          class="w-16 h-16 object-cover rounded-lg border-2 border-gray-200 hover:border-blue-300 hover:scale-105 transition-all cursor-pointer"
+        />
+        <img 
+          v-if="modelDetails.image_2"
+          :src="$store.state.root_media_api + modelDetails.image_2" 
+          class="w-16 h-16 object-cover rounded-lg border-2 border-gray-200 hover:border-blue-300 hover:scale-105 transition-all cursor-pointer"
+        />
+        <img 
+          v-if="modelDetails.image_3"
+          :src="$store.state.root_media_api + modelDetails.image_3" 
+          class="w-16 h-16 object-cover rounded-lg border-2 border-gray-200 hover:border-blue-300 hover:scale-105 transition-all cursor-pointer"
+        />
+      </div>
+    </div>
+
+    <!-- 3D Model Selector -->
+    <div class="w-full">
+      <select3d_model_for_color 
+        :list_history_generated_3d_models="list_history_generated_3d_models"
+        :loading_generated_models_history="loading_generated_models_history" 
+        @clicked-model="clickedModel"
+      />
+      
+      <!-- Pagination Footer -->
+      <div v-if="list_history_generated_3d_models.length > 0" class="mt-4 pt-4 border-t border-gray-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <p class="text-sm text-gray-500">
+          Showing {{ list_history_generated_3d_models.length }} of {{ pagination.totalCount }} models
+        </p>
+        
+        <a-button 
+          v-if="pagination.hasMoreModels"
+          @click="loadMoreModels"
+          :loading="loadingMoreModels"
+          class="!rounded-lg"
+        >
+          <template #icon>
+            <svg v-if="!loadingMoreModels" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          </template>
+          {{ loadingMoreModels ? 'Loading...' : 'Load More Models' }}
+        </a-button>
+        
+        <p v-else class="text-sm text-green-600 font-medium">
+          ✓ All models loaded
+        </p>
+      </div>
+    </div>
+  </div>
+</a-col>
+
           
           
   
@@ -314,7 +294,7 @@
     
                 <!-- Category, Type, Price Row -->
                 <a-row :gutter="12" style="margin-bottom: 16px;">
-                  <a-col :span="8">
+                  <a-col :span="12">
            
                  
                        
@@ -342,7 +322,7 @@
       
     </div>
                   </a-col>
-                  <a-col :span="8">
+                  <a-col :span="12">
                     <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Type</label>
                     <a-select 
                       v-model:value="productForm.furniture_type" 
@@ -353,7 +333,7 @@
                       <a-select-option v-for="type in types" :key="type" :value="type">{{ type }}</a-select-option>
                     </a-select>
                   </a-col>
-                  <a-col :span="8">
+                  <a-col :span="24">
                     <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Price <span style="color: red;">*</span></label>
                     <a-input-number
                       v-model:value="productForm.pricing.price" 
@@ -416,241 +396,245 @@
                     </a-col>
                   </a-row>
                 </div>
-    
-                <!-- Available Colors Section -->
-                <div style="margin-bottom: 20px;">
-                                      <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #374151;">Available Colors</label>
-                                      
-                                      <a-popover trigger="click" placement="bottom">
-                                        <template #title>
-                                          <div style="display: flex; align-items: center; gap: 8px;">
-                                            <span>Add Available Colors</span>
-                                            <input 
-                                              type="color" 
-                                              :value="tempColor"
-                                              @input="tempColor = $event.target.value"
-                                              style="width: 30px; height: 25px; border: none; border-radius: 4px; cursor: pointer;"
-                                            />
-                                            <a-button 
-                                              type="primary" 
-                                              size="small" 
-                                              @click="addAvailableColor"
-                                              style="margin-left: 8px;"
-                                            >
-                                              Add
-                                            </a-button>
-                                          </div>
-                                        </template>
-                                        <template #content>
-                                          <div style="display: grid; grid-template-columns: repeat(6, 32px); gap: 8px; padding: 8px;">
-                                            <div
-                                              v-for="(color, index) in presetColors"
-                                              :key="index"
-                                              @click="addPresetColor(color)"
-                                              :style="{
-                                                width: '32px',
-                                                height: '32px',
-                                                borderRadius: '6px',
-                                                backgroundColor: color,
-                                                cursor: 'pointer',
-                                                border: '1px solid #e5e7eb',
-                                                opacity: selectedColors.some(c => c.value === color) ? 0.5 : 1
-                                              }"
-                                            ></div>
-                                          </div>
-                                        </template>
-                                        <a-button style="border-radius: 6px; border: 2px dashed #d1d5db;">
-                                          <template #icon>
-                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                              <line x1="12" y1="5" x2="12" y2="19"></line>
-                                              <line x1="5" y1="12" x2="19" y2="12"></line>
-                                            </svg>
-                                          </template>
-                                          Add Colors
-                                        </a-button>
-                                      </a-popover>
-                        
-                                      <div v-if="selectedColors.length > 0" style="margin-top: 12px;">
-                                        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-                                          <div 
-                                            v-for="(color, index) in selectedColors" 
-                                            :key="index"
-                                            style="position: relative;"
-                                          >
-                                            <div
-                                              :style="{
-                                                width: '40px',
-                                                height: '40px',
-                                                borderRadius: '50%',
-                                                backgroundColor: color.value,
-                                                border: color.isPrimary ? '2px solid #22c55e' : '2px solid #e5e7eb',
-                                                cursor: 'pointer',
-                                                position: 'relative',
-                                                transition: 'all 0.2s ease'
-                                              }"
-                                              @click="setPrimaryColor(color)"
-                                            ></div>
-                                            <div 
-                                              v-if="color.isPrimary"
-                                              style="position: absolute; left: -5px; bottom: -5px; background: #22c55e; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 12px; box-shadow: 0 2px 4px rgba(34, 197, 94, 0.3);"
-                                            >
-                                              ★
+
+                <div className="flex flex-row gap-6 sm:gap-12">
+
+                  <!-- Available Colors Section -->
+                  <div style="margin-bottom: 20px;">
+                                        <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #374151;">Available Colors</label>
+                                        
+                                        <a-popover trigger="click" placement="bottom">
+                                          <template #title>
+                                            <div style="display: flex; align-items: center; gap: 8px;">
+                                              <span>Add Available Colors</span>
+                                              <input 
+                                                type="color" 
+                                                :value="tempColor"
+                                                @input="tempColor = $event.target.value"
+                                                style="width: 30px; height: 25px; border: none; border-radius: 4px; cursor: pointer;"
+                                              />
+                                              <a-button 
+                                                type="primary" 
+                                                size="small" 
+                                                @click="addAvailableColor"
+                                                style="margin-left: 8px;"
+                                              >
+                                                Add
+                                              </a-button>
                                             </div>
-                                            <a-button 
-                                              type="text" 
-                                              size="small" 
-                                              @click="removeColor(index)"
-                                              style="position: absolute; top: -8px; right: -8px; background: #ef4444; color: white; border-radius: 50%; width: 20px; height: 20px; padding: 0; min-width: 20px;"
+                                          </template>
+                                          <template #content>
+                                            <div style="display: grid; grid-template-columns: repeat(6, 32px); gap: 8px; padding: 8px;">
+                                              <div
+                                                v-for="(color, index) in presetColors"
+                                                :key="index"
+                                                @click="addPresetColor(color)"
+                                                :style="{
+                                                  width: '32px',
+                                                  height: '32px',
+                                                  borderRadius: '6px',
+                                                  backgroundColor: color,
+                                                  cursor: 'pointer',
+                                                  border: '1px solid #e5e7eb',
+                                                  opacity: selectedColors.some(c => c.value === color) ? 0.5 : 1
+                                                }"
+                                              ></div>
+                                            </div>
+                                          </template>
+                                          <a-button style="border-radius: 6px; border: 2px dashed #d1d5db;">
+                                            <template #icon>
+                                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                              </svg>
+                                            </template>
+                                            Add Colors
+                                          </a-button>
+                                        </a-popover>
+                          
+                                        <div v-if="selectedColors.length > 0" style="margin-top: 12px;">
+                                          <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                                            <div 
+                                              v-for="(color, index) in selectedColors" 
+                                              :key="index"
+                                              style="position: relative;"
                                             >
-                                              <template #icon>
-                                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                                                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                                                  <line x1="6" y1="6" x2="18" y2="18"></line>
-                                                </svg>
-                                              </template>
-                                            </a-button>
+                                              <div
+                                                :style="{
+                                                  width: '40px',
+                                                  height: '40px',
+                                                  borderRadius: '50%',
+                                                  backgroundColor: color.value,
+                                                  border: color.isPrimary ? '2px solid #22c55e' : '2px solid #e5e7eb',
+                                                  cursor: 'pointer',
+                                                  position: 'relative',
+                                                  transition: 'all 0.2s ease'
+                                                }"
+                                                @click="setPrimaryColor(color)"
+                                              ></div>
+                                              <div 
+                                                v-if="color.isPrimary"
+                                                style="position: absolute; left: -5px; bottom: -5px; background: #22c55e; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 12px; box-shadow: 0 2px 4px rgba(34, 197, 94, 0.3);"
+                                              >
+                                                ★
+                                              </div>
+                                              <a-button 
+                                                type="text" 
+                                                size="small" 
+                                                @click="removeColor(index)"
+                                                style="position: absolute; top: -8px; right: -8px; background: #ef4444; color: white; border-radius: 50%; width: 20px; height: 20px; padding: 0; min-width: 20px;"
+                                              >
+                                                <template #icon>
+                                                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                                  </svg>
+                                                </template>
+                                              </a-button>
+                                            </div>
                                           </div>
                                         </div>
                                       </div>
-                                    </div>
-    
-                <!-- Textures Section -->
-                 <div style="margin-bottom: 20px;">
-        <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #374151;">Texture Images</label>
-                                  
-          <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 12px;">
-            
-            <!-- Select from pre-uploaded textures -->
-            <a-popover trigger="click" placement="bottom">
-              <!-- Upload custom texture -->
-            
-              <template #title>
-                <a-button 
-              @click="uploadTexture"
-              style="border-radius: 6px; border: 2px dashed #d1d5db;"
-            >
-              <template #icon>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <line x1="12" y1="5" x2="12" y2="19"></line>
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
-              </template>
-              Upload Custom
-            </a-button>
-                <div style="display: flex; align-items: center; justify-content: space-between;">
-                  <span>Select Texture from Library</span>
-                  <a-spin v-if="loadingTextures" size="small" style="margin-left: 8px;" />
-                </div>
-              </template>
-              <template #content>
-                <div v-if="loadingTextures" style="text-align: center; padding: 20px;">
-                  <a-spin />
-                </div>
-                <div v-else-if="availableTextures.length === 0" style="text-align: center; padding: 20px; color: #6b7280;">
-                  <p style="font-size: 12px; margin: 0;">No textures available</p>
-                </div>
-                <div v-else style="display: grid; grid-template-columns: repeat(4, 60px); gap: 8px; max-height: 300px; overflow-y: auto; padding: 8px;">
-                  <div
-                    v-for="(texture, index) in availableTextures"
-                    :key="index"
-                    @click="addPresetTexture(texture)"
-                    :style="{
-                      width: '60px',
-                      height: '60px',
-                      borderRadius: '8px',
-                      backgroundImage: `url('${getTextureUrl(texture.url)}')`,
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center',
-                      cursor: 'pointer',
-                      border: selectedTextures.some(t => t.id === texture.id) ? '2px solid #22c55e' : '2px solid #e5e7eb',
-                      opacity: selectedTextures.some(t => t.id === texture.id) ? 0.6 : 1,
-                      transition: 'all 0.2s ease'
-                    }"
-                    :title="texture.name"
-                  >
-                    <div v-if="selectedTextures.some(t => t.id === texture.id)" 
-                      style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.3); border-radius: 6px;">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2">
-                        <polyline points="20 6 9 17 4 12"></polyline>
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-              </template>
-              <a-button style="border-radius: 6px; border: 2px dashed #d1d5db;">
+      
+                  <!-- Textures Section -->
+                   <div style="margin-bottom: 20px;">
+          <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #374151;">Texture Images</label>
+                                    
+            <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 12px;">
+              
+              <!-- Select from pre-uploaded textures -->
+              <a-popover trigger="click" placement="bottom">
+                <!-- Upload custom texture -->
+              
+                <template #title>
+                  <a-button 
+                @click="uploadTexture"
+                style="border-radius: 6px; border: 2px dashed #d1d5db;"
+              >
                 <template #icon>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="12" y1="8" x2="12" y2="16"></line>
-                    <line x1="8" y1="12" x2="16" y2="12"></line>
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
                   </svg>
                 </template>
-                Select Texture
+                Upload Custom
               </a-button>
-            </a-popover>
-
-            <!-- Upload custom texture -->
-            <!-- <a-button 
-              @click="uploadTexture"
-              style="border-radius: 6px; border: 2px dashed #d1d5db;"
-            >
-              <template #icon>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <line x1="12" y1="5" x2="12" y2="19"></line>
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
-              </template>
-              Upload Custom
-            </a-button> -->
-          </div>
-                    
-                                  <!-- Selected textures display -->
-          <div v-if="selectedTextures.length > 0" style="margin-top: 12px;">
-            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-              <div 
-                v-for="(texture, index) in selectedTextures" 
-                :key="index" 
-                style="position: relative;"
-              >
-                <div 
-                  :style="{ 
-                    width: '60px', 
-                    height: '60px', 
-                    backgroundImage: `url('${getTextureUrl(texture.url)}')`, 
-                    backgroundSize: 'cover', 
-                    backgroundPosition: 'center', 
-                    borderRadius: '8px', 
-                    border: '2px solid #e5e7eb', 
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease'
-                  }"
-                  :title="texture.name || 'Texture'"
-                ></div>
-                <!-- Custom texture indicator (uploaded by user) -->
-                <div 
-                  v-if="!texture.id"
-                  style="position: absolute; left: -5px; bottom: -5px; background: #8b5cf6; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 10px; box-shadow: 0 2px 4px rgba(139, 92, 246, 0.3);"
-                  title="Custom uploaded texture"
-                >
-                  📤
-                </div>
-                <a-button 
-                  type="text" 
-                  size="small" 
-                  @click="removeTexture(index)"
-                  style="position: absolute; top: -8px; right: -8px; background: #ef4444; color: white; border-radius: 50%; width: 20px; height: 20px; padding: 0; min-width: 20px;"
-                >
+                  <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <span>Select Texture from Library</span>
+                    <a-spin v-if="loadingTextures" size="small" style="margin-left: 8px;" />
+                  </div>
+                </template>
+                <template #content>
+                  <div v-if="loadingTextures" style="text-align: center; padding: 20px;">
+                    <a-spin />
+                  </div>
+                  <div v-else-if="availableTextures.length === 0" style="text-align: center; padding: 20px; color: #6b7280;">
+                    <p style="font-size: 12px; margin: 0;">No textures available</p>
+                  </div>
+                  <div v-else style="display: grid; grid-template-columns: repeat(4, 60px); gap: 8px; max-height: 300px; overflow-y: auto; padding: 8px;">
+                    <div
+                      v-for="(texture, index) in availableTextures"
+                      :key="index"
+                      @click="addPresetTexture(texture)"
+                      :style="{
+                        width: '60px',
+                        height: '60px',
+                        borderRadius: '8px',
+                        backgroundImage: `url('${getTextureUrl(texture.url)}')`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        cursor: 'pointer',
+                        border: selectedTextures.some(t => t.id === texture.id) ? '2px solid #22c55e' : '2px solid #e5e7eb',
+                        opacity: selectedTextures.some(t => t.id === texture.id) ? 0.6 : 1,
+                        transition: 'all 0.2s ease'
+                      }"
+                      :title="texture.name"
+                    >
+                      <div v-if="selectedTextures.some(t => t.id === texture.id)" 
+                        style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.3); border-radius: 6px;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2">
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+                <a-button style="border-radius: 6px; border: 2px dashed #d1d5db;">
                   <template #icon>
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                      <line x1="18" y1="6" x2="6" y2="18"></line>
-                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <line x1="12" y1="8" x2="12" y2="16"></line>
+                      <line x1="8" y1="12" x2="16" y2="12"></line>
                     </svg>
                   </template>
+                  Select Texture
                 </a-button>
+              </a-popover>
+  
+              <!-- Upload custom texture -->
+              <!-- <a-button 
+                @click="uploadTexture"
+                style="border-radius: 6px; border: 2px dashed #d1d5db;"
+              >
+                <template #icon>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                </template>
+                Upload Custom
+              </a-button> -->
+            </div>
+                      
+                                    <!-- Selected textures display -->
+            <div v-if="selectedTextures.length > 0" style="margin-top: 12px;">
+              <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                <div 
+                  v-for="(texture, index) in selectedTextures" 
+                  :key="index" 
+                  style="position: relative;"
+                >
+                  <div 
+                    :style="{ 
+                      width: '60px', 
+                      height: '60px', 
+                      backgroundImage: `url('${getTextureUrl(texture.url)}')`, 
+                      backgroundSize: 'cover', 
+                      backgroundPosition: 'center', 
+                      borderRadius: '8px', 
+                      border: '2px solid #e5e7eb', 
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease'
+                    }"
+                    :title="texture.name || 'Texture'"
+                  ></div>
+                  <!-- Custom texture indicator (uploaded by user) -->
+                  <div 
+                    v-if="!texture.id"
+                    style="position: absolute; left: -5px; bottom: -5px; background: #8b5cf6; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 10px; box-shadow: 0 2px 4px rgba(139, 92, 246, 0.3);"
+                    title="Custom uploaded texture"
+                  >
+                    📤
+                  </div>
+                  <a-button 
+                    type="text" 
+                    size="small" 
+                    @click="removeTexture(index)"
+                    style="position: absolute; top: -8px; right: -8px; background: #ef4444; color: white; border-radius: 50%; width: 20px; height: 20px; padding: 0; min-width: 20px;"
+                  >
+                    <template #icon>
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                      </svg>
+                    </template>
+                  </a-button>
+                </div>
               </div>
             </div>
-          </div>
-      </div>
+        </div>
+                </div>
+    
     
                 <!-- PBR Files Section -->
                 <div style="margin-bottom: 20px;">
@@ -928,8 +912,11 @@ watch: {
     async fetch3d_models_generated_by_user() {
   this.loading_generated_models_history = true;
 
-  try {
-    const url = `${this.$store.state.root_api}engine/generated-3d-models-user-history/`;
+      try {
+        const limit = this.pagination.pageSize;
+        const offset = this.pagination.currentOffset;
+        
+        const url = `${this.$store.state.root_api}engine/generated-3d-models-list/?limit=${limit}&offset=${offset}`;
 
     console.log('📡 Fetching generated 3D models history...');
 
@@ -1791,9 +1778,17 @@ async loadInitialCategories() {
 
 
 <style scoped>
+/* Default (desktop & above) */
 .add-product-modal :deep(.ant-modal-header) {
   padding: 16px 24px;
   border-bottom: 1px solid #f0f0f0;
+}
+
+/* Mobile below 450px */
+@media (max-width: 449px) {
+  .add-product-modal :deep(.ant-modal-header) {
+    padding: 6px 10px;
+  }
 }
 
 .add-product-modal :deep(.ant-modal-body) {

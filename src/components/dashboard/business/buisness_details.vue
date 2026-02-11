@@ -180,8 +180,27 @@
       class="avatar-upload-wrapper"
     >
       <div class="camera-overlay">
-        <!-- SVG unchanged -->
-        YOUR_SVG_HERE
+        <svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="20"
+  height="20"
+  viewBox="0 0 24 24"
+  fill="none"
+>
+  <path
+    d="M4 20h4l10-10-4-4L4 16v4z"
+    stroke="currentColor"
+    stroke-width="1.5"
+    stroke-linejoin="round"
+  />
+  <path
+    d="M14 6l4 4"
+    stroke="currentColor"
+    stroke-width="1.5"
+    stroke-linecap="round"
+  />
+</svg>
+
       </div>
     </a-upload>
 
@@ -357,6 +376,15 @@ Upload Room Photo</h2>
     md: [24, 12]
   }"
 >
+<div v-if="isEditMode" class="w-full flex justify-end gap-2 p-2">
+  <a-button type="primary" @click="saveChanges" class="save-btn" :loading="saving">
+    Save Changes
+  </a-button>
+  <a-button @click="cancelEdit" class="cancel-btn">
+    Cancel
+  </a-button>
+</div>
+
             <!-- Name Field -->
                 <a-col :xs="24" :sm="24" :md="24" :lg="24">
                   <a-form-item label="Name">
@@ -555,14 +583,14 @@ Upload Room Photo</h2>
               </a-row>
 
               <!-- Save Button (only show when editing) -->
-              <div v-if="isEditMode" class="form-actions p-2">
+              <!-- <div v-if="isEditMode" class="form-actions p-2">
                 <a-button type="primary" @click="saveChanges" class="save-btn" :loading="saving">
                   Save Changes
                 </a-button>
                 <a-button @click="cancelEdit" class="cancel-btn">
                   Cancel
                 </a-button>
-              </div>
+              </div> -->
             </a-form>
           </div>
         </div>
@@ -1343,7 +1371,7 @@ async checkVerificationStatus() {
   border: 1px solid #d1d5db;
   border-radius: 12px;
   font-size: 15px;
-  background: #f9fafb;
+  background: #f2f2f2;
   color: #6b7280;
   resize: none;
   box-sizing: border-box;
@@ -1414,7 +1442,7 @@ async checkVerificationStatus() {
   margin-top: 32px;
   display: flex;
   gap: 12px;
-  justify-content: flex-end;
+  justify-content: flex-start;
 }
 
 .save-btn {
