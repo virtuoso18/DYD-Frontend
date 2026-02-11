@@ -5186,6 +5186,7 @@ export default {
         this.$message.warning('This product has unusual dimensions');
       }
       
+      console.log('📏 Setting dimensions ------ > :', { width, height, depth });
       console.log('📏 Setting dimensions:', { width, height, depth });
       
       // ✅ Set dimensions
