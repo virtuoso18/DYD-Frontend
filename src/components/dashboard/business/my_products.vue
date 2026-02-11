@@ -202,7 +202,7 @@
               />
             </circle>
           </svg>
-          <span style="flex: 1; text-align: left; font-size: 15px"
+          <span style="flex: 1; text-align: left; font-size: 14px"
             >Generate 3D Model with DYD AI</span
           >
         </a-button>
@@ -331,7 +331,7 @@
               opacity="0.8"
             />
           </svg>
-          <span style="flex: 1; text-align: left; font-size: 15px"
+          <span style="flex: 1; text-align: left; font-size: 14px"
             >Upload 3D Model from Local System</span
           >
         </a-button>
@@ -1047,7 +1047,7 @@
                     'flex items-center px-3 py-2 font-semibold text-xs transition ',
                     viewMode === 'table'
                       ? 'bg-blue-600 text-white'
-                      : 'bg-white text-gray-600',
+                      : 'bg-white !text-gray-600',
                   ]"
                   style="font-family: var(--font-family-main); color: white"
                 >
@@ -1232,130 +1232,92 @@
                       class="product-responsive p-1 sm:p-2"
                       style="padding: 5px"
                     >
-                      <div class="product" style="padding: 5px">
-                        <div
-                          class="product-image-container"
-                          @click="viewProduct(product)"
-                        >
-                          <img
-                            :src="
-                              $store.state.root_media_api +
-                              product.primary_image
-                            "
-                            :alt="product.name"
-                            class="product-image"
-                          />
-                          <!-- Category Badge -->
-                          <div class="category-badge">
-                            {{ product.category.name }}
-                          </div>
-                          <!-- AR Badge -->
-                          <div class="ar-badge">AR</div>
-                        </div>
-                        <!-- {{ truncateText(product.description || 'No description available', 8) }} -->
+                     <div class="product" style="padding: 5px">
+  <div
+    class="product-image-container"
+    @click="viewProduct(product)"
+    style="position: relative; overflow: hidden;"
+  >
+    <!-- Skeleton -->
+    <div
+      v-if="!imageLoadedMap[product.id]"
+      class="product-skeleton"
+    ></div>
 
-                        <a-row>
-                          <a-col span="24">
-                            <b
-                              class="block w-full truncate"
-                              :title="product.name"
-                            >
-                              {{ product.name || "No name available" }}
-                            </b>
-                          </a-col>
+    <!-- Preloader -->
+    <img
+      :src="$store.state.root_media_api + product.primary_image"
+      style="position: absolute; width: 0; height: 0; opacity: 0"
+      @load="onProductImageLoad(product.id)"
+      alt=""
+    />
 
-                          <a-col
-                            span="16"
-                            style="
-                              font-family: 'Poppins', sans-serif;
-                              font-size: 13px;
-                              font-weight: 400;
-                            "
-                          >
-                            Color
-                          </a-col>
+    <!-- Actual Image -->
+    <img
+      v-show="imageLoadedMap[product.id]"
+      :src="$store.state.root_media_api + product.primary_image"
+      :alt="product.name"
+      class="product-image"
+    />
 
-                          <a-col
-                            span="8"
-                            style="display: flex; justify-content: end"
-                          >
-                            <div
-                              v-for="(color, index) in product.colors.slice(
-                                0,
-                                2
-                              )"
-                              :key="index"
-                              style="
-                                width: 20px;
-                                height: 20px;
-                                border-radius: 20px;
-                                margin-left: 2px;
-                              "
-                              :style="'background:' + color"
-                            ></div>
-                          </a-col>
+    <!-- Badges -->
+    <div v-show="imageLoadedMap[product.id]" class="category-badge">
+      {{ product.category.name }}
+    </div>
+    <div v-show="imageLoadedMap[product.id]" class="ar-badge">AR</div>
+  </div>
 
-                          <a-col
-                            span="12"
-                            style="
-                              font-family: 'Poppins', sans-serif;
-                              font-size: 13px;
-                              font-weight: 400;
-                            "
-                          >
-                            Price
-                          </a-col>
+  <a-row>
+    <a-col span="24">
+      <b class="block w-full truncate" :title="product.name">
+        {{ product.name || "No name available" }}
+      </b>
+    </a-col>
 
-                          <a-col
-                            span="12"
-                            style="
-                              display: flex;
-                              justify-content: end;
-                              font-weight: 700;
-                            "
-                          >
-                            <!-- <del style="font-size: 10px;">${{ product.pricing.price }}</del> -->
-                            ${{ product.pricing.price }}
-                          </a-col>
-                          <a-col span="18">
-                            <a-button
-                              block
-                              @click="viewProduct(product)"
-                              style="display: flex; justify-content: center"
-                              >Product Details</a-button
-                            >
-                          </a-col>
+    <a-col span="16" style="font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 400;">
+      Color
+    </a-col>
 
-                          <a-col :span="1"></a-col>
-                          <a-col
-                            span="5"
-                            style="
-                              display: flex;
-                              align-items: end;
-                              justify-content: end;
-                            "
-                          >
-                            <!-- <a-button><HeartOutlined /></a-button> -->
+    <a-col span="8" style="display: flex; justify-content: end">
+      <div
+        v-for="(color, index) in product.colors.slice(0, 2)"
+        :key="index"
+        style="width: 20px; height: 20px; border-radius: 20px; margin-left: 2px;"
+        :style="'background:' + color"
+      ></div>
+    </a-col>
 
-                            <a-button
-                              @click="toggleFavorite(product, 'product')"
-                              style="
-                                padding: 2px 12px;
-                                display: flex;
-                                align-items: center;
-                                justify-content: center;
-                              "
-                            >
-                              <template v-if="product.is_favorited">
-                                <HeartFilled style="color: red" />
-                              </template>
-                              <template v-else>
-                                <HeartOutlined />
-                              </template>
-                            </a-button>
-                          </a-col>
-                        </a-row>
-                      </div>
+    <a-col span="12" style="font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 400;">
+      Price
+    </a-col>
+
+    <a-col span="12" style="display: flex; justify-content: end; font-weight: 700;">
+      ${{ product.pricing.price }}
+    </a-col>
+
+    <a-col span="18">
+      <a-button block @click="viewProduct(product)" style="display: flex; justify-content: center">
+        Product Details
+      </a-button>
+    </a-col>
+
+    <a-col :span="1"></a-col>
+    <a-col span="5" style="display: flex; align-items: end; justify-content: end;">
+      <a-button
+        @click="toggleFavorite(product, 'product')"
+        style="padding: 2px 12px; display: flex; align-items: center; justify-content: center;"
+      >
+        <template v-if="product.is_favorited">
+          <HeartFilled style="color: red" />
+        </template>
+        <template v-else>
+          <HeartOutlined />
+        </template>
+      </a-button>
+    </a-col>
+  </a-row>
+</div>
+
                     </a-col>
                   </a-row>
 
@@ -1414,137 +1376,91 @@
                     class="product-responsive"
                     style="padding: 5px"
                   >
-                    <div class="product" style="padding: 5px">
-                      <!-- Product image container -->
-                      <!-- <div 
-                                class="product-image-container" 
-                                @click="viewProduct(product)"
-                                style="position: relative;"
-                                > -->
+                   <div class="product" style="padding: 5px">
+  <div
+    class="product-image-container"
+    @click="viewProduct(product)"
+    style="position: relative; overflow: hidden;"
+  >
+    <!-- Skeleton -->
+    <div
+      v-if="!imageLoadedMap[product.id]"
+      class="product-skeleton"
+    ></div>
 
-                      <div
-                        class="product-image-container"
-                        @click="viewProduct(product)"
-                      >
-                        <img
-                          :src="
-                            $store.state.root_media_api +
-                            (product.product_images.length > 0
-                              ? product.product_images[0].image
-                              : product.texture_image)
-                          "
-                          :alt="product.title"
-                          class="product-image"
-                        />
-                        <!-- Category Badge -->
-                        <div class="category-badge">
-                          {{ product.texture_style }}
-                        </div>
-                        <!-- AR Badge -->
-                        <div class="ar-badge">AR</div>
-                      </div>
-                      <!-- </div> -->
+    <!-- Preloader -->
+    <img
+      :src="$store.state.root_media_api + (product.product_images.length > 0 ? product.product_images[0].image : product.texture_image)"
+      style="position: absolute; width: 0; height: 0; opacity: 0"
+      @load="onProductImageLoad(product.id)"
+      alt=""
+    />
 
-                      <!-- Product details -->
-                      <a-row style="margin-top: 10px">
-                        <a-col span="24">
-                          <!-- <b>{{ product.title }}</b> -->
-                          <b>{{
-                            truncateText(
-                              product.title || "No title available",
-                              19
-                            )
-                          }}</b>
-                        </a-col>
+    <!-- Actual Image -->
+    <img
+      v-show="imageLoadedMap[product.id]"
+      :src="$store.state.root_media_api + (product.product_images.length > 0 ? product.product_images[0].image : product.texture_image)"
+      :alt="product.title"
+      class="product-image"
+    />
 
-                        <!-- Colors -->
-                        <a-col span="18">Colors</a-col>
-                        <a-col
-                          span="6"
-                          style="display: flex; justify-content: end"
-                        >
-                          <div
-                            v-for="(
-                              color, index
-                            ) in product.associated_colors.slice(0, 2)"
-                            :key="index"
-                            :style="{
-                              background: color.color_hex,
-                              width: '20px',
-                              height: '20px',
-                              borderRadius: '20px',
-                              marginLeft: '2px',
-                            }"
-                          ></div>
-                        </a-col>
+    <!-- Badges -->
+    <div v-show="imageLoadedMap[product.id]" class="category-badge">
+      {{ product.texture_style }}
+    </div>
+    <div v-show="imageLoadedMap[product.id]" class="ar-badge">AR</div>
+  </div>
 
-                        <!-- Price -->
-                        <a-col span="12" style="margin-top: 4px">Price</a-col>
-                        <a-col
-                          span="12"
-                          style="
-                            margin-top: 4px;
-                            width: 100%;
-                            display: flex;
-                            justify-content: end;
-                          "
-                        >
-                          <!-- <del v-if="product.is_on_sale" style="font-size: 10px;">
-                                    ${{ product.price}}
-                                    </del> -->
-                          <!-- {{ product.sale_price }} -->
-                          <span
-                            style="
-                              font-size: 14px;
-                              font-weight: 600;
-                              margin-left: 4px;
-                            "
-                          >
-                            ${{ product.sale_price_per_sqm || 0 }}
-                          </span>
-                        </a-col>
+  <a-row style="margin-top: 10px">
+    <a-col span="24">
+      <b>{{ truncateText(product.title || "No title available", 19) }}</b>
+    </a-col>
 
-                        <!-- Buttons -->
+    <a-col span="18">Colors</a-col>
+    <a-col span="6" style="display: flex; justify-content: end">
+      <div
+        v-for="(color, index) in product.associated_colors.slice(0, 2)"
+        :key="index"
+        :style="{
+          background: color.color_hex,
+          width: '20px',
+          height: '20px',
+          borderRadius: '20px',
+          marginLeft: '2px',
+        }"
+      ></div>
+    </a-col>
 
-                        <a-col span="17">
-                          <a-button
-                            block
-                            @click="viewProduct(product)"
-                            style="display: flex; justify-content: center"
-                            >Product Details</a-button
-                          >
-                        </a-col>
+    <a-col span="12" style="margin-top: 4px">Price</a-col>
+    <a-col span="12" style="margin-top: 4px; width: 100%; display: flex; justify-content: end;">
+      <span style="font-size: 14px; font-weight: 600; margin-left: 4px;">
+        ${{ product.sale_price_per_sqm || 0 }}
+      </span>
+    </a-col>
 
-                        <a-col :span="1"></a-col>
-                        <a-col
-                          span="6"
-                          style="
-                            display: flex;
-                            align-items: end;
-                            justify-content: end;
-                          "
-                        >
-                          <!-- <a-button><HeartOutlined /></a-button> -->
+    <a-col span="17">
+      <a-button block @click="viewProduct(product)" style="display: flex; justify-content: center">
+        Product Details
+      </a-button>
+    </a-col>
 
-                          <a-button
-                            @click="toggleFavorite(product, 'wall_texture')"
-                            style="
-                              padding: 2px 12px;
-                              display: flex;
-                              align-items: center;
-                              justify-content: center;
-                            "
-                          >
-                            <template v-if="product.is_favorited">
-                              <HeartFilled style="color: red" />
-                            </template>
-                            <template v-else>
-                              <HeartOutlined />
-                            </template>
-                          </a-button>
-                        </a-col>
-                      </a-row>
-                    </div>
+    <a-col :span="1"></a-col>
+    <a-col span="6" style="display: flex; align-items: end; justify-content: end;">
+      <a-button
+        @click="toggleFavorite(product, 'wall_texture')"
+        style="padding: 2px 12px; display: flex; align-items: center; justify-content: center;"
+      >
+        <template v-if="product.is_favorited">
+          <HeartFilled style="color: red" />
+        </template>
+        <template v-else>
+          <HeartOutlined />
+        </template>
+      </a-button>
+    </a-col>
+  </a-row>
+</div>
+
                   </a-col>
                 </a-row>
 
@@ -1599,123 +1515,91 @@
                     class="product-responsive"
                     style="padding: 5px"
                   >
-                    <div class="product" style="padding: 4px">
-                      <!-- Product image container -->
-                      <div
-                        class="product-image-container"
-                        @click="viewProduct(product)"
-                      >
-                        <img
-                          :src="
-                            $store.state.root_media_api +
-                            (product.product_images.length > 0
-                              ? product.product_images[0].image
-                              : product.texture_image)
-                          "
-                          :alt="product.title"
-                          class="product-image"
-                        />
-                        <!-- Category Badge -->
-                        <div class="category-badge">
-                          {{ product.texture_style }}
-                        </div>
-                        <!-- AR Badge -->
-                        <div class="ar-badge">AR</div>
-                      </div>
+                   <div class="product" style="padding: 4px">
+  <div
+    class="product-image-container"
+    @click="viewProduct(product)"
+    style="position: relative; overflow: hidden;"
+  >
+    <!-- Skeleton -->
+    <div
+      v-if="!imageLoadedMap[product.id]"
+      class="product-skeleton"
+    ></div>
 
-                      <!-- Product details -->
-                      <a-row style="margin-top: 10px">
-                        <a-col span="24">
-                          <b>{{ product.title }}</b>
-                        </a-col>
+    <!-- Preloader -->
+    <img
+      :src="$store.state.root_media_api + (product.product_images.length > 0 ? product.product_images[0].image : product.texture_image)"
+      style="position: absolute; width: 0; height: 0; opacity: 0"
+      @load="onProductImageLoad(product.id)"
+      alt=""
+    />
 
-                        <!-- Colors -->
-                        <a-col span="18">Colors</a-col>
-                        <a-col
-                          span="6"
-                          style="display: flex; justify-content: end"
-                        >
-                          <div
-                            v-for="(
-                              color, index
-                            ) in product.associated_colors.slice(0, 2)"
-                            :key="index"
-                            :style="{
-                              background: color.color_hex,
-                              width: '20px',
-                              height: '20px',
-                              borderRadius: '20px',
-                              marginLeft: '2px',
-                            }"
-                          ></div>
-                        </a-col>
+    <!-- Actual Image -->
+    <img
+      v-show="imageLoadedMap[product.id]"
+      :src="$store.state.root_media_api + (product.product_images.length > 0 ? product.product_images[0].image : product.texture_image)"
+      :alt="product.title"
+      class="product-image"
+    />
 
-                        <!-- Price -->
-                        <a-col span="12" style="margin-top: 4px">Price</a-col>
-                        <a-col span="12" style="margin-top: 4px">
-                          <!-- <del v-if="product.is_on_sale" style="font-size: 10px;">
-                                    ${{ product.price_per_sqm }}
-                                    </del> -->
-                          <span
-                            style="
-                              font-size: 14px;
-                              font-weight: 600;
-                              margin-left: 4px;
-                              display: flex;
-                              justify-content: end;
-                            "
-                          >
-                            <!-- ${{ product.current_price_per_sqm }} -->
-                            ${{ product.sale_price_per_sqm || 0 }}
-                          </span>
-                        </a-col>
+    <!-- Badges -->
+    <div v-show="imageLoadedMap[product.id]" class="category-badge">
+      {{ product.texture_style }}
+    </div>
+    <div v-show="imageLoadedMap[product.id]" class="ar-badge">AR</div>
+  </div>
 
-                        <!-- Buttons -->
-                        <a-col span="17">
-                          <a-button
-                            block
-                            @click="viewProduct(product)"
-                            style="
-                              font-family: 'Poppins', sans-serif;
-                              font-size: 12px;
-                              display: flex;
-                              justify-content: center;
-                              align-items: center;
-                            "
-                            >Product Details</a-button
-                          >
-                        </a-col>
+  <a-row style="margin-top: 10px">
+    <a-col span="24">
+      <b>{{ product.title }}</b>
+    </a-col>
 
-                        <a-col :span="1"></a-col>
-                        <a-col
-                          span="6"
-                          style="
-                            display: flex;
-                            align-items: end;
-                            justify-content: end;
-                          "
-                        >
-                          <!-- <a-button><HeartOutlined /></a-button> -->
+    <a-col span="18">Colors</a-col>
+    <a-col span="6" style="display: flex; justify-content: end">
+      <div
+        v-for="(color, index) in product.associated_colors.slice(0, 2)"
+        :key="index"
+        :style="{
+          background: color.color_hex,
+          width: '20px',
+          height: '20px',
+          borderRadius: '20px',
+          marginLeft: '2px',
+        }"
+      ></div>
+    </a-col>
 
-                          <a-button
-                            @click="toggleFavorite(product, 'floor_texture')"
-                            style="
-                              padding: 2px 12px;
-                              display: flex;
-                              align-items: center;
-                              justify-content: center;
-                            "
-                          >
-                            <template v-if="product.is_favorited">
-                              <HeartFilled style="color: red" />
-                            </template>
-                            <template v-else>
-                              <HeartOutlined />
-                            </template>
-                          </a-button>
-                        </a-col>
-                      </a-row>
-                    </div>
+    <a-col span="12" style="margin-top: 4px">Price</a-col>
+    <a-col span="12" style="margin-top: 4px">
+      <span style="font-size: 14px; font-weight: 600; margin-left: 4px; display: flex; justify-content: end;">
+        ${{ product.sale_price_per_sqm || 0 }}
+      </span>
+    </a-col>
+
+    <a-col span="17">
+      <a-button block @click="viewProduct(product)" style="font-family: 'Poppins', sans-serif; font-size: 12px; display: flex; justify-content: center; align-items: center;">
+        Product Details
+      </a-button>
+    </a-col>
+
+    <a-col :span="1"></a-col>
+    <a-col span="6" style="display: flex; align-items: end; justify-content: end;">
+      <a-button
+        @click="toggleFavorite(product, 'floor_texture')"
+        style="padding: 2px 12px; display: flex; align-items: center; justify-content: center;"
+      >
+        <template v-if="product.is_favorited">
+          <HeartFilled style="color: red" />
+        </template>
+        <template v-else>
+          <HeartOutlined />
+        </template>
+      </a-button>
+    </a-col>
+  </a-row>
+</div>
+
                   </a-col>
                 </a-row>
 
@@ -1770,109 +1654,83 @@
                     class="product-responsive"
                     style="padding: 5px"
                   >
-                    <div class="product" style="padding: 4px">
-                      <div
-                        class="product-image-container"
-                        @click="viewProduct(product)"
-                      >
-                        <img
-                          :src="
-                            $store.state.root_media_api + product.primary_image
-                          "
-                          :alt="product.name"
-                          class="product-image"
-                        />
-                        <div class="category-badge">
-                          {{ product.category.name }}
-                        </div>
-                        <div class="ar-badge">AR</div>
-                      </div>
-                      <a-row>
-                        <!-- {{ truncateText(product.description || 'No description available', 8) }} -->
+                   <div class="product" style="padding: 4px">
+  <div
+    class="product-image-container"
+    @click="viewProduct(product)"
+    style="position: relative; overflow: hidden;"
+  >
+    <!-- Skeleton -->
+    <div
+      v-if="!imageLoadedMap[product.id]"
+      class="product-skeleton"
+    ></div>
 
-                        <a-col span="24"
-                          ><b>{{
-                            truncateText(
-                              product.name || "No Name available",
-                              19
-                            )
-                          }}</b></a-col
-                        >
-                        <a-col span="18">Color</a-col>
-                        <a-col
-                          span="6"
-                          style="display: flex; justify-content: end"
-                        >
-                          <div
-                            v-for="(color, index) in product.colors.slice(0, 2)"
-                            :key="index"
-                            style="
-                              width: 20px;
-                              height: 20px;
-                              border-radius: 20px;
-                              margin-left: 2px;
-                            "
-                            :style="'background:' + color"
-                          ></div>
-                        </a-col>
-                        <a-col span="12">Price</a-col>
-                        <a-col
-                          span="12"
-                          style="display: flex; justify-content: end"
-                        >
-                          <!-- <del style="font-size: 10px;">${{ product.pricing.price }}</del> -->
-                          <b>${{ product.pricing.price }}</b>
-                        </a-col>
+    <!-- Preloader -->
+    <img
+      :src="$store.state.root_media_api + product.primary_image"
+      style="position: absolute; width: 0; height: 0; opacity: 0"
+      @load="onProductImageLoad(product.id)"
+      alt=""
+    />
 
-                        <a-col
-                          span="18"
-                          style="
-                            font-family: 'Poppins', sans-serif;
-                            font-size: 13px;
-                            padding-right: 5px;
-                          "
-                        >
-                          <a-button
-                            block
-                            @click="viewProduct(product)"
-                            style="
-                              display: flex;
-                              width: 100%;
-                              align-items: center;
-                              justify-content: center;
-                            "
-                            >Product Details</a-button
-                          >
-                        </a-col>
-                        <a-col
-                          span="6"
-                          style="
-                            display: flex;
-                            align-items: end;
-                            justify-content: end;
-                          "
-                        >
-                          <!-- <a-button><HeartOutlined /></a-button> -->
+    <!-- Actual Image -->
+    <img
+      v-show="imageLoadedMap[product.id]"
+      :src="$store.state.root_media_api + product.primary_image"
+      :alt="product.name"
+      class="product-image"
+    />
 
-                          <a-button
-                            @click="toggleFavorite(product, 'product')"
-                            style="
-                              padding: 2px 12px;
-                              display: flex;
-                              align-items: center;
-                              justify-content: center;
-                            "
-                          >
-                            <template v-if="product.is_favorited">
-                              <HeartFilled style="color: red" />
-                            </template>
-                            <template v-else>
-                              <HeartOutlined />
-                            </template>
-                          </a-button>
-                        </a-col>
-                      </a-row>
-                    </div>
+    <!-- Badges -->
+    <div v-show="imageLoadedMap[product.id]" class="category-badge">
+      {{ product.category.name }}
+    </div>
+    <div v-show="imageLoadedMap[product.id]" class="ar-badge">AR</div>
+  </div>
+
+  <a-row>
+    <a-col span="24">
+      <b>{{ truncateText(product.name || "No Name available", 19) }}</b>
+    </a-col>
+
+    <a-col span="18">Color</a-col>
+    <a-col span="6" style="display: flex; justify-content: end">
+      <div
+        v-for="(color, index) in product.colors.slice(0, 2)"
+        :key="index"
+        style="width: 20px; height: 20px; border-radius: 20px; margin-left: 2px;"
+        :style="'background:' + color"
+      ></div>
+    </a-col>
+
+    <a-col span="12">Price</a-col>
+    <a-col span="12" style="display: flex; justify-content: end">
+      <b>${{ product.pricing.price }}</b>
+    </a-col>
+
+    <a-col span="18" style="font-family: 'Poppins', sans-serif; font-size: 13px; padding-right: 5px;">
+      <a-button block @click="viewProduct(product)" style="display: flex; width: 100%; align-items: center; justify-content: center;">
+        Product Details
+      </a-button>
+    </a-col>
+
+    <a-col span="6" style="display: flex; align-items: end; justify-content: end;">
+      <a-button
+        @click="toggleFavorite(product, 'product')"
+        style="padding: 2px 12px; display: flex; align-items: center; justify-content: center;"
+      >
+        <template v-if="product.is_favorited">
+          <HeartFilled style="color: red" />
+        </template>
+        <template v-else>
+          <HeartOutlined />
+        </template>
+      </a-button>
+    </a-col>
+  </a-row>
+</div>
+
                   </a-col>
                 </a-row>
 
@@ -3261,6 +3119,10 @@ export default {
       searchQuery: "",
       isLoading: false,
       selectedProduct: null,
+      imageLoadedMap: {}, // ✨ ADD THIS
+    
+    prepopulatedProductData: null,
+    isCreatingVariation: false,
 
       // popup for the add new product where user will need to choose the local 3d model or the DYD generated 3d model there
       open_add_newProductModal: false,
@@ -3385,7 +3247,7 @@ export default {
   },
   methods: {
     createVariation() {
-      debugger
+      
       console.log("Creating variation for:", this.selectedProduct);
 
       if (!this.selectedProduct) {
@@ -3429,6 +3291,13 @@ export default {
         this.$message.error("Failed to prepare variation data");
       }
     },
+
+    onProductImageLoad(id) {
+    this.imageLoadedMap[id] = false;
+    setTimeout(() => {
+      this.imageLoadedMap[id] = true;
+    }, 2000);
+  },
     handleVariantSelection(variantId) {
       // Call your existing fetchProductDetails method with the variant ID
       this.fetchProductDetails(variantId);
@@ -4064,6 +3933,23 @@ export default {
   align-items: center;
   justify-content: center;
   /* padding: 16px; */
+}
+
+.product-skeleton {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(110deg, #e5e7eb 8%, #f9fafb 18%, #e5e7eb 33%);
+  background-size: 200% 100%;
+  animation: product-shimmer 1.6s infinite linear;
+  border-radius: 8px;
+}
+
+@keyframes product-shimmer {
+  to {
+    background-position-x: -200%;
+  }
 }
 
 .product-image {

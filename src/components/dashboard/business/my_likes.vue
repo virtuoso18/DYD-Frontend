@@ -252,7 +252,21 @@
                         class="product-image "
                       />
                       <!-- Category Badge -->
-                      <!-- <div class="category-badge">{{ product.category }}</div> -->
+                     <div class="like-badge">
+  <a-button
+    @click="toggleFavorite(product)"
+    class="like-btn"
+  >
+    <template v-if="product.is_favorited">
+      <HeartFilled style="color: red" />
+    </template>
+    <template v-else>
+      <HeartOutlined />
+    </template>
+  </a-button>
+</div>
+
+                      
                     </div>
                     <!-- {{ truncateText(product.description || 'No description available', 8) }} -->
 <div style="height:7px;"></div>

@@ -281,7 +281,6 @@
   <div
     v-if="showImageDrawer"
     class="fixed inset-0 z-[10000] md:hidden"
-    style="position: fixed; top: 0; left: 0; right: 0; bottom: 0;"
   >
     <!-- Backdrop -->
     <div 
@@ -289,23 +288,53 @@
       @click="closeDrawer"
     ></div>
 
-    <!-- Drawer Content (Your existing mobile code) -->
-    <div class="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl max-h-[85vh] overflow-hidden flex flex-col">
-      <!-- Drawer Handle -->
-      <div class="flex justify-center py-3 border-b border-gray-200">
-        <div class="w-12 h-1.5 bg-gray-300 rounded-full"></div>
+    <!-- Drawer Content -->
+  <div 
+  ref="drawerRef"
+  class="absolute left-0 right-0 bg-white shadow-2xl overflow-hidden flex flex-col transition-all duration-300 ease-out z-10"
+  :style="isExpanded ? {
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    borderRadius: 0,
+    height: '100vh',
+    width: '100vw'
+  } : {
+    bottom: 0,
+    left: 0,
+    right: 0,
+    maxHeight: '85vh',
+    borderTopLeftRadius: '1.5rem',
+    borderTopRightRadius: '1.5rem'
+  }"
+  @touchstart="handleTouchStart"
+  @touchmove="handleTouchMove"
+  @touchend="handleTouchEnd"
+>
+
+      <!-- Drag Handle -->
+      <div 
+        class="flex justify-center py-3 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white"
+        :style="{ cursor: isExpanded ? 'default' : 'grab' }"
+      >
+        <div 
+          class="w-12 h-1.5 bg-gradient-to-r from-gray-400 to-gray-300 rounded-full shadow-sm hover:from-gray-500 hover:to-gray-400 transition-all duration-200 active:scale-95"
+          :class="{ 'rotate-180 scale-110': isExpanded }"
+        ></div>
       </div>
 
       <!-- Scrollable Content -->
       <div class="overflow-y-auto flex-1 pb-6">
         <!-- Image Preview -->
         <div class="px-4 pt-4">
-          
-            <router-link :to="'/'+selectedImage.brand">
-            <span class="text-sm font-semibold text-gray-700" style="font-weight:600;"><a-avatar size="18" style="border:1px solid rgba(0,0,0,0.2)" :src="this.$store.state.root_media_api+selectedImage.brand_banner"></a-avatar> {{selectedImage.brand_name}}</span>
+          <router-link :to="'/'+selectedImage.brand" class="block mb-4">
+            <span class="text-sm font-semibold text-gray-700 inline-flex items-center gap-2 hover:text-blue-600 transition-colors" style="font-weight:600;">
+              <a-avatar size="18" style="border:1px solid rgba(0,0,0,0.2)" :src="this.$store.state.root_media_api+selectedImage.brand_banner"></a-avatar> 
+              {{selectedImage.brand_name}}
+            </span>
           </router-link>
-          <br>
-          <br>
+          
           <img 
             v-if="selectedImage"
             :src="$store.state.root_media_api + selectedImage.image"
@@ -314,86 +343,76 @@
           />
         </div>
 
-        <!-- Image Details -->
+        <!-- Content -->
         <div class="px-6 mt-6">
-          <br>
-                      <div class="flex items-center justify-between ">
-              <h4 class="text-base font-bold font-family-poppins text-gray-900">Project Stats</h4>
-            </div>
+          <div class="flex items-center justify-between mb-6 flex-wrap gap-2">
+            <h4 class="text-base font-bold text-gray-900" style="font-family: poppins;">Project Stats</h4>
+          </div>
+
           <!-- Detected Objects Header -->
-          <div class="bg-white rounded-xl border border-gray-200 p-4 !my-4">
-            <h3 class="text-lg font-bold font-family-poppins text-gray-900 !mb-2">Detected Objects</h3>
-            <p class="text-sm text-gray-600">
+          <div class="bg-white rounded-xl border border-gray-200 p-4 mb-6">
+            <h3 class="text-lg font-bold text-gray-900 mb-2" style="font-family: poppins;">Detected Objects</h3>
+            <p class="text-sm text-gray-600 leading-relaxed">
               Tap on any detected objects (green boxes) to replace or delete it.
             </p>
           </div>
 
-          <!-- Project Stats -->
-          <div class="!my-4">
-
-
-            <!-- Stats Cards -->
-            <div class="grid grid-cols-3 h-20 gap-3">
-              <div class="bg-white rounded-xl  border border-gray-200 p-2 flex flex-col items-center justify-center text-center">
-                <p class="text-2xl font-bold !font-family-poppins text-gray-900 leading-none ">{{  selectedImage.objects_detected }}</p>
-                <p class="text-xs !font-family-poppins text-gray-600">Objects</p>
-              </div>
-              <div class="bg-white rounded-xl  border border-gray-200 p-2 flex flex-col items-center justify-center text-center">
-                <p class="text-2xl font-bold !font-family-poppins text-blue-600 leading-none ">0</p>
-                <p class="text-xs font-family-poppins text-gray-600">Products</p>
-              </div>
-              <div class="bg-white rounded-xl border border-gray-200 p-2 flex flex-col items-center justify-center text-center">
-                <p class="text-2xl font-bold !font-family-poppins text-green-600 leading-none">0</p>
-                <p class="text-xs !font-family-poppins text-gray-600">Replaced</p>
-              </div>
+          <!-- Stats Cards -->
+          <div class="grid grid-cols-3 gap-3 mb-8 h-20">
+            <div class="bg-white rounded-xl border border-gray-200 p-3 flex flex-col items-center justify-center text-center hover:shadow-md transition-shadow">
+              <p class="text-2xl font-bold text-gray-900 leading-none" style="font-family: poppins;">{{ selectedImage.objects_detected }}</p>
+              <p class="text-xs text-gray-600 mt-1" style="font-family: poppins;">Objects</p>
+            </div>
+            <div class="bg-white rounded-xl border border-gray-200 p-3 flex flex-col items-center justify-center text-center hover:shadow-md transition-shadow">
+              <p class="text-2xl font-bold text-blue-600 leading-none" style="font-family: poppins;">0</p>
+              <p class="text-xs text-gray-600 mt-1 font-family-poppins">Products</p>
+            </div>
+            <div class="bg-white rounded-xl border border-gray-200 p-3 flex flex-col items-center justify-center text-center hover:shadow-md transition-shadow">
+              <p class="text-2xl font-bold text-green-600 leading-none" style="font-family: poppins;">0</p>
+              <p class="text-xs text-gray-600 mt-1" style="font-family: poppins;">Replaced</p>
             </div>
           </div>
 
-          <!-- Manage Objects Button -->
-         <div className="gap-2">
+          <!-- Buttons -->
+          <div class="space-y-3">
+            <button
+              @click="showObjectManagement = true"
+              class="w-full bg-[#F2F2F2] hover:bg-gray-200 text-gray-900 font-semibold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg active:scale-[0.98]"
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M4 18C3.71667 18 3.47934 17.904 3.288 17.712C3.09667 17.52 3.00067 17.2827 3 17C2.99934 16.7173 3.09534 16.48 3.288 16.288C3.48067 16.096 3.718 16 4 16H20C20.2833 16 20.521 16.096 20.713 16.288C20.905 16.48 21.0007 16.7173 21 17C20.9993 17.2827 20.9033 17.5203 20.712 17.713C20.5207 17.9057 20.2833 18.0013 20 18H4ZM4 13C3.71667 13 3.47934 12.904 3.288 12.712C3.09667 12.52 3.00067 12.2827 3 12C2.99934 11.7173 3.09534 11.48 3.288 11.288C3.48067 11.096 3.718 11 4 11H20C20.2833 11 20.521 11.096 20.713 11.288C20.905 11.48 21.0007 11.7173 21 12C20.9993 12.2827 20.9033 12.5203 20.712 12.713C20.5207 12.9057 20.2833 13.0013 20 13H4ZM4 8C3.71667 8 3.47934 7.904 3.288 7.712C3.09667 7.52 3.00067 7.28267 3 7C2.99934 6.71733 3.09534 6.48 3.288 6.288C3.48067 6.096 3.718 6 4 6H20C20.2833 6 20.521 6.096 20.713 6.288C20.905 6.48 21.0007 6.71733 21 7C20.9993 7.28267 20.9033 7.52033 20.712 7.713C20.5207 7.90567 20.2833 8.00133 20 8H4Z" fill="#333333"/>
+              </svg>
+              Manage Detected Objects
+            </button>
 
-  <button
-    @click="showObjectManagement = true"
-    class="w-full !mt-12 bg-[#F2F2F2] hover:bg-blue-700 text-white font-semibold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-lg"
-  >
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M4 18C3.71667 18 3.47934 17.904 3.288 17.712C3.09667 17.52 3.00067 17.2827 3 17C2.99934 16.7173 3.09534 16.48 3.288 16.288C3.48067 16.096 3.718 16 4 16H20C20.2833 16 20.521 16.096 20.713 16.288C20.905 16.48 21.0007 16.7173 21 17C20.9993 17.2827 20.9033 17.5203 20.712 17.713C20.5207 17.9057 20.2833 18.0013 20 18H4ZM4 13C3.71667 13 3.47934 12.904 3.288 12.712C3.09667 12.52 3.00067 12.2827 3 12C2.99934 11.7173 3.09534 11.48 3.288 11.288C3.48067 11.096 3.718 11 4 11H20C20.2833 11 20.521 11.096 20.713 11.288C20.905 11.48 21.0007 11.7173 21 12C20.9993 12.2827 20.9033 12.5203 20.712 12.713C20.5207 12.9057 20.2833 13.0013 20 13H4ZM4 8C3.71667 8 3.47934 7.904 3.288 7.712C3.09667 7.52 3.00067 7.28267 3 7C2.99934 6.71733 3.09534 6.48 3.288 6.288C3.48067 6.096 3.718 6 4 6H20C20.2833 6 20.521 6.096 20.713 6.288C20.905 6.48 21.0007 6.71733 21 7C20.9993 7.28267 20.9033 7.52033 20.712 7.713C20.5207 7.90567 20.2833 8.00133 20 8H4Z" fill="#333333"/>
-  </svg>
-  
-    Manage Detected Objects
-  </button>
-  <br>
-  <!-- {{showImageDrawer_test_room}} -->
-
-  <!-- Use This Room Button -->
-  <button
-     v-if="showImageDrawer_test_room"
-            @click="handleSampleClick"
-                  class="w-full bg-blue-600 pt-3  !text-white hover:bg-blue-500 font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors"
-
-  >
-    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-    </svg>
-    Use This Room
-  </button>
-  <button
-     v-else
-            @click="useSelectedRoom"
-                  class="w-full bg-blue-600 pt-3  !text-white hover:bg-blue-500 font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors"
-
-  >
-    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-    </svg>
-    Use This Room
-  </button>
-</div>
+            <!-- Use This Room Button -->
+            <button
+              v-if="showImageDrawer_test_room"
+              @click="handleSampleClick"
+              class="w-full bg-blue-600 text-white hover:bg-blue-700 font-semibold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg hover:shadow-xl active:scale-[0.98]"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+              Use This Room
+            </button>
+            <button
+              v-else
+              @click="useSelectedRoom"
+              class="w-full bg-blue-600 text-white hover:bg-blue-700 font-semibold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg hover:shadow-xl active:scale-[0.98]"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+              Use This Room
+            </button>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </Transition>
+
 
 <!-- Desktop Modal (Hidden on mobile) -->
 <Transition name="modal-fade">
@@ -854,6 +873,12 @@ export default {
       uploadResult: null,
       uploadError: null,
       your_history: [],
+       drawerRef: null,
+    isDragging: false,
+    startY: 0,
+    currentY: 0,
+    isExpanded: false,
+    threshold: 80,
       exampleImages: [],
       
       // NEW: Modal file preview states
@@ -886,6 +911,7 @@ export default {
   },
 
   mounted() {
+    this.isExpanded = false;
     const hasVisited = false
     console.log('Has visited before:', hasVisited);
     
@@ -962,7 +988,78 @@ export default {
                 console.error('Error creating/finding room:', error)
             }
             this.LoadingMessageButton=false
-      },
+    },
+
+    // DRAWER DRAG METHODS - ADD THESE
+  handleTouchStart(e) {
+    this.isDragging = true;
+    this.startY = e.touches[0].clientY;
+  },
+
+  handleTouchMove(e) {
+    if (!this.isDragging) return;
+    
+    this.currentY = e.touches[0].clientY;
+    const deltaY = this.currentY - this.startY;
+    
+    // Only drag when NOT expanded
+    if (!this.isExpanded && deltaY > 0) {
+      if (this.drawerRef) {
+        this.drawerRef.style.transform = `translateY(${Math.min(deltaY * 0.4, 150)}px)`;
+      }
+    }
+  },
+
+ handleTouchEnd() {
+  if (!this.isDragging) return;
+  
+  const deltaY = this.currentY - this.startY;
+  
+  // Drag UP to expand (more than 80px)
+  if (deltaY < -this.threshold) {
+    this.isExpanded = true;
+  } 
+  // Drag DOWN to close (from expanded) OR collapse (from partial)
+  else if (deltaY > this.threshold || (this.isExpanded && deltaY > 20)) {
+    this.closeDrawer();
+  }
+  // Snap back if small drag
+  else {
+    this.isExpanded = false;
+  }
+  
+  // Reset transform immediately
+  if (this.drawerRef) {
+    this.drawerRef.style.transform = '';
+  }
+  this.isDragging = false;
+},
+  // Update your existing closeDrawer method
+closeDrawer() {
+  // ALWAYS reset expanded state
+  this.isExpanded = false;
+  
+  this.showImageDrawer = false;
+  this.showImageDrawer_test_room = false;
+  this.showObjectManagement = false;
+  
+  // Force immediate reset of drawer transform and position
+  if (this.drawerRef) {
+    this.drawerRef.style.transform = '';
+    this.drawerRef.style.top = '';
+    this.drawerRef.style.height = '';
+    this.drawerRef.style.width = '';
+    this.drawerRef.style.borderRadius = '';
+  }
+  
+  // Clear selection after animation
+  setTimeout(() => {
+    this.selectedImage = null;
+    this.detectedObjects = [];
+  }, 250);
+},
+
+
 
     // NEW METHOD: Trigger modal file input
     triggerFileUpload() {
@@ -1105,6 +1202,8 @@ export default {
 
     // EXISTING METHODS (Keep all your existing methods)
     openImageDrawer(historyCard) {
+       this.isExpanded = false;
+  this.isDragging = false;
       this.selectedImage = historyCard;
       this.showImageDrawer = true;
       
@@ -1116,6 +1215,8 @@ export default {
       }
     },
     openImageDrawer_test_room(historyCard) {
+      this.isExpanded = false;
+  this.isDragging = false;
       this.selectedImage = historyCard;
       this.showImageDrawer = true;
       this.showImageDrawer_test_room = true;
