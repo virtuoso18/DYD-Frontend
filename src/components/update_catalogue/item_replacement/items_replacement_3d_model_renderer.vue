@@ -1,6 +1,6 @@
 <template>
   <!-- {{ isLoading }} -->
- <a-modal
+<a-modal
     v-model:open="isShowInstructionModal"
     title="Instructions"
     @ok="closeInstructionModal"
@@ -15,7 +15,7 @@
     class="main-canvas max-h-[300px] md:max-h-[95vh] mx-auto"
     ref="canvasContainer"
   >
-  <img
+   <img
         class="absolute top-[5px] right-[10px] cursor-pointer z-9 w-[25px]"
         src="../../../assets/icons/informationIcon.svg"
         alt="instruction"
@@ -42,7 +42,7 @@
       <!-- Show background image when no GLB -->
       <div
         v-if="!glbUrl || glbUrl === ''"
-        class="text-center flex items-center h-full justify-center text-gray-600"
+        class="text-center flex items-center h-full  justify-center text-gray-600"
       >
         <img
           :src="baseImageUrl"
@@ -176,11 +176,11 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+
 import ZoomInIcon from "@/assets/icons/zoomout.png";
 import ZoomOutIcon from "@/assets/icons/zoomin.png";
 import TapToSelect from "@/assets/icons/tap.png";
 import DragToMove from "@/assets/icons/tapAndMove.png";
-
 export default {
   name: "ItemReplacementRenderer",
 
@@ -199,6 +199,7 @@ export default {
       default: () => ({ width: 0.00, height: 0.00, depth: 0.00 }),
     },
   },
+
   computed: {
     loadingProxy: {
       get() {
@@ -226,20 +227,7 @@ export default {
       modelPosition: { x: 0, y: 0 },
       modelRotation: { y: 0 },
 
-      // Floor data from JSON
-      // floorData: {}
-      // ... your existing data ...
-      modelScale: 1.0, // Track current scale multiplier
-      minScale: 0.5, // Minimum scale (50%)
-      maxScale: 3.0, // Maximum scale (300%)
-      scaleStep: 0.02, // Step size for +/- buttons (10%)
 
-      // Store the base dimensions separately
-      currentModelDimensions: {
-        width: 0,
-        height: 0,
-        depth: 0,
-      },
       isShowInstructionModal: false,
       instructionConfig: [
         {
@@ -256,6 +244,22 @@ export default {
           value: DragToMove,
         }
       ],
+
+
+      // Floor data from JSON
+      // floorData: {}
+      // ... your existing data ...
+      modelScale: 1.0, // Track current scale multiplier
+      minScale: 0.5, // Minimum scale (50%)
+      maxScale: 3.0, // Maximum scale (300%)
+      scaleStep: 0.02, // Step size for +/- buttons (10%)
+
+      // Store the base dimensions separately
+      currentModelDimensions: {
+        width: 0,
+        height: 0,
+        depth: 0,
+      },
     };
   },
 
@@ -303,6 +307,7 @@ export default {
   watch: {
     glbUrl: {
     handler(newUrl, oldUrl) {
+      
       console.log('👀 glbUrl changed:', { old: oldUrl, new: newUrl });
       
       // Skip if URL is being cleared (empty string)
@@ -388,7 +393,7 @@ export default {
   },
 
   methods: {
-     showInstructionModal() {
+       showInstructionModal() {
       this.isShowInstructionModal = true;
     },
     closeInstructionModal() {
@@ -874,8 +879,8 @@ export default {
         return;
       }
       try {
+        
         this.$emit("update:isLoading", true);
-
         this.remove3DObjectFromScene();
 
         this.loadingText = "Rendering Item...";
@@ -1093,6 +1098,7 @@ export default {
         } else {
           await this.reinitializeWithNewModel();
         }
+        this.reset_entire_room()
       } catch (error) {
         console.error("Error handling glbUrl change:", error);
         this.showErrorState();
@@ -2443,6 +2449,14 @@ export default {
   letter-spacing: 1px;
   text-transform: uppercase;
 }
+@media screen and (min-width: 768px) {
+  #viewer {
+    height: 100%;
+  }
+}
+
+
+
 
 /* modal */
 .instruction-item {
@@ -2467,10 +2481,4 @@ export default {
   object-fit: contain;
   margin-left: 20px;
 }
-@media screen and (min-width: 768px) {
-  #viewer {
-    height: 100%;
-  }
-}
-
 </style>

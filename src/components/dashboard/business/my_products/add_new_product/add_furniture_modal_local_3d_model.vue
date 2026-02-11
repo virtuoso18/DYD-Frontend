@@ -355,7 +355,7 @@
                     
                                 <!-- Category, Type, Price Row -->
                                 <a-row :gutter="12" style="margin-bottom: 16px;">
-                                  <a-col :span="8">
+                                  <a-col :span="12">
                            
                                  
                                        
@@ -394,7 +394,7 @@
                                       <a-select-option v-for="type in types" :key="type" :value="type">{{ type }}</a-select-option>
                                     </a-select>
                                   </a-col>
-                                  <a-col :span="8">
+                                  <a-col :span="24">
                                     <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Price <span style="color: red;">*</span></label>
                                     <a-input-number
                                       v-model:value="productForm.pricing.price" 

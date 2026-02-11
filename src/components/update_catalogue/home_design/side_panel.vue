@@ -411,7 +411,7 @@ watch: {
   color: #1890ff;
   font-size: 16px;
   font-weight: 500;
-  /* margin: auto 0 24px 0; */
+  margin: auto 0 24px 0;
   gap: 8px;
 }
 
@@ -460,5 +460,12 @@ watch: {
 
 .delete-button:hover {
   background: rgba(255, 13, 13, 0.8);
+}
+
+@media screen and (max-width: 448px) {
+ 
+.credits-section {
+  margin:  0;
+}
 }
 </style>

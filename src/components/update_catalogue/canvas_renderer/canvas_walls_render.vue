@@ -11,14 +11,15 @@
     </div>
   </a-modal>
   <div class="canvas-container" ref="canvasContainer">
-    <!-- Loading Overlay -->
- <img
+    <img
         class="absolute top-[5px] right-[10px] cursor-pointer z-9 w-[25px]"
         src="../../../assets/icons/informationIcon.svg"
         alt="instruction"
         @click="showInstructionModal"
         title="see instruction"
       />
+    <!-- Loading Overlay -->
+
     <div v-if="isLoading" class="scanning-loading-overlay">
       <div
         class="loading-screen"
@@ -458,6 +459,17 @@ export default {
       overlayCanvas: null,
       overlayCtx: null,
 
+
+      isShowInstructionModal: false,
+      instructionConfig: [
+        {
+          key: "Pinch out zoom out",
+          value: ZoomInIcon,
+        },
+        { key: "Pinch in to zoom", value: ZoomOutIcon },
+        {key:"Click to Select Wall", value : TapToSelect}
+      ],
+
       // Images
       baseImg: null,
       maskImages: [],
@@ -505,15 +517,6 @@ export default {
 
       // Internal selected masks (for immediate UI updates)
       internalSelectedMasks: [],
-      isShowInstructionModal: false,
-      instructionConfig: [
-        {
-          key: "Pinch out zoom out",
-          value: ZoomInIcon,
-        },
-        { key: "Pinch in to zoom", value: ZoomOutIcon },
-        {key:"Click to Select Wall", value : TapToSelect}
-      ],
     };
   },
 
@@ -2648,30 +2651,6 @@ export default {
   z-index: 2;
 }
 
-/* modal */
-.instruction-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.instruction-item:last-child {
-  border-bottom: none;
-}
-
-.instruction {
-  font-weight: 500;
-  color: #333;
-  flex: 1;
-}
-
-.gesture-icon {
-  width: 40px;
-  height: 40px;
-  object-fit: contain;
-  margin-left: 20px;
-}
-
 @keyframes moveWaveLeftToRight {
   from {
     transform: translateX(-100%);
@@ -2715,4 +2694,39 @@ export default {
   letter-spacing: 1px;
   text-transform: uppercase;
 }
+
+
+
+
+
+
+
+
+
+
+/* modal */
+.instruction-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.instruction-item:last-child {
+  border-bottom: none;
+}
+
+.instruction {
+  font-weight: 500;
+  color: #333;
+  flex: 1;
+}
+
+.gesture-icon {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  margin-left: 20px;
+}
+
+
 </style>

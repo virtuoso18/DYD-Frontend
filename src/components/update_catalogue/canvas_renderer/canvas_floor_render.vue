@@ -11,7 +11,7 @@
     </div>
   </a-modal>
   <div class="canvas-container" ref="canvasContainer">
-    <img
+     <img
         class="absolute top-[5px] right-[10px] cursor-pointer z-9 w-[25px] md:hidden"
         src="../../../assets/icons/informationIcon.svg"
         alt="instruction"
@@ -45,7 +45,7 @@
     ></canvas>
 
     <!-- Zoom Controls -->
-    <!-- <div v-if="!isLoading" class="zoom-controls">
+    <div v-if="!isLoading" class="zoom-controls">
       <button @click="zoomIn" class="zoom-btn" title="Zoom In">+</button>
       <span class="zoom-level">{{ Math.round(zoom * 100) }}%</span>
       <button @click="zoomOut" class="zoom-btn" title="Zoom Out">-</button>
@@ -56,7 +56,7 @@
       >
       ⌂
     </button>
-  </div> -->
+  </div>
     
 
     <!-- Pan Instructions -->
@@ -132,6 +132,12 @@ export default {
 
   data() {
     return {
+      isTouchDevice: false,
+      canvas: null,
+      ctx: null,
+      baseImg: null,
+      internalLoading: false,
+      
       isShowInstructionModal: false,
       instructionConfig: [
         {
@@ -140,11 +146,6 @@ export default {
         },
         { key: "Pinch in to zoom", value: ZoomOutIcon },
       ],
-      isTouchDevice: false,
-      canvas: null,
-      ctx: null,
-      baseImg: null,
-      internalLoading: false,
 
       // Canvas dimensions
       canvasWidth: 800,
@@ -230,12 +231,13 @@ export default {
   },
 
   methods: {
-     showInstructionModal() {
+    showInstructionModal() {
       this.isShowInstructionModal = true;
     },
     closeInstructionModal() {
       this.isShowInstructionModal = false;
     },
+
     checkTouchDevice() {
       return (
         (navigator.maxTouchPoints && navigator.maxTouchPoints > 0) ||
@@ -259,8 +261,7 @@ export default {
         });
 
         if (this.$refs.canvasContainer) {
-          this.resizeObserver.observe(this.$refs.canvasContainer);
-        }
+          this.resizeObserver.observe(this.$refs.canvasContainer);}
       } else {
         // Fallback for older browsers
         window.addEventListener("resize", this.handleWindowResize);
@@ -1093,30 +1094,6 @@ export default {
   pointer-events: none;
 }
 
-/* modal */
-.instruction-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.instruction-item:last-child {
-  border-bottom: none;
-}
-
-.instruction {
-  font-weight: 500;
-  color: #333;
-  flex: 1;
-}
-
-.gesture-icon {
-  width: 40px;
-  height: 40px;
-  object-fit: contain;
-  margin-left: 20px;
-}
-
 /* Responsive design */
 @media (max-width: 768px) {
   .zoom-controls {
@@ -1290,5 +1267,29 @@ export default {
   opacity: 0.9;
   letter-spacing: 1px;
   text-transform: uppercase;
+}
+
+
+.instruction-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.instruction-item:last-child {
+  border-bottom: none;
+}
+
+.instruction {
+  font-weight: 500;
+  color: #333;
+  flex: 1;
+}
+
+.gesture-icon {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  margin-left: 20px;
 }
 </style>

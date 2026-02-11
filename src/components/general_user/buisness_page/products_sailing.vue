@@ -1,7 +1,7 @@
 <template>
   <div class="md:!p-3 !bg-white !rounded-xl !border-2 !border-gray-200/20">
     <div class="!pb-5 md:!pb-6">
-      <!-- Responsive Grid - Same as first example -->
+      <!-- Responsive Grid -->
       <div class="grid grid-cols-2 px-1.25 gap-1.25 md:grid-cols-3 md:px-2 md:gap-2 lg:grid-cols-4 lg:px-2.5 lg:gap-2.5 xl:grid-cols-5 xl:px-3 xl:gap-3 w-full">
         <div 
           v-for="product in products"
@@ -11,38 +11,44 @@
           <div class="p-2.5 mb-2.5 rounded-xl bg-gray-100">
             <!-- Product Image -->
             <div
-              class="relative overflow-hidden cursor-pointer"
+              class="relative overflow-hidden cursor-pointer w-full h-[170px]"
               @click="goto_product_Route(product)"
             >
-              <!-- Skeleton -->
+              <!-- ✨ FIXED: Skeleton with proper class -->
               <div
-                v-if="!imageLoadedMap[product.id]"
-                class="absolute inset-0 w-full h-[240px] rounded-[10px] bg-gradient-to-r from-gray-200 via-gray-50 to-gray-200 bg-[length:200%_100%] animate-[shimmer_1.6s_infinite]"
+                v-if="!imageLoadedMap[product.product_id]"
+                class="product-image-skeleton"
               ></div>
 
               <!-- Preload -->
               <img
                 :src="$store.state.root_media_api + product.product_image"
                 class="absolute w-0 h-0 opacity-0"
-                @load="onProductImageLoad(product.id)"
+                @load="onProductImageLoad(product.product_id)"
                 alt=""
               />
 
               <!-- Visible Image -->
               <img
-                v-show="imageLoadedMap[product.id]"
+                v-show="imageLoadedMap[product.product_id]"
                 :src="$store.state.root_media_api + product.product_image"
                 :alt="product.product_title"
-                class="w-full h-[170px] object-cover rounded-[10px] transition-transform duration-300 ease-in-out"
+                class="w-full h-full object-cover rounded-[10px] transition-transform duration-300 ease-in-out"
               />
 
               <!-- Category Badge -->
-              <div class="absolute top-3 left-3 bg-black/75 text-white px-2 py-1 rounded-md text-[10px] font-semibold uppercase tracking-wider z-10">
+              <div 
+                v-show="imageLoadedMap[product.product_id]"
+                class="absolute top-3 left-3 bg-black/75 text-white px-2 py-1 rounded-md text-[10px] font-semibold uppercase tracking-wider z-10"
+              >
                 {{ product.category_name }}
               </div>
 
               <!-- AR Badge -->
-              <div class="absolute top-3 right-3 bg-gray-200 text-gray-700 px-2 py-1 rounded-md text-[10px] font-bold tracking-wider">
+              <div 
+                v-show="imageLoadedMap[product.product_id]"
+                class="absolute top-3 right-3 bg-gray-200 text-gray-700 px-2 py-1 rounded-md text-[10px] font-bold tracking-wider"
+              >
                 AR
               </div>
             </div>
@@ -172,7 +178,7 @@ export default {
       this.imageLoadedMap[id] = false;
       setTimeout(() => {
         this.imageLoadedMap[id] = true;
-      }, 2000);
+      }, 2000); // 2 second shimmer
     },
     
     handleProductDetail(product) {
@@ -223,6 +229,24 @@ export default {
 </script>
 
 <style scoped>
+
+/* ✨ ADDED: Product Image Skeleton */
+.product-image-skeleton {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  background: linear-gradient(110deg, #e5e7eb 8%, #f9fafb 18%, #e5e7eb 33%);
+  background-size: 200% 100%;
+  animation: product-shimmer 1.6s infinite linear;
+}
+
+@keyframes product-shimmer {
+  to {
+    background-position-x: -200%;
+  }
+}
 
 /* Shimmer Effect for Images */
 .shimmer-effect {

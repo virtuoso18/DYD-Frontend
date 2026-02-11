@@ -61,7 +61,7 @@
       </a-col>
     </a-row>
   </a-drawer>
-  <a-modal
+<a-modal
     v-model:open="isShowInstructionModal"
     title="Instructions"
     @ok="closeInstructionModal"
@@ -72,7 +72,6 @@
       <img :src="item?.value" alt="gesture" class="gesture-icon" />
     </div>
   </a-modal>
-
   <DrawRemovalModal
     :visible="draw_removal_modal"
     :baseImage="baseImage"
@@ -80,6 +79,7 @@
     @update:visible="draw_removal_modal = $event"
     @submit-removal="handleDrawnAreaRemoval"
     @insufficient-credits="throw_Insufficient_credits"
+
     @removal-success="handleRemovalSuccess"
     @cancel="draw_removal_modal = false"
   />
@@ -153,7 +153,6 @@
     </div>
 
     <div class="main-canvas-sec">
-      <!-- eye icon for instructions  -->
       <img
         class="absolute top-[5px] right-[10px] cursor-pointer z-9 w-[25px] md:hidden"
         src="../../../assets/icons/informationIcon.svg"
@@ -801,8 +800,10 @@ import { DotLottieVue } from "@lottiefiles/dotlottie-vue";
 import { DeleteOutlined, RedoOutlined } from "@ant-design/icons-vue";
 import SwitchFurnitureModal from "@/components/update_catalogue/canvas_renderer/switch_furniture.vue";
 import SwitchFurnitureDrawerForMobile from "@/components/update_catalogue/canvas_renderer/SwitchFurnitureDrawerForMobile.vue";
+
 import ZoomInIcon from "@/assets/icons/zoomout.png";
 import ZoomOutIcon from "@/assets/icons/zoomin.png";
+
 export default {
   name: "item_remove_renderer",
   props: {
@@ -1146,10 +1147,12 @@ export default {
     closeInstructionModal() {
       this.isShowInstructionModal = false;
     },
-    throw_Insufficient_credits(msg, buid) {
+
+    throw_Insufficient_credits(msg,buid){
       // console.log(msg);
       // console.log(buid);
-      this.$emit("insufficient-credits", msg, buid);
+          this.$emit("insufficient-credits",msg,buid);
+      
     },
     openSwitchFurnitureModal() {
       if (this.selectedObjects.length === 0) return;
@@ -1536,42 +1539,42 @@ export default {
     //   this.saveDrawingState();
     //   this.setupDrawingEventListeners();
     // },
-    initializeDrawingCanvas() {
-      if (!this.drawingCanvas) {
-        this.drawingCanvas = document.createElement("canvas");
+initializeDrawingCanvas() {
+  if (!this.drawingCanvas) {
+    this.drawingCanvas = document.createElement("canvas");
+    
+    // ===== ADD HIGH-DPI SUPPORT =====
+    const dpr = window.devicePixelRatio || 1;
+    this.drawingCanvas.width = this.canvasWidth * dpr;
+    this.drawingCanvas.height = this.canvasHeight * dpr;
+    this.drawingCanvas.style.width = this.canvasWidth + 'px';
+    this.drawingCanvas.style.height = this.canvasHeight + 'px';
+    // ===== END =====
+    
+    this.drawingCanvas.className = "drawing-overlay-canvas";
+    this.drawingCanvas.style.position = "absolute";
+    this.drawingCanvas.style.top = "0";
+    this.drawingCanvas.style.left = "0";
+    this.drawingCanvas.style.zIndex = "3";
+    this.drawingCanvas.style.cursor = "crosshair";
+    this.drawingCanvas.style.pointerEvents = "auto";
 
-        // ===== ADD HIGH-DPI SUPPORT =====
-        const dpr = window.devicePixelRatio || 1;
-        this.drawingCanvas.width = this.canvasWidth * dpr;
-        this.drawingCanvas.height = this.canvasHeight * dpr;
-        this.drawingCanvas.style.width = this.canvasWidth + "px";
-        this.drawingCanvas.style.height = this.canvasHeight + "px";
-        // ===== END =====
+    this.$refs.canvasContainer.appendChild(this.drawingCanvas);
+  }
 
-        this.drawingCanvas.className = "drawing-overlay-canvas";
-        this.drawingCanvas.style.position = "absolute";
-        this.drawingCanvas.style.top = "0";
-        this.drawingCanvas.style.left = "0";
-        this.drawingCanvas.style.zIndex = "3";
-        this.drawingCanvas.style.cursor = "crosshair";
-        this.drawingCanvas.style.pointerEvents = "auto";
+  this.drawingCtx = this.drawingCanvas.getContext("2d");
+  
+  // ===== ADD THIS =====
+  const dpr = window.devicePixelRatio || 1;
+  this.drawingCtx.scale(dpr, dpr);
+  // ===== END =====
 
-        this.$refs.canvasContainer.appendChild(this.drawingCanvas);
-      }
+  this.drawingCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
 
-      this.drawingCtx = this.drawingCanvas.getContext("2d");
-
-      // ===== ADD THIS =====
-      const dpr = window.devicePixelRatio || 1;
-      this.drawingCtx.scale(dpr, dpr);
-      // ===== END =====
-
-      this.drawingCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-
-      this.drawSelectedFurnitureHighlight();
-      this.saveDrawingState();
-      this.setupDrawingEventListeners();
-    },
+  this.drawSelectedFurnitureHighlight();
+  this.saveDrawingState();
+  this.setupDrawingEventListeners();
+},
     // Add this new method to highlight all selected furniture
     drawSelectedFurnitureHighlight() {
       if (!this.drawingCtx) return;
@@ -2038,7 +2041,7 @@ export default {
       }, {})
     ));
     formData.append('canvas_dimensions', JSON.stringify(this.getCanvasDimensions()));
-
+    
     const response = await fetch(`${this.$store.state.root_api}/api/furniture/switch`, {
       method: 'POST',
       body: formData,
@@ -2046,13 +2049,13 @@ export default {
         'Authorization': `Bearer ${this.$store.state.authToken}`
       }
     });
-
+    
     if (!response.ok) {
       throw new Error(`Backend error: ${response.statusText}`);
     }
-
+    
     const result = await response.json();
-
+    
     this.$emit('furniture-switched', {
       objectKeys: this.selectedObjects,
       baseKey: this.selectedObjectForSwitch,
@@ -2462,64 +2465,64 @@ export default {
     },
 
     updateCanvasDimensions() {
-      if (this.$refs.canvasContainer) {
-        const rect = this.$refs.canvasContainer.getBoundingClientRect();
-        this.containerWidth = Math.floor(rect.width);
-        this.containerHeight = Math.floor(rect.height);
-
-        // ===== ADD THIS =====
-        // Ensure canvas matches container pixel-perfectly
-        this.canvasWidth = this.containerWidth;
-        this.canvasHeight = this.containerHeight;
-
-        // Force re-initialization with new DPI settings
-        if (this.canvas) {
-          const dpr = window.devicePixelRatio || 1;
-          this.canvas.width = this.canvasWidth * dpr;
-          this.canvas.height = this.canvasHeight * dpr;
-          this.canvas.style.width = this.canvasWidth + "px";
-          this.canvas.style.height = this.canvasHeight + "px";
-          this.ctx.scale(dpr, dpr);
-        }
-        // ===== END =====
-      }
-    },
-
-    initCanvas() {
-      this.canvas = this.$refs.canvas;
-      this.overlayCanvas = this.$refs.overlayCanvas;
-
-      if (!this.canvas || !this.overlayCanvas) {
-        console.error("Canvas refs not found");
-        return;
-      }
-
-      // ===== ADD THIS SECTION =====
+  if (this.$refs.canvasContainer) {
+    const rect = this.$refs.canvasContainer.getBoundingClientRect();
+    this.containerWidth = Math.floor(rect.width);
+    this.containerHeight = Math.floor(rect.height);
+    
+    // ===== ADD THIS =====
+    // Ensure canvas matches container pixel-perfectly
+    this.canvasWidth = this.containerWidth;
+    this.canvasHeight = this.containerHeight;
+    
+    // Force re-initialization with new DPI settings
+    if (this.canvas) {
       const dpr = window.devicePixelRatio || 1;
-
-      // Set canvas size with device pixel ratio
       this.canvas.width = this.canvasWidth * dpr;
       this.canvas.height = this.canvasHeight * dpr;
-      this.overlayCanvas.width = this.canvasWidth * dpr;
-      this.overlayCanvas.height = this.canvasHeight * dpr;
-
-      // Set display size (CSS pixels)
-      this.canvas.style.width = this.canvasWidth + "px";
-      this.canvas.style.height = this.canvasHeight + "px";
-      this.overlayCanvas.style.width = this.canvasWidth + "px";
-      this.overlayCanvas.style.height = this.canvasHeight + "px";
-
-      this.ctx = this.canvas.getContext("2d");
-      this.overlayCtx = this.overlayCanvas.getContext("2d");
-
-      // Scale context to account for device pixel ratio
+      this.canvas.style.width = this.canvasWidth + 'px';
+      this.canvas.style.height = this.canvasHeight + 'px';
       this.ctx.scale(dpr, dpr);
-      this.overlayCtx.scale(dpr, dpr);
-      // ===== END OF NEW SECTION =====
+    }
+    // ===== END =====
+  }
+},
 
-      this.ctx.fillStyle = "#f0f0f0";
-      this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
-    },
+    initCanvas() {
+  this.canvas = this.$refs.canvas;
+  this.overlayCanvas = this.$refs.overlayCanvas;
+
+  if (!this.canvas || !this.overlayCanvas) {
+    console.error("Canvas refs not found");
+    return;
+  }
+
+  // ===== ADD THIS SECTION =====
+  const dpr = window.devicePixelRatio || 1;
+  
+  // Set canvas size with device pixel ratio
+  this.canvas.width = this.canvasWidth * dpr;
+  this.canvas.height = this.canvasHeight * dpr;
+  this.overlayCanvas.width = this.canvasWidth * dpr;
+  this.overlayCanvas.height = this.canvasHeight * dpr;
+  
+  // Set display size (CSS pixels)
+  this.canvas.style.width = this.canvasWidth + 'px';
+  this.canvas.style.height = this.canvasHeight + 'px';
+  this.overlayCanvas.style.width = this.canvasWidth + 'px';
+  this.overlayCanvas.style.height = this.canvasHeight + 'px';
+
+  this.ctx = this.canvas.getContext("2d");
+  this.overlayCtx = this.overlayCanvas.getContext("2d");
+
+  // Scale context to account for device pixel ratio
+  this.ctx.scale(dpr, dpr);
+  this.overlayCtx.scale(dpr, dpr);
+  // ===== END OF NEW SECTION =====
+
+  this.ctx.fillStyle = "#f0f0f0";
+  this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+},
 
     // =================== EVENT LISTENERS ===================
 
@@ -2714,148 +2717,146 @@ export default {
       this.removeObjectHighlight();
     },
 
-    handleTouchStart(e) {
-      if (this.isLoading) return;
+handleTouchStart(e) {
+  if (this.isLoading) return;
 
-      // ALWAYS allow page scroll with single touch
-      if (e.touches.length === 1) {
-        this.isDragging = false;
-        return; // Don't prevent default - allow scroll
-      }
+  // ALWAYS allow page scroll with single touch
+  if (e.touches.length === 1) {
+    this.isDragging = false;
+    return; // Don't prevent default - allow scroll
+  }
 
-      e.preventDefault(); // Prevent ONLY for two-finger gestures
+  e.preventDefault(); // Prevent ONLY for two-finger gestures
 
-      if (e.touches.length === 2) {
-        // Two fingers - prepare for zoom OR pan
-        this.isDragging = false;
-        const touch1 = e.touches[0];
-        const touch2 = e.touches[1];
+  if (e.touches.length === 2) {
+    // Two fingers - prepare for zoom OR pan
+    this.isDragging = false;
+    const touch1 = e.touches[0];
+    const touch2 = e.touches[1];
+    
+    // Calculate initial distance
+    const dx = touch2.clientX - touch1.clientX;
+    const dy = touch2.clientY - touch1.clientY;
+    this.lastTouchDistance = Math.sqrt(dx * dx + dy * dy);
+    this.initialTouchDistance = this.lastTouchDistance;
+    this.lastPinchZoom = this.zoom;
+    
+    // Store center point for two-finger panning
+    this.twoFingerPanStartX = (touch1.clientX + touch2.clientX) / 2;
+    this.twoFingerPanStartY = (touch1.clientY + touch2.clientY) / 2;
+    this.dragStartPanX = this.panX;
+    this.dragStartPanY = this.panY;
+    this.twoFingerPanning = false;
+  }
+},
+handleTouchMove(e) {
+  if (this.isLoading) return;
 
-        // Calculate initial distance
-        const dx = touch2.clientX - touch1.clientX;
-        const dy = touch2.clientY - touch1.clientY;
-        this.lastTouchDistance = Math.sqrt(dx * dx + dy * dy);
-        this.initialTouchDistance = this.lastTouchDistance;
-        this.lastPinchZoom = this.zoom;
+  // ALWAYS allow page scroll with single touch
+  if (e.touches.length === 1) {
+    return; // Don't prevent default - allow scroll
+  }
 
-        // Store center point for two-finger panning
-        this.twoFingerPanStartX = (touch1.clientX + touch2.clientX) / 2;
-        this.twoFingerPanStartY = (touch1.clientY + touch2.clientY) / 2;
-        this.dragStartPanX = this.panX;
-        this.dragStartPanY = this.panY;
-        this.twoFingerPanning = false;
-      }
-    },
-    handleTouchMove(e) {
-      if (this.isLoading) return;
+  e.preventDefault(); // Prevent ONLY for two-finger gestures
 
-      // ALWAYS allow page scroll with single touch
-      if (e.touches.length === 1) {
-        return; // Don't prevent default - allow scroll
-      }
-
-      e.preventDefault(); // Prevent ONLY for two-finger gestures
-
-      if (e.touches.length === 2) {
-        // Two fingers - detect zoom OR pan
-        const touch1 = e.touches[0];
-        const touch2 = e.touches[1];
-
-        // Calculate current distance
-        const dx = touch2.clientX - touch1.clientX;
-        const dy = touch2.clientY - touch1.clientY;
-        const currentDistance = Math.sqrt(dx * dx + dy * dy);
-
-        // Calculate distance change threshold (5% of initial distance)
-        const distanceThreshold = this.initialTouchDistance * 0.05;
-        const distanceChange = Math.abs(
-          currentDistance - this.initialTouchDistance,
+  if (e.touches.length === 2) {
+    // Two fingers - detect zoom OR pan
+    const touch1 = e.touches[0];
+    const touch2 = e.touches[1];
+    
+    // Calculate current distance
+    const dx = touch2.clientX - touch1.clientX;
+    const dy = touch2.clientY - touch1.clientY;
+    const currentDistance = Math.sqrt(dx * dx + dy * dy);
+    
+    // Calculate distance change threshold (5% of initial distance)
+    const distanceThreshold = this.initialTouchDistance * 0.05;
+    const distanceChange = Math.abs(currentDistance - this.initialTouchDistance);
+    
+    if (distanceChange > distanceThreshold) {
+      // ZOOM MODE - distance changed significantly
+      this.twoFingerPanning = false;
+      
+      if (this.lastTouchDistance > 0) {
+        const zoomFactor = currentDistance / this.lastTouchDistance;
+        const newZoom = Math.max(
+          this.minZoom,
+          Math.min(this.maxZoom, this.lastPinchZoom * zoomFactor)
         );
 
-        if (distanceChange > distanceThreshold) {
-          // ZOOM MODE - distance changed significantly
-          this.twoFingerPanning = false;
-
-          if (this.lastTouchDistance > 0) {
-            const zoomFactor = currentDistance / this.lastTouchDistance;
-            const newZoom = Math.max(
-              this.minZoom,
-              Math.min(this.maxZoom, this.lastPinchZoom * zoomFactor),
-            );
-
-            if (newZoom !== this.zoom) {
-              const centerX = (touch1.clientX + touch2.clientX) / 2;
-              const centerY = (touch1.clientY + touch2.clientY) / 2;
-              const rect = this.canvas.getBoundingClientRect();
-              const canvasCenterX = centerX - rect.left;
-              const canvasCenterY = centerY - rect.top;
-
-              const imageX = (canvasCenterX - this.panX) / this.zoom;
-              const imageY = (canvasCenterY - this.panY) / this.zoom;
-
-              this.zoom = newZoom;
-              this.panX = canvasCenterX - imageX * this.zoom;
-              this.panY = canvasCenterY - imageY * this.zoom;
-
-              this.constrainPan();
-              this.render();
-            }
-          }
-        } else {
-          // PAN MODE - distance stayed constant
-          this.twoFingerPanning = true;
-
+        if (newZoom !== this.zoom) {
           const centerX = (touch1.clientX + touch2.clientX) / 2;
           const centerY = (touch1.clientY + touch2.clientY) / 2;
+          const rect = this.canvas.getBoundingClientRect();
+          const canvasCenterX = centerX - rect.left;
+          const canvasCenterY = centerY - rect.top;
 
-          const deltaX = centerX - this.twoFingerPanStartX;
-          const deltaY = centerY - this.twoFingerPanStartY;
+          const imageX = (canvasCenterX - this.panX) / this.zoom;
+          const imageY = (canvasCenterY - this.panY) / this.zoom;
 
-          this.panX = this.dragStartPanX + deltaX;
-          this.panY = this.dragStartPanY + deltaY;
+          this.zoom = newZoom;
+          this.panX = canvasCenterX - imageX * this.zoom;
+          this.panY = canvasCenterY - imageY * this.zoom;
 
           this.constrainPan();
           this.render();
         }
       }
-    },
-    //   handleTouchEnd(e) {
-    //     if (this.isLoading) return;
-    //     if (this.zoom === 1) {
-    //   this.isDragging = false;
-    //   this.lastTouchDistance = 0;
-    //   return; // Allow scroll
-    // }
-    //     e.preventDefault();
+    } else {
+      // PAN MODE - distance stayed constant
+      this.twoFingerPanning = true;
+      
+      const centerX = (touch1.clientX + touch2.clientX) / 2;
+      const centerY = (touch1.clientY + touch2.clientY) / 2;
+      
+      const deltaX = centerX - this.twoFingerPanStartX;
+      const deltaY = centerY - this.twoFingerPanStartY;
+      
+      this.panX = this.dragStartPanX + deltaX;
+      this.panY = this.dragStartPanY + deltaY;
+      
+      this.constrainPan();
+      this.render();
+    }
+  }
+},
+  //   handleTouchEnd(e) {
+  //     if (this.isLoading) return;
+  //     if (this.zoom === 1) {
+  //   this.isDragging = false;
+  //   this.lastTouchDistance = 0;
+  //   return; // Allow scroll
+  // }
+  //     e.preventDefault();
 
-    //     this.isDragging = false;
-    //     this.lastTouchDistance = 0;
-    //     this.removeObjectHighlight();
-    //   },
+  //     this.isDragging = false;
+  //     this.lastTouchDistance = 0;
+  //     this.removeObjectHighlight();
+  //   },
 
     // =================== ZOOM & PAN CONTROLS ===================
-    handleTouchEnd(e) {
-      if (this.isLoading) return;
+handleTouchEnd(e) {
+  if (this.isLoading) return;
 
-      // ALWAYS allow scroll with single touch
-      if (e.touches.length <= 1) {
-        this.isDragging = false;
-        this.lastTouchDistance = 0;
-        this.twoFingerPanning = false;
-        this.initialTouchDistance = 0;
-        return; // Don't prevent default
-      }
+  // ALWAYS allow scroll with single touch
+  if (e.touches.length <= 1) {
+    this.isDragging = false;
+    this.lastTouchDistance = 0;
+    this.twoFingerPanning = false;
+    this.initialTouchDistance = 0;
+    return; // Don't prevent default
+  }
 
-      e.preventDefault(); // Prevent ONLY when still using two fingers
+  e.preventDefault(); // Prevent ONLY when still using two fingers
 
-      if (e.touches.length === 0) {
-        this.isDragging = false;
-        this.lastTouchDistance = 0;
-        this.twoFingerPanning = false;
-        this.initialTouchDistance = 0;
-        this.removeObjectHighlight();
-      }
-    },
+  if (e.touches.length === 0) {
+    this.isDragging = false;
+    this.lastTouchDistance = 0;
+    this.twoFingerPanning = false;
+    this.initialTouchDistance = 0;
+    this.removeObjectHighlight();
+  }
+},
     constrainPan() {
       if (!this.baseImg) return;
 
@@ -2940,33 +2941,30 @@ export default {
     //   }
     // },
     async loadImage() {
-      if (!this.baseImage) {
-        console.warn("No base image provided");
-        return;
-      }
+  if (!this.baseImage) {
+    console.warn("No base image provided");
+    return;
+  }
 
-      try {
-        this.baseImg = await this.createImageFromSrc(this.baseImage);
-
-        // ===== ADD THIS =====
-        // Don't downscale the image quality
-        // Let the canvas handle scaling instead
-        if (
-          this.baseImg.naturalWidth > 4000 ||
-          this.baseImg.naturalHeight > 4000
-        ) {
-          console.log("Large image detected, maintaining quality");
-        }
-        // ===== END =====
-
-        this.calculateImageDimensions();
-        this.render();
-        await this.processInitialObjectMasks();
-      } catch (error) {
-        console.error("Error loading image:", error);
-        this.showErrorState();
-      }
-    },
+  try {
+    this.baseImg = await this.createImageFromSrc(this.baseImage);
+    
+    // ===== ADD THIS =====
+    // Don't downscale the image quality
+    // Let the canvas handle scaling instead
+    if (this.baseImg.naturalWidth > 4000 || this.baseImg.naturalHeight > 4000) {
+      console.log("Large image detected, maintaining quality");
+    }
+    // ===== END =====
+    
+    this.calculateImageDimensions();
+    this.render();
+    await this.processInitialObjectMasks();
+  } catch (error) {
+    console.error("Error loading image:", error);
+    this.showErrorState();
+  }
+},
 
     async processInitialObjectMasks() {
       this.currentObjectMasksHash = this.objectMasksHash;
@@ -3000,36 +2998,36 @@ export default {
     },
 
     calculateImageDimensions() {
-      if (!this.baseImg) return;
+  if (!this.baseImg) return;
 
-      const maxWidth = this.canvasWidth;
-      const maxHeight = this.canvasHeight;
+  const maxWidth = this.canvasWidth;
+  const maxHeight = this.canvasHeight;
 
-      const imgAspectRatio = this.baseImg.width / this.baseImg.height;
-      const canvasAspectRatio = maxWidth / maxHeight;
+  const imgAspectRatio = this.baseImg.width / this.baseImg.height;
+  const canvasAspectRatio = maxWidth / maxHeight;
 
-      // Always fit to width first (100% width)
-      this.renderWidth = maxWidth;
-      this.renderHeight = Math.round(maxWidth / imgAspectRatio);
-      this.renderOffsetX = 0;
+  // Always fit to width first (100% width)
+  this.renderWidth = maxWidth;
+  this.renderHeight = Math.round(maxWidth / imgAspectRatio);
+  this.renderOffsetX = 0;
 
-      // If calculated height exceeds available height, fit to height instead
-      if (this.renderHeight > maxHeight) {
-        this.renderHeight = maxHeight;
-        this.renderWidth = Math.round(maxHeight * imgAspectRatio);
-        this.renderOffsetX = Math.round((maxWidth - this.renderWidth) / 2);
-        this.renderOffsetY = 0;
-      } else {
-        // Center vertically if height is less than container
-        this.renderOffsetY = Math.round((maxHeight - this.renderHeight) / 2);
-      }
+  // If calculated height exceeds available height, fit to height instead
+  if (this.renderHeight > maxHeight) {
+    this.renderHeight = maxHeight;
+    this.renderWidth = Math.round(maxHeight * imgAspectRatio);
+    this.renderOffsetX = Math.round((maxWidth - this.renderWidth) / 2);
+    this.renderOffsetY = 0;
+  } else {
+    // Center vertically if height is less than container
+    this.renderOffsetY = Math.round((maxHeight - this.renderHeight) / 2);
+  }
 
-      // ===== ADD THIS FOR BETTER QUALITY =====
-      // Use natural dimensions to avoid quality loss
-      this.scaleX = this.renderWidth / this.baseImg.naturalWidth;
-      this.scaleY = this.renderHeight / this.baseImg.naturalHeight;
-      // ===== END =====
-    },
+  // ===== ADD THIS FOR BETTER QUALITY =====
+  // Use natural dimensions to avoid quality loss
+  this.scaleX = this.renderWidth / this.baseImg.naturalWidth;
+  this.scaleY = this.renderHeight / this.baseImg.naturalHeight;
+  // ===== END =====
+},
 
     // =================== OBJECT MASK CACHING ===================
 
@@ -4710,6 +4708,35 @@ export default {
   border-color: #40a9ff;
 }
 
+/* For mobile */
+@media screen and (max-width: 768px) {
+  .canvas-container {
+    height: calc(100vh - 200px); /* Adjust based on mobile toolbar height */
+  }
+}
+
+@media screen and (min-width: 400px) and (max-width: 770px) {
+  .canvas-container {
+    height: calc(100vh - 180px);
+  }
+}
+
+@media screen and (min-width: 200px) and (max-width: 400px) {
+  .canvas-container {
+    height: calc(100vh - 190px);
+  }
+}
+@media screen and (max-width: 500px) {
+  .zoom-controls {
+    display:none;
+    top: 16px;
+    right: 5px;
+  }
+}
+
+
+
+
 /* modal */
 .instruction-item {
   display: flex;
@@ -4732,31 +4759,5 @@ export default {
   height: 40px;
   object-fit: contain;
   margin-left: 20px;
-}
-
-/* For mobile */
-@media screen and (max-width: 768px) {
-  .canvas-container {
-    height: calc(100vh - 200px); /* Adjust based on mobile toolbar height */
-  }
-}
-
-@media screen and (min-width: 400px) and (max-width: 770px) {
-  .canvas-container {
-    height: calc(100vh - 180px);
-  }
-}
-
-@media screen and (min-width: 200px) and (max-width: 400px) {
-  .canvas-container {
-    height: calc(100vh - 190px);
-  }
-}
-@media screen and (max-width: 500px) {
-  .zoom-controls {
-    display: none;
-    top: 16px;
-    right: 5px;
-  }
 }
 </style>
