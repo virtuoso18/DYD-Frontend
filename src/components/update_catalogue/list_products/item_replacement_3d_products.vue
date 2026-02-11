@@ -426,8 +426,16 @@ export default {
       this.$emit('products-see-all', true);
     },
 
-    updateItemRendering(model_id, model_url, width, height, depth,is_resizable) {
+    updateItemRendering(model_id, model_url, width, height, depth,is_resizable=false) {
       this.selected_item = model_id;
+      
+      // console.log("model_id --->",  model_id);
+      // console.log("model_url --->",  model_url);
+      // console.log("width --->",  width);
+      // console.log("height --->",  height);
+      // console.log("depth --->",  depth);
+      // console.log("is_resizable --->",  is_resizable);
+
 
       this.$emit('change-3d-model', {
         'model_uuid': model_id,

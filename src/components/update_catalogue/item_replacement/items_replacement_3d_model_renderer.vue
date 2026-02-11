@@ -1,10 +1,27 @@
 <template>
   <!-- {{ isLoading }} -->
-
+<a-modal
+    v-model:open="isShowInstructionModal"
+    title="Instructions"
+    @ok="closeInstructionModal"
+    :width="500"
+  >
+    <div class="instruction-item" v-for="item in instructionConfig" :key="item">
+      <span class="instruction">{{ item?.key }}</span>
+      <img :src="item?.value" alt="gesture" class="gesture-icon" />
+    </div>
+  </a-modal>
   <div
     class="main-canvas max-h-[300px] md:max-h-[95vh] mx-auto"
     ref="canvasContainer"
   >
+   <img
+        class="absolute top-[5px] right-[10px] cursor-pointer z-9 w-[25px]"
+        src="../../../assets/icons/informationIcon.svg"
+        alt="instruction"
+        @click="showInstructionModal"
+        title="see instruction"
+      />
     <!-- ✅ LOADING OVERLAY - Always rendered on top when isLoading=true -->
     <div v-if="isLoading" class="scanning-loading-overlay">
       <div
@@ -25,7 +42,7 @@
       <!-- Show background image when no GLB -->
       <div
         v-if="!glbUrl || glbUrl === ''"
-        class="text-center flex items-center justify-center text-gray-600"
+        class="text-center flex items-center h-full  justify-center text-gray-600"
       >
         <img
           :src="baseImageUrl"
@@ -160,6 +177,10 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
+import ZoomInIcon from "@/assets/icons/zoomout.png";
+import ZoomOutIcon from "@/assets/icons/zoomin.png";
+import TapToSelect from "@/assets/icons/tap.png";
+import DragToMove from "@/assets/icons/tapAndMove.png";
 export default {
   name: "ItemReplacementRenderer",
 
@@ -178,6 +199,7 @@ export default {
       default: () => ({ width: 0.00, height: 0.00, depth: 0.00 }),
     },
   },
+
   computed: {
     loadingProxy: {
       get() {
@@ -204,6 +226,25 @@ export default {
       isOnValidFloor: true,
       modelPosition: { x: 0, y: 0 },
       modelRotation: { y: 0 },
+
+
+      isShowInstructionModal: false,
+      instructionConfig: [
+        {
+          key: "Pinch out zoom out",
+          value: ZoomInIcon,
+        },
+        { key: "Pinch in to zoom", value: ZoomOutIcon },
+        {
+          key: "Tap to select",
+          value: TapToSelect,
+        },
+        {
+          key: "Drag to move",
+          value: DragToMove,
+        }
+      ],
+
 
       // Floor data from JSON
       // floorData: {}
@@ -266,6 +307,7 @@ export default {
   watch: {
     glbUrl: {
     handler(newUrl, oldUrl) {
+      
       console.log('👀 glbUrl changed:', { old: oldUrl, new: newUrl });
       
       // Skip if URL is being cleared (empty string)
@@ -351,6 +393,12 @@ export default {
   },
 
   methods: {
+       showInstructionModal() {
+      this.isShowInstructionModal = true;
+    },
+    closeInstructionModal() {
+      this.isShowInstructionModal = false;
+    },
     restoreModelTransform(transform) {
   if (!transform || !this.model) return;
   
@@ -831,8 +879,8 @@ export default {
         return;
       }
       try {
+        
         this.$emit("update:isLoading", true);
-
         this.remove3DObjectFromScene();
 
         this.loadingText = "Rendering Item...";
@@ -1050,6 +1098,7 @@ export default {
         } else {
           await this.reinitializeWithNewModel();
         }
+        this.reset_entire_room()
       } catch (error) {
         console.error("Error handling glbUrl change:", error);
         this.showErrorState();
@@ -2406,4 +2455,30 @@ export default {
   }
 }
 
+
+
+
+/* modal */
+.instruction-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.instruction-item:last-child {
+  border-bottom: none;
+}
+
+.instruction {
+  font-weight: 500;
+  color: #333;
+  flex: 1;
+}
+
+.gesture-icon {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  margin-left: 20px;
+}
 </style>

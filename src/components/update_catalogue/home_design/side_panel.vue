@@ -461,4 +461,11 @@ watch: {
 .delete-button:hover {
   background: rgba(255, 13, 13, 0.8);
 }
+
+@media screen and (max-width: 448px) {
+ 
+.credits-section {
+  margin:  0;
+}
+}
 </style>
