@@ -37,233 +37,186 @@
                 
                    
                     <!-- Left Column - 3D Model Preview -->
-                               <a-col
-    :xs="24"
-    :sm="24"
-    :md="10"
-    :lg="10"
-  >
-                      <div style="position: relative; padding:10px;">
-            
-                        <!-- 3D Model Upload Area (shown when no model is uploaded) -->
-                        <!-- <div 
-                          v-if="!local3dModelUrl"
-                          @drop.prevent="handleModelDrop"
-                          @dragover.prevent="isDragging = true"
-                          @dragleave.prevent="isDragging = false"
-                          @click="upload3dModel"
-                          :style="{
-                            border: isDragging ? '2px solid #3b82f6' : '2px dashed #d1d5db',
-                            borderRadius: '12px',
-                            padding: '40px 16px',
-                            background: isDragging ? '#f8faff' : '#f9fafb',
-                            minHeight: '250px',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            cursor: 'pointer',
-                            transition: 'all 0.3s ease'
-                          }"
-                        >
-                          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" style="margin-bottom: 16px;">
-                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-                            <polyline points="3.27,6.96 12,12.01 20.73,6.96"></polyline>
-                            <line x1="12" y1="22.08" x2="12" y2="12"></line>
-                          </svg>
-                          <p style="font-size: 14px; color: #374151; font-weight: 500; margin-bottom: 8px;">Drag and drop 3D model here or click to upload</p>
-                          <p style="font-size: 12px; color: #6b7280; margin: 0;">Supported file format: .gltf / .glb</p>
-                          <p style="font-size: 12px; color: #6b7280; margin: 4px 0 0 0;">File size: 50MB</p>
-                        </div> -->
-                           <router-link 
-                  v-if="!local3dModelUrl"
-                  :to="'/my-products/add-new-furniture'"
-                  :style="{
-                    border: isDragging ? '2px solid #3b82f6' : '2px dashed #d1d5db',
-                    borderRadius: '12px',
-                    padding: '40px 16px',
-                    background: isDragging ? '#f8faff' : '#f9fafb',
-                    minHeight: '250px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease'
-                  }"
-                >
-                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" style="margin-bottom: 16px;">
-                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-                    <polyline points="3.27,6.96 12,12.01 20.73,6.96"></polyline>
-                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
-                  </svg>
-                  <p style="font-size: 14px; color: #374151; font-weight: 500; margin-bottom: 8px;">please pick your already generated 3d models  3D model here or click to upload</p>
-                  <p style="font-size: 12px; color: #6b7280; margin: 4px 0 0 0;">or create new one </p>
-                </router-link>
-                        <!-- 3D Model Renderer (shown when model is uploaded) -->
-                        <div v-else style="position: relative;">
-                          <canvas_3d_model_renderer 
-                            :glbModelUrl="local3dModelUrl"
-                            :Model_instance_id="'local-preview-' + Date.now()"
-                            :isLoading="false"
-                            style="width: 100%; max-height:250px; height: 100%;border-radius: 10px"
-                          />
-                          <div
-                            style="position: absolute; bottom: 75px; right: 15px; background: white; padding: 8px 12px; border-radius: 6px; border: 1px solid #e9ecef; font-size: 12px; font-weight: 600; cursor: pointer;">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                              stroke-width="2" style="margin-right: 5px; vertical-align: middle;">
-                              <path
-                                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
-                              </path>
-                              <polyline points="3.27,6.96 12,12.01 20.73,6.96"></polyline>
-                              <line x1="12" y1="22.08" x2="12" y2="12"></line>
-                            </svg>
-                            3D View
-                          </div>
-                          
-                          <!-- Change Model Button -->
-                          <a-button 
-                            @click="upload3dModel"
-                            style="position: absolute; top: 10px; right: 10px; background: white; border-radius: 6px; font-size: 11px;"
-                            size="small"
-                          >
-                            Change Model
-                          </a-button>
-            
-                          <!-- Display uploaded model info -->
-                          <div style="margin-top: 12px; padding: 8px 12px; background: #f8faff; border: 1px solid #e5e7eb; border-radius: 6px;">
-                            <div style="display: flex; align-items: center; justify-content: space-between;">
-                              <div style="display: flex; align-items: center; gap: 8px;">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2">
-                                  <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"></path>
-                                </svg>
-                                <div>
-                                  <div style="font-size: 12px; font-weight: 500; color: #1f2937;">{{ uploaded3dModelFile?.name }}</div>
-                                  <div style="font-size: 11px; color: #6b7280;">{{ uploaded3dModelFile?.size }}</div>
-                                </div>
-                              </div>
-                              <a-button 
-                                type="text" 
-                                size="small" 
-                                @click="remove3dModel"
-                                style="color: #ef4444; padding: 4px;"
-                              >
-                                <template #icon>
-                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                                  </svg>
-                                </template>
-                              </a-button>
-                            </div>
-                          </div>
-                        </div>
-            
-                       <label style="display: block; margin-top: 16px; margin-bottom: 8px; font-size: 13px; color: #374151;">
-              Images used to create 3d model (<b>{{modelDetails?.model_mode || 'N/A'}}</b>) 
-            </label>
-            
-                        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-              <img 
-                v-if="modelDetails?.image_0"
-                :src="this.$store.state.root_media_api + modelDetails.image_0" 
-                :style="{
-                  width: '60px',
-                  height: '60px',
-                  objectFit: 'contain',
-                  borderRadius: '8px',
-                  border: '2px solid #e5e7eb'
-                }"
-              />
-              <img 
-                v-if="modelDetails?.image_1"
-                :src="this.$store.state.root_media_api + modelDetails.image_1" 
-                :style="{
-                  width: '60px',
-                  height: '60px',
-                  objectFit: 'contain',
-                  borderRadius: '8px',
-                  border: '2px solid #e5e7eb'
-                }"
-              />
-              <img 
-                v-if="modelDetails?.image_2"
-                :src="this.$store.state.root_media_api + modelDetails.image_2" 
-                :style="{
-                  width: '60px',
-                  height: '60px',
-                  objectFit: 'contain',
-                  borderRadius: '8px',
-                  border: '2px solid #e5e7eb'
-                }"
-              />
-              <img 
-                v-if="modelDetails?.image_3"
-                :src="this.$store.state.root_media_api + modelDetails.image_3" 
-                :style="{
-                  width: '60px',
-                  height: '60px',
-                  objectFit: 'contain',
-                  borderRadius: '8px',
-                  border: '2px solid #e5e7eb'
-                }"
-              />
+                                 <a-col :xs="24" :sm="24" :md="10" :lg="10" class="p-2 md:p-4">
+  <div class="w-full space-y-4">
+    <!-- 3D Model Upload/Display Area -->
+    <div class="w-full">
+      <!-- Router Link (No Model) -->
+      <router-link 
+        v-if="!local3dModelUrl"
+        to="/my-products/add-new-furniture"
+        class="block w-full border-2 border-dashed rounded-xl p-6 md:p-10 bg-gray-50 hover:bg-blue-50 hover:border-blue-500 transition-all duration-300 min-h-[200px] md:min-h-[250px] flex flex-col items-center justify-center text-center group"
+        :class="isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-300'"
+      >
+        <svg 
+          width="40" 
+          height="40" 
+          viewBox="0 0 24 24" 
+          fill="none" 
+          stroke="currentColor" 
+          stroke-width="2" 
+          class="mb-3 md:mb-4 group-hover:scale-110 transition-transform md:w-12 md:h-12"
+          :stroke="isDragging ? '#3b82f6' : '#9ca3af'"
+        >
+          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+          <polyline points="3.27,6.96 12,12.01 20.73,6.96"></polyline>
+          <line x1="12" y1="22.08" x2="12" y2="12"></line>
+        </svg>
+        <p class="text-xs md:text-sm font-medium text-gray-700 mb-1 md:mb-2 leading-relaxed px-2">
+          Please pick your already generated 3D models or click to upload
+        </p>
+        <p class="text-[10px] md:text-xs text-gray-500">
+          or create new one
+        </p>
+      </router-link>
+
+      <!-- 3D Model Renderer (Has Model) -->
+      <div v-else class="relative rounded-xl overflow-hidden bg-white shadow-lg">
+        <canvas_3d_model_renderer 
+          :glbModelUrl="local3dModelUrl"
+          :Model_instance_id="'local-preview-' + Date.now()"
+          :isLoading="false"
+          class="w-full h-[200px] md:h-[250px]"
+        />
+        
+        <!-- 3D View Badge -->
+        <div class="absolute bottom-2 right-2 md:bottom-3 md:right-3 bg-white/90 backdrop-blur-sm px-2 py-1 md:px-3 md:py-2 rounded-lg shadow-md border hover:bg-white transition-all">
+          <div class="flex items-center gap-1 text-[10px] md:text-xs font-semibold text-gray-700 cursor-pointer hover:text-blue-600">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="md:w-4 md:h-4">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+              <polyline points="3.27,6.96 12,12.01 20.73,6.96"></polyline>
+              <line x1="12" y1="22.08" x2="12" y2="12"></line>
+            </svg>
+            <span class="hidden md:inline">3D View</span>
+          </div>
+        </div>
+
+        <!-- Change Model Button -->
+        <a-button 
+          @click="upload3dModel"
+          class="absolute top-2 right-2 md:top-3 md:right-3 !bg-white shadow-md !rounded-lg !text-[10px] md:!text-xs !px-2 md:!px-3"
+          size="small"
+        >
+          Change
+        </a-button>
+      </div>
+
+      <!-- Model Info Card (if model exists) -->
+      <div v-if="local3dModelUrl" class="bg-blue-50 border border-blue-100 rounded-xl p-3 md:p-4 mt-3">
+        <div class="flex items-center justify-between gap-2 md:gap-3">
+          <div class="flex items-center gap-2 md:gap-3 flex-1 min-w-0">
+            <div class="w-8 h-8 md:w-10 md:h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" class="md:w-4 md:h-4">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+              </svg>
             </div>
-                      </div>
-                       <div style="margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; padding: 12px; background: #f8faff; border-radius: 8px; border: 1px solid #e5e7eb;">
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2">
-                        <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
-                      </svg>
-                      <span style="font-size: 13px; font-weight: 500; color: #374151;">Model Resizable</span>
-                    </div>
-                    
-                    <a-switch 
-                      v-model:checked="is_resizable"
-                      @change="handleResizableChange"
-                      style="background-color: #3b82f6;"
-                    />
-                       </div>
-                        <select3d_model_for_color 
-                 :list_history_generated_3d_models="list_history_generated_3d_models"
-                 :loading_generated_models_history="loading_generated_models_history" 
-                 @clicked-model="clickedModel"
-               />
-               <div v-if="list_history_generated_3d_models.length > 0" style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #e5e7eb;">
-                    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
-                      <p style="font-size: 12px; color: #6b7280; margin: 0;">
-                        Showing {{ list_history_generated_3d_models.length }} of {{ pagination.totalCount }} models
-                      </p>
-                      
-                      <a-button 
-                        v-if="pagination.hasMoreModels"
-                        @click="loadMoreModels"
-                        :loading="loadingMoreModels"
-                        style="border-radius: 6px;"
-                      >
-                        <template #icon>
-                          <svg 
-                            v-if="!loadingMoreModels"
-                            width="16" 
-                            height="16" 
-                            viewBox="0 0 24 24" 
-                            fill="none" 
-                            stroke="currentColor" 
-                            stroke-width="2"
-                          >
-                            <line x1="12" y1="5" x2="12" y2="19"></line>
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                          </svg>
-                        </template>
-                        {{ loadingMoreModels ? 'Loading...' : 'Load More Models' }}
-                      </a-button>
-                      
-                      <p v-else style="font-size: 12px; color: #10b981; margin: 0;">
-                        All models loaded
-                      </p>
-                    </div>
-                </div>
-                    </a-col>
+            <div class="flex-1 min-w-0">
+              <p class="font-semibold text-xs md:text-sm text-gray-900 truncate">
+                {{ uploaded3dModelFile?.name }}
+              </p>
+              <p class="text-[10px] md:text-xs text-gray-500">{{ uploaded3dModelFile?.size }}</p>
+            </div>
+          </div>
+          <a-button 
+            type="text" 
+            size="small" 
+            @click="remove3dModel"
+            class="!text-red-500 hover:!text-red-600 !p-1 flex-shrink-0"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="md:w-4 md:h-4">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </a-button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Source Images Section -->
+    <div v-if="modelDetails" class="w-full">
+      <label class="block mb-2 md:mb-3 text-xs md:text-sm font-medium text-gray-700">
+        Images used to create 3D model 
+        <span class="font-bold text-gray-900">({{ modelDetails.model_mode || 'N/A' }})</span>
+      </label>
+      <div class="flex flex-wrap gap-2">
+        <img 
+          v-if="modelDetails.image_0"
+          :src="$store.state.root_media_api + modelDetails.image_0" 
+          class="w-12 h-12 md:w-16 md:h-16 object-cover rounded-lg border-2 border-gray-200 hover:border-blue-300 hover:scale-105 transition-all cursor-pointer"
+        />
+        <img 
+          v-if="modelDetails.image_1"
+          :src="$store.state.root_media_api + modelDetails.image_1" 
+          class="w-12 h-12 md:w-16 md:h-16 object-cover rounded-lg border-2 border-gray-200 hover:border-blue-300 hover:scale-105 transition-all cursor-pointer"
+        />
+        <img 
+          v-if="modelDetails.image_2"
+          :src="$store.state.root_media_api + modelDetails.image_2" 
+          class="w-12 h-12 md:w-16 md:h-16 object-cover rounded-lg border-2 border-gray-200 hover:border-blue-300 hover:scale-105 transition-all cursor-pointer"
+        />
+        <img 
+          v-if="modelDetails.image_3"
+          :src="$store.state.root_media_api + modelDetails.image_3" 
+          class="w-12 h-12 md:w-16 md:h-16 object-cover rounded-lg border-2 border-gray-200 hover:border-blue-300 hover:scale-105 transition-all cursor-pointer"
+        />
+      </div>
+    </div>
+
+    <!-- Model Resizable Toggle -->
+    <div class="flex items-center justify-between !mt-2 p-3 md:p-4 bg-blue-50 rounded-xl border border-blue-100">
+      <div class="flex items-center gap-2 md:gap-3">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" class="md:w-4 md:h-4">
+          <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+        </svg>
+        <span class="text-xs md:text-sm font-medium text-gray-700">Model Resizable</span>
+      </div>
+      <a-switch 
+        v-model:checked="is_resizable"
+        @change="handleResizableChange"
+        class="flex-shrink-0"
+      />
+    </div>
+
+    <!-- 3D Model Selector Component -->
+    <div class="w-full">
+      <select3d_model_for_color 
+        :list_history_generated_3d_models="list_history_generated_3d_models"
+        :loading_generated_models_history="loading_generated_models_history" 
+        @clicked-model="clickedModel"
+      />
+    </div>
+
+    <!-- Pagination Footer -->
+    <div v-if="list_history_generated_3d_models.length > 0" class="pt-3 md:pt-4 border-t border-gray-200">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 md:gap-3">
+        <p class="text-[10px] md:text-xs text-gray-500 text-center sm:text-left">
+          Showing {{ list_history_generated_3d_models.length }} of {{ pagination.totalCount }} models
+        </p>
+        
+        <a-button 
+          v-if="pagination.hasMoreModels"
+          @click="loadMoreModels"
+          :loading="loadingMoreModels"
+          class="!rounded-lg !text-xs md:!text-sm w-full sm:w-auto"
+        >
+          <template #icon>
+            <svg v-if="!loadingMoreModels" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="md:w-4 md:h-4">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          </template>
+          {{ loadingMoreModels ? 'Loading...' : 'Load More' }}
+        </a-button>
+        
+        <p v-else class="text-[10px] md:text-xs text-green-600 font-medium text-center sm:text-right">
+          ✓ All models loaded
+        </p>
+      </div>
+    </div>
+  </div>
+</a-col>
+
                   
 
                     
@@ -355,7 +308,7 @@
                     
                                 <!-- Category, Type, Price Row -->
                                 <a-row :gutter="12" style="margin-bottom: 16px;">
-                                  <a-col :span="12">
+                                  <a-col :span="8">
                            
                                  
                                        
@@ -394,7 +347,7 @@
                                       <a-select-option v-for="type in types" :key="type" :value="type">{{ type }}</a-select-option>
                                     </a-select>
                                   </a-col>
-                                  <a-col :span="24">
+                                  <a-col :span="8">
                                     <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Price <span style="color: red;">*</span></label>
                                     <a-input-number
                                       v-model:value="productForm.pricing.price" 

@@ -414,7 +414,7 @@ export default {
     },
 
     onImageLoad(id) {
-      this.$set(this.imageLoadedMap, id, true);
+      this.imageLoadedMap[id] = true;
     },
 
     async loadMoreFloors() {
