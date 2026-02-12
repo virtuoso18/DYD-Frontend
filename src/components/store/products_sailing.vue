@@ -1,12 +1,12 @@
 <template>
-  <div class="main">
+  <div class="sm:!main">
     <div class="products-list">
       <a-row>
         <a-col
           v-for="product in products"
           :key="product.product_id"
-          class="product-responsive"
-          style="padding: 5px; text-align: start"
+          class="product-responsive p-1 sm:p-2"
+          style="text-align: start"
         >
           <div class="product">
             <div
@@ -45,7 +45,7 @@
 
             <a-row>
               <a-col :span="24" style="padding-top: 10px">
-                <b>{{
+                <b class="truncate block">{{
                   truncateText(
                     product.product_title || "No title available",
                     22,
@@ -53,10 +53,10 @@
                 }}</b>
               </a-col>
 
-              <a-col :span="18"> Colors </a-col>
+              <a-col :span="16"> Colors </a-col>
 
               <a-col
-                span="6"
+                span="8"
                 style="display: flex; justify-content: end; gap: 4px"
               >
                 <div
@@ -73,10 +73,10 @@
                 <b>${{ product.product_price }}</b>
               </a-col>
 
-              <a-col span="17">
+              <a-col span="16">
                 <a-button
                   @click="goto_product_Route(product)"
-                  class="w-full !text-[12px]"
+                  class="w-full !text-[10px] sm:!text-[12px]"
                   style="font-family: var(--font-family-main)"
                 >
                   Product Details
@@ -84,17 +84,18 @@
               </a-col>
 
               <a-col span="1"></a-col>
-              <a-col span="4">
+              <a-col span="4" class="flex items-center">
                 <a-button
                   @click="
                     toggleFavorite(product.product_id, product.type, product)
                   "
+                  class="!flex !items-center !justify-center"
                 >
                   <template v-if="product.is_favorited">
-                    <HeartFilled style="color: red" />
+                    <HeartFilled style="color: red" class="!m-0" />
                   </template>
                   <template v-else>
-                    <HeartOutlined />
+                    <HeartOutlined class="!m-0" />
                   </template>
                 </a-button>
               </a-col>
@@ -199,7 +200,7 @@ export default {
             }),
           },
         );
-        // 
+        //
         const data = await response.json();
 
         // Update the product's favorite status

@@ -173,8 +173,7 @@
                   ></path>
                   <path
                     d="m18.5 2.5 a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"
-                  ></path></svg
-              ></template>
+                  ></path></svg ></template>
             </a-button>
           </div>
           <div v-if="!isEditing || !editStoreDescription">
@@ -233,8 +232,7 @@
                   ></path>
                   <path
                     d="m18.5 2.5 a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"
-                  ></path></svg
-              ></template>
+                  ></path></svg   ></template>
             </a-button>
           </div>
           <div v-if="!isEditing || !editServices">
@@ -270,8 +268,7 @@
                     <polyline points="3,6 5,6 21,6"></polyline>
                     <path
                       d="m19,6v14a2,2 0 0,1-2,2H7a2,2 0 0,1-2-2V6m3,0V4a2,2 0 0,1,2-2h4a2,2 0 0,1,2,2v2"
-                    ></path></svg
-                ></template>
+                    ></path></svg   ></template>
               </a-button>
             </div>
             <a-button type="dashed" @click="addService" style="width: 100%">
@@ -568,20 +565,13 @@
     <br />
     <!-- My Products Section -->
     <div
-      class="!text-gray-700"
-      style="
-        padding: 10px;
-        padding-top: 0;
-        background-color: white;
-        border-radius: 10px;
-        border: 2px solid rgba(128, 128, 128, 0.16);
-      "
+      class="!text-gray-700 sm:p-[10px] pt-0 bg-white rounded-[10px] sm:border border-gray-200"
     >
-      <a-row>
-        <a-col :span="18" style="padding-top: 20px">
+      <a-row class="!px-2">
+        <a-col :xs="10" :sm="10" :md="18" :lg="18" style="padding-top: 20px">
           <b><h2>My Products</h2></b>
         </a-col>
-        <a-col :span="6">
+        <a-col :xs="14" :sm="14" :md="6" :lg="6">
           <!-- Add Product Button -->
           <div style="margin-top: 20px">
             <router-link to="/my-store/manage-products">
@@ -593,7 +583,8 @@
           </div>
         </a-col>
       </a-row>
-      <div style="padding: 10px">
+
+      <div class="!px-1 !py-2 sm:!p-2">
         <!-- Loading Spinner on First Load -->
         <div
           v-if="loading && productsPage === 1"
@@ -1171,7 +1162,6 @@ export default {
         );
 
         const data = await response.json();
-        ;
         console.log("data---->", data);
 
         if (data.success) {
@@ -1809,9 +1799,9 @@ export default {
 .stat-item {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 3px;
   cursor: pointer;
-  padding: 4px 8px;
+  padding: 4px 4px;
   border-radius: 16px;
   transition: background-color 0.2s ease;
   font-size: 14px;

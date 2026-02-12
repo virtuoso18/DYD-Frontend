@@ -296,7 +296,7 @@
                     
                                 <!-- Description Field -->
                                 <div style="margin-bottom: 16px;">
-                                  <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Description</label>
+                                  <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Description <span style="color: red;">*</span> </label>
                                   <a-textarea 
                                     v-model:value="productForm.description"
                                     :rows="3"
@@ -337,7 +337,7 @@
                     </div>
                                   </a-col>
                                   <a-col :span="8">
-                                    <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Type</label>
+                                    <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Type <span style="color: red;">*</span> </label>
                                     <a-select 
                                       v-model:value="productForm.furniture_type" 
                                       placeholder="Modern"
@@ -364,7 +364,7 @@
                                   <h4 style="margin-bottom: 12px; font-size: 14px; font-weight: 500; color: #1f2937;">Dimensions</h4>
                                   <a-row :gutter="8">
                                     <a-col :span="8">
-                                      <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Height</label>
+                                      <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Height<span style="color: red;">*</span></label>
                                       <div style="display: flex; align-items: center;">
                                         <a-input-number
                                           v-model:value="productForm.dimensions.height" 
@@ -379,7 +379,7 @@
                                       </div>
                                     </a-col>
                                     <a-col :span="8">
-                                      <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Length/Depth</label>
+                                      <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Length/Depth <span style="color: red;">*</span></label>
                                       <div style="display: flex; align-items: center;">
                                         <a-input-number
                                           v-model:value="productForm.dimensions.length" 
@@ -394,7 +394,7 @@
                                       </div>
                                     </a-col>
                                     <a-col :span="8">
-                                      <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Width</label>
+                                      <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Width <span style="color: red;">*</span> </label>
                                       <div style="display: flex; align-items: center;">
                                         <a-input-number
                                           v-model:value="productForm.dimensions.width" 
@@ -413,7 +413,7 @@
                     
                                 <!-- Available Colors Section -->
                                 <div style="margin-bottom: 20px;">
-                                  <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #374151;">Available Colors</label>
+                                  <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #374151;">Available Colors<span style="color: red;">*</span></label>
                                   
                                   <a-popover trigger="click" placement="bottom">
                                     <template #title>
@@ -510,7 +510,7 @@
                     
                                 <!-- Textures Section -->
                                 <div style="margin-bottom: 20px;">
-                                  <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #374151;">Texture Images</label>
+                                  <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #374151;">Texture Images <span style="color: red;">*</span></label>
                                   
                                   <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 12px;">
                                     

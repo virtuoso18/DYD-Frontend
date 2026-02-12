@@ -1,5 +1,7 @@
 <template>
-  <div class="sm:main min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh] sm:p-0 " >
+  <div
+    class="sm:main min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh] sm:p-0"
+  >
     <!-- Loading State -->
     <div v-if="loading" style="text-align: center; padding: 40px">
       <a-spin size="large" />
@@ -7,410 +9,511 @@
     </div>
 
     <!-- Posts Grid View -->
-    <a-row v-if="selectedPost == null" >
-      <a-col :span="24"  >
-        <div style="background-color: white;border-radius: 16px;padding:10px;margin-top:15px;border:1px solid rgba(0,0,0,0.1);">
-
-        <h3>My Community</h3>
-        <div> 
-              <!-- Empty State -->
-              <div
-                v-if="posts.length === 0 && !loading"
-                style="text-align: center; padding: 60px 20px"
-              >
-                <div
-                  style="font-size: 64px; color: #d9d9d9; margin-bottom: 16px"
-                >
-                  📝
-                </div>
-                <h3 style="color: #666; margin-bottom: 8px">No posts yet</h3>
-                <p style="color: #999">
-                  Start sharing your amazing designs with the community!
-                </p>
-                <!-- <a-button
+    <a-row v-if="selectedPost == null">
+      <a-col :span="24">
+        <div
+          style="
+            background-color: white;
+            border-radius: 16px;
+            padding: 10px;
+            margin-top: 15px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+          "
+        >
+          <h3>My Community</h3>
+          <div>
+            <!-- Empty State -->
+            <div
+              v-if="posts.length === 0 && !loading"
+              style="text-align: center; padding: 60px 20px"
+            >
+              <div style="font-size: 64px; color: #d9d9d9; margin-bottom: 16px">
+                📝
+              </div>
+              <h3 style="color: #666; margin-bottom: 8px">No posts yet</h3>
+              <p style="color: #999">
+                Start sharing your amazing designs with the community!
+              </p>
+              <!-- <a-button
                   type="primary"
                   style="margin-top: 16px"
                   @click="$router.push('/designs')"
                 >
                   Create Your First Design
                 </a-button> -->
-              </div>
-              <a-row v-else>
-                <a-col
-                  v-for="post in posts"
-                  :key="post.id"
-                  :lg="8"
-                  :md="8"
-                  :xs="24"
-                  :sm="24"
-                  ><div style="padding: 4px">
-                    <div class="post-card">
-                      <!-- Post Image -->
-                      <div class="post-image-container" style="position: relative; overflow: hidden; border-radius: 16px;">
-  <!-- Skeleton -->
-  <div
-    v-if="!postImageLoadedMap[post.id]"
-    class="post-image-skeleton"
-  ></div>
+            </div>
+            <a-row v-else>
+              <a-col
+                v-for="post in posts"
+                :key="post.id"
+                :lg="8"
+                :md="8"
+                :xs="24"
+                :sm="24"
+                ><div style="padding: 4px">
+                  <div class="post-card">
+                    <!-- Post Image -->
+                    <div
+                      class="post-image-container"
+                      style="
+                        position: relative;
+                        overflow: hidden;
+                        border-radius: 16px;
+                      "
+                    >
+                      <!-- Skeleton -->
+                      <div
+                        v-if="!postImageLoadedMap[post.id]"
+                        class="post-image-skeleton"
+                      ></div>
 
-  <!-- Preload image -->
-  <img
-    :src="$store.state.root_media_api + post.post_image || require('../../../assets/home_main_banner.jpg')"
-    style="position:absolute;width:0;height:0;opacity:0;"
-    @load="onPostImageLoad(post.id)"
-    alt=""
-  />
+                      <!-- Preload image -->
+                      <img
+                        :src="
+                          $store.state.root_media_api + post.post_image ||
+                          require('../../../assets/home_main_banner.jpg')
+                        "
+                        style="
+                          position: absolute;
+                          width: 0;
+                          height: 0;
+                          opacity: 0;
+                        "
+                        @load="onPostImageLoad(post.id)"
+                        alt=""
+                      />
 
-  <!-- Visible image -->
-  <img
-    v-show="postImageLoadedMap[post.id]"
-    :src="$store.state.root_media_api + post.post_image || require('../../../assets/home_main_banner.jpg')"
-    style="
-      width: 100%;
-      height: 200px;
-      object-fit: cover;
-      border-radius: 16px;
-      cursor: pointer;
-      display: block;
-    "
-    :alt="post.title"
-    @click="viewPost(post)"
-  />
+                      <!-- Visible image -->
+                      <img
+                        v-show="postImageLoadedMap[post.id]"
+                        :src="
+                          $store.state.root_media_api + post.post_image ||
+                          require('../../../assets/home_main_banner.jpg')
+                        "
+                        style="
+                          width: 100%;
+                          height: 200px;
+                          object-fit: cover;
+                          border-radius: 16px;
+                          cursor: pointer;
+                          display: block;
+                        "
+                        :alt="post.title"
+                        @click="viewPost(post)"
+                      />
 
-                        <!-- Tags - Fixed for string array -->
-                        <div class="tags-overlay">
-                          <template v-if="post.tags && post.tags.length > 0">
-                            <a-tag
-                              v-for="(tag, index) in post.tags.slice(0, 3)"
-                              :key="index"
-                              color="blue"
-                              style="
-                                margin: 2px;
-                                border-radius: 12px;
-                                font-size: 11px;
-                              "
-                            >
-                              {{ tag }}
-                            </a-tag>
-                            <a-tag
-                              v-if="post.tags.length > 3"
-                              style="
-                                margin: 2px;
-                                border-radius: 12px;
-                                font-size: 11px;
-                                background: rgba(0, 0, 0, 0.6);
-                                color: white;
-                                border: none;
-                              "
-                            >
-                              +{{ post.tags.length - 3 }}
-                            </a-tag>
-                          </template>
-                        </div>
-
-                        <!-- View Count Overlay -->
-                        <div class="view-count-overlay">
-                          <EyeOutlined style="margin-right: 4px" />
-                          {{ formatNumber(post.view_count) }}
-                        </div>
-
-                        <!-- Pinned Badge -->
-                        <div v-if="post.is_pinned" class="pinned-badge">
-                          <PushpinOutlined />
-                          Pinned
-                        </div>
+                      <!-- Tags - Fixed for string array -->
+                      <div class="tags-overlay">
+                        <template v-if="post.tags && post.tags.length > 0">
+                          <a-tag
+                            v-for="(tag, index) in post.tags.slice(0, 3)"
+                            :key="index"
+                            color="blue"
+                            style="
+                              margin: 2px;
+                              border-radius: 12px;
+                              font-size: 11px;
+                            "
+                          >
+                            {{ tag }}
+                          </a-tag>
+                          <a-tag
+                            v-if="post.tags.length > 3"
+                            style="
+                              margin: 2px;
+                              border-radius: 12px;
+                              font-size: 11px;
+                              background: rgba(0, 0, 0, 0.6);
+                              color: white;
+                              border: none;
+                            "
+                          >
+                            +{{ post.tags.length - 3 }}
+                          </a-tag>
+                        </template>
                       </div>
 
-                      <!-- Post Content -->
-                      <div style="padding: 5px">
-                        <!-- Actions Row -->
-                        <a-row style="align-items: center">
-                          <a-col :span="16" style="display:flex;gap:10px;justify-content: start;align-items: center;">
-                            <img
-                              :src="
-                                this.$store.state.root_media_api + post.user_profile
-                              "
-                              style="
-                                width: 40px;
-                                height: 40px;
-                                border-radius: 100%;
-                                border:1px solid rgba(0,0,0,0.2)
-                              "
-                              alt=""
-                            />
-                            <span style="font-size: 16px;font-weight:600">{{
-                              truncateText(post.post_by, 15)
-                            }}</span>
-                          </a-col>
-                          <a-col :span="8" style="display: flex">
-                            <!-- Post Stats -->
-                            <div class="post-stats">
-                              <div class="stat-item" @click="toggleLike(post)">
-                                <HeartFilled
-                                  v-if="post.is_liked"
-                                  style="color: #ff4d4f"
-                                />
-                                <HeartOutlined v-else />
-                                <span>{{ formatNumber(post.like_count) }}</span>
-                              </div>
-                              <div
-                                class="stat-item"
-                                @click="openCommentsModal(post)"
-                              >
-                                <MessageOutlined />
-                                <span>{{
-                                  formatNumber(post.comment_count)
-                                }}</span>
-                              </div>
-                              <!-- <div class="stat-item" @click="sharePost(post)">
+                      <!-- View Count Overlay -->
+                      <div class="view-count-overlay">
+                        <EyeOutlined style="margin-right: 4px" />
+                        {{ formatNumber(post.view_count) }}
+                      </div>
+
+                      <!-- Pinned Badge -->
+                      <div v-if="post.is_pinned" class="pinned-badge">
+                        <PushpinOutlined />
+                        Pinned
+                      </div>
+                    </div>
+
+                    <!-- Post Content -->
+                    <div style="padding: 5px">
+                      <!-- Actions Row -->
+                      <a-row style="align-items: center">
+                        <a-col
+                          :span="16"
+                          style="
+                            display: flex;
+                            gap: 10px;
+                            justify-content: start;
+                            align-items: center;
+                          "
+                        >
+                          <img
+                            :src="
+                              this.$store.state.root_media_api +
+                              post.user_profile
+                            "
+                            style="
+                              width: 40px;
+                              height: 40px;
+                              border-radius: 100%;
+                              border: 1px solid rgba(0, 0, 0, 0.2);
+                            "
+                            alt=""
+                          />
+                          <span style="font-size: 16px; font-weight: 600">{{
+                            truncateText(post.post_by, 15)
+                          }}</span>
+                        </a-col>
+                        <a-col :span="8" style="display: flex">
+                          <!-- Post Stats -->
+                          <div class="post-stats">
+                            <div class="stat-item" @click="toggleLike(post)">
+                              <HeartFilled
+                                v-if="post.is_liked"
+                                style="color: #ff4d4f"
+                              />
+                              <HeartOutlined v-else />
+                              <span>{{ formatNumber(post.like_count) }}</span>
+                            </div>
+                            <div
+                              class="stat-item"
+                              @click="openCommentsModal(post)"
+                            >
+                              <MessageOutlined />
+                              <span>{{
+                                formatNumber(post.comment_count)
+                              }}</span>
+                            </div>
+                            <!-- <div class="stat-item" @click="sharePost(post)">
                                 <ShareAltOutlined />
                                 <span>{{
                                   formatNumber(post.share_count)
                                 }}</span>
                               </div> -->
-                            </div>
-                            <!-- More Actions Dropdown -->
-                            <a-dropdown
-                              :trigger="['click']"
-                              placement="bottomRight"
+                          </div>
+                          <!-- More Actions Dropdown -->
+                          <a-dropdown
+                            :trigger="['click']"
+                            placement="bottomRight"
+                          >
+                            <a-button
+                              type="text"
+                              size="small"
+                              style="padding: 2px"
                             >
-                              <a-button
-                                type="text"
-                                size="small"
-                                style="padding: 2px"
-                              >
-                                <MoreOutlined
-                                  style="font-size: 16px; color: #666"
-                                />
-                              </a-button>
-                              <template #overlay>
-                                <a-menu>
-                                  <a-menu-item @click="editPost(post)">
-                                    <EditOutlined style="margin-right: 8px" />
-                                    Edit Post
-                                  </a-menu-item>
-                                  <!-- <a-menu-item @click="sharePost(post)">
+                              <MoreOutlined
+                                style="font-size: 16px; color: #666"
+                              />
+                            </a-button>
+                            <template #overlay>
+                              <a-menu>
+                                <a-menu-item @click="editPost(post)">
+                                  <EditOutlined style="margin-right: 8px" />
+                                  Edit Post
+                                </a-menu-item>
+                                <!-- <a-menu-item @click="sharePost(post)">
                                     <ShareAltOutlined
                                       style="margin-right: 8px"
                                     />
                                     Share
                                   </a-menu-item> -->
-                                  <a-menu-divider />
-                                  <a-menu-item
-                                    @click="confirmDelete(post)"
-                                    style="color: #ff4d4f"
-                                  >
-                                    <DeleteOutlined style="margin-right: 8px" />
-                                    Delete Post
-                                  </a-menu-item>
-                                </a-menu>
-                              </template>
-                            </a-dropdown>
-                          </a-col>
-                        </a-row>
-                      </div>
+                                <a-menu-divider />
+                                <a-menu-item
+                                  @click="confirmDelete(post)"
+                                  style="color: #ff4d4f"
+                                >
+                                  <DeleteOutlined style="margin-right: 8px" />
+                                  Delete Post
+                                </a-menu-item>
+                              </a-menu>
+                            </template>
+                          </a-dropdown>
+                        </a-col>
+                      </a-row>
                     </div>
                   </div>
-                </a-col>
-              </a-row>
-            </div>
+                </div>
+              </a-col>
+            </a-row>
+          </div>
         </div>
       </a-col>
     </a-row>
 
     <!-- Post Detail View -->
     <div v-else class="relative bg-white min-h-screen">
-    <!-- Header with Back Button -->
-    <div class="sticky top-0 z-10 bg-white border-b border-gray-200 px-4 md:px-6 py-4">
-      <div class="flex items-center justify-between max-w-7xl mx-auto">
-        <a-button @click="closePostDetails" type="text" size="large" style="display:flex;justify-content: center;align-items:center;">
-          <ArrowLeftOutlined  style="margin-top:2px;"/>
-          <span class="font-bold" style="">Back</span>
-          </a-button>
-        <div class="flex gap-2">
-          <a-button @click="editPost(selectedPost)" type="default" style="display: flex;justify-content: center;align-items: center;" >
-            <EditOutlined  /> Edit
-          </a-button>
-          <a-button @click="confirmDelete(selectedPost)" type="text" danger style="display: flex;justify-content: center;align-items: center;" >
-            <DeleteOutlined  /> Delete
-          </a-button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Main Content Area -->
-    <div class="max-w-7xl mx-auto px-4 md:px-6 py-6">
-  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-    
-    <!-- Left Column - Post Details -->
-    <div class="lg:col-span-7 lg:pr-4">
-      
-      <!-- Post Image -->
-      <div class="relative rounded-2xl overflow-hidden mb-4">
-        <img
-          :src="$store.state.root_media_api + selectedPost.post_image || require('../../../assets/home_main_banner.jpg')"
-          :alt="selectedPost.title"
-          class="w-full h-auto object-cover"
-        />
-
-        <!-- Pinned Badge -->
-        <div v-if="selectedPost.is_pinned" class="absolute top-3 left-3 bg-black bg-opacity-60 text-white px-3 py-1.5 rounded-lg flex items-center gap-2 text-sm">
-          <PushpinOutlined />
-          <span>Pinned</span>
-        </div>
-      </div>
-
-      <!-- Stats Row - Likes, Comments, Shares -->
-      <div class="flex items-center justify-between py-4 px-4 border-b border-gray-200">
-        <!-- Left Side: Views -->
-        <div class="flex items-center gap-2 text-gray-600">
-          <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M0.5 4C0.5 4 2.5 0.5 6 0.5C9.5 0.5 11.5 4 11.5 4C11.5 4 9.5 7.5 6 7.5C2.5 7.5 0.5 4 0.5 4Z" stroke="#4D4D4D" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M6 5.3125C6.82843 5.3125 7.5 4.72487 7.5 4C7.5 3.27513 6.82843 2.6875 6 2.6875C5.17157 2.6875 4.5 3.27513 4.5 4C4.5 4.72487 5.17157 5.3125 6 5.3125Z" stroke="#4D4D4D" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          <span class="font-medium">{{ formatNumber(selectedPost.view_count) }}</span>
-        </div>
-
-        <!-- Right Side: Comments + Likes -->
-        <div class="flex items-center gap-6">
-          <!-- Comments - Click to open drawer on mobile -->
-          <div
-            class="flex items-center gap-2 text-gray-600 cursor-pointer hover:text-blue-500 transition-colors"
-            @click="toggleCommentsDrawer"
+      <!-- Header with Back Button -->
+      <div
+        class="sticky top-0 z-10 bg-white border-b border-gray-200 px-4 md:px-6 py-4"
+      >
+        <div class="flex items-center justify-between max-w-7xl mx-auto">
+          <a-button
+            @click="closePostDetails"
+            type="text"
+            size="large"
+            style="display: flex; justify-content: center; align-items: center"
           >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M1.33594 3.99967C1.33594 3.29243 1.61689 2.61415 2.11699 2.11406C2.61708 1.61396 3.29536 1.33301 4.0026 1.33301H12.0026C12.7098 1.33301 13.3881 1.61396 13.8882 2.11406C14.3883 2.61415 14.6693 3.29243 14.6693 3.99967V9.33301C14.6693 10.0403 14.3883 10.7185 13.8882 11.2186C13.3881 11.7187 12.7098 11.9997 12.0026 11.9997H8.8706L5.0386 14.5543C4.93821 14.6211 4.82158 14.6595 4.70113 14.6652C4.58067 14.671 4.46091 14.644 4.3546 14.5871C4.24829 14.5301 4.15941 14.4455 4.09742 14.342C4.03544 14.2386 4.00267 14.1203 4.0026 13.9997V11.9997C3.29536 11.9997 2.61708 11.7187 2.11699 11.2186C1.61689 10.7185 1.33594 10.0403 1.33594 9.33301V3.99967ZM4.0026 2.66634C3.64898 2.66634 3.30984 2.80682 3.05979 3.05687C2.80975 3.30691 2.66927 3.64605 2.66927 3.99967V9.33301C2.66927 9.68663 2.80975 10.0258 3.05979 10.2758C3.30984 10.5259 3.64898 10.6663 4.0026 10.6663H4.66927C4.84608 10.6663 5.01565 10.7366 5.14068 10.8616C5.2657 10.9866 5.33594 11.1562 5.33594 11.333V12.7543L8.29994 10.7783C8.40931 10.7054 8.53781 10.6664 8.66927 10.6663H12.0026C12.3562 10.6663 12.6954 10.5259 12.9454 10.2758C13.1955 10.0258 13.3359 9.68663 13.3359 9.33301V3.99967C13.3359 3.64605 13.1955 3.30691 12.9454 3.05687C12.6954 2.80682 12.3562 2.66634 12.0026 2.66634H4.0026Z" fill="#4D4D4D"/>
-            </svg>
-            <span class="font-medium">{{ formatNumber(selectedPost.comment_count) }}</span>
-          </div>
-
-          <!-- Likes -->
-          <div 
-            class="flex items-center gap-2 cursor-pointer transition-colors"
-            @click="toggleLike(selectedPost)"
-            :class="selectedPost.is_liked ? 'text-red-500' : 'text-gray-600'"
-          >
-            <HeartFilled v-if="selectedPost.is_liked" class="text-lg" />
-            <HeartOutlined v-else class="text-lg" />
-            <span class="font-medium">{{ formatNumber(selectedPost.like_count) }}</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Post Description -->
-      <div class="py-4">
-        <h3 class="text-xl md:text-2xl font-semibold text-gray-900 mb-3">
-          {{ selectedPost.title }}
-        </h3>
-        <p v-if="selectedPost.content" class="text-sm text-gray-600 leading-relaxed mb-4">
-          {{ selectedPost.content }}
-        </p>
-
-        <!-- Tags -->
-        <div class="flex flex-wrap gap-2 mb-4">
-          <a-tag
-            v-for="(tag, index) in selectedPost.tags"
-            :key="index"
-            color="blue"
-            class="px-3 py-1 rounded-full"
-          >
-            {{ tag }}
-          </a-tag>
-        </div>
-
-        <!-- Meta Info -->
-        <div class="flex flex-wrap gap-2 text-xs text-gray-400">
-          <span>Created: {{ formatDate(selectedPost.created_at) }}</span>
-          <span v-if="selectedPost.updated_at !== selectedPost.created_at">
-            • Updated: {{ formatDate(selectedPost.updated_at) }}
-          </span>
-        </div>
-      </div>
-
-      <!-- Products Used Section -->
-       <a-col :span="24">
-          <a-row>
-            <a-col
-              v-for="product in products_used_in_post"
-              :key="product.id"
-              class="product-responsive"
-              style="padding: 5px"
+            <ArrowLeftOutlined style="margin-top: 2px" />
+            <span class="font-bold" style="">Back</span>
+          </a-button>
+          <div class="flex gap-2">
+            <a-button
+              @click="editPost(selectedPost)"
+              type="default"
+              style="
+                display: flex;
+                justify-content: center;
+                align-items: center;
+              "
             >
-              <!-- {{product.product_colors}} -->
-              <div class="product">
-                <div
-                  class="product-image-container"
-                  @click="viewProduct(product)"
-                >
-                  <img
-                    :src="$store.state.root_media_api + product.product_image"
-                    :alt="product.product_title"
-                    class="product-image"
-                  />
-                  <!-- Category Badge -->
-                  <div class="category-badge">{{ product.category_name }}</div>
-                  <!-- AR Badge -->
-                  <div class="ar-badge">AR</div>
-                </div>
-                <!-- {{ truncateText(product.description || 'No description available', 8) }} -->
+              <EditOutlined /> Edit
+            </a-button>
+            <a-button
+              @click="confirmDelete(selectedPost)"
+              type="text"
+              danger
+              style="
+                display: flex;
+                justify-content: center;
+                align-items: center;
+              "
+            >
+              <DeleteOutlined /> Delete
+            </a-button>
+          </div>
+        </div>
+      </div>
 
-                <a-row>
+      <!-- Main Content Area -->
+      <div class="max-w-7xl mx-auto px-4 md:px-6 py-6">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- Left Column - Post Details -->
+          <div class="lg:col-span-7 lg:pr-4">
+            <!-- Post Image -->
+            <div class="relative rounded-2xl overflow-hidden mb-4">
+              <img
+                :src="
+                  $store.state.root_media_api + selectedPost.post_image ||
+                  require('../../../assets/home_main_banner.jpg')
+                "
+                :alt="selectedPost.title"
+                class="w-full h-auto object-cover"
+              />
+
+              <!-- Pinned Badge -->
               <div
-  class="overflow-x-auto whitespace-nowrap hide-scrollbar"
-  style="max-width: 200px;"
->
-  <b class="font-light !text-gray-700 inline-block">
-    {{ product.product_title }}
-  </b>
-</div>
+                v-if="selectedPost.is_pinned"
+                class="absolute top-3 left-3 bg-black bg-opacity-60 text-white px-3 py-1.5 rounded-lg flex items-center gap-2 text-sm"
+              >
+                <PushpinOutlined />
+                <span>Pinned</span>
+              </div>
+            </div>
 
+            <!-- Stats Row - Likes, Comments, Shares -->
+            <div
+              class="flex items-center justify-between py-4 px-4 border-b border-gray-200"
+            >
+              <!-- Left Side: Views -->
+              <div class="flex items-center gap-2 text-gray-600">
+                <svg
+                  width="12"
+                  height="8"
+                  viewBox="0 0 12 8"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M0.5 4C0.5 4 2.5 0.5 6 0.5C9.5 0.5 11.5 4 11.5 4C11.5 4 9.5 7.5 6 7.5C2.5 7.5 0.5 4 0.5 4Z"
+                    stroke="#4D4D4D"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M6 5.3125C6.82843 5.3125 7.5 4.72487 7.5 4C7.5 3.27513 6.82843 2.6875 6 2.6875C5.17157 2.6875 4.5 3.27513 4.5 4C4.5 4.72487 5.17157 5.3125 6 5.3125Z"
+                    stroke="#4D4D4D"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                <span class="font-medium">{{
+                  formatNumber(selectedPost.view_count)
+                }}</span>
+              </div>
 
-
-<a-col 
-  span="18"
-  
-  class="font-light !text-gray-700"
->
-  Color
-</a-col>
-                  <a-col  span="6" style="display: flex; justify-content: end">
-                    <div
-                      v-for="(color, index) in product.product_colors.slice(
-                        0,
-                        2
-                      )"
-                      :key="index"
-                      style="
-                        width: 20px;
-                        height: 20px;
-                        border-radius: 20px;
-                        margin-left: 2px;
-                      "
-                      :style="
-                        'background:' +
-                        (color.color_hex ? color.color_hex : color.color)
-                      "
-                    >
-                      <!-- {{ color }} -->
-                    </div>
-                  </a-col>
-
-                  <a-col class="!text-gray-700" span="12"> Price </a-col>
-
-                  <a-col
-                  class="!text-gray-700"
-                    span="12"
-                    style="
-                      display: flex;
-                      justify-content: end;
-                      font-weight: 700;
-                    "
+              <!-- Right Side: Comments + Likes -->
+              <div class="flex items-center gap-6">
+                <!-- Comments - Click to open drawer on mobile -->
+                <div
+                  class="flex items-center gap-2 text-gray-600 cursor-pointer hover:text-blue-500 transition-colors"
+                  @click="toggleCommentsDrawer"
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
                   >
-                    <!-- <del style="font-size: 10px;">${{ product.pricing.price }}</del> -->
-                    ${{ product.product_price }}
-                  </a-col>
+                    <path
+                      d="M1.33594 3.99967C1.33594 3.29243 1.61689 2.61415 2.11699 2.11406C2.61708 1.61396 3.29536 1.33301 4.0026 1.33301H12.0026C12.7098 1.33301 13.3881 1.61396 13.8882 2.11406C14.3883 2.61415 14.6693 3.29243 14.6693 3.99967V9.33301C14.6693 10.0403 14.3883 10.7185 13.8882 11.2186C13.3881 11.7187 12.7098 11.9997 12.0026 11.9997H8.8706L5.0386 14.5543C4.93821 14.6211 4.82158 14.6595 4.70113 14.6652C4.58067 14.671 4.46091 14.644 4.3546 14.5871C4.24829 14.5301 4.15941 14.4455 4.09742 14.342C4.03544 14.2386 4.00267 14.1203 4.0026 13.9997V11.9997C3.29536 11.9997 2.61708 11.7187 2.11699 11.2186C1.61689 10.7185 1.33594 10.0403 1.33594 9.33301V3.99967ZM4.0026 2.66634C3.64898 2.66634 3.30984 2.80682 3.05979 3.05687C2.80975 3.30691 2.66927 3.64605 2.66927 3.99967V9.33301C2.66927 9.68663 2.80975 10.0258 3.05979 10.2758C3.30984 10.5259 3.64898 10.6663 4.0026 10.6663H4.66927C4.84608 10.6663 5.01565 10.7366 5.14068 10.8616C5.2657 10.9866 5.33594 11.1562 5.33594 11.333V12.7543L8.29994 10.7783C8.40931 10.7054 8.53781 10.6664 8.66927 10.6663H12.0026C12.3562 10.6663 12.6954 10.5259 12.9454 10.2758C13.1955 10.0258 13.3359 9.68663 13.3359 9.33301V3.99967C13.3359 3.64605 13.1955 3.30691 12.9454 3.05687C12.6954 2.80682 12.3562 2.66634 12.0026 2.66634H4.0026Z"
+                      fill="#4D4D4D"
+                    />
+                  </svg>
+                  <span class="font-medium">{{
+                    formatNumber(selectedPost.comment_count)
+                  }}</span>
+                </div>
 
-                  <!-- <a-col span="18">
+                <!-- Likes -->
+                <div
+                  class="flex items-center gap-2 cursor-pointer transition-colors"
+                  @click="toggleLike(selectedPost)"
+                  :class="
+                    selectedPost.is_liked ? 'text-red-500' : 'text-gray-600'
+                  "
+                >
+                  <HeartFilled v-if="selectedPost.is_liked" class="text-lg" />
+                  <HeartOutlined v-else class="text-lg" />
+                  <span class="font-medium">{{
+                    formatNumber(selectedPost.like_count)
+                  }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Post Description -->
+            <div class="py-4">
+              <h3 class="text-xl md:text-2xl font-semibold text-gray-900 mb-3">
+                {{ selectedPost.title }}
+              </h3>
+              <p
+                v-if="selectedPost.content"
+                class="text-sm text-gray-600 leading-relaxed mb-4"
+              >
+                {{ selectedPost.content }}
+              </p>
+
+              <!-- Tags -->
+              <div class="flex flex-wrap gap-2 mb-4">
+                <a-tag
+                  v-for="(tag, index) in selectedPost.tags"
+                  :key="index"
+                  color="blue"
+                  class="px-3 py-1 rounded-full"
+                >
+                  {{ tag }}
+                </a-tag>
+              </div>
+
+              <!-- Meta Info -->
+              <div class="flex flex-wrap gap-2 text-xs text-gray-400">
+                <span>Created: {{ formatDate(selectedPost.created_at) }}</span>
+                <span
+                  v-if="selectedPost.updated_at !== selectedPost.created_at"
+                >
+                  • Updated: {{ formatDate(selectedPost.updated_at) }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Products Used Section -->
+            <a-col :span="24">
+              <a-row>
+                <a-col
+                  v-for="product in products_used_in_post"
+                  :key="product.id"
+                  class="product-responsive"
+                  style="padding: 5px"
+                >
+                  <!-- {{product.product_colors}} -->
+                  <div class="product">
+                    <div
+                      class="product-image-container"
+                      @click="viewProduct(product)"
+                    >
+                      <img
+                        :src="
+                          $store.state.root_media_api + product.product_image
+                        "
+                        :alt="product.product_title"
+                        class="product-image"
+                      />
+                      <!-- Category Badge -->
+                      <div class="category-badge">
+                        {{ product.category_name }}
+                      </div>
+                      <!-- AR Badge -->
+                      <div class="ar-badge">AR</div>
+                    </div>
+                    <!-- {{ truncateText(product.description || 'No description available', 8) }} -->
+
+                    <a-row>
+                      <div
+                        class="overflow-x-auto whitespace-nowrap hide-scrollbar"
+                        style="max-width: 200px"
+                      >
+                        <b class="font-light !text-gray-700 inline-block">
+                          {{ product.product_title }}
+                        </b>
+                      </div>
+
+                      <a-col span="18" class="font-light !text-gray-700">
+                        Color
+                      </a-col>
+                      <a-col
+                        span="6"
+                        style="display: flex; justify-content: end"
+                      >
+                        <div
+                          v-for="(color, index) in product.product_colors.slice(
+                            0,
+                            2,
+                          )"
+                          :key="index"
+                          style="
+                            width: 20px;
+                            height: 20px;
+                            border-radius: 20px;
+                            margin-left: 2px;
+                          "
+                          :style="
+                            'background:' +
+                            (color.color_hex ? color.color_hex : color.color)
+                          "
+                        >
+                          <!-- {{ color }} -->
+                        </div>
+                      </a-col>
+
+                      <a-col class="!text-gray-700" span="12"> Price </a-col>
+
+                      <a-col
+                        class="!text-gray-700"
+                        span="12"
+                        style="
+                          display: flex;
+                          justify-content: end;
+                          font-weight: 700;
+                        "
+                      >
+                        <!-- <del style="font-size: 10px;">${{ product.pricing.price }}</del> -->
+                        ${{ product.product_price }}
+                      </a-col>
+
+                      <!-- <a-col span="18">
                     <a-button block @click="viewProduct(product)"
                       >Product Details</a-button
                     >
@@ -426,455 +529,563 @@
                                                                     </template>
                                                 </a-button>
                   </a-col> -->
-                  <div class="flex items-center gap-2 w-full">
-                          <!-- Product Details Button - 75% width (18/24) -->
-                           <!-- {{product}} -->
-                          <div class="w-3/4">
-                            <button
-                              @click="goto_product_Route(product)"
-                                class="w-full py-2 px-4 bg-white border  border-gray-300 rounded hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500 transition-colors whitespace-nowrap"
-                              style="
-                                font-family: 'Poppins', sans-serif;
-                                font-size: 11px;
-                              "
-                            >
-                              Product Details
-                            </button>
-                          </div>
-
-                          <!-- Like Button - 25% width (6/24) -->
-                          <div class="w-1/4 flex items-end justify-end">
-                            <button
-                              @click="toggleFavorite(product.product_id,product.product_type,product)"
-                              class="bg-white !py-2.5 border border-gray-300 rounded hover:bg-gray-50 hover:border-blue-500 transition-colors flex items-center justify-center"
-                              style="padding: 2px 12px"
-                            >
-                              <template v-if="product.is_favorited">
-                                <HeartFilled style="color: red" />
-                              </template>
-                              <template v-else>
-                                <HeartOutlined />
-                              </template>
-                            </button>
-                          </div>
+                      <div class="flex items-center gap-2 w-full">
+                        <!-- Product Details Button - 75% width (18/24) -->
+                        <!-- {{product}} -->
+                        <div class="w-3/4">
+                          <button
+                            @click="goto_product_Route(product)"
+                            class="w-full py-2 px-4 bg-white border border-gray-300 rounded hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500 transition-colors whitespace-nowrap"
+                            style="
+                              font-family: Poppins, sans-serif;
+                              font-size: 11px;
+                            "
+                          >
+                            Product Details
+                          </button>
                         </div>
-                </a-row>
-              </div>
-            </a-col>
-          </a-row>
-        </a-col>
-    </div>
 
-    <!-- Desktop Comments - Hidden on mobile (lg:block) -->
-    <!-- Desktop Comments - Hidden on mobile (lg:block) -->
-<div class="hidden lg:block lg:col-span-5">
-  <div class="flex h-[740px] flex-col bg-gray-50 rounded-2xl p-6 sticky top-6">
-    <!-- Comments Header -->
-    <div class="pb-4 border-b border-gray-200">
-      <h4 class="text-xl font-semibold text-gray-900">
-        Comments ({{ selectedPost.comment_count }})
-      </h4>
-    </div>
-
-    <!-- Comments List (Scrollable) -->
-    <div class="flex-1 overflow-y-auto no-scrollbar py-4 pr-2" ref="commentsSection">
-      <!-- Empty State -->
-      <div 
-        v-if="!comments.length" 
-        class="flex flex-col items-center justify-center h-full min-h-[300px]"
-      >
-        <a-empty description="No Comments Available"></a-empty>
-      </div>
-
-      <!-- Comments -->
-      <div v-else class="space-y-6">
-        <div
-          v-for="comment in comments"
-          :key="comment.id"
-          class="pb-6 border-b border-gray-200 last:border-0"
-        >
-          <div class="flex gap-3">
-            <!-- Avatar -->
-            <a-avatar
-              :size="40"
-              class="border border-gray-200 flex-shrink-0"
-              :src="$store.state.root_media_api + comment.comment_owner.user_profile"
-            />
-
-            <!-- Comment Content -->
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center justify-between mb-2">
-                <h5 class="font-semibold text-sm text-gray-900">
-                  {{ comment.comment_owner?.username || 'Anonymous' }}
-                </h5>
-                <span class="text-xs text-gray-400">
-                  {{ formatDate(comment.created_at) }}
-                </span>
-              </div>
-              
-              <!-- Comment text with show more/less -->
-              <div class="text-sm text-gray-600 leading-relaxed break-words overflow-hidden">
-                <p v-if="comment.content.length <= 100">
-                  {{ comment.content }}
-                </p>
-                <div v-else>
-                  <p>
-                    {{ expandedComments[comment.id] ? comment.content : comment.content.substring(0, 100) + '...' }}
-                  </p>
-                  <button
-                    @click="toggleCommentExpansion(comment.id)"
-                    class="text-blue-500 hover:text-blue-600 text-xs font-medium mt-1"
-                  >
-                    {{ expandedComments[comment.id] ? 'Show Less' : 'Show More' }}
-                  </button>
-                </div>
-              </div>
-
-              <!-- Replies -->
-              <div
-                v-if="comment.replies && comment.replies.length > 0"
-                class="mt-4 pl-4 border-l-2 border-gray-200 space-y-4"
-              >
-                <div
-                  v-for="reply in comment.replies"
-                  :key="reply.id"
-                  class="flex gap-2"
-                >
-                  <a-avatar
-                    :size="32"
-                    class="border border-gray-200 flex-shrink-0"
-                    :src="$store.state.root_media_api + reply.comment_owner.user_profile"
-                  />
-                  <div class="flex-1 min-w-0">
-                    <div class="flex items-center gap-2 mb-1">
-                      <span class="font-semibold text-xs text-gray-900">
-                        {{ reply.comment_owner?.username || 'Anonymous' }}
-                      </span>
-                      <span class="text-xs text-gray-400">
-                        {{ formatDate(reply.created_at) }}
-                      </span>
-                    </div>
-                    
-                    <!-- Reply text with show more/less -->
-                    <div class="text-xs text-gray-600 leading-relaxed">
-                      <p v-if="reply.content.length <= 100">
-                        {{ reply.content }}
-                      </p>
-                      <div v-else>
-                        <p>
-                          {{ expandedComments[reply.id] ? reply.content : reply.content.substring(0, 100) + '...' }}
-                        </p>
-                        <button
-                          @click="toggleCommentExpansion(reply.id)"
-                          class="text-blue-500 hover:text-blue-600 text-xs font-medium mt-1"
-                        >
-                          {{ expandedComments[reply.id] ? 'Show Less' : 'Show More' }}
-                        </button>
+                        <!-- Like Button - 25% width (6/24) -->
+                        <div class="w-1/4 flex items-end justify-end">
+                          <button
+                            @click="
+                              toggleFavorite(
+                                product.product_id,
+                                product.product_type,
+                                product,
+                              )
+                            "
+                            class="bg-white !py-2.5 border border-gray-300 rounded hover:bg-gray-50 hover:border-blue-500 transition-colors flex items-center justify-center"
+                            style="padding: 2px 12px"
+                          >
+                            <template v-if="product.is_favorited">
+                              <HeartFilled style="color: red" />
+                            </template>
+                            <template v-else>
+                              <HeartOutlined />
+                            </template>
+                          </button>
+                        </div>
                       </div>
-                    </div>
+                    </a-row>
                   </div>
+                </a-col>
+              </a-row>
+            </a-col>
+          </div>
+
+          <!-- Desktop Comments - Hidden on mobile (lg:block) -->
+          <!-- Desktop Comments - Hidden on mobile (lg:block) -->
+          <div class="hidden lg:block lg:col-span-5">
+            <div
+              class="flex h-[740px] flex-col bg-gray-50 rounded-2xl p-6 sticky top-6"
+            >
+              <!-- Comments Header -->
+              <div class="pb-4 border-b border-gray-200">
+                <h4 class="text-xl font-semibold text-gray-900">
+                  Comments ({{ selectedPost.comment_count }})
+                </h4>
+              </div>
+
+              <!-- Comments List (Scrollable) -->
+              <div
+                class="flex-1 overflow-y-auto no-scrollbar py-4 pr-2"
+                ref="commentsSection"
+              >
+                <!-- Empty State -->
+                <div
+                  v-if="!comments.length"
+                  class="flex flex-col items-center justify-center h-full min-h-[300px]"
+                >
+                  <a-empty description="No Comments Available"></a-empty>
                 </div>
 
-                <!-- Load More Replies -->
-                <a-button
-                  v-if="comment.reply_count > comment.replies.length"
-                  type="link"
-                  size="small"
-                  @click="loadMoreReplies(comment)"
-                  class="text-xs"
-                >
-                  View {{ comment.reply_count - comment.replies.length }} more replies
-                </a-button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Load More Comments -->
-        <div v-if="hasMoreComments" class="text-center pt-4">
-          <a-button
-            type="link"
-            @click="loadMoreComments"
-            :loading="loadingComments"
-          >
-            Load More Comments
-          </a-button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Add Comment Input (Fixed at Bottom) -->
-    <div class="pt-4 border-t border-gray-200 bg-white">
-      <!-- Outer field (single border, rounded) -->
-      <div class="flex items-center w-full rounded-2xl border border-gray-300 px-4 py-2 bg-white">
-        <!-- Textarea -->
-        <a-textarea
-          v-model:value="newComment"
-          placeholder="Type here"
-          :rows="1"
-          :maxlength="500"
-          auto-size
-          @input="validateCommentLength"
-          class="flex-1 resize-none"
-          style="border:none; box-shadow:none; outline:none; background:transparent;"
-        />
-
-        <!-- Send button with your SVG -->
-        <button
-          @click="addComment"
-          :disabled="!newComment.trim() || newComment.length > 500"
-          class="ml-2 w-8 h-8 flex items-center justify-center rounded-full
-                 text-blue-500 disabled:opacity-30 disabled:cursor-not-allowed"
-        >
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 16 16"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M3.721 7.63038L5.2073 8.12581C6.18973 8.45258 6.67989 8.61702 7.03196 8.96909C7.38403 9.32117 7.54847 9.81238 7.87525 10.7927L8.37068 12.279C9.1971 14.7604 9.61031 16 10.3703 16C11.1293 16 11.5435 14.7604 12.37 12.279L15.3615 3.30642C15.9434 1.56082 16.2343 0.688014 15.7737 0.227368C15.313 -0.233277 14.4402 0.0576566 12.6957 0.638471L3.71995 3.63214C1.24174 4.45751 0 4.87072 0 5.63073C0 6.39074 1.24069 6.80395 3.721 7.63038Z"
-              fill="#3B63FB"
-            />
-            <path
-              d="M3.721 7.63038L5.2073 8.12581C6.18973 8.45258 6.67989 8.61702 7.03196 8.96909C7.38403 9.32117 7.54847 9.81238 7.87525 10.7927L8.37068 12.279C9.1971 14.7604 9.61031 16 10.3703 16C11.1293 16 11.5435 14.7604 12.37 12.279L15.3615 3.30642C15.9434 1.56082 16.2343 0.688014 15.7737 0.227368C15.313 -0.233277 14.4402 0.0576566 12.6957 0.638471L3.71995 3.63214C1.24174 4.45751 0 4.87072 0 5.63073C0 6.39074 1.24069 6.80395 3.721 7.63038Z"
-              fill="#3B63FB"
-            />
-            <path
-              d="M5.65441 9.68062L3.48084 8.95644C3.32874 8.90574 3.16709 8.8904 3.00817 8.91159C2.84925 8.93278 2.69726 8.98994 2.56376 9.07872L1.41478 9.844C1.27877 9.93462 1.17202 10.0628 1.10752 10.213C1.04302 10.3631 1.02354 10.5288 1.05146 10.6898C1.07938 10.8509 1.15349 11.0003 1.26477 11.12C1.37606 11.2397 1.51973 11.3245 1.67831 11.364L3.73909 11.8784C3.83183 11.9016 3.91653 11.9495 3.98411 12.0171C4.0517 12.0847 4.09964 12.1694 4.12279 12.2621L4.63719 14.3229C4.67674 14.4815 4.76151 14.6252 4.8812 14.7364C5.00089 14.8477 5.15034 14.9218 5.31137 14.9498C5.47241 14.9777 5.63808 14.9582 5.78825 14.8937C5.93841 14.8292 6.0666 14.7225 6.15722 14.5864L6.9225 13.4375C7.01128 13.304 7.06844 13.152 7.08963 12.9931C7.11082 12.8341 7.09548 12.6725 7.04478 12.5204L6.32061 10.3468C6.26884 10.1917 6.1817 10.0508 6.06608 9.93514C5.95045 9.81952 5.80952 9.73238 5.65441 9.68062Z"
-              fill="#3B63FB"
-            />
-          </svg>
-        </button>
-      </div>
-      
-      <!-- Character Counter -->
-      <div class="text-right mt-1 px-2">
-        <span 
-          class="text-xs"
-          :class="newComment.length > 500 ? 'text-red-500 font-semibold' : 'text-gray-400'"
-        >
-          {{ newComment.length }}/500
-        </span>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-  </div>
-
-  <!-- Mobile Comments Drawer (slides from bottom) -->
- <transition name="drawer">
-    <div
-      v-if="showCommentsDrawer"
-      class="fixed inset-0 z-50 lg:hidden"
-      @click.self="showCommentsDrawer = false"
-    >
-      <!-- Backdrop -->
-      <div class="absolute inset-0 bg-black/10 backdrop-blur-md"></div>
-
-      <!-- Drawer Content -->
-      <div 
-        class="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl flex flex-col transition-all duration-300"
-        :class="isDrawerExpanded ? 'h-[95vh]' : 'max-h-[85vh]'"
-        :style="{ transform: `translateY(${dragOffset}px)` }"
-      >
-        <!-- Drawer Handle - Draggable -->
-        <div 
-          class="flex justify-center pt-3 pb-2 cursor-grab active:cursor-grabbing"
-          @click="toggleDrawerExpansion"
-          @touchstart="handleTouchStart"
-          @touchmove="handleTouchMove"
-          @touchend="handleTouchEnd"
-        >
-          <div class="w-12 h-1.5 bg-gray-300 rounded-full"></div>
-        </div>
-
-        <!-- Drawer Header -->
-        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-          <h4 class="text-lg font-semibold text-gray-900">
-            Comments ({{ selectedPost.comment_count }})
-          </h4>
-          <button
-            @click="showCommentsDrawer = false"
-            class="p-2 hover:bg-gray-100 rounded-full transition-colors"
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-          </button>
-        </div>
-
-        <!-- Comments List (Scrollable) -->
-        <div class="flex-1 overflow-y-auto px-6 py-4">
-          <!-- Empty State -->
-          <div 
-            v-if="!comments.length" 
-            class="flex flex-col items-center justify-center h-full min-h-[200px]"
-          >
-            <a-empty description="No Comments Available"></a-empty>
-          </div>
-
-          <!-- Comments -->
-          <div v-else class="space-y-6">
-            <div
-              v-for="comment in comments"
-              :key="comment.id"
-              class="pb-6 border-b border-gray-200 last:border-0"
-            >
-              <div class="flex gap-3">
-                <!-- Avatar -->
-                <a-avatar
-                  :size="40"
-                  class="border border-gray-200 flex-shrink-0"
-                  :src="$store.state.root_media_api + comment.comment_owner.user_profile"
-                />
-
-                <!-- Comment Content -->
-                <div class="flex-1 min-w-0">
-                  <div class="flex items-center justify-between mb-2">
-                    <h5 class="font-semibold text-sm text-gray-900">
-                      {{ comment.comment_owner?.username || 'Anonymous' }}
-                    </h5>
-                    <span class="text-xs text-gray-400">
-                      {{ formatDate(comment.created_at) }}
-                    </span>
-                  </div>
-                  
-                  <!-- Comment text with show more/less -->
-                  <div class="text-sm text-gray-600 leading-relaxed break-words overflow-hidden">
-                    <p v-if="comment.content.length <= 100">
-                      {{ comment.content }}
-                    </p>
-                    <div v-else>
-                      <p>
-                        {{ expandedComments[comment.id] ? comment.content : comment.content.substring(0, 100) + '...' }}
-                      </p>
-                      <button
-                        @click="toggleCommentExpansion(comment.id)"
-                        class="text-blue-500 hover:text-blue-600 text-xs font-medium mt-1"
-                      >
-                        {{ expandedComments[comment.id] ? 'Show Less' : 'Show More' }}
-                      </button>
-                    </div>
-                  </div>
-
-                  <!-- Replies -->
+                <!-- Comments -->
+                <div v-else class="space-y-6">
                   <div
-                    v-if="comment.replies && comment.replies.length > 0"
-                    class="mt-4 pl-4 border-l-2 border-gray-200 space-y-4"
+                    v-for="comment in comments"
+                    :key="comment.id"
+                    class="pb-6 border-b border-gray-200 last:border-0"
                   >
-                    <div
-                      v-for="reply in comment.replies"
-                      :key="reply.id"
-                      class="flex gap-2"
-                    >
+                    <div class="flex gap-3">
+                      <!-- Avatar -->
                       <a-avatar
-                        :size="32"
+                        :size="40"
                         class="border border-gray-200 flex-shrink-0"
-                        :src="$store.state.root_media_api + reply.comment_owner.user_profile"
+                        :src="
+                          $store.state.root_media_api +
+                          comment.comment_owner.user_profile
+                        "
                       />
+
+                      <!-- Comment Content -->
                       <div class="flex-1 min-w-0">
-                        <div class="flex items-center gap-2 mb-1">
-                          <span class="font-semibold text-xs text-gray-900">
-                            {{ reply.comment_owner?.username || 'Anonymous' }}
-                          </span>
+                        <div class="flex items-center justify-between mb-2">
+                          <h5 class="font-semibold text-sm text-gray-900">
+                            {{ comment.comment_owner?.username || "Anonymous" }}
+                          </h5>
                           <span class="text-xs text-gray-400">
-                            {{ formatDate(reply.created_at) }}
+                            {{ formatDate(comment.created_at) }}
                           </span>
                         </div>
-                        
-                        <!-- Reply text with show more/less -->
-                        <div class="text-xs text-gray-600 leading-relaxed">
-                          <p v-if="reply.content.length <= 100">
-                            {{ reply.content }}
+
+                        <!-- Comment text with show more/less -->
+                        <div
+                          class="text-sm text-gray-600 leading-relaxed break-words overflow-hidden"
+                        >
+                          <p v-if="comment.content.length <= 100">
+                            {{ comment.content }}
                           </p>
                           <div v-else>
                             <p>
-                              {{ expandedComments[reply.id] ? reply.content : reply.content.substring(0, 100) + '...' }}
+                              {{
+                                expandedComments[comment.id]
+                                  ? comment.content
+                                  : comment.content.substring(0, 100) + "..."
+                              }}
                             </p>
                             <button
-                              @click="toggleCommentExpansion(reply.id)"
+                              @click="toggleCommentExpansion(comment.id)"
                               class="text-blue-500 hover:text-blue-600 text-xs font-medium mt-1"
                             >
-                              {{ expandedComments[reply.id] ? 'Show Less' : 'Show More' }}
+                              {{
+                                expandedComments[comment.id]
+                                  ? "Show Less"
+                                  : "Show More"
+                              }}
                             </button>
                           </div>
                         </div>
+
+                        <!-- Replies -->
+                        <div
+                          v-if="comment.replies && comment.replies.length > 0"
+                          class="mt-4 pl-4 border-l-2 border-gray-200 space-y-4"
+                        >
+                          <div
+                            v-for="reply in comment.replies"
+                            :key="reply.id"
+                            class="flex gap-2"
+                          >
+                            <a-avatar
+                              :size="32"
+                              class="border border-gray-200 flex-shrink-0"
+                              :src="
+                                $store.state.root_media_api +
+                                reply.comment_owner.user_profile
+                              "
+                            />
+                            <div class="flex-1 min-w-0">
+                              <div class="flex items-center gap-2 mb-1">
+                                <span
+                                  class="font-semibold text-xs text-gray-900"
+                                >
+                                  {{
+                                    reply.comment_owner?.username || "Anonymous"
+                                  }}
+                                </span>
+                                <span class="text-xs text-gray-400">
+                                  {{ formatDate(reply.created_at) }}
+                                </span>
+                              </div>
+
+                              <!-- Reply text with show more/less -->
+                              <div
+                                class="text-xs text-gray-600 leading-relaxed"
+                              >
+                                <p v-if="reply.content.length <= 100">
+                                  {{ reply.content }}
+                                </p>
+                                <div v-else>
+                                  <p>
+                                    {{
+                                      expandedComments[reply.id]
+                                        ? reply.content
+                                        : reply.content.substring(0, 100) +
+                                          "..."
+                                    }}
+                                  </p>
+                                  <button
+                                    @click="toggleCommentExpansion(reply.id)"
+                                    class="text-blue-500 hover:text-blue-600 text-xs font-medium mt-1"
+                                  >
+                                    {{
+                                      expandedComments[reply.id]
+                                        ? "Show Less"
+                                        : "Show More"
+                                    }}
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <!-- Load More Replies -->
+                          <a-button
+                            v-if="comment.reply_count > comment.replies.length"
+                            type="link"
+                            size="small"
+                            @click="loadMoreReplies(comment)"
+                            class="text-xs"
+                          >
+                            View
+                            {{
+                              comment.reply_count - comment.replies.length
+                            }}
+                            more replies
+                          </a-button>
+                        </div>
                       </div>
                     </div>
+                  </div>
 
+                  <!-- Load More Comments -->
+                  <div v-if="hasMoreComments" class="text-center pt-4">
                     <a-button
-                      v-if="comment.reply_count > comment.replies.length"
                       type="link"
-                      size="small"
-                      @click="loadMoreReplies(comment)"
-                      class="text-xs"
+                      @click="loadMoreComments"
+                      :loading="loadingComments"
                     >
-                      View {{ comment.reply_count - comment.replies.length }} more replies
+                      Load More Comments
                     </a-button>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <!-- Load More Comments -->
-            <div v-if="hasMoreComments" class="text-center pt-4">
-              <a-button
-                type="link"
-                @click="loadMoreComments"
-                :loading="loadingComments"
+              <!-- Add Comment Input (Fixed at Bottom) -->
+              <div class="pt-4 border-t border-gray-200 bg-white">
+                <!-- Outer field (single border, rounded) -->
+                <div
+                  class="flex items-center w-full rounded-2xl border border-gray-300 px-4 py-2 bg-white"
+                >
+                  <!-- Textarea -->
+                  <a-textarea
+                    v-model:value="newComment"
+                    placeholder="Type here"
+                    :rows="1"
+                    :maxlength="500"
+                    auto-size
+                    @input="validateCommentLength"
+                    class="flex-1 resize-none"
+                    style="
+                      border: none;
+                      box-shadow: none;
+                      outline: none;
+                      background: transparent;
+                    "
+                  />
+
+                  <!-- Send button with your SVG -->
+                  <button
+                    @click="addComment"
+                    :disabled="!newComment.trim() || newComment.length > 500"
+                    class="ml-2 w-8 h-8 flex items-center justify-center rounded-full text-blue-500 disabled:opacity-30 disabled:cursor-not-allowed"
+                  >
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 16 16"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M3.721 7.63038L5.2073 8.12581C6.18973 8.45258 6.67989 8.61702 7.03196 8.96909C7.38403 9.32117 7.54847 9.81238 7.87525 10.7927L8.37068 12.279C9.1971 14.7604 9.61031 16 10.3703 16C11.1293 16 11.5435 14.7604 12.37 12.279L15.3615 3.30642C15.9434 1.56082 16.2343 0.688014 15.7737 0.227368C15.313 -0.233277 14.4402 0.0576566 12.6957 0.638471L3.71995 3.63214C1.24174 4.45751 0 4.87072 0 5.63073C0 6.39074 1.24069 6.80395 3.721 7.63038Z"
+                        fill="#3B63FB"
+                      />
+                      <path
+                        d="M3.721 7.63038L5.2073 8.12581C6.18973 8.45258 6.67989 8.61702 7.03196 8.96909C7.38403 9.32117 7.54847 9.81238 7.87525 10.7927L8.37068 12.279C9.1971 14.7604 9.61031 16 10.3703 16C11.1293 16 11.5435 14.7604 12.37 12.279L15.3615 3.30642C15.9434 1.56082 16.2343 0.688014 15.7737 0.227368C15.313 -0.233277 14.4402 0.0576566 12.6957 0.638471L3.71995 3.63214C1.24174 4.45751 0 4.87072 0 5.63073C0 6.39074 1.24069 6.80395 3.721 7.63038Z"
+                        fill="#3B63FB"
+                      />
+                      <path
+                        d="M5.65441 9.68062L3.48084 8.95644C3.32874 8.90574 3.16709 8.8904 3.00817 8.91159C2.84925 8.93278 2.69726 8.98994 2.56376 9.07872L1.41478 9.844C1.27877 9.93462 1.17202 10.0628 1.10752 10.213C1.04302 10.3631 1.02354 10.5288 1.05146 10.6898C1.07938 10.8509 1.15349 11.0003 1.26477 11.12C1.37606 11.2397 1.51973 11.3245 1.67831 11.364L3.73909 11.8784C3.83183 11.9016 3.91653 11.9495 3.98411 12.0171C4.0517 12.0847 4.09964 12.1694 4.12279 12.2621L4.63719 14.3229C4.67674 14.4815 4.76151 14.6252 4.8812 14.7364C5.00089 14.8477 5.15034 14.9218 5.31137 14.9498C5.47241 14.9777 5.63808 14.9582 5.78825 14.8937C5.93841 14.8292 6.0666 14.7225 6.15722 14.5864L6.9225 13.4375C7.01128 13.304 7.06844 13.152 7.08963 12.9931C7.11082 12.8341 7.09548 12.6725 7.04478 12.5204L6.32061 10.3468C6.26884 10.1917 6.1817 10.0508 6.06608 9.93514C5.95045 9.81952 5.80952 9.73238 5.65441 9.68062Z"
+                        fill="#3B63FB"
+                      />
+                    </svg>
+                  </button>
+                </div>
+
+                <!-- Character Counter -->
+                <div class="text-right mt-1 px-2">
+                  <span
+                    class="text-xs"
+                    :class="
+                      newComment.length > 500
+                        ? 'text-red-500 font-semibold'
+                        : 'text-gray-400'
+                    "
+                  >
+                    {{ newComment.length }}/500
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mobile Comments Drawer (slides from bottom) -->
+        <transition name="drawer">
+          <div
+            v-if="showCommentsDrawer"
+            class="fixed inset-0 z-50 lg:hidden"
+            @click.self="showCommentsDrawer = false"
+          >
+            <!-- Backdrop -->
+            <div class="absolute inset-0 bg-black/10 backdrop-blur-md"></div>
+
+            <!-- Drawer Content -->
+            <div
+              class="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl flex flex-col transition-all duration-300"
+              :class="isDrawerExpanded ? 'h-[95vh]' : 'max-h-[85vh]'"
+              :style="{ transform: `translateY(${dragOffset}px)` }"
+            >
+              <!-- Drawer Handle - Draggable -->
+              <div
+                class="flex justify-center pt-3 pb-2 cursor-grab active:cursor-grabbing"
+                @click="toggleDrawerExpansion"
+                @touchstart="handleTouchStart"
+                @touchmove="handleTouchMove"
+                @touchend="handleTouchEnd"
               >
-                Load More Comments
-              </a-button>
+                <div class="w-12 h-1.5 bg-gray-300 rounded-full"></div>
+              </div>
+
+              <!-- Drawer Header -->
+              <div
+                class="flex items-center justify-between px-6 py-4 border-b border-gray-200"
+              >
+                <h4 class="text-lg font-semibold text-gray-900">
+                  Comments ({{ selectedPost.comment_count }})
+                </h4>
+                <button
+                  @click="showCommentsDrawer = false"
+                  class="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                >
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>
+              </div>
+
+              <!-- Comments List (Scrollable) -->
+              <div class="flex-1 overflow-y-auto px-6 py-4">
+                <!-- Empty State -->
+                <div
+                  v-if="!comments.length"
+                  class="flex flex-col items-center justify-center h-full min-h-[200px]"
+                >
+                  <a-empty description="No Comments Available"></a-empty>
+                </div>
+
+                <!-- Comments -->
+                <div v-else class="space-y-6">
+                  <div
+                    v-for="comment in comments"
+                    :key="comment.id"
+                    class="pb-6 border-b border-gray-200 last:border-0"
+                  >
+                    <div class="flex gap-3">
+                      <!-- Avatar -->
+                      <a-avatar
+                        :size="40"
+                        class="border border-gray-200 flex-shrink-0"
+                        :src="
+                          $store.state.root_media_api +
+                          comment.comment_owner.user_profile
+                        "
+                      />
+
+                      <!-- Comment Content -->
+                      <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between mb-2">
+                          <h5 class="font-semibold text-sm text-gray-900">
+                            {{ comment.comment_owner?.username || "Anonymous" }}
+                          </h5>
+                          <span class="text-xs text-gray-400">
+                            {{ formatDate(comment.created_at) }}
+                          </span>
+                        </div>
+
+                        <!-- Comment text with show more/less -->
+                        <div
+                          class="text-sm text-gray-600 leading-relaxed break-words overflow-hidden"
+                        >
+                          <p v-if="comment.content.length <= 100">
+                            {{ comment.content }}
+                          </p>
+                          <div v-else>
+                            <p>
+                              {{
+                                expandedComments[comment.id]
+                                  ? comment.content
+                                  : comment.content.substring(0, 100) + "..."
+                              }}
+                            </p>
+                            <button
+                              @click="toggleCommentExpansion(comment.id)"
+                              class="text-blue-500 hover:text-blue-600 text-xs font-medium mt-1"
+                            >
+                              {{
+                                expandedComments[comment.id]
+                                  ? "Show Less"
+                                  : "Show More"
+                              }}
+                            </button>
+                          </div>
+                        </div>
+
+                        <!-- Replies -->
+                        <div
+                          v-if="comment.replies && comment.replies.length > 0"
+                          class="mt-4 pl-4 border-l-2 border-gray-200 space-y-4"
+                        >
+                          <div
+                            v-for="reply in comment.replies"
+                            :key="reply.id"
+                            class="flex gap-2"
+                          >
+                            <a-avatar
+                              :size="32"
+                              class="border border-gray-200 flex-shrink-0"
+                              :src="
+                                $store.state.root_media_api +
+                                reply.comment_owner.user_profile
+                              "
+                            />
+                            <div class="flex-1 min-w-0">
+                              <div class="flex items-center gap-2 mb-1">
+                                <span
+                                  class="font-semibold text-xs text-gray-900"
+                                >
+                                  {{
+                                    reply.comment_owner?.username || "Anonymous"
+                                  }}
+                                </span>
+                                <span class="text-xs text-gray-400">
+                                  {{ formatDate(reply.created_at) }}
+                                </span>
+                              </div>
+
+                              <!-- Reply text with show more/less -->
+                              <div
+                                class="text-xs text-gray-600 leading-relaxed"
+                              >
+                                <p v-if="reply.content.length <= 100">
+                                  {{ reply.content }}
+                                </p>
+                                <div v-else>
+                                  <p>
+                                    {{
+                                      expandedComments[reply.id]
+                                        ? reply.content
+                                        : reply.content.substring(0, 100) +
+                                          "..."
+                                    }}
+                                  </p>
+                                  <button
+                                    @click="toggleCommentExpansion(reply.id)"
+                                    class="text-blue-500 hover:text-blue-600 text-xs font-medium mt-1"
+                                  >
+                                    {{
+                                      expandedComments[reply.id]
+                                        ? "Show Less"
+                                        : "Show More"
+                                    }}
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <a-button
+                            v-if="comment.reply_count > comment.replies.length"
+                            type="link"
+                            size="small"
+                            @click="loadMoreReplies(comment)"
+                            class="text-xs"
+                          >
+                            View
+                            {{
+                              comment.reply_count - comment.replies.length
+                            }}
+                            more replies
+                          </a-button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Load More Comments -->
+                  <div v-if="hasMoreComments" class="text-center pt-4">
+                    <a-button
+                      type="link"
+                      @click="loadMoreComments"
+                      :loading="loadingComments"
+                    >
+                      Load More Comments
+                    </a-button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Add Comment Input (Fixed at Bottom) -->
+              <div class="px-6 py-4 border-t border-gray-200 bg-white">
+                <div
+                  class="flex items-center gap-2 bg-gray-100 rounded-xl px-3 py-2"
+                >
+                  <a-textarea
+                    v-model:value="newComment"
+                    placeholder="Add a comment..."
+                    :rows="1"
+                    :maxlength="500"
+                    auto-size
+                    @input="validateCommentLength"
+                    class="flex-1 border-none bg-transparent resize-none focus:outline-none"
+                  />
+                  <button
+                    @click="addComment"
+                    :disabled="!newComment.trim() || newComment.length > 500"
+                    class="w-10 h-10 flex items-center justify-center rounded-md disabled:opacity-30"
+                  >
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 16 16"
+                      fill="#3B63FB"
+                    >
+                      <path
+                        d="M3.721 7.63038L5.2073 8.12581C6.18973 8.45258 6.67989 8.61702 7.03196 8.96909C7.38403 9.32117 7.54847 9.81238 7.87525 10.7927L8.37068 12.279C9.1971 14.7604 9.61031 16 10.3703 16C11.1293 16 11.5435 14.7604 12.37 12.279L15.3615 3.30642C15.9434 1.56082 16.2343 0.688014 15.7737 0.227368C15.313 -0.233277 14.4402 0.0576566 12.6957 0.638471L3.71995 3.63214C1.24174 4.45751 0 4.87072 0 5.63073C0 6.39074 1.24069 6.80395 3.721 7.63038Z"
+                      />
+                    </svg>
+                  </button>
+                </div>
+
+                <!-- Character Counter -->
+                <div class="text-right mt-1 px-2">
+                  <span
+                    class="text-xs"
+                    :class="
+                      newComment.length > 500
+                        ? 'text-red-500 font-semibold'
+                        : 'text-gray-400'
+                    "
+                  >
+                    {{ newComment.length }}/500
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-
-        <!-- Add Comment Input (Fixed at Bottom) -->
-        <div class="px-6 py-4 border-t border-gray-200 bg-white">
-          <div class="flex items-center gap-2 bg-gray-100 rounded-xl px-3 py-2">
-            <a-textarea
-              v-model:value="newComment"
-              placeholder="Add a comment..."
-              :rows="1"
-              :maxlength="500"
-              auto-size
-              @input="validateCommentLength"
-              class="flex-1 border-none bg-transparent resize-none focus:outline-none"
-            />
-            <button
-              @click="addComment"
-              :disabled="!newComment.trim() || newComment.length > 500"
-              class="w-10 h-10 flex items-center justify-center rounded-md disabled:opacity-30"
-            >
-              <svg width="18" height="18" viewBox="0 0 16 16" fill="#3B63FB">
-                <path d="M3.721 7.63038L5.2073 8.12581C6.18973 8.45258 6.67989 8.61702 7.03196 8.96909C7.38403 9.32117 7.54847 9.81238 7.87525 10.7927L8.37068 12.279C9.1971 14.7604 9.61031 16 10.3703 16C11.1293 16 11.5435 14.7604 12.37 12.279L15.3615 3.30642C15.9434 1.56082 16.2343 0.688014 15.7737 0.227368C15.313 -0.233277 14.4402 0.0576566 12.6957 0.638471L3.71995 3.63214C1.24174 4.45751 0 4.87072 0 5.63073C0 6.39074 1.24069 6.80395 3.721 7.63038Z"/>
-              </svg>
-            </button>
-          </div>
-          
-          <!-- Character Counter -->
-          <div class="text-right mt-1 px-2">
-            <span 
-              class="text-xs"
-              :class="newComment.length > 500 ? 'text-red-500 font-semibold' : 'text-gray-400'"
-            >
-              {{ newComment.length }}/500
-            </span>
-          </div>
-        </div>
+        </transition>
       </div>
     </div>
-  </transition>
-
-
-</div>
-
-  </div>
 
     <!-- Load More Button -->
     <div
@@ -932,10 +1143,15 @@
     </a-modal>
 
     <!-- Comments Modal -->
-
   </div>
- <CommentsModal v-if="commentsModalVisible" :is-open="commentsModalVisible" :post="selectedPostForComments" @close="closeCommentsModal" @comment-added="handleCommentAdded" @like-toggled="handleLikeToggled" />
-
+  <CommentsModal
+    v-if="commentsModalVisible"
+    :is-open="commentsModalVisible"
+    :post="selectedPostForComments"
+    @close="closeCommentsModal"
+    @comment-added="handleCommentAdded"
+    @like-toggled="handleLikeToggled"
+  />
 </template>
 
 <script>
@@ -980,14 +1196,13 @@ export default {
       postImageLoadedMap: {},
       hasMore: false,
       currentPage: 1,
-      newComment: '',
+      newComment: "",
       isDrawerExpanded: false,
-    dragStartY: 0,
-    dragOffset: 0,
-    isDragging: false,
-    expandedComments: {},
+      dragStartY: 0,
+      dragOffset: 0,
+      isDragging: false,
+      expandedComments: {},
 
-      
       // Post details
       postDetailVisible: false,
       selectedPost: null,
@@ -1034,118 +1249,112 @@ export default {
     await this.loadTags();
   },
 
- methods: {
+  methods: {
     toggleCommentsDrawer() {
-    
-    if (window.innerWidth < 1024) {
-      this.showCommentsDrawer = !this.showCommentsDrawer;
-    } else {
-     
-      this.scrollToComments();
-    }
+      if (window.innerWidth < 1024) {
+        this.showCommentsDrawer = !this.showCommentsDrawer;
+      } else {
+        this.scrollToComments();
+      }
     },
 
-   onPostImageLoad(id) {
-    this.postImageLoadedMap[id] = false;
-    setTimeout(() => {
-      this.postImageLoadedMap[id] = true;
-    }, 1000); // 1s skeleton
-   },
+    onPostImageLoad(id) {
+      this.postImageLoadedMap[id] = false;
+      setTimeout(() => {
+        this.postImageLoadedMap[id] = true;
+      }, 1000); // 1s skeleton
+    },
 
     toggleDrawerExpansion() {
-    if (!this.isDragging) {
-      this.isDrawerExpanded = !this.isDrawerExpanded;
-    }
-  },
-
-  
-  handleTouchStart(e) {
-    this.isDragging = false;
-    this.dragStartY = e.touches[0].clientY;
-    this.dragOffset = 0;
-  },
-
-  
-  handleTouchMove(e) {
-    const currentY = e.touches[0].clientY;
-    const diff = currentY - this.dragStartY;
-    
-    
-    if (diff > 0) {
-      this.isDragging = true;
-      this.dragOffset = diff;
-    }
-  },
-
-  
-  handleTouchEnd() {
-    
-    if (this.dragOffset > 100) {
-      this.showCommentsDrawer = false;
-      this.isDrawerExpanded = false;
-    }
-    
-    
-    this.dragOffset = 0;
-    this.dragStartY = 0;
-    
-    
-    setTimeout(() => {
-      this.isDragging = false;
-    }, 100);
-  },
-  
-    goto_product_Route(product){
-      let produuct_type='product'
-      if (product.product_type=='light'){
-        produuct_type='product'
-      }else if (product.product_type=='floor_texture'){
-        produuct_type='floor'
-      }else if (product.product_type=='wall_texture'){
-        produuct_type='wall'
+      if (!this.isDragging) {
+        this.isDrawerExpanded = !this.isDrawerExpanded;
       }
-      else{
-        produuct_type=product.type
+    },
+
+    handleTouchStart(e) {
+      this.isDragging = false;
+      this.dragStartY = e.touches[0].clientY;
+      this.dragOffset = 0;
+    },
+
+    handleTouchMove(e) {
+      const currentY = e.touches[0].clientY;
+      const diff = currentY - this.dragStartY;
+
+      if (diff > 0) {
+        this.isDragging = true;
+        this.dragOffset = diff;
+      }
+    },
+
+    handleTouchEnd() {
+      if (this.dragOffset > 100) {
+        this.showCommentsDrawer = false;
+        this.isDrawerExpanded = false;
+      }
+
+      this.dragOffset = 0;
+      this.dragStartY = 0;
+
+      setTimeout(() => {
+        this.isDragging = false;
+      }, 100);
+    },
+
+    goto_product_Route(product) {
+      console.log(product);
+      let produuct_type = "product";
+      if (product.product_type === "light") {
+        produuct_type = "product";
+      } else if (product.product_type === "floor_texture") {
+        produuct_type = "floor";
+      } else if (product.product_type === "wall_texture") {
+        produuct_type = "wall";
+      } else {
+        produuct_type = product.product_type;
       }
       this.$router.push({
-      name: 'buisness_product',
-      params: {
-        buisness_name: product.business_slug,
-        product_type: produuct_type,
-        product_id: product.product_id
-      }
-    })
-  
+        name: "buisness_product",
+        params: {
+          buisness_name: product.business_slug,
+          product_type: produuct_type,
+          product_id: product.product_id,
+        },
+      });
     },
-    
+
     async openCommentsModal(post) {
-  this.selectedPostForComments = { 
-    ...post,
-    userAvatar: this.$store.state.root_media_api + post.user_profile,
-    userName: post.post_by,
-    image: this.$store.state.root_media_api + post.post_image,
-    views: post.view_count || 0,
-    likes: post.like_count || 0,
-    is_liked: post.is_liked || false
-  };
-  this.commentsModalVisible = true;
-  await this.loadModalComments(post.id);
-},
+      this.selectedPostForComments = {
+        ...post,
+        userAvatar: this.$store.state.root_media_api + post.user_profile,
+        userName: post.post_by,
+        image: this.$store.state.root_media_api + post.post_image,
+        views: post.view_count || 0,
+        likes: post.like_count || 0,
+        is_liked: post.is_liked || false,
+      };
+      this.commentsModalVisible = true;
+      await this.loadModalComments(post.id);
+    },
 
-handleCommentAdded() {
-  const postIndex = this.posts.findIndex(p => p.id === this.selectedPostForComments?.id);
-  if (postIndex !== -1) {
-    this.posts[postIndex].comment_count += 1;
-  }
-},
+    handleCommentAdded() {
+      const postIndex = this.posts.findIndex(
+        (p) => p.id === this.selectedPostForComments?.id,
+      );
+      if (postIndex !== -1) {
+        this.posts[postIndex].comment_count += 1;
+      }
+    },
 
-handleLikeToggled() {
-  const postIndex = this.posts.findIndex(p => p.id === this.selectedPostForComments?.id);
-  if (postIndex !== -1) {
-    this.posts[postIndex].is_liked = this.selectedPostForComments.is_liked;
-    this.posts[postIndex].like_count = this.selectedPostForComments.likes;
-  }
-},
+    handleLikeToggled() {
+      const postIndex = this.posts.findIndex(
+        (p) => p.id === this.selectedPostForComments?.id,
+      );
+      if (postIndex !== -1) {
+        this.posts[postIndex].is_liked = this.selectedPostForComments.is_liked;
+        this.posts[postIndex].like_count = this.selectedPostForComments.likes;
+      }
+    },
 
     closeCommentsModal() {
       this.commentsModalVisible = false;
@@ -1165,7 +1374,7 @@ handleLikeToggled() {
               Authorization: `Token ${localStorage.getItem("token")}`,
               "Content-Type": "application/json",
             },
-          }
+          },
         );
 
         const data = await response.json();
@@ -1189,7 +1398,7 @@ handleLikeToggled() {
       if (this.selectedPostForComments) {
         await this.loadModalComments(
           this.selectedPostForComments.id,
-          this.modalCommentsPage + 1
+          this.modalCommentsPage + 1,
         );
       }
     },
@@ -1211,7 +1420,7 @@ handleLikeToggled() {
               post_id: this.selectedPostForComments.id,
               content: this.newModalComment.trim(),
             }),
-          }
+          },
         );
 
         const data = await response.json();
@@ -1220,7 +1429,7 @@ handleLikeToggled() {
           await this.loadModalComments(this.selectedPostForComments.id);
           this.selectedPostForComments.comment_count += 1;
           const postIndex = this.posts.findIndex(
-            (p) => p.id === this.selectedPostForComments.id
+            (p) => p.id === this.selectedPostForComments.id,
           );
           if (postIndex !== -1) {
             this.posts[postIndex].comment_count =
@@ -1247,7 +1456,7 @@ handleLikeToggled() {
               Authorization: `Token ${localStorage.getItem("token")}`,
               "Content-Type": "application/json",
             },
-          }
+          },
         );
 
         const data = await response.json();
@@ -1255,7 +1464,7 @@ handleLikeToggled() {
         if (data.success) {
           this.posts = data.data.map((post) => ({
             ...post,
-           
+
             tags: post.tags || [],
             like_count: post.like_count || 0,
             comment_count: post.comment_count || 0,
@@ -1289,7 +1498,7 @@ handleLikeToggled() {
               Authorization: `Token ${localStorage.getItem("token")}`,
               "Content-Type": "application/json",
             },
-          }
+          },
         );
 
         const data = await response.json();
@@ -1328,7 +1537,7 @@ handleLikeToggled() {
             body: JSON.stringify({
               post_id: postId,
             }),
-          }
+          },
         );
 
         const data = await response.json();
@@ -1346,7 +1555,7 @@ handleLikeToggled() {
         console.error("Failed to increment view count:", error);
       }
     },
-    
+
     closePostDetails() {
       this.selectedPost = null;
       this.comments = [];
@@ -1364,7 +1573,7 @@ handleLikeToggled() {
               Authorization: `Token ${localStorage.getItem("token")}`,
               "Content-Type": "application/json",
             },
-          }
+          },
         );
 
         const data = await response.json();
@@ -1395,9 +1604,9 @@ handleLikeToggled() {
               Authorization: `Token ${localStorage.getItem("token")}`,
               "Content-Type": "application/json",
             },
-          }
+          },
         );
-        
+
         const data = await response.json();
         if (data.success) {
           this.products_used_in_post = data.data;
@@ -1416,7 +1625,12 @@ handleLikeToggled() {
     },
 
     async addComment() {
-      if (!this.newComment.trim() || !this.selectedPost || this.newComment.length > 500) return;
+      if (
+        !this.newComment.trim() ||
+        !this.selectedPost ||
+        this.newComment.length > 500
+      )
+        return;
 
       try {
         this.addingComment = true;
@@ -1432,7 +1646,7 @@ handleLikeToggled() {
               post_id: this.selectedPost.id,
               content: this.newComment.trim(),
             }),
-          }
+          },
         );
 
         const data = await response.json();
@@ -1443,7 +1657,7 @@ handleLikeToggled() {
 
           this.selectedPost.comment_count += 1;
           const postIndex = this.posts.findIndex(
-            (p) => p.id === this.selectedPost.id
+            (p) => p.id === this.selectedPost.id,
           );
           if (postIndex !== -1) {
             this.posts[postIndex].comment_count =
@@ -1461,17 +1675,16 @@ handleLikeToggled() {
     },
 
     // ✅ ADD THESE TWO NEW METHODS HERE
-   // In methods section
-toggleCommentExpansion(commentId) {
-  // Direct assignment works in Vue 3
-  this.expandedComments[commentId] = !this.expandedComments[commentId];
-},
-
+    // In methods section
+    toggleCommentExpansion(commentId) {
+      // Direct assignment works in Vue 3
+      this.expandedComments[commentId] = !this.expandedComments[commentId];
+    },
 
     validateCommentLength() {
       if (this.newComment.length > 500) {
         this.newComment = this.newComment.substring(0, 500);
-        this.$message.warning('Comment cannot exceed 500 characters');
+        this.$message.warning("Comment cannot exceed 500 characters");
       }
     },
     // ✅ END OF NEW METHODS
@@ -1497,7 +1710,7 @@ toggleCommentExpansion(commentId) {
             body: JSON.stringify({
               post_id: post.id,
             }),
-          }
+          },
         );
 
         const data = await response.json();
@@ -1512,7 +1725,7 @@ toggleCommentExpansion(commentId) {
           }
 
           this.$message.success(`Post ${data.data.action}!`);
-          this.loadPosts()
+          this.loadPosts();
         }
       } catch (error) {
         console.error("Failed to toggle like:", error);
@@ -1533,7 +1746,7 @@ toggleCommentExpansion(commentId) {
             body: JSON.stringify({
               post_id: post.id,
             }),
-          }
+          },
         );
 
         const data = await response.json();
@@ -1568,7 +1781,7 @@ toggleCommentExpansion(commentId) {
         this.editForm.tag_ids = post.tags
           .map((tagName) => {
             const foundTag = this.availableTags.find(
-              (tag) => tag.label === tagName
+              (tag) => tag.label === tagName,
             );
             return foundTag ? foundTag.value : null;
           })
@@ -1599,14 +1812,14 @@ toggleCommentExpansion(commentId) {
               post_id: this.editingPost.id,
               ...this.editForm,
             }),
-          }
+          },
         );
 
         const data = await response.json();
 
         if (data.success) {
           const postIndex = this.posts.findIndex(
-            (p) => p.id === this.editingPost.id
+            (p) => p.id === this.editingPost.id,
           );
           if (postIndex !== -1) {
             this.posts[postIndex] = {
@@ -1664,7 +1877,7 @@ toggleCommentExpansion(commentId) {
             body: JSON.stringify({
               post_id: post.id,
             }),
-          }
+          },
         );
 
         const data = await response.json();
@@ -1709,37 +1922,34 @@ toggleCommentExpansion(commentId) {
       if (!text || text.length <= length) return text;
       return text.substring(0, length) + "...";
     },
-    
-    async toggleFavorite(product_id,product_type,product) {
-        try {
-            const token = localStorage.getItem('token');
-            
-            const response = await fetch(
-                
-            `${this.$store.state.root_api}likes/favorites/toggle/`,
-            {
-                method: "POST",
-                headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Token ${token}`,
-                },
-                body: JSON.stringify({
-                id: product_id,
-                type: product_type,
-                }),
-            }
-            );
 
-            const data = await response.json();
+    async toggleFavorite(product_id, product_type, product) {
+      try {
+        const token = localStorage.getItem("token");
 
-            product.is_favorited = data.favorited;
+        const response = await fetch(
+          `${this.$store.state.root_api}likes/favorites/toggle/`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Token ${token}`,
+            },
+            body: JSON.stringify({
+              id: product_id,
+              type: product_type,
+            }),
+          },
+        );
 
-        } catch (error) {
-            console.error("Favorite toggle failed", error);
-        }
-    }
-},
+        const data = await response.json();
 
+        product.is_favorited = data.favorited;
+      } catch (error) {
+        console.error("Favorite toggle failed", error);
+      }
+    },
+  },
 };
 </script>
 
@@ -1769,8 +1979,6 @@ toggleCommentExpansion(commentId) {
   /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); */
   /* transform: translateY(-2px); */
 }
-
-
 
 /* Fixed tags overlay positioning */
 .tags-overlay {
@@ -1915,10 +2123,10 @@ toggleCommentExpansion(commentId) {
 }
 
 /* Fix: Reference Tailwind to enable @apply and utilities */
-@reference "tailwindcss"; 
+@reference "tailwindcss";
 
 .comments-modal :deep(.ant-modal) {
-  @apply rounded-none md:rounded-3xl;  
+  @apply rounded-none md:rounded-3xl;
 }
 
 .comments-modal :deep(.ant-modal-content) {
@@ -1951,12 +2159,7 @@ toggleCommentExpansion(commentId) {
 .post-image-skeleton {
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    110deg,
-    #e5e7eb 8%,
-    #f9fafb 18%,
-    #e5e7eb 33%
-  );
+  background: linear-gradient(110deg, #e5e7eb 8%, #f9fafb 18%, #e5e7eb 33%);
   background-size: 200% 100%;
   animation: post-shimmer 1.6s infinite linear;
   border-radius: 16px;
@@ -1974,7 +2177,6 @@ toggleCommentExpansion(commentId) {
 .pinned-badge {
   z-index: 10;
 }
-
 
 .post-description {
   padding: 0 0 20px 0;

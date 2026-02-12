@@ -4,68 +4,70 @@
     <div v-if="loading" class="loading-container">
       <a-spin size="large" />
     </div>
-
+    
     <!-- Empty State -->
     <div v-else-if="!requests || requests.length === 0" class="empty-state">
       <a-empty description="No requests found" />
     </div>
-
+    
     <!-- List View -->
     <div v-else-if="viewMode === 'list'" class="list-view">
-      <a-table
-        :columns="columns"
-        :data-source="requests"
+      <a-table 
+        :columns="columns" 
+        :data-source="requests" 
         :customRow="onRowClick"
         :pagination="false"
         :scroll="{ x: 1000 }"
+        
         row-key="id"
       >
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'id'">
             {{ record.id.toString().slice(-4) }}
           </template>
-
+          
           <template v-else-if="column.key === 'date'">
             {{ formatDate(record.created_at) }}
           </template>
-
+          
           <template v-else-if="column.key === 'requester'">
             {{ record.email }}
           </template>
-
+          
           <template v-else-if="column.key === 'room_photo'">
-            <div class="room-photo">
-              <!-- SHIMMER OVERLAY (exact same position as img) -->
-              <div
-                v-if="record.image_url && !imageLoadedMap[record.id]"
-                class="room-photo-shimmer"
-              ></div>
+  <div class="room-photo">
+    <!-- SHIMMER OVERLAY (exact same position as img) -->
+    <div
+      v-if="record.image_url && !imageLoadedMap[record.id]"
+      class="room-photo-shimmer"
+    ></div>
+    
+    <!-- YOUR ORIGINAL IMG -->
+    <img 
+      v-if="record.image_url" 
+      :src="$store.state.root_media_api + record.image_url" 
+      :class="{ 'image-loaded': imageLoadedMap[record.id] }"
+      @load="onRoomPhotoLoad(record.id)"
+      alt="Room"
+    />
+    
+    <!-- YOUR ORIGINAL FALLBACK -->
+    <div v-else class="no-image">No Image</div>
+    
+    <!-- YOUR ORIGINAL TEXT (unchanged position) -->
+    <div class="request-text">
+      {{ truncateText(record.message, 50) }}
+    </div>
+  </div>
+</template>
 
-              <!-- YOUR ORIGINAL IMG -->
-              <img
-                v-if="record.image_url"
-                :src="$store.state.root_media_api + record.image_url"
-                :class="{ 'image-loaded': imageLoadedMap[record.id] }"
-                @load="onRoomPhotoLoad(record.id)"
-                alt="Room"
-              />
-
-              <!-- YOUR ORIGINAL FALLBACK -->
-              <div v-else class="no-image">No Image</div>
-
-              <!-- YOUR ORIGINAL TEXT (unchanged position) -->
-              <div class="request-text">
-                {{ truncateText(record.message, 50) }}
-              </div>
-            </div>
-          </template>
-
+          
           <template v-else-if="column.key === 'generated_room'">
             <!-- {{record}} -->
             <div class="generated-room">
-              <img
-                v-if="record.generated_image"
-                :src="this.$store.state.root_media_api + record.generated_image"
+              <img 
+                v-if="record.generated_image" 
+                :src="this.$store.state.root_media_api+record.generated_image" 
                 alt="Generated"
               />
               <div v-else class="pending-generation">-</div>
@@ -74,16 +76,18 @@
               </div>
             </div>
           </template>
-
+          
           <template v-else-if="column.key === 'status'">
-            <a-tag :color="getStatusColor(record.status)">
+            <a-tag 
+              :color="getStatusColor(record.status)"
+            >
               {{ record.status }}
             </a-tag>
           </template>
 
           <template v-else-if="column.key === 'actions'">
             <div class="action-buttons">
-              <a-button
+              <a-button 
                 v-if="record.status === 'Pending'"
                 type="primary"
                 size="small"
@@ -92,8 +96,8 @@
               >
                 Process Photo
               </a-button>
-
-              <a-button
+              
+              <a-button 
                 v-if="record.status === 'Completed'"
                 type="primary"
                 size="small"
@@ -105,11 +109,10 @@
                 </template>
                 Regenerate
               </a-button>
-
-              <a-button
-                v-if="
-                  record.status !== 'Rejected' && record.status !== 'Completed'
-                "
+              
+              
+              <a-button 
+                v-if="(record.status !== 'Rejected' ) && (record.status !== 'Completed' )"
                 danger
                 size="small"
                 @click.stop="openRejectModal(record)"
@@ -122,50 +125,48 @@
         </template>
       </a-table>
     </div>
-
+    
     <!-- Grid View -->
     <div v-else class="grid-view">
       <div class="requests-grid">
-        <div v-for="request in requests" :key="request.id" class="request-card">
+        <div 
+          v-for="request in requests" 
+          :key="request.id"
+          class="request-card"
+        >
           <div class="card-images">
             <div class="original-image">
-              <img
-                v-if="request.image_url"
-                :src="$store.state.root_media_api + request.image_url"
+              <img 
+                v-if="request.image_url" 
+                :src="$store.state.root_media_api + request.image_url" 
                 alt="Original"
               />
               <div v-else class="no-image">No Image</div>
             </div>
             <div class="generated-image">
-              <img
-                v-if="request.generated_image"
-                :src="
-                  this.$store.state.root_media_api + request.generated_image
-                "
+              <img 
+                v-if="request.generated_image" 
+                :src="this.$store.state.root_media_api+request.generated_image" 
                 alt="Generated"
               />
               <div v-else class="pending">Pending</div>
             </div>
           </div>
-
+          
           <div class="card-content">
             <div class="card-header">
-              <span class="request-id"
-                >ID: {{ request.id.toString().slice(-4) }}</span
-              >
+              <span class="request-id">ID: {{ request.id.toString().slice(-4) }}</span>
               <a-tag :color="getStatusColor(request.status)">
                 {{ request.status }}
               </a-tag>
             </div>
-
+            
             <div class="request-email">{{ request.email }}</div>
-            <div class="request-message">
-              {{ truncateText(request.message, 80) }}
-            </div>
+            <div class="request-message">{{ truncateText(request.message, 80) }}</div>
             <div class="request-date">{{ formatDate(request.created_at) }}</div>
-
+            
             <div class="card-actions">
-              <a-button
+              <a-button 
                 v-if="request.status === 'Pending'"
                 type="primary"
                 size="small"
@@ -175,8 +176,8 @@
               >
                 Process Photo
               </a-button>
-
-              <a-button
+              
+              <a-button 
                 v-if="request.status === 'Completed'"
                 type="primary"
                 size="small"
@@ -189,17 +190,15 @@
                 </template>
                 Regenerate
               </a-button>
-
-              <a-button
-                v-if="
-                  record.status !== 'Rejected' && record.status !== 'Completed'
-                "
+              
+              <a-button 
+                v-if="(record.status !== 'Rejected' ) && (record.status !== 'Completed' )"
                 danger
                 size="small"
                 @click.stop="openRejectModal(request)"
                 :loading="rejectingIds.includes(request.id)"
                 block
-                style="margin-top: 8px"
+                style="margin-top: 8px;"
               >
                 Reject
               </a-button>
@@ -216,15 +215,12 @@
       :confirm-loading="rejecting"
       @ok="handleReject"
       @cancel="closeRejectModal"
-    >
+      >
       <!-- :ok-button-props="{ disabled: !canReject }" -->
       <div class="reject-form">
-        <p>
-          <strong>Request ID:</strong>
-          {{ selectedRequest?.id?.toString().slice(-4) }}
-        </p>
+        <p><strong>Request ID:</strong> {{ selectedRequest?.id?.toString().slice(-4) }}</p>
         <p><strong>Email:</strong> {{ selectedRequest?.email }}</p>
-
+        
         <a-form layout="vertical">
           <!-- <a-form-item 
             label="Type 'CONFIRM' to proceed with rejection:"
@@ -237,13 +233,13 @@
               @input="validateConfirmation"
             />
           </a-form-item> -->
-
-          <a-form-item
+          
+          <a-form-item 
             label="Reason for rejection:"
             :validate-status="reasonError ? 'error' : ''"
             :help="reasonError"
           >
-            <a-textarea
+            <a-textarea 
               v-model:value="rejectReason"
               placeholder="Please provide a reason for rejection..."
               :rows="4"
@@ -255,6 +251,7 @@
       </div>
     </a-modal>
   </div>
+  
 
   <!-- Mobile View -->
   <div class="sm:hidden py-4">
@@ -262,93 +259,72 @@
     <div v-if="loading" class="flex justify-center items-center py-16">
       <a-spin size="large" />
     </div>
-
+    
     <!-- Empty State -->
     <div v-else-if="!requests || requests.length === 0" class="py-16">
       <a-empty description="No requests found" />
     </div>
-
+    
     <!-- Mobile Cards -->
     <div v-else class="space-y-1">
-      <div
-        v-for="request in requests"
+      <div 
+        v-for="request in requests" 
         :key="request.id"
         class="bg-white rounded-xl border border-gray-200 mb-4 overflow-hidden shadow-sm"
         @click="onRowClick(request)"
       >
         <!-- Header: ID and Date -->
-        <div
-          class="flex justify-between items-center px-4 py-3 border-b border-gray-100"
-        >
+        <div class="flex justify-between items-center px-4 py-3 border-b border-gray-100">
           <div class="flex items-center gap-2">
-            <span class="label-text text-sm font-semibold text-gray-900"
-              >Request ID:</span
-            >
-            <span class="text-[16px] font-extrabold text-black">{{
-              request.id.toString().slice(-4)
-            }}</span>
+            <span class="label-text text-sm font-semibold text-gray-900">Request ID:</span>
+            <span class="text-[16px] font-extrabold text-black">{{ request.id.toString().slice(-4) }}</span>
           </div>
-          <span class="label-text text-xs text-gray-500">{{
-            formatDate(request.created_at)
-          }}</span>
+          <span class="label-text text-xs text-gray-500">{{ formatDate(request.created_at) }}</span>
         </div>
 
         <!-- Email Section -->
         <div class="px-4 py-3 border-b border-gray-100">
           <div class="flex items-center gap-2">
             <span class="label-text text-xs text-gray-500">Requested by:</span>
-            <span class="label-text text-sm font-medium text-gray-900">{{
-              request.email
-            }}</span>
+            <span class="label-text text-sm font-medium text-gray-900">{{ request.email }}</span>
           </div>
         </div>
 
         <!-- Room Photo Section -->
         <div class="px-4 py-3 border-b border-gray-100">
           <div class="flex items-start justify-between gap-3">
-            <p
-              class="label-text !text-[12px] sm:!text-sm font-medium text-gray-700"
-            >
-              Room photo:
-            </p>
+            <p class="label-text text-sm font-medium text-gray-700">Room photo:</p>
+            
+           <div class="flex-shrink-0 w-[245px] relative">
+  <!-- SHIMMER (covers entire image area) -->
+  <div
+    v-if="request.image_url"
+    class="absolute inset-0 w-full h-[160px] rounded-lg border border-gray-200 z-10"
+    :class="{ 'opacity-0 transition-opacity duration-300': imageLoadedMap[request.id] }"
+  >
+    <div class="image-shimmer w-full h-full rounded-lg"></div>
+  </div>
+  
+  <!-- YOUR ORIGINAL IMG (always rendered underneath) -->
+  <img 
+    v-if="request.image_url" 
+    :src="$store.state.root_media_api + request.image_url" 
+    @load="onImageLoad(request.id)"
+    alt="Room"
+    class="w-full h-[160px] rounded-lg mb-4 object-cover border border-gray-200"
+  />
+  
+  <!-- YOUR ORIGINAL FALLBACK -->
+  <div v-else class="w-full h-[160px] rounded-lg bg-gray-100 flex items-center justify-center border border-gray-200 mb-4">
+    <span class="text-xs text-gray-400">No Image</span>
+  </div>
+  
+  <!-- DESCRIPTION (unchanged) -->
+  <p class="text-[12px] font-family-poppins tracking-tight text-gray-600 line-clamp-3 text-left">
+    {{ request.message || 'No message provided' }}
+  </p>
+</div>
 
-            <div class="flex-shrink-0 w-[245px] relative">
-              <!-- SHIMMER (covers entire image area) -->
-              <div
-                v-if="request.image_url"
-                class="absolute inset-0 w-full h-[160px] rounded-lg border border-gray-200 z-10"
-                :class="{
-                  'opacity-0 transition-opacity duration-300':
-                    imageLoadedMap[request.id],
-                }"
-              >
-                <div class="image-shimmer w-full h-full rounded-lg"></div>
-              </div>
-
-              <!-- YOUR ORIGINAL IMG (always rendered underneath) -->
-              <img
-                v-if="request.image_url"
-                :src="$store.state.root_media_api + request.image_url"
-                @load="onImageLoad(request.id)"
-                alt="Room"
-                class="w-full h-[160px] rounded-lg mb-4 object-cover border border-gray-200"
-              />
-
-              <!-- YOUR ORIGINAL FALLBACK -->
-              <div
-                v-else
-                class="w-full h-[160px] rounded-lg bg-gray-100 flex items-center justify-center border border-gray-200 mb-4"
-              >
-                <span class="text-xs text-gray-400">No Image</span>
-              </div>
-
-              <!-- DESCRIPTION (unchanged) -->
-              <p
-                class="text-[12px] font-family-poppins tracking-tight text-gray-600 line-clamp-3 text-left"
-              >
-                {{ request.message || "No message provided" }}
-              </p>
-            </div>
           </div>
         </div>
 
@@ -356,31 +332,20 @@
         <div class="px-4 py-3 border-b border-gray-100">
           <div class="flex items-start justify-between gap-3">
             <div class="flex-1 min-w-0">
-              <p
-                class="label-text !text-[12px] sm:!text-sm font-medium text-gray-700 mb-2"
-              >
-                Generated room:
-              </p>
-              <p class="label-text !text-[12px] sm:!text-sm text-gray-500">
-                {{
-                  request.generated_image
-                    ? formatDate(request.updated_at)
-                    : "Not generated yet"
-                }}
+              <p class="label-text text-sm font-medium text-gray-700 mb-2">Generated room:</p>
+              <p class="label-text text-[10px] text-gray-500">
+                {{ request.generated_image ? formatDate(request.updated_at) : 'Not generated yet' }}
               </p>
             </div>
-
+            
             <div class="flex-shrink-0">
               <img
-                v-if="request.generated_image"
-                :src="$store.state.root_media_api + request.generated_image"
+                v-if="request.generated_image" 
+                :src="$store.state.root_media_api + request.generated_image" 
                 alt="Generated"
                 class="w-[245px] h-[160px] rounded-lg object-cover border border-gray-200"
               />
-              <div
-                v-else
-                class="w-[245px] h-[160px] rounded-lg bg-gray-50 flex items-center justify-center border border-dashed border-gray-300"
-              >
+              <div v-else class="w-[245px] h-[160px] rounded-lg bg-gray-50 flex items-center justify-center border border-dashed border-gray-300">
                 <span class="text-xs label-text text-gray-400">Pending</span>
               </div>
             </div>
@@ -389,7 +354,7 @@
 
         <!-- Status Section -->
         <div class="px-4 py-3 bg-gray-50 border-b border-gray-100">
-          <a-tag
+          <a-tag 
             :color="getStatusColor(request.status)"
             class="!m-0 !rounded-full !w-full !text-center !font-family-poppins !py-1"
           >
@@ -399,52 +364,53 @@
 
         <!-- Action Buttons Section -->
         <div class="px-4 py-3 space-y-2">
-          <a-row>
+          <a-row >
+            
             <a-col :span="12">
-              <a-button
-                v-if="
-                  request.status !== 'Rejected' &&
-                  request.status !== 'Completed'
-                "
-                danger
-                size="large"
-                @click.stop="openRejectModal(request)"
-                :loading="rejectingIds.includes(request.id)"
-                block
-                class="!rounded-lg"
-              >
-                Reject Request
-              </a-button>
+              
+          
+          <a-button 
+            v-if="(request.status !== 'Rejected') && (request.status !== 'Completed')"
+            danger
+            size="large"
+            @click.stop="openRejectModal(request)"
+            :loading="rejectingIds.includes(request.id)"
+            block
+            class="!rounded-lg"
+          >
+            Reject Request
+          </a-button>
             </a-col>
-            <a-col :span="12">
-              <a-button
-                v-if="request.status === 'Pending'"
-                type="primary"
-                size="large"
-                @click.stop="processPhoto(request)"
-                :loading="processingIds.includes(request.id)"
-                block
-                class="!rounded-lg"
-                style="margin-bottom: 10px"
-              >
-                Process Photo
-              </a-button>
-              <a-button
-                v-if="request.status === 'Completed'"
-                type="primary"
-                size="large"
-                @click.stop="processPhoto(request)"
-                :loading="regeneratingIds.includes(request.id)"
-                block
-                class="!rounded-lg"
-              >
-                <template #icon>
-                  <ReloadOutlined />
-                </template>
-                Regenerate
-              </a-button></a-col
-            >
+            <a-col :span="12">  <a-button 
+            v-if="request.status === 'Pending'"
+            type="primary"
+            size="large"
+            @click.stop="processPhoto(request)"
+            :loading="processingIds.includes(request.id)"
+            block
+            class="!rounded-lg"
+            style="margin-bottom:10px"
+          >
+            Process Photo
+          </a-button>
+        <a-button 
+            v-if="request.status === 'Completed'"
+            type="primary"
+            size="large"
+            @click.stop="processPhoto(request)"
+            :loading="regeneratingIds.includes(request.id)"
+            block
+            class="!rounded-lg"
+          >
+            <template #icon>
+              <ReloadOutlined />
+            </template>
+            Regenerate
+          </a-button></a-col>
           </a-row>
+        
+          
+          
         </div>
       </div>
     </div>
@@ -459,19 +425,16 @@
     @cancel="closeRejectModal"
   >
     <div class="reject-form">
-      <p>
-        <strong>Request ID:</strong>
-        {{ selectedRequest?.id?.toString().slice(-4) }}
-      </p>
+      <p><strong>Request ID:</strong> {{ selectedRequest?.id?.toString().slice(-4) }}</p>
       <p><strong>Email:</strong> {{ selectedRequest?.email }}</p>
-
+      
       <a-form layout="vertical">
-        <a-form-item
+        <a-form-item 
           label="Reason for rejection:"
           :validate-status="reasonError ? 'error' : ''"
           :help="reasonError"
         >
-          <a-textarea
+          <a-textarea 
             v-model:value="rejectReason"
             placeholder="Please provide a reason for rejection..."
             :rows="4"
@@ -481,31 +444,31 @@
         </a-form-item>
       </a-form>
     </div>
-  </a-modal>
+    </a-modal>
 </template>
 
 <script>
-import { ReloadOutlined } from "@ant-design/icons-vue";
-import { message } from "ant-design-vue";
+import { ReloadOutlined } from '@ant-design/icons-vue'
+import { message } from 'ant-design-vue'
 
 export default {
-  name: "RequestsList",
+  name: 'RequestsList',
   components: {
-    ReloadOutlined,
+    ReloadOutlined
   },
   props: {
     requests: {
       type: Array,
-      default: () => [],
+      default: () => []
     },
     loading: {
       type: Boolean,
-      default: false,
+      default: false
     },
     viewMode: {
       type: String,
-      default: "list",
-    },
+      default: 'list'
+    }
   },
   data() {
     return {
@@ -517,213 +480,199 @@ export default {
       // Reject modal state
       rejectModalVisible: false,
       selectedRequest: null,
-      confirmationText: "",
-      rejectReason: "",
+      confirmationText: '',
+      rejectReason: '',
       rejecting: false,
-      confirmationError: "",
-      reasonError: "",
-
+      confirmationError: '',
+      reasonError: '',
+      
       columns: [
         {
-          title: "ID",
-          dataIndex: "id",
-          key: "id",
+          title: 'ID',
+          dataIndex: 'id',
+          key: 'id',
           width: 80,
-          sorter: (a, b) => a.id - b.id,
+          sorter: (a, b) => a.id - b.id
         },
         {
-          title: "Request Date",
-          key: "date",
+          title: 'Request Date',
+          key: 'date',
           width: 120,
-          sorter: (a, b) => new Date(a.created_at) - new Date(b.created_at),
+          sorter: (a, b) => new Date(a.created_at) - new Date(b.created_at)
         },
         {
-          title: "Requested Email",
-          key: "requester",
-          width: 150,
+          title: 'Requested Email',
+          key: 'requester',
+          width: 150
         },
         {
-          title: "Room Photo",
-          key: "room_photo",
-          width: 300,
+          title: 'Room Photo',
+          key: 'room_photo',
+          width: 300
         },
         {
-          title: "Generated Room",
-          key: "generated_room",
+          title: 'Generated Room',
+          key: 'generated_room',
+          width: 200
+        },
+        {
+          title: 'Status',
+          key: 'status',
+          width: 100
+        },
+        {
+          title: 'Actions',
+          key: 'actions',
           width: 200,
-        },
-        {
-          title: "Status",
-          key: "status",
-          width: 100,
-        },
-        {
-          title: "Actions",
-          key: "actions",
-          width: 200,
-          fixed: "right",
-        },
-      ],
-    };
+          fixed: 'right'
+        }
+      ]
+    }
   },
   computed: {
     canReject() {
-      return this.rejectReason.trim().length > 0;
-    },
+      return  this.rejectReason.trim().length > 0
+    }
   },
   methods: {
     onRowClick(record) {
       return {
         onClick: () => {
           console.log("Clicked row ID:", record.id);
-          this.$emit("record-clicked", { id: record.id, record: record });
+          this.$emit('record-clicked',{'id':record.id,'record':record})
           // if you want to emit or do something else, you can:
           // this.$emit("row-selected", record.id)
         },
-        style: {
-          cursor: "pointer", // 👈 makes the cursor change
-        },
+         style: {
+          cursor: "pointer",   // 👈 makes the cursor change
+        }
       };
     },
-    onRoomPhotoLoad(id) {
-      this.imageLoadedMap[id] = false;
-      setTimeout(() => {
-        this.imageLoadedMap[id] = true;
-      }, 1000); // 1s shimmer
-    },
+onRoomPhotoLoad(id) {
+    this.imageLoadedMap[id] = false;
+    setTimeout(() => {
+      this.imageLoadedMap[id] = true;
+    }, 1000); // 1s shimmer
+  },
 
-    onImageLoad(id) {
-      this.imageLoadedMap[id] = false;
-      setTimeout(() => {
-        this.imageLoadedMap[id] = true;
-      }, 1000);
-    },
-
+  onImageLoad(id) {
+     this.imageLoadedMap[id] = false;
+    setTimeout(() => {
+      this.imageLoadedMap[id] = true;
+    }, 1000);
+  },
+  
     formatDate(dateString) {
-      if (!dateString) return "-";
-      const date = new Date(dateString);
-      return date.toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-      });
+      if (!dateString) return '-'
+      const date = new Date(dateString)
+      return date.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      })
     },
-
+    
     getStatusColor(status) {
       const colors = {
-        Pending: "orange",
-        Completed: "blue",
-        Rejected: "red",
-      };
-      return colors[status] || "default";
+        'Pending': 'orange',
+        'Completed': 'blue',
+        'Rejected': 'red'
+      }
+      return colors[status] || 'default'
     },
-
+    
     truncateText(text, maxLength = 100) {
-      if (!text) return "No message provided";
-      return text.length > maxLength
-        ? text.substring(0, maxLength) + "..."
-        : text;
+      if (!text) return 'No message provided'
+      return text.length > maxLength ? text.substring(0, maxLength) + '...' : text
     },
 
+
+   
     async processPhoto(request) {
       try {
-        this.processingIds.push(request.id);
-        const response = await fetch(
-          `${this.$store.state.root_api}engine/new-room-client-requested/`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Token ${localStorage.getItem("token")}`,
-            },
-            body: JSON.stringify({
-              client_request_id: request.id,
-            }),
+        this.processingIds.push(request.id)
+        const response = await fetch(`${this.$store.state.root_api}engine/new-room-client-requested/`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${localStorage.getItem('token')}`
+
           },
-        );
+          body: JSON.stringify({
+            client_request_id: request.id,
+          })
+        })
 
         if (response.ok) {
-          message.success("Photo processing started successfully");
+          message.success('Photo processing started successfully')
           const responseData = await response.json();
-          console.log(responseData);
+          console.log(responseData)
           // Emit event to parent component if needed
-          this.$emit("upload-success", responseData);
-          this.$router.push({
-            name: "update_catelogue",
-            params: { id: responseData.room_id },
-          });
+          this.$emit('upload-success', responseData);
+          this.$router.push({ name: 'update_catelogue', params: { id: responseData.room_id } });
+
         } else {
-          throw new Error("Failed to process photo");
+          throw new Error('Failed to process photo')
         }
       } catch (error) {
-        console.error("Error processing photo:", error);
-        message.error("Failed to process photo");
+        console.error('Error processing photo:', error)
+        message.error('Failed to process photo')
       } finally {
-        this.processingIds = this.processingIds.filter(
-          (id) => id !== request.id,
-        );
+        this.processingIds = this.processingIds.filter(id => id !== request.id)
       }
     },
 
     async regenerate(request) {
       try {
-        this.regeneratingIds.push(request.id);
-
-        const response = await fetch(
-          `${this.$store.state.root_api}room_request/business-owner-room-requests-api/regenerate/`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              request_id: request.id,
-            }),
+        this.regeneratingIds.push(request.id)
+        
+        const response = await fetch(`${this.$store.state.root_api}room_request/business-owner-room-requests-api/regenerate/`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
           },
-        );
+          body: JSON.stringify({
+            request_id: request.id
+          })
+        })
 
         if (response.ok) {
-          message.success("Regeneration started successfully");
-          this.$emit("refresh");
+          message.success('Regeneration started successfully')
+          this.$emit('refresh')
         } else {
-          throw new Error("Failed to Regenerate");
+          throw new Error('Failed to Regenerate')
         }
       } catch (error) {
-        console.error("Error regenerating:", error);
-        message.error("Failed to Regenerate room");
+        console.error('Error regenerating:', error)
+        message.error('Failed to Regenerate room')
       } finally {
-        this.regeneratingIds = this.regeneratingIds.filter(
-          (id) => id !== request.id,
-        );
+        this.regeneratingIds = this.regeneratingIds.filter(id => id !== request.id)
       }
     },
 
     openRejectModal(request) {
-      this.selectedRequest = request;
-      this.rejectModalVisible = true;
-      this.confirmationText = "";
-      this.rejectReason = "";
-      this.confirmationError = "";
-      this.reasonError = "";
+      this.selectedRequest = request
+      this.rejectModalVisible = true
+      this.confirmationText = ''
+      this.rejectReason = ''
+      this.confirmationError = ''
+      this.reasonError = ''
     },
 
     closeRejectModal() {
-      this.rejectModalVisible = false;
-      this.selectedRequest = null;
-      this.confirmationText = "";
-      this.rejectReason = "";
-      this.confirmationError = "";
-      this.reasonError = "";
+      this.rejectModalVisible = false
+      this.selectedRequest = null
+      this.confirmationText = ''
+      this.rejectReason = ''
+      this.confirmationError = ''
+      this.reasonError = ''
     },
 
     validateConfirmation() {
-      if (
-        this.confirmationText &&
-        this.confirmationText.toUpperCase() !== "CONFIRM"
-      ) {
-        this.confirmationError = 'Please type "CONFIRM" exactly';
+      if (this.confirmationText && this.confirmationText.toUpperCase() !== 'CONFIRM') {
+        this.confirmationError = 'Please type "CONFIRM" exactly'
       } else {
-        this.confirmationError = "";
+        this.confirmationError = ''
       }
     },
 
@@ -735,48 +684,43 @@ export default {
       // }
 
       if (!this.rejectReason.trim()) {
-        this.reasonError = "Rejection reason is required";
-        return;
+        this.reasonError = 'Rejection reason is required'
+        return
       }
 
       try {
-        this.rejecting = true;
-        this.rejectingIds.push(this.selectedRequest.id);
+        this.rejecting = true
+        this.rejectingIds.push(this.selectedRequest.id)
 
-        const response = await fetch(
-          `${this.$store.state.root_api}room_request/business-owner-room-requests-api/reject-room-requests-recieved/`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              request_id: this.selectedRequest.id,
-              reject_reason: this.rejectReason.trim(),
-            }),
+        const response = await fetch(`${this.$store.state.root_api}room_request/business-owner-room-requests-api/reject-room-requests-recieved/`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
           },
-        );
+          body: JSON.stringify({
+            request_id: this.selectedRequest.id,
+            reject_reason: this.rejectReason.trim()
+          })
+        })
 
         if (response.ok) {
-          message.success("Request rejected successfully");
-          this.closeRejectModal();
-          this.$emit("refresh");
+          message.success('Request rejected successfully')
+          this.closeRejectModal()
+          this.$emit('refresh')
         } else {
-          const errorData = await response.json().catch(() => ({}));
-          throw new Error(errorData.message || "Failed to reject request");
+          const errorData = await response.json().catch(() => ({}))
+          throw new Error(errorData.message || 'Failed to reject request')
         }
       } catch (error) {
-        console.error("Error rejecting request:", error);
-        message.error(error.message || "Failed to reject request");
+        console.error('Error rejecting request:', error)
+        message.error(error.message || 'Failed to reject request')
       } finally {
-        this.rejecting = false;
-        this.rejectingIds = this.rejectingIds.filter(
-          (id) => id !== this.selectedRequest?.id,
-        );
+        this.rejecting = false
+        this.rejectingIds = this.rejectingIds.filter(id => id !== this.selectedRequest?.id)
       }
-    },
-  },
-};
+    }
+  }
+}
 </script>
 
 <style scoped>
@@ -800,7 +744,7 @@ export default {
   font-style: normal;
   font-size: 14px;
   line-height: 20px;
-  color: #4d4d4d;
+  color: #4D4D4D;
 }
 
 .line-clamp-3 {
@@ -834,7 +778,12 @@ export default {
   left: 4;
   width: 60px;
   height: 60px;
-  background: linear-gradient(110deg, #e5e7eb 8%, #f9fafb 18%, #e5e7eb 33%);
+  background: linear-gradient(
+    110deg,
+    #e5e7eb 8%,
+    #f9fafb 18%,
+    #e5e7eb 33%
+  );
   background-size: 200% 100%;
   border-radius: 8px;
   border: 1px solid #e8e8e8;
@@ -851,6 +800,7 @@ export default {
 .room-photo img.image-loaded {
   z-index: 2;
 }
+
 
 .room-photo img {
   width: 60px;
@@ -874,20 +824,22 @@ export default {
 .image-shimmer {
   width: 100%;
   height: 100%;
-  background: linear-gradient(110deg, #f3f4f6 8%, #e5e7eb 18%, #f3f4f6 33%);
+  background: linear-gradient(
+    110deg,
+    #f3f4f6 8%,
+    #e5e7eb 18%,
+    #f3f4f6 33%
+  );
   background-size: 200% 100%;
   border-radius: inherit;
   animation: shimmer 1.5s infinite linear;
 }
 
 @keyframes shimmer {
-  0% {
-    background-position-x: 0%;
-  }
-  100% {
-    background-position-x: -200%;
-  }
+  0% { background-position-x: 0%; }
+  100% { background-position-x: -200%; }
 }
+
 
 .request-text {
   flex: 1;
@@ -958,8 +910,7 @@ export default {
   height: 200px;
 }
 
-.original-image,
-.generated-image {
+.original-image, .generated-image {
   flex: 1;
   display: flex;
   align-items: center;
@@ -1039,7 +990,7 @@ export default {
   .requests-grid {
     grid-template-columns: 1fr;
   }
-
+  
   .action-buttons {
     flex-direction: column;
   }
