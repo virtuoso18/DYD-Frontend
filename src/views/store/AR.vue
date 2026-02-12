@@ -135,6 +135,38 @@
               :style="{ width: loadingProgress + '%' }"
             ></div>
           </div>
+          <!-- Floating Color Selector for AR Mode -->
+          <div v-if="isARActive && ProductDetails" class="ar-floating-colors">
+            <div class="!flex gap-1 w-1/2">
+              <div
+                v-for="(color, index) in ProductDetails.colors.available_colors"
+                :key="color.id"
+                @click="switchColorInAR(index, color)"
+                :class="[
+                  'ar-color-dot',
+                  selectedColorIndex === index ? 'active' : '',
+                ]"
+                :style="{ backgroundColor: color.color }"
+              ></div>
+            </div>
+            <div class="!flex !justify-end w-1/2">
+              <a-button
+                style="
+                  padding: 2px 12px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                "
+              >
+                <template v-if="true">
+                  <HeartFilled style="color: red" />
+                </template>
+                <template>
+                  <HeartOutlined />
+                </template>
+              </a-button>
+            </div>
+          </div>
         </model-viewer>
       </div>
     </div>
@@ -604,6 +636,7 @@ import {
   LeftOutlined,
   ArrowLeftOutlined,
   HeartOutlined,
+  HeartFilled,
   IssuesCloseOutlined,
   ShoppingCartOutlined,
 } from "@ant-design/icons-vue";
@@ -663,6 +696,15 @@ export default {
       selectedColorIndex: null,
       selectedColorHex: null,
       showColorAlert: false,
+
+      //model switcher
+      models: [
+        { name: "Chair" },
+        { name: "Mixer" },
+        { name: "GeoPlanter" },
+        { name: "ToyTrain" },
+        { name: "Canoe" },
+      ],
     };
   },
 
@@ -670,6 +712,7 @@ export default {
     LeftOutlined,
     ArrowLeftOutlined,
     HeartOutlined,
+    HeartFilled,
     IssuesCloseOutlined,
     ShoppingCartOutlined,
   },
@@ -709,17 +752,55 @@ export default {
   },
 
   methods: {
+    switchColorInAR(index, color) {
+      if (!color.model_file_colored_product) {
+        this.$message.warning("3D model not available for this color");
+        return;
+      }
+      if (this.selectedColorIndex === index) {
+        return;
+      }
+      this.selectedColorIndex = index;
+      const viewer = this.$refs.modelViewer;
+
+      if (viewer && viewer.arStatus === "session-started") {
+        viewer.exitAR();
+
+        setTimeout(() => {
+          viewer.src =
+            this.$store.state.root_media_api + color.model_file_colored_product;
+
+          setTimeout(() => {
+            if (viewer.canActivateAR) {
+              viewer.activateAR();
+            }
+          }, 500);
+        }, 300);
+      } else {
+        this.updateModelViewerSource();
+      }
+    },
+    // switch model
+    switchModel(index) {
+      this.selectedColorIndex = index;
+
+      // Optional: If AR session is running, exit first
+      const viewer = this.$refs.modelViewer;
+      if (viewer && viewer.arStatus === "session-started") {
+        viewer.exitAR();
+      }
+    },
     // In your methods
-updateARButton() {
-  const viewer = this.$refs.modelViewer;
-  if (viewer) {
-    // This tells Scene Viewer to allow moving without the reticle
-    viewer.arConfig = { 
-      initialScale: 'auto',
-      disableOcclusion: !this.occlusionSupported 
-    };
-  }
-},
+    updateARButton() {
+      const viewer = this.$refs.modelViewer;
+      if (viewer) {
+        // This tells Scene Viewer to allow moving without the reticle
+        viewer.arConfig = {
+          initialScale: "auto",
+          disableOcclusion: !this.occlusionSupported,
+        };
+      }
+    },
     selectVariant(variant) {
       this.$router
         .push({
@@ -1975,4 +2056,61 @@ updateARButton() {
     opacity: 0.5;
   }
 }
-</style> 
+
+/* Floating AR Color Selector */
+.ar-floating-colors {
+  position: fixed;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 253, 253, 0);
+  backdrop-filter: blur(10px);
+  padding: 10px 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  display: flex;
+  gap: 10px;
+  z-index: 1600;
+  animation: fadeInUp 0.3s ease;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.ar-color-dot {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 3px solid transparent;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.ar-color-dot:active {
+  transform: scale(0.9);
+}
+
+.ar-color-dot.active {
+  border-color: #1890ff;
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.4);
+}
+
+@media (max-width: 480px) {
+  .ar-floating-colors {
+    width: 100%;
+    bottom: 0px;
+    left: 0px;
+    transform: none;
+    justify-content: center;
+  }
+}
+</style>
