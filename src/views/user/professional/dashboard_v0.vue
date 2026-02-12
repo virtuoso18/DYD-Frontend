@@ -10,16 +10,15 @@
 <div class="dashboard-container ">
    
     <!-- Mobile Header - Only visible on mobile when viewing content -->
-<div v-if="!menu_view_mobile" class="mobile-header-sticky">
-  <button @click="menu_view_mobile = true" class="back-button flex items-center gap-2 text-gray-700 hover:text-gray-900">
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-      <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-    <span class="font-medium">Menu</span>
-  </button>
-  <h2 class="text-lg font-semibold text-gray-900">{{ currentPageTitle }}</h2>
-</div>
-
+    <div v-if="!menu_view_mobile" class="mobile-header md:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-[#e9ecef] px-4 py-3 flex items-center justify-between shadow-sm">
+      <button @click="menu_view_mobile = true" class="back-button flex items-center gap-2 text-gray-700 hover:text-gray-900">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="font-medium">Menu</span>
+      </button>
+      <h2 class="text-lg font-semibold text-gray-900">{{ currentPageTitle }}</h2>
+    </div>
 
     <!-- Main Dashboard Content -->
     <a-row class="dashboard-content  ">
@@ -1270,28 +1269,6 @@ export default {
   align-items: center;
   margin-bottom: 12px;
 }
-
-/* Mobile Header - Sticky */
-.mobile-header-sticky {
-  display: none;
-  background: white;
-  border-bottom: 1px solid #e9ecef;
-  padding: 12px 16px;
-  align-items: center;
-  justify-content: space-between;
-  position: sticky;
-  top: 0; /* Changed from 48px to 0 */
-  z-index: 99; /* One less than navbar (if navbar is 100) */
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-}
-
-@media (max-width: 768px) {
-  .mobile-header-sticky {
-    display: flex;
-  }
-}
-
-
 
 .package-label {
   font-size: 12px;
