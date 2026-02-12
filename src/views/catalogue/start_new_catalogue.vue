@@ -344,7 +344,7 @@
         </div>
 
         <!-- Content -->
-        <div class="px-6 mt-6">
+        <div class="px-6 !pt-6 sm:!pt-0">
           <div class="flex items-center justify-between mb-6 flex-wrap gap-2">
             <h4 class="text-base font-bold text-gray-900" style="font-family: poppins;">Project Stats</h4>
           </div>
@@ -358,7 +358,7 @@
           </div>
 
           <!-- Stats Cards -->
-          <div class="grid grid-cols-3 gap-3 mb-8 h-20">
+          <div class="grid grid-cols-3 gap-3 !pt-2 sm:!pt-0 h-20">
             <div class="bg-white rounded-xl border border-gray-200 p-3 flex flex-col items-center justify-center text-center hover:shadow-md transition-shadow">
               <p class="text-2xl font-bold text-gray-900 leading-none" style="font-family: poppins;">{{ selectedImage.objects_detected }}</p>
               <p class="text-xs text-gray-600 mt-1" style="font-family: poppins;">Objects</p>
@@ -374,7 +374,7 @@
           </div>
 
           <!-- Buttons -->
-          <div class="space-y-3">
+          <div class="!space-y-2  !pt-16 sm:!pt-0">
             <button
               @click="showObjectManagement = true"
               class="w-full bg-[#F2F2F2] hover:bg-gray-200 text-gray-900 font-semibold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg active:scale-[0.98]"

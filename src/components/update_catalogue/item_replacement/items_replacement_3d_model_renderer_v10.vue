@@ -11,7 +11,6 @@
       <img :src="item?.value" alt="gesture" class="gesture-icon" />
     </div>
   </a-modal>
-  <!-- {{isLoading}} -->
   <div
     class="main-canvas max-h-[300px] md:max-h-[95vh] mx-auto"
     ref="canvasContainer"
@@ -67,7 +66,7 @@
           bottom: 10px;
           left: 10px;
 "
-        >W-{{ modelDimensions.width }}m X H-{{modelDimensions.height}}m X D-{{ modelDimensions.depth }}m</span
+        >W-{{ currentModelDimensions.width }}m X H-{{currentModelDimensions.height}}m X D-{{ currentModelDimensions.depth }}m</span
 >
     </div>
   </div>
@@ -186,19 +185,19 @@ export default {
   name: "ItemReplacementRenderer",
 
   props: {
-    // glbUrl: { type: String, required: true },
+    glbUrl: { type: String, required: true },
     product_id: { type: String, required: true },
     baseImageUrl: { type: String, required: true },
-    // is_resizable: { type: Boolean, required: true },
+    is_resizable: { type: Boolean, required: true },
     isLoading: {
       type: Boolean,
       required: true,
     },
     floorData: Object,
-    // modelDimensions: {
-    //   type: Object,
-    //   default: () => ({ width: 0.00, height: 0.00, depth: 0.00 }),
-    // },
+    modelDimensions: {
+      type: Object,
+      default: () => ({ width: 0.00, height: 0.00, depth: 0.00 }),
+    },
   },
 
   computed: {
@@ -212,7 +211,8 @@ export default {
     },
   },
   emits: ["rendered-comfyui-workflow", "Apply-Changes", "update:isLoading"],
- data() {
+
+  data() {
     return {
       // isLoading: false,
       loadingText: "Initializing...",
@@ -227,20 +227,6 @@ export default {
       modelPosition: { x: 0, y: 0 },
       modelRotation: { y: 0 },
 
-      // ✅ NEW: Internal scaling factor (doesn't affect display)
-    internalScaleFactor: 1.0,  // 1.0 = desktop, 1.3 = mobile
-    
-
-       // Product data from API
-    glbUrl: '',                    // ✅ From API
-    is_resizable: false,           // ✅ From API
-    modelDimensions: {             // ✅ From API
-      width: 0,
-      height: 0,
-      depth: 0
-    },
-   
-    
 
       isShowInstructionModal: false,
       instructionConfig: [
@@ -260,11 +246,6 @@ export default {
       ],
 
 
-    loadingText: "Initializing...",
-    modelLoaded: false,
-    viewerInitialized: false,
-    productDataLoaded: false,      // ✅ NEW - track API call
-    
       // Floor data from JSON
       // floorData: {}
       // ... your existing data ...
@@ -281,7 +262,6 @@ export default {
       },
     };
   },
-  
 
   created() {
     this.scene = null;
@@ -325,45 +305,6 @@ export default {
   // CORRECT PLACEMENT - Replace your entire watch section with this:
 
   watch: {
-
-  '$route.query.product_id': {
-    async handler(newProductId, oldProductId) {
-      console.log('👀 Product ID changed in query:', {
-        old: oldProductId,
-        new: newProductId
-      });
-      
-      // Only reload if product ID actually changed
-      if (newProductId && newProductId !== oldProductId) {
-        console.log('🔄 Reloading product details for:', newProductId);
-        
-        try {
-          this.$emit("update:isLoading", true);
-          this.loadingText = 'Loading new product...';
-          
-          // Reset product data
-          this.glbUrl = '';
-          this.is_resizable = false;
-          this.modelDimensions = {
-            width: 0,
-            height: 0,
-            depth: 0
-          };
-          
-          // Load new product
-          await this.loadProductDetailsAndInitialize();
-          
-        } catch (error) {
-          console.error('❌ Failed to reload product:', error);
-          this.$emit("update:isLoading", false);
-          this.loadingText = 'Error loading product';
-        }
-      }
-    },
-    deep: true,
-    immediate: false  // Don't trigger on mount (already handled there)
-  }
-,
     glbUrl: {
     handler(newUrl, oldUrl) {
       
@@ -432,137 +373,26 @@ export default {
   }
   },
   mounted() {
-  console.log('🚀 Component mounted');
-  console.log('📝 product_id from props:', this.product_id);
-  
-  // Step 1: Load product details
-  this.loadProductDetailsAndInitialize();
-  
-},
+    if (this.glbUrl !== "" && this.modelDimensions.width && this.modelDimensions.height && this.modelDimensions.depth) {
+      // Initialize currentModelDimensions from props
+      this.currentModelDimensions = {
+        width: parseFloat(this.modelDimensions.width),
+        height: parseFloat(this.modelDimensions.height),
+        depth: parseFloat(this.modelDimensions.depth),
+      };
 
+      this.$nextTick(() => {
+        this.handleGlbUrlChange();
+        this.load_the_fileData();
+      });
+    }
+  },
 
   beforeUnmount() {
     this.cleanup();
   },
 
   methods: {
-async loadProductDetailsAndInitialize() {
-  try {
-      this.$emit("update:isLoading", true);
-
-    this.loadingText = 'Loading product details...';
-    
-    const productData = await this.loadProductDetails();
-    
-    if (!productData) {
-      throw new Error('Failed to load product details');
-    }
-    
-    console.log('✅ Product data loaded:', productData);
-    
-    // Set original dimensions (NEVER MODIFY THESE)
-    this.modelDimensions = {
-      width: parseFloat(productData.dimensions.width),
-      height: parseFloat(productData.dimensions.height),
-      depth: parseFloat(productData.dimensions.depth),
-    };
-    
-    console.log('📏 Original dimensions:', this.modelDimensions);
-    
-    // Set display to original
-    this.currentModelDimensions = {
-      width: this.modelDimensions.width,
-      height: this.modelDimensions.height,
-      depth: this.modelDimensions.depth,
-    };
-    
-    this.glbUrl = productData.model_url;
-    this.is_resizable = productData.is_resizable;
-    
-    // Adjust INTERNAL scale only
-    this.adjustDimensionsForScreen();
-    
-    this.$nextTick(() => {
-      this.handleGlbUrlChange();
-    });
-    
-    this.productDataLoaded = true;
-    
-  } catch (error) {
-    console.error('❌ Failed to load product:', error);
-          this.$emit("update:isLoading", false);
-
-    this.loadingText = 'Error loading product';
-  }
-},
-
-// Step 3a: New method to adjust dimensions for mobile
-adjustDimensionsForScreen() {
-  console.log('🖥️ Adjusting internal scale for screen size...');
-  
-  const isMobile = window.innerWidth < 768;
-  const isTablet = window.innerWidth >= 768 && window.innerWidth < 1024;
-  const isDesktop = window.innerWidth >= 1024;
-  
-  if (isMobile) {
-    this.internalScaleFactor = 1.155;  // 30% larger internally
-    console.log('📱 Mobile - internal scale: 1.3x');
-  } else if (isTablet) {
-    this.internalScaleFactor = 1.155;  // 10% larger internally
-    console.log('📱 Tablet - internal scale: 1.1x');
-  } else if (isDesktop) {
-    this.internalScaleFactor = 1.0;  // Original size
-    console.log('🖥️ Desktop - internal scale: 1.0x');
-  }
-  
-  // ✅ CRITICAL: Keep modelDimensions UNCHANGED
-  console.log('✅ Display dimensions (unchanged):', this.modelDimensions);
-  console.log('📐 Internal scaling factor:', this.internalScaleFactor);
-},
-// Existing method - REFACTOR IT
-async loadProductDetails() {
-  try {
-    // const url = `${this.$store.state.root_api}product/api/product-details/${this.product_id}/`;
-    const url = `${this.$store.state.root_api}product/api/product-details/${this.$route.query.product_id}/`;
-    
-    console.log('📡 Fetching from:', url);
-    
-    const token = localStorage.getItem('token');
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Token ${token}`,
-        'Content-Type': 'application/json'
-      }
-    });
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    
-    const result = await response.json();
-    
-    if (!result.success || !result.data) {
-      throw new Error('Invalid response format');
-    }
-    
-    const data = result.data;
-    
-    return {
-      model_url: this.$store.state.root_media_api + data['3d_model'],
-      is_resizable: data.is_resizable,
-      dimensions: {
-        width: data.dimensions.width,
-        height: data.dimensions.height,
-        depth: data.dimensions.length
-      }
-    };
-    
-  } catch (error) {
-    console.error('❌ Error loading product details:', error);
-    throw error;
-  }
-},
        showInstructionModal() {
       this.isShowInstructionModal = true;
     },
@@ -621,12 +451,6 @@ async loadProductDetails() {
         this.modelDimensions.depth * this.modelScale
       ).toFixed(2);
 
-
-      // Update the dimension display
-      this.modelDimensions.width = this.currentModelDimensions.width
-      this.modelDimensions.height = this.currentModelDimensions.height
-      this.modelDimensions.depth = this.currentModelDimensions.depth
-
       this.applyModelScale();
     },
 
@@ -647,12 +471,6 @@ async loadProductDetails() {
       this.currentModelDimensions.depth = (
         this.modelDimensions.depth * this.modelScale
       ).toFixed(2);
-
-     
-      // Update the dimension display
-      this.modelDimensions.width = this.currentModelDimensions.width
-      this.modelDimensions.height = this.currentModelDimensions.height
-      this.modelDimensions.depth = this.currentModelDimensions.depth
 
       this.applyModelScale();
     },
@@ -692,19 +510,19 @@ async loadProductDetails() {
       this.updateRotationRingPosition();
     },
 
-    // async load_the_fileData() {
-    //   try {
-    //     const response = await fetch(this.floor_3d_model_grid);
+    async load_the_fileData() {
+      try {
+        const response = await fetch(this.floor_3d_model_grid);
 
-    //     if (!response.ok) {
-    //       throw new Error(`HTTP error! status: ${response.status}`);
-    //     }
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
-    //     this.floorData = await response.json();
-    //   } catch (error) {
-    //     console.error("Error loading floor data:", error);
-    //   }
-    // },
+        this.floorData = await response.json();
+      } catch (error) {
+        console.error("Error loading floor data:", error);
+      }
+    },
 
     // // Replace your existing renderItem method with this:
     // async renderItem() {
@@ -1268,111 +1086,56 @@ async loadProductDetails() {
       tempRenderer.dispose();
       return blob;
     },
-   async handleGlbUrlChange() {
-  try {
-    console.log('🔄 handleGlbUrlChange triggered');
-    console.log('   glbUrl:', this.glbUrl);
-    console.log('   dimensions:', this.modelDimensions);
-    
-    this.resetComponentState();
-          this.$emit("update:isLoading", true);
+    async handleGlbUrlChange() {
+      try {
+        this.resetComponentState();
+        this.$emit("update:isLoading", true);
+        this.loadingText = "Initializing 3D Viewer...";
+        await this.$nextTick();
 
-    this.loadingText = "Initializing 3D Viewer...";
-    
-    await this.$nextTick();
-
-    if (!this.viewerInitialized) {
-      console.log('📊 Initializing viewer for first time');
-      await this.initializeViewer();
-    } else {
-      console.log('♻️ Reinitializing with new model');
-      await this.reinitializeWithNewModel();
-    }
-    
-    this.reset_entire_room();
-          this.$emit("update:isLoading", false);
-
-    
-  } catch (error) {
-    console.error("❌ Error in handleGlbUrlChange:", error);
-    this.showErrorState();
-  }
-},
-
-   resetComponentState() {
-  console.log('🧹 Resetting component state');
-  
-  this.modelLoaded = false;
-  this.modelPosition = { x: 0, y: 0 };
-  this.modelRotation = { y: 0 };
-
-  if (this.model && this.scene) {
-    this.scene.remove(this.model);
-    this.model.traverse((child) => {
-      if (child.isMesh) {
-        child.geometry?.dispose();
-        if (child.material?.map) child.material.map.dispose();
-        child.material?.dispose();
+        if (!this.viewerInitialized) {
+          await this.initializeViewer();
+        } else {
+          await this.reinitializeWithNewModel();
+        }
+        this.reset_entire_room()
+      } catch (error) {
+        console.error("Error handling glbUrl change:", error);
+        this.showErrorState();
       }
-    });
-    this.model = null;
-    this.modelBoundingBox = null;
-    this.modelSize = null;
-  }
+    },
 
-  // ✅ CRITICAL: Remove rotation ring
-  if (this.rotationRing && this.scene) {
-    console.log('🗑️ Removing rotation ring from scene');
-    this.scene.remove(this.rotationRing);
-    this.rotationRing.traverse((child) => {
-      if (child.isMesh || child.isLine) {
-        child.geometry?.dispose();
-        child.material?.dispose();
+    resetComponentState() {
+      this.modelLoaded = false;
+      this.modelPosition = { x: 0, y: 0 };
+      this.modelRotation = { y: 0 };
+
+      if (this.model && this.scene) {
+        this.scene.remove(this.model);
+        this.model = null;
+        this.modelBoundingBox = null;
+        this.modelSize = null;
       }
-    });
-    this.rotationRing = null;
-    this.rotationArrows = [];
-  }
 
-  if (this.gridHelper) {
-    this.gridHelper.visible = false;
-  }
-
-  console.log('✅ Component state reset');
-},
-
- async reinitializeWithNewModel() {
-  console.log('♻️ Reinitializing with new model');
-  
-  this.loadingText = "Loading new model...";
-  
-  // Remove old ring before loading new model
-  if (this.rotationRing && this.scene) {
-    console.log('🗑️ Removing old ring before new model');
-    this.scene.remove(this.rotationRing);
-    this.rotationRing.traverse((child) => {
-      if (child.isMesh) {
-        child.geometry?.dispose();
-        child.material?.dispose();
+      if (this.rotationRing && this.scene) {
+        this.scene.remove(this.rotationRing);
+        this.rotationRing = null;
+        this.rotationArrows = [];
       }
-    });
-    this.rotationRing = null;
-    this.rotationArrows = [];
-  }
-  
-  // Load new model
-  this.$emit("update:isLoading", false);
-  await this.loadModel();
-  
-  // Create NEW ring
-  this.createRotationRing();
-  this.updateRotationRingPosition();
+    },
 
-  this.fitCameraToModel();
-  this.$emit("update:isLoading", false);
-  
-  console.log('✅ Reinitialization complete');
-},
+    async reinitializeWithNewModel() {
+      this.loadingText = "Loading new model...";
+      this.$emit("update:isLoading", false);
+      await this.loadModel();
+      this.fitCameraToModel();
+      // Recreate rotation ring for new model
+      this.createRotationRing();
+      this.updateRotationRingPosition();
+
+      this.fitCameraToModel();
+      this.$emit("update:isLoading", false);
+    },
 
     async initializeViewer() {
       await this.$nextTick();
@@ -1696,52 +1459,36 @@ async loadProductDetails() {
     },
 
     createRotationRing() {
-  console.log('🔄 Creating rotation ring');
-  
-  // ✅ Remove old ring first
-  if (this.rotationRing) {
-    console.log('🗑️ Removing old rotation ring');
-    this.scene.remove(this.rotationRing);
-    this.rotationRing.traverse((child) => {
-      if (child.isMesh) {
-        child.geometry?.dispose();
-        child.material?.dispose();
-      }
-    });
-  }
+      this.rotationRing = new THREE.Group();
+      this.rotationRing.name = "rotationRing";
 
-  this.rotationRing = new THREE.Group();
-  this.rotationRing.name = "rotationRing";
+      const ringGeometry = new THREE.RingGeometry(0.8, 0.85, 64);
+      const ringMaterial = new THREE.MeshBasicMaterial({
+        color: 0x00ffff,
+        transparent: true,
+        opacity: 0.8,
+        side: THREE.DoubleSide,
+        depthTest: true, // ← Change from false to true
+        depthWrite: true, // ← Add this
+      });
+      const ring = new THREE.Mesh(ringGeometry, ringMaterial);
+      ring.rotation.x = -Math.PI / 2;
+      ring.name = "rotationRingMesh";
+      this.rotationRing.add(ring);
 
-  const ringGeometry = new THREE.RingGeometry(0.8, 0.85, 64);
-  const ringMaterial = new THREE.MeshBasicMaterial({
-    color: 0x00ffff,
-    transparent: true,
-    opacity: 0.8,
-    side: THREE.DoubleSide,
-    depthTest: true,
-    depthWrite: true,
-  });
-  
-  const ring = new THREE.Mesh(ringGeometry, ringMaterial);
-  ring.rotation.x = -Math.PI / 2;
-  ring.name = "rotationRingMesh";
-  this.rotationRing.add(ring);
+      // Create 4 rotation arrows
+      const arrowPositions = [0, Math.PI / 2, Math.PI, (3 * Math.PI) / 2];
 
-  const arrowPositions = [0, Math.PI / 2, Math.PI, (3 * Math.PI) / 2];
+      arrowPositions.forEach((angle, index) => {
+        const arrowGroup = this.createRotationArrow(angle, index);
+        this.rotationRing.add(arrowGroup);
+        this.rotationArrows.push(arrowGroup);
+      });
 
-  arrowPositions.forEach((angle, index) => {
-    const arrowGroup = this.createRotationArrow(angle, index);
-    this.rotationRing.add(arrowGroup);
-    this.rotationArrows.push(arrowGroup);
-  });
-
-  this.rotationRing.visible = this.showRotationRing;
-  this.rotationRing.renderOrder = 999;
-  this.scene.add(this.rotationRing);
-  
-  console.log('✅ Rotation ring created');
-},
+      this.rotationRing.visible = this.showRotationRing;
+      this.rotationRing.renderOrder = 999; // Render on top
+      this.scene.add(this.rotationRing);
+    },
 
     createRotationArrow(angle, index) {
       const arrowGroup = new THREE.Group();
@@ -1769,35 +1516,25 @@ async loadProductDetails() {
     },
 
     // FIXED: Update rotation ring to maintain circular shape
-   
     updateRotationRingPosition() {
-  if (!this.rotationRing || !this.model || !this.modelSize || !this.renderer) {
-    console.warn('⚠️ Cannot update ring - missing dependencies');
-    return;
-  }
+      if (!this.rotationRing || !this.model || !this.modelSize) return;
 
-  // Position at model center
-  this.rotationRing.position.copy(this.model.position);
+      // Position at model center
+      this.rotationRing.position.copy(this.model.position);
 
-  // ✅ Scale based on canvas width (35% of canvas)
-  const canvas = this.renderer.domElement;
-  const canvasWidth = canvas.clientWidth;
-  
-  // Ring diameter = 1.7, so scale = desired_width / 1.7
-  const maxRingWidth = canvasWidth * 0.35;
-  const targetScale = maxRingWidth / 1.7;
-  
-  // Clamp between 0.5 and 1.5
-  const ringScale = Math.max(0.5, Math.min(1.5, targetScale));
-  
-  console.log('📐 Ring scale:', ringScale.toFixed(3), '(canvas:', canvasWidth, 'px)');
-  
-  this.rotationRing.scale.setScalar(ringScale);
-  this.rotationRing.rotation.set(0, 0, 0);
+      // Calculate scale based on model size (larger models = larger ring)
+      const avgSize = (this.modelSize.x + this.modelSize.z) / 2;
+      const baseScale = Math.max(0.8, avgSize * 1.2);
+      this.rotationRing.scale.setScalar(baseScale);
 
-  const offset = this.modelSize.y * 0.05;
-  this.rotationRing.position.y += offset;
-},
+      // Keep ring horizontal (don't tilt with floor)
+      // This ensures it stays circular in screen space
+      this.rotationRing.rotation.set(0, 0, 0);
+
+      // Offset ring slightly above model
+      const offset = this.modelSize.y * 0.05;
+      this.rotationRing.position.y += offset;
+    },
     // async loadModel() {
     //   if (!this.glbUrl || this.glbUrl === "") {
     //     console.warn("No glbUrl provided");
@@ -1856,7 +1593,7 @@ async loadProductDetails() {
 
     async loadModel() {
   if (!this.glbUrl || this.glbUrl === "") {
-    console.warn("⚠️ No glbUrl provided");
+    console.warn("No glbUrl provided");
     return Promise.resolve();
   }
 
@@ -1879,24 +1616,18 @@ async loadProductDetails() {
           }
         });
 
-        console.log('🎯 Model loaded, setting up bounds');
-        console.log('   Using dimensions:', {
-          width: this.modelDimensions.width.toFixed(3),
-          height: this.modelDimensions.height.toFixed(3),
-          depth: this.modelDimensions.depth.toFixed(3)
-        });
-        
-        // ✅ CRITICAL: setupModelBounds() now uses correct dimensions
+        // ✅ CRITICAL: Setup bounds BEFORE positioning
+        console.log('🎯 Setting up model with dimensions:', this.modelDimensions);
         this.setupModelBounds();
         
+        // ✅ Position AFTER scaling is applied
         this.positionModelOnFloor();
 
         this.scene.add(this.model);
         this.updateRotationRingPosition();
         this.fitCameraToModel();
 
-              this.$emit("update:isLoading", false);
-
+        this.$emit("update:isLoading", false);
         this.modelLoaded = true;
         console.log("✅ Model loaded successfully");
         resolve();
@@ -1910,9 +1641,8 @@ async loadProductDetails() {
         }
       },
       (error) => {
-        console.error("❌ Failed to load model", error);
-              this.$emit("update:isLoading", false);
-
+        console.error("Failed to load model", error);
+        this.$emit("update:isLoading", false);
         this.modelLoaded = false;
         reject(error);
       },
@@ -1950,51 +1680,56 @@ async loadProductDetails() {
     //   // console.log('Model bounds max.y:', this.modelBoundingBox.max.y);
     //   // console.log('Model position after centering:', this.model.position);
     // },
-  // ✅ DO NOT MODIFY - Your current implementation is perfect
-setupModelBounds() {
+    
+   setupModelBounds() {
   console.log('=== 📐 SETUP MODEL BOUNDS ===');
   
+  // Get raw bounding box BEFORE any scaling
   const rawBbox = new THREE.Box3().setFromObject(this.model);
   const rawSize = rawBbox.getSize(new THREE.Vector3());
   
-  console.log('📦 Raw model size:', {
+  console.log('📦 Raw model size (before scaling):', {
     x: rawSize.x.toFixed(4),
     y: rawSize.y.toFixed(4),
     z: rawSize.z.toFixed(4)
   });
   
-  // ✅ Apply internalScaleFactor to the 3D scaling
-  const targetWidth = parseFloat(this.modelDimensions.width) * this.internalScaleFactor;
-  const targetHeight = parseFloat(this.modelDimensions.height) * this.internalScaleFactor;
-  const targetDepth = parseFloat(this.modelDimensions.depth) * this.internalScaleFactor;
+  // Get target dimensions from props (in meters)
+  const targetWidth = parseFloat(this.modelDimensions.width);
+  const targetHeight = parseFloat(this.modelDimensions.height);
+  const targetDepth = parseFloat(this.modelDimensions.depth);
   
-  console.log('🎯 Target dimensions for 3D scaling:', {
-    width: targetWidth.toFixed(4),
-    height: targetHeight.toFixed(4),
-    depth: targetDepth.toFixed(4)
+  console.log('🎯 Target dimensions (in meters):', {
+    width: targetWidth,
+    height: targetHeight,
+    depth: targetDepth
   });
-  console.log('📊 Internal scale factor:', this.internalScaleFactor);
   
+  // ✅ CRITICAL: Calculate scale for each dimension
   const scaleX = targetWidth / rawSize.x;
   const scaleY = targetHeight / rawSize.y;
   const scaleZ = targetDepth / rawSize.z;
   
-  console.log('📊 Scale factors:', {
+  console.log('📊 Scale factors needed:', {
     X: scaleX.toFixed(4),
     Y: scaleY.toFixed(4),
     Z: scaleZ.toFixed(4)
   });
   
+  // ✅ Use MINIMUM scale to ensure object fits within target dimensions
+  // This prevents the object from being too large in any dimension
   this.baseModelScale = Math.min(scaleX, scaleY, scaleZ);
   
-  console.log('⚖️ Using scale:', this.baseModelScale.toFixed(4));
+  console.log('⚖️ Using MINIMUM scale:', this.baseModelScale.toFixed(4));
   
+  // ✅ Apply the scale to the model
   this.model.scale.set(
     this.baseModelScale,
     this.baseModelScale,
     this.baseModelScale
   );
   
+  // Recalculate bounding box after scaling
   this.modelBoundingBox = new THREE.Box3().setFromObject(this.model);
   this.modelSize = this.modelBoundingBox.getSize(new THREE.Vector3());
   
@@ -2004,6 +1739,7 @@ setupModelBounds() {
     depth: this.modelSize.z.toFixed(3) + 'm'
   });
   
+  // ✅ Verify the scaling worked
   const maxDim = Math.max(this.modelSize.x, this.modelSize.y, this.modelSize.z);
   const targetMax = Math.max(targetWidth, targetHeight, targetDepth);
   
@@ -2014,9 +1750,11 @@ setupModelBounds() {
     console.log('✅ Scaling verified successfully!');
   }
   
+  // Center the model at origin
   const center = this.modelBoundingBox.getCenter(new THREE.Vector3());
   this.model.position.sub(center);
   
+  // Update bounding box one final time
   this.modelBoundingBox = new THREE.Box3().setFromObject(this.model);
   
   console.log('📍 Model bottom Y:', this.modelBoundingBox.min.y.toFixed(3));
@@ -2510,55 +2248,41 @@ setupModelBounds() {
       console.error("An error occurred in the 3D viewer");
     },
 
-   cleanup() {
-  console.log('🧹 Cleaning up component');
-  
-  if (this.animationId) {
-    cancelAnimationFrame(this.animationId);
-    this.animationId = null;
-  }
-
-  window.removeEventListener("resize", this.onWindowResize);
-
-  // ✅ Dispose rotation ring
-  if (this.rotationRing && this.scene) {
-    this.scene.remove(this.rotationRing);
-    this.rotationRing.traverse((child) => {
-      if (child.isMesh) {
-        child.geometry?.dispose();
-        child.material?.dispose();
+    cleanup() {
+      if (this.animationId) {
+        cancelAnimationFrame(this.animationId);
+        this.animationId = null;
       }
-    });
-    this.rotationRing = null;
-    this.rotationArrows = [];
-  }
 
-  if (this.renderer) {
-    const canvas = this.renderer.domElement;
-    canvas.removeEventListener("mousedown", this.onMouseDown);
-    canvas.removeEventListener("mousemove", this.onMouseMove);
-    canvas.removeEventListener("mouseup", this.onMouseUp);
-    canvas.removeEventListener("mouseleave", this.onMouseUp);
+      window.removeEventListener("resize", this.onWindowResize);
 
-    canvas.removeEventListener("touchstart", this.onMouseDown);
-    canvas.removeEventListener("touchmove", this.onMouseMove);
-    canvas.removeEventListener("touchend", this.onMouseUp);
-    canvas.removeEventListener("touchcancel", this.onMouseUp);
+      if (this.renderer) {
+        const canvas = this.renderer.domElement;
+        canvas.removeEventListener("mousedown", this.onMouseDown);
+        canvas.removeEventListener("mousemove", this.onMouseMove);
+        canvas.removeEventListener("mouseup", this.onMouseUp);
+        canvas.removeEventListener("mouseleave", this.onMouseUp);
 
-    this.renderer.dispose();
+        canvas.removeEventListener("touchstart", this.onMouseDown);
+        canvas.removeEventListener("touchmove", this.onMouseMove);
+        canvas.removeEventListener("touchend", this.onMouseUp);
+        canvas.removeEventListener("touchcancel", this.onMouseUp);
 
-    if (canvas.parentNode) {
-      canvas.parentNode.removeChild(canvas);
-    }
-  }
+        this.renderer.dispose();
 
-  if (this.scene) {
-    this.scene.clear();
-  }
+        if (canvas.parentNode) {
+          canvas.parentNode.removeChild(canvas);
+        }
+      }
 
-  this.viewerInitialized = false;
-  this.modelLoaded = false;
-}
+      if (this.scene) {
+        this.scene.clear();
+      }
+
+      this.viewerInitialized = false;
+      this.modelLoaded = false;
+      // this.$emit('update:isLoading', false);
+    },
   },
 };
 </script>

@@ -240,53 +240,66 @@
                   class="product-responsive"
                   style="padding: 5px"
                 >
-                  <div class="product ">
-                    <!-- {{ product }} -->
-                    <div
-                      class=""
-                      @click="viewRoom(product)"
-                    >
-                      <img
-                        :src="$store.state.root_media_api + product.image"
-                        :alt="product.name"
-                        class="product-image "
-                      />
-                      <!-- Category Badge -->
-                     <div class="like-badge">
-  <a-button
-    @click="toggleFavorite(product)"
-    class="like-btn"
+              <div class="product">
+  <div 
+    class="product-image-container"
+    @click="viewRoom(product)"
+    style="position: relative; overflow: hidden;"
   >
-    <template v-if="product.is_favorited">
-      <HeartFilled style="color: red" />
-    </template>
-    <template v-else>
-      <HeartOutlined />
-    </template>
-  </a-button>
+    <!-- Skeleton -->
+    <div
+      v-if="!productImageLoadedMap[product.id]"
+      class="product-image-skeleton"
+    ></div>
+
+    <!-- Preload image (hidden, triggers @load) -->
+    <img
+      :src="$store.state.root_media_api + product.image"
+      :alt="product.name"
+      style="position:absolute;width:0;height:0;opacity:0;"
+      @load="onProductImageLoad(product.id)"
+    />
+
+    <!-- Visible image -->
+    <img
+      v-show="productImageLoadedMap[product.id]"
+      :src="$store.state.root_media_api + product.image"
+      :alt="product.name"
+      class="product-image"
+    />
+
+    <!-- Like Badge -->
+    <div class="like-badge">
+      <a-button
+        @click.stop="toggleFavorite(product)"
+        class="like-btn"
+      >
+        <template v-if="product.is_favorited">
+          <HeartFilled style="color: red" />
+        </template>
+        <template v-else>
+          <HeartOutlined />
+        </template>
+      </a-button>
+    </div>
+  </div>
+
+  <div style="height: 7px;"></div>
+
+  <a-row>
+    <a-col span="24">
+      <a-button
+        block
+        @click="viewRoom(product)"
+        style="display: flex; font-size: 12px; justify-content: center; align-items: center;"
+      >
+        Room Details
+      </a-button>
+    </a-col>
+  </a-row>
 </div>
 
-                      
-                    </div>
-                    <!-- {{ truncateText(product.description || 'No description available', 8) }} -->
-<div style="height:7px;"></div>
-                    <a-row>
-                      <!-- <a-col span="24">
-                        <b>{{
-                          truncateText(product.name || "No name available", 19)
-                        }}</b>
-                      </a-col> -->
 
-                      <a-col span="24">
-                        <a-button block @click="viewRoom(product)" style="display: flex;font-size: 12px;; justify-content: center;align-items: center;"
-                          >Room Details</a-button
-                        >
-                      </a-col>
-
-                      
-                    
-                    </a-row>
-                  </div>
                 </a-col>
               </a-row>
               <div
@@ -696,6 +709,7 @@ export default {
       products: [],
       rooms: [],
       roomModalVisible: false,
+      productImageLoadedMap: {},
       selectedRoom: null,
       productImageLoadedMap: {},
       community_posts: [],
@@ -762,8 +776,9 @@ export default {
     this.productImageLoadedMap[id] = false;
     setTimeout(() => {
       this.productImageLoadedMap[id] = true;
-    }, 1000); // 1s skeleton
-  },
+    }, 1000); // 1s skeleton display
+  }, // ✓ Vue 3 reactivity handles this automatically
+  
 
     handleTabClick(key) {
       this.active_tab = key;
@@ -926,6 +941,7 @@ export default {
     async fetchMyRooms(page = 1) {
       try {
         this.isLoading = true;
+        this.productImageLoadedMap = {};
         const token = localStorage.getItem("token");
         const response = await fetch(
           `${this.$store.state.root_api}likes/favorites/?page=${page}&page_size=${this.roomPagination.pageSize}&item_type=room`,
@@ -1063,6 +1079,32 @@ export default {
   background-color: white;
 }
 
+.product-image-skeleton {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 240px !important; /* ← MATCH container height */
+  border-radius: 12px; /* ← MATCH image border-radius */
+  background: linear-gradient(
+    110deg,
+    #e5e7eb 8%,
+    #f9fafb 18%,
+    #e5e7eb 33%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s infinite linear;
+  z-index: 1;
+}
+
+@keyframes shimmer {
+  to {
+    background-position-x: -200%;
+  }
+}
+
+
+
 /* Force remove modal backdrop interference */
 :deep(.ant-modal-mask) {
   z-index: 1000 !important;
@@ -1082,22 +1124,29 @@ export default {
   justify-content: space-between;
 }
 .product {
+  position: relative;
   padding: 10px;
   margin-bottom: 10px;
   border-radius: 10px;
   background: #f3f2f4;
 }
+/* Make sure image container is relative */
+.product > div:first-child {
+  position: relative;
+  overflow: hidden;
+}
+
 .products-list {
   padding-bottom: 20px;
 }
 .product-image-container {
   position: relative;
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  height: 180px;
+  height: 240px !important;
   display: flex;
   align-items: center;
   justify-content: center;
-  /* padding: 16px; */
+  overflow: hidden; /* ← Added this */
 }
 
 .product-image {
@@ -1106,6 +1155,8 @@ export default {
   object-fit: cover;
   border-radius: 12px;
   transition: transform 0.3s ease;
+  position: relative; /* ← Added this */
+  z-index: 2; /* ← Added this */
 }
 
 .category-badge {
@@ -1120,6 +1171,7 @@ export default {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  z-index: 3; /* ← Make sure badge is on top */
 }
 
 .like-badge {
@@ -1154,7 +1206,7 @@ export default {
 
 .product-image-skeleton {
   width: 100%;
-  height: 240px;
+  height: 180px;
   border-radius: 10px;
   background: linear-gradient(
     110deg,

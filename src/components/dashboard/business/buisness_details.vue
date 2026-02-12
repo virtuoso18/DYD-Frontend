@@ -357,16 +357,29 @@ Upload Room Photo</h2>
 
           <!-- Business Details Form -->
           <div class="business-details-section" style="margin-top:10px;">
-            <div class="section-header">
-              <h3>Business Information</h3>
-              <a-button type="text" class="edit-button" @click="toggleEditMode">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                  <path d="M11 4H4C3.46957 4 2.96086 4.21071 2.58579 4.58579C2.21071 4.96086 2 5.46957 2 6V20C2 20.5304 2.21071 21.0391 2.58579 21.4142C2.96086 21.7893 3.46957 22 4 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M18.5 2.5C18.8978 2.10217 19.4374 1.87868 20 1.87868C20.5626 1.87868 21.1022 2.10217 21.5 2.5C21.8978 2.89783 22.1213 3.43739 22.1213 4C22.1213 4.56261 21.8978 5.10217 21.5 5.5L12 15L8 16L9 12L18.5 2.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                Edit
-              </a-button>
-            </div>
+           <div class="section-header sm:mt-8">
+  <h3>Business Information</h3>
+  <div class="header-buttons">
+    <!-- Edit button - shown when NOT in edit mode -->
+    <a-button v-if="!isEditMode" type="text" class="edit-button" @click="toggleEditMode">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+        <path d="M11 4H4C3.46957 4 2.96086 4.21071 2.58579 4.58579C2.21071 4.96086 2 5.46957 2 6V20C2 20.5304 2.21071 21.0391 2.58579 21.4142C2.96086 21.7893 3.46957 22 4 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M18.5 2.5C18.8978 2.10217 19.4374 1.87868 20 1.87868C20.5626 1.87868 21.1022 2.10217 21.5 2.5C21.8978 2.89783 22.1213 3.43739 22.1213 4C22.1213 4.56261 21.8978 5.10217 21.5 5.5L12 15L8 16L9 12L18.5 2.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Edit
+    </a-button>
+    <!-- Save and Cancel buttons - shown when in edit mode -->
+    <div v-if="isEditMode" class="edit-mode-buttons">
+      <a-button type="primary" @click="saveChanges" class="save-btn" :loading="saving">
+        Save Changes
+      </a-button>
+      <a-button @click="cancelEdit" class="cancel-btn">
+        Cancel
+      </a-button>
+    </div>
+  </div>
+</div>
+
 
             <a-form layout="vertical" class="business-form">
 <a-row
@@ -376,14 +389,14 @@ Upload Room Photo</h2>
     md: [24, 12]
   }"
 >
-<div v-if="isEditMode" class="w-full flex justify-end gap-2 p-2">
+<!-- <div v-if="isEditMode" class="w-full flex justify-end gap-2 p-2">
   <a-button type="primary" @click="saveChanges" class="save-btn" :loading="saving">
     Save Changes
   </a-button>
   <a-button @click="cancelEdit" class="cancel-btn">
     Cancel
   </a-button>
-</div>
+</div> -->
 
             <!-- Name Field -->
                 <a-col :xs="24" :sm="24" :md="24" :lg="24">
@@ -562,7 +575,7 @@ Upload Room Photo</h2>
 </svg>
                         <a-input :disabled="!isEditMode" v-model:value="businessInfo.facebook" addon-before="https://facebook.com/" class="social-input" />
                       </div>
-                      <a-button type="link" class="add-social-btn" v-if="isEditMode">Add</a-button>
+                      
                     </div>
                   </a-form-item>
                 </a-col>
@@ -1379,6 +1392,13 @@ async checkVerificationStatus() {
   line-height: 1.5;
 }
 
+.form-input:not(:disabled),
+.form-textarea:not(:disabled) {
+  border: 1px solid #212f39;
+  background: #f2f2f2;
+  box-shadow: 0 0 0 3px rgba(24, 144, 255, 0.1);
+}
+
 .form-input:focus,
 .form-textarea:focus {
   border-color: #1890ff;
@@ -1401,6 +1421,18 @@ async checkVerificationStatus() {
   display: flex;
   align-items: center;
   gap: 12px;
+}
+
+.header-buttons {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.edit-mode-buttons {
+  display: flex;
+  gap: 12px;
+  align-items: center;
 }
 
 .social-icon {

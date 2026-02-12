@@ -999,7 +999,7 @@
         >
           <!-- Title -->
           <h2
-            className="!mt-2 text-lg lg:text-2xl font-semibold px-2 whitespace-nowrap"
+            className="!mt-4 sm:mt-6 text-lg lg:text-2xl font-semibold px-2 whitespace-nowrap"
           >
             My Products
             <span class="text-gray-500 text-base">

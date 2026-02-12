@@ -1267,6 +1267,7 @@ Switch Furniture</a-button> -->
 
             <!-- glbUrl="http://127.0.0.1:8000/media/products/3d_models/046-cp7.glb" -->
             <!-- {{ floor_3d_model_grid }} -->
+              <!-- {{ canvasLoading }} -->
             <items_replacement_renderer
               v-if="
                 current_tab == 'image' &&
@@ -1502,6 +1503,8 @@ Switch Furniture</a-button> -->
                 select_replace === 'Floor'
               "
               @texture-selected="floorTextureSelected"
+              @texture-floor-product-selected="texture_floor_selected"
+              
               ref="floor_products_list_mobile"
               :brand_data="brand_data"
               @floor-see-all="floorSeeAll"
@@ -1514,6 +1517,7 @@ Switch Furniture</a-button> -->
               "
               @texture-selected="wallTextureSelected"
               ref="wall_products_list_mobile"
+              @texture-wall-product-selected="texture_wall_selected"
               :brand_data="brand_data"
               @walls-see-all="wallsSeeAll"
             ></walls>
@@ -2148,6 +2152,8 @@ Switch Furniture</a-button> -->
                       "
                       @texture-selected="floorTextureSelected"
                       ref="floor_products_list"
+                     @texture-floor-product-selected="texture_floor_selected"
+
                       :brand_data="brand_data"
                       @floor-see-all="floorSeeAll"
                     ></floor>
@@ -2161,6 +2167,8 @@ Switch Furniture</a-button> -->
                       @texture-selected="wallTextureSelected"
                       ref="wall_products_list"
                       :brand_data="brand_data"
+                      @texture-wall-product-selected="texture_wall_selected"
+
                       @walls-see-all="wallsSeeAll"
                     ></walls>
                     <fernitures
@@ -3424,6 +3432,32 @@ export default {
   },
 
   methods: {
+    texture_floor_selected(e){
+    this.$router.replace({
+              query: {
+                ...this.$route.query, // keep existing query params
+                product_type: "floor",
+                product_id: e,
+                window_name: "floor",
+
+              },
+            });  
+
+            
+    },
+    texture_wall_selected(e){
+      this.$router.replace({
+              query: {
+                ...this.$route.query, // keep existing query params
+                product_type: "wall",
+                product_id: e,
+              window_name: "wall",
+
+              },
+            });  
+
+
+    },
     handle3DModelTransformUpdate(transform) {
     this.preserved3DModelTransform = transform;
     console.log('📌 Preserved 3D transform:', transform);
@@ -3559,6 +3593,25 @@ export default {
       this.brand_walls = e.walls;
       this.brand_furniture_products = e.furniture_products;
       this.brand_lights = e.lights;
+
+
+        // 👇 ADD THIS CODE HERE 👇
+        if(this.$route.query.window_name === 'All'){
+          this.select_replace ='All';
+        }
+        if(this.$route.query.window_name === 'furniture'){
+          this.select_replace ='Furniture';
+        }
+        if(this.$route.query.window_name === 'floor'){
+          this.select_replace ='Floor';
+        }
+        if(this.$route.query.window_name === 'wall'){
+          this.select_replace ='Wall';
+        }
+        if(this.$route.query.window_name === 'light'){
+          this.select_replace ='Lights';
+        }
+        
     },
     async rescaleWallMask(e) {
       // 2. FLOOR TEXTURE METHOD (corrected)
@@ -3630,6 +3683,8 @@ export default {
             // this.fetchRoom_floor_3d_cords(),
             this.fetch3d_models_generated_by_room(),
           ]);
+
+          
           console.log("✅ Component initialized");
         }
       } catch (error) {
@@ -4691,17 +4746,88 @@ export default {
             }
           });
         }
+
+          
+          const query = { ...this.$route.query };
+          delete query.product_id; // ✅ remove it
+          delete query.product_type; // ✅ remove it
+          delete query.selected_light_type; // ✅ remove it
+          this.$router.replace({
+            query: {
+              ...query,
+              window_name: "all",
+            },
+          });
+            
       } else if (category === "Wall") {
         this.showSelectionButtons = true;
         this.selected_objects_binary_masks = [];
+
+          
+           
+          const query = { ...this.$route.query };
+          delete query.product_id; // ✅ remove it
+          delete query.product_type; // ✅ remove it
+          delete query.selected_light_type; // ✅ remove it
+
+
+          this.$router.replace({
+            query: {
+              ...query,
+              window_name: "wall",
+            },
+          });
+            
       } else if (category === "Floor") {
         this.showSelectionButtons = false;
         this.selectedMasks = [];
         this.selected_objects_binary_masks = [];
+
+          
+           
+          const query = { ...this.$route.query };
+          delete query.product_id; // ✅ remove it
+          delete query.product_type; // ✅ remove it
+          delete query.selected_light_type; // ✅ remove it
+
+          this.$router.replace({
+            query: {
+              ...query,
+              window_name: "floor",
+            },
+          });
+            
       } else if (category === "Lights") {
         this.showSelectionButtons = false;
         this.selectedMasks = [];
         this.selected_objects_binary_masks = [];
+
+          const query = { ...this.$route.query };
+          delete query.product_id; // ✅ remove it
+          delete query.product_type; // ✅ remove it
+          delete query.selected_light_type; // ✅ remove it
+
+          this.$router.replace({
+            query: {
+              ...query,
+              window_name: "light",
+            },
+          });
+            
+      } else if (category === "Furniture") {
+
+          const query = { ...this.$route.query };
+          delete query.product_id; // ✅ remove it
+          delete query.product_type; // ✅ remove it
+          delete query.selected_light_type; // ✅ remove it
+
+          this.$router.replace({
+            query: {
+              ...query,
+              window_name: "furniture",
+            },
+          });
+            
       }
 
       this.forceCanvasUpdate();
@@ -4927,6 +5053,18 @@ export default {
           ) {
             this.$refs.floor_products_list.selectTexture(e.id);
             this.$refs.floor_products_list_mobile.selectTexture(e.id);
+
+            this.$router.replace({
+              query: {
+                ...this.$route.query, // keep existing query params
+                product_type: "floor",
+                product_id: e.id,
+                window_name: "floor",
+
+              },
+            });
+
+
           }
         });
       }
@@ -4953,6 +5091,13 @@ export default {
             this.select_replace === "Furniture" &&
             (this.$refs.furniture_products_list || this.$refs.furniture_products_list_mobile)
           ) {
+          this.$router.replace({
+              query: {
+                ...this.$route.query, // keep existing query params
+                product_type: "furniture",
+                product_id: e.id,
+              },
+          });
             // this.item_replacement_renderer_3d_model_url = this.$store.state.root_media_api + e.model_url;
             // console.log(this.item_replacement_renderer_3d_model_url)
             this.$refs.furniture_products_list.updateItemRendering(
@@ -4972,6 +5117,15 @@ export default {
               e.is_resizable
             );
             
+            //  const f={   
+            //   'width':e.width,
+            //   'height':e.height,
+            //   'depth':e.depth,
+            //   'is_resizable':e.is_resizable,
+            //   'model_uuid':e.id,
+            //   'model_url':e.model_url
+            // }
+            // this.change3dModel(f)
           }
         });
       }
@@ -4988,6 +5142,19 @@ export default {
             // console.log(this.$refs)
             this.$refs.wall_products_list.selectTexture(e.id);
             this.$refs.wall_products_list_mobile.selectTexture(e.id);
+
+            
+            this.$router.replace({
+              query: {
+                ...this.$route.query, // keep existing query params
+                product_type: "wall",
+                product_id: e.id,
+              window_name: "wall",
+
+              },
+            });
+
+
           }
         });
       }
@@ -5006,6 +5173,18 @@ export default {
               e.light_type,
               e.model_url,
             );
+
+              
+            this.$router.replace({
+              query: {
+                ...this.$route.query, // keep existing query params
+                product_type: "light",
+                product_id: e.id,
+                window_name: "light",
+
+              },
+            });
+            
           }
         });
       }
@@ -5099,7 +5278,7 @@ export default {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Token ${localStorage.getItem("token")}`,
+                Authorization: `Token ${localStorage.getItem("token")}`,
             },
           },
           "startTestRoom",
@@ -5195,7 +5374,16 @@ export default {
       this.selected_model_depth = depth;
       this.is_resizable = e.is_resizable;
       this.selected_3d_product_model = e.model_uuid;
-      
+
+      this.$router.replace({
+              query: {
+                ...this.$route.query, // keep existing query params
+                product_type: "furniture",
+                product_id: e.model_uuid,
+              },
+          });
+
+
       // ✅ CRITICAL: Clear the model URL first to force unmount
       this.item_replacement_renderer_3d_model_url = '';
       
@@ -5233,6 +5421,16 @@ export default {
       this.selectedlightuuid = e.uuid;
       this.selected_light_type = e.type;
       this.model_3d_url = this.$store.state.root_media_api + e.model_3d_url;
+
+
+      this.$router.replace({
+              query: {
+                ...this.$route.query, // keep existing query params
+                product_type: "light",
+                selected_light_type:e.type,
+                product_id: e.uuid,
+              },
+          });
     },
 
     Apply_ceiling_light() {

@@ -210,7 +210,7 @@
               />
             </div>
                       </div>
-                       <!-- <div style="margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; padding: 12px; background: #f8faff; border-radius: 8px; border: 1px solid #e5e7eb;">
+                       <div style="margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; padding: 12px; background: #f8faff; border-radius: 8px; border: 1px solid #e5e7eb;">
                     <div style="display: flex; align-items: center; gap: 8px;">
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2">
                         <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
@@ -223,7 +223,7 @@
                       @change="handleResizableChange"
                       style="background-color: #3b82f6;"
                     />
-                       </div> -->
+                       </div>
                         <select3d_model_for_color 
                  :list_history_generated_3d_models="list_history_generated_3d_models"
                  :loading_generated_models_history="loading_generated_models_history" 
@@ -355,7 +355,7 @@
                     
                                 <!-- Category, Type, Price Row -->
                                 <a-row :gutter="12" style="margin-bottom: 16px;">
-                                  <a-col :span="8">
+                                  <a-col :span="12">
                            
                                  
                                        
@@ -394,7 +394,7 @@
                                       <a-select-option v-for="type in types" :key="type" :value="type">{{ type }}</a-select-option>
                                     </a-select>
                                   </a-col>
-                                  <a-col :span="8">
+                                  <a-col :span="24">
                                     <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Price <span style="color: red;">*</span></label>
                                     <a-input-number
                                       v-model:value="productForm.pricing.price" 
@@ -556,14 +556,14 @@
                                 </div>
                     
                                 <!-- Textures Section -->
-                                <!-- <div style="margin-bottom: 20px;">
+                                <div style="margin-bottom: 20px;">
                                   <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #374151;">Texture Images</label>
                                   
                                   <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 12px;">
                                     
-                                   
+                                    <!-- Select from pre-uploaded textures -->
                                     <a-popover trigger="click" placement="bottom">
-                                      
+                                      <!-- Upload custom texture -->
                                     
                                       <template #title>
                                         <a-button 
@@ -629,7 +629,23 @@
                                         Select Texture
                                       </a-button>
                                     </a-popover>
+
+                                    <!-- Upload custom texture -->
+                                    <!-- <a-button 
+                                      @click="uploadTexture"
+                                      style="border-radius: 6px; border: 2px dashed #d1d5db;"
+                                    >
+                                      <template #icon>
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                          <line x1="12" y1="5" x2="12" y2="19"></line>
+                                          <line x1="5" y1="12" x2="19" y2="12"></line>
+                                        </svg>
+                                      </template>
+                                      Upload Custom
+                                    </a-button> -->
                                   </div>
+                    
+                                  <!-- Selected textures display -->
                                   <div v-if="selectedTextures.length > 0" style="margin-top: 12px;">
                                     <div style="display: flex; flex-wrap: wrap; gap: 8px;">
                                       <div 
@@ -651,6 +667,7 @@
                                           }"
                                           :title="texture.name || 'Texture'"
                                         ></div>
+                                        <!-- Custom texture indicator (uploaded by user) -->
                                         <div 
                                           v-if="!texture.id"
                                           style="position: absolute; left: -5px; bottom: -5px; background: #8b5cf6; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 10px; box-shadow: 0 2px 4px rgba(139, 92, 246, 0.3);"
@@ -674,10 +691,10 @@
                                       </div>
                                     </div>
                                   </div>
-                                </div> -->
+                                </div>
                     
                                 <!-- PBR Files Section -->
-                                <!-- <div style="margin-bottom: 20px;">
+                                <div style="margin-bottom: 20px;">
                                   <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #374151;">PBR Files</label>
                                   
                                   <div style="cursor: pointer;" @click="uploadPbr">
@@ -718,7 +735,7 @@
                                       </a-button>
                                     </div>
                                   </div>
-                                </div> -->
+                                </div>
                               </div>
                             </a-col>
                   
@@ -755,7 +772,7 @@ export default {
       name: 'demo product',
       description: 'description sample',
       category_name: 'Chair',
-      furniture_type: 'Modern',
+      furniture_type: '',
       pricing: { price: 10 },
       dimensions: { height: 1, length: 1, width: 2 },
       images: [],
@@ -918,9 +935,9 @@ watch: {
         const limit = this.pagination.pageSize;
         const offset = this.pagination.currentOffset;
         
-        const url = `${this.$store.state.root_api}engine/generated-3d-models-list/?limit=${limit}&offset=${offset}&is_light_type=true`;
+        const url = `${this.$store.state.root_api}engine/generated-3d-models-list/?limit=${limit}&offset=${offset}`;
 
-        console.log(' Loading more 3D models...', { 
+        console.log('📡 Loading more 3D models...', { 
           offset: offset,
           limit: limit,
           currentTotal: this.list_history_generated_3d_models.length
@@ -1044,7 +1061,7 @@ watch: {
         const limit = this.pagination.pageSize;
         const offset = this.pagination.currentOffset;
         
-        const url = `${this.$store.state.root_api}engine/generated-3d-models-list/?limit=${limit}&offset=${offset}&is_light_type=true`;
+        const url = `${this.$store.state.root_api}engine/generated-3d-models-list/?limit=${limit}&offset=${offset}`;
 
         console.log('📡 Fetching 3D models history...', { 
           offset: offset,
@@ -1924,7 +1941,7 @@ removeColor(index) {
           pbr_files_count: this.selectedPbrFiles.length
         });
 
-        const response = await fetch(`${store.state.root_api}product/api-product-owner/lights/`, {
+        const response = await fetch(`${store.state.root_api}product/api-product-owner/products/`, {
           method: 'POST',
           headers: { 
             'Authorization': `Token ${token}` 

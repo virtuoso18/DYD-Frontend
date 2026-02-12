@@ -466,180 +466,229 @@
     </div>
 
     <!-- Desktop Comments - Hidden on mobile (lg:block) -->
-    <div class="hidden lg:block lg:col-span-5">
-      <div class="flex h-[740px] flex-col bg-gray-50 rounded-2xl p-6 sticky top-6">
-        <!-- Comments Header -->
-        <div class="pb-4 border-b border-gray-200">
-          <h4 class="text-xl font-semibold text-gray-900">
-            Comments ({{ selectedPost.comment_count }})
-          </h4>
-        </div>
+    <!-- Desktop Comments - Hidden on mobile (lg:block) -->
+<div class="hidden lg:block lg:col-span-5">
+  <div class="flex h-[740px] flex-col bg-gray-50 rounded-2xl p-6 sticky top-6">
+    <!-- Comments Header -->
+    <div class="pb-4 border-b border-gray-200">
+      <h4 class="text-xl font-semibold text-gray-900">
+        Comments ({{ selectedPost.comment_count }})
+      </h4>
+    </div>
 
-        <!-- Comments List (Scrollable) -->
-        <div class="flex-1 overflow-y-auto no-scrollbar py-4 pr-2" ref="commentsSection">
-          <!-- Empty State -->
-          <div 
-            v-if="!comments.length" 
-            class="flex flex-col items-center justify-center h-full min-h-[300px]"
-          >
-            <a-empty description="No Comments Available"></a-empty>
-          </div>
+    <!-- Comments List (Scrollable) -->
+    <div class="flex-1 overflow-y-auto no-scrollbar py-4 pr-2" ref="commentsSection">
+      <!-- Empty State -->
+      <div 
+        v-if="!comments.length" 
+        class="flex flex-col items-center justify-center h-full min-h-[300px]"
+      >
+        <a-empty description="No Comments Available"></a-empty>
+      </div>
 
-          <!-- Comments -->
-          <div v-else class="space-y-6">
-            <div
-              v-for="comment in comments"
-              :key="comment.id"
-              class="pb-6 border-b border-gray-200 last:border-0"
-            >
-              <div class="flex gap-3">
-                <!-- Avatar -->
-                <a-avatar
-                  :size="40"
-                  class="border border-gray-200 flex-shrink-0"
-                  :src="$store.state.root_media_api + comment.comment_owner.user_profile"
-                />
+      <!-- Comments -->
+      <div v-else class="space-y-6">
+        <div
+          v-for="comment in comments"
+          :key="comment.id"
+          class="pb-6 border-b border-gray-200 last:border-0"
+        >
+          <div class="flex gap-3">
+            <!-- Avatar -->
+            <a-avatar
+              :size="40"
+              class="border border-gray-200 flex-shrink-0"
+              :src="$store.state.root_media_api + comment.comment_owner.user_profile"
+            />
 
-                <!-- Comment Content -->
-                <div class="flex-1 min-w-0">
-                  <div class="flex items-center justify-between mb-2">
-                    <h5 class="font-semibold text-sm text-gray-900">
-                      {{ comment.comment_owner?.username || 'Anonymous' }}
-                    </h5>
-                    <span class="text-xs text-gray-400">
-                      {{ formatDate(comment.created_at) }}
-                    </span>
-                  </div>
-                  <p
-  class="text-sm text-gray-600 leading-relaxed break-words overflow-hidden"
->
-  {{ comment.content }}
-</p>
-
-
-                  <!-- Replies -->
-                  <div
-                    v-if="comment.replies && comment.replies.length > 0"
-                    class="mt-4 pl-4 border-l-2 border-gray-200 space-y-4"
+            <!-- Comment Content -->
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between mb-2">
+                <h5 class="font-semibold text-sm text-gray-900">
+                  {{ comment.comment_owner?.username || 'Anonymous' }}
+                </h5>
+                <span class="text-xs text-gray-400">
+                  {{ formatDate(comment.created_at) }}
+                </span>
+              </div>
+              
+              <!-- Comment text with show more/less -->
+              <div class="text-sm text-gray-600 leading-relaxed break-words overflow-hidden">
+                <p v-if="comment.content.length <= 100">
+                  {{ comment.content }}
+                </p>
+                <div v-else>
+                  <p>
+                    {{ expandedComments[comment.id] ? comment.content : comment.content.substring(0, 100) + '...' }}
+                  </p>
+                  <button
+                    @click="toggleCommentExpansion(comment.id)"
+                    class="text-blue-500 hover:text-blue-600 text-xs font-medium mt-1"
                   >
-                    <div
-                      v-for="reply in comment.replies"
-                      :key="reply.id"
-                      class="flex gap-2"
-                    >
-                      <a-avatar
-                        :size="32"
-                        class="border border-gray-200 flex-shrink-0"
-                        :src="$store.state.root_media_api + reply.comment_owner.user_profile"
-                      />
-                      <div class="flex-1 min-w-0">
-                        <div class="flex items-center gap-2 mb-1">
-                          <span class="font-semibold text-xs text-gray-900">
-                            {{ reply.comment_owner?.username || 'Anonymous' }}
-                          </span>
-                          <span class="text-xs text-gray-400">
-                            {{ formatDate(reply.created_at) }}
-                          </span>
-                        </div>
-                        <p class="text-xs text-gray-600 leading-relaxed">
-                          {{ reply.content }}
-                        </p>
-                      </div>
-                    </div>
-
-                    <!-- Load More Replies -->
-                    <a-button
-                      v-if="comment.reply_count > comment.replies.length"
-                      type="link"
-                      size="small"
-                      @click="loadMoreReplies(comment)"
-                      class="text-xs"
-                    >
-                      View {{ comment.reply_count - comment.replies.length }} more replies
-                    </a-button>
-                  </div>
+                    {{ expandedComments[comment.id] ? 'Show Less' : 'Show More' }}
+                  </button>
                 </div>
               </div>
-            </div>
 
-            <!-- Load More Comments -->
-            <div v-if="hasMoreComments" class="text-center pt-4">
-              <a-button
-                type="link"
-                @click="loadMoreComments"
-                :loading="loadingComments"
+              <!-- Replies -->
+              <div
+                v-if="comment.replies && comment.replies.length > 0"
+                class="mt-4 pl-4 border-l-2 border-gray-200 space-y-4"
               >
-                Load More Comments
-              </a-button>
+                <div
+                  v-for="reply in comment.replies"
+                  :key="reply.id"
+                  class="flex gap-2"
+                >
+                  <a-avatar
+                    :size="32"
+                    class="border border-gray-200 flex-shrink-0"
+                    :src="$store.state.root_media_api + reply.comment_owner.user_profile"
+                  />
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2 mb-1">
+                      <span class="font-semibold text-xs text-gray-900">
+                        {{ reply.comment_owner?.username || 'Anonymous' }}
+                      </span>
+                      <span class="text-xs text-gray-400">
+                        {{ formatDate(reply.created_at) }}
+                      </span>
+                    </div>
+                    
+                    <!-- Reply text with show more/less -->
+                    <div class="text-xs text-gray-600 leading-relaxed">
+                      <p v-if="reply.content.length <= 100">
+                        {{ reply.content }}
+                      </p>
+                      <div v-else>
+                        <p>
+                          {{ expandedComments[reply.id] ? reply.content : reply.content.substring(0, 100) + '...' }}
+                        </p>
+                        <button
+                          @click="toggleCommentExpansion(reply.id)"
+                          class="text-blue-500 hover:text-blue-600 text-xs font-medium mt-1"
+                        >
+                          {{ expandedComments[reply.id] ? 'Show Less' : 'Show More' }}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Load More Replies -->
+                <a-button
+                  v-if="comment.reply_count > comment.replies.length"
+                  type="link"
+                  size="small"
+                  @click="loadMoreReplies(comment)"
+                  class="text-xs"
+                >
+                  View {{ comment.reply_count - comment.replies.length }} more replies
+                </a-button>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- Add Comment Input (Fixed at Bottom) -->
-      <div class="pt-4 border-t border-gray-200 bg-white">
-  <!-- Outer field (single border, rounded) -->
-  <div class="flex items-center w-full rounded-2xl border border-gray-300 px-4 py-2 bg-white">
-    <!-- Textarea -->
-   <a-textarea
-  v-model:value="newComment"
-  placeholder="Type here"
-  :rows="1"
-  auto-size
-  class="flex-1 resize-none"
-  style="border:none; box-shadow:none; outline:none; background:transparent;"
-/>
+        <!-- Load More Comments -->
+        <div v-if="hasMoreComments" class="text-center pt-4">
+          <a-button
+            type="link"
+            @click="loadMoreComments"
+            :loading="loadingComments"
+          >
+            Load More Comments
+          </a-button>
+        </div>
+      </div>
+    </div>
 
+    <!-- Add Comment Input (Fixed at Bottom) -->
+    <div class="pt-4 border-t border-gray-200 bg-white">
+      <!-- Outer field (single border, rounded) -->
+      <div class="flex items-center w-full rounded-2xl border border-gray-300 px-4 py-2 bg-white">
+        <!-- Textarea -->
+        <a-textarea
+          v-model:value="newComment"
+          placeholder="Type here"
+          :rows="1"
+          :maxlength="500"
+          auto-size
+          @input="validateCommentLength"
+          class="flex-1 resize-none"
+          style="border:none; box-shadow:none; outline:none; background:transparent;"
+        />
 
-    <!-- Send button with your SVG -->
-    <button
-      @click="addComment"
-      :disabled="!newComment.trim()"
-      class="ml-2 w-8 h-8 flex items-center justify-center rounded-full
-             text-blue-500 disabled:opacity-30 disabled:cursor-not-allowed"
-    >
-      <svg
-        width="16"
-        height="16"
-        viewBox="0 0 16 16"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M3.721 7.63038L5.2073 8.12581C6.18973 8.45258 6.67989 8.61702 7.03196 8.96909C7.38403 9.32117 7.54847 9.81238 7.87525 10.7927L8.37068 12.279C9.1971 14.7604 9.61031 16 10.3703 16C11.1293 16 11.5435 14.7604 12.37 12.279L15.3615 3.30642C15.9434 1.56082 16.2343 0.688014 15.7737 0.227368C15.313 -0.233277 14.4402 0.0576566 12.6957 0.638471L3.71995 3.63214C1.24174 4.45751 0 4.87072 0 5.63073C0 6.39074 1.24069 6.80395 3.721 7.63038Z"
-          fill="#3B63FB"
-        />
-        <path
-          d="M3.721 7.63038L5.2073 8.12581C6.18973 8.45258 6.67989 8.61702 7.03196 8.96909C7.38403 9.32117 7.54847 9.81238 7.87525 10.7927L8.37068 12.279C9.1971 14.7604 9.61031 16 10.3703 16C11.1293 16 11.5435 14.7604 12.37 12.279L15.3615 3.30642C15.9434 1.56082 16.2343 0.688014 15.7737 0.227368C15.313 -0.233277 14.4402 0.0576566 12.6957 0.638471L3.71995 3.63214C1.24174 4.45751 0 4.87072 0 5.63073C0 6.39074 1.24069 6.80395 3.721 7.63038Z"
-          fill="#3B63FB"
-        />
-        <path
-          d="M5.65441 9.68062L3.48084 8.95644C3.32874 8.90574 3.16709 8.8904 3.00817 8.91159C2.84925 8.93278 2.69726 8.98994 2.56376 9.07872L1.41478 9.844C1.27877 9.93462 1.17202 10.0628 1.10752 10.213C1.04302 10.3631 1.02354 10.5288 1.05146 10.6898C1.07938 10.8509 1.15349 11.0003 1.26477 11.12C1.37606 11.2397 1.51973 11.3245 1.67831 11.364L3.73909 11.8784C3.83183 11.9016 3.91653 11.9495 3.98411 12.0171C4.0517 12.0847 4.09964 12.1694 4.12279 12.2621L4.63719 14.3229C4.67674 14.4815 4.76151 14.6252 4.8812 14.7364C5.00089 14.8477 5.15034 14.9218 5.31137 14.9498C5.47241 14.9777 5.63808 14.9582 5.78825 14.8937C5.93841 14.8292 6.0666 14.7225 6.15722 14.5864L6.9225 13.4375C7.01128 13.304 7.06844 13.152 7.08963 12.9931C7.11082 12.8341 7.09548 12.6725 7.04478 12.5204L6.32061 10.3468C6.26884 10.1917 6.1817 10.0508 6.06608 9.93514C5.95045 9.81952 5.80952 9.73238 5.65441 9.68062Z"
-          fill="#3B63FB"
-        />
-      </svg>
-    </button>
+        <!-- Send button with your SVG -->
+        <button
+          @click="addComment"
+          :disabled="!newComment.trim() || newComment.length > 500"
+          class="ml-2 w-8 h-8 flex items-center justify-center rounded-full
+                 text-blue-500 disabled:opacity-30 disabled:cursor-not-allowed"
+        >
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3.721 7.63038L5.2073 8.12581C6.18973 8.45258 6.67989 8.61702 7.03196 8.96909C7.38403 9.32117 7.54847 9.81238 7.87525 10.7927L8.37068 12.279C9.1971 14.7604 9.61031 16 10.3703 16C11.1293 16 11.5435 14.7604 12.37 12.279L15.3615 3.30642C15.9434 1.56082 16.2343 0.688014 15.7737 0.227368C15.313 -0.233277 14.4402 0.0576566 12.6957 0.638471L3.71995 3.63214C1.24174 4.45751 0 4.87072 0 5.63073C0 6.39074 1.24069 6.80395 3.721 7.63038Z"
+              fill="#3B63FB"
+            />
+            <path
+              d="M3.721 7.63038L5.2073 8.12581C6.18973 8.45258 6.67989 8.61702 7.03196 8.96909C7.38403 9.32117 7.54847 9.81238 7.87525 10.7927L8.37068 12.279C9.1971 14.7604 9.61031 16 10.3703 16C11.1293 16 11.5435 14.7604 12.37 12.279L15.3615 3.30642C15.9434 1.56082 16.2343 0.688014 15.7737 0.227368C15.313 -0.233277 14.4402 0.0576566 12.6957 0.638471L3.71995 3.63214C1.24174 4.45751 0 4.87072 0 5.63073C0 6.39074 1.24069 6.80395 3.721 7.63038Z"
+              fill="#3B63FB"
+            />
+            <path
+              d="M5.65441 9.68062L3.48084 8.95644C3.32874 8.90574 3.16709 8.8904 3.00817 8.91159C2.84925 8.93278 2.69726 8.98994 2.56376 9.07872L1.41478 9.844C1.27877 9.93462 1.17202 10.0628 1.10752 10.213C1.04302 10.3631 1.02354 10.5288 1.05146 10.6898C1.07938 10.8509 1.15349 11.0003 1.26477 11.12C1.37606 11.2397 1.51973 11.3245 1.67831 11.364L3.73909 11.8784C3.83183 11.9016 3.91653 11.9495 3.98411 12.0171C4.0517 12.0847 4.09964 12.1694 4.12279 12.2621L4.63719 14.3229C4.67674 14.4815 4.76151 14.6252 4.8812 14.7364C5.00089 14.8477 5.15034 14.9218 5.31137 14.9498C5.47241 14.9777 5.63808 14.9582 5.78825 14.8937C5.93841 14.8292 6.0666 14.7225 6.15722 14.5864L6.9225 13.4375C7.01128 13.304 7.06844 13.152 7.08963 12.9931C7.11082 12.8341 7.09548 12.6725 7.04478 12.5204L6.32061 10.3468C6.26884 10.1917 6.1817 10.0508 6.06608 9.93514C5.95045 9.81952 5.80952 9.73238 5.65441 9.68062Z"
+              fill="#3B63FB"
+            />
+          </svg>
+        </button>
+      </div>
+      
+      <!-- Character Counter -->
+      <div class="text-right mt-1 px-2">
+        <span 
+          class="text-xs"
+          :class="newComment.length > 500 ? 'text-red-500 font-semibold' : 'text-gray-400'"
+        >
+          {{ newComment.length }}/500
+        </span>
+      </div>
+    </div>
+
   </div>
 </div>
 
-      </div>
-    </div>
   </div>
 
   <!-- Mobile Comments Drawer (slides from bottom) -->
-  <transition name="drawer">
+ <transition name="drawer">
     <div
       v-if="showCommentsDrawer"
       class="fixed inset-0 z-50 lg:hidden"
       @click.self="showCommentsDrawer = false"
     >
       <!-- Backdrop -->
-<!-- Darker blur backdrop -->
-<div class="absolute inset-0 bg-black/10 backdrop-blur-md"></div>
+      <div class="absolute inset-0 bg-black/10 backdrop-blur-md"></div>
 
       <!-- Drawer Content -->
-      <div class="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl max-h-[85vh] flex flex-col">
-        <!-- Drawer Handle -->
-        <div class="flex justify-center pt-3 pb-2">
+      <div 
+        class="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl flex flex-col transition-all duration-300"
+        :class="isDrawerExpanded ? 'h-[95vh]' : 'max-h-[85vh]'"
+        :style="{ transform: `translateY(${dragOffset}px)` }"
+      >
+        <!-- Drawer Handle - Draggable -->
+        <div 
+          class="flex justify-center pt-3 pb-2 cursor-grab active:cursor-grabbing"
+          @click="toggleDrawerExpansion"
+          @touchstart="handleTouchStart"
+          @touchmove="handleTouchMove"
+          @touchend="handleTouchEnd"
+        >
           <div class="w-12 h-1.5 bg-gray-300 rounded-full"></div>
         </div>
 
@@ -694,12 +743,24 @@
                       {{ formatDate(comment.created_at) }}
                     </span>
                   </div>
-                <p
-  class="text-sm text-gray-600 leading-relaxed break-words overflow-hidden"
->
-  {{ comment.content }}
-</p>
-
+                  
+                  <!-- Comment text with show more/less -->
+                  <div class="text-sm text-gray-600 leading-relaxed break-words overflow-hidden">
+                    <p v-if="comment.content.length <= 100">
+                      {{ comment.content }}
+                    </p>
+                    <div v-else>
+                      <p>
+                        {{ expandedComments[comment.id] ? comment.content : comment.content.substring(0, 100) + '...' }}
+                      </p>
+                      <button
+                        @click="toggleCommentExpansion(comment.id)"
+                        class="text-blue-500 hover:text-blue-600 text-xs font-medium mt-1"
+                      >
+                        {{ expandedComments[comment.id] ? 'Show Less' : 'Show More' }}
+                      </button>
+                    </div>
+                  </div>
 
                   <!-- Replies -->
                   <div
@@ -725,9 +786,24 @@
                             {{ formatDate(reply.created_at) }}
                           </span>
                         </div>
-                        <p class="text-xs text-gray-600 leading-relaxed">
-                          {{ reply.content }}
-                        </p>
+                        
+                        <!-- Reply text with show more/less -->
+                        <div class="text-xs text-gray-600 leading-relaxed">
+                          <p v-if="reply.content.length <= 100">
+                            {{ reply.content }}
+                          </p>
+                          <div v-else>
+                            <p>
+                              {{ expandedComments[reply.id] ? reply.content : reply.content.substring(0, 100) + '...' }}
+                            </p>
+                            <button
+                              @click="toggleCommentExpansion(reply.id)"
+                              class="text-blue-500 hover:text-blue-600 text-xs font-medium mt-1"
+                            >
+                              {{ expandedComments[reply.id] ? 'Show Less' : 'Show More' }}
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     </div>
 
@@ -765,12 +841,14 @@
               v-model:value="newComment"
               placeholder="Add a comment..."
               :rows="1"
+              :maxlength="500"
               auto-size
+              @input="validateCommentLength"
               class="flex-1 border-none bg-transparent resize-none focus:outline-none"
             />
             <button
               @click="addComment"
-              :disabled="!newComment.trim()"
+              :disabled="!newComment.trim() || newComment.length > 500"
               class="w-10 h-10 flex items-center justify-center rounded-md disabled:opacity-30"
             >
               <svg width="18" height="18" viewBox="0 0 16 16" fill="#3B63FB">
@@ -778,10 +856,22 @@
               </svg>
             </button>
           </div>
+          
+          <!-- Character Counter -->
+          <div class="text-right mt-1 px-2">
+            <span 
+              class="text-xs"
+              :class="newComment.length > 500 ? 'text-red-500 font-semibold' : 'text-gray-400'"
+            >
+              {{ newComment.length }}/500
+            </span>
+          </div>
         </div>
       </div>
     </div>
   </transition>
+
+
 </div>
 
   </div>
@@ -890,6 +980,12 @@ export default {
       postImageLoadedMap: {},
       hasMore: false,
       currentPage: 1,
+      newComment: '',
+      isDrawerExpanded: false,
+    dragStartY: 0,
+    dragOffset: 0,
+    isDragging: false,
+    expandedComments: {},
 
       
       // Post details
@@ -938,22 +1034,65 @@ export default {
     await this.loadTags();
   },
 
-  methods: {
+ methods: {
     toggleCommentsDrawer() {
-    // Only toggle on mobile (below lg breakpoint)
+    
     if (window.innerWidth < 1024) {
       this.showCommentsDrawer = !this.showCommentsDrawer;
     } else {
-      // On desktop, scroll to comments section
+     
       this.scrollToComments();
     }
-  },
+    },
 
    onPostImageLoad(id) {
     this.postImageLoadedMap[id] = false;
     setTimeout(() => {
       this.postImageLoadedMap[id] = true;
     }, 1000); // 1s skeleton
+   },
+
+    toggleDrawerExpansion() {
+    if (!this.isDragging) {
+      this.isDrawerExpanded = !this.isDrawerExpanded;
+    }
+  },
+
+  
+  handleTouchStart(e) {
+    this.isDragging = false;
+    this.dragStartY = e.touches[0].clientY;
+    this.dragOffset = 0;
+  },
+
+  
+  handleTouchMove(e) {
+    const currentY = e.touches[0].clientY;
+    const diff = currentY - this.dragStartY;
+    
+    
+    if (diff > 0) {
+      this.isDragging = true;
+      this.dragOffset = diff;
+    }
+  },
+
+  
+  handleTouchEnd() {
+    
+    if (this.dragOffset > 100) {
+      this.showCommentsDrawer = false;
+      this.isDrawerExpanded = false;
+    }
+    
+    
+    this.dragOffset = 0;
+    this.dragStartY = 0;
+    
+    
+    setTimeout(() => {
+      this.isDragging = false;
+    }, 100);
   },
   
     goto_product_Route(product){
@@ -978,11 +1117,11 @@ export default {
     })
   
     },
-    // Open comments modal (replace the viewPost call in comment icon click)
+    
     async openCommentsModal(post) {
   this.selectedPostForComments = { 
     ...post,
-    userAvatar: this.$store.state.root_media_api + post.user_profile, // For modal avatar
+    userAvatar: this.$store.state.root_media_api + post.user_profile,
     userName: post.post_by,
     image: this.$store.state.root_media_api + post.post_image,
     views: post.view_count || 0,
@@ -990,11 +1129,10 @@ export default {
     is_liked: post.is_liked || false
   };
   this.commentsModalVisible = true;
-  await this.loadModalComments(post.id); // Pre-load comments
+  await this.loadModalComments(post.id);
 },
 
 handleCommentAdded() {
-  // Update main post list comment count
   const postIndex = this.posts.findIndex(p => p.id === this.selectedPostForComments?.id);
   if (postIndex !== -1) {
     this.posts[postIndex].comment_count += 1;
@@ -1002,7 +1140,6 @@ handleCommentAdded() {
 },
 
 handleLikeToggled() {
-  // Sync like state back to main list
   const postIndex = this.posts.findIndex(p => p.id === this.selectedPostForComments?.id);
   if (postIndex !== -1) {
     this.posts[postIndex].is_liked = this.selectedPostForComments.is_liked;
@@ -1010,7 +1147,6 @@ handleLikeToggled() {
   }
 },
 
-    // Close comments modal
     closeCommentsModal() {
       this.commentsModalVisible = false;
       this.selectedPostForComments = null;
@@ -1018,7 +1154,6 @@ handleLikeToggled() {
       this.newModalComment = "";
     },
 
-    // Load comments for modal
     async loadModalComments(postId, page = 1) {
       try {
         this.loadingModalComments = true;
@@ -1050,7 +1185,6 @@ handleLikeToggled() {
       }
     },
 
-    // Load more comments in modal
     async loadMoreModalComments() {
       if (this.selectedPostForComments) {
         await this.loadModalComments(
@@ -1060,7 +1194,6 @@ handleLikeToggled() {
       }
     },
 
-    // Add comment in modal
     async addModalComment() {
       if (!this.newModalComment.trim() || !this.selectedPostForComments) return;
 
@@ -1083,13 +1216,8 @@ handleLikeToggled() {
 
         const data = await response.json();
         if (data.success) {
-          // Clear input
           this.newModalComment = "";
-
-          // Reload comments
           await this.loadModalComments(this.selectedPostForComments.id);
-
-          // Update comment count in the main list
           this.selectedPostForComments.comment_count += 1;
           const postIndex = this.posts.findIndex(
             (p) => p.id === this.selectedPostForComments.id
@@ -1109,7 +1237,6 @@ handleLikeToggled() {
       }
     },
 
-    // Load community posts
     async loadPosts() {
       try {
         const response = await fetch(
@@ -1126,18 +1253,16 @@ handleLikeToggled() {
         const data = await response.json();
 
         if (data.success) {
-          // Process posts data to match backend structure
           this.posts = data.data.map((post) => ({
             ...post,
            
-            tags: post.tags || [], // Backend returns string array
+            tags: post.tags || [],
             like_count: post.like_count || 0,
             comment_count: post.comment_count || 0,
             share_count: post.share_count || 0,
             view_count: post.view_count || 0,
           }));
 
-          // No pagination in MyPostsAPI currently
           this.hasMore = false;
         } else {
           throw new Error(data.message || "Failed to load posts");
@@ -1150,13 +1275,10 @@ handleLikeToggled() {
       }
     },
 
-    // Load more posts (if pagination is added to backend later)
     async loadMorePosts() {
-      // Currently not implemented in backend API
       this.$message.info("Load more not available for personal posts");
     },
 
-    // Load available tags
     async loadTags() {
       try {
         const response = await fetch(
@@ -1182,21 +1304,17 @@ handleLikeToggled() {
       }
     },
 
-    // View post details
     async viewPost(post) {
       this.selectedPost = { ...post };
       this.comments = [];
       this.commentsPage = 1;
       this.hasMoreComments = false;
 
-      // Load comments
       await this.loadComments(post.id);
       await this.loadUsedProducts(post.id);
-      // Increment view count
       await this.incrementViewCount(post.id);
     },
 
-    // Add this new method
     async incrementViewCount(postId) {
       try {
         const response = await fetch(
@@ -1215,13 +1333,11 @@ handleLikeToggled() {
 
         const data = await response.json();
         if (data.success) {
-          // Update view count in the posts list
           const postIndex = this.posts.findIndex((p) => p.id === postId);
           if (postIndex !== -1) {
             this.posts[postIndex].view_count = data.data.view_count;
           }
 
-          // Update selected post view count
           if (this.selectedPost && this.selectedPost.id === postId) {
             this.selectedPost.view_count = data.data.view_count;
           }
@@ -1230,14 +1346,13 @@ handleLikeToggled() {
         console.error("Failed to increment view count:", error);
       }
     },
-    // Close post details
+    
     closePostDetails() {
       this.selectedPost = null;
       this.comments = [];
       this.newComment = "";
     },
 
-    // Load comments for post - CORRECTED to match backend API
     async loadComments(postId, page = 1) {
       try {
         this.loadingComments = true;
@@ -1269,7 +1384,6 @@ handleLikeToggled() {
       }
     },
 
-    // Load comments for post - CORRECTED to match backend API
     async loadUsedProducts(postId, page = 1) {
       try {
         this.loadingProductsUsed = true;
@@ -1295,16 +1409,14 @@ handleLikeToggled() {
       }
     },
 
-    // Load more comments
     async loadMoreComments() {
       if (this.selectedPost) {
         await this.loadComments(this.selectedPost.id, this.commentsPage + 1);
       }
     },
 
-    // Add comment - CORRECTED to match backend API
     async addComment() {
-      if (!this.newComment.trim() || !this.selectedPost) return;
+      if (!this.newComment.trim() || !this.selectedPost || this.newComment.length > 500) return;
 
       try {
         this.addingComment = true;
@@ -1325,13 +1437,10 @@ handleLikeToggled() {
 
         const data = await response.json();
         if (data.success) {
-          // Clear the comment input BEFORE reloading
           this.newComment = "";
 
-          // Reload comments to get the updated list
           await this.loadComments(this.selectedPost.id);
 
-          // Update comment count
           this.selectedPost.comment_count += 1;
           const postIndex = this.posts.findIndex(
             (p) => p.id === this.selectedPost.id
@@ -1350,7 +1459,23 @@ handleLikeToggled() {
         this.addingComment = false;
       }
     },
-    // Scroll to comments section
+
+    // ✅ ADD THESE TWO NEW METHODS HERE
+   // In methods section
+toggleCommentExpansion(commentId) {
+  // Direct assignment works in Vue 3
+  this.expandedComments[commentId] = !this.expandedComments[commentId];
+},
+
+
+    validateCommentLength() {
+      if (this.newComment.length > 500) {
+        this.newComment = this.newComment.substring(0, 500);
+        this.$message.warning('Comment cannot exceed 500 characters');
+      }
+    },
+    // ✅ END OF NEW METHODS
+
     scrollToComments() {
       this.$nextTick(() => {
         if (this.$refs.commentsSection) {
@@ -1359,7 +1484,6 @@ handleLikeToggled() {
       });
     },
 
-    // Toggle like/unlike
     async toggleLike(post) {
       try {
         const response = await fetch(
@@ -1382,7 +1506,6 @@ handleLikeToggled() {
           post.is_liked = data.data.action === "liked";
           post.like_count = data.data.like_count;
 
-          // Update selected post if it's the same
           if (this.selectedPost && this.selectedPost.id === post.id) {
             this.selectedPost.is_liked = post.is_liked;
             this.selectedPost.like_count = post.like_count;
@@ -1397,7 +1520,6 @@ handleLikeToggled() {
       }
     },
 
-    // Share post
     async sharePost(post) {
       try {
         const response = await fetch(
@@ -1419,14 +1541,12 @@ handleLikeToggled() {
         if (data.success) {
           post.share_count = data.data.share_count;
 
-          // Update selected post if it's the same
           if (this.selectedPost && this.selectedPost.id === post.id) {
             this.selectedPost.share_count = post.share_count;
           }
 
           this.$message.success("Post shared successfully!");
 
-          // Copy link to clipboard
           const shareUrl = `${window.location.origin}/community/post/${post.id}`;
           navigator.clipboard.writeText(shareUrl);
           this.$message.info("Post link copied to clipboard!");
@@ -1437,7 +1557,6 @@ handleLikeToggled() {
       }
     },
 
-    // Edit post
     editPost(post) {
       this.editingPost = post;
       this.editForm = {
@@ -1445,7 +1564,6 @@ handleLikeToggled() {
         title: post.title,
         tag_ids: post.tags,
       };
-      // You'll need to find the actual tag IDs from your availableTags
       if (post.tags && post.tags.length > 0) {
         this.editForm.tag_ids = post.tags
           .map((tagName) => {
@@ -1460,7 +1578,6 @@ handleLikeToggled() {
       this.editModalVisible = true;
     },
 
-    // Update post
     async updatePost() {
       if (!this.editForm.title.trim()) {
         this.$message.error("Title is required");
@@ -1488,7 +1605,6 @@ handleLikeToggled() {
         const data = await response.json();
 
         if (data.success) {
-          // Update post in list
           const postIndex = this.posts.findIndex(
             (p) => p.id === this.editingPost.id
           );
@@ -1501,7 +1617,6 @@ handleLikeToggled() {
             };
           }
 
-          // Update selected post if it's being viewed
           if (
             this.selectedPost &&
             this.selectedPost.id === this.editingPost.id
@@ -1524,7 +1639,6 @@ handleLikeToggled() {
       }
     },
 
-    // Confirm delete
     confirmDelete(post) {
       this.$confirm({
         title: "Delete Post",
@@ -1537,7 +1651,6 @@ handleLikeToggled() {
       });
     },
 
-    // Delete post
     async deletePost(post) {
       try {
         const response = await fetch(
@@ -1557,10 +1670,8 @@ handleLikeToggled() {
         const data = await response.json();
 
         if (data.success) {
-          // Remove post from list
           this.posts = this.posts.filter((p) => p.id !== post.id);
 
-          // Close post detail if it's the deleted post
           if (this.selectedPost && this.selectedPost.id === post.id) {
             this.closePostDetails();
           }
@@ -1575,7 +1686,6 @@ handleLikeToggled() {
       }
     },
 
-    // Utility methods
     formatNumber(num) {
       if (!num || num === 0) return "0";
       if (num >= 1000000) return (num / 1000000).toFixed(1) + "M";
@@ -1599,7 +1709,8 @@ handleLikeToggled() {
       if (!text || text.length <= length) return text;
       return text.substring(0, length) + "...";
     },
-     async toggleFavorite(product_id,product_type,product) {
+    
+    async toggleFavorite(product_id,product_type,product) {
         try {
             const token = localStorage.getItem('token');
             
@@ -1626,8 +1737,9 @@ handleLikeToggled() {
         } catch (error) {
             console.error("Favorite toggle failed", error);
         }
-        }
-  },
+    }
+},
+
 };
 </script>
 

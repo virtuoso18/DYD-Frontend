@@ -319,6 +319,14 @@ export default {
       console.log('Loading self products');
       this.fetchCatalogItems(null, 1);
     }
+
+
+      if(this.$route.query.product_type=='furniture' && this.$route.query.product_id){
+      // if (this.catalogItems > 0){
+        // this.selectTexture(this.$route.query.product_id)
+        this.updateItemRendering(this.$route.query.product_id,'',0,0,0,false) 
+      // }
+    }
   },
   methods: {
     startFurrnitureSwitch(){

@@ -210,6 +210,12 @@ export default {
       console.log('Loading self products');
       this.fetchCatalogItems(null, 1);
     }
+
+    if(this.$route.query.product_type=='floor' && this.$route.query.product_id){
+      // if (this.catalogItems > 0){
+        this.selectTexture(this.$route.query.product_id)
+      // }
+    }
   },
   methods: {
       truncateChars(text, limit = 11) {
@@ -313,6 +319,8 @@ export default {
     selectTexture(uuid) {
       console.log(uuid);
       this.selected_texture = uuid;
+      this.$emit('texture-floor-product-selected', this.selected_texture);
+
     },
 
     updateItemRendering() {

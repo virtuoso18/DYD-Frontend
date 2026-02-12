@@ -228,6 +228,13 @@ export default {
       console.log('Loading self products');
       this.fetchCatalogItems(null, 1);
     }
+
+    
+    if(this.$route.query.product_type=='wall' && this.$route.query.product_id){
+      // if (this.catalogItems > 0){
+        this.selectTexture(this.$route.query.product_id)
+      // }
+    }
   },
   methods: {
     truncateChars(text, limit = 11) {
@@ -330,6 +337,8 @@ export default {
 
     selectTexture(uuid) {
       this.selected_texture = uuid;
+      this.$emit('texture-wall-product-selected', this.selected_texture);
+
     },
 
     updateItemRendering() {
