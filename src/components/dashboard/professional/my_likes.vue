@@ -63,27 +63,26 @@
 >
   <!-- Skeleton -->
   <div
-    v-if="!imageLoadedMap[product.id]"
+    v-if="!productImageLoadedMap[product.id]"
     class="product-image-skeleton"
   ></div>
 
-  <!-- Preload image -->
+  <!-- Preload image (invisible but triggers @load) -->
   <img
     :src="$store.state.root_media_api + product.image"
+    :alt="product.name"
     style="position:absolute;width:0;height:0;opacity:0;"
     @load="onProductImageLoad(product.id)"
-    alt=""
   />
 
   <!-- Visible image -->
   <img
-    v-show="imageLoadedMap[product.id]"
+    v-show="productImageLoadedMap[product.id]"
     :src="$store.state.root_media_api + product.image"
     :alt="product.name"
     class="product-image"
   />
 
-  <!-- Category badge (stays on top) -->
   <div class="category-badge">{{ product.category }}</div>
 </div>
 
@@ -153,23 +152,37 @@
                             ${{ product.product_price }}
                           </a-col>
                         <!-- {{ product }} -->
-    
-                        <a-col span="18">
-                            <a-button block @click="goto_product_Route(product)"  class="product-details-btn">Product Details</a-button>
-                        </a-col>
-    
-    
-                        <!-- ❤️ Dynamic Favorite Button -->
-                        <a-col span="6" style="display: flex;justify-content: end;">
-                        <a-button @click="toggleFavorite(product)" class="like-button" style="display: flex;justify-content: center;align-items: center;">
-                            <template v-if="product.is_favorited">
-                            <HeartFilled style="color: red" />
-                            </template>
-                            <template v-else>
-                            <HeartOutlined />
-                            </template>
-                        </a-button>
-                        </a-col>
+    <div class="flex items-center gap-1 w-full">
+
+  <!-- Product Details (fills remaining space) -->
+  <a-col class="flex-1">
+    <a-button
+      block
+      @click="goto_product_Route(product)"
+      class="!px-2 !py-1 !text-[12px] h-7 flex items-center whitespace-nowrap"
+    >
+      Product Details
+    </a-button>
+  </a-col>
+
+  <!-- ❤️ Favorite Button (auto width) -->
+  <a-col class="flex-shrink-0">
+    <a-button
+  @click="toggleFavorite(product)"
+  class="flex items-center justify-center h-7 !px-2 leading-none"
+>
+  <template v-if="product.is_favorited">
+    <HeartFilled class="!text-red-500 text-[16px] -translate-y-1 leading-none" />
+  </template>
+  <template v-else>
+    <HeartOutlined class="text-[16px] leading-none" />
+  </template>
+</a-button>
+
+  </a-col>
+
+</div>
+
     
             </a-row>
                 </div>
@@ -227,49 +240,66 @@
                   class="product-responsive"
                   style="padding: 5px"
                 >
-                  <div class="product">
-                    <!-- {{ product }} -->
-                    <div
-                      class="product-image-container"
-                      @click="viewRoom(product)"
-                    >
-                      <img
-                        :src="$store.state.root_media_api + product.image"
-                        :alt="product.name"
-                        class="product-image"
-                      />
-                      <!-- Category Badge -->
-                      <div class="category-badge">{{ product.category }}</div>
-                    </div>
-                    <!-- {{ truncateText(product.description || 'No description available', 8) }} -->
+              <div class="product">
+  <div 
+    class="product-image-container"
+    @click="viewRoom(product)"
+    style="position: relative; overflow: hidden;"
+  >
+    <!-- Skeleton -->
+    <div
+      v-if="!productImageLoadedMap[product.id]"
+      class="product-image-skeleton"
+    ></div>
 
-                    <a-row>
-                      <a-col span="24">
-                        <!-- <b>{{product.name}}</b> -->
-                        <b>{{
-                          truncateText(product.name || "No name available", 19)
-                        }}</b>
-                      </a-col>
+    <!-- Preload image (hidden, triggers @load) -->
+    <img
+      :src="$store.state.root_media_api + product.image"
+      :alt="product.name"
+      style="position:absolute;width:0;height:0;opacity:0;"
+      @load="onProductImageLoad(product.id)"
+    />
 
-                      <a-col span="17">
-                        <a-button block @click="viewRoom(product)"
-                          >Product Details</a-button
-                        >
-                      </a-col>
+    <!-- Visible image -->
+    <img
+      v-show="productImageLoadedMap[product.id]"
+      :src="$store.state.root_media_api + product.image"
+      :alt="product.name"
+      class="product-image"
+    />
 
-                      <a-col span="1"></a-col>
-                      <a-col span="4">
-                        <a-button @click="toggleFavorite(product)">
-                          <template v-if="product.is_favorited">
-                            <HeartFilled style="color: red" />
-                          </template>
-                          <template v-else>
-                            <HeartOutlined />
-                          </template>
-                        </a-button>
-                      </a-col>
-                    </a-row>
-                  </div>
+    <!-- Like Badge -->
+    <div class="like-badge">
+      <a-button
+        @click.stop="toggleFavorite(product)"
+        class="like-btn"
+      >
+        <template v-if="product.is_favorited">
+          <HeartFilled style="color: red" />
+        </template>
+        <template v-else>
+          <HeartOutlined />
+        </template>
+      </a-button>
+    </div>
+  </div>
+
+  <div style="height: 7px;"></div>
+
+  <a-row>
+    <a-col span="24">
+      <a-button
+        block
+        @click="viewRoom(product)"
+        style="display: flex; font-size: 12px; justify-content: center; align-items: center;"
+      >
+        Room Details
+      </a-button>
+    </a-col>
+  </a-row>
+</div>
+
+
                 </a-col>
               </a-row>
               <div
@@ -495,7 +525,7 @@
                               {{ truncateText(post.post_by, 15) }}
                             </span>
                           </a-col>
-                          <a-col :span="8" style="display: flex">
+                          <a-col :span="8" style="display: flex;justify-content: end; align-items: end;">
                             <!-- Post Stats -->
                             <div style="display: flex">
                               <div
@@ -679,8 +709,9 @@ export default {
       products: [],
       rooms: [],
       roomModalVisible: false,
-      imageLoadedMap: {},
+      productImageLoadedMap: {},
       selectedRoom: null,
+      productImageLoadedMap: {},
       community_posts: [],
       tabRefreshKey: 0,
       showModal: false,
@@ -741,6 +772,14 @@ export default {
       this.selectedPost = null;
     },
 
+    onProductImageLoad(id) {
+    this.productImageLoadedMap[id] = false;
+    setTimeout(() => {
+      this.productImageLoadedMap[id] = true;
+    }, 1000); // 1s skeleton display
+  }, // ✓ Vue 3 reactivity handles this automatically
+  
+
     handleTabClick(key) {
       this.active_tab = key;
       if (key === "Furniture") {
@@ -752,13 +791,6 @@ export default {
       }
       this.tabRefreshKey++; // Force re-render
     },
-
-     onProductImageLoad(id) {
-    this.imageLoadedMap[id] = false;
-    setTimeout(() => {
-      this.imageLoadedMap[id] = true;
-    }, 1000);
-  },
 
     viewRoom(room) {
       // room object already looks like:
@@ -909,6 +941,7 @@ export default {
     async fetchMyRooms(page = 1) {
       try {
         this.isLoading = true;
+        this.productImageLoadedMap = {};
         const token = localStorage.getItem("token");
         const response = await fetch(
           `${this.$store.state.root_api}likes/favorites/?page=${page}&page_size=${this.roomPagination.pageSize}&item_type=room`,
@@ -1046,6 +1079,32 @@ export default {
   background-color: white;
 }
 
+.product-image-skeleton {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 240px !important; /* ← MATCH container height */
+  border-radius: 12px; /* ← MATCH image border-radius */
+  background: linear-gradient(
+    110deg,
+    #e5e7eb 8%,
+    #f9fafb 18%,
+    #e5e7eb 33%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s infinite linear;
+  z-index: 1;
+}
+
+@keyframes shimmer {
+  to {
+    background-position-x: -200%;
+  }
+}
+
+
+
 /* Force remove modal backdrop interference */
 :deep(.ant-modal-mask) {
   z-index: 1000 !important;
@@ -1064,11 +1123,91 @@ export default {
   display: flex;
   justify-content: space-between;
 }
+.product {
+  position: relative;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  background: #f3f2f4;
+}
+/* Make sure image container is relative */
+.product > div:first-child {
+  position: relative;
+  overflow: hidden;
+}
+
+.products-list {
+  padding-bottom: 20px;
+}
+.product-image-container {
+  position: relative;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  height: 240px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden; /* ← Added this */
+}
+
+.product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+  transition: transform 0.3s ease;
+  position: relative; /* ← Added this */
+  z-index: 2; /* ← Added this */
+}
+
+.category-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(0, 0, 0, 0.75);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  z-index: 3; /* ← Make sure badge is on top */
+}
+
+.like-badge {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+}
+
+/* override ant button */
+.like-btn {
+  background: rgba(0, 0, 0, 0.35) !important; /* transparent gray */
+  border: none !important;
+  box-shadow: none !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px !important;
+}
+
+/* hover */
+.like-btn:hover {
+  background: rgba(0, 0, 0, 0.45) !important;
+}
+
+
+.product-image {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+  border-radius: 10px;
+}
 
 .product-image-skeleton {
   width: 100%;
-  height: 240px; /* match your product-image height */
-  border-radius: 12px;
+  height: 180px;
+  border-radius: 10px;
   background: linear-gradient(
     110deg,
     #e5e7eb 8%,
@@ -1085,56 +1224,6 @@ export default {
   }
 }
 
-/* Ensure category badge stays on top */
-.category-badge {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  z-index: 10;
-}
-
-
-
-.product {
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 10px;
-  background: #f3f2f4;
-}
-.products-list {
-  padding-bottom: 20px;
-}
-.product-image-container {
-  position: relative;
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  height: 180px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  /* padding: 16px; */
-}
-
-.product-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 12px;
-  transition: transform 0.3s ease;
-}
-
-.category-badge {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  background: rgba(0, 0, 0, 0.75);
-  color: white;
-  padding: 4px 8px;
-  border-radius: 6px;
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
 
 .ar-badge {
   position: absolute;
@@ -1175,19 +1264,6 @@ export default {
   .product-responsive {
     width: 20%;
     flex: 0 0 20%;
-  }
-}
-@media screen and (max-width: 585px) {
-  .product{
-    padding: 5px;
-  }
-  .like-button{
-    padding: 4px 7px !important;
-  }
-  .product-details-btn{
-    display: flex;
-    justify-content: center;
-    align-items: center;
   }
 }
 </style>

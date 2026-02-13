@@ -39,9 +39,9 @@
                 </svg>
                 <span class="credits-number">{{liveCredits}}</span>
               </div>
-              <a-button type="primary" size="small" @click="this.$router.push('/pricing')">Buy</a-button>
+              <router-link :to="'/pricing'"><a-button type="primary" size="small" >Buy</a-button></router-link>
             </div>
-   <a-button type="primary" @click="this.$router.push({name:'my-store'})" v-if="user.user_type ==='Business' ">
+   <router-link to="/my-store"><a-button type="primary"  v-if="user.user_type ==='Business' ">
             <div style="display:flex;gap:5px">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 17" fill="none">
 <path d="M1.97754 7.49756V10.8321C1.97754 12.7184 1.97754 13.6616 2.56333 14.2476C3.14911 14.8336 4.09192 14.8336 5.97754 14.8336H9.97754C11.8631 14.8336 12.8059 14.8336 13.3917 14.2476C13.9775 13.6616 13.9775 12.7184 13.9775 10.8321V7.49756" stroke="white" stroke-linecap="round"/>
@@ -50,7 +50,7 @@
 </svg>
 <span>My Store</span>
             </div>
-</a-button>
+</a-button></router-link>
 <!-- <a-button type="primary" @click="this.$router.push({name:'manage-access'})" v-if="user.user_type ==='Professional' ">
             <div style="display:flex;gap:5px">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 17" fill="none">
@@ -170,14 +170,14 @@
 
       <!-- Right Side Actions -->
       <div class="navbar-actions">
-            <div class="btn-input_credits" style="height:35px;">
+            <div class="btn-input_credits" style="height:35px;"  v-if="(user.user_type ==='Professional') || (user.user_type ==='Business')">
               <div class="credits-content">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 17 17" fill="none">
                   <path fill-rule="evenodd" clip-rule="evenodd" d="M8.49935 1.41699C4.58722 1.41699 1.41602 4.5882 1.41602 8.50033C1.41602 12.4124 4.58722 15.5837 8.49935 15.5837C12.4115 15.5837 15.5827 12.4124 15.5827 8.50033C15.5827 4.5882 12.4115 1.41699 8.49935 1.41699ZM8.49935 2.12533C8.49935 3.81608 7.8277 5.43759 6.63215 6.63313C5.43661 7.82868 3.8151 8.50033 2.12435 8.50033C3.8151 8.50033 5.43661 9.17198 6.63215 10.3675C7.8277 11.5631 8.49935 13.1846 8.49935 14.8753C8.49935 13.1846 9.171 11.5631 10.3665 10.3675C11.5621 9.17198 13.1836 8.50033 14.8743 8.50033C13.1836 8.50033 11.5621 7.82868 10.3665 6.63313C9.171 5.43759 8.49935 3.81608 8.49935 2.12533Z" fill="currentColor"/>
                 </svg>
                 <span class="credits-number">{{liveCredits}}</span>
               </div>
-              <a-button type="primary" size="small">Buy</a-button>
+              <router-link :to="'/pricing'"> <a-button type="primary" size="small">Buy</a-button></router-link>
             </div>
 
         <div class="icon-actions">
