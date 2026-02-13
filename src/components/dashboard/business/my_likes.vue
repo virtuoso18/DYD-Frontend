@@ -1176,8 +1176,9 @@ export default {
 
 .like-badge {
   position: absolute;
-  top: 18px;
-  left: 18px;
+  top: 12px;
+  left: 12px;
+  z-index: 10;
 }
 
 /* override ant button */

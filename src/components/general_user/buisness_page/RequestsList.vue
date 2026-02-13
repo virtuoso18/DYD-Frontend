@@ -248,7 +248,7 @@
         <div class="flex items-start gap-3">
           <!-- Left: Text and Date -->
           <div class="flex-1 min-w-0">
-            <p class="label-text text-sm font-medium text-gray-700 mb-2">Generate room:</p>
+            <p class="label-text !text-xs sm:!text-sm font-medium text-gray-700 mb-2">Generate room:</p>
             <p class="label-text !text-[10px] text-gray-500">
               {{ request.generated_image ? formatDate(request.updated_at) : 'Processing...' }}
             </p>

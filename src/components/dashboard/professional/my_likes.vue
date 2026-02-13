@@ -29,184 +29,182 @@
               <a-spin tip="Loading..."> </a-spin>
             </div>
             <div v-else>
-            <div
-              v-if="!filteredProducts?.length"
-              style="
-                height: 70vh;
-                gap: 20px;
-                flex-direction: column;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-              "
-            >
-              <!-- <a-empty :description="'No Furniture Available'"></a-empty> -->
-
-              <a-empty
-                :description="'You have not added anything in your likes till yet '"
+              <div
+                v-if="!filteredProducts?.length"
+                style="
+                  height: 70vh;
+                  gap: 20px;
+                  flex-direction: column;
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                "
               >
-              </a-empty>
-            </div>
+                <!-- <a-empty :description="'No Furniture Available'"></a-empty> -->
 
-            <a-row v-else>
-              <a-col
-                v-for="product in filteredProducts"
-                :key="product.id"
-                class="product-responsive"
-                style="padding: 5px"
+                <a-empty
+                  :description="'You have not added anything in your likes till yet '"
+                >
+                </a-empty>
+              </div>
+
+              <a-row v-else>
+                <a-col
+                  v-for="product in filteredProducts"
+                  :key="product.id"
+                  class="product-responsive"
+                  style="padding: 5px"
+                >
+                  <div class="product">
+                    <div
+                      class="product-image-container"
+                      @click="goto_product_Route(product)"
+                      style="position: relative; overflow: hidden"
+                    >
+                      <!-- Skeleton -->
+                      <div
+                        v-if="!productImageLoadedMap[product.id]"
+                        class="product-image-skeleton"
+                      ></div>
+
+                      <!-- Preload image (invisible but triggers @load) -->
+                      <img
+                        :src="$store.state.root_media_api + product.image"
+                        :alt="product.name"
+                        style="
+                          position: absolute;
+                          width: 0;
+                          height: 0;
+                          opacity: 0;
+                        "
+                        @load="onProductImageLoad(product.id)"
+                      />
+
+                      <!-- Visible image -->
+                      <img
+                        v-show="productImageLoadedMap[product.id]"
+                        :src="$store.state.root_media_api + product.image"
+                        :alt="product.name"
+                        class="product-image"
+                      />
+
+                      <div class="category-badge">{{ product.category }}</div>
+                    </div>
+
+                    <a-row>
+                      <a-col span="24">
+                        <b class="block w-full truncate" :title="product.name">
+                          {{ product.name || "No name available" }}
+                        </b>
+                      </a-col>
+
+                      <a-col
+                        span="16"
+                        style="
+                          font-family: &quot;Poppins&quot;, sans-serif;
+                          font-size: 13px;
+                          font-weight: 400;
+                        "
+                      >
+                        Color
+                      </a-col>
+
+                      <a-col
+                        span="8"
+                        style="display: flex; justify-content: end"
+                      >
+                        <!-- {{product.product_colors}} -->
+                        <div
+                          v-for="(color, index) in product.product_colors.slice(
+                            0,
+                            2,
+                          )"
+                          :key="index"
+                          style="
+                            width: 20px;
+                            height: 20px;
+                            border-radius: 20px;
+                            margin-left: 2px;
+                          "
+                          :style="'background:' + color.color"
+                        ></div>
+                      </a-col>
+
+                      <a-col
+                        span="12"
+                        style="
+                          font-family: &quot;Poppins&quot;, sans-serif;
+                          font-size: 13px;
+                          font-weight: 400;
+                        "
+                      >
+                        Price
+                      </a-col>
+
+                      <a-col
+                        span="12"
+                        style="
+                          display: flex;
+                          justify-content: end;
+                          font-weight: 700;
+                        "
+                      >
+                        <!-- <del style="font-size: 10px;">${{ product.pricing.price }}</del> -->
+                        ${{ product.product_price }}
+                      </a-col>
+                      <!-- {{ product }} -->
+                      <div class="flex items-center gap-1 w-full">
+                        <!-- Product Details (fills remaining space) -->
+                        <a-col class="flex-1">
+                          <a-button
+                            block
+                            @click="goto_product_Route(product)"
+                            class="!px-2 !py-1 !text-[12px] h-7 flex items-center whitespace-nowrap"
+                          >
+                            Product Details
+                          </a-button>
+                        </a-col>
+
+                        <!-- ❤️ Favorite Button (auto width) -->
+                        <a-col class="flex-shrink-0">
+                          <a-button
+                            @click="toggleFavorite(product)"
+                            class="flex items-center justify-center h-7 !px-2 leading-none"
+                          >
+                            <template v-if="product.is_favorited">
+                              <HeartFilled
+                                class="!text-red-500 text-[16px] -translate-y-1 leading-none"
+                              />
+                            </template>
+                            <template v-else>
+                              <HeartOutlined class="text-[16px] leading-none" />
+                            </template>
+                          </a-button>
+                        </a-col>
+                      </div>
+                    </a-row>
+                  </div>
+                </a-col>
+              </a-row>
+
+              <div
+                v-if="filteredProducts?.length > 0"
+                style="
+                  display: flex;
+                  justify-content: center;
+                  margin-top: 20px;
+                  margin-bottom: 20px;
+                "
               >
-                <div class="product">
-                 <div
-  class="product-image-container"
-  @click="goto_product_Route(product)"
-  style="position: relative; overflow: hidden;"
->
-  <!-- Skeleton -->
-  <div
-    v-if="!productImageLoadedMap[product.id]"
-    class="product-image-skeleton"
-  ></div>
-
-  <!-- Preload image (invisible but triggers @load) -->
-  <img
-    :src="$store.state.root_media_api + product.image"
-    :alt="product.name"
-    style="position:absolute;width:0;height:0;opacity:0;"
-    @load="onProductImageLoad(product.id)"
-  />
-
-  <!-- Visible image -->
-  <img
-    v-show="productImageLoadedMap[product.id]"
-    :src="$store.state.root_media_api + product.image"
-    :alt="product.name"
-    class="product-image"
-  />
-
-  <div class="category-badge">{{ product.category }}</div>
-</div>
-
-
-                  <a-row>
-                        <a-col span="24">
-                            <b
-                              class="block w-full truncate"
-                              :title="product.name"
-                            >
-                              {{ product.name || "No name available" }}
-                            </b>
-                          </a-col>
-
-                          <a-col
-                            span="16"
-                            style="
-                              font-family: 'Poppins', sans-serif;
-                              font-size: 13px;
-                              font-weight: 400;
-                            "
-                          >
-                            Color
-                          </a-col>
-
-                          <a-col
-                            span="8"
-                            style="display: flex; justify-content: end"
-                          >
-                          <!-- {{product.product_colors}} -->
-                            <div
-                              v-for="(color, index) in product.product_colors.slice(
-                                0,
-                                2
-                              )"
-                              :key="index"
-                              style="
-                                width: 20px;
-                                height: 20px;
-                                border-radius: 20px;
-                                margin-left: 2px;
-                              "
-                              :style="'background:' + color.color"
-                            ></div>
-                          </a-col>
-
-                          <a-col
-                            span="12"
-                            style="
-                              font-family: 'Poppins', sans-serif;
-                              font-size: 13px;
-                              font-weight: 400;
-                            "
-                          >
-                            Price
-                          </a-col>
-
-                          <a-col
-                            span="12"
-                            style="
-                              display: flex;
-                              justify-content: end;
-                              font-weight: 700;
-                            "
-                          >
-                            <!-- <del style="font-size: 10px;">${{ product.pricing.price }}</del> -->
-                            ${{ product.product_price }}
-                          </a-col>
-                        <!-- {{ product }} -->
-    <div class="flex items-center gap-1 w-full">
-
-  <!-- Product Details (fills remaining space) -->
-  <a-col class="flex-1">
-    <a-button
-      block
-      @click="goto_product_Route(product)"
-      class="!px-2 !py-1 !text-[12px] h-7 flex items-center whitespace-nowrap"
-    >
-      Product Details
-    </a-button>
-  </a-col>
-
-  <!-- ❤️ Favorite Button (auto width) -->
-  <a-col class="flex-shrink-0">
-    <a-button
-  @click="toggleFavorite(product)"
-  class="flex items-center justify-center h-7 !px-2 leading-none"
->
-  <template v-if="product.is_favorited">
-    <HeartFilled class="!text-red-500 text-[16px] -translate-y-1 leading-none" />
-  </template>
-  <template v-else>
-    <HeartOutlined class="text-[16px] leading-none" />
-  </template>
-</a-button>
-
-  </a-col>
-
-</div>
-
-    
-            </a-row>
-                </div>
-              </a-col>
-            </a-row>
-
-            <div
-              v-if="filteredProducts?.length > 0"
-              style="
-                display: flex;
-                justify-content: center;
-                margin-top: 20px;
-                margin-bottom: 20px;
-              "
-            >
-              <a-pagination
-                v-model:current="productsPagination.currentPage"
-                :total="productsPagination.totalCount"
-                :page-size="productsPagination.pageSize"
-                @change="handleProductsPageChange"
-                show-total
-                :show-size-changer="false"
-              />
-            </div>
+                <a-pagination
+                  v-model:current="productsPagination.currentPage"
+                  :total="productsPagination.totalCount"
+                  :page-size="productsPagination.pageSize"
+                  @change="handleProductsPageChange"
+                  show-total
+                  :show-size-changer="false"
+                />
+              </div>
             </div>
           </a-tab-pane>
           <a-tab-pane key="rooms" tab="rooms">
@@ -240,66 +238,74 @@
                   class="product-responsive"
                   style="padding: 5px"
                 >
-              <div class="product">
-  <div 
-    class="product-image-container"
-    @click="viewRoom(product)"
-    style="position: relative; overflow: hidden;"
-  >
-    <!-- Skeleton -->
-    <div
-      v-if="!productImageLoadedMap[product.id]"
-      class="product-image-skeleton"
-    ></div>
+                  <div class="product">
+                    <div
+                      class="product-image-container"
+                      @click="viewRoom(product)"
+                      style="position: relative; overflow: hidden"
+                    >
+                      <!-- Skeleton -->
+                      <div
+                        v-if="!productImageLoadedMap[product.id]"
+                        class="product-image-skeleton"
+                      ></div>
 
-    <!-- Preload image (hidden, triggers @load) -->
-    <img
-      :src="$store.state.root_media_api + product.image"
-      :alt="product.name"
-      style="position:absolute;width:0;height:0;opacity:0;"
-      @load="onProductImageLoad(product.id)"
-    />
+                      <!-- Preload image (hidden, triggers @load) -->
+                      <img
+                        :src="$store.state.root_media_api + product.image"
+                        :alt="product.name"
+                        style="
+                          position: absolute;
+                          width: 0;
+                          height: 0;
+                          opacity: 0;
+                        "
+                        @load="onProductImageLoad(product.id)"
+                      />
 
-    <!-- Visible image -->
-    <img
-      v-show="productImageLoadedMap[product.id]"
-      :src="$store.state.root_media_api + product.image"
-      :alt="product.name"
-      class="product-image"
-    />
+                      <!-- Visible image -->
+                      <img
+                        v-show="productImageLoadedMap[product.id]"
+                        :src="$store.state.root_media_api + product.image"
+                        :alt="product.name"
+                        class="product-image"
+                      />
 
-    <!-- Like Badge -->
-    <div class="like-badge">
-      <a-button
-        @click.stop="toggleFavorite(product)"
-        class="like-btn"
-      >
-        <template v-if="product.is_favorited">
-          <HeartFilled style="color: red" />
-        </template>
-        <template v-else>
-          <HeartOutlined />
-        </template>
-      </a-button>
-    </div>
-  </div>
+                      <!-- Like Badge -->
+                      <div class="like-badge">
+                        <a-button
+                          @click.stop="toggleFavorite(product)"
+                          class="like-btn"
+                        >
+                          <template v-if="product.is_favorited">
+                            <HeartFilled style="color: red" />
+                          </template>
+                          <template v-else>
+                            <HeartOutlined />
+                          </template>
+                        </a-button>
+                      </div>
+                    </div>
 
-  <div style="height: 7px;"></div>
+                    <div style="height: 7px"></div>
 
-  <a-row>
-    <a-col span="24">
-      <a-button
-        block
-        @click="viewRoom(product)"
-        style="display: flex; font-size: 12px; justify-content: center; align-items: center;"
-      >
-        Room Details
-      </a-button>
-    </a-col>
-  </a-row>
-</div>
-
-
+                    <a-row>
+                      <a-col span="24">
+                        <a-button
+                          block
+                          @click="viewRoom(product)"
+                          style="
+                            display: flex;
+                            font-size: 12px;
+                            justify-content: center;
+                            align-items: center;
+                          "
+                        >
+                          Room Details
+                        </a-button>
+                      </a-col>
+                    </a-row>
+                  </div>
                 </a-col>
               </a-row>
               <div
@@ -323,7 +329,7 @@
             </div>
           </a-tab-pane>
           <a-tab-pane key="community-posts" tab="Community Posts">
-             <div
+            <div
               v-if="isLoading"
               class="spinner-sec w-full h-[80vh] flex justify-center items-center"
             >
@@ -525,7 +531,14 @@
                               {{ truncateText(post.post_by, 15) }}
                             </span>
                           </a-col>
-                          <a-col :span="8" style="display: flex;justify-content: end; align-items: end;">
+                          <a-col
+                            :span="8"
+                            style="
+                              display: flex;
+                              justify-content: end;
+                              align-items: end;
+                            "
+                          >
                             <!-- Post Stats -->
                             <div style="display: flex">
                               <div
@@ -614,34 +627,31 @@
               </div>
             </div>
             <div>
- <div
-              v-if="isLoading"
-              class="spinner-sec w-full h-[80vh] flex justify-center items-center"
-            >
-              <a-spin tip="Loading..."> </a-spin>
-            </div>
-            <div v-else>
               <div
-                v-if="community_posts.length === 0"
-                style="
-                  height: 70vh;
-                  gap: 20px;
-                  flex-direction: column;
-                  display: flex;
-                  justify-content: center;
-                  align-items: center;
-                "
+                v-if="isLoading"
+                class="spinner-sec w-full h-[80vh] flex justify-center items-center"
               >
-                <a-empty
-                  :description="'You have not posted anything on comunity yet '"
-                >
-                </a-empty>
+                <a-spin tip="Loading..."> </a-spin>
               </div>
-            
-              
+              <div v-else>
+                <div
+                  v-if="community_posts.length === 0"
+                  style="
+                    height: 70vh;
+                    gap: 20px;
+                    flex-direction: column;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                  "
+                >
+                  <a-empty
+                    :description="'You have not posted anything on comunity yet '"
+                  >
+                  </a-empty>
+                </div>
+              </div>
             </div>
-            </div>
-           
           </a-tab-pane>
         </a-tabs>
       </div>
@@ -745,7 +755,7 @@ export default {
             .includes(this.searchQuery.toLowerCase()) ||
           product.furniture_type
             .toLowerCase()
-            .includes(this.searchQuery.toLowerCase())
+            .includes(this.searchQuery.toLowerCase()),
       );
     },
 
@@ -753,7 +763,7 @@ export default {
       console.log("reached inside filtered rooms");
       if (!this.searchQuery) return this.rooms;
       return this.rooms.filter((room) =>
-        room.name.toLowerCase().includes(this.searchQuery.toLowerCase())
+        room.name.toLowerCase().includes(this.searchQuery.toLowerCase()),
       );
     },
   },
@@ -773,12 +783,11 @@ export default {
     },
 
     onProductImageLoad(id) {
-    this.productImageLoadedMap[id] = false;
-    setTimeout(() => {
-      this.productImageLoadedMap[id] = true;
-    }, 1000); // 1s skeleton display
-  }, // ✓ Vue 3 reactivity handles this automatically
-  
+      this.productImageLoadedMap[id] = false;
+      setTimeout(() => {
+        this.productImageLoadedMap[id] = true;
+      }, 1000); // 1s skeleton display
+    }, // ✓ Vue 3 reactivity handles this automatically
 
     handleTabClick(key) {
       this.active_tab = key;
@@ -858,7 +867,7 @@ export default {
     handleCommentAdded() {
       if (this.selectedPost) {
         const postIndex = this.community_posts.findIndex(
-          (p) => p.id === this.selectedPost.id
+          (p) => p.id === this.selectedPost.id,
         );
         if (postIndex !== -1) {
           this.community_posts[postIndex].comment_count++;
@@ -870,7 +879,7 @@ export default {
     handleLikeToggled() {
       if (this.selectedPost) {
         const postIndex = this.community_posts.findIndex(
-          (p) => p.id === this.selectedPost.id
+          (p) => p.id === this.selectedPost.id,
         );
         if (postIndex !== -1) {
           this.community_posts[postIndex].isLiked = this.selectedPost.is_liked;
@@ -920,7 +929,7 @@ export default {
             headers: {
               Authorization: `Token ${token}`,
             },
-          }
+          },
         );
         const result = await response.json();
         if (result.success) {
@@ -950,7 +959,7 @@ export default {
             headers: {
               Authorization: `Token ${token}`,
             },
-          }
+          },
         );
         const result = await response.json();
         if (result.success) {
@@ -978,7 +987,7 @@ export default {
             headers: {
               Authorization: `Token ${token}`,
             },
-          }
+          },
         );
         const result = await response.json();
         if (result.success) {
@@ -1009,7 +1018,7 @@ export default {
               id: product.id,
               type: product.type,
             }),
-          }
+          },
         );
 
         const data = await response.json();
@@ -1042,7 +1051,7 @@ export default {
             body: JSON.stringify({
               post_id: post.id,
             }),
-          }
+          },
         );
 
         const data = await response.json();
@@ -1086,12 +1095,7 @@ export default {
   width: 100%;
   height: 240px !important; /* ← MATCH container height */
   border-radius: 12px; /* ← MATCH image border-radius */
-  background: linear-gradient(
-    110deg,
-    #e5e7eb 8%,
-    #f9fafb 18%,
-    #e5e7eb 33%
-  );
+  background: linear-gradient(110deg, #e5e7eb 8%, #f9fafb 18%, #e5e7eb 33%);
   background-size: 200% 100%;
   animation: shimmer 1.6s infinite linear;
   z-index: 1;
@@ -1102,8 +1106,6 @@ export default {
     background-position-x: -200%;
   }
 }
-
-
 
 /* Force remove modal backdrop interference */
 :deep(.ant-modal-mask) {
@@ -1176,8 +1178,9 @@ export default {
 
 .like-badge {
   position: absolute;
-  top: 18px;
-  left: 18px;
+  top: 12px;
+  left: 12px;
+  z-index: 10;
 }
 
 /* override ant button */
@@ -1196,7 +1199,6 @@ export default {
   background: rgba(0, 0, 0, 0.45) !important;
 }
 
-
 .product-image {
   width: 100%;
   height: 240px;
@@ -1208,12 +1210,7 @@ export default {
   width: 100%;
   height: 180px;
   border-radius: 10px;
-  background: linear-gradient(
-    110deg,
-    #e5e7eb 8%,
-    #f9fafb 18%,
-    #e5e7eb 33%
-  );
+  background: linear-gradient(110deg, #e5e7eb 8%, #f9fafb 18%, #e5e7eb 33%);
   background-size: 200% 100%;
   animation: product-shimmer 1.6s infinite linear;
 }
@@ -1223,7 +1220,6 @@ export default {
     background-position-x: -200%;
   }
 }
-
 
 .ar-badge {
   position: absolute;

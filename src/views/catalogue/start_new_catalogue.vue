@@ -320,7 +320,7 @@
       >
         <div 
           class="w-12 h-1.5 bg-gradient-to-r from-gray-400 to-gray-300 rounded-full shadow-sm hover:from-gray-500 hover:to-gray-400 transition-all duration-200 active:scale-95"
-          :class="{ 'rotate-180 scale-110': isExpanded }"
+          
         ></div>
       </div>
 
@@ -328,12 +328,25 @@
       <div class="overflow-y-auto flex-1 pb-6">
         <!-- Image Preview -->
         <div class="px-4 pt-4">
-          <router-link :to="'/'+selectedImage.brand" class="block mb-4">
-            <span class="text-sm font-semibold text-gray-700 inline-flex items-center gap-2 hover:text-blue-600 transition-colors" style="font-weight:600;">
-              <a-avatar size="18" style="border:1px solid rgba(0,0,0,0.2)" :src="this.$store.state.root_media_api+selectedImage.brand_banner"></a-avatar> 
-              {{selectedImage.brand_name}}
-            </span>
-          </router-link>
+          <div class="flex items-center justify-between mb-4">
+      <router-link :to="'/'+selectedImage.brand" class="block">
+        <span class="text-sm font-semibold text-gray-700 inline-flex items-center gap-2 hover:text-blue-600 transition-colors" style="font-weight:600;">
+          <a-avatar size="18" style="border:1px solid rgba(0,0,0,0.2)" :src="this.$store.state.root_media_api+selectedImage.brand_banner"></a-avatar> 
+          {{selectedImage.brand_name}}
+        </span>
+      </router-link>
+      
+      <!-- Close Button -->
+      <button 
+        @click="closeDrawer"
+        class="p-2 hover:bg-gray-100 rounded-full transition-colors"
+        aria-label="Close"
+      >
+        <svg class="w-5 h-5 text-gray-600 hover:text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
           
           <img 
             v-if="selectedImage"
@@ -936,6 +949,38 @@ export default {
       this.showCreditModal = false;
       this.$router.push("/pricing"); // or your actual route
     },
+
+closeDrawer() {
+  // IMMEDIATE close - no animations or state changes
+  this.isDragging = false;
+  this.isExpanded = false;
+  this.showImageDrawer = false;
+  this.showImageDrawer_test_room = false;
+  this.showObjectManagement = false;
+  
+  // Immediately reset drawer transform
+  if (this.drawerRef) {
+    this.drawerRef.style.transition = 'none'; // Disable transition
+    this.drawerRef.style.transform = '';
+    this.drawerRef.style.top = '';
+    this.drawerRef.style.height = '';
+    this.drawerRef.style.width = '';
+    this.drawerRef.style.borderRadius = '';
+    
+    // Re-enable transitions after a frame
+    requestAnimationFrame(() => {
+      if (this.drawerRef) {
+        this.drawerRef.style.transition = '';
+      }
+    });
+  }
+  
+  // Clear selection immediately
+  this.selectedImage = null;
+  this.detectedObjects = [];
+},
+
+
     async startchat_with_buisness_user() {
             const selectedUser = this.buid
             this.LoadingMessageButton=true
@@ -1010,8 +1055,18 @@ export default {
     }
   },
 
- handleTouchEnd() {
+handleTouchEnd(e) {
   if (!this.isDragging) return;
+  
+  // Check if touch ended on a button - if so, ignore drag logic
+  const target = e.target;
+  if (target.closest('button') || target.tagName === 'BUTTON') {
+    this.isDragging = false;
+    if (this.drawerRef) {
+      this.drawerRef.style.transform = '';
+    }
+    return;
+  }
   
   const deltaY = this.currentY - this.startY;
   
@@ -1034,6 +1089,7 @@ export default {
   }
   this.isDragging = false;
 },
+
   // Update your existing closeDrawer method
 closeDrawer() {
   // ALWAYS reset expanded state

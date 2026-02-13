@@ -1,5 +1,5 @@
 <template>
-  <div className="md:pt-3 -translate-y-18 sm:translate-y-0">
+  <div className="!pt-14 sm:!pt-3 -translate-y-18 sm:translate-y-0">
 
     <div class="p-1 bg-white rounded-2xl    border border-gray-200">
       <div class="flex h-screen overflow-auto bg-gray-50">

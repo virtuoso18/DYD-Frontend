@@ -456,6 +456,8 @@ Upload Room Photo</h2>
                       v-model:value="businessInfo.description"
                       :disabled="!isEditMode"
                       :rows="4"
+                      :maxlength="100"
+
                       placeholder="Tell us about your business..."
                       class="form-textarea"
                     />

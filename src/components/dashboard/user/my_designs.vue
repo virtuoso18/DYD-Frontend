@@ -396,34 +396,31 @@
                       <!-- <del style="font-size: 10px;">${{ product.pricing.price }}</del> -->
                       ${{ product.product_price }}
                     </a-col>
+<a-col span="17">
+  <button
+    @click="goto_product_Route(product)"
+    class="w-full h-7 px-2 text-[11px] rounded-md border border-gray-300 bg-white hover:bg-gray-50 flex items-center justify-center whitespace-nowrap transition"
+  >
+    Product Details
+  </button>
+</a-col>
 
-                    <a-col span="17">
-                      <!-- {{ product }} -->
-                      <a-button block @click="goto_product_Route(product)"
-                        >Product Details</a-button
-                      >
-                    </a-col>
+<a-col span="1"></a-col>
 
-                    <a-col span="1"></a-col>
-                    <a-col span="4">
-                      <!-- {{product.is_favorited}} -->
-                      <a-button
-                        size="medium"
-                        @click="toggleFavorite(product)"
-                        style="
-                          display: flex;
-                          justify-content: center;
-                          align-items: center;
-                        "
-                      >
-                        <template v-if="product.is_favorited">
-                          <HeartFilled style="color: red" />
-                        </template>
-                        <template v-else>
-                          <HeartOutlined />
-                        </template>
-                      </a-button>
-                    </a-col>
+<a-col span="4" class="flex justify-center">
+  <button
+    @click="toggleFavorite(product)"
+    class="h-7 px-2 rounded-md border border-gray-300 bg-white hover:bg-gray-50 flex items-center justify-center transition"
+  >
+    <template v-if="product.is_favorited">
+      <HeartFilled class="!text-red-500 text-[16px] leading-none" />
+    </template>
+    <template v-else>
+      <HeartOutlined class="text-[16px] leading-none" />
+    </template>
+  </button>
+</a-col>
+
                   </a-row>
                 </div>
               </a-col>
@@ -844,7 +841,7 @@ export default {
   color: white;
   padding: 4px 8px;
   border-radius: 6px;
-  font-size: 10px;
+  font-size: 8px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;

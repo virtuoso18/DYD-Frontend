@@ -1,6 +1,6 @@
 <template>
 
-  <div className="sm:py-3 -translate-y-15 md:translate-y-0">
+  <div className="sm:!py-3 !pt-14  -translate-y-15 md:translate-y-0">
 
     <div 
       class="

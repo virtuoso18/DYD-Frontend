@@ -4,10 +4,10 @@
     <a-row class="dashboard-content -translate-y-16 sm:translate-y-0">
       <!-- Content Area -->
       <a-col :xs="24" :sm="24" :md="24" :lg="24" class="content-area">
-<div class=" sm:bg-white sm:rounded-[24px] sm:border border-[#e9ecef] overflow-hidden sm:h-[800px]">
+<div class=" sm:bg-white !pt-12 sm:!pt-0 sm:rounded-[24px] sm:border border-[#e9ecef] overflow-hidden sm:h-[800px]">
           <!-- Wavy Background Header -->
 <div
-  class="wavy-header sm:rounded-tl-[24px] sm:rounded-tr-[24px]  w-full h-[200px] relative "
+  class="wavy-header  sm:rounded-tl-[24px] sm:rounded-tr-[24px]  w-full h-[200px] relative "
   :class="!wavyHeaderLoaded ? 'header-skeleton' : ''"
   :style="`background: url(${this.$store.state.root_media_api + profile.background_picture}) center/cover no-repeat;`"
 >          <!-- Background Edit Button -->
@@ -20,12 +20,11 @@
     alt=""
   />
 
-            <a-button 
+           <a-button 
   type="primary" 
   shape="circle" 
   v-if="isEditing" 
-  class="!flex !items-center !justify-center"
-  style="top:20px;left:20px" 
+  class="!absolute !top-8 sm:!top-2 !left-5 !flex !items-center !justify-center !z-[100]"
   @click="handleBackgroundClick"
 >
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -33,6 +32,7 @@
     <path d="M18.5 2.5C18.8978 2.10217 19.4374 1.87868 20 1.87868C20.5626 1.87868 21.1022 2.10217 21.5 2.5C21.8978 2.89783 22.1213 3.43739 22.1213 4C22.1213 4.56261 21.8978 5.10217 21.5 5.5L12 15L8 16L9 12L18.5 2.5Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
   </svg>
 </a-button>
+
 
             
             <!-- Profile Avatar in Header -->
@@ -62,9 +62,35 @@
   />
 
   <!-- Camera button (stays on top) -->
-  <a-button v-if="isEditing" type="primary" shape="circle" class="camera-icon" @click="handleCameraClick">
-    <!-- SVG unchanged -->
-  </a-button>
+  <a-button
+  v-if="isEditing"
+  type="primary"
+  shape="circle"
+  class="camera-icon flex items-center justify-center"
+  @click="handleCameraClick"
+>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+  >
+    <path
+      d="M4 20h4l10-10-4-4L4 16v4z"
+      stroke="currentColor"
+      stroke-width="1.8"
+      stroke-linejoin="round"
+    />
+    <path
+      d="M14 6l4 4"
+      stroke="currentColor"
+      stroke-width="1.8"
+      stroke-linecap="round"
+    />
+  </svg>
+</a-button>
+
 </div>
 
             </div>
@@ -458,7 +484,7 @@ export default {
     background: white;
     border-radius: 24px;
     border: 1px solid #e9ecef;
-    overflow: hidden;
+    /* overflow: hidden; */
   }
 }
 .wavy-header {
