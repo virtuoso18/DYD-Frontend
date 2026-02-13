@@ -140,6 +140,7 @@
             <div class="!flex gap-1 w-1/2">
               <div
                 v-for="(color, index) in ProductDetails.colors.available_colors"
+                v-if="color.color && color.model_file_colored_product"
                 :key="color.id"
                 @click="switchColorInAR(index, color)"
                 :class="[
