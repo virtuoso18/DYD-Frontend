@@ -99,10 +99,11 @@
                 size="small"
                 @click.stop="processPhoto(record)"
                 :loading="regeneratingIds.includes(record.id)"
+                style="display: flex;justify-content: center;align-items: center;"
               >
-                <template #icon>
+                <!-- <template #icon> -->
                   <ReloadOutlined />
-                </template>
+                <!-- </template> -->
                 Regenerate
               </a-button>
 

@@ -2534,7 +2534,7 @@
                 placeholder="describe the room here "
               ></a-textarea>
               <a-button
-                :disabled="!description_room.trim()"
+                :disabled="!description_room.trim() && loading"
                 block
                 type="primary"
                 size="large"
