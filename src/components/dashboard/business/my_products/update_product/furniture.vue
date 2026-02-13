@@ -243,31 +243,41 @@
           
           <!-- Name & Description -->
           <div style="margin-bottom: 20px;">
-            <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151;">Name</label>
-            <a-input v-model:value="productForm.name" placeholder="Product Name" style="border-radius: 8px;" size="large" />
+            <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151;">Name<span style="color: red;">*</span></label>
+            <a-input v-model:value="productForm.name"
+            :maxlength="50"
+    show-count
+     placeholder="Product Name" style="border-radius: 8px;" size="large" />
           </div>
 
           <div style="margin-bottom: 20px;">
-            <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151;">Description</label>
-            <a-textarea v-model:value="productForm.description" :rows="4" placeholder="Product Description" style="border-radius: 8px; resize: none;" />
+            <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151;">Description<span style="color: red;">*</span></label>
+<a-textarea
+    v-model:value="productForm.description"
+    :rows="4"
+    placeholder="Product Description"
+    :maxlength="100"
+    show-count
+    style="border-radius: 8px; resize: none;"
+  />
           </div>
 
           <!-- Category, Type, Price -->
           <a-row :gutter="16" style="margin-bottom: 20px;">
             <a-col :span="8">
-              <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151;">Category</label>
+              <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151;">Category<span style="color: red;">*</span></label>
               <a-select v-model:value="productForm.category_name" style="width: 100%;" size="large">
                 <a-select-option v-for="cat in categories_available" :key="cat" :value="cat">{{ cat }}</a-select-option>
               </a-select>
             </a-col>
             <a-col :span="8">
-              <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151;">Type</label>
+              <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151;">Type<span style="color: red;">*</span></label>
               <a-select v-model:value="productForm.furniture_type" style="width: 100%;" size="large">
                 <a-select-option v-for="type in types" :key="type" :value="type">{{ type }}</a-select-option>
               </a-select>
             </a-col>
             <a-col :span="8">
-              <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151;">Price</label>
+              <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151;">Price<span style="color: red;">*</span></label>
               <a-input v-model:value="productForm.pricing.price" placeholder="680" suffix="$" style="border-radius: 8px;" size="large" />
             </a-col>
           </a-row>
@@ -298,7 +308,7 @@
           text-transform: capitalize;
         "
       >
-        {{ dim }}
+        {{ dim }}<span style="color: red;">*</span>
         <span
           style="
             margin-left: 8px;
@@ -331,7 +341,7 @@
           <a-row :gutter="24">
            <!-- Colors Section - Updated -->
 <a-col :span="12">
-  <h4 style="margin-bottom: 16px; font-weight: 500; font-size: 14px; color: #1f2937;">Colors</h4>
+  <h4 style="margin-bottom: 16px; font-weight: 500; font-size: 14px; color: #1f2937;">Colors<span style="color: red;">*</span></h4>
   <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 12px;">
     <!-- Existing Colors -->
    <div 
@@ -470,7 +480,7 @@
 </a-col>
 
             <a-col :span="12">
-              <div
+              <div  class="flex flex-wrap"
   style="
     display: flex;
     align-items: center;
@@ -478,7 +488,7 @@
     margin-bottom: 16px;
   "
 >
-  <h4 style="margin-bottom: 16px; font-weight: 500; font-size: 14px; color: #1f2937;">Textures</h4>
+  <h4 style="margin-bottom: 16px; font-weight: 500; font-size: 14px; color: #1f2937;">Textures<span style="color: red;">*</span></h4>
   
     <!-- Add Texture from Library -->
     <a-popover trigger="click" placement="bottom">
@@ -1834,38 +1844,58 @@ async handleTextureUpload(event) {
     });
   },
 
-    // Form Validation & Save
-    validateForm() {
-      if (!this.productForm.name.trim()) {
-        this.$message.error('Product name is required');
-        return false;
-      }
-      if (!this.productForm.description.trim()) {
-        this.$message.error('Product description is required');
-        return false;
-      }
-      if (!this.productForm.category_name) {
-        this.$message.error('Category is required');
-        return false;
-      }
-      if (!this.productForm.pricing.price || parseFloat(this.productForm.pricing.price) <= 0) {
-        this.$message.error('Valid price is required');
-        return false;
-      }
-      if (this.productForm.pricing.sale_price && parseFloat(this.productForm.pricing.sale_price) <= 0) {
-        this.$message.error('Sale price must be greater than 0 if provided');
-        return false;
-      }
 
-      const dimensions = ['height', 'length', 'width', 'depth'];
-      for (let dim of dimensions) {
-        if (this.productForm.dimensions[dim] && parseFloat(this.productForm.dimensions[dim]) <= 0) {
-          this.$message.error(`${dim} must be greater than 0 if provided`);
-          return false;
-        }
-      }
-      return true;
-    },
+    // Form Validation & Save
+   validateForm() {
+  if (!this.productForm.name.trim()) {
+    this.$message.error('Product name is required');
+    return false;
+  }
+  if (!this.productForm.description.trim()) {
+    this.$message.error('Product description is required');
+    return false;
+  }
+  if (!this.productForm.category_name) {
+    this.$message.error('Category is required');
+    return false;
+  }
+  if (!this.productForm.furniture_type) {
+    this.$message.error('Type is required');
+    return false;
+  }
+  if (!this.productForm.pricing.price || parseFloat(this.productForm.pricing.price) <= 0) {
+    this.$message.error('Valid price is required');
+    return false;
+  }
+  if (this.productForm.pricing.sale_price && parseFloat(this.productForm.pricing.sale_price) <= 0) {
+    this.$message.error('Sale price must be greater than 0 if provided');
+    return false;
+  }
+
+  // Dimensions validation
+  const dimensions = ['height', 'length', 'width'];
+  for (let dim of dimensions) {
+    if (!this.productForm.dimensions[dim] || parseFloat(this.productForm.dimensions[dim]) <= 0) {
+      this.$message.error(`${dim.charAt(0).toUpperCase() + dim.slice(1)} is required and must be greater than 0`);
+      return false;
+    }
+  }
+
+  // Colors validation
+  if (!this.selectedProduct.colors.available_colors || this.selectedProduct.colors.available_colors.length === 0) {
+    this.$message.error('At least one color is required');
+    return false;
+  }
+
+  // Textures validation
+  if (!this.selectedProduct.textures || this.selectedProduct.textures.length === 0) {
+    this.$message.error('At least one texture is required');
+    return false;
+  }
+
+  return true;
+},
+
 
     async saveProduct() {
       if (!this.hasUnsavedChanges && !this.pending3DModel && this.imagePreviewsState.length === 0) {

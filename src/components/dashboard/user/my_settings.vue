@@ -1,6 +1,6 @@
 <template>
 
-  <div className=" -translate-y-20 sm:translate-y-0">
+  <div className=" !pt-14 sm:!pt-0 -translate-y-20 sm:translate-y-0">
 
         <!-- Change Password Modal -->
         <a-modal 

@@ -130,33 +130,33 @@
           
           <!-- Title & Description -->
           <div style="margin-bottom: 20px;">
-            <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151;">Title</label>
+            <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151;">Title<span style="color: red;">*</span></label>
             <a-input v-model:value="textureForm.title" placeholder="Wall Texture Title" style="border-radius: 8px;" size="large" />
           </div>
 
           <div style="margin-bottom: 20px;">
-            <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151;">Description</label>
+            <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151;">Description<span style="color: red;">*</span></label>
             <a-textarea v-model:value="textureForm.description" :rows="4" placeholder="Wall Texture Description" style="border-radius: 8px; resize: none;" />
           </div>
 
           <!-- Texture Style, Brand, Model Number -->
           <a-row :gutter="16" style="margin-bottom: 20px;">
             <a-col :span="6">
-              <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151;">Texture Style</label>
+              <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151;">Texture Style<span style="color: red;">*</span></label>
               <a-select v-model:value="textureForm.texture_style" style="width: 100%;" size="large">
                 <a-select-option v-for="style in textureStyles" :key="style" :value="style">{{ style }}</a-select-option>
               </a-select>
             </a-col>
              <a-col :span="6">
-              <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151;">Sale Price per SQM</label>
+              <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151;">Sale Price per SQM <span style="color: red;">*</span></label>
               <a-input-number v-model:value="textureForm.sale_price_per_sqm" :min="0" :step="0.01" placeholder="20.00" suffix="$" style="width: 100%; border-radius: 8px;" size="large" />
             </a-col>
               <a-col :span="6">
-                <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 13px; color: #6b7280;">Tile Width (cm)</label>
+                <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 13px; color: #6b7280;">Tile Width (cm) <span style="color: red;">*</span></label>
                 <a-input-number v-model:value="textureForm.tile_width" :min="0.01" :step="0.01" placeholder="100.00" style="width: 100%; border-radius: 6px;" />
               </a-col>
               <a-col :span="6">
-                <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 13px; color: #6b7280;">Tile Height (cm)</label>
+                <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 13px; color: #6b7280;">Tile Height (cm) <span style="color: red;">*</span></label>
                 <a-input-number v-model:value="textureForm.tile_height" :min="0.01" :step="0.01" placeholder="100.00" style="width: 100%; border-radius: 6px;" />
               </a-col>
             <!-- <a-col :span="8">
@@ -227,7 +227,7 @@
               </a-col> -->
               
   <a-col :span="12">
-    <h4 style="margin-bottom: 16px; font-weight: 500; font-size: 14px; color: #1f2937;">Available Colors</h4>
+    <h4 style="margin-bottom: 16px; font-weight: 500; font-size: 14px; color: #1f2937;">Available Colors <span style="color: red;">*</span></h4>
     
 <div style="margin-bottom: 20px;">
   
@@ -855,39 +855,45 @@ export default {
       });
     },
 
-    validateForm() {
-      if (!this.textureForm.title.trim()) {
-        this.$message.error('Title is required');
-        return false;
-      }
-      if (!this.textureForm.texture_style) {
-        this.$message.error('Texture Style is required');
-        return false;
-      }
-      // if (!this.textureForm.price_per_sqm || parseFloat(this.textureForm.price_per_sqm) <= 0) {
-      //   this.$message.error('Price per SQM must be greater than 0');
-      //   return false;
-      // }
-      if (this.textureForm.sale_price_per_sqm && parseFloat(this.textureForm.sale_price_per_sqm) <= 0) {
-        this.$message.error('Sale price must be greater than 0 if provided');
-        return false;
-      }
-      // if (this.textureForm.stock_quantity === null || this.textureForm.stock_quantity < 0) {
-      //   this.$message.error('Stock quantity must be 0 or greater');
-      //   return false;
-      // }
 
-      // Validate dimensions if provided
-      // const dimensionFields = ['thickness', 'weight_per_sqm', 'size_width', 'size_height', 'tile_width', 'tile_height', 'coverage_per_unit'];
-      const dimensionFields = ['tile_width', 'tile_height'];
-      for (let field of dimensionFields) {
-        if (this.textureForm[field] !== null && parseFloat(this.textureForm[field]) <= 0) {
-          this.$message.error(`${field.replace('_', ' ')} must be greater than 0 if provided`);
-          return false;
-        }
-      }
-      return true;
-    },
+    
+   validateForm() {
+  if (!this.textureForm.title.trim()) {
+    this.$message.error('Title is required');
+    return false;
+  }
+  if (!this.textureForm.description.trim()) {
+    this.$message.error('Description is required');
+    return false;
+  }
+  if (!this.textureForm.texture_style) {
+    this.$message.error('Texture Style is required');
+    return false;
+  }
+  if (!this.textureForm.sale_price_per_sqm || parseFloat(this.textureForm.sale_price_per_sqm) <= 0) {
+    this.$message.error('Sale Price per SQM is required and must be greater than 0');
+    return false;
+  }
+  
+  // Tile dimensions validation
+  if (!this.textureForm.tile_width || parseFloat(this.textureForm.tile_width) <= 0) {
+    this.$message.error('Tile Width is required and must be greater than 0');
+    return false;
+  }
+  if (!this.textureForm.tile_height || parseFloat(this.textureForm.tile_height) <= 0) {
+    this.$message.error('Tile Height is required and must be greater than 0');
+    return false;
+  }
+
+  // Available colors validation
+  if (!this.selectedTexture?.associated_colors || this.selectedTexture.associated_colors.length === 0) {
+    this.$message.error('At least one available color is required');
+    return false;
+  }
+
+  return true;
+},
+
 
     async saveTexture() {
       if (!this.hasUnsavedChanges && this.imagePreviewsState.length === 0) {
