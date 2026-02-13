@@ -1,5 +1,5 @@
 <template>
-   <!-- Purchase Credits Modal -->
+  <!-- Purchase Credits Modal -->
   <a-modal
     v-model:open="showCreditModal"
     title=""
@@ -54,7 +54,8 @@
         {{ creditErrorMessage }}
       </p>
       <!-- CTA button -->
-      <a-button v-if="currentUser.user_type!=='User'"
+      <a-button
+        v-if="currentUser.user_type !== 'User'"
         type="primary"
         block
         size="large"
@@ -63,53 +64,77 @@
       >
         Purchase Credits
       </a-button>
-      
-      <a-button v-else
+
+      <a-button
+        v-else
         type="primary"
         block
         size="large"
         :loading="LoadingMessageButton"
-        style="height: 46px; font-size: 16px; border-radius: 8px; display: flex;justify-content: center;align-items: center;"
+        style="
+          height: 46px;
+          font-size: 16px;
+          border-radius: 8px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        "
         @click="startchat_with_buisness_user"
       >
-        <MessageOutlined style="font-size: 16px;"/>
-    Message Business
+        <MessageOutlined style="font-size: 16px" />
+        Message Business
       </a-button>
     </div>
   </a-modal>
 
-
   <div class="home-container">
     <!-- Loading Modal - Direct in DOM -->
-     <!-- Loading Modal - Direct in DOM --><Transition name="modal-fade">
+    <!-- Loading Modal - Direct in DOM --><Transition name="modal-fade">
       <div
         v-if="showLoadingModal"
         class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 backdrop-blur-sm"
-        style="position: fixed; top: 0; left: 0; right: 0; bottom: 0;"
+        style="position: fixed; top: 0; left: 0; right: 0; bottom: 0"
       >
         <div class="bg-white rounded-2xl shadow-2xl p-10 max-w-md w-11/12 mx-4">
           <div class="flex flex-col items-center justify-center">
             <!-- Building SVG Icon -->
             <div class="mb-8 animate-pulse-slow">
-              <svg width="120" height="136" viewBox="0 0 120 136" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <svg
+                width="120"
+                height="136"
+                viewBox="0 0 120 136"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
                 <g clip-path="url(#clip0_7680_52339)">
-                  <path d="M32.6554 135.997H13.2641V95.3268L2.13775 98.2749V135.779H0V96.6333L13.2641 93.1325V83.0822L30.5176 78.1911V33.4841L76.1509 0V49.5646L95.155 55.0587V93.1157L120 102.831V135.779H117.862V104.272L95.155 95.3938V135.846H74.0132V84.8243L93.0173 92.2615V56.65L76.1509 51.7756V78.6936L63.3918 82.0772V135.913H42.553V87.5881L32.6554 90.2011V135.997ZM15.4019 133.87H30.5176V90.7707L15.4019 94.774V133.87ZM44.6907 133.769H61.2372V82.63L44.6907 87.0018V133.769ZM76.1509 133.719H93.0173V94.5563L76.1509 87.9566V133.719ZM15.4019 84.6903V92.563L30.5176 88.5596V80.4021L15.4019 84.6903ZM32.6554 79.7991V88.0068L42.553 85.3938V77.0018L32.6554 79.7991ZM44.6907 76.382V84.8075L61.2372 80.4356V71.6919L44.6907 76.382ZM63.375 68.8611V79.8661L73.9964 77.052V51.1559L44.6739 42.6801V74.171L63.375 68.8611ZM32.6554 34.5729V77.5881L42.553 74.774V39.8493L74.0132 48.9448V4.22111L32.6554 34.5729Z" fill="#0C0C0C"/>
-                  <path d="M83.2037 48.9282L80.7461 48.1912L81.0659 3.38379L83.2037 5.51109V48.9282Z" fill="#0C0C0C"/>
-                  <path d="M89.6173 50.6363L87.2607 49.782L87.4796 8.49219L89.6173 10.2007V50.6363Z" fill="#0C0C0C"/>
+                  <path
+                    d="M32.6554 135.997H13.2641V95.3268L2.13775 98.2749V135.779H0V96.6333L13.2641 93.1325V83.0822L30.5176 78.1911V33.4841L76.1509 0V49.5646L95.155 55.0587V93.1157L120 102.831V135.779H117.862V104.272L95.155 95.3938V135.846H74.0132V84.8243L93.0173 92.2615V56.65L76.1509 51.7756V78.6936L63.3918 82.0772V135.913H42.553V87.5881L32.6554 90.2011V135.997ZM15.4019 133.87H30.5176V90.7707L15.4019 94.774V133.87ZM44.6907 133.769H61.2372V82.63L44.6907 87.0018V133.769ZM76.1509 133.719H93.0173V94.5563L76.1509 87.9566V133.719ZM15.4019 84.6903V92.563L30.5176 88.5596V80.4021L15.4019 84.6903ZM32.6554 79.7991V88.0068L42.553 85.3938V77.0018L32.6554 79.7991ZM44.6907 76.382V84.8075L61.2372 80.4356V71.6919L44.6907 76.382ZM63.375 68.8611V79.8661L73.9964 77.052V51.1559L44.6739 42.6801V74.171L63.375 68.8611ZM32.6554 34.5729V77.5881L42.553 74.774V39.8493L74.0132 48.9448V4.22111L32.6554 34.5729Z"
+                    fill="#0C0C0C"
+                  />
+                  <path
+                    d="M83.2037 48.9282L80.7461 48.1912L81.0659 3.38379L83.2037 5.51109V48.9282Z"
+                    fill="#0C0C0C"
+                  />
+                  <path
+                    d="M89.6173 50.6363L87.2607 49.782L87.4796 8.49219L89.6173 10.2007V50.6363Z"
+                    fill="#0C0C0C"
+                  />
                 </g>
                 <defs>
                   <clipPath id="clip0_7680_52339">
-                    <rect width="120" height="136" fill="white"/>
+                    <rect width="120" height="136" fill="white" />
                   </clipPath>
                 </defs>
               </svg>
             </div>
-            
+
             <p class="text-lg text-gray-700 mb-10 font-medium">Loading...</p>
-            
+
             <div class="text-center">
               <p class="text-sm text-gray-500 mt-2 mb-2">Powered By</p>
-              <h2 class="text-4xl font-bold text-black tracking-wider">D.Y.D</h2>
+              <h2 class="text-4xl font-bold text-black tracking-wider">
+                D.Y.D
+              </h2>
             </div>
           </div>
         </div>
@@ -121,70 +146,176 @@
       <div
         v-if="showInstructionsModal"
         class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
-        style="position: fixed; top: 0; left: 0; right: 0; bottom: 0;"
+        style="position: fixed; top: 0; left: 0; right: 0; bottom: 0"
         @click.self="showInstructionsModal = false"
       >
-        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 relative">
+        <div
+          class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 relative"
+        >
           <button
             @click="showInstructionsModal = false"
             class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 transition-colors z-10"
           >
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
 
           <div class="pt-12 px-3 pb-6">
             <h2 class="text-xl font-bold text-center mb-8"></h2>
-            
-            <div  v-if="!modalPreviewImage"  class="border-2 border-dashed border-gray-300 rounded-xl p-5 mb-6">
+
+            <div
+              v-if="!modalPreviewImage"
+              class="border-2 border-dashed border-gray-300 rounded-xl p-5 mb-6"
+            >
               <div class="flex items-center gap-3 mb-4">
-                <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg
+                  width="19"
+                  height="19"
+                  viewBox="0 0 19 19"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
                   <g clip-path="url(#clip0_7680_52365)">
-                    <path d="M17.9362 14.8169C17.9362 15.2305 17.7719 15.6272 17.4794 15.9197C17.1869 16.2122 16.7902 16.3765 16.3766 16.3765H2.33991C1.92627 16.3765 1.52957 16.2122 1.23708 15.9197C0.944591 15.6272 0.780273 15.2305 0.780273 14.8169V6.23893C0.780273 5.82529 0.944591 5.42859 1.23708 5.1361C1.52957 4.84361 1.92627 4.67929 2.33991 4.67929H5.45917L7.01881 2.33984H11.6977L13.2573 4.67929H16.3766C16.7902 4.67929 17.1869 4.84361 17.4794 5.1361C17.7719 5.42859 17.9362 5.82529 17.9362 6.23893V14.8169Z" stroke="#606367" stroke-width="1.55963" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M9.35852 13.2571C11.0812 13.2571 12.4778 11.8605 12.4778 10.1378C12.4778 8.4151 11.0812 7.01855 9.35852 7.01855C7.6358 7.01855 6.23926 8.4151 6.23926 10.1378C6.23926 11.8605 7.6358 13.2571 9.35852 13.2571Z" stroke="#606367" stroke-width="1.55963" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path
+                      d="M17.9362 14.8169C17.9362 15.2305 17.7719 15.6272 17.4794 15.9197C17.1869 16.2122 16.7902 16.3765 16.3766 16.3765H2.33991C1.92627 16.3765 1.52957 16.2122 1.23708 15.9197C0.944591 15.6272 0.780273 15.2305 0.780273 14.8169V6.23893C0.780273 5.82529 0.944591 5.42859 1.23708 5.1361C1.52957 4.84361 1.92627 4.67929 2.33991 4.67929H5.45917L7.01881 2.33984H11.6977L13.2573 4.67929H16.3766C16.7902 4.67929 17.1869 4.84361 17.4794 5.1361C17.7719 5.42859 17.9362 5.82529 17.9362 6.23893V14.8169Z"
+                      stroke="#606367"
+                      stroke-width="1.55963"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M9.35852 13.2571C11.0812 13.2571 12.4778 11.8605 12.4778 10.1378C12.4778 8.4151 11.0812 7.01855 9.35852 7.01855C7.6358 7.01855 6.23926 8.4151 6.23926 10.1378C6.23926 11.8605 7.6358 13.2571 9.35852 13.2571Z"
+                      stroke="#606367"
+                      stroke-width="1.55963"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
                   </g>
                   <defs>
                     <clipPath id="clip0_7680_52365">
-                      <rect width="18.7156" height="18.7156" fill="white"/>
+                      <rect width="18.7156" height="18.7156" fill="white" />
                     </clipPath>
                   </defs>
                 </svg>
-                <p class="text-[14px] !font-family-poppins text-gray-700">Upload the picture of your space here.</p>
+                <p class="text-[14px] !font-family-poppins text-gray-700">
+                  Upload the picture of your space here.
+                </p>
               </div>
 
               <div class="flex items-center gap-3 mb-4">
-                <svg width="17" height="18" viewBox="0 0 17 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M4.21193 13.4677C2.81866 13.7015 1.75052 14.0482 1.16804 14.4559C0.585558 14.8635 0.520238 15.3101 0.981863 15.7284C1.44349 16.1467 2.40715 16.5141 3.72798 16.7755C4.41096 16.9107 5.17038 17.0137 5.97282 17.0817M12.387 13.4667C13.7812 13.7 14.8506 14.0465 15.4346 14.454C16.0186 14.8615 16.0856 15.3081 15.6256 15.7265C15.1655 16.1449 14.2032 16.5126 12.8834 16.7743C12.1989 16.9101 11.4373 17.0135 10.6325 17.0817M8.30265 7.13925V12.1958M8.30265 7.13925L13.3859 4.14732M8.30265 7.13925L3.21937 4.14732M7.87904 0.791234C8.14117 0.639901 8.46413 0.639901 8.72626 0.791234L13.3819 3.47914C13.644 3.63048 13.8055 3.91016 13.8055 4.21285V9.58867C13.8055 9.89136 13.644 10.171 13.3819 10.3224L8.72626 13.0103C8.46413 13.1616 8.14117 13.1616 7.87904 13.0103L3.22344 10.3224C2.96131 10.171 2.79983 9.89136 2.79983 9.58867V4.21285C2.79983 3.91016 2.96131 3.63048 3.22344 3.47914L7.87904 0.791234Z" stroke="#606367" stroke-width="1.35554" stroke-linecap="round"/>
+                <svg
+                  width="17"
+                  height="18"
+                  viewBox="0 0 17 18"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M4.21193 13.4677C2.81866 13.7015 1.75052 14.0482 1.16804 14.4559C0.585558 14.8635 0.520238 15.3101 0.981863 15.7284C1.44349 16.1467 2.40715 16.5141 3.72798 16.7755C4.41096 16.9107 5.17038 17.0137 5.97282 17.0817M12.387 13.4667C13.7812 13.7 14.8506 14.0465 15.4346 14.454C16.0186 14.8615 16.0856 15.3081 15.6256 15.7265C15.1655 16.1449 14.2032 16.5126 12.8834 16.7743C12.1989 16.9101 11.4373 17.0135 10.6325 17.0817M8.30265 7.13925V12.1958M8.30265 7.13925L13.3859 4.14732M8.30265 7.13925L3.21937 4.14732M7.87904 0.791234C8.14117 0.639901 8.46413 0.639901 8.72626 0.791234L13.3819 3.47914C13.644 3.63048 13.8055 3.91016 13.8055 4.21285V9.58867C13.8055 9.89136 13.644 10.171 13.3819 10.3224L8.72626 13.0103C8.46413 13.1616 8.14117 13.1616 7.87904 13.0103L3.22344 10.3224C2.96131 10.171 2.79983 9.89136 2.79983 9.58867V4.21285C2.79983 3.91016 2.96131 3.63048 3.22344 3.47914L7.87904 0.791234Z"
+                    stroke="#606367"
+                    stroke-width="1.35554"
+                    stroke-linecap="round"
+                  />
                 </svg>
-                <p class="text-[14px] !font-family-poppins text-gray-700">Try our products in space</p>
+                <p class="text-[14px] !font-family-poppins text-gray-700">
+                  Try our products in space
+                </p>
               </div>
 
               <div class="flex items-center gap-3 mb-4">
-                <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M14.8169 2.33887H3.89948C3.03812 2.33887 2.33984 3.03714 2.33984 3.8985V14.8159C2.33984 15.6773 3.03812 16.3756 3.89948 16.3756H14.8169C15.6783 16.3756 16.3765 15.6773 16.3765 14.8159V3.8985C16.3765 3.03714 15.6783 2.33887 14.8169 2.33887Z" stroke="#606367" stroke-width="1.55963" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M6.62871 7.79843C7.27473 7.79843 7.79843 7.27473 7.79843 6.62871C7.79843 5.98269 7.27473 5.45898 6.62871 5.45898C5.98269 5.45898 5.45898 5.98269 5.45898 6.62871C5.45898 7.27473 5.98269 7.79843 6.62871 7.79843Z" stroke="#606367" stroke-width="1.55963" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M16.3765 11.6969L12.4774 7.79785L3.89941 16.3758" stroke="#606367" stroke-width="1.55963" stroke-linecap="round" stroke-linejoin="round"/>
+                <svg
+                  width="19"
+                  height="19"
+                  viewBox="0 0 19 19"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M14.8169 2.33887H3.89948C3.03812 2.33887 2.33984 3.03714 2.33984 3.8985V14.8159C2.33984 15.6773 3.03812 16.3756 3.89948 16.3756H14.8169C15.6783 16.3756 16.3765 15.6773 16.3765 14.8159V3.8985C16.3765 3.03714 15.6783 2.33887 14.8169 2.33887Z"
+                    stroke="#606367"
+                    stroke-width="1.55963"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M6.62871 7.79843C7.27473 7.79843 7.79843 7.27473 7.79843 6.62871C7.79843 5.98269 7.27473 5.45898 6.62871 5.45898C5.98269 5.45898 5.45898 5.98269 5.45898 6.62871C5.45898 7.27473 5.98269 7.79843 6.62871 7.79843Z"
+                    stroke="#606367"
+                    stroke-width="1.55963"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M16.3765 11.6969L12.4774 7.79785L3.89941 16.3758"
+                    stroke="#606367"
+                    stroke-width="1.55963"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
                 </svg>
-                <p class="text-[14px] !font-family-poppins text-gray-700">Clean the camera</p>
+                <p class="text-[14px] !font-family-poppins text-gray-700">
+                  Clean the camera
+                </p>
               </div>
 
               <div class="flex items-center gap-3 relative">
-                <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M8.57838 14.8159C12.0238 14.8159 14.8169 12.0228 14.8169 8.5774C14.8169 5.13195 12.0238 2.33887 8.57838 2.33887C5.13293 2.33887 2.33984 5.13195 2.33984 8.5774C2.33984 12.0228 5.13293 14.8159 8.57838 14.8159Z" stroke="#606367" stroke-width="1.55963" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M16.3776 16.3766L12.9854 12.9844" stroke="#606367" stroke-width="1.55963" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M8.57812 6.23828V10.9172" stroke="#606367" stroke-width="1.55963" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M6.23926 8.57715H10.9182" stroke="#606367" stroke-width="1.55963" stroke-linecap="round" stroke-linejoin="round"/>
+                <svg
+                  width="19"
+                  height="19"
+                  viewBox="0 0 19 19"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M8.57838 14.8159C12.0238 14.8159 14.8169 12.0228 14.8169 8.5774C14.8169 5.13195 12.0238 2.33887 8.57838 2.33887C5.13293 2.33887 2.33984 5.13195 2.33984 8.5774C2.33984 12.0228 5.13293 14.8159 8.57838 14.8159Z"
+                    stroke="#606367"
+                    stroke-width="1.55963"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M16.3776 16.3766L12.9854 12.9844"
+                    stroke="#606367"
+                    stroke-width="1.55963"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M8.57812 6.23828V10.9172"
+                    stroke="#606367"
+                    stroke-width="1.55963"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M6.23926 8.57715H10.9182"
+                    stroke="#606367"
+                    stroke-width="1.55963"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
                 </svg>
-                <p class="text-[14px] !font-family-poppins text-gray-700">Take the picture at 0.5 zoom.</p>
+                <p class="text-[14px] !font-family-poppins text-gray-700">
+                  Take the picture at 0.5 zoom.
+                </p>
               </div>
             </div>
-            
-            <br>
+
+            <br />
             <!-- Hidden file input for modal -->
-            <input 
+            <input
               ref="modalFileInput"
-              type="file" 
+              type="file"
               accept=".png,.jpg,.jpeg"
               @change="handleModalFileUploadChange"
               class="hidden"
@@ -192,30 +323,74 @@
 
             <!-- Show preview if image is selected, else show upload button -->
             <div v-if="!modalPreviewImage" class="space-y-3">
-              <button 
+              <button
                 @click="triggerFileUpload"
                 :disabled="uploading"
                 class="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed !text-white font-medium py-3 px-4 text-[14px] !font-family-poppins rounded-lg flex items-center justify-center gap-2 transition-colors mb-5"
               >
-                <svg v-if="uploading" class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                <svg
+                  v-if="uploading"
+                  class="animate-spin h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    class="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    stroke-width="4"
+                  ></circle>
+                  <path
+                    class="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
                 </svg>
 
-                <svg v-else width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg
+                  v-else
+                  width="25"
+                  height="25"
+                  viewBox="0 0 25 25"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
                   <g clip-path="url(#clip0_7680_52390)">
-                    <path d="M17.9362 21.0542C17.9362 21.4679 17.7719 21.8646 17.4794 22.157C17.1869 22.4495 16.7902 22.6138 16.3766 22.6138H2.33991C1.92627 22.6138 1.52957 22.4495 1.23708 22.157C0.944591 21.8646 0.780273 21.4679 0.780273 21.0542V12.4762C0.780273 12.0626 0.944591 11.6659 1.23708 11.3734C1.52957 11.0809 1.92627 10.9166 2.33991 10.9166H5.45917L7.01881 8.57715H11.6977L13.2573 10.9166H16.3766C16.7902 10.9166 17.1869 11.0809 17.4794 11.3734C17.7719 11.6659 17.9362 12.0626 17.9362 12.4762V21.0542Z" stroke="white" stroke-width="1.55963" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M9.35755 19.4954C11.0803 19.4954 12.4768 18.0988 12.4768 16.3761C12.4768 14.6534 11.0803 13.2568 9.35755 13.2568C7.63482 13.2568 6.23828 14.6534 6.23828 16.3761C6.23828 18.0988 7.63482 19.4954 9.35755 19.4954Z" stroke="white" stroke-width="1.55963" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path
+                      d="M17.9362 21.0542C17.9362 21.4679 17.7719 21.8646 17.4794 22.157C17.1869 22.4495 16.7902 22.6138 16.3766 22.6138H2.33991C1.92627 22.6138 1.52957 22.4495 1.23708 22.157C0.944591 21.8646 0.780273 21.4679 0.780273 21.0542V12.4762C0.780273 12.0626 0.944591 11.6659 1.23708 11.3734C1.52957 11.0809 1.92627 10.9166 2.33991 10.9166H5.45917L7.01881 8.57715H11.6977L13.2573 10.9166H16.3766C16.7902 10.9166 17.1869 11.0809 17.4794 11.3734C17.7719 11.6659 17.9362 12.0626 17.9362 12.4762V21.0542Z"
+                      stroke="white"
+                      stroke-width="1.55963"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M9.35755 19.4954C11.0803 19.4954 12.4768 18.0988 12.4768 16.3761C12.4768 14.6534 11.0803 13.2568 9.35755 13.2568C7.63482 13.2568 6.23828 14.6534 6.23828 16.3761C6.23828 18.0988 7.63482 19.4954 9.35755 19.4954Z"
+                      stroke="white"
+                      stroke-width="1.55963"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
                   </g>
-                  <path d="M22.8937 8.43H20.5683V10.7882H19.6403V8.43H17.3258V7.58936H19.6403V5.22027H20.5683V7.58936H22.8937V8.43Z" fill="white"/>
+                  <path
+                    d="M22.8937 8.43H20.5683V10.7882H19.6403V8.43H17.3258V7.58936H19.6403V5.22027H20.5683V7.58936H22.8937V8.43Z"
+                    fill="white"
+                  />
                   <defs>
                     <clipPath id="clip0_7680_52390">
-                      <rect width="18.7156" height="18.7156" fill="white" transform="translate(0 6.23828)"/>
+                      <rect
+                        width="18.7156"
+                        height="18.7156"
+                        fill="white"
+                        transform="translate(0 6.23828)"
+                      />
                     </clipPath>
                   </defs>
                 </svg>
 
-                {{ uploading ? 'Processing...' : 'Upload a picture' }}
+                {{ uploading ? "Processing..." : "Upload a picture" }}
               </button>
 
               <!-- <div class="text-start">
@@ -238,16 +413,20 @@
             <!-- Preview state - show when image is selected -->
             <div v-else class="space-y-4">
               <!-- {{ !modalPreviewImage }} -->
-              
-              <img 
-                :src="modalPreviewImage" 
+
+              <img
+                :src="modalPreviewImage"
                 alt="Selected room"
                 class="w-full h-48 object-cover rounded-xl shadow-lg"
               />
-              
+
               <div class="bg-gray-50 rounded-xl p-4 text-center">
-                <p class="text-sm text-gray-600 mb-2">Image selected and ready</p>
-                <p class="text-xs text-gray-500">Size: {{ (modalFile?.size / 1024 / 1024).toFixed(2) }} MB</p>
+                <p class="text-sm text-gray-600 mb-2">
+                  Image selected and ready
+                </p>
+                <p class="text-xs text-gray-500">
+                  Size: {{ (modalFile?.size / 1024 / 1024).toFixed(2) }} MB
+                </p>
               </div>
 
               <div class="space-y-2 flex gap-2">
@@ -263,11 +442,28 @@
                   :disabled="uploading"
                   class="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed !text-white font-semibold py-3 px-4 text-[14px] !font-family-poppins rounded-lg flex items-center justify-center gap-2 transition-colors"
                 >
-                  <svg v-if="uploading" class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  <svg
+                    v-if="uploading"
+                    class="animate-spin h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      class="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      stroke-width="4"
+                    ></circle>
+                    <path
+                      class="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
                   </svg>
-                  {{ uploading ? 'Processing...' : 'Continue' }}
+                  {{ uploading ? "Processing..." : "Continue" }}
                 </button>
               </div>
             </div>
@@ -277,342 +473,554 @@
     </Transition>
 
     <!-- Mobile Drawer (Hidden on desktop) -->
-<Transition name="drawer-slide">
-  <div
-    v-if="showImageDrawer"
-    class="fixed inset-0 z-[10000] md:hidden"
-  >
-    <!-- Backdrop -->
-    <div 
-      class="absolute inset-0 bg-black/50 backdrop-blur-sm"
-      @click="closeDrawer"
-    ></div>
-
-    <!-- Drawer Content -->
-  <div 
-  ref="drawerRef"
-  class="absolute left-0 right-0 bg-white shadow-2xl overflow-hidden flex flex-col transition-all duration-300 ease-out z-10"
-  :style="isExpanded ? {
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-    borderRadius: 0,
-    height: '100vh',
-    width: '100vw'
-  } : {
-    bottom: 0,
-    left: 0,
-    right: 0,
-    maxHeight: '85vh',
-    borderTopLeftRadius: '1.5rem',
-    borderTopRightRadius: '1.5rem'
-  }"
-  @touchstart="handleTouchStart"
-  @touchmove="handleTouchMove"
-  @touchend="handleTouchEnd"
->
-
-      <!-- Drag Handle -->
-      <div 
-        class="flex justify-center py-3 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white"
-        :style="{ cursor: isExpanded ? 'default' : 'grab' }"
-      >
-        <div 
-          class="w-12 h-1.5 bg-gradient-to-r from-gray-400 to-gray-300 rounded-full shadow-sm hover:from-gray-500 hover:to-gray-400 transition-all duration-200 active:scale-95"
-          :class="{ 'rotate-180 scale-110': isExpanded }"
-        ></div>
-      </div>
-
-      <!-- Scrollable Content -->
-      <div class="overflow-y-auto flex-1 pb-6">
-        <!-- Image Preview -->
-        <div class="px-4 pt-4">
-          <router-link :to="'/'+selectedImage.brand" class="block mb-4">
-            <span class="text-sm font-semibold text-gray-700 inline-flex items-center gap-2 hover:text-blue-600 transition-colors" style="font-weight:600;">
-              <a-avatar size="18" style="border:1px solid rgba(0,0,0,0.2)" :src="this.$store.state.root_media_api+selectedImage.brand_banner"></a-avatar> 
-              {{selectedImage.brand_name}}
-            </span>
-          </router-link>
-          
-          <img 
-            v-if="selectedImage"
-            :src="$store.state.root_media_api + selectedImage.image"
-            alt="Selected room"
-            class="w-full h-64 object-cover rounded-xl shadow-lg"
-          />
-        </div>
-
-        <!-- Content -->
-        <div class="px-6 !pt-6 sm:!pt-0">
-          <div class="flex items-center justify-between mb-6 flex-wrap gap-2">
-            <h4 class="text-base font-bold text-gray-900" style="font-family: poppins;">Project Stats</h4>
-          </div>
-
-          <!-- Detected Objects Header -->
-          <div class="bg-white rounded-xl border border-gray-200 p-4 mb-6">
-            <h3 class="text-lg font-bold text-gray-900 mb-2" style="font-family: poppins;">Detected Objects</h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
-              Tap on any detected objects (green boxes) to replace or delete it.
-            </p>
-          </div>
-
-          <!-- Stats Cards -->
-          <div class="grid grid-cols-3 gap-3 !pt-2 sm:!pt-0 h-20">
-            <div class="bg-white rounded-xl border border-gray-200 p-3 flex flex-col items-center justify-center text-center hover:shadow-md transition-shadow">
-              <p class="text-2xl font-bold text-gray-900 leading-none" style="font-family: poppins;">{{ selectedImage.objects_detected }}</p>
-              <p class="text-xs text-gray-600 mt-1" style="font-family: poppins;">Objects</p>
-            </div>
-            <div class="bg-white rounded-xl border border-gray-200 p-3 flex flex-col items-center justify-center text-center hover:shadow-md transition-shadow">
-              <p class="text-2xl font-bold text-blue-600 leading-none" style="font-family: poppins;">0</p>
-              <p class="text-xs text-gray-600 mt-1 font-family-poppins">Products</p>
-            </div>
-            <div class="bg-white rounded-xl border border-gray-200 p-3 flex flex-col items-center justify-center text-center hover:shadow-md transition-shadow">
-              <p class="text-2xl font-bold text-green-600 leading-none" style="font-family: poppins;">0</p>
-              <p class="text-xs text-gray-600 mt-1" style="font-family: poppins;">Replaced</p>
-            </div>
-          </div>
-
-          <!-- Buttons -->
-          <div class="!space-y-2  !pt-16 sm:!pt-0">
-            <button
-              @click="showObjectManagement = true"
-              class="w-full bg-[#F2F2F2] hover:bg-gray-200 text-gray-900 font-semibold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg active:scale-[0.98]"
-            >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path d="M4 18C3.71667 18 3.47934 17.904 3.288 17.712C3.09667 17.52 3.00067 17.2827 3 17C2.99934 16.7173 3.09534 16.48 3.288 16.288C3.48067 16.096 3.718 16 4 16H20C20.2833 16 20.521 16.096 20.713 16.288C20.905 16.48 21.0007 16.7173 21 17C20.9993 17.2827 20.9033 17.5203 20.712 17.713C20.5207 17.9057 20.2833 18.0013 20 18H4ZM4 13C3.71667 13 3.47934 12.904 3.288 12.712C3.09667 12.52 3.00067 12.2827 3 12C2.99934 11.7173 3.09534 11.48 3.288 11.288C3.48067 11.096 3.718 11 4 11H20C20.2833 11 20.521 11.096 20.713 11.288C20.905 11.48 21.0007 11.7173 21 12C20.9993 12.2827 20.9033 12.5203 20.712 12.713C20.5207 12.9057 20.2833 13.0013 20 13H4ZM4 8C3.71667 8 3.47934 7.904 3.288 7.712C3.09667 7.52 3.00067 7.28267 3 7C2.99934 6.71733 3.09534 6.48 3.288 6.288C3.48067 6.096 3.718 6 4 6H20C20.2833 6 20.521 6.096 20.713 6.288C20.905 6.48 21.0007 6.71733 21 7C20.9993 7.28267 20.9033 7.52033 20.712 7.713C20.5207 7.90567 20.2833 8.00133 20 8H4Z" fill="#333333"/>
-              </svg>
-              Manage Detected Objects
-            </button>
-
-            <!-- Use This Room Button -->
-            <button
-              v-if="showImageDrawer_test_room"
-              @click="handleSampleClick"
-              class="w-full bg-blue-600 text-white hover:bg-blue-700 font-semibold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg hover:shadow-xl active:scale-[0.98]"
-            >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-              </svg>
-              Use This Room
-            </button>
-            <button
-              v-else
-              @click="useSelectedRoom"
-              class="w-full bg-blue-600 text-white hover:bg-blue-700 font-semibold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg hover:shadow-xl active:scale-[0.98]"
-            >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-              </svg>
-              Use This Room
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</Transition>
-
-
-<!-- Desktop Modal (Hidden on mobile) -->
-<Transition name="modal-fade">
-  <div
-    v-if="showImageDrawer"
-    class="hidden md:flex fixed inset-0 z-[10000] items-center justify-center p-4"
-    style="position: fixed; top: 0; left: 0; right: 0; bottom: 0;"
-    @click.self="closeDrawer"
-  >
-    <!-- Backdrop -->
-    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
-
-    <!-- Modal Content -->
-    <div class="relative bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden flex flex-col">
-      <!-- Modal Header -->
-      <div  class="flex items-center justify-between px-6 py-2 border-b border-gray-200">
-            
-                  <router-link :to="'/'+selectedImage.brand" v-if="!showImageDrawer_test_room">
-                    <span   class="text-sm font-semibold text-gray-700" style="font-weight:600;gap:10px;display: flex;font-size: 18px;display: flex;align-items: center;"><a-avatar size="18" style="border:1px solid rgba(0,0,0,0.2)" :src="this.$store.state.root_media_api+selectedImage.brand_banner"></a-avatar> {{selectedImage.brand_name}}</span>
-                  </router-link>
-                  <span  v-else class="text-sm font-semibold text-gray-700" style="font-weight:600;gap:10px;display: flex;font-size: 18px;display: flex;align-items: center;"><img  style="border:1px solid rgba(0,0,0,0.2);width:35px;height:35px;border-radius:100%"  src="../../assets/apply_changes_img.png"/>DYD Example Room</span>
-        <button
+    <Transition name="drawer-slide">
+      <div v-if="showImageDrawer" class="fixed inset-0 z-[10000] md:hidden">
+        <!-- Backdrop -->
+        <div
+          class="absolute inset-0 bg-black/50 backdrop-blur-sm"
           @click="closeDrawer"
-          class="p-2 hover:bg-gray-100 rounded-full transition-colors"
+        ></div>
+
+        <!-- Drawer Content -->
+        <div
+          ref="drawerRef"
+          class="absolute left-0 right-0 bg-white shadow-2xl overflow-hidden flex flex-col transition-all duration-300 ease-out z-10"
+          :style="
+            isExpanded
+              ? {
+                  top: 0,
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  borderRadius: 0,
+                  height: '100vh',
+                  width: '100vw',
+                }
+              : {
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  maxHeight: '85vh',
+                  borderTopLeftRadius: '1.5rem',
+                  borderTopRightRadius: '1.5rem',
+                }
+          "
+          @touchstart="handleTouchStart"
+          @touchmove="handleTouchMove"
+          @touchend="handleTouchEnd"
         >
-          <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-          </svg>
-        </button>
-      </div>
+          <!-- Drag Handle -->
+          <div
+            class="flex justify-center py-3 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white"
+            :style="{ cursor: isExpanded ? 'default' : 'grab' }"
+          >
+            <div
+              class="w-12 h-1.5 bg-gradient-to-r from-gray-400 to-gray-300 rounded-full shadow-sm hover:from-gray-500 hover:to-gray-400 transition-all duration-200 active:scale-95"
+              :class="{ 'rotate-180 scale-110': isExpanded }"
+            ></div>
+          </div>
 
-      <!-- Two Column Layout -->
-      <div class="flex flex-1 overflow-hidden">
-        <!-- Left Side - Image -->
-        <div class="w-1/2 p-6 flex items-center justify-center bg-gray-50">
-          <img 
-            v-if="selectedImage"
-            :src="$store.state.root_media_api + selectedImage.image"
-            alt="Selected room"
-            class="w-full h-full object-contain rounded-xl "
-          />
-        </div>
-        <!-- {{ $store.state.root_media_api + selectedImage.image }} -->
+          <!-- Scrollable Content -->
+          <div class="overflow-y-auto flex-1 pb-6">
+            <!-- Image Preview -->
+            <div class="px-4 pt-4">
+              <router-link :to="'/' + selectedImage.brand" class="block mb-4">
+                <span
+                  class="text-sm font-semibold text-gray-700 inline-flex items-center gap-2 hover:text-blue-600 transition-colors"
+                  style="font-weight: 600"
+                >
+                  <a-avatar
+                    size="18"
+                    style="border: 1px solid rgba(0, 0, 0, 0.2)"
+                    :src="
+                      this.$store.state.root_media_api +
+                      selectedImage.brand_banner
+                    "
+                  ></a-avatar>
+                  {{ selectedImage.brand_name }}
+                </span>
+              </router-link>
 
-        <!-- Vertical Divider -->
-        <div class="w-px bg-gray-200"></div>
+              <img
+                v-if="selectedImage"
+                :src="$store.state.root_media_api + selectedImage.image"
+                alt="Selected room"
+                class="w-full h-64 object-cover rounded-xl shadow-lg"
+              />
+            </div>
 
-        <!-- Right Side - Content -->
-        <div class="w-1/2 flex flex-col overflow-hidden">
-          <!-- Scrollable Content Area -->
-          <div class="flex-1 overflow-y-auto p-6">
-            
-              <div class="flex items-center justify-between mb-4">
-                <h4 class="text-base font-bold text-gray-900">Project Stats</h4>
-                
-                
+            <!-- Content -->
+            <div class="px-6 !pt-6 sm:!pt-0">
+              <div
+                class="flex items-center justify-between mb-6 flex-wrap gap-2"
+              >
+                <h4
+                  class="text-base font-bold text-gray-900"
+                  style="font-family: poppins"
+                >
+                  Project Stats
+                </h4>
               </div>
 
-            <!-- Detected Objects Header -->
-            <div class="bg-gray-50 rounded-xl border border-gray-200 p-4 mb-6">
-              <h3 class="text-lg font-bold text-gray-900 mb-2">Detected Objects</h3>
-              <p class="text-sm text-gray-600">
-                Tap on any detected objects (green boxes) to replace or delete it.
-              </p>
-            </div>
-<br>
-            <!-- Project Stats -->
-            <div class="mb-6">
+              <!-- Detected Objects Header -->
+              <div class="bg-white rounded-xl border border-gray-200 p-4 mb-6">
+                <h3
+                  class="text-lg font-bold text-gray-900 mb-2"
+                  style="font-family: poppins"
+                >
+                  Detected Objects
+                </h3>
+                <p class="text-sm text-gray-600 leading-relaxed">
+                  Tap on any detected objects (green boxes) to replace or delete
+                  it.
+                </p>
+              </div>
 
-              <div class="grid grid-cols-3 font-family-poppins gap-3">
-                <div class="bg-gray-50 rounded-xl border border-gray-200 p-4 flex flex-col items-center justify-center text-center">
-                  <p class="text-2xl font-bold text-gray-900 leading-none mb-1">{{ selectedImage.objects_detected }}</p>
-                  <p class="text-xs text-gray-600">Objects</p>
+              <!-- Stats Cards -->
+              <div class="grid grid-cols-3 gap-3 !pt-2 sm:!pt-0 h-20">
+                <div
+                  class="bg-white rounded-xl border border-gray-200 p-3 flex flex-col items-center justify-center text-center hover:shadow-md transition-shadow"
+                >
+                  <p
+                    class="text-2xl font-bold text-gray-900 leading-none"
+                    style="font-family: poppins"
+                  >
+                    {{ selectedImage.objects_detected }}
+                  </p>
+                  <p
+                    class="text-xs text-gray-600 mt-1"
+                    style="font-family: poppins"
+                  >
+                    Objects
+                  </p>
                 </div>
-                <div class="bg-gray-50 rounded-xl border border-gray-200 p-4 flex flex-col items-center justify-center text-center">
-                  <p class="text-2xl font-bold text-blue-600 leading-none mb-1">{{ selectedImage.used_products }}</p>
-                  <p class="text-xs text-gray-600">Products</p>
+                <div
+                  class="bg-white rounded-xl border border-gray-200 p-3 flex flex-col items-center justify-center text-center hover:shadow-md transition-shadow"
+                >
+                  <p
+                    class="text-2xl font-bold text-blue-600 leading-none"
+                    style="font-family: poppins"
+                  >
+                    0
+                  </p>
+                  <p class="text-xs text-gray-600 mt-1 font-family-poppins">
+                    Products
+                  </p>
                 </div>
-                <div class="bg-gray-50 rounded-xl border border-gray-200 p-4 flex flex-col items-center justify-center text-center">
-                  <p class="text-2xl font-bold text-green-600 leading-none mb-1">0</p>
-                  <p class="text-xs text-gray-600">Replaced</p>
+                <div
+                  class="bg-white rounded-xl border border-gray-200 p-3 flex flex-col items-center justify-center text-center hover:shadow-md transition-shadow"
+                >
+                  <p
+                    class="text-2xl font-bold text-green-600 leading-none"
+                    style="font-family: poppins"
+                  >
+                    0
+                  </p>
+                  <p
+                    class="text-xs text-gray-600 mt-1"
+                    style="font-family: poppins"
+                  >
+                    Replaced
+                  </p>
                 </div>
+              </div>
+
+              <!-- Buttons -->
+              <div class="!space-y-2 !pt-16 sm:!pt-0">
+                <button
+                  @click="showObjectManagement = true"
+                  class="w-full bg-[#F2F2F2] hover:bg-gray-200 text-gray-900 font-semibold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg active:scale-[0.98]"
+                >
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M4 18C3.71667 18 3.47934 17.904 3.288 17.712C3.09667 17.52 3.00067 17.2827 3 17C2.99934 16.7173 3.09534 16.48 3.288 16.288C3.48067 16.096 3.718 16 4 16H20C20.2833 16 20.521 16.096 20.713 16.288C20.905 16.48 21.0007 16.7173 21 17C20.9993 17.2827 20.9033 17.5203 20.712 17.713C20.5207 17.9057 20.2833 18.0013 20 18H4ZM4 13C3.71667 13 3.47934 12.904 3.288 12.712C3.09667 12.52 3.00067 12.2827 3 12C2.99934 11.7173 3.09534 11.48 3.288 11.288C3.48067 11.096 3.718 11 4 11H20C20.2833 11 20.521 11.096 20.713 11.288C20.905 11.48 21.0007 11.7173 21 12C20.9993 12.2827 20.9033 12.5203 20.712 12.713C20.5207 12.9057 20.2833 13.0013 20 13H4ZM4 8C3.71667 8 3.47934 7.904 3.288 7.712C3.09667 7.52 3.00067 7.28267 3 7C2.99934 6.71733 3.09534 6.48 3.288 6.288C3.48067 6.096 3.718 6 4 6H20C20.2833 6 20.521 6.096 20.713 6.288C20.905 6.48 21.0007 6.71733 21 7C20.9993 7.28267 20.9033 7.52033 20.712 7.713C20.5207 7.90567 20.2833 8.00133 20 8H4Z"
+                      fill="#333333"
+                    />
+                  </svg>
+                  Manage Detected Objects
+                </button>
+
+                <!-- Use This Room Button -->
+                <button
+                  v-if="showImageDrawer_test_room"
+                  @click="handleSampleClick"
+                  class="w-full bg-blue-600 text-white hover:bg-blue-700 font-semibold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg hover:shadow-xl active:scale-[0.98]"
+                >
+                  <svg
+                    class="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                  Use This Room
+                </button>
+                <button
+                  v-else
+                  @click="useSelectedRoom"
+                  class="w-full bg-blue-600 text-white hover:bg-blue-700 font-semibold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg hover:shadow-xl active:scale-[0.98]"
+                >
+                  <svg
+                    class="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                  Use This Room
+                </button>
               </div>
             </div>
           </div>
+        </div>
+      </div>
+    </Transition>
 
-          <!-- Action Buttons - Fixed at Bottom -->
-          <div class="flex gap-2 px-6 py-4 border-t border-gray-200 bg-white space-y-3">
-            <button 
-              @click="showObjectManagement = true"
-              class="w-full bg-gray-500 hover:bg-gray-700 !text-white font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-lg"
+    <!-- Desktop Modal (Hidden on mobile) -->
+    <Transition name="modal-fade">
+      <div
+        v-if="showImageDrawer"
+        class="hidden md:flex fixed inset-0 z-[10000] items-center justify-center p-4"
+        style="position: fixed; top: 0; left: 0; right: 0; bottom: 0"
+        @click.self="closeDrawer"
+      >
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+
+        <!-- Modal Content -->
+        <div
+          class="relative bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden flex flex-col"
+        >
+          <!-- Modal Header -->
+          <div
+            class="flex items-center justify-between px-6 py-2 border-b border-gray-200"
+          >
+            <router-link
+              :to="'/' + selectedImage.brand"
+              v-if="!showImageDrawer_test_room"
             >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-              </svg>
-              <!-- Manage Objects -->
-              Show Objects
-            </button>
-            <!-- @click="useSelectedRoom" -->
-            <!-- @click="useSelectedRoom" -->
-             <!-- {{ showImageDrawer_test_room }} -->
+              <span
+                class="text-sm font-semibold text-gray-700"
+                style="
+                  font-weight: 600;
+                  gap: 10px;
+                  display: flex;
+                  font-size: 18px;
+                  display: flex;
+                  align-items: center;
+                "
+                ><a-avatar
+                  size="18"
+                  style="border: 1px solid rgba(0, 0, 0, 0.2)"
+                  :src="
+                    this.$store.state.root_media_api +
+                    selectedImage.brand_banner
+                  "
+                ></a-avatar>
+                {{ selectedImage.brand_name }}</span
+              >
+            </router-link>
+            <span
+              v-else
+              class="text-sm font-semibold text-gray-700"
+              style="
+                font-weight: 600;
+                gap: 10px;
+                display: flex;
+                font-size: 18px;
+                display: flex;
+                align-items: center;
+              "
+              ><img
+                style="
+                  border: 1px solid rgba(0, 0, 0, 0.2);
+                  width: 35px;
+                  height: 35px;
+                  border-radius: 100%;
+                "
+                src="../../assets/apply_changes_img.png"
+              />DYD Example Room</span
+            >
             <button
-            v-if="showImageDrawer_test_room"
-            @click="handleSampleClick"
-
-              class="w-full bg-blue-600 pt-3  !text-white hover:bg-blue-500 font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors"
+              @click="closeDrawer"
+              class="p-2 hover:bg-gray-100 rounded-full transition-colors"
             >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              <svg
+                class="w-6 h-6 text-gray-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
-              Continue
             </button>
-            <button
-            v-else
-            @click="useSelectedRoom"
+          </div>
 
-              class="w-full bg-blue-600 pt-3  !text-white hover:bg-blue-500 font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors"
-            >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-              </svg>
-              Continue
-            </button>
+          <!-- Two Column Layout -->
+          <div class="flex flex-1 overflow-hidden">
+            <!-- Left Side - Image -->
+            <div class="w-1/2 p-6 flex items-center justify-center bg-gray-50">
+              <img
+                v-if="selectedImage"
+                :src="$store.state.root_media_api + selectedImage.image"
+                alt="Selected room"
+                class="w-full h-full object-contain rounded-xl"
+              />
+            </div>
+            <!-- {{ $store.state.root_media_api + selectedImage.image }} -->
+
+            <!-- Vertical Divider -->
+            <div class="w-px bg-gray-200"></div>
+
+            <!-- Right Side - Content -->
+            <div class="w-1/2 flex flex-col overflow-hidden">
+              <!-- Scrollable Content Area -->
+              <div class="flex-1 overflow-y-auto p-6">
+                <div class="flex items-center justify-between mb-4">
+                  <h4 class="text-base font-bold text-gray-900">
+                    Project Stats
+                  </h4>
+                </div>
+
+                <!-- Detected Objects Header -->
+                <div
+                  class="bg-gray-50 rounded-xl border border-gray-200 p-4 mb-6"
+                >
+                  <h3 class="text-lg font-bold text-gray-900 mb-2">
+                    Detected Objects
+                  </h3>
+                  <p class="text-sm text-gray-600">
+                    Tap on any detected objects (green boxes) to replace or
+                    delete it.
+                  </p>
+                </div>
+                <br />
+                <!-- Project Stats -->
+                <div class="mb-6">
+                  <div class="grid grid-cols-3 font-family-poppins gap-3">
+                    <div
+                      class="bg-gray-50 rounded-xl border border-gray-200 p-4 flex flex-col items-center justify-center text-center"
+                    >
+                      <p
+                        class="text-2xl font-bold text-gray-900 leading-none mb-1"
+                      >
+                        {{ selectedImage.objects_detected }}
+                      </p>
+                      <p class="text-xs text-gray-600">Objects</p>
+                    </div>
+                    <div
+                      class="bg-gray-50 rounded-xl border border-gray-200 p-4 flex flex-col items-center justify-center text-center"
+                    >
+                      <p
+                        class="text-2xl font-bold text-blue-600 leading-none mb-1"
+                      >
+                        {{ selectedImage.used_products }}
+                      </p>
+                      <p class="text-xs text-gray-600">Products</p>
+                    </div>
+                    <div
+                      class="bg-gray-50 rounded-xl border border-gray-200 p-4 flex flex-col items-center justify-center text-center"
+                    >
+                      <p
+                        class="text-2xl font-bold text-green-600 leading-none mb-1"
+                      >
+                        0
+                      </p>
+                      <p class="text-xs text-gray-600">Replaced</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Action Buttons - Fixed at Bottom -->
+              <div
+                class="flex gap-2 px-6 py-4 border-t border-gray-200 bg-white space-y-3"
+              >
+                <button
+                  @click="showObjectManagement = true"
+                  class="w-full bg-gray-500 hover:bg-gray-700 !text-white font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-lg"
+                >
+                  <svg
+                    class="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                    />
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
+                  </svg>
+                  <!-- Manage Objects -->
+                  Show Objects
+                </button>
+                <!-- @click="useSelectedRoom" -->
+                <!-- @click="useSelectedRoom" -->
+                <!-- {{ showImageDrawer_test_room }} -->
+                <button
+                  v-if="showImageDrawer_test_room"
+                  @click="handleSampleClick"
+                  class="w-full bg-blue-600 pt-3 !text-white hover:bg-blue-500 font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors"
+                >
+                  <svg
+                    class="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                  Continue
+                </button>
+                <button
+                  v-else
+                  @click="handleUseSelectedRoom"
+                  class="w-full bg-blue-600 pt-3 !text-white hover:bg-blue-500 font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors"
+                >
+                  <svg
+                    class="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                  Continue
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-</Transition>
-
-
+    </Transition>
 
     <!-- Object Management Drawer (Slides from right) -->
-   <Transition name="slide-right">
-  <div
-    v-if="showObjectManagement"
-    class="fixed inset-0 z-[10001] flex items-center justify-center"
-    style="position: fixed; top: 0; left: 0; right: 0; bottom: 0;"
-  >
-    <!-- Backdrop -->
-    <div 
-      class="absolute inset-0 bg-black/60 backdrop-blur-sm"
-      @click="showObjectManagement = false"
-    ></div>
-
-    <!-- Drawer/Modal Content -->
-    <!-- Full width on mobile, centered modal on desktop -->
-    <div class="absolute md:relative inset-y-0 md:inset-y-auto right-0 md:right-auto w-full  md:max-w-xl md:rounded-2xl bg-white shadow-2xl flex flex-col md:max-h-[85vh]">
-      <!-- Header -->
-      <div class="flex items-center justify-between px-4 py-4 border-b border-gray-200 bg-white sticky top-0 z-10 md:rounded-t-2xl">
-        <h3 class="text-lg font-bold text-gray-900">Detected Objects</h3>
-        <button
+    <Transition name="slide-right">
+      <div
+        v-if="showObjectManagement"
+        class="fixed inset-0 z-[10001] flex items-center justify-center"
+        style="position: fixed; top: 0; left: 0; right: 0; bottom: 0"
+      >
+        <!-- Backdrop -->
+        <div
+          class="absolute inset-0 bg-black/60 backdrop-blur-sm"
           @click="showObjectManagement = false"
-          class="p-2 hover:bg-gray-100 rounded-full transition-colors"
+        ></div>
+
+        <!-- Drawer/Modal Content -->
+        <!-- Full width on mobile, centered modal on desktop -->
+        <div
+          class="absolute md:relative inset-y-0 md:inset-y-auto right-0 md:right-auto w-full md:max-w-xl md:rounded-2xl bg-white shadow-2xl flex flex-col md:max-h-[85vh]"
         >
-          <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-          </svg>
-        </button>
-      </div>
+          <!-- Header -->
+          <div
+            class="flex items-center justify-between px-4 py-4 border-b border-gray-200 bg-white sticky top-0 z-10 md:rounded-t-2xl"
+          >
+            <h3 class="text-lg font-bold text-gray-900">Detected Objects</h3>
+            <button
+              @click="showObjectManagement = false"
+              class="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            >
+              <svg
+                class="w-6 h-6 text-gray-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </div>
 
-      <!-- Scrollable Objects List -->
-      <div class="flex-1 overflow-y-auto px-4 pb-6">
-        <div class="!mt-4 space-y-3">
-         
+          <!-- Scrollable Objects List -->
+          <div class="flex-1 overflow-y-auto px-4 pb-6">
+            <div class="!mt-4 space-y-3">
+              <!-- Empty state -->
+              <div
+                v-if="detectedObjects.length === 0"
+                class="text-center flex flex-wrap justify-center"
+              >
+                <!-- {{ this.$store.state.root_media_api }} -->
+                <!-- <a-row >
+                <a-col :span="12"    > -->
 
-          <!-- Empty state -->
-          <div v-if="detectedObjects.length === 0" class="text-center flex flex-wrap justify-center">
-
-            <!-- {{ this.$store.state.root_media_api }} -->
-              <!-- <a-row >
-                <a-col :span="12"    > --> 
-
-                  <MaskOverlay
-                    v-if = "selectedImage.binary_masks"
-                    v-for="(obj, index) in selectedImage.binary_masks"
-                    :selectedImage="selectedImage "
-                    :maskPath="obj"
-                    :title="index"
-                    :key="obj.id"
-                    :handleRemoveObject="removeObject"
-                  />
+                <MaskOverlay
+                  v-if="selectedImage.binary_masks"
+                  v-for="(obj, index) in selectedImage.binary_masks"
+                  :selectedImage="selectedImage"
+                  :maskPath="obj"
+                  :title="index"
+                  :key="obj.id"
+                  :handleRemoveObject="removeObject"
+                />
                 <!-- </a-col>
               </a-row> -->
-          
-          <div v-else>
 
-            <svg class="w-16 h-16 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-            </svg>
-            <p class="text-gray-500 font-medium">All objects removed!</p>
-            <p class="text-sm text-gray-400 mt-1">Room is clean and ready</p>
+                <div v-else>
+                  <svg
+                    class="w-16 h-16 text-gray-300 mx-auto mb-3"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  <p class="text-gray-500 font-medium">All objects removed!</p>
+                  <p class="text-sm text-gray-400 mt-1">
+                    Room is clean and ready
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-        </div>
-      </div>
 
-      <!-- Bottom Action Buttons -->
-      <!-- <div class="flex gap-2 px-4 py-4 border-t border-gray-200 bg-white space-y-3 md:rounded-b-2xl">
+          <!-- Bottom Action Buttons -->
+          <!-- <div class="flex gap-2 px-4 py-4 border-t border-gray-200 bg-white space-y-3 md:rounded-b-2xl">
        
         <button
           @click="showObjectManagement = false"
@@ -627,15 +1035,17 @@
           Save Changes
         </button>
       </div> -->
-    </div>
-  </div>
-</Transition>
-
+        </div>
+      </div>
+    </Transition>
 
     <!-- Background video -->
     <div class="video-background">
       <video autoplay muted loop playsinline class="video-element">
-        <source src="../../assets/GettyImages-1285221354.mp4" type="video/mp4" />
+        <source
+          src="../../assets/GettyImages-1285221354.mp4"
+          type="video/mp4"
+        />
         Your browser does not support the video tag.
       </video>
     </div>
@@ -663,163 +1073,181 @@
             <p class="upload-instruction">Click or drag image to upload</p>
             <p class="upload-hint">PNG or JPEG only</p>
             <a-button type="primary" :loading="uploading">
-              <CloudUploadOutlined style="font-size:20px;" />&nbsp; 
-              {{ uploading ? 'Processing...' : 'Upload An Image' }}
+              <CloudUploadOutlined style="font-size: 20px" />&nbsp;
+              {{ uploading ? "Processing..." : "Upload An Image" }}
             </a-button>
           </div>
         </a-upload-dragger>
       </div>
 
       <!-- History -->
-       <div v-if="your_history.length">
+      <div v-if="your_history.length">
+        <p class="history-label pl-2">
+          <a-spin v-if="loading_user_history_rooms" /> Your History
+        </p>
+        <div
+          class="grid grid-cols-3 !space-y-2 sm:grid-cols-3 gap-1 sm:gap-2 sm:px-5 max-w-[1300px]"
+        >
+          <div
+            v-for="histry_card in your_history"
+            :key="histry_card.id"
+            class="px-[5px]"
+          >
+            <div
+              @click="openImageDrawer(histry_card)"
+              class="cursor-pointer hover:opacity-80 transition-opacity"
+            >
+              <div class="history-image-wrapper">
+                <!-- Skeleton -->
+                <div
+                  v-if="!imageLoadedMap[histry_card.id]"
+                  class="history-image-skeleton"
+                ></div>
 
-      <p class="history-label pl-2"><a-spin v-if="loading_user_history_rooms" /> Your History </p>
-      <div class="grid grid-cols-3 !space-y-2 sm:grid-cols-3 gap-1 sm:gap-2 sm:px-5 max-w-[1300px]">
-       <div
-  v-for="histry_card in your_history"
-  :key="histry_card.id"
-  class="px-[5px]"
->
-  <div 
-  @click="openImageDrawer(histry_card)" 
-  class="cursor-pointer hover:opacity-80 transition-opacity"
->
-  <div
-    class="history-image-wrapper"
-  >
-    <!-- Skeleton -->
-    <div
-      v-if="!imageLoadedMap[histry_card.id]"
-      class="history-image-skeleton"
-    ></div>
+                <!-- Preload image -->
+                <img
+                  :src="$store.state.root_media_api + histry_card.image"
+                  style="position: absolute; width: 0; height: 0; opacity: 0"
+                  @load="onHistoryImageLoad(histry_card.id)"
+                  alt=""
+                />
 
-    <!-- Preload image -->
-    <img
-      :src="$store.state.root_media_api + histry_card.image"
-      style="position:absolute;width:0;height:0;opacity:0;"
-      @load="onHistoryImageLoad(histry_card.id)"
-      alt=""
-    />
+                <!-- Visible image -->
+                <img
+                  v-show="imageLoadedMap[histry_card.id]"
+                  :src="$store.state.root_media_api + histry_card.image"
+                  alt="Example"
+                  class="example-image w-full !h-32 sm:!h-48 object-cover rounded-lg"
+                  style="display: block"
+                />
 
-    <!-- Visible image -->
-    <img
-      v-show="imageLoadedMap[histry_card.id]"
-      :src="$store.state.root_media_api + histry_card.image"
-      alt="Example"
-      class="example-image w-full !h-32 sm:!h-48 object-cover rounded-lg"
-      style="display:block;"
-    />
-
-    <!-- Brand badge (unchanged, stays on top) -->
-    <div
-      v-if="histry_card.brand_banner"
-      class="history-brand-badge"
-    >
-      <a-avatar :src="$store.state.root_media_api + histry_card.brand_banner"></a-avatar>
-    </div>
-  </div>
-</div>
-
-</div>
-
+                <!-- Brand badge (unchanged, stays on top) -->
+                <div
+                  v-if="histry_card.brand_banner"
+                  class="history-brand-badge"
+                >
+                  <a-avatar
+                    :src="
+                      $store.state.root_media_api + histry_card.brand_banner
+                    "
+                  ></a-avatar>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-       </div>
 
       <!-- Examples -->
       <!-- Examples Section -->
-<p class="example-label !text-center pl-3 sm:pl-0">
-  <a-spin v-if="loading_Example_rooms"/> Use an our example room image
-</p>
+      <p class="example-label !text-center pl-3 sm:pl-0">
+        <a-spin v-if="loading_Example_rooms" /> Use an our example room image
+      </p>
 
-<!-- Room Type Filter Tabs -->
-<div class="flex justify-center mb-4">
-  <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide px-4">
-    <button
-      v-for="roomType in roomTypes"
-      :key="roomType.value"
-      @click="selectedRoomType = roomType.value"
-      :class="[
-        'px-4 md:px-8 py-2 rounded-lg font-medium !font-family-poppins text-sm whitespace-nowrap transition-all',
-        selectedRoomType === roomType.value
-          ? '!bg-blue-600 !text-white shadow-md'
-          : 'bg-white text-gray-700 border border-gray-200 hover:border-blue-400'
-      ]"
-    >
-      {{ roomType.label }}
-    </button>
-  </div>
-</div>
+      <!-- Room Type Filter Tabs -->
+      <div class="flex justify-center mb-4">
+        <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide px-4">
+          <button
+            v-for="roomType in roomTypes"
+            :key="roomType.value"
+            @click="selectedRoomType = roomType.value"
+            :class="[
+              'px-4 md:px-8 py-2 rounded-lg font-medium !font-family-poppins text-sm whitespace-nowrap transition-all',
+              selectedRoomType === roomType.value
+                ? '!bg-blue-600 !text-white shadow-md'
+                : 'bg-white text-gray-700 border border-gray-200 hover:border-blue-400',
+            ]"
+          >
+            {{ roomType.label }}
+          </button>
+        </div>
+      </div>
 
-<!-- Example Images Grid -->
-<div class="px-3 pb-6 sm:px-5 max-w-[1300px] mx-auto">
-  
-  <div class="grid grid-cols-3 gap-3 sm:gap-4">
-    <div
-      v-for="example in filteredExampleImages"
-      :key="example.id"
-      class="relative"
-    >
-     <div 
-  class="image-wrapper cursor-pointer" 
-  @click="openImageDrawer_test_room(example)"
->
-  <div class="example-image-container">
-    <!-- Skeleton -->
-    <div
-      v-if="!imageLoadedMap[example.id]"
-      class="example-image-skeleton"
-    ></div>
+      <!-- Example Images Grid -->
+      <div class="px-3 pb-6 sm:px-5 max-w-[1300px] mx-auto">
+        <div class="grid grid-cols-3 gap-3 sm:gap-4">
+          <div
+            v-for="example in filteredExampleImages"
+            :key="example.id"
+            class="relative"
+          >
+            <div
+              class="image-wrapper cursor-pointer"
+              @click="openImageDrawer_test_room(example)"
+            >
+              <div class="example-image-container">
+                <!-- Skeleton -->
+                <div
+                  v-if="!imageLoadedMap[example.id]"
+                  class="example-image-skeleton"
+                ></div>
 
-    <!-- Preload image -->
-    <img
-      :src="$store.state.root_media_api + example.image"
-      style="position:absolute;width:0;height:0;opacity:0;"
-      @load="onExampleImageLoad(example.id)"
-      alt=""
-    />
+                <!-- Preload image -->
+                <img
+                  :src="$store.state.root_media_api + example.image"
+                  style="position: absolute; width: 0; height: 0; opacity: 0"
+                  @load="onExampleImageLoad(example.id)"
+                  alt=""
+                />
 
-    <!-- Visible image -->
-    <img
-      v-show="imageLoadedMap[example.id]"
-      :src="$store.state.root_media_api + example.image"
-      :alt="example.demo_room_type || 'Room'"
-      class="w-full h-32 sm:h-48 object-cover rounded-xl shadow-md hover:shadow-lg transition-shadow"
-      :class="{ 'opacity-40': loading }"
-    />
+                <!-- Visible image -->
+                <img
+                  v-show="imageLoadedMap[example.id]"
+                  :src="$store.state.root_media_api + example.image"
+                  :alt="example.demo_room_type || 'Room'"
+                  class="w-full h-32 sm:h-48 object-cover rounded-xl shadow-md hover:shadow-lg transition-shadow"
+                  :class="{ 'opacity-40': loading }"
+                />
 
-    <!-- Room Type Badge (stays on top) -->
-    <div class="absolute top-2 left-2 bg-blue-600 text-white px-3 py-1 rounded-lg text-xs font-semibold z-10">
-      {{ example.demo_room_type }}
-    </div>
+                <!-- Room Type Badge (stays on top) -->
+                <div
+                  class="absolute top-2 left-2 bg-blue-600 text-white px-3 py-1 rounded-lg text-xs font-semibold z-10"
+                >
+                  {{ example.demo_room_type }}
+                </div>
 
-    <!-- Existing spinner overlay (unchanged) -->
-    <div v-if="loading" class="loader-overlay">
-      <a-spin />
-    </div>
-  </div>
-</div>
+                <!-- Existing spinner overlay (unchanged) -->
+                <div v-if="loading" class="loader-overlay">
+                  <a-spin />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-    </div>
-  </div>
-
-  <!-- Empty State -->
-  <div v-if="filteredExampleImages.length === 0 && !loading_Example_rooms" class="text-center py-12">
-    <svg class="w-16 h-16 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-    </svg>
-    <p class="text-gray-500 font-medium">No {{ selectedRoomType }} images found</p>
-  </div>
-</div>
-
+        <!-- Empty State -->
+        <div
+          v-if="filteredExampleImages.length === 0 && !loading_Example_rooms"
+          class="text-center py-12"
+        >
+          <svg
+            class="w-16 h-16 text-gray-300 mx-auto mb-3"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+            />
+          </svg>
+          <p class="text-gray-500 font-medium">
+            No {{ selectedRoomType }} images found
+          </p>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
-
 <script>
-import { CloudUploadOutlined } from '@ant-design/icons-vue';
-import MaskOverlay from "@/components/update_catalogue/start_new_catalog/mask_overlay.vue"
-import {   
+import { CloudUploadOutlined } from "@ant-design/icons-vue";
+import { Modal } from "ant-design-vue";
+import { h } from "vue";
+import MaskOverlay from "@/components/update_catalogue/start_new_catalog/mask_overlay.vue";
+import {
   EyeOutlined,
   HeartOutlined,
   HeartFilled,
@@ -831,30 +1259,30 @@ import {
   PushpinOutlined,
   ArrowLeftOutlined,
   CloseOutlined,
-} from '@ant-design/icons-vue'
+} from "@ant-design/icons-vue";
 
 export default {
   components: {
     EyeOutlined,
-        HeartOutlined,
-        HeartFilled,
-        MessageOutlined,
-        ShareAltOutlined,
-        MoreOutlined,
-        EditOutlined,
-        DeleteOutlined,
-        PushpinOutlined,
-        ArrowLeftOutlined,
-        CloseOutlined,
+    HeartOutlined,
+    HeartFilled,
+    MessageOutlined,
+    ShareAltOutlined,
+    MoreOutlined,
+    EditOutlined,
+    DeleteOutlined,
+    PushpinOutlined,
+    ArrowLeftOutlined,
+    CloseOutlined,
     CloudUploadOutlined,
-    MaskOverlay
+    MaskOverlay,
   },
-  
+
   data() {
     return {
-      currentUser:JSON.parse(localStorage.getItem('user')),
-      LoadingMessageButton:false,
-      buid:null,
+      currentUser: JSON.parse(localStorage.getItem("user")),
+      LoadingMessageButton: false,
+      buid: null,
       showCreditModal: false,
       creditErrorMessage: "",
 
@@ -873,193 +1301,215 @@ export default {
       uploadResult: null,
       uploadError: null,
       your_history: [],
-       drawerRef: null,
-    isDragging: false,
-    startY: 0,
-    currentY: 0,
-    isExpanded: false,
-    threshold: 80,
+      drawerRef: null,
+      isDragging: false,
+      startY: 0,
+      currentY: 0,
+      isExpanded: false,
+      threshold: 80,
       exampleImages: [],
-      
+
       // NEW: Modal file preview states
       modalPreviewImage: null,
       modalFile: null,
-      showImageDrawer_test_room:false,
-      
+      showImageDrawer_test_room: false,
+
       // Room type filter
-      selectedRoomType: 'all',
+      selectedRoomType: "all",
       roomTypes: [
-        { label: 'All', value: 'all' },
-        { label: 'Living room', value: 'Living room' },
-        { label: 'Kitchen', value: 'Kitchen' },
-        { label: 'Bedroom', value: 'Bedroom' },
-        { label: 'Dining room', value: 'Dining room' }
-      ]
+        { label: "All", value: "all" },
+        { label: "Living room", value: "Living room" },
+        { label: "Kitchen", value: "Kitchen" },
+        { label: "Bedroom", value: "Bedroom" },
+        { label: "Dining room", value: "Dining room" },
+      ],
     };
   },
 
   computed: {
-   filteredExampleImages() {
-    if (this.selectedRoomType === 'all') {
-      return this.exampleImages;
-    }
-    // Filter by demo_room_type from API response
-    return this.exampleImages.filter(
-      img => img.demo_room_type === this.selectedRoomType
-    );
-  }
+    filteredExampleImages() {
+      if (this.selectedRoomType === "all") {
+        return this.exampleImages;
+      }
+      // Filter by demo_room_type from API response
+      return this.exampleImages.filter(
+        (img) => img.demo_room_type === this.selectedRoomType,
+      );
+    },
   },
 
   mounted() {
     this.isExpanded = false;
-    const hasVisited = false
-    console.log('Has visited before:', hasVisited);
-    
+    const hasVisited = false;
+    console.log("Has visited before:", hasVisited);
+
     if (!hasVisited) {
-      console.log('First time visit - showing modals');
+      console.log("First time visit - showing modals");
       this.showLoadingModal = true;
-      
+
       setTimeout(() => {
-        console.log('Hiding loading, showing instructions');
+        console.log("Hiding loading, showing instructions");
         this.showLoadingModal = false;
         this.showInstructionsModal = true;
-        localStorage.setItem('hasVisitedHome', 'true');
+        localStorage.setItem("hasVisitedHome", "true");
       }, 2000);
     }
-    
+
     this.fetchExampleRooms();
     this.fetchUserHistoryRooms();
   },
-  
+
   methods: {
-  goToPurchaseCredits() {
+    showConfirm() {
+      Modal.confirm({
+        title: "Brand Mismatch",
+        icon: "",
+        content: h("div", { style: "color:red;" }, "The product you are viewing already belongs to a different brand, and the room you have selected also belongs to another brand. Please either select a room that belongs to the same brand, or if you wish to proceed with this brand, you will not be able to view this product. Alternatively, you can upload a new image for a new room."),
+        onOk: () => {
+          this.useSelectedRoom();
+        },
+        onCancel() {
+          console.log("Cancel");
+        },
+        class: "test",
+      });
+    },
+    handleUseSelectedRoom() {
+      this.showImageDrawer = false;
+      if (this.$route.query.brand === this.selectedImage?.brand) {
+        this.useSelectedRoom();
+      } else {
+        this.showConfirm();
+      }
+    },
+    goToPurchaseCredits() {
       this.showCreditModal = false;
       this.$router.push("/pricing"); // or your actual route
     },
     async startchat_with_buisness_user() {
-            const selectedUser = this.buid
-            this.LoadingMessageButton=true
-            const payload = JSON.stringify({
-                type: 'DM',
-                members: [this.currentUser.id, parseInt(selectedUser.id)],
-                name: `${this.currentUser.first_name} & ${selectedUser.first_name}`,
-            })
-            try {
-                const response = await fetch(`${this.$store.state.root_api}chat/chats`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: 'Token ' + localStorage.getItem('token'),
-                    },
-                    body: payload,
-                })
+      const selectedUser = this.buid;
+      this.LoadingMessageButton = true;
+      const payload = JSON.stringify({
+        type: "DM",
+        members: [this.currentUser.id, parseInt(selectedUser.id)],
+        name: `${this.currentUser.first_name} & ${selectedUser.first_name}`,
+      });
+      try {
+        const response = await fetch(
+          `${this.$store.state.root_api}chat/chats`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Token " + localStorage.getItem("token"),
+            },
+            body: payload,
+          },
+        );
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`)
-                }
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
-                const data = await response.json()
-                const room = data.room || data
+        const data = await response.json();
+        const room = data.room || data;
 
-                // if (this.currentUser.user_type === 'User') {
-                
-                if (this.currentUser.user_type === 'User') {
-                    this.$router.push({
-                        path: '/user-dashboard/my-messages',
-                        query: { chatId: data.room_id }
-                    })
-                }
+        // if (this.currentUser.user_type === 'User') {
 
-                if (this.currentUser.user_type === 'Business' ) {
-                    this.$router.push({
-                        path: '/my-store/messages',
-                        query: { chatId: data.room_id }
-                    })
-                }
-                  if (this.currentUser.user_type === 'Professional') {
-                    this.$router.push({
-                        path: '/professional-dashboard/my-messages',
-                        query: { chatId: data.room_id }
-                    })
-                }
-                // }
+        if (this.currentUser.user_type === "User") {
+          this.$router.push({
+            path: "/user-dashboard/my-messages",
+            query: { chatId: data.room_id },
+          });
+        }
 
-            } catch (error) {
-                console.error('Error creating/finding room:', error)
-            }
-            this.LoadingMessageButton=false
+        if (this.currentUser.user_type === "Business") {
+          this.$router.push({
+            path: "/my-store/messages",
+            query: { chatId: data.room_id },
+          });
+        }
+        if (this.currentUser.user_type === "Professional") {
+          this.$router.push({
+            path: "/professional-dashboard/my-messages",
+            query: { chatId: data.room_id },
+          });
+        }
+        // }
+      } catch (error) {
+        console.error("Error creating/finding room:", error);
+      }
+      this.LoadingMessageButton = false;
     },
 
     // DRAWER DRAG METHODS - ADD THESE
-  handleTouchStart(e) {
-    this.isDragging = true;
-    this.startY = e.touches[0].clientY;
-  },
+    handleTouchStart(e) {
+      this.isDragging = true;
+      this.startY = e.touches[0].clientY;
+    },
 
-  handleTouchMove(e) {
-    if (!this.isDragging) return;
-    
-    this.currentY = e.touches[0].clientY;
-    const deltaY = this.currentY - this.startY;
-    
-    // Only drag when NOT expanded
-    if (!this.isExpanded && deltaY > 0) {
-      if (this.drawerRef) {
-        this.drawerRef.style.transform = `translateY(${Math.min(deltaY * 0.4, 150)}px)`;
+    handleTouchMove(e) {
+      if (!this.isDragging) return;
+
+      this.currentY = e.touches[0].clientY;
+      const deltaY = this.currentY - this.startY;
+
+      // Only drag when NOT expanded
+      if (!this.isExpanded && deltaY > 0) {
+        if (this.drawerRef) {
+          this.drawerRef.style.transform = `translateY(${Math.min(deltaY * 0.4, 150)}px)`;
+        }
       }
-    }
-  },
+    },
 
- handleTouchEnd() {
-  if (!this.isDragging) return;
-  
-  const deltaY = this.currentY - this.startY;
-  
-  // Drag UP to expand (more than 80px)
-  if (deltaY < -this.threshold) {
-    this.isExpanded = true;
-  } 
-  // Drag DOWN to close (from expanded) OR collapse (from partial)
-  else if (deltaY > this.threshold || (this.isExpanded && deltaY > 20)) {
-    this.closeDrawer();
-  }
-  // Snap back if small drag
-  else {
-    this.isExpanded = false;
-  }
-  
-  // Reset transform immediately
-  if (this.drawerRef) {
-    this.drawerRef.style.transform = '';
-  }
-  this.isDragging = false;
-},
-  // Update your existing closeDrawer method
-closeDrawer() {
-  // ALWAYS reset expanded state
-  this.isExpanded = false;
-  
-  this.showImageDrawer = false;
-  this.showImageDrawer_test_room = false;
-  this.showObjectManagement = false;
-  
-  // Force immediate reset of drawer transform and position
-  if (this.drawerRef) {
-    this.drawerRef.style.transform = '';
-    this.drawerRef.style.top = '';
-    this.drawerRef.style.height = '';
-    this.drawerRef.style.width = '';
-    this.drawerRef.style.borderRadius = '';
-  }
-  
-  // Clear selection after animation
-  setTimeout(() => {
-    this.selectedImage = null;
-    this.detectedObjects = [];
-  }, 250);
-},
+    handleTouchEnd() {
+      if (!this.isDragging) return;
 
+      const deltaY = this.currentY - this.startY;
 
+      // Drag UP to expand (more than 80px)
+      if (deltaY < -this.threshold) {
+        this.isExpanded = true;
+      }
+      // Drag DOWN to close (from expanded) OR collapse (from partial)
+      else if (deltaY > this.threshold || (this.isExpanded && deltaY > 20)) {
+        this.closeDrawer();
+      }
+      // Snap back if small drag
+      else {
+        this.isExpanded = false;
+      }
+
+      // Reset transform immediately
+      if (this.drawerRef) {
+        this.drawerRef.style.transform = "";
+      }
+      this.isDragging = false;
+    },
+    // Update your existing closeDrawer method
+    closeDrawer() {
+      // ALWAYS reset expanded state
+      this.isExpanded = false;
+
+      this.showImageDrawer = false;
+      this.showImageDrawer_test_room = false;
+      this.showObjectManagement = false;
+
+      // Force immediate reset of drawer transform and position
+      if (this.drawerRef) {
+        this.drawerRef.style.transform = "";
+        this.drawerRef.style.top = "";
+        this.drawerRef.style.height = "";
+        this.drawerRef.style.width = "";
+        this.drawerRef.style.borderRadius = "";
+      }
+
+      // Clear selection after animation
+      setTimeout(() => {
+        this.selectedImage = null;
+        this.detectedObjects = [];
+      }, 250);
+    },
 
     // NEW METHOD: Trigger modal file input
     triggerFileUpload() {
@@ -1075,7 +1525,7 @@ closeDrawer() {
 
       const isValid = this.beforeUpload(file);
       if (!isValid) {
-        this.$refs.modalFileInput.value = '';
+        this.$refs.modalFileInput.value = "";
         return;
       }
 
@@ -1092,105 +1542,119 @@ closeDrawer() {
     resetModalPreview() {
       this.modalPreviewImage = null;
       this.modalFile = null;
-      this.$refs.modalFileInput.value = '';
+      this.$refs.modalFileInput.value = "";
     },
 
-     onHistoryImageLoad(id) {
-    this.imageLoadedMap[id] = false;
-    setTimeout(() => {
-      this.imageLoadedMap[id] = true;
-    }, 1000);
-  },
+    onHistoryImageLoad(id) {
+      this.imageLoadedMap[id] = false;
+      setTimeout(() => {
+        this.imageLoadedMap[id] = true;
+      }, 1000);
+    },
 
-   onExampleImageLoad(id) {
-    this.imageLoadedMap[id] = false;
-    setTimeout(() => {
-      this.imageLoadedMap[id] = true;
-    }, 1000);
-  },
+    onExampleImageLoad(id) {
+      this.imageLoadedMap[id] = false;
+      setTimeout(() => {
+        this.imageLoadedMap[id] = true;
+      }, 1000);
+    },
 
     // NEW METHOD: Save and continue - fires the API with the selected image
     async saveAndContinue() {
       if (!this.modalFile) {
-        this.$message.error('Please select an image first');
+        this.$message.error("Please select an image first");
         return;
       }
 
       this.uploading = true;
-      
+
       try {
         const formData = new FormData();
-        formData.append('base_image', this.modalFile);
-        
+        formData.append("base_image", this.modalFile);
+
         if (this.$route.query.brand) {
-          formData.append('business_owner', this.$route.query.brand);
+          formData.append("business_owner", this.$route.query.brand);
           console.log(this.$route.query.brand);
         }
 
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 120000);
 
-        const response = await fetch(this.$store.state.root_api + 'engine/new-room/', {
-          method: 'POST',
-          body: formData,
-          headers: {
-            'Authorization': `Token ${localStorage.getItem('token')}`
+        const response = await fetch(
+          this.$store.state.root_api + "engine/new-room/",
+          {
+            method: "POST",
+            body: formData,
+            headers: {
+              Authorization: `Token ${localStorage.getItem("token")}`,
+            },
+            signal: controller.signal,
           },
-          signal: controller.signal
-        });
+        );
 
         clearTimeout(timeoutId);
         const responseData = await response.json();
 
-        
         if (responseData.error) {
-          this.showInstructionsModal = false
+          this.showInstructionsModal = false;
           this.creditErrorMessage = responseData.msg;
           this.showCreditModal = true;
-          this.buid=responseData.buid;
+          this.buid = responseData.buid;
           return;
         }
 
         if (response.ok && !responseData.error) {
           this.uploadResult = responseData;
-          this.$message.success('Room processed successfully!');
-          
+          this.$message.success("Room processed successfully!");
+
           // Close the instructions modal
           this.showInstructionsModal = false;
-          
-          this.$emit('upload-success', responseData);
-          
+
+          this.$emit("upload-success", responseData);
+          const { brand, window_name, product_type, product_id } =
+            this.$route.query;
           // Navigate to update catalogue page
           if (this.$route.query.brand) {
-            this.$router.push({ 
-              name: 'update_catelogue',  
+            this.$router.push({
+              name: "update_catelogue",
               params: { id: responseData.room_id },
               query: {
-                brand: this.$route.query.brand,
-              } 
+                brand: brand,
+                window_name: window_name,
+                product_type: product_type,
+                product_id: product_id,
+              },
             });
           } else {
-            this.$router.push({ 
-              name: 'update_catelogue', 
-              params: { id: responseData.room_id } 
+            this.$router.push({
+              name: "update_catelogue",
+              params: { id: responseData.room_id },
+              query: {
+                brand: brand,
+                window_name: window_name,
+                product_type: product_type,
+                product_id: product_id,
+              },
             });
           }
         } else {
-          const errorMsg = responseData.msg || `HTTP ${response.status}: Upload failed`;
+          const errorMsg =
+            responseData.msg || `HTTP ${response.status}: Upload failed`;
           this.uploadError = errorMsg;
           this.$message.error(errorMsg);
         }
       } catch (error) {
-        console.error('Upload error:', error);
-        
-        let errorMessage = 'Upload failed';
-        
-        if (error.name === 'AbortError') {
-          errorMessage = 'Upload timeout - file may be too large or processing is taking too long';
-        } else if (error.message.includes('fetch')) {
-          errorMessage = 'Network error - please check your connection';
+        console.error("Upload error:", error);
+
+        let errorMessage = "Upload failed";
+
+        if (error.name === "AbortError") {
+          errorMessage =
+            "Upload timeout - file may be too large or processing is taking too long";
+        } else if (error.message.includes("fetch")) {
+          errorMessage = "Network error - please check your connection";
         } else {
-          errorMessage = error.message || 'Unknown error occurred';
+          errorMessage = error.message || "Unknown error occurred";
         }
 
         this.uploadError = errorMessage;
@@ -1202,12 +1666,15 @@ closeDrawer() {
 
     // EXISTING METHODS (Keep all your existing methods)
     openImageDrawer(historyCard) {
-       this.isExpanded = false;
-  this.isDragging = false;
+      this.isExpanded = false;
+      this.isDragging = false;
       this.selectedImage = historyCard;
       this.showImageDrawer = true;
-      
-      if (historyCard.detected_objects && historyCard.detected_objects.length > 0) {
+
+      if (
+        historyCard.detected_objects &&
+        historyCard.detected_objects.length > 0
+      ) {
         this.detectedObjects = historyCard.detected_objects;
       } else {
         // this.fetchDetectedObjects(historyCard.id);
@@ -1216,12 +1683,15 @@ closeDrawer() {
     },
     openImageDrawer_test_room(historyCard) {
       this.isExpanded = false;
-  this.isDragging = false;
+      this.isDragging = false;
       this.selectedImage = historyCard;
       this.showImageDrawer = true;
       this.showImageDrawer_test_room = true;
-      
-      if (historyCard.detected_objects && historyCard.detected_objects.length > 0) {
+
+      if (
+        historyCard.detected_objects &&
+        historyCard.detected_objects.length > 0
+      ) {
         this.detectedObjects = historyCard.detected_objects;
       } else {
         // this.fetchDetectedObjects(historyCard.id);
@@ -1232,14 +1702,14 @@ closeDrawer() {
       try {
         const url = `${this.$store.state.root_api}room/api/detected-objects/${roomId}/`;
         const response = await fetch(url, {
-          method: 'GET',
+          method: "GET",
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Token ${localStorage.getItem('token')}`
+            "Content-Type": "application/json",
+            Authorization: `Token ${localStorage.getItem("token")}`,
           },
         });
         const data = await response.json();
-        
+
         if (data && data.data) {
           this.detectedObjects = data.data;
         } else {
@@ -1253,7 +1723,7 @@ closeDrawer() {
 
     closeDrawer() {
       this.showImageDrawer = false;
-      this.showImageDrawer_test_room=false;
+      this.showImageDrawer_test_room = false;
       this.showObjectManagement = false;
       setTimeout(() => {
         this.selectedImage = null;
@@ -1263,48 +1733,52 @@ closeDrawer() {
 
     removeObject(index) {
       this.detectedObjects.splice(index, 1);
-      this.$message.success('Object removed successfully!');
+      this.$message.success("Object removed successfully!");
     },
 
     saveObjectChanges() {
-      this.$message.success('Changes saved successfully!');
+      this.$message.success("Changes saved successfully!");
       this.showObjectManagement = false;
     },
 
     useSelectedRoom() {
       if (this.selectedImage) {
-        this.showImageDrawer = false;
-        
-        if (this.$route.query.brand) {
-          this.$router.push({ 
-            name: 'update_catelogue', 
+        const { brand, window_name, product_type, product_id } =
+          this.$route.query;
+
+        if (this.$route.query.brand === this.selectedImage?.brand) {
+          this.$router.push({
+            name: "update_catelogue",
             params: { id: this.selectedImage.id },
             query: {
               brand: this.selectedImage.brand || this.$route.query.brand,
-            } 
+              window_name: window_name,
+              product_type: product_type,
+              product_id: product_id,
+            },
           });
         } else {
-          this.$router.push({ 
-            name: 'update_catelogue', 
-            params: { id: this.selectedImage.id } 
+          this.$router.push({
+            name: "update_catelogue",
+            params: { id: this.selectedImage.id },
           });
         }
       }
     },
 
     formatDate(dateString) {
-      if (!dateString) return 'Just now';
+      if (!dateString) return "Just now";
       const date = new Date(dateString);
-      return date.toLocaleDateString('en-US', { 
-        month: 'short', 
-        day: 'numeric', 
-        year: 'numeric' 
+      return date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
       });
     },
 
     handleSampleClick(room_id) {
       this.showInstructionsModal = false;
-     if (this.selectedImage) {
+      if (this.selectedImage) {
         this.showImageDrawer = false;
         this.startTestRoom(this.selectedImage.id);
       }
@@ -1315,10 +1789,10 @@ closeDrawer() {
       try {
         const url = `${this.$store.state.root_api}room/api/example-rooms/`;
         const response = await fetch(url, {
-          method: 'GET',
+          method: "GET",
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Token ${localStorage.getItem('token')}`
+            "Content-Type": "application/json",
+            Authorization: `Token ${localStorage.getItem("token")}`,
           },
         });
         const data = await response.json();
@@ -1338,34 +1812,38 @@ closeDrawer() {
       this.loading = true;
       try {
         let url = `${this.$store.state.root_api}room/api/start-example-room/${room_id}`;
-        if(this.$route.query.brand){
+        if (this.$route.query.brand) {
           url = `${this.$store.state.root_api}room/api/start-example-room/${room_id}?brand=${this.$route.query.brand}`;
-
         }
         const response = await fetch(url, {
-          method: 'GET',
+          method: "GET",
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Token ${localStorage.getItem('token')}`
+            "Content-Type": "application/json",
+            Authorization: `Token ${localStorage.getItem("token")}`,
           },
         });
         const data = await response.json();
         console.log(data);
         if (data && data.data) {
           this.exampleImages = data.data;
-          
+
+          const { brand, window_name, product_type, product_id } =
+            this.$route.query;
           if (this.$route.query.brand) {
-            this.$router.push({ 
-              name: 'update_catelogue', 
+            this.$router.push({
+              name: "update_catelogue",
               params: { id: this.exampleImages.id },
               query: {
-                brand: this.$route.query.brand,
-              } 
+                brand: brand,
+                window_name: window_name,
+                product_type: product_type,
+                product_id: product_id,
+              },
             });
           } else {
-            this.$router.push({ 
-              name: 'update_catelogue', 
-              params: { id: this.exampleImages.id } 
+            this.$router.push({
+              name: "update_catelogue",
+              params: { id: this.exampleImages.id },
             });
           }
         }
@@ -1381,10 +1859,10 @@ closeDrawer() {
       try {
         const url = `${this.$store.state.root_api}room/api/user-history-rooms/`;
         const response = await fetch(url, {
-          method: 'GET',
+          method: "GET",
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Token ${localStorage.getItem('token')}`
+            "Content-Type": "application/json",
+            Authorization: `Token ${localStorage.getItem("token")}`,
           },
         });
         const data = await response.json();
@@ -1402,7 +1880,7 @@ closeDrawer() {
     beforeUpload(file) {
       const isImage = file.type.startsWith("image/");
       const isValidSize = file.size / 1024 / 1024 < 10;
-      
+
       if (!isImage) {
         this.$message.error("Only image files allowed!");
         return false;
@@ -1415,83 +1893,91 @@ closeDrawer() {
 
       this.uploadResult = null;
       this.uploadError = null;
-      
+
       return true;
     },
 
     async customUpload({ file, onSuccess, onError }) {
       this.uploading = true;
-      
+
       try {
         const formData = new FormData();
-        formData.append('base_image', file);
-        
+        formData.append("base_image", file);
+
         if (this.$route.query.brand) {
-          formData.append('business_owner', this.$route.query.brand);
+          formData.append("business_owner", this.$route.query.brand);
           console.log(this.$route.query.brand);
         }
 
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 120000);
 
-        const response = await fetch(this.$store.state.root_api + 'engine/new-room/', {
-          method: 'POST',
-          body: formData,
-          headers: {
-            'Authorization': `Token ${localStorage.getItem('token')}`
+        const response = await fetch(
+          this.$store.state.root_api + "engine/new-room/",
+          {
+            method: "POST",
+            body: formData,
+            headers: {
+              Authorization: `Token ${localStorage.getItem("token")}`,
+            },
+            signal: controller.signal,
           },
-          signal: controller.signal
-        });
+        );
 
         clearTimeout(timeoutId);
         const responseData = await response.json();
-        
+
         if (responseData.error) {
           this.creditErrorMessage = responseData.msg;
           this.showCreditModal = true;
-          this.buid=responseData.buid;
+          this.buid = responseData.buid;
           return;
         }
-        
-        
+
         if (response.ok && !responseData.error) {
           this.uploadResult = responseData;
-          this.$message.success('Room processed successfully!');
+          this.$message.success("Room processed successfully!");
           onSuccess(responseData);
-          
-          this.$emit('upload-success', responseData);
-          
+
+          this.$emit("upload-success", responseData);
+          const { brand, window_name, product_type, product_id } =
+            this.$route.query;
           if (this.$route.query.brand) {
-            this.$router.push({ 
-              name: 'update_catelogue',  
+            this.$router.push({
+              name: "update_catelogue",
               params: { id: responseData.room_id },
               query: {
-                brand: this.$route.query.brand,
-              } 
+                brand: brand,
+                window_name: window_name,
+                product_type: product_type,
+                product_id: product_id,
+              },
             });
           } else {
-            this.$router.push({ 
-              name: 'update_catelogue', 
-              params: { id: responseData.room_id } 
+            this.$router.push({
+              name: "update_catelogue",
+              params: { id: responseData.room_id },
             });
           }
         } else {
-          const errorMsg = responseData.msg || `HTTP ${response.status}: Upload failed`;
+          const errorMsg =
+            responseData.msg || `HTTP ${response.status}: Upload failed`;
           this.uploadError = errorMsg;
           this.$message.error(errorMsg);
           onError(new Error(errorMsg));
         }
       } catch (error) {
-        console.error('Upload error:', error);
-        
-        let errorMessage = 'Upload failed';
-        
-        if (error.name === 'AbortError') {
-          errorMessage = 'Upload timeout - file may be too large or processing is taking too long';
-        } else if (error.message.includes('fetch')) {
-          errorMessage = 'Network error - please check your connection';
+        console.error("Upload error:", error);
+
+        let errorMessage = "Upload failed";
+
+        if (error.name === "AbortError") {
+          errorMessage =
+            "Upload timeout - file may be too large or processing is taking too long";
+        } else if (error.message.includes("fetch")) {
+          errorMessage = "Network error - please check your connection";
         } else {
-          errorMessage = error.message || 'Unknown error occurred';
+          errorMessage = error.message || "Unknown error occurred";
         }
 
         this.uploadError = errorMessage;
@@ -1508,7 +1994,7 @@ closeDrawer() {
         this.customUpload({
           file: file.originFileObj || file,
           onSuccess: () => {},
-          onError: () => {}
+          onError: () => {},
         });
       }
     },
@@ -1518,16 +2004,13 @@ closeDrawer() {
       this.uploadResult = null;
       this.uploadError = null;
       this.uploading = false;
-    }
-  }
+    },
+  },
 };
 </script>
 
-
 <style scoped>
-
-  /* Loading Modal Styles */
-
+/* Loading Modal Styles */
 
 .loading-content {
   display: flex;
@@ -1543,7 +2026,8 @@ closeDrawer() {
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
     opacity: 1;
   }
@@ -1654,7 +2138,6 @@ closeDrawer() {
   border-radius: 12px;
 }
 
-
 .instruction-item p {
   margin: 0;
   font-size: 14px;
@@ -1709,35 +2192,26 @@ closeDrawer() {
   transform: scale(1.02);
 }
 
-
 .history-image-wrapper {
   position: relative;
   display: inline-block;
   width: 100%;
-  height: 200px;              /* match your image height */
+  height: 200px; /* match your image height */
   border-radius: 10px;
   overflow: hidden;
 }
 
-@media (max-width:450px) {
-
+@media (max-width: 450px) {
   .history-image-wrapper {
-
-     height: 130px;
+    height: 130px;
   }
-
 }
 
 .history-image-skeleton {
   width: 100%;
   height: 100%;
   border-radius: 10px;
-  background: linear-gradient(
-    110deg,
-    #e5e7eb 8%,
-    #f9fafb 18%,
-    #e5e7eb 33%
-  );
+  background: linear-gradient(110deg, #e5e7eb 8%, #f9fafb 18%, #e5e7eb 33%);
   background-size: 200% 100%;
   animation: history-shimmer 1.6s infinite linear;
 }
@@ -1768,11 +2242,10 @@ closeDrawer() {
   }
 }
 
-
 .example-image-container {
   position: relative;
   width: 100%;
-  height: 128px;        /* default: mobile */
+  height: 128px; /* default: mobile */
   border-radius: 12px; /* rounded-xl */
   overflow: hidden;
 }
@@ -1784,17 +2257,11 @@ closeDrawer() {
   }
 }
 
-
 .example-image-skeleton {
   width: 100%;
   height: 100%;
   border-radius: 12px;
-  background: linear-gradient(
-    110deg,
-    #e5e7eb 8%,
-    #f9fafb 18%,
-    #e5e7eb 33%
-  );
+  background: linear-gradient(110deg, #e5e7eb 8%, #f9fafb 18%, #e5e7eb 33%);
   background-size: 200% 100%;
   animation: example-shimmer 1.6s infinite linear;
 }
@@ -1804,8 +2271,6 @@ closeDrawer() {
     background-position-x: -200%;
   }
 }
-
-
 
 .sample-image img {
   width: 160px;
@@ -1836,7 +2301,8 @@ closeDrawer() {
 
 /* Custom animation for loading icon */
 @keyframes pulse-slow {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
     opacity: 1;
   }
@@ -1876,7 +2342,7 @@ closeDrawer() {
   /* filter: brightness(0.6); */
 }
 .video-background::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 0;
   left: 0;
@@ -1902,7 +2368,7 @@ closeDrawer() {
   text-align: center;
   max-width: 1000px;
   margin: auto;
-  margin-top:-250px;
+  margin-top: -250px;
   /* background: linear-gradient(to bottom, rgba(255,255,255,0.65) 10%, rgba(255,255,255,1) 90%); */
   /* backdrop-filter: blur(8px); */
 }
@@ -1985,27 +2451,24 @@ closeDrawer() {
 
 /* Example Images */
 .example-label {
-  
   font-size: 18px;
   margin-bottom: 20px;
-  text-align:start;
+  text-align: start;
   font-weight: 700;
   color: #444;
 }
-
-
 
 /* Example Images */
 .history-label {
   font-size: 18px;
   margin-bottom: 20px;
-  text-align:start;
+  text-align: start;
   font-weight: 700;
   color: #444;
 }
 .example-images {
   display: grid;
-  
+
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 20px;
   padding: 0 20px;
@@ -2026,16 +2489,13 @@ closeDrawer() {
 @media (max-width: 510px) {
   .example-image {
     height: 100px;
-
   }
 }
-
 
 .example-image:hover {
   transform: scale(1.05);
 }
 .upload-dragger {
-
   background: #ffffff;
   border: 2px dashed #ccc;
   border-radius: 14px;
@@ -2051,13 +2511,13 @@ closeDrawer() {
 }
 
 .upload-dragger-inner {
-    height:100%;
-    /* text-align: center; */
-  
-    display:flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+  height: 100%;
+  /* text-align: center; */
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .upload-icon {
@@ -2077,14 +2537,6 @@ closeDrawer() {
   font-size: 12px;
   color: #999;
 }
-
-
-
-
-
-
-
-
 
 .image-wrapper {
   position: relative;
@@ -2112,5 +2564,4 @@ closeDrawer() {
   background: rgba(255, 255, 255, 0.6);
   border-radius: 10px;
 }
-
 </style>

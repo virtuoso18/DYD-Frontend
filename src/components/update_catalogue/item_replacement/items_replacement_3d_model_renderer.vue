@@ -17,7 +17,7 @@
     ref="canvasContainer"
   >
    <img
-        class="absolute top-[5px] right-[10px] cursor-pointer z-9 w-[25px]"
+        class="absolute top-[5px] right-[10px] md:hidden cursor-pointer z-9 w-[25px]"
         src="../../../assets/icons/informationIcon.svg"
         alt="instruction"
         @click="showInstructionModal"
