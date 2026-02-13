@@ -37,15 +37,20 @@
                 :Model_instance_id="selectedProduct.id"
                 style="width: 100%; max-height: 500px; height: 100%; border-radius: 10px"
               />
-              <a-button type="text" danger @click="remove3DModel"
-                style="position: absolute; top: 12px; right: 12px; background: rgba(255,255,255,0.9); box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-radius: 6px; width: 32px; height: 32px; padding: 0;">
-                <template #icon>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                  </svg>
-                </template>
-              </a-button>
+              <a-button 
+  type="text" 
+  danger 
+  @click="remove3DModel"
+  style="position: absolute; top: 12px; right: 12px; background: rgba(255,255,255,0.9); box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-radius: 6px; width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center;"
+>
+  <template #icon>
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <line x1="18" y1="6" x2="6" y2="18"></line>
+      <line x1="6" y1="6" x2="18" y2="18"></line>
+    </svg>
+  </template>
+</a-button>
+
             </div>
             
             <!-- Upload 3D Model Area -->
@@ -82,15 +87,21 @@
             <!-- Primary Badge -->
             <div v-if="img.is_primary" style="position: absolute; top: -6px; left: -6px; background: #10b981; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 10px;">★</div>
             <!-- Delete Button -->
-            <a-button type="text" danger size="small" @click.stop="deleteImage(img.id)"
-              style="position: absolute; top: -6px; right: -6px; background: #ef4444; color: white; border-radius: 50%; width: 20px; height: 20px; padding: 0; min-width: 20px;">
-              <template #icon>
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-              </template>
-            </a-button>
+            <a-button 
+  type="text" 
+  danger 
+  size="small" 
+  @click.stop="deleteImage(img.id)"
+  style="position: absolute; top: -6px; right: -6px; background: #ef4444; color: white; border-radius: 50%; width: 20px; height: 20px; padding: 0; min-width: 20px; display: flex; align-items: center; justify-content: center;"
+>
+  <template #icon>
+    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <line x1="18" y1="6" x2="6" y2="18"></line>
+      <line x1="6" y1="6" x2="18" y2="18"></line>
+    </svg>
+  </template>
+</a-button>
+
           </div>
 
           <!-- Preview Images (Not yet saved) -->
@@ -172,31 +183,31 @@
           
           <!-- Name & Description -->
           <div style="margin-bottom: 20px;">
-            <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151;">Name</label>
+            <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151;">Name<span style="color: red;">*</span></label>
             <a-input v-model:value="productForm.name" placeholder="Product Name" style="border-radius: 8px;" size="large" />
           </div>
 
           <div style="margin-bottom: 20px;">
-            <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151;">Description</label>
+            <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151;">Description <span style="color: red;">*</span></label>
             <a-textarea v-model:value="productForm.description" :rows="4" placeholder="Product Description" style="border-radius: 8px; resize: none;" />
           </div>
 
           <!-- Category, Type, Price -->
           <a-row :gutter="16" style="margin-bottom: 20px;">
             <a-col :span="8">
-              <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151;">Category</label>
+              <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151;">Category <span style="color: red;">*</span></label>
               <a-select v-model:value="productForm.category_name" style="width: 100%;" size="large">
                 <a-select-option v-for="cat in categories_available" :key="cat" :value="cat">{{ cat }}</a-select-option>
               </a-select>
             </a-col>
             <a-col :span="8">
-              <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151;">Type</label>
+              <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151;">Type <span style="color: red;">*</span></label>
               <a-select v-model:value="productForm.furniture_type" style="width: 100%;" size="large">
                 <a-select-option v-for="type in types" :key="type" :value="type">{{ type }}</a-select-option>
               </a-select>
             </a-col>
             <a-col :span="8">
-              <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151;">Price</label>
+              <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151;">Price <span style="color: red;">*</span></label>
               <a-input v-model:value="productForm.pricing.price" placeholder="680" suffix="$" style="border-radius: 8px;" size="large" />
             </a-col>
           </a-row>
@@ -213,7 +224,7 @@
             <h4 style="margin-bottom: 16px; font-weight: 500; font-size: 14px; color: #1f2937;">Dimensions</h4>
             <a-row :gutter="16">
               <a-col :span="8" v-for="dim in ['height', 'length', 'width']" :key="dim">
-                <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 13px; color: #6b7280; text-transform: capitalize;">{{ dim }}<span style="margin-left: 8px; color: #9ca3af; font-size: 13px; min-width: 20px;">( meter )</span></label>
+                <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 13px; color: #6b7280; text-transform: capitalize;">{{ dim }} <span style="color: red;">*</span><span style="margin-left: 8px; color: #9ca3af; font-size: 13px; min-width: 20px;">( meter )</span></label>
                 <div style="display: flex; align-items: center;">
                   <a-input v-model:value="productForm.dimensions[dim]" :placeholder="dim === 'height' ? '100' : '30'" style="border-radius: 6px;" />
                   
@@ -225,20 +236,26 @@
           <!-- Colors & Textures -->
           <a-row :gutter="24">
             <a-col :span="12">
-              <h4 style="margin-bottom: 16px; font-weight: 500; font-size: 14px; color: #1f2937;">Colors</h4>
+              <h4 style="margin-bottom: 16px; font-weight: 500; font-size: 14px; color: #1f2937;">Colors <span style="color: red;">*</span></h4>
               <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 12px;">
                 <!-- Existing Colors -->
                 <div v-for="color in selectedProduct.colors.available_colors" :key="color.id" style="position: relative;">
                   <div @click="selectColor(color.color)" :style="{ width: '36px', height: '36px', borderRadius: '8px', backgroundColor: color.color, cursor: 'pointer', border: productForm.colors.primary_color === color.color ? '3px solid #3b82f6' : '2px solid #e5e7eb' }"></div>
-                  <a-button type="text" danger size="small" @click.stop="deleteColor(color.id)"
-                    style="position: absolute; top: -8px; right: -8px; background: #ef4444; color: white; border-radius: 50%; width: 16px; height: 16px; padding: 0;">
-                    <template #icon>
-                      <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                      </svg>
-                    </template>
-                  </a-button>
+                  <a-button 
+  type="text" 
+  danger 
+  size="small" 
+  @click.stop="deleteColor(color.id)"
+  style="position: absolute; top: -8px; right: -8px; background: #ef4444; color: white; border-radius: 50%; width: 16px; height: 16px; padding: 0; display: flex; align-items: center; justify-content: center;"
+>
+  <template #icon>
+    <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+      <line x1="18" y1="6" x2="6" y2="18"></line>
+      <line x1="6" y1="6" x2="18" y2="18"></line>
+    </svg>
+  </template>
+</a-button>
+
                 </div>
                 
                 <!-- Add Color -->
@@ -255,7 +272,7 @@
             </a-col>
 
             <a-col :span="12">
-              <h4 style="margin-bottom: 16px; font-weight: 500; font-size: 14px; color: #1f2937;">Textures</h4>
+              <h4 style="margin-bottom: 16px; font-weight: 500; font-size: 14px; color: #1f2937;">Textures <span style="color: red;">*</span></h4>
               <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
                 <!-- Existing Textures -->
                 <div v-for="texture in selectedProduct.textures" :key="texture.id" style="position: relative;">
@@ -669,37 +686,73 @@ export default {
     },
 
     // Form Validation & Save
-    validateForm() {
-      if (!this.productForm.name.trim()) {
-        this.$message.error('Product name is required');
-        return false;
-      }
-      if (!this.productForm.description.trim()) {
-        this.$message.error('Product description is required');
-        return false;
-      }
-      if (!this.productForm.category_name) {
-        this.$message.error('Category is required');
-        return false;
-      }
-      if (!this.productForm.pricing.price || parseFloat(this.productForm.pricing.price) <= 0) {
-        this.$message.error('Valid price is required');
-        return false;
-      }
-      if (this.productForm.pricing.sale_price && parseFloat(this.productForm.pricing.sale_price) <= 0) {
-        this.$message.error('Sale price must be greater than 0 if provided');
-        return false;
-      }
+   validateForm() {
+  // Name validation
+  if (!this.productForm.name.trim()) {
+    this.$message.error('Product name is required');
+    return false;
+  }
+  
+  // Description validation
+  if (!this.productForm.description.trim()) {
+    this.$message.error('Product description is required');
+    return false;
+  }
+  
+  // Category validation
+  if (!this.productForm.category_name) {
+    this.$message.error('Category is required');
+    return false;
+  }
+  
+  // Type validation
+  if (!this.productForm.furniture_type) {
+    this.$message.error('Type is required');
+    return false;
+  }
+  
+  // Price validation
+  if (!this.productForm.pricing.price || parseFloat(this.productForm.pricing.price) <= 0) {
+    this.$message.error('Valid price is required');
+    return false;
+  }
+  
+  // Sale price validation (if provided)
+  if (this.productForm.pricing.sale_price && parseFloat(this.productForm.pricing.sale_price) <= 0) {
+    this.$message.error('Sale price must be greater than 0 if provided');
+    return false;
+  }
 
-      const dimensions = ['height', 'length', 'width', 'depth'];
-      for (let dim of dimensions) {
-        if (this.productForm.dimensions[dim] && parseFloat(this.productForm.dimensions[dim]) <= 0) {
-          this.$message.error(`${dim} must be greater than 0 if provided`);
-          return false;
-        }
-      }
-      return true;
-    },
+  // Dimensions validation - all required
+  const dimensions = ['height', 'length', 'width'];
+  for (let dim of dimensions) {
+    if (!this.productForm.dimensions[dim] || parseFloat(this.productForm.dimensions[dim]) <= 0) {
+      this.$message.error(`${dim.charAt(0).toUpperCase() + dim.slice(1)} is required and must be greater than 0`);
+      return false;
+    }
+  }
+
+  // 3D Model validation
+  if (!this.selectedProduct['3d_model'] && !this.pending3DModel) {
+    this.$message.error('3D Model is required');
+    return false;
+  }
+
+  // Colors validation
+  if (!this.selectedProduct.colors.available_colors || this.selectedProduct.colors.available_colors.length === 0) {
+    this.$message.error('At least one color is required');
+    return false;
+  }
+
+  // Textures validation
+  if (!this.selectedProduct.textures || this.selectedProduct.textures.length === 0) {
+    this.$message.error('At least one texture is required');
+    return false;
+  }
+
+  return true;
+},
+
 
     async saveProduct() {
       if (!this.hasUnsavedChanges && !this.pending3DModel && this.imagePreviewsState.length === 0) {

@@ -557,7 +557,7 @@ z-index: 1 !important; }
 .avatar-skeleton,
 .profile-img {
   position: relative !important;
-  z-index: 1002 !important;
+  z-index: 1000 !important;
 }
 
 .avatar-skeleton {
@@ -624,7 +624,7 @@ z-index: 1 !important; }
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 80 !important;
+  z-index: 1001 !important;
   color: white;
   cursor: pointer;
   transition: all 0.3s ease;

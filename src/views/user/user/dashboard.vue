@@ -3,69 +3,117 @@
     <!-- Mobile Header (Only visible on mobile) -->
     <div v-if="isMobile && !showSidebar" class="mobile-header">
       <button @click="showSidebar = true" class="mobile-menu-btn">
-       <svg width="6" height="10" viewBox="0 0 6 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M4.75 8.75L0.75 4.75L4.75 0.75" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
-
+        <svg
+          width="6"
+          height="10"
+          viewBox="0 0 6 10"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M4.75 8.75L0.75 4.75L4.75 0.75"
+            stroke="#1A1A1A"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
       </button>
-      <h2 class="mobile-title">Dashboard</h2>
+      <h2 class="mobile-title !text-black">{{ currentPageTitle }}</h2>
     </div>
 
     <!-- Main Dashboard Content -->
     <a-row class="dashboard-content">
       <!-- Sidebar -->
-      <a-col 
-        :xs="showSidebar ? 30 : 0" 
-        :sm="showSidebar ? 30 : 0" 
-        :md="6" 
-        :lg="6" 
+      <a-col
+        :xs="showSidebar ? 30 : 0"
+        :sm="showSidebar ? 30 : 0"
+        :md="6"
+        :lg="6"
         class="sidebar-col"
-        :class="{ 'sidebar-visible': showSidebar, 'sidebar-hidden': !showSidebar }"
+        :class="{
+          'sidebar-visible': showSidebar,
+          'sidebar-hidden': !showSidebar,
+        }"
       >
         <div class="sidebar">
           <!-- Mobile Back Button -->
-          <button v-if="isMobile" @click="showSidebar = false" class="mobile-back-btn">
+          <button
+            v-if="isMobile"
+            @click="showSidebar = false"
+            class="mobile-back-btn"
+          >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <path d="M19 12H5M12 19L5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path
+                d="M19 12H5M12 19L5 12L12 5"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
             </svg>
             <span>Back</span>
           </button>
 
           <div class="user-info">
-           <div class="user-avatar">
-  <!-- Hidden preload image -->
-  <img
-    v-if="profile.profile_picture"
-    :src="this.$store.state.root_media_api + profile.profile_picture"
-    @load="onSidebarAvatarLoad"
-    style="position:absolute;width:0;height:0;opacity:0;"
-    class="!z-999"
-    alt=""
-  />
-  
-  <!-- Skeleton loader -->
-  <div
-    v-if="!sidebarAvatarLoaded"
-    class="sidebar-avatar-skeleton"
-  ></div>
-  
-  <!-- Visible image -->
-  <img
-    v-show="sidebarAvatarLoaded"
-    :src="this.$store.state.root_media_api + profile.profile_picture"
-    class="sidebar-avatar-img"
-    alt="User Avatar"
-  />
-</div>
+            <div class="user-avatar">
+              <!-- Hidden preload image -->
+              <img
+                v-if="profile.profile_picture"
+                :src="
+                  this.$store.state.root_media_api + profile.profile_picture
+                "
+                @load="onSidebarAvatarLoad"
+                style="position: absolute; width: 0; height: 0; opacity: 0"
+                class="!z-999"
+                alt=""
+              />
 
-            <h3 class="text-center" style="font-family: Poppins; font-weight: 500; font-style: normal; font-size: 16px; line-height: 24px; letter-spacing: 0;">
+              <!-- Skeleton loader -->
+              <div
+                v-if="!sidebarAvatarLoaded"
+                class="sidebar-avatar-skeleton"
+              ></div>
+
+              <!-- Visible image -->
+              <img
+                v-show="sidebarAvatarLoaded"
+                :src="
+                  this.$store.state.root_media_api + profile.profile_picture
+                "
+                class="sidebar-avatar-img"
+                alt="User Avatar"
+              />
+            </div>
+
+            <h3
+              class="text-center"
+              style="
+                font-family: Poppins;
+                font-weight: 500;
+                font-style: normal;
+                font-size: 16px;
+                line-height: 24px;
+                letter-spacing: 0;
+              "
+            >
               {{ user?.full_name || "John Doe" }}
             </h3>
-            <p class="user-email text-center" style="font-family: Poppins; font-weight: 400; font-style: normal; font-size: 12px; line-height: 20px; letter-spacing: 0;">
+            <p
+              class="user-email text-center"
+              style="
+                font-family: Poppins;
+                font-weight: 400;
+                font-style: normal;
+                font-size: 12px;
+                line-height: 20px;
+                letter-spacing: 0;
+              "
+            >
               {{ user?.email || "johndoe@gmail.com" }}
             </p>
 
-              <!-- <div class="completion-badge sm:absolute sm:top-2.5 sm:right-2.5">
+            <!-- <div class="completion-badge sm:absolute sm:top-2.5 sm:right-2.5">
                 <div class="completion-circle">
                   <span class="completion-text inline-flex items-center justify-center" style="font-family: Poppins; font-weight: 400; font-style: normal; font-size: 12px; line-height: 20px; letter-spacing: 0; text-align: center; color: #3b63fb;">
                     <svg
@@ -88,7 +136,7 @@
                 </div>
               </div> -->
 
-            <div class="package-info pt-12 md:pt-1 ">
+            <div class="package-info pt-12 md:pt-1">
               <!-- <div class="package-header">
                 <span class="package-label text-center" style="font-family: Poppins; font-weight: 400; font-style: normal; font-size: 10px; line-height: 20px; letter-spacing: 0;">
                   Your package
@@ -98,11 +146,26 @@
                 </router-link>
               </div> -->
               <div class="package-card">
-                <span class="package-type text-center" style="font-family: Poppins; font-weight: 500; font-style: normal; font-size: 14px; line-height: 20px; letter-spacing: 0; color: #3b63fb;">
+                <span
+                  class="package-type text-center"
+                  style="
+                    font-family: Poppins;
+                    font-weight: 500;
+                    font-style: normal;
+                    font-size: 14px;
+                    line-height: 20px;
+                    letter-spacing: 0;
+                    color: #3b63fb;
+                  "
+                >
                   Free User
                 </span>
                 <div class="package-icon">
-                  <img src="../../../assets/dyd-logo.png" alt="" style="width: 40px; height: 40px" />
+                  <img
+                    src="../../../assets/dyd-logo.png"
+                    alt=""
+                    style="width: 40px; height: 40px"
+                  />
                 </div>
               </div>
             </div>
@@ -117,7 +180,7 @@
               @click.native="handleNavClick"
             >
               <div class="nav-icon-wrapper">
-  <svg
+                <svg
                   class="nav-icon"
                   width="20"
                   height="20"
@@ -142,7 +205,20 @@
                   />
                 </svg>
               </div>
-              <span class="nav-text" :class="{ '!text-white': $route.name === 'user_my_profile' }" style="font-family: Poppins; font-weight: 400; font-style: normal; font-size: 14px; line-height: 20px; letter-spacing: 0; text-align: center; color: #666666;">
+              <span
+                class="nav-text"
+                :class="{ '!text-white': $route.name === 'user_my_profile' }"
+                style="
+                  font-family: Poppins;
+                  font-weight: 400;
+                  font-style: normal;
+                  font-size: 14px;
+                  line-height: 20px;
+                  letter-spacing: 0;
+                  text-align: center;
+                  color: #666666;
+                "
+              >
                 Profile
               </span>
             </router-link>
@@ -154,7 +230,7 @@
               @click.native="handleNavClick"
             >
               <div class="nav-icon-wrapper">
-  <svg
+                <svg
                   width="24"
                   height="24"
                   viewBox="0 0 24 24"
@@ -173,8 +249,22 @@
                     d="M5.69922 17.3992C8.77777 13.123 12.2374 7.45193 17.3992 11.7052"
                     stroke="currentColor"
                   />
-                </svg>              </div>
-              <span class="nav-text" :class="{ '!text-white': $route.name === 'user_my_designs' }" style="font-family: Poppins; font-weight: 400; font-style: normal; font-size: 14px; line-height: 20px; letter-spacing: 0; text-align: center; color: #666666;">
+                </svg>
+              </div>
+              <span
+                class="nav-text"
+                :class="{ '!text-white': $route.name === 'user_my_designs' }"
+                style="
+                  font-family: Poppins;
+                  font-weight: 400;
+                  font-style: normal;
+                  font-size: 14px;
+                  line-height: 20px;
+                  letter-spacing: 0;
+                  text-align: center;
+                  color: #666666;
+                "
+              >
                 My Designs
               </span>
             </router-link>
@@ -186,7 +276,7 @@
               @click.native="handleNavClick"
             >
               <div class="nav-icon-wrapper">
-<svg
+                <svg
                   width="24"
                   height="24"
                   viewBox="0 0 24 24"
@@ -206,55 +296,58 @@
                     fill="white"
                     stroke="currentColor"
                   />
-                </svg>              </div>
-              <span class="nav-text text-center text-sm" :class="{ '!text-white': $route.name === 'user_requests' }" style="font-family: Poppins; font-weight: 400">
+                </svg>
+              </div>
+              <span
+                class="nav-text text-center text-sm"
+                :class="{ '!text-white': $route.name === 'user_requests' }"
+                style="font-family: Poppins; font-weight: 400"
+              >
                 Requests
               </span>
             </router-link>
-             <router-link 
-  to="/user-dashboard/my-likes" 
-  class="nav-item"
-  :class="{ active: $route.name === 'user_my_likes' }"
-  @click.native="handleNavClick"
-  
->
-  <div class="nav-icon-wrapper">
-    <svg 
-      width="19" 
-      height="19" 
-      viewBox="0 0 19 19" 
-      fill="none" 
-      xmlns="http://www.w3.org/2000/svg"
-      class="nav-icon"
-    >
-      <path 
-        d="M7.90304 15.1577C5.7611 13.556 1.51758 9.89416 1.51758 6.59893C1.51758 4.42091 3.11591 2.65527 5.31361 2.65527C6.45242 2.65527 7.59123 3.03488 9.10965 4.55329C10.6281 3.03488 11.7669 2.65527 12.9057 2.65527C15.1034 2.65527 16.7017 4.42091 16.7017 6.59893C16.7017 9.89416 12.4582 13.556 10.3163 15.1577C9.59546 15.6966 8.62383 15.6966 7.90304 15.1577Z" 
-        stroke="currentColor" 
-        stroke-width="1.13881" 
-        stroke-linecap="round" 
-        stroke-linejoin="round"
-      />
-    </svg>
-  </div>
+            <router-link
+              to="/user-dashboard/my-likes"
+              class="nav-item"
+              :class="{ active: $route.name === 'user_my_likes' }"
+              @click.native="handleNavClick"
+            >
+              <div class="nav-icon-wrapper">
+                <svg
+                  width="19"
+                  height="19"
+                  viewBox="0 0 19 19"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="nav-icon"
+                >
+                  <path
+                    d="M7.90304 15.1577C5.7611 13.556 1.51758 9.89416 1.51758 6.59893C1.51758 4.42091 3.11591 2.65527 5.31361 2.65527C6.45242 2.65527 7.59123 3.03488 9.10965 4.55329C10.6281 3.03488 11.7669 2.65527 12.9057 2.65527C15.1034 2.65527 16.7017 4.42091 16.7017 6.59893C16.7017 9.89416 12.4582 13.556 10.3163 15.1577C9.59546 15.6966 8.62383 15.6966 7.90304 15.1577Z"
+                    stroke="currentColor"
+                    stroke-width="1.13881"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </div>
 
-  <span
-    class="nav-text"
-    :class="{ '!text-white': $route.name === 'user_my_likes' }"
-    style="
-      font-family: Poppins;
-      font-weight: 400;
-      font-style: normal;
-      font-size: 14px;
-      line-height: 20px;
-      letter-spacing: 0;
-      text-align: center;
-      color: #666666;
-    "
-  >
-    My Likes
-  </span>
-</router-link>
-
+              <span
+                class="nav-text"
+                :class="{ '!text-white': $route.name === 'user_my_likes' }"
+                style="
+                  font-family: Poppins;
+                  font-weight: 400;
+                  font-style: normal;
+                  font-size: 14px;
+                  line-height: 20px;
+                  letter-spacing: 0;
+                  text-align: center;
+                  color: #666666;
+                "
+              >
+                My Likes
+              </span>
+            </router-link>
 
             <router-link
               to="/user-dashboard/my-messages"
@@ -263,7 +356,7 @@
               @click.native="handleNavClick"
             >
               <div class="nav-icon-wrapper">
-<svg
+                <svg
                   width="24"
                   height="24"
                   viewBox="0 0 24 24"
@@ -276,8 +369,13 @@
                     stroke-linecap="round"
                     stroke-linejoin="round"
                   />
-                </svg>              </div>
-              <span class="nav-text text-center text-sm" :class="{ '!text-white': $route.name === 'user_messages' }" style="font-family: Poppins; font-weight: 400">
+                </svg>
+              </div>
+              <span
+                class="nav-text text-center text-sm"
+                :class="{ '!text-white': $route.name === 'user_messages' }"
+                style="font-family: Poppins; font-weight: 400"
+              >
                 Messages
               </span>
             </router-link>
@@ -340,7 +438,7 @@
               v-if="employee_owner_business_slug"
             >
               <div class="nav-icon-wrapper">
- <svg
+                <svg
                   xmlns="http://www.w3.org/2000/svg"
                   xmlns:xlink="http://www.w3.org/1999/xlink"
                   fill="#666666"
@@ -372,8 +470,15 @@
                       </g>
                     </g>
                   </g>
-                </svg>              </div>
-              <span class="nav-text text-center text-sm" :class="{ '!text-white': $route.name === 'user_access_business' }" style="font-family: Poppins; font-weight: 400">
+                </svg>
+              </div>
+              <span
+                class="nav-text text-center text-sm"
+                :class="{
+                  '!text-white': $route.name === 'user_access_business',
+                }"
+                style="font-family: Poppins; font-weight: 400"
+              >
                 Access Business
               </span>
             </div>
@@ -385,7 +490,7 @@
               @click.native="handleNavClick"
             >
               <div class="nav-icon-wrapper">
- <svg
+                <svg
                   width="24"
                   height="24"
                   viewBox="0 0 24 24"
@@ -404,46 +509,63 @@
                     stroke-linecap="round"
                     stroke-linejoin="round"
                   />
-                </svg>              </div>
-              <span class="nav-text text-center text-sm" :class="{ '!text-white': $route.name === 'user_settings' }" style="font-family: Poppins; font-weight: 400">
+                </svg>
+              </div>
+              <span
+                class="nav-text text-center text-sm"
+                :class="{ '!text-white': $route.name === 'user_settings' }"
+                style="font-family: Poppins; font-weight: 400"
+              >
                 Settings
               </span>
             </router-link>
 
-            <div  @click="logout_user">
+            <div @click="logout_user">
               <div
                 className="w-full h-[46px] bg-[#FEE3E0] rounded-[8px] flex items-center justify-center gap-2 cursor-pointer hover:bg-[#fcbeb8] transition"
               >
-              <div class="nav-icon-wrapper">
-                <svg
-                width="16"
-                height="16"
-                viewBox="0 0 16 16"
-                fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
+                <div class="nav-icon-wrapper">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
                   >
-                  <path
-                  d="M1.81818 16C1.31818 16 0.890303 15.8261 0.534545 15.4782C0.178788 15.1304 0.000606061 14.7117 0 14.2222V1.77778C0 1.28889 0.178182 0.870518 0.534545 0.522666C0.890909 0.174815 1.31879 0.000592592 1.81818 0H7.27273C7.5303 0 7.74636 0.0853334 7.92091 0.256C8.09545 0.426666 8.18242 0.637629 8.18182 0.888888C8.18121 1.14015 8.09394 1.35141 7.92 1.52267C7.74606 1.69392 7.5303 1.77896 7.27273 1.77778H1.81818V14.2222H7.27273C7.5303 14.2222 7.74636 14.3075 7.92091 14.4782C8.09545 14.6489 8.18242 14.8598 8.18182 15.1111C8.18121 15.3624 8.09394 15.5736 7.92 15.7449C7.74606 15.9161 7.5303 16.0012 7.27273 16H1.81818ZM12.8864 8.88888H6.36364C6.10606 8.88888 5.8903 8.80355 5.71636 8.63288C5.54242 8.46222 5.45515 8.25125 5.45455 7.99999C5.45394 7.74873 5.54121 7.53777 5.71636 7.36711C5.89152 7.19644 6.10727 7.11111 6.36364 7.11111H12.8864L11.1818 5.44444C11.0152 5.28148 10.9318 5.08148 10.9318 4.84444C10.9318 4.6074 11.0152 4.4 11.1818 4.22222C11.3485 4.04444 11.5606 3.9517 11.8182 3.944C12.0758 3.93629 12.2955 4.02163 12.4773 4.2L15.7273 7.37777C15.9091 7.55555 16 7.76296 16 7.99999C16 8.23703 15.9091 8.44444 15.7273 8.62222L12.4773 11.8C12.2955 11.9778 12.0797 12.0631 11.83 12.056C11.5803 12.0489 11.3642 11.9561 11.1818 11.7778C11.0152 11.6 10.9358 11.389 10.9436 11.1449C10.9515 10.9007 11.0385 10.6969 11.2045 10.5333L12.8864 8.88888Z"
-                  fill="#E33827"
-                  />
-                </svg>              </div>
-                <span class="nav-text text-center text-sm" style="font-family: Poppins; font-weight: 600; font-size: medium; color: #e33827;">
+                    <path
+                      d="M1.81818 16C1.31818 16 0.890303 15.8261 0.534545 15.4782C0.178788 15.1304 0.000606061 14.7117 0 14.2222V1.77778C0 1.28889 0.178182 0.870518 0.534545 0.522666C0.890909 0.174815 1.31879 0.000592592 1.81818 0H7.27273C7.5303 0 7.74636 0.0853334 7.92091 0.256C8.09545 0.426666 8.18242 0.637629 8.18182 0.888888C8.18121 1.14015 8.09394 1.35141 7.92 1.52267C7.74606 1.69392 7.5303 1.77896 7.27273 1.77778H1.81818V14.2222H7.27273C7.5303 14.2222 7.74636 14.3075 7.92091 14.4782C8.09545 14.6489 8.18242 14.8598 8.18182 15.1111C8.18121 15.3624 8.09394 15.5736 7.92 15.7449C7.74606 15.9161 7.5303 16.0012 7.27273 16H1.81818ZM12.8864 8.88888H6.36364C6.10606 8.88888 5.8903 8.80355 5.71636 8.63288C5.54242 8.46222 5.45515 8.25125 5.45455 7.99999C5.45394 7.74873 5.54121 7.53777 5.71636 7.36711C5.89152 7.19644 6.10727 7.11111 6.36364 7.11111H12.8864L11.1818 5.44444C11.0152 5.28148 10.9318 5.08148 10.9318 4.84444C10.9318 4.6074 11.0152 4.4 11.1818 4.22222C11.3485 4.04444 11.5606 3.9517 11.8182 3.944C12.0758 3.93629 12.2955 4.02163 12.4773 4.2L15.7273 7.37777C15.9091 7.55555 16 7.76296 16 7.99999C16 8.23703 15.9091 8.44444 15.7273 8.62222L12.4773 11.8C12.2955 11.9778 12.0797 12.0631 11.83 12.056C11.5803 12.0489 11.3642 11.9561 11.1818 11.7778C11.0152 11.6 10.9358 11.389 10.9436 11.1449C10.9515 10.9007 11.0385 10.6969 11.2045 10.5333L12.8864 8.88888Z"
+                      fill="#E33827"
+                    />
+                  </svg>
+                </div>
+                <span
+                  class="nav-text text-center text-sm"
+                  style="
+                    font-family: Poppins;
+                    font-weight: 600;
+                    font-size: medium;
+                    color: #e33827;
+                  "
+                >
                   Logout
                 </span>
               </div>
-              </div>
+            </div>
           </nav>
         </div>
       </a-col>
 
       <!-- Content Area -->
-      <a-col 
-        :xs="!showSidebar ? 24 : 0" 
-        :sm="!showSidebar ? 24 : 0" 
-        :md="18" 
-        :lg="18" 
+      <a-col
+        :xs="!showSidebar ? 24 : 0"
+        :sm="!showSidebar ? 24 : 0"
+        :md="18"
+        :lg="18"
         class="content-area"
-        :class="{ 'content-visible': !showSidebar, 'content-hidden': showSidebar }"
+        :class="{
+          'content-visible': !showSidebar,
+          'content-hidden': showSidebar,
+        }"
       >
         <router-view :user="user" :profile="profile" />
       </a-col>
@@ -463,32 +585,47 @@ export default {
       profile: JSON.parse(localStorage.getItem("profile")),
       sidebarAvatarLoaded: false,
       showSidebar: true,
-      isMobile: false
+      isMobile: false,
     };
   },
 
   computed: {
     currentRouteName() {
       return this.$route.name;
-    }
+    },
+     currentPageTitle() {
+    const routeNameMap = {
+      user_my_profile: "Profile",
+      user_my_designs: "My Designs",
+      user_my_requests: "Requests",
+      user_my_likes: "My Likes",
+      user_my_messages: "Messages",
+      user_manage_subscription: "Manage Subscription",
+      user_my_transactions: "Transactions",
+      user_settings: "Settings",
+    };
+
+    return routeNameMap[this.$route.name] || "Dashboard";
   },
 
+  },
+ 
   mounted() {
     this.checkUserhaveAnyBusinessAccess();
     this.checkScreenSize();
-    window.addEventListener('resize', this.checkScreenSize);
+    window.addEventListener("resize", this.checkScreenSize);
   },
 
   beforeDestroy() {
-    window.removeEventListener('resize', this.checkScreenSize);
+    window.removeEventListener("resize", this.checkScreenSize);
   },
 
   watch: {
-    '$route'() {
+    $route() {
       if (this.isMobile) {
         this.showSidebar = false;
       }
-    }
+    },
   },
 
   methods: {
@@ -507,17 +644,17 @@ export default {
       }
     },
 
-     onSidebarAvatarLoad() {
-    this.sidebarAvatarLoaded = false;
-    setTimeout(() => {
-      this.sidebarAvatarLoaded = true;
-    }, 1000);  // 1s skeleton - same as profile/wavy
-  },
+    onSidebarAvatarLoad() {
+      this.sidebarAvatarLoaded = false;
+      setTimeout(() => {
+        this.sidebarAvatarLoaded = true;
+      }, 1000); // 1s skeleton - same as profile/wavy
+    },
 
     handleAccessBusinessClick() {
       this.$router.push({
-        name: 'business-overview',
-        query: { access_id: this.employee_owner_business_access_id }
+        name: "business-overview",
+        query: { access_id: this.employee_owner_business_access_id },
       });
       if (this.isMobile) {
         this.showSidebar = false;
@@ -531,10 +668,10 @@ export default {
           {
             method: "GET",
             headers: {
-              Authorization: `Token ${localStorage.getItem('token')}`,
+              Authorization: `Token ${localStorage.getItem("token")}`,
               "Content-Type": "application/json",
             },
-          }
+          },
         );
 
         const data = await response.json();
@@ -558,8 +695,8 @@ export default {
         message: "Logout Successful",
         placement: "bottomRight",
       });
-    }
-  }
+    },
+  },
 };
 </script>
 <style scoped>
@@ -581,25 +718,20 @@ export default {
   z-index: 100;
   background: white;
   padding: 16px 20px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   align-items: center;
   gap: 16px;
 }
 
 .user-avatar {
-  position: relative;  /* ⬅️ CRITICAL for stacking */
+  position: relative; /* ⬅️ CRITICAL for stacking */
 }
 
 .sidebar-avatar-skeleton {
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  background: linear-gradient(
-    110deg,
-    #e0e7ff 8%,
-    #f8fafc 18%,
-    #e0e7ff 33%
-  );
+  background: linear-gradient(110deg, #e0e7ff 8%, #f8fafc 18%, #e0e7ff 33%);
   background-size: 200% 100%;
   animation: sidebar-shimmer 1.6s infinite linear;
 }
@@ -617,7 +749,6 @@ export default {
     background-position-x: -200%;
   }
 }
-
 
 .mobile-menu-btn {
   background: none;
@@ -666,7 +797,6 @@ export default {
   padding: 24px;
   border: 1px solid #e9ecef;
   height: 100%;
-
 }
 
 .user-info {
@@ -701,7 +831,6 @@ export default {
   color: #6b7280;
   font-size: 14px;
 }
-
 
 .completion-circle {
   display: inline-block;
@@ -792,13 +921,13 @@ export default {
 
 .nav-item.active {
   /* background: linear-gradient(135deg, #3b82f6, #1d4ed8); */
-  background:#3B63FB;
+  background: #3b63fb;
   color: white;
 }
 
 .nav-item.active:hover {
   /* background: linear-gradient(135deg, #1d4ed8, #1e40af); */
-  background:#3B63FB;
+  background: #3b63fb;
 
   color: white;
 }
@@ -827,10 +956,8 @@ export default {
   }
 
   .sidebar-col {
-    
-    width: 100% !important;  /* ✅ ADD THIS LINE */
-  
-   
+    width: 100% !important; /* ✅ ADD THIS LINE */
+
     padding: 0;
     background: white;
   }
@@ -848,13 +975,12 @@ export default {
 
   .content-area.content-visible {
     display: block !important;
-    padding-top: 60px;
+    padding-top: 0px;
   }
 
   .sidebar {
     border-radius: 0;
     height: auto;
-    
   }
 }
 
