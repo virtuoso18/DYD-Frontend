@@ -666,7 +666,7 @@
                 </button>
                 <button
                   v-else
-                  @click="useSelectedRoom"
+                  @click="handleUseSelectedRoom"
                   class="w-full bg-blue-600 text-white hover:bg-blue-700 font-semibold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg hover:shadow-xl active:scale-[0.98]"
                 >
                   <svg
@@ -1826,6 +1826,7 @@ closeDrawer() {
 
     handleSampleClick(room_id) {
       this.showInstructionsModal = false;
+      //yaha karna hai
       if (this.selectedImage) {
         this.showImageDrawer = false;
         this.startTestRoom(this.selectedImage.id);
@@ -1856,7 +1857,6 @@ closeDrawer() {
     },
 
     async startTestRoom(room_id) {
-      console.log(room_id);
       this.loading = true;
       try {
         let url = `${this.$store.state.root_api}room/api/start-example-room/${room_id}`;
