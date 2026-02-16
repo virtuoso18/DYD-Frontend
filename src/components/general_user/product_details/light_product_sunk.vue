@@ -193,7 +193,7 @@
               <br>
                <a-row>
                 <a-col :span="12">
-                    <!-- Simple Add to Cart Button -->
+                    <!-- Simple Add to Cart Button 
                     <a-button 
                       type="primary" 
                       block
@@ -202,15 +202,28 @@
                       style="display:flex;gap:10px;justify-content: center;align-items: center;"
                     >
 
-                      <!-- <template #icon> -->
+                      <!-- <template #icon> 
                         <svg v-if="!cartLoading" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                           <circle cx="9" cy="21" r="1"/>
                           <circle cx="20" cy="21" r="1"/>
                           <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
                         </svg>
-                      <!-- </template> -->
+                      <!-- </template> 
                       Add to Cart
-                    </a-button>
+                    </a-button> -->
+                    <a-button
+                type="primary"
+                block
+                @click="this.handleSeeInRoom"
+                style="
+                  display: flex;
+                  gap: 10px;
+                  justify-content: center;
+                  align-items: center;
+                "
+              >
+                See in your room
+              </a-button>
                 </a-col>
 
                 <a-col :span="12" >
@@ -349,7 +362,22 @@ export default {
     };
   },
   methods: {
-  
+  handleSeeInRoom() {
+      const businessName =
+        this.$route.params.buisness_name
+        const window_name = this.$route.params.window_name;
+        const product_type = this.$route.params.product_type;
+        const product_id = this.$route.params.product_id;
+      this.$router.push({
+        path: "/start-new-catalogue" ,
+        query: {
+          brand: businessName,
+          window_name: "furniture", 
+          product_type: product_type,
+          product_id: product_id,
+        },
+      });
+    },
     async addToCart() {
       if (!this.selectedProduct || !this.selectedProduct.id) {
         this.$message.error('Product not found');
