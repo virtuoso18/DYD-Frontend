@@ -881,14 +881,14 @@
                     <DeleteOutlined />
                   </div>
                 </div>
-              </a-col>
+</a-col>
             </div>
           </div>
 
           <!-- Empty State -->
           <div
             v-if="textures_available.length === 0"
-            style="
+            style="              
               text-align: center;
               padding: 20px 20px;
               color: #999;

@@ -335,7 +335,37 @@ export default {
       this.$emit('walls-see-all', true);
     },
 
+smoothMobileScrolltoTop(){
+        if (window.innerWidth < 500) {
+            const smoothScrollToTop = (duration = 800) => {
+              const start = window.scrollY;
+              const startTime = performance.now();
+
+              const easeInOutCubic = (t) =>
+                t < 0.5
+                  ? 4 * t * t * t
+                  : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+              const animate = (currentTime) => {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const ease = easeInOutCubic(progress);
+
+                window.scrollTo(0, start * (1 - ease));
+
+                if (progress < 1) {
+                  requestAnimationFrame(animate);
+                }
+              };
+
+              requestAnimationFrame(animate);
+            };
+
+            smoothScrollToTop(900); // 900ms = very smooth
+          }
+        },
     selectTexture(uuid) {
+      this.smoothMobileScrolltoTop()
       this.selected_texture = uuid;
       this.$emit('texture-wall-product-selected', this.selected_texture);
 
