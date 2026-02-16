@@ -83,12 +83,12 @@ padding:5px;" @click="selectTexture(item.id)"
       Wall Texture
     </div>
 
-    <div class="absolute top-2  rounded-md right-2 z-10 !text-white"
+    <!-- <div class="absolute top-2  rounded-md right-2 z-10 !text-white"
          style="padding:3px;background-color: grey;
          padding-left:5px;padding-right:5px;padding-top:1px;
          height:22px;font-size:12px">
       AR
-    </div>
+    </div> -->
 
   <div
     v-if="!imageLoadedMap[item.id]"

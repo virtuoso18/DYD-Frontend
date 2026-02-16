@@ -70,13 +70,13 @@
           
           <div v-else :class="showGrid ? 'grid' : 'list'">
             <div v-for="item in filterItems(furniture_products, 'name')" 
+            
               :key="item.id"
               class="item relative overflow-hidden w-full h-[120px] cursor-pointer"
               :class="{ 'ring-2 ring-blue-500 shadow-lg': selected_texture === item.id }"
               @click="selectfurnitureProduct('product', item.id, item['3d_model'], item.dimensions,item.is_resizable)"
               style="position:relative !important; overflow:hidden !important;"
               >
-
               <!-- Image Shimmer -->
               <div 
                 v-if="!imageLoadedMap[item.id]"

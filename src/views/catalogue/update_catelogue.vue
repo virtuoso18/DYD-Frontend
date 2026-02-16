@@ -4101,7 +4101,13 @@ export default {
     },
 
     async performObjectMaskCaching() {
-      const objectEntries = Object.entries(this.binaryMasks_objects_detected);
+      const objectEntries = Object.entries(this.binaryMasks_objects_detected)
+        .filter(([key, path]) => {
+          // Skip invalid paths
+          if (!path || typeof path !== 'string') return false;
+          return true;
+        });
+
       this.objectMaskLoadingTotal = objectEntries.length;
       this.objectMaskLoadingProgress = 0;
 
@@ -4145,7 +4151,7 @@ export default {
 
     async loadAndCacheObjectMask(objectKey, maskPath) {
       try {
-        const fullUrl = `${this.$store.state.root_media_api}${maskPath}`;
+        const fullUrl = `${this.$store.state.root_media_api}/${maskPath}`;
         const img = await this.loadImageWithTimeout(fullUrl, 8000);
 
         const cacheData = {

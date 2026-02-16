@@ -323,6 +323,9 @@
 
             <!-- Show preview if image is selected, else show upload button -->
             <div v-if="!modalPreviewImage" class="space-y-3">
+          <a-alert style="margin-bottom:10px" v-show="this.$route.query.product_id"
+            description="You’ve selected a product to preview in your room. Please capture and upload a well-lit photo of your room to continue.">
+          </a-alert>
               <button
                 @click="triggerFileUpload"
                 :disabled="uploading"
@@ -1081,6 +1084,9 @@
             </a-button>
           </div>
         </a-upload-dragger>
+        <a-alert style="margin-bottom:10px" v-show="this.$route.query.product_id"
+            description="You’ve selected a product to preview in your room. Please capture and upload a well-lit photo of your room to continue, or select a previously saved room from your history that belongs to the same brand as this product you selected.">
+          </a-alert>
       </div>
 
       <!-- History -->

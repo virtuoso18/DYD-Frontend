@@ -103,12 +103,12 @@ padding:5px;
 </div>
 
             <div class="product-info">
-              <div style="display:flex;justify-content: space-between;" class="">
+              <!-- <div style="display:flex;justify-content: space-between;" class="">
                 <div style="background-color: grey;color :white;border-radius:5px;padding-left:5px;padding-right:5px;padding-top:1px;height:22px;font-size:12px">
                   Floor
                 </div>
                 <div class="!text-gray-700" style="padding:3px;border:1px solid grey;border-radius:5px;padding-left:5px;padding-right:5px;padding-top:1px;height:22px;font-size:12px">AR</div>
-              </div>
+              </div> -->
               <div class="product-name">{{ truncateText( item.title || 'No description available', 3) }}</div>
               
               <div class="product-details" style="display:flex;justify-content: space-between;">
@@ -347,7 +347,7 @@ smoothMobileScrolltoTop(){
         },
     selectTexture(uuid) {
       this.smoothMobileScrolltoTop()
-      
+
       console.log(uuid);
       this.selected_texture = uuid;
       this.$emit('texture-floor-product-selected', this.selected_texture);
