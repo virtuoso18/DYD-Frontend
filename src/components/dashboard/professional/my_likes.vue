@@ -101,7 +101,7 @@
                       <a-col
                         span="16"
                         style="
-                          font-family: &quot;Poppins&quot;, sans-serif;
+                          font-family: Poppins, sans-serif;
                           font-size: 13px;
                           font-weight: 400;
                         "
@@ -133,7 +133,7 @@
                       <a-col
                         span="12"
                         style="
-                          font-family: &quot;Poppins&quot;, sans-serif;
+                          font-family: Poppins, sans-serif;
                           font-size: 13px;
                           font-weight: 400;
                         "

@@ -122,14 +122,10 @@
   </div>
 </div>
 
-<div v-else>
+<div v-else style="display: flex;justify-content: center;align-items: center;">
 
-    <a-button                 style="margin-top:10px;display: flex;justify-content: center;align-items: center;" 
- @click="startchat_with_buisness_user()"
-    type="primary"
-    size="medium"
-    v-if="canMessageBusiness"
-    >
+    <a-button style="margin-top:10px;display: flex;justify-content: center;align-items: center;" 
+ @click="startchat_with_buisness_user()" type="primary" size="medium" v-if="canMessageBusiness" >
     <MessageOutlined />
     Message Business
 </a-button>

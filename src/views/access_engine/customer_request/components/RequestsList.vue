@@ -94,13 +94,14 @@
               <a-button 
                 v-if="canRegenerate(record)"
                 type="primary"
+                style="display: flex;justify-content: center;align-items: center;"
                 size="small"
                 @click.stop="processPhoto(record)"
                 :loading="regeneratingIds.includes(record.id)"
               >
-                <template #icon>
+                <!-- <template #icon> -->
                   <ReloadOutlined />
-                </template>
+                <!-- </template> -->
                 Regenerate
               </a-button>
               
