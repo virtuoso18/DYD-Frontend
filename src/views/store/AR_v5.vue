@@ -489,52 +489,11 @@
                 display: flex;
                 justify-content: center;
                 align-items: center;
+                width: 100%;
               "
             >
               <IssuesCloseOutlined />See Product
             </a-button>
-            <a-button
-                shape="circle"
-                @click="toggleFavorite(ProductDetails, 'product')"
-                type="default"
-                block
-                size="large"
-                style="
-                  display: flex;
-                  width:50px;
-                  gap: 10px;
-                  justify-content: center;
-                  align-items: center;
-                "
-              >
-                <div
-                  style="
-                    display: flex;
-                    gap: 10px;
-                    justify-content: center;
-                    align-items: center;
-                  "
-                  v-if="ProductDetails.is_favorited"
-                >
-                  <HeartFilled
-                    class="!text-red-500 text-[16px] -translate-y-0.5 leading-none"
-                  />
-                </div>
-                <div
-                  style="
-                    display: flex;
-                    gap: 10px;
-                    justify-content: center;
-                    align-items: center;
-                  "
-                  v-else
-                >
-                  <HeartOutlined
-                    class="text-[16px] leading-none text-gray-600"
-                  />
-                </div>
-              </a-button>
-
           </div>
           <!-- Variants Section -->
           <div
@@ -719,7 +678,7 @@ export default {
       // Drawer State
       drawerState: "collapsed",
       collapsedHeight: 100,
-      expandedHeight: 500,
+      expandedHeight: 300,
       currentDrawerHeight: 100,
       isDragging: false,
       startY: 0,
@@ -794,31 +753,6 @@ export default {
   },
 
   methods: {
-      async toggleFavorite(product, product_type) {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await fetch(
-          `${this.$store.state.root_api}likes/favorites/toggle/`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Token ${token}`,
-            },
-            body: JSON.stringify({
-              id: product.id,
-              type: product_type,
-            }),
-          },
-        );
-
-        const data = await response.json();
-       
-        this.ProductDetails.is_favorited = data.favorited;
-      } catch (error) {
-        console.error("Favorite toggle failed", error);
-      }
-    },
     switchColorInAR(index, color) {
       if (!color.model_file_colored_product) {
         this.$message.warning("3D model not available for this color");
@@ -1818,7 +1752,7 @@ export default {
 
 .drawer-content {
   height: 300px;
-  max-height: calc(550px - 5px);
+  max-height: calc(350px - 5px);
   padding: 0 20px 20px;
   overflow-y: auto;
   padding-bottom: 40px;
@@ -2005,6 +1939,7 @@ export default {
 
 .action-buttons {
   display: flex;
+  flex-direction: column;
   gap: 12px;
   padding-top: 8px;
 }

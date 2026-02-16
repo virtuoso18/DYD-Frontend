@@ -670,8 +670,8 @@
                 <button
                   v-else
                   @click="handleUseSelectedRoom"
-                  class="w-full bg-blue-600 text-white hover:bg-blue-700 font-semibold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg hover:shadow-xl active:scale-[0.98]"
-                >
+                  style="color:white"
+                  class="w-full bg-blue-600 text-white hover:bg-blue-700 font-semibold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg hover:shadow-xl active:scale-[0.98]">
                   <svg
                     class="w-5 h-5"
                     fill="none"
