@@ -142,12 +142,81 @@
       <a-col :xs="24" :md="12">
         <a-card>
           <!-- Texture Title and Description -->
-          <a-tag color="blue" style="margin-bottom: 16px">
-            {{
-              selectedTexture.texture_owner_display ? "Wall" : "Floor"
-            }}
-            Texture Details
-          </a-tag>
+          <div class="!flex !justify-between">
+            <a-tag color="blue" style="margin-bottom: 16px">
+              {{ selectedTexture.texture_owner_display ? "Wall" : "Floor" }}
+              Texture Details
+            </a-tag>
+            <div class="!flex gap-2 ">
+              <a-button
+                type="primary"
+                size="large"
+                shape="circle"
+                titile="Add to Cart"
+                block
+                @click="addToCart"
+                :loading="cartLoading"
+                style="
+                  display: flex;
+                  gap: 10px;
+                  justify-content: center;
+                  align-items: center;
+                "
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20px"
+                  height="20px"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                >
+                  <path
+                    d="M7.5 18C8.32843 18 9 18.6716 9 19.5C9 20.3284 8.32843 21 7.5 21C6.67157 21 6 20.3284 6 19.5C6 18.6716 6.67157 18 7.5 18Z"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                  />
+                  <path
+                    d="M16.5 18.0001C17.3284 18.0001 18 18.6716 18 19.5001C18 20.3285 17.3284 21.0001 16.5 21.0001C15.6716 21.0001 15 20.3285 15 19.5001C15 18.6716 15.6716 18.0001 16.5 18.0001Z"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                  />
+                  <path
+                    d="M13 13V11M13 11V9M13 11H15M13 11H11"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                  />
+                  <path
+                    d="M2 3L2.26121 3.09184C3.5628 3.54945 4.2136 3.77826 4.58584 4.32298C4.95808 4.86771 4.95808 5.59126 4.95808 7.03836V9.76C4.95808 12.7016 5.02132 13.6723 5.88772 14.5862C6.75412 15.5 8.14857 15.5 10.9375 15.5H12M16.2404 15.5C17.8014 15.5 18.5819 15.5 19.1336 15.0504C19.6853 14.6008 19.8429 13.8364 20.158 12.3075L20.6578 9.88275C21.0049 8.14369 21.1784 7.27417 20.7345 6.69708C20.2906 6.12 18.7738 6.12 17.0888 6.12H11.0235M4.95808 6.12H7"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </a-button>
+              <a-button
+                size="large"
+                shape="circle"
+                @click="toggleFavorite(selectedTexture, 'wall_texture')"
+                type="default"
+                block
+              >
+                <div
+                  v-if="selectedTexture.is_favorited"
+                  class="!flex !justify-center !align-center"
+                >
+                  <HeartFilled
+                    class="!text-red-500 text-[16px] -translate-y-0.5 leading-none"
+                  />
+                </div>
+                <div v-else class="!flex !justify-center !align-center">
+                  <HeartOutlined
+                    class="text-[16px] leading-none text-gray-600"
+                  />
+                </div>
+              </a-button>
+            </div>
+          </div>
           <h1 style="font-size: 28px; margin-bottom: 16px">
             {{ selectedTexture.title }}
           </h1>
@@ -277,8 +346,8 @@
             </div>
           </div>
           <br />
-          <a-row>
-            <a-col :span="12">
+          <a-row :gutter="8">
+            <a-col :span="10">
               <!-- Simple Add to Cart Button 
                     <a-button 
                       type="primary" 
@@ -312,7 +381,7 @@
               </a-button>
             </a-col>
 
-            <a-col :span="12">
+            <a-col :span="10">
               <a-button
                 type="default"
                 block
@@ -350,6 +419,8 @@ import {
   ClockCircleOutlined,
   EditOutlined,
   DeleteOutlined,
+  HeartOutlined,
+  HeartFilled,
 } from "@ant-design/icons-vue";
 import { computed } from "vue";
 
@@ -359,6 +430,8 @@ export default {
     ClockCircleOutlined,
     EditOutlined,
     DeleteOutlined,
+    HeartFilled,
+    HeartOutlined,
   },
   data() {
     return {
@@ -461,17 +534,42 @@ export default {
     };
   },
   methods: {
+    async toggleFavorite(product, product_type) {
+      try {
+        const token = localStorage.getItem("token");
+        console.log(product);
+        const response = await fetch(
+          `${this.$store.state.root_api}likes/favorites/toggle/`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Token ${token}`,
+            },
+            body: JSON.stringify({
+              id: product.id,
+              type: product_type,
+            }),
+          },
+        );
+
+        const data = await response.json();
+
+        this.selectedTexture.is_favorited = data.favorited;
+      } catch (error) {
+        console.error("Favorite toggle failed", error);
+      }
+    },
     handleSeeInRoom() {
-      const businessName =
-        this.$route.params.buisness_name
-        const window_name = this.$route.params.window_name;
-        const product_type = this.$route.params.product_type;
-        const product_id = this.$route.params.product_id;
+      const businessName = this.$route.params.buisness_name;
+      const window_name = this.$route.params.window_name;
+      const product_type = this.$route.params.product_type;
+      const product_id = this.$route.params.product_id;
       this.$router.push({
-        path: "/start-new-catalogue" ,
+        path: "/start-new-catalogue",
         query: {
           brand: businessName,
-          window_name: "furniture", 
+          window_name: "furniture",
           product_type: product_type,
           product_id: product_id,
         },
