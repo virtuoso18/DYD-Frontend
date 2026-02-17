@@ -103,12 +103,12 @@ padding:5px;
 </div>
 
             <div class="product-info">
-              <div style="display:flex;justify-content: space-between;" class="">
+              <!-- <div style="display:flex;justify-content: space-between;" class="">
                 <div style="background-color: grey;color :white;border-radius:5px;padding-left:5px;padding-right:5px;padding-top:1px;height:22px;font-size:12px">
                   Floor
                 </div>
                 <div class="!text-gray-700" style="padding:3px;border:1px solid grey;border-radius:5px;padding-left:5px;padding-right:5px;padding-top:1px;height:22px;font-size:12px">AR</div>
-              </div>
+              </div> -->
               <div class="product-name">{{ truncateText( item.title || 'No description available', 3) }}</div>
               
               <div class="product-details" style="display:flex;justify-content: space-between;">
@@ -316,7 +316,38 @@ export default {
       this.$emit('floor-see-all', true);
     },
 
+smoothMobileScrolltoTop(){
+        if (window.innerWidth < 500) {
+            const smoothScrollToTop = (duration = 800) => {
+              const start = window.scrollY;
+              const startTime = performance.now();
+
+              const easeInOutCubic = (t) =>
+                t < 0.5
+                  ? 4 * t * t * t
+                  : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+              const animate = (currentTime) => {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const ease = easeInOutCubic(progress);
+
+                window.scrollTo(0, start * (1 - ease));
+
+                if (progress < 1) {
+                  requestAnimationFrame(animate);
+                }
+              };
+
+              requestAnimationFrame(animate);
+            };
+
+            smoothScrollToTop(900); // 900ms = very smooth
+          }
+        },
     selectTexture(uuid) {
+      this.smoothMobileScrolltoTop()
+
       console.log(uuid);
       this.selected_texture = uuid;
       this.$emit('texture-floor-product-selected', this.selected_texture);

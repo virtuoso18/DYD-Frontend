@@ -4101,7 +4101,13 @@ export default {
     },
 
     async performObjectMaskCaching() {
-      const objectEntries = Object.entries(this.binaryMasks_objects_detected);
+      const objectEntries = Object.entries(this.binaryMasks_objects_detected)
+        .filter(([key, path]) => {
+          // Skip invalid paths
+          if (!path || typeof path !== 'string') return false;
+          return true;
+        });
+
       this.objectMaskLoadingTotal = objectEntries.length;
       this.objectMaskLoadingProgress = 0;
 
@@ -4145,7 +4151,7 @@ export default {
 
     async loadAndCacheObjectMask(objectKey, maskPath) {
       try {
-        const fullUrl = `${this.$store.state.root_media_api}${maskPath}`;
+        const fullUrl = `${this.$store.state.root_media_api}/${maskPath}`;
         const img = await this.loadImageWithTimeout(fullUrl, 8000);
 
         const cacheData = {
@@ -5414,10 +5420,41 @@ export default {
       this.$refs.floor_item_3d_renderer.switchFurniture();
     },
 
+smoothMobileScrolltoTop(){
+        if (window.innerWidth < 500) {
+            const smoothScrollToTop = (duration = 800) => {
+              const start = window.scrollY;
+              const startTime = performance.now();
+
+              const easeInOutCubic = (t) =>
+                t < 0.5
+                  ? 4 * t * t * t
+                  : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+              const animate = (currentTime) => {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const ease = easeInOutCubic(progress);
+
+                window.scrollTo(0, start * (1 - ease));
+
+                if (progress < 1) {
+                  requestAnimationFrame(animate);
+                }
+              };
+
+              requestAnimationFrame(animate);
+            };
+
+            smoothScrollToTop(900); // 900ms = very smooth
+          }
+        },
     // ==========================================
     // LIGHTS METHODS
     // ==========================================
     lightSelected(e) {
+            this.smoothMobileScrolltoTop()
+
       this.selectedlightuuid = e.uuid;
       this.selected_light_type = e.type;
       this.model_3d_url = this.$store.state.root_media_api + e.model_3d_url;

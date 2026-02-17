@@ -132,7 +132,37 @@ export default {
         this.loading = false;
     }
 },
+smoothMobileScrolltoTop(){
+        if (window.innerWidth < 500) {
+            const smoothScrollToTop = (duration = 800) => {
+              const start = window.scrollY;
+              const startTime = performance.now();
+
+              const easeInOutCubic = (t) =>
+                t < 0.5
+                  ? 4 * t * t * t
+                  : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+              const animate = (currentTime) => {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const ease = easeInOutCubic(progress);
+
+                window.scrollTo(0, start * (1 - ease));
+
+                if (progress < 1) {
+                  requestAnimationFrame(animate);
+                }
+              };
+
+              requestAnimationFrame(animate);
+            };
+
+            smoothScrollToTop(900); // 900ms = very smooth
+          }
+        },
       clicked_history(item,id){
+        this.smoothMobileScrolltoTop()
         this.$emit('home-design-history-clicked',item,id)
       },
         async fetchGenerateHistory() {

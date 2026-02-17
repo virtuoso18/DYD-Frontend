@@ -1100,6 +1100,7 @@ export default {
       this.$store.dispatch("logout");
       localStorage.removeItem("profile");
       localStorage.removeItem("business_profile");
+      localStorage.removeItem("user");
       this.$router.push("/login");
 
       notification.success({
