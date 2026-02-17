@@ -63,7 +63,7 @@
                 <div
                   v-for="(colorObj, index) in product.colors_available.slice(
                     0,
-                    2
+                    2,
                   )"
                   :key="index"
                   style="
@@ -108,7 +108,8 @@
                   block
                   @click="viewProduct(product)"
                   style="margin-top: 8px"
-                  >Product Details</a-button>
+                  >Product Details</a-button
+                >
               </a-col>
 
               <a-col span="1"></a-col>
@@ -165,7 +166,7 @@
                 <div
                   v-for="(colorObj, index) in product.colors_available.slice(
                     0,
-                    2
+                    2,
                   )"
                   :key="index"
                   style="
@@ -264,6 +265,32 @@ export default {
     this.fetchLights();
   },
   methods: {
+    async toggleFavorite(product, product_type) {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch(
+          `${this.$store.state.root_api}likes/favorites/toggle/`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Token ${token}`,
+            },
+            body: JSON.stringify({
+              id: product.id,
+              type: product_type,
+            }),
+          },
+        );
+
+        const data = await response.json();
+        if (this.selectedProduct.is_favorited) {
+        }
+        this.selectedProduct.is_favorited = data.favorited;
+      } catch (error) {
+        console.error("Favorite toggle failed", error);
+      }
+    },
     selectFurniture(product) {
       this.selected_furniture = product;
     },
@@ -366,7 +393,9 @@ export default {
   margin-bottom: 10px;
   border-radius: 10px;
   background: #f3f2f4;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .product:hover {

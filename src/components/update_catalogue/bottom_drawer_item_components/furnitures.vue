@@ -89,12 +89,7 @@
                   >
                     <a-spin size="small" />
                   </div>
-                  <div
-                    v-else
-                    style="
-                      padding-right: 8px;
-                    "
-                  >
+                  <div v-else style="padding-right: 8px">
                     <a-checkbox
                       v-for="category in availableCategories"
                       :key="category.id"
@@ -175,19 +170,13 @@
             <a-col :xs="24" :sm="24" :md="24" :lg="0">
               <a-collapse v-model:activeKey="furnitureTypeKey">
                 <a-collapse-panel key="1" header="Furniture Type">
-                  
                   <div
                     v-if="loadingFilters"
                     style="text-align: center; padding: 10px"
                   >
                     <a-spin size="small" />
                   </div>
-                  <div
-                    v-else
-                    style="
-                      padding-right: 8px;
-                    "
-                  >
+                  <div v-else style="padding-right: 8px">
                     <a-checkbox
                       v-for="type in availableFurnitureTypes"
                       :key="type.furniture_type"
@@ -388,64 +377,65 @@
               style="padding: 5px"
             >
               <div class="product">
-                <div class="product-image-container" style="position: relative; overflow: hidden;">
-  <!-- Skeleton (YOUR EXACT CSS) -->
-  <div
-    v-if="!imageLoadedMap[product.id]"
-    class="product-skeleton"
-  ></div>
+                <div
+                  class="product-image-container"
+                  style="position: relative; overflow: hidden"
+                >
+                  <!-- Skeleton (YOUR EXACT CSS) -->
+                  <div
+                    v-if="!imageLoadedMap[product.id]"
+                    class="product-skeleton"
+                  ></div>
 
-  <!-- Preload -->
-  <img
-    :src="getProductImage(product)"
-    style="position:absolute;width:0;height:0;opacity:0;"
-    @load="onProductImageLoad(product.id)"
-    alt=""
-  />
+                  <!-- Preload -->
+                  <img
+                    :src="getProductImage(product)"
+                    style="position: absolute; width: 0; height: 0; opacity: 0"
+                    @load="onProductImageLoad(product.id)"
+                    alt=""
+                  />
 
-  <!-- Visible -->
-  <img
-    v-show="imageLoadedMap[product.id]"
-    :src="getProductImage(product)"
-    :alt="product.name"
-    class="product-image"
-  />
+                  <!-- Visible -->
+                  <img
+                    v-show="imageLoadedMap[product.id]"
+                    :src="getProductImage(product)"
+                    :alt="product.name"
+                    class="product-image"
+                  />
 
-  <!-- Badges (z-index stays above) -->
-  <div class="category-badge">
-    {{ getCategoryName(product) }}
-  </div>
-  <div class="ar-badge">AR</div>
-</div>
-
+                  <!-- Badges (z-index stays above) -->
+                  <div class="category-badge">
+                    {{ getCategoryName(product) }}
+                  </div>
+                  <div class="ar-badge">AR</div>
+                </div>
 
                 <a-row>
                   <a-col span="24">
-  <b class="product-name">
-    {{ product.name }}
-  </b>
-</a-col>
+                    <b class="product-name">
+                      {{ product.name }}
+                    </b>
+                  </a-col>
 
                   <a-col span="12"> Colors </a-col>
 
                   <a-col
-  span="12"
-  style="display: flex; justify-content: end; gap: 4px"
->
-  <div
-    v-for="color in product.colors_available.slice(0, 3)"
-    :key="color.id"
-    style="
-      width: 20px;
-      height: 20px;
-      border-radius: 20px;
-      border: 1px solid #ddd;
-    "
-    :style="{ backgroundColor: color.color }"
-    :title="`Color ${color.color}`"
-  ></div>
-</a-col>
-
+                    span="12"
+                    style="display: flex; justify-content: end; gap: 4px"
+                  >
+                    <div
+                      v-for="color in product.colors_available.slice(0, 3)"
+                      :key="color.id"
+                      style="
+                        width: 20px;
+                        height: 20px;
+                        border-radius: 20px;
+                        border: 1px solid #ddd;
+                      "
+                      :style="{ backgroundColor: color.color }"
+                      :title="`Color ${color.color}`"
+                    ></div>
+                  </a-col>
 
                   <a-col span="12"> Price </a-col>
 
@@ -453,36 +443,45 @@
                     ${{ getPrice(product) }}
                   </a-col>
 
-                 <a-col
-  span="24"
-  style="font-size: 11px; color: #666; margin-bottom: 4px; max-width: 100%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;"
->
-  Dimensions: {{ getDimensions(product) }}
-</a-col>
-
+                  <a-col
+                    span="24"
+                    style="
+                      font-size: 11px;
+                      color: #666;
+                      margin-bottom: 4px;
+                      max-width: 100%;
+                      overflow: hidden;
+                      white-space: nowrap;
+                      text-overflow: ellipsis;
+                    "
+                  >
+                    Dimensions: {{ getDimensions(product) }}
+                  </a-col>
 
                   <a-col span="16">
-                    <a-button block class="product-detail-btn" @click="handleProductDetail(product)"
+                    <a-button
+                      block
+                      class="product-detail-btn"
+                      @click="handleProductDetail(product)"
                       >Product Details</a-button
                     >
                   </a-col>
 
                   <a-col span="1"></a-col>
-                 <a-col span="4">
-  <a-button
-    :type="isWishlisted(product.id) ? 'primary' : 'default'"
-    @click="toggleWishlist(product)"
-    class="sm:product-detail-btn"
-  >
-    <!-- style="
+                  <a-col span="4">
+                    <a-button
+                      :type="isWishlisted(product.id) ? 'primary' : 'default'"
+                      @click="toggleWishlist(product)"
+                      class="sm:product-detail-btn"
+                    >
+                      <!-- style="
       display: flex;
       align-items: center;
       justify-content: center;
     " -->
-    <HeartOutlined />
-  </a-button>
-</a-col>
-
+                      <HeartOutlined />
+                    </a-button>
+                  </a-col>
                 </a-row>
               </div>
             </a-col>
@@ -530,7 +529,7 @@ export default {
     return {
       colourAcitveKey: ["1"],
       categoryKey: ["1"],
-      furnitureTypeKey:["1"],
+      furnitureTypeKey: ["1"],
       products: [],
       wishlisted: new Set(),
       loading: false,
@@ -560,8 +559,35 @@ export default {
   mounted() {
     this.loadFilterOptions();
     this.loadProducts();
+   
   },
   methods: {
+      async toggleFavorite(product, product_type) {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch(
+          `${this.$store.state.root_api}likes/favorites/toggle/`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Token ${token}`,
+            },
+            body: JSON.stringify({
+              id: product.id,
+              type: product_type,
+            }),
+          },
+        );
+
+        const data = await response.json();
+        if (this.selectedProduct.is_favorited) {
+        }
+        this.selectedProduct.is_favorited = data.favorited;
+      } catch (error) {
+        console.error("Favorite toggle failed", error);
+      }
+    },
     /**
      * Load filter options from API
      */
@@ -607,11 +633,11 @@ export default {
     },
 
     onProductImageLoad(id) {
-    this.imageLoadedMap[id] = false;
-    setTimeout(() => {
-      this.imageLoadedMap[id] = true;
-    }, 1000);
-  },
+      this.imageLoadedMap[id] = false;
+      setTimeout(() => {
+        this.imageLoadedMap[id] = true;
+      }, 1000);
+    },
 
     /**
      * Toggle color filter selection
@@ -667,7 +693,7 @@ export default {
           .filter((id) => this.filters.selectedCategories[id])
           .map((id) => {
             const category = this.availableCategories.find(
-              (cat) => cat.id === id
+              (cat) => cat.id === id,
             );
             return category ? category.name : id;
           });
@@ -678,7 +704,7 @@ export default {
 
         // Add selected furniture types
         const selectedTypes = Object.keys(this.filters.selectedTypes).filter(
-          (type) => this.filters.selectedTypes[type]
+          (type) => this.filters.selectedTypes[type],
         );
 
         if (selectedTypes.length > 0) {
@@ -721,6 +747,7 @@ export default {
           this.pagination.total_count = data.total_count || 0;
           this.pagination.total_pages = data.total_pages || 1;
 
+           this.addInitWishListed();
           // Scroll to top when page changes
           window.scrollTo({ top: 0, behavior: "smooth" });
         } else {
@@ -867,6 +894,14 @@ export default {
     isWishlisted(productId) {
       return this.wishlisted.has(productId);
     },
+     
+    addInitWishListed(){
+      this.products.forEach((product) => {
+        if (product.is_favorited) {
+          this.wishlisted.add(product.id);
+        }
+      });
+    },
 
     /**
      * Toggle wishlist status
@@ -879,6 +914,7 @@ export default {
         this.wishlisted.add(product.id);
         this.$message.success("Added to wishlist");
       }
+      this.toggleFavorite(product, "product");
     },
 
     /**
@@ -909,7 +945,6 @@ export default {
     margin-bottom: 10px;
   }
 }
-
 
 .product {
   padding: 5px;
@@ -943,20 +978,16 @@ export default {
   width: 100%;
   height: 240px;
   border-radius: 12px;
-  background: linear-gradient(
-    110deg,
-    #e5e7eb 8%,
-    #f9fafb 18%,
-    #e5e7eb 33%
-  );
+  background: linear-gradient(110deg, #e5e7eb 8%, #f9fafb 18%, #e5e7eb 33%);
   background-size: 200% 100%;
   animation: product-shimmer 1.6s infinite linear;
 }
 
 @keyframes product-shimmer {
-  to { background-position-x: -200%; }
+  to {
+    background-position-x: -200%;
+  }
 }
-
 
 .category-badge {
   position: absolute;
@@ -974,13 +1005,12 @@ export default {
 
 .product-name {
   display: -webkit-box;
-  -webkit-line-clamp: 1;   /* max 2 lines */
+  -webkit-line-clamp: 1; /* max 2 lines */
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
   line-height: 1.4;
 }
-
 
 .product-detail-btn {
   white-space: nowrap;
@@ -1006,7 +1036,6 @@ export default {
     font-size: 14px;
   }
 }
-
 
 .ar-badge {
   position: absolute;
