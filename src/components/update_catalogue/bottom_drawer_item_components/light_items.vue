@@ -499,6 +499,32 @@ export default {
     this.loadProducts();
   },
   methods: {
+     async toggleFavorite(product, product_type) {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch(
+          `${this.$store.state.root_api}likes/favorites/toggle/`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Token ${token}`,
+            },
+            body: JSON.stringify({
+              id: product.id,
+              type: product_type,
+            }),
+          },
+        );
+
+        const data = await response.json();
+        if (this.selectedProduct.is_favorited) {
+        }
+        this.selectedProduct.is_favorited = data.favorited;
+      } catch (error) {
+        console.error("Favorite toggle failed", error);
+      }
+    },
     /**
      * Load filter options from API
      */
@@ -635,6 +661,7 @@ export default {
           this.pagination.total_count = data.total_count || 0;
           this.pagination.total_pages = data.total_pages || 1;
 
+          this.addInitWishListed();
           // Scroll to top when page changes
           window.scrollTo({ top: 0, behavior: "smooth" });
         } else {
@@ -738,6 +765,14 @@ export default {
       return this.wishlisted.has(productId);
     },
 
+     addInitWishListed(){
+      this.products.forEach((product) => {
+        if (product.is_favorited) {
+          this.wishlisted.add(product.id);
+        }
+      });
+    },
+
     /**
      * Toggle wishlist status
      */
@@ -749,6 +784,7 @@ export default {
         this.wishlisted.add(product.id);
         this.$message.success("Added to wishlist");
       }
+      this.toggleFavorite(product, "product");
     },
 
     /**

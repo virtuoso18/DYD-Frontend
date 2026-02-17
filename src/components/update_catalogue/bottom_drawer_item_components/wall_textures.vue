@@ -102,11 +102,7 @@
             <a-col :xs="24" :sm="24" :md="24" :lg="0">
               <a-collapse v-model:activeKey="styleActiveKey">
                 <a-collapse-panel key="1" header="Style">
-                  <div
-                    style="
-                      padding-right: 8px;
-                    "
-                  >
+                  <div style="padding-right: 8px">
                     <a-checkbox
                       v-model:checked="filters.styles.modern"
                       @change="applyFilters"
@@ -310,38 +306,40 @@
               style="padding: 5px"
             >
               <div class="product">
-               <div class="product-image-container" style="position: relative; overflow: hidden;">
-  <!-- Skeleton -->
-  <div
-    v-if="!imageLoadedMap[product.id]"
-    class="texture-product-skeleton"
-  ></div>
+                <div
+                  class="product-image-container"
+                  style="position: relative; overflow: hidden"
+                >
+                  <!-- Skeleton -->
+                  <div
+                    v-if="!imageLoadedMap[product.id]"
+                    class="texture-product-skeleton"
+                  ></div>
 
-  <!-- Preload (uses your getProductImage) -->
-  <img
-    :src="getProductImage(product)"
-    style="position:absolute;width:0;height:0;opacity:0;"
-    @load="onProductImageLoad(product.id)"
-    alt=""
-  />
+                  <!-- Preload (uses your getProductImage) -->
+                  <img
+                    :src="getProductImage(product)"
+                    style="position: absolute; width: 0; height: 0; opacity: 0"
+                    @load="onProductImageLoad(product.id)"
+                    alt=""
+                  />
 
-  <!-- Visible image -->
-  <img
-    v-show="imageLoadedMap[product.id]"
-    :src="getProductImage(product)"
-    :alt="product.title"
-    class="product-image"
-  />
+                  <!-- Visible image -->
+                  <img
+                    v-show="imageLoadedMap[product.id]"
+                    :src="getProductImage(product)"
+                    :alt="product.title"
+                    class="product-image"
+                  />
 
-  <!-- Category Badge -->
-  <div class="category-badge">
-    {{ product.texture_style || "Wall" }}
-  </div>
-  
-  <!-- AR Badge -->
-  <div class="ar-badge">AR</div>
-</div>
+                  <!-- Category Badge -->
+                  <div class="category-badge">
+                    {{ product.texture_style || "Wall" }}
+                  </div>
 
+                  <!-- AR Badge -->
+                  <div class="ar-badge">AR</div>
+                </div>
 
                 <a-row>
                   <a-col span="24">
@@ -382,7 +380,10 @@
                   </a-col>
 
                   <a-col span="17">
-                    <a-button block class="product-detail-btn" @click="handleProductDetail(product)"
+                    <a-button
+                      block
+                      class="product-detail-btn"
+                      @click="handleProductDetail(product)"
                       >Product Details</a-button
                     >
                   </a-col>
@@ -480,6 +481,32 @@ export default {
     this.loadProducts();
   },
   methods: {
+    async toggleFavorite(product, product_type) {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch(
+          `${this.$store.state.root_api}likes/favorites/toggle/`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Token ${token}`,
+            },
+            body: JSON.stringify({
+              id: product.id,
+              type: product_type,
+            }),
+          },
+        );
+
+        const data = await response.json();
+        if (this.selectedProduct.is_favorited) {
+        }
+        this.selectedProduct.is_favorited = data.favorited;
+      } catch (error) {
+        console.error("Favorite toggle failed", error);
+      }
+    },
     /**
      * Load available colors from all products
      */
@@ -527,12 +554,11 @@ export default {
     },
 
     onProductImageLoad(id) {
-  this.imageLoadedMap[id] = false;
-  setTimeout(() => {
-    this.imageLoadedMap[id] = true;
-  }, 2000);
-},
-
+      this.imageLoadedMap[id] = false;
+      setTimeout(() => {
+        this.imageLoadedMap[id] = true;
+      }, 2000);
+    },
 
     /**
      * Toggle color filter selection
@@ -623,6 +649,7 @@ export default {
           this.pagination.total_count = data.total_count || 0;
           this.pagination.total_pages = data.total_pages || 1;
 
+          this.addInitWishListed();
           // Scroll to top when page changes
           window.scrollTo({ top: 0, behavior: "smooth" });
         } else {
@@ -734,6 +761,14 @@ export default {
       return this.wishlisted.has(productId);
     },
 
+     addInitWishListed(){
+      this.products.forEach((product) => {
+        if (product.is_favorited) {
+          this.wishlisted.add(product.id);
+        }
+      });
+    },
+
     /**
      * Toggle wishlist status
      */
@@ -745,6 +780,7 @@ export default {
         this.wishlisted.add(product.id);
         this.$message.success("Added to wishlist");
       }
+      this.toggleFavorite(product, "wall_texture");
     },
 
     /**
@@ -785,20 +821,16 @@ export default {
   width: 100%;
   height: 240px; /* match your product-image height */
   border-radius: 12px;
-  background: linear-gradient(
-    110deg,
-    #e5e7eb 8%,
-    #f9fafb 18%,
-    #e5e7eb 33%
-  );
+  background: linear-gradient(110deg, #e5e7eb 8%, #f9fafb 18%, #e5e7eb 33%);
   background-size: 200% 100%;
   animation: product-shimmer 1.6s infinite linear;
 }
 
 @keyframes product-shimmer {
-  to { background-position-x: -200%; }
+  to {
+    background-position-x: -200%;
+  }
 }
-
 
 .product {
   padding: 10px;
