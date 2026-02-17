@@ -1,14 +1,14 @@
 <template>
   <!-- All Products Used Modal -->
-  <a-modal 
-    v-model:open="open_products_used_model" 
-    centered 
-    title="All catalog products used for this home design" 
-    style="width: 100%; max-width: 900px;"
+  <a-modal
+    v-model:open="open_products_used_model"
+    centered
+    title="All catalog products used for this home design"
+    style="width: 100%; max-width: 900px"
     @ok="handleOk"
   >
     <template #footer></template>
-    
+
     <a-row>
       <a-col
         span="24"
@@ -20,7 +20,9 @@
         "
         v-if="!products_used.length"
       >
-        <a-empty description="You have not used any product in this room here."></a-empty>
+        <a-empty
+          description="You have not used any product in this room here."
+        ></a-empty>
       </a-col>
 
       <a-col
@@ -31,7 +33,7 @@
         v-for="product in products_used"
         :key="product.id"
         class="product-responsive"
-        style="padding: 5px;"
+        style="padding: 5px"
       >
         <div class="product">
           <div class="product-image-container" @click="viewProduct(product)">
@@ -61,13 +63,19 @@
                   border-radius: 20px;
                   margin-left: 2px;
                 "
-                :style="'background:' + (color.color_hex ? color.color_hex : color.color)"
+                :style="
+                  'background:' +
+                  (color.color_hex ? color.color_hex : color.color)
+                "
               ></div>
             </a-col>
 
             <a-col span="12">Price</a-col>
 
-            <a-col span="12" style="display: flex; justify-content: end; font-weight: 700">
+            <a-col
+              span="12"
+              style="display: flex; justify-content: end; font-weight: 700"
+            >
               ${{ product.product_price }}
             </a-col>
 
@@ -75,15 +83,35 @@
               <a-button
                 size="medium"
                 block
-                @click="this.$router.push('/' + product.business_slug + '/' + product.type + '/' + product.product_id)"
+                @click="
+                  this.$router.push(
+                    '/' +
+                      product.business_slug +
+                      '/' +
+                      product.type +
+                      '/' +
+                      product.product_id,
+                  )
+                "
               >
                 Product Details
               </a-button>
             </a-col>
 
             <a-col span="4">
-              <a-button style="display: flex; justify-content: center; align-items: center;">
-                <HeartOutlined />
+              <a-button
+                style="
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                "
+                @click="toggleFavorite(product, 'product')"
+              >
+                <HeartFilled
+                  v-if="product.is_favorited"
+                  style="color: red; font-size: 18px"
+                />
+                <HeartOutlined v-else style="font-size: 18px" />
               </a-button>
             </a-col>
           </a-row>
@@ -101,10 +129,21 @@
     style="width: 100%; max-width: 900px"
     :closable="true"
   >
-    <div style="display: flex; align-items: center; flex-direction: column; justify-content: center;">
+    <div
+      style="
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        justify-content: center;
+      "
+    >
       <div style="width: 100%; text-align: start; margin-bottom: 20px">
-        <h3 style="margin: 0; font-size: 24px; font-weight: 600">Save To My Designs</h3>
-        <p style="margin: 5px 0; color: #666">Save your amazing design in your my designs!</p>
+        <h3 style="margin: 0; font-size: 24px; font-weight: 600">
+          Save To My Designs
+        </h3>
+        <p style="margin: 5px 0; color: #666">
+          Save your amazing design in your my designs!
+        </p>
       </div>
 
       <a-row style="width: 100%" :gutter="20">
@@ -177,7 +216,14 @@
                 margin-bottom: 20px;
               "
             >
-              <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+              <div
+                style="
+                  display: flex;
+                  align-items: center;
+                  gap: 10px;
+                  margin-bottom: 8px;
+                "
+              >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="#666">
                   <path
                     d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"
@@ -185,43 +231,81 @@
                 </svg>
                 <span style="font-weight: 500; color: #333">Room Details</span>
               </div>
-              <div style="display: flex; flex-direction: column; gap: 15px; font-size: 14px; color: #666">
+              <div
+                style="
+                  display: flex;
+                  flex-direction: column;
+                  gap: 15px;
+                  font-size: 14px;
+                  color: #666;
+                "
+              >
                 <!-- Style Select -->
                 <div>
-                  <label style="display: block; margin-bottom: 6px; font-weight: 500; color: #333;">
+                  <label
+                    style="
+                      display: block;
+                      margin-bottom: 6px;
+                      font-weight: 500;
+                      color: #333;
+                    "
+                  >
                     <strong>Style:</strong>
                   </label>
-                  <a-select 
+                  <a-select
                     v-model:value="form.home_design_room_style"
                     style="width: 100%"
                   >
                     <a-select-option value="Modern">Modern</a-select-option>
                     <a-select-option value="Classic">Classic</a-select-option>
                     <a-select-option value="Rustic">Rustic</a-select-option>
-                    <a-select-option value="Industrial">Industrial</a-select-option>
-                    <a-select-option value="Minimalist">Minimalist</a-select-option>
-                    <a-select-option value="Traditional">Traditional</a-select-option>
-                    <a-select-option value="Contemporary">Contemporary</a-select-option>
+                    <a-select-option value="Industrial"
+                      >Industrial</a-select-option
+                    >
+                    <a-select-option value="Minimalist"
+                      >Minimalist</a-select-option
+                    >
+                    <a-select-option value="Traditional"
+                      >Traditional</a-select-option
+                    >
+                    <a-select-option value="Contemporary"
+                      >Contemporary</a-select-option
+                    >
                     <a-select-option value="Vintage">Vintage</a-select-option>
                   </a-select>
                 </div>
 
                 <!-- Room Type Select -->
                 <div>
-                  <label style="display: block; margin-bottom: 6px; font-weight: 500; color: #333;">
+                  <label
+                    style="
+                      display: block;
+                      margin-bottom: 6px;
+                      font-weight: 500;
+                      color: #333;
+                    "
+                  >
                     <strong>Room Type:</strong>
                   </label>
-                  <a-select 
+                  <a-select
                     v-model:value="form.home_design_room_type"
                     style="width: 100%"
                   >
-                    <a-select-option value="Living Room">Living Room</a-select-option>
-                    <a-select-option value="Dinning Room">Dinning Room</a-select-option>
+                    <a-select-option value="Living Room"
+                      >Living Room</a-select-option
+                    >
+                    <a-select-option value="Dinning Room"
+                      >Dinning Room</a-select-option
+                    >
                     <a-select-option value="Kitchen">Kitchen</a-select-option>
-                    <a-select-option value="Home Office">Home Office</a-select-option>
+                    <a-select-option value="Home Office"
+                      >Home Office</a-select-option
+                    >
                     <a-select-option value="Bedroom">Bedroom</a-select-option>
                     <a-select-option value="Office">Office</a-select-option>
-                    <a-select-option value="Rest Room">Rest Room</a-select-option>
+                    <a-select-option value="Rest Room"
+                      >Rest Room</a-select-option
+                    >
                   </a-select>
                 </div>
 
@@ -248,7 +332,9 @@
               type="primary"
               size="large"
               :loading="saveLoading"
-              :disabled="!form.home_design_room_type || !form.home_design_room_style"
+              :disabled="
+                !form.home_design_room_type || !form.home_design_room_style
+              "
               @click="SaveToMyDesignes"
               style="
                 flex: 2;
@@ -260,7 +346,13 @@
                 gap: 8px;
               "
             >
-              <svg v-if="!saveLoading" width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <svg
+                v-if="!saveLoading"
+                width="20"
+                height="20"
+                viewBox="0 0 20 20"
+                fill="none"
+              >
                 <path
                   d="M17.125 5.64648C17.125 6.95816 16.0617 8.02148 14.75 8.02148C13.4383 8.02148 12.375 6.95816 12.375 5.64648C12.375 4.33481 13.4383 3.27148 14.75 3.27148C16.0617 3.27148 17.125 4.33481 17.125 5.64648Z"
                   stroke="white"
@@ -294,17 +386,22 @@
     <!-- Mobile & Desktop Layout -->
     <div class="max-w-[1400px] !mx-auto !p-4 md:!p-6">
       <div class="grid grid-cols-1 lg:grid-cols-[1fr_400px] !gap-6">
-        
         <!-- LEFT SECTION - Image Preview -->
         <div class="space-y-4">
           <!-- Back Button -->
           <div class="flex items-center justify-between !mb-4">
-            <button 
+            <button
               @click="$router.go(-1)"
               class="flex items-center !gap-2 !text-gray-700 hover:!text-gray-900 !font-medium"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path
+                  d="M15 18L9 12L15 6"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
               </svg>
               Back
             </button>
@@ -312,8 +409,8 @@
 
           <!-- Main Image -->
           <div class="!bg-white !rounded-2xl overflow-hidden !shadow-sm">
-            <img 
-              :src="afterImage" 
+            <img
+              :src="afterImage"
               alt="Room Design"
               class="w-full h-auto max-h-[500px] md:max-h-[600px] object-cover"
             />
@@ -323,21 +420,27 @@
           <div class="sm:flex sm:items-center sm:justify-between !gap-4">
             <!-- Thumbnails -->
             <div class="flex !gap-3 overflow-x-auto !mt-3 flex-1">
-              <div 
-                v-for="(thumb, index) in thumbnails" 
+              <div
+                v-for="(thumb, index) in thumbnails"
                 :key="index"
                 @click="selectThumbnail(index)"
                 :class="[
                   'min-w-[80px] w-[80px] h-[80px] md:min-w-[100px] md:w-[100px] md:h-[100px] !rounded-lg overflow-hidden cursor-pointer !border-2 transition-all',
-                  selectedThumb === index ? '!border-blue-600' : '!border-gray-200'
+                  selectedThumb === index
+                    ? '!border-blue-600'
+                    : '!border-gray-200',
                 ]"
               >
-                <img :src="$store.state.root_media_api + thumb" alt="Thumbnail" class="w-full h-full object-cover" />
+                <img
+                  :src="$store.state.root_media_api + thumb"
+                  alt="Thumbnail"
+                  class="w-full h-full object-cover"
+                />
               </div>
             </div>
 
             <!-- Regenerate Button -->
-            <button 
+            <button
               @click="regenerateImages"
               class="flex items-center justify-center w-full sm:justify-start sm:w-auto !text-center !mt-6 sm:!mt-0 !gap-2 !bg-blue-600 hover:!bg-blue-700 !text-white !px-5 !py-3 !rounded-lg !font-medium !text-sm whitespace-nowrap transition-all"
             >
@@ -365,7 +468,9 @@
         <div class="space-y-4">
           <!-- Congratulations Card -->
           <div class="!bg-white !p-6 !rounded-lg">
-            <h2 class="!text-xl md:!text-2xl text-center !font-semibold !text-gray-900 !mb-1">
+            <h2
+              class="!text-xl md:!text-2xl text-center !font-semibold !text-gray-900 !mb-1"
+            >
               Congratulation!
             </h2>
             <p class="!text-gray-600 text-center !text-sm md:!text-base">
@@ -376,9 +481,9 @@
           <!-- Share Project Card -->
           <div class="!bg-[#F2F2F2] rounded-xl !p-6">
             <div class="flex !gap-4">
-              <img 
-                :src="afterImage" 
-                alt="Project Preview" 
+              <img
+                :src="afterImage"
+                alt="Project Preview"
                 class="w-20 h-20 !rounded-lg object-cover flex-shrink-0"
               />
               <div>
@@ -397,13 +502,13 @@
             <!-- Detail Staging Card -->
             <div class="!p-6 !border-b !border-gray-200">
               <h3 class="!font-bold !text-gray-900 !mb-4">Detail Staging</h3>
-              
+
               <div class="space-y-3">
                 <div>
                   <p class="!text-sm !text-gray-500 !mb-1">Room type</p>
                   <p class="!font-medium !text-gray-900">{{ roomType }}</p>
                 </div>
-                
+
                 <div>
                   <p class="!text-sm !text-gray-500 !mb-1">Style</p>
                   <p class="!font-medium !text-gray-900">{{ style }}</p>
@@ -414,20 +519,31 @@
             <!-- Product Card -->
             <div class="!p-6">
               <h3 class="!font-bold !text-gray-900 !mb-4">Product</h3>
-              
+
               <div class="flex !gap-4 !mb-4" v-if="products_used.length">
-                <img 
-                  :src="$store.state.root_media_api + products_used[0].product_image" 
-                  alt="Product" 
+                <img
+                  :src="
+                    $store.state.root_media_api + products_used[0].product_image
+                  "
+                  alt="Product"
                   class="w-16 h-16 object-cover !rounded-lg flex-shrink-0"
                 />
                 <div class="flex-1">
                   <h4 class="!font-semibold !text-gray-900 !mb-1">
                     {{ products_used[0].product_title }}
                   </h4>
-                  <a-button 
+                  <a-button
                     type="text"
-                    @click="this.$router.push('/' + products_used[0].business_slug + '/' + products_used[0].type + '/' + products_used[0].product_id)"
+                    @click="
+                      this.$router.push(
+                        '/' +
+                          products_used[0].business_slug +
+                          '/' +
+                          products_used[0].type +
+                          '/' +
+                          products_used[0].product_id,
+                      )
+                    "
                     class="!text-sm !text-blue-600 hover:!text-blue-700 !font-medium !p-0"
                   >
                     Product Detail
@@ -435,7 +551,7 @@
                 </div>
               </div>
 
-              <button 
+              <button
                 @click="open_products_used_model = true"
                 class="w-full flex items-center justify-center !gap-2 !bg-white !border !border-blue-600 !text-blue-600 hover:!bg-blue-50 !px-4 !py-3 !rounded-lg !font-medium transition-all !mb-4"
               >
@@ -444,14 +560,7 @@
 
               <a
                 @click="AddHomeDesignItemstocart"
-                class="
-                  flex items-center justify-center gap-2
-                  !text-sm
-                  !text-blue-600 hover:!text-blue-700
-                  !font-medium
-                  cursor-pointer
-                  !mb-4
-                "
+                class="flex items-center justify-center gap-2 !text-sm !text-blue-600 hover:!text-blue-700 !font-medium cursor-pointer !mb-4"
               >
                 <svg
                   width="16"
@@ -474,24 +583,23 @@
           </div>
 
           <!-- Save to My Design Button -->
-          <button 
+          <button
             @click="open_SaveToMyDesignes = true"
             class="w-full !mt-3 !bg-blue-600 hover:!bg-blue-700 !text-white !px-6 !py-4 !rounded-lg !text-base transition-all !shadow-sm"
           >
             Save to My Design
           </button>
         </div>
-
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { HeartOutlined } from "@ant-design/icons-vue";
+import { HeartFilled, HeartOutlined } from "@ant-design/icons-vue";
 
 export default {
-  name: 'HomeDesignApplyChanges',
+  name: "HomeDesignApplyChanges",
   data() {
     return {
       // Modal states
@@ -499,21 +607,23 @@ export default {
       open_SaveToMyDesignes: false,
 
       // Images
-      beforeImage: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=600&fit=crop',
-      afterImage: 'https://images.unsplash.com/photo-1600210492493-0946911123ea?w=800&h=600&fit=crop',
+      beforeImage:
+        "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=600&fit=crop",
+      afterImage:
+        "https://images.unsplash.com/photo-1600210492493-0946911123ea?w=800&h=600&fit=crop",
       thumbnails: [],
       selectedThumb: 0,
 
       // Products and design data
       products_used: [],
-      roomType: 'Dinning Room',
-      style: 'Modern',
+      roomType: "Dinning Room",
+      style: "Modern",
 
       // Form data for saving design
       form: {
-        description_room: '',
-        home_design_room_type: 'Living Room',
-        home_design_room_style: 'Modern'
+        description_room: "",
+        home_design_room_type: "Living Room",
+        home_design_room_style: "Modern",
       },
 
       // Loading states
@@ -523,13 +633,14 @@ export default {
 
       // Error handling
       error: {
-        room: null
-      }
+        room: null,
+      },
     };
   },
 
   components: {
     HeartOutlined,
+    HeartFilled,
   },
 
   mounted() {
@@ -540,6 +651,35 @@ export default {
   },
 
   methods: {
+    async toggleFavorite(product, product_type) {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch(
+          `${this.$store.state.root_api}likes/favorites/toggle/`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Token ${token}`,
+            },
+            body: JSON.stringify({
+              id: product.product_id,
+              type: product_type,
+            }),
+          },
+        );
+
+        // const data = await response.json();
+
+        const homeDesignId = this.$route.params.id;
+        if (homeDesignId) {
+          this.getHomeDesignItem(homeDesignId);
+        }
+      } catch (error) {
+        console.error("Favorite toggle failed", error);
+      }
+    },
+
     /**
      * Fetch home design details including images and products
      */
@@ -551,12 +691,12 @@ export default {
         const response = await fetch(
           `${this.$store.state.root_api}engine/get-home-design-history/${home_design_id}`,
           {
-            method: 'GET',
+            method: "GET",
             headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Token ${localStorage.getItem('token')}`,
-            }
-          }
+              "Content-Type": "application/json",
+              Authorization: `Token ${localStorage.getItem("token")}`,
+            },
+          },
         );
 
         if (!response.ok) {
@@ -568,9 +708,11 @@ export default {
         if (result.success) {
           this.thumbnails = result.images;
           // Convert thumbnail URL from 100x100 to 800x600
-          this.afterImage = this.$store.state.root_media_api + this.thumbnails[0].replace('w=100&h=100', 'w=800&h=600');
+          this.afterImage =
+            this.$store.state.root_media_api +
+            this.thumbnails[0].replace("w=100&h=100", "w=800&h=600");
           this.products_used = result.products_used || [];
-          
+
           // Set default room type and style from data if available
           if (result.home_design_room_type) {
             this.form.home_design_room_type = result.home_design_room_type;
@@ -581,12 +723,12 @@ export default {
             this.style = result.home_design_room_style;
           }
         } else {
-          throw new Error(result.message || 'Failed to fetch home design');
+          throw new Error(result.message || "Failed to fetch home design");
         }
       } catch (error) {
-        console.error('Error fetching home design:', error);
+        console.error("Error fetching home design:", error);
         this.error.room = error.message;
-        this.$message.error('Failed to load home design');
+        this.$message.error("Failed to load home design");
       } finally {
         this.loading = false;
       }
@@ -603,12 +745,12 @@ export default {
       // }
 
       if (!this.form.home_design_room_type) {
-        this.$message.error('Please select a room type');
+        this.$message.error("Please select a room type");
         return;
       }
 
       if (!this.form.home_design_room_style) {
-        this.$message.error('Please select a design style');
+        this.$message.error("Please select a design style");
         return;
       }
 
@@ -620,10 +762,10 @@ export default {
         const url = `${this.$store.state.root_api}engine/home-designs-add-new-home-design-to-my-design/save/`;
 
         const response = await fetch(url, {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Token ${localStorage.getItem('token')}`,
+            "Content-Type": "application/json",
+            Authorization: `Token ${localStorage.getItem("token")}`,
           },
           body: JSON.stringify({
             home_design_id: homeDesignId,
@@ -635,25 +777,28 @@ export default {
         const responseData = await response.json();
 
         if (!response.ok) {
-          throw new Error(responseData.message || `HTTP ${response.status}: ${response.statusText}`);
+          throw new Error(
+            responseData.message ||
+              `HTTP ${response.status}: ${response.statusText}`,
+          );
         }
 
         if (responseData && !responseData.error) {
-          this.$message.success('Design saved successfully!');
+          this.$message.success("Design saved successfully!");
           this.open_SaveToMyDesignes = false;
-          
+
           // Reset form after successful save
-          this.form.description_room = '';
-          
+          this.form.description_room = "";
+
           // Optional: Navigate to my designs or show success
           // this.$router.push('/my-designs');
         } else {
-          throw new Error(responseData.message || 'Failed to save design');
+          throw new Error(responseData.message || "Failed to save design");
         }
       } catch (error) {
-        console.error('Error saving design:', error);
+        console.error("Error saving design:", error);
         this.error.room = error.message;
-        this.$message.error(error.message || 'Failed to save design');
+        this.$message.error(error.message || "Failed to save design");
       } finally {
         this.saveLoading = false;
       }
@@ -664,14 +809,16 @@ export default {
      */
     selectThumbnail(index) {
       this.selectedThumb = index;
-      this.afterImage = this.$store.state.root_media_api + this.thumbnails[index].replace('w=100&h=100', 'w=800&h=600');
+      this.afterImage =
+        this.$store.state.root_media_api +
+        this.thumbnails[index].replace("w=100&h=100", "w=800&h=600");
     },
 
     /**
      * Regenerate images (placeholder)
      */
     regenerateImages() {
-      this.$message.info('Regenerating images...');
+      this.$message.info("Regenerating images...");
     },
 
     /**
@@ -679,7 +826,7 @@ export default {
      */
     async AddHomeDesignItemstocart() {
       if (!this.products_used || this.products_used.length === 0) {
-        this.$message.warning('No products to add to cart');
+        this.$message.warning("No products to add to cart");
         return;
       }
 
@@ -689,13 +836,13 @@ export default {
         const response = await fetch(
           `${this.$store.state.root_api}cart/add-home-design/`,
           {
-            method: 'POST',
+            method: "POST",
             headers: {
-              'Authorization': `Token ${localStorage.getItem('token')}`,
-              'Content-Type': 'application/json',
+              Authorization: `Token ${localStorage.getItem("token")}`,
+              "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              products_used: this.products_used
+              products_used: this.products_used,
             }),
           },
         );
@@ -703,13 +850,15 @@ export default {
         const data = await response.json();
 
         if (response.ok) {
-          this.$message.success('Home design items added to cart successfully!');
+          this.$message.success(
+            "Home design items added to cart successfully!",
+          );
         } else {
-          this.$message.error(data.message || 'Failed to add items to cart');
+          this.$message.error(data.message || "Failed to add items to cart");
         }
       } catch (error) {
-        console.error('Error adding to cart:', error);
-        this.$message.error('An error occurred while adding items to cart');
+        console.error("Error adding to cart:", error);
+        this.$message.error("An error occurred while adding items to cart");
       } finally {
         this.addingToCart = false;
       }
@@ -720,7 +869,7 @@ export default {
      */
     closeShareModal() {
       this.open_SaveToMyDesignes = false;
-      this.form.description_room = '';
+      this.form.description_room = "";
     },
 
     /**
@@ -734,9 +883,9 @@ export default {
      * View product details
      */
     viewProduct(product) {
-      console.log('Viewing product:', product);
-    }
-  }
+      console.log("Viewing product:", product);
+    },
+  },
 };
 </script>
 
