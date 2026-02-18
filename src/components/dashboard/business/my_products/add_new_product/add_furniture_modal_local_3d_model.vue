@@ -1636,7 +1636,7 @@ addAvailableColor() {
     this.selectedColors.push(colorObj);
     this.tempColor = '#000000';
   }
-},
+},    
 
 addPresetColor(color) {
   if (!this.selectedColors.some(c => c.value === color)) {
