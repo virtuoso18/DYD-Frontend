@@ -1,8 +1,6 @@
-<template>
-    light Product Update here
-</template>
+<template>light Product Update here</template>
 <script>
 export default {
-    name:"light_product_update "
-}
+  name: "light_product_update ",
+};
 </script>
