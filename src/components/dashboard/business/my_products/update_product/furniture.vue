@@ -910,7 +910,6 @@
                       align-items: center;
                       font-size: 14px;
                       font-weight: bold;
-                      line-height: 1;
                       cursor: pointer;
                       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
                       z-index: 2;

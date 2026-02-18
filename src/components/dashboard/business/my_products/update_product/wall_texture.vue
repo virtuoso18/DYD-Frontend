@@ -547,6 +547,51 @@
                 </h4>
 
                 <div style="margin-bottom: 20px">
+                  <div
+                    style="
+                      display: flex;
+                      gap: 12px;
+                      align-items: center;
+                      flex-wrap: wrap;
+                      margin-top: 12px;
+                      margin-bottom: 5px;
+                    "
+                  >
+                    <div
+                      v-for="color in selectedTexture?.associated_colors || []"
+                      :key="color.id"
+                      style="position: relative"
+                    >
+                      <div
+                        :style="{
+                         width: '58px',
+                        height: '58px',
+                        borderRadius: '5px',
+                          backgroundColor: color.color_hex,
+                          cursor: 'pointer',
+                          border: '2px solid #e5e7eb',
+                        }"
+                      ></div>
+
+                      <a-button
+                        type="text"
+                        size="small"
+                        @click="deleteColor(color.id)"
+                        class="!absolute -top-2 -right-2 !flex !items-center !justify-center !bg-red-500 !text-white !rounded-full !w-5 !h-5 !min-w-5 !p-0"
+                      >
+                        <svg
+                          class="w-3 h-3"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="3"
+                        >
+                          <line x1="18" y1="6" x2="6" y2="18" />
+                          <line x1="6" y1="6" x2="18" y2="18" />
+                        </svg>
+                      </a-button>
+                    </div>
+                  </div>
                   <a-popover trigger="click" placement="bottom">
                     <template #title>
                       <div style="display: flex; align-items: center; gap: 8px">
@@ -624,51 +669,6 @@
                       Add Colors
                     </a-button>
                   </a-popover>
-
-                  <div
-                    style="
-                      display: flex;
-                      gap: 12px;
-                      align-items: center;
-                      flex-wrap: wrap;
-                      margin-top: 12px;
-                    "
-                  >
-                    <div
-                      v-for="color in selectedTexture?.associated_colors || []"
-                      :key="color.id"
-                      style="position: relative"
-                    >
-                      <div
-                        :style="{
-                          width: '40px',
-                          height: '40px',
-                          borderRadius: '50%',
-                          backgroundColor: color.color_hex,
-                          cursor: 'pointer',
-                          border: '2px solid #e5e7eb',
-                        }"
-                      ></div>
-
-                      <a-button
-                        type="text"
-                        size="small"
-                        @click="deleteColor(color.id)"
-                        class="!absolute -top-2 -right-2 !flex !items-center !justify-center !bg-red-500 !text-white !rounded-full !w-5 !h-5 !min-w-5 !p-0"
-                      >
-                        <svg
-                          class="w-3 h-3"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="3"
-                        >
-                          <line x1="18" y1="6" x2="6" y2="18" />
-                          <line x1="6" y1="6" x2="18" y2="18" />
-                        </svg>
-                      </a-button>
-                    </div>
-                  </div>
                 </div>
               </a-col>
             </a-row>

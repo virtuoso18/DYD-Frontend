@@ -734,9 +734,9 @@
                   <div
                     @click="selectColor(color.color)"
                     :style="{
-                      width: '36px',
-                      height: '36px',
-                      borderRadius: '8px',
+                      width: '58px',
+                        height: '58px',
+                        borderRadius: '5px',
                       backgroundColor: color.color,
                       cursor: 'pointer',
                       border:
@@ -781,171 +781,177 @@
                   </a-button>
                 </div>
                 <div style="margin-bottom: 20px">
-                  <label
-                    style="
-                      display: block;
-                      margin-bottom: 8px;
-                      font-size: 13px;
-                      color: #374151;
-                    "
-                    >Available Colors<span style="color: red">*</span></label
-                  >
-
-                  <a-popover trigger="click" placement="bottom">
-                    <template #title>
-                      <div style="display: flex; align-items: center; gap: 8px">
-                        <span>Add Available Colors</span>
-                        <input
-                          type="color"
-                          :value="tempColor"
-                          @input="tempColor = $event.target.value"
-                          @change="addColor(tempColor)"
-                          style="
-                            width: 30px;
-                            height: 25px;
-                            border: none;
-                            border-radius: 4px;
-                            cursor: pointer;
-                          "
-                        />
-                        <a-button
-                          type="primary"
-                          size="small"
-                          @click="addAvailableColor"
-                          style="margin-left: 8px"
-                        >
-                          Add
-                        </a-button>
-                      </div>
-                    </template>
-                    <template #content>
-                      <div
-                        style="
-                          display: grid;
-                          grid-template-columns: repeat(6, 32px);
-                          gap: 8px;
-                          padding: 8px;
-                        "
-                      >
-                        <div
-                          v-for="(color, index) in presetColors"
-                          :key="index"
-                          @click="addColor(color)"
-                          :style="{
-                            width: '32px',
-                            height: '32px',
-                            borderRadius: '6px',
-                            backgroundColor: color,
-                            cursor: 'pointer',
-                            border: '1px solid #e5e7eb',
-                            opacity: selectedColors?.some(
-                              (c) => c.value === color,
-                            )
-                              ? 0.5
-                              : 1,
-                          }"
-                        ></div>
-                      </div>
-                    </template>
-                    <a-button
-                      class="!flex !justify-center !align-center"
-                      style="border-radius: 6px; border: 2px dashed #d1d5db"
+                  <div>
+                    <div
+                      v-if="selectedColors?.length > 0"
+                      style="margin-top: 12px"
                     >
-                      <template #icon>
-                        <svg
-                          width="16"
-                          height="16"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                        >
-                          <line x1="12" y1="5" x2="12" y2="19"></line>
-                          <line x1="5" y1="12" x2="19" y2="12"></line>
-                        </svg>
-                      </template>
-                      Add Colors
-                    </a-button>
-                  </a-popover>
-
-                  <div
-                    v-if="selectedColors?.length > 0"
-                    style="margin-top: 12px"
-                  >
-                    <div style="display: flex; flex-wrap: wrap; gap: 8px">
-                      <div
-                        v-for="(color, index) in selectedColors"
-                        :key="index"
-                        style="position: relative"
-                      >
+                      <div style="display: flex; flex-wrap: wrap; gap: 8px">
                         <div
-                          :style="{
-                            width: '40px',
-                            height: '40px',
-                            borderRadius: '50%',
-                            backgroundColor: color.value,
-                            border: color.isPrimary
-                              ? '2px solid #22c55e'
-                              : '2px solid #e5e7eb',
-                            cursor: 'pointer',
-                            position: 'relative',
-                            transition: 'all 0.2s ease',
-                          }"
-                          @click="setPrimaryColor(color)"
-                        ></div>
-                        <div
-                          v-if="color.isPrimary"
-                          style="
-                            position: absolute;
-                            left: -5px;
-                            bottom: -5px;
-                            background: #22c55e;
-                            color: white;
-                            border-radius: 50%;
-                            width: 20px;
-                            height: 20px;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            font-size: 12px;
-                            box-shadow: 0 2px 4px rgba(34, 197, 94, 0.3);
-                          "
+                          v-for="(color, index) in selectedColors"
+                          :key="index"
+                          style="position: relative"
                         >
-                          ★
+                          <div
+                            :style="{
+                              width: '58px',
+                              height: '58px',
+                              borderRadius: '5px',
+                              backgroundColor: color.value,
+                              border: color.isPrimary
+                                ? '2px solid #22c55e'
+                                : '2px solid #e5e7eb',
+                              cursor: 'pointer',
+                              position: 'relative',
+                              transition: 'all 0.2s ease',
+                            }"
+                            @click="setPrimaryColor(color)"
+                          ></div>
+                          <div
+                            v-if="color.isPrimary"
+                            style="
+                              position: absolute;
+                              left: -5px;
+                              bottom: -5px;
+                              background: #22c55e;
+                              color: white;
+                              border-radius: 50%;
+                              width: 20px;
+                              height: 20px;
+                              display: flex;
+                              align-items: center;
+                              justify-content: center;
+                              font-size: 12px;
+                              box-shadow: 0 2px 4px rgba(34, 197, 94, 0.3);
+                            "
+                          >
+                            ★
+                          </div>
+                          <a-button
+                            type="text"
+                            size="small"
+                            @click="removeColor(index)"
+                            style="
+                              position: absolute;
+                              top: -8px;
+                              right: -8px;
+                              background: #ef4444;
+                              color: white;
+                              border-radius: 50%;
+                              width: 20px;
+                              height: 20px;
+                              padding: 0;
+                              min-width: 20px;
+                            "
+                          >
+                            <template #icon>
+                              <svg
+                                width="10"
+                                height="10"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="3"
+                              >
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                              </svg>
+                            </template>
+                          </a-button>
                         </div>
-                        <a-button
-                          type="text"
-                          size="small"
-                          @click="removeColor(index)"
-                          style="
-                            position: absolute;
-                            top: -8px;
-                            right: -8px;
-                            background: #ef4444;
-                            color: white;
-                            border-radius: 50%;
-                            width: 20px;
-                            height: 20px;
-                            padding: 0;
-                            min-width: 20px;
-                          "
-                        >
-                          <template #icon>
-                            <svg
-                              width="10"
-                              height="10"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              stroke-width="3"
-                            >
-                              <line x1="18" y1="6" x2="6" y2="18"></line>
-                              <line x1="6" y1="6" x2="18" y2="18"></line>
-                            </svg>
-                          </template>
-                        </a-button>
                       </div>
                     </div>
+                  </div>
+
+                  <div>
+                    <label
+                      style="
+                        display: block;
+                        margin-bottom: 8px;
+                        font-size: 13px;
+                        color: #374151;
+                      "
+                      >Available Colors<span style="color: red">*</span></label
+                    >
+
+                    <a-popover trigger="click" placement="bottom">
+                      <template #title>
+                        <div
+                          style="display: flex; align-items: center; gap: 8px"
+                        >
+                          <span>Add Available Colors</span>
+                          <input
+                            type="color"
+                            :value="tempColor"
+                            @input="tempColor = $event.target.value"
+                            @change="addColor(tempColor)"
+                            style="
+                              width: 30px;
+                              height: 25px;
+                              border: none;
+                              border-radius: 4px;
+                              cursor: pointer;
+                            "
+                          />
+                          <a-button
+                            type="primary"
+                            size="small"
+                            @click="addAvailableColor"
+                            style="margin-left: 8px"
+                          >
+                            Add
+                          </a-button>
+                        </div>
+                      </template>
+                      <template #content>
+                        <div
+                          style="
+                            display: grid;
+                            grid-template-columns: repeat(6, 32px);
+                            gap: 8px;
+                            padding: 8px;
+                          "
+                        >
+                          <div
+                            v-for="(color, index) in presetColors"
+                            :key="index"
+                            @click="addColor(color)"
+                            :style="{
+                              width: '32px',
+                              height: '32px',
+                              borderRadius: '6px',
+                              backgroundColor: color,
+                              cursor: 'pointer',
+                              border: '1px solid #e5e7eb',
+                              opacity: selectedColors?.some(
+                                (c) => c.value === color,
+                              )
+                                ? 0.5
+                                : 1,
+                            }"
+                          ></div>
+                        </div>
+                      </template>
+                      <a-button
+                        class="!flex !justify-center !align-center"
+                        style="border-radius: 6px; border: 2px dashed #d1d5db"
+                      >
+                        <template #icon>
+                          <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                          >
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                          </svg>
+                        </template>
+                        Add Colors
+                      </a-button>
+                    </a-popover>
                   </div>
                 </div>
                 <!-- Add Color -->
