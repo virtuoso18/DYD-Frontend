@@ -1126,7 +1126,6 @@
                   display: flex;
                   align-items: center;
                   gap: 12px;
-                  margin-bottom: 16px;
                 "
               >
                 <h4
@@ -1139,8 +1138,73 @@
                 >
                   Textures<span style="color: red">*</span>
                 </h4>
+              </div>
+              <div
+                style="
+                  display: flex;
+                  gap: 12px;
+                  align-items: center;
+                  flex-wrap: wrap;
+                  margin-bottom: 16px;
+                "
+              >
+                <!-- Existing Textures -->
+                <div
+                  v-for="texture in selectedProduct.textures"
+                  :key="texture.id"
+                  style="
+                    position: relative;
+                    width: 48px;
+                    height: 36px;
+                    margin-right: 10px;
+                  "
+                >
+                  <!-- Texture Box -->
+                  <div
+                    @click="selectTexture(texture.id)"
+                    :style="{
+                      width: '58px',
+                      height: '58px',
+                      borderRadius: '8px',
+                      backgroundImage: `url(${$store.state.root_media_api + texture.texture})`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                      border:
+                        selectedTexture === texture.id
+                          ? '3px solid #3b82f6'
+                          : '2px solid #e5e7eb',
+                      cursor: 'pointer',
+                    }"
+                  ></div>
 
-                <!-- Add Texture from Library -->
+                  <!-- Delete Button -->
+                  <div
+                    @click.stop="deleteTexture(texture.id)"
+                    style="
+                      position: absolute;
+                      top: -6px;
+                      right: -6px;
+                      background: #ef4444;
+                      color: #fff;
+                      width: 20px;
+                      height: 20px;
+                      border-radius: 50%;
+                      display: flex;
+                      justify-content: center;
+                      align-items: center;
+                      font-size: 14px;
+                      font-weight: bold;
+                      line-height: 1;
+                      cursor: pointer;
+                      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+                    "
+                  >
+                    ×
+                  </div>
+                </div>
+              </div>
+              <div class="!flex gap-1">
+<!-- Add Texture from Library -->
                 <a-popover trigger="click" placement="bottom">
                   <template #title>
                     <div
@@ -1310,70 +1374,6 @@
                   </template>
                   Upload Custom
                 </a-button>
-              </div>
-              <div
-                style="
-                  display: flex;
-                  gap: 12px;
-                  align-items: center;
-                  flex-wrap: wrap;
-                  margin-bottom: 16px;
-                "
-              >
-                <!-- Existing Textures -->
-                <div
-                  v-for="texture in selectedProduct.textures"
-                  :key="texture.id"
-                  style="
-                    position: relative;
-                    width: 48px;
-                    height: 36px;
-                    margin-right: 10px;
-                  "
-                >
-                  <!-- Texture Box -->
-                  <div
-                    @click="selectTexture(texture.id)"
-                    :style="{
-                      width: '58px',
-                      height: '58px',
-                      borderRadius: '8px',
-                      backgroundImage: `url(${$store.state.root_media_api + texture.texture})`,
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center',
-                      border:
-                        selectedTexture === texture.id
-                          ? '3px solid #3b82f6'
-                          : '2px solid #e5e7eb',
-                      cursor: 'pointer',
-                    }"
-                  ></div>
-
-                  <!-- Delete Button -->
-                  <div
-                    @click.stop="deleteTexture(texture.id)"
-                    style="
-                      position: absolute;
-                      top: -6px;
-                      right: -6px;
-                      background: #ef4444;
-                      color: #fff;
-                      width: 20px;
-                      height: 20px;
-                      border-radius: 50%;
-                      display: flex;
-                      justify-content: center;
-                      align-items: center;
-                      font-size: 14px;
-                      font-weight: bold;
-                      line-height: 1;
-                      cursor: pointer;
-                      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-                    "
-                  >
-                    ×
-                  </div>
-                </div>
               </div>
             </a-col>
           </a-row>

@@ -967,7 +967,7 @@
               </div>
             </a-col>
 
-            <a-col :span="12">
+            <!-- <a-col :span="12">
               <h4
                 style="
                   margin-bottom: 16px;
@@ -986,7 +986,7 @@
                   flex-wrap: wrap;
                 "
               >
-                <!-- Existing Textures -->
+                <!-- Existing Textures 
                 <div
                   v-for="texture in selectedProduct.textures"
                   :key="texture.id"
@@ -1041,7 +1041,7 @@
                   </a-button>
                 </div>
 
-                <!-- Add Texture -->
+                <!-- Add Texture 
                 <div
                   @click="uploadTexture"
                   style="
@@ -1069,7 +1069,7 @@
                   </svg>
                 </div>
               </div>
-            </a-col>
+            </a-col> -->
           </a-row>
         </div>
       </a-col>
