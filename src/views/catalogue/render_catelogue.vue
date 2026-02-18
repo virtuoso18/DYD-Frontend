@@ -112,7 +112,24 @@
 
             <a-col span="1"></a-col>
             <a-col span="4">
-              <a-button><HeartOutlined /></a-button>
+              <a-button
+                block
+                type="default"
+                style="
+                  padding: 0;
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  border: none;
+                "
+                @click="toggleFavorite(product,  'product')"
+              >
+                <HeartFilled
+                  v-if="product.is_favorited"
+                  style="color: red; font-size: 18px"
+                />
+                <HeartOutlined v-else style="font-size: 18px" />
+              </a-button>
             </a-col>
           </a-row>
         </div>
@@ -925,7 +942,6 @@
       "
     >
       <div
-      
         style="
           padding: 15px;
           border: 1px solid rgba(0, 0, 0, 0.1);
@@ -934,7 +950,7 @@
           background: white;
         "
       >
-        <div  style="position: relative; display: inline-block">
+        <div style="position: relative; display: inline-block">
           <div
             v-if="imageLoading"
             style="
@@ -967,7 +983,7 @@
 
           <!-- Actual Image -->
           <div
-            class="relative "
+            class="relative"
             style="
               overflow: hidden;
               width: 100%;
@@ -995,7 +1011,7 @@
               v-show="imageLoadedMap['room']"
               :src="displayImage"
               alt="Room Render"
-              class="room-render-image "
+              class="room-render-image"
             />
           </div>
 
@@ -1555,57 +1571,57 @@
         margin-top: -25px;
       "
     >
-     <div
-  style="
-    padding: 15px;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    background: white;
-  "
->
-  <div style="position: relative; display: inline-block; width: 100%;">
-    <!-- Skeleton - EXACT same dimensions as visible image -->
-    <div
-      v-if="!imageLoadedMap['room']"
-      class=""
-      style="
-        width: 100%;
-        max-width: 800px;
-        height: 200px !important;
-        aspect-ratio: 16/10;
-        max-height: 300px;
-        object-fit: cover;
-        display: block;
-        border-radius: 8px;
-      "
-    ></div>
+      <div
+        style="
+          padding: 15px;
+          border: 1px solid rgba(0, 0, 0, 0.1);
+          border-radius: 12px;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+          background: white;
+        "
+      >
+        <div style="position: relative; display: inline-block; width: 100%">
+          <!-- Skeleton - EXACT same dimensions as visible image -->
+          <div
+            v-if="!imageLoadedMap['room']"
+            class=""
+            style="
+              width: 100%;
+              max-width: 800px;
+              height: 200px !important;
+              aspect-ratio: 16/10;
+              max-height: 300px;
+              object-fit: cover;
+              display: block;
+              border-radius: 8px;
+            "
+          ></div>
 
-    <!-- Preload image (hidden) -->
-    <img
-      :src="displayImage"
-      style="position: absolute; width: 0; height: 0; opacity: 0"
-      @load="onRoomImageLoad"
-      @error="handleImageError"
-      alt=""
-    />
+          <!-- Preload image (hidden) -->
+          <img
+            :src="displayImage"
+            style="position: absolute; width: 0; height: 0; opacity: 0"
+            @load="onRoomImageLoad"
+            @error="handleImageError"
+            alt=""
+          />
 
-    <!-- Visible image -->
-    <img
-      v-show="imageLoadedMap['room']"
-      :src="displayImage"
-      alt="Room Render"
-      style="
-        width: 100%;
-        max-width: 800px;
-        height: auto;
-        max-height: 500px;
-        object-fit: cover;
-        display: block;
-        border-radius: 8px;
-        transition: opacity 0.3s ease-in-out;
-      "
-    />
+          <!-- Visible image -->
+          <img
+            v-show="imageLoadedMap['room']"
+            :src="displayImage"
+            alt="Room Render"
+            style="
+              width: 100%;
+              max-width: 800px;
+              height: auto;
+              max-height: 500px;
+              object-fit: cover;
+              display: block;
+              border-radius: 8px;
+              transition: opacity 0.3s ease-in-out;
+            "
+          />
 
           <!-- Before/After Toggle - Positioned on Image -->
           <div
@@ -1911,24 +1927,23 @@
               height: 500px;
             "
           >
-
- <div class="w-full h-full">
+            <div class="w-full h-full">
               <div
-              class="loading-screen "
-              :style="{
-                backgroundImage: base_image_url
-                  ? `url(${base_image_url})`
-                  : 'none',
-              }"
-            >
-              <div class="wave-overlay"></div>
-              <div class="loading-text">
-                <div class="process-text">
-                  Plaease Wait We Are Rendering the Final Results
+                class="loading-screen"
+                :style="{
+                  backgroundImage: base_image_url
+                    ? `url(${base_image_url})`
+                    : 'none',
+                }"
+              >
+                <div class="wave-overlay"></div>
+                <div class="loading-text">
+                  <div class="process-text">
+                    Plaease Wait We Are Rendering the Final Results
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
           </div>
 
           <div style="position: relative; display: inline-block" v-else>
@@ -2876,6 +2891,31 @@ export default {
   },
 
   methods: {
+  async toggleFavorite(product, product_type) {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch(
+          `${this.$store.state.root_api}likes/favorites/toggle/`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Token ${token}`,
+            },
+            body: JSON.stringify({
+              id: product.product_id,
+              type: product_type,
+            }),
+          },
+        );
+
+        // const data = await response.json();
+       
+        this.FetchFinalResults();
+      } catch (error) {
+        console.error("Favorite toggle failed", error);
+      }
+    },
      goToPurchaseCredits() {
       this.showCreditModal = false;
       this.$router.push("/pricing"); // or your actual route
@@ -3810,13 +3850,12 @@ export default {
 /* Desktop */
 @media (min-width: 768px) {
   .room-render-image {
-    max-width: 100%;   /* 🔥 full width */
+    max-width: 100%; /* 🔥 full width */
     min-width: 100%;
-    max-height: none;  /* optional */
+    max-height: none; /* optional */
     min-height: auto;
   }
 }
-
 
 .loading-screen {
   position: relative;

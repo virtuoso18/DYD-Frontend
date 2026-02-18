@@ -1,6 +1,6 @@
 <template>
-  <div class="main ">
-    <a-row class="see-all-section ">
+  <div class="main">
+    <a-row class="see-all-section">
       <a-col :sm="24" :md="24" :lg="4">
         <!-- Clear Button -->
         <!-- <a-button block type="primary" @click="clearFilters"
@@ -110,11 +110,7 @@
             <a-col :xs="24" :sm="24" :md="24" :lg="0">
               <a-collapse v-model:activeKey="styleActiveKey">
                 <a-collapse-panel key="1" header="Style">
-                  <div
-                    style="
-                      padding-right: 8px;
-                    "
-                  >
+                  <div style="padding-right: 8px">
                     <a-checkbox
                       v-model:checked="filters.styles.modern"
                       @change="applyFilters"
@@ -238,7 +234,7 @@
         </div>
       </a-col>
 
-      <a-col  :sm="24" :md="24" :lg="20">
+      <a-col :sm="24" :md="24" :lg="20">
         <!-- Results Header -->
         <div
           v-if="!loading"
@@ -283,34 +279,36 @@
               style="padding: 3px"
             >
               <div class="product">
-               <div class="product-image-container" style="position: relative; overflow: hidden;">
-  <!-- Skeleton (YOUR EXACT CSS) -->
-  <div
-    v-if="!imageLoadedMap[product.id]"
-    class="product-skeleton"
-  ></div>
+                <div
+                  class="product-image-container"
+                  style="position: relative; overflow: hidden"
+                >
+                  <!-- Skeleton (YOUR EXACT CSS) -->
+                  <div
+                    v-if="!imageLoadedMap[product.id]"
+                    class="product-skeleton"
+                  ></div>
 
-  <!-- Preload -->
-  <img
-    :src="getProductImage(product)"
-    style="position:absolute;width:0;height:0;opacity:0;"
-    @load="onProductImageLoad(product.id)"
-    alt=""
-  />
+                  <!-- Preload -->
+                  <img
+                    :src="getProductImage(product)"
+                    style="position: absolute; width: 0; height: 0; opacity: 0"
+                    @load="onProductImageLoad(product.id)"
+                    alt=""
+                  />
 
-  <!-- Visible -->
-  <img
-    v-show="imageLoadedMap[product.id]"
-    :src="getProductImage(product)"
-    :alt="product.title"
-    class="product-image"
-  />
+                  <!-- Visible -->
+                  <img
+                    v-show="imageLoadedMap[product.id]"
+                    :src="getProductImage(product)"
+                    :alt="product.title"
+                    class="product-image"
+                  />
 
-  <!-- Badges -->
-  <div class="category-badge">Floor</div>
-  <div class="ar-badge">AR</div>
-</div>
-
+                  <!-- Badges -->
+                  <div class="category-badge">Floor</div>
+                  <div class="ar-badge">AR</div>
+                </div>
 
                 <a-row>
                   <a-col span="24">
@@ -352,7 +350,10 @@
                   </a-col>
 
                   <a-col span="17">
-                    <a-button block class="product-detail-btn" @click="handleProductDetail(product)"
+                    <a-button
+                      block
+                      class="product-detail-btn"
+                      @click="handleProductDetail(product)"
                       >Product Details</a-button
                     >
                   </a-col>
@@ -362,8 +363,7 @@
                     <a-button
                       :type="isWishlisted(product.id) ? 'primary' : 'default'"
                       @click="toggleWishlist(product)"
-                      class="product-detail-btn" 
-                       
+                      class="product-detail-btn"
                     >
                       <HeartOutlined />
                     </a-button>
@@ -449,6 +449,32 @@ export default {
     this.loadProducts();
   },
   methods: {
+    async toggleFavorite(product, product_type) {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch(
+          `${this.$store.state.root_api}likes/favorites/toggle/`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Token ${token}`,
+            },
+            body: JSON.stringify({
+              id: product.id,
+              type: product_type,
+            }),
+          },
+        );
+
+        const data = await response.json();
+        if (this.selectedProduct.is_favorited) {
+        }
+        this.selectedProduct.is_favorited = data.favorited;
+      } catch (error) {
+        console.error("Favorite toggle failed", error);
+      }
+    },
     /**
      * Load available colors from all products
      */
@@ -501,12 +527,11 @@ export default {
     },
 
     onProductImageLoad(id) {
-    this.imageLoadedMap[id] = false;
-    setTimeout(() => {
-      this.imageLoadedMap[id] = true;
-    }, 1000);
-  },
-
+      this.imageLoadedMap[id] = false;
+      setTimeout(() => {
+        this.imageLoadedMap[id] = true;
+      }, 1000);
+    },
 
     /**
      * Toggle color filter selection
@@ -591,6 +616,7 @@ export default {
           this.pagination.page_size = data.page_size || 20;
           this.pagination.total_count = data.total_count || 0;
           this.pagination.total_pages = data.total_pages || 1;
+          this.addInitWishListed();
 
           window.scrollTo({ top: 0, behavior: "smooth" });
         } else {
@@ -700,6 +726,14 @@ export default {
         this.wishlisted.add(product.id);
         this.$message.success("Added to wishlist");
       }
+      this.toggleFavorite(product, "floor_texture");
+    },
+     addInitWishListed(){
+      this.products.forEach((product) => {
+        if (product.is_favorited) {
+          this.wishlisted.add(product.id);
+        }
+      });
     },
 
     /**
@@ -729,7 +763,6 @@ export default {
     margin-bottom: 10px;
   }
 }
-
 
 .see-all-section {
   display: flex;
@@ -763,25 +796,20 @@ export default {
   transition: transform 0.3s ease;
 }
 
-
 .product-skeleton {
   width: 100%;
   height: 240px;
   border-radius: 12px;
-  background: linear-gradient(
-    110deg,
-    #e5e7eb 8%,
-    #f9fafb 18%,
-    #e5e7eb 33%
-  );
+  background: linear-gradient(110deg, #e5e7eb 8%, #f9fafb 18%, #e5e7eb 33%);
   background-size: 200% 100%;
   animation: product-shimmer 1.6s infinite linear;
 }
 
 @keyframes product-shimmer {
-  to { background-position-x: -200%; }
+  to {
+    background-position-x: -200%;
+  }
 }
-
 
 .category-badge {
   position: absolute;
