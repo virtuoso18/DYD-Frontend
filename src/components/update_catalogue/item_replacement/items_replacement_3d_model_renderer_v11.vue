@@ -214,6 +214,13 @@ export default {
   emits: ["rendered-comfyui-workflow", "Apply-Changes", "update:isLoading"],
  data() {
     return {
+      // ✅ NEW: Drag system improvements
+      dragPlaneFixed: null,           // Single consistent plane
+      canvasBounds: null,             // Cache canvas rect
+      lastScreenCoords: null,         // For velocity calculation
+      dragVelocity: new THREE.Vector2(0, 0),  // For smooth damping
+      isDampingDrag: false,           // Smooth deceleration
+      
       // isLoading: false,
       loadingText: "Initializing...",
       modelLoaded: false,
@@ -325,7 +332,7 @@ export default {
   // CORRECT PLACEMENT - Replace your entire watch section with this:
 
   watch: {
-
+ 
   '$route.query.product_id': {
     async handler(newProductId, oldProductId) {
       console.log('👀 Product ID changed in query:', {
@@ -446,6 +453,49 @@ export default {
   },
 
   methods: {
+    
+getScreenToNDC(clientX, clientY) {
+  // ✅ FIX: Cache canvas bounds for consistency
+  if (!this.canvasBounds) {
+    this.canvasBounds = this.renderer.domElement.getBoundingClientRect();
+  }
+  
+  const bounds = this.canvasBounds;
+  const width = bounds.width;
+  const height = bounds.height;
+  
+  // ✅ FIX: Account for device pixel ratio
+  const dpr = window.devicePixelRatio || 1;
+  
+  // Convert to normalized device coordinates (-1 to 1)
+  const x = ((clientX - bounds.left) / width) * 2 - 1;
+  const y = -((clientY - bounds.top) / height) * 2 + 1;
+  
+  return new THREE.Vector2(x, y);
+},
+
+// ============================================================================
+// FIX 2: Setup Fixed Drag Plane
+// ============================================================================
+
+setupDragPlane() {
+  // ✅ FIX: Use floor plane instead of variable plane
+  if (!this.dragPlaneFixed) {
+    this.dragPlaneFixed = new THREE.Plane();
+    
+    // Use the same floor plane equation
+    const { a, b, c, d } = this.planeEquation;
+    const normal = new THREE.Vector3(a, b, c).normalize();
+    const point = this.floorPoint.clone();
+    
+    this.dragPlaneFixed.setFromNormalAndCoplanarPoint(normal, point);
+    
+    console.log('✅ Fixed drag plane created');
+  }
+  
+  return this.dragPlaneFixed;
+}
+,
 async loadProductDetailsAndInitialize() {
   try {
       this.$emit("update:isLoading", true);
@@ -2139,158 +2189,417 @@ setupModelBounds() {
       return true;
     },
 
-    onMouseDown(event) {
-      event.preventDefault();
-      let clientX, clientY;
-      if (event.touches && event.touches.length > 0) {
-        clientX = event.touches[0].clientX;
-        clientY = event.touches[0].clientY;
+//     onMouseDown(event) {
+//       event.preventDefault();
+//       let clientX, clientY;
+//       if (event.touches && event.touches.length > 0) {
+//         clientX = event.touches[0].clientX;
+//         clientY = event.touches[0].clientY;
+//       } else {
+//         clientX = event.clientX;
+//         clientY = event.clientY;
+//       }
+//       const mouse = new THREE.Vector2();
+//       const rect = this.renderer.domElement.getBoundingClientRect();
+//       mouse.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+//       mouse.y = -((clientY - rect.top) / rect.height) * 2 + 1;
+//       this.raycaster.setFromCamera(mouse, this.camera);
+//       // -----------------------------------------------
+//       // ROTATION ARROWS
+//       // -----------------------------------------------
+//       if (this.rotationRing && this.showRotationRing) {
+//         const arrowIntersects = this.raycaster.intersectObject(
+//           this.rotationRing,
+//           true,
+//         );
+//         if (arrowIntersects.length > 0) {
+//           const hitPoint = arrowIntersects[0].point.clone();
+//           const intersected = arrowIntersects[0].object;
+//           if (intersected.userData.isRotationArrow) {
+//             this.controls.enabled = false;
+//             this.isRotatingModel = true;
+//             this.isRotating = true;
+//             this.rotationStartMouse.copy(mouse);
+//             this.rotationStartAngle = this.modelRotation.y;
+//             intersected.material.color.setHex(0xff6600);
+//             return;
+//           }
+//         }
+//       }
+//       // -----------------------------------------------
+//       // MODEL DRAGGING
+//       // -----------------------------------------------
+//       if (this.model) {
+//         const intersects = this.raycaster.intersectObject(this.model, true);
+//         if (intersects.length > 0) {
+//           this.controls.enabled = false;
+//           this.isDraggingModel = true;
+//           this.isDragging = true;
+//           this.dragStartMouse.copy(mouse);
+//           this.dragStartPosition.set(
+//             this.model.position.x,
+//             this.model.position.z,
+//           );
+//           // -----------------------------------------------
+//           // :white_check_mark: FIX: Keep pointer coordinate locked to same spot
+//           // -----------------------------------------------
+//           const hitPoint = intersects[0].point.clone();
+//           // Ground plane for drag
+//           this.dragPlane = new THREE.Plane();
+//           this.dragPlane.setFromNormalAndCoplanarPoint(
+//             new THREE.Vector3(0, 1, 0),
+//             hitPoint,
+//           );
+//           // Store offset between model origin & hit point
+//           this.dragOffset = new THREE.Vector3().subVectors(
+//             hitPoint,
+//             this.model.position,
+//           );
+//           // -----------------------------------------------
+//           return;
+//         }
+//       }
+//     },
+//     onMouseMove(event) {
+//       if (!this.isDraggingModel && !this.isRotatingModel) return;
+//       event.preventDefault();
+//       // READ POINTER (mouse / touch)
+//       let clientX, clientY;
+//       if (event.touches && event.touches.length > 0) {
+//         clientX = event.touches[0].clientX;
+//         clientY = event.touches[0].clientY;
+//       } else {
+//         clientX = event.clientX;
+//         clientY = event.clientY;
+//       }
+//       const mouse = new THREE.Vector2();
+//       const rect = this.renderer.domElement.getBoundingClientRect();
+//       mouse.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+//       mouse.y = -((clientY - rect.top) / rect.height) * 2 + 1;
+//       // MODEL DRAGGING
+
+//       if (this.isDraggingModel) {
+//         this.raycaster.setFromCamera(mouse, this.camera);
+//         const worldPoint = new THREE.Vector3();
+
+//         if (this.raycaster.ray.intersectPlane(this.dragPlane, worldPoint)) {
+//           worldPoint.sub(this.dragOffset);
+
+//           this.model.position.x = worldPoint.x;
+//           this.model.position.z = worldPoint.z;
+
+//           // FIXED: Use the same calculation as applyModelScale
+//           const { a, b, c, d } = this.planeEquation;
+//           let floorY;
+//           if (Math.abs(b) > 0.001) {
+//             floorY = -(a * worldPoint.x + c * worldPoint.z + d) / b;
+//           } else {
+//             floorY = this.floorData.floor_plane.height;
+//           }
+
+//           // FIXED: Account for current model scale when positioning
+//           const finalScale = this.baseModelScale * this.modelScale;
+//           const modelBottomWorldOffset =
+//             this.modelBoundingBox.min.y * finalScale;
+//           this.model.position.y = floorY - modelBottomWorldOffset;
+
+//           this.updateRotationRingPosition();
+//           this.isOnValidFloor = true;
+//         }
+//       }
+
+//       // ------------------------------------------------------------
+//       // MODEL ROTATION
+//       // ------------------------------------------------------------
+//       else if (this.isRotatingModel) {
+//         const deltaX = mouse.x - this.rotationStartMouse.x;
+//         this.modelRotation.y = this.rotationStartAngle + deltaX * 180;
+//         this.model.rotation.y = THREE.MathUtils.degToRad(this.modelRotation.y);
+//       }
+//     },
+
+//     onMouseUp(event) {
+//   const wasDragging = this.isDraggingModel;
+//   const wasRotating = this.isRotatingModel;
+
+//   if (this.isDraggingModel) {
+//     this.controls.enabled = true;
+//     this.isDraggingModel = false;
+//     this.isDragging = false;
+    
+//     if (this.model) {
+//       this.modelPosition.x = this.model.position.x;
+//       this.modelPosition.y = this.model.position.z;
+      
+//       this.lastKnownModelPosition = this.model.position.clone();
+//       this.lastKnownModelRotation = this.model.rotation.clone();
+//       this.lastKnownModelScale = this.model.scale.clone();
+      
+//       console.log("✅ Position updated after drag:", {
+//         x: this.modelPosition.x.toFixed(2),
+//         z: this.modelPosition.y.toFixed(2)
+//       });
+//       console.log("✅ 3D Position stored:", {
+//         x: this.lastKnownModelPosition.x.toFixed(2),
+//         y: this.lastKnownModelPosition.y.toFixed(2),
+//         z: this.lastKnownModelPosition.z.toFixed(2)
+//       });
+      
+//       // 🔧 EMIT to parent
+//       this.$emit('model-transform-updated', {
+//         position: {
+//           x: this.model.position.x,
+//           y: this.model.position.y,
+//           z: this.model.position.z
+//         },
+//         rotation: {
+//           x: this.model.rotation.x,
+//           y: this.model.rotation.y,
+//           z: this.model.rotation.z
+//         },
+//         scale: {
+//           x: this.model.scale.x,
+//           y: this.model.scale.y,
+//           z: this.model.scale.z
+//         }
+//       });
+//     }
+//   }
+
+//   if (this.isRotatingModel) {
+//     this.controls.enabled = true;
+//     this.isRotatingModel = false;
+//     this.isRotating = false;
+
+//     if (this.model) {
+//       this.modelRotation.y = THREE.MathUtils.radToDeg(this.model.rotation.y);
+      
+//       this.lastKnownModelRotation = this.model.rotation.clone();
+//       this.lastKnownModelPosition = this.model.position.clone();
+//       this.lastKnownModelScale = this.model.scale.clone();
+      
+//       console.log("✅ Rotation updated:", this.modelRotation.y.toFixed(2), "degrees");
+//       console.log("✅ Rotation stored (radians):", {
+//         x: this.lastKnownModelRotation.x.toFixed(2),
+//         y: this.lastKnownModelRotation.y.toFixed(2),
+//         z: this.lastKnownModelRotation.z.toFixed(2)
+//       });
+      
+//       // 🔧 EMIT to parent after rotation
+//       this.$emit('model-transform-updated', {
+//         position: {
+//           x: this.model.position.x,
+//           y: this.model.position.y,
+//           z: this.model.position.z
+//         },
+//         rotation: {
+//           x: this.model.rotation.x,
+//           y: this.model.rotation.y,
+//           z: this.model.rotation.z
+//         },
+//         scale: {
+//           x: this.model.scale.x,
+//           y: this.model.scale.y,
+//           z: this.model.scale.z
+//         }
+//       });
+//     }
+
+//     this.rotationArrows.forEach((group) => {
+//       group.children.forEach((arrow) => {
+//         if (arrow.userData.isRotationArrow) {
+//           arrow.material.color.setHex(arrow.userData.originalColor);
+//         }
+//       });
+//     });
+//   }
+
+//   // Force a render update if interaction just ended
+//   if ((wasDragging || wasRotating) && this.needsRenderUpdate) {
+//     this.$nextTick(() => {
+//       if (this.renderer && this.scene && this.camera) {
+//         this.renderer.render(this.scene, this.camera);
+//       }
+//       this.needsRenderUpdate = false;
+//     });
+//   }
+// },
+
+
+// ============================================================================
+// FIX 3: Improved onMouseDown with Better Offset Calculation
+// ============================================================================
+
+onMouseDown(event) {
+  event.preventDefault();
+  
+  // ✅ FIX: Get consistent screen coordinates
+  let clientX, clientY;
+  if (event.touches && event.touches.length > 0) {
+    clientX = event.touches[0].clientX;
+    clientY = event.touches[0].clientY;
+  } else {
+    clientX = event.clientX;
+    clientY = event.clientY;
+  }
+  
+  // ✅ FIX: Use improved NDC conversion
+  const mouse = this.getScreenToNDC(clientX, clientY);
+  this.raycaster.setFromCamera(mouse, this.camera);
+  
+  // -----------------------------------------------
+  // ROTATION ARROWS
+  // -----------------------------------------------
+  if (this.rotationRing && this.showRotationRing) {
+    const arrowIntersects = this.raycaster.intersectObject(
+      this.rotationRing,
+      true,
+    );
+    if (arrowIntersects.length > 0) {
+      const intersected = arrowIntersects[0].object;
+      if (intersected.userData.isRotationArrow) {
+        this.controls.enabled = false;
+        this.isRotatingModel = true;
+        this.isRotating = true;
+        this.rotationStartMouse.copy(mouse);
+        this.rotationStartAngle = this.modelRotation.y;
+        intersected.material.color.setHex(0xff6600);
+        return;
+      }
+    }
+  }
+  
+  // -----------------------------------------------
+  // MODEL DRAGGING
+  // -----------------------------------------------
+  if (this.model) {
+    const intersects = this.raycaster.intersectObject(this.model, true);
+    if (intersects.length > 0) {
+      this.controls.enabled = false;
+      this.isDraggingModel = true;
+      this.isDragging = true;
+      this.isDampingDrag = false;
+      
+      // ✅ FIX: Store initial screen position for velocity tracking
+      this.dragStartMouse.copy(mouse);
+      this.lastScreenCoords = mouse.clone();
+      this.dragVelocity.set(0, 0);
+      
+      // ✅ FIX: Use model's current position as reference
+      this.dragStartPosition.set(
+        this.model.position.x,
+        this.model.position.z,
+      );
+      
+      // ✅ FIX: Setup fixed drag plane
+      this.setupDragPlane();
+      
+      // ✅ FIX: Calculate offset from model center to intersection point
+      const hitPoint = intersects[0].point.clone();
+      this.dragOffset = new THREE.Vector3().subVectors(
+        hitPoint,
+        this.model.position,
+      );
+      
+      console.log('✅ Drag started at model position:', {
+        x: this.model.position.x.toFixed(2),
+        z: this.model.position.z.toFixed(2)
+      });
+      
+      return;
+    }
+  }
+},
+
+// ============================================================================
+// FIX 4: Improved onMouseMove with Better Tracking
+// ============================================================================
+
+onMouseMove(event) {
+  if (!this.isDraggingModel && !this.isRotatingModel) return;
+  event.preventDefault();
+  
+  // ✅ FIX: Get consistent screen coordinates
+  let clientX, clientY;
+  if (event.touches && event.touches.length > 0) {
+    clientX = event.touches[0].clientX;
+    clientY = event.touches[0].clientY;
+  } else {
+    clientX = event.clientX;
+    clientY = event.clientY;
+  }
+  
+  // ✅ FIX: Use improved NDC conversion
+  const mouse = this.getScreenToNDC(clientX, clientY);
+  
+  // ============================================================
+  // MODEL DRAGGING
+  // ============================================================
+  if (this.isDraggingModel) {
+    // ✅ FIX: Use fixed drag plane instead of variable one
+    this.raycaster.setFromCamera(mouse, this.camera);
+    const worldPoint = new THREE.Vector3();
+    
+    // ✅ FIX: Use the fixed drag plane
+    if (this.raycaster.ray.intersectPlane(this.dragPlaneFixed, worldPoint)) {
+      // ✅ FIX: Apply offset to get model center
+      worldPoint.sub(this.dragOffset);
+      
+      // ✅ FIX: Calculate velocity for smooth damping
+      if (this.lastScreenCoords) {
+        this.dragVelocity.subVectors(mouse, this.lastScreenCoords);
+      }
+      this.lastScreenCoords.copy(mouse);
+      
+      // ✅ FIX: Update model position smoothly
+      this.model.position.x = worldPoint.x;
+      this.model.position.z = worldPoint.z;
+      
+      // ✅ FIX: Recalculate floor height at new position
+      const { a, b, c, d } = this.planeEquation;
+      let floorY;
+      if (Math.abs(b) > 0.001) {
+        floorY = -(a * worldPoint.x + c * worldPoint.z + d) / b;
       } else {
-        clientX = event.clientX;
-        clientY = event.clientY;
+        floorY = this.floorData.floor_plane.height;
       }
-      const mouse = new THREE.Vector2();
-      const rect = this.renderer.domElement.getBoundingClientRect();
-      mouse.x = ((clientX - rect.left) / rect.width) * 2 - 1;
-      mouse.y = -((clientY - rect.top) / rect.height) * 2 + 1;
-      this.raycaster.setFromCamera(mouse, this.camera);
-      // -----------------------------------------------
-      // ROTATION ARROWS
-      // -----------------------------------------------
-      if (this.rotationRing && this.showRotationRing) {
-        const arrowIntersects = this.raycaster.intersectObject(
-          this.rotationRing,
-          true,
-        );
-        if (arrowIntersects.length > 0) {
-          const hitPoint = arrowIntersects[0].point.clone();
-          const intersected = arrowIntersects[0].object;
-          if (intersected.userData.isRotationArrow) {
-            this.controls.enabled = false;
-            this.isRotatingModel = true;
-            this.isRotating = true;
-            this.rotationStartMouse.copy(mouse);
-            this.rotationStartAngle = this.modelRotation.y;
-            intersected.material.color.setHex(0xff6600);
-            return;
-          }
-        }
-      }
-      // -----------------------------------------------
-      // MODEL DRAGGING
-      // -----------------------------------------------
-      if (this.model) {
-        const intersects = this.raycaster.intersectObject(this.model, true);
-        if (intersects.length > 0) {
-          this.controls.enabled = false;
-          this.isDraggingModel = true;
-          this.isDragging = true;
-          this.dragStartMouse.copy(mouse);
-          this.dragStartPosition.set(
-            this.model.position.x,
-            this.model.position.z,
-          );
-          // -----------------------------------------------
-          // :white_check_mark: FIX: Keep pointer coordinate locked to same spot
-          // -----------------------------------------------
-          const hitPoint = intersects[0].point.clone();
-          // Ground plane for drag
-          this.dragPlane = new THREE.Plane();
-          this.dragPlane.setFromNormalAndCoplanarPoint(
-            new THREE.Vector3(0, 1, 0),
-            hitPoint,
-          );
-          // Store offset between model origin & hit point
-          this.dragOffset = new THREE.Vector3().subVectors(
-            hitPoint,
-            this.model.position,
-          );
-          // -----------------------------------------------
-          return;
-        }
-      }
-    },
-    onMouseMove(event) {
-      if (!this.isDraggingModel && !this.isRotatingModel) return;
-      event.preventDefault();
-      // READ POINTER (mouse / touch)
-      let clientX, clientY;
-      if (event.touches && event.touches.length > 0) {
-        clientX = event.touches[0].clientX;
-        clientY = event.touches[0].clientY;
-      } else {
-        clientX = event.clientX;
-        clientY = event.clientY;
-      }
-      const mouse = new THREE.Vector2();
-      const rect = this.renderer.domElement.getBoundingClientRect();
-      mouse.x = ((clientX - rect.left) / rect.width) * 2 - 1;
-      mouse.y = -((clientY - rect.top) / rect.height) * 2 + 1;
-      // MODEL DRAGGING
+      
+      // ✅ FIX: Account for current model scale
+      const finalScale = this.baseModelScale * this.modelScale;
+      const modelBottomWorldOffset = this.modelBoundingBox.min.y * finalScale;
+      this.model.position.y = floorY - modelBottomWorldOffset;
+      
+      // ✅ FIX: Check bounds
+      this.isOnValidFloor = this.isPositionOnFloor(worldPoint);
+      
+      // ✅ FIX: Update rotation ring position
+      this.updateRotationRingPosition();
+      
+      console.log(`📍 Model pos: x=${this.model.position.x.toFixed(2)}, z=${this.model.position.z.toFixed(2)}`);
+    }
+  }
+  
+  // ============================================================
+  // MODEL ROTATION
+  // ============================================================
+  else if (this.isRotatingModel) {
+    // ✅ FIX: Improved rotation calculation with damping
+    const deltaX = mouse.x - this.rotationStartMouse.x;
+    
+    // ✅ FIX: Scale rotation by canvas width for consistent feel
+    const canvasWidth = this.renderer.domElement.clientWidth;
+    const rotationSensitivity = (canvasWidth / 800) * 180; // Normalize to 800px baseline
+    
+    this.modelRotation.y = this.rotationStartAngle + (deltaX * rotationSensitivity);
+    this.model.rotation.y = THREE.MathUtils.degToRad(this.modelRotation.y);
+  }
+},
 
-      if (this.isDraggingModel) {
-        this.raycaster.setFromCamera(mouse, this.camera);
-        const worldPoint = new THREE.Vector3();
+// ============================================================================
+// FIX 5: Improved onMouseUp with Velocity Damping
+// ============================================================================
 
-        if (this.raycaster.ray.intersectPlane(this.dragPlane, worldPoint)) {
-          worldPoint.sub(this.dragOffset);
-
-          this.model.position.x = worldPoint.x;
-          this.model.position.z = worldPoint.z;
-
-          // FIXED: Use the same calculation as applyModelScale
-          const { a, b, c, d } = this.planeEquation;
-          let floorY;
-          if (Math.abs(b) > 0.001) {
-            floorY = -(a * worldPoint.x + c * worldPoint.z + d) / b;
-          } else {
-            floorY = this.floorData.floor_plane.height;
-          }
-
-          // FIXED: Account for current model scale when positioning
-          const finalScale = this.baseModelScale * this.modelScale;
-          const modelBottomWorldOffset =
-            this.modelBoundingBox.min.y * finalScale;
-          this.model.position.y = floorY - modelBottomWorldOffset;
-
-          this.updateRotationRingPosition();
-          this.isOnValidFloor = true;
-        }
-      }
-
-      // ------------------------------------------------------------
-      // MODEL ROTATION
-      // ------------------------------------------------------------
-      else if (this.isRotatingModel) {
-        const deltaX = mouse.x - this.rotationStartMouse.x;
-        this.modelRotation.y = this.rotationStartAngle + deltaX * 180;
-        this.model.rotation.y = THREE.MathUtils.degToRad(this.modelRotation.y);
-      }
-    },
-    // onMouseUp(event) {
-    //   if (this.isDraggingModel) {
-    //     this.controls.enabled = true;
-    //     this.isDraggingModel = false;
-    //     this.isDragging = false;
-        
-    //   }
-
-    //   if (this.isRotatingModel) {
-    //     this.controls.enabled = true;
-    //     this.isRotatingModel = false;
-    //     this.isRotating = false;
-
-    //     this.rotationArrows.forEach((group) => {
-    //       group.children.forEach((arrow) => {
-    //         if (arrow.userData.isRotationArrow) {
-    //           arrow.material.color.setHex(arrow.userData.originalColor);
-    //         }
-    //       });
-    //     });
-    //   }
-    // },
-
-    onMouseUp(event) {
+onMouseUp(event) {
   const wasDragging = this.isDraggingModel;
   const wasRotating = this.isRotatingModel;
 
@@ -2303,18 +2612,14 @@ setupModelBounds() {
       this.modelPosition.x = this.model.position.x;
       this.modelPosition.y = this.model.position.z;
       
+      // ✅ FIX: Store exact transform
       this.lastKnownModelPosition = this.model.position.clone();
       this.lastKnownModelRotation = this.model.rotation.clone();
       this.lastKnownModelScale = this.model.scale.clone();
       
-      console.log("✅ Position updated after drag:", {
-        x: this.modelPosition.x.toFixed(2),
-        z: this.modelPosition.y.toFixed(2)
-      });
-      console.log("✅ 3D Position stored:", {
-        x: this.lastKnownModelPosition.x.toFixed(2),
-        y: this.lastKnownModelPosition.y.toFixed(2),
-        z: this.lastKnownModelPosition.z.toFixed(2)
+      console.log("✅ Drag ended - Position:", {
+        x: this.model.position.x.toFixed(2),
+        z: this.model.position.z.toFixed(2)
       });
       
       // 🔧 EMIT to parent
@@ -2350,14 +2655,8 @@ setupModelBounds() {
       this.lastKnownModelPosition = this.model.position.clone();
       this.lastKnownModelScale = this.model.scale.clone();
       
-      console.log("✅ Rotation updated:", this.modelRotation.y.toFixed(2), "degrees");
-      console.log("✅ Rotation stored (radians):", {
-        x: this.lastKnownModelRotation.x.toFixed(2),
-        y: this.lastKnownModelRotation.y.toFixed(2),
-        z: this.lastKnownModelRotation.z.toFixed(2)
-      });
+      console.log("✅ Rotation ended:", this.modelRotation.y.toFixed(2), "degrees");
       
-      // 🔧 EMIT to parent after rotation
       this.$emit('model-transform-updated', {
         position: {
           x: this.model.position.x,
@@ -2386,17 +2685,12 @@ setupModelBounds() {
     });
   }
 
-  // Force a render update if interaction just ended
-  if ((wasDragging || wasRotating) && this.needsRenderUpdate) {
-    this.$nextTick(() => {
-      if (this.renderer && this.scene && this.camera) {
-        this.renderer.render(this.scene, this.camera);
-      }
-      this.needsRenderUpdate = false;
-    });
+  // ✅ FIX: Clear cached bounds on interaction end
+  if (wasDragging || wasRotating) {
+    this.canvasBounds = null; // Recalculate on next interaction
   }
-},
-
+}
+,
     fitCameraToModel() {
       // Keep camera position fixed to match background image
       // Don't move camera to fit model

@@ -1415,7 +1415,7 @@ export default {
         this.isARActive = false;
         this.isFullScreen = false;
       } else {
-        window.history.back();
+        this.$route.back();
       }
     },
 
