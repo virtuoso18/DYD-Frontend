@@ -1,22 +1,181 @@
 <template>
 
-  <CommentsModal
-      :isOpen="showCommentsModal"
-      :post="selectedPost || {}"
-      @close="closeModal"
-      @commentAdded="handleCommentAdded"
-      @likeToggled="handleLikeToggled"
-    />
-
   
-<RequestCreateRoom 
-      ref="roomModal"
-      :canMessageBusiness="canMessageBusiness"
-      @close="handleClose"
-      @submit="handleSubmit"
-    />
+    <!-- Blur Overlay when modal is active -->
+    <div 
+      v-if="showPlanBlockModal" 
+      class="plan-block-overlay"
+    >
+      <!-- Modal -->
+      <div class="plan-block-modal">
+        <div class="modal-content">
+         <div class="mb-5 flex justify-center">
+  <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#ff4d4f" stroke-width="2">
+    <g>
+      <circle cx="6" cy="12" r="3" fill="none" class="animate-pulse" style="animation-delay: 0s;"/>
+      <circle cx="12" cy="12" r="3" fill="none" class="animate-pulse" style="animation-delay: 0.5s;"/>
+      <circle cx="18" cy="12" r="3" fill="none" class="animate-pulse" style="animation-delay: 1s;"/>
+      <line x1="3" y1="12" x2="21" y2="12" stroke-dasharray="4 4" class="opacity-50"/>
+    </g>
+  </svg>
+</div>
+          <h2>Upgrade Required</h2>
+          <p>Your current plan <strong>({{ currentPlanName }})</strong> doesn't have access to this store page.</p>
+          <p>Please upgrade to a premium plan to view this content.</p>
+          
+          <div class="modal-actions">
+            <a-button type="primary" size="large" @click="goToPricing">
+              Upgrade Plan
+            </a-button>
+            <a-button size="large" @click="goBack">
+              Go Back
+            </a-button>
+          </div>
+        </div>
+      </div>
+    </div>
 
-    <div class="!p-0  ">
+ <div v-if="showPlanBlockModal">
+
+      
+
+    </div>
+
+   <div v-else class="!p-0  ">
+
+
+     <CommentsModal
+         :isOpen="showCommentsModal"
+         :post="selectedPost || {}"
+         @close="closeModal"
+         @commentAdded="handleCommentAdded"
+         @likeToggled="handleLikeToggled"
+       />
+   
+     
+   <RequestCreateRoom 
+         ref="roomModal"
+         :canMessageBusiness="canMessageBusiness"
+         @close="handleClose"
+         @submit="handleSubmit"
+       />
+   </div> 
+
+
+   <!-- Skeleton Loading State for Business Page -->
+<div v-if=showPlanBlockModal  class="!p-0 md:!p-2 animate-pulse">
+  <!-- Hero Section Skeleton -->
+  <div class="business-hero relative overflow-hidden h-[250px] bg-gray-200">
+    <div class="absolute inset-0 flex flex-col items-center justify-center">
+      <div class="w-[70px] h-[70px] rounded-full bg-gray-300 mb-4"></div>
+      <div class="h-6 w-48 bg-gray-300 rounded mb-2"></div>
+      <div class="h-4 w-32 bg-gray-300 rounded"></div>
+    </div>
+  </div>
+
+  <br>
+
+  <!-- Business Info Section Skeleton -->
+  <div class="max-w-1200px mx-auto">
+    <div class="p-10">
+      <div class="bg-gray-100 rounded-lg p-10">
+        <div class="h-5 w-32 bg-gray-300 rounded mb-3"></div>
+        <div class="h-4 w-full bg-gray-300 rounded mb-2"></div>
+        <div class="h-4 w-3/4 bg-gray-300 rounded"></div>
+      </div>
+    </div>
+
+    <br>
+
+    <!-- Services Section Skeleton -->
+    <div class="p-10">
+      <div class="bg-gray-100 rounded-lg p-10">
+        <div class="h-4 w-28 bg-gray-300 rounded mb-3"></div>
+        <div class="space-y-2">
+          <div class="h-3 w-40 bg-gray-300 rounded"></div>
+          <div class="h-3 w-36 bg-gray-300 rounded"></div>
+          <div class="h-3 w-32 bg-gray-300 rounded"></div>
+        </div>
+      </div>
+    </div>
+
+    <br>
+
+    <!-- Contact Section Skeleton -->
+    <div class="p-10">
+      <div class="bg-gray-100 rounded-lg p-10">
+        <div class="h-4 w-32 bg-gray-300 rounded mb-4"></div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <div class="h-3 w-40 bg-gray-300 rounded mb-2"></div>
+            <div class="h-3 w-36 bg-gray-300 rounded mb-2"></div>
+            <div class="h-3 w-32 bg-gray-300 rounded"></div>
+          </div>
+          <div>
+            <div class="flex gap-2">
+              <div class="h-8 w-16 bg-gray-300 rounded"></div>
+              <div class="h-8 w-16 bg-gray-300 rounded"></div>
+              <div class="h-8 w-16 bg-gray-300 rounded"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <br>
+
+    <!-- Reviews & Map Section Skeleton -->
+    <div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-10">
+        <!-- Ratings Skeleton -->
+        <div>
+          <div class="flex flex-col items-center">
+            <div class="h-8 w-16 bg-gray-300 rounded mb-2"></div>
+            <div class="h-4 w-32 bg-gray-300 rounded mb-2"></div>
+            <div class="h-3 w-24 bg-gray-300 rounded"></div>
+          </div>
+        </div>
+        
+        <!-- Map Skeleton -->
+        <div>
+          <div class="bg-gray-200 rounded-lg w-full h-[200px]"></div>
+        </div>
+      </div>
+    </div>
+
+    <br>
+
+    <!-- Products Section Skeleton -->
+    <div class="p-10">
+      <div class="h-6 w-32 bg-gray-300 rounded mb-4"></div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div v-for="n in 4" :key="n" class="bg-gray-100 rounded-lg p-3">
+          <div class="h-32 bg-gray-300 rounded mb-2"></div>
+          <div class="h-4 w-3/4 bg-gray-300 rounded mb-2"></div>
+          <div class="h-3 w-1/2 bg-gray-300 rounded"></div>
+        </div>
+      </div>
+    </div>
+
+    <br>
+
+    <!-- Community Posts Skeleton -->
+    <div class="p-10">
+      <div class="h-6 w-48 bg-gray-300 rounded mb-4"></div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div v-for="n in 3" :key="n" class="border border-gray-200 rounded-lg p-2">
+          <div class="h-[200px] bg-gray-300 rounded mb-2"></div>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-gray-300"></div>
+            <div class="h-4 w-24 bg-gray-300 rounded"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div v-else class="!p-0  ">
         <!-- Loading State -->
         <div v-if="loading" style="text-align: center; padding: 50px;">
             <a-spin size="large" />
@@ -650,7 +809,11 @@ export default {
         }
     },
     data() {
-        return {
+      return {
+
+        showPlanBlockModal: false,
+    currentPlanName: '',
+    business_available_actions: null,
             
             imageLoadedMap: {},
            businessRatings: {
@@ -700,15 +863,20 @@ export default {
         }
     },
     async mounted() {
-        try {
-            await this.loadBusinessData();
-            this.loadBusinessRatings()
-            this.fetchCommunityPosts()
-        } catch (error) {
-            console.error('Error in mounted:', error);
-            this.error = 'Failed to load page data';
-        }
-    },
+  try {
+    // ✅ CALL API FIRST
+    await this.loadBrandPurchasedPlanDetails();
+    
+    // Then load other data
+    await this.loadBusinessData();
+    this.loadBusinessRatings();
+    this.fetchCommunityPosts();
+  } catch (error) {
+    console.error('Error in mounted:', error);
+    this.error = 'Failed to load page data';
+  }
+},
+
     watch: {
         '$route'() {
             this.productsPage = 1;
@@ -718,7 +886,94 @@ export default {
             this.loadBusinessProducts(1);
           }
     },
-    methods: {
+  methods: {
+
+async loadBrandPurchasedPlanDetails() {
+  try {
+    const brandSlug = this.$route.params.buisness_name;
+    
+    if (!brandSlug) {
+      console.warn('⚠️ No brand slug found in route params');
+      return;
+    }
+    
+    const url = `${this.$store.state.root_api}subscription/api/get-business-plan-details/${brandSlug}/`;
+    
+    
+    
+    const token = localStorage.getItem('token');
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Token ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    
+    
+    // Now check the Network tab to see the raw response
+    // Look for the request to: get-business-plan-details/${brandSlug}/
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    
+    // DEBUGGER: After parsing JSON, inspect the result object
+   
+    
+    console.log('📦 Plan Details Result:', result);
+    
+    // Store plan name
+    this.currentPlanName = result.plan_name || 'Unknown';
+    
+    // Store business actions
+    if (result.business_available_actions) {
+      this.business_available_actions = result.business_available_actions;
+    }
+    
+    // CHECK IF PLAN IS BASIC OR FALSE
+    const planName = (result.plan_name || '').toLowerCase();
+    const isBasicPlan = planName === 'basic' || planName === 'false' || planName === false;
+    
+    // DEBUGGER: Before setting modal state
+    // debugger;
+    
+    if (isBasicPlan) {
+      console.log('❌ BLOCKING ACCESS - Basic plan detected');
+      this.showPlanBlockModal = true;
+    } else {
+      console.log('✅ ACCESS GRANTED - Premium plan detected');
+      this.showPlanBlockModal = false;
+    }
+
+    // DEBUGGER: After setting modal state
+    // debugger;
+
+  } catch (error) {
+    console.error('❌ Error loading plan details:', error);
+    // On error, block access as safety measure
+    this.showPlanBlockModal = true;
+    this.currentPlanName = 'Unknown';
+    
+    // DEBUGGER: Error state
+    // debugger;
+  }
+},
+  
+  // ✅ ADD MODAL ACTION METHODS
+  goToPricing() {
+    this.$router.push('/pricing');
+  },
+  
+  goBack() {
+    this.$router.go(-1);
+  },
+
+
+    
       async fetchCommunityPosts(page = 1) {
     try {
       
@@ -860,7 +1115,7 @@ sharePost(post) {
                     ratings: result.data.ratings || []
                 };
                 
-                console.log('✅ Business ratings loaded:', this.businessRatings);
+                // console.log('✅ Business ratings loaded:', this.businessRatings);
             } else {
                 throw new Error(result.message || 'Failed to fetch ratings');
             }
@@ -1244,7 +1499,13 @@ sharePost(post) {
                     }
                     else{
                       await this.loadBusinessProducts(1);
-                      this.showModal();
+                      // if ()
+                      // {
+                          this.showModal();
+                        
+                        // }
+
+                      
                     }
                     // Set business location
                     this.businessLocation = {
@@ -1315,6 +1576,123 @@ sharePost(post) {
   align-items: center;
   z-index: 2;
 }
+
+/* ✅ ADD THESE STYLES */
+.plan-block-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(252, 250, 250, 0.436);
+  backdrop-filter: blur(10px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.plan-block-modal {
+  background: white;
+  border-radius: 16px;
+  padding: 40px;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.rotate-prohibited {
+  animation: slowSpin 4s linear infinite;
+}
+
+@keyframes slowSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.plan-block-modal h2 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #262626;
+  margin-bottom: 16px;
+}
+
+.plan-block-modal p {
+  font-size: 16px;
+  color: #595959;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.plan-block-modal p strong {
+  color: #ff4d4f;
+  font-weight: 600;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 30px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.modal-actions .ant-btn {
+  min-width: 140px;
+  height: 44px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+}
+
+.content-blurred {
+  filter: blur(8px);
+  pointer-events: none;
+  user-select: none;
+}
+
+@media (max-width: 768px) {
+  .plan-block-modal {
+    padding: 30px 20px;
+  }
+  
+  .plan-block-modal h2 {
+    font-size: 22px;
+  }
+  
+  .plan-block-modal p {
+    font-size: 14px;
+  }
+  
+  .modal-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .modal-actions .ant-btn {
+    width: 100%;
+  }
+}
+
 
 .pinned-badge {
   position: absolute;

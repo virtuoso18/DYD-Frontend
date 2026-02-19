@@ -20,8 +20,8 @@
               <div class="instruction-content">
                 <span class="mode-icon">{{ getModeIcon() }}</span>
                 <div class="instruction-text">
-                  <strong>{{ getModeTitle() }}</strong>
-                  <span>{{ getModeInstructions() }}</span>
+                  <strong class="font-poppins">{{ getModeTitle() }}</strong>
+                  <span class="font-poppins">{{ getModeInstructions() }}</span>
                 </div>
               </div>
               <div class="status-indicator">
@@ -123,7 +123,7 @@
           <div class="control-sec-panel-desktop">
             <div class="left-controls">
               <div class="mode-section">
-                <span class="control-label">Mode:</span>
+                <span class="control-label font-poppins">Mode:</span>
                 <a-radio-group
                   v-model:value="removalMode"
                   button-style="solid"
@@ -144,7 +144,7 @@
                 <template v-if="removalMode === 'draw'">
                   <div class="control-group flex justify-between w-full">
                     <a-button
-                      class="w-2/5 button-flex-with-center"
+                      class="w-2/5 button-flex-with-center font-poppins"
                       @click="clearDrawing"
                       :disabled="isProcessing || drawingHistory.length === 0"
                       size="small"
@@ -164,7 +164,7 @@
                   </div>
 
                   <div class="control-group">
-                    <span class="control-label">Brush:</span>
+                    <span class="control-label font-poppins">Brush:</span>
                     <a-slider
                       v-model:value="brushSize"
                       :min="5"
@@ -178,11 +178,12 @@
 
                   <div class="control-group w-full">
                     <a-button
-                      class="w-full"
+                      class="w-full font-poppins"
                       :type="useEraser ? 'primary' : 'default'"
                       @click="toggleEraser"
                       :disabled="isProcessing"
                       size="small"
+
                     >
                       🧹 Eraser
                     </a-button>
@@ -300,14 +301,14 @@
               </div>
               <div class="cancel-remove-sec w-full flex justify-between">
                 <a-button
-                  class="2/5"
+                  class="2/5 font-poppins"
                   @click="handleCancel"
                   :disabled="isProcessing"
                 >
                   Cancel
                 </a-button>
                 <a-button
-                  clas="w-2/5"
+                  clas="w-2/5 font-poppins"
                   type="primary"
                   @click="handleSubmit"
                   :loading="isProcessing"
@@ -323,310 +324,326 @@
     </a-modal>
 
     <!-- Mobile Drawer -->
-    <a-drawer
-      v-else
-      v-model:open="localVisible"
-      title="Object Removal Tool"
-      placement="bottom"
-      :height="'95vh'"
-      @close="handleCancel"
-      :body-style="{ padding: '16px', overflow: 'auto' }"
-      class="removal-drawer"
+   <a-drawer
+  v-else
+  v-model:open="localVisible"
+  title="Object Removal Tool"
+  placement="bottom"
+  :height="'95vh'"
+  @close="handleCancel"
+  :body-style="{ padding: '16px', overflow: 'auto' }"
+  class="removal-drawer font-poppins"
+>
+  <div class="flex flex-col !gap-3 !h-full">
+    <!-- Mode Toggle -->
+    <div class="!px-3 !py-3 flex items-center justify-between bg-white border border-gray-200 rounded">
+      <span class="!text-[13px] font-poppins !font-medium !text-gray-600 whitespace-nowrap">Mode:</span>
+      <a-radio-group
+        v-model:value="removalMode"
+        button-style="solid"
+        :disabled="isProcessing"
+        size="small"
+        class="font-poppins"
+      >
+        <a-radio-button value="draw">✏️ Draw</a-radio-button>
+        <a-radio-button value="sam2">🎯 SAM-2</a-radio-button>
+        <a-radio-button value="sam3">🎯 SAM-3</a-radio-button>
+      </a-radio-group>
+    </div>
+
+    <!-- Instructions -->
+    <div
+      class="flex items-center justify-between !px-4 !py-3 rounded border text-[13px] font-normal transition-colors"
+      :class="{
+        'bg-gradient-to-r from-gray-100 to-white border-gray-200 !text-gray-900': removalMode === 'draw',
+        'bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-300 !text-gray-900': removalMode === 'sam2' || removalMode === 'sam3'
+      }"
     >
-      <div class="removal-container-mobile">
-        <!-- Mode Toggle -->
-        <div class="mobile-mode-section">
-          <span class="control-label">Mode:</span>
-          <a-radio-group
-            v-model:value="removalMode"
-            button-style="solid"
-            :disabled="isProcessing"
-            size="small"
-          >
-            <a-radio-button value="draw">✏️ Draw</a-radio-button>
-            <a-radio-button value="sam2">🎯 SAM-2</a-radio-button>
-            <a-radio-button value="sam3">🎯 SAM-3</a-radio-button>
-          </a-radio-group>
-        </div>
-
-        <!-- Instructions -->
-        <div class="instructions-banner" :class="removalMode">
-          <div class="instruction-content">
-            <span class="mode-icon">{{ getModeIcon() }}</span>
-            <div class="instruction-text">
-              <strong>{{ getModeTitle() }}</strong>
-              <span>{{ getModeInstructions() }}</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Canvas -->
-        <div class="canvas-wrapper-mobile" ref="canvasWrapperMobile">
-          <div class="canvas-overlay">
-            <canvas
-              ref="drawCanvasMobile"
-              @mousedown="handleCanvasMouseDown"
-              @mousemove="handleCanvasMouseMove"
-              @mouseup="handleCanvasMouseUp"
-              @mouseleave="handleCanvasMouseLeave"
-              @click="handleCanvasClick"
-              @touchstart="handleCanvasMouseDown"
-              @touchmove="handleCanvasMouseMove"
-              @touchend="handleCanvasMouseUp"
-              :style="{ cursor: getCursorStyle() }"
-            ></canvas>
-
-            <!-- Draw Mode Cursor -->
-            <div
-              v-if="showCursor && removalMode === 'draw'"
-              class="custom-cursor"
-              :style="{
-                left: cursorX + 'px',
-                top: cursorY + 'px',
-                width: brushSize * displayScale + 'px',
-                height: brushSize * displayScale + 'px',
-                borderColor: useEraser ? '#ffffff' : '#ff4444',
-                background: useEraser
-                  ? 'rgba(255, 255, 255, 0.1)'
-                  : 'rgba(255, 68, 68, 0.15)',
-              }"
-            ></div>
-
-            <!-- SAM Points -->
-            <div
-              v-for="(point, index) in samPoints"
-              :key="'sam-point-' + index"
-              class="sam-point-indicator"
-              :class="{ 'point-active': index === samPoints.length - 1 }"
-              :style="{
-                left: point.displayX + 'px',
-                top: point.displayY + 'px',
-              }"
-            >
-              <span class="point-number">{{ index + 1 }}</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Controls Panel -->
-        <div class="mobile-controls-panel">
-          <!-- Draw Controls -->
-          <template v-if="removalMode === 'draw'">
-            <div class="control-section">
-              <div class="control-row">
-                <a-button
-                  @click="clearDrawing"
-                  :disabled="isProcessing || drawingHistory.length === 0"
-                  size="small"
-                  style="
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                  "
-                  block
-                >
-                  <template #icon><DeleteOutlined /></template>
-                  Clear
-                </a-button>
-                <a-button
-                  @click="undoLastStroke"
-                  :disabled="drawingHistory.length === 0 || isProcessing"
-                  size="small"
-                  style="
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                  "
-                  block
-                >
-                  <template #icon><UndoOutlined /></template>
-                  Undo
-                </a-button>
-              </div>
-
-              <div class="control-row">
-                <span class="control-label">Brush: {{ brushSize }}px</span>
-                <a-slider
-                  style="width: 100%"
-                  v-model:value="brushSize"
-                  :min="5"
-                  :max="100"
-                  :step="5"
-                  :disabled="isProcessing"
-                />
-              </div>
-
-              <div class="control-row">
-                <a-button
-                  :type="useEraser ? 'primary' : 'default'"
-                  @click="toggleEraser"
-                  :disabled="isProcessing"
-                  block
-                >
-                  🧹 {{ useEraser ? "Eraser On" : "Eraser" }}
-                </a-button>
-              </div>
-            </div>
-          </template>
-
-          <!-- SAM-2 Controls -->
-          <template v-if="removalMode === 'sam2'">
-            <div class="control-section">
-              <div class="control-row">
-                <a-button
-                  @click="clearSAMPoints"
-                  :disabled="isProcessing || samPoints.length === 0"
-                  size="small"
-                  block
-                  style="
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                  "
-                >
-                  <template #icon><DeleteOutlined /></template>
-                  Clear ({{ samPoints.length }})
-                </a-button>
-                <a-button
-                  @click="undoLastSAMPoint"
-                  :disabled="samPoints.length === 0 || isProcessing"
-                  size="small"
-                  block
-                  style="
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                  "
-                >
-                  <template #icon><UndoOutlined /></template>
-                  Undo
-                </a-button>
-              </div>
-
-              <div class="control-row">
-                <span class="control-label"
-                  >Confidence: {{ samConfidence.toFixed(2) }}</span
-                >
-                <a-slider
-                  style="width: 100%"
-                  v-model:value="samConfidence"
-                  :min="0"
-                  :max="1"
-                  :step="0.05"
-                  :disabled="isProcessing"
-                />
-              </div>
-
-              <a-button
-                @click="fetchSAMMask"
-                :loading="isFetchingSAMMask"
-                :disabled="samPoints.length === 0 || isProcessing"
-                type="primary"
-                block
-              >
-                🎯 Detect
-              </a-button>
-            </div>
-          </template>
-
-          <!-- SAM-3 Controls -->
-          <template v-if="removalMode === 'sam3'">
-            <div class="control-section">
-              <div class="control-row">
-                <a-button
-                  @click="clearSAM3Masks"
-                  :disabled="isProcessing || sam3MasksList.length === 0"
-                  size="small"
-                  block
-                  style="
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                  "
-                >
-                  <DeleteOutlined />
-                  Clear ({{ sam3MasksList.length }})
-                </a-button>
-                <a-button
-                  @click="undoLastSAM3Mask"
-                  :disabled="sam3MasksList.length === 0 || isProcessing"
-                  size="small"
-                  block
-                  style="
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                  "
-                >
-                  <template #icon><UndoOutlined /></template>
-                  Undo
-                </a-button>
-              </div>
-
-              <div class="control-row">
-                <span class="control-label"
-                  >Confidence: {{ samConfidence.toFixed(2) }}</span
-                >
-                <a-slider
-                  style="width: 100%"
-                  v-model:value="samConfidence"
-                  :min="0"
-                  :max="1"
-                  :step="0.05"
-                  :disabled="isProcessing"
-                />
-              </div>
-
-              <a-input
-                v-model:value="sam3TextPrompt"
-                placeholder="e.g., person, chair, table..."
-                :disabled="isProcessing"
-                size="small"
-              />
-
-              <a-button
-                @click="fetchSAM3Mask"
-                :loading="isFetchingSAMMask"
-                :disabled="!sam3TextPrompt || isProcessing"
-                type="primary"
-                block
-              >
-                🎯 Detect
-              </a-button>
-            </div>
-          </template>
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="mobile-action-buttons">
-          <a-button @click="handleCancel" :disabled="isProcessing" block>
-            Cancel
-          </a-button>
-          <a-button
-            type="primary"
-            @click="handleSubmit"
-            :loading="isProcessing"
-            :disabled="!hasValidMask"
-            block
-          >
-            ✨ Remove Area
-          </a-button>
-        </div>
-
-        <!-- Processing Overlay -->
-        <div
-          v-if="isProcessing || isFetchingSAMMask"
-          class="processing-overlay"
-        >
-          <a-spin size="large" />
-          <p>
-            {{
-              isFetchingSAMMask ? "Generating mask..." : "Processing removal..."
-            }}
-          </p>
+      <div class="flex items-center !gap-3">
+        <span class="text-2xl drop-shadow-md">{{ getModeIcon() }}</span>
+        <div class="flex flex-col !gap-1">
+          <strong class="!text-[12px] font-poppins font-medium uppercase tracking-[0.5px] !text-gray-900">
+            {{ getModeTitle() }}
+          </strong>
+          <span class="!text-[12px] font-poppins !text-gray-600">
+            {{ getModeInstructions() }}
+          </span>
         </div>
       </div>
-    </a-drawer>
+      <span
+        class="bg-white/60 !px-3 !py-1 rounded !text-[11px] !font-medium border border-black/10 tracking-[0.3px] whitespace-nowrap !text-gray-900"
+      >
+        {{ removalMode.toUpperCase() }}
+      </span>
+    </div>
+
+    <!-- Canvas -->
+    <div
+      class="relative w-full !h-[800px] rounded border border-gray-200  flex items-center justify-center bg-gray-100 !my-3"
+      ref="canvasWrapperMobile"
+    >
+      <div class="relative inline-block ">
+        <canvas
+          ref="drawCanvasMobile"
+          @mousedown="handleCanvasMouseDown"
+          @mousemove="handleCanvasMouseMove"
+          @mouseup="handleCanvasMouseUp"
+          @mouseleave="handleCanvasMouseLeave"
+          @click="handleCanvasClick"
+          @touchstart="handleCanvasMouseDown"
+          @touchmove="handleCanvasMouseMove"
+          @touchend="handleCanvasMouseUp"
+          :style="{ cursor: getCursorStyle() }"
+          class="block rounded-sm "
+        ></canvas>
+
+        <!-- Draw Mode Cursor -->
+        <div
+          v-if="showCursor && removalMode === 'draw'"
+          class="absolute rounded-full pointer-events-none z-[1000] shadow-[0_0_0_1px_rgba(255,255,255,0.5)] transition-[transform,opacity] duration-75 ease-out"
+          :style="{
+            left: cursorX + 'px',
+            top: cursorY + 'px',
+            width: brushSize * displayScale + 'px',
+            height: brushSize * displayScale + 'px',
+            borderWidth: '2px',
+            borderStyle: 'solid',
+            borderColor: useEraser ? '#ffffff' : '#ff4444',
+            background: useEraser
+              ? 'rgba(255, 255, 255, 0.1)'
+              : 'rgba(255, 68, 68, 0.15)',
+            transform: 'translate(-50%, -50%)'
+          }"
+        ></div>
+
+        <!-- SAM Points -->
+        <div
+          v-for="(point, index) in samPoints"
+          :key="'sam-point-' + index"
+          class="absolute w-6 h-6 bg-red-500 border-2 border-white rounded-full pointer-events-none z-[1000] flex items-center justify-center shadow-[0_2px_8px_rgba(0,0,0,0.4)] transition-all duration-200"
+          :class="{
+            'animate-[pulsePoint_1.5s_ease-in-out_infinite] bg-red-400':
+              index === samPoints.length - 1
+          }"
+          :style="{
+            left: point.displayX + 'px',
+            top: point.displayY + 'px',
+            transform: 'translate(-50%, -50%)'
+          }"
+        >
+          <span class="!text-white text-[11px] font-bold drop-shadow">
+            {{ index + 1 }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Controls Panel -->
+    <div class="!p-4 bg-white rounded border border-gray-200">
+      <!-- Draw Controls -->
+      <template v-if="removalMode === 'draw'">
+        <div class="flex flex-col !gap-3">
+          <div class="flex flex-wrap !gap-3">
+            <a-button
+              @click="clearDrawing"
+              :disabled="isProcessing || drawingHistory.length === 0"
+              size="small"
+              block
+              class="flex font-poppins justify-center items-center"
+            >
+              <template #icon><DeleteOutlined /></template>
+              Clear
+            </a-button>
+            <a-button
+              @click="undoLastStroke"
+              :disabled="drawingHistory.length === 0 || isProcessing"
+              size="small"
+              block
+              class="flex font-poppins justify-center items-center"
+            >
+              <template #icon><UndoOutlined /></template>
+              Undo
+            </a-button>
+          </div>
+
+          <div class="flex flex-wrap items-center !gap-3">
+            <span class="!text-[13px] font-poppins !font-medium !text-gray-600">
+              Brush: {{ brushSize }}px
+            </span>
+            <a-slider
+              class="flex-1"
+              v-model:value="brushSize"
+              :min="5"
+              :max="100"
+              :step="5"
+              :disabled="isProcessing"
+            />
+          </div>
+
+          <div class="flex font-poppins flex-wrap !gap-3">
+            <a-button
+              :type="useEraser ? 'primary' : 'default'"
+              @click="toggleEraser"
+              :disabled="isProcessing"
+              block
+              class="font-poppins"
+            >
+              🧹 {{ useEraser ? "Eraser On" : "Eraser" }}
+            </a-button>
+          </div>
+        </div>
+      </template>
+
+      <!-- SAM-2 Controls -->
+      <template v-if="removalMode === 'sam2'">
+        <div class="flex flex-col !gap-3">
+          <div class="flex flex-wrap !gap-3">
+            <a-button
+              @click="clearSAMPoints"
+              :disabled="isProcessing || samPoints.length === 0"
+              size="small"
+              block
+              class="flex font-poppins justify-center items-center"
+            >
+              <template #icon><DeleteOutlined /></template>
+              Clear ({{ samPoints.length }})
+            </a-button>
+            <a-button
+              @click="undoLastSAMPoint"
+              :disabled="samPoints.length === 0 || isProcessing"
+              size="small"
+              block
+              class="flex font-poppins justify-center items-center"
+            >
+              <template #icon><UndoOutlined /></template>
+              Undo
+            </a-button>
+          </div>
+
+          <div class="flex flex-wrap items-center !gap-3">
+            <span class="!text-[13px] font-poppins !font-medium !text-gray-600">
+              Confidence: {{ samConfidence.toFixed(2) }}
+            </span>
+            <a-slider
+              class="flex-1"
+              v-model:value="samConfidence"
+              :min="0"
+              :max="1"
+              :step="0.05"
+              :disabled="isProcessing"
+            />
+          </div>
+
+          <a-button
+            @click="fetchSAMMask"
+            :loading="isFetchingSAMMask"
+            :disabled="samPoints.length === 0 || isProcessing"
+            type="primary"
+            block
+            class="font-poppins"
+          >
+            🎯 Detect
+          </a-button>
+        </div>
+      </template>
+
+      <!-- SAM-3 Controls -->
+      <template v-if="removalMode === 'sam3'">
+        <div class="flex flex-col !gap-3">
+          <div class="flex flex-wrap !gap-3">
+            <a-button
+              @click="clearSAM3Masks"
+              :disabled="isProcessing || sam3MasksList.length === 0"
+              size="small"
+              block
+              class="flex font-poppins justify-center items-center"
+            >
+              <DeleteOutlined />
+              Clear ({{ sam3MasksList.length }})
+            </a-button>
+            <a-button
+              @click="undoLastSAM3Mask"
+              :disabled="sam3MasksList.length === 0 || isProcessing"
+              size="small"
+              block
+              class="flex font-poppins justify-center items-center"
+            >
+              <template #icon><UndoOutlined /></template>
+              Undo
+            </a-button>
+          </div>
+
+          <div class="flex flex-wrap items-center !gap-3">
+            <span class="!text-[13px] font-poppins !font-medium !text-gray-600">
+              Confidence: {{ samConfidence.toFixed(2) }}
+            </span>
+            <a-slider
+              class="flex-1"
+              v-model:value="samConfidence"
+              :min="0"
+              :max="1"
+              :step="0.05"
+              :disabled="isProcessing"
+            />
+          </div>
+
+          <a-input
+            v-model:value="sam3TextPrompt"
+            placeholder="e.g., person, chair, table..."
+            :disabled="isProcessing"
+            size="small"
+          />
+
+          <a-button
+            @click="fetchSAM3Mask"
+            :loading="isFetchingSAMMask"
+            :disabled="!sam3TextPrompt || isProcessing"
+            type="primary"
+            block
+            class="font-poppins"
+          >
+            🎯 Detect
+          </a-button>
+        </div>
+      </template>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex !gap-3 !my-4 !pb-4">
+      <a-button
+       @click="handleCancel"
+        :disabled="isProcessing"
+         block
+         class="font-poppins"
+         
+         >
+        Cancel
+      </a-button>
+      <a-button
+        type="primary"
+        @click="handleSubmit"
+        :loading="isProcessing"
+        :disabled="!hasValidMask"
+        block
+        class="font-poppins"
+      >
+        ✨ Remove Area
+      </a-button>
+    </div>
+
+    <!-- Processing Overlay -->
+    <div
+      v-if="isProcessing || isFetchingSAMMask"
+      class="absolute inset-0 bg-white/95 flex flex-col items-center justify-center !gap-4 z-[100] rounded-md backdrop-blur-sm"
+    >
+      <a-spin size="large" />
+      <p class="!m-0 !text-[14px] !text-gray-900 !font-medium">
+        {{ isFetchingSAMMask ? "Generating mask..." : "Processing removal..." }}
+      </p>
+    </div>
+  </div>
+</a-drawer>
+
   </div>
 </template>
 
@@ -1477,6 +1494,25 @@ export default {
 </script>
 
 <style scoped>
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+
+.removal-drawer :deep(.ant-drawer-title),
+.removal-drawer :deep(.ant-drawer-header-title) {
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+  font-weight: 600 !important;
+  font-size: 18px !important;
+}
+.font-poppins {
+  font-family: 'Poppins', 'Segoe UI',
+    system-ui, sans-serif !important;
+}
+
+
+
+
+
 .removal-modal :deep(.ant-modal-header) {
   background: #ffffff;
   border-bottom: 1px solid #e8e8e8;
@@ -1677,7 +1713,7 @@ export default {
 .canvas-wrapper-mobile {
   position: relative;
   width: 100%;
-  height: 300px;
+  height: 400px;
   border-radius: 4px;
   overflow: auto;
   display: flex;

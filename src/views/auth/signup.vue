@@ -76,6 +76,7 @@
               size="large"
               class="custom-input"
               :class="{ 'input-error': errors.firstName }"
+              @keypress="allowOnlyLetters"
             />
             <span v-if="errors.firstName" class="error-message">{{ errors.firstName }}</span>
           </div>
@@ -87,6 +88,8 @@
               size="large"
               class="custom-input"
               :class="{ 'input-error': errors.lastName }"
+               @keypress="allowOnlyLetters"
+               
             />
             <span v-if="errors.lastName" class="error-message">{{ errors.lastName }}</span>
           </div>
@@ -536,6 +539,22 @@ export default {
     selectPersonalization(type) {
       this.selectedType = type;
     },
+
+     handleFirstName(e) {
+    const value = e.target.value;
+
+    // Allow only alphabets
+    this.personalInfo.firstName = value.replace(/[^a-zA-Z]/g, '');
+    },
+
+     allowOnlyLetters(event) {
+    const char = String.fromCharCode(event.keyCode);
+
+    // Allow only A-Z and a-z
+    if (!/^[a-zA-Z ]$/.test(char)) {
+      event.preventDefault();
+    }
+  },
     
     nextStep() {
       // Clear previous errors

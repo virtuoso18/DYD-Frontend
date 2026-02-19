@@ -1,4 +1,94 @@
 <template>
+
+   <div 
+    v-if="showRemoveObjectModal" 
+    class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/10 backdrop-blur-sm"
+    @click="showRemoveObjectModal = false"
+  >
+    <div 
+      class="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 animate-slideUp"
+      @click.stop
+    >
+      <!-- Icon -->
+      <div class="flex justify-center mb-6">
+        <div class="relative">
+          <div class="absolute inset-0 bg-red-500 blur-2xl opacity-30 rounded-full animate-pulse"></div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="relative">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            <line x1="15" y1="9" x2="9" y2="15"></line>
+            <line x1="9" y1="9" x2="15" y2="15"></line>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Title -->
+      <h2 class="text-3xl font-bold text-gray-900 text-center mb-4">
+        Feature Locked 🔒
+      </h2>
+
+      <!-- Description -->
+      <p class="text-base text-gray-600 text-center mb-3 leading-relaxed">
+        Your current plan 
+        <span class="font-semibold text-red-500">{{ currentPlanName }}</span> 
+        doesn't include the 
+        <span class="font-semibold text-gray-900">Remove Objects</span> 
+        feature.
+      </p>
+
+      <!-- Sub Description -->
+      <p class="text-sm text-gray-500 text-center mb-8">
+        Upgrade to unlock AI-powered object removal and advanced editing tools!
+      </p>
+
+      <!-- Actions -->
+      <div class="space-y-3">
+        <button 
+          @click="goToUpgrade"
+          class="w-full h-12 !mb-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold rounded-lg flex items-center justify-center gap-2 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+            <path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path>
+          </svg>
+          Upgrade Now
+        </button>
+
+        <button 
+          @click="showRemoveObjectModal = false"
+          class="w-full h-12 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-lg transition-colors duration-200"
+        >
+          Maybe Later
+        </button>
+      </div>
+
+      <!-- Features -->
+      <div class="mt-6 pt-6 border-t border-gray-200">
+        <p class="text-xs text-gray-500 text-center mb-3">Premium features:</p>
+        <div class="flex justify-center gap-4 flex-wrap">
+          <div class="flex items-center gap-1 text-xs text-gray-600">
+            <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+            </svg>
+            Remove Objects
+          </div>
+          <div class="flex items-center gap-1 text-xs text-gray-600">
+            <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+            </svg>
+            AI Inpainting
+          </div>
+          <div class="flex items-center gap-1 text-xs text-gray-600">
+            <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+            </svg>
+            Unlimited Edits
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
   <contextHolder />
   <a-drawer
     v-if="selectedObjectForSwitch"
@@ -359,13 +449,14 @@
       >
         🔄 Switch Furniture
       </a-button> -->
-      <a-button
+
+      <!-- <a-button
         v-if="canShowSwitchButton"
         class="toolbar-btn primary-btn"
         @click="openSwitchFurnitureModal"
       >
         🔄 Switch Furniture
-      </a-button>
+      </a-button> -->
 
       <a-button
         class="toolbar-btn primary-btn"
@@ -854,6 +945,9 @@ export default {
   data() {
     return {
       isShowInstructionModal: false,
+      showRemoveObjectModal: false,
+    currentPlanName: 'Basic',
+    business_available_actions: null,
       instructionConfig: [
         {
           key: "Pinch out zoom out",
@@ -1035,6 +1129,11 @@ export default {
   },
 
   mounted() {
+
+     if (this.$route.query.brand) {
+    this.loadBrandPurchasedPlanDetails();
+    }
+  
     this.cycleLoadingMessage();
     this.setupResizeObserver();
     this.updateCanvasDimensions();
@@ -2411,24 +2510,136 @@ initializeDrawingCanvas() {
       this.removeObjectHighlight();
     },
 
-    removeSelectedObjects() {
-      if (this.selectedObjects.length === 0) return;
+    async loadBrandPurchasedPlanDetails() {
+    try {
+      const brandSlug = this.$route.query.brand;
+      
+      if (!brandSlug) {
+        console.warn('⚠️ No brand slug found in query');
+        this.business_available_actions = {
+          remove_object: false
+        };
+        return;
+      }
+      
+      const url = `${this.$store.state.root_api}subscription/api/get-business-plan-details/${brandSlug}/`;
+      
+      console.log('🔍 Fetching plan details from:', url);
 
-      console.log("Removing selected objects:", this.selectedObjects);
-
-      this.$emit("objects-selected-for-removal", {
-        selectedObjects: [...this.selectedObjects],
-        objectMasks: this.selectedObjects.reduce((acc, key) => {
-          if (this.objectMasks[key]) {
-            acc[key] = this.objectMasks[key];
-          }
-          return acc;
-        }, {}),
-        canvasDimensions: this.getCanvasDimensions(),
+      const token = localStorage.getItem('token');
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Token ${token}`,
+          'Content-Type': 'application/json'
+        }
       });
 
-      this.clearSelections();
-    },
+      console.log('📡 Response Status:', response.status);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      
+      console.log('═══════════════════════════════════════');
+      console.log('📦 Full API Response:', result);
+      console.log('📊 Plan Name:', result.plan_name);
+      console.log('🎯 Business Available Actions:', result.business_available_actions);
+      console.log('🗑️ remove_object:', result.business_available_actions?.remove_object);
+      console.log('═══════════════════════════════════════');
+      
+      // Store plan info
+      this.currentPlanName = result.plan_name || 'Free';
+      
+      if (result.business_available_actions) {
+        this.business_available_actions = result.business_available_actions;
+        console.log('✅ Stored business_available_actions:', this.business_available_actions);
+      } else {
+        console.warn('⚠️ No business_available_actions in response');
+        this.business_available_actions = {
+          remove_object: false
+        };
+      }
+
+    } catch (error) {
+      console.error('═══════════════════════════════════════');
+      console.error('❌ Error loading plan details:', error);
+      console.error('═══════════════════════════════════════');
+      
+      // Default to restricted on error
+      this.business_available_actions = {
+        remove_object: false
+      };
+      console.log('⚠️ Set default: remove_object = false');
+    }
+  },
+  
+  // ✅ UPDATED removeSelectedObjects METHOD
+  removeSelectedObjects() {
+    console.log('═══════════════════════════════════════');
+    console.log('🗑️ Remove Objects Clicked');
+    console.log('📦 business_available_actions:', this.business_available_actions);
+    
+    // Check if no objects selected
+    if (this.selectedObjects.length === 0) {
+      console.log('⚠️ No objects selected');
+      return;
+    }
+
+    // ✅ Check if plan data is loaded
+    if (!this.business_available_actions) {
+      console.warn('⚠️ Plan data not loaded yet! Blocking access by default.');
+      this.showRemoveObjectModal = true;
+      return;
+    }
+
+    // ✅ Check remove_object permission
+    const canRemoveObject = this.business_available_actions.remove_object === true;
+    
+    console.log('🗑️ remove_object value:', this.business_available_actions.remove_object);
+    console.log('🚦 Can Remove Object:', canRemoveObject);
+    console.log('═══════════════════════════════════════');
+
+    if (!canRemoveObject) {
+      console.log('❌ Feature BLOCKED - Showing upgrade modal');
+      this.showRemoveObjectModal = true;
+      return;
+    }
+
+    console.log('✅ Feature ALLOWED - Removing objects');
+    console.log("Removing selected objects:", this.selectedObjects);
+
+    // ✅ ORIGINAL FUNCTIONALITY - Only runs if access is granted
+    this.$emit("objects-selected-for-removal", {
+      selectedObjects: [...this.selectedObjects],
+      objectMasks: this.selectedObjects.reduce((acc, key) => {
+        if (this.objectMasks[key]) {
+          acc[key] = this.objectMasks[key];
+        }
+        return acc;
+      }, {}),
+      canvasDimensions: this.getCanvasDimensions(),
+    });
+
+    this.clearSelections();
+  },
+  
+  // ✅ ADD UPGRADE ACTION
+  goToUpgrade() {
+    this.showRemoveObjectModal = false;
+    this.$router.push('/pricing');
+  },
+  
+  // Your existing methods...
+  getCanvasDimensions() {
+    // Your existing implementation
+  },
+  
+  clearSelections() {
+    // Your existing implementation
+  },
 
     make_room_empty() {
       this.$emit("make-room-empty", true);
@@ -4434,6 +4645,21 @@ handleTouchEnd(e) {
   justify-content: space-between;
   align-items: center;
   gap: 6px;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-slideUp {
+  animation: slideUp 0.4s ease-out;
 }
 
 .drawing-header h3 {
