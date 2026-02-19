@@ -2910,17 +2910,17 @@ Switch Furniture</a-button> -->
 
                 <!-- glbUrl="http://127.0.0.1:8000/media/products/3d_models/046-cp7.glb" -->
                 <!-- {{ floor_3d_model_grid }} -->
-                <!-- <items_replacement_renderer
+                <items_replacement_renderer
                   v-if="
                     current_tab == 'image' &&
                     active_tab_image === 'item_replacement' &&
                     select_replace === 'Furniture'
                   "
                     @model-transform-updated="handle3DModelTransformUpdate"
-                    @update:isLoading="StartEndCanvasLoading"
 
                   :glbUrl="item_replacement_renderer_3d_model_url"
                   :is_resizable="is_resizable"
+                  @update:isLoading="StartEndCanvasLoading"
                   :isLoading="canvasLoading"
                   :product_id="selected_3d_product_model"
                   :modelDimensions="{
@@ -2941,41 +2941,7 @@ Switch Furniture</a-button> -->
                   "
                   @Apply-Changes="ApplyChanges"
                   @insufficient-credits="throw_Insufficient_credits"
-                /> -->
-
-                    
-                <items_replacement_renderer
-                  v-if="
-                    current_tab == 'image' &&
-                    active_tab_image === 'item_replacement' &&
-                    select_replace === 'Furniture'
-                  "
-                  ref="floor_item_3d_renderer"
-                  
-                  :key="base_image_url"
-                  :debug="debug"
-                  v-bind="active_room_ptcld_cords"
-                  :isLoading="canvasLoading"
-                  
-                  :TARGET_DIMS="{
-                    width: selected_model_width,
-                    height: selected_model_height,
-                    depth: selected_model_depth,
-                  }"
-                  :BASE_ROOT_MAIN_IMAGE="base_image_url"
-                  :CHAIR_MODEL="item_replacement_renderer_3d_model_url"
-
-                  @model-transform-updated="handle3DModelTransformUpdate"
-                                      @update:isLoading="StartEndCanvasLoading"
-                  @add-3d-furniture-to-room-start-polling="
-                                      updateBaskeImageURL_CANVAS
-                                    "
-                  :product_id="selected_3d_product_model"
-                                    
-                  @Apply-Changes="ApplyChanges"
-                  @insufficient-credits="throw_Insufficient_credits"
-                  >
-                  </items_replacement_renderer>
+                />
 
                 <!-- :glbModelUrl="this.$store.state.root_media_api+'/media/3d-Rendered-Models/temp/8a36f84a-39e3-40f3-a194-05c5a46c0c2d/HY-2.0-3D-Textured-model_00023_.glb '" -->
                 <a-row v-if="current_tab == '3d'">
@@ -3234,8 +3200,7 @@ export default {
 
   data() {
     return {
-      active_room_ptcld_cords:null,
-      debug:false,
+
       currentUser:JSON.parse(localStorage.getItem('user')),
       LoadingMessageButton:false,
       buid:null,
@@ -3456,10 +3421,6 @@ export default {
       this.goto_home_design_show(this.$route.query.home_design);
       // console.log(this.$route.query.home_design)
     }
-
-    if((this.$route.query.window_name==='furniture') &&(this.$route.query.product_type==='furniture') && this.$route.query.product_id){
-      this.loadProductDetailsAndInitialize()
-    }
   },
 
   beforeUnmount() {
@@ -3471,86 +3432,6 @@ export default {
   },
 
   methods: {
-        
-    // Existing method - REFACTOR IT
-    async loadProductDetails() {
-      try {
-        // const url = `${this.$store.state.root_api}product/api/product-details/${this.product_id}/`;
-        const url = `${this.$store.state.root_api}product/api/product-details/${this.$route.query.product_id}/`;
-        
-        console.log('📡 Fetching from:', url);
-        
-        const token = localStorage.getItem('token');
-        const response = await fetch(url, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Token ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const result = await response.json();
-        
-        if (!result.success || !result.data) {
-          throw new Error('Invalid response format');
-        }
-        
-        const data = result.data;
-        
-        return {
-          model_url: this.$store.state.root_media_api + data['3d_model'],
-          is_resizable: data.is_resizable,
-          dimensions: {
-            width: data.dimensions.width,
-            height: data.dimensions.height,
-            depth: data.dimensions.length
-          }
-        };
-        
-      } catch (error) {
-        console.error('❌ Error loading product details:', error);
-        throw error;
-      }
-    },
-    async loadProductDetailsAndInitialize() {
-        try {
-            this.canvasLoading=true
-
-          this.loadingText = 'Loading product details...';
-          
-          const productData = await this.loadProductDetails();
-          
-          if (!productData) {
-            throw new Error('Failed to load product details');
-          }
-          
-          console.log('✅ Product data loaded:', productData);
-          
-          // Set original dimensions (NEVER MODIFY THESE)
-          this.modelDimensions = {
-            width: parseFloat(productData.dimensions.width),
-            height: parseFloat(productData.dimensions.height),
-            depth: parseFloat(productData.dimensions.depth),
-          };
-          
-          console.log('📏 Original dimensions:', this.modelDimensions);
-          
-          this.selected_model_width= this.modelDimensions.width
-          this.selected_model_height=this.modelDimensions.height
-          this.selected_model_depth=this.modelDimensions.depth
-          this.item_replacement_renderer_3d_model_url=productData.model_url;
-
-          
-          this.canvasLoading=false
-        } catch (error) {
-          console.error('❌ Failed to load product:', error);
-          this.canvasLoading=false
-        }
-      },
     texture_floor_selected(e){
     this.$router.replace({
               query: {
@@ -4127,31 +4008,6 @@ export default {
             { length: this.binaryMaskList.length },
             (_, i) => i,
           );
-
-          // this.active_room_ptcld_cords={
-          //       // Camera intrinsics
-          //       CAM_IMG_W: 1600,
-          //       CAM_IMG_H: 1200,
-          //       CAM_FX: 1.3832 * 1600,
-          //       CAM_FY: 1.8443 * 1200,
-          //       CAM_CX: 0.5 * 1600,
-          //       CAM_CY: 0.5 * 1200,
-          //       CAM_Z_SIGN: -1,
-          //       MASK_ERODE_PX: 10,
-
-          //       CAM_FOV_V: 30.0,
-          //       // Asset paths
-          //       POINTCLOUD: 'pointcloud_voxel_0_1m.ply',
-          //       FLOOR_MASK: 'floor_mask.png',
-                
-          //       // Chair target dimensions
-          //       // TARGET_DIMS: { width: 0.63, height: 0.94, depth: 0.57 },
-          //       // BASE_ROOT_MAIN_IMAGE: '/room.jpg',
-          //       // CHAIR_MODEL: 'sofa_1.glb',
-          //     }
-          this.active_room_ptcld_cords=responseData.active_room_ptcld_cords
-          this.active_room_ptcld_cords.POINTCLOUD=this.$store.state.root_media_api+ this.active_room_ptcld_cords.POINTCLOUD
-          this.active_room_ptcld_cords.FLOOR_MASK=this.$store.state.root_media_api+ this.active_room_ptcld_cords.FLOOR_MASK
 
           this.binaryMasks_objects_detected =
             { ...responseData.objects_detected_masks } || {};
