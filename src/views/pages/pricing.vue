@@ -49,38 +49,38 @@
             </div>
           </div>
 
-          <div class="pricing-card pro-card">
+          <div class="pricing-card standard-card">
             <div class="card-header">
-              <h3 class="plan-name">Pro</h3>
+              <h3 class="plan-name">Standard</h3>
               <p class="plan-subtitle">MOST POPULAR</p>
             </div>
             <div class="price-section">
               <span class="currency">$</span>
-              <span class="price">{{ data.pro.monthly_charges }}</span>
-              <p class="billing-period">{{data.pro.plan_credits}} credits / month</p>
+              <span class="price">{{ data.standard.monthly_charges }}</span>
+              <p class="billing-period">{{data.standard.plan_credits}} credits / month</p>
             </div>
-            <button class="get-started-btn pro-btn" @click="this.$router.push('/make-payment/'+'pro')">Get Started</button>
+            <button class="get-started-btn standard-btn" @click="this.$router.push('/make-payment/'+'standard')">Get Started</button>
             <div class="features-list">
-              <div v-for="(feature, index) in data.pro.description_list" :key="index" class="feature-item">
+              <div v-for="(feature, index) in data.standard.description_list" :key="index" class="feature-item">
                 <span class="checkmark">✓</span>
                 <span>{{ feature }}</span>
               </div>
             </div>
           </div>
 
-          <div class="pricing-card enterprise-card">
+          <div class="pricing-card premium-card">
             <div class="card-header">
-              <h3 class="plan-name">Enterprise</h3>
+              <h3 class="plan-name">Premium</h3>
               <p class="plan-subtitle">For Organization</p>
             </div>
             <div class="price-section">
               <span class="currency">$</span>
-              <span class="price">{{ data.enterprise.monthly_charges }}</span>
-              <p class="billing-period">{{data.enterprise.plan_credits}} Customizable credit / month</p>
+              <span class="price">{{ data.premium.monthly_charges }}</span>
+              <p class="billing-period">{{data.premium.plan_credits}} Customizable credit / month</p>
             </div>
-            <button class="get-started-btn enterprise-btn" @click="this.$router.push('/make-payment/'+'enterprise')">Get Started</button>
+            <button class="get-started-btn premium-btn" @click="this.$router.push('/make-payment/'+'premium')">Get Started</button>
             <div class="features-list">
-              <div v-for="(feature, index) in data.enterprise.description_list" :key="index" class="feature-item">
+              <div v-for="(feature, index) in data.premium.description_list" :key="index" class="feature-item">
                 <span class="checkmark">✓</span>
                 <span>{{ feature }}</span>
               </div>
@@ -93,7 +93,7 @@
       <div v-if="!token && data">
         <div class="plan-toggle-container">
           <button class="toggle-btn" :class="{ active: activePlanType === 'business' }" @click="activePlanType = 'business'">Business</button>
-          <button class="toggle-btn" :class="{ active: activePlanType === 'professional' }" @click="activePlanType = 'professional'">Professional</button>
+          <button class="toggle-btn" :class="{ active: activePlanType === 'standardfessional' }" @click="activePlanType = 'standardfessional'">Professional</button>
         </div>
 
         <div v-if="activePlanType === 'business'" class="pricing-cards">
@@ -116,40 +116,40 @@
             </div>
           </div>
 
-          <div class="pricing-card pro-card featured">
+          <div class="pricing-card standard-card featured">
             <div class="save-badge">Save 27%</div>
             <div class="card-header">
-              <h3 class="plan-name"> Pro</h3>
+              <h3 class="plan-name"> Standard</h3>
               <p class="plan-subtitle">MOST POPULAR</p>
             </div>
             <div class="price-section">
-              <span class="original-price">${{ calculateOriginalPrice(data.business_plan_list.pro.monthly_charges) }}</span>
+              <span class="original-price">${{ calculateOriginalPrice(data.business_plan_list.standard.monthly_charges) }}</span>
               <span class="currency">$</span>
-              <span class="price">{{ data.business_plan_list.pro.monthly_charges }}</span>
-              <p class="billing-period">{{data.business_plan_list.pro.plan_credits}} credits / month</p>
+              <span class="price">{{ data.business_plan_list.standard.monthly_charges }}</span>
+              <p class="billing-period">{{data.business_plan_list.standard.plan_credits}} credits / month</p>
             </div>
-            <button class="get-started-btn pro-btn" @click="this.$router.push('/login')">Start 7-days Free Trial</button>
+            <button class="get-started-btn standard-btn" @click="this.$router.push('/login')">Start 7-days Free Trial</button>
             <div class="features-list">
-              <div v-for="(feature, index) in data.business_plan_list.pro.description_list" :key="index" class="feature-item">
+              <div v-for="(feature, index) in data.business_plan_list.standard.description_list" :key="index" class="feature-item">
                 <span class="checkmark">✓</span>
                 <span>{{ feature }}</span>
               </div>
             </div>
           </div>
 
-          <div class="pricing-card enterprise-card">
+          <div class="pricing-card premium-card">
             <div class="card-header">
-              <h3 class="plan-name">Enterprise</h3>
+              <h3 class="plan-name">Premium</h3>
               <p class="plan-subtitle">For Organization</p>
             </div>
             <div class="price-section">
               <span class="currency">$</span>
-              <span class="price">{{ data.business_plan_list.enterprise.monthly_charges }}</span>
-              <p class="billing-period">{{data.business_plan_list.enterprise.plan_credits}} credits / month</p>
+              <span class="price">{{ data.business_plan_list.premium.monthly_charges }}</span>
+              <p class="billing-period">{{data.business_plan_list.premium.plan_credits}} credits / month</p>
             </div>
-            <button class="get-started-btn enterprise-btn" @click="this.$router.push('/login')">Start 7-days Free Trial</button>
+            <button class="get-started-btn premium-btn" @click="this.$router.push('/login')">Start 7-days Free Trial</button>
             <div class="features-list">
-              <div v-for="(feature, index) in data.business_plan_list.enterprise.description_list" :key="index" class="feature-item">
+              <div v-for="(feature, index) in data.business_plan_list.premium.description_list" :key="index" class="feature-item">
                 <span class="checkmark">✓</span>
                 <span>{{ feature }}</span>
               </div>
@@ -157,7 +157,7 @@
           </div>
         </div>
 
-        <div v-if="activePlanType === 'professional'" class="pricing-cards">
+        <div v-if="activePlanType === 'standardfessional'" class="pricing-cards">
           <div class="pricing-card basic-card">
             <div class="card-header">
               <h3 class="plan-name">Basic</h3>
@@ -165,52 +165,52 @@
             </div>
             <div class="price-section">
               <span class="currency">$</span>
-              <span class="price">{{ data.professional_plan_list.basic.monthly_charges }}</span>
-              <p class="billing-period">{{data.professional_plan_list.basic.plan_credits}} credits / month</p>
+              <span class="price">{{ data.standardfessional_plan_list.basic.monthly_charges }}</span>
+              <p class="billing-period">{{data.standardfessional_plan_list.basic.plan_credits}} credits / month</p>
             </div>
             <button class="get-started-btn basic-btn" @click="this.$router.push('/login')">Start 7-days Free Trial</button>
             <div class="features-list">
-              <div v-for="(feature, index) in data.professional_plan_list.basic.description_list" :key="index" class="feature-item">
+              <div v-for="(feature, index) in data.standardfessional_plan_list.basic.description_list" :key="index" class="feature-item">
                 <span class="checkmark">✓</span>
                 <span>{{ feature }}</span>
               </div>
             </div>
           </div>
 
-          <div class="pricing-card pro-card featured">
+          <div class="pricing-card standard-card featured">
             <div class="save-badge">Save 27%</div>
             <div class="card-header">
-              <h3 class="plan-name">Pro </h3>
+              <h3 class="plan-name">Standard </h3>
               <p class="plan-subtitle">MOST POPULAR</p>
             </div>
             <div class="price-section">
-              <span class="original-price">${{ calculateOriginalPrice(data.professional_plan_list.pro.monthly_charges) }}</span>
+              <span class="original-price">${{ calculateOriginalPrice(data.standardfessional_plan_list.standard.monthly_charges) }}</span>
               <span class="currency">$</span>
-              <span class="price">{{ data.professional_plan_list.pro.monthly_charges }}</span>
-              <p class="billing-period">{{data.professional_plan_list.pro.plan_credits}} credits / month</p>
+              <span class="price">{{ data.standardfessional_plan_list.standard.monthly_charges }}</span>
+              <p class="billing-period">{{data.standardfessional_plan_list.standard.plan_credits}} credits / month</p>
             </div>
-            <button class="get-started-btn pro-btn" @click="this.$router.push('/login')">Start 7-days Free Trial</button>
+            <button class="get-started-btn standard-btn" @click="this.$router.push('/login')">Start 7-days Free Trial</button>
             <div class="features-list">
-              <div v-for="(feature, index) in data.professional_plan_list.pro.description_list" :key="index" class="feature-item">
+              <div v-for="(feature, index) in data.standardfessional_plan_list.standard.description_list" :key="index" class="feature-item">
                 <span class="checkmark">✓</span>
                 <span>{{ feature }}</span>
               </div>
             </div>
           </div>
 
-          <div class="pricing-card enterprise-card">
+          <div class="pricing-card premium-card">
             <div class="card-header">
-              <h3 class="plan-name">Enterprise</h3>
+              <h3 class="plan-name">Premium</h3>
               <p class="plan-subtitle">For Organization</p>
             </div>
             <div class="price-section">
               <span class="currency">$</span>
-              <span class="price">{{ data.professional_plan_list.enterprise.monthly_charges }}</span>
-              <p class="billing-period">{{data.professional_plan_list.enterprise.plan_credits}} credits / month</p>
+              <span class="price">{{ data.standardfessional_plan_list.premium.monthly_charges }}</span>
+              <p class="billing-period">{{data.standardfessional_plan_list.premium.plan_credits}} credits / month</p>
             </div>
-            <button class="get-started-btn enterprise-btn" @click="this.$router.push('/login')">Start 7-days Free Trial</button>
+            <button class="get-started-btn premium-btn" @click="this.$router.push('/login')">Start 7-days Free Trial</button>
             <div class="features-list">
-              <div v-for="(feature, index) in data.professional_plan_list.enterprise.description_list" :key="index" class="feature-item">
+              <div v-for="(feature, index) in data.standardfessional_plan_list.premium.description_list" :key="index" class="feature-item">
                 <span class="checkmark">✓</span>
                 <span>{{ feature }}</span>
               </div>
@@ -533,18 +533,18 @@ export default {
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
 }
 
-.basic-card, .enterprise-card {
+.basic-card, .premium-card {
   background: #f8f9ff;
 }
 
-.pro-card {
+.standard-card {
   background: linear-gradient(135deg, #201b85 0%, #0d00ff 100%);;
   color: white;
   transform: scale(1.05);
   box-shadow: 0 8px 30px rgba(45, 45, 45, 0.3);
 }
 
-.pro-card.featured {
+.standard-card.featured {
   background: linear-gradient(135deg, #201b85 0%, #0d00ff 100%);
 }
 
@@ -572,11 +572,11 @@ export default {
   margin-bottom: 4px;
 }
 
-.basic-card .plan-name, .enterprise-card .plan-name {
+.basic-card .plan-name, .premium-card .plan-name {
   color: #1f2937;
 }
 
-.pro-card .plan-name {
+.standard-card .plan-name {
   color: white;
 }
 
@@ -587,11 +587,11 @@ export default {
   letter-spacing: 0.5px;
 }
 
-.basic-card .plan-subtitle, .enterprise-card .plan-subtitle {
+.basic-card .plan-subtitle, .premium-card .plan-subtitle {
   color: #6b7280;
 }
 
-.pro-card .plan-subtitle {
+.standard-card .plan-subtitle {
   color: rgba(255, 255, 255, 0.8);
 }
 
@@ -614,11 +614,11 @@ export default {
   margin-right: 2px;
 }
 
-.basic-card .currency, .enterprise-card .currency {
+.basic-card .currency, .premium-card .currency {
   color: #1f2937;
 }
 
-.pro-card .currency {
+.standard-card .currency {
   color: white;
 }
 
@@ -628,11 +628,11 @@ export default {
   line-height: 1;
 }
 
-.basic-card .price, .enterprise-card .price {
+.basic-card .price, .premium-card .price {
   color: #1f2937;
 }
 
-.pro-card .price {
+.standard-card .price {
   color: white;
 }
 
@@ -642,7 +642,7 @@ export default {
   color: #6b7280;
 }
 
-.pro-card .billing-period {
+.standard-card .billing-period {
   color: rgba(255, 255, 255, 0.7);
 }
 
@@ -658,21 +658,21 @@ export default {
   transition: all 0.2s ease;
 }
 
-.basic-btn, .enterprise-btn {
+.basic-btn, .premium-btn {
   background: #4F46E5;
   color: white;
 }
 
-.basic-btn:hover, .enterprise-btn:hover {
+.basic-btn:hover, .premium-btn:hover {
   background: #4338CA;
 }
 
-.pro-btn {
+.standard-btn {
   background: white;
   color: #2d2d2d;
 }
 
-.pro-btn:hover {
+.standard-btn:hover {
   background: #f0f0f0;
 }
 
@@ -689,7 +689,7 @@ export default {
   color: #374151;
 }
 
-.pro-card .feature-item {
+.standard-card .feature-item {
   color: rgba(255, 255, 255, 0.9);
 }
 
@@ -698,7 +698,7 @@ export default {
   color: #9ca3af;
 }
 
-.pro-card .feature-item.disabled {
+.standard-card .feature-item.disabled {
   opacity: 0.5;
   color: rgba(255, 255, 255, 0.5);
 }
@@ -710,7 +710,7 @@ export default {
   flex-shrink: 0;
 }
 
-.pro-card .checkmark {
+.standard-card .checkmark {
   color: #34d399;
 }
 
@@ -789,7 +789,7 @@ export default {
     gap: 20px;
   }
   
-  .pro-card {
+  .standard-card {
     transform: none;
   }
   

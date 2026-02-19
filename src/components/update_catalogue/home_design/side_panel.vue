@@ -1,5 +1,92 @@
 <template>
-  <div class="side-panel">
+ <!-- show Rendering Failed Model  -->
+  <a-modal
+    v-model:open="showFailedRenderingModel"
+    title=""
+    centered
+    width="380px"
+    footer=""
+  >
+    <div style="text-align: center; padding: 10px; border-radius: 12px">
+      <!-- Icon wrapper -->
+      <div
+        style="
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 70px;
+          height: 70px;
+          margin: 0 auto 18px auto;
+          border-radius: 50%;
+          background: rgba(59, 99, 251, 0.12);
+        "
+      >
+        <svg
+          width="34"
+          height="34"
+          viewBox="0 0 20 20"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M10 0C4.477 0 0 4.477 0 10C0 15.523 4.477 20 10 20C15.523 20 20 15.523 20 10C20 4.477 15.523 0 10 0ZM10 1C10 3.38695 9.05179 5.67613 7.36396 7.36396C5.67613 9.05179 3.38695 10 1 10C3.38695 10 5.67613 10.9482 7.36396 12.636C9.05179 14.3239 10 16.6131 10 19C10 16.6131 10.9482 14.3239 12.636 12.636C14.3239 10.9482 16.6131 10 19 10C16.6131 10 14.3239 9.05179 12.636 7.36396C10.9482 5.67613 10 3.38695 10 1Z"
+            fill="#3B63FB"
+          />
+        </svg>
+      </div>
+
+      <!-- Heading -->
+      <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 10px">
+        Failed Rendering 
+      </h2>
+
+      <!-- Message -->
+      <p
+        style="
+          font-size: 15px;
+          line-height: 1.5;
+          color: #555;
+          margin-bottom: 25px;
+        "
+      >
+        {{ failure_reason }}
+      </p>
+      <!-- CTA button -->
+      <!-- <a-button
+        v-if="currentUser.user_type !== 'User'"
+        type="primary"
+        block
+        size="large"
+        style="height: 46px; font-size: 16px; border-radius: 8px"
+        @click="goToPurchaseCredits"
+      >
+        Purchase Credits
+      </a-button>
+
+      <a-button
+        v-else
+        type="primary"
+        block
+        size="large"
+        :loading="LoadingMessageButton"
+        style="
+          height: 46px;
+          font-size: 16px;
+          border-radius: 8px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        "
+        @click="startchat_with_buisness_user"
+      >
+        <MessageOutlined style="font-size: 16px" />
+        Message Business
+      </a-button> -->
+    </div>
+  </a-modal>
+    <div class="side-panel">
     <!-- Image Upload Area -->
     <div class="upload-area">
       <a-upload-dragger
@@ -113,6 +200,10 @@ watch: {
 },
   data() {
     return {
+      failure_reason:'',
+      showFailedRenderingModel:false,
+
+
       fileList: [],
        generating: false,
       uploadedImage: this.base_image_url || '',
@@ -162,8 +253,11 @@ watch: {
               return;
             }
 
-            if (data.status === "failed") {
+            if (data.status === "Failed") {
               this.loading = false;
+              console.error(data)
+              this.throw_failed_rendering(data.failure_reason_if_rendering_failed)
+
               this.stopPolling();
               reject("Rendering failed");
               this.$message.success('Image generated successfully!');
@@ -200,6 +294,16 @@ watch: {
     this.uploadedImage = ''
     this.fileList = []
   },
+throw_failed_rendering(message) {
+      // @insufficient-credits="throw_Insufficient_credits"
+      // if(response.status==402){
+      //    const result = await response.json()
+      //    this.$emit('insufficient-credits',result.msg)
+      //  }
+      this.failure_reason = message;
+      this.generating=false;
+      this.showFailedRenderingModel = true;
+    },
 
   async handleGenerate() {
   // Validate that an image is selected
