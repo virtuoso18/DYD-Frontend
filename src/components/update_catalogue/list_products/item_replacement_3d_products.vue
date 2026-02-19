@@ -1,4 +1,48 @@
 <template>
+
+  <a-modal 
+    v-model:open="showUpgradeModal" 
+    centered
+    :closable="false"
+    :footer="null"
+    width="500px"
+  >
+    <div class="upgrade-modal-content">
+     <div class="modal-icon">
+  <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#ff4d4f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+    <circle cx="12" cy="16" r="1" fill="#ff4d4f"></circle>
+  </svg>
+</div>
+
+      
+      <h2 class="modal-title">Feature Locked</h2>
+      
+      <p class="modal-description">
+        Your current plan <strong>({{ currentPlanName }})</strong> doesn't include the 
+        <strong>Switch Furniture</strong> feature.
+      </p>
+      
+      <p class="modal-subdescription">
+        Upgrade to unlock AI-powered furniture replacement and many more premium features!
+      </p>
+      
+      <div class="modal-actions">
+        <a-button type="primary" size="large" @click="goToUpgrade" block>
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+            <path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path>
+          </svg>
+          Upgrade Now
+        </a-button>
+        <a-button size="large" @click="showUpgradeModal = false" block>
+          Maybe Later
+        </a-button>
+      </div>
+    </div>
+  </a-modal>
+
 <a-modal :open="swichFurnitureModel" centered @cancel="showSwitchFurnitureModel()">
 
 
@@ -283,6 +327,12 @@ export default {
   },
   data() {
     return {
+
+      showUpgradeModal: false,
+    currentPlanName: 'Basic',
+    business_available_actions: null,
+
+
       swichFurnitureModel:false,
       searchText: '',
       selected_item: '',
@@ -308,9 +358,13 @@ export default {
     HeartFilled,
     HeartOutlined
   },
-  mounted() {
+  async  mounted() {
     const route = this.$route;
     this.brand = route.query.brand;
+
+ if (this.brand) {
+    await this.loadBrandPurchasedPlanDetails();
+  }
 
     if (this.brand) {
       console.log('Loading catalogue for brand:', this.brand);
@@ -329,13 +383,89 @@ export default {
     }
   },
   methods: {
-    startFurrnitureSwitch(){
-    this.showSwitchFurnitureModel()  
-      this.$emit('trigger-switch-furniture')
-    },
-    showSwitchFurnitureModel(){
-            this.swichFurnitureModel = !this.swichFurnitureModel
-    },
+
+
+     async loadBrandPurchasedPlanDetails() {
+    try {
+      const brandSlug = this.$route.query.brand;
+      
+      if (!brandSlug) {
+        console.warn('⚠️ No brand slug found in query');
+        return;
+      }
+      
+      const url = `${this.$store.state.root_api}subscription/api/get-business-plan-details/${brandSlug}/`;
+      
+      console.log('🔍 Fetching plan details from:', url);
+
+      const token = localStorage.getItem('token');
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Token ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      
+      console.log('📦 Plan Details:', result);
+      console.log('🎯 Switch Furniture Access:', result.business_available_actions?.switch_furniture);
+      
+      // Store plan info
+      this.currentPlanName = result.plan_name || 'Free';
+      
+      if (result.business_available_actions) {
+        this.business_available_actions = result.business_available_actions;
+      }
+
+    } catch (error) {
+      console.error('❌ Error loading plan details:', error);
+      // Default to restricted on error
+      this.business_available_actions = {
+        switch_furniture: false
+      };
+    }
+  },
+  
+  // ✅ MODIFIED METHOD - Check plan before showing modal
+  showSwitchFurnitureModel() {
+    // Check if switch_furniture feature is available
+    const canSwitchFurniture = this.business_available_actions?.switch_furniture === true;
+    
+    console.log('🔍 Can Switch Furniture:', canSwitchFurniture);
+    console.log('🔍 Available Actions:', this.business_available_actions);
+    
+    if (!canSwitchFurniture) {
+      console.log('❌ Feature blocked - Showing upgrade modal');
+      this.showUpgradeModal = true;
+      return;
+    }
+    
+    console.log('✅ Feature allowed - Opening switch furniture modal');
+    this.swichFurnitureModel = !this.swichFurnitureModel;
+  },
+  
+  // ✅ ADD UPGRADE ACTION
+  goToUpgrade() {
+    this.showUpgradeModal = false;
+    this.$router.push('/pricing');
+  },
+  
+  startFurrnitureSwitch() {
+    this.showSwitchFurnitureModel();
+    this.$emit('trigger-switch-furniture');
+  },
+
+
+
+    // showSwitchFurnitureModel(){
+    //         this.swichFurnitureModel = !this.swichFurnitureModel
+    // },
     
     truncateChars(text, limit = 11) {
       if (!text) return ''
@@ -571,6 +701,95 @@ this.smoothMobileScrolltoTop()
   display: flex;
   flex-direction: column;
   height: 77vh; 
+}
+
+.upgrade-modal-content {
+  text-align: center;
+  padding: 20px 10px;
+}
+
+.modal-icon {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  animation: iconBounce 2s ease-in-out infinite;
+}
+
+@keyframes iconBounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.modal-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 16px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.modal-description {
+  font-size: 16px;
+  color: #595959;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.modal-description strong {
+  color: #ff4d4f;
+  font-weight: 600;
+}
+
+.modal-subdescription {
+  font-size: 14px;
+  color: #8c8c8c;
+  line-height: 1.5;
+  margin-bottom: 30px;
+}
+
+.modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal-actions .ant-btn {
+  height: 48px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-actions .ant-btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.modal-actions .ant-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+}
+
+@media (max-width: 768px) {
+  .modal-title {
+    font-size: 22px;
+  }
+  
+  .modal-description {
+    font-size: 14px;
+  }
+  
+  .modal-subdescription {
+    font-size: 13px;
+  }
 }
 
 .ai-catalog-header {

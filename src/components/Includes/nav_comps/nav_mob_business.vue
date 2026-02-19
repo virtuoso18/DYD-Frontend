@@ -1,4 +1,12 @@
 <template>
+
+   <PlanUpgradeModal 
+    :visible="showPlanUpgradeModal" 
+    @update:visible="showPlanUpgradeModal = $event"
+    @upgrade="handlePlanUpgrade"
+  />
+
+
   <div class="pb-2">
     <button
       @click="navigateToStore"
@@ -314,12 +322,11 @@
     </router-link>
 
     <!-- Generate Banner -->
-    <router-link
-      to="/business-dashboard/generate-banner?p=true"
-      class="flex items-center gap-4 px-2 py-2 rounded-xl text-gray-700 font-medium transition-all duration-200 relative overflow-hidden group hover:bg-gray-50 hover:text-blue-600"
-      :class="{ 'nav-active': $route.name === 'business_generate_banner' }"
-      @click="closeMobileMenu"
-    >
+   <div
+  @click="handleGenerateBannerClick"
+  class="flex items-center gap-4 px-2 py-2 rounded-xl text-gray-700 font-medium transition-all duration-200 relative overflow-hidden group hover:bg-gray-50 hover:text-blue-600 cursor-pointer"
+  :class="{ 'nav-active': $route.name === 'business_generate_banner' }"
+>
       <div
         class="flex-shrink-0 w-7 h-7 rounded-lg  flex items-center justify-center transition-all duration-200 group-hover:bg-blue-100"
       >
@@ -362,7 +369,7 @@
           d="M9 18l6-6-6-6"
         />
       </svg>
-    </router-link>
+    </div>
 
     <!-- Manage Subscription -->
     <router-link
@@ -617,8 +624,16 @@
   </nav>
 </template>
 <script>
+import { notification } from 'ant-design-vue';
+import PlanUpgradeModal from '@/views/catalogue/PlanUpgradeModal.vue';
+
 export default {
   name: "business_user_nav_drawar_menu",
+  
+  // ✅ ADD COMPONENTS
+  components: {
+    PlanUpgradeModal,
+  },
 
   props: {
     isOpen: {
@@ -626,8 +641,104 @@ export default {
       default: false,
     },
   },
+  
+  // ✅ ADD DATA
+  data() {
+    return {
+      showPlanUpgradeModal: false,
+      business_available_actions: null,
+    };
+  },
+  
+  // ✅ ADD COMPUTED
+  computed: {
+    canGenerateBanner() {
+      return this.hasFeature('generate_banner');
+    },
+  },
+  
+  // ✅ ADD MOUNTED
+  mounted() {
+    this.loadBrandPurchasedPlanDetails();
+  },
 
   methods: {
+    // ✅ ADD HELPER METHOD
+    hasFeature(featureName) {
+      if (!this.business_available_actions) {
+        return false;
+      }
+      return this.business_available_actions[featureName] === true;
+    },
+    
+    // ✅ ADD API CALL
+    async loadBrandPurchasedPlanDetails() {
+      try {
+        const brandSlug = this.$route.query.brand;
+        
+        if (!brandSlug) {
+          console.warn('No brand slug found in query');
+          return;
+        }
+        
+        const url = `${this.$store.state.root_api}subscription/api/get-business-plan-details/${brandSlug}/`;
+        
+        console.log('Fetching plan details from:', url);
+
+        const token = localStorage.getItem('token');
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Token ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        console.log('Plan details received:', result);
+        
+        if (result.business_available_actions) {
+          this.business_available_actions = result.business_available_actions;
+          localStorage.setItem(
+            'business_available_actions', 
+            JSON.stringify(result.business_available_actions)
+          );
+        }
+
+      } catch (error) {
+        console.error('Error loading plan details:', error);
+        this.business_available_actions = {
+          generate_banner: false
+        };
+      }
+    },
+    
+    // ✅ ADD BANNER CLICK HANDLER
+    handleGenerateBannerClick() {
+      // Check if banner generation is available
+      if (!this.hasFeature('generate_banner')) {
+        this.showPlanUpgradeModal = true;
+        this.$message.warning('Upgrade your plan to access Banner Generation');
+        return;
+      }
+      
+      // If access granted, navigate
+      this.$router.push('/business-dashboard/generate-banner?p=true');
+      this.closeMobileMenu();
+    },
+    
+    // ✅ ADD UPGRADE HANDLER
+    handlePlanUpgrade(selectedPlan) {
+      this.showPlanUpgradeModal = false;
+      this.$message.success(`Plan upgrade initiated for ${selectedPlan}!`);
+      // TODO: Navigate to pricing page
+      // this.$router.push('/pricing');
+    },
+    
     closeMobileMenu() {
       this.$emit("close");
     },
@@ -651,6 +762,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 /* Fade transition */

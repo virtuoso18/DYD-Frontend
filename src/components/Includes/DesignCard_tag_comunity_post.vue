@@ -54,7 +54,7 @@
 
 
     <!-- Bottom Person + Likes + Comments -->
-    <div class="px-3 py-2 flex items-center justify-between">
+    <div class="px-2 py-2 flex items-center justify-between">
       <!-- Avatar + Name -->
       <div class="flex items-center gap-2">
         <img
@@ -63,7 +63,7 @@
           class="w-8 h-8 rounded-full border"
         />
         <span
-          class="!font-poppins font-normal text-[7px] sm:text-[14px] leading-[20px] tracking-normal text-center text-gray-600"
+          class="!font-poppins font-normal text-[10px] sm:text-[14px] leading-[20px] tracking-normal text-center text-gray-600"
         >
           {{ name }}
         </span>
