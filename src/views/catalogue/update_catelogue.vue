@@ -4623,9 +4623,9 @@ export default {
               return;
             }
 
-            if (data.status === "failed") {
+            if (data.status === "Failed") {
               this.canvasLoading = false;
-
+                
               this.stopPolling();
               reject("Rendering failed");
               return;
