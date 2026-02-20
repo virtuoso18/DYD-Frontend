@@ -92,6 +92,7 @@ clicked_history_model(e){
   this.processing_generate_is_Loading=false
   this.generated3dModel_url=this.$store.state.root_media_api+ e.media_url
   this.model_instance_id=e.new3d_model_instance
+  this.model_file_url=e.model_file_url;
 
 },
 async new3DModelGenerated(e){
