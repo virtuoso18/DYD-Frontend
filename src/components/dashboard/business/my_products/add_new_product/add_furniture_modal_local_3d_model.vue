@@ -71,7 +71,7 @@
       </router-link>
 
       <!-- 3D Model Renderer (Has Model) -->
-      <div v-else class="relative rounded-xl overflow-hidden bg-white shadow-lg">
+      <div v-else class="relative rounded-xl overflow-hidden bg-white ">
         <canvas_3d_model_renderer 
           :glbModelUrl="local3dModelUrl"
           :Model_instance_id="'local-preview-' + Date.now()"
@@ -92,13 +92,14 @@
         </div>
 
         <!-- Change Model Button -->
-        <a-button 
+        <!-- <a-button 
           @click="upload3dModel"
           class="absolute top-2 right-2 md:top-3 md:right-3 !bg-white shadow-md !rounded-lg !text-[10px] md:!text-xs !px-2 md:!px-3"
           size="small"
         >
           Change
-        </a-button>
+        </a-button> -->
+        <br>
       </div>
 
       <!-- Model Info Card (if model exists) -->
@@ -1010,7 +1011,7 @@ watch: {
       this.loading_generated_models_history = true;
 
       try {
-        debugger
+        
         const limit = this.pagination.pageSize;
         const offset = this.pagination.currentOffset;
         

@@ -347,111 +347,100 @@ const Add_new_product = () => {
     controls.target.set(0, 0, 0);
     controls.update();
   }
-
-  function loadModel() {
-  if (!props.glbModelUrl) return;
-  
-  loading.value = true;
-  modelLoaded.value = false;
-  
-  // Clear ALL objects from scene (except lights)
-  const objectsToRemove = [];
-  scene.traverse((child) => {
-    if (child.type !== 'Scene' && 
-        !child.isLight && 
-        !child.isAmbientLight && 
-        !child.isDirectionalLight && 
-        !child.isHemisphereLight) {
-      objectsToRemove.push(child);
+function clearScene() {
+  // Collect only non-light, non-scene root objects at the TOP level
+  const toRemove = []
+  scene.children.forEach((child) => {
+    if (!child.isLight && !child.isAmbientLight && !child.isDirectionalLight && !child.isHemisphereLight) {
+      toRemove.push(child)
     }
-  });
+  })
 
-  objectsToRemove.forEach(obj => {
-    if (obj.parent) {
-      obj.parent.remove(obj);
-    }
-    if (obj.geometry) obj.geometry.dispose();
-    if (obj.material) {
-      if (Array.isArray(obj.material)) {
-        obj.material.forEach(mat => {
-          if (mat.map) mat.map.dispose();
-          if (mat.normalMap) mat.normalMap.dispose();
-          if (mat.roughnessMap) mat.roughnessMap.dispose();
-          if (mat.metalnessMap) mat.metalnessMap.dispose();
-          mat.dispose();
-        });
-      } else {
-        if (obj.material.map) obj.material.map.dispose();
-        if (obj.material.normalMap) obj.material.normalMap.dispose();
-        if (obj.material.roughnessMap) obj.material.roughnessMap.dispose();
-        if (obj.material.metalnessMap) obj.material.metalnessMap.dispose();
-        obj.material.dispose();
+  toRemove.forEach((obj) => {
+    scene.remove(obj)
+    // Recursively dispose geometry + materials
+    obj.traverse((child) => {
+      if (child.geometry) child.geometry.dispose()
+      if (child.material) {
+        const mats = Array.isArray(child.material) ? child.material : [child.material]
+        mats.forEach((mat) => {
+          if (mat.map)          mat.map.dispose()
+          if (mat.normalMap)    mat.normalMap.dispose()
+          if (mat.roughnessMap) mat.roughnessMap.dispose()
+          if (mat.metalnessMap) mat.metalnessMap.dispose()
+          mat.dispose()
+        })
       }
-    }
-  });
+    })
+  })
 
-  // Reset model reference
-  model = null;
-  
-  // Force renderer clear
+  model = null
+
+  // Force an immediate blank frame so the old model never flashes
   if (renderer) {
-    renderer.clear();
+    renderer.clear()
+    renderer.render(backgroundScene, backgroundCamera)
+    renderer.render(scene, camera)
   }
-  
-  const loader = new GLTFLoader();
+}
+
+function loadModel() {
+  if (!props.glbModelUrl) return
+
+  // ✅ Clear FIRST, synchronously, before any async work
+  clearScene()
+
+  loading.value = true
+  modelLoaded.value = false
+
+  const loader = new GLTFLoader()
   loader.load(
     props.glbModelUrl,
     (gltf) => {
-      model = gltf.scene;
+      // ✅ Clear again in case a second loadModel() call fired before this resolved
+      clearScene()
+
+      model = gltf.scene
 
       model.traverse((child) => {
         if (child.isMesh) {
-          child.castShadow = true;
-          child.receiveShadow = true;
-          
-          if (child.material) {
-            if (Array.isArray(child.material)) {
-              child.material.forEach(mat => mat.needsUpdate = true);
-            } else {
-              child.material.needsUpdate = true;
-            }
-          }
+          child.castShadow = true
+          child.receiveShadow = true
+          const mats = Array.isArray(child.material) ? child.material : [child.material]
+          mats.forEach((mat) => (mat.needsUpdate = true))
         }
-      });
+      })
 
-      modelBoundingBox = new THREE.Box3().setFromObject(model);
-      modelSize = modelBoundingBox.getSize(new THREE.Vector3());
-      modelCenter = modelBoundingBox.getCenter(new THREE.Vector3());
+      modelBoundingBox = new THREE.Box3().setFromObject(model)
+      modelSize = modelBoundingBox.getSize(new THREE.Vector3())
+      modelCenter = modelBoundingBox.getCenter(new THREE.Vector3())
 
-      const maxDim = Math.max(modelSize.x, modelSize.y, modelSize.z);
-      const desiredSize = 3;
-      const scaleFactor = desiredSize / maxDim;
-      model.scale.setScalar(scaleFactor);
+      const maxDim = Math.max(modelSize.x, modelSize.y, modelSize.z)
+      const scaleFactor = 3 / maxDim
+      model.scale.setScalar(scaleFactor)
 
-      modelBoundingBox = new THREE.Box3().setFromObject(model);
-      modelSize = modelBoundingBox.getSize(new THREE.Vector3());
-      modelCenter = modelBoundingBox.getCenter(new THREE.Vector3());
+      modelBoundingBox = new THREE.Box3().setFromObject(model)
+      modelSize = modelBoundingBox.getSize(new THREE.Vector3())
+      modelCenter = modelBoundingBox.getCenter(new THREE.Vector3())
 
-      model.position.sub(modelCenter);
-      model.position.y = -modelBoundingBox.min.y;
-      model.rotation.set(0, 0, 0);
+      model.position.sub(modelCenter)
+      model.position.y = -modelBoundingBox.min.y
+      model.rotation.set(0, 0, 0)
 
-      scene.add(model);
-      createGroundPlane();
-      fitCameraToModel();
+      scene.add(model)
+      createGroundPlane()
+      fitCameraToModel()
 
-      loading.value = false;
-      modelLoaded.value = true;
+      loading.value = false
+      modelLoaded.value = true
     },
-    (progress) => {
-      console.log('Loading progress:', (progress.loaded / progress.total * 100) + '%');
-    },
+    undefined,
     (error) => {
-      console.error("Failed to load model", error);
-      loading.value = false;
-      modelLoaded.value = false;
-    }
-  );
+      console.error('Failed to load model', error)
+      loading.value = false
+      modelLoaded.value = false
+    },
+  )
 }
 
   function createGroundPlane() {

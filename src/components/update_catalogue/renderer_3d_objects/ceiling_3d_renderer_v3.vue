@@ -383,12 +383,6 @@ export default {
     this.twoFingerStartAngle = 0
     this.twoFingerStartAvgY  = 0
     this.isTwoFingerRotating = false
-
-    this._lastDragHit       = null
-    this._dragSmoothX       = 0
-    this._dragSmoothZ       = 0
-    this.DRAG_SMOOTH        = 0.15    // tweak: 0=instant, 0.3=smoother
-    this.twoFingerStartAvgX = 0       // needed for horizontal swipe rotation
   },
 
   mounted() {
@@ -612,371 +606,167 @@ export default {
     // POINTER EVENTS
     // ─────────────────────────────────────────────────────
 
-    // onPointerDown(event) {
-    //   if (!this.light || !this.ceilingPlaneTHREE) return
-
-    //   // ── Two-finger tracking ──
-    //   if (event.pointerType === 'touch') {
-    //     this.twoFingerPointers.set(event.pointerId, event.clientY)
-
-    //     if (this.twoFingerPointers.size === 2) {
-    //       this.isDragging = false; this.isDraggingRef = false
-    //       this.isRotating = false; this.isRotatingRef = false
-
-    //       const vals = Array.from(this.twoFingerPointers.values())
-    //       this.twoFingerStartAvgY  = (vals[0] + vals[1]) / 2
-    //       this.twoFingerStartAngle = this.light.rotation.y
-    //       this.isTwoFingerRotating = true
-    //       event.preventDefault(); return
-    //     }
-
-    //     if (this.isTwoFingerRotating) { event.preventDefault(); return }
-    //   }
-
-    //   if (this.isTwoFingerRotating) return
-
-    //   const { clientX, clientY } = event
-    //   const { ndcX, ndcY } = this._eventToNDC(clientX, clientY)
-    //   this.mouse.set(ndcX, ndcY)
-    //   this.raycaster.setFromCamera(this.mouse, this.camera)
-
-    //   // 1. Check rotation ring arrows
-    //   if (this.rotationRing) {
-    //     const arrowHits = this.raycaster.intersectObject(this.rotationRing, true)
-    //     const arrowHit  = arrowHits.find(h => h.object.userData.isRotationArrow)
-
-    //     if (arrowHit) {
-    //       const visMesh = arrowHit.object.userData.visMesh
-    //       if (visMesh) visMesh.material.color.setHex(0xff6600)
-
-    //       this.isRotating          = true
-    //       this.isRotatingRef       = true
-    //       this.rotationStartAngle  = this.light.rotation.y
-    //       this.rotationStartMouseX = ndcX
-
-    //       this.renderer.domElement.setPointerCapture(event.pointerId)
-    //       event.preventDefault(); return
-    //     }
-    //   }
-
-    //   // 2. Check model body for drag
-    //   const hits = this.raycaster.intersectObject(this.light, true)
-    //   if (hits.length === 0) return
-
-    //   this.light.visible = false
-    //   const ceilHit = this.raycastCeiling()
-    //   this.light.visible = true
-    //   if (!ceilHit) return
-
-    //   this.dragOffset.set(
-    //     this.light.position.x - ceilHit.x,
-    //     0,
-    //     this.light.position.z - ceilHit.z,
-    //   )
-
-    //   this.isDragging    = true
-    //   this.isDraggingRef = true
-    //   this.renderer.domElement.setPointerCapture(event.pointerId)
-    //   event.preventDefault()
-    // },
-    _eventToNDC(clientX, clientY) {
-  const el   = this.renderer.domElement
-  const rect = el.getBoundingClientRect()   // CSS displayed size, not render size
-  const relX = (clientX - rect.left) / rect.width
-  const relY = (clientY - rect.top)  / rect.height
-  const clampedX = Math.max(0, Math.min(1, relX))
-  const clampedY = Math.max(0, Math.min(1, relY))
-  return {
-    ndcX:  clampedX * 2 - 1,
-    ndcY: -(clampedY * 2 - 1),
-    sx: clientX - rect.left,
-    sy: clientY - rect.top,
-  }
-},
     onPointerDown(event) {
-  if (!this.light || !this.ceilingPlaneTHREE) return
+      if (!this.light || !this.ceilingPlaneTHREE) return
 
-  if (event.pointerType === 'touch') {
-    this.twoFingerPointers.set(event.pointerId, {
-      clientX: event.clientX,
-      clientY: event.clientY,
-    })
+      // ── Two-finger tracking ──
+      if (event.pointerType === 'touch') {
+        this.twoFingerPointers.set(event.pointerId, event.clientY)
 
-    if (this.twoFingerPointers.size === 2) {
-      this.isDragging = false; this.isDraggingRef = false
-      this.isRotating = false; this.isRotatingRef = false
-      const vals = Array.from(this.twoFingerPointers.values())
-      this.twoFingerStartAvgX  = (vals[0].clientX + vals[1].clientX) / 2
-      this.twoFingerStartAvgY  = (vals[0].clientY + vals[1].clientY) / 2
-      this.twoFingerStartAngle = this.light.rotation.y
-      this.isTwoFingerRotating = true
-      event.preventDefault(); return
-    }
-    if (this.isTwoFingerRotating) { event.preventDefault(); return }
-  }
+        if (this.twoFingerPointers.size === 2) {
+          this.isDragging = false; this.isDraggingRef = false
+          this.isRotating = false; this.isRotatingRef = false
 
-  if (this.isTwoFingerRotating) return
+          const vals = Array.from(this.twoFingerPointers.values())
+          this.twoFingerStartAvgY  = (vals[0] + vals[1]) / 2
+          this.twoFingerStartAngle = this.light.rotation.y
+          this.isTwoFingerRotating = true
+          event.preventDefault(); return
+        }
 
-const el   = this.renderer.domElement
-const rect = el.getBoundingClientRect()
-const relX = (event.clientX - rect.left) / rect.width
-const relY = (event.clientY - rect.top)  / rect.height
-const ndcX =  Math.max(0, Math.min(1, relX)) * 2 - 1
-const ndcY = -(Math.max(0, Math.min(1, relY)) * 2 - 1)
+        if (this.isTwoFingerRotating) { event.preventDefault(); return }
+      }
 
-this.mouse.set(ndcX, ndcY)
-this.raycaster.setFromCamera(this.mouse, this.camera)
+      if (this.isTwoFingerRotating) return
 
-  if (this.rotationRing) {
-    const arrowHits = this.raycaster.intersectObject(this.rotationRing, true)
-    const arrowHit  = arrowHits.find(h => h.object.userData.isRotationArrow)
-    if (arrowHit) {
-      const visMesh = arrowHit.object.userData.visMesh
-      if (visMesh) visMesh.material.color.setHex(0xff6600)
-      this.isRotating = true; this.isRotatingRef = true
-      this.rotationStartAngle  = this.light.rotation.y
-      this.rotationStartMouseX = ndcX
+      const { clientX, clientY } = event
+      const { ndcX, ndcY } = this._eventToNDC(clientX, clientY)
+      this.mouse.set(ndcX, ndcY)
+      this.raycaster.setFromCamera(this.mouse, this.camera)
+
+      // 1. Check rotation ring arrows
+      if (this.rotationRing) {
+        const arrowHits = this.raycaster.intersectObject(this.rotationRing, true)
+        const arrowHit  = arrowHits.find(h => h.object.userData.isRotationArrow)
+
+        if (arrowHit) {
+          const visMesh = arrowHit.object.userData.visMesh
+          if (visMesh) visMesh.material.color.setHex(0xff6600)
+
+          this.isRotating          = true
+          this.isRotatingRef       = true
+          this.rotationStartAngle  = this.light.rotation.y
+          this.rotationStartMouseX = ndcX
+
+          this.renderer.domElement.setPointerCapture(event.pointerId)
+          event.preventDefault(); return
+        }
+      }
+
+      // 2. Check model body for drag
+      const hits = this.raycaster.intersectObject(this.light, true)
+      if (hits.length === 0) return
+
+      this.light.visible = false
+      const ceilHit = this.raycastCeiling()
+      this.light.visible = true
+      if (!ceilHit) return
+
+      this.dragOffset.set(
+        this.light.position.x - ceilHit.x,
+        0,
+        this.light.position.z - ceilHit.z,
+      )
+
+      this.isDragging    = true
+      this.isDraggingRef = true
       this.renderer.domElement.setPointerCapture(event.pointerId)
-      event.preventDefault(); return
-    }
-  }
+      event.preventDefault()
+    },
 
-  const hits = this.raycaster.intersectObject(this.light, true)
-  if (hits.length === 0) return
+    onPointerMove(event) {
+      // Two-finger rotation
+      if (event.pointerType === 'touch' && this.isTwoFingerRotating) {
+        if (!this.twoFingerPointers.has(event.pointerId)) return
+        this.twoFingerPointers.set(event.pointerId, event.clientY)
 
-  this.light.visible = false
-  const ceilHit = this.raycastCeiling()
-  this.light.visible = true
-  if (!ceilHit) return
+        if (this.twoFingerPointers.size === 2) {
+          const vals   = Array.from(this.twoFingerPointers.values())
+          const avgY   = (vals[0] + vals[1]) / 2
+          const deltaY = avgY - this.twoFingerStartAvgY
+          const screenH = this.renderer.domElement.clientHeight || window.innerHeight
+          const deltaRad = (deltaY / screenH) * Math.PI * 2
+          const newRotY = this.twoFingerStartAngle + deltaRad
+          this.light.rotation.y = newRotY
+          this.lightRotation = ((THREE.MathUtils.radToDeg(newRotY) % 360) + 360) % 360
+          this._snapRingToLight()
+        }
+        event.preventDefault(); return
+      }
 
-  this.dragOffset.set(
-    this.light.position.x - ceilHit.x,
-    0,
-    this.light.position.z - ceilHit.z,
-  )
-  // Init smoothing to current position
-  this._dragSmoothX = this.light.position.x
-  this._dragSmoothZ = this.light.position.z
-  this._lastDragHit = ceilHit.clone()
+      if (event.pointerType === 'touch' && !event.isPrimary) return
+      if (!this.isDragging && !this.isRotating) return
 
-  this.isDragging = true; this.isDraggingRef = true
-  this.renderer.domElement.setPointerCapture(event.pointerId)
-  event.preventDefault()
-},
+      const { clientX, clientY } = event
+      const { ndcX, ndcY, sx, sy } = this._eventToNDC(clientX, clientY)
+      this.mouse.set(ndcX, ndcY)
 
-    // onPointerMove(event) {
-    //   // Two-finger rotation
-    //   if (event.pointerType === 'touch' && this.isTwoFingerRotating) {
-    //     if (!this.twoFingerPointers.has(event.pointerId)) return
-    //     this.twoFingerPointers.set(event.pointerId, event.clientY)
+      // Arrow rotation
+      if (this.isRotating) {
+        const deltaX  = ndcX - this.rotationStartMouseX
+        const newRotY = this.rotationStartAngle + deltaX * Math.PI * 2
+        this.light.rotation.y = newRotY
+        this.lightRotation = ((THREE.MathUtils.radToDeg(newRotY) % 360) + 360) % 360
+        this._snapRingToLight()
+        event.preventDefault(); return
+      }
 
-    //     if (this.twoFingerPointers.size === 2) {
-    //       const vals   = Array.from(this.twoFingerPointers.values())
-    //       const avgY   = (vals[0] + vals[1]) / 2
-    //       const deltaY = avgY - this.twoFingerStartAvgY
-    //       const screenH = this.renderer.domElement.clientHeight || window.innerHeight
-    //       const deltaRad = (deltaY / screenH) * Math.PI * 2
-    //       const newRotY = this.twoFingerStartAngle + deltaRad
-    //       this.light.rotation.y = newRotY
-    //       this.lightRotation = ((THREE.MathUtils.radToDeg(newRotY) % 360) + 360) % 360
-    //       this._snapRingToLight()
-    //     }
-    //     event.preventDefault(); return
-    //   }
+      // Model drag along ceiling plane
+      if (this.isDragging) {
+        this.raycaster.setFromCamera(this.mouse, this.camera)
 
-    //   if (event.pointerType === 'touch' && !event.isPrimary) return
-    //   if (!this.isDragging && !this.isRotating) return
+        this.light.visible = false
+        const ceilHit = this.raycastCeiling()
+        this.light.visible = true
+        if (!ceilHit) return
 
-    //   const { clientX, clientY } = event
-    //   const { ndcX, ndcY, sx, sy } = this._eventToNDC(clientX, clientY)
-    //   this.mouse.set(ndcX, ndcY)
+        const newX = ceilHit.x + this.dragOffset.x
+        const newZ = ceilHit.z + this.dragOffset.z
 
-    //   // Arrow rotation
-    //   if (this.isRotating) {
-    //     const deltaX  = ndcX - this.rotationStartMouseX
-    //     const newRotY = this.rotationStartAngle + deltaX * Math.PI * 2
-    //     this.light.rotation.y = newRotY
-    //     this.lightRotation = ((THREE.MathUtils.radToDeg(newRotY) % 360) + 360) % 360
-    //     this._snapRingToLight()
-    //     event.preventDefault(); return
-    //   }
+        // Solve Y from ceiling plane equation
+        const n = this.ceilingNormal3
+        const d = this.ceilingPlaneTHREE.constant
+        let newY = this.ceilingCentroid3.y
+        if (Math.abs(n.y) > 1e-6) {
+          newY = (-d - n.x * newX - n.z * newZ) / n.y
+        }
 
-    //   // Model drag along ceiling plane
-    //   if (this.isDragging) {
-    //     this.raycaster.setFromCamera(this.mouse, this.camera)
+        // Position: top of light at ceiling surface, hanging down
+        // ceilingNormal3.y < 0 so addScaledVector by lightHalfH moves down
+        this.light.position.set(newX, newY, newZ)
+        this.light.position.addScaledVector(n, -this.lightHalfH)
 
-    //     this.light.visible = false
-    //     const ceilHit = this.raycastCeiling()
-    //     this.light.visible = true
-    //     if (!ceilHit) return
+        this._snapRingToLight()
+        event.preventDefault()
+      }
+    },
 
-    //     const newX = ceilHit.x + this.dragOffset.x
-    //     const newZ = ceilHit.z + this.dragOffset.z
+    onPointerUp(event) {
+      if (event.pointerType === 'touch') {
+        this.twoFingerPointers.delete(event.pointerId)
+        if (this.twoFingerPointers.size < 2 && this.isTwoFingerRotating) {
+          this.isTwoFingerRotating = false; return
+        }
+        if (this.isTwoFingerRotating) return
+      }
 
-    //     // Solve Y from ceiling plane equation
-    //     const n = this.ceilingNormal3
-    //     const d = this.ceilingPlaneTHREE.constant
-    //     let newY = this.ceilingCentroid3.y
-    //     if (Math.abs(n.y) > 1e-6) {
-    //       newY = (-d - n.x * newX - n.z * newZ) / n.y
-    //     }
+      if (this.isRotating && this.rotationRing) {
+        this.rotationRing.traverse((child) => {
+          if (child.userData?.visMesh) {
+            child.userData.visMesh.material.color.setHex(child.userData.originalColor)
+          }
+        })
+      }
 
-    //     // Position: top of light at ceiling surface, hanging down
-    //     // ceilingNormal3.y < 0 so addScaledVector by lightHalfH moves down
-    //     this.light.position.set(newX, newY, newZ)
-    //     this.light.position.addScaledVector(n, -this.lightHalfH)
-
-    //     this._snapRingToLight()
-    //     event.preventDefault()
-    //   }
-    // },
-
-  onPointerMove(event) {
-  if (event.pointerType === 'touch' && this.isTwoFingerRotating) {
-    if (!this.twoFingerPointers.has(event.pointerId)) return
-    this.twoFingerPointers.set(event.pointerId, {
-      clientX: event.clientX,
-      clientY: event.clientY,
-    })
-    if (this.twoFingerPointers.size === 2) {
-      const vals = Array.from(this.twoFingerPointers.values())
-      const avgX = (vals[0].clientX + vals[1].clientX) / 2
-      const deltaX = avgX - this.twoFingerStartAvgX
-      // 300px horizontal swipe = 180° on mobile
-      const deltaRad = (deltaX / 300) * Math.PI
-      const newRotY = this.twoFingerStartAngle + deltaRad
-      this.light.rotation.y = newRotY
-      this.lightRotation = ((THREE.MathUtils.radToDeg(newRotY) % 360) + 360) % 360
-      this._snapRingToLight()
-    }
-    event.preventDefault(); return
-  }
-
-  if (event.pointerType === 'touch' && !event.isPrimary) return
-  if (!this.isDragging && !this.isRotating) return
-
-  // ── Compute NDC correctly for both mouse and touch ──────────────────────
-  // On mobile, renderer.domElement is CSS-scaled but its internal resolution
-  // (renderer.domElement.width/height) is the full render resolution.
-  // getBoundingClientRect() gives the DISPLAYED (CSS) size — use that for mapping.
-  const el   = this.renderer.domElement
-  const rect = el.getBoundingClientRect()  // CSS display size
-
-  const clientX = event.clientX
-  const clientY = event.clientY
-
-  // Map client coords → [0,1] within the displayed canvas rect
-  const relX = (clientX - rect.left)  / rect.width
-  const relY = (clientY - rect.top)   / rect.height
-
-  // Clamp to avoid edge overshoots on fast swipes
-  const clampedRelX = Math.max(0, Math.min(1, relX))
-  const clampedRelY = Math.max(0, Math.min(1, relY))
-
-  // Convert to NDC [-1, +1]
-  const ndcX =  clampedRelX * 2 - 1
-  const ndcY = -clampedRelY * 2 + 1
-
-  this.mouse.set(ndcX, ndcY)
-
-  if (this.isRotating) {
-    const deltaX  = ndcX - this.rotationStartMouseX
-    const newRotY = this.rotationStartAngle + deltaX * Math.PI
-    this.light.rotation.y = newRotY
-    this.lightRotation = ((THREE.MathUtils.radToDeg(newRotY) % 360) + 360) % 360
-    this._snapRingToLight()
-    event.preventDefault(); return
-  }
-
-  if (this.isDragging) {
-    this.raycaster.setFromCamera(this.mouse, this.camera)
-    this.light.visible = false
-    const ceilHit = this.raycastCeiling()
-    this.light.visible = true
-
-    const hit = ceilHit || this._lastDragHit
-    if (!hit) return
-    if (ceilHit) this._lastDragHit = ceilHit.clone()
-
-    const rawX = hit.x + this.dragOffset.x
-    const rawZ = hit.z + this.dragOffset.z
-
-    // More aggressive smoothing on touch (mobile needs more damping)
-    const S = event.pointerType === 'touch' ? 0.25 : (this.DRAG_SMOOTH ?? 0.15)
-    this._dragSmoothX += (rawX - this._dragSmoothX) * (1 - S)
-    this._dragSmoothZ += (rawZ - this._dragSmoothZ) * (1 - S)
-
-    const newX = this._dragSmoothX
-    const newZ = this._dragSmoothZ
-
-    const n = this.ceilingNormal3
-    const d = this.ceilingPlaneTHREE.constant
-    let newY = this.ceilingCentroid3.y
-    if (Math.abs(n.y) > 1e-6) {
-      newY = (-d - n.x * newX - n.z * newZ) / n.y
-    }
-
-    this.light.position.set(newX, newY, newZ)
-    this._snapRingToLight()
-    event.preventDefault()
-  }
-},
-    // onPointerUp(event) {
-    //   if (event.pointerType === 'touch') {
-    //     this.twoFingerPointers.delete(event.pointerId)
-    //     if (this.twoFingerPointers.size < 2 && this.isTwoFingerRotating) {
-    //       this.isTwoFingerRotating = false; return
-    //     }
-    //     if (this.isTwoFingerRotating) return
-    //   }
-
-    //   if (this.isRotating && this.rotationRing) {
-    //     this.rotationRing.traverse((child) => {
-    //       if (child.userData?.visMesh) {
-    //         child.userData.visMesh.material.color.setHex(child.userData.originalColor)
-    //       }
-    //     })
-    //   }
-
-    //   this.isDragging    = false; this.isDraggingRef = false
-    //   this.isRotating    = false; this.isRotatingRef = false
-    //   try { this.renderer.domElement.releasePointerCapture(event.pointerId) } catch (_) {}
-    // },
+      this.isDragging    = false; this.isDraggingRef = false
+      this.isRotating    = false; this.isRotatingRef = false
+      try { this.renderer.domElement.releasePointerCapture(event.pointerId) } catch (_) {}
+    },
 
     // ─────────────────────────────────────────────────────
     // CEILING RAYCAST
     // ─────────────────────────────────────────────────────
-onPointerUp(event) {
-  if (event.pointerType === 'touch') {
-    this.twoFingerPointers.delete(event.pointerId)
-    if (this.twoFingerPointers.size < 2 && this.isTwoFingerRotating) {
-      this.isTwoFingerRotating = false
-      // Re-anchor remaining finger so follow-up doesn't snap
-      if (this.twoFingerPointers.size === 1) {
-        const rem = Array.from(this.twoFingerPointers.values())[0]
-        this.twoFingerStartAngle = this.light ? this.light.rotation.y : 0
-        this.twoFingerStartAvgX  = rem.clientX
-        this.twoFingerStartAvgY  = rem.clientY
-      }
-      return
-    }
-    if (this.isTwoFingerRotating) return
-  }
 
-  if (this.isRotating && this.rotationRing) {
-    this.rotationRing.traverse((child) => {
-      if (child.userData?.visMesh) {
-        child.userData.visMesh.material.color.setHex(child.userData.originalColor)
-      }
-    })
-  }
-
-  this.isDragging = false; this.isDraggingRef = false
-  this.isRotating = false; this.isRotatingRef = false
-  this._lastDragHit = null
-
-  try { this.renderer.domElement.releasePointerCapture(event.pointerId) } catch (_) {}
-},
     raycastCeiling() {
       if (this.ceilingPlaneTHREE) {
         const pt = new THREE.Vector3()

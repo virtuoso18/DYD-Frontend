@@ -160,32 +160,26 @@ Regererate </a-button>
   });
 
   function initializeScene(container) {
-    scene = new THREE.Scene();
-    backgroundScene = new THREE.Scene();
-    backgroundCamera = new THREE.Camera();
+  scene = new THREE.Scene()
+  backgroundScene = new THREE.Scene()
+  backgroundCamera = new THREE.Camera()
 
-    const width = container.clientWidth || window.innerWidth;
-    const height =props.glbModelUrl ? ((container.clientHeight || window.innerHeight)-170) :(container.clientHeight || window.innerHeight);
+  const width  = container.clientWidth  || window.innerWidth
+  const height = container.clientHeight || window.innerHeight
 
-    camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+  camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000)
 
-    renderer = new THREE.WebGLRenderer({ 
-      antialias: true,
-      alpha: true 
-    });
-    renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.outputColorSpace = THREE.SRGBColorSpace;
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    renderer.setClearColor(0xf5f5f5, 1);
-    
-    while (container.firstChild) {
-      container.removeChild(container.firstChild);
-    }
-    
-    container.appendChild(renderer.domElement);
-  }
+  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
+  renderer.setSize(width, height)
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+  renderer.outputColorSpace = THREE.SRGBColorSpace
+  renderer.shadowMap.enabled = true
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap
+  renderer.setClearColor(0xf5f5f5, 1)
+
+  while (container.firstChild) container.removeChild(container.firstChild)
+  container.appendChild(renderer.domElement)
+}
 
   function initializeBackground() {
     const canvas = document.createElement('canvas');
@@ -250,159 +244,149 @@ Regererate </a-button>
     scene.add(rimLight);
   }
 
-  function initializeControls() {
-    controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.1;
-    controls.maxPolarAngle = Math.PI * 0.48;
-    controls.minDistance = 1;
-    controls.maxDistance = 20;
-    
-    camera.position.set(5, 5, 5);
-    controls.target.set(0, 0, 0);
-    controls.update();
-  }
+function initializeControls() {
+  controls = new OrbitControls(camera, renderer.domElement)
+  controls.enableDamping  = true
+  controls.dampingFactor  = 0.1
+  controls.maxPolarAngle  = Math.PI * 0.48
+  controls.minDistance    = 0.5
+  controls.maxDistance    = 20
+  controls.enablePan      = false   // cleaner on mobile
 
-  function loadModel() {
-      if (!props.glbModelUrl || !scene) return;  // 👈 ensure scene exists
+  camera.position.set(0, 3, 6)
+  controls.target.set(0, 0, 0)
+  controls.update()
+}
 
-  // if (!props.glbModelUrl) return;
-  
-  loading.value = true;
-  modelLoaded.value = false;
-  
-  // Clear ALL objects from scene (except lights)
-  const objectsToRemove = [];
-  scene.traverse((child) => {
-    if (child.type !== 'Scene' && 
-        !child.isLight && 
-        !child.isAmbientLight && 
-        !child.isDirectionalLight && 
-        !child.isHemisphereLight) {
-      objectsToRemove.push(child);
+
+function clearScene() {
+  const toRemove = []
+  scene.children.forEach((child) => {
+    if (!child.isLight && !child.isAmbientLight &&
+        !child.isDirectionalLight && !child.isHemisphereLight) {
+      toRemove.push(child)
     }
-  });
-
-  objectsToRemove.forEach(obj => {
-    if (obj.parent) {
-      obj.parent.remove(obj);
-    }
-    if (obj.geometry) obj.geometry.dispose();
-    if (obj.material) {
-      if (Array.isArray(obj.material)) {
-        obj.material.forEach(mat => {
-          if (mat.map) mat.map.dispose();
-          if (mat.normalMap) mat.normalMap.dispose();
-          if (mat.roughnessMap) mat.roughnessMap.dispose();
-          if (mat.metalnessMap) mat.metalnessMap.dispose();
-          mat.dispose();
-        });
-      } else {
-        if (obj.material.map) obj.material.map.dispose();
-        if (obj.material.normalMap) obj.material.normalMap.dispose();
-        if (obj.material.roughnessMap) obj.material.roughnessMap.dispose();
-        if (obj.material.metalnessMap) obj.material.metalnessMap.dispose();
-        obj.material.dispose();
+  })
+  toRemove.forEach((obj) => {
+    scene.remove(obj)
+    obj.traverse((child) => {
+      if (child.geometry) child.geometry.dispose()
+      if (child.material) {
+        const mats = Array.isArray(child.material) ? child.material : [child.material]
+        mats.forEach((mat) => {
+          if (mat.map)          mat.map.dispose()
+          if (mat.normalMap)    mat.normalMap.dispose()
+          if (mat.roughnessMap) mat.roughnessMap.dispose()
+          if (mat.metalnessMap) mat.metalnessMap.dispose()
+          mat.dispose()
+        })
       }
-    }
-  });
-
-  // Reset model reference
-  model = null;
-  
-  // Force renderer clear
+    })
+  })
+  model = null
   if (renderer) {
-    renderer.clear();
+    renderer.clear()
+    renderer.render(backgroundScene, backgroundCamera)
+    renderer.render(scene, camera)
   }
+}
   
-  const loader = new GLTFLoader();
+function loadModel() {
+  if (!props.glbModelUrl || !scene) return
+
+  // ✅ Clear synchronously FIRST
+  clearScene()
+
+  loading.value    = true
+  modelLoaded.value = false
+
+  const loader = new GLTFLoader()
   loader.load(
     props.glbModelUrl,
     (gltf) => {
-      model = gltf.scene;
+      // ✅ Clear again to handle rapid switching
+      clearScene()
 
+      model = gltf.scene
       model.traverse((child) => {
         if (child.isMesh) {
-          child.castShadow = true;
-          child.receiveShadow = true;
-          
-          if (child.material) {
-            if (Array.isArray(child.material)) {
-              child.material.forEach(mat => mat.needsUpdate = true);
-            } else {
-              child.material.needsUpdate = true;
-            }
-          }
+          child.castShadow    = true
+          child.receiveShadow = true
+          const mats = Array.isArray(child.material) ? child.material : [child.material]
+          mats.forEach((m) => (m.needsUpdate = true))
         }
-      });
+      })
 
-      modelBoundingBox = new THREE.Box3().setFromObject(model);
-      modelSize = modelBoundingBox.getSize(new THREE.Vector3());
-      modelCenter = modelBoundingBox.getCenter(new THREE.Vector3());
+      // Scale to consistent size
+      modelBoundingBox = new THREE.Box3().setFromObject(model)
+      modelSize        = modelBoundingBox.getSize(new THREE.Vector3())
+      modelCenter      = modelBoundingBox.getCenter(new THREE.Vector3())
 
-      const maxDim = Math.max(modelSize.x, modelSize.y, modelSize.z);
-      const desiredSize = 3;
-      const scaleFactor = desiredSize / maxDim;
-      model.scale.setScalar(scaleFactor);
+      const maxDim     = Math.max(modelSize.x, modelSize.y, modelSize.z)
+      const scaleFactor = 3 / maxDim
+      model.scale.setScalar(scaleFactor)
 
-      modelBoundingBox = new THREE.Box3().setFromObject(model);
-      modelSize = modelBoundingBox.getSize(new THREE.Vector3());
-      modelCenter = modelBoundingBox.getCenter(new THREE.Vector3());
+      // Re-measure after scale
+      modelBoundingBox = new THREE.Box3().setFromObject(model)
+      modelSize        = modelBoundingBox.getSize(new THREE.Vector3())
+      modelCenter      = modelBoundingBox.getCenter(new THREE.Vector3())
 
-      model.position.sub(modelCenter);
-      model.position.y = -modelBoundingBox.min.y;
-      model.rotation.set(0, 0, 0);
+      // Center horizontally, sit on ground
+      model.position.set(-modelCenter.x, -modelBoundingBox.min.y, -modelCenter.z)
+      model.rotation.set(0, 0, 0)
 
-      scene.add(model);
-      createGroundPlane();
-      fitCameraToModel();
+      scene.add(model)
+      createGroundPlane()
+      fitCameraToModel()
 
-      loading.value = false;
-      modelLoaded.value = true;
+      loading.value     = false
+      modelLoaded.value = true
     },
-    (progress) => {
-      console.log('Loading progress:', (progress.loaded / progress.total * 100) + '%');
-    },
+    undefined,
     (error) => {
-      console.error("Failed to load model", error);
-      loading.value = false;
-      modelLoaded.value = false;
-    }
-  );
+      console.error('Failed to load model', error)
+      loading.value = false
+    },
+  )
+}
+  function createGroundPlane() {
+  // Smaller grid that scales with model size
+  const gridSize = Math.max(modelSize?.x ?? 4, modelSize?.z ?? 4) * 4
+  const divisions = 20
+
+  const groundGeometry = new THREE.PlaneGeometry(gridSize, gridSize)
+  const groundMaterial = new THREE.MeshLambertMaterial({
+    color: 0xffffff, transparent: true, opacity: 0.1,
+  })
+  const groundPlane = new THREE.Mesh(groundGeometry, groundMaterial)
+  groundPlane.rotation.x = -Math.PI / 2
+  groundPlane.position.y = 0
+  groundPlane.receiveShadow = true
+  scene.add(groundPlane)
+
+  const gridHelper = new THREE.GridHelper(gridSize, divisions, 0xcccccc, 0xe0e0e0)
+  gridHelper.position.y = 0.001
+  scene.add(gridHelper)
 }
 
-  function createGroundPlane() {
-    const groundGeometry = new THREE.PlaneGeometry(20, 20);
-    const groundMaterial = new THREE.MeshLambertMaterial({
-      color: 0xffffff,
-      transparent: true,
-      opacity: 0.1
-    });
-    
-    const groundPlane = new THREE.Mesh(groundGeometry, groundMaterial);
-    groundPlane.rotation.x = -Math.PI / 2;
-    groundPlane.position.y = -0.01;
-    groundPlane.receiveShadow = true;
-    scene.add(groundPlane);
-    
-    const gridHelper = new THREE.GridHelper(10, 20, 0xcccccc, 0xe0e0e0);
-    gridHelper.position.y = 0;
-    scene.add(gridHelper);
-  }
+function fitCameraToModel() {
+  if (!model || !modelSize) return
 
-  function fitCameraToModel() {
-    if (!model || !modelSize) return;
-    
-    const maxDim = Math.max(modelSize.x, modelSize.y, modelSize.z);
-    const fov = camera.fov * (Math.PI / 180);
-    const fitHeightDistance = maxDim / (2 * Math.tan(fov / 2));
-    const fitWidthDistance = fitHeightDistance / camera.aspect;
-    const distance = Math.max(fitHeightDistance, fitWidthDistance) * 2;
+  const maxDim = Math.max(modelSize.x, modelSize.y, modelSize.z)
+  const fov    = camera.fov * (Math.PI / 180)
 
-    camera.position.set(distance * -0.4, distance * 0.5, distance * 0.7);
-    controls.target.copy(new THREE.Vector3(0, modelSize.y * 0.3, 0));
-    controls.update();
-  }
+  // Distance that fits the model fully in frame
+  const fitDist = (maxDim / 2) / Math.tan(fov / 2)
+  const distance = fitDist * 1.8   // 1.8× so it's not clipped
+
+  // Slightly elevated angle — good on both desktop and mobile
+  camera.position.set(distance * 0.6, distance * 0.55, distance * 0.8)
+
+  // Look at vertical center of model, not base
+  controls.target.set(0, modelSize.y * 0.35, 0)
+  controls.update()
+}
+
 
   function animate() {
     animationId = requestAnimationFrame(animate);
@@ -419,17 +403,17 @@ Regererate </a-button>
     }
   }
 
-  function onWindowResize() {
-    if (!canvasContainer.value || !renderer || !camera) return;
-    
-    const container = canvasContainer.value;
-    const width = container.clientWidth;
-    const height = container.clientHeight;
-    
-    camera.aspect = width / height;
-    camera.updateProjectionMatrix();
-    renderer.setSize(width, height);
-  }
+function onWindowResize() {
+  if (!canvasContainer.value || !renderer || !camera) return
+
+  const container = canvasContainer.value
+  const width  = container.clientWidth
+  const height = container.clientHeight
+
+  camera.aspect = width / height
+  camera.updateProjectionMatrix()
+  renderer.setSize(width, height)
+}
 
   onBeforeUnmount(() => {
     if (animationId) {
@@ -603,6 +587,44 @@ Regererate </a-button>
   
   .loading-text {
     padding: 15px 20px;
+  }
+}
+
+
+
+#canvas-container {
+  position: relative;
+  width: 100%;
+  height: 400px;
+  background-color: #f3f2f7;
+  overflow: hidden;
+}
+
+/* Make viewer fill the container properly */
+#viewer {
+  width: 100%;
+  height: 100%;
+  background: #f3f2f7;
+}
+
+#viewer canvas {
+  cursor: grab;
+  display: block;    /* ← removes inline gap */
+  width: 100% !important;
+  height: 100% !important;
+}
+
+@media (max-width: 768px) {
+  #canvas-container {
+    height: 340px;   /* fixed, comfortable mobile height */
+    min-height: 280px;
+  }
+}
+
+@media (max-width: 480px) {
+  #canvas-container {
+    height: 280px;
+    min-height: 240px;
   }
 }
 </style>

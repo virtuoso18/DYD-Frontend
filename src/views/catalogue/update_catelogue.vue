@@ -1331,7 +1331,7 @@ Switch Furniture</a-button> -->
             />
 
             <!-- glbUrl="http://127.0.0.1:8000/media/products/ceiling_lamp_disk.glb" -->
-            <ceiling_3d_object_renderer
+            <!-- <ceiling_3d_object_renderer
               v-if="
                 current_tab == 'image' &&
                 active_tab_image === 'item_replacement' &&
@@ -1345,6 +1345,34 @@ Switch Furniture</a-button> -->
               :roll="ceiling_roll"
               :pitch="ceiling_pitch"
               :yaw="ceiling_yaw"
+              @model-3d-light-added="magneticLightsMearjed"
+              @Apply-Changes="ApplyChanges"
+              ref="canvas_ceiling_3d_object_light_renderer"
+              @insufficient-credits="throw_Insufficient_credits"
+            /> -->
+            <ceiling_3d_object_renderer
+              v-if="
+                current_tab == 'image' &&
+                active_tab_image === 'item_replacement' &&
+                select_replace === 'Lights' &&
+                selected_light_type === 'hanging'
+              "
+              v-bind="active_room_ptcld_cords"
+
+              :glbUrl="model_3d_url"
+              :selectedlightuuid="selectedlightuuid"
+              :debug="debug"
+              :baseImageUrl="base_image_url"
+              :ceilingMaskUrl="this.$store.state.root_media_api+active_room_ptcld_cords.CEILING_MASK"
+              
+              :TARGET_DIMS="selected_3dlight_model_diamensions" 
+              
+              :roll="ceiling_roll"
+              :pitch="ceiling_pitch"
+              :yaw="ceiling_yaw"
+
+              
+
               @model-3d-light-added="magneticLightsMearjed"
               @Apply-Changes="ApplyChanges"
               ref="canvas_ceiling_3d_object_light_renderer"
@@ -3638,11 +3666,14 @@ export default {
       this.goto_home_design_show(this.$route.query.home_design);
       // console.log(this.$route.query.home_design)
     }
-    if((this.$route.query.window_name==='furniture') && (this.$route.query.product_type==='furniture') && this.$route.query.product_id){
-      
-      
-      this.loadProductDetailsAndInitialize()
-    }
+    if
+    (
+      ((this.$route.query.window_name==='furniture') ||(this.$route.query.window_name==='light')) && 
+      ((this.$route.query.product_type==='furniture') ||(this.$route.query.product_type==='light')) && 
+      this.$route.query.product_id
+    ) {      
+       this.loadProductDetailsAndInitialize()
+      }
   },
 
   beforeUnmount() {
@@ -3694,7 +3725,9 @@ export default {
             width: data.dimensions.width,
             height: data.dimensions.height,
             depth: data.dimensions.length
-          }
+          },
+          is_ceiling_light_product:data.is_ceiling_light_product,
+          light_type:data.light_type,
         };
         
       } catch (error) {
@@ -3713,7 +3746,8 @@ export default {
           if (!productData) {
             throw new Error('Failed to load product details');
           }
-          
+          //  console.log(productData);
+          //   debugger
           console.log('✅ Product data loaded:', productData);
           
           // Set original dimensions (NEVER MODIFY THESE)
@@ -3725,11 +3759,24 @@ export default {
           
           console.log('📏 Original dimensions:', this.modelDimensions);
           
+          if(this.$route.query.window_name =='furniture'){
+          
           this.selected_model_width= this.modelDimensions.width
           this.selected_model_height=this.modelDimensions.height
           this.selected_model_depth=this.modelDimensions.depth
           this.item_replacement_renderer_3d_model_url=productData.model_url;
           // console.log(this.item_replacement_renderer_3d_model_url);
+          }
+
+          if(this.$route.query.window_name =='light'){
+
+            this.model_3d_url=productData.model_url;
+            this.selectedlightuuid=this.$route.query.product_id
+            this.selected_3dlight_model_diamensions={ width: productData.dimensions.width, height: productData.dimensions.height, depth: productData.dimensions.length }
+          // is_ceiling_light_product
+          // light_type
+            }
+
           // debugger
           this.canvasLoading=false
         } catch (error) {
@@ -5896,7 +5943,10 @@ smoothMobileScrolltoTop(){
     },
 
     async magneticLightsMearjed(e) {
+      
+      // console.log(e)
       this.base_image_url = this.$store.state.root_media_api + e.image_url+"?p="+Date.now();
+      // debugger
       this.forceCanvasUpdate();
     },
 
