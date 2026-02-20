@@ -19,10 +19,9 @@
         v-for="(model, index) in list_history_generated_3d_models" 
         :key="model.id"
         style="border-bottom:1px solid #f0f0f0;align-items:center;"
-        @click="this.$emit('clicked-model', {'new3d_model_instance':model.id,'media_url':model.model_file_url})"
+        @click="this.$emit('clicked-model', {'new3d_model_instance':model.id,'media_url':model.model_file_url, originalImageUrl:model?.images?.image_0})"
         class="card-history"
       >
-      
         <a-col :span="5">
           <!-- ✨ ADDED: Container with position relative -->
           <div style="position: relative; width: 60px; height: 60px; overflow: hidden; border-radius: 4px;">

@@ -91,6 +91,7 @@
       :isLoading="processing_generate_is_Loading"
       :Model_instance_id="model_instance_id"
       @clicked-add-product="add_new_product"
+      @updateInputImage="updateInputImage"
     />
   </div>
   
@@ -100,6 +101,7 @@
       @insufficient-credits="throw_Insufficient_credits"
       @generated="new3DModelGenerated"
       @queue-updated="get_3d_rendered_model_details"
+      :input_image="input_image"
     />
   </div>
   
@@ -143,7 +145,9 @@ data(){
       abortControllers: new Map(),
 
       // modal
-      showAddProduct:false
+      showAddProduct:false,
+      imageTempUrl: "",
+      input_image: "",
       
 }
 },
@@ -157,6 +161,9 @@ mounted(){
   this.fetch3d_models_generated_by_user()
 },
 methods:{
+  updateInputImage() {
+      this.input_image =this.imageTempUrl;
+    },
   throw_Insufficient_credits(message){
       // @insufficient-credits="throw_Insufficient_credits"
       // if(response.status==402){
@@ -183,7 +190,8 @@ this.$router.push('/business-dashboard/my-products')
 clicked_history_model(e){
   this.processing_generate_is_Loading=false
   this.generated3dModel_url=this.$store.state.root_media_api+ e.media_url
-  this.model_instance_id=e.new3d_model_instance
+  this.model_instance_id=e.new3d_model_instance;
+  this.imageTempUrl = e.originalImageUrl;
 
 },
 async new3DModelGenerated(e){

@@ -681,7 +681,6 @@ onMounted(() => {
 });
 
 function handleRegenerateClick(){
-  console.log("fffffffffffffff");
    emit('updateInputImage');
 };
 const Add_new_product = () => {

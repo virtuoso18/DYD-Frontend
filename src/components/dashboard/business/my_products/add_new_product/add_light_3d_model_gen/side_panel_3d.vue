@@ -833,6 +833,13 @@ export default {
     ],
     multiViewQueueProcessingBg: false,
     }
+
+  },
+
+  props: {
+    input_image: {
+      type: String,
+    },
   },
   
 // Add these lifecycle hooks:
@@ -840,13 +847,23 @@ mounted() {
   // Initialize completed count on first load
   this.initializeCompletedCount()
   // Start queue polling when component mounts
-  this.startQueuePolling()
+  this.startQueuePolling();
+  if (this.input_image) {
+      this.mainImage = this.$store.state.root_media_api + this.input_image;
+    }
 
 },
 
 beforeUnmount() {
   // Clean up polling when component unmounts
   this.stopQueuePolling()
+},
+  watch: {
+  input_image(newVal) {
+    if (newVal) {
+      this.mainImage = this.$store.state.root_media_api + newVal;
+    }
+  }
 },
   computed: {
     
