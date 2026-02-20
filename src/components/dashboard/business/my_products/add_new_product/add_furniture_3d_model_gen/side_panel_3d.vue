@@ -1,16 +1,16 @@
 <template>
   <!-- TEXTURE MODAL -->
- <a-modal
-  v-model:open="openTextureModal"
-  width="60%"
-  style="max-width: 400px"
-  title="Apply Texture"
-  :footer="null"
-  centered
->
-  <div style="display: flex; flex-direction: column; gap: 16px">
-    <!-- Selected Texture Preview Section - SINGLE REGION -->
-    <!-- <div 
+  <a-modal
+    v-model:open="openTextureModal"
+    width="60%"
+    style="max-width: 400px"
+    title="Apply Texture"
+    :footer="null"
+    centered
+  >
+    <div style="display: flex; flex-direction: column; gap: 16px">
+      <!-- Selected Texture Preview Section - SINGLE REGION -->
+      <!-- <div 
       v-if="getSelectedTextureImage()" 
       style="
         padding: 16px;
@@ -35,165 +35,179 @@
       />
     </div> -->
 
-    <!-- Upload from Local Section -->
-    <div style="display: flex; flex-direction: column; gap: 12px">
-      <p style="margin: 0; font-weight: 500; font-size: 14px">
-        Upload from Local
-      </p>
-      <div
-        style="
-          border: 2px dashed #d9d9d9;
-          border-radius: 8px;
-          padding: 20px;
-          text-align: center;
-          cursor: pointer;
-          transition: all 0.3s;
-        "
-        :style="
-          textureImage && !selectedLibraryTexture
-            ? { borderColor: '#1890ff', background: '#f0f8ff' }
-            : {}
-        "
-        @click="triggerTextureFileInput()"
-      >
-      <div v-if="getSelectedTextureImage()!=null" style="display:flex;justify-content: center;">
-      <img
-        :src="getSelectedTextureImage()"
-        alt="Selected texture"
-        style="
-          max-width: 150px;
-          max-height: 150px;
-          border-radius: 4px;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        "
-      />
-      </div>
-        <div v-if="getSelectedTextureImage()==null">
-          <PlusOutlined
-            style="
-              font-size: 24px;
-              color: #1890ff;
-              margin-bottom: 8px;
-              display: block;
-            "
-          />
-          <p style="margin: 8px 0; font-weight: 500; font-size: 13px">
-            Click to select texture image
-          </p>
-          <small style="color: #999">PNG, JPG formats supported</small>
+      <!-- Upload from Local Section -->
+      <div style="display: flex; flex-direction: column; gap: 12px">
+        <p style="margin: 0; font-weight: 500; font-size: 14px">
+          Upload from Local
+        </p>
+        <div
+          style="
+            border: 2px dashed #d9d9d9;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+          "
+          :style="
+            textureImage && !selectedLibraryTexture
+              ? { borderColor: '#1890ff', background: '#f0f8ff' }
+              : {}
+          "
+          @click="triggerTextureFileInput()"
+        >
+          <div
+            v-if="getSelectedTextureImage() != null"
+            style="display: flex; justify-content: center"
+          >
+            <img
+              :src="getSelectedTextureImage()"
+              alt="Selected texture"
+              style="
+                max-width: 150px;
+                max-height: 150px;
+                border-radius: 4px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+              "
+            />
+          </div>
+          <div v-if="getSelectedTextureImage() == null">
+            <PlusOutlined
+              style="
+                font-size: 24px;
+                color: #1890ff;
+                margin-bottom: 8px;
+                display: block;
+              "
+            />
+            <p style="margin: 8px 0; font-weight: 500; font-size: 13px">
+              Click to select texture image
+            </p>
+            <small style="color: #999">PNG, JPG formats supported</small>
+          </div>
         </div>
-      </div>
 
-      <!-- Change Image Button -->
-      <!-- <div v-if="textureImage && !selectedLibraryTexture" style="text-align: center">
+        <!-- Change Image Button -->
+        <!-- <div v-if="textureImage && !selectedLibraryTexture" style="text-align: center">
         <a-button size="small" @click="removeSelectedTexture()">
           Change Image
         </a-button>
       </div> -->
-    </div>
-
-    <!-- Divider -->
-    <a-divider style="margin: 8px 0">OR</a-divider>
-
-    <!-- Texture Library Section -->
-    <div style="display: flex; flex-direction: column; gap: 12px">
-      <div style="display: flex; justify-content: space-between; align-items: center">
-        <p style="margin: 0; font-weight: 500; font-size: 14px">
-          Select from Library ({{ availableTexturesLibrary.length }})
-        </p>
-        <a-button
-          v-if="!loadingAvailableTextures && availableTexturesLibrary.length > 0"
-          type="text"
-          size="small"
-          @click="refreshTextureLibrary()"
-        >
-          ↻ Refresh
-        </a-button>
       </div>
 
-      <!-- Loading State -->
-      <div v-if="loadingAvailableTextures" style="text-align: center; padding: 40px">
-        <a-spin size="large" />
-        <p style="margin-top: 16px; color: #999">Loading textures...</p>
-      </div>
+      <!-- Divider -->
+      <a-divider style="margin: 8px 0">OR</a-divider>
 
-      <!-- Textures Grid -->
-      <div
-        v-else
-        style="
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
-          gap: 12px;
-          max-height: 350px;
-          overflow-y: auto;
-          padding: 8px;
-          border: 1px solid #e8e8e8;
-          border-radius: 6px;
-          background: #fafafa;
-        "
-      >
+      <!-- Texture Library Section -->
+      <div style="display: flex; flex-direction: column; gap: 12px">
         <div
-          v-for="texture in availableTexturesLibrary"
-          :key="texture.id"
-          style="position: relative; cursor: pointer"
-          @click="selectLibraryTexture(texture)"
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          "
+        >
+          <p style="margin: 0; font-weight: 500; font-size: 14px">
+            Select from Library ({{ availableTexturesLibrary.length }})
+          </p>
+          <a-button
+            v-if="
+              !loadingAvailableTextures && availableTexturesLibrary.length > 0
+            "
+            type="text"
+            size="small"
+            @click="refreshTextureLibrary()"
+          >
+            ↻ Refresh
+          </a-button>
+        </div>
+
+        <!-- Loading State -->
+        <div
+          v-if="loadingAvailableTextures"
+          style="text-align: center; padding: 40px"
+        >
+          <a-spin size="large" />
+          <p style="margin-top: 16px; color: #999">Loading textures...</p>
+        </div>
+
+        <!-- Textures Grid -->
+        <div
+          v-else
+          style="
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+            gap: 12px;
+            max-height: 350px;
+            overflow-y: auto;
+            padding: 8px;
+            border: 1px solid #e8e8e8;
+            border-radius: 6px;
+            background: #fafafa;
+          "
         >
           <div
-            style="
-              border-radius: 8px;
-              overflow: hidden;
-              transition: all 0.3s;
-              aspect-ratio: 1;
-              background: #f5f5f5;
-            "
-            :style="
-              selectedLibraryTexture?.id === texture.id
-                ? {
-                    border: '3px solid #52c41a',
-                    boxShadow: '0 0 12px rgba(82, 196, 26, 0.4)',
-                  }
-                : {
-                    border: '2px solid #d9d9d9',
-                  }
-            "
+            v-for="texture in availableTexturesLibrary"
+            :key="texture.id"
+            style="position: relative; cursor: pointer"
+            @click="selectLibraryTexture(texture)"
           >
-            <img
-              :src="getImageUrl(texture.url)"
-              :alt="texture.name"
-              style="
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                display: block;
-              "
-            />
-
-            <!-- Selection Checkmark -->
             <div
-              v-if="selectedLibraryTexture?.id === texture.id"
               style="
-                position: absolute;
-                top: 0;
-                right: 0;
-                background: red;
-                color: white;
-                width: 28px;
-                height: 28px;
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 16px;
-                margin: 4px;
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+                border-radius: 8px;
+                overflow: hidden;
+                transition: all 0.3s;
+                aspect-ratio: 1;
+                background: #f5f5f5;
               "
-               @click.stop=" clearLibrarySelection() "
+              :style="
+                selectedLibraryTexture?.id === texture.id
+                  ? {
+                      border: '3px solid #52c41a',
+                      boxShadow: '0 0 12px rgba(82, 196, 26, 0.4)',
+                    }
+                  : {
+                      border: '2px solid #d9d9d9',
+                    }
+              "
             >
-              <!-- ✓ -->
-               X
+              <img
+                :src="getImageUrl(texture.url)"
+                :alt="texture.name"
+                style="
+                  width: 100%;
+                  height: 100%;
+                  object-fit: cover;
+                  display: block;
+                "
+              />
+
+              <!-- Selection Checkmark -->
+              <div
+                v-if="selectedLibraryTexture?.id === texture.id"
+                style="
+                  position: absolute;
+                  top: 0;
+                  right: 0;
+                  background: red;
+                  color: white;
+                  width: 28px;
+                  height: 28px;
+                  border-radius: 50%;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  font-size: 16px;
+                  margin: 4px;
+                  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+                "
+                @click.stop="clearLibrarySelection()"
+              >
+                <!-- ✓ -->
+                X
+              </div>
             </div>
-          </div>
-          <!-- <p
+            <!-- <p
             style="
               margin-top: 8px;
               text-align: center;
@@ -207,55 +221,58 @@
           >
             {{ texture.name }}
           </p> -->
+          </div>
+
+          <!-- Empty State -->
+          <div
+            v-if="
+              availableTexturesLibrary.length === 0 && !loadingAvailableTextures
+            "
+            style="grid-column: 1/-1; text-align: center; padding: 40px"
+          >
+            <p style="color: #999; margin: 0">No textures available</p>
+          </div>
         </div>
 
-        <!-- Empty State -->
+        <!-- Load More Button -->
         <div
-          v-if="availableTexturesLibrary.length === 0 && !loadingAvailableTextures"
-          style="grid-column: 1/-1; text-align: center; padding: 40px"
+          v-if="hasMoreTextures && !loadingAvailableTextures"
+          style="text-align: center"
         >
-          <p style="color: #999; margin: 0">No textures available</p>
+          <a-button
+            @click="loadMoreTextures()"
+            :loading="loadingAvailableTextures"
+          >
+            Load More Textures
+          </a-button>
         </div>
       </div>
 
-      <!-- Load More Button -->
+      <!-- Clear Library Selection Button -->
       <div
-        v-if="hasMoreTextures && !loadingAvailableTextures"
+        v-if="selectedLibraryTexture && !textureImage"
         style="text-align: center"
       >
-        <a-button @click="loadMoreTextures()" :loading="loadingAvailableTextures">
-          Load More Textures
+        <a-button size="small" @click="clearLibrarySelection()">
+          Clear Selection
+        </a-button>
+      </div>
+
+      <!-- Apply & Cancel buttons -->
+      <div style="display: flex; gap: 8px; padding-top: 8px">
+        <a-button block @click="closeTextureModal()"> Cancel </a-button>
+        <a-button
+          type="primary"
+          block
+          @click="applyTextureToImage()"
+          :disabled="!getSelectedTextureImage()"
+          :loading="isApplyingTexture"
+        >
+          Apply Texture (⚡20)
         </a-button>
       </div>
     </div>
-
-    <!-- Clear Library Selection Button -->
-    <div
-      v-if="selectedLibraryTexture && !textureImage"
-      style="text-align: center"
-    >
-      <a-button size="small" @click="clearLibrarySelection()"   >
-        Clear Selection
-      </a-button>
-    </div>
-
-    <!-- Apply & Cancel buttons -->
-    <div style="display: flex; gap: 8px; padding-top: 8px">
-      <a-button block @click="closeTextureModal()">
-        Cancel
-      </a-button>
-      <a-button
-        type="primary"
-        block
-        @click="applyTextureToImage()"
-        :disabled="!getSelectedTextureImage()"
-        :loading="isApplyingTexture"
-      >
-        Apply Texture (⚡20)
-      </a-button>
-    </div>
-  </div>
-</a-modal>
+  </a-modal>
   <!-- Multi-View Queue Modal -->
   <a-modal
     v-model:open="openMultiViewQueueModal"
@@ -756,12 +773,7 @@
       class="edit-image-modal"
     >
       <template #title>
-        <div
-          class=""
-          style="
-            display: flex;
-            justify-content: space-between;
-          ">
+        <div class="" style="display: flex; justify-content: space-between">
           <span>Edit Photo</span>
           <div class="">
             <a-button @click="resetCanvas" type="default"> Reset </a-button>
@@ -1510,19 +1522,35 @@ export default {
       multiViewQueueProcessingBg: false,
     };
   },
-  
+  props: {
+    input_image: {
+      type: String,
+    },
+    // Accept props if needed, e.g. for passing in existing product data
+  },
+
   // Add these lifecycle hooks:
   mounted() {
     // Initialize completed count on first load
     this.initializeCompletedCount();
     // Start queue polling when component mounts
     this.startQueuePolling();
+     if (this.input_image) {
+      this.mainImage = this.$store.state.root_media_api + this.input_image;
+    }
   },
 
   beforeUnmount() {
     // Clean up polling when component unmounts
     this.stopQueuePolling();
   },
+  watch: {
+  input_image(newVal) {
+    if (newVal) {
+      this.mainImage = this.$store.state.root_media_api + newVal;
+    }
+  }
+},
   computed: {
     hasValidMultiViewQueue() {
       // At minimum, front view is required
@@ -1559,28 +1587,31 @@ export default {
     },
   },
   methods: {
-     getImageUrl(imagePath) {
-      console.log(`${this.$store.state.root_media_api}${imagePath}`)
+    handleSetBaseImage(imagePath) {
+      this.mainImage = this.getImageUrl(imagePath);
+    },
+
+    getImageUrl(imagePath) {
       return `${this.$store.state.root_media_api}${imagePath}`;
     },
-   handleModalOpen() {
-    debugger
+    handleModalOpen() {
+      debugger;
       // Load textures when modal opens
       if (this.availableTexturesLibrary.length === 0) {
         this.loadAvailableTexturesLibrary();
       }
     },
     async urlToBase64(url) {
-  const res = await fetch(url);
-  const blob = await res.blob();
+      const res = await fetch(url);
+      const blob = await res.blob();
 
-  return await new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onloadend = () => resolve(reader.result); // full base64 (data:image/...;base64,...)
-    reader.onerror = reject;
-    reader.readAsDataURL(blob);
-  });
-},
+      return await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result); // full base64 (data:image/...;base64,...)
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+    },
     startPolling(jobId) {
       if (!jobId) return Promise.reject("Invalid job id");
 
@@ -1676,49 +1707,46 @@ export default {
       this.loadAvailableTexturesLibrary();
     },
 
-  closeTextureModal() {
-    this.openTextureModal = false;
-    this.textureImage = null;
-    this.selectedLibraryTexture = null;
-
-  },
+    closeTextureModal() {
+      this.openTextureModal = false;
+      this.textureImage = null;
+      this.selectedLibraryTexture = null;
+    },
 
     triggerTextureFileInput() {
       this.$refs["fileInput-texture-select"].click();
     },
 
-  handleTextureFileSelect(event) {
-  const file = event.target.files[0];
-  if (file) {
-    // Validate file size (max 10MB)
-    if (file.size > 10 * 1024 * 1024) {
-      this.$message.error('File size must be less than 10MB');
-      return;
-    }
+    handleTextureFileSelect(event) {
+      const file = event.target.files[0];
+      if (file) {
+        // Validate file size (max 10MB)
+        if (file.size > 10 * 1024 * 1024) {
+          this.$message.error("File size must be less than 10MB");
+          return;
+        }
 
-    // Validate file type
-    if (!['image/png', 'image/jpeg'].includes(file.type)) {
-      this.$message.error('Only PNG and JPG formats are supported');
-      return;
-    }
+        // Validate file type
+        if (!["image/png", "image/jpeg"].includes(file.type)) {
+          this.$message.error("Only PNG and JPG formats are supported");
+          return;
+        }
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      this.textureImage = e.target.result;
-      this.selectedLibraryTexture = null; // Clear library selection when local image is selected
-      console.log('Texture file loaded');
-    };
-    reader.onerror = (error) => {
-      console.error('File reading error:', error);
-      this.$message.error('Failed to read file');
-    };
-    reader.readAsDataURL(file);
-  }
-  // Reset the input so same file can be selected again
-  event.target.value = '';
-},
-
-
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          this.textureImage = e.target.result;
+          this.selectedLibraryTexture = null; // Clear library selection when local image is selected
+          console.log("Texture file loaded");
+        };
+        reader.onerror = (error) => {
+          console.error("File reading error:", error);
+          this.$message.error("Failed to read file");
+        };
+        reader.readAsDataURL(file);
+      }
+      // Reset the input so same file can be selected again
+      event.target.value = "";
+    },
 
     removeSelectedTexture() {
       this.textureImage = null;
@@ -1816,9 +1844,9 @@ export default {
     //     this.isApplyingTexture = false;
     //   }
     // },
-      clearLibrarySelection() {
-    this.selectedLibraryTexture = null;
-  },
+    clearLibrarySelection() {
+      this.selectedLibraryTexture = null;
+    },
 
     activateTexture(index) {
       if (!this.textures_available[index]) return;
@@ -2733,7 +2761,8 @@ export default {
                       processedImage.type.split("-")[1],
                     );
                     if (this.views[viewIndex]) {
-                      this.views[viewIndex].image = processedImage.data_removed_bg;
+                      this.views[viewIndex].image =
+                        processedImage.data_removed_bg;
                     }
                   }
 
@@ -2918,7 +2947,7 @@ export default {
     //     this.$emit("processing-generate", false);
     //   }
     // },
-    
+
     async generateObject() {
       // If in multi-view mode and no images, show multi-view queue modal
       if (this.multiView && !this.hasAnyImage) {
@@ -3037,286 +3066,286 @@ export default {
         this.$emit("processing-generate", false);
       }
     },
-//     async applyTextureToImage() {
-//   const selectedImage = this.getSelectedTextureImage();
-  
-//   if (!selectedImage) {
-//     this.$message.warning("Please select a texture image");
-//     return;
-//   }
+    //     async applyTextureToImage() {
+    //   const selectedImage = this.getSelectedTextureImage();
 
-//   if (!this.mainImage) {
-//     this.$message.warning("Please upload a main image first");
-//     return;
-//   }
+    //   if (!selectedImage) {
+    //     this.$message.warning("Please select a texture image");
+    //     return;
+    //   }
 
-//   this.isApplyingTexture = true;
+    //   if (!this.mainImage) {
+    //     this.$message.warning("Please upload a main image first");
+    //     return;
+    //   }
 
-//   try {
-//     // Handle library texture - convert to base64 if needed
-//     let textureImageData = this.textureImage || selectedImage;
-    
-//     // If it's from library, fetch and convert to base64
-//     if (!this.textureImage && this.selectedLibraryTexture?.url) {
-//       textureImageData = await this.urlToBase64(
-//         this.getImageUrl(this.selectedLibraryTexture.url)
-//       );
-//     }
+    //   this.isApplyingTexture = true;
 
-//     // Ensure main_image and texture_image are valid base64 strings
-//     let mainImageData = this.mainImage;
+    //   try {
+    //     // Handle library texture - convert to base64 if needed
+    //     let textureImageData = this.textureImage || selectedImage;
 
-//     // Check if they already have data URI prefix
-//     if (!mainImageData.startsWith("data:")) {
-//       mainImageData = `data:image/png;base64,${mainImageData}`;
-//     }
-//     if (!textureImageData.startsWith("data:")) {
-//       textureImageData = `data:image/png;base64,${textureImageData}`;
-//     }
+    //     // If it's from library, fetch and convert to base64
+    //     if (!this.textureImage && this.selectedLibraryTexture?.url) {
+    //       textureImageData = await this.urlToBase64(
+    //         this.getImageUrl(this.selectedLibraryTexture.url)
+    //       );
+    //     }
 
-//     const payload = {
-//       main_image: mainImageData,
-//       texture_image: textureImageData,
-//     };
+    //     // Ensure main_image and texture_image are valid base64 strings
+    //     let mainImageData = this.mainImage;
 
-//     console.log("Sending texture application request...");
-//     console.log("Main image length:", mainImageData.length);
-//     console.log("Texture image length:", textureImageData.length);
+    //     // Check if they already have data URI prefix
+    //     if (!mainImageData.startsWith("data:")) {
+    //       mainImageData = `data:image/png;base64,${mainImageData}`;
+    //     }
+    //     if (!textureImageData.startsWith("data:")) {
+    //       textureImageData = `data:image/png;base64,${textureImageData}`;
+    //     }
 
-//     const token = localStorage.getItem("token");
-//     const response = await fetch(
-//       `${this.$store.state.root_api}engine/apply-texture/`,
-//       {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//           Authorization: `Token ${token}`,
-//         },
-//         body: JSON.stringify(payload),
-//       },
-//     );
+    //     const payload = {
+    //       main_image: mainImageData,
+    //       texture_image: textureImageData,
+    //     };
 
-//     if (response.status === 402) {
-//       this.openTextureModal = false;
-//       const result = await response.json();
-//       this.$emit("insufficient-credits", result.msg);
-//       return;
-//     }
+    //     console.log("Sending texture application request...");
+    //     console.log("Main image length:", mainImageData.length);
+    //     console.log("Texture image length:", textureImageData.length);
 
-//     if (response.ok) {
-//       const result = await response.json();
-//       this.startPolling(result?.renderer_id);
-//     } else {
-//       const error = await response.json();
-//       console.error("API Error Response:", error);
-//       console.error("Response Status:", response.status);
-//       this.$message.error(error.msg || "Failed to apply texture");
-//       this.isApplyingTexture = false;
-//     }
-//   } catch (error) {
-//     console.error("Error applying texture:", error);
-//     this.$message.error("Failed to apply texture: " + error.message);
-//     this.isApplyingTexture = false;
-//   }
-// },
+    //     const token = localStorage.getItem("token");
+    //     const response = await fetch(
+    //       `${this.$store.state.root_api}engine/apply-texture/`,
+    //       {
+    //         method: "POST",
+    //         headers: {
+    //           "Content-Type": "application/json",
+    //           Authorization: `Token ${token}`,
+    //         },
+    //         body: JSON.stringify(payload),
+    //       },
+    //     );
 
-async applyTextureToImage() {
-  const selectedImage = this.getSelectedTextureImage();
-  let textureId = null;
+    //     if (response.status === 402) {
+    //       this.openTextureModal = false;
+    //       const result = await response.json();
+    //       this.$emit("insufficient-credits", result.msg);
+    //       return;
+    //     }
 
-  if (!selectedImage) {
-    this.$message.warning("Please select a texture image");
-    return;
-  }
+    //     if (response.ok) {
+    //       const result = await response.json();
+    //       this.startPolling(result?.renderer_id);
+    //     } else {
+    //       const error = await response.json();
+    //       console.error("API Error Response:", error);
+    //       console.error("Response Status:", response.status);
+    //       this.$message.error(error.msg || "Failed to apply texture");
+    //       this.isApplyingTexture = false;
+    //     }
+    //   } catch (error) {
+    //     console.error("Error applying texture:", error);
+    //     this.$message.error("Failed to apply texture: " + error.message);
+    //     this.isApplyingTexture = false;
+    //   }
+    // },
 
-  if (!this.mainImage) {
-    this.$message.warning("Please upload a main image first");
-    return;
-  }
+    async applyTextureToImage() {
+      const selectedImage = this.getSelectedTextureImage();
+      let textureId = null;
 
-  this.isApplyingTexture = true;
-
-  try {
-    // Handle library texture - convert to base64 if needed
-    let textureImageData = this.textureImage || selectedImage;
-    
-    // If it's from library, fetch and convert to base64
-    if (!this.textureImage && this.selectedLibraryTexture?.url) {
-      textureImageData = await this.urlToBase64(
-        this.getImageUrl(this.selectedLibraryTexture.url)
-      );
-      textureId = this.selectedLibraryTexture?.id || null;
-    }
-
-    // Ensure main_image and texture_image are valid base64 strings
-    let mainImageData = this.mainImage;
-
-    // Check if they already have data URI prefix
-    if (!mainImageData.startsWith("data:")) {
-      mainImageData = `data:image/png;base64,${mainImageData}`;
-    }
-    if (!textureImageData.startsWith("data:")) {
-      textureImageData = `data:image/png;base64,${textureImageData}`;
-    }
-
-    const payload = {
-      main_image: mainImageData,
-      texture_image: textureImageData,
-      texture_id: textureId
-    };
-
-    console.log("Sending texture application request...");
-    console.log("Main image length:", mainImageData.length);
-    console.log("Texture image length:", textureImageData.length);
-
-    const token = localStorage.getItem("token");
-    const response = await fetch(
-      `${this.$store.state.root_api}engine/apply-texture/`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Token ${token}`,
-        },
-        body: JSON.stringify(payload),
-      },
-    );
-
-    if (response.status === 402) {
-      this.openTextureModal = false;
-      const result = await response.json();
-      this.$emit("insufficient-credits", result.msg);
-      return;
-    }
-
-    if (response.ok) {
-      const result = await response.json();
-      this.startPolling(result?.renderer_id);
-    } else {
-      const error = await response.json();
-      console.error("API Error Response:", error);
-      console.error("Response Status:", response.status);
-      this.$message.error(error.msg || "Failed to apply texture");
-      this.isApplyingTexture = false;
-    }
-  } catch (error) {
-    console.error("Error applying texture:", error);
-    this.$message.error("Failed to apply texture: " + error.message);
-    this.isApplyingTexture = false;
-  }
-},
-async loadAvailableTexturesLibrary() {
-  try {
-    this.loadingAvailableTextures = true;
-    this.texturesPaginationOffset = 0;
-    const token = localStorage.getItem('token');
-
-    if (!token) {
-      throw new Error('No authentication token found');
-    }
-
-    const response = await fetch(
-      `${this.$store.state.root_api}product/api/products/user-textures/?limit=${this.texturesPaginationLimit}&offset=${this.texturesPaginationOffset}`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Token ${token}`,
-        },
+      if (!selectedImage) {
+        this.$message.warning("Please select a texture image");
+        return;
       }
-    );
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const result = await response.json();
-
-    if (result) {
-      this.availableTexturesLibrary = (result.results?.data || []).map(
-        (texture) => ({
-          id: texture?.id,
-          name: texture?.name || 'Texture',
-          url: texture?.image_url || texture?.url,
-        })
-      );
-
-      this.hasMoreTextures = result.next !== null;
-      this.texturesPaginationOffset += this.texturesPaginationLimit;
-
-      console.log(
-        'Available textures loaded:',
-        this.availableTexturesLibrary.length
-      );
-      console.log('Has more textures:', this.hasMoreTextures);
-    } else {
-      console.warn('Failed to load textures or no data returned');
-      this.availableTexturesLibrary = [];
-      this.hasMoreTextures = false;
-    }
-  } catch (error) {
-    console.error('Error loading available textures:', error);
-    this.$message.error('Failed to load texture library');
-    this.availableTexturesLibrary = [];
-    this.hasMoreTextures = false;
-  } finally {
-    this.loadingAvailableTextures = false;
-  }
-},
-
-async loadMoreTextures() {
-  try {
-    this.loadingAvailableTextures = true;
-    const token = localStorage.getItem('token');
-
-    if (!token) {
-      throw new Error('No authentication token found');
-    }
-
-    const response = await fetch(
-      `${this.$store.state.root_api}product/api/products/user-textures/?limit=${this.texturesPaginationLimit}&offset=${this.texturesPaginationOffset}`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Token ${token}`,
-        },
+      if (!this.mainImage) {
+        this.$message.warning("Please upload a main image first");
+        return;
       }
-    );
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
+      this.isApplyingTexture = true;
 
-    const result = await response.json();
+      try {
+        // Handle library texture - convert to base64 if needed
+        let textureImageData = this.textureImage || selectedImage;
 
-    if (result) {
-      const newTextures = (result.results?.data || []).map((texture) => ({
-        id: texture?.id,
-        name: texture?.name || 'Texture',
-        url: texture?.image_url || texture?.url,
-      }));
+        // If it's from library, fetch and convert to base64
+        if (!this.textureImage && this.selectedLibraryTexture?.url) {
+          textureImageData = await this.urlToBase64(
+            this.getImageUrl(this.selectedLibraryTexture.url),
+          );
+          textureId = this.selectedLibraryTexture?.id || null;
+        }
 
-      this.availableTexturesLibrary = [
-        ...this.availableTexturesLibrary,
-        ...newTextures,
-      ];
+        // Ensure main_image and texture_image are valid base64 strings
+        let mainImageData = this.mainImage;
 
-      this.hasMoreTextures = result.next !== null;
-      this.texturesPaginationOffset += this.texturesPaginationLimit;
+        // Check if they already have data URI prefix
+        if (!mainImageData.startsWith("data:")) {
+          mainImageData = `data:image/png;base64,${mainImageData}`;
+        }
+        if (!textureImageData.startsWith("data:")) {
+          textureImageData = `data:image/png;base64,${textureImageData}`;
+        }
 
-      console.log('More textures loaded:', newTextures.length);
-    }
-  } catch (error) {
-    console.error('Error loading more textures:', error);
-    this.$message.error('Failed to load more textures');
-  } finally {
-    this.loadingAvailableTextures = false;
-  }
-},
-refreshTextureLibrary() {
-  this.loadAvailableTexturesLibrary();
-},
+        const payload = {
+          main_image: mainImageData,
+          texture_image: textureImageData,
+          texture_id: textureId,
+        };
+
+        console.log("Sending texture application request...");
+        console.log("Main image length:", mainImageData.length);
+        console.log("Texture image length:", textureImageData.length);
+
+        const token = localStorage.getItem("token");
+        const response = await fetch(
+          `${this.$store.state.root_api}engine/apply-texture/`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Token ${token}`,
+            },
+            body: JSON.stringify(payload),
+          },
+        );
+
+        if (response.status === 402) {
+          this.openTextureModal = false;
+          const result = await response.json();
+          this.$emit("insufficient-credits", result.msg);
+          return;
+        }
+
+        if (response.ok) {
+          const result = await response.json();
+          this.startPolling(result?.renderer_id);
+        } else {
+          const error = await response.json();
+          console.error("API Error Response:", error);
+          console.error("Response Status:", response.status);
+          this.$message.error(error.msg || "Failed to apply texture");
+          this.isApplyingTexture = false;
+        }
+      } catch (error) {
+        console.error("Error applying texture:", error);
+        this.$message.error("Failed to apply texture: " + error.message);
+        this.isApplyingTexture = false;
+      }
+    },
+    async loadAvailableTexturesLibrary() {
+      try {
+        this.loadingAvailableTextures = true;
+        this.texturesPaginationOffset = 0;
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+          throw new Error("No authentication token found");
+        }
+
+        const response = await fetch(
+          `${this.$store.state.root_api}product/api/products/user-textures/?limit=${this.texturesPaginationLimit}&offset=${this.texturesPaginationOffset}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Token ${token}`,
+            },
+          },
+        );
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+
+        if (result) {
+          this.availableTexturesLibrary = (result.results?.data || []).map(
+            (texture) => ({
+              id: texture?.id,
+              name: texture?.name || "Texture",
+              url: texture?.image_url || texture?.url,
+            }),
+          );
+
+          this.hasMoreTextures = result.next !== null;
+          this.texturesPaginationOffset += this.texturesPaginationLimit;
+
+          console.log(
+            "Available textures loaded:",
+            this.availableTexturesLibrary.length,
+          );
+          console.log("Has more textures:", this.hasMoreTextures);
+        } else {
+          console.warn("Failed to load textures or no data returned");
+          this.availableTexturesLibrary = [];
+          this.hasMoreTextures = false;
+        }
+      } catch (error) {
+        console.error("Error loading available textures:", error);
+        this.$message.error("Failed to load texture library");
+        this.availableTexturesLibrary = [];
+        this.hasMoreTextures = false;
+      } finally {
+        this.loadingAvailableTextures = false;
+      }
+    },
+
+    async loadMoreTextures() {
+      try {
+        this.loadingAvailableTextures = true;
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+          throw new Error("No authentication token found");
+        }
+
+        const response = await fetch(
+          `${this.$store.state.root_api}product/api/products/user-textures/?limit=${this.texturesPaginationLimit}&offset=${this.texturesPaginationOffset}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Token ${token}`,
+            },
+          },
+        );
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+
+        if (result) {
+          const newTextures = (result.results?.data || []).map((texture) => ({
+            id: texture?.id,
+            name: texture?.name || "Texture",
+            url: texture?.image_url || texture?.url,
+          }));
+
+          this.availableTexturesLibrary = [
+            ...this.availableTexturesLibrary,
+            ...newTextures,
+          ];
+
+          this.hasMoreTextures = result.next !== null;
+          this.texturesPaginationOffset += this.texturesPaginationLimit;
+
+          console.log("More textures loaded:", newTextures.length);
+        }
+      } catch (error) {
+        console.error("Error loading more textures:", error);
+        this.$message.error("Failed to load more textures");
+      } finally {
+        this.loadingAvailableTextures = false;
+      }
+    },
+    refreshTextureLibrary() {
+      this.loadAvailableTexturesLibrary();
+    },
 
     selectLibraryTexture(texture) {
       this.selectedLibraryTexture = texture;
@@ -3324,25 +3353,25 @@ refreshTextureLibrary() {
     },
 
     // ============ UTILITY METHODS ============
-   getSelectedTextureImage() {
-  // Return whichever texture is selected (upload or library)
-    if (this.textureImage) {
-      return this.textureImage;
-    } else if (this.selectedLibraryTexture?.url) {
-      return this.getImageUrl(this.selectedLibraryTexture.url);
-    }
-    return null;
-  },
-  async getSelectedTexturePreview() {
-    debugger
-  if (this.textureImage) {
-    return this.textureImage; // Local upload - already base64
-  } else if (this.selectedLibraryTexture?.url) {
-    // Library texture - may need to convert to base64 for display
-    return this.getImageUrl(this.selectedLibraryTexture.url);
-  }
-  return null;
-},
+    getSelectedTextureImage() {
+      // Return whichever texture is selected (upload or library)
+      if (this.textureImage) {
+        return this.textureImage;
+      } else if (this.selectedLibraryTexture?.url) {
+        return this.getImageUrl(this.selectedLibraryTexture.url);
+      }
+      return null;
+    },
+    async getSelectedTexturePreview() {
+      debugger;
+      if (this.textureImage) {
+        return this.textureImage; // Local upload - already base64
+      } else if (this.selectedLibraryTexture?.url) {
+        // Library texture - may need to convert to base64 for display
+        return this.getImageUrl(this.selectedLibraryTexture.url);
+      }
+      return null;
+    },
   },
 };
 </script>

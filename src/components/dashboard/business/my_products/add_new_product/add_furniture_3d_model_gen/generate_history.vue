@@ -45,6 +45,7 @@
           this.$emit('clicked-model', {
             new3d_model_instance: model.id,
             media_url: model.model_file_url,
+            originalImageUrl:model?.images?.image_0
           })
         "
         class="card-history"
