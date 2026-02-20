@@ -1,5 +1,100 @@
 <template>
-  <div class="side-panel">
+ <!-- show Rendering Failed Model  -->
+  <a-modal
+    v-model:open="showFailedRenderingModel"
+    title=""
+    centered
+    width="380px"
+    footer=""
+  >
+    <div style="text-align: center; padding: 10px; border-radius: 12px">
+      <!-- Icon wrapper -->
+      <div
+        style="
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 70px;
+          height: 70px;
+          margin: 0 auto 18px auto;
+          border-radius: 50%;
+          background: rgba(59, 99, 251, 0.12);
+        "
+      >
+        <svg
+          width="34"
+          height="34"
+          viewBox="0 0 20 20"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M10 0C4.477 0 0 4.477 0 10C0 15.523 4.477 20 10 20C15.523 20 20 15.523 20 10C20 4.477 15.523 0 10 0ZM10 1C10 3.38695 9.05179 5.67613 7.36396 7.36396C5.67613 9.05179 3.38695 10 1 10C3.38695 10 5.67613 10.9482 7.36396 12.636C9.05179 14.3239 10 16.6131 10 19C10 16.6131 10.9482 14.3239 12.636 12.636C14.3239 10.9482 16.6131 10 19 10C16.6131 10 14.3239 9.05179 12.636 7.36396C10.9482 5.67613 10 3.38695 10 1Z"
+            fill="#3B63FB"
+          />
+        </svg>
+      </div>
+
+      <!-- Heading -->
+      <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 10px">
+        Failed Rendering 
+      </h2>
+
+      <!-- Message -->
+      <p
+        style="
+          font-size: 15px;
+          line-height: 1.5;
+          color: #555;
+          margin-bottom: 25px;
+        "
+      >
+        {{ failure_reason }}
+      </p>
+      <!-- CTA button -->
+      <!-- <a-button
+        v-if="currentUser.user_type !== 'User'"
+        type="primary"
+        block
+        size="large"
+        style="height: 46px; font-size: 16px; border-radius: 8px"
+        @click="goToPurchaseCredits"
+      >
+        Purchase Credits
+      </a-button>
+
+      <a-button
+        v-else
+        type="primary"
+        block
+        size="large"
+        :loading="LoadingMessageButton"
+        style="
+          height: 46px;
+          font-size: 16px;
+          border-radius: 8px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        "
+        @click="startchat_with_buisness_user"
+      >
+        <MessageOutlined style="font-size: 16px" />
+        Message Business
+      </a-button> -->
+    </div>
+  </a-modal>
+    <div class="side-panel">
+    
+    <!-- ✅ ADD PLAN UPGRADE MODAL AT THE TOP -->
+    <PlanUpgradeModal 
+      :visible="showPlanUpgradeModal" 
+      @update:visible="showPlanUpgradeModal = $event"
+      @upgrade="handlePlanUpgrade"
+    />
+
     <!-- Image Upload Area -->
     <div class="upload-area">
       <a-upload-dragger
@@ -10,7 +105,7 @@
         class="upload-dragger"
       >
         <div v-if="!uploadedImage && !uploading" class="upload-content">
-          <CloudUploadOutlined class="upload-icon"  />
+          <CloudUploadOutlined class="upload-icon" />
           <div class="upload-text">Click / upload from camera / drag and drop</div>
           <div class="upload-hint">Support format: .png .jpeg</div>
         </div>
@@ -20,15 +115,12 @@
           <div class="uploading-text">Uploading...</div>
         </div>
         
-        <!-- <div v-if="uploadedImage && !uploading" class="image-preview">
-          <img :src="uploadedImage" alt="uploaded" />
-        </div> -->
         <div v-if="uploadedImage && !uploading" class="image-preview">
-  <img :src="uploadedImage" alt="uploaded" />
-  <div class="delete-button" @click.stop="deleteImage">
-    <DeleteOutlined />
-  </div>
-</div>
+          <img :src="uploadedImage" alt="uploaded" />
+          <div class="delete-button" @click.stop="deleteImage">
+            <DeleteOutlined />
+          </div>
+        </div>
       </a-upload-dragger>
     </div>
 
@@ -65,56 +157,72 @@
 
     <!-- Credits -->
     <div class="credits-section">
-      <a-icon type="credit-card" />
       <svg width="17" height="18" viewBox="0 0 17 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M8.5013 1.91602C4.58918 1.91602 1.41797 5.08722 1.41797 8.99935C1.41797 12.9115 4.58918 16.0827 8.5013 16.0827C12.4134 16.0827 15.5846 12.9115 15.5846 8.99935C15.5846 5.08722 12.4134 1.91602 8.5013 1.91602ZM8.5013 2.62435C8.5013 4.3151 7.82965 5.93661 6.63411 7.13215C5.43856 8.3277 3.81706 8.99935 2.1263 8.99935C3.81706 8.99935 5.43856 9.671 6.63411 10.8665C7.82965 12.0621 8.5013 13.6836 8.5013 15.3743C8.5013 13.6836 9.17295 12.0621 10.3685 10.8665C11.564 9.671 13.1855 8.99935 14.8763 8.99935C13.1855 8.99935 11.564 8.3277 10.3685 7.13215C9.17295 5.93661 8.5013 4.3151 8.5013 2.62435Z" fill="#3B63FB"/>
-</svg>
-
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M8.5013 1.91602C4.58918 1.91602 1.41797 5.08722 1.41797 8.99935C1.41797 12.9115 4.58918 16.0827 8.5013 16.0827C12.4134 16.0827 15.5846 12.9115 15.5846 8.99935C15.5846 5.08722 12.4134 1.91602 8.5013 1.91602ZM8.5013 2.62435C8.5013 4.3151 7.82965 5.93661 6.63411 7.13215C5.43856 8.3277 3.81706 8.99935 2.1263 8.99935C3.81706 8.99935 5.43856 9.671 6.63411 10.8665C7.82965 12.0621 8.5013 13.6836 8.5013 15.3743C8.5013 13.6836 9.17295 12.0621 10.3685 10.8665C11.564 9.671 13.1855 8.99935 14.8763 8.99935C13.1855 8.99935 11.564 8.3277 10.3685 7.13215C9.17295 5.93661 8.5013 4.3151 8.5013 2.62435Z" fill="#3B63FB"/>
+      </svg>
       <span>1500</span>
     </div>
 
     <!-- Generate Button -->
     <a-button 
-  type="primary" 
-  size="large" 
-  block
-  class="generate-button"
-  :loading="generating"
-  @click="handleGenerate"
->
-  <a-icon type="thunderbolt" />
-  {{ generating ? 'Generating...' : 'Generate' }}
-</a-button>
+      type="primary" 
+      size="large" 
+      block
+      class="generate-button"
+      :loading="generating"
+      @click="handleGenerateClick"
+    >
+      <a-icon type="thunderbolt" />
+      {{ generating ? 'Generating...' : 'Generate' }}
+    </a-button>
+
   </div>
 </template>
 
+
 <script>
-import { DeleteOutlined,CloudUploadOutlined  } from '@ant-design/icons-vue';
+import PlanUpgradeModal from '@/views/catalogue/PlanUpgradeModal.vue';
+import { DeleteOutlined, CloudUploadOutlined } from '@ant-design/icons-vue';
+
 export default {
   name: 'SidePanel',
-  components:{
-    DeleteOutlined,CloudUploadOutlined 
+  components: {
+    DeleteOutlined,
+    CloudUploadOutlined,
+    PlanUpgradeModal
   },
   props: {
-  base_image_url: {
-    type: String,
-    default: ''
-  }
-},
-watch: {
-  base_image_url: {
-    handler(newVal) {
-      if (newVal) {
-        this.uploadedImage = newVal
-      }
+    base_image_url: {
+      type: String,
+      default: ''
     },
-    immediate: true
-  }
-},
+    home_design_access: {
+      type: Boolean,
+      default: false
+    },
+    plan_details: {
+      type: Object,
+      default: null
+    }
+  },
+  watch: {
+    base_image_url: {
+      handler(newVal) {
+        if (newVal) {
+          this.uploadedImage = newVal;
+        }
+      },
+      immediate: true
+    }
+  },
   data() {
     return {
+      failure_reason:'',
+      showFailedRenderingModel:false,
+
+
       fileList: [],
-       generating: false,
+      generating: false,
       uploadedImage: this.base_image_url || '',
       uploading: false,
       selectedVariation: 4,
@@ -123,16 +231,105 @@ watch: {
         { label: '1:1', value: '1:1' },
         { label: '3:2', value: '3:2' },
         { label: '2:3', value: '2:3' }
-      ]
+      ],
+      showPlanUpgradeModal: false,
+      business_available_actions: null,
+    };
+  },
+  
+  computed: {
+    isHomeDesignAvailable() {
+      return this.hasFeature('home_design');
+    },
+    
+    canRemoveObject() {
+      return this.hasFeature('remove_object');
+    },
+    
+    canCleanRoom() {
+      return this.hasFeature('clean_entire_room');
+    },
+  },
+  
+  mounted() {
+    // Load available actions from localStorage
+    const actions = localStorage.getItem('business_available_actions');
+    if (actions) {
+      this.business_available_actions = JSON.parse(actions);
+    }
+    
+    if (this.base_image_url) {
+      this.uploadedImage = this.base_image_url;
     }
   },
-  mounted() {
-    // Component mounted
-     if (this.base_image_url) {
-    this.uploadedImage = this.base_image_url
-  }
-  },
+  
   methods: {
+    // Helper method to check features
+    hasFeature(featureName) {
+      if (!this.business_available_actions) {
+        return false;
+      }
+      return this.business_available_actions[featureName] === true;
+    },
+    
+    // ✅ CORRECTED METHOD
+handleGenerateClick() {
+  // First check if image is uploaded
+  if (!this.uploadedImage) {
+    this.$message.warning('Please upload an image first!');
+    return;
+  }
+  
+  // Then check if user has home_design access
+  if (!this.home_design_access) {
+    // Emit event to parent to show upgrade modal
+    this.$emit('show-upgrade-modal');
+    return;
+  }
+  
+  // Proceed with normal generation
+  this.generateHomeDesign();
+},
+
+// ✅ UPDATE generateHomeDesign - Remove the image check since it's already done
+async generateHomeDesign() {
+  try {
+    this.generating = true;
+    
+    // Your API call logic here
+    const response = await fetch(
+      `${this.$store.state.root_api}renderer/start-render/`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Token ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({
+          image: this.uploadedImage,
+          variations: this.selectedVariation,
+          aspect_ratio: this.selectedAspectRatio
+        })
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error('Failed to start generation');
+    }
+
+    const data = await response.json();
+    
+    if (data.job_id) {
+      await this.startPolling(data.job_id);
+    }
+  } catch (error) {
+    console.error('Error generating home design:', error);
+    this.$message.error('Failed to generate home design');
+    this.generating = false;
+  }
+},
+
+    
     startPolling(jobId) {
       if (!jobId) return Promise.reject("Invalid job id");
 
@@ -143,7 +340,7 @@ watch: {
       return new Promise((resolve, reject) => {
         const poll = async () => {
           try {
-            this.generating = true
+            this.generating = true;
             const res = await fetch(
               `${this.$store.state.root_api}renderer/checkout-renderer/${jobId}/`,
             );
@@ -158,15 +355,18 @@ watch: {
               resolve(data);
               this.$emit('home-design-generation-complete', data);
               this.$message.success('Image generated successfully!');
-              this.generating = false
+              this.generating = false;
               return;
             }
 
-            if (data.status === "failed") {
+            if (data.status === "Failed") {
               this.loading = false;
+              console.error(data)
+              this.throw_failed_rendering(data.failure_reason_if_rendering_failed)
+
               this.stopPolling();
               reject("Rendering failed");
-              this.$message.success('Image generated successfully!');
+              this.$message.error('Image generation failed!');
               this.generating = false;
               return;
             }
@@ -176,16 +376,11 @@ watch: {
             this.loading = false;
             this.stopPolling();
             reject(err);
-            this.generating = false
-          }finally{
-            //this.generating = false
+            this.generating = false;
           }
         };
 
-        // run immediately
         poll();
-
-        // then every 3s
         this.pollTimer = setInterval(poll, 3000);
       });
     },
@@ -266,32 +461,40 @@ watch: {
   } 
 },
     beforeUpload(file) {
-      this.uploading = true
-      
+      this.uploading = true;
+
       setTimeout(() => {
-        const reader = new FileReader()
+        const reader = new FileReader();
         reader.onload = (e) => {
-          this.uploadedImage = e.target.result
-          this.uploading = false
-        }
-        reader.readAsDataURL(file)
-      }, 1500)
-      
-      return false
+          this.uploadedImage = e.target.result;
+          this.uploading = false;
+        };
+        reader.readAsDataURL(file);
+      }, 1500);
+
+      return false;
     },
-    
+
     selectVariation(num) {
-      this.selectedVariation = num
+      this.selectedVariation = num;
     },
-    
+
     handleAspectRatioChange(value) {
-      this.selectedAspectRatio = value
+      this.selectedAspectRatio = value;
     },
     
-    
+    handlePlanUpgrade(selectedPlan) {
+      // TODO: Call backend API to upgrade
+      this.showPlanUpgradeModal = false;
+      this.$message.success(`Plan upgrade initiated for ${selectedPlan}!`);
+    }
   }
-}
+};
 </script>
+
+
+
+
 
 <style scoped>
 .side-panel {

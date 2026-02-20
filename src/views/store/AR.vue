@@ -80,7 +80,7 @@
             align-items: center;
           "
           type="primary"
-          @click.stop="this.$router.push('/' + ProductDetails.business_slug)"
+@click.stop="$router.push('/' + ProductDetails.business_slug)"
           ><LeftOutlined />
         </a-button>
         <model-viewer
@@ -1415,7 +1415,7 @@ export default {
         this.isARActive = false;
         this.isFullScreen = false;
       } else {
-        window.history.back();
+        this.$route.back();
       }
     },
 
@@ -1502,7 +1502,6 @@ export default {
   width: 100%;
   height: 80vh;
   min-height: 400px;
-  pointer-events: none;
 }
 
 .model-viewer {
@@ -1817,8 +1816,8 @@ export default {
 }
 
 .drawer-content {
-  height: 300px;
-  max-height: calc(550px - 5px);
+  height: 100vh;
+  max-height: 100vh;
   padding: 0 20px 20px;
   overflow-y: auto;
   padding-bottom: 40px;

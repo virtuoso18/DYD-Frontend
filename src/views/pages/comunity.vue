@@ -174,52 +174,67 @@
             v-model="searchQuery"
             @keyup.enter="onSearch"
           /> -->
-          <div style="width:100%">
-
-            <input
+        <div style="width:100%; position: relative;">
+  <input
     type="text"
-     class="search-input"
-     style="width:100%"
+    class="search-input"
+    style="width:100%"
     placeholder="What are you looking for?"
     v-model="searchQuery"
     @focus="onInputFocus"
     @input="onInputChange"
     @keydown.enter.prevent="onSearch"
   />
-   <div
-  v-if="showTagDropdown && tagResults.length"
-  style="border:1px solid rgba(0,0,0,0.2); border-top:none;border-radius:0 0  10px 10px;position:relative"
->
-  <ul>
-    <li v-if="tagLoading" class="px-4 py-2 text-sm text-gray-400">
-  Searching tags…
-</li>
-    <li
-      v-for="tag in tagResults"
-      :key="tag.id"
-      class="px-4 py-2 hover:bg-gray-100 cursor-pointer flex justify-between"
-      @click="goToTag(tag.name)"
-      style="padding:10px"
-    >
-      <span class="font-medium text-gray-800">
-        #{{ tag.name }}
-      </span>
-      <span class="text-xs text-gray-500">
-        {{ tag.post_count }} posts
-      </span>
-    </li>
-  </ul>
-
-  <!-- VIEW MORE -->
+  
+  <!-- Dropdown with absolute positioning -->
   <div
-    v-if="tagHasNext"
-    class="px-4 py-2 text-center border-t cursor-pointer text-blue-600 text-sm hover:bg-gray-50"
-    @click="loadMoreTags"
+    v-if="showTagDropdown && tagResults.length"
+    style="
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border: 1px solid rgba(0,0,0,0.2);
+      border-top: none;
+      border-radius: 0 0 10px 10px;
+      z-index: 1000;
+      max-height: 300px;
+      overflow-y: auto;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    "
   >
-    View more
+    <ul style="margin: 0; padding: 0; list-style: none;">
+      <li v-if="tagLoading" class="px-4 py-2 text-sm text-gray-400">
+        Searching tags…
+      </li>
+      <li
+        v-for="tag in tagResults"
+        :key="tag.id"
+        class="px-4 py-2 hover:bg-gray-100 cursor-pointer flex justify-between"
+        @click="goToTag(tag.name)"
+        style="padding: 10px;"
+      >
+        <span class="font-medium text-gray-800">
+          #{{ tag.name }}
+        </span>
+        <span class="text-xs text-gray-500">
+          {{ tag.post_count }} posts
+        </span>
+      </li>
+    </ul>
+
+    <!-- VIEW MORE -->
+    <div
+      v-if="tagHasNext"
+      class="px-4 py-2 text-center border-t cursor-pointer text-blue-600 text-sm hover:bg-gray-50"
+      @click="loadMoreTags"
+    >
+      View more
+    </div>
   </div>
 </div>
-          </div>
+
 
           <a-button type="primary" style="width:100%;max-width:100px" @click="onSearch">Search</a-button>
 

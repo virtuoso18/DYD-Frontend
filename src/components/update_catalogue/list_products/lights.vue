@@ -83,13 +83,14 @@
   
         <!-- Product Grid/List -->
         <div v-if="!loading || catalogItems.length > 0" class="product-container" :class="{ 'grid-view': showGrid, 'list-view': !showGrid }">
-          <div v-for="(item, index) in catalogItems" :key="index" @click="updateItemRendering(item.id, item.light_type, item['3d_model'])" style="
+          <div v-for="(item, index) in catalogItems" :key="index" @click="updateItemRendering(item.id, item.light_type, item['3d_model'],item)" style="
            background: #f2f2f2;
 border: none;
 border-radius: 4px;
 padding:5px;"
             :style="selected_light===item.id ? 'border:1px solid blue': ''">
             <div class="product-item">
+              <!-- {{ item.dimensions }} -->
             <div class="product-image" style="position: relative; overflow: hidden;">
   <!-- Skeleton -->
   <div
@@ -332,12 +333,13 @@ onProductImageLoad(id) {
       return words.slice(0, wordLimit).join(' ') + '...';
     },
 
-    updateItemRendering(uuid, type, model_3d_url) {
+    updateItemRendering(uuid, type, model_3d_url,item) {
       this.selected_light = uuid;
       this.$emit('light-selected', {
         'uuid': uuid,
         'type': type,
-        'model_3d_url': model_3d_url
+        'model_3d_url': model_3d_url,
+        'model_diamensions':{ width: item.dimensions.width, height: item.dimensions.height, depth: item.dimensions.length } 
       });
     },
        async toggleLike(itemId, itemIndex) {

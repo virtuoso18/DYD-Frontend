@@ -5,170 +5,198 @@
     @ok="closeInstructionModal"
     :width="500"
   >
-    <div class="instruction-item" v-for="item in instructionConfig" :key="item">
+    <div class="instruction-item" v-for="item in instructionConfig" :key="item.key">
       <span class="instruction">{{ item?.key }}</span>
       <img :src="item?.value" alt="gesture" class="gesture-icon" />
     </div>
   </a-modal>
-  
-  <div className="">
-     <img
-        class="absolute top-[5px] right-[10px] cursor-pointer z-9 w-[25px]"
-        src="../../../assets/icons/informationIcon.svg"
-        alt="instruction"
-        @click="showInstructionModal"
-        title="see instruction"
-      />
 
-    <div class="main-canvas" ref="canvasContainer">
-      <div id="viewer" ref="viewer">
-        <div id="loading" v-if="loading">
-          Loading 3D model and ceiling data...
-        </div>
-      </div>
+  <div>
+    <!-- ✅ NO-MODEL fallback -->
+    <div
+      v-if="!glbUrl || glbUrl === ''"
+      class="text-center flex items-center h-full justify-center text-gray-600"
+    >
+      <img :src="baseImageUrl" alt="" class="max-w-full max-h-[54vh] md:max-h-[83vh] mx-auto" />
     </div>
-    
-    <div class="flex flex-wrap justify-between gap-3 header-wrapper">
-      <!-- Sliders Section -->
-      <div class="flex flex-row md:flex-row overflow-x-auto gap-8 md:gap-2 items-center justify-center flex-1 min-w-0">
-        <!-- Roll Control -->
-        <div class="flex flex-col md:flex-row md:items-center gap-1 flex-shrink-0">
-          <label class="text-[10px] font-bold whitespace-nowrap">Roll</label>
-          
-          <!-- Mobile: +/- Buttons -->
-          <div class="flex md:hidden items-center gap-1">
-            <button
-              type="button"
-              @click="adjustRoll = Math.max(-45, adjustRoll - 1)"
-              :disabled="adjustRoll <= -45"
-              class="w-6 h-6 flex items-center justify-center bg-gray-200 hover:bg-gray-300 active:bg-gray-400 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <span class="text-sm font-bold">−</span>
-            </button>
-            
-            <span class="text-[10px] min-w-[35px] text-center font-semibold">{{ adjustRoll }}°</span>
-            
-            <button
-              type="button"
-              @click="adjustRoll = Math.min(45, adjustRoll + 1)"
-              :disabled="adjustRoll >= 45"
-              class="w-6 h-6 flex items-center justify-center bg-gray-200 hover:bg-gray-300 active:bg-gray-400 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <span class="text-sm font-bold">+</span>
-            </button>
-          </div>
-          
-          <!-- Desktop: Slider -->
-          <div class="hidden md:flex items-center gap-1">
-            <a-slider
-              v-model:value="adjustRoll"
-              :min="-45"
-              :max="45"
-              :step="1"
-              :tooltip-formatter="(value) => `${value}°`"
-              style="width: 120px; height: 10px"
-            />
-            <span style="font-size: 9px; min-width: 25px; text-align: center">
-              {{ adjustRoll }}°
-            </span>
+
+    <!-- ✅ 3D EDITOR -->
+    <div class="editor-wrapper" v-show="glbUrl && glbUrl !== ''">
+      <div class="room-container">
+        <!-- Instruction icon -->
+        <img
+          class="absolute top-[5px] right-[10px] md:hidden cursor-pointer z-[9] w-[25px]"
+          src="../../../assets/icons/informationIcon.svg"
+          alt="instruction"
+          @click="showInstructionModal"
+          title="see instruction"
+        />
+
+        <!-- LOADING OVERLAY -->
+        <div v-if="internalLoading" class="scanning-loading-overlay">
+          <div
+            class="loading-screen"
+            :style="{ backgroundImage: baseImageUrl ? `url(${baseImageUrl})` : 'none' }"
+          >
+            <div class="wave-overlay"></div>
+            <div class="loading-text">
+              <div class="process-text">{{ internalLoadingText }}</div>
+              <div v-if="modelLoadProgress > 0 && modelLoadProgress < 100" style="margin-top:16px;">
+                <div style="width:220px;height:6px;background:rgba(255,255,255,0.2);border-radius:99px;overflow:hidden;">
+                  <div :style="{ width: modelLoadProgress + '%', height: '100%', background: '#3b82f6', borderRadius: '99px', transition: 'width 0.2s ease' }"></div>
+                </div>
+                <div style="margin-top:8px;font-size:13px;opacity:0.8;">{{ modelLoadProgress }}%</div>
+              </div>
+            </div>
           </div>
         </div>
-        
-        <!-- Pitch Control -->
-        <div class="flex flex-col md:flex-row md:items-center gap-1 flex-shrink-0">
-          <label class="text-[10px] font-bold whitespace-nowrap">Pitch</label>
-          
-          <!-- Mobile: +/- Buttons -->
-          <div class="flex md:hidden items-center gap-1">
-            <button
-              type="button"
-              @click="adjustPitch = Math.max(-45, adjustPitch - 1)"
-              :disabled="adjustPitch <= -45"
-              class="w-6 h-6 flex items-center justify-center bg-gray-200 hover:bg-gray-300 active:bg-gray-400 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <span class="text-sm font-bold">−</span>
-            </button>
-            
-            <span class="text-[10px] min-w-[35px] text-center font-semibold">{{ adjustPitch }}°</span>
-            
-            <button
-              type="button"
-              @click="adjustPitch = Math.min(45, adjustPitch + 1)"
-              :disabled="adjustPitch >= 45"
-              class="w-6 h-6 flex items-center justify-center bg-gray-200 hover:bg-gray-300 active:bg-gray-400 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <span class="text-sm font-bold">+</span>
-            </button>
-          </div>
-          
-          <!-- Desktop: Slider -->
-          <div class="hidden md:flex items-center gap-1">
-            <a-slider
-              v-model:value="adjustPitch"
-              :min="-45"
-              :max="45"
-              :step="1"
-              :tooltip-formatter="(value) => `${value}°`"
-              style="width: 120px; height: 10px"
-            />
-            <span style="font-size: 9px; min-width: 25px; text-align: center">
-              {{ adjustPitch }}°
-            </span>
-          </div>
+
+        <!-- Room background image -->
+        <img ref="roomImage" :src="baseImageUrl" class="room-image" @load="initThree" />
+
+        <!-- Mask debug overlay -->
+        <canvas
+          ref="maskOverlayCanvas"
+          class="mask-overlay"
+          :style="{ opacity: 0.5, display: debugMask ? 'block' : 'none' }"
+        ></canvas>
+
+        <!-- Three.js canvas layer -->
+        <div ref="threeContainer" class="three-layer"></div>
+
+        <!-- Status badge while fitting -->
+        <div class="status-badge" v-if="!planeReady && !internalLoading">
+          {{ plyReady && maskReady ? '🔄 Fitting ceiling plane…' : '⏳ Loading assets…' }}
         </div>
-        
-        <!-- Size Control -->
-        <div class="flex flex-col md:flex-row md:items-center gap-1 flex-shrink-0">
-          <label class="text-[10px] font-bold whitespace-nowrap">Size</label>
-          
-          <!-- Mobile: +/- Buttons -->
-          <div class="flex md:hidden items-center gap-1">
-            <button
-              type="button"
-              @click="modelSizeScale = Math.max(0.5, parseFloat((modelSizeScale - 0.1).toFixed(1)))"
-              :disabled="modelSizeScale <= 0.5"
-              class="w-6 h-6 flex items-center justify-center bg-gray-200 hover:bg-gray-300 active:bg-gray-400 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <span class="text-sm font-bold">−</span>
-            </button>
-            
-            <span class="text-[10px] min-w-[35px] text-center font-semibold">{{ modelSizeScale }}x</span>
-            
-            <button
-              type="button"
-              @click="modelSizeScale = Math.min(4.0, parseFloat((modelSizeScale + 0.1).toFixed(1)))"
-              :disabled="modelSizeScale >= 4.0"
-              class="w-6 h-6 flex items-center justify-center bg-gray-200 hover:bg-gray-300 active:bg-gray-400 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <span class="text-sm font-bold">+</span>
-            </button>
-          </div>
-          
-          <!-- Desktop: Slider -->
-          <div class="hidden md:flex items-center gap-1">
-            <a-slider
-              v-model:value="modelSizeScale"
-              :min="0.5"
-              :max="4.0"
-              :step="0.1"
-              :tooltip-formatter="(value) => `${value}x`"
-              style="width: 120px; height: 10px"
-            />
-            <span style="font-size: 9px; min-width: 25px; text-align: center">
-              {{ modelSizeScale }}x
-            </span>
-          </div>
+
+        <!-- Dimension label -->
+        <span class="dim-label">
+          W-{{ TARGET_DIMS?.width }}m × H-{{ TARGET_DIMS?.height }}m × D-{{ TARGET_DIMS?.depth }}m
+        </span>
+      </div>
+
+      <!-- ── DEBUG PANEL ── -->
+      <div class="debug-panel" v-if="debug">
+        <div class="debug-title">🔧 Debug — Ceiling Plane</div>
+        <label class="debug-row">
+          <span>Mask Overlay</span>
+          <input type="checkbox" v-model="debugMask" />
+          <span class="badge" :class="debugMask ? 'on' : 'off'">{{ debugMask ? 'ON' : 'OFF' }}</span>
+        </label>
+        <label class="debug-row">
+          <span>Point Cloud</span>
+          <input type="checkbox" v-model="debugPointCloud" @change="togglePointCloud" />
+          <span class="badge" :class="debugPointCloud ? 'on' : 'off'">{{ debugPointCloud ? 'ON' : 'OFF' }}</span>
+        </label>
+        <label class="debug-row">
+          <span>Ceiling Mesh</span>
+          <input type="checkbox" v-model="debugCeilingMesh" @change="toggleCeilingMesh" />
+          <span class="badge" :class="debugCeilingMesh ? 'on' : 'off'">{{ debugCeilingMesh ? 'ON' : 'OFF' }}</span>
+        </label>
+        <label class="debug-row">
+          <span>Light Rotation</span>
+          <input type="range" min="0" max="360" step="1" v-model.number="lightRotation" />
+          <span class="val">{{ lightRotation }}°</span>
+        </label>
+        <div class="debug-status">
+          <div class="status-row"><span>Mask:</span>
+            <span :class="maskReady ? 'ok' : 'err'">{{ maskReady ? '✅ ready' : '⏳…' }}</span></div>
+          <div class="status-row"><span>Point cloud:</span>
+            <span :class="plyReady ? 'ok' : 'err'">{{ plyReady ? '✅ ready' : '⏳…' }}</span></div>
+          <div class="status-row"><span>Ceiling plane:</span>
+            <span :class="planeReady ? 'ok' : 'err'">{{ planeReady ? '✅ fitted' : '⏳…' }}</span></div>
+          <div class="status-row"><span>Light model:</span>
+            <span :class="lightLoaded ? 'ok' : 'err'">{{ lightLoaded ? '✅ yes' : '⏳…' }}</span></div>
+          <div class="status-row"><span>Ceiling pts used:</span>
+            <span class="coord">{{ ceilingPtCount }}</span></div>
+          <div class="status-row"><span>Ceiling Y (centroid):</span>
+            <span class="coord">{{ ceilingCentroidY.toFixed(4) }} m</span></div>
+          <div class="status-row"><span>Ceiling normal:</span>
+            <span class="coord">({{ _ceilNX.toFixed(3) }}, {{ _ceilNY.toFixed(3) }}, {{ _ceilNZ.toFixed(3) }})</span></div>
+          <div class="status-row"><span>Tilt angle:</span>
+            <span class="coord">{{ tiltAngleDeg.toFixed(2) }}°</span></div>
+          <div class="status-row"><span>Roll / Pitch:</span>
+            <span class="coord">{{ adjustRoll }}° / {{ adjustPitch }}°</span></div>
+          <div class="status-row"><span>Size scale:</span>
+            <span class="coord">{{ modelSizeScale }}×</span></div>
         </div>
       </div>
 
-      <!-- Apply Changes Button -->
-      <div class="flex-shrink-0 w-full md:w-auto !py-2">
-        <div >
+      <!-- BOTTOM ACTION BAR -->
+      <div class="flex flex-wrap justify-between items-center py-2 px-2 bg-white w-full gap-2">
+
+        <!-- Controls row -->
+        <div class="flex flex-row gap-4 items-center overflow-x-auto flex-1 min-w-0">
+
+          <!-- Roll -->
+          <div class="flex flex-col md:flex-row md:items-center gap-1 flex-shrink-0">
+            <label class="text-[10px] font-bold whitespace-nowrap">Roll</label>
+            <div class="flex md:hidden items-center gap-1">
+              <button type="button" @click="adjustRoll = Math.max(-45, adjustRoll - 1)" :disabled="adjustRoll <= -45" class="w-6 h-6 flex items-center justify-center bg-gray-200 rounded-md disabled:opacity-50">
+                <span class="text-sm font-bold">−</span>
+              </button>
+              <span class="text-[10px] min-w-[35px] text-center font-semibold">{{ adjustRoll }}°</span>
+              <button type="button" @click="adjustRoll = Math.min(45, adjustRoll + 1)" :disabled="adjustRoll >= 45" class="w-6 h-6 flex items-center justify-center bg-gray-200 rounded-md disabled:opacity-50">
+                <span class="text-sm font-bold">+</span>
+              </button>
+            </div>
+            <div class="hidden md:flex items-center gap-1">
+              <a-slider v-model:value="adjustRoll" :min="-45" :max="45" :step="1" :tooltip-formatter="v => `${v}°`" style="width:120px" />
+              <span style="font-size:9px;min-width:25px;text-align:center">{{ adjustRoll }}°</span>
+            </div>
+          </div>
+
+          <!-- Pitch -->
+          <div class="flex flex-col md:flex-row md:items-center gap-1 flex-shrink-0">
+            <label class="text-[10px] font-bold whitespace-nowrap">Pitch</label>
+            <div class="flex md:hidden items-center gap-1">
+              <button type="button" @click="adjustPitch = Math.max(-45, adjustPitch - 1)" :disabled="adjustPitch <= -45" class="w-6 h-6 flex items-center justify-center bg-gray-200 rounded-md disabled:opacity-50">
+                <span class="text-sm font-bold">−</span>
+              </button>
+              <span class="text-[10px] min-w-[35px] text-center font-semibold">{{ adjustPitch }}°</span>
+              <button type="button" @click="adjustPitch = Math.min(45, adjustPitch + 1)" :disabled="adjustPitch >= 45" class="w-6 h-6 flex items-center justify-center bg-gray-200 rounded-md disabled:opacity-50">
+                <span class="text-sm font-bold">+</span>
+              </button>
+            </div>
+            <div class="hidden md:flex items-center gap-1">
+              <a-slider v-model:value="adjustPitch" :min="-45" :max="45" :step="1" :tooltip-formatter="v => `${v}°`" style="width:120px" />
+              <span style="font-size:9px;min-width:25px;text-align:center">{{ adjustPitch }}°</span>
+            </div>
+          </div>
+
+          <!-- Size -->
+          <!-- <div class="flex flex-col md:flex-row md:items-center gap-1 flex-shrink-0">
+            <label class="text-[10px] font-bold whitespace-nowrap">Size</label>
+            <div class="flex md:hidden items-center gap-1">
+              <button type="button" @click="modelSizeScale = Math.max(0.5, parseFloat((modelSizeScale - 0.1).toFixed(1)))" :disabled="modelSizeScale <= 0.5" class="w-6 h-6 flex items-center justify-center bg-gray-200 rounded-md disabled:opacity-50">
+                <span class="text-sm font-bold">−</span>
+              </button>
+              <span class="text-[10px] min-w-[35px] text-center font-semibold">{{ modelSizeScale }}x</span>
+              <button type="button" @click="modelSizeScale = Math.min(4.0, parseFloat((modelSizeScale + 0.1).toFixed(1)))" :disabled="modelSizeScale >= 4.0" class="w-6 h-6 flex items-center justify-center bg-gray-200 rounded-md disabled:opacity-50">
+                <span class="text-sm font-bold">+</span>
+              </button>
+            </div>
+            <div class="hidden md:flex items-center gap-1">
+              <a-slider v-model:value="modelSizeScale" :min="0.5" :max="4.0" :step="0.1" :tooltip-formatter="v => `${v}x`" style="width:120px" />
+              <span style="font-size:9px;min-width:25px;text-align:center">{{ modelSizeScale }}x</span>
+            </div>
+          </div> -->
+        </div>
+
+        <!-- Action buttons -->
+        <div class="flex gap-2 flex-shrink-0">
+          <button
+            @click="resetLightPosition"
+            :disabled="!lightLoaded || !planeReady"
+            style="font-family:Poppins;font-weight:500;font-size:14px;line-height:20px;background:#e5e7eb;padding:4px 16px;border-radius:6px;"
+          >
+            Recenter
+          </button>
           <a-button
             type="primary"
-            class="toolbar-btn primary-btn w-full md:w-auto"
             @click="$emit('Apply-Changes', '3d-ceiling-light-Renerer')"
-            :disabled="isLoading"
+            :disabled="!lightLoaded || !planeReady || isLoading"
+            style="padding:4px 12px;border-radius:6px;"
           >
             Finalise Changes
           </a-button>
@@ -178,2167 +206,1401 @@
   </div>
 </template>
 
+<script>
+import { markRaw } from 'vue'
+import * as THREE from 'three'
+import { PLYLoader } from 'three/examples/jsm/loaders/PLYLoader'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 
+import ZoomInIcon  from '@/assets/icons/zoomout.png'
+import ZoomOutIcon from '@/assets/icons/zoomin.png'
+import TapToSelect from '@/assets/icons/tap.png'
+import DragToMove  from '@/assets/icons/tapAndMove.png'
 
+export default {
+  name: 'ceiling_light_renderer_3d_ptcld',
 
+  props: {
+    isLoading:       { type: Boolean, default: false },
+    glbUrl:          { type: String,  required: true },
+    baseImageUrl:    { type: String,  required: true },
+    ceilingMaskUrl:  { type: String,  required: true },
+    selectedlightuuid: { type: String, required: true },
 
+    // ── Camera intrinsics (same as floor component) ──
+    CAM_IMG_W:    { type: Number, required: true },
+    CAM_IMG_H:    { type: Number, required: true },
+    CAM_FX:       { type: Number, required: true },
+    CAM_FY:       { type: Number, required: true },
+    CAM_CX:       { type: Number, required: true },
+    CAM_CY:       { type: Number, required: true },
+    CAM_Z_SIGN:   { type: Number, default: 1 },
+    CAM_FOV_V:    { type: Number, required: true },
+    MASK_ERODE_PX:{ type: Number, default: 10 },
 
+    // ── Pointcloud ──
+    POINTCLOUD:   { type: String, required: true },
 
+    // ── Physical dimensions of the light fixture ──
+    TARGET_DIMS:  { type: Object, default: () => ({ width: 0.5, height: 0.3, depth: 0.5 }) },
 
-<script setup>
-import { ref, onMounted, onBeforeUnmount, reactive, watch } from "vue";
-import * as THREE from "three";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-
-import { useRoute } from "vue-router";
-import { useStore } from "vuex";
-import { defineEmits } from "vue";
-import ZoomInIcon from "@/assets/icons/zoomout.png";
-import ZoomOutIcon from "@/assets/icons/zoomin.png";
-import DragLight from "@/assets/icons/tapAndMove.png";
-// Define the emit
-const emit = defineEmits(["model-3d-light-added", "insufficient-credits"]);
-const route = useRoute();
-const store = useStore();
-
-const props = defineProps({
-  glbUrl: { type: String, required: true },
-  baseImageUrl: { type: String, required: true },
-  ceilingMaskUrl: { type: String, required: true }, // Changed from floorMaskUrl
-  selectedlightuuid: {
-    type: String,
-    required: true,
+    debug: Boolean,
   },
-  roll: { type: Number, default: 0 },
-  pitch: { type: Number, default: 0 },
-  yaw: { type: Number, default: 0 },
-  isLoading: { type: Boolean, default: false, required: false },
-  ceilingHeight: { type: Number, default: 1 - 0 }, // New prop for ceiling height
-});
 
-// Add these reactive variables at the top of your script setup
-const canvasWidth = ref(800);
-const canvasHeight = ref(600);
-// 4. Add this variable at the top of your script setup:
-let resizeDebounce = null;
-// New reactive variables for the controls
-const adjustRoll = ref(0);
-const adjustPitch = ref(0);
-const modelSizeScale = ref(1.0);
-let originalModelScale = 1.0; // Store the original scale after initial fitting
+  emits: [
+    'update:isLoading',
+    'model-3d-light-added',
+    'insufficient-credits',
+    'Apply-Changes',
+  ],
 
-// Add watchers for props that should trigger reloads
-watch(
-  () => props.glbUrl,
-  (newUrl, oldUrl) => {
-    if (newUrl !== oldUrl && newUrl) {
-      console.log("GLB URL changed, reloading model:", newUrl);
-      loading.value = true;
-      loadModel();
+  data() {
+    return {
+      isShowInstructionModal: false,
+      instructionConfig: [
+        { key: 'Pinch out to zoom', value: ZoomInIcon },
+        { key: 'Pinch in to zoom',  value: ZoomOutIcon },
+        { key: 'Tap to select',     value: TapToSelect },
+        { key: 'Drag to move',      value: DragToMove  },
+      ],
+
+      // Loading state
+      internalLoading:     true,
+      internalLoadingText: 'Loading assets…',
+      modelLoadProgress:   0,
+      animationFrameId:    null,
+
+      // Readiness flags
+      maskReady:   false,
+      plyReady:    false,
+      planeReady:  false,
+      lightLoaded: false,
+
+      // UI controls
+      adjustRoll:     0,
+      adjustPitch:    0,
+      modelSizeScale: 1.0,
+      lightRotation:  0,
+
+      // Debug
+      debugMask:        false,
+      debugPointCloud:  false,
+      debugCeilingMesh: false,
+
+      // Background texture reference (needed by downloadCurrentSceneImage)
+      currentBgTexture: null,
+      ceilingDebugMesh: null,   // visible debug mesh for ceiling plane
+
+      // THREE objects (set as non-reactive via markRaw)
+      scene:     null,
+      camera:    null,
+      renderer:  null,
+      bgScene:   null,
+      bgCamera:  null,
+      bgMesh:    null,
+
+      // Model
+      light:         null,   // pivotGroup
+      lightHalfH:    0,
+      originalScale: 1,
+
+      // Ceiling plane
+      ceilingPlaneTHREE: null,
+      ceilingNormal3:    null,
+      ceilingCentroid3:  null,
+
+      // Rotation ring
+      rotationRing:  null,
+      rotationArrows: [],
+
+      // Point cloud
+      pointCloudObj: null,
+      plyPositions:  null,
+      plyPointCount: 0,
+
+      // Mask
+      maskCanvas: null,
+      maskCtx:    null,
+      erodedMask: null,
+      maskOverlayCanvas: null,
+
+      // Stats for debug
+      ceilingPtCount:  0,
+      ceilingCentroidY: 0,
+      _ceilNX: 0, _ceilNY: -1, _ceilNZ: 0,
+
+      // Drag state (reactive)
+      isDraggingRef:  false,
+      isRotatingRef:  false,
+
+      // Two-finger rotation
+      twoFingerPointers:   null,
+      twoFingerStartAngle: 0,
+      twoFingerStartAvgY:  0,
+      isTwoFingerRotating: false,
     }
-  }
-);
+  },
 
-watch(
-  () => props.baseImageUrl,
-  (newUrl, oldUrl) => {
-    if (newUrl !== oldUrl && newUrl) {
-      console.log("Base image URL changed, reloading background:", newUrl);
-      initializeBackground();
-    }
-  }
-);
-
-watch(
-  () => props.ceilingMaskUrl,
-  (newUrl, oldUrl) => {
-    if (newUrl !== oldUrl && newUrl) {
-      console.log("Ceiling mask URL changed, reloading mask:", newUrl);
-      loadCeilingMask();
-    }
-  }
-);
-
-// Watch for angle changes and update ceiling orientation
-watch(
-  [() => props.roll, () => props.pitch, () => props.yaw],
-  ([newRoll, newPitch, newYaw]) => {
-    ceilingAngles.roll = newRoll - 10;
-    ceilingAngles.pitch = newPitch - 20;
-    ceilingAngles.yaw = newYaw + 30;
-
-    if (ceilingPlane) {
-      createCeilingPlaneWithEulerAngles();
-    }
-    if (ceilingMaskMesh) {
-      createCeilingMaskVisualization();
-    }
-    if (gridHelper) {
-      createVisualGrid();
-    }
-  }
-);
-
-// Watch for adjust roll changes
-watch(adjustRoll, (newRoll) => {
-  if (model) {
-    updateModelRoll();
-  }
-});
-watch(adjustPitch, (adjustPitch) => {
-  if (model) {
-    updateModelPitch();
-  }
-});
-
-// Watch for model size changes
-watch(modelSizeScale, (newScale) => {
-  if (model) {
-    updateModelSize();
-  }
-});
-
-watch(
-  () => props.ceilingHeight,
-  (newHeight) => {
-    currentCeilingHeight.value = newHeight + 40;
-
-    // Update lighting position
-    if (scene) {
-      const dirLight = scene.children.find(
-        (child) =>
-          child instanceof THREE.DirectionalLight &&
-          child.position.y > newHeight
-      );
-      if (dirLight) {
-        dirLight.position.y = newHeight + 5;
-      }
-    }
-
-    // Update model position if loaded
-    if (model) {
-      updateModelPositionOnCeiling();
-    }
-
-    // Recreate ceiling elements
-    if (ceilingPlane) {
-      createCeilingPlaneWithEulerAngles();
-    }
-    if (ceilingMaskMesh) {
-      createCeilingMaskVisualization();
-    }
-    if (gridHelper) {
-      createVisualGrid();
-    }
-  }
-);
-
-const viewer = ref(null);
-const canvasContainer = ref(null);
-const loading = ref(true);
-const modelLoaded = ref(false);
-const ceilingMaskLoaded = ref(false); // Changed from floorMaskLoaded
-const showGrid = ref(false);
-const showRotationControls = ref(true);
-const showCeilingMask = ref(false); // Changed from showFloorMask
-const isDragging = ref(false);
-const isRotating = ref(false);
-const isOnValidCeiling = ref(true); // Changed from isOnValidFloor
-
-const modelPosition = reactive({ x: 0, y: 0 });
-const modelRotation = reactive({ y: 0 });
-
-// Use props for ceiling angles - matching Python output exactly for exact output
-const ceilingAngles = reactive({
-  roll: props.roll - 10,
-  pitch: props.pitch - 20,
-  yaw: props.yaw + 30,
-});
-
-// code which will performs the great for ;look it looks like ceiling is hanging to the top border of image canvas
-// const ceilingAngles = reactive({
-//   roll: -10,
-//   pitch: -20,
-//   yaw: 30
-// });
-
-const gridSize = ref(0.3);
-const currentCeilingHeight = ref(props.ceilingHeight + 40); // Changed from currentFloorHeight
-
-
-let isShowInstructionModal = ref(false);
-    const  instructionConfig = [
-        {
-          key: "Pinch out zoom out",
-          value: ZoomInIcon,
-        },
-        { key: "Pinch in to zoom", value: ZoomOutIcon },
-        { key: "Drag to move light", value: DragLight },
-      ];
-
-      function showInstructionModal() {
-      isShowInstructionModal.value = true;
-    };
-   function closeInstructionModal() {
-      isShowInstructionModal.value = false;
-    };
-// Ceiling mask data (changed from floor mask)
-let ceilingMaskTexture = null;
-let ceilingMaskCanvas = null;
-let ceilingMaskContext = null;
-let ceilingMaskImageData = null;
-
-let isDraggingModel = false;
-let isRotatingModel = false;
-let dragStartMouse = new THREE.Vector2();
-let dragStartPosition = new THREE.Vector2();
-let rotationStartMouse = new THREE.Vector2();
-let rotationStartAngle = 0;
-let dragPlane = new THREE.Plane();
-let raycaster = new THREE.Raycaster();
-let ceilingNormal = new THREE.Vector3(); // Changed from floorNormal
-
-let scene, camera, renderer, controls, animationId;
-let backgroundScene, backgroundCamera, bgMesh;
-let gridGroup, gridHelper, ceilingPlane; // Changed from floorPlane
-let model, modelBoundingBox, modelCenter, modelSize;
-let rotationControlsGroup, rotationCircle, rotationArrows;
-let currentBackgroundTexture = null;
-let ceilingMaskMesh = null; // Changed from floorMaskMesh
-
-// New function to update model roll
-function updateModelRoll() {
-  if (!model) return;
-
-  // Apply roll rotation to the model
-  const rollRadians = THREE.MathUtils.degToRad(adjustRoll.value);
-
-  // Create rotation matrix for roll (rotation around Z-axis)
-  const rollMatrix = new THREE.Matrix4().makeRotationZ(rollRadians);
-
-  // Create rotation matrix for existing Y rotation
-  const yRotationMatrix = new THREE.Matrix4().makeRotationY(
-    THREE.MathUtils.degToRad(modelRotation.y)
-  );
-
-  // Combine rotations: apply Y rotation first, then roll
-  const combinedMatrix = new THREE.Matrix4().multiplyMatrices(
-    rollMatrix,
-    yRotationMatrix
-  );
-
-  // Apply the combined rotation to the model
-  model.rotation.setFromRotationMatrix(combinedMatrix);
-}
-
-// New function to update model Pitch
-
-// Corrected function to update model Pitch
-function updateModelPitch() {
-  if (!model) return;
-
-  // Apply pitch rotation to the model (rotation around X-axis)
-  const pitchRadians = THREE.MathUtils.degToRad(adjustPitch.value);
-
-  // Create rotation matrix for pitch (rotation around X-axis)
-  const pitchMatrix = new THREE.Matrix4().makeRotationX(pitchRadians);
-
-  // Create rotation matrix for existing Y rotation
-  const yRotationMatrix = new THREE.Matrix4().makeRotationY(
-    THREE.MathUtils.degToRad(modelRotation.y)
-  );
-
-  // Create rotation matrix for existing roll rotation (if you have adjustRoll)
-  const rollMatrix = new THREE.Matrix4().makeRotationZ(
-    THREE.MathUtils.degToRad(adjustRoll.value || 0)
-  );
-
-  // Combine rotations in proper order: Y (yaw) -> X (pitch) -> Z (roll)
-  const tempMatrix = new THREE.Matrix4().multiplyMatrices(
-    pitchMatrix,
-    yRotationMatrix
-  );
-  const combinedMatrix = new THREE.Matrix4().multiplyMatrices(
-    rollMatrix,
-    tempMatrix
-  );
-
-  // Apply the combined rotation to the model
-  model.rotation.setFromRotationMatrix(combinedMatrix);
-}
-
-// New function to update model size
-function updateModelSize() {
-  if (!model || !originalModelScale) return;
-
-  // Apply the new scale based on the original fitted scale
-  const newScale = originalModelScale * modelSizeScale.value;
-  model.scale.setScalar(newScale);
-
-  // Update bounding box and related properties
-  modelBoundingBox = new THREE.Box3().setFromObject(model);
-  modelSize = modelBoundingBox.getSize(new THREE.Vector3());
-  modelCenter = modelBoundingBox.getCenter(new THREE.Vector3());
-
-  // Update position to maintain ceiling attachment
-  updateModelPositionOnCeiling();
-  updateRotationControlsPosition();
-}
-
-// 5. Update the onMounted function to include the resize observer:
-onMounted(() => {
-  const container = viewer.value;
-  initializeScene(container);
-  initializeBackground();
-  initializeLighting();
-  loadCeilingMask();
-  initializeEnhancedGrid();
-  initializeRotationControls();
-  initializeControls();
-  initializeDragControls();
-  loadModel();
-
-  window.addEventListener("resize", onWindowResize);
-
-  // Setup resize observer for better responsiveness
-  const cleanupResize = setupResizeObserver();
-
-  // Store cleanup function for unmount
-  if (cleanupResize) {
-    onBeforeUnmount(cleanupResize);
-  }
-
-  animate();
-});
-
-// Update your initializeScene function to use reactive dimensions
-
-// 6. Update the initializeScene function to use full container dimensions:
-function initializeScene(container) {
-  scene = new THREE.Scene();
-  backgroundScene = new THREE.Scene();
-  backgroundCamera = new THREE.Camera();
-
-  // Get initial container dimensions - use full available space
-  const rect = container.getBoundingClientRect();
-  canvasWidth.value = Math.max(rect.width, 400);
-  canvasHeight.value = Math.max(rect.height, 300);
-
-  camera = new THREE.PerspectiveCamera(
-    45,
-    canvasWidth.value / canvasHeight.value,
-    0.1,
-    1000
-  );
-
-  renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.setSize(canvasWidth.value, canvasHeight.value);
-  renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.outputColorSpace = THREE.SRGBColorSpace;
-  renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-  container.appendChild(renderer.domElement);
-}
-
-// Add a resize observer for better responsiveness (optional but recommended)
-
-// 3. Add a new resize observer setup in onMounted:
-function setupResizeObserver() {
-  if (typeof ResizeObserver !== "undefined" && canvasContainer.value) {
-    const resizeObserver = new ResizeObserver((entries) => {
-      for (let entry of entries) {
-        // Debounce resize events
-        clearTimeout(resizeDebounce);
-        resizeDebounce = setTimeout(() => {
-          if (currentBackgroundTexture) {
-            adjustCanvasToImageAspectRatio(currentBackgroundTexture);
-            updateBackground(currentBackgroundTexture);
-          }
-        }, 100);
-      }
-    });
-
-    resizeObserver.observe(canvasContainer.value);
-
-    // Return cleanup function
-    return () => {
-      clearTimeout(resizeDebounce);
-      resizeObserver.disconnect();
-    };
-  }
-  return null;
-}
-function initializeBackground() {
-  const canvas = document.createElement("canvas");
-  canvas.width = 512;
-  canvas.height = 512;
-  const ctx = canvas.getContext("2d");
-
-  const gradient = ctx.createLinearGradient(0, 0, 0, 512);
-  gradient.addColorStop(0, "#f5f5f5");
-  gradient.addColorStop(1, "#e0e0e0");
-  ctx.fillStyle = gradient;
-  ctx.fillRect(0, 0, 512, 512);
-
-  const fallbackTexture = new THREE.CanvasTexture(canvas);
-
-  new THREE.TextureLoader().load(
-    props.baseImageUrl,
-    (texture) => {
-      currentBackgroundTexture = texture;
-      adjustCanvasToImageAspectRatio(texture);
-      updateBackground(texture);
+  computed: {
+    tiltAngleDeg() {
+      return (Math.acos(Math.min(1, Math.abs(this._ceilNY))) * 180) / Math.PI
     },
-    undefined,
-    (error) => {
-      console.warn("Background image failed to load, using fallback");
-      currentBackgroundTexture = fallbackTexture;
-      updateBackground(fallbackTexture);
-    }
-  );
-}
+  },
 
-function generateBinaryMask() {
-  if (!model || !currentBackgroundTexture) {
-    console.warn("Model or background not loaded");
-    return;
-  }
+  created() {
+    this.ceilingNormal3   = markRaw(new THREE.Vector3(0, -1, 0))
+    this.ceilingCentroid3 = markRaw(new THREE.Vector3())
 
-  const bgWidth = currentBackgroundTexture.image.width;
-  const bgHeight = currentBackgroundTexture.image.height;
+    this.isDragging          = false
+    this.isRotating          = false
+    this.dragOffset          = markRaw(new THREE.Vector3())
+    this.raycaster           = markRaw(new THREE.Raycaster())
+    this.mouse               = markRaw(new THREE.Vector2())
+    this.rotationStartAngle  = 0
+    this.rotationStartMouseX = 0
 
-  const tempCanvas = document.createElement("canvas");
-  tempCanvas.width = bgWidth;
-  tempCanvas.height = bgHeight;
+    this.twoFingerPointers   = new Map()
+    this.twoFingerStartAngle = 0
+    this.twoFingerStartAvgY  = 0
+    this.isTwoFingerRotating = false
+  },
 
-  const tempRenderer = new THREE.WebGLRenderer({
-    canvas: tempCanvas,
-    antialias: true,
-    preserveDrawingBuffer: true,
-  });
-  tempRenderer.setSize(bgWidth, bgHeight);
-  tempRenderer.setClearColor(0x000000, 1);
+  mounted() {
+    this.$nextTick(() => {
+      this.roomImage         = this.$refs.roomImage
+      this.threeContainer    = this.$refs.threeContainer
+      this.maskOverlayCanvas = this.$refs.maskOverlayCanvas
 
-  const tempScene = new THREE.Scene();
-  const modelClone = model.clone();
-  tempScene.add(modelClone);
-
-  tempScene.add(new THREE.HemisphereLight(0xffffff, 0xffffff, 1.0));
-  const dirLight = new THREE.DirectionalLight(0xffffff, 1.0);
-  dirLight.position.set(10, 15, 5);
-  tempScene.add(dirLight);
-
-  const tempCamera = camera.clone();
-  tempCamera.aspect = bgWidth / bgHeight;
-  tempCamera.updateProjectionMatrix();
-
-  modelClone.traverse((child) => {
-    if (child.isMesh) {
-      child.material = new THREE.MeshBasicMaterial({ color: 0xffffff });
-    }
-  });
-
-  tempRenderer.render(tempScene, tempCamera);
-
-  const dataURL = tempCanvas.toDataURL("image/png");
-
-  const link = document.createElement("a");
-  link.download = `ceiling_model_binary_mask_${Date.now()}.png`;
-  link.href = dataURL;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-
-  tempRenderer.dispose();
-
-  console.log(`Binary mask generated with dimensions: ${bgWidth}x${bgHeight}`);
-}
-
-// async function downloadCurrentSceneImage() {
-//   if (!renderer || !scene || !camera || !currentBackgroundTexture || !model) {
-//     console.warn("Required components not available for image generation");
-//     return;
-//   }
-
-//   try {
-//     // Get current canvas dimensions
-//     const width = renderer.domElement.width;
-//     const height = renderer.domElement.height;
-
-//     // Store original visibility states
-//     const originalRotationControlsVisible = rotationControlsGroup ? rotationControlsGroup.visible : false;
-//     const originalGridVisible = gridHelper ? gridHelper.visible : false;
-//     const originalCeilingMaskVisible = ceilingMaskMesh ? ceilingMaskMesh.visible : false;
-
-//     // Hide UI elements temporarily
-//     if (rotationControlsGroup) rotationControlsGroup.visible = false;
-//     if (gridHelper) gridHelper.visible = false;
-//     if (ceilingMaskMesh) ceilingMaskMesh.visible = false;
-
-//     // Create a temporary canvas for compositing
-//     const compositeCanvas = document.createElement('canvas');
-//     compositeCanvas.width = width;
-//     compositeCanvas.height = height;
-//     const ctx = compositeCanvas.getContext('2d');
-
-//     // Step 1: Draw the background image
-//     const bgImage = currentBackgroundTexture.image;
-//     ctx.drawImage(bgImage, 0, 0, width, height);
-
-//     // Step 2: Render only the 3D model scene
-//     // Temporarily clear the background scene to render only the model
-//     const originalBgMeshVisible = bgMesh ? bgMesh.visible : false;
-//     if (bgMesh) bgMesh.visible = false;
-
-//     // Set transparent background for model rendering
-//     const originalClearColor = renderer.getClearColor(new THREE.Color());
-//     const originalClearAlpha = renderer.getClearAlpha();
-//     renderer.setClearColor(0x000000, 0); // Transparent background
-
-//     // Render only the 3D scene (model without background)
-//     renderer.autoClear = false;
-//     renderer.clear();
-//     renderer.render(scene, camera);
-
-//     // Step 3: Get the model render as image data
-//     const modelImageData = renderer.domElement.toDataURL('image/png');
-
-//     // Step 4: Create composite image
-//     const finalDataURL = await new Promise((resolve) => {
-//       const modelImage = new Image();
-//       modelImage.onload = function() {
-//         // Draw the model on top of the background with proper blending
-//         ctx.globalCompositeOperation = 'source-over';
-//         ctx.drawImage(modelImage, 0, 0, width, height);
-
-//         // Get final composite image
-//         resolve(compositeCanvas.toDataURL('image/png', 0.95));
-//       };
-//       modelImage.src = modelImageData;
-//     });
-
-//     // Step 5: Send to server via POST request
-//     const response = await fetch(store.state.root_api + 'engine/added-3d-light-to-room/', {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//         'Authorization': `Token ${localStorage.getItem('token')}`
-//       },
-//       body: JSON.stringify({
-//         image: finalDataURL,
-//         room_id: route.params.id,
-//       product_id:props.selectedlightuuid,
-//         timestamp: Date.now(),
-//         // Add any additional metadata you want to send
-//         metadata: {
-//           modelPosition: {
-//             x: modelPosition.x,
-//             y: modelPosition.y,
-//             rotation: modelRotation.y
-//           },
-//           ceilingAngles: {
-//             roll: ceilingAngles.roll,
-//             pitch: ceilingAngles.pitch,
-//             yaw: ceilingAngles.yaw
-//           },
-//           modelScale: modelSizeScale.value,
-//           ceilingHeight: currentCeilingHeight.value,
-//           dimensions: {
-//             width: width,
-//             height: height
-//           }
-//         }
-//       })
-//     });
-
-//     if(response.status==402){
-//       console.log(response)
-//         const result = await response.json()
-//         emit('model-3d-light-added', {'image_url':image_url});
-//         emit('insufficient-credits',result.msg)
-//         return
-//       }
-
-//     if (response.ok) {
-//       const result = await response.json();
-//       console.log('Image successfully sent to server:', result);
-//       emit('model-3d-light-added', result);
-
-//       // Optional: Still download locally as backup
-//       // const link = document.createElement('a');
-//       // link.download = `ceiling_model_composite_${Date.now()}.png`;
-//       // link.href = finalDataURL;
-//       // document.body.appendChild(link);
-//       // link.click();
-//       // document.body.removeChild(link);
-//     } else {
-//       console.error('Failed to send image to server:', response.status, response.statusText);
-
-//       // Fallback: Download locally if server fails
-//       const link = document.createElement('a');
-//       link.download = `ceiling_model_composite_${Date.now()}.png`;
-//       link.href = finalDataURL;
-//       document.body.appendChild(link);
-//       link.click();
-//       document.body.removeChild(link);
-//     }
-
-//     console.log(`Composite image processed with dimensions: ${width}x${height}`);
-
-//     // Restore original states
-//     if (rotationControlsGroup) rotationControlsGroup.visible = originalRotationControlsVisible;
-//     if (gridHelper) gridHelper.visible = originalGridVisible;
-//     if (ceilingMaskMesh) ceilingMaskMesh.visible = originalCeilingMaskVisible;
-//     if (bgMesh) bgMesh.visible = originalBgMeshVisible;
-
-//     // Restore renderer settings
-//     renderer.setClearColor(originalClearColor, originalClearAlpha);
-//     renderer.autoClear = true;
-
-//     // Resume normal rendering
-//     renderer.clear();
-//     renderer.render(backgroundScene, backgroundCamera);
-//     renderer.render(scene, camera);
-
-//   } catch (error) {
-//     console.error('Error in downloadCurrentSceneImage:', error);
-
-//     // Restore states even if error occurs
-//     if (rotationControlsGroup) rotationControlsGroup.visible = originalRotationControlsVisible;
-//     if (gridHelper) gridHelper.visible = originalGridVisible;
-//     if (ceilingMaskMesh) ceilingMaskMesh.visible = originalCeilingMaskVisible;
-//     if (bgMesh) bgMesh.visible = originalBgMeshVisible;
-
-//     if (renderer) {
-//       renderer.setClearColor(originalClearColor || 0x000000, originalClearAlpha || 1);
-//       renderer.autoClear = true;
-//     }
-//   }
-// }
-
-async function downloadCurrentSceneImage() {
-  if (!renderer || !scene || !camera || !currentBackgroundTexture || !model) {
-    console.warn("Required components not available for image generation");
-    return;
-  }
-
-  try {
-    // Store original states BEFORE any modifications
-    const originalClearColor = renderer.getClearColor(new THREE.Color());
-    const originalClearAlpha = renderer.getClearAlpha();
-    const originalBgMeshVisible = bgMesh ? bgMesh.visible : false;
-    const originalRotationControlsVisible = rotationControlsGroup
-      ? rotationControlsGroup.visible
-      : false;
-    const originalGridVisible = gridHelper ? gridHelper.visible : false;
-    const originalCeilingMaskVisible = ceilingMaskMesh
-      ? ceilingMaskMesh.visible
-      : false;
-
-    // Get current canvas dimensions
-    const width = renderer.domElement.width;
-    const height = renderer.domElement.height;
-
-    // Hide UI elements temporarily
-    if (rotationControlsGroup) rotationControlsGroup.visible = false;
-    if (gridHelper) gridHelper.visible = false;
-    if (ceilingMaskMesh) ceilingMaskMesh.visible = false;
-
-    // Create a temporary canvas for compositing
-    const compositeCanvas = document.createElement("canvas");
-    compositeCanvas.width = width;
-    compositeCanvas.height = height;
-    const ctx = compositeCanvas.getContext("2d");
-
-    // Step 1: Draw the background image
-    const bgImage = currentBackgroundTexture.image;
-    ctx.drawImage(bgImage, 0, 0, width, height);
-
-    // Step 2: Render only the 3D model scene
-    // Temporarily hide background mesh
-    if (bgMesh) bgMesh.visible = false;
-
-    // Set transparent background for model rendering
-    renderer.setClearColor(0x000000, 0); // Transparent background
-
-    // Render only the 3D scene (model without background)
-    renderer.autoClear = false;
-    renderer.clear();
-    renderer.render(scene, camera);
-
-    // Step 3: Get the model render as image data
-    const modelImageData = renderer.domElement.toDataURL("image/png");
-
-    // Step 4: Create composite image and wait for it
-    const finalDataURL = await new Promise((resolve) => {
-      const modelImage = new Image();
-      modelImage.onload = function () {
-        // Draw the model on top of the background with proper blending
-        ctx.globalCompositeOperation = "source-over";
-        ctx.drawImage(modelImage, 0, 0, width, height);
-
-        // Get final composite image
-        resolve(compositeCanvas.toDataURL("image/png", 0.95));
-      };
-      modelImage.onerror = function () {
-        resolve(null); // Return null if image fails to load
-      };
-      modelImage.src = modelImageData;
-    });
-
-    // If image generation failed, restore state and return early
-    if (!finalDataURL) {
-      console.error("Failed to generate composite image");
-      // Restore states immediately
-      restoreRendererState(
-        originalBgMeshVisible,
-        originalClearColor,
-        originalClearAlpha
-      );
-      restoreUIState(
-        originalRotationControlsVisible,
-        originalGridVisible,
-        originalCeilingMaskVisible
-      );
-      return;
-    }
-
-    // Step 5: Send to server via POST request
-    const response = await fetch(
-      store.state.root_api + "engine/added-3d-light-to-room/",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Token ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({
-          image: finalDataURL,
-          room_id: route.params.id,
-          product_id: props.selectedlightuuid,
-          timestamp: Date.now(),
-          metadata: {
-            modelPosition: {
-              x: modelPosition.x,
-              y: modelPosition.y,
-              rotation: modelRotation.y,
-            },
-            ceilingAngles: {
-              roll: ceilingAngles.roll,
-              pitch: ceilingAngles.pitch,
-              yaw: ceilingAngles.yaw,
-            },
-            modelScale: modelSizeScale.value,
-            ceilingHeight: currentCeilingHeight.value,
-            dimensions: {
-              width: width,
-              height: height,
-            },
-          },
-        }),
+      if (this.roomImage?.complete && this.roomImage.naturalWidth > 0) {
+        this.initThree()
       }
-    );
+    })
+  },
 
-    // Handle 402 BEFORE restoring state
-    if (response.status === 402) {
-      console.log("Insufficient credits response received");
-      const result = await response.json();
+  beforeUnmount() {
+    this.cleanup()
+  },
 
-      // Restore ALL states FIRST before emitting
-      restoreRendererState(
-        originalBgMeshVisible,
-        originalClearColor,
-        originalClearAlpha
-      );
-      restoreUIState(
-        originalRotationControlsVisible,
-        originalGridVisible,
-        originalCeilingMaskVisible
-      );
+  watch: {
+    glbUrl(newVal, oldVal) {
+      if (newVal && newVal !== oldVal && this.scene) this.reloadLight()
+    },
+    adjustRoll()      { this._applyModelOrientation() },
+    adjustPitch()     { this._applyModelOrientation() },
+    modelSizeScale()  { this._applyModelScale() },
+    lightRotation()   { this._applyModelOrientation() },
+    debugPointCloud() { this.togglePointCloud() },
+    debugCeilingMesh(){ this.toggleCeilingMesh() },
+  },
 
-      // THEN emit the insufficient credits event
-      emit("insufficient-credits", result.msg,result.buid);
-      return; // Exit early without emitting model-3d-light-added
-    }
+  methods: {
 
-    if (response.ok) {
-      const result = await response.json();
-      console.log("Image successfully sent to server:", result);
+    // ─────────────────────────────────────────────────────
+    // MODAL
+    // ─────────────────────────────────────────────────────
 
-      // Restore states before emitting
-      restoreRendererState(
-        originalBgMeshVisible,
-        originalClearColor,
-        originalClearAlpha
-      );
-      restoreUIState(
-        originalRotationControlsVisible,
-        originalGridVisible,
-        originalCeilingMaskVisible
-      );
+    showInstructionModal()  { this.isShowInstructionModal = true  },
+    closeInstructionModal() { this.isShowInstructionModal = false },
 
-      // Emit success event
-      emit("model-3d-light-added", result);
-    } else {
-      console.error(
-        "Failed to send image to server:",
-        response.status,
-        response.statusText
-      );
+    // ─────────────────────────────────────────────────────
+    // HELPERS
+    // ─────────────────────────────────────────────────────
 
-      // Restore states
-      restoreRendererState(
-        originalBgMeshVisible,
-        originalClearColor,
-        originalClearAlpha
-      );
-      restoreUIState(
-        originalRotationControlsVisible,
-        originalGridVisible,
-        originalCeilingMaskVisible
-      );
+    resolveModelUrl(url) {
+      if (!url) return url
+      if (url.startsWith('http://') || url.startsWith('https://')) return url
+      return `${this.$store.state.root_media_api}${url}`
+    },
 
-      // Fallback: Download locally if server fails
-      const link = document.createElement("a");
-      link.download = `ceiling_model_composite_${Date.now()}.png`;
-      link.href = finalDataURL;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
+    _eventToNDC(clientX, clientY) {
+      const el   = this.renderer.domElement
+      const rect = el.getBoundingClientRect()
+      const sx   = clientX - rect.left
+      const sy   = clientY - rect.top
+      return {
+        ndcX:  (sx / rect.width)  *  2 - 1,
+        ndcY: -(sy / rect.height) *  2 + 1,
+        sx, sy,
+      }
+    },
 
-    console.log(
-      `Composite image processed with dimensions: ${width}x${height}`
-    );
-  } catch (error) {
-    console.error("Error in downloadCurrentSceneImage:", error);
+    _getClient(event) {
+      if (event.touches?.length > 0)
+        return { clientX: event.touches[0].clientX, clientY: event.touches[0].clientY }
+      if (event.changedTouches?.length > 0)
+        return { clientX: event.changedTouches[0].clientX, clientY: event.changedTouches[0].clientY }
+      return { clientX: event.clientX, clientY: event.clientY }
+    },
 
-    // Restore all states on error
-    const originalClearColor = renderer.getClearColor(new THREE.Color());
-    const originalClearAlpha = renderer.getClearAlpha();
-    const originalBgMeshVisible = bgMesh ? bgMesh.visible : true;
-    const originalRotationControlsVisible = rotationControlsGroup
-      ? rotationControlsGroup.visible
-      : true;
-    const originalGridVisible = gridHelper ? gridHelper.visible : false;
-    const originalCeilingMaskVisible = ceilingMaskMesh
-      ? ceilingMaskMesh.visible
-      : false;
+    // ─────────────────────────────────────────────────────
+    // INIT
+    // ─────────────────────────────────────────────────────
 
-    restoreRendererState(
-      originalBgMeshVisible,
-      originalClearColor,
-      originalClearAlpha
-    );
-    restoreUIState(
-      originalRotationControlsVisible,
-      originalGridVisible,
-      originalCeilingMaskVisible
-    );
-  }
-}
+    initThree() {
+      if (this.renderer) return
 
-// Helper function to restore renderer state
-function restoreRendererState(bgMeshVisible, clearColor, clearAlpha) {
-  if (bgMesh) bgMesh.visible = bgMeshVisible;
-  if (renderer) {
-    renderer.setClearColor(clearColor, clearAlpha);
-    renderer.autoClear = true;
-    renderer.clear();
-    renderer.render(backgroundScene, backgroundCamera);
-    renderer.render(scene, camera);
-  }
-}
+      this.$emit('update:isLoading', true)
+      this.internalLoading     = true
+      this.internalLoadingText = 'Loading room assets…'
 
-// Helper function to restore UI state
-function restoreUIState(
-  rotationControlsVisible,
-  gridVisible,
-  ceilingMaskVisible
-) {
-  if (rotationControlsGroup)
-    rotationControlsGroup.visible = rotationControlsVisible;
-  if (gridHelper) gridHelper.visible = gridVisible;
-  if (ceilingMaskMesh) ceilingMaskMesh.visible = ceilingMaskVisible;
-}
+      this.roomImage         = this.$refs.roomImage
+      this.threeContainer    = this.$refs.threeContainer
+      this.maskOverlayCanvas = this.$refs.maskOverlayCanvas
 
-// Corrected adjustCanvasToImageAspectRatio function with 800px max width
+      if (!this.roomImage || !this.threeContainer) return
 
-// 2. Update the adjustCanvasToImageAspectRatio function:
-// function adjustCanvasToImageAspectRatio(texture) {
-//   if (!texture.image || !canvasContainer.value) return;
+      const renderW = this.roomImage.naturalWidth  || this.CAM_IMG_W
+      const renderH = this.roomImage.naturalHeight || this.CAM_IMG_H
+      if (renderW === 0 || renderH === 0) return
 
-//   const imgAspect = texture.image.width / texture.image.height;
+      // ── Background scene (room image as full-screen quad) ──
+      this.bgScene  = markRaw(new THREE.Scene())
+      this.bgCamera = markRaw(new THREE.Camera())
 
-//   // Get the parent container's dimensions
-//   const containerRect = canvasContainer.value.getBoundingClientRect();
-//   const availableWidth = containerRect.width;
-//   const availableHeight = containerRect.height;
+      const bgTex = markRaw(new THREE.TextureLoader())
+      bgTex.load(this.baseImageUrl, (tex) => {
+        tex.minFilter = THREE.LinearFilter
+        tex.magFilter = THREE.LinearFilter
+        tex.colorSpace = THREE.SRGBColorSpace
+        this.currentBgTexture = tex           // ← store for export
+        const bgGeo = new THREE.PlaneGeometry(2, 2)
+        const bgMat = new THREE.MeshBasicMaterial({ map: tex, depthTest: false })
+        this.bgMesh = markRaw(new THREE.Mesh(bgGeo, bgMat))
+        this.bgMesh.position.z = -1
+        this.bgScene.add(this.bgMesh)
+      })
 
-//   // Calculate dimensions based on available space and image aspect ratio
-//   let newCanvasWidth, newCanvasHeight;
+      // ── Main scene with matched camera ──
+      this.scene = markRaw(new THREE.Scene())
 
-//   // Try to fit by width first
-//   newCanvasWidth = availableWidth;
-//   newCanvasHeight = availableWidth / imgAspect;
+      // Exact pinhole camera matching the room photo
+      this.camera = markRaw(new THREE.PerspectiveCamera(this.CAM_FOV_V, renderW / renderH, 0.01, 200))
+      this.camera.position.set(0, 0, 0)
+      this.camera.lookAt(0, 0, -1)
+      this.camera.updateProjectionMatrix()
 
-//   // If height exceeds available space, fit by height instead
-//   if (newCanvasHeight > availableHeight) {
-//     newCanvasHeight = availableHeight;
-//     newCanvasWidth = availableHeight * imgAspect;
-//   }
+      this.renderer = markRaw(new THREE.WebGLRenderer({ antialias: true, alpha: true }))
+      this.renderer.setSize(renderW, renderH, false)
+      this.renderer.setPixelRatio(1)
+      this.renderer.outputColorSpace  = THREE.SRGBColorSpace
+      this.renderer.shadowMap.enabled = true
+      this.renderer.shadowMap.type    = THREE.PCFSoftShadowMap
+      this.renderer.autoClear = false
 
-//   // Ensure minimum dimensions
-//   // newCanvasWidth = Math.max(newCanvasWidth, 400);
-//   // newCanvasHeight = Math.max(newCanvasHeight, 500);
+      this.threeContainer.appendChild(this.renderer.domElement)
 
-//   // Update reactive variables
-//   canvasWidth.value = newCanvasWidth;
-//   canvasHeight.value = newCanvasHeight;
+      this.maskOverlayCanvas.width  = renderW
+      this.maskOverlayCanvas.height = renderH
 
-//   // Update container styling
-//   canvasContainer.value.style.width = `${newCanvasWidth}px`;
-//   canvasContainer.value.style.height = `${newCanvasHeight}px`;
-//   canvasContainer.value.style.margin = "0 auto"; // Center the canvas
+      this.adjustCanvasToAspectRatio()
 
-//   // Update Three.js renderer
-//   if (renderer) {
-//     renderer.setSize(newCanvasWidth, newCanvasHeight);
-//   }
+      // ── Lighting ──
+      this.scene.add(new THREE.AmbientLight(0xfff4e0, 1.4))
 
-//   // Update camera aspect ratio
-//   if (camera) {
-//     camera.aspect = imgAspect;
-//     camera.updateProjectionMatrix();
-//   }
+      const sun = new THREE.DirectionalLight(0xfff5e8, 2.0)
+      sun.position.set(1.5, -5, -3)   // comes from below ceiling (ceiling is "above")
+      sun.castShadow = true
+      sun.shadow.mapSize.set(2048, 2048)
+      sun.shadow.camera.near = 0.1; sun.shadow.camera.far = 20
+      sun.shadow.camera.left = sun.shadow.camera.bottom = -6
+      sun.shadow.camera.right = sun.shadow.camera.top  =  6
+      sun.shadow.bias = -0.001; sun.shadow.normalBias = 0.02
+      this.scene.add(sun)
 
-//   console.log(
-//     `Canvas resized to: ${newCanvasWidth}x${newCanvasHeight} (aspect: ${imgAspect.toFixed(
-//       2
-//     )})`
-//   );
-// }
-function adjustCanvasToImageAspectRatio(texture) {
-  if (!texture.image || !canvasContainer.value) return;
+      const fill = new THREE.DirectionalLight(0xd0e8ff, 1.8)
+      fill.position.set(-2, -3, 2)
+      this.scene.add(fill)
 
-  const imgAspect = texture.image.width / texture.image.height;
+      const back = new THREE.DirectionalLight(0xfff8e8, 0.5)
+      back.position.set(0, -2, 4)
+      this.scene.add(back)
 
-  // Get the parent container's dimensions
-  const containerRect = canvasContainer.value.getBoundingClientRect();
-  const availableWidth = containerRect.width;
-  const availableHeight = containerRect.height;
+      // ── Load assets ──
+      this.loadMask()
+      this.loadPointCloud()
+      this.loadLight()
+      this.animate()
 
-  // Always fit to width first (100% width)
-  let newCanvasWidth = availableWidth;
-  let newCanvasHeight = availableWidth / imgAspect;
+      // ── Pointer events ──
+      const el = this.renderer.domElement
+      el.style.touchAction = 'none'
+      el.addEventListener('pointerdown',   this.onPointerDown)
+      el.addEventListener('pointermove',   this.onPointerMove)
+      el.addEventListener('pointerup',     this.onPointerUp)
+      el.addEventListener('pointercancel', this.onPointerUp)
+      window.addEventListener('resize', this.adjustCanvasToAspectRatio)
+    },
 
-  // If calculated height exceeds available height, fit to height instead
-  if (newCanvasHeight > availableHeight) {
-    newCanvasHeight = availableHeight;
-    newCanvasWidth = availableHeight * imgAspect;
-  }
+    adjustCanvasToAspectRatio() {
+      if (!this.renderer || !this.roomImage) return
+      const container = this.$refs.threeContainer
+      if (!container) return
 
-  // Update reactive variables
-  canvasWidth.value = newCanvasWidth;
-  canvasHeight.value = newCanvasHeight;
+      const rect = container.getBoundingClientRect()
+      const availW = Math.floor(rect.width)
+      const availH = Math.floor(rect.height)
+      if (availW === 0 || availH === 0) return
 
-  // Update container styling
-  canvasContainer.value.style.width = `${newCanvasWidth}px`;
-  canvasContainer.value.style.height = `${newCanvasHeight}px`;
-  canvasContainer.value.style.margin = "0 auto"; // Center the canvas
+      const imgAspect = (this.roomImage.naturalWidth  || this.CAM_IMG_W) /
+                        (this.roomImage.naturalHeight || this.CAM_IMG_H)
 
-  // Update Three.js renderer
-  if (renderer) {
-    renderer.setSize(newCanvasWidth, newCanvasHeight);
-  }
+      let cssW = availW
+      let cssH = Math.round(cssW / imgAspect)
+      if (cssH > availH) { cssH = availH; cssW = Math.round(cssH * imgAspect) }
 
-  // Update camera aspect ratio
-  if (camera) {
-    camera.aspect = imgAspect;
-    camera.updateProjectionMatrix();
-  }
+      this.renderer.domElement.style.width  = `${cssW}px`
+      this.renderer.domElement.style.height = `${cssH}px`
+      this.maskOverlayCanvas.style.width    = `${cssW}px`
+      this.maskOverlayCanvas.style.height   = `${cssH}px`
 
-  console.log(
-    `Canvas resized to: ${newCanvasWidth}x${newCanvasHeight} (aspect: ${imgAspect.toFixed(2)})`
-  );
-}
-function loadCeilingMask() {
-  // Changed from loadFloorMask
-  const loader = new THREE.TextureLoader();
-  loader.load(
-    props.ceilingMaskUrl, // Changed from floorMaskUrl
-    (texture) => {
-      ceilingMaskTexture = texture;
+      if (this.rotationRing) this._fitRingToCanvas()
+    },
 
-      ceilingMaskCanvas = document.createElement("canvas");
-      ceilingMaskCanvas.width = texture.image.width;
-      ceilingMaskCanvas.height = texture.image.height;
-      ceilingMaskContext = ceilingMaskCanvas.getContext("2d");
-      ceilingMaskContext.drawImage(texture.image, 0, 0);
-      ceilingMaskImageData = ceilingMaskContext.getImageData(
+    // ─────────────────────────────────────────────────────
+    // POINTER EVENTS
+    // ─────────────────────────────────────────────────────
+
+    onPointerDown(event) {
+      if (!this.light || !this.ceilingPlaneTHREE) return
+
+      // ── Two-finger tracking ──
+      if (event.pointerType === 'touch') {
+        this.twoFingerPointers.set(event.pointerId, event.clientY)
+
+        if (this.twoFingerPointers.size === 2) {
+          this.isDragging = false; this.isDraggingRef = false
+          this.isRotating = false; this.isRotatingRef = false
+
+          const vals = Array.from(this.twoFingerPointers.values())
+          this.twoFingerStartAvgY  = (vals[0] + vals[1]) / 2
+          this.twoFingerStartAngle = this.light.rotation.y
+          this.isTwoFingerRotating = true
+          event.preventDefault(); return
+        }
+
+        if (this.isTwoFingerRotating) { event.preventDefault(); return }
+      }
+
+      if (this.isTwoFingerRotating) return
+
+      const { clientX, clientY } = event
+      const { ndcX, ndcY } = this._eventToNDC(clientX, clientY)
+      this.mouse.set(ndcX, ndcY)
+      this.raycaster.setFromCamera(this.mouse, this.camera)
+
+      // 1. Check rotation ring arrows
+      if (this.rotationRing) {
+        const arrowHits = this.raycaster.intersectObject(this.rotationRing, true)
+        const arrowHit  = arrowHits.find(h => h.object.userData.isRotationArrow)
+
+        if (arrowHit) {
+          const visMesh = arrowHit.object.userData.visMesh
+          if (visMesh) visMesh.material.color.setHex(0xff6600)
+
+          this.isRotating          = true
+          this.isRotatingRef       = true
+          this.rotationStartAngle  = this.light.rotation.y
+          this.rotationStartMouseX = ndcX
+
+          this.renderer.domElement.setPointerCapture(event.pointerId)
+          event.preventDefault(); return
+        }
+      }
+
+      // 2. Check model body for drag
+      const hits = this.raycaster.intersectObject(this.light, true)
+      if (hits.length === 0) return
+
+      this.light.visible = false
+      const ceilHit = this.raycastCeiling()
+      this.light.visible = true
+      if (!ceilHit) return
+
+      this.dragOffset.set(
+        this.light.position.x - ceilHit.x,
         0,
-        0,
-        ceilingMaskCanvas.width,
-        ceilingMaskCanvas.height
-      );
+        this.light.position.z - ceilHit.z,
+      )
 
-      ceilingMaskLoaded.value = true;
-      createCeilingMaskVisualization();
-      console.log(
-        "Ceiling mask loaded:",
-        ceilingMaskCanvas.width,
-        "x",
-        ceilingMaskCanvas.height
-      );
+      this.isDragging    = true
+      this.isDraggingRef = true
+      this.renderer.domElement.setPointerCapture(event.pointerId)
+      event.preventDefault()
     },
-    undefined,
-    (error) => {
-      console.error("Failed to load ceiling mask:", error);
-      ceilingMaskLoaded.value = false;
-    }
-  );
-}
 
-function createCeilingMaskVisualization() {
-  // Changed from createFloorMaskVisualization
-  if (!ceilingMaskTexture) return;
-
-  const geometry = new THREE.PlaneGeometry(10, 10);
-  const material = new THREE.MeshBasicMaterial({
-    map: ceilingMaskTexture,
-    transparent: true,
-    opacity: 0.3,
-    side: THREE.DoubleSide,
-  });
-
-  if (ceilingMaskMesh) scene.remove(ceilingMaskMesh);
-  ceilingMaskMesh = new THREE.Mesh(geometry, material);
-
-  // Apply ceiling angles using corrected rotation order
-  const euler = new THREE.Euler(
-    THREE.MathUtils.degToRad(-ceilingAngles.pitch), // Negative pitch
-    THREE.MathUtils.degToRad(ceilingAngles.yaw),
-    THREE.MathUtils.degToRad(ceilingAngles.roll),
-    "XYZ" // Changed rotation order
-  );
-  ceilingMaskMesh.setRotationFromEuler(euler);
-
-  // Position at top area height
-  const topAreaHeight = props.ceilingHeight + 1.5;
-  ceilingMaskMesh.position.y = topAreaHeight;
-  ceilingMaskMesh.visible = showCeilingMask.value;
-  scene.add(ceilingMaskMesh);
-}
-
-function updateBackground(texture) {
-  texture.minFilter = THREE.LinearFilter;
-  texture.magFilter = THREE.LinearFilter;
-  texture.colorSpace = THREE.SRGBColorSpace;
-
-  const bgGeo = new THREE.PlaneGeometry(2, 2);
-  const bgMat = new THREE.MeshBasicMaterial({ map: texture, depthTest: false });
-
-  if (bgMesh) backgroundScene.remove(bgMesh);
-
-  bgMesh = new THREE.Mesh(bgGeo, bgMat);
-  bgMesh.position.z = -1;
-  backgroundScene.add(bgMesh);
-}
-
-function initializeLighting() {
-  // Adjust lighting for ceiling-mounted objects
-  scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 0.9));
-
-  const dirLight = new THREE.DirectionalLight(0xffffff, 8);
-  dirLight.position.set(10, props.ceilingHeight + 5, 5); // Position above ceiling
-  dirLight.castShadow = true;
-  dirLight.shadow.mapSize.width = 2048;
-  dirLight.shadow.mapSize.height = 2048;
-  dirLight.shadow.camera.near = 0.1;
-  dirLight.shadow.camera.far = 50;
-  dirLight.shadow.camera.left = -20;
-  dirLight.shadow.camera.right = 20;
-  dirLight.shadow.camera.top = 20;
-  dirLight.shadow.camera.bottom = -20;
-  scene.add(dirLight);
-
-  const fillLight = new THREE.DirectionalLight(0xffffff, 0.8);
-  fillLight.position.set(-10, props.ceilingHeight - 2, -5); // Position below ceiling
-  scene.add(fillLight);
-
-  // Add additional key light from different angle
-  const keyLight = new THREE.DirectionalLight(0xffffff, 0.8);
-  keyLight.position.set(5, 10, 10);
-  scene.add(keyLight);
-
-  // Add subtle rim light for better edge definition
-  const rimLight = new THREE.DirectionalLight(0xffffff, 0.4);
-  rimLight.position.set(-5, 5, -10);
-  scene.add(rimLight);
-}
-
-// Enhanced grid initialization with proper ceiling plane
-function initializeEnhancedGrid() {
-  gridGroup = new THREE.Group();
-  scene.add(gridGroup);
-  createCeilingPlaneWithEulerAngles(); // Changed from createFloorPlaneWithEulerAngles
-  createVisualGrid();
-}
-
-// Create ceiling plane using exact Python rotation order
-function createCeilingPlaneWithEulerAngles() {
-  // Changed from createFloorPlaneWithEulerAngles
-  if (ceilingPlane) gridGroup.remove(ceilingPlane);
-
-  // Calculate ceiling normal using same method as Python but inverted for ceiling
-  ceilingNormal = getCeilingNormalFromEulerAngles();
-
-  // Create invisible ceiling plane for dragging
-  const ceilingGeometry = new THREE.PlaneGeometry(20, 20);
-  const ceilingMaterial = new THREE.MeshLambertMaterial({
-    transparent: true,
-    opacity: 0,
-    color: 0x888888,
-    side: THREE.DoubleSide,
-  });
-
-  ceilingPlane = new THREE.Mesh(ceilingGeometry, ceilingMaterial);
-
-  // Apply rotation using corrected order for ceiling alignment
-  const euler = new THREE.Euler(
-    THREE.MathUtils.degToRad(-ceilingAngles.pitch), // Negative pitch
-    THREE.MathUtils.degToRad(ceilingAngles.yaw),
-    THREE.MathUtils.degToRad(ceilingAngles.roll),
-    "XYZ" // Changed rotation order
-  );
-  ceilingPlane.setRotationFromEuler(euler);
-
-  // Position at top area for proper ceiling representation
-  const topAreaHeight = props.ceilingHeight + 1.5;
-  ceilingPlane.position.set(0, topAreaHeight, 0);
-  ceilingPlane.name = "dragCeiling";
-  gridGroup.add(ceilingPlane);
-
-  // Update drag plane for intersection calculations
-  updateDragPlane();
-}
-
-// Calculate ceiling normal from Euler angles (inverted from floor normal)
-function getCeilingNormalFromEulerAngles() {
-  // Changed from getFloorNormalFromEulerAngles
-  // Start with down vector (0, -1, 0) for ceiling
-  const normal = new THREE.Vector3(0, -1, 0);
-
-  // Apply rotations with corrected order for proper ceiling alignment
-  const euler = new THREE.Euler(
-    THREE.MathUtils.degToRad(-ceilingAngles.pitch), // Negative pitch
-    THREE.MathUtils.degToRad(ceilingAngles.yaw),
-    THREE.MathUtils.degToRad(ceilingAngles.roll),
-    "XYZ" // Changed rotation order for ceiling
-  );
-  normal.applyEuler(euler);
-
-  return normal;
-}
-
-// Update drag plane for proper intersection
-function updateDragPlane() {
-  const topAreaHeight = props.ceilingHeight + 1.5;
-  const ceilingPoint = new THREE.Vector3(0, topAreaHeight, 0);
-  dragPlane.setFromNormalAndCoplanarPoint(ceilingNormal, ceilingPoint);
-}
-
-// Create visual grid aligned with ceiling plane
-function createVisualGrid() {
-  if (gridHelper) gridGroup.remove(gridHelper);
-
-  // Create custom grid that follows the ceiling plane
-  const gridSize = 8; // Reduced size for better visual alignment
-  const divisions = 16; // Adjusted divisions
-  const step = gridSize / divisions;
-
-  const gridGeometry = new THREE.BufferGeometry();
-  const gridVertices = [];
-
-  // Create grid lines
-  for (let i = 0; i <= divisions; i++) {
-    const pos = -gridSize / 2 + i * step;
-
-    // Horizontal lines
-    gridVertices.push(-gridSize / 2, 0, pos);
-    gridVertices.push(gridSize / 2, 0, pos);
-
-    // Vertical lines
-    gridVertices.push(pos, 0, -gridSize / 2);
-    gridVertices.push(pos, 0, gridSize / 2);
-  }
-
-  gridGeometry.setAttribute(
-    "position",
-    new THREE.Float32BufferAttribute(gridVertices, 3)
-  );
-
-  const gridMaterial = new THREE.LineBasicMaterial({
-    color: 0x4a90e2, // Changed to blue for better ceiling visibility
-    transparent: true,
-    opacity: 0.7,
-  });
-
-  gridHelper = new THREE.LineSegments(gridGeometry, gridMaterial);
-
-  // Position grid at top area of the scene (higher than ceiling)
-  const topAreaHeight = props.ceilingHeight + 2;
-
-  // Apply rotations with corrected order and values for proper ceiling alignment
-  const euler = new THREE.Euler(
-    THREE.MathUtils.degToRad(-ceilingAngles.pitch), // Negative pitch for correct orientation
-    THREE.MathUtils.degToRad(ceilingAngles.yaw),
-    THREE.MathUtils.degToRad(ceilingAngles.roll),
-    "XYZ" // Changed rotation order for better ceiling alignment
-  );
-  gridHelper.setRotationFromEuler(euler);
-  gridHelper.position.set(0, topAreaHeight, 0); // Position at top area
-  gridHelper.visible = showGrid.value;
-
-  gridGroup.add(gridHelper);
-}
-
-function initializeRotationControls() {
-  rotationControlsGroup = new THREE.Group();
-  rotationControlsGroup.name = "rotationControls";
-
-  const circleGeometry = new THREE.RingGeometry(1.5, 1.6, 64);
-  const circleMaterial = new THREE.MeshBasicMaterial({
-    color: 0x00ffff,
-    transparent: true,
-    opacity: 0.8,
-    side: THREE.DoubleSide,
-  });
-  rotationCircle = new THREE.Mesh(circleGeometry, circleMaterial);
-  rotationCircle.rotation.x = Math.PI / 2; // Flip for ceiling orientation
-  rotationCircle.name = "rotationCircle";
-  rotationControlsGroup.add(rotationCircle);
-
-  rotationArrows = new THREE.Group();
-  rotationArrows.name = "rotationArrows";
-
-  const arrowPositions = [
-    { angle: 0, axis: "y", id: 0 },
-    { angle: Math.PI / 2, axis: "y", id: 1 },
-    { angle: Math.PI, axis: "y", id: 2 },
-    { angle: (3 * Math.PI) / 2, axis: "y", id: 3 },
-  ];
-
-  arrowPositions.forEach((pos) => {
-    const arrowGroup = createRotationArrow(pos.angle, pos.axis, pos.id);
-    rotationArrows.add(arrowGroup);
-  });
-
-  rotationControlsGroup.add(rotationArrows);
-  rotationControlsGroup.visible = showRotationControls.value;
-  scene.add(rotationControlsGroup);
-}
-
-function createRotationArrow(angle, axis, index) {
-  const arrowGroup = new THREE.Group();
-
-  const arrowGeometry = new THREE.ConeGeometry(0.08, 0.2, 8);
-  const arrowMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff88 });
-  const arrow = new THREE.Mesh(arrowGeometry, arrowMaterial);
-
-  const radius = 1.55;
-  const x = Math.cos(angle) * radius;
-  const z = Math.sin(angle) * radius;
-
-  arrow.position.set(x, 0, z);
-  arrow.rotation.x = Math.PI / 2; // Flip for ceiling orientation
-  arrow.rotation.y = angle + Math.PI / 2;
-
-  arrow.userData = {
-    isRotationArrow: true,
-    axis: axis,
-    index: index,
-    originalColor: 0x00ff88,
-  };
-
-  arrowGroup.add(arrow);
-  return arrowGroup;
-}
-
-function updateRotationControlsPosition() {
-  if (!rotationControlsGroup || !model) return;
-
-  rotationControlsGroup.position.copy(model.position);
-  // Position controls above the hanging model
-  rotationControlsGroup.position.y += modelSize ? modelSize.y * 0.6 : 1;
-
-  let scale = 1;
-  if (modelSize) {
-    const avgSize = (modelSize.x + modelSize.z) / 2;
-    scale = Math.max(0.5, avgSize * 0.8);
-  }
-  rotationControlsGroup.scale.setScalar(scale);
-}
-
-// function initializeControls() {
-//   controls = new OrbitControls(camera, renderer.domElement);
-
-//   controls.enableRotate = false;
-//   controls.enableZoom = true; // Enable zoom
-//   controls.enablePan = false;
-
-//   // Set zoom limits
-//   controls.minDistance = 5;
-//   controls.maxDistance = 50;
-
-//   // NEW: Position camera to view top area of canvas
-//   const topAreaY = props.ceilingHeight + 3; // Higher Y position
-//   camera.position.set(8, topAreaY - 1, 8); // Slightly below the top area
-//   controls.target.set(0, topAreaY, 0); // Look at the top area
-//   controls.update();
-// }
-
-function initializeControls() {
-  controls = new OrbitControls(camera, renderer.domElement);
-
-  controls.enableRotate = false;
-  controls.enableZoom = true;
-  controls.enablePan = true; // ✅ Enable panning
-
-  // Set zoom limits
-  controls.minDistance = 5;
-  controls.maxDistance = 50;
-
-  // ✅ Enable touch controls for mobile
-  controls.touches = {
-    ONE: THREE.TOUCH.PAN,      // One finger = pan
-    TWO: THREE.TOUCH.DOLLY_PAN // Two fingers = zoom + pan
-  };
-
-  // Position camera to view top area of canvas
-  const topAreaY = props.ceilingHeight + 3;
-  camera.position.set(8, topAreaY - 1, 8);
-  controls.target.set(0, topAreaY, 0);
-  controls.update();
-}
-
-// function initializeDragControls() {
-//   const canvas = renderer.domElement;
-//   canvas.addEventListener("mousedown", onMouseDown);
-//   canvas.addEventListener("mousemove", onMouseMove);
-//   canvas.addEventListener("mouseup", onMouseUp);
-//   canvas.addEventListener("mouseleave", onMouseUp);
-
-//   //for mobile touch
-//   canvas.addEventListener("touchstart", onMouseDown, { passive: false });
-//   canvas.addEventListener("touchmove", onMouseMove, { passive: false });
-//   canvas.addEventListener("touchend", onMouseUp);
-//   canvas.addEventListener("touchcancel", onMouseUp);
-// }
-
-function initializeDragControls() {
-  const canvas = renderer.domElement;
-  
-  // Mouse events
-  canvas.addEventListener("mousedown", onMouseDown);
-  canvas.addEventListener("mousemove", onMouseMove);
-  canvas.addEventListener("mouseup", onMouseUp);
-  canvas.addEventListener("mouseleave", onMouseUp);
-
-  // ✅ Updated touch events with proper passive handling
-  canvas.addEventListener("touchstart", onMouseDown, { passive: false });
-  canvas.addEventListener("touchmove", onMouseMove, { passive: false });
-  canvas.addEventListener("touchend", onMouseUp, { passive: false });
-  canvas.addEventListener("touchcancel", onMouseUp, { passive: false });
-}
-
-// Enhanced ceiling position validation with proper coordinate mapping
-function isPositionOnCeiling(worldPos) {
-  // Changed from isPositionOnFloor
-  if (!ceilingMaskImageData || !currentBackgroundTexture) return true; // Allow movement if no mask
-
-  // Convert world position to normalized coordinates (-1 to 1)
-  const normalizedX = worldPos.x / 5;
-  const normalizedZ = worldPos.z / 5;
-
-  // Convert to image coordinates
-  const imgX = Math.floor((normalizedX + 1) * 0.5 * ceilingMaskCanvas.width);
-  const imgY = Math.floor(
-    (1 - (normalizedZ + 1) * 0.5) * ceilingMaskCanvas.height
-  );
-
-  // Check bounds
-  if (
-    imgX < 0 ||
-    imgX >= ceilingMaskCanvas.width ||
-    imgY < 0 ||
-    imgY >= ceilingMaskCanvas.height
-  ) {
-    return false;
-  }
-
-  // Get pixel data (RGBA)
-  const pixelIndex = (imgY * ceilingMaskCanvas.width + imgX) * 4;
-  const red = ceilingMaskImageData.data[pixelIndex];
-
-  // White pixels (255) represent valid ceiling areas
-  return red > 128;
-}
-
-// Calculate ceiling height at any world position using the tilted plane
-function getCeilingHeightAtWorldPosition(worldPos) {
-  // Changed from getFloorHeightAtWorldPosition
-  // Use the ceiling normal to calculate height
-  // For ceiling at top area: plane equation adjusted for higher position
-  if (Math.abs(ceilingNormal.y) < 0.001) return props.ceilingHeight + 1.5; // Avoid division by zero
-
-  const topAreaHeight = props.ceilingHeight + 1.5;
-  const planeConstant = ceilingNormal.y * topAreaHeight;
-  return (
-    -(
-      ceilingNormal.x * worldPos.x +
-      ceilingNormal.z * worldPos.z -
-      planeConstant
-    ) / ceilingNormal.y
-  );
-}
-
-function onMouseDown(event) {
-  event.preventDefault();
-
-  let clientX, clientY;
-  if (event.touches && event.touches.length > 0) {
-    (clientX = event.touches[0].clientX), (clientY = event.touches[0].clientY);
-  } else {
-    (clientX = event.clientX), (clientY = event.clientY);
-  }
-
-  const mouse = new THREE.Vector2();
-  const rect = renderer.domElement.getBoundingClientRect();
-  mouse.x = ((clientX - rect.left) / rect.width) * 2 - 1;
-  mouse.y = -((clientY - rect.top) / rect.height) * 2 + 1;
-
-  raycaster.setFromCamera(mouse, camera);
-
-  if (rotationArrows && showRotationControls.value) {
-    const arrowIntersects = raycaster.intersectObject(rotationArrows, true);
-
-    if (arrowIntersects.length > 0) {
-      const intersectedArrow = arrowIntersects[0].object;
-      if (intersectedArrow.userData.isRotationArrow) {
-        controls.enabled = false;
-        isRotatingModel = true;
-        isRotating.value = true;
-
-        rotationStartMouse.copy(mouse);
-        rotationStartAngle = modelRotation.y;
-
-        intersectedArrow.material.color.setHex(0xff6600);
-        return;
-      }
-    }
-  }
-
-  if (model) {
-    const intersects = raycaster.intersectObject(model, true);
-
-    if (intersects.length > 0) {
-      controls.enabled = false;
-      isDraggingModel = true;
-      isDragging.value = true;
-
-      dragStartMouse.copy(mouse);
-      dragStartPosition.set(modelPosition.x, modelPosition.y);
-    }
-  }
-}
-
-// Enhanced mouse move with proper ceiling plane constraint
-function onMouseMove(event) {
-  if (!isDraggingModel && !isRotatingModel) return;
-
-  event.preventDefault();
-  const mouse = new THREE.Vector2();
-  let clientX, clientY;
-  if (event.touches && event.touches.length > 0) {
-    (clientX = event.touches[0].clientX), (clientY = event.touches[0].clientY);
-  } else {
-    (clientX = event.clientX), (clientY = event.clientY);
-  }
-
-  const rect = renderer.domElement.getBoundingClientRect();
-  mouse.x = ((clientX - rect.left) / rect.width) * 2 - 1;
-  mouse.y = -((clientY - rect.top) / rect.height) * 2 + 1;
-
-  if (isDraggingModel) {
-    raycaster.setFromCamera(mouse, camera);
-
-    const intersection = new THREE.Vector3();
-    if (raycaster.ray.intersectPlane(dragPlane, intersection)) {
-      // Apply movement constraints (free movement in XZ on tilted ceiling plane)
-      const newWorldPos = intersection.clone();
-
-      // Update model position
-      modelPosition.x = newWorldPos.x;
-      modelPosition.y = newWorldPos.z; // Note: modelPosition.y represents Z in world space
-
-      // Validate position is on ceiling mask
-      isOnValidCeiling.value = isPositionOnCeiling(newWorldPos);
-
-      updateModelPositionOnCeiling(); // Changed from updateModelPositionOnFloor
-    }
-  } else if (isRotatingModel) {
-    const deltaX = mouse.x - rotationStartMouse.x;
-    modelRotation.y = rotationStartAngle + deltaX * 180;
-    modelRotation.y = Math.max(-180, Math.min(180, modelRotation.y));
-    updateModelRotation();
-  }
-}
-
-function onMouseUp(event) {
-  if (isDraggingModel) {
-    controls.enabled = true;
-    isDraggingModel = false;
-    isDragging.value = false;
-  }
-
-  if (isRotatingModel) {
-    controls.enabled = true;
-    isRotatingModel = false;
-    isRotating.value = false;
-
-    if (rotationArrows) {
-      rotationArrows.traverse((child) => {
-        if (child.userData && child.userData.isRotationArrow) {
-          child.material.color.setHex(child.userData.originalColor);
+    onPointerMove(event) {
+      // Two-finger rotation
+      if (event.pointerType === 'touch' && this.isTwoFingerRotating) {
+        if (!this.twoFingerPointers.has(event.pointerId)) return
+        this.twoFingerPointers.set(event.pointerId, event.clientY)
+
+        if (this.twoFingerPointers.size === 2) {
+          const vals   = Array.from(this.twoFingerPointers.values())
+          const avgY   = (vals[0] + vals[1]) / 2
+          const deltaY = avgY - this.twoFingerStartAvgY
+          const screenH = this.renderer.domElement.clientHeight || window.innerHeight
+          const deltaRad = (deltaY / screenH) * Math.PI * 2
+          const newRotY = this.twoFingerStartAngle + deltaRad
+          this.light.rotation.y = newRotY
+          this.lightRotation = ((THREE.MathUtils.radToDeg(newRotY) % 360) + 360) % 360
+          this._snapRingToLight()
         }
-      });
-    }
-  }
-}
+        event.preventDefault(); return
+      }
 
-// Enhanced loadModel function with better cleanup
-function loadModel() {
-  const loader = new GLTFLoader();
+      if (event.pointerType === 'touch' && !event.isPrimary) return
+      if (!this.isDragging && !this.isRotating) return
 
-  // Show loading state
-  loading.value = true;
-  modelLoaded.value = false;
+      const { clientX, clientY } = event
+      const { ndcX, ndcY, sx, sy } = this._eventToNDC(clientX, clientY)
+      this.mouse.set(ndcX, ndcY)
 
-  loader.load(
-    props.glbUrl,
-    (gltf) => {
-      // Clean up existing model
-      if (model) {
-        scene.remove(model);
-        // Dispose of geometries and materials to prevent memory leaks
-        model.traverse((child) => {
-          if (child.isMesh) {
-            if (child.geometry) child.geometry.dispose();
-            if (child.material) {
-              if (Array.isArray(child.material)) {
-                child.material.forEach((material) => material.dispose());
-              } else {
-                child.material.dispose();
-              }
-            }
+      // Arrow rotation
+      if (this.isRotating) {
+        const deltaX  = ndcX - this.rotationStartMouseX
+        const newRotY = this.rotationStartAngle + deltaX * Math.PI * 2
+        this.light.rotation.y = newRotY
+        this.lightRotation = ((THREE.MathUtils.radToDeg(newRotY) % 360) + 360) % 360
+        this._snapRingToLight()
+        event.preventDefault(); return
+      }
+
+      // Model drag along ceiling plane
+      if (this.isDragging) {
+        this.raycaster.setFromCamera(this.mouse, this.camera)
+
+        this.light.visible = false
+        const ceilHit = this.raycastCeiling()
+        this.light.visible = true
+        if (!ceilHit) return
+
+        const newX = ceilHit.x + this.dragOffset.x
+        const newZ = ceilHit.z + this.dragOffset.z
+
+        // Solve Y from ceiling plane equation
+        const n = this.ceilingNormal3
+        const d = this.ceilingPlaneTHREE.constant
+        let newY = this.ceilingCentroid3.y
+        if (Math.abs(n.y) > 1e-6) {
+          newY = (-d - n.x * newX - n.z * newZ) / n.y
+        }
+
+        // Position: top of light at ceiling surface, hanging down
+        // ceilingNormal3.y < 0 so addScaledVector by lightHalfH moves down
+        this.light.position.set(newX, newY, newZ)
+        this.light.position.addScaledVector(n, -this.lightHalfH)
+
+        this._snapRingToLight()
+        event.preventDefault()
+      }
+    },
+
+    onPointerUp(event) {
+      if (event.pointerType === 'touch') {
+        this.twoFingerPointers.delete(event.pointerId)
+        if (this.twoFingerPointers.size < 2 && this.isTwoFingerRotating) {
+          this.isTwoFingerRotating = false; return
+        }
+        if (this.isTwoFingerRotating) return
+      }
+
+      if (this.isRotating && this.rotationRing) {
+        this.rotationRing.traverse((child) => {
+          if (child.userData?.visMesh) {
+            child.userData.visMesh.material.color.setHex(child.userData.originalColor)
           }
-        });
+        })
       }
 
-      model = gltf.scene;
+      this.isDragging    = false; this.isDraggingRef = false
+      this.isRotating    = false; this.isRotatingRef = false
+      try { this.renderer.domElement.releasePointerCapture(event.pointerId) } catch (_) {}
+    },
 
-      model.traverse((child) => {
-        if (child.isMesh) {
-          child.castShadow = true;
-          child.receiveShadow = true;
-          child.userData.draggable = true;
+    // ─────────────────────────────────────────────────────
+    // CEILING RAYCAST
+    // ─────────────────────────────────────────────────────
+
+    raycastCeiling() {
+      if (this.ceilingPlaneTHREE) {
+        const pt = new THREE.Vector3()
+        if (this.raycaster.ray.intersectPlane(this.ceilingPlaneTHREE, pt)) return pt
+      }
+      // Fallback: flat ceiling at centroid Y
+      const yPlane = new THREE.Plane(new THREE.Vector3(0, -1, 0), this.ceilingCentroid3.y)
+      const pt = new THREE.Vector3()
+      if (this.raycaster.ray.intersectPlane(yPlane, pt)) return pt
+      return null
+    },
+
+    // ─────────────────────────────────────────────────────
+    // READY CHECK
+    // ─────────────────────────────────────────────────────
+
+    _checkAllReady() {
+      if (this.planeReady && this.lightLoaded) {
+        this.internalLoading     = false
+        this.internalLoadingText = ''
+        this.$emit('update:isLoading', false)
+      } else if (!this.lightLoaded && !this.planeReady) {
+        this.internalLoadingText = 'Loading assets…'
+      } else if (!this.planeReady) {
+        this.internalLoadingText = 'Fitting ceiling plane…'
+      } else {
+        this.internalLoadingText = 'Loading 3D model…'
+      }
+    },
+
+    // ─────────────────────────────────────────────────────
+    // MASK
+    // ─────────────────────────────────────────────────────
+
+    loadMask() {
+      const img = new Image()
+      img.src = this.ceilingMaskUrl
+      img.crossOrigin = 'anonymous'
+      img.onload = () => {
+        this.maskCanvas = document.createElement('canvas')
+        this.maskCanvas.width  = this.CAM_IMG_W
+        this.maskCanvas.height = this.CAM_IMG_H
+        this.maskCtx = this.maskCanvas.getContext('2d')
+        this.maskCtx.drawImage(img, 0, 0, this.CAM_IMG_W, this.CAM_IMG_H)
+        const raw    = this.maskCtx.getImageData(0, 0, this.CAM_IMG_W, this.CAM_IMG_H).data
+        const binary = new Uint8Array(this.CAM_IMG_W * this.CAM_IMG_H)
+        for (let i = 0; i < this.CAM_IMG_W * this.CAM_IMG_H; i++) binary[i] = raw[i * 4] > 127 ? 1 : 0
+        this.erodedMask = this.erodeBinaryMask(binary, this.CAM_IMG_W, this.CAM_IMG_H, this.MASK_ERODE_PX)
+        this.maskReady  = true
+        this.internalLoadingText = 'Analysing ceiling…'
+        this.tryComputeCeiling()
+      }
+      img.onerror = () => {
+        this.erodedMask = new Uint8Array(this.CAM_IMG_W * this.CAM_IMG_H).fill(1)
+        this.maskReady  = true
+        this.internalLoadingText = 'Analysing ceiling…'
+        this.tryComputeCeiling()
+      }
+    },
+
+    erodeBinaryMask(binary, W, H, radius) {
+      const tmp = new Uint8Array(W * H)
+      for (let y = 0; y < H; y++) {
+        const prefix = new Int32Array(W + 1)
+        for (let x = 0; x < W; x++) prefix[x+1] = prefix[x] + binary[y*W+x]
+        for (let x = 0; x < W; x++) {
+          const lo = Math.max(0, x-radius), hi = Math.min(W-1, x+radius)
+          tmp[y*W+x] = prefix[hi+1] - prefix[lo] === hi-lo+1 ? 1 : 0
         }
-      });
-
-      modelBoundingBox = new THREE.Box3().setFromObject(model);
-      modelSize = modelBoundingBox.getSize(new THREE.Vector3());
-      modelCenter = modelBoundingBox.getCenter(new THREE.Vector3());
-
-      const maxDim = Math.max(modelSize.x, modelSize.y, modelSize.z);
-      const desiredSize = 2;
-      const scaleFactor = desiredSize / maxDim;
-      model.scale.setScalar(scaleFactor);
-
-      // Store the original scale for size adjustments
-      originalModelScale = scaleFactor;
-
-      modelBoundingBox = new THREE.Box3().setFromObject(model);
-      modelSize = modelBoundingBox.getSize(new THREE.Vector3());
-      modelCenter = modelBoundingBox.getCenter(new THREE.Vector3());
-
-      model.position.sub(modelCenter);
-
-      // Position model hanging from ceiling surface using proper calculation
-      const initialPos = new THREE.Vector3(0, 0, 0);
-      const ceilingHeight = getCeilingHeightAtWorldPosition(initialPos);
-      model.position.y = ceilingHeight - modelBoundingBox.max.y;
-
-      currentCeilingHeight.value = ceilingHeight;
-
-      scene.add(model);
-      updateRotationControlsPosition();
-      positionCameraForTopView();
-
-      // Update loading states
-      loading.value = false;
-      modelLoaded.value = true;
-
-      console.log("Model loaded successfully:", props.glbUrl);
+      }
+      const out = new Uint8Array(W * H)
+      for (let x = 0; x < W; x++) {
+        const prefix = new Int32Array(H + 1)
+        for (let y = 0; y < H; y++) prefix[y+1] = prefix[y] + tmp[y*W+x]
+        for (let y = 0; y < H; y++) {
+          const lo = Math.max(0, y-radius), hi = Math.min(H-1, y+radius)
+          out[y*W+x] = prefix[hi+1] - prefix[lo] === hi-lo+1 ? 1 : 0
+        }
+      }
+      return out
     },
-    (progress) => {
-      console.log(
-        "Loading progress:",
-        (progress.loaded / progress.total) * 100 + "%"
-      );
-    },
-    (error) => {
-      console.error("Failed to load model:", error);
-      loading.value = false;
-      modelLoaded.value = false;
-    }
-  );
-}
 
-// Enhanced cleanup function
-function cleanupResources() {
-  if (model) {
-    scene.remove(model);
-    model.traverse((child) => {
-      if (child.isMesh) {
-        if (child.geometry) child.geometry.dispose();
-        if (child.material) {
-          if (Array.isArray(child.material)) {
-            child.material.forEach((material) => material.dispose());
-          } else {
-            child.material.dispose();
+    // ─────────────────────────────────────────────────────
+    // POINT CLOUD
+    // ─────────────────────────────────────────────────────
+
+    loadPointCloud() {
+      new PLYLoader().load(this.resolveModelUrl(this.POINTCLOUD), (geo) => {
+        const posAttr = geo.getAttribute('position')
+        this.plyPositions  = posAttr.array
+        this.plyPointCount = posAttr.count
+        const hasColor = geo.hasAttribute('color')
+        const mat = new THREE.PointsMaterial({ size: 0.02, vertexColors: hasColor, color: hasColor ? undefined : 0x00ccff })
+        this.pointCloudObj = markRaw(new THREE.Points(geo, mat))
+        this.pointCloudObj.visible = false   // hidden by default
+        this.scene.add(this.pointCloudObj)
+        this.plyReady = true
+        this.internalLoadingText = 'Fitting ceiling plane…'
+        this.tryComputeCeiling()
+      })
+    },
+
+    // ─────────────────────────────────────────────────────
+    // CEILING PLANE FITTING
+    // ─────────────────────────────────────────────────────
+
+    projectToPixel(x, y, z) {
+      const depth = this.CAM_Z_SIGN * z
+      if (depth < 1e-4) return null
+      const u = Math.round(this.CAM_FX * (x / depth) + this.CAM_CX)
+      const v = Math.round(this.CAM_FY * (-y / depth) + this.CAM_CY)
+      if (u < 0 || u >= this.CAM_IMG_W || v < 0 || v >= this.CAM_IMG_H) return null
+      return { u, v }
+    },
+
+    tryComputeCeiling() {
+      if (!this.plyReady || !this.maskReady) return
+
+      const ceilPts = []
+      for (let i = 0; i < this.plyPointCount; i++) {
+        const x = this.plyPositions[i*3+0]
+        const y = this.plyPositions[i*3+1]
+        const z = this.plyPositions[i*3+2]
+        const px = this.projectToPixel(x, y, z)
+        if (!px) continue
+        if (this.erodedMask[px.v * this.CAM_IMG_W + px.u] === 1) ceilPts.push([x, y, z])
+      }
+
+      this.ceilingPtCount = ceilPts.length
+      if (ceilPts.length < 10) {
+        console.error('❌ Too few ceiling points:', ceilPts.length)
+        return
+      }
+
+      // Compute centroid
+      let cx = 0, cy = 0, cz = 0
+      for (const [x, y, z] of ceilPts) { cx += x; cy += y; cz += z }
+      cx /= ceilPts.length; cy /= ceilPts.length; cz /= ceilPts.length
+      this.ceilingCentroid3.set(cx, cy, cz)
+      this.ceilingCentroidY = cy
+
+      // Fit plane
+      const fit = this.fitPlane(ceilPts)
+      if (!fit) { console.error('❌ Ceiling plane fit failed'); return }
+
+      this.ceilingNormal3.copy(fit.normal)
+
+      // For ceiling: normal must point DOWNWARD (y < 0) — toward the viewer
+      // In the projection formula: v = CAM_FY*(-y/depth)+CAM_CY
+      // Ceiling pixels (top of image, small v) → y > 0 in world space
+      // So ceiling points cluster at y > 0, fitted normal could go either way.
+      // We force it to point downward (into the room).
+      if (this.ceilingNormal3.y > 0) this.ceilingNormal3.negate()
+
+      // Reject extreme tilt (> 20° from horizontal)
+      const tiltDeg = (Math.acos(Math.min(1, Math.abs(this.ceilingNormal3.y))) * 180) / Math.PI
+      if (tiltDeg > 20) {
+        console.warn(`⚠️ Ceiling tilt ${tiltDeg.toFixed(1)}° too large — using flat ceiling`)
+        this.ceilingNormal3.set(0, -1, 0)
+      }
+
+      this._ceilNX = this.ceilingNormal3.x
+      this._ceilNY = this.ceilingNormal3.y
+      this._ceilNZ = this.ceilingNormal3.z
+
+      // THREE.Plane: n·x + d = 0
+      this.ceilingPlaneTHREE = markRaw(new THREE.Plane())
+      this.ceilingPlaneTHREE.setFromNormalAndCoplanarPoint(this.ceilingNormal3, this.ceilingCentroid3)
+
+      this.planeReady = true
+      console.log(`✅ Ceiling plane fitted — centroid Y: ${cy.toFixed(3)}, normal: (${this._ceilNX.toFixed(3)}, ${this._ceilNY.toFixed(3)}, ${this._ceilNZ.toFixed(3)})`)
+
+      this._buildCeilingDebugMesh()
+
+      if (this.light) {
+        this.placeLightOnCeiling()
+        this.createRotationRing()
+        this._snapRingToLight()
+      }
+      this._checkAllReady()
+    },
+
+    fitPlane(pts) {
+      const N = pts.length
+      if (N < 3) return null
+      let sx2=0, sxz=0, sx=0, sz2=0, sz=0, sxy=0, szy=0, sy=0
+      for (const [x, y, z] of pts) {
+        sx2+=x*x; sxz+=x*z; sx+=x; sz2+=z*z; sz+=z; sxy+=x*y; szy+=z*y; sy+=y
+      }
+      const M = [[sx2,sxz,sx],[sxz,sz2,sz],[sx,sz,N]]
+      const b = [sxy, szy, sy]
+      const coeffs = this.gaussElim3(M, b)
+      if (!coeffs) return null
+      const [a, bC, c] = coeffs
+      const nx = a, ny = -1, nz = bC
+      const len = Math.sqrt(nx*nx + ny*ny + nz*nz)
+      return { normal: new THREE.Vector3(nx/len, ny/len, nz/len) }
+    },
+
+    gaussElim3(M, b) {
+      const A = M.map((r, i) => [...r, b[i]])
+      for (let col = 0; col < 3; col++) {
+        let maxRow = col, maxVal = Math.abs(A[col][col])
+        for (let row = col+1; row < 3; row++) {
+          if (Math.abs(A[row][col]) > maxVal) { maxVal = Math.abs(A[row][col]); maxRow = row }
+        }
+        ;[A[col], A[maxRow]] = [A[maxRow], A[col]]
+        if (Math.abs(A[col][col]) < 1e-12) return null
+        for (let row = col+1; row < 3; row++) {
+          const f = A[row][col] / A[col][col]
+          for (let k = col; k <= 3; k++) A[row][k] -= f * A[col][k]
+        }
+      }
+      const x = [0, 0, 0]
+      for (let i = 2; i >= 0; i--) {
+        x[i] = A[i][3]
+        for (let j = i+1; j < 3; j++) x[i] -= A[i][j] * x[j]
+        x[i] /= A[i][i]
+      }
+      return x
+    },
+
+    // ─────────────────────────────────────────────────────
+    // ROTATION RING
+    // ─────────────────────────────────────────────────────
+
+    createRotationRing() {
+      this._disposeRotationRing()
+
+      const ring = new THREE.Group()
+      ring.name = 'rotationRing'
+
+      const RADIUS     = 1.0
+      const SEGMENTS   = 128
+      const LINE_COLOR = 0xffffff
+      const ARR_COLOR  = 0x00e5ff
+      const ARR_ANGLES = [0, Math.PI * 0.5, Math.PI, Math.PI * 1.5]
+
+      const circlePoints = []
+      for (let i = 0; i <= SEGMENTS; i++) {
+        const a = (i / SEGMENTS) * Math.PI * 2
+        circlePoints.push(new THREE.Vector3(Math.cos(a) * RADIUS, 0, Math.sin(a) * RADIUS))
+      }
+      ring.add(new THREE.LineLoop(
+        new THREE.BufferGeometry().setFromPoints(circlePoints),
+        new THREE.LineBasicMaterial({ color: LINE_COLOR, linewidth: 2 }),
+      ))
+
+      this.rotationArrows = []
+      const AW = 0.13, AH = 0.22, HIT_R = 0.32
+
+      ARR_ANGLES.forEach((angle) => {
+        const tx =  Math.sin(angle), tz = -Math.cos(angle)
+        const nx = -Math.cos(angle), nz = -Math.sin(angle)
+        const cx = Math.cos(angle) * RADIUS, cz = Math.sin(angle) * RADIUS
+
+        const visGeo = new THREE.BufferGeometry()
+        visGeo.setAttribute('position', new THREE.Float32BufferAttribute([
+          cx + tx * AH, 0, cz + tz * AH,
+          cx + nx * AW, 0, cz + nz * AW,
+          cx - nx * AW, 0, cz - nz * AW,
+        ], 3))
+        visGeo.setIndex([0, 1, 2])
+        visGeo.computeVertexNormals()
+
+        const visMesh = new THREE.Mesh(
+          visGeo,
+          new THREE.MeshBasicMaterial({ color: ARR_COLOR, side: THREE.DoubleSide }),
+        )
+        visMesh.raycast = () => {}
+        ring.add(visMesh)
+
+        const hitMesh = new THREE.Mesh(
+          new THREE.CircleGeometry(HIT_R, 20),
+          new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, side: THREE.DoubleSide, depthWrite: false }),
+        )
+        hitMesh.rotation.x = -Math.PI / 2
+        hitMesh.position.set(cx, 0.002, cz)
+        hitMesh.userData = { isRotationArrow: true, originalColor: ARR_COLOR, visMesh }
+        ring.add(hitMesh)
+        this.rotationArrows.push(hitMesh)
+      })
+
+      this.rotationRing = markRaw(ring)
+      this.scene.add(ring)
+    },
+
+    _snapRingToLight() {
+      if (!this.rotationRing || !this.light) return
+
+      // Ring sits just below the ceiling surface (slightly into the room)
+      this.rotationRing.position.copy(this.light.position)
+      this.rotationRing.position.addScaledVector(this.ceilingNormal3, 0.012)
+
+      // Tilt the flat XZ ring to align with the ceiling plane
+      const worldUp = new THREE.Vector3(0, 1, 0)
+      // Ceiling normal points down, ring's "up" should align with ceiling normal reversed
+      const fn = this.ceilingNormal3.clone().normalize().negate() // points up
+      const tiltQ = new THREE.Quaternion().setFromUnitVectors(worldUp, fn)
+      this.rotationRing.quaternion.copy(tiltQ)
+
+      this._fitRingToCanvas()
+    },
+
+    _fitRingToCanvas() {
+      if (!this.rotationRing || !this.renderer || !this.light || !this.camera) return
+      let footprintHalf = 0.6
+      if (this.TARGET_DIMS?.width) {
+        footprintHalf = (parseFloat(this.TARGET_DIMS.width) / 2) * 1.35
+      }
+      const desiredRadius = Math.max(0.25, footprintHalf)
+      this.rotationRing.scale.setScalar(desiredRadius)
+    },
+
+    _disposeRotationRing() {
+      if (!this.rotationRing) return
+      this.scene.remove(this.rotationRing)
+      this.rotationRing.traverse((child) => {
+        if (child.geometry) child.geometry.dispose()
+        if (child.material) child.material.dispose()
+      })
+      this.rotationRing  = null
+      this.rotationArrows = []
+    },
+
+    // ─────────────────────────────────────────────────────
+    // LIGHT MODEL LOAD / RELOAD
+    // ─────────────────────────────────────────────────────
+
+    loadLight() {
+      const modelUrl = this.resolveModelUrl(this.glbUrl)
+      if (!modelUrl) { console.warn('⚠️ loadLight: no model URL'); return }
+      this._loadGLTF(modelUrl)
+    },
+
+    reloadLight() {
+      if (!this.scene) return
+
+      this.isDragging = false; this.isDraggingRef = false
+      this.isRotating = false; this.isRotatingRef = false
+      this.lightLoaded = false
+      this.internalLoading     = true
+      this.internalLoadingText = 'Loading 3D model…'
+      this._disposeRotationRing()
+
+      if (this.light) {
+        this.scene.remove(this.light)
+        this.light.traverse((child) => {
+          if (child.geometry) child.geometry.dispose()
+          if (child.material) {
+            Array.isArray(child.material) ? child.material.forEach(m => m.dispose()) : child.material.dispose()
           }
-        }
+        })
+        this.light = null
       }
-    });
-  }
 
-  if (ceilingMaskTexture) {
-    ceilingMaskTexture.dispose();
-  }
+      this.lightRotation    = 0
+      this.adjustRoll       = 0
+      this.adjustPitch      = 0
+      this.modelLoadProgress = 0
 
-  if (currentBackgroundTexture) {
-    currentBackgroundTexture.dispose();
-  }
+      this._loadGLTF(this.resolveModelUrl(this.glbUrl))
+    },
+
+    _loadGLTF(modelUrl) {
+      new GLTFLoader().load(
+        modelUrl,
+        (gltf) => {
+          const innerMesh = gltf.scene
+          innerMesh.traverse(n => { if (n.isMesh) { n.castShadow = true; n.receiveShadow = true } })
+          innerMesh.position.set(0, 0, 0)
+          innerMesh.rotation.set(0, 0, 0)
+          innerMesh.scale.set(1, 1, 1)
+          innerMesh.updateMatrixWorld(true)
+
+          // ── Physical sizing (same focal correction as floor component) ──
+          const rawBox  = new THREE.Box3().setFromObject(innerMesh)
+          const rawSize = new THREE.Vector3()
+          rawBox.getSize(rawSize)
+
+          const fovRad         = (this.CAM_FOV_V * Math.PI) / 180
+          const fy_threejs     = this.CAM_IMG_H / 2 / Math.tan(fovRad / 2)
+          const focalCorrection = this.CAM_FY / fy_threejs
+
+          const sx = rawSize.x > 0 ? (this.TARGET_DIMS.width  * focalCorrection) / rawSize.x : 1
+          const sy = rawSize.y > 0 ? (this.TARGET_DIMS.height * focalCorrection) / rawSize.y : 1
+          const sz = rawSize.z > 0 ? (this.TARGET_DIMS.depth  * focalCorrection) / rawSize.z : 1
+
+          innerMesh.scale.set(sx, sy, sz)
+          innerMesh.updateMatrixWorld(true)
+
+          this.originalScale = Math.min(sx, sy, sz)   // uniform reference for size slider
+
+          // ── Pivot so that model hangs from ceiling (top at Y=0 of pivotGroup) ──
+          const scaledBox = new THREE.Box3().setFromObject(innerMesh)
+          // Move inner mesh up so its TOP face is at local Y=0
+          // (pivotGroup Y = ceiling attachment point, model hangs downward)
+          innerMesh.position.y -= scaledBox.max.y
+          innerMesh.updateMatrixWorld(true)
+
+          // Half-height of the model (used for a tiny gap offset if needed)
+          const finalBox = new THREE.Box3().setFromObject(innerMesh)
+          this.lightHalfH = Math.abs(finalBox.min.y) / 2   // positive, model extends downward
+
+          const pivotGroup = new THREE.Group()
+          pivotGroup.add(innerMesh)
+          this.scene.add(pivotGroup)
+
+          this.light       = markRaw(pivotGroup)
+          this.lightLoaded = true
+          this.modelLoadProgress = 100
+
+          if (this.planeReady) {
+            this.placeLightOnCeiling()
+            this.createRotationRing()
+            this._snapRingToLight()
+          }
+          this._checkAllReady()
+        },
+        xhr => { if (xhr.total > 0) this.modelLoadProgress = Math.round((xhr.loaded / xhr.total) * 100) },
+        err => { console.error('❌ Light load failed:', err); this._checkAllReady() },
+      )
+    },
+
+    // ─────────────────────────────────────────────────────
+    // PLACEMENT
+    // ─────────────────────────────────────────────────────
+
+    placeLightOnCeiling(worldX = null, worldZ = null) {
+      if (!this.light || !this.ceilingPlaneTHREE) return
+
+      const x = worldX ?? this.ceilingCentroid3.x
+      const z = worldZ ?? this.ceilingCentroid3.z
+
+      // Solve Y on the ceiling plane at (x, z)
+      const n = this.ceilingNormal3
+      const d = this.ceilingPlaneTHREE.constant
+      let y   = this.ceilingCentroid3.y
+      if (Math.abs(n.y) > 1e-6) y = (-d - n.x * x - n.z * z) / n.y
+
+      // Place pivot (attachment point) on ceiling surface
+      this.light.position.set(x, y, z)
+      // The model hangs DOWN from the ceiling.
+      // ceilingNormal3.y is negative, so addScaledVector(n, -lightHalfH) moves slightly into room.
+      // This keeps a zero-gap between ceiling and top of fixture.
+
+      this._applyModelOrientation()
+    },
+
+    resetLightPosition() {
+      if (!this.light || !this.planeReady) return
+      this.lightRotation = 0
+      this.adjustRoll    = 0
+      this.adjustPitch   = 0
+      this.placeLightOnCeiling(this.ceilingCentroid3.x, this.ceilingCentroid3.z)
+      if (this.rotationRing) this._snapRingToLight()
+    },
+
+    // ─────────────────────────────────────────────────────
+    // MODEL ORIENTATION / SCALE (roll, pitch, yaw, size)
+    // ─────────────────────────────────────────────────────
+
+    _applyModelOrientation() {
+      if (!this.light || !this.planeReady) return
+
+      // Base tilt: align model's "up" with ceiling normal (inverted = pointing down into room)
+      const worldDown = new THREE.Vector3(0, -1, 0)
+      const fn        = this.ceilingNormal3.clone().normalize()
+      const tiltQ     = new THREE.Quaternion().setFromUnitVectors(worldDown, fn)
+
+      // Yaw (spin around ceiling normal axis)
+      const spinQ = new THREE.Quaternion().setFromAxisAngle(fn, THREE.MathUtils.degToRad(this.lightRotation))
+
+      // User adjustments (roll around Z, pitch around X)
+      const rollQ  = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), THREE.MathUtils.degToRad(this.adjustRoll))
+      const pitchQ = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), THREE.MathUtils.degToRad(this.adjustPitch))
+
+      // Combine: tilt first, then spin, then pitch/roll corrections
+      const combined = new THREE.Quaternion()
+        .multiplyQuaternions(spinQ, tiltQ)
+      combined.multiplyQuaternions(rollQ, combined)
+      combined.multiplyQuaternions(pitchQ, combined)
+
+      this.light.quaternion.copy(combined)
+      if (this.rotationRing) this._snapRingToLight()
+    },
+
+    _applyModelScale() {
+      if (!this.light) return
+      const inner = this.light.children[0]
+      if (!inner) return
+
+      // Re-scale uniformly around the original physical size
+      const fovRad         = (this.CAM_FOV_V * Math.PI) / 180
+      const fy_threejs     = this.CAM_IMG_H / 2 / Math.tan(fovRad / 2)
+      const focalCorrection = this.CAM_FY / fy_threejs
+
+      const sx = (this.TARGET_DIMS.width  * focalCorrection * this.modelSizeScale) / (this.TARGET_DIMS.width  * focalCorrection / (inner.scale.x || 1) * (inner.scale.x || 1))
+      // Simpler: just apply scale relative to original
+      inner.scale.setScalar(this.originalScale * this.modelSizeScale)
+      inner.updateMatrixWorld(true)
+
+      // Re-center so top stays at Y=0 of pivot group
+      const box = new THREE.Box3().setFromObject(inner)
+      inner.position.y = -box.max.y
+      inner.updateMatrixWorld(true)
+
+      const finalBox = new THREE.Box3().setFromObject(inner)
+      this.lightHalfH = Math.abs(finalBox.min.y) / 2
+
+      this.placeLightOnCeiling(this.light.position.x, this.light.position.z)
+    },
+
+    // ─────────────────────────────────────────────────────
+    // RENDER / EXPORT  (called by parent via $refs)
+    // ─────────────────────────────────────────────────────
+
+    async downloadCurrentSceneImage() {
+      if (!this.renderer || !this.scene || !this.camera || !this.currentBgTexture || !this.light) {
+        console.warn('Required components not available for image generation'); return
+      }
+
+      // ── Store original states BEFORE any modifications ──
+      const originalClearColor          = this.renderer.getClearColor(new THREE.Color())
+      const originalClearAlpha          = this.renderer.getClearAlpha()
+      const originalBgMeshVisible       = this.bgMesh        ? this.bgMesh.visible        : false
+      const originalRingVisible         = this.rotationRing  ? this.rotationRing.visible  : false
+      const originalPointCloudVisible   = this.pointCloudObj ? this.pointCloudObj.visible : false
+      const originalCeilingMeshVisible  = this.ceilingDebugMesh ? this.ceilingDebugMesh.visible : false
+
+      try {
+        // Current live canvas dimensions
+        const width  = this.renderer.domElement.width
+        const height = this.renderer.domElement.height
+
+        // ── Step 1: Hide all UI / debug elements ──
+        if (this.rotationRing)   this.rotationRing.visible   = false
+        if (this.pointCloudObj)  this.pointCloudObj.visible  = false
+        if (this.ceilingDebugMesh) this.ceilingDebugMesh.visible = false
+
+        // ── Step 2: Composite canvas — background image first ──
+        const compositeCanvas = document.createElement('canvas')
+        compositeCanvas.width  = width
+        compositeCanvas.height = height
+        const ctx = compositeCanvas.getContext('2d')
+
+        const bgImage = this.currentBgTexture.image
+        ctx.drawImage(bgImage, 0, 0, width, height)
+
+        // ── Step 3: Render only the 3D model over transparent background ──
+        if (this.bgMesh) this.bgMesh.visible = false
+        this.renderer.setClearColor(0x000000, 0)   // transparent
+        this.renderer.autoClear = false
+        this.renderer.clear()
+        this.renderer.render(this.scene, this.camera)
+
+        const modelImageData = this.renderer.domElement.toDataURL('image/png')
+
+        // ── Step 4: Composite model on top of background ──
+        const finalDataURL = await new Promise((resolve) => {
+          const modelImage = new Image()
+          modelImage.onload = () => {
+            ctx.globalCompositeOperation = 'source-over'
+            ctx.drawImage(modelImage, 0, 0, width, height)
+            resolve(compositeCanvas.toDataURL('image/png', 0.95))
+          }
+          modelImage.onerror = () => resolve(null)
+          modelImage.src = modelImageData
+        })
+
+        if (!finalDataURL) {
+          console.error('Failed to generate composite image')
+          this._restoreRendererState(originalBgMeshVisible, originalClearColor, originalClearAlpha)
+          this._restoreUIState(originalRingVisible, originalPointCloudVisible, originalCeilingMeshVisible)
+          return
+        }
+
+        // ── Step 5: Send to server ──
+        const response = await fetch(
+          `${this.$store.state.root_api}engine/added-3d-light-to-room/`,
+          {
+            method:  'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Token ${localStorage.getItem('token')}`,
+            },
+            body: JSON.stringify({
+              image:      finalDataURL,
+              room_id:    this.$route.params.id,
+              product_id: this.selectedlightuuid,
+              timestamp:  Date.now(),
+              metadata: {
+                modelPosition: {
+                  x: this.light.position.x,
+                  y: this.light.position.z,   // Z is the XZ plane "depth"
+                  rotation: this.lightRotation,
+                },
+                ceilingPlane: {
+                  normalX:   this._ceilNX,
+                  normalY:   this._ceilNY,
+                  normalZ:   this._ceilNZ,
+                  centroidY: this.ceilingCentroidY,
+                },
+                adjustRoll:     this.adjustRoll,
+                adjustPitch:    this.adjustPitch,
+                modelSizeScale: this.modelSizeScale,
+                dimensions:     { width, height },
+              },
+            }),
+          }
+        )
+
+        // ── Handle 402: restore state FIRST, then emit ──
+        if (response.status === 402) {
+          const result = await response.json()
+          this._restoreRendererState(originalBgMeshVisible, originalClearColor, originalClearAlpha)
+          this._restoreUIState(originalRingVisible, originalPointCloudVisible, originalCeilingMeshVisible)
+          this.$emit('insufficient-credits', result.msg, result.buid)
+          return
+        }
+
+        if (response.ok) {
+          const result = await response.json()
+          console.log('Image successfully sent to server:', result)
+          this._restoreRendererState(originalBgMeshVisible, originalClearColor, originalClearAlpha)
+          this._restoreUIState(originalRingVisible, originalPointCloudVisible, originalCeilingMeshVisible)
+          this.$emit('model-3d-light-added', result)
+        } else {
+          console.error('Server error:', response.status, response.statusText)
+          this._restoreRendererState(originalBgMeshVisible, originalClearColor, originalClearAlpha)
+          this._restoreUIState(originalRingVisible, originalPointCloudVisible, originalCeilingMeshVisible)
+
+          // Fallback: download locally
+          const link = document.createElement('a')
+          link.download = `ceiling_light_composite_${Date.now()}.png`
+          link.href = finalDataURL
+          document.body.appendChild(link); link.click(); document.body.removeChild(link)
+        }
+
+        console.log(`Composite processed: ${width}×${height}`)
+
+      } catch (error) {
+        console.error('Error in downloadCurrentSceneImage:', error)
+        this._restoreRendererState(originalBgMeshVisible, originalClearColor, originalClearAlpha)
+        this._restoreUIState(originalRingVisible, originalPointCloudVisible, originalCeilingMeshVisible)
+      }
+    },
+
+    // ── Renderer restore helpers ─────────────────────────
+
+    _restoreRendererState(bgMeshVisible, clearColor, clearAlpha) {
+      if (this.bgMesh) this.bgMesh.visible = bgMeshVisible
+      if (this.renderer) {
+        this.renderer.setClearColor(clearColor, clearAlpha)
+        this.renderer.autoClear = true
+        this.renderer.clear()
+        if (this.bgScene && this.bgCamera) this.renderer.render(this.bgScene, this.bgCamera)
+        this.renderer.render(this.scene, this.camera)
+      }
+    },
+
+    _restoreUIState(ringVisible, pointCloudVisible, ceilingMeshVisible) {
+      if (this.rotationRing)    this.rotationRing.visible    = ringVisible
+      if (this.pointCloudObj)   this.pointCloudObj.visible   = pointCloudVisible
+      if (this.ceilingDebugMesh) this.ceilingDebugMesh.visible = ceilingMeshVisible
+    },
+
+    _buildCeilingDebugMesh() {
+      if (this.ceilingDebugMesh) { this.scene.remove(this.ceilingDebugMesh); this.ceilingDebugMesh = null }
+      const geo = new THREE.PlaneGeometry(12, 12)
+      const mat = new THREE.MeshStandardMaterial({
+        color: 0x00aaff, emissive: 0x001133, transparent: true, opacity: 0.35, side: THREE.DoubleSide,
+      })
+      this.ceilingDebugMesh = markRaw(new THREE.Mesh(geo, mat))
+      // Orient plane normal to match fitted ceiling normal
+      // PlaneGeometry faces +Z, so rotate to face ceilingNormal3 direction
+      const worldZ = new THREE.Vector3(0, 0, 1)
+      const q = new THREE.Quaternion().setFromUnitVectors(worldZ, this.ceilingNormal3.clone().normalize())
+      this.ceilingDebugMesh.applyQuaternion(q)
+      this.ceilingDebugMesh.position.copy(this.ceilingCentroid3)
+      this.ceilingDebugMesh.visible = this.debugCeilingMesh
+      this.scene.add(this.ceilingDebugMesh)
+    },
+
+    togglePointCloud()  { if (this.pointCloudObj)  this.pointCloudObj.visible  = this.debugPointCloud  },
+    toggleCeilingMesh() { if (this.ceilingDebugMesh) this.ceilingDebugMesh.visible = this.debugCeilingMesh },
+
+    // ─────────────────────────────────────────────────────
+    // ANIMATE
+    // ─────────────────────────────────────────────────────
+
+    animate() {
+      this.animationFrameId = requestAnimationFrame(this.animate)
+      if (!this.renderer || !this.scene || !this.camera) return
+      this.renderer.autoClear = false
+      this.renderer.clear()
+      if (this.bgScene && this.bgCamera) this.renderer.render(this.bgScene, this.bgCamera)
+      this.renderer.render(this.scene, this.camera)
+    },
+
+    // ─────────────────────────────────────────────────────
+    // CLEANUP
+    // ─────────────────────────────────────────────────────
+
+    cleanup() {
+      if (this.animationFrameId) cancelAnimationFrame(this.animationFrameId)
+
+      if (this.renderer?.domElement) {
+        const el = this.renderer.domElement
+        el.removeEventListener('pointerdown',   this.onPointerDown)
+        el.removeEventListener('pointermove',   this.onPointerMove)
+        el.removeEventListener('pointerup',     this.onPointerUp)
+        el.removeEventListener('pointercancel', this.onPointerUp)
+      }
+      window.removeEventListener('resize', this.adjustCanvasToAspectRatio)
+
+      this._disposeRotationRing()
+
+      if (this.renderer) {
+        this.renderer.dispose()
+        this.renderer.domElement?.parentNode?.removeChild(this.renderer.domElement)
+      }
+      if (this.scene) {
+        this.scene.traverse(child => {
+          if (child.geometry) child.geometry.dispose()
+          if (child.material) {
+            Array.isArray(child.material) ? child.material.forEach(m => m.dispose()) : child.material.dispose()
+          }
+        })
+      }
+
+      this.scene = null; this.renderer = null; this.camera = null
+      this.light = null; this.pointCloudObj = null
+      this.planeReady = false; this.lightLoaded = false
+      this.maskReady  = false; this.plyReady    = false
+      this.isDragging = false; this.isRotating  = false
+      this.isTwoFingerRotating = false
+      this.twoFingerPointers.clear()
+      this.ceilingPlaneTHREE = null
+      this.ceilingNormal3   = markRaw(new THREE.Vector3(0, -1, 0))
+      this.ceilingCentroid3 = markRaw(new THREE.Vector3())
+    },
+  },
 }
-
-function fitCameraToModel() {
-  if (!model || !modelSize) return;
-
-  const maxDim = Math.max(modelSize.x, modelSize.y, modelSize.z);
-  const fov = camera.fov * (Math.PI / 180);
-  const fitHeightDistance = maxDim / (2 * Math.tan(fov / 2));
-  const fitWidthDistance = fitHeightDistance / camera.aspect;
-
-  const distance = Math.max(fitHeightDistance, fitWidthDistance) * 3.0; // Reduced multiplier
-
-  // NEW: Position camera to focus on top area
-  const topAreaY = props.ceilingHeight + 0;
-  camera.position.set(distance * 0.3, topAreaY - 0.5, distance * 0.5);
-  controls.target.set(0, topAreaY, 0); // Target the top area
-  controls.update();
-}
-
-// 3. OPTIONAL: If you want even more control, add this helper function:
-function positionCameraForTopView() {
-  const topAreaY = props.ceilingHeight - 5;
-
-  // Position camera at an angle to view the top area
-  camera.position.set(8, topAreaY - 8, 20);
-  controls.target.set(0, topAreaY, 0);
-
-  // Adjust camera's up vector if needed for better orientation
-  camera.up.set(0, 1, 0);
-  camera.updateProjectionMatrix();
-  controls.update();
-}
-
-// Enhanced model position update with proper ceiling projection
-function updateModelPositionOnCeiling() {
-  // Changed from updateModelPositionOnFloor
-  if (!model) return;
-
-  // Update XZ position
-  model.position.x = modelPosition.x;
-  model.position.z = modelPosition.y;
-
-  // Calculate height based on ceiling surface using proper plane equation
-  const worldPos = new THREE.Vector3(modelPosition.x, 0, modelPosition.y);
-  const ceilingHeight = getCeilingHeightAtWorldPosition(worldPos);
-  currentCeilingHeight.value = ceilingHeight;
-
-  // Position model hanging from ceiling surface
-  if (modelBoundingBox) {
-    model.position.y = ceilingHeight - modelBoundingBox.max.y; // Hang from ceiling top
-  }
-
-  updateRotationControlsPosition();
-}
-
-function updateModelRotation() {
-  if (!model) return;
-
-  // Combine Y rotation with roll rotation
-  const yRotation = THREE.MathUtils.degToRad(modelRotation.y);
-  const rollRotation = THREE.MathUtils.degToRad(adjustRoll.value);
-
-  // Create rotation matrices
-  const yRotationMatrix = new THREE.Matrix4().makeRotationY(yRotation);
-  const rollMatrix = new THREE.Matrix4().makeRotationZ(rollRotation);
-
-  // Combine rotations: apply Y rotation first, then roll
-  const combinedMatrix = new THREE.Matrix4().multiplyMatrices(
-    rollMatrix,
-    yRotationMatrix
-  );
-
-  // Apply the combined rotation to the model
-  model.rotation.setFromRotationMatrix(combinedMatrix);
-}
-
-function animate() {
-  animationId = requestAnimationFrame(animate);
-  controls.update();
-
-  renderer.autoClear = false;
-  renderer.clear();
-  renderer.render(backgroundScene, backgroundCamera);
-  renderer.render(scene, camera);
-}
-
-// Enhanced onWindowResize function
-function onWindowResize() {
-  if (!currentBackgroundTexture || !canvasContainer.value) return;
-
-  // Recalculate dimensions based on current container size
-  adjustCanvasToImageAspectRatio(currentBackgroundTexture);
-  updateBackground(currentBackgroundTexture);
-}
-
-// Update the onBeforeUnmount to include resource cleanup
-onBeforeUnmount(() => {
-  cancelAnimationFrame(animationId);
-  window.removeEventListener("resize", onWindowResize);
-
-  if (renderer) {
-    const canvas = renderer.domElement;
-    canvas.removeEventListener("mousedown", onMouseDown);
-    canvas.removeEventListener("mousemove", onMouseMove);
-    canvas.removeEventListener("mouseup", onMouseUp);
-    canvas.removeEventListener("mouseleave", onMouseUp);
-
-    //for mobile touch
-    canvas.removeEventListener("touchstart", onMouseDown);
-    canvas.removeEventListener("touchmove", onMouseMove);
-    canvas.removeEventListener("touchend", onMouseUp);
-    canvas.removeEventListener("touchcancel", onMouseUp);
-  }
-
-  // Clean up Three.js resources
-  cleanupResources();
-
-  if (renderer) {
-    renderer.dispose();
-  }
-});
-
-defineExpose({
-  downloadCurrentSceneImage,
-});
 </script>
+
 <style scoped>
-.controls-panel {
-  display: none;
-  /* position: absolute; */
-  right: 10px;
-  background: rgba(0, 0, 0, 0.8);
-  color: white;
-  padding: 15px;
-  border-radius: 8px;
-  font-family: Arial, sans-serif;
-  font-size: 12px;
-  max-width: 600px;
-  max-height: calc(100vh);
-  overflow-y: auto;
-  z-index: 1000;
-}
-
-.header-wrapper {
-  padding-left: 8px;
-  padding-right: 10px;
-  padding-top: 0;
-  background: white;
-  min-height: 50px;
-  position: relative; /* ADD THIS */
-  z-index: 100; /* ADD THIS */
-}
-
-/* 400px – 800px */
-@media (min-width: 400px) and (max-width: 800px) {
-  .header-wrapper {
-    min-height: 150px;
-  }
-}
-
-/* above 800px */
-@media (min-width: 801px) {
-  .header-wrapper {
-    min-height: 50px;
-  }
-}
-
-/* FIX: Ensure buttons are always clickable on mobile */
-.header-wrapper button {
-  position: relative;
-  z-index: 101;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-}
-
-.control-group {
-  margin-bottom: 15px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #333;
-}
-
-.control-group:last-child {
-  border-bottom: none;
-}
-
-.control-group label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: bold;
-  color: #fff;
-}
-
-.position-inputs,
-.angle-inputs {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 10px;
-}
-
-.position-input,
-.angle-input {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.position-input label,
-.angle-input label {
-  margin-bottom: 0;
-  margin-right: 8px;
-  font-weight: normal;
-  min-width: 80px;
-}
-
-.position-input input,
-.angle-input input {
-  width: 80px;
-  padding: 4px;
-  border: 1px solid #555;
-  border-radius: 3px;
-  background: #222;
-  color: white;
-}
-
-.angle-input span {
-  color: #ccc;
-  min-width: 80px;
-  text-align: right;
-}
-
-.grid-controls {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.grid-controls > div {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.grid-controls input[type="checkbox"] {
-  margin-right: 8px;
-}
-
-.grid-size,
-.grid-divisions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.grid-size input,
-.grid-divisions input {
-  width: 60px;
-  padding: 4px;
-  border: 1px solid #555;
-  border-radius: 3px;
-  background: #222;
-  color: white;
-}
-
-.grid-size span,
-.grid-divisions span {
-  color: #ccc;
-  font-size: 11px;
-}
-
-.drag-info {
-  margin-top: 8px;
-  padding-top: 8px;
-  border-top: 1px solid #333;
-}
-
-.drag-info p {
-  margin: 4px 0;
-  font-size: 11px;
-  color: #ccc;
-}
-
-.ceiling-status {
-  padding: 4px 8px;
-  border-radius: 3px;
-  font-weight: bold;
-  margin-top: 4px;
-}
-
-.ceiling-status.valid {
-  background-color: rgba(0, 255, 0, 0.2);
-  color: #00ff00;
-}
-
-.ceiling-status.invalid {
-  background-color: rgba(255, 0, 0, 0.2);
-  color: #ff4444;
-}
-
-.info {
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px solid #333;
-}
-
-.info p {
-  margin: 3px 0;
-  font-size: 11px;
-  color: #ccc;
-}
-
-.drag-status {
-  color: #00ff88 !important;
-  font-weight: bold;
-}
-
-.main-canvas {
-  display: block;
-  margin: auto;
+.editor-wrapper {
   width: 100%;
-  height: calc(100vh - 140px); /* Responsive height */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* padding: 12px 0; */
+  min-height: 100%;
+}
+
+.room-container {
+  position: relative;
+  width: 100%;
+  height: calc(100vh - 140px);
   min-height: 400px;
-  position: relative;
-  z-index: 1;
+  max-height: calc(100vh - 140px);
+  line-height: 0;
+  border-radius: 6px;
+  overflow: hidden;
 }
 
-/* Desktop */
 @media (min-width: 769px) {
-  .main-canvas {
-    height: calc(100vh - 140px);
-    min-height: 400px;
-  }
+  .room-container { height: calc(100vh - 140px); max-height: calc(100vh - 140px); max-width: 920px; margin: 0 auto; }
+}
+@media (min-width: 400px) and (max-width: 768px) {
+  .room-container { height: calc(100vh - 180px); max-height: calc(100vh - 180px); }
+}
+@media (max-width: 399px) {
+  .room-container { height: calc(100vh - 220px); max-height: calc(100vh - 220px); }
+}
+@media screen and (min-width: 768px) {
+  .room-container { min-height: 83vh; }
 }
 
-/* Tablet */
-@media (min-width: 741px) and (max-width: 768px) {
-  .main-canvas {
-    height: calc(100vh - 180px);
-    min-height: 400px;
-  }
-}
-
-/* Mobile */
-@media (max-width: 740px) {
-  .main-canvas {
-    height: calc(100vh - 220px);
-    min-height: 300px;
-    max-height: calc(100vh - 200px);
-    overflow: hidden;
-  }
-}
-#viewer {
-  position: relative;
+.room-image {
+  display: block;
   width: 100%;
   height: 100%;
-  min-height: 400px;
-  /* FIX: Prevent canvas from blocking buttons */
-  isolation: isolate; /* ADD THIS */
-}
-
-/* FIX: Ensure Three.js canvas doesn't block clicks */
-#viewer canvas {
-  display: block;
-  max-width: 100%;
-  height: auto;
-  position: relative; /* ADD THIS */
-  z-index: 0; /* ADD THIS - Lowest z-index */
-}
-
-
-/* Mobile specific touch improvements */
-@media (max-width: 767px) {
-  .header-wrapper {
-    position: relative;
-    z-index: 100;
-    background: white;
-    padding: 8px 10px;
-  }
-  
-  .header-wrapper button {
-    pointer-events: auto !important;
-    z-index: 101 !important;
-  }
-  
-  .main-canvas {
-    max-height: calc(100vh - 200px);
-    overflow: hidden;
-    touch-action: none; /* ✅ Let Three.js handle touch */
-  }
-  
-  #viewer {
-    pointer-events: auto;
-    touch-action: none; /* ✅ Let OrbitControls handle gestures */
-  }
-  
-  #viewer canvas {
-    pointer-events: auto;
-    touch-action: pan-x pan-y pinch-zoom; /* ✅ Enable specific gestures */
-    -webkit-user-select: none;
-    user-select: none;
-  }
-}
-
-/* Touch device optimizations */
-@media (hover: none) and (pointer: coarse) {
-  #viewer canvas {
-    touch-action: pan-x pan-y pinch-zoom;
-    -webkit-tap-highlight-color: transparent;
-  }
-  
-  .main-canvas {
-    -webkit-overflow-scrolling: touch;
-  }
-}
-#loading {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: rgba(0, 0, 0, 0.8);
-  color: white;
-  padding: 20px;
-  border-radius: 8px;
-  font-family: Arial, sans-serif;
-  z-index: 1000;
-}
-
-/* Ceiling-specific visual indicators */
-.ceiling-mount-indicator {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  background: rgba(0, 123, 204, 0.8);
-  color: white;
-  padding: 8px 12px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: bold;
-  z-index: 1000;
-}
-
-.ceiling-mount-indicator::before {
-  content: "⬆️ ";
-  margin-right: 4px;
-}
-
-@media screen and (min-width:768px) {
-  .main-canvas {
-    min-height: 83vh;
-  }
-}
-
-/* MOBILE SPECIFIC FIX - Critical for 375px screens */
-@media (max-width: 767px) {
-  .header-wrapper {
-    position: relative;
-    z-index: 100;
-    background: white;
-    padding: 8px 10px;
-  }
-  
-  .header-wrapper button {
-    pointer-events: auto !important;
-    z-index: 101 !important;
-  }
-  
-  /* Ensure canvas doesn't overflow and block buttons */
-  .main-canvas {
-    max-height: calc(100vh - 200px);
-    overflow: hidden;
-  }
-  
-  #viewer {
-    pointer-events: auto;
-  }
-  
-  #viewer canvas {
-    pointer-events: auto;
-    touch-action: pan-y pinch-zoom;
-  }
-}
-
-
-
-
-/* modal */
-.instruction-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.instruction-item:last-child {
-  border-bottom: none;
-}
-
-.instruction {
-  font-weight: 500;
-  color: #333;
-  flex: 1;
-}
-
-.gesture-icon {
-  width: 40px;
-  height: 40px;
   object-fit: contain;
-  margin-left: 20px;
+  max-width: 920px;
+  max-height: 80vh;
 }
-</style>
 
+.mask-overlay { position: absolute; top: 0; left: 0; pointer-events: none; }
+.three-layer  { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }
+.three-layer canvas { display: block; }
+
+.dim-label {
+  background: white;
+  border-radius: 5px;
+  padding: 0 5px;
+  font-size: 12px;
+  font-weight: 600;
+  position: absolute;
+  z-index: 5;
+  line-height: 1.4;
+  bottom: 10px;
+  left: 10px;
+}
+
+.status-badge {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.75);
+  color: #facc15;
+  font-size: 12px;
+  padding: 5px 14px;
+  border-radius: 20px;
+  pointer-events: none;
+  border: 1px solid #444;
+  backdrop-filter: blur(4px);
+}
+
+/* Loading overlay */
+.scanning-loading-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; overflow: hidden; }
+.loading-screen {
+  position: relative; width: 100%; height: 100%;
+  background-size: cover; background-position: center; background-repeat: no-repeat;
+  display: flex; align-items: center; justify-content: center; overflow: hidden;
+}
+.loading-screen::before {
+  content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(20,20,20,0.55); backdrop-filter: blur(0.1px); z-index: 1;
+}
+.wave-overlay {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(to left, rgba(0,102,255,1) 0%, rgba(0,102,255,0.4) 20%,
+    rgba(0,102,255,0.15) 40%, rgba(0,102,255,0) 100%);
+  animation: moveWave 3s linear infinite, waveFade 3s ease-in-out infinite;
+  z-index: 2;
+}
+@keyframes moveWave { from { transform: translateX(-100%) } to { transform: translateX(50%) } }
+@keyframes waveFade { 0% { opacity: 0 } 10% { opacity: 1 } 90% { opacity: 1 } 100% { opacity: 0 } }
+.loading-text {
+  position: relative; color: #fff; text-align: center; z-index: 3;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+  background: rgba(0,0,0,0.3); padding: 20px 30px; border-radius: 10px;
+  backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.1);
+}
+.process-text { font-size: 18px; opacity: 0.9; letter-spacing: 1px; text-transform: uppercase; }
+
+/* Debug panel */
+.debug-panel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 24px;
+  background: #0d0d0d;
+  border: 1px solid #222;
+  border-radius: 8px;
+  padding: 10px 16px;
+  width: 100%;
+  max-width: 920px;
+  box-sizing: border-box;
+  margin-top: 6px;
+}
+.debug-title { width: 100%; font-size: 10px; font-weight: 700; color: #555; letter-spacing: .12em; text-transform: uppercase; }
+.debug-row   { display: flex; align-items: center; gap: 8px; color: #999; font-size: 12px; cursor: pointer; user-select: none; }
+.debug-row input[type='checkbox'] { accent-color: #4ade80; width: 15px; height: 15px; cursor: pointer; }
+.debug-row input[type='range']    { width: 80px; accent-color: #4ade80; cursor: pointer; }
+.val  { color: #4ade80; min-width: 36px; text-align: right; }
+.badge { padding: 1px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; letter-spacing: .05em; }
+.badge.on  { background: #14532d; color: #4ade80; }
+.badge.off { background: #3f1515; color: #f87171; }
+.debug-status { display: flex; flex-wrap: wrap; gap: 6px 20px; width: 100%; border-top: 1px solid #1a1a1a; padding-top: 8px; }
+.status-row   { display: flex; gap: 6px; font-size: 11px; color: #555; align-items: center; }
+.ok    { color: #4ade80; }
+.err   { color: #f87171; }
+.coord { color: #60a5fa; letter-spacing: .03em; }
+
+/* Modal */
+.instruction-item { display: flex; justify-content: space-between; align-items: center; }
+.instruction      { font-weight: 500; color: #333; flex: 1; }
+.gesture-icon     { width: 40px; height: 40px; object-fit: contain; margin-left: 20px; }
+</style>

@@ -136,6 +136,87 @@
       </a-col>
     </a-row>
   </a-drawer>
+  <!-- Purchase Credits Modal -->
+  <a-modal
+    v-model:open="showCreditModal"
+    title=""
+    centered
+    width="380px"
+    footer=""
+  >
+    <div style="text-align: center; padding: 10px; border-radius: 12px">
+      <!-- Icon wrapper -->
+      <div
+        style="
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 70px;
+          height: 70px;
+          margin: 0 auto 18px auto;
+          border-radius: 50%;
+          background: rgba(59, 99, 251, 0.12);
+        "
+      >
+        <svg
+          width="34"
+          height="34"
+          viewBox="0 0 20 20"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M10 0C4.477 0 0 4.477 0 10C0 15.523 4.477 20 10 20C15.523 20 20 15.523 20 10C20 4.477 15.523 0 10 0ZM10 1C10 3.38695 9.05179 5.67613 7.36396 7.36396C5.67613 9.05179 3.38695 10 1 10C3.38695 10 5.67613 10.9482 7.36396 12.636C9.05179 14.3239 10 16.6131 10 19C10 16.6131 10.9482 14.3239 12.636 12.636C14.3239 10.9482 16.6131 10 19 10C16.6131 10 14.3239 9.05179 12.636 7.36396C10.9482 5.67613 10 3.38695 10 1Z"
+            fill="#3B63FB"
+          />
+        </svg>
+      </div>
+
+      <!-- Heading -->
+      <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 10px">
+        Insufficient Credits
+      </h2>
+
+      <!-- Message -->
+      <p
+        style="
+          font-size: 15px;
+          line-height: 1.5;
+          color: #555;
+          margin-bottom: 25px;
+        "
+      >
+        {{ creditErrorMessage }}
+      </p>
+
+      <!-- CTA button -->
+      <a-button v-if="user.user_type!=='User'"
+        type="primary"
+        block
+        size="large"
+        style="height: 46px; font-size: 16px; border-radius: 8px"
+        @click="goToPurchaseCredits"
+      >
+        Purchase Credits
+      </a-button>
+      
+      <a-button v-else
+        type="primary"
+        block
+        size="large"
+        :loading="LoadingMessageButton"
+        style="height: 46px; font-size: 16px; border-radius: 8px; display: flex;justify-content: center;align-items: center;"
+        @click="startchat_with_buisness_user"
+      >
+        <MessageOutlined style="font-size: 16px;"/>
+    Message Business
+      </a-button>
+    </div>
+  </a-modal>
+
+
 
   <a-modal v-model:open="open_RenderNowModal" title="" footer="" centered>
     <div
@@ -2024,7 +2105,8 @@
             type="primary"
             @click="openShareOnComunity()"
             block
-            :disabled="loading"
+            :disabled="loading || out_of_credits"
+
             style="
               display: flex;
               justify-content: center;
@@ -2044,22 +2126,22 @@
             >
               <path
                 d="M17.125 5.64648C17.125 6.95816 16.0617 8.02148 14.75 8.02148C13.4383 8.02148 12.375 6.95816 12.375 5.64648C12.375 4.33481 13.4383 3.27148 14.75 3.27148C16.0617 3.27148 17.125 4.33481 17.125 5.64648Z"
-                stroke="white"
+                stroke="currentColor"
                 stroke-width="1.5"
               />
               <path
                 d="M7.625 10C7.625 11.3117 6.56167 12.375 5.25 12.375C3.93833 12.375 2.875 11.3117 2.875 10C2.875 8.68829 3.93833 7.625 5.25 7.625C6.56167 7.625 7.625 8.68829 7.625 10Z"
-                stroke="white"
+                stroke="currentColor"
                 stroke-width="1.5"
               />
               <path
                 d="M17.125 14.3535C17.125 15.6652 16.0617 16.7285 14.75 16.7285C13.4383 16.7285 12.375 15.6652 12.375 14.3535C12.375 13.0418 13.4383 11.9785 14.75 11.9785C16.0617 11.9785 17.125 13.0418 17.125 14.3535Z"
-                stroke="white"
+                stroke="currentColor"
                 stroke-width="1.5"
               />
               <path
                 d="M7.40625 9.00937L12.5521 6.63477M7.40625 10.9889L12.5521 13.3635"
-                stroke="white"
+                stroke="currentColor"
                 stroke-width="1.5"
               />
             </svg>
@@ -2262,7 +2344,7 @@
                 type="primary"
                 @click="open_SaveToMyDesignes = true"
                 v-else
-                :disabled="loading"
+                :disabled="loading || out_of_credits"
                 style="
                   display: flex;
                   justify-content: center;
@@ -2280,6 +2362,8 @@
             <a-col :span="4" style="padding-left: 5px">
               <a-button
                 @click="toggleLikeRoom"
+                :disabled="loading || out_of_credits"
+
                 style="
                   display: flex;
                   justify-content: center;
@@ -2717,6 +2801,12 @@ export default {
   },
   data() {
     return {
+      showCreditModal:false,
+      creditErrorMessage:'',
+      LoadingMessageButton:false,
+      buid:'',
+      out_of_credits:false,
+
       user: JSON.parse(localStorage.getItem("user")),
       imageLoading: true, // ADD THIS
       SavedToMyDesignes: false,
@@ -2801,7 +2891,7 @@ export default {
   },
 
   methods: {
-     async toggleFavorite(product, product_type) {
+  async toggleFavorite(product, product_type) {
       try {
         const token = localStorage.getItem("token");
         const response = await fetch(
@@ -2826,6 +2916,65 @@ export default {
         console.error("Favorite toggle failed", error);
       }
     },
+     goToPurchaseCredits() {
+      this.showCreditModal = false;
+      this.$router.push("/pricing"); // or your actual route
+    },
+    async startchat_with_buisness_user() {
+            const selectedUser = this.buid
+            this.LoadingMessageButton=true
+            const payload = JSON.stringify({
+                type: 'DM',
+                members: [this.user.id, parseInt(selectedUser.id)],
+                name: `${this.user.first_name} & ${selectedUser.first_name}`,
+            })
+            try {
+                const response = await fetch(`${this.$store.state.root_api}chat/chats`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: 'Token ' + localStorage.getItem('token'),
+                    },
+                    body: payload,
+                })
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`)
+                }
+
+                const data = await response.json()
+                const room = data.room || data
+
+                // if (this.currentUser.user_type === 'User') {
+                
+                if (this.user.user_type === 'User') {
+                    this.$router.push({
+                        path: '/user-dashboard/my-messages',
+                        query: { chatId: data.room_id }
+                    })
+                }
+
+                if (this.user.user_type === 'Business' ) {
+                    this.$router.push({
+                        path: '/my-store/messages',
+                        query: { chatId: data.room_id }
+                    })
+                }
+                  if (this.user.user_type === 'Professional') {
+                    this.$router.push({
+                        path: '/professional-dashboard/my-messages',
+                        query: { chatId: data.room_id }
+                    })
+                }
+                // }
+
+            } catch (error) {
+                console.error('Error creating/finding room:', error)
+            }
+            this.LoadingMessageButton=false
+      },
+
+
     startPolling(jobId) {
       if (!jobId) return Promise.reject("Invalid job id");
 
@@ -3266,11 +3415,22 @@ export default {
           }),
         });
 
-        if (!response.ok) {
+        if (!response.ok && response.status === 402) {
+            this.showCreditModal=true
+            const responseData = await response.json();
+            this.creditErrorMessage=responseData.msg
+              this.buid=responseData.buid
+            this.out_of_credits=true
+            return 
+        }
+
+        if (!response.ok  ) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
 
         const responseData = await response.json();
+        
+
 
         if (responseData.renderer_id) {
           // ⏳ WAIT until polling completes

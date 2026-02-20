@@ -1,20 +1,5 @@
 <template>
-  <!-- {{ isLoading }} -->
-<a-modal
-    v-model:open="isShowInstructionModal"
-    title="Instructions"
-    @ok="closeInstructionModal"
-    :width="500"
-  >
-    <div class="instruction-item" v-for="item in instructionConfig" :key="item">
-      <span class="instruction">{{ item?.key }}</span>
-      <img :src="item?.value" alt="gesture" class="gesture-icon" />
-    </div>
-  </a-modal>
-
-
   <div>
-    
     <!-- ✅ NO-MODEL fallback -->
     <div
       v-if="!CHAIR_MODEL || CHAIR_MODEL === ''"
@@ -29,17 +14,10 @@
 
     <!-- ✅ 3D EDITOR -->
     <div class="editor-wrapper" v-show="CHAIR_MODEL && CHAIR_MODEL !== ''">
-     
       <div class="room-container">
- <img
-        class="absolute top-[5px] right-[10px] md:hidden cursor-pointer z-9 w-[25px]"
-        src="../../../assets/icons/informationIcon.svg"
-        alt="instruction"
-        @click="showInstructionModal"
-        title="see instruction"
-      />
+
         <!-- ✅ LOADING OVERLAY -->
-        <div v-if="internalLoading" class="scanning-loading-overlay">
+        <div v-if="isLoading || modelLoading" class="scanning-loading-overlay">
           <div
             class="loading-screen"
             :style="{ backgroundImage: BASE_ROOT_MAIN_IMAGE ? `url(${BASE_ROOT_MAIN_IMAGE})` : 'none' }"
@@ -47,9 +25,9 @@
             <div class="wave-overlay"></div>
             <div class="loading-text">
               <div class="process-text">
-                {{ internalLoadingText }}
+                {{ modelLoading ? 'Loading 3D Model...' : loadingText }}
               </div>
-              <div v-if="modelLoadProgress > 0 && modelLoadProgress < 100" style="margin-top: 16px;">
+              <div v-if="modelLoading" style="margin-top: 16px;">
                 <div style="width:220px;height:6px;background:rgba(255,255,255,0.2);border-radius:99px;overflow:hidden;">
                   <div :style="{width: modelLoadProgress+'%',height:'100%',background:'#3b82f6',borderRadius:'99px',transition:'width 0.2s ease'}"></div>
                 </div>
@@ -67,7 +45,7 @@
         ></canvas>
         <div ref="threeContainer" class="three-layer"></div>
 
-        <div class="status-badge" v-if="!planeReady && !internalLoading">
+        <div class="status-badge" v-if="!planeReady">
           {{ plyReady && maskReady ? '🔄 Fitting floor plane…' : '⏳ Loading assets…' }}
         </div>
 
@@ -133,7 +111,7 @@
       </div>
 
       <!-- ── BOTTOM ACTION BAR ── -->
-      <!-- <a-row>
+      <a-row>
         <a-col :lg="0" :md="0" :sm="24" :xs="24">
           <label style="display:flex;gap:5px;">
             <span>Furniture Rotation</span>
@@ -141,7 +119,7 @@
             <span style="display:flex;gap:5px;">{{ chairRotation }}°</span>
           </label>
         </a-col>
-      </a-row> -->
+      </a-row>
 
       <div class="flex justify-between items-center py-2 px-2 bg-white w-full gap-2">
         <button
@@ -152,7 +130,7 @@
           Recenter
         </button>
 
-        <!-- <a-row>
+        <a-row>
           <a-col :lg="24" :md="24" :sm="0" :xs="0">
             <label style="display:flex;gap:5px;">
               <span>Furniture Rotation</span>
@@ -160,7 +138,7 @@
               <span style="display:flex;gap:5px;">{{ chairRotation }}°</span>
             </label>
           </a-col>
-        </a-row> -->
+        </a-row>
 
         <a-button
           type="primary"
@@ -181,11 +159,6 @@ import * as THREE from 'three'
 import { PLYLoader } from 'three/examples/jsm/loaders/PLYLoader'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 
-
-import ZoomInIcon from "@/assets/icons/zoomout.png";
-import ZoomOutIcon from "@/assets/icons/zoomin.png";
-import TapToSelect from "@/assets/icons/tap.png";
-import DragToMove from "@/assets/icons/tapAndMove.png";
 export default {
   name: 'itemre_placement_renderer_3d_ptcld',
   props: {
@@ -210,31 +183,9 @@ export default {
 
   data() {
     return {
-
-      isShowInstructionModal: false,
-      instructionConfig: [
-        {
-          key: "Pinch out zoom out",
-          value: ZoomInIcon,
-        },
-        { key: "Pinch in to zoom", value: ZoomOutIcon },
-        {
-          key: "Tap to select",
-          value: TapToSelect,
-        },
-        {
-          key: "Drag to move",
-          value: DragToMove,
-        }
-      ],
-
-
       loadingText: 'Initializing...',
       modelLoadProgress: 0,
       modelLoading: false,
-      // Internal loading state — true from mount until BOTH floor AND chair ready
-      internalLoading: true,
-      internalLoadingText: 'Loading assets…',
       animationFrameId: null,
       roomImage: null,
       threeContainer: null,
@@ -248,11 +199,11 @@ export default {
       planeReady: false,
       chairLoaded: false,
 
-      // ─── DRAG / ROTATE STATE (reactive for UI) ────────────────
+      // ─── DRAG STATE ───────────────────────────────────────────
+      // true while a pointer (mouse or touch) is held down on the chair
       isDraggingRef: false,
-      isRotatingRef: false,
 
-      chairRotation: 0,        // degrees – kept in sync with ring drag
+      chairRotation: 0,
       lastHit: null,
       lastMaskResult: false,
       floorPtCount: 0,
@@ -286,10 +237,9 @@ export default {
       maskCtx: null,
       erodedMask: null,
 
-      // ─── ROTATION RING ────────────────────────────────────────
-      rotationRing: null,
-      rotationArrows: [],
-      showRotationRing: true,
+      // ─── INTERNAL DRAG STATE (not reactive, set in created) ───
+      // isDragging, dragOffset, hitOffsetOnFloor, raycaster, mouse
+      // are assigned in created() via this.xxx = markRaw(...)
     }
   },
 
@@ -298,7 +248,6 @@ export default {
     'insufficient-credits',
     'add-3d-furniture-to-room-start-polling',
     'rendered-comfyui-workflow',
-    'Apply-Changes',
   ],
 
   computed: {
@@ -315,35 +264,18 @@ export default {
   },
 
   created() {
-    // ── Non-reactive internal state ──────────────────────────────
-    this.floorNormal3        = markRaw(new THREE.Vector3(0, 1, 0))
-    this.floorCentroid3      = markRaw(new THREE.Vector3())
-
-    // Drag state
-    this.isDragging          = false
-    this.dragOffset          = markRaw(new THREE.Vector3())
-    this.raycaster           = markRaw(new THREE.Raycaster())
-    this.mouse               = markRaw(new THREE.Vector2())
-
-    // Rotation-ring state
-    this.isRotating          = false
-    this.rotationStartAngle  = 0
-    this.rotationStartMouseX = 0
-
-    // ── Two-finger vertical swipe → rotate (mobile only) ─────
-    // We track exactly 2 active pointer IDs. While both are held down,
-    // vertical movement of their average Y position drives Y rotation.
-    this.twoFingerPointers   = new Map()  // pointerId → clientY
-    this.twoFingerStartAngle = 0          // chair.rotation.y when gesture began
-    this.twoFingerStartAvgY  = 0          // avg clientY of both fingers at start
-    this.isTwoFingerRotating = false
+    this.floorNormal3   = markRaw(new THREE.Vector3(0, 1, 0))
+    this.floorCentroid3 = markRaw(new THREE.Vector3())
+    this.dragOffset     = markRaw(new THREE.Vector3())   // world-space grab offset
+    this.raycaster      = markRaw(new THREE.Raycaster())
+    this.mouse          = markRaw(new THREE.Vector2())
+    this.isDragging     = false   // internal (non-reactive) flag
   },
 
   mounted() {
-    
     this.$nextTick(() => {
-      this.roomImage         = this.$refs.roomImage
-      this.threeContainer    = this.$refs.threeContainer
+      this.roomImage        = this.$refs.roomImage
+      this.threeContainer   = this.$refs.threeContainer
       this.maskOverlayCanvas = this.$refs.maskOverlayCanvas
 
       if (this.roomImage) {
@@ -355,18 +287,9 @@ export default {
     })
   },
 
-  beforeUnmount() {
-    this.cleanup()
-  },
-
   // ─────────────────────────────────────────────────────────────
   methods: {
- showInstructionModal() {
-      this.isShowInstructionModal = true;
-    },
-    closeInstructionModal() {
-      this.isShowInstructionModal = false;
-    },
+
     // ── HELPERS ─────────────────────────────────────────────────
 
     resolveModelUrl(url) {
@@ -376,6 +299,11 @@ export default {
       return `${base}${url}`
     },
 
+    /**
+     * Convert a DOM pointer event OR a Touch object into normalised NDC
+     * coordinates [-1, 1] that THREE.Raycaster understands.
+     * Also returns raw canvas-space {sx, sy} for mask checks.
+     */
     _eventToNDC(clientX, clientY) {
       const el   = this.renderer.domElement
       const rect = el.getBoundingClientRect()
@@ -389,11 +317,17 @@ export default {
       }
     },
 
+    /**
+     * Extract {clientX, clientY} from either a MouseEvent or a TouchEvent.
+     * Returns null when there are no active touches.
+     */
     _getClient(event) {
-      if (event.touches && event.touches.length > 0)
+      if (event.touches && event.touches.length > 0) {
         return { clientX: event.touches[0].clientX, clientY: event.touches[0].clientY }
-      if (event.changedTouches && event.changedTouches.length > 0)
+      }
+      if (event.changedTouches && event.changedTouches.length > 0) {
         return { clientX: event.changedTouches[0].clientX, clientY: event.changedTouches[0].clientY }
+      }
       return { clientX: event.clientX, clientY: event.clientY }
     },
 
@@ -402,13 +336,8 @@ export default {
     initThree() {
       if (this.renderer) return
 
-      // Signal parent and show internal overlay immediately
-      this.$emit('update:isLoading', true)
-      this.internalLoading     = true
-      this.internalLoadingText = 'Loading room assets…'
-
-      this.roomImage         = this.$refs.roomImage
-      this.threeContainer    = this.$refs.threeContainer
+      this.roomImage        = this.$refs.roomImage
+      this.threeContainer   = this.$refs.threeContainer
       this.maskOverlayCanvas = this.$refs.maskOverlayCanvas
 
       if (!this.roomImage || !this.threeContainer) return
@@ -487,14 +416,15 @@ export default {
       this.loadChair()
       this.animate()
 
-      // ── POINTER EVENTS ───────────────────────────────────────
+      // ── POINTER / TOUCH EVENTS ───────────────────────────────
+      // We register ONE unified handler for both mouse and touch.
       const el = this.renderer.domElement
-      el.style.touchAction = 'none'
+      el.style.touchAction = 'none'   // prevent browser scroll hijacking
 
-      el.addEventListener('pointerdown',   this.onPointerDown)
-      el.addEventListener('pointermove',   this.onPointerMove)
-      el.addEventListener('pointerup',     this.onPointerUp)
-      el.addEventListener('pointercancel', this.onPointerUp)
+      el.addEventListener('pointerdown',  this.onPointerDown)
+      el.addEventListener('pointermove',  this.onPointerMove)
+      el.addEventListener('pointerup',    this.onPointerUp)
+      el.addEventListener('pointercancel',this.onPointerUp)
 
       window.addEventListener('resize', this.adjustCanvasToAspectRatio)
     },
@@ -523,92 +453,36 @@ export default {
       this.renderer.domElement.style.height = `${cssH}px`
       this.maskOverlayCanvas.style.width    = `${cssW}px`
       this.maskOverlayCanvas.style.height   = `${cssH}px`
-
-      // Refit ring whenever canvas resizes
-      if (this.rotationRing) this._fitRingToCanvas()
     },
 
-    // ── POINTER EVENTS ──────────────────────────────────────────
-    //
-    // Three mutually-exclusive gestures:
-    //   A) Single pointer on ring arrow  → ring-arrow rotation
-    //   B) Single pointer on model body  → drag/translate
-    //   C) Two fingers anywhere (mobile) → two-finger vertical swipe rotation
-    //
-    // (C) is detected via the Pointer Events API: we track all active touch
-    // pointers in this.twoFingerPointers. As soon as a 2nd touch lands we
-    // cancel any in-progress drag/arrow-rotation and start swipe-rotation.
+    // ── POINTER EVENTS (unified mouse + touch via Pointer Events API) ──
 
     onPointerDown(event) {
       if (!this.chair || !this.floorPlaneTHREE) return
 
-      // ── Track all touch pointers for two-finger gesture ─────
-      if (event.pointerType === 'touch') {
-        this.twoFingerPointers.set(event.pointerId, event.clientY)
-
-        // When the 2nd finger lands → switch to two-finger rotation
-        if (this.twoFingerPointers.size === 2) {
-          // Cancel any single-finger action that was in progress
-          this.isDragging    = false
-          this.isDraggingRef = false
-          this.isRotating    = false
-          this.isRotatingRef = false
-
-          // Snapshot start state
-          const vals = Array.from(this.twoFingerPointers.values())
-          this.twoFingerStartAvgY  = (vals[0] + vals[1]) / 2
-          this.twoFingerStartAngle = this.chair.rotation.y
-          this.isTwoFingerRotating = true
-
-          event.preventDefault()
-          return
-        }
-
-        // If a 2-finger gesture is already running, just update and return
-        if (this.isTwoFingerRotating) {
-          event.preventDefault()
-          return
-        }
-      }
-
-      // ── Single-pointer path (mouse or first touch finger) ────
-      // Block if a 2-finger gesture is active
-      if (this.isTwoFingerRotating) return
+      // Only respond to the first finger / left mouse button
+      if (event.pointerType === 'touch' && event.isPrimary === false) return
 
       const { clientX, clientY } = event
       const { ndcX, ndcY } = this._eventToNDC(clientX, clientY)
+
       this.mouse.set(ndcX, ndcY)
       this.raycaster.setFromCamera(this.mouse, this.camera)
 
-      // 1. Check rotation ring arrows first
-      if (this.rotationRing && this.showRotationRing) {
-        const arrowHits = this.raycaster.intersectObject(this.rotationRing, true)
-        const arrowHit  = arrowHits.find(h => h.object.userData.isRotationArrow)
-
-        if (arrowHit) {
-          const visMesh = arrowHit.object.userData.visMesh
-          if (visMesh) visMesh.material.color.setHex(0xff6600)
-
-          this.isRotating          = true
-          this.isRotatingRef       = true
-          this.rotationStartAngle  = this.chair.rotation.y
-          this.rotationStartMouseX = ndcX
-
-          this.renderer.domElement.setPointerCapture(event.pointerId)
-          event.preventDefault()
-          return
-        }
-      }
-
-      // 2. Check model body for dragging
+      // 1. Did the ray hit the chair?
       const hits = this.raycaster.intersectObject(this.chair, true)
       if (hits.length === 0) return
 
+      // 2. Find where on the floor plane the same ray lands
+      //    (hide chair first so it doesn't occlude the floor mesh)
       this.chair.visible = false
       const floorHit = this.raycastFloor()
       this.chair.visible = true
       if (!floorHit) return
 
+      // 3. Compute the grab offset: difference between the chair's XZ
+      //    position and where the floor ray landed.
+      //    This keeps the chair exactly under the grab point forever.
       this.dragOffset.set(
         this.chair.position.x - floorHit.x,
         0,
@@ -616,144 +490,67 @@ export default {
       )
 
       this.isDragging    = true
-      this.isDraggingRef = true
+      this.isDraggingRef = true   // reactive – for UI hints
 
+      // Capture pointer so we receive move/up even outside the canvas
       this.renderer.domElement.setPointerCapture(event.pointerId)
+
       event.preventDefault()
     },
 
     onPointerMove(event) {
-      // ── Two-finger rotation (mobile) ─────────────────────────
-      if (event.pointerType === 'touch' && this.isTwoFingerRotating) {
-        if (!this.twoFingerPointers.has(event.pointerId)) return
-
-        // Update the moved finger's Y
-        this.twoFingerPointers.set(event.pointerId, event.clientY)
-
-        if (this.twoFingerPointers.size === 2) {
-          const vals   = Array.from(this.twoFingerPointers.values())
-          const avgY   = (vals[0] + vals[1]) / 2
-          const deltaY = avgY - this.twoFingerStartAvgY
-
-          // Sensitivity: dragging the full canvas height (screenH px) = 360°
-          const screenH  = this.renderer.domElement.clientHeight || window.innerHeight
-          const deltaRad = (deltaY / screenH) * Math.PI * 2   // ↓ swipe = positive rotation
-
-          const newRotY = this.twoFingerStartAngle + deltaRad
-          this.chair.rotation.y = newRotY
-          this.chairRotation = ((THREE.MathUtils.radToDeg(newRotY) % 360) + 360) % 360
-          this._snapRingToChair()
-        }
-
-        event.preventDefault()
-        return
-      }
-
-      // ── Single-pointer path ──────────────────────────────────
+      if (!this.isDragging || !this.chair || !this.floorPlaneTHREE) return
       if (event.pointerType === 'touch' && event.isPrimary === false) return
-      if (!this.isDragging && !this.isRotating) return
 
       const { clientX, clientY } = event
       const { ndcX, ndcY, sx, sy } = this._eventToNDC(clientX, clientY)
+
       this.mouse.set(ndcX, ndcY)
+      this.raycaster.setFromCamera(this.mouse, this.camera)
 
-      // Arrow rotation
-      if (this.isRotating) {
-        const deltaX  = ndcX - this.rotationStartMouseX
-        const newRotY = this.rotationStartAngle + deltaX * Math.PI * 2
-        this.chair.rotation.y = newRotY
-        this.chairRotation = ((THREE.MathUtils.radToDeg(newRotY) % 360) + 360) % 360
-        this._snapRingToChair()
-        event.preventDefault()
-        return
+      // Hide chair so raycast hits the floor plane, not the chair mesh
+      this.chair.visible = false
+      const floorHit = this.raycastFloor()
+      this.chair.visible = true
+      if (!floorHit) return
+
+      // Optional mask debug info
+      this.lastHit = {
+        x: floorHit.x.toFixed(3),
+        y: floorHit.y.toFixed(3),
+        z: floorHit.z.toFixed(3),
+      }
+      this.lastMaskResult = this.isOnFloorMask(sx, sy)
+
+      // Apply the grab offset so the model sticks to the grab point
+      const newX = floorHit.x + this.dragOffset.x
+      const newZ = floorHit.z + this.dragOffset.z
+
+      // Recompute Y from the fitted floor plane equation at (newX, newZ)
+      const n = this.floorNormal3
+      const d = this.floorPlaneTHREE.constant
+      let newY = this.floorCentroid3.y
+      if (Math.abs(n.y) > 1e-6) {
+        newY = (-d - n.x * newX - n.z * newZ) / n.y
       }
 
-      // Model drag
-      if (this.isDragging) {
-        this.raycaster.setFromCamera(this.mouse, this.camera)
+      this.chair.position.set(newX, newY + this.chairHalfH * n.y, newZ)
+      this.chair.position.addScaledVector(n, this.chairHalfH)
+      this.snapLightToChair()
 
-        this.chair.visible = false
-        const floorHit = this.raycastFloor()
-        this.chair.visible = true
-        if (!floorHit) return
-
-        this.lastHit = {
-          x: floorHit.x.toFixed(3),
-          y: floorHit.y.toFixed(3),
-          z: floorHit.z.toFixed(3),
-        }
-        this.lastMaskResult = this.isOnFloorMask(sx, sy)
-
-        const newX = floorHit.x + this.dragOffset.x
-        const newZ = floorHit.z + this.dragOffset.z
-
-        const n = this.floorNormal3
-        const d = this.floorPlaneTHREE.constant
-        let newY = this.floorCentroid3.y
-        if (Math.abs(n.y) > 1e-6) {
-          newY = (-d - n.x * newX - n.z * newZ) / n.y
-        }
-
-        this.chair.position.set(newX, newY + this.chairHalfH * n.y, newZ)
-        this.chair.position.addScaledVector(n, this.chairHalfH)
-        this._snapRingToChair()
-        this.snapLightToChair()
-
-        event.preventDefault()
-      }
+      event.preventDefault()
     },
 
     onPointerUp(event) {
-      // ── Two-finger gesture cleanup ───────────────────────────
-      if (event.pointerType === 'touch') {
-        this.twoFingerPointers.delete(event.pointerId)
-
-        // Once fewer than 2 fingers remain, end the gesture
-        if (this.twoFingerPointers.size < 2 && this.isTwoFingerRotating) {
-          this.isTwoFingerRotating = false
-          // Re-snapshot start values with remaining finger so a quick
-          // single-finger follow-up doesn't snap the model
-          return
-        }
-
-        if (this.isTwoFingerRotating) return
-      }
-
-      // Restore highlighted arrow colour
-      if (this.isRotating && this.rotationRing) {
-        this.rotationRing.traverse((child) => {
-          if (child.userData && child.userData.visMesh) {
-            child.userData.visMesh.material.color.setHex(child.userData.originalColor)
-          }
-          if (child.userData && child.userData.isRotationArrow && child.material && child.material.color) {
-            child.material.color.setHex(child.userData.originalColor)
-          }
-        })
-      }
+      if (!this.isDragging) return
+      if (event.pointerType === 'touch' && event.isPrimary === false) return
 
       this.isDragging    = false
       this.isDraggingRef = false
-      this.isRotating    = false
-      this.isRotatingRef = false
 
-      try { this.renderer.domElement.releasePointerCapture(event.pointerId) } catch (_) {}
-    },
-
-    // ── READY CHECK ─────────────────────────────────────────────
-    // Called whenever floor OR chair finishes loading.
-    // Only hides the overlay once BOTH are ready together.
-    _checkAllReady() {
-      if (this.planeReady && this.chairLoaded) {
-        this.internalLoading     = false
-        this.internalLoadingText = ''
-        this.$emit('update:isLoading', false)
-      } else if (!this.chairLoaded && !this.planeReady) {
-        this.internalLoadingText = 'Loading assets…'
-      } else if (!this.planeReady) {
-        this.internalLoadingText = 'Fitting floor plane…'
-      } else {
-        this.internalLoadingText = 'Loading 3D model…'
-      }
+      try {
+        this.renderer.domElement.releasePointerCapture(event.pointerId)
+      } catch (_) {}
     },
 
     // ── FLOOR RAYCAST ───────────────────────────────────────────
@@ -763,161 +560,11 @@ export default {
         const pt = new THREE.Vector3()
         if (this.raycaster.ray.intersectPlane(this.floorPlaneTHREE, pt)) return pt
       }
+      // Fallback: horizontal plane at centroid Y
       const yPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), -this.floorCentroid3.y)
       const pt = new THREE.Vector3()
       if (this.raycaster.ray.intersectPlane(yPlane, pt)) return pt
       return null
-    },
-
-    // ── ROTATION RING ───────────────────────────────────────────
-
-    /**
-     * Builds a thin white circle LINE with 4 flat cyan triangle arrowheads.
-     * Each arrow also gets a large INVISIBLE hit-disc behind it so the
-     * raycaster can detect clicks/touches reliably regardless of camera angle.
-     *
-     * Ring lies flat in XZ (Y=0 local). _snapRingToChair() tilts the whole
-     * group to align with the fitted floor normal.
-     */
-    createRotationRing() {
-      this._disposeRotationRing()
-
-      const ring = new THREE.Group()
-      ring.name  = 'rotationRing'
-
-      const RADIUS       = 1.0
-      const SEGMENTS     = 128
-      const LINE_COLOR   = 0xffffff  // white ring line
-      const ARROW_COLOR  = 0x00e5ff  // cyan arrowheads
-      const ARROW_ANGLES = [0, Math.PI * 0.5, Math.PI, Math.PI * 1.5]
-
-      // ── 1. Thin white circle outline ────────────────────────
-      const circlePoints = []
-      for (let i = 0; i <= SEGMENTS; i++) {
-        const a = (i / SEGMENTS) * Math.PI * 2
-        circlePoints.push(new THREE.Vector3(Math.cos(a) * RADIUS, 0, Math.sin(a) * RADIUS))
-      }
-      const circleLine = new THREE.LineLoop(
-        new THREE.BufferGeometry().setFromPoints(circlePoints),
-        new THREE.LineBasicMaterial({ color: LINE_COLOR, linewidth: 2 }),
-      )
-      ring.add(circleLine)
-
-      // ── 2. Per-arrow: visible triangle + invisible hit disc ──
-      this.rotationArrows = []
-
-      const AW    = 0.13  // arrowhead half-width
-      const AH    = 0.22  // arrowhead length
-      const HIT_R = 0.32  // invisible hit-disc radius (generous for easy touch)
-
-      ARROW_ANGLES.forEach((angle) => {
-        // Clockwise tangent direction in XZ at this angle
-        const tx =  Math.sin(angle)
-        const tz = -Math.cos(angle)
-        // Radially-inward direction (spreads the arrowhead base)
-        const nx = -Math.cos(angle)
-        const nz = -Math.sin(angle)
-
-        const cx = Math.cos(angle) * RADIUS  // centre X on ring
-        const cz = Math.sin(angle) * RADIUS  // centre Z on ring
-
-        // ── Visible cyan triangle ─────────────────────────────
-        const visGeo = new THREE.BufferGeometry()
-        visGeo.setAttribute('position', new THREE.Float32BufferAttribute([
-          cx + tx * AH,  0, cz + tz * AH,   // tip
-          cx + nx * AW,  0, cz + nz * AW,   // base left
-          cx - nx * AW,  0, cz - nz * AW,   // base right
-        ], 3))
-        visGeo.setIndex([0, 1, 2])
-        visGeo.computeVertexNormals()
-
-        const visMesh = new THREE.Mesh(
-          visGeo,
-          new THREE.MeshBasicMaterial({ color: ARROW_COLOR, side: THREE.DoubleSide }),
-        )
-        // Disable raycasting on the visual mesh — the hit disc handles it
-        visMesh.raycast = () => {}
-        ring.add(visMesh)
-
-        // ── Invisible hit-disc ────────────────────────────────
-        // CircleGeometry lies in XY; rotate -90° around X to lay flat in XZ.
-        // This gives a fat, camera-ray-friendly hit target around each arrow.
-        const hitMesh = new THREE.Mesh(
-          new THREE.CircleGeometry(HIT_R, 20),
-          new THREE.MeshBasicMaterial({
-            transparent: true,
-            opacity:     0,           // fully invisible
-            side:        THREE.DoubleSide,
-            depthWrite:  false,
-          }),
-        )
-        hitMesh.rotation.x  = -Math.PI / 2   // XY → XZ
-        hitMesh.position.set(cx, 0.002, cz)  // tiny Y lift avoids z-fighting
-        hitMesh.userData = {
-          isRotationArrow: true,
-          originalColor:   ARROW_COLOR,
-          visMesh,                    // ref to highlight the visible arrow on drag
-        }
-        ring.add(hitMesh)
-        this.rotationArrows.push(hitMesh)  // raycaster targets these
-      })
-
-      ring.visible      = this.showRotationRing
-      this.rotationRing = markRaw(ring)
-      this.scene.add(ring)
-    },
-
-    /** Snap ring position + tilt to match floor normal under the chair. */
-    _snapRingToChair() {
-      if (!this.rotationRing || !this.chair) return
-
-      // Sit just above the floor surface to avoid z-fighting
-      this.rotationRing.position.copy(this.chair.position)
-      this.rotationRing.position.addScaledVector(this.floorNormal3, 0.012)
-
-      // Tilt the flat XZ ring so it aligns with the actual floor plane normal
-      const worldUp = new THREE.Vector3(0, 1, 0)
-      const fn      = this.floorNormal3.clone().normalize()
-      const tiltQ   = new THREE.Quaternion().setFromUnitVectors(worldUp, fn)
-      this.rotationRing.quaternion.copy(tiltQ)
-
-      this._fitRingToCanvas()
-    },
-
-    /**
-     * Scale the ring group so the circle appears roughly the same
-     * pixel size regardless of how far away the model is.
-     * We project the chair centre to screen space and compute a
-     * scale that makes the ring diameter ≈ 110 % of the model's
-     * screen-space bounding width, similar to the reference UI.
-     */
-    _fitRingToCanvas() {
-      if (!this.rotationRing || !this.renderer || !this.chair || !this.camera) return
-
-      // Project chair world position to NDC, then derive a world-space scale
-      // that makes the ring fill a sensible portion of the view.
-      //
-      // Strategy: measure the model's approximate world-space footprint width
-      // (TARGET_DIMS.width or fallback) and set ring radius to 60 % larger.
-      let footprintHalf = 0.6   // fallback half-width in world units
-      if (this.TARGET_DIMS && this.TARGET_DIMS.width) {
-        footprintHalf = (parseFloat(this.TARGET_DIMS.width) / 2) * 1.35
-      }
-
-      // Ring geometry was built with radius = 1.0, so scale = desired radius
-      const desiredRadius = Math.max(0.25, footprintHalf)
-      this.rotationRing.scale.setScalar(desiredRadius)
-    },
-
-    _disposeRotationRing() {
-      if (!this.rotationRing) return
-      this.scene.remove(this.rotationRing)
-      this.rotationRing.traverse((child) => {
-        if (child.geometry) child.geometry.dispose()
-        if (child.material) child.material.dispose()
-      })
-      this.rotationRing  = null
-      this.rotationArrows = []
     },
 
     // ── CHAIR LOAD / RELOAD ─────────────────────────────────────
@@ -925,16 +572,9 @@ export default {
     reloadChair() {
       if (!this.scene) { console.warn('⚠️ reloadChair: scene not ready'); return }
 
-      this.isDragging          = false
-      this.isDraggingRef       = false
-      this.isRotating          = false
-      this.isRotatingRef       = false
-      this.chairLoaded         = false
-      this.internalLoading     = true
-      this.internalLoadingText = 'Loading 3D model…'
-
-      // Remove old ring
-      this._disposeRotationRing()
+      this.isDragging    = false
+      this.isDraggingRef = false
+      this.chairLoaded   = false
 
       if (this.chair) {
         this.scene.remove(this.chair)
@@ -989,29 +629,22 @@ export default {
           innerMesh.position.y -= scaledBox.min.y
           innerMesh.updateMatrixWorld(true)
 
-          this.chairHalfH        = 0.001
-          this.chair             = markRaw(pivotGroup)
-          this.chairLoaded       = true
+          this.chairHalfH = 0.001
+          this.chair      = markRaw(pivotGroup)
+          this.chairLoaded = true
           this.modelLoadProgress = 100
           this.modelLoading      = false
 
-          if (this.planeReady) {
-            this.placeChairOnFloor()
-            this.createRotationRing()
-            this._snapRingToChair()
-          }
-          this._checkAllReady()
+          if (this.planeReady) this.placeChairOnFloor()
         },
         xhr => { if (xhr.total > 0) this.modelLoadProgress = Math.round((xhr.loaded / xhr.total) * 100) },
-        err => { console.error('❌ Chair reload failed:', err); this.modelLoading = false; this._checkAllReady() },
+        err => { console.error('❌ Chair reload failed:', err); this.modelLoading = false },
       )
     },
 
     loadChair() {
-      const modelUrl = this.resolveModelUrl(this.CHAIR_MODEL)
-      if (!modelUrl) { console.warn('⚠️ loadChair: no model URL'); return }
       new GLTFLoader().load(
-        modelUrl,
+        this.CHAIR_MODEL,
         (gltf) => {
           const innerMesh = gltf.scene
           innerMesh.traverse(n => { if (n.isMesh) { n.castShadow = true; n.receiveShadow = true } })
@@ -1019,6 +652,10 @@ export default {
           innerMesh.rotation.set(0, 0, 0)
           innerMesh.scale.set(1, 1, 1)
           innerMesh.updateMatrixWorld(true)
+
+          const rawBox  = new THREE.Box3().setFromObject(innerMesh)
+          const rawSize = new THREE.Vector3()
+          rawBox.getSize(rawSize)
 
           const flippedBox  = new THREE.Box3().setFromObject(innerMesh)
           const flippedSize = new THREE.Vector3()
@@ -1050,13 +687,12 @@ export default {
 
           if (this.planeReady) {
             this.placeChairOnFloor()
-            this.createRotationRing()
-            this._snapRingToChair()
+            this.loadingProxy = false
+            this.loadingText  = ''
           }
-          this._checkAllReady()
         },
         xhr => { if (xhr.total > 0) console.log(`Loading: ${Math.round((xhr.loaded / xhr.total) * 100)}%`) },
-        err => { console.error('❌ Chair load failed:', err); this._checkAllReady() },
+        err => { console.error('❌ Chair load failed:', err) },
       )
     },
 
@@ -1084,7 +720,6 @@ export default {
       if (!this.chair || !this.planeReady) return
       this.chairRotation = 0
       this.placeChairOnFloor(this.floorCentroid3.x, this.floorCentroid3.z)
-      if (this.rotationRing) this._snapRingToChair()
     },
 
     alignChairToFloor() {
@@ -1097,10 +732,7 @@ export default {
     },
 
     updateChairRotation() {
-      if (this.chair && this.planeReady) {
-        this.alignChairToFloor()
-        if (this.rotationRing) this._snapRingToChair()
-      }
+      if (this.chair && this.planeReady) this.alignChairToFloor()
     },
 
     snapLightToChair() {
@@ -1130,14 +762,12 @@ export default {
         for (let i = 0; i < this.CAM_IMG_W * this.CAM_IMG_H; i++) binary[i] = raw[i * 4] > 127 ? 1 : 0
         this.erodedMask = this.erodeBinaryMask(binary, this.CAM_IMG_W, this.CAM_IMG_H, this.MASK_ERODE_PX)
         this.maskReady  = true
-        this.internalLoadingText = 'Analysing floor…'
         if (this.debugMask) this.drawMaskOverlay()
         this.tryComputeFloor()
       }
       img.onerror = () => {
         this.erodedMask = new Uint8Array(this.CAM_IMG_W * this.CAM_IMG_H).fill(1)
         this.maskReady  = true
-        this.internalLoadingText = 'Analysing floor…'
         this.tryComputeFloor()
       }
     },
@@ -1192,7 +822,6 @@ export default {
         this.pointCloudObj.visible = this.debugPointCloud
         this.scene.add(this.pointCloudObj)
         this.plyReady = true
-        this.internalLoadingText = 'Fitting floor plane…'
         this.tryComputeFloor()
       })
     },
@@ -1297,11 +926,9 @@ export default {
 
       if (this.chair) {
         this.placeChairOnFloor()
-        // Create ring now that the floor is known
-        this.createRotationRing()
-        this._snapRingToChair()
+        this.loadingProxy = false
+        this.loadingText  = ''
       }
-      this._checkAllReady()
     },
 
     buildShadowReceiver() {
@@ -1488,9 +1115,6 @@ export default {
       }
       window.removeEventListener('resize', this.adjustCanvasToAspectRatio)
 
-      // Dispose ring
-      this._disposeRotationRing()
-
       if (this.renderer) {
         this.renderer.dispose()
         if (this.renderer.domElement?.parentNode) this.renderer.domElement.parentNode.removeChild(this.renderer.domElement)
@@ -1507,8 +1131,6 @@ export default {
       this.sofaSpotLight=null; this.sofaSpotTarget=null
       this.planeReady=false; this.chairLoaded=false; this.maskReady=false
       this.plyReady=false; this.isDragging=false; this.isDraggingRef=false
-      this.isRotating=false; this.isRotatingRef=false
-      this.isTwoFingerRotating=false; this.twoFingerPointers.clear()
       this.floorPlaneTHREE=null
       this.floorNormal3   = markRaw(new THREE.Vector3(0,1,0))
       this.floorCentroid3 = markRaw(new THREE.Vector3())
@@ -1560,6 +1182,7 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+  /* gap: 12px; */
   padding: 12px 0;
   min-height: 100%;
 }

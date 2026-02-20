@@ -1,91 +1,4 @@
 <template>
-  <!-- show Rendering Failed Model  -->
-  <a-modal
-    v-model:open="showFailedRenderingModel"
-    title=""
-    centered
-    width="380px"
-    footer=""
-  >
-    <div style="text-align: center; padding: 10px; border-radius: 12px">
-      <!-- Icon wrapper -->
-      <div
-        style="
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 70px;
-          height: 70px;
-          margin: 0 auto 18px auto;
-          border-radius: 50%;
-          background: rgba(59, 99, 251, 0.12);
-        "
-      >
-        <svg
-          width="34"
-          height="34"
-          viewBox="0 0 20 20"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            fill-rule="evenodd"
-            clip-rule="evenodd"
-            d="M10 0C4.477 0 0 4.477 0 10C0 15.523 4.477 20 10 20C15.523 20 20 15.523 20 10C20 4.477 15.523 0 10 0ZM10 1C10 3.38695 9.05179 5.67613 7.36396 7.36396C5.67613 9.05179 3.38695 10 1 10C3.38695 10 5.67613 10.9482 7.36396 12.636C9.05179 14.3239 10 16.6131 10 19C10 16.6131 10.9482 14.3239 12.636 12.636C14.3239 10.9482 16.6131 10 19 10C16.6131 10 14.3239 9.05179 12.636 7.36396C10.9482 5.67613 10 3.38695 10 1Z"
-            fill="#3B63FB"
-          />
-        </svg>
-      </div>
-
-      <!-- Heading -->
-      <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 10px">
-        Failed Rendering 
-      </h2>
-
-      <!-- Message -->
-      <p
-        style="
-          font-size: 15px;
-          line-height: 1.5;
-          color: #555;
-          margin-bottom: 25px;
-        "
-      >
-        {{ failure_reason }}
-      </p>
-      <!-- CTA button -->
-      <!-- <a-button
-        v-if="currentUser.user_type !== 'User'"
-        type="primary"
-        block
-        size="large"
-        style="height: 46px; font-size: 16px; border-radius: 8px"
-        @click="goToPurchaseCredits"
-      >
-        Purchase Credits
-      </a-button>
-
-      <a-button
-        v-else
-        type="primary"
-        block
-        size="large"
-        :loading="LoadingMessageButton"
-        style="
-          height: 46px;
-          font-size: 16px;
-          border-radius: 8px;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        "
-        @click="startchat_with_buisness_user"
-      >
-        <MessageOutlined style="font-size: 16px" />
-        Message Business
-      </a-button> -->
-    </div>
-  </a-modal>
   <!-- Purchase Credits Modal -->
   <a-modal
     v-model:open="showCreditModal"
@@ -142,10 +55,9 @@
       </p>
 
       <!-- CTA button -->
-
+      
       <!-- CTA button -->
-      <a-button
-        v-if="currentUser.user_type !== 'User'"
+      <a-button v-if="currentUser.user_type!=='User'"
         type="primary"
         block
         size="large"
@@ -154,35 +66,20 @@
       >
         Purchase Credits
       </a-button>
-
-      <a-button
-        v-else
+      
+      <a-button v-else
         type="primary"
         block
         size="large"
         :loading="LoadingMessageButton"
-        style="
-          height: 46px;
-          font-size: 16px;
-          border-radius: 8px;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        "
+        style="height: 46px; font-size: 16px; border-radius: 8px; display: flex;justify-content: center;align-items: center;"
         @click="startchat_with_buisness_user"
       >
-        <MessageOutlined style="font-size: 16px" />
-        Message Business
+        <MessageOutlined style="font-size: 16px;"/>
+    Message Business
       </a-button>
     </div>
   </a-modal>
-
- <PlanUpgradeModal 
-  :visible="showPlanUpgradeModal" 
-  @update:visible="handlePlanUpgradeModalClose"
-  @upgrade="handlePlanUpgrade"
-/>
-
 
   <!-- Walls Drawer -->
   <a-drawer
@@ -652,15 +549,6 @@ Switch Furniture</a-button> -->
         </a-col>
       </a-row>
     </div>
-<div style="display: flex; justify-content: center; padding: 16px 0;">
-    <a-pagination
-      :current="Math.floor(history_current_offset / history_limit) + 1"
-      :total="history_total_count"
-      :pageSize="history_limit"
-      :showSizeChanger="false"
-      @change="(page) => fetchUserHistoryRooms((page - 1) * history_limit)"
-    />
-  </div>
 
     <!-- Examples -->
     <p class="history-label">Use an example room</p>
@@ -802,7 +690,7 @@ Switch Furniture</a-button> -->
           class="category-section"
           v-if="active_tab_image === 'item_replacement'"
         >
-          <div class="category-tabs" style="padding-bottom: 5px">
+          <div class="category-tabs" style="padding-bottom:5px">
             <div
               :class="
                 select_replace === 'All'
@@ -1152,16 +1040,16 @@ Switch Furniture</a-button> -->
               !(current_tab === 'image' && active_tab_image === 'home_design')
             "
           > -->
-          <!-- Left: Share section -->
-          <!-- <div class="flex items-center gap-2">
+            <!-- Left: Share section -->
+            <!-- <div class="flex items-center gap-2">
               <span class="text-[16px] text-gray-700">Share on social:</span>
               <img src="/whatsapp.svg" alt="Whatsapp" class="w-5 h-5" />
               <img src="/logos_facebook.svg" alt="Facebook" class="w-5 h-5" />
               <img src="/instagram.svg" alt="Instagram" class="w-5 h-5" />
             </div> -->
 
-          <!-- // Middle: Buttons  -->
-          <!-- <div class="flex items-center gap-3">
+            <!-- // Middle: Buttons  -->
+            <!-- <div class="flex items-center gap-3">
               
               <button
                 class="border-none bg-[#f9f9f9] px-3 py-1.5 rounded-md flex items-center gap-1.5 cursor-pointer !text-blue-800 !text-[12px] hover:bg-[#eaeaea] transition"
@@ -1188,8 +1076,13 @@ Switch Furniture</a-button> -->
               
             </div> -->
 
-          <!-- Right: Close button -->
-          <!-- <div>
+
+
+
+
+
+            <!-- Right: Close button -->
+            <!-- <div>
     <button 
       class="p-0 outline-none m-0 cursor-pointer" 
       @click="onClose_drawer_modal"
@@ -1282,7 +1175,9 @@ Switch Furniture</a-button> -->
               @handle_removal_completed="fetchRoom()"
               @furniture-switching-started="furniture_Switching_started"
               @furniture-switched="furniture_Switched"
-              @insufficient-credits="throw_Insufficient_credits"
+
+                  @insufficient-credits="throw_Insufficient_credits"
+
             />
             <!-- @redetect-objects-room="fetch_redetect_ObjectsBinary_Masks" -->
             <!-- ceiling light renderer -->
@@ -1310,7 +1205,8 @@ Switch Furniture</a-button> -->
               :depthMask="depthMask"
               :key="canvasKey"
               @magentic-lights-added="magneticLightsMearjed"
-              @insufficient-credits="throw_Insufficient_credits"
+                @insufficient-credits="throw_Insufficient_credits"
+
               @Apply-Changes="ApplyChanges"
               ref="canvas_sunk_magnetic_lights_render"
             />
@@ -1371,14 +1267,15 @@ Switch Furniture</a-button> -->
 
             <!-- glbUrl="http://127.0.0.1:8000/media/products/3d_models/046-cp7.glb" -->
             <!-- {{ floor_3d_model_grid }} -->
-            <!-- {{ canvasLoading }} -->
-            <!-- <items_replacement_renderer
+              <!-- {{ canvasLoading }} -->
+            <items_replacement_renderer
               v-if="
                 current_tab == 'image' &&
                 active_tab_image === 'item_replacement' &&
                 select_replace === 'Furniture'
               "
-              @model-transform-updated="handle3DModelTransformUpdate"
+                @model-transform-updated="handle3DModelTransformUpdate"
+
               :glbUrl="item_replacement_renderer_3d_model_url"
               @update:isLoading="StartEndCanvasLoading"
               :isLoading="canvasLoading"
@@ -1402,41 +1299,7 @@ Switch Furniture</a-button> -->
               "
               @Apply-Changes="ApplyChanges"
               @insufficient-credits="throw_Insufficient_credits"
-            /> 
-            -->
-            
-                <items_replacement_renderer
-                  v-if="
-                    current_tab == 'image' &&
-                    active_tab_image === 'item_replacement' &&
-                    select_replace === 'Furniture'
-                  "
-                  ref="floor_item_3d_renderer"
-                  
-                  :key="base_image_url"
-                  :debug="debug"
-                  v-bind="active_room_ptcld_cords"
-                  :isLoading="canvasLoading"
-                  
-                  :TARGET_DIMS="{
-                    width: selected_model_width,
-                    height: selected_model_height,
-                    depth: selected_model_depth,
-                  }"
-                  :BASE_ROOT_MAIN_IMAGE="base_image_url"
-                  :CHAIR_MODEL="item_replacement_renderer_3d_model_url"
-
-                  @model-transform-updated="handle3DModelTransformUpdate"
-                                      @update:isLoading="StartEndCanvasLoading"
-                  @add-3d-furniture-to-room-start-polling="
-                                      updateBaskeImageURL_CANVAS
-                                    "
-                  :product_id="selected_3d_product_model"
-                                    
-                  @Apply-Changes="ApplyChanges"
-                  @insufficient-credits="throw_Insufficient_credits"
-                  >
-                  </items_replacement_renderer>
+            />
 
             <!-- :glbModelUrl="this.$store.state.root_media_api+'/media/3d-Rendered-Models/temp/8a36f84a-39e3-40f3-a194-05c5a46c0c2d/HY-2.0-3D-Textured-model_00023_.glb '" -->
             <a-row v-if="current_tab == '3d'">
@@ -1632,7 +1495,7 @@ Switch Furniture</a-button> -->
               ref="furniture_products_list_mobile"
               @change-3d-model="change3dModel"
             />
-
+            
             <floor
               v-if="
                 current_tab == 'image' &&
@@ -1641,6 +1504,7 @@ Switch Furniture</a-button> -->
               "
               @texture-selected="floorTextureSelected"
               @texture-floor-product-selected="texture_floor_selected"
+              
               ref="floor_products_list_mobile"
               :brand_data="brand_data"
               @floor-see-all="floorSeeAll"
@@ -1666,8 +1530,8 @@ Switch Furniture</a-button> -->
               @product-selected="product_selected_all_tabs_section"
               :brand_data="brand_data"
               @see-all-products="SeeAllProducts"
-              @brand-products="get_all_products_tabs_available"
-            >
+
+              @brand-products="get_all_products_tabs_available"            >
             </fernitures>
             <lights
               v-if="
@@ -1693,18 +1557,11 @@ Switch Furniture</a-button> -->
             "
             :home_design_images="home_design_images"
           />
-
-
           <side_panel_home_design
             :base_image_url="base_image_url"
-  :home_design_access="planDetails?.homedesign || false"
-  :plan_details="planDetails"
-  @home-design-generation-complete="newhome_designes_generated"
-  @insufficient-credits="throw_Insufficient_credits"
-  @show-upgrade-modal="showPlanUpgradeModal = true"
+            @home-design-generation-complete="newhome_designes_generated"
+            @insufficient-credits="throw_Insufficient_credits"
           />
-
-
           <history_panel_home_design
             v-if="current_tab == 'image' && active_tab_image === 'home_design'"
             @home-design-history-clicked="home_design_history_clicked"
@@ -1876,7 +1733,7 @@ Switch Furniture</a-button> -->
                         d="M15.32 7.70C14.48 7.70 13.79 8.39 13.79 9.23V10.77C13.79 11.40 13.66 11.53 13.03 11.53H5.36C4.73 11.53 4.59 11.40 4.59 10.77V9.23C4.59 8.39 3.91 7.70 3.06 7.70C2.21 7.70 1.53 8.39 1.53 9.23C1.53 9.80 1.84 10.30 2.29 10.56V10.77C2.29 12.21 2.29 12.93 2.74 13.38C3.19 13.83 3.92 13.83 5.36 13.83H13.03C14.47 13.83 15.19 13.83 15.64 13.38C16.09 12.93 16.09 12.21 16.09 10.77V10.56C16.55 10.30 16.86 9.80 16.86 9.23C16.86 8.39 16.17 7.70 15.32 7.70Z"
                         stroke="currentColor"
                         stroke-width="1.5"
-                      /></svg >&nbsp; Item Replace
+                      /></svg>&nbsp; Item Replace
                   </div>
                   <div
                     :class="
@@ -1908,7 +1765,7 @@ Switch Furniture</a-button> -->
                         stroke="currentColor"
                         stroke-width="1.5"
                         stroke-linecap="round"
-                      /></svg >&nbsp; Home Design
+                      /></svg>&nbsp; Home Design
                   </div>
                 </div>
 
@@ -2295,7 +2152,8 @@ Switch Furniture</a-button> -->
                       "
                       @texture-selected="floorTextureSelected"
                       ref="floor_products_list"
-                      @texture-floor-product-selected="texture_floor_selected"
+                     @texture-floor-product-selected="texture_floor_selected"
+
                       :brand_data="brand_data"
                       @floor-see-all="floorSeeAll"
                     ></floor>
@@ -2310,6 +2168,7 @@ Switch Furniture</a-button> -->
                       ref="wall_products_list"
                       :brand_data="brand_data"
                       @texture-wall-product-selected="texture_wall_selected"
+
                       @walls-see-all="wallsSeeAll"
                     ></walls>
                     <fernitures
@@ -2346,11 +2205,10 @@ Switch Furniture</a-button> -->
                 >
                   <side_panel_home_design
                     :base_image_url="base_image_url"
-  :home_design_access="planDetails?.homedesign || false"
-  :plan_details="planDetails"
-  @home-design-generation-complete="newhome_designes_generated"
-  @insufficient-credits="throw_Insufficient_credits"
-  @show-upgrade-modal="showPlanUpgradeModal = true"
+                    @home-design-generation-complete="
+                      newhome_designes_generated
+                    "
+                    @insufficient-credits="throw_Insufficient_credits"
                   />
 
                   <!-- main_panel_home_design
@@ -2501,9 +2359,7 @@ Switch Furniture</a-button> -->
                       font-size: 16px;
                     "
                   >
-                    <span style="font-size: 16px; color: #444"
-                      >Share on social:</span
-                    >
+                    <span style="font-size: 16px; color: #444">Share on social:</span>
                     <svg
                       width="20"
                       height="20"
@@ -2962,7 +2818,9 @@ Switch Furniture</a-button> -->
                   @handle_removal_completed="fetchRoom()"
                   @furniture-switching-started="furniture_Switching_started"
                   @furniture-switched="furniture_Switched"
+
                   @insufficient-credits="throw_Insufficient_credits"
+
                 />
                 <!-- @redetect-objects-room="fetch_redetect_ObjectsBinary_Masks" -->
                 <!-- ceiling light renderer -->
@@ -2990,6 +2848,7 @@ Switch Furniture</a-button> -->
                   :depthMask="depthMask"
                   :key="canvasKey"
                   @insufficient-credits="throw_Insufficient_credits"
+
                   @magentic-lights-added="magneticLightsMearjed"
                   @Apply-Changes="ApplyChanges"
                   ref="canvas_sunk_magnetic_lights_render"
@@ -3011,7 +2870,7 @@ Switch Furniture</a-button> -->
                 />
 
                 <!-- glbUrl="http://127.0.0.1:8000/media/products/ceiling_lamp_disk.glb" -->
-                <!-- <ceiling_3d_object_renderer
+                <ceiling_3d_object_renderer
                   v-if="
                     current_tab == 'image' &&
                     active_tab_image === 'item_replacement' &&
@@ -3025,34 +2884,6 @@ Switch Furniture</a-button> -->
                   :roll="ceiling_roll"
                   :pitch="ceiling_pitch"
                   :yaw="ceiling_yaw"
-                  @model-3d-light-added="magneticLightsMearjed"
-                  @Apply-Changes="ApplyChanges"
-                  ref="canvas_ceiling_3d_object_light_renderer"
-                  @insufficient-credits="throw_Insufficient_credits"
-                /> -->
-                <ceiling_3d_object_renderer
-                  v-if="
-                    current_tab == 'image' &&
-                    active_tab_image === 'item_replacement' &&
-                    select_replace === 'Lights' &&
-                    selected_light_type === 'hanging'
-                  "
-                  v-bind="active_room_ptcld_cords"
-
-                  :glbUrl="model_3d_url"
-                  :selectedlightuuid="selectedlightuuid"
-                  :debug="debug"
-                  :baseImageUrl="base_image_url"
-                  :ceilingMaskUrl="this.$store.state.root_media_api+active_room_ptcld_cords.CEILING_MASK"
-                  
-                  :TARGET_DIMS="selected_3dlight_model_diamensions" 
-                  
-                  :roll="ceiling_roll"
-                  :pitch="ceiling_pitch"
-                  :yaw="ceiling_yaw"
-
-                  
-
                   @model-3d-light-added="magneticLightsMearjed"
                   @Apply-Changes="ApplyChanges"
                   ref="canvas_ceiling_3d_object_light_renderer"
@@ -3079,17 +2910,17 @@ Switch Furniture</a-button> -->
 
                 <!-- glbUrl="http://127.0.0.1:8000/media/products/3d_models/046-cp7.glb" -->
                 <!-- {{ floor_3d_model_grid }} -->
-                <!-- <items_replacement_renderer
+                <items_replacement_renderer
                   v-if="
                     current_tab == 'image' &&
                     active_tab_image === 'item_replacement' &&
                     select_replace === 'Furniture'
                   "
                     @model-transform-updated="handle3DModelTransformUpdate"
-                    @update:isLoading="StartEndCanvasLoading"
 
                   :glbUrl="item_replacement_renderer_3d_model_url"
                   :is_resizable="is_resizable"
+                  @update:isLoading="StartEndCanvasLoading"
                   :isLoading="canvasLoading"
                   :product_id="selected_3d_product_model"
                   :modelDimensions="{
@@ -3110,41 +2941,7 @@ Switch Furniture</a-button> -->
                   "
                   @Apply-Changes="ApplyChanges"
                   @insufficient-credits="throw_Insufficient_credits"
-                /> -->
-
-                    
-                <items_replacement_renderer
-                  v-if="
-                    current_tab == 'image' &&
-                    active_tab_image === 'item_replacement' &&
-                    select_replace === 'Furniture'
-                  "
-                  ref="floor_item_3d_renderer"
-                  
-                  :key="base_image_url"
-                  :debug="debug"
-                  v-bind="active_room_ptcld_cords"
-                  :isLoading="canvasLoading"
-                  
-                  :TARGET_DIMS="{
-                    width: selected_model_width,
-                    height: selected_model_height,
-                    depth: selected_model_depth,
-                  }"
-                  :BASE_ROOT_MAIN_IMAGE="base_image_url"
-                  :CHAIR_MODEL="item_replacement_renderer_3d_model_url"
-
-                  @model-transform-updated="handle3DModelTransformUpdate"
-                                      @update:isLoading="StartEndCanvasLoading"
-                  @add-3d-furniture-to-room-start-polling="
-                                      updateBaskeImageURL_CANVAS
-                                    "
-                  :product_id="selected_3d_product_model"
-                                    
-                  @Apply-Changes="ApplyChanges"
-                  @insufficient-credits="throw_Insufficient_credits"
-                  >
-                  </items_replacement_renderer>
+                />
 
                 <!-- :glbModelUrl="this.$store.state.root_media_api+'/media/3d-Rendered-Models/temp/8a36f84a-39e3-40f3-a194-05c5a46c0c2d/HY-2.0-3D-Textured-model_00023_.glb '" -->
                 <a-row v-if="current_tab == '3d'">
@@ -3185,6 +2982,8 @@ Switch Furniture</a-button> -->
                       "
                       :home_design_images="home_design_images"
                     />
+  
+
                   </a-col>
 
                   <a-col :sm="0" :xs="0" :md="8" :lg="8">
@@ -3363,7 +3162,8 @@ import {
   CloudUploadOutlined,
   UserDeleteOutlined,
   SwapOutlined,
-  MessageOutlined,
+          MessageOutlined,
+
 } from "@ant-design/icons-vue";
 import canvas_floor_render from "@/components/update_catalogue/canvas_renderer/canvas_floor_render.vue";
 import canvas_item_remover_render from "@/components/update_catalogue/canvas_renderer/canvas_item_remover_render.vue";
@@ -3394,7 +3194,6 @@ import light_items_bottom_drawer_menu from "@/components/update_catalogue/bottom
 import fetch_all_drawer_component from "@/components/update_catalogue/bottom_drawer_item_components/fetchAllDrawer.vue";
 
 import ai_catalog_item_replacement_3d_products from "@/components/update_catalogue/list_products/item_replacement_3d_products.vue";
-import PlanUpgradeModal from "./PlanUpgradeModal.vue";
 
 export default {
   name: "update_catelogue",
@@ -3402,25 +3201,14 @@ export default {
   data() {
     return {
 
-      history_total_count: 0,
-      history_current_offset: 0,
-      history_limit: 12,
-
-      
-      active_room_ptcld_cords:null,
-      debug:false,
       currentUser:JSON.parse(localStorage.getItem('user')),
       LoadingMessageButton:false,
       buid:null,
       creditErrorMessage: "",
       showCreditModal: false,
-      showFailedRenderingModel:false,
-      failure_reason:'',
-
-      showPlanUpgradeModal: false,
+      
       preserved3DModelTransform: null,
-      planDetails: null,
- 
+
       LockCanvasOperation: false,
       brand: "",
       brand_data: {
@@ -3471,7 +3259,6 @@ export default {
       ceiling_roll: 0,
       ceiling_pitch: 0,
       ceiling_yaw: 0,
-      selected_3dlight_model_diamensions:{ width: 0.5, height: 0.3, depth: 0.5 },
 
       // Room Data
       base_image_url: "",
@@ -3629,19 +3416,10 @@ export default {
   },
 
   async mounted() {
-
-  this.loadBrqandPurchasedPlanDetails();
-  
-
     await this.initializeComponent();
     if (this.$route.query.home_design) {
       this.goto_home_design_show(this.$route.query.home_design);
       // console.log(this.$route.query.home_design)
-    }
-    if((this.$route.query.window_name==='furniture') && (this.$route.query.product_type==='furniture') && this.$route.query.product_id){
-      
-      
-      this.loadProductDetailsAndInitialize()
     }
   },
 
@@ -3654,89 +3432,6 @@ export default {
   },
 
   methods: {
-        
-    // Existing method - REFACTOR IT
-    async loadProductDetails() {
-      try {
-        // const url = `${this.$store.state.root_api}product/api/product-details/${this.product_id}/`;
-        const url = `${this.$store.state.root_api}product/api/product-details/${this.$route.query.product_id}/`;
-        
-        console.log('📡 Fetching from:', url);
-        
-        const token = localStorage.getItem('token');
-        const response = await fetch(url, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Token ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const result = await response.json();
-        
-        if (!result.success || !result.data) {
-          throw new Error('Invalid response format');
-        }
-        
-        const data = result.data;
-        // console.log(data);
-        // debugger
-        return {
-          // model_url: this.$store.state.root_media_api + data['3d_model'],
-          model_url: this.$store.state.root_media_api + data['model_file'],
-
-          is_resizable: data.is_resizable,
-          dimensions: {
-            width: data.dimensions.width,
-            height: data.dimensions.height,
-            depth: data.dimensions.length
-          }
-        };
-        
-      } catch (error) {
-        console.error('❌ Error loading product details:', error);
-        throw error;
-      }
-    },
-    async loadProductDetailsAndInitialize() {
-        try {
-            this.canvasLoading=true
-
-          this.loadingText = 'Loading product details...';
-          
-          const productData = await this.loadProductDetails();
-          
-          if (!productData) {
-            throw new Error('Failed to load product details');
-          }
-          
-          console.log('✅ Product data loaded:', productData);
-          
-          // Set original dimensions (NEVER MODIFY THESE)
-          this.modelDimensions = {
-            width: parseFloat(productData.dimensions.width),
-            height: parseFloat(productData.dimensions.height),
-            depth: parseFloat(productData.dimensions.depth),
-          };
-          
-          console.log('📏 Original dimensions:', this.modelDimensions);
-          
-          this.selected_model_width= this.modelDimensions.width
-          this.selected_model_height=this.modelDimensions.height
-          this.selected_model_depth=this.modelDimensions.depth
-          this.item_replacement_renderer_3d_model_url=productData.model_url;
-          // console.log(this.item_replacement_renderer_3d_model_url);
-          // debugger
-          this.canvasLoading=false
-        } catch (error) {
-          console.error('❌ Failed to load product:', error);
-          this.canvasLoading=false
-        }
-      },
     texture_floor_selected(e){
     this.$router.replace({
               query: {
@@ -3750,124 +3445,76 @@ export default {
 
             
     },
-    texture_wall_selected(e) {
+    texture_wall_selected(e){
       this.$router.replace({
-        query: {
-          ...this.$route.query, // keep existing query params
-          product_type: "wall",
-          product_id: e,
-          window_name: "wall",
-        },
-      });
+              query: {
+                ...this.$route.query, // keep existing query params
+                product_type: "wall",
+                product_id: e,
+              window_name: "wall",
+
+              },
+            });  
+
+
     },
-
-checkHomeDesignAccess() {
-  if (!this.planDetails) {
-    console.warn("Plan details not loaded yet");
-    return false;
-  }
-  
-  return this.planDetails.home_design === true;
-},
-
-    async loadBrqandPurchasedPlanDetails() {
-  try {
-    const url = `${this.$store.state.root_api}subscription/api/get-business-plan-details/${this.$route.query.brand}/`;
-
-    console.log(' Fetching from:', url);
-
-    const token = localStorage.getItem('token');
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Token ${token}`,
-        'Content-Type': 'application/json'
-      }
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const result = await response.json();
-
- 
-    if (result.success && result.data) {
-      this.planDetails = result.data;
-      console.log('✅ Plan details loaded:', this.planDetails);
-    }
-
-    console.log(result)
-
-  } catch (error) {
-    console.error(' Error loading product details:', error);
-    throw error;
-  }
-    },
-
     handle3DModelTransformUpdate(transform) {
-      this.preserved3DModelTransform = transform;
-      console.log("📌 Preserved 3D transform:", transform);
-    },
-    async startchat_with_buisness_user() {
-      const selectedUser = this.buid;
-      this.LoadingMessageButton = true;
-      const payload = JSON.stringify({
-        type: "DM",
-        members: [this.currentUser.id, parseInt(selectedUser.id)],
-        name: `${this.currentUser.first_name} & ${selectedUser.first_name}`,
-      });
-      try {
-        const response = await fetch(
-          `${this.$store.state.root_api}chat/chats`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: "Token " + localStorage.getItem("token"),
-            },
-            body: payload,
-          },
-        );
+    this.preserved3DModelTransform = transform;
+    console.log('📌 Preserved 3D transform:', transform);
+  },
+     async startchat_with_buisness_user() {
+            const selectedUser = this.buid
+            this.LoadingMessageButton=true
+            const payload = JSON.stringify({
+                type: 'DM',
+                members: [this.currentUser.id, parseInt(selectedUser.id)],
+                name: `${this.currentUser.first_name} & ${selectedUser.first_name}`,
+            })
+            try {
+                const response = await fetch(`${this.$store.state.root_api}chat/chats`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: 'Token ' + localStorage.getItem('token'),
+                    },
+                    body: payload,
+                })
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`)
+                }
 
-        const data = await response.json();
-        const room = data.room || data;
+                const data = await response.json()
+                const room = data.room || data
 
-        // if (this.currentUser.user_type === 'User') {
+                // if (this.currentUser.user_type === 'User') {
+                
+                if (this.currentUser.user_type === 'User') {
+                    this.$router.push({
+                        path: '/user-dashboard/my-messages',
+                        query: { chatId: data.room_id }
+                    })
+                }
 
-        if (this.currentUser.user_type === "User") {
-          this.$router.push({
-            path: "/user-dashboard/my-messages",
-            query: { chatId: data.room_id },
-          });
-        }
+                if (this.currentUser.user_type === 'Business' ) {
+                    this.$router.push({
+                        path: '/my-store/messages',
+                        query: { chatId: data.room_id }
+                    })
+                }
+                  if (this.currentUser.user_type === 'Professional') {
+                    this.$router.push({
+                        path: '/professional-dashboard/my-messages',
+                        query: { chatId: data.room_id }
+                    })
+                }
+                // }
 
-        if (this.currentUser.user_type === "Business") {
-          this.$router.push({
-            path: "/my-store/messages",
-            query: { chatId: data.room_id },
-          });
-        }
-        if (this.currentUser.user_type === "Professional") {
-          this.$router.push({
-            path: "/professional-dashboard/my-messages",
-            query: { chatId: data.room_id },
-          });
-        }
-        // }
-      } catch (error) {
-        console.error("Error creating/finding room:", error);
-      }
-      this.LoadingMessageButton = false;
-    },
-
-    handlePlanUpgrade(selectedPlan) {
-      console.log(`User selected to upgrade to: ${selectedPlan}`);
-    },
+            } catch (error) {
+                console.error('Error creating/finding room:', error)
+            }
+            this.LoadingMessageButton=false
+      },
 
     StartEndCanvasLoading(e) {
       this.canvasLoading = e;
@@ -3909,20 +3556,7 @@ checkHomeDesignAccess() {
     toggleSocialShare() {
       this.isCollapsed = !this.isCollapsed;
     },
-    throw_Insufficient_credits(message, buid = null) {
-      // @insufficient-credits="throw_Insufficient_credits"
-      // if(response.status==402){
-      //    const result = await response.json()
-      //    this.$emit('insufficient-credits',result.msg)
-      //  }
-      this.canvasLoading = false;
-      this.processing_generate_is_Loading = false;
-      this.creditErrorMessage = message;
-      this.buid = buid;
-      this.showCreditModal = true;
-    },
-
-    throw_failed_rendering(message) {
+    throw_Insufficient_credits(message,buid=null) {
       // @insufficient-credits="throw_Insufficient_credits"
       // if(response.status==402){
       //    const result = await response.json()
@@ -3930,9 +3564,9 @@ checkHomeDesignAccess() {
       //  }
       this.canvasLoading=false;
       this.processing_generate_is_Loading = false;
-      this.failure_reason = message;
-      
-      this.showFailedRenderingModel = true;
+      this.creditErrorMessage = message;
+      this.buid=buid
+      this.showCreditModal = true;
     },
 
     furniture_Switching_started(e) {
@@ -3960,22 +3594,24 @@ checkHomeDesignAccess() {
       this.brand_furniture_products = e.furniture_products;
       this.brand_lights = e.lights;
 
-      // 👇 ADD THIS CODE HERE 👇
-      if (this.$route.query.window_name === "All") {
-        this.select_replace = "All";
-      }
-      if (this.$route.query.window_name === "furniture") {
-        this.select_replace = "Furniture";
-      }
-      if (this.$route.query.window_name === "floor") {
-        this.select_replace = "Floor";
-      }
-      if (this.$route.query.window_name === "wall") {
-        this.select_replace = "Wall";
-      }
-      if (this.$route.query.window_name === "light") {
-        this.select_replace = "Lights";
-      }
+
+        // 👇 ADD THIS CODE HERE 👇
+        if(this.$route.query.window_name === 'All'){
+          this.select_replace ='All';
+        }
+        if(this.$route.query.window_name === 'furniture'){
+          this.select_replace ='Furniture';
+        }
+        if(this.$route.query.window_name === 'floor'){
+          this.select_replace ='Floor';
+        }
+        if(this.$route.query.window_name === 'wall'){
+          this.select_replace ='Wall';
+        }
+        if(this.$route.query.window_name === 'light'){
+          this.select_replace ='Lights';
+        }
+        
     },
     async rescaleWallMask(e) {
       // 2. FLOOR TEXTURE METHOD (corrected)
@@ -4003,14 +3639,15 @@ checkHomeDesignAccess() {
         if (responseData.error) {
           this.creditErrorMessage = responseData.msg;
           this.showCreditModal = true;
-          this.buid = responseData.buid;
+          this.buid=responseData.buid
 
           return;
         }
 
         if (responseData) {
-          // await this.fetchBinaryWallMasks();
-          // this.forceCanvasUpdate();
+          
+          // await this.fetchBinaryWallMasks(); 
+         // this.forceCanvasUpdate();
           this.startPollingResetWallBinaryMask(responseData?.renderer_id);
           // this.$message.success("Floor texture applied successfully!");
         } else {
@@ -4024,7 +3661,7 @@ checkHomeDesignAccess() {
             "An error occurred while applying the floor texture.",
           () => this.floorTextureSelected(texture_id),
         );
-      }
+      } 
     },
     // ==========================================
     // INITIALIZATION
@@ -4047,6 +3684,7 @@ checkHomeDesignAccess() {
             this.fetch3d_models_generated_by_room(),
           ]);
 
+          
           console.log("✅ Component initialized");
         }
       } catch (error) {
@@ -4260,35 +3898,30 @@ checkHomeDesignAccess() {
     //   }
     // },
     async load_the_fileData(floor_3d_model_grid_url) {
-      this.isLoading = true;
+  this.isLoading = true;
 
-      try {
-        const response = await fetch(floor_3d_model_grid_url);
+  try {
+    const response = await fetch(floor_3d_model_grid_url);
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
 
-        this.floor_3d_model_grid = await response.json();
-
-        // 🔍 DIAGNOSTIC: Log floor dimensions
-        console.log("=== FLOOR DATA LOADED ===");
-        console.log(
-          "Floor plane height:",
-          this.floor_3d_model_grid.floor_plane?.height,
-        );
-        console.log("Floor bounds:", this.floor_3d_model_grid.floor_bounds);
-        console.log(
-          "Camera position:",
-          this.floor_3d_model_grid.camera?.position,
-        );
-        console.log("Full floor data:", this.floor_3d_model_grid);
-      } catch (error) {
-        console.error("Error loading floor data:", error);
-      } finally {
-        this.isLoading = false;
-      }
-    },
+    this.floor_3d_model_grid = await response.json();
+    
+    // 🔍 DIAGNOSTIC: Log floor dimensions
+    console.log('=== FLOOR DATA LOADED ===');
+    console.log('Floor plane height:', this.floor_3d_model_grid.floor_plane?.height);
+    console.log('Floor bounds:', this.floor_3d_model_grid.floor_bounds);
+    console.log('Camera position:', this.floor_3d_model_grid.camera?.position);
+    console.log('Full floor data:', this.floor_3d_model_grid);
+    
+  } catch (error) {
+    console.error('Error loading floor data:', error);
+  } finally {
+    this.isLoading = false;
+  }
+},
 
     startRoomPolling() {
       if (this.roomPollingInterval) {
@@ -4375,31 +4008,6 @@ checkHomeDesignAccess() {
             { length: this.binaryMaskList.length },
             (_, i) => i,
           );
-
-          // this.active_room_ptcld_cords={
-          //       // Camera intrinsics
-          //       CAM_IMG_W: 1600,
-          //       CAM_IMG_H: 1200,
-          //       CAM_FX: 1.3832 * 1600,
-          //       CAM_FY: 1.8443 * 1200,
-          //       CAM_CX: 0.5 * 1600,
-          //       CAM_CY: 0.5 * 1200,
-          //       CAM_Z_SIGN: -1,
-          //       MASK_ERODE_PX: 10,
-
-          //       CAM_FOV_V: 30.0,
-          //       // Asset paths
-          //       POINTCLOUD: 'pointcloud_voxel_0_1m.ply',
-          //       FLOOR_MASK: 'floor_mask.png',
-                
-          //       // Chair target dimensions
-          //       // TARGET_DIMS: { width: 0.63, height: 0.94, depth: 0.57 },
-          //       // BASE_ROOT_MAIN_IMAGE: '/room.jpg',
-          //       // CHAIR_MODEL: 'sofa_1.glb',
-          //     }
-          this.active_room_ptcld_cords=responseData.active_room_ptcld_cords
-          this.active_room_ptcld_cords.POINTCLOUD=this.$store.state.root_media_api+ this.active_room_ptcld_cords.POINTCLOUD
-          this.active_room_ptcld_cords.FLOOR_MASK=this.$store.state.root_media_api+ this.active_room_ptcld_cords.FLOOR_MASK
 
           this.binaryMasks_objects_detected =
             { ...responseData.objects_detected_masks } || {};
@@ -4624,7 +4232,7 @@ checkHomeDesignAccess() {
         if (result.error) {
           this.creditErrorMessage = result.msg;
           this.showCreditModal = true;
-          this.buid = result.buid;
+          this.buid=result.buid
           return;
         }
 
@@ -4761,9 +4369,11 @@ checkHomeDesignAccess() {
         });
         if (responseData.error) {
           this.creditErrorMessage = responseData.msg;
-          this.buid = responseData.buid;
+          this.buid=responseData.buid;
 
-          this.throw_Insufficient_credits(this.creditErrorMessage);
+          this.throw_Insufficient_credits(
+            this.creditErrorMessage
+          );
         }
 
         if (responseData?.renderer_id) {
@@ -4865,15 +4475,13 @@ checkHomeDesignAccess() {
                 "?t=" +
                 Date.now();
 
-              this.forceCanvasUpdate();
+               this.forceCanvasUpdate(); 
               return;
             }
 
-            if (data.status === "Failed") {
+            if (data.status === "failed") {
               this.canvasLoading = false;
-              //  hadller model failed Rendering 
-              
-              this.throw_failed_rendering(data.failure_reason_if_rendering_failed)
+
               this.stopPolling();
               reject("Rendering failed");
               return;
@@ -4903,7 +4511,7 @@ checkHomeDesignAccess() {
       }
     },
 
-    startPollingResetWallBinaryMask(jobId) {
+     startPollingResetWallBinaryMask(jobId) {
       if (!jobId) return Promise.reject("Invalid job id");
 
       this.stopPolling();
@@ -4926,12 +4534,12 @@ checkHomeDesignAccess() {
               //this.stopPolling();
               //resolve(data.finalised_result_wall_processed_image);
               //this.base_image_url =
-              //this.$store.state.root_media_api +
-              //data.finalised_result_wall_processed_image +
-              //"?t=" +
-              //Date.now();
-              // this.fetchBinaryWallMasks();
-
+                //this.$store.state.root_media_api +
+                //data.finalised_result_wall_processed_image +
+                //"?t=" +
+                //Date.now();
+              // this.fetchBinaryWallMasks(); 
+            
               window.location.reload();
               return;
             }
@@ -5008,7 +4616,7 @@ checkHomeDesignAccess() {
         if (responseData.error) {
           this.creditErrorMessage = responseData.msg;
           this.showCreditModal = true;
-          this.buid = responseData.buid;
+          this.buid=responseData.buid
 
           return;
         }
@@ -5029,7 +4637,7 @@ checkHomeDesignAccess() {
         }
       } catch (error) {
         console.error("❌ Wall texture failed:", error);
-        // this.showError("Failed to Apply Wall Texture", error.message);
+        this.showError("Failed to Apply Wall Texture", error.message);
       } finally {
         this.canvasLoading = false;
       }
@@ -5064,7 +4672,7 @@ checkHomeDesignAccess() {
         if (responseData.error) {
           this.creditErrorMessage = responseData.msg;
           this.showCreditModal = true;
-          this.buid = responseData.buid;
+          this.buid=responseData.buid
 
           return;
         }
@@ -5091,7 +4699,7 @@ checkHomeDesignAccess() {
         }
       } catch (error) {
         console.error("❌ Floor texture failed:", error);
-        // this.showError("Failed to Apply Floor Texture", error.message);
+        this.showError("Failed to Apply Floor Texture", error.message);
       } finally {
         this.canvasLoading = false;
       }
@@ -5107,37 +4715,25 @@ checkHomeDesignAccess() {
       this.model_instance_id = "";
     },
 
- selectActiveTab(tab) {
-  // Always switch to the tab first (allow page to show)
-  this.active_tab_image = tab;
-  this.select_replace = 'All';
-  
-  // Then check access and show modal if needed
-  if (tab === 'home_design') {
-    if (!this.checkHomeDesignAccess()) {
-      // Show modal but DON'T block tab switch
-      this.showPlanUpgradeModal = true;
-    }
-  }
-},
+    selectActiveTab(tabName) {
+      this.active_tab_image = tabName;
 
+      if (tabName === "item_replacement") {
+        this.showSelectionButtons = false;
+        this.selectedMasks = [];
+        this.selected_objects_binary_masks = [];
+      }
 
-
- handlePlanUpgradeModalClose(visible) {
-  this.showPlanUpgradeModal = visible;
-  
-  // DON'T redirect or change tab when modal closes
-  // User can stay on home_design page regardless
-},
-
+      this.forceCanvasUpdate();
+    },
 
     selectCategory(category) {
       this.select_replace = category;
 
-      // this.item_replacement_renderer_3d_model_url = "";
-      this.selected_model_width = 0.0;
-      this.selected_model_height = 0.0;
-      this.selected_model_depth = 0.0;
+     this.item_replacement_renderer_3d_model_url ="";
+      this.selected_model_width = 0.00;
+      this.selected_model_height = 0.00;
+      this.selected_model_depth = 0.00;
 
       if (category === "All") {
         this.showSelectionButtons = false;
@@ -5157,81 +4753,94 @@ checkHomeDesignAccess() {
           });
         }
 
-        const query = { ...this.$route.query };
-        delete query.product_id; // ✅ remove it
-        delete query.product_type; // ✅ remove it
-        delete query.selected_light_type; // ✅ remove it
-        this.$router.replace({
-          query: {
-            ...query,
-            window_name: "all",
-          },
-        });
+          
+          const query = { ...this.$route.query };
+          delete query.product_id; // ✅ remove it
+          delete query.product_type; // ✅ remove it
+          delete query.selected_light_type; // ✅ remove it
+          this.$router.replace({
+            query: {
+              ...query,
+              window_name: "all",
+            },
+          });
+            
       } else if (category === "Wall") {
         this.showSelectionButtons = true;
         this.selected_objects_binary_masks = [];
 
-        const query = { ...this.$route.query };
-        delete query.product_id; // ✅ remove it
-        delete query.product_type; // ✅ remove it
-        delete query.selected_light_type; // ✅ remove it
+          
+           
+          const query = { ...this.$route.query };
+          delete query.product_id; // ✅ remove it
+          delete query.product_type; // ✅ remove it
+          delete query.selected_light_type; // ✅ remove it
 
-        this.$router.replace({
-          query: {
-            ...query,
-            window_name: "wall",
-          },
-        });
+
+          this.$router.replace({
+            query: {
+              ...query,
+              window_name: "wall",
+            },
+          });
+            
       } else if (category === "Floor") {
         this.showSelectionButtons = false;
         this.selectedMasks = [];
         this.selected_objects_binary_masks = [];
 
-        const query = { ...this.$route.query };
-        delete query.product_id; // ✅ remove it
-        delete query.product_type; // ✅ remove it
-        delete query.selected_light_type; // ✅ remove it
+          
+           
+          const query = { ...this.$route.query };
+          delete query.product_id; // ✅ remove it
+          delete query.product_type; // ✅ remove it
+          delete query.selected_light_type; // ✅ remove it
 
-        this.$router.replace({
-          query: {
-            ...query,
-            window_name: "floor",
-          },
-        });
+          this.$router.replace({
+            query: {
+              ...query,
+              window_name: "floor",
+            },
+          });
+            
       } else if (category === "Lights") {
         this.showSelectionButtons = false;
         this.selectedMasks = [];
         this.selected_objects_binary_masks = [];
 
-        const query = { ...this.$route.query };
-        delete query.product_id; // ✅ remove it
-        delete query.product_type; // ✅ remove it
-        delete query.selected_light_type; // ✅ remove it
+          const query = { ...this.$route.query };
+          delete query.product_id; // ✅ remove it
+          delete query.product_type; // ✅ remove it
+          delete query.selected_light_type; // ✅ remove it
 
-        this.$router.replace({
-          query: {
-            ...query,
-            window_name: "light",
-          },
-        });
+          this.$router.replace({
+            query: {
+              ...query,
+              window_name: "light",
+            },
+          });
+            
       } else if (category === "Furniture") {
-        const query = { ...this.$route.query };
-        delete query.product_id; // ✅ remove it
-        delete query.product_type; // ✅ remove it
-        delete query.selected_light_type; // ✅ remove it
 
-        this.$router.replace({
-          query: {
-            ...query,
-            window_name: "furniture",
-          },
-        });
+          const query = { ...this.$route.query };
+          delete query.product_id; // ✅ remove it
+          delete query.product_type; // ✅ remove it
+          delete query.selected_light_type; // ✅ remove it
+
+          this.$router.replace({
+            query: {
+              ...query,
+              window_name: "furniture",
+            },
+          });
+            
       }
 
       this.forceCanvasUpdate();
     },
 
     switchToFurnitureModeWithCache() {
+      
       this.$nextTick(() => {
         if (this.cachedObjectImages && this.cachedObjectImages.size > 0) {
           this.$message?.destroy();
@@ -5446,8 +5055,7 @@ checkHomeDesignAccess() {
         this.$nextTick(() => {
           if (
             this.select_replace === "Floor" &&
-            (this.$refs.floor_products_list ||
-              this.$refs.floor_products_list_mobile)
+            (this.$refs.floor_products_list || this.$refs.floor_products_list_mobile) 
           ) {
             this.$refs.floor_products_list.selectTexture(e.id);
             this.$refs.floor_products_list_mobile.selectTexture(e.id);
@@ -5458,8 +5066,11 @@ checkHomeDesignAccess() {
                 product_type: "floor",
                 product_id: e.id,
                 window_name: "floor",
+
               },
             });
+
+
           }
         });
       }
@@ -5472,42 +5083,27 @@ checkHomeDesignAccess() {
         this.selected_model_depth = e.depth;
         this.is_resizable = e.is_resizable;
         this.selected_3d_product_model = e.id;
-
+        
         console.log(e);
-        console.log(
-          " >>------------------------------------------> selected_model_width ",
-          this.selected_model_width,
-        );
-        console.log(
-          " >>------------------------------------------> selected_model_height ",
-          this.selected_model_height,
-        );
-        console.log(
-          " >>------------------------------------------> selected_model_depth ",
-          this.selected_model_depth,
-        );
-        console.log(
-          " >>------------------------------------------> selected_3d_product_model ",
-          this.selected_3d_product_model,
-        );
-        console.log(
-          " >>------------------------------------------> is_resizable ",
-          this.is_resizable,
-        );
+        console.log(" >>------------------------------------------> selected_model_width " , this.selected_model_width);
+        console.log(" >>------------------------------------------> selected_model_height " , this.selected_model_height);
+        console.log(" >>------------------------------------------> selected_model_depth " , this.selected_model_depth);
+        console.log(" >>------------------------------------------> selected_3d_product_model " , this.selected_3d_product_model);
+        console.log(" >>------------------------------------------> is_resizable " , this.is_resizable);
 
+       
         this.$nextTick(() => {
           if (
             this.select_replace === "Furniture" &&
-            (this.$refs.furniture_products_list ||
-              this.$refs.furniture_products_list_mobile)
+            (this.$refs.furniture_products_list || this.$refs.furniture_products_list_mobile)
           ) {
-            this.$router.replace({
+          this.$router.replace({
               query: {
                 ...this.$route.query, // keep existing query params
                 product_type: "furniture",
                 product_id: e.id,
               },
-            });
+          });
             // this.item_replacement_renderer_3d_model_url = this.$store.state.root_media_api + e.model_url;
             // console.log(this.item_replacement_renderer_3d_model_url)
             this.$refs.furniture_products_list.updateItemRendering(
@@ -5516,7 +5112,7 @@ checkHomeDesignAccess() {
               e.width,
               e.height,
               e.depth,
-              e.is_resizable,
+              e.is_resizable
             );
             this.$refs.furniture_products_list_mobile.updateItemRendering(
               e.id,
@@ -5524,10 +5120,10 @@ checkHomeDesignAccess() {
               e.width,
               e.height,
               e.depth,
-              e.is_resizable,
+              e.is_resizable
             );
-
-            //  const f={
+            
+            //  const f={   
             //   'width':e.width,
             //   'height':e.height,
             //   'depth':e.depth,
@@ -5547,21 +5143,24 @@ checkHomeDesignAccess() {
             this.current_tab === "image" &&
             this.active_tab_image === "item_replacement" &&
             this.select_replace === "Wall" &&
-            (this.$refs.wall_products_list ||
-              this.$refs.wall_products_list_mobile)
+            (this.$refs.wall_products_list || this.$refs.wall_products_list_mobile)
           ) {
             // console.log(this.$refs)
             this.$refs.wall_products_list.selectTexture(e.id);
             this.$refs.wall_products_list_mobile.selectTexture(e.id);
 
+            
             this.$router.replace({
               query: {
                 ...this.$route.query, // keep existing query params
                 product_type: "wall",
                 product_id: e.id,
-                window_name: "wall",
+              window_name: "wall",
+
               },
             });
+
+
           }
         });
       }
@@ -5569,10 +5168,7 @@ checkHomeDesignAccess() {
       if (e.type === "light") {
         this.selectCategory("Lights");
         this.$nextTick(() => {
-          if (
-            this.select_replace === "Lights" &&
-            (this.$refs.lights_list || this.$refs.lights_list_mobile)
-          ) {
+          if (this.select_replace === "Lights" && (this.$refs.lights_list || this.$refs.lights_list_mobile )) {
             this.$refs.lights_list.updateItemRendering(
               e.id,
               e.light_type,
@@ -5584,14 +5180,17 @@ checkHomeDesignAccess() {
               e.model_url,
             );
 
+              
             this.$router.replace({
               query: {
                 ...this.$route.query, // keep existing query params
                 product_type: "light",
                 product_id: e.id,
                 window_name: "light",
+
               },
             });
+            
           }
         });
       }
@@ -5641,28 +5240,28 @@ checkHomeDesignAccess() {
       }
     },
 
-    async fetchUserHistoryRooms(offset = 0) {
-        try {
-          const limit = 12; // items per page
-          const url = `${this.$store.state.root_api}room/api/user-history-rooms/?limit=${limit}&offset=${offset}`;
-          const response = await this.makeApiRequest(url, {
+    async fetchUserHistoryRooms() {
+      try {
+        const url = `${this.$store.state.root_api}room/api/user-history-rooms/`;
+        const response = await this.makeApiRequest(
+          url,
+          {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
               Authorization: `Token ${localStorage.getItem("token")}`,
             },
-          }, "historyRooms");
+          },
+          "historyRooms",
+        );
 
-          if (response?.results?.data) {
-            this.your_history_change_room = response.results.data;
-            this.history_total_count = response.count;         // total records
-            this.history_current_offset = offset;              // current offset
-            this.history_limit = limit;
-          }
-        } catch (error) {
-          console.error("Failed to fetch history rooms:", error);
+        if (response?.data) {
+          this.your_history_change_room = response.data;
         }
-      },
+      } catch (error) {
+        console.error("Failed to fetch history rooms:", error);
+      }
+    },
 
     goToCatalogue(id) {
       this.openSeeAll_ChangeRoom = false;
@@ -5685,7 +5284,7 @@ checkHomeDesignAccess() {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Token ${localStorage.getItem("token")}`,
+                Authorization: `Token ${localStorage.getItem("token")}`,
             },
           },
           "startTestRoom",
@@ -5757,74 +5356,65 @@ checkHomeDesignAccess() {
       this.processing_generate_is_Loading = true;
     },
 
+
     change3dModel(e) {
-      console.log("🔧 Changing 3D model with dimensions:", e);
-      const width = parseFloat(e.width) ;
-      const height = parseFloat(e.height) ;
-      const depth = parseFloat(e.depth) ;
-      if(width!==0.00 || height !==0.00 || depth!==0.00){
-        // ✅ Parse dimensions safely
-
-        // ✅ Safety check for unrealistic dimensions
-        if (width > 50 || height > 50 || depth > 50) {
-          console.warn("⚠️ Unrealistic dimensions detected:", {
-            width,
-            height,
-            depth,
-          });
-          this.$message.warning("This product has unusual dimensions");
-        }
-
-        console.log("📏 Setting dimensions ------ > :", { width, height, depth });
-        console.log("📏 Setting dimensions:", { width, height, depth });
-
-        // ✅ Set dimensions
-        this.selected_model_width = width;
-        this.selected_model_height = height;
-        this.selected_model_depth = depth;
-
-        this.is_resizable = e.is_resizable;
-        this.selected_3d_product_model = e.model_uuid;
-
-        this.$router.replace({
-          query: {
-            ...this.$route.query, // keep existing query params
-            product_type: "furniture",
-            product_id: e.model_uuid,
-          },
-        });
-
-        // ✅ CRITICAL: Clear the model URL first to force unmount
-          // if(this.item_replacement_renderer_3d_model_url===""){
-          //   this.item_replacement_renderer_3d_model_url = "";
-          //     }
-        // ✅ Then set the new URL on next tick to force remount
-        this.$nextTick(() => {
-          console.log("🎨 Loading model URL:", e.model_url);
-          if(e.model_url!==""){
-            this.item_replacement_renderer_3d_model_url =
-            this.$store.state.root_media_api + e.model_url;
-          }
-          
-        });
+      console.log('🔧 Changing 3D model with dimensions:', e);
+      
+      // ✅ Parse dimensions safely
+      const width = parseFloat(e.width) || 1.0;
+      const height = parseFloat(e.height) || 1.0;
+      const depth = parseFloat(e.depth) || 1.0;
+      
+      // ✅ Safety check for unrealistic dimensions
+      if (width > 50 || height > 50 || depth > 50) {
+        console.warn('⚠️ Unrealistic dimensions detected:', { width, height, depth });
+        this.$message.warning('This product has unusual dimensions');
       }
+      
+      console.log('📏 Setting dimensions ------ > :', { width, height, depth });
+      console.log('📏 Setting dimensions:', { width, height, depth });
+      
+      // ✅ Set dimensions
+      this.selected_model_width = width;
+      this.selected_model_height = height;
+      this.selected_model_depth = depth;
+      this.is_resizable = e.is_resizable;
+      this.selected_3d_product_model = e.model_uuid;
 
+      this.$router.replace({
+              query: {
+                ...this.$route.query, // keep existing query params
+                product_type: "furniture",
+                product_id: e.model_uuid,
+              },
+          });
+
+
+      // ✅ CRITICAL: Clear the model URL first to force unmount
+      this.item_replacement_renderer_3d_model_url = '';
+      
+      // ✅ Then set the new URL on next tick to force remount
+      this.$nextTick(() => {
+        console.log('🎨 Loading model URL:', e.model_url);
+        this.item_replacement_renderer_3d_model_url = this.$store.state.root_media_api + e.model_url;
+      });
     },
 
     // execute3DRederer() {
     //   this.$refs.floor_item_3d_renderer.renderItem();
     // },
-    execute3DRederer() {
-      if (this.$refs.floor_item_3d_renderer) {
-        // Pass preserved state to child before rendering
-        if (this.preserved3DModelTransform) {
-          this.$refs.floor_item_3d_renderer.restoreModelTransform(
-            this.preserved3DModelTransform,
-          );
-        }
-        this.$refs.floor_item_3d_renderer.renderItem();
+     execute3DRederer() {
+    if (this.$refs.floor_item_3d_renderer) {
+      // Pass preserved state to child before rendering
+      if (this.preserved3DModelTransform) {
+        this.$refs.floor_item_3d_renderer.restoreModelTransform(
+          this.preserved3DModelTransform
+        );
       }
-    },
+      this.$refs.floor_item_3d_renderer.renderItem();
+
+    }
+  },
     executeswitchFurniture() {
       console.log("execute switch furniture");
       this.$refs.floor_item_3d_renderer.switchFurniture();
@@ -5868,16 +5458,16 @@ smoothMobileScrolltoTop(){
       this.selectedlightuuid = e.uuid;
       this.selected_light_type = e.type;
       this.model_3d_url = this.$store.state.root_media_api + e.model_3d_url;
-      this.selected_3dlight_model_diamensions=e.model_diamensions
+
 
       this.$router.replace({
-        query: {
-          ...this.$route.query, // keep existing query params
-          product_type: "light",
-          selected_light_type: e.type,
-          product_id: e.uuid,
-        },
-      });
+              query: {
+                ...this.$route.query, // keep existing query params
+                product_type: "light",
+                selected_light_type:e.type,
+                product_id: e.uuid,
+              },
+          });
     },
 
     Apply_ceiling_light() {
@@ -5896,14 +5486,14 @@ smoothMobileScrolltoTop(){
     },
 
     async magneticLightsMearjed(e) {
-      this.base_image_url = this.$store.state.root_media_api + e.image_url+"?p="+Date.now();
+      this.base_image_url = this.$store.state.root_media_api + e.image_url;
       this.forceCanvasUpdate();
     },
 
     // ==========================================
     // HOME DESIGN METHODS
     // ==========================================
-    home_design_history_clicked(images, id) {
+    home_design_history_clicked(images,id) {
       this.home_design_images = {
         error: false,
         home_design_id: id,
@@ -6060,10 +5650,9 @@ smoothMobileScrolltoTop(){
   components: {
     SwapOutlined,
     BulbOutlined,
-    PlanUpgradeModal,
     CloudUploadOutlined,
     UserDeleteOutlined,
-    MessageOutlined,
+        MessageOutlined,
 
     // switch Business
     switch_business,

@@ -1704,13 +1704,13 @@ export default {
       }
 
       // Textures validation
-      if (
-        !this.selectedProduct.textures ||
-        this.selectedProduct.textures.length === 0
-      ) {
-        this.$message.error("At least one texture is required");
-        return false;
-      }
+      // if (
+      //   !this.selectedProduct.textures ||
+      //   this.selectedProduct.textures.length === 0
+      // ) {
+      //   this.$message.error("At least one texture is required");
+      //   return false;
+      // }
 
       return true;
     },

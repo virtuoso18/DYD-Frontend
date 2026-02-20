@@ -284,7 +284,10 @@ export default {
     }
   },
   mounted() {
-    this.fetch_current_credits_of_user()
+    if(this.user?.user_type !== 'User'){
+
+      this.fetch_current_credits_of_user()
+    }
     this.fetch_unread_notifications_count()
     
     this.token = localStorage.getItem('token');

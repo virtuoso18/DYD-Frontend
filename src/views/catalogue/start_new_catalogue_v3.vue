@@ -38,10 +38,8 @@
       </div>
 
       <!-- Heading -->
-      
       <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 10px">
-
-        {{errorTitle || "Insufficient Credits"}}
+        Insufficient Credits
       </h2>
 
       <!-- Message -->
@@ -64,7 +62,7 @@
         style="height: 46px; font-size: 16px; border-radius: 8px"
         @click="goToPurchaseCredits"
       >
-       {{ btnText || "Purchase Credits" }} 
+        Purchase Credits
       </a-button>
 
       <a-button
@@ -1092,111 +1090,62 @@
       </div>
 
       <!-- History -->
-      <!-- History -->
-<div v-if="your_history.length || loading_user_history_rooms">
-  <p class="history-label pl-2">
-    <a-spin v-if="loading_user_history_rooms" /> Your History
-  </p>
-
-  <div
-    class="grid grid-cols-3 !space-y-2 sm:grid-cols-3 gap-1 sm:gap-2 sm:px-5 max-w-[1300px]"
-  >
-    <div
-      v-for="histry_card in your_history"
-      :key="histry_card.id"
-      class="px-[5px]"
-    >
-      <div
-        @click="openImageDrawer(histry_card)"
-        class="cursor-pointer hover:opacity-80 transition-opacity"
-      >
-        <div class="history-image-wrapper">
-          <!-- Skeleton -->
+      <div v-if="your_history.length">
+        <p class="history-label pl-2">
+          <a-spin v-if="loading_user_history_rooms" /> Your History
+        </p>
+        <div
+          class="grid grid-cols-3 !space-y-2 sm:grid-cols-3 gap-1 sm:gap-2 sm:px-5 max-w-[1300px]"
+        >
           <div
-            v-if="!imageLoadedMap[histry_card.id]"
-            class="history-image-skeleton"
-          ></div>
-
-          <!-- Preload image -->
-          <img
-            :src="$store.state.root_media_api + histry_card.image"
-            style="position: absolute; width: 0; height: 0; opacity: 0"
-            @load="onHistoryImageLoad(histry_card.id)"
-            alt=""
-          />
-
-          <!-- Visible image -->
-          <img
-            v-show="imageLoadedMap[histry_card.id]"
-            :src="$store.state.root_media_api + histry_card.image"
-            alt="Example"
-            class="example-image w-full !h-32 sm:!h-48 object-cover rounded-lg"
-            style="display: block"
-          />
-
-          <!-- Brand badge -->
-          <div
-            v-if="histry_card.brand_banner"
-            class="history-brand-badge"
+            v-for="histry_card in your_history"
+            :key="histry_card.id"
+            class="px-[5px]"
           >
-            <a-avatar
-              :src="$store.state.root_media_api + histry_card.brand_banner"
-            ></a-avatar>
+            <div
+              @click="openImageDrawer(histry_card)"
+              class="cursor-pointer hover:opacity-80 transition-opacity"
+            >
+              <div class="history-image-wrapper">
+                <!-- Skeleton -->
+                <div
+                  v-if="!imageLoadedMap[histry_card.id]"
+                  class="history-image-skeleton"
+                ></div>
+
+                <!-- Preload image -->
+                <img
+                  :src="$store.state.root_media_api + histry_card.image"
+                  style="position: absolute; width: 0; height: 0; opacity: 0"
+                  @load="onHistoryImageLoad(histry_card.id)"
+                  alt=""
+                />
+
+                <!-- Visible image -->
+                <img
+                  v-show="imageLoadedMap[histry_card.id]"
+                  :src="$store.state.root_media_api + histry_card.image"
+                  alt="Example"
+                  class="example-image w-full !h-32 sm:!h-48 object-cover rounded-lg"
+                  style="display: block"
+                />
+
+                <!-- Brand badge (unchanged, stays on top) -->
+                <div
+                  v-if="histry_card.brand_banner"
+                  class="history-brand-badge"
+                >
+                  <a-avatar
+                    :src="
+                      $store.state.root_media_api + histry_card.brand_banner
+                    "
+                  ></a-avatar>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-
-  <!-- Load More Button -->
-  <div
-    v-if="history_pagination.next"
-    class="flex justify-center mt-4 mb-2 px-4"
-  >
-    <button
-      @click="fetchUserHistoryRooms(true)"
-      :disabled="loading_more_history"
-      class="flex items-center gap-2 px-6 py-2.5 bg-white border border-gray-300 hover:border-blue-500 hover:text-blue-600 text-gray-700 font-medium text-sm rounded-xl shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-    >
-      <svg
-        v-if="loading_more_history"
-        class="animate-spin h-4 w-4 text-blue-600"
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-      >
-        <circle
-          class="opacity-25"
-          cx="12"
-          cy="12"
-          r="10"
-          stroke="currentColor"
-          stroke-width="4"
-        ></circle>
-        <path
-          class="opacity-75"
-          fill="currentColor"
-          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-        ></path>
-      </svg>
-      <svg
-        v-else
-        class="w-4 h-4"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M19 9l-7 7-7-7"
-        />
-      </svg>
-      {{ loading_more_history ? "Loading..." : `Load More (${history_pagination.count - your_history.length} remaining)` }}
-    </button>
-  </div>
-</div>
 
       <!-- Examples -->
       <!-- Examples Section -->
@@ -1344,8 +1293,6 @@ export default {
       LoadingMessageButton: false,
       buid: null,
       showCreditModal: false,
-      errorTitle:"",
-      btnText:"",
       creditErrorMessage: "",
 
       showLoadingModal: false,
@@ -1363,13 +1310,6 @@ export default {
       uploadResult: null,
       uploadError: null,
       your_history: [],
-      history_pagination: {
-        count: 0,
-        next: null,
-        offset: 0,
-        limit: 20,
-      },
-      loading_more_history: false,
       drawerRef: null,
       isDragging: false,
       startY: 0,
@@ -1711,8 +1651,6 @@ closeDrawer() {
 
         if (responseData.error) {
           this.showInstructionsModal = false;
-          this.errorTitle=responseData?.title;
-          this.btnText=responseData?.btn_text;
           this.creditErrorMessage = responseData.msg;
           this.showCreditModal = true;
           this.buid = responseData.buid;
@@ -1970,41 +1908,28 @@ closeDrawer() {
       }
     },
 
-    async fetchUserHistoryRooms(loadMore = false) {
-            if (loadMore) {
-              this.loading_more_history = true;
-            } else {
-              this.loading_user_history_rooms = true;
-              this.history_pagination.offset = 0;
-              this.your_history = [];
-            }
-
-            try {
-              const { limit, offset } = this.history_pagination;
-              const url = `${this.$store.state.root_api}room/api/user-history-rooms/?limit=${limit}&offset=${offset}`;
-              const response = await fetch(url, {
-                method: "GET",
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Token ${localStorage.getItem("token")}`,
-                },
-              });
-              const data = await response.json();
-
-              if (data && data.results?.data) {
-                this.your_history = [...this.your_history, ...data.results.data];
-                this.history_pagination.count = data.count;
-                this.history_pagination.next = data.next;
-                // Advance offset for next load
-                this.history_pagination.offset += this.history_pagination.limit;
-              }
-            } catch (error) {
-              console.error("Failed to fetch:", error);
-            } finally {
-              this.loading_user_history_rooms = false;
-              this.loading_more_history = false;
-            }
+    async fetchUserHistoryRooms() {
+      this.loading_user_history_rooms = true;
+      try {
+        const url = `${this.$store.state.root_api}room/api/user-history-rooms/`;
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Token ${localStorage.getItem("token")}`,
           },
+        });
+        const data = await response.json();
+        console.log(data);
+        if (data && data.data) {
+          this.your_history = data.data;
+        }
+      } catch (error) {
+        console.error("Failed to fetch:", error);
+      } finally {
+        this.loading_user_history_rooms = false;
+      }
+    },
 
     beforeUpload(file) {
       const isImage = file.type.startsWith("image/");
@@ -2058,7 +1983,6 @@ closeDrawer() {
 
         if (responseData.error) {
           this.creditErrorMessage = responseData.msg;
-          this.errorTitle=responseData?.title
           this.showCreditModal = true;
           this.buid = responseData.buid;
           return;
