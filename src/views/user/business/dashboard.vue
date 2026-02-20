@@ -886,6 +886,7 @@ export default {
       mobileMenuOpen: false,
       isMobile: false,
       userAvatarLoaded: false,
+      menu_view_mobile:false,
       
       // Profile Completion Modal
       showCompletionModal: false,

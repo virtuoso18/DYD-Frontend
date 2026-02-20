@@ -122,16 +122,16 @@
                           </div>
                           
                           <!-- Change Model Button -->
-                          <a-button 
+                          <!-- <a-button 
                             @click="upload3dModel"
                             style="position: absolute; top: 10px; right: 10px; background: white; border-radius: 6px; font-size: 11px;"
                             size="small"
                           >
                             Change Model
-                          </a-button>
+                          </a-button> -->
             
                           <!-- Display uploaded model info -->
-                          <div style="margin-top: 12px; padding: 8px 12px; background: #f8faff; border: 1px solid #e5e7eb; border-radius: 6px;">
+                          <div style="margin-top: 12px;  background: #f8faff; border: 1px solid #e5e7eb; border-radius: 6px;">
                             <div style="display: flex; align-items: center; justify-content: space-between;">
                               <div style="display: flex; align-items: center; gap: 8px;">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2">
@@ -739,7 +739,9 @@ import { computed } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import { message } from 'ant-design-vue';
-import canvas_3d_model_renderer from "@/components/store/canvas_3d_model_renderer.vue"
+// import canvas_3d_model_renderer from "@/components/store/canvas_3d_model_renderer.vue"
+import canvas_3d_model_renderer from "@/components/dashboard/business/my_products/canvas_3d_model_renderer_light.vue"
+
 import select3d_model_for_color from '@/components/dashboard/business/my_products/add_color_3d_model/dyd_generated.vue'
 
 export default {
@@ -1040,7 +1042,7 @@ watch: {
       this.loading_generated_models_history = true;
 
       try {
-        debugger
+        
         const limit = this.pagination.pageSize;
         const offset = this.pagination.currentOffset;
         
