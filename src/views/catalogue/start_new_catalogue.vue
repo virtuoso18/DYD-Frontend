@@ -1367,7 +1367,7 @@ export default {
         count: 0,
         next: null,
         offset: 0,
-        limit: 1,
+        limit: 20,
       },
       loading_more_history: false,
       drawerRef: null,

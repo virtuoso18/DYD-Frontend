@@ -1,5 +1,112 @@
 <template>
   <!-- TEXTURE MODAL (Keep your existing modal) -->
+
+   <div 
+    v-if="showTextureUpgradeModal" 
+    class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/10 backdrop-blur-sm animate-fadeIn"
+    @click="showTextureUpgradeModal = false"
+  >
+    <div 
+      class="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 animate-slideUp"
+      @click.stop
+    >
+      <!-- Close Button -->
+      <button 
+        @click="showTextureUpgradeModal = false"
+        class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+
+      <!-- Icon -->
+      <div class="flex justify-center mb-6 animate-bounce">
+        <div class="relative">
+          <!-- Pulse rings -->
+          <div class="absolute inset-0 rounded-full bg-red-500/20 animate-ping"></div>
+          <div class="absolute inset-0 rounded-full bg-red-500/10 animate-pulse"></div>
+          
+          <!-- Shield Icon -->
+          <svg xmlns="http://www.w3.org/2000/svg" width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="relative z-10">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            <line x1="15" y1="9" x2="9" y2="15"></line>
+            <line x1="9" y1="9" x2="15" y2="15"></line>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Title -->
+      <h2 class="text-3xl font-bold text-gray-900 text-center mb-4">
+        Feature Locked
+      </h2>
+
+      <!-- Description -->
+      <p class="text-base text-gray-600 text-center mb-3 leading-relaxed">
+        Your current plan 
+        <span class="font-semibold text-red-500">{{ currentPlanName }}</span> 
+        doesn't include the 
+        <span class="font-semibold text-gray-900">Custom Texture Upload</span> 
+        feature.
+      </p>
+
+      <!-- Sub Description -->
+      <p class="text-sm text-gray-500 text-center mb-8">
+        Upgrade to unlock AI-powered texture customization and personalize your 3D designs!
+      </p>
+
+      <!-- Actions -->
+      <div class="space-y-3">
+        <!-- Upgrade Button -->
+        <button 
+          @click="goToUpgrade"
+          class="w-full h-12 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold rounded-lg flex items-center justify-center gap-2 transition-all !mb-2 duration-300 transform hover:-translate-y-1 hover:shadow-xl"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+            <path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path>
+          </svg>
+          Upgrade Now
+        </button>
+
+        <!-- Cancel Button -->
+        <button 
+          @click="showTextureUpgradeModal = false"
+          class="w-full h-12 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-lg transition-colors duration-200"
+        >
+          Maybe Later
+        </button>
+      </div>
+
+      <!-- Features Preview (Optional) -->
+      <div class="mt-6 pt-6 border-t border-gray-200">
+        <p class="text-xs text-gray-500 text-center mb-3">Premium features include:</p>
+        <div class="flex justify-center gap-4 text-xs text-gray-600">
+          <div class="flex items-center gap-1">
+            <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+            </svg>
+            Unlimited Textures
+          </div>
+          <div class="flex items-center gap-1">
+            <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+            </svg>
+            AI Tools
+          </div>
+          <div class="flex items-center gap-1">
+            <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+            </svg>
+            Priority Support
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
   <a-modal
     v-model:open="openTextureModal"
     width="60%"
@@ -1251,6 +1358,10 @@ export default {
       isApplyingTexture: false,
       originalMainImage: null,
 
+        showTextureUpgradeModal: false,
+    currentPlanName: 'Free',
+    business_available_actions: null,
+
       // NEW: Add this texture list
       textures_available: [
         // {
@@ -1326,6 +1437,11 @@ export default {
 
   // Add these lifecycle hooks:
   mounted() {
+
+     if (this.$route.query.brand) {
+   this.loadBrandPurchasedPlanDetails();
+  }
+  
     // Initialize completed count on first load
     this.initializeCompletedCount();
     // Start queue polling when component mounts
@@ -1466,14 +1582,114 @@ export default {
       }
     },
 
-    openTexturModal() {
-      if (!this.mainImage) {
-        this.$message.warning("Please upload a main image first");
+     async loadBrandPurchasedPlanDetails() {
+    try {
+      const brandSlug = this.$route.query.brand;
+      
+      if (!brandSlug) {
+        console.warn('⚠️ No brand slug found in query');
+        this.business_available_actions = {
+          change_texture_3d_item: false
+        };
         return;
       }
-      this.openTextureModal = true;
-    },
+      
+      const url = `${this.$store.state.root_api}subscription/api/get-business-plan-details/${brandSlug}/`;
+      
+      console.log('🔍 Fetching plan details from:', url);
 
+      const token = localStorage.getItem('token');
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Token ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      console.log('📡 Response Status:', response.status);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      
+      console.log('═══════════════════════════════════════');
+      console.log('📦 Full API Response:', result);
+      console.log('📊 Plan Name:', result.plan_name);
+      console.log('🎯 Business Available Actions:', result.business_available_actions);
+      console.log('🎨 change_texture_3d_item:', result.business_available_actions?.change_texture_3d_item);
+      console.log('═══════════════════════════════════════');
+      
+      // Store plan info
+      this.currentPlanName = result.plan_name || 'Free';
+      
+      if (result.business_available_actions) {
+        this.business_available_actions = result.business_available_actions;
+        console.log('✅ Stored business_available_actions:', this.business_available_actions);
+      } else {
+        console.warn('⚠️ No business_available_actions in response');
+        this.business_available_actions = {
+          change_texture_3d_item: false
+        };
+      }
+
+    } catch (error) {
+      console.error('═══════════════════════════════════════');
+      console.error('❌ Error loading plan details:', error);
+      console.error('Error Message:', error.message);
+      console.error('═══════════════════════════════════════');
+      
+      // Default to restricted on error
+      this.business_available_actions = {
+        change_texture_3d_item: false
+      };
+      console.log('⚠️ Set default: change_texture_3d_item = false');
+    }
+  },
+  
+  // ✅ UPDATED openTexturModal METHOD
+  openTexturModal() {
+    console.log('═══════════════════════════════════════');
+    console.log('🎨 Add Texture Clicked');
+    console.log('📦 business_available_actions:', this.business_available_actions);
+    
+    // Check if main image exists
+    if (!this.mainImage) {
+      this.$message.warning("Please upload a main image first");
+      return;
+    }
+    
+    // ✅ Check if plan data is loaded
+    if (!this.business_available_actions) {
+      console.warn('⚠️ Plan data not loaded yet! Blocking access by default.');
+      this.showTextureUpgradeModal = true;
+      return;
+    }
+    
+    // ✅ Check texture access permission
+    const canChangeTexture = this.business_available_actions.change_texture_3d_item === true;
+    
+    console.log('🎨 change_texture_3d_item value:', this.business_available_actions.change_texture_3d_item);
+    console.log('🚦 Can Change Texture:', canChangeTexture);
+    console.log('═══════════════════════════════════════');
+    
+    if (!canChangeTexture) {
+      console.log('❌ Feature BLOCKED - Showing upgrade modal');
+      this.showTextureUpgradeModal = true;
+      return;
+    }
+    
+    console.log('✅ Feature ALLOWED - Opening texture modal');
+    this.openTextureModal = true;
+  },
+  
+  // ✅ ADD UPGRADE ACTION
+  goToUpgrade() {
+    this.showTextureUpgradeModal = false;
+    this.$router.push('/pricing');
+  },
     closeTextureModal() {
       this.openTextureModal = false;
       this.textureImage = null;
@@ -2976,6 +3192,96 @@ export default {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+.upgrade-modal-content {
+  text-align: center;
+  padding: 20px 10px;
+}
+
+.modal-icon {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  animation: iconShake 0.5s ease-in-out;
+}
+
+@keyframes iconShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-10px); }
+  75% { transform: translateX(10px); }
+}
+
+.modal-icon svg {
+  filter: drop-shadow(0 4px 8px rgba(255, 77, 79, 0.3));
+}
+
+.modal-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 16px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.modal-description {
+  font-size: 16px;
+  color: #595959;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.modal-description strong {
+  color: #ff4d4f;
+  font-weight: 600;
+}
+
+.modal-subdescription {
+  font-size: 14px;
+  color: #8c8c8c;
+  line-height: 1.5;
+  margin-bottom: 30px;
+}
+
+.modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal-actions .ant-btn {
+  height: 48px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-actions .ant-btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.modal-actions .ant-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+}
+
+@media (max-width: 768px) {
+  .modal-title {
+    font-size: 22px;
+  }
+  
+  .modal-description {
+    font-size: 14px;
+  }
+  
+  .modal-subdescription {
+    font-size: 13px;
+  }
 }
 
 .setting-group label {

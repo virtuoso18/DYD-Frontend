@@ -1,5 +1,12 @@
 <template>
   <div class="dashboard-container">
+
+    <PlanUpgradeModal 
+      :visible="showPlanUpgradeModal" 
+      @update:visible="showPlanUpgradeModal = $event"
+      @upgrade="handlePlanUpgrade"
+    />
+
     <!-- Mobile Header -->
     <div class="mobile-header" v-if="menu_view_mobile">
       <!-- <div class="mobile-header" v-if="isMobile"> -->
@@ -256,39 +263,18 @@
               <span>Community</span>
             </router-link>
 
-            <router-link
-              to="/business-dashboard/generate-banner"
-              class="nav-item-mobile"
-              :class="{ active: $route.name === 'business_generate_banner' }"
-              @click="closeMobileMenu"
-            >
-              <svg
-                width="18"
-                height="16"
-                viewBox="0 0 18 16"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M15.5385 0.5H2.46154C1.37821 0.5 0.5 1.37821 0.5 2.46154V12.9231C0.5 14.0064 1.37821 14.8846 2.46154 14.8846H15.5385C16.6218 14.8846 17.5 14.0064 17.5 12.9231V2.46154C17.5 1.37821 16.6218 0.5 15.5385 0.5Z"
-                  stroke="currentColor"
-                  stroke-linejoin="round"
-                />
-                <path
-                  d="M12.2686 5.73257C12.9908 5.73257 13.5763 5.1471 13.5763 4.42488C13.5763 3.70266 12.9908 3.11719 12.2686 3.11719C11.5464 3.11719 10.9609 3.70266 10.9609 4.42488C10.9609 5.1471 11.5464 5.73257 12.2686 5.73257Z"
-                  stroke="currentColor"
-                  stroke-miterlimit="10"
-                />
-                <path
-                  d="M10.9615 10.9519L7.25668 7.254C7.02093 7.01831 6.70406 6.88154 6.37084 6.87167C6.03762 6.86179 5.71321 6.97955 5.46392 7.20088L0.5 11.6143M7.69231 14.8836L12.7326 9.84324C12.9632 9.61227 13.2717 9.47582 13.5976 9.4607C13.9236 9.44558 14.2434 9.55287 14.4944 9.7615L17.5 12.2682"
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
+          
+<div @click="handleGenerateBannerClick" 
+  class="nav-item-mobile" 
+  :class="{ active: $route.name === 'business:generate-banner' }">
+  <svg width="18" height="16" viewBox="0 0 18 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M15.5385 0.5H2.46154C1.37821 0.5 0.5 1.37821 0.5 2.46154V12.9231C0.5 14.0064 1.37821 14.8846 2.46154 14.8846H15.5385C16.6218 14.8846 17.5 14.0064 17.5 12.9231V2.46154C17.5 1.37821 16.6218 0.5 15.5385 0.5Z" stroke="currentColor" stroke-linejoin="round"/>
+    <path d="M12.2686 5.73257C12.9908 5.73257 13.5763 5.1471 13.5763 4.42488C13.5763 3.70266 12.9908 3.11719 12.2686 3.11719C11.5464 3.11719 10.9609 3.70266 10.9609 4.42488C10.9609 5.1471 11.5464 5.73257 12.2686 5.73257Z" stroke="currentColor" stroke-miterlimit="10"/>
+    <path d="M10.9615 10.9519L7.25668 7.254C7.02093 7.01831 6.70406 6.88154 6.37084 6.87167C6.03762 6.86179 5.71321 6.97955 5.46392 7.20088L0.5 11.6143M7.69231 14.8836L12.7326 9.84324C12.9632 9.61227 13.2717 9.47582 13.5976 9.4607C13.9236 9.44558 14.2434 9.55287 14.4944 9.7615L17.5 12.2682" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+  <span>Generate a Banner</span>
+</div>
 
-              <span>Generate a Banner</span>
-            </router-link>
 
             <router-link
               to="/business-dashboard/manage-subscription"
@@ -739,51 +725,25 @@
               />
             </router-link>
 
-            <router-link
-              to="/business-dashboard/generate-banner"
-              class="nav-item flex items-center justify-between"
-              :class="{ active: $route.name === 'business_generate_banner' }"
-              @click="menu_view_mobile = true"
-            >
-              <!-- LEFT: Icon + Text -->
-              <div class="flex items-center gap-2">
-                <div class="nav-icon-wrapper">
-                  <svg
-                    width="18"
-                    height="16"
-                    viewBox="0 0 18 16"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M15.5385 0.5H2.46154C1.37821 0.5 0.5 1.37821 0.5 2.46154V12.9231C0.5 14.0064 1.37821 14.8846 2.46154 14.8846H15.5385C16.6218 14.8846 17.5 14.0064 17.5 12.9231V2.46154C17.5 1.37821 16.6218 0.5 15.5385 0.5Z"
-                      stroke="currentColor"
-                      stroke-linejoin="round"
-                    />
-                    <path
-                      d="M12.2686 5.73257C12.9908 5.73257 13.5763 5.1471 13.5763 4.42488C13.5763 3.70266 12.9908 3.11719 12.2686 3.11719C11.5464 3.11719 10.9609 3.70266 10.9609 4.42488C10.9609 5.1471 11.5464 5.73257 12.2686 5.73257Z"
-                      stroke="currentColor"
-                      stroke-miterlimit="10"
-                    />
-                    <path
-                      d="M10.9615 10.9519L7.25668 7.254C7.02093 7.01831 6.70406 6.88154 6.37084 6.87167C6.03762 6.86179 5.71321 6.97955 5.46392 7.20088L0.5 11.6143M7.69231 14.8836L12.7326 9.84324C12.9632 9.61227 13.2717 9.47582 13.5976 9.4607C13.9236 9.44558 14.2434 9.55287 14.4944 9.7615L17.5 12.2682"
-                      stroke="currentColor"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
-                </div>
+          <!-- ✅ NEW CODE -->
+<div @click="handleGenerateBannerClick" 
+  class="nav-item flex items-center justify-between" 
+  :class="{ active: $route.name === 'business:generate-banner' }">
+  <!-- LEFT Icon + Text -->
+  <div class="flex items-center gap-2">
+    <div class="nav-icon-wrapper">
+      <svg width="18" height="16" viewBox="0 0 18 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M15.5385 0.5H2.46154C1.37821 0.5 0.5 1.37821 0.5 2.46154V12.9231C0.5 14.0064 1.37821 14.8846 2.46154 14.8846H15.5385C16.6218 14.8846 17.5 14.0064 17.5 12.9231V2.46154C17.5 1.37821 16.6218 0.5 15.5385 0.5Z" stroke="currentColor" stroke-linejoin="round"/>
+        <path d="M12.2686 5.73257C12.9908 5.73257 13.5763 5.1471 13.5763 4.42488C13.5763 3.70266 12.9908 3.11719 12.2686 3.11719C11.5464 3.11719 10.9609 3.70266 10.9609 4.42488C10.9609 5.1471 11.5464 5.73257 12.2686 5.73257Z" stroke="currentColor" stroke-miterlimit="10"/>
+        <path d="M10.9615 10.9519L7.25668 7.254C7.02093 7.01831 6.70406 6.88154 6.37084 6.87167C6.03762 6.86179 5.71321 6.97955 5.46392 7.20088L0.5 11.6143M7.69231 14.8836L12.7326 9.84324C12.9632 9.61227 13.2717 9.47582 13.5976 9.4607C13.9236 9.44558 14.2434 9.55287 14.4944 9.7615L17.5 12.2682" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <span class="nav-text">Generate a Banner</span>
+  </div>
+  <!-- RIGHT openfile.svg -->
+  <img src="/openfile.svg" alt="Open File" class="w-4 h-4 md:hidden block" />
+</div>
 
-                <span class="nav-text">Generate a Banner</span>
-              </div>
-
-              <!-- RIGHT: /openfile.svg -->
-              <img
-                src="/openfile.svg"
-                alt="Open File"
-                class="w-4 h-4 md:hidden block"
-              />
-            </router-link>
 
             <router-link
               to="/business-dashboard/manage-subscription"
@@ -907,163 +867,237 @@
 <script>
 import { notification } from "ant-design-vue";
 import ProfileCompletionModal from "./ProfileCompletionModal.vue";
+import PlanUpgradeModal from "@/views/catalogue/PlanUpgradeModal.vue";
 
 export default {
   name: "DashboardManager_business_user",
 
   components: {
     ProfileCompletionModal,
+    PlanUpgradeModal,
   },
 
-  data() {
+   data() {
     return {
-      user: JSON.parse(localStorage.getItem("user") || "{}"),
-      profile: JSON.parse(localStorage.getItem("profile") || "{}"),
-      business_info: JSON.parse(
-        localStorage.getItem("business_profile") || "{}"
-      ),
-      menu_view_mobile: false,
+      user: JSON.parse(localStorage.getItem('user')),
+      profile: JSON.parse(localStorage.getItem('profile')),
+      businessinfo: JSON.parse(localStorage.getItem('businessprofile')),
+      menuviewmobile: false,
       mobileMenuOpen: false,
       isMobile: false,
-       userAvatarLoaded: false,
-
+      userAvatarLoaded: false,
+      
       // Profile Completion Modal
       showCompletionModal: false,
       profileSteps: [
         {
           id: 1,
-          title: "Personal details",
-          description:
-            "Please fill in your personal details accurately to ensure a smooth process.",
+          title: 'Personal details',
+          description: 'Please fill in your personal details accurately to ensure a smooth process.',
           completed: false,
-          missing_fields: [], // Add this
+          missingfields: [],
         },
         {
           id: 2,
-          title: "Business details",
-          description: "Please fill in your Business details accurately.",
+          title: 'Business details',
+          description: 'Please fill in your Business details accurately.',
           completed: false,
-          missing_fields: [], // Add this
+          missingfields: [],
         },
         {
           id: 3,
-          title: "Add at least 3 products",
-          description:
-            "Please add at least three products to proceed with the process.",
+          title: 'Add at least 3 products',
+          description: 'Please add at least three products to proceed with the process.',
           completed: false,
-          missing_fields: [], // Add this
+          missingfields: [],
           metadata: {
-            products_added: 0,
-            products_required: 3,
+            productsadded: 0,
+            productsrequired: 3,
           },
         },
         {
           id: 4,
-          title: "Generate Your First Simulation",
-          description:
-            "Create your first simulation with products that you have in your business AI catalog.",
+          title: 'Generate Your First Simulation',
+          description: 'Create your first simulation with products that you have in your business AI catalog.',
           completed: false,
-          missing_fields: [], // Add this
+          missingfields: [],
         },
       ],
+      
+      // ✅ ADD THESE FOR BANNER FEATURE
+      showPlanUpgradeModal: false,
+      business_available_actions: null,
     };
   },
-
+  
   computed: {
     currentRouteName() {
       return this.$route.name;
     },
-
     currentPageTitle() {
       const titles = {
-        business_my_profile: "Profile",
-        business_business_details: "Business Detail",
-        business_my_designs: "My Designs",
-        business_my_products: "My Products",
-        business_dashboard_community: "Community",
-        business_generate_banner: "Generate Banner",
-        business_manage_subscription: "Manage Subscription",
-        my_transactions: "Transactions",
+        'business:my-profile': 'Profile',
+        'business:business-details': 'Business Detail',
+        'business:my-designs': 'My Designs',
+        'business:my-products': 'My Products',
+        'business:dashboard:community': 'Community',
+        'business:generate-banner': 'Generate Banner',
+        'business:manage-subscription': 'Manage Subscription',
+        'my:transactions': 'Transactions',
       };
-      return titles[this.$route.name] || "Dashboard";
+      return titles[this.$route.name] || 'Dashboard';
     },
-
     completionPercentage() {
-      const completed = this.profileSteps.filter(
-        (step) => step.completed
-      ).length;
+      const completed = this.profileSteps.filter((step) => step.completed).length;
       return Math.round((completed / this.profileSteps.length) * 100);
     },
-
     isProfileComplete() {
       return this.profileSteps.every((step) => step.completed);
     },
+    // ✅ ADD THIS
+    canGenerateBanner() {
+      return this.hasFeature('generate_banner');
+    },
   },
-
+  
   methods: {
+    // ✅ ADD HELPER METHOD
+    hasFeature(featureName) {
+      if (!this.business_available_actions) {
+        return false;
+      }
+      return this.business_available_actions[featureName] === true;
+    },
+    
+    // ✅ ADD API CALL METHOD
+    async loadBrandPurchasedPlanDetails() {
+      try {
+        const brandSlug = this.$route.query.brand;
+        
+        if (!brandSlug) {
+          console.warn('No brand slug found in query');
+          return;
+        }
+        
+        const url = `${this.$store.state.root_api}subscription/api/get-business-plan-details/${brandSlug}/`;
+        
+        console.log('Fetching plan details from:', url);
+
+        const token = localStorage.getItem('token');
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Token ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        console.log('Plan details received:', result);
+        
+        // ✅ Store business_available_actions
+        if (result.business_available_actions) {
+          this.business_available_actions = result.business_available_actions;
+          localStorage.setItem(
+            'business_available_actions', 
+            JSON.stringify(result.business_available_actions)
+          );
+        }
+
+      } catch (error) {
+        console.error('Error loading plan details:', error);
+        // Default to restrictive
+        this.business_available_actions = {
+          generate_banner: false
+        };
+      }
+    },
+    
+    // ✅ ADD BANNER CLICK HANDLER
+    handleGenerateBannerClick() {
+      // Check if banner generation is available
+      if (!this.hasFeature('generate_banner')) {
+        this.showPlanUpgradeModal = true;
+        this.$message.warning('Upgrade your plan to access Banner Generation');
+        return;
+      }
+      
+      // If access granted, navigate
+      // this.$router.push({
+      //   name: 'business:generate-banner'
+      // });
+
+      this.$router.push('/business-dashboard/generate-banner?p=true');
+      
+      // Close mobile menu if open
+      if (this.mobileMenuOpen) {
+        this.closeMobileMenu();
+      }
+    },
+    
+    // ✅ ADD UPGRADE HANDLER
+    handlePlanUpgrade(selectedPlan) {
+      this.showPlanUpgradeModal = false;
+      this.$message.success(`Plan upgrade initiated for ${selectedPlan}!`);
+      // TODO: Navigate to pricing/upgrade page
+      // this.$router.push('/pricing');
+    },
+    
+    // ... ALL YOUR EXISTING METHODS STAY THE SAME ...
+    
     async fetchOnboardingProgress() {
       try {
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem('token');
         const response = await fetch(
           `${this.$store.state.root_api}Auth/api/onboarding-progress/`,
           {
-            method: "GET",
+            method: 'GET',
             headers: {
               Authorization: `Token ${token}`,
-              "Content-Type": "application/json",
+              'Content-Type': 'application/json',
             },
           }
         );
 
         if (response.ok) {
           const data = await response.json();
-          console.log("Onboarding Progress:", data);
+          console.log('Onboarding Progress:', data);
 
-          // Update profileSteps with API response including missing_fields
           if (data.success && data.data.steps) {
             data.data.steps.forEach((apiStep) => {
-              const localStep = this.profileSteps.find(
-                (s) => s.id === apiStep.step
-              );
+              const localStep = this.profileSteps.find((s) => s.id === apiStep.step);
               if (localStep) {
                 localStep.completed = apiStep.is_completed;
-                // Add missing fields from API response
-                localStep.missing_fields = apiStep.missing_fields || [];
-                // Add metadata if present (for step 3)
+                localStep.missingfields = apiStep.missing_fields;
                 if (apiStep.metadata) {
                   localStep.metadata = apiStep.metadata;
                 }
               }
             });
+
+            const completed = this.profileSteps.filter((step) => step.completed).length;
+            const completionPercent = Math.round((completed / this.profileSteps.length) * 100);
+            console.log('Profile Completion:', completionPercent + '%');
+            return data;
           }
-
-          // Update completion percentage
-          const completed = this.profileSteps.filter(
-            (step) => step.completed
-          ).length;
-          const completionPercent = Math.round(
-            (completed / this.profileSteps.length) * 100
-          );
-          console.log(`Profile Completion: ${completionPercent}%`);
-
-          return data;
         } else {
-          console.error(
-            "Failed to fetch onboarding progress:",
-            response.status
-          );
+          console.error('Failed to fetch onboarding progress:', response.status);
           notification.error({
-            message: "Failed to load progress",
-            description: "Unable to fetch your onboarding progress",
-            placement: "bottomRight",
+            message: 'Failed to load progress',
+            description: 'Unable to fetch your onboarding progress',
+            placement: 'bottomRight',
           });
         }
       } catch (error) {
-        console.error("Error fetching onboarding progress:", error);
+        console.error('Error fetching onboarding progress:', error);
         notification.error({
-          message: "Error",
-          description: "An error occurred while fetching your progress",
-          placement: "bottomRight",
+          message: 'Error',
+          description: 'An error occurred while fetching your progress',
+          placement: 'bottomRight',
         });
       }
     },
@@ -1072,19 +1106,19 @@ export default {
       this.mobileMenuOpen = !this.mobileMenuOpen;
     },
 
-     onUserAvatarLoad() {
-    this.userAvatarLoaded = false;
-    setTimeout(() => {
-      this.userAvatarLoaded = true;
-    }, 1000); // 1 second skeleton
-  },
+    onUserAvatarLoad() {
+      this.userAvatarLoaded = false;
+      setTimeout(() => {
+        this.userAvatarLoaded = true;
+      }, 1000);
+    },
 
     closeMobileMenu() {
       this.mobileMenuOpen = false;
     },
 
     goBack() {
-      this.menu_view_mobile = false;
+      this.menuviewmobile = false;
     },
 
     checkScreenSize() {
@@ -1093,23 +1127,21 @@ export default {
 
     logoutAndClose() {
       this.closeMobileMenu();
-      this.logout_user();
+      this.logoutuser();
     },
 
     logout_user() {
-      this.$store.dispatch("logout");
-      localStorage.removeItem("profile");
-      localStorage.removeItem("business_profile");
-      localStorage.removeItem("user");
-      this.$router.push("/login");
-
+      this.$store.dispatch('logout');
+      localStorage.removeItem('profile');
+      localStorage.removeItem('businessprofile');
+      localStorage.removeItem('user');
+      this.$router.push('/login');
       notification.success({
-        message: "Logout Successful",
-        placement: "bottomRight",
+        message: 'Logout Successful',
+        placement: 'bottomRight',
       });
     },
 
-    // Profile Completion Methods
     openCompletionModal() {
       this.fetchOnboardingProgress();
       this.showCompletionModal = true;
@@ -1121,71 +1153,47 @@ export default {
 
     handleProfileComplete() {
       this.showCompletionModal = false;
-
-      // notification.success({
-      //   message: "Profile Completed!",
-      //   description: "Your profile setup is now complete. You can start using all features.",
-      //   placement: 'bottomRight'
-      // });
-
-      // Optional: Reload profile data or redirect
+      notification.success({
+        message: 'Profile Completed!',
+        description: 'Your profile setup is now complete. You can start using all features.',
+        placement: 'bottomRight',
+      });
       this.fetchProfileStatus();
     },
 
     async fetchProfileStatus() {
       try {
-        // Check personal details completion
         const hasPersonalDetails =
-          this.profile &&
-          this.profile.full_name &&
-          this.profile.email &&
-          this.profile.phone;
-
-        // Check business details completion
+          this.profile && this.profile.fullname && this.profile.email && this.profile.phone;
         const hasBusinessDetails =
-          this.business_info &&
-          this.business_info.business_name &&
-          this.business_info.business_type;
+          this.businessinfo && this.businessinfo.businessname && this.businessinfo.businesstype;
 
-        // Update step 1 (Personal details)
         this.profileSteps[0].completed = hasPersonalDetails;
-
-        // Update step 2 (Business details)
         this.profileSteps[1].completed = hasBusinessDetails;
 
-        // Fetch products count from API
-        const response = await fetch(
-          `${this.$store.state.root_api}products/count`,
-          {
-            headers: {
-              Authorization: `Token ${localStorage.getItem("token")}`,
-            },
-          }
-        );
+        const response = await fetch(`${this.$store.state.root_api}/products/count/`, {
+          headers: {
+            Authorization: `Token ${localStorage.getItem('token')}`,
+          },
+        });
 
         if (response.ok) {
           const data = await response.json();
-          // Update step 3 (Add at least 3 products)
           this.profileSteps[2].completed = data.count >= 3;
         }
 
-        // Check if AI catalog exists
-        const catalogResponse = await fetch(
-          `${this.$store.state.root_api}catalog/check`,
-          {
-            headers: {
-              Authorization: `Token ${localStorage.getItem("token")}`,
-            },
-          }
-        );
+        const catalogResponse = await fetch(`${this.$store.state.root_api}/catalog/check/`, {
+          headers: {
+            Authorization: `Token ${localStorage.getItem('token')}`,
+          },
+        });
 
         if (catalogResponse.ok) {
           const catalogData = await catalogResponse.json();
-          // Update step 4 (Create AI Catalog)
           this.profileSteps[3].completed = catalogData.exists;
         }
       } catch (error) {
-        console.error("Failed to fetch profile status:", error);
+        console.error('Failed to fetch profile status:', error);
       }
     },
 
@@ -1199,14 +1207,14 @@ export default {
 
   async mounted() {
     this.checkScreenSize();
-    window.addEventListener("resize", this.checkScreenSize);
-
-    // Fetch profile completion status on mount
+    window.addEventListener('resize', this.checkScreenSize);
+    
+    // ✅ LOAD PLAN DETAILS ON MOUNT
+    await this.loadBrandPurchasedPlanDetails();
+    
     await this.fetchOnboardingProgress();
 
-    // Optional: Show modal automatically if profile is incomplete
     if (!this.isProfileComplete && this.completionPercentage < 100) {
-      // Show modal after a short delay
       setTimeout(() => {
         this.showCompletionModal = false;
       }, 2000);
@@ -1214,14 +1222,13 @@ export default {
   },
 
   beforeDestroy() {
-    window.removeEventListener("resize", this.checkScreenSize);
+    window.removeEventListener('resize', this.checkScreenSize);
   },
 
   created() {
-    // Debug: Log current route information
-    console.log("Current route:", this.$route);
-    console.log("Current route name:", this.$route.name);
-    console.log("Current route path:", this.$route.path);
+    console.log('Current route:', this.$route);
+    console.log('Current route name:', this.$route.name);
+    console.log('Current route path:', this.$route.path);
   },
 };
 </script>

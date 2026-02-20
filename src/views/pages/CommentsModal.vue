@@ -241,7 +241,8 @@
       <!-- Mobile Modal - FULLY FIXED -->
 <div
   class="md:hidden bg-white rounded-t-3xl w-full flex flex-col absolute left-0 right-0 click.stop"
-  :class="isMobileExpanded ? 'bottom-0 h-[100vh]' : 'bottom-0 h-[80vh]'"  
+  :class="isMobileExpanded ? 'bottom-0 h-[100vh]' : 'bottom-0 h-[80vh]'" 
+   @click.stop  
 >
   <!-- Handle (drag area) -->
   <div
