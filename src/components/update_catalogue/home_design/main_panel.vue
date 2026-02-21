@@ -302,6 +302,7 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    
   },
   data() {
     return {
@@ -335,7 +336,7 @@ export default {
       if (this.home_design_images && this.home_design_images.image_paths) {
         const imageUrls = Object.values(
           this.home_design_images.image_paths || {},
-        ).filter((url) => url !== null && url !== undefined && url !== ""); // filter invalid
+        ).filter((url) => url !== null && url !== undefined && url !== "");
         this.allImages = imageUrls;
         this.images = imageUrls;
       } else {
@@ -356,9 +357,11 @@ export default {
       return "";
     },
     regenerateImages() {
+      console.log("RRRRRRRRRRRRrrrrrrrrrrr");
       // Simulate regeneration by shuffling images
-      const shuffled = [...this.allImages].sort(() => Math.random() - 0.5);
-      this.images = shuffled.slice(0, this.images.length);
+      // const shuffled = [...this.allImages].sort(() => Math.random() - 0.5);
+      // this.images = shuffled.slice(0, this.images.length);
+      this.$emit("updateBaseImageUrlForHomeDesign",true);
     },
   },
   mounted() {
