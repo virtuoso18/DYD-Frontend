@@ -499,7 +499,7 @@ export default {
 }
 
 .header-section {
-  background: linear-gradient(135deg, #0d00ff 0%, #7C3AED 100%);
+  background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
   position: relative;
   padding: 80px 20px 120px;
   overflow: hidden;
@@ -604,14 +604,14 @@ export default {
 }
 
 .toggle-btn:hover {
-  border-color: #0d00ff;
-  color: #0d00ff;
+  border-color: #4F46E5;
+  color: #4F46E5;
 }
 
 .toggle-btn.active {
-  background: linear-gradient(135deg, #201b85 0%, #0d00ff 100%);
+  background: linear-gradient(135deg, #201b85 0%, #0d00ff 100%);;
   color: white;
-  border-color: transparent;
+  border-color: linear-gradient(135deg, #201b85 0%, #0d00ff 100%);;
 }
 
 .pricing-cards {
@@ -640,7 +640,7 @@ export default {
 }
 
 .standard-card {
-  background: linear-gradient(135deg, #201b85 0%, #0d00ff 100%);
+  background: linear-gradient(135deg, #201b85 0%, #0d00ff 100%);;
   color: white;
   transform: scale(1.05);
   box-shadow: 0 8px 30px rgba(45, 45, 45, 0.3);
@@ -802,12 +802,12 @@ export default {
 }
 
 .basic-btn, .premium-btn {
-  background: #0d00ff;
+  background: #4F46E5;
   color: white;
 }
 
 .basic-btn:hover:not(:disabled), .premium-btn:hover:not(:disabled) {
-  background: #0d00ff;
+  background: #4338CA;
 }
 
 .standard-btn {
@@ -901,7 +901,7 @@ export default {
 .credits-amount {
   font-size: 32px;
   font-weight: 700;
-  color: #0d00ff;
+  color: #4F46E5;
   margin-bottom: 12px;
 }
 
@@ -913,7 +913,7 @@ export default {
 
 .buy-btn {
   padding: 10px 28px;
-  background: #0d00ff;
+  background: #4F46E5;
   color: white;
   border: none;
   border-radius: 8px;
@@ -923,7 +923,7 @@ export default {
 }
 
 .buy-btn:hover {
-  background: #0d00ff;
+  background: #4338CA;
 }
 
 @media (max-width: 768px) {

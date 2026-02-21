@@ -1312,7 +1312,7 @@ Switch Furniture</a-button> -->
               @magentic-lights-added="magneticLightsMearjed"
               @insufficient-credits="throw_Insufficient_credits"
               @Apply-Changes="ApplyChanges"
-              ref="canvas_sunk_magnetic_lights_render"
+              ref="canvas_sunk_magnetic_lights_render_mobile"
             />
             <canvas_unsunk_lights_render
               v-if="
@@ -1371,11 +1371,9 @@ Switch Furniture</a-button> -->
               :pitch="ceiling_pitch"
               :yaw="ceiling_yaw"
 
-              
-
               @model-3d-light-added="magneticLightsMearjed"
               @Apply-Changes="ApplyChanges"
-              ref="canvas_ceiling_3d_object_light_renderer"
+              ref="canvas_ceiling_3d_object_light_renderer_mobile"
               @insufficient-credits="throw_Insufficient_credits"
             />
 
@@ -1439,7 +1437,7 @@ Switch Furniture</a-button> -->
                     active_tab_image === 'item_replacement' &&
                     select_replace === 'Furniture'
                   "
-                  ref="floor_item_3d_renderer"
+                  ref="floor_item_3d_renderer_mobile"
                   
                   :key="base_image_url"
                   :debug="debug"
@@ -1655,8 +1653,14 @@ Switch Furniture</a-button> -->
               "
               :brand_data="brand_data"
               @products-see-all="furnituresSeeAll"
+              
               @trigger-render-3d-object="execute3DRederer"
               @trigger-switch-furniture="executeswitchFurniture"
+
+              
+              @trigger-render-3d-object_mobile="execute3DRederer_mobile"
+              @trigger-switch-furniture_mobile="executeswitchFurniture_mobile"
+                      
               ref="furniture_products_list_mobile"
               @change-3d-model="change3dModel"
             />
@@ -1708,6 +1712,7 @@ Switch Furniture</a-button> -->
               :brand_data="brand_data"
               @light-see-all="lightsSeeAll"
               @Apply_Light="Apply_ceiling_light"
+              @Apply_Light_mobile="Apply_ceiling_light_mobile"
             >
             </lights>
           </div>
@@ -2312,6 +2317,10 @@ Switch Furniture</a-button> -->
                       @products-see-all="furnituresSeeAll"
                       @trigger-render-3d-object="execute3DRederer"
                       @trigger-switch-furniture="executeswitchFurniture"
+                      
+                      @trigger-render-3d-object_mobile="execute3DRederer_mobile"
+                      @trigger-switch-furniture_mobile="executeswitchFurniture_mobile"
+                      
                       ref="furniture_products_list"
                       @change-3d-model="change3dModel"
                     />
@@ -2364,6 +2373,7 @@ Switch Furniture</a-button> -->
                       :brand_data="brand_data"
                       @light-see-all="lightsSeeAll"
                       @Apply_Light="Apply_ceiling_light"
+                      @Apply_Light_mobile="Apply_ceiling_light_mobile"
                     >
                     </lights>
                   </div>
@@ -5861,8 +5871,11 @@ checkHomeDesignAccess() {
     // execute3DRederer() {
     //   this.$refs.floor_item_3d_renderer.renderItem();
     // },
+
+    // ==========================================================================
+    // Furniture Apply 3D Object
+    // ==========================================================================
     execute3DRederer() {
-      
       if (this.$refs.floor_item_3d_renderer) {
         // Pass preserved state to child before rendering
         if (this.preserved3DModelTransform) {
@@ -5877,6 +5890,29 @@ checkHomeDesignAccess() {
       console.log("execute switch furniture");
       this.$refs.floor_item_3d_renderer.switchFurniture();
     },
+    // ==========================================================================
+
+
+    // ==========================================================================
+    // Furniture Apply 3D Object Mobile
+    // ==========================================================================
+    execute3DRederer_mobile() {
+      if (this.$refs.floor_item_3d_renderer_mobile) {
+        // Pass preserved state to child before rendering
+        if (this.preserved3DModelTransform) {
+          this.$refs.floor_item_3d_renderer_mobile.restoreModelTransform(
+            this.preserved3DModelTransform,
+          );
+        }
+        this.$refs.floor_item_3d_renderer_mobile.renderItem();
+      }
+    },
+    executeswitchFurniture_mobile() {
+      console.log("execute switch furniture");
+      this.$refs.floor_item_3d_renderer_mobile.switchFurniture();
+    },
+    // ==========================================================================
+
 
 smoothMobileScrolltoTop(){
         if (window.innerWidth < 500) {
@@ -5940,6 +5976,21 @@ smoothMobileScrolltoTop(){
         this.selected_light_type === "hanging"
       ) {
         this.$refs.canvas_ceiling_3d_object_light_renderer.downloadCurrentSceneImage();
+      }
+    },
+
+    Apply_ceiling_light_mobile() {
+      if (
+        this.select_replace === "Lights" &&
+        this.selected_light_type === "sunk"
+      ) {
+        this.$refs.canvas_sunk_magnetic_lights_render_mobile.saveRoom();
+      }
+      if (
+        this.select_replace === "Lights" &&
+        this.selected_light_type === "hanging"
+      ) {
+        this.$refs.canvas_ceiling_3d_object_light_renderer_mobile.downloadCurrentSceneImage();
       }
     },
 

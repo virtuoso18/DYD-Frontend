@@ -54,9 +54,16 @@
 
   <template #title>Switch Furniture</template>
   <template #footer>
-    <a-button type="primary" @click="startFurrnitureSwitch">
+    <a-row>
+      <a-col :sm="0" :xs="0" :lg="24" :md="24"><a-button type="primary" @click="startFurrnitureSwitch">
       Start Furniture Switch
-    </a-button>
+    </a-button></a-col>
+      <a-col :sm="24" :xs="24" :lg="0" :md="0"> <a-button type="primary" @click="startFurrnitureSwitch">
+      Start Furniture Switch
+    </a-button></a-col>
+    </a-row>
+    
+    
   </template>
 </a-modal>
 <div class="pt-wrapper">
@@ -88,7 +95,7 @@
             </a-button>
       </a-col>
 <a-col  :span="12"style="padding:0px 0px 0px 5px"> 
-  <a-button :disabled="!selected_item" type="primary" size="large" block  @click="$emit('trigger-render-3d-object')">
+  <a-button :disabled="!selected_item" type="primary" size="large" block  @click="$emit('trigger-render-3d-object_mobile')">
         Add 3D Object
       </a-button></a-col>
       
@@ -461,6 +468,10 @@ export default {
     this.$emit('trigger-switch-furniture');
   },
 
+  startFurrnitureSwitch_mobile() {
+    this.showSwitchFurnitureModel();
+    this.$emit('trigger-switch-furniture_mobile');
+  },
 
 
     // showSwitchFurnitureModel(){
