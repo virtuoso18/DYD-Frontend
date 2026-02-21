@@ -288,45 +288,7 @@ handleGenerateClick() {
   }
   
   // Proceed with normal generation
-  this.generateHomeDesign();
-},
-
-// ✅ UPDATE generateHomeDesign - Remove the image check since it's already done
-async generateHomeDesign() {
-  try {
-    this.generating = true;
-    
-    // Your API call logic here
-    const response = await fetch(
-      `${this.$store.state.root_api}renderer/start-render/`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Token ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({
-          image: this.uploadedImage,
-          variations: this.selectedVariation,
-          aspect_ratio: this.selectedAspectRatio
-        })
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error('Failed to start generation');
-    }
-
-    const data = await response.json();
-    
-    if (data.job_id) {
-      await this.startPolling(data.job_id);
-    }
-  } catch (error) {
-    console.error('Error generating home design:', error);
-    this.$message.error('Failed to generate home design');
-    this.generating = false;
-  }
+  this.handleGenerate();
 },
 
     

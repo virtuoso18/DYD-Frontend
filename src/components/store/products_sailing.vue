@@ -294,7 +294,7 @@ export default {
       } catch (error) {
         console.error('Error loading plan details:', error);
         this.business_available_actions = {
-          ar_available_for_products: false  
+          ar_available_for_products: true  
 
           //just add true here to open 
         };

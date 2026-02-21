@@ -112,6 +112,7 @@ import NewHome from '@/views/newhome/Home.vue'
 import authentication from '@/views/auth/authenticaition.vue'
 import pricing from '@/views/pages/pricing.vue'
 import make_payment from '@/views/pages/make_payment.vue'
+import make_payment_upgrade_plan from '@/views/pages/make_payment_upgrade_plan.vue'
 import comunity from '@/views/pages/comunity.vue'
 import comunity_tagged_posts from '@/views/pages/comunity_tagged_posts.vue'
 import contactus from '@/views/pages/contactus.vue'
@@ -327,6 +328,12 @@ const router = createRouter({
       path: '/make-payment-credit-topup/:uuid',
       name: 'make_payment_credittopup',
       component: make_payment_credittopup,
+    },
+    {
+      path: '/make-payment-upgrade/:plan_type',
+      name: 'make_payment-upgrade-plan',
+      component: make_payment_upgrade_plan,
+       meta: { requiresAuth: true }
     },
     {
       path: '/comunity',
