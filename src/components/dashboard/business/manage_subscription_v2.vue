@@ -100,10 +100,10 @@
               <h1
                 class="text-[clamp(36px,9vw,48px)] text-white m-0 font-bold leading-none"
               >
-                ${{currentSubscription?.yearly_charges}}
+                $45
               </h1>
               <p class="text-white/90 m-0 text-sm mt-1">
-                {{currentSubscription?.plan_credits/12}} credits / month
+                1,000 credits / month
               </p>
             </div>
 
@@ -145,7 +145,7 @@
               <h3
                 class="text-[clamp(24px,3vw,32px)] font-semibold text-[#262626] font-[Poppins]"
               >
-                {{currentSubscription?.plan_name}}
+                Basic
               </h3>
               <p class="m-0 text-[#8c8c8c] text-xs uppercase font-[Poppins]">
                 BILLED YEARLY
@@ -173,54 +173,26 @@
               </a-button>
             </div>
 
-           
             <!-- Right Blue Section -->
-              <!-- Right Blue Section -->
-<div
-  class="absolute right-0 top-0 bottom-0 bg-[#3B63FB] rounded-r-[15px] px-6 py-5 flex flex-col justify-center items-center text-center w-[30%]"
->
-  <h1 class="text-[clamp(32px,4vw,45px)] text-white m-0 mb-2 font-bold font-[Poppins] leading-[36px]">
-    ${{currentSubscription?.monthly_charges}}
-  </h1>
-  <p class="text-white/90 m-0 mb-4 text-[clamp(12px,2.5vw,14px)] font-[Poppins] leading-[20px]">
-   {{currentSubscription?.plan_credits/12}} credits / month
-  </p>
-
-  <!-- basic: 2 buttons -->
-  <template v-if="currentPlan === 'basic'">
-    <div class="flex flex-col gap-2 w-full">
-      <button
-        @click="handleUpgrade('standard')"
-        class="bg-white text-[#3B63FB] font-semibold rounded-lg px-4 h-9 w-full transition-all duration-500 ease-out hover:scale-105 text-sm"
-      >
-        Upgrade to Standard
-      </button>
-      <button
-        @click="handleUpgrade('premium')"
-        class="bg-white text-[#3B63FB] font-semibold rounded-lg px-4 h-9 w-full transition-all duration-500 ease-out hover:scale-105 text-sm"
-      >
-        Upgrade to Premium
-      </button>
-    </div>
-  </template>
-
-  <!-- standard: 1 button -->
-  <template v-else-if="currentPlan === 'standard'">
-    <button
-      @click="handleUpgrade('premium')"
-      class="bg-white text-[#3B63FB] font-semibold rounded-lg px-4 h-9 w-full transition-all duration-500 ease-out hover:scale-105 text-sm"
-    >
-      Upgrade to Premium
-    </button>
-  </template>
-
-  <!-- premium: no buttons, just a badge -->
-  <template v-else-if="currentPlan === 'premium'">
-    <span class="bg-white/20 text-white text-xs font-medium px-3 py-1 rounded-full">
-      ✓ Top Plan
-    </span>
-  </template>
-</div>
+            <div
+              class="absolute right-0 top-0 bottom-0 bg-[#3B63FB] rounded-r-[15px] px-6 py-5 flex flex-col justify-center items-center text-center w-[30%]"
+            >
+              <h1
+                class="text-[clamp(32px,4vw,45px)] text-white m-0 mb-2 font-bold font-[Poppins] leading-[36px]"
+              >
+                $45
+              </h1>
+              <p
+                class="text-white/90 m-0 mb-4 text-[clamp(12px,2.5vw,14px)] font-[Poppins] leading-[20px]"
+              >
+                1,000 credits / month
+              </p>
+              <button
+                class="bg-white text-[#3B63FB] font-semibold rounded-lg px-4 h-9 w-full transition-all duration-500 ease-out hover:scale-105"
+              >
+                Upgrade to Pro
+              </button>
+            </div>
           </div>
         </div>
 
@@ -725,10 +697,6 @@ export default {
   name: "ManageSubscription",
   data() {
     return {
-      currentPlan: 'basic',       // will be overwritten by API
-      currentSubscription: null,  // ← ADD THIS
-      isEligibleForFreeCredits: false,  // ← ADD THIS (was missing from data, only set in method)
-      freeCreditsMessage: '',           // ← ADD THIS          
       loading: true,
       activeTab: "subscription",
       freeCreditsLoading: false,
@@ -760,45 +728,8 @@ export default {
     this.fetch_my_subscriptions();
     this.fetch_my_credits();
     this.checkFreeCreditsEligibility();
-    this.fetchCurrentSubscription();
   },
   methods: {
-    async fetchCurrentSubscription() {
-  try {
-    const token = localStorage.getItem("token");
-
-    const response = await fetch(
-      `${this.$store.state.root_api}subscription/api/current-subscription-plan/`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Token ${token}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    const result = await response.json();
-
-    if (response.ok && result.has_active_subscription) {
-      this.currentSubscription = result.subscription;
-
-      // Normalize plan_name to lowercase to match v-if checks: 'basic' | 'standard' | 'premium'
-      this.currentPlan = result.subscription.plan_name.toLowerCase();
-    } else {
-      // No active subscription — keep default or set to null
-      this.currentPlan = null;
-      this.currentSubscription = null;
-    }
-  } catch (error) {
-    console.error("Error fetching current subscription:", error);
-    this.currentPlan = null;
-  }
-},
-handleUpgrade(plan) {
-  console.log(`Upgrading to ${plan}`);
-  this.$router.push('/make-payment-upgrade/' + plan);
-},
     handleTabChange(tab) {
       this.activeTab = tab;
     },

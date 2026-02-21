@@ -5866,6 +5866,7 @@ checkHomeDesignAccess() {
     //   this.$refs.floor_item_3d_renderer.renderItem();
     // },
     execute3DRederer() {
+      
       if (this.$refs.floor_item_3d_renderer) {
         // Pass preserved state to child before rendering
         if (this.preserved3DModelTransform) {

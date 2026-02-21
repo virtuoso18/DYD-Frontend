@@ -290,6 +290,12 @@ export default {
       rotationRing: null,
       rotationArrows: [],
       showRotationRing: true,
+
+
+      lastKnownPos:null,
+      lastKnownQuat:null,
+      lastKnownScale:null,
+      _pendingTransformRestore:null,
     }
   },
 
@@ -337,6 +343,12 @@ export default {
     this.twoFingerStartAngle = 0          // chair.rotation.y when gesture began
     this.twoFingerStartAvgY  = 0          // avg clientY of both fingers at start
     this.isTwoFingerRotating = false
+
+
+    this.lastKnownPos  = null
+this.lastKnownQuat = null
+this.lastKnownScale = null
+this._pendingTransformRestore = null
   },
 
   mounted() {
@@ -587,7 +599,9 @@ export default {
 
   // ── POINTER EVENTS ───────────────────────────────────────
   const el = this.renderer.domElement
-  el.style.touchAction = 'none'
+// 'pan-y' lets the browser scroll vertically when the pointer lands
+// on empty space; we call preventDefault only when hitting the model or ring.
+el.style.touchAction = 'pan-y'
 
   el.addEventListener('pointerdown',   this.onPointerDown)
   el.addEventListener('pointermove',   this.onPointerMove)
@@ -864,42 +878,71 @@ export default {
       }
     },
 
-    onPointerUp(event) {
-      // ── Two-finger gesture cleanup ───────────────────────────
-      if (event.pointerType === 'touch') {
-        this.twoFingerPointers.delete(event.pointerId)
+// ── STEP 3: Add _saveLastKnownTransform helper ───────────────────────────────
+// Reads raw numeric values from the chair — no Vector3 references, no proxies.
+_saveLastKnownTransform() {
+  if (!this.chair) return
 
-        // Once fewer than 2 fingers remain, end the gesture
-        if (this.twoFingerPointers.size < 2 && this.isTwoFingerRotating) {
-          this.isTwoFingerRotating = false
-          // Re-snapshot start values with remaining finger so a quick
-          // single-finger follow-up doesn't snap the model
-          return
-        }
+  this.lastKnownPos = {
+    x: this.chair.position.x,
+    y: this.chair.position.y,
+    z: this.chair.position.z,
+  }
+  this.lastKnownQuat = {
+    x: this.chair.quaternion.x,
+    y: this.chair.quaternion.y,
+    z: this.chair.quaternion.z,
+    w: this.chair.quaternion.w,
+  }
+  this.lastKnownScale = {
+    x: this.chair.scale.x,
+    y: this.chair.scale.y,
+    z: this.chair.scale.z,
+  }
 
-        if (this.isTwoFingerRotating) return
+  console.log('[lastKnown saved] pos:', this.lastKnownPos,
+              'rot.y:', THREE.MathUtils.radToDeg(this.chair.rotation.y).toFixed(1) + '°')
+},
+
+// ── STEP 2: Replace onPointerUp entirely ──────────────────────────────────────
+onPointerUp(event) {
+  // ── Two-finger gesture cleanup ─────────────────────────────────────────────
+  if (event.pointerType === 'touch') {
+    this.twoFingerPointers.delete(event.pointerId)
+
+    if (this.twoFingerPointers.size < 2 && this.isTwoFingerRotating) {
+      this.isTwoFingerRotating = false
+      // ✅ Save transform after two-finger rotation ends
+      this._saveLastKnownTransform()
+      this._emitTransformUpdate()
+      return
+    }
+    if (this.isTwoFingerRotating) return
+  }
+
+  // Restore highlighted arrow colour
+  if (this.isRotating && this.rotationRing) {
+    this.rotationRing.traverse((child) => {
+      if (child.userData && child.userData.visMesh) {
+        child.userData.visMesh.material.color.setHex(child.userData.originalColor)
       }
-
-      // Restore highlighted arrow colour
-      if (this.isRotating && this.rotationRing) {
-        this.rotationRing.traverse((child) => {
-          if (child.userData && child.userData.visMesh) {
-            child.userData.visMesh.material.color.setHex(child.userData.originalColor)
-          }
-          if (child.userData && child.userData.isRotationArrow && child.material && child.material.color) {
-            child.material.color.setHex(child.userData.originalColor)
-          }
-        })
+      if (child.userData && child.userData.isRotationArrow && child.material && child.material.color) {
+        child.material.color.setHex(child.userData.originalColor)
       }
+    })
+  }
 
-      this.isDragging    = false
-      this.isDraggingRef = false
-      this.isRotating    = false
-      this.isRotatingRef = false
+  this.isDragging    = false
+  this.isDraggingRef = false
+  this.isRotating    = false
+  this.isRotatingRef = false
 
-      try { this.renderer.domElement.releasePointerCapture(event.pointerId) } catch (_) {}
-    },
+  try { this.renderer.domElement.releasePointerCapture(event.pointerId) } catch (_) {}
 
+  // ✅ Save transform after every drag/rotate ends
+  this._saveLastKnownTransform()
+  this._emitTransformUpdate()
+},
     // ── READY CHECK ─────────────────────────────────────────────
     // Called whenever floor OR chair finishes loading.
     // Only hides the overlay once BOTH are ready together.
@@ -1156,10 +1199,15 @@ export default {
           this.modelLoadProgress = 100
           this.modelLoading      = false
 
-          if (this.planeReady) {
+         if (this.planeReady) {
             this.placeChairOnFloor()
             this.createRotationRing()
             this._snapRingToChair()
+
+            // ✅ Restore previous drag position if parent preserved it
+            if (this._pendingTransformRestore) {
+              this._applyPendingTransform()
+            }
           }
           this._checkAllReady()
         },
@@ -1465,6 +1513,80 @@ export default {
       this._checkAllReady()
     },
 
+    restoreModelTransform(transform) {
+  if (!transform) return
+
+  // ✅ Store as pending — chair may still be loading when this is called.
+  // reloadChair() will apply this after placeChairOnFloor() completes.
+  this._pendingTransformRestore = {
+    position: { x: transform.position.x, y: transform.position.y, z: transform.position.z },
+    rotation: { x: transform.rotation.x, y: transform.rotation.y, z: transform.rotation.z },
+    scale:    { x: transform.scale.x,    y: transform.scale.y,    z: transform.scale.z },
+  }
+
+  console.log('[restoreModelTransform] stored pending restore:', this._pendingTransformRestore)
+
+  // Also update lastKnown so renderItem uses it
+  this.lastKnownPos = { ...this._pendingTransformRestore.position }
+  this.lastKnownQuat = null  // will be rebuilt from Euler in _applyPendingTransform
+  this.lastKnownScale = { ...this._pendingTransformRestore.scale }
+
+  // If chair is already loaded, apply immediately
+  if (this.chair && this.planeReady) {
+    this._applyPendingTransform()
+  }
+},
+
+// ✅ NEW helper — applies pending transform to chair
+_applyPendingTransform() {
+  if (!this._pendingTransformRestore || !this.chair) return
+
+  const t = this._pendingTransformRestore
+
+  this.chair.position.set(t.position.x, t.position.y, t.position.z)
+  this.chair.rotation.set(t.rotation.x, t.rotation.y, t.rotation.z)
+  this.chair.scale.set(t.scale.x, t.scale.y, t.scale.z)
+  this.chair.updateMatrixWorld(true)
+
+  // Sync reactive rotation degree tracker
+  this.chairRotation = ((THREE.MathUtils.radToDeg(t.rotation.y) % 360) + 360) % 360
+
+  // Update lastKnown with quaternion now that rotation is applied
+  this.lastKnownPos  = { x: this.chair.position.x, y: this.chair.position.y, z: this.chair.position.z }
+  this.lastKnownQuat = { x: this.chair.quaternion.x, y: this.chair.quaternion.y, z: this.chair.quaternion.z, w: this.chair.quaternion.w }
+  this.lastKnownScale = { x: this.chair.scale.x, y: this.chair.scale.y, z: this.chair.scale.z }
+
+  // Snap ring to new position
+  if (this.rotationRing) this._snapRingToChair()
+  this.snapLightToChair()
+
+  console.log('[_applyPendingTransform] applied → pos:', this.chair.position.x.toFixed(3), this.chair.position.z.toFixed(3))
+
+  this._pendingTransformRestore = null  // clear after applying
+},
+
+// ─── ALSO ADD THIS: emit transform on every drag end so parent stays in sync ─
+// Call this at the end of onPointerUp (after isDragging/isRotating cleared):
+_emitTransformUpdate() {
+  if (!this.chair) return;
+  this.$emit('model-transform-updated', {
+    position: {
+      x: this.chair.position.x,
+      y: this.chair.position.y,
+      z: this.chair.position.z,
+    },
+    rotation: {
+      x: this.chair.rotation.x,
+      y: this.chair.rotation.y,
+      z: this.chair.rotation.z,
+    },
+    scale: {
+      x: this.chair.scale.x,
+      y: this.chair.scale.y,
+      z: this.chair.scale.z,
+    },
+  });
+},
     buildShadowReceiver() {
       if (this.shadowReceiverMesh) { this.scene.remove(this.shadowReceiverMesh); this.shadowReceiverMesh=null }
       const geo = new THREE.PlaneGeometry(12,12)
@@ -1493,134 +1615,360 @@ export default {
 
     // ── RENDER / EXPORT ─────────────────────────────────────────
 
-    async renderItem() {
-      if (!this.chair || !this.renderer || !this.scene || !this.camera) { console.warn('Not ready'); return }
-      try {
+// ── helper ───────────────────────────────────────────────────────────────────
+
+_getBgNativeSize() {
+  const img = this.$refs.roomImage;
+  if (img && img.naturalWidth > 0 && img.naturalHeight > 0) {
+    return { w: img.naturalWidth, h: img.naturalHeight };
+  }
+  const c = this.renderer?.domElement;
+  return { w: c?.width || 800, h: c?.height || 600 };
+},
+
+
+ downloadImages(compositeBlob, maskBlob) {
+
+    // ---- Download Composite Image ----
+    const compositeUrl = URL.createObjectURL(compositeBlob);
+    const compositeLink = document.createElement('a');
+    compositeLink.href = compositeUrl;
+    compositeLink.download = 'composite_image.png';
+    document.body.appendChild(compositeLink);
+    compositeLink.click();
+    document.body.removeChild(compositeLink);
+    URL.revokeObjectURL(compositeUrl);
+
+
+    // ---- Download Binary Mask ----
+    const maskUrl = URL.createObjectURL(maskBlob);
+    const maskLink = document.createElement('a');
+    maskLink.href = maskUrl;
+    maskLink.download = 'binary_mask.png';
+    document.body.appendChild(maskLink);
+    maskLink.click();
+    document.body.removeChild(maskLink);
+    URL.revokeObjectURL(maskUrl);
+  },
+    // async renderItem() {
+    //   if (!this.chair || !this.renderer || !this.scene || !this.camera) { console.warn('Not ready'); return }
+    //   try {
         
-        const currentPosition = this.chair.position.clone()
-        const currentRotation = this.chair.rotation.clone()
-        const currentScale    = this.chair.scale.clone()
+    //     const currentPosition = this.chair.position.clone()
+    //     const currentRotation = this.chair.rotation.clone()
+    //     const currentScale    = this.chair.scale.clone()
 
-        await this.$nextTick()
-        if (this.renderer && this.scene && this.camera) this.renderer.render(this.scene, this.camera)
+    //     await this.$nextTick()
+    //     if (this.renderer && this.scene && this.camera) this.renderer.render(this.scene, this.camera)
 
-        this.chair.position.copy(currentPosition)
-        this.chair.rotation.copy(currentRotation)
-        this.chair.scale.copy(currentScale)
-        // ✅ Hide rotation ring
-            if (this.rotationRing) {
-              this.rotationRing.visible = false
-            }
-        this.internalLoading = true
-        this.internalLoadingText = 'Rendering Item...'
-        this.isDraggingRef = false
-        this.loadingProxy  = true
-        this.loadingText   = 'Rendering Item...'
+    //     this.chair.position.copy(currentPosition)
+    //     this.chair.rotation.copy(currentRotation)
+    //     this.chair.scale.copy(currentScale)
+    //     // ✅ Hide rotation ring
+    //         if (this.rotationRing) {
+    //           this.rotationRing.visible = false
+    //         }
+    //     this.internalLoading = true
+    //     this.internalLoadingText = 'Rendering Item...'
+    //     this.isDraggingRef = false
+    //     this.loadingProxy  = true
+    //     this.loadingText   = 'Rendering Item...'
 
-        const canvas = this.renderer.domElement
-        let renderWidth  = canvas.width
-        let renderHeight = canvas.height
-        if (renderWidth===0||renderHeight===0) {
-          const img = this.$refs.roomImage
-          renderWidth  = img ? img.naturalWidth  || img.clientWidth  || 800 : 800
-          renderHeight = img ? img.naturalHeight || img.clientHeight || 600 : 600
-        }
+    //     const canvas = this.renderer.domElement
+    //     let renderWidth  = canvas.width
+    //     let renderHeight = canvas.height
+    //     if (renderWidth===0||renderHeight===0) {
+    //       const img = this.$refs.roomImage
+    //       renderWidth  = img ? img.naturalWidth  || img.clientWidth  || 800 : 800
+    //       renderHeight = img ? img.naturalHeight || img.clientHeight || 600 : 600
+    //     }
 
-        this.loadingText = 'Creating composite image...'
-        const compositeBlob = await this.createCompositeImageBlob(renderWidth, renderHeight, currentPosition, currentRotation, currentScale)
-        if (!compositeBlob || compositeBlob.size===0) throw new Error('Failed to create composite')
+    //     this.loadingText = 'Creating composite image...'
+    //     const compositeBlob = await this.createCompositeImageBlob(renderWidth, renderHeight, currentPosition, currentRotation, currentScale)
+    //     if (!compositeBlob || compositeBlob.size===0) throw new Error('Failed to create composite')
 
-        this.loadingText = 'Creating binary mask...'
-        const maskBlob = await this.createBinaryMaskBlob(renderWidth, renderHeight, currentPosition, currentRotation, currentScale)
-        if (!maskBlob || maskBlob.size===0) throw new Error('Failed to create mask')
+    //     this.loadingText = 'Creating binary mask...'
+    //     const maskBlob = await this.createBinaryMaskBlob(renderWidth, renderHeight, currentPosition, currentRotation, currentScale)
+    //     if (!maskBlob || maskBlob.size===0) throw new Error('Failed to create mask')
 
-        const formData = new FormData()
-        formData.append('composite_image', compositeBlob, 'composite_image.png')
-        formData.append('binary_mask',     maskBlob,      'binary_mask.png')
-        formData.append('room_id',  this.$route.params.id)
-        formData.append('prod_id',  this.$route.query.product_id)
+    // this.downloadImages(compositeBlob, maskBlob);
+    // return 
+    //     const formData = new FormData()
+    //     formData.append('composite_image', compositeBlob, 'composite_image.png')
+    //     formData.append('binary_mask',     maskBlob,      'binary_mask.png')
+    //     formData.append('room_id',  this.$route.params.id)
+    //     formData.append('prod_id',  this.$route.query.product_id)
 
-        this.loadingText = 'Adding Product to Your Room...'
-        const url      = `${this.$store.state.root_api}engine/inpaint-item-ref/`
-        const response = await fetch(url, {
-          method: 'POST',
-          headers: { Authorization: `Token ${localStorage.getItem('token')}` },
-          body: formData,
-        })
+    //     this.loadingText = 'Adding Product to Your Room...'
+    //     const url      = `${this.$store.state.root_api}engine/inpaint-item-ref/`
+    //     const response = await fetch(url, {
+    //       method: 'POST',
+    //       headers: { Authorization: `Token ${localStorage.getItem('token')}` },
+    //       body: formData,
+    //     })
 
-        if (response.status===402) { const r=await response.json(); this.$emit('insufficient-credits',r.msg,r.buid); return }
-        if (!response.ok) throw new Error(`HTTP ${response.status}`)
+    //     if (response.status===402) { const r=await response.json(); this.$emit('insufficient-credits',r.msg,r.buid); return }
+    //     if (!response.ok) throw new Error(`HTTP ${response.status}`)
 
-        const result = await response.json()
-        if (result.renderer_id) {
-          if (this.chair) this.chair.visible = false
-          this.$emit('add-3d-furniture-to-room-start-polling', result.renderer_id)
-        }
-        return result
-      } catch (error) {
-        console.error('Error rendering item:', error)
-        this.internalLoading = false  // ✅ clear on error
-      this.loadingProxy = false
-      if (this.rotationRing) {
-              this.rotationRing.visible = false
-            }
-        throw error
+    //     const result = await response.json()
+    //     if (result.renderer_id) {
+    //       if (this.chair) this.chair.visible = false
+    //       this.$emit('add-3d-furniture-to-room-start-polling', result.renderer_id)
+    //     }
+    //     return result
+    //   } catch (error) {
+    //     console.error('Error rendering item:', error)
+    //     this.internalLoading = false  // ✅ clear on error
+    //   this.loadingProxy = false
+    //   if (this.rotationRing) {
+    //           this.rotationRing.visible = false
+    //         }
+    //     throw error
+    //   }
+    // },
+
+// ── STEP 4: Replace renderItem() entirely ────────────────────────────────────
+async renderItem() {
+  if (!this.chair || !this.renderer || !this.scene || !this.camera) {
+    console.warn('renderItem: not ready')
+    return
+  }
+        this.$emit('update:isLoading', true)
+
+  try {
+    // ── STEP 1: Force matrix update & snapshot BEFORE any reactive changes ──
+    this.chair.updateMatrixWorld(true)
+
+    const snapPos = {
+      x: this.chair.position.x,
+      y: this.chair.position.y,
+      z: this.chair.position.z,
+    }
+    const snapQuat = {
+      x: this.chair.quaternion.x,
+      y: this.chair.quaternion.y,
+      z: this.chair.quaternion.z,
+      w: this.chair.quaternion.w,
+    }
+    const snapScale = {
+      x: this.chair.scale.x,
+      y: this.chair.scale.y,
+      z: this.chair.scale.z,
+    }
+
+    console.log('[renderItem] SNAPSHOT pos:', snapPos)
+    console.log('[renderItem] floorCentroid:', {
+      x: this.floorCentroid3.x.toFixed(3),
+      z: this.floorCentroid3.z.toFixed(3)
+    })
+    console.log('[renderItem] was dragged from centroid?',
+      Math.abs(snapPos.x - this.floorCentroid3.x) > 0.01 ||
+      Math.abs(snapPos.z - this.floorCentroid3.z) > 0.01
+    )
+
+    // ── STEP 2: Hide ring & do live render BEFORE reactive state changes ──
+    if (this.rotationRing) this.rotationRing.visible = false
+    this.renderer.render(this.scene, this.camera)
+
+    // ── STEP 3: NOW change reactive state (triggers Vue watchers/flush) ──
+    this.internalLoading     = true
+    this.internalLoadingText = 'Rendering Item...'
+    this.isDraggingRef       = false
+    this.loadingProxy        = true
+
+    // ── STEP 4: await nextTick to let Vue reactivity flush fully ──
+    await this.$nextTick()
+
+    // ── STEP 5: CRITICAL re-apply — mirrors old component exactly ──
+    // Vue watcher flush (chairRotation → alignChairToFloor) may have
+    // silently changed chair.quaternion between steps 1 and here.
+    // Re-applying from plain primitives (not Vector3 refs) is safe.
+    this.chair.position.set(snapPos.x, snapPos.y, snapPos.z)
+    this.chair.quaternion.set(snapQuat.x, snapQuat.y, snapQuat.z, snapQuat.w)
+    this.chair.scale.set(snapScale.x, snapScale.y, snapScale.z)
+    this.chair.updateMatrixWorld(true)
+
+    console.log('[renderItem] POST-NEXTICK pos (should match snapshot):',
+      this.chair.position.x.toFixed(3),
+      this.chair.position.z.toFixed(3)
+    )
+
+    // ── STEP 6: Export dimensions — use CSS pixels (clientWidth), NOT canvas.width ──
+    // canvas.width = renderW (native image size, e.g. 4032px)
+    // canvas.clientWidth = CSS display size (e.g. 390px on mobile)
+    // Camera was built with renderW/renderH aspect BUT the offscreen camera
+    // is rebuilt fresh with bgWidth/bgHeight aspect — use clientWidth so
+    // the aspect the user SEES is what we export at.
+    const canvasEl = this.renderer.domElement
+    const exportW = canvasEl.clientWidth  || canvasEl.width  || 800
+    const exportH = canvasEl.clientHeight || canvasEl.height || 600
+    console.log(`[renderItem] Exporting at ${exportW}×${exportH} (CSS pixels)`)
+
+    // ── STEP 7: Create blobs — chair state is now guaranteed correct ──
+    this.internalLoadingText = 'Creating composite image...'
+    const compositeBlob = await this.createCompositeImageBlob(exportW, exportH)
+    if (!compositeBlob || compositeBlob.size === 0) throw new Error('Composite blob empty')
+
+    this.internalLoadingText = 'Creating binary mask...'
+    const maskBlob = await this.createBinaryMaskBlob(exportW, exportH)
+    if (!maskBlob || maskBlob.size === 0) throw new Error('Mask blob empty')
+
+    // // ── DEBUG: remove these two lines when sending to backend ──
+    // this.downloadImages(compositeBlob, maskBlob)
+    // return
+
+    // Backend upload
+    const formData = new FormData();
+    formData.append('composite_image', compositeBlob, 'composite_image.png');
+    formData.append('binary_mask',     maskBlob,      'binary_mask.png');
+    formData.append('room_id',  this.$route.params.id);
+    formData.append('prod_id',  this.$route.query.product_id);
+
+    this.internalLoadingText = 'Adding Product to Your Room...';
+    const response = await fetch(
+      `${this.$store.state.root_api}engine/inpaint-item-ref/`,
+      {
+        method:  'POST',
+        headers: { Authorization: `Token ${localStorage.getItem('token')}` },
+        body:    formData,
       }
-    },
+    );
 
-    async createCompositeImageBlob(bgWidth, bgHeight, position, rotation, scale) {
-      const objectCanvas = document.createElement('canvas')
-      objectCanvas.width = bgWidth ; objectCanvas.height = bgHeight
-      const objectRenderer = new THREE.WebGLRenderer({ canvas:objectCanvas, antialias:true, preserveDrawingBuffer:true, alpha:true, precision:'highp' })
-      objectRenderer.setSize(bgWidth, bgHeight) ; objectRenderer.setPixelRatio(1)
-      objectRenderer.outputColorSpace = THREE.SRGBColorSpace
-      objectRenderer.setClearColor(0x000000,0)
-      objectRenderer.shadowMap.enabled = true ; objectRenderer.shadowMap.type = THREE.PCFShadowMap
+    if (response.status === 402) {
+      const r = await response.json();
+      this.$emit('insufficient-credits', r.msg, r.buid);
+      return;
+    }
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
-      const objectScene  = new THREE.Scene()
-      const chairClone   = this.chair.clone(true)
-      chairClone.position.copy(position) ; chairClone.rotation.copy(rotation) ; chairClone.scale.copy(scale)
-      chairClone.updateMatrix()
-      objectScene.add(chairClone)
+    const result = await response.json();
+    if (result.renderer_id) {
+      if (this.chair) this.chair.visible = false;
+      this.$emit('add-3d-furniture-to-room-start-polling', result.renderer_id);
+    }
+    this.$emit('update:isLoading', false)
+    this.loadingProxy    = false;
 
-      objectScene.add(new THREE.AmbientLight(0xfff4e0,1.2))
-      const sun = new THREE.DirectionalLight(0xfff5e8,2.0) ; sun.position.set(1.5,5,-3) ; sun.castShadow=true ; sun.shadow.mapSize.set(2048,2048) ; objectScene.add(sun)
-      const f1  = new THREE.DirectionalLight(0xd0e8ff,0.8) ; f1.position.set(-2,3,2)  ; objectScene.add(f1)
-      const f2  = new THREE.DirectionalLight(0xe8f0ff,0.6) ; f2.position.set(3,2,1)   ; objectScene.add(f2)
-      const bk  = new THREE.DirectionalLight(0xfff8e8,0.5) ; bk.position.set(0,2,4)   ; objectScene.add(bk)
+    return result;
 
-      const objectCamera = this.camera.clone()
-      objectCamera.aspect = bgWidth/bgHeight ; objectCamera.updateProjectionMatrix()
-      objectRenderer.render(objectScene, objectCamera)
+  } catch (error) {
+    console.error('renderItem error:', error);
+    this.internalLoading = false;
+    this.loadingProxy    = false;
+    if (this.rotationRing) this.rotationRing.visible = true;
+    throw error;
 
-      const blob = await new Promise(resolve => objectCanvas.toBlob(resolve,'image/png'))
-      objectRenderer.dispose()
-      return blob
-    },
+  } finally {
+    // Always restore ring visibility on completion/error
+    if (this.rotationRing) this.rotationRing.visible = this.showRotationRing;
+  }
+},
 
-    async createBinaryMaskBlob(bgWidth, bgHeight, position, rotation, scale) {
-      const tempCanvas = document.createElement('canvas')
-      tempCanvas.width = bgWidth ; tempCanvas.height = bgHeight
-      const tempRenderer = new THREE.WebGLRenderer({ canvas:tempCanvas, antialias:true, preserveDrawingBuffer:true })
-      tempRenderer.setSize(bgWidth,bgHeight) ; tempRenderer.setPixelRatio(1)
-      tempRenderer.setClearColor(0x000000,1)
 
-      const tempScene   = new THREE.Scene()
-      const chairClone  = this.chair.clone(true)
-      chairClone.position.copy(position) ; chairClone.rotation.copy(rotation) ; chairClone.scale.copy(scale)
-      chairClone.updateMatrix()
-      chairClone.traverse(child => { if (child.isMesh) child.material = new THREE.MeshBasicMaterial({color:0xffffff}) })
-      tempScene.add(chairClone)
-      tempScene.add(new THREE.HemisphereLight(0xffffff,0xffffff,1.0))
 
-      const tempCamera = this.camera.clone()
-      tempCamera.aspect = bgWidth/bgHeight ; tempCamera.updateProjectionMatrix()
-      tempRenderer.render(tempScene, tempCamera)
+// ─── UPDATED createCompositeImageBlob ────────────────────────────────────────
+// Now accepts snapPos/snapQuat/snapScale as plain objects (not Three.js objects)
+// to avoid any proxy/reference issues
+async createCompositeImageBlob(bgWidth, bgHeight) {
+  const offCanvas = document.createElement('canvas')
+  offCanvas.width  = bgWidth
+  offCanvas.height = bgHeight
 
-      const blob = await new Promise(resolve => tempCanvas.toBlob(resolve,'image/png'))
-      tempRenderer.dispose()
-      return blob
-    },
+  const offRenderer = new THREE.WebGLRenderer({
+    canvas: offCanvas, antialias: true,
+    preserveDrawingBuffer: true, alpha: true, precision: 'highp',
+  })
+  offRenderer.setSize(bgWidth, bgHeight)
+  offRenderer.setPixelRatio(1)
+  offRenderer.outputColorSpace  = THREE.SRGBColorSpace
+  offRenderer.setClearColor(0x000000, 0)
+  offRenderer.shadowMap.enabled = true
+  offRenderer.shadowMap.type    = THREE.PCFShadowMap
+
+  const offScene = new THREE.Scene()
+
+  // ✅ Read from this.chair DIRECTLY at call time
+  // renderItem() has already re-applied the snapshot, so this is the dragged position
+  const chairClone = this.chair.clone(true)
+  this.chair.updateMatrixWorld(true)
+  chairClone.position.copy(this.chair.position)
+  chairClone.quaternion.copy(this.chair.quaternion)
+  chairClone.scale.copy(this.chair.scale)
+  chairClone.updateMatrixWorld(true)
+
+  console.log(`[composite] chair at x=${chairClone.position.x.toFixed(3)}, z=${chairClone.position.z.toFixed(3)}`)
+  offScene.add(chairClone)
+
+  offScene.add(new THREE.AmbientLight(0xfff4e0, 1.2))
+  const sun = new THREE.DirectionalLight(0xfff5e8, 2.0)
+  sun.position.set(1.5, 5, -3)
+  sun.castShadow = true
+  sun.shadow.mapSize.set(2048, 2048)
+  sun.shadow.camera.near = 0.1; sun.shadow.camera.far   = 20
+  sun.shadow.camera.left = -6;  sun.shadow.camera.right  = 6
+  sun.shadow.camera.bottom = -6; sun.shadow.camera.top   = 6
+  sun.shadow.bias = -0.001; sun.shadow.normalBias = 0.02
+  offScene.add(sun)
+  const f1 = new THREE.DirectionalLight(0xd0e8ff, 2.8); f1.position.set(-2, 3, 2); offScene.add(f1)
+  const f2 = new THREE.DirectionalLight(0xe8f0ff, 0.6); f2.position.set( 3, 2, 1); offScene.add(f2)
+  const bk = new THREE.DirectionalLight(0xfff8e8, 0.5); bk.position.set( 0, 2, 4); offScene.add(bk)
+
+  // ✅ Fresh camera matching live camera exactly
+  const offCamera = new THREE.PerspectiveCamera(this.CAM_FOV_V, bgWidth / bgHeight, 0.01, 200)
+  offCamera.position.set(0, 0, 0)
+  offCamera.lookAt(0, 0, -1)
+  offCamera.updateProjectionMatrix()
+  offCamera.updateMatrixWorld(true)
+
+  offRenderer.render(offScene, offCamera)
+  const blob = await new Promise(resolve => offCanvas.toBlob(resolve, 'image/png'))
+  offRenderer.dispose()
+  return blob
+},
+
+async createBinaryMaskBlob(bgWidth, bgHeight) {
+  const offCanvas = document.createElement('canvas')
+  offCanvas.width  = bgWidth
+  offCanvas.height = bgHeight
+
+  const offRenderer = new THREE.WebGLRenderer({
+    canvas: offCanvas, antialias: false,
+    preserveDrawingBuffer: true, alpha: false,
+  })
+  offRenderer.setSize(bgWidth, bgHeight)
+  offRenderer.setPixelRatio(1)
+  offRenderer.setClearColor(0x000000, 1)
+
+  const offScene = new THREE.Scene()
+
+  // ✅ Same direct-read pattern
+  const chairClone = this.chair.clone(true)
+  chairClone.position.copy(this.chair.position)
+  chairClone.quaternion.copy(this.chair.quaternion)
+  chairClone.scale.copy(this.chair.scale)
+  chairClone.updateMatrixWorld(true)
+  chairClone.traverse(child => {
+    if (child.isMesh) {
+      child.material = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.FrontSide })
+      child.castShadow = false; child.receiveShadow = false
+    }
+  })
+  offScene.add(chairClone)
+  offScene.add(new THREE.AmbientLight(0xffffff, 1))
+
+  const offCamera = new THREE.PerspectiveCamera(this.CAM_FOV_V, bgWidth / bgHeight, 0.01, 200)
+  offCamera.position.set(0, 0, 0)
+  offCamera.lookAt(0, 0, -1)
+  offCamera.updateProjectionMatrix()
+  offCamera.updateMatrixWorld(true)
+
+  offRenderer.render(offScene, offCamera)
+  const blob = await new Promise(resolve => offCanvas.toBlob(resolve, 'image/png'))
+  offRenderer.dispose()
+  return blob
+},
+
+
 
     async switchFurniture() {
       if (!this.chair) { console.warn('No chair loaded'); return }

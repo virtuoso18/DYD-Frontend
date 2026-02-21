@@ -900,7 +900,6 @@ async loadBrandPurchasedPlanDetails() {
     const url = `${this.$store.state.root_api}subscription/api/get-business-plan-details/${brandSlug}/`;
     
     
-    
     const token = localStorage.getItem('token');
     const response = await fetch(url, {
       method: 'GET',
@@ -918,8 +917,9 @@ async loadBrandPurchasedPlanDetails() {
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-
+    
     const result = await response.json();
+    // debugger
     
     // DEBUGGER: After parsing JSON, inspect the result object
    
@@ -927,7 +927,7 @@ async loadBrandPurchasedPlanDetails() {
     console.log('📦 Plan Details Result:', result);
     
     // Store plan name
-    this.currentPlanName = result.plan_name || 'Unknown';
+    this.currentPlanName = result.plan_name ;
     
     // Store business actions
     if (result.business_available_actions) {
@@ -935,11 +935,12 @@ async loadBrandPurchasedPlanDetails() {
     }
     
     // CHECK IF PLAN IS BASIC OR FALSE
-    const planName = (result.plan_name || '').toLowerCase();
-    const isBasicPlan = planName === 'basic' || planName === 'false' || planName === false;
+    const planName = (result.plan_name ).toLowerCase();
+    const isBasicPlan = (planName === 'basic');
     
     // DEBUGGER: Before setting modal state
-    // debugger;
+    console.log(isBasicPlan);
+    debugger;
     
     if (isBasicPlan) {
       console.log('❌ BLOCKING ACCESS - Basic plan detected');
@@ -955,6 +956,7 @@ async loadBrandPurchasedPlanDetails() {
   } catch (error) {
     console.error('❌ Error loading plan details:', error);
     // On error, block access as safety measure
+    
     this.showPlanBlockModal = true;
     this.currentPlanName = 'Unknown';
     
@@ -974,7 +976,7 @@ async loadBrandPurchasedPlanDetails() {
 
 
     
-      async fetchCommunityPosts(page = 1) {
+  async fetchCommunityPosts(page = 1) {
     try {
       
         const token = localStorage.getItem('token');
@@ -983,9 +985,9 @@ async loadBrandPurchasedPlanDetails() {
             {
                 method: 'GET',
                 headers: {
-                Authorization: `Token ${token}`,
-                "Content-Type": "application/json",
-              },
+                  Authorization: `Token ${token}`,
+                  "Content-Type": "application/json",
+                },
             }
         );
         const result = await response.json();

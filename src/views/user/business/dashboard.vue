@@ -847,19 +847,50 @@
       </a-col>
 
       <!-- Content Area -->
-      <a-col
-        :xs="menu_view_mobile ? 24 : !this.$route.query.p ? 0 : 24"
-        :sm="menu_view_mobile ? 24 : !this.$route.query.p ? 0 : 24"
-        :md="18"
-        :lg="18"
-        class="content-area"
-      >
-        <router-view
-          :user="user"
-          :profile="profile"
-          :buisness_info="business_info"
-        />
-      </a-col>
+     <!-- Content Area -->
+<a-col
+  :xs="menu_view_mobile ? 24 : !this.$route.query.p ? 0 : 24"
+  :sm="menu_view_mobile ? 24 : !this.$route.query.p ? 0 : 24"
+  :md="18"
+  :lg="18"
+  class="content-area"
+>
+  <!-- ✅ If email is verified, show normal content -->
+ <!-- ✅ Profile & Business Detail — ALWAYS show, no email check -->
+<router-view
+  v-if="isAllowedWithoutVerification"
+  :business_info="business_info"
+  :user="user"
+:profile="profile"
+/>
+
+<router-view
+  v-else-if="business_info.is_email_verified"
+  :business_info="business_info"
+  :user="user"
+:profile="profile"
+/>
+
+
+<!-- ✅ Email not verified + not on allowed page = show banner -->
+<div
+  v-else
+  style="margin-top:10px;background:white;border-radius:15px;height:90vh;padding:10px;border:1px solid rgba(0,0,0,0.1);display:flex;justify-content:center;align-items:center;"
+>
+  <div style="text-align:center">
+    <img src="../../../assets/emailverify.jpg" style="max-width:200px;max-height:400px" alt=""/><br/><br/>
+    <p style="font-size:15px;color:#374151;margin-bottom:16px;">
+      Your Business email is <b>not verified</b> yet.<br/>
+      Please verify to access the dashboard features.
+    </p>
+    <router-link to="/business-dashboard/business-details">
+      <a-button type="primary">Verify Now</a-button>
+    </router-link>
+  </div>
+</div>
+
+</a-col>
+
     </a-row>
   </div>
 </template>
@@ -881,12 +912,11 @@ export default {
     return {
       user: JSON.parse(localStorage.getItem('user')),
       profile: JSON.parse(localStorage.getItem('profile')),
-      businessinfo: JSON.parse(localStorage.getItem('businessprofile')),
-      menuviewmobile: false,
+business_info: JSON.parse(localStorage.getItem('business_profile') || '{}'),
+      menu_view_mobile: false, 
       mobileMenuOpen: false,
       isMobile: false,
       userAvatarLoaded: false,
-      menu_view_mobile:false,
       
       // Profile Completion Modal
       showCompletionModal: false,
@@ -935,6 +965,14 @@ export default {
     currentRouteName() {
       return this.$route.name;
     },
+ isAllowedWithoutVerification() {
+  const allowedPaths = [
+    '/business-dashboard/my-profile',
+    '/business-dashboard/business-details'
+  ];
+  return allowedPaths.includes(this.$route.path);
+},
+
     currentPageTitle() {
       const titles = {
         'business:my-profile': 'Profile',
@@ -960,6 +998,15 @@ export default {
       return this.hasFeature('generate_banner');
     },
   },
+
+  watch: {
+  // ...existing watchers...
+
+  '$route'() {
+    this.business_info = JSON.parse(localStorage.getItem('business_profile') || '{}');
+  }
+},
+
   
   methods: {
     // ✅ ADD HELPER METHOD
@@ -1119,7 +1166,7 @@ export default {
     },
 
     goBack() {
-      this.menuviewmobile = false;
+      this.menu_view_mobile = false;
     },
 
     checkScreenSize() {
@@ -1209,6 +1256,7 @@ export default {
   async mounted() {
     this.checkScreenSize();
     window.addEventListener('resize', this.checkScreenSize);
+    
     
     // ✅ LOAD PLAN DETAILS ON MOUNT
     await this.loadBrandPurchasedPlanDetails();

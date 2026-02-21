@@ -30,7 +30,12 @@
       <!-- Logged In User Plans -->
       <div v-if="token && data !== null">
         <div class="pricing-cards">
+
+          <!-- Basic Card -->
           <div class="pricing-card basic-card">
+            <div class="plan-status-badge current-badge" v-if="currentPlan === 'basic'">
+              ✦ Current Plan
+            </div>
             <div class="card-header">
               <h3 class="plan-name">Basic</h3>
               <p class="plan-subtitle">Basic Plan</p>
@@ -40,7 +45,24 @@
               <span class="price">{{ data.basic.monthly_charges }}</span>
               <p class="billing-period">{{data.basic.plan_credits}} credits / month</p>
             </div>
-            <button class="get-started-btn basic-btn" @click="this.$router.push('/make-payment/'+'basic')">Get Started</button>
+            <!-- Current plan: disabled -->
+            <button
+              v-if="currentPlan === 'basic'"
+              class="get-started-btn basic-btn btn-disabled"
+              disabled
+            >Active Plan</button>
+            <!-- Higher plan purchased: downgrade (disabled) -->
+            <button
+              v-else-if="planRank(currentPlan) > planRank('basic')"
+              class="get-started-btn basic-btn btn-disabled"
+              disabled
+            >Not Available</button>
+            <!-- No plan or lower plan: Get Started -->
+            <button
+              v-else
+              class="get-started-btn basic-btn"
+              @click="this.$router.push('/make-payment/basic')"
+            >Get Started</button>
             <div class="features-list">
               <div v-for="(feature, index) in data.basic.description_list" :key="index" class="feature-item">
                 <span class="checkmark">✓</span>
@@ -49,7 +71,11 @@
             </div>
           </div>
 
+          <!-- Standard Card -->
           <div class="pricing-card standard-card">
+            <div class="plan-status-badge current-badge-standard" v-if="currentPlan === 'standard'">
+              ✦ Current Plan
+            </div>
             <div class="card-header">
               <h3 class="plan-name">Standard</h3>
               <p class="plan-subtitle">MOST POPULAR</p>
@@ -59,7 +85,30 @@
               <span class="price">{{ data.standard.monthly_charges }}</span>
               <p class="billing-period">{{data.standard.plan_credits}} credits / month</p>
             </div>
-            <button class="get-started-btn standard-btn" @click="this.$router.push('/make-payment/'+'standard')">Get Started</button>
+            <!-- Current plan: disabled -->
+            <button
+              v-if="currentPlan === 'standard'"
+              class="get-started-btn standard-btn btn-disabled"
+              disabled
+            >Active Plan</button>
+            <!-- Higher plan purchased: disabled -->
+            <button
+              v-else-if="planRank(currentPlan) > planRank('standard')"
+              class="get-started-btn standard-btn btn-disabled"
+              disabled
+            >Not Available</button>
+            <!-- Lower plan: Upgrade -->
+            <button
+              v-else-if="planRank(currentPlan) > 0 && planRank(currentPlan) < planRank('standard')"
+              class="get-started-btn standard-btn"
+              @click="this.$router.push('/make-payment-upgrade/standard')"
+            >Upgrade to Standard</button>
+            <!-- No plan -->
+            <button
+              v-else
+              class="get-started-btn standard-btn"
+              @click="this.$router.push('/make-payment/standard')"
+            >Get Started</button>
             <div class="features-list">
               <div v-for="(feature, index) in data.standard.description_list" :key="index" class="feature-item">
                 <span class="checkmark">✓</span>
@@ -68,7 +117,11 @@
             </div>
           </div>
 
+          <!-- Premium Card -->
           <div class="pricing-card premium-card">
+            <div class="plan-status-badge current-badge" v-if="currentPlan === 'premium'">
+              ✦ Current Plan
+            </div>
             <div class="card-header">
               <h3 class="plan-name">Premium</h3>
               <p class="plan-subtitle">For Organization</p>
@@ -78,7 +131,24 @@
               <span class="price">{{ data.premium.monthly_charges }}</span>
               <p class="billing-period">{{data.premium.plan_credits}} Customizable credit / month</p>
             </div>
-            <button class="get-started-btn premium-btn" @click="this.$router.push('/make-payment/'+'premium')">Get Started</button>
+            <!-- Current plan: disabled -->
+            <button
+              v-if="currentPlan === 'premium'"
+              class="get-started-btn premium-btn btn-disabled"
+              disabled
+            >Active Plan</button>
+            <!-- Lower plan: Upgrade -->
+            <button
+              v-else-if="planRank(currentPlan) > 0 && planRank(currentPlan) < planRank('premium')"
+              class="get-started-btn premium-btn"
+              @click="this.$router.push('/make-payment-upgrade/premium')"
+            >Upgrade to Premium</button>
+            <!-- No plan -->
+            <button
+              v-else
+              class="get-started-btn premium-btn"
+              @click="this.$router.push('/make-payment/premium')"
+            >Get Started</button>
             <div class="features-list">
               <div v-for="(feature, index) in data.premium.description_list" :key="index" class="feature-item">
                 <span class="checkmark">✓</span>
@@ -86,6 +156,7 @@
               </div>
             </div>
           </div>
+
         </div>
       </div>
 
@@ -275,6 +346,7 @@ export default {
       freecreditdata: null,
       credittopupplan: null,
       token: null,
+      currentPlan: null, // e.g. 'basic' | 'standard' | 'premium' | null
       activePlanType: 'business',
       showCreditTopupModal: false,
       loadingTopupPlans: false,
@@ -293,7 +365,6 @@ export default {
           width: '20%',
           render: (text) => `$${text}`
         },
-       
         {
           title: 'Action',
           key: 'action',
@@ -308,8 +379,38 @@ export default {
     this.fetchPricingPlans()
     this.fetchfreecreditplan()
     this.fetchCreditTopUpPlan()
+    if (this.token) {
+      this.fetchCurrentPlan()
+    }
   },
   methods: {
+    /**
+     * Returns a numeric rank for plan comparison.
+     * null / undefined / unknown = 0 (no active plan)
+     * basic = 1, standard = 2, premium = 3
+     */
+    planRank(planName) {
+      const ranks = { basic: 1, standard: 2, premium: 3 }
+      return ranks[planName] || 0
+    },
+
+    async fetchCurrentPlan() {
+      try {
+        const response = await fetch(`${this.$store.state.root_api}subscription/api/current-subscription-plan/`, {
+          method: 'GET',
+          headers: { Authorization: `Token ${this.token}` }
+        })
+        const result = await response.json()
+        // Adjust the key below to match your actual API response shape
+        // e.g. result.data.plan_type  OR  result.plan  etc.
+        if (result) {
+          this.currentPlan = result.subscription.plan_name
+        }
+      } catch (error) {
+        console.error('Error fetching current plan:', error)
+      }
+    },
+
     async fetchPricingPlans(){
       try {
         let header = {}
@@ -329,9 +430,11 @@ export default {
           console.error('Error loading pricing plans:', error);
       }
     },
+
     calculateOriginalPrice(discountedPrice) {
       return (discountedPrice / 0.73).toFixed(0);
     },
+
     async fetchfreecreditplan(){
       try {
         let header = {}
@@ -351,6 +454,7 @@ export default {
           console.error('Error loading pricing plans:', error);
       }
     },
+
     async fetchCreditTopUpPlan(){
        try {
         this.loadingTopupPlans = true;
@@ -373,8 +477,8 @@ export default {
           this.loadingTopupPlans = false;
       }
     },
+
     handleBuyCredit(record) {
-      // Redirect to make-payment page with credit topup plan id
       this.$router.push(`/make-payment-credit-topup/${record.id}`);
     }
   },
@@ -395,7 +499,7 @@ export default {
 }
 
 .header-section {
-  background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+  background: linear-gradient(135deg, #0d00ff 0%, #7C3AED 100%);
   position: relative;
   padding: 80px 20px 120px;
   overflow: hidden;
@@ -410,9 +514,7 @@ export default {
   background-repeat: no-repeat;
   background-size: cover;
   opacity: 0.9;
-  
-  background-image: 
-    url("../../assets/pricing-banner.png");
+  background-image: url("../../assets/pricing-banner.png");
 }
 
 .header-content {
@@ -502,14 +604,14 @@ export default {
 }
 
 .toggle-btn:hover {
-  border-color: #4F46E5;
-  color: #4F46E5;
+  border-color: #0d00ff;
+  color: #0d00ff;
 }
 
 .toggle-btn.active {
-  background: linear-gradient(135deg, #201b85 0%, #0d00ff 100%);;
+  background: linear-gradient(135deg, #201b85 0%, #0d00ff 100%);
   color: white;
-  border-color: linear-gradient(135deg, #201b85 0%, #0d00ff 100%);;
+  border-color: transparent;
 }
 
 .pricing-cards {
@@ -529,7 +631,7 @@ export default {
 }
 
 .pricing-card:hover {
-   transform: translateY(-2px); 
+  /* transform: translateY(-2px); */
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
 }
 
@@ -538,7 +640,7 @@ export default {
 }
 
 .standard-card {
-  background: linear-gradient(135deg, #201b85 0%, #0d00ff 100%);;
+  background: linear-gradient(135deg, #201b85 0%, #0d00ff 100%);
   color: white;
   transform: scale(1.05);
   box-shadow: 0 8px 30px rgba(45, 45, 45, 0.3);
@@ -546,6 +648,47 @@ export default {
 
 .standard-card.featured {
   background: linear-gradient(135deg, #201b85 0%, #0d00ff 100%);
+}
+
+/* ── Plan status badges ── */
+.plan-status-badge {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+.current-badge {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+/* Badge on the dark standard card */
+.current-badge-standard {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.25);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+/* ── Disabled button state ── */
+.btn-disabled {
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+  pointer-events: none;
 }
 
 .save-badge {
@@ -659,12 +802,12 @@ export default {
 }
 
 .basic-btn, .premium-btn {
-  background: #4F46E5;
+  background: #0d00ff;
   color: white;
 }
 
-.basic-btn:hover, .premium-btn:hover {
-  background: #4338CA;
+.basic-btn:hover:not(:disabled), .premium-btn:hover:not(:disabled) {
+  background: #0d00ff;
 }
 
 .standard-btn {
@@ -672,7 +815,7 @@ export default {
   color: #2d2d2d;
 }
 
-.standard-btn:hover {
+.standard-btn:hover:not(:disabled) {
   background: #f0f0f0;
 }
 
@@ -758,7 +901,7 @@ export default {
 .credits-amount {
   font-size: 32px;
   font-weight: 700;
-  color: #4F46E5;
+  color: #0d00ff;
   margin-bottom: 12px;
 }
 
@@ -770,7 +913,7 @@ export default {
 
 .buy-btn {
   padding: 10px 28px;
-  background: #4F46E5;
+  background: #0d00ff;
   color: white;
   border: none;
   border-radius: 8px;
@@ -780,7 +923,7 @@ export default {
 }
 
 .buy-btn:hover {
-  background: #4338CA;
+  background: #0d00ff;
 }
 
 @media (max-width: 768px) {
@@ -788,18 +931,18 @@ export default {
     grid-template-columns: 1fr;
     gap: 20px;
   }
-  
+
   .standard-card {
     transform: none;
   }
-  
+
   .free-credits-banner,
   .credit-topup-section {
     flex-direction: column;
     text-align: center;
     gap: 20px;
   }
-  
+
   .header-title {
     font-size: 36px;
   }
@@ -809,19 +952,19 @@ export default {
   .header-section {
     padding: 60px 20px 100px;
   }
-  
+
   .pricing-section {
     padding: 0 16px 60px;
   }
-  
+
   .pricing-card {
     padding: 24px 20px;
   }
-  
+
   .price {
     font-size: 36px;
   }
-  
+
   .plan-toggle-container {
     margin-bottom: 30px;
   }

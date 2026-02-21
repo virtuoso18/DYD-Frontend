@@ -242,8 +242,6 @@ export default {
     baseImageUrl:    { type: String,  required: true },
     ceilingMaskUrl:  { type: String,  required: true },
     selectedlightuuid: { type: String, required: true },
-
-    // ── Camera intrinsics (same as floor component) ──
     CAM_IMG_W:    { type: Number, required: true },
     CAM_IMG_H:    { type: Number, required: true },
     CAM_FX:       { type: Number, required: true },
@@ -253,13 +251,8 @@ export default {
     CAM_Z_SIGN:   { type: Number, default: 1 },
     CAM_FOV_V:    { type: Number, required: true },
     MASK_ERODE_PX:{ type: Number, default: 10 },
-
-    // ── Pointcloud ──
     POINTCLOUD:   { type: String, required: true },
-
-    // ── Physical dimensions of the light fixture ──
     TARGET_DIMS:  { type: Object, default: () => ({ width: 0.5, height: 0.3, depth: 0.5 }) },
-
     debug: Boolean,
   },
 
@@ -279,82 +272,62 @@ export default {
         { key: 'Tap to select',     value: TapToSelect },
         { key: 'Drag to move',      value: DragToMove  },
       ],
-
-      // Loading state
       internalLoading:     true,
       internalLoadingText: 'Loading assets…',
       modelLoadProgress:   0,
       animationFrameId:    null,
-
-      // Readiness flags
       maskReady:   false,
       plyReady:    false,
       planeReady:  false,
       lightLoaded: false,
-
-      // UI controls
       adjustRoll:     0,
       adjustPitch:    0,
       modelSizeScale: 1.0,
       lightRotation:  0,
-
-      // Debug
       debugMask:          false,
       maskOverlayOpacity: 0.5,
       debugPointCloud:    false,
       debugCeilingMesh:   false,
-
-      // Background texture reference (needed by downloadCurrentSceneImage)
       currentBgTexture: null,
-      ceilingDebugMesh: null,   // visible debug mesh for ceiling plane
-
-      // THREE objects (set as non-reactive via markRaw)
+      ceilingDebugMesh: null,
       scene:     null,
       camera:    null,
       renderer:  null,
       bgScene:   null,
       bgCamera:  null,
       bgMesh:    null,
-
-      // Model
-      light:         null,   // pivotGroup
+      light:         null,
       lightHalfH:    0,
       originalScale: 1,
-
-      // Ceiling plane
       ceilingPlaneTHREE: null,
       ceilingNormal3:    null,
       ceilingCentroid3:  null,
-
-      // Rotation ring
       rotationRing:  null,
       rotationArrows: [],
-
-      // Point cloud
       pointCloudObj: null,
       plyPositions:  null,
       plyPointCount: 0,
-
-      // Mask
       maskCanvas: null,
       maskCtx:    null,
       erodedMask: null,
       maskOverlayCanvas: null,
-
-      // Stats for debug
       ceilingPtCount:  0,
       ceilingCentroidY: 0,
       _ceilNX: 0, _ceilNY: -1, _ceilNZ: 0,
-
-      // Drag state (reactive)
       isDraggingRef:  false,
       isRotatingRef:  false,
-
-      // Two-finger rotation
       twoFingerPointers:   null,
       twoFingerStartAngle: 0,
       twoFingerStartAvgY:  0,
       isTwoFingerRotating: false,
+
+      // ── last-known transform saved on every pointerUp ──
+      lastKnownPos:   null,
+      lastKnownQuat:  null,
+      lastKnownScale: null,
+      // ── stores the render resolution used by the live camera ──
+      _liveRenderW: 0,
+      _liveRenderH: 0,
     }
   },
 
@@ -367,7 +340,6 @@ export default {
   created() {
     this.ceilingNormal3   = markRaw(new THREE.Vector3(0, -1, 0))
     this.ceilingCentroid3 = markRaw(new THREE.Vector3())
-
     this.isDragging          = false
     this.isRotating          = false
     this.dragOffset          = markRaw(new THREE.Vector3())
@@ -375,20 +347,22 @@ export default {
     this.mouse               = markRaw(new THREE.Vector2())
     this.rotationStartAngle  = 0
     this.rotationStartMouseX = 0
-
     this._rawBinaryMask          = null
     this._computeRetryScheduled  = false
-
     this.twoFingerPointers   = new Map()
     this.twoFingerStartAngle = 0
     this.twoFingerStartAvgY  = 0
     this.isTwoFingerRotating = false
-
     this._lastDragHit       = null
     this._dragSmoothX       = 0
     this._dragSmoothZ       = 0
-    this.DRAG_SMOOTH        = 0.15    // tweak: 0=instant, 0.3=smoother
-    this.twoFingerStartAvgX = 0       // needed for horizontal swipe rotation
+    this.DRAG_SMOOTH        = 0.15
+    this.twoFingerStartAvgX = 0
+    this.lastKnownPos   = null
+    this.lastKnownQuat  = null
+    this.lastKnownScale = null
+    this._liveRenderW   = 0
+    this._liveRenderH   = 0
   },
 
   mounted() {
@@ -396,7 +370,6 @@ export default {
       this.roomImage         = this.$refs.roomImage
       this.threeContainer    = this.$refs.threeContainer
       this.maskOverlayCanvas = this.$refs.maskOverlayCanvas
-
       if (this.roomImage?.complete && this.roomImage.naturalWidth > 0) {
         this.initThree()
       }
@@ -411,22 +384,18 @@ export default {
     glbUrl(newVal, oldVal) {
       if (newVal && newVal !== oldVal && this.scene) this.reloadLight()
     },
-
-    // ── Real-time background image swap ──
     baseImageUrl(newUrl, oldUrl) {
       if (!newUrl || newUrl === oldUrl || !this.bgScene) return
       new THREE.TextureLoader().load(newUrl, (tex) => {
         tex.minFilter = THREE.LinearFilter
         tex.magFilter = THREE.LinearFilter
         tex.colorSpace = THREE.SRGBColorSpace
-        // Dispose old texture to free GPU memory
         if (this.currentBgTexture) this.currentBgTexture.dispose()
         this.currentBgTexture = tex
         if (this.bgMesh) {
           this.bgMesh.material.map = tex
           this.bgMesh.material.needsUpdate = true
         } else {
-          // bgMesh hasn't been created yet — create it now
           const bgGeo = new THREE.PlaneGeometry(2, 2)
           const bgMat = new THREE.MeshBasicMaterial({ map: tex, depthTest: false })
           this.bgMesh = markRaw(new THREE.Mesh(bgGeo, bgMat))
@@ -435,7 +404,6 @@ export default {
         }
       })
     },
-
     adjustRoll()       { this._applyModelOrientation() },
     adjustPitch()      { this._applyModelOrientation() },
     modelSizeScale()   { this._applyModelScale() },
@@ -447,16 +415,8 @@ export default {
 
   methods: {
 
-    // ─────────────────────────────────────────────────────
-    // MODAL
-    // ─────────────────────────────────────────────────────
-
     showInstructionModal()  { this.isShowInstructionModal = true  },
     closeInstructionModal() { this.isShowInstructionModal = false },
-
-    // ─────────────────────────────────────────────────────
-    // HELPERS
-    // ─────────────────────────────────────────────────────
 
     resolveModelUrl(url) {
       if (!url) return url
@@ -467,12 +427,15 @@ export default {
     _eventToNDC(clientX, clientY) {
       const el   = this.renderer.domElement
       const rect = el.getBoundingClientRect()
-      const sx   = clientX - rect.left
-      const sy   = clientY - rect.top
+      const relX = (clientX - rect.left) / rect.width
+      const relY = (clientY - rect.top)  / rect.height
+      const clampedX = Math.max(0, Math.min(1, relX))
+      const clampedY = Math.max(0, Math.min(1, relY))
       return {
-        ndcX:  (sx / rect.width)  *  2 - 1,
-        ndcY: -(sy / rect.height) *  2 + 1,
-        sx, sy,
+        ndcX:  clampedX * 2 - 1,
+        ndcY: -(clampedY * 2 - 1),
+        sx: clientX - rect.left,
+        sy: clientY - rect.top,
       }
     },
 
@@ -505,7 +468,13 @@ export default {
       const renderH = this.roomImage.naturalHeight || this.CAM_IMG_H
       if (renderW === 0 || renderH === 0) return
 
-      // ── Background scene (room image as full-screen quad) ──
+      // ── Store the EXACT resolution the live camera is built with ──
+      // This is used later in downloadCurrentSceneImage to build a matching
+      // offscreen camera. On mobile, naturalWidth may differ from CAM_IMG_W.
+      this._liveRenderW = renderW
+      this._liveRenderH = renderH
+      console.log(`[ceiling initThree] live camera resolution: ${renderW}×${renderH}`)
+
       this.bgScene  = markRaw(new THREE.Scene())
       this.bgCamera = markRaw(new THREE.Camera())
 
@@ -514,7 +483,7 @@ export default {
         tex.minFilter = THREE.LinearFilter
         tex.magFilter = THREE.LinearFilter
         tex.colorSpace = THREE.SRGBColorSpace
-        this.currentBgTexture = tex           // ← store for export
+        this.currentBgTexture = tex
         const bgGeo = new THREE.PlaneGeometry(2, 2)
         const bgMat = new THREE.MeshBasicMaterial({ map: tex, depthTest: false })
         this.bgMesh = markRaw(new THREE.Mesh(bgGeo, bgMat))
@@ -522,10 +491,7 @@ export default {
         this.bgScene.add(this.bgMesh)
       })
 
-      // ── Main scene with matched camera ──
       this.scene = markRaw(new THREE.Scene())
-
-      // Exact pinhole camera matching the room photo
       this.camera = markRaw(new THREE.PerspectiveCamera(this.CAM_FOV_V, renderW / renderH, 0.01, 200))
       this.camera.position.set(0, 0, 0)
       this.camera.lookAt(0, 0, -1)
@@ -546,11 +512,9 @@ export default {
 
       this.adjustCanvasToAspectRatio()
 
-      // ── Lighting ──
       this.scene.add(new THREE.AmbientLight(0xfff4e0, 1.4))
-
       const sun = new THREE.DirectionalLight(0xfff5e8, 2.0)
-      sun.position.set(1.5, -5, -3)   // comes from below ceiling (ceiling is "above")
+      sun.position.set(1.5, -5, -3)
       sun.castShadow = true
       sun.shadow.mapSize.set(2048, 2048)
       sun.shadow.camera.near = 0.1; sun.shadow.camera.far = 20
@@ -558,24 +522,20 @@ export default {
       sun.shadow.camera.right = sun.shadow.camera.top  =  6
       sun.shadow.bias = -0.001; sun.shadow.normalBias = 0.02
       this.scene.add(sun)
-
       const fill = new THREE.DirectionalLight(0xd0e8ff, 1.8)
       fill.position.set(-2, -3, 2)
       this.scene.add(fill)
-
       const back = new THREE.DirectionalLight(0xfff8e8, 0.5)
       back.position.set(0, -2, 4)
       this.scene.add(back)
 
-      // ── Load assets ──
       this.loadMask()
       this.loadPointCloud()
       this.loadLight()
       this.animate()
 
-      // ── Pointer events ──
       const el = this.renderer.domElement
-      el.style.touchAction = 'none'
+      el.style.touchAction = 'pan-y'
       el.addEventListener('pointerdown',   this.onPointerDown)
       el.addEventListener('pointermove',   this.onPointerMove)
       el.addEventListener('pointerup',     this.onPointerUp)
@@ -587,24 +547,19 @@ export default {
       if (!this.renderer || !this.roomImage) return
       const container = this.$refs.threeContainer
       if (!container) return
-
       const rect = container.getBoundingClientRect()
       const availW = Math.floor(rect.width)
       const availH = Math.floor(rect.height)
       if (availW === 0 || availH === 0) return
-
       const imgAspect = (this.roomImage.naturalWidth  || this.CAM_IMG_W) /
                         (this.roomImage.naturalHeight || this.CAM_IMG_H)
-
       let cssW = availW
       let cssH = Math.round(cssW / imgAspect)
       if (cssH > availH) { cssH = availH; cssW = Math.round(cssH * imgAspect) }
-
       this.renderer.domElement.style.width  = `${cssW}px`
       this.renderer.domElement.style.height = `${cssH}px`
       this.maskOverlayCanvas.style.width    = `${cssW}px`
       this.maskOverlayCanvas.style.height   = `${cssH}px`
-
       if (this.rotationRing) this._fitRingToCanvas()
     },
 
@@ -612,377 +567,215 @@ export default {
     // POINTER EVENTS
     // ─────────────────────────────────────────────────────
 
-    // onPointerDown(event) {
-    //   if (!this.light || !this.ceilingPlaneTHREE) return
-
-    //   // ── Two-finger tracking ──
-    //   if (event.pointerType === 'touch') {
-    //     this.twoFingerPointers.set(event.pointerId, event.clientY)
-
-    //     if (this.twoFingerPointers.size === 2) {
-    //       this.isDragging = false; this.isDraggingRef = false
-    //       this.isRotating = false; this.isRotatingRef = false
-
-    //       const vals = Array.from(this.twoFingerPointers.values())
-    //       this.twoFingerStartAvgY  = (vals[0] + vals[1]) / 2
-    //       this.twoFingerStartAngle = this.light.rotation.y
-    //       this.isTwoFingerRotating = true
-    //       event.preventDefault(); return
-    //     }
-
-    //     if (this.isTwoFingerRotating) { event.preventDefault(); return }
-    //   }
-
-    //   if (this.isTwoFingerRotating) return
-
-    //   const { clientX, clientY } = event
-    //   const { ndcX, ndcY } = this._eventToNDC(clientX, clientY)
-    //   this.mouse.set(ndcX, ndcY)
-    //   this.raycaster.setFromCamera(this.mouse, this.camera)
-
-    //   // 1. Check rotation ring arrows
-    //   if (this.rotationRing) {
-    //     const arrowHits = this.raycaster.intersectObject(this.rotationRing, true)
-    //     const arrowHit  = arrowHits.find(h => h.object.userData.isRotationArrow)
-
-    //     if (arrowHit) {
-    //       const visMesh = arrowHit.object.userData.visMesh
-    //       if (visMesh) visMesh.material.color.setHex(0xff6600)
-
-    //       this.isRotating          = true
-    //       this.isRotatingRef       = true
-    //       this.rotationStartAngle  = this.light.rotation.y
-    //       this.rotationStartMouseX = ndcX
-
-    //       this.renderer.domElement.setPointerCapture(event.pointerId)
-    //       event.preventDefault(); return
-    //     }
-    //   }
-
-    //   // 2. Check model body for drag
-    //   const hits = this.raycaster.intersectObject(this.light, true)
-    //   if (hits.length === 0) return
-
-    //   this.light.visible = false
-    //   const ceilHit = this.raycastCeiling()
-    //   this.light.visible = true
-    //   if (!ceilHit) return
-
-    //   this.dragOffset.set(
-    //     this.light.position.x - ceilHit.x,
-    //     0,
-    //     this.light.position.z - ceilHit.z,
-    //   )
-
-    //   this.isDragging    = true
-    //   this.isDraggingRef = true
-    //   this.renderer.domElement.setPointerCapture(event.pointerId)
-    //   event.preventDefault()
-    // },
-    _eventToNDC(clientX, clientY) {
-  const el   = this.renderer.domElement
-  const rect = el.getBoundingClientRect()   // CSS displayed size, not render size
-  const relX = (clientX - rect.left) / rect.width
-  const relY = (clientY - rect.top)  / rect.height
-  const clampedX = Math.max(0, Math.min(1, relX))
-  const clampedY = Math.max(0, Math.min(1, relY))
-  return {
-    ndcX:  clampedX * 2 - 1,
-    ndcY: -(clampedY * 2 - 1),
-    sx: clientX - rect.left,
-    sy: clientY - rect.top,
-  }
-},
     onPointerDown(event) {
-  if (!this.light || !this.ceilingPlaneTHREE) return
+      if (!this.light || !this.ceilingPlaneTHREE) return
 
-  if (event.pointerType === 'touch') {
-    this.twoFingerPointers.set(event.pointerId, {
-      clientX: event.clientX,
-      clientY: event.clientY,
-    })
+      if (event.pointerType === 'touch') {
+        this.twoFingerPointers.set(event.pointerId, {
+          clientX: event.clientX,
+          clientY: event.clientY,
+        })
+        if (this.twoFingerPointers.size === 2) {
+          this.isDragging = false; this.isDraggingRef = false
+          this.isRotating = false; this.isRotatingRef = false
+          const vals = Array.from(this.twoFingerPointers.values())
+          this.twoFingerStartAvgX  = (vals[0].clientX + vals[1].clientX) / 2
+          this.twoFingerStartAvgY  = (vals[0].clientY + vals[1].clientY) / 2
+          this.twoFingerStartAngle = this.light.rotation.y
+          this.isTwoFingerRotating = true
+          event.preventDefault(); return
+        }
+        if (this.isTwoFingerRotating) { event.preventDefault(); return }
+      }
 
-    if (this.twoFingerPointers.size === 2) {
+      if (this.isTwoFingerRotating) return
+
+      const el   = this.renderer.domElement
+      const rect = el.getBoundingClientRect()
+      const relX = (event.clientX - rect.left) / rect.width
+      const relY = (event.clientY - rect.top)  / rect.height
+      const ndcX =  Math.max(0, Math.min(1, relX)) * 2 - 1
+      const ndcY = -(Math.max(0, Math.min(1, relY)) * 2 - 1)
+
+      this.mouse.set(ndcX, ndcY)
+      this.raycaster.setFromCamera(this.mouse, this.camera)
+
+      if (this.rotationRing) {
+        const arrowHits = this.raycaster.intersectObject(this.rotationRing, true)
+        const arrowHit  = arrowHits.find(h => h.object.userData.isRotationArrow)
+        if (arrowHit) {
+          const visMesh = arrowHit.object.userData.visMesh
+          if (visMesh) visMesh.material.color.setHex(0xff6600)
+          this.isRotating = true; this.isRotatingRef = true
+          this.rotationStartAngle  = this.light.rotation.y
+          this.rotationStartMouseX = ndcX
+          this.renderer.domElement.setPointerCapture(event.pointerId)
+          event.preventDefault(); return
+        }
+      }
+
+      const hits = this.raycaster.intersectObject(this.light, true)
+      if (hits.length === 0) return
+
+      this.light.visible = false
+      const ceilHit = this.raycastCeiling()
+      this.light.visible = true
+      if (!ceilHit) return
+
+      this.dragOffset.set(
+        this.light.position.x - ceilHit.x,
+        0,
+        this.light.position.z - ceilHit.z,
+      )
+      this._dragSmoothX = this.light.position.x
+      this._dragSmoothZ = this.light.position.z
+      this._lastDragHit = ceilHit.clone()
+
+      this.isDragging = true; this.isDraggingRef = true
+      this.renderer.domElement.setPointerCapture(event.pointerId)
+      event.preventDefault()
+    },
+
+    onPointerMove(event) {
+      if (event.pointerType === 'touch' && this.isTwoFingerRotating) {
+        if (!this.twoFingerPointers.has(event.pointerId)) return
+        this.twoFingerPointers.set(event.pointerId, {
+          clientX: event.clientX,
+          clientY: event.clientY,
+        })
+        if (this.twoFingerPointers.size === 2) {
+          const vals = Array.from(this.twoFingerPointers.values())
+          const avgX = (vals[0].clientX + vals[1].clientX) / 2
+          const deltaX = avgX - this.twoFingerStartAvgX
+          const deltaRad = (deltaX / 300) * Math.PI
+          const newRotY = this.twoFingerStartAngle + deltaRad
+          this.light.rotation.y = newRotY
+          this.lightRotation = ((THREE.MathUtils.radToDeg(newRotY) % 360) + 360) % 360
+          this._snapRingToLight()
+        }
+        event.preventDefault(); return
+      }
+
+      if (event.pointerType === 'touch' && !event.isPrimary) return
+      if (!this.isDragging && !this.isRotating) return
+
+      const el   = this.renderer.domElement
+      const rect = el.getBoundingClientRect()
+      const relX = (event.clientX - rect.left)  / rect.width
+      const relY = (event.clientY - rect.top)   / rect.height
+      const clampedRelX = Math.max(0, Math.min(1, relX))
+      const clampedRelY = Math.max(0, Math.min(1, relY))
+      const ndcX =  clampedRelX * 2 - 1
+      const ndcY = -clampedRelY * 2 + 1
+
+      this.mouse.set(ndcX, ndcY)
+
+      if (this.isRotating) {
+        const deltaX  = ndcX - this.rotationStartMouseX
+        const newRotY = this.rotationStartAngle + deltaX * Math.PI
+        this.light.rotation.y = newRotY
+        this.lightRotation = ((THREE.MathUtils.radToDeg(newRotY) % 360) + 360) % 360
+        this._snapRingToLight()
+        event.preventDefault(); return
+      }
+
+      if (this.isDragging) {
+        this.raycaster.setFromCamera(this.mouse, this.camera)
+        this.light.visible = false
+        const ceilHit = this.raycastCeiling()
+        this.light.visible = true
+
+        const hit = ceilHit || this._lastDragHit
+        if (!hit) return
+        if (ceilHit) this._lastDragHit = ceilHit.clone()
+
+        const rawX = hit.x + this.dragOffset.x
+        const rawZ = hit.z + this.dragOffset.z
+
+        const S = event.pointerType === 'touch' ? 0.25 : (this.DRAG_SMOOTH ?? 0.15)
+        this._dragSmoothX += (rawX - this._dragSmoothX) * (1 - S)
+        this._dragSmoothZ += (rawZ - this._dragSmoothZ) * (1 - S)
+
+        const newX = this._dragSmoothX
+        const newZ = this._dragSmoothZ
+
+        const n = this.ceilingNormal3
+        const d = this.ceilingPlaneTHREE.constant
+        let newY = this.ceilingCentroid3.y
+        if (Math.abs(n.y) > 1e-6) {
+          newY = (-d - n.x * newX - n.z * newZ) / n.y
+        }
+
+        this.light.position.set(newX, newY, newZ)
+        this._snapRingToLight()
+        event.preventDefault()
+      }
+    },
+
+    onPointerUp(event) {
+      if (event.pointerType === 'touch') {
+        this.twoFingerPointers.delete(event.pointerId)
+        if (this.twoFingerPointers.size < 2 && this.isTwoFingerRotating) {
+          this.isTwoFingerRotating = false
+          if (this.twoFingerPointers.size === 1) {
+            const rem = Array.from(this.twoFingerPointers.values())[0]
+            this.twoFingerStartAngle = this.light ? this.light.rotation.y : 0
+            this.twoFingerStartAvgX  = rem.clientX
+            this.twoFingerStartAvgY  = rem.clientY
+          }
+          if (this.light) this._saveLastKnownTransform()
+          return
+        }
+        if (this.isTwoFingerRotating) return
+      }
+
+      if (this.isRotating && this.rotationRing) {
+        this.rotationRing.traverse((child) => {
+          if (child.userData?.visMesh) {
+            child.userData.visMesh.material.color.setHex(child.userData.originalColor)
+          }
+        })
+      }
+
       this.isDragging = false; this.isDraggingRef = false
       this.isRotating = false; this.isRotatingRef = false
-      const vals = Array.from(this.twoFingerPointers.values())
-      this.twoFingerStartAvgX  = (vals[0].clientX + vals[1].clientX) / 2
-      this.twoFingerStartAvgY  = (vals[0].clientY + vals[1].clientY) / 2
-      this.twoFingerStartAngle = this.light.rotation.y
-      this.isTwoFingerRotating = true
-      event.preventDefault(); return
-    }
-    if (this.isTwoFingerRotating) { event.preventDefault(); return }
-  }
+      this._lastDragHit = null
 
-  if (this.isTwoFingerRotating) return
+      if (this.light) this._saveLastKnownTransform()
 
-const el   = this.renderer.domElement
-const rect = el.getBoundingClientRect()
-const relX = (event.clientX - rect.left) / rect.width
-const relY = (event.clientY - rect.top)  / rect.height
-const ndcX =  Math.max(0, Math.min(1, relX)) * 2 - 1
-const ndcY = -(Math.max(0, Math.min(1, relY)) * 2 - 1)
+      try { this.renderer.domElement.releasePointerCapture(event.pointerId) } catch (_) {}
+    },
 
-this.mouse.set(ndcX, ndcY)
-this.raycaster.setFromCamera(this.mouse, this.camera)
-
-  if (this.rotationRing) {
-    const arrowHits = this.raycaster.intersectObject(this.rotationRing, true)
-    const arrowHit  = arrowHits.find(h => h.object.userData.isRotationArrow)
-    if (arrowHit) {
-      const visMesh = arrowHit.object.userData.visMesh
-      if (visMesh) visMesh.material.color.setHex(0xff6600)
-      this.isRotating = true; this.isRotatingRef = true
-      this.rotationStartAngle  = this.light.rotation.y
-      this.rotationStartMouseX = ndcX
-      this.renderer.domElement.setPointerCapture(event.pointerId)
-      event.preventDefault(); return
-    }
-  }
-
-  const hits = this.raycaster.intersectObject(this.light, true)
-  if (hits.length === 0) return
-
-  this.light.visible = false
-  const ceilHit = this.raycastCeiling()
-  this.light.visible = true
-  if (!ceilHit) return
-
-  this.dragOffset.set(
-    this.light.position.x - ceilHit.x,
-    0,
-    this.light.position.z - ceilHit.z,
-  )
-  // Init smoothing to current position
-  this._dragSmoothX = this.light.position.x
-  this._dragSmoothZ = this.light.position.z
-  this._lastDragHit = ceilHit.clone()
-
-  this.isDragging = true; this.isDraggingRef = true
-  this.renderer.domElement.setPointerCapture(event.pointerId)
-  event.preventDefault()
-},
-
-    // onPointerMove(event) {
-    //   // Two-finger rotation
-    //   if (event.pointerType === 'touch' && this.isTwoFingerRotating) {
-    //     if (!this.twoFingerPointers.has(event.pointerId)) return
-    //     this.twoFingerPointers.set(event.pointerId, event.clientY)
-
-    //     if (this.twoFingerPointers.size === 2) {
-    //       const vals   = Array.from(this.twoFingerPointers.values())
-    //       const avgY   = (vals[0] + vals[1]) / 2
-    //       const deltaY = avgY - this.twoFingerStartAvgY
-    //       const screenH = this.renderer.domElement.clientHeight || window.innerHeight
-    //       const deltaRad = (deltaY / screenH) * Math.PI * 2
-    //       const newRotY = this.twoFingerStartAngle + deltaRad
-    //       this.light.rotation.y = newRotY
-    //       this.lightRotation = ((THREE.MathUtils.radToDeg(newRotY) % 360) + 360) % 360
-    //       this._snapRingToLight()
-    //     }
-    //     event.preventDefault(); return
-    //   }
-
-    //   if (event.pointerType === 'touch' && !event.isPrimary) return
-    //   if (!this.isDragging && !this.isRotating) return
-
-    //   const { clientX, clientY } = event
-    //   const { ndcX, ndcY, sx, sy } = this._eventToNDC(clientX, clientY)
-    //   this.mouse.set(ndcX, ndcY)
-
-    //   // Arrow rotation
-    //   if (this.isRotating) {
-    //     const deltaX  = ndcX - this.rotationStartMouseX
-    //     const newRotY = this.rotationStartAngle + deltaX * Math.PI * 2
-    //     this.light.rotation.y = newRotY
-    //     this.lightRotation = ((THREE.MathUtils.radToDeg(newRotY) % 360) + 360) % 360
-    //     this._snapRingToLight()
-    //     event.preventDefault(); return
-    //   }
-
-    //   // Model drag along ceiling plane
-    //   if (this.isDragging) {
-    //     this.raycaster.setFromCamera(this.mouse, this.camera)
-
-    //     this.light.visible = false
-    //     const ceilHit = this.raycastCeiling()
-    //     this.light.visible = true
-    //     if (!ceilHit) return
-
-    //     const newX = ceilHit.x + this.dragOffset.x
-    //     const newZ = ceilHit.z + this.dragOffset.z
-
-    //     // Solve Y from ceiling plane equation
-    //     const n = this.ceilingNormal3
-    //     const d = this.ceilingPlaneTHREE.constant
-    //     let newY = this.ceilingCentroid3.y
-    //     if (Math.abs(n.y) > 1e-6) {
-    //       newY = (-d - n.x * newX - n.z * newZ) / n.y
-    //     }
-
-    //     // Position: top of light at ceiling surface, hanging down
-    //     // ceilingNormal3.y < 0 so addScaledVector by lightHalfH moves down
-    //     this.light.position.set(newX, newY, newZ)
-    //     this.light.position.addScaledVector(n, -this.lightHalfH)
-
-    //     this._snapRingToLight()
-    //     event.preventDefault()
-    //   }
-    // },
-
-  onPointerMove(event) {
-  if (event.pointerType === 'touch' && this.isTwoFingerRotating) {
-    if (!this.twoFingerPointers.has(event.pointerId)) return
-    this.twoFingerPointers.set(event.pointerId, {
-      clientX: event.clientX,
-      clientY: event.clientY,
-    })
-    if (this.twoFingerPointers.size === 2) {
-      const vals = Array.from(this.twoFingerPointers.values())
-      const avgX = (vals[0].clientX + vals[1].clientX) / 2
-      const deltaX = avgX - this.twoFingerStartAvgX
-      // 300px horizontal swipe = 180° on mobile
-      const deltaRad = (deltaX / 300) * Math.PI
-      const newRotY = this.twoFingerStartAngle + deltaRad
-      this.light.rotation.y = newRotY
-      this.lightRotation = ((THREE.MathUtils.radToDeg(newRotY) % 360) + 360) % 360
-      this._snapRingToLight()
-    }
-    event.preventDefault(); return
-  }
-
-  if (event.pointerType === 'touch' && !event.isPrimary) return
-  if (!this.isDragging && !this.isRotating) return
-
-  // ── Compute NDC correctly for both mouse and touch ──────────────────────
-  // On mobile, renderer.domElement is CSS-scaled but its internal resolution
-  // (renderer.domElement.width/height) is the full render resolution.
-  // getBoundingClientRect() gives the DISPLAYED (CSS) size — use that for mapping.
-  const el   = this.renderer.domElement
-  const rect = el.getBoundingClientRect()  // CSS display size
-
-  const clientX = event.clientX
-  const clientY = event.clientY
-
-  // Map client coords → [0,1] within the displayed canvas rect
-  const relX = (clientX - rect.left)  / rect.width
-  const relY = (clientY - rect.top)   / rect.height
-
-  // Clamp to avoid edge overshoots on fast swipes
-  const clampedRelX = Math.max(0, Math.min(1, relX))
-  const clampedRelY = Math.max(0, Math.min(1, relY))
-
-  // Convert to NDC [-1, +1]
-  const ndcX =  clampedRelX * 2 - 1
-  const ndcY = -clampedRelY * 2 + 1
-
-  this.mouse.set(ndcX, ndcY)
-
-  if (this.isRotating) {
-    const deltaX  = ndcX - this.rotationStartMouseX
-    const newRotY = this.rotationStartAngle + deltaX * Math.PI
-    this.light.rotation.y = newRotY
-    this.lightRotation = ((THREE.MathUtils.radToDeg(newRotY) % 360) + 360) % 360
-    this._snapRingToLight()
-    event.preventDefault(); return
-  }
-
-  if (this.isDragging) {
-    this.raycaster.setFromCamera(this.mouse, this.camera)
-    this.light.visible = false
-    const ceilHit = this.raycastCeiling()
-    this.light.visible = true
-
-    const hit = ceilHit || this._lastDragHit
-    if (!hit) return
-    if (ceilHit) this._lastDragHit = ceilHit.clone()
-
-    const rawX = hit.x + this.dragOffset.x
-    const rawZ = hit.z + this.dragOffset.z
-
-    // More aggressive smoothing on touch (mobile needs more damping)
-    const S = event.pointerType === 'touch' ? 0.25 : (this.DRAG_SMOOTH ?? 0.15)
-    this._dragSmoothX += (rawX - this._dragSmoothX) * (1 - S)
-    this._dragSmoothZ += (rawZ - this._dragSmoothZ) * (1 - S)
-
-    const newX = this._dragSmoothX
-    const newZ = this._dragSmoothZ
-
-    const n = this.ceilingNormal3
-    const d = this.ceilingPlaneTHREE.constant
-    let newY = this.ceilingCentroid3.y
-    if (Math.abs(n.y) > 1e-6) {
-      newY = (-d - n.x * newX - n.z * newZ) / n.y
-    }
-
-    this.light.position.set(newX, newY, newZ)
-    this._snapRingToLight()
-    event.preventDefault()
-  }
-},
-    // onPointerUp(event) {
-    //   if (event.pointerType === 'touch') {
-    //     this.twoFingerPointers.delete(event.pointerId)
-    //     if (this.twoFingerPointers.size < 2 && this.isTwoFingerRotating) {
-    //       this.isTwoFingerRotating = false; return
-    //     }
-    //     if (this.isTwoFingerRotating) return
-    //   }
-
-    //   if (this.isRotating && this.rotationRing) {
-    //     this.rotationRing.traverse((child) => {
-    //       if (child.userData?.visMesh) {
-    //         child.userData.visMesh.material.color.setHex(child.userData.originalColor)
-    //       }
-    //     })
-    //   }
-
-    //   this.isDragging    = false; this.isDraggingRef = false
-    //   this.isRotating    = false; this.isRotatingRef = false
-    //   try { this.renderer.domElement.releasePointerCapture(event.pointerId) } catch (_) {}
-    // },
+    _saveLastKnownTransform() {
+      // Store plain numbers — NOT proxy refs — so they survive Vue's nextTick flush
+      this.lastKnownPos   = {
+        x: this.light.position.x,
+        y: this.light.position.y,
+        z: this.light.position.z,
+      }
+      this.lastKnownQuat  = {
+        x: this.light.quaternion.x,
+        y: this.light.quaternion.y,
+        z: this.light.quaternion.z,
+        w: this.light.quaternion.w,
+      }
+      this.lastKnownScale = {
+        x: this.light.scale.x,
+        y: this.light.scale.y,
+        z: this.light.scale.z,
+      }
+      console.log('[ceiling] lastKnown saved:', JSON.stringify(this.lastKnownPos))
+    },
 
     // ─────────────────────────────────────────────────────
     // CEILING RAYCAST
     // ─────────────────────────────────────────────────────
-onPointerUp(event) {
-  if (event.pointerType === 'touch') {
-    this.twoFingerPointers.delete(event.pointerId)
-    if (this.twoFingerPointers.size < 2 && this.isTwoFingerRotating) {
-      this.isTwoFingerRotating = false
-      // Re-anchor remaining finger so follow-up doesn't snap
-      if (this.twoFingerPointers.size === 1) {
-        const rem = Array.from(this.twoFingerPointers.values())[0]
-        this.twoFingerStartAngle = this.light ? this.light.rotation.y : 0
-        this.twoFingerStartAvgX  = rem.clientX
-        this.twoFingerStartAvgY  = rem.clientY
-      }
-      return
-    }
-    if (this.isTwoFingerRotating) return
-  }
 
-  if (this.isRotating && this.rotationRing) {
-    this.rotationRing.traverse((child) => {
-      if (child.userData?.visMesh) {
-        child.userData.visMesh.material.color.setHex(child.userData.originalColor)
-      }
-    })
-  }
-
-  this.isDragging = false; this.isDraggingRef = false
-  this.isRotating = false; this.isRotatingRef = false
-  this._lastDragHit = null
-
-  try { this.renderer.domElement.releasePointerCapture(event.pointerId) } catch (_) {}
-},
     raycastCeiling() {
       if (this.ceilingPlaneTHREE) {
         const pt = new THREE.Vector3()
         if (this.raycaster.ray.intersectPlane(this.ceilingPlaneTHREE, pt)) return pt
       }
-      // Fallback: flat ceiling at centroid Y
       const yPlane = new THREE.Plane(new THREE.Vector3(0, -1, 0), this.ceilingCentroid3.y)
       const pt = new THREE.Vector3()
       if (this.raycaster.ray.intersectPlane(yPlane, pt)) return pt
@@ -1024,11 +817,10 @@ onPointerUp(event) {
         const raw    = this.maskCtx.getImageData(0, 0, this.CAM_IMG_W, this.CAM_IMG_H).data
         const binary = new Uint8Array(this.CAM_IMG_W * this.CAM_IMG_H)
         for (let i = 0; i < this.CAM_IMG_W * this.CAM_IMG_H; i++) binary[i] = raw[i * 4] > 127 ? 1 : 0
-        this._rawBinaryMask = binary                                           // ← kept for erosion fallbacks
+        this._rawBinaryMask = binary
         this.erodedMask = this.erodeBinaryMask(binary, this.CAM_IMG_W, this.CAM_IMG_H, this.MASK_ERODE_PX)
         this.maskReady  = true
         this.internalLoadingText = 'Analysing ceiling…'
-        // Pre-paint the overlay so it's instant when the user enables it
         this.$nextTick(() => this.drawMaskOverlay())
         this.tryComputeCeiling()
       }
@@ -1074,7 +866,7 @@ onPointerUp(event) {
         const hasColor = geo.hasAttribute('color')
         const mat = new THREE.PointsMaterial({ size: 0.02, vertexColors: hasColor, color: hasColor ? undefined : 0x00ccff })
         this.pointCloudObj = markRaw(new THREE.Points(geo, mat))
-        this.pointCloudObj.visible = false   // hidden by default
+        this.pointCloudObj.visible = false
         this.scene.add(this.pointCloudObj)
         this.plyReady = true
         this.internalLoadingText = 'Fitting ceiling plane…'
@@ -1097,32 +889,19 @@ onPointerUp(event) {
 
     tryComputeCeiling() {
       if (!this.plyReady || !this.maskReady || !this.erodedMask) return
-      if (this.planeReady) return   // already fitted, skip redundant calls
-
-      // Try fitting with progressively relaxed erosion if we get too few points
+      if (this.planeReady) return
       const result = this._attemptCeilingFit(this.erodedMask)
-
-      if (result) {
-        this._applyFitResult(result)
-        return
-      }
-
-      // Fallback 1: re-erode with half radius
+      if (result) { this._applyFitResult(result); return }
       console.warn('⚠️ Too few ceiling points with full erosion — retrying at half radius…')
       const halfEroded = this.erodeBinaryMask(
-        this._rawBinaryMask,
-        this.CAM_IMG_W, this.CAM_IMG_H,
+        this._rawBinaryMask, this.CAM_IMG_W, this.CAM_IMG_H,
         Math.max(1, Math.round(this.MASK_ERODE_PX / 2)),
       )
       const result2 = this._attemptCeilingFit(halfEroded)
       if (result2) { this._applyFitResult(result2); return }
-
-      // Fallback 2: no erosion at all (use raw binary mask)
       console.warn('⚠️ Still too few points — retrying with no erosion…')
       const result3 = this._attemptCeilingFit(this._rawBinaryMask)
       if (result3) { this._applyFitResult(result3); return }
-
-      // Fallback 3: 500ms retry (handles any lingering race where plyPositions wasn't flushed)
       if (!this._computeRetryScheduled) {
         this._computeRetryScheduled = true
         setTimeout(() => {
@@ -1137,10 +916,8 @@ onPointerUp(event) {
       }
     },
 
-    // Returns fit result object or null if < 10 points
     _attemptCeilingFit(mask) {
       if (!mask || !this.plyPositions) return null
-
       const ceilPts = []
       for (let i = 0; i < this.plyPointCount; i++) {
         const x = this.plyPositions[i * 3 + 0]
@@ -1150,20 +927,15 @@ onPointerUp(event) {
         if (!px) continue
         if (mask[px.v * this.CAM_IMG_W + px.u] === 1) ceilPts.push([x, y, z])
       }
-
       if (ceilPts.length < 10) {
         console.warn(`  → ${ceilPts.length} ceiling points (need ≥ 10)`)
         return null
       }
-
-      // Centroid
       let cx = 0, cy = 0, cz = 0
       for (const [x, y, z] of ceilPts) { cx += x; cy += y; cz += z }
       cx /= ceilPts.length; cy /= ceilPts.length; cz /= ceilPts.length
-
       const fit = this.fitPlane(ceilPts)
       if (!fit) return null
-
       return { normal: fit.normal, centroid: { x: cx, y: cy, z: cz }, count: ceilPts.length }
     },
 
@@ -1172,30 +944,21 @@ onPointerUp(event) {
       this.ceilingPtCount = count
       this.ceilingCentroid3.set(centroid.x, centroid.y, centroid.z)
       this.ceilingCentroidY = centroid.y
-
       this.ceilingNormal3.copy(normal)
-      // Force normal to point downward into the room
       if (this.ceilingNormal3.y > 0) this.ceilingNormal3.negate()
-
-      // Reject extreme tilt (> 20°)
       const tiltDeg = (Math.acos(Math.min(1, Math.abs(this.ceilingNormal3.y))) * 180) / Math.PI
       if (tiltDeg > 20) {
         console.warn(`⚠️ Ceiling tilt ${tiltDeg.toFixed(1)}° too large — using flat ceiling`)
         this.ceilingNormal3.set(0, -1, 0)
       }
-
       this._ceilNX = this.ceilingNormal3.x
       this._ceilNY = this.ceilingNormal3.y
       this._ceilNZ = this.ceilingNormal3.z
-
       this.ceilingPlaneTHREE = markRaw(new THREE.Plane())
       this.ceilingPlaneTHREE.setFromNormalAndCoplanarPoint(this.ceilingNormal3, this.ceilingCentroid3)
-
       this.planeReady = true
       console.log(`✅ Ceiling plane fitted — ${count} pts, centroid Y: ${centroid.y.toFixed(3)}, normal: (${this._ceilNX.toFixed(3)}, ${this._ceilNY.toFixed(3)}, ${this._ceilNZ.toFixed(3)})`)
-
       this._buildCeilingDebugMesh()
-
       if (this.light) {
         this.placeLightOnCeiling()
         this.createRotationRing()
@@ -1215,7 +978,7 @@ onPointerUp(event) {
       const b = [sxy, szy, sy]
       const coeffs = this.gaussElim3(M, b)
       if (!coeffs) return null
-      const [a, bC, c] = coeffs
+      const [a, bC] = coeffs
       const nx = a, ny = -1, nz = bC
       const len = Math.sqrt(nx*nx + ny*ny + nz*nz)
       return { normal: new THREE.Vector3(nx/len, ny/len, nz/len) }
@@ -1250,16 +1013,13 @@ onPointerUp(event) {
 
     createRotationRing() {
       this._disposeRotationRing()
-
       const ring = new THREE.Group()
       ring.name = 'rotationRing'
-
       const RADIUS     = 1.0
       const SEGMENTS   = 128
       const LINE_COLOR = 0xffffff
       const ARR_COLOR  = 0x00e5ff
       const ARR_ANGLES = [0, Math.PI * 0.5, Math.PI, Math.PI * 1.5]
-
       const circlePoints = []
       for (let i = 0; i <= SEGMENTS; i++) {
         const a = (i / SEGMENTS) * Math.PI * 2
@@ -1269,15 +1029,12 @@ onPointerUp(event) {
         new THREE.BufferGeometry().setFromPoints(circlePoints),
         new THREE.LineBasicMaterial({ color: LINE_COLOR, linewidth: 2 }),
       ))
-
       this.rotationArrows = []
       const AW = 0.13, AH = 0.22, HIT_R = 0.32
-
       ARR_ANGLES.forEach((angle) => {
         const tx =  Math.sin(angle), tz = -Math.cos(angle)
         const nx = -Math.cos(angle), nz = -Math.sin(angle)
         const cx = Math.cos(angle) * RADIUS, cz = Math.sin(angle) * RADIUS
-
         const visGeo = new THREE.BufferGeometry()
         visGeo.setAttribute('position', new THREE.Float32BufferAttribute([
           cx + tx * AH, 0, cz + tz * AH,
@@ -1286,14 +1043,12 @@ onPointerUp(event) {
         ], 3))
         visGeo.setIndex([0, 1, 2])
         visGeo.computeVertexNormals()
-
         const visMesh = new THREE.Mesh(
           visGeo,
           new THREE.MeshBasicMaterial({ color: ARR_COLOR, side: THREE.DoubleSide }),
         )
         visMesh.raycast = () => {}
         ring.add(visMesh)
-
         const hitMesh = new THREE.Mesh(
           new THREE.CircleGeometry(HIT_R, 20),
           new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, side: THREE.DoubleSide, depthWrite: false }),
@@ -1304,25 +1059,18 @@ onPointerUp(event) {
         ring.add(hitMesh)
         this.rotationArrows.push(hitMesh)
       })
-
       this.rotationRing = markRaw(ring)
       this.scene.add(ring)
     },
 
     _snapRingToLight() {
       if (!this.rotationRing || !this.light) return
-
-      // Ring sits just below the ceiling surface (slightly into the room)
       this.rotationRing.position.copy(this.light.position)
       this.rotationRing.position.addScaledVector(this.ceilingNormal3, 0.012)
-
-      // Tilt the flat XZ ring to align with the ceiling plane
       const worldUp = new THREE.Vector3(0, 1, 0)
-      // Ceiling normal points down, ring's "up" should align with ceiling normal reversed
-      const fn = this.ceilingNormal3.clone().normalize().negate() // points up
+      const fn = this.ceilingNormal3.clone().normalize().negate()
       const tiltQ = new THREE.Quaternion().setFromUnitVectors(worldUp, fn)
       this.rotationRing.quaternion.copy(tiltQ)
-
       this._fitRingToCanvas()
     },
 
@@ -1359,14 +1107,12 @@ onPointerUp(event) {
 
     reloadLight() {
       if (!this.scene) return
-
       this.isDragging = false; this.isDraggingRef = false
       this.isRotating = false; this.isRotatingRef = false
       this.lightLoaded = false
       this.internalLoading     = true
       this.internalLoadingText = 'Loading 3D model…'
       this._disposeRotationRing()
-
       if (this.light) {
         this.scene.remove(this.light)
         this.light.traverse((child) => {
@@ -1377,12 +1123,10 @@ onPointerUp(event) {
         })
         this.light = null
       }
-
       this.lightRotation    = 0
       this.adjustRoll       = 0
       this.adjustPitch      = 0
       this.modelLoadProgress = 0
-
       this._loadGLTF(this.resolveModelUrl(this.glbUrl))
     },
 
@@ -1397,7 +1141,6 @@ onPointerUp(event) {
           innerMesh.scale.set(1, 1, 1)
           innerMesh.updateMatrixWorld(true)
 
-          // ── Physical sizing (same focal correction as floor component) ──
           const rawBox  = new THREE.Box3().setFromObject(innerMesh)
           const rawSize = new THREE.Vector3()
           rawBox.getSize(rawSize)
@@ -1412,19 +1155,14 @@ onPointerUp(event) {
 
           innerMesh.scale.set(sx, sy, sz)
           innerMesh.updateMatrixWorld(true)
+          this.originalScale = Math.min(sx, sy, sz)
 
-          this.originalScale = Math.min(sx, sy, sz)   // uniform reference for size slider
-
-          // ── Pivot so that model hangs from ceiling (top at Y=0 of pivotGroup) ──
           const scaledBox = new THREE.Box3().setFromObject(innerMesh)
-          // Move inner mesh up so its TOP face is at local Y=0
-          // (pivotGroup Y = ceiling attachment point, model hangs downward)
           innerMesh.position.y -= scaledBox.max.y
           innerMesh.updateMatrixWorld(true)
 
-          // Half-height of the model (used for a tiny gap offset if needed)
           const finalBox = new THREE.Box3().setFromObject(innerMesh)
-          this.lightHalfH = Math.abs(finalBox.min.y) / 2   // positive, model extends downward
+          this.lightHalfH = Math.abs(finalBox.min.y) / 2
 
           const pivotGroup = new THREE.Group()
           pivotGroup.add(innerMesh)
@@ -1452,22 +1190,13 @@ onPointerUp(event) {
 
     placeLightOnCeiling(worldX = null, worldZ = null) {
       if (!this.light || !this.ceilingPlaneTHREE) return
-
       const x = worldX ?? this.ceilingCentroid3.x
       const z = worldZ ?? this.ceilingCentroid3.z
-
-      // Solve Y on the ceiling plane at (x, z)
       const n = this.ceilingNormal3
       const d = this.ceilingPlaneTHREE.constant
       let y   = this.ceilingCentroid3.y
       if (Math.abs(n.y) > 1e-6) y = (-d - n.x * x - n.z * z) / n.y
-
-      // Place pivot (attachment point) on ceiling surface
       this.light.position.set(x, y, z)
-      // The model hangs DOWN from the ceiling.
-      // ceilingNormal3.y is negative, so addScaledVector(n, -lightHalfH) moves slightly into room.
-      // This keeps a zero-gap between ceiling and top of fixture.
-
       this._applyModelOrientation()
     },
 
@@ -1481,30 +1210,20 @@ onPointerUp(event) {
     },
 
     // ─────────────────────────────────────────────────────
-    // MODEL ORIENTATION / SCALE (roll, pitch, yaw, size)
+    // MODEL ORIENTATION / SCALE
     // ─────────────────────────────────────────────────────
 
     _applyModelOrientation() {
       if (!this.light || !this.planeReady) return
-
-      // Base tilt: align model's "up" with ceiling normal (inverted = pointing down into room)
       const worldDown = new THREE.Vector3(0, -1, 0)
       const fn        = this.ceilingNormal3.clone().normalize()
       const tiltQ     = new THREE.Quaternion().setFromUnitVectors(worldDown, fn)
-
-      // Yaw (spin around ceiling normal axis)
       const spinQ = new THREE.Quaternion().setFromAxisAngle(fn, THREE.MathUtils.degToRad(this.lightRotation))
-
-      // User adjustments (roll around Z, pitch around X)
       const rollQ  = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), THREE.MathUtils.degToRad(this.adjustRoll))
       const pitchQ = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), THREE.MathUtils.degToRad(this.adjustPitch))
-
-      // Combine: tilt first, then spin, then pitch/roll corrections
-      const combined = new THREE.Quaternion()
-        .multiplyQuaternions(spinQ, tiltQ)
+      const combined = new THREE.Quaternion().multiplyQuaternions(spinQ, tiltQ)
       combined.multiplyQuaternions(rollQ, combined)
       combined.multiplyQuaternions(pitchQ, combined)
-
       this.light.quaternion.copy(combined)
       if (this.rotationRing) this._snapRingToLight()
     },
@@ -1513,93 +1232,136 @@ onPointerUp(event) {
       if (!this.light) return
       const inner = this.light.children[0]
       if (!inner) return
-
-      // Re-scale uniformly around the original physical size
-      const fovRad         = (this.CAM_FOV_V * Math.PI) / 180
-      const fy_threejs     = this.CAM_IMG_H / 2 / Math.tan(fovRad / 2)
-      const focalCorrection = this.CAM_FY / fy_threejs
-
-      const sx = (this.TARGET_DIMS.width  * focalCorrection * this.modelSizeScale) / (this.TARGET_DIMS.width  * focalCorrection / (inner.scale.x || 1) * (inner.scale.x || 1))
-      // Simpler: just apply scale relative to original
       inner.scale.setScalar(this.originalScale * this.modelSizeScale)
       inner.updateMatrixWorld(true)
-
-      // Re-center so top stays at Y=0 of pivot group
       const box = new THREE.Box3().setFromObject(inner)
       inner.position.y = -box.max.y
       inner.updateMatrixWorld(true)
-
       const finalBox = new THREE.Box3().setFromObject(inner)
       this.lightHalfH = Math.abs(finalBox.min.y) / 2
-
       this.placeLightOnCeiling(this.light.position.x, this.light.position.z)
     },
 
     // ─────────────────────────────────────────────────────
-    // RENDER / EXPORT  (called by parent via $refs)
+    // EXPORT  ← THE FIXED METHOD
     // ─────────────────────────────────────────────────────
 
     async downloadCurrentSceneImage() {
       if (!this.renderer || !this.scene || !this.camera || !this.currentBgTexture || !this.light) {
-        console.warn('Required components not available for image generation'); return
+        console.warn('Required components not available'); return
       }
 
-      // ── Store original states BEFORE any modifications ──
-      const originalClearColor          = this.renderer.getClearColor(new THREE.Color())
-      const originalClearAlpha          = this.renderer.getClearAlpha()
-      const originalBgMeshVisible       = this.bgMesh        ? this.bgMesh.visible        : false
-      const originalRingVisible         = this.rotationRing  ? this.rotationRing.visible  : false
-      const originalPointCloudVisible   = this.pointCloudObj ? this.pointCloudObj.visible : false
-      const originalCeilingMeshVisible  = this.ceilingDebugMesh ? this.ceilingDebugMesh.visible : false
+      // ── STEP 1: Snapshot ──────────────────────────────────────────────────
+      this.light.updateMatrixWorld(true)
+      const snapPos   = { x: this.light.position.x,   y: this.light.position.y,   z: this.light.position.z   }
+      const snapQuat  = { x: this.light.quaternion.x, y: this.light.quaternion.y, z: this.light.quaternion.z, w: this.light.quaternion.w }
+      const snapScale = { x: this.light.scale.x,      y: this.light.scale.y,      z: this.light.scale.z      }
+      console.log('[ceiling export] snapPos:', JSON.stringify(snapPos))
+
+      // ── STEP 2: Hide UI ───────────────────────────────────────────────────
+      const wasRingVisible        = this.rotationRing     ? this.rotationRing.visible     : false
+      const wasPointCloudVisible  = this.pointCloudObj    ? this.pointCloudObj.visible    : false
+      const wasCeilingMeshVisible = this.ceilingDebugMesh ? this.ceilingDebugMesh.visible : false
+      if (this.rotationRing)     this.rotationRing.visible     = false
+      if (this.pointCloudObj)    this.pointCloudObj.visible    = false
+      if (this.ceilingDebugMesh) this.ceilingDebugMesh.visible = false
+
+      // ── STEP 3: nextTick → re-apply snapshot ─────────────────────────────
+      await this.$nextTick()
+      this.light.position.set(snapPos.x, snapPos.y, snapPos.z)
+      this.light.quaternion.set(snapQuat.x, snapQuat.y, snapQuat.z, snapQuat.w)
+      this.light.scale.set(snapScale.x, snapScale.y, snapScale.z)
+      this.light.updateMatrixWorld(true)
+      console.log('[ceiling export] pos after re-apply:', this.light.position.x.toFixed(3), this.light.position.z.toFixed(3))
+
+      // ── STEP 4: Use the EXACT resolution the live camera was built with ───
+      // _liveRenderW/_liveRenderH are saved during initThree() from
+      // roomImage.naturalWidth/naturalHeight — the same values used to create
+      // this.camera. Any other value (CAM_IMG_W, clientWidth) risks a different
+      // aspect ratio, which shifts the model in the export.
+      const exportW = this._liveRenderW || this.renderer.domElement.width
+      const exportH = this._liveRenderH || this.renderer.domElement.height
+      console.log(`[ceiling export] ${exportW}×${exportH}  (live camera res)`)
 
       try {
-        // Current live canvas dimensions
-        const width  = this.renderer.domElement.width
-        const height = this.renderer.domElement.height
+        // ── STEP 5: Offscreen render ──────────────────────────────────────
+        const offCanvas = document.createElement('canvas')
+        offCanvas.width  = exportW
+        offCanvas.height = exportH
 
-        // ── Step 1: Hide all UI / debug elements ──
-        if (this.rotationRing)   this.rotationRing.visible   = false
-        if (this.pointCloudObj)  this.pointCloudObj.visible  = false
-        if (this.ceilingDebugMesh) this.ceilingDebugMesh.visible = false
+        const offRenderer = new THREE.WebGLRenderer({
+          canvas: offCanvas, antialias: true,
+          preserveDrawingBuffer: true, alpha: true, precision: 'highp',
+        })
+        offRenderer.setSize(exportW, exportH)
+        offRenderer.setPixelRatio(1)
+        offRenderer.outputColorSpace  = THREE.SRGBColorSpace
+        offRenderer.setClearColor(0x000000, 0)
+        offRenderer.shadowMap.enabled = true
+        offRenderer.shadowMap.type    = THREE.PCFShadowMap
+        offRenderer.autoClear = true
 
-        // ── Step 2: Composite canvas — background image first ──
+        const offScene = new THREE.Scene()
+
+        // Clone model at the confirmed dragged position
+        const lightClone = this.light.clone(true)
+        lightClone.position.copy(this.light.position)
+        lightClone.quaternion.copy(this.light.quaternion)
+        lightClone.scale.copy(this.light.scale)
+        lightClone.updateMatrixWorld(true)
+        console.log(`[ceiling export] clone x=${lightClone.position.x.toFixed(3)}, z=${lightClone.position.z.toFixed(3)}`)
+        offScene.add(lightClone)
+
+        // Same lighting as initThree()
+        offScene.add(new THREE.AmbientLight(0xfff4e0, 1.4))
+        const sun = new THREE.DirectionalLight(0xfff5e8, 2.0)
+        sun.position.set(1.5, -5, -3)
+        sun.castShadow = true
+        sun.shadow.mapSize.set(2048, 2048)
+        sun.shadow.camera.near = 0.1; sun.shadow.camera.far   = 20
+        sun.shadow.camera.left = -6;  sun.shadow.camera.right  = 6
+        sun.shadow.camera.bottom = -6; sun.shadow.camera.top   = 6
+        sun.shadow.bias = -0.001; sun.shadow.normalBias = 0.02
+        offScene.add(sun)
+        const fill = new THREE.DirectionalLight(0xd0e8ff, 1.8); fill.position.set(-2, -3, 2); offScene.add(fill)
+        const back = new THREE.DirectionalLight(0xfff8e8, 0.5); back.position.set(0, -2, 4); offScene.add(back)
+
+        // Camera with IDENTICAL aspect to the live camera
+        const offCamera = new THREE.PerspectiveCamera(this.CAM_FOV_V, exportW / exportH, 0.01, 200)
+        offCamera.position.set(0, 0, 0)
+        offCamera.lookAt(0, 0, -1)
+        offCamera.updateProjectionMatrix()
+        offCamera.updateMatrixWorld(true)
+
+        offRenderer.render(offScene, offCamera)
+
+        // ── STEP 6: Composite bg + model ─────────────────────────────────
+        const bgImg = this.currentBgTexture.image
         const compositeCanvas = document.createElement('canvas')
-        compositeCanvas.width  = width
-        compositeCanvas.height = height
+        compositeCanvas.width  = exportW
+        compositeCanvas.height = exportH
         const ctx = compositeCanvas.getContext('2d')
+        ctx.drawImage(bgImg, 0, 0, exportW, exportH)
 
-        const bgImage = this.currentBgTexture.image
-        ctx.drawImage(bgImage, 0, 0, width, height)
-
-        // ── Step 3: Render only the 3D model over transparent background ──
-        if (this.bgMesh) this.bgMesh.visible = false
-        this.renderer.setClearColor(0x000000, 0)   // transparent
-        this.renderer.autoClear = false
-        this.renderer.clear()
-        this.renderer.render(this.scene, this.camera)
-
-        const modelImageData = this.renderer.domElement.toDataURL('image/png')
-
-        // ── Step 4: Composite model on top of background ──
         const finalDataURL = await new Promise((resolve) => {
-          const modelImage = new Image()
-          modelImage.onload = () => {
+          const modelImg = new Image()
+          modelImg.onload = () => {
             ctx.globalCompositeOperation = 'source-over'
-            ctx.drawImage(modelImage, 0, 0, width, height)
+            ctx.drawImage(modelImg, 0, 0, exportW, exportH)
             resolve(compositeCanvas.toDataURL('image/png', 0.95))
           }
-          modelImage.onerror = () => resolve(null)
-          modelImage.src = modelImageData
+          modelImg.onerror = () => resolve(null)
+          modelImg.src = offCanvas.toDataURL('image/png')
         })
 
+        offRenderer.dispose()
+
         if (!finalDataURL) {
-          console.error('Failed to generate composite image')
-          this._restoreRendererState(originalBgMeshVisible, originalClearColor, originalClearAlpha)
-          this._restoreUIState(originalRingVisible, originalPointCloudVisible, originalCeilingMeshVisible)
+          console.error('[ceiling export] Failed to generate composite image')
           return
         }
 
-        // ── Step 5: Send to server ──
+        // ── STEP 7: POST to server — payload unchanged ───────────────────
         const response = await fetch(
           `${this.$store.state.root_api}engine/added-3d-light-to-room/`,
           {
@@ -1616,7 +1378,7 @@ onPointerUp(event) {
               metadata: {
                 modelPosition: {
                   x: this.light.position.x,
-                  y: this.light.position.z,   // Z is the XZ plane "depth"
+                  y: this.light.position.z,
                   rotation: this.lightRotation,
                 },
                 ceilingPlane: {
@@ -1628,49 +1390,41 @@ onPointerUp(event) {
                 adjustRoll:     this.adjustRoll,
                 adjustPitch:    this.adjustPitch,
                 modelSizeScale: this.modelSizeScale,
-                dimensions:     { width, height },
+                dimensions:     { width: exportW, height: exportH },
               },
             }),
           }
         )
 
-        // ── Handle 402: restore state FIRST, then emit ──
         if (response.status === 402) {
           const result = await response.json()
-          this._restoreRendererState(originalBgMeshVisible, originalClearColor, originalClearAlpha)
-          this._restoreUIState(originalRingVisible, originalPointCloudVisible, originalCeilingMeshVisible)
           this.$emit('insufficient-credits', result.msg, result.buid)
           return
         }
-
         if (response.ok) {
           const result = await response.json()
-          console.log('Image successfully sent to server:', result)
-          this._restoreRendererState(originalBgMeshVisible, originalClearColor, originalClearAlpha)
-          this._restoreUIState(originalRingVisible, originalPointCloudVisible, originalCeilingMeshVisible)
+          console.log('[ceiling export] ✅ sent:', result)
           this.$emit('model-3d-light-added', result)
         } else {
-          console.error('Server error:', response.status, response.statusText)
-          this._restoreRendererState(originalBgMeshVisible, originalClearColor, originalClearAlpha)
-          this._restoreUIState(originalRingVisible, originalPointCloudVisible, originalCeilingMeshVisible)
-
-          // Fallback: download locally
+          console.error('[ceiling export] Server error:', response.status, response.statusText)
           const link = document.createElement('a')
           link.download = `ceiling_light_composite_${Date.now()}.png`
           link.href = finalDataURL
           document.body.appendChild(link); link.click(); document.body.removeChild(link)
         }
 
-        console.log(`Composite processed: ${width}×${height}`)
-
       } catch (error) {
-        console.error('Error in downloadCurrentSceneImage:', error)
-        this._restoreRendererState(originalBgMeshVisible, originalClearColor, originalClearAlpha)
-        this._restoreUIState(originalRingVisible, originalPointCloudVisible, originalCeilingMeshVisible)
+        console.error('[ceiling export] Error:', error)
+      } finally {
+        if (this.rotationRing)     this.rotationRing.visible     = wasRingVisible
+        if (this.pointCloudObj)    this.pointCloudObj.visible    = wasPointCloudVisible
+        if (this.ceilingDebugMesh) this.ceilingDebugMesh.visible = wasCeilingMeshVisible
       }
     },
 
-    // ── Renderer restore helpers ─────────────────────────
+    // ─────────────────────────────────────────────────────
+    // DEBUG HELPERS
+    // ─────────────────────────────────────────────────────
 
     _restoreRendererState(bgMeshVisible, clearColor, clearAlpha) {
       if (this.bgMesh) this.bgMesh.visible = bgMeshVisible
@@ -1696,8 +1450,6 @@ onPointerUp(event) {
         color: 0x00aaff, emissive: 0x001133, transparent: true, opacity: 0.35, side: THREE.DoubleSide,
       })
       this.ceilingDebugMesh = markRaw(new THREE.Mesh(geo, mat))
-      // Orient plane normal to match fitted ceiling normal
-      // PlaneGeometry faces +Z, so rotate to face ceilingNormal3 direction
       const worldZ = new THREE.Vector3(0, 0, 1)
       const q = new THREE.Quaternion().setFromUnitVectors(worldZ, this.ceilingNormal3.clone().normalize())
       this.ceilingDebugMesh.applyQuaternion(q)
@@ -1710,51 +1462,33 @@ onPointerUp(event) {
     toggleCeilingMesh() { if (this.ceilingDebugMesh) this.ceilingDebugMesh.visible = this.debugCeilingMesh },
 
     // ─────────────────────────────────────────────────────
-    // MASK OVERLAY PAINTER
+    // MASK OVERLAY
     // ─────────────────────────────────────────────────────
 
     drawMaskOverlay() {
       const canvas = this.$refs.maskOverlayCanvas
       if (!canvas) return
-
       const W = this.CAM_IMG_W
       const H = this.CAM_IMG_H
       canvas.width  = W
       canvas.height = H
       const ctx = canvas.getContext('2d')
       ctx.clearRect(0, 0, W, H)
-
       if (!this.erodedMask) return
-
-      // Build ImageData: paint each pixel according to mask type
-      // cyan  = kept after erosion (erodedMask = 1)
-      // red   = in raw mask but eroded away (rawBinary = 1, erodedMask = 0)
-      // transparent = not ceiling at all
       const imgData = ctx.createImageData(W, H)
       const d = imgData.data
-      const raw     = this._rawBinaryMask
-      const eroded  = this.erodedMask
-
+      const raw    = this._rawBinaryMask
+      const eroded = this.erodedMask
       for (let i = 0; i < W * H; i++) {
         const px = i * 4
         if (eroded[i] === 1) {
-          // Valid ceiling pixel — cyan
-          d[px + 0] = 0
-          d[px + 1] = 220
-          d[px + 2] = 255
-          d[px + 3] = 180          // semi-transparent
+          d[px+0]=0; d[px+1]=220; d[px+2]=255; d[px+3]=180
         } else if (raw && raw[i] === 1) {
-          // Eroded away — red warning
-          d[px + 0] = 255
-          d[px + 1] = 60
-          d[px + 2] = 60
-          d[px + 3] = 140
+          d[px+0]=255; d[px+1]=60; d[px+2]=60; d[px+3]=140
         } else {
-          // Not ceiling — fully transparent
-          d[px + 3] = 0
+          d[px+3]=0
         }
       }
-
       ctx.putImageData(imgData, 0, 0)
     },
 
@@ -1777,7 +1511,6 @@ onPointerUp(event) {
 
     cleanup() {
       if (this.animationFrameId) cancelAnimationFrame(this.animationFrameId)
-
       if (this.renderer?.domElement) {
         const el = this.renderer.domElement
         el.removeEventListener('pointerdown',   this.onPointerDown)
@@ -1786,9 +1519,7 @@ onPointerUp(event) {
         el.removeEventListener('pointercancel', this.onPointerUp)
       }
       window.removeEventListener('resize', this.adjustCanvasToAspectRatio)
-
       this._disposeRotationRing()
-
       if (this.renderer) {
         this.renderer.dispose()
         this.renderer.domElement?.parentNode?.removeChild(this.renderer.domElement)
@@ -1801,7 +1532,6 @@ onPointerUp(event) {
           }
         })
       }
-
       this.scene = null; this.renderer = null; this.camera = null
       this.light = null; this.pointCloudObj = null
       this.planeReady = false; this.lightLoaded = false
@@ -1812,11 +1542,12 @@ onPointerUp(event) {
       this.ceilingPlaneTHREE = null
       this.ceilingNormal3   = markRaw(new THREE.Vector3(0, -1, 0))
       this.ceilingCentroid3 = markRaw(new THREE.Vector3())
+      this._liveRenderW = 0
+      this._liveRenderH = 0
     },
   },
 }
 </script>
-
 <style scoped>
 .editor-wrapper {
   width: 100%;
