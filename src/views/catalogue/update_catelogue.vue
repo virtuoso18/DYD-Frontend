@@ -1501,6 +1501,7 @@ Switch Furniture</a-button> -->
                     current_tab == 'image' && active_tab_image === 'home_design'
                   "
                   :home_design_images="home_design_images"
+                  @updateBaseImageUrlForHomeDesign="updateBaseImageUrlForHomeDesign"
                 />
               </a-col>
 
@@ -1724,7 +1725,7 @@ Switch Furniture</a-button> -->
               active_tab_image === 'home_design' &&
               home_design_images
             "
-            :home_design_images="home_design_images"
+            @updateBaseImageUrlForHomeDesign="updateBaseImageUrlForHomeDesign"
           />
 
 
@@ -3222,6 +3223,7 @@ Switch Furniture</a-button> -->
                         active_tab_image === 'home_design'
                       "
                       :home_design_images="home_design_images"
+                      @updateBaseImageUrlForHomeDesign="updateBaseImageUrlForHomeDesign"
                     />
                   </a-col>
 
@@ -3433,6 +3435,7 @@ import fetch_all_drawer_component from "@/components/update_catalogue/bottom_dra
 
 import ai_catalog_item_replacement_3d_products from "@/components/update_catalogue/list_products/item_replacement_3d_products.vue";
 import PlanUpgradeModal from "./PlanUpgradeModal.vue";
+import { update } from "three/examples/jsm/libs/tween.module.js";
 
 export default {
   name: "update_catelogue",
@@ -3513,6 +3516,7 @@ export default {
 
       // Room Data
       base_image_url: "",
+      tempBaseImageUrl: "",
       depthMask: "",
       floor_Mask: "",
       floor_3d_model_grid: null,
@@ -6005,7 +6009,7 @@ smoothMobileScrolltoTop(){
     // ==========================================
     // HOME DESIGN METHODS
     // ==========================================
-    home_design_history_clicked(images, id) {
+    home_design_history_clicked(images, id, input_image) {
       this.home_design_images = {
         error: false,
         home_design_id: id,
@@ -6015,6 +6019,13 @@ smoothMobileScrolltoTop(){
         image_paths: images,
         msg: "Home design variations changed successfully",
       };
+      this.tempBaseImageUrl = this.$store.state.root_media_api + input_image;
+      console.log("TEmpurlrllllllllllllllllll",this.tempBaseImageUrl);
+    },
+
+    updateBaseImageUrlForHomeDesign() {
+      console.log('update hoooooooooooooooooooooo')
+      this.base_image_url = this.tempBaseImageUrl + "?t=" + Date.now();
     },
 
     newhome_designes_generated(e) {
