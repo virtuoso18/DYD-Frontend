@@ -1067,7 +1067,7 @@ export default {
 
         if (result.success && result.data) {
           const data = result.data;
-          console.log(data);
+          
           // Set business location
           this.businessLocation = {
             latitude: data.latitude || 40.7128,
@@ -1079,7 +1079,6 @@ export default {
           };
 
           this.businessLocationReady = true;
-          console.log("Business location loaded:", this.businessLocation);
         }
       } catch (error) {
         console.error("Error loading business location:", error);
@@ -1102,7 +1101,6 @@ export default {
     },
 
     async handleLocationConfirmed(locationData) {
-      console.log("Location Confirmed:", locationData);
 
       // Update business location
       this.businessLocation = {
@@ -1144,7 +1142,6 @@ export default {
           };
 
           this.businessLocationReady = true;
-          console.log("Business location loaded:", this.businessLocation);
         }
       } catch (error) {
         console.error("Error loading business location:", error);
@@ -1193,7 +1190,6 @@ export default {
         );
 
         const data = await response.json();
-        console.log("data---->", data);
 
         if (data.success) {
           this.community_posts_virtualisations = data.data.map((post) => ({
@@ -1227,8 +1223,6 @@ export default {
         } else {
           this.isLoadingMoreProducts = true;
         }
-        console.log("=============================");
-        console.log(this.business_info?.slug);
         const businessName = this.business_info?.slug;
         const token = localStorage.getItem("token");
 
@@ -1248,7 +1242,6 @@ export default {
         }
 
         const result = await response.json();
-        console.log("Products API Response:", result);
 
         // Extract products data
         let productsData = [];
@@ -1261,46 +1254,36 @@ export default {
           result.results.data &&
           Array.isArray(result.results.data)
         ) {
-          console.log("✅ Using nested Django REST + success format");
           productsData = result.results.data;
           totalCount = result.count || 0;
           hasNextPage = result.next !== null && result.next !== undefined;
         }
         // Check Django REST Pagination format (results as array)
         else if (result.results && Array.isArray(result.results)) {
-          console.log("✅ Using Django REST format");
           productsData = result.results;
           totalCount = result.count || 0;
           hasNextPage = result.next !== null && result.next !== undefined;
         }
         // Fallback to success + data format
         else if (result.success && result.data && Array.isArray(result.data)) {
-          console.log("✅ Using success + data format");
           productsData = result.data;
           totalCount = result.total || result.data.length;
           hasNextPage = false;
         }
         // Direct array in data
         else if (Array.isArray(result.data)) {
-          console.log("✅ Using direct data array format");
           productsData = result.data;
           totalCount = result.data.length;
           hasNextPage = false;
         }
         // Direct array response
         else if (Array.isArray(result)) {
-          console.log("✅ Using direct array format");
           productsData = result;
           totalCount = result.length;
           hasNextPage = false;
         }
 
-        console.log("Extracted data:", {
-          productsCount: productsData.length,
-          totalCount,
-          hasNextPage,
-          currentPage: pageNumber,
-        });
+        
 
         if (productsData.length > 0) {
           // Append products to existing list
@@ -1324,11 +1307,7 @@ export default {
             this.hasMoreProducts = true;
           }
 
-          console.log("✅ Products loaded:", {
-            displayed: this.our_products.length,
-            total: this.totalProducts,
-            hasMore: this.hasMoreProducts,
-          });
+         
         } else {
           console.warn("⚠️ No products in response");
           if (pageNumber === 1) {
@@ -1352,11 +1331,7 @@ export default {
     },
 
     async loadMoreProducts() {
-      console.log("Load More clicked:", {
-        isLoading: this.isLoadingMoreProducts,
-        hasMore: this.hasMoreProducts,
-        currentPage: this.productsPage,
-      });
+     
 
       if (!this.isLoadingMoreProducts && this.hasMoreProducts) {
         await this.loadBusinessProducts(this.productsPage + 1);
@@ -1439,7 +1414,7 @@ export default {
 
         if (result.success) {
           const data = result.data;
-          console.log(data);
+          
           this.editData = {
             ...this.editData,
             business_picture:
@@ -1566,7 +1541,7 @@ export default {
             ratings: result.data.ratings || [],
           };
 
-          console.log("✅ Business ratings loaded:", this.businessRatings);
+         
         } else {
           throw new Error(result.message || "Failed to fetch ratings");
         }
@@ -1707,7 +1682,6 @@ export default {
           this.$message.success("Comment added successfully!");
         }
       } catch (error) {
-        console.error("Failed to add comment:", error);
         this.$message.error("Failed to add comment");
       } finally {
         this.addingModalComment = false;
