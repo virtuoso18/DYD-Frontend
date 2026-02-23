@@ -4196,7 +4196,7 @@ checkHomeDesignAccess() {
 
       try {
         const roomId = this.$route.params.id;
-        const url = `${this.$store.state.root_api}room/api/room/${roomId}`;
+        const url = `${this.$store.state.root_api}room/api/room/${roomId}/`;
 
         const responseData = await this.makeApiRequest(
           url,

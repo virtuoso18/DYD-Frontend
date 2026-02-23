@@ -3669,7 +3669,7 @@ export default {
 
       try {
         const roomId = this.$route.params.id;
-        const url = `${this.$store.state.root_api}room/api/room/${roomId}`;
+        const url = `${this.$store.state.root_api}room/api/room/${roomId}/`;
 
         const response = await fetch(url, {
           method: "GET",
