@@ -458,30 +458,32 @@
                     Dimensions: {{ getDimensions(product) }}
                   </a-col>
 
-                  <a-col span="16">
-                    <a-button
-                      block
-                      class="product-detail-btn"
-                      @click="handleProductDetail(product)"
-                      >Product Details</a-button
-                    >
-                  </a-col>
+                <a-col span="24">
+  <div style="display: flex; gap: 8px; align-items: center;">
+    
+    <!-- Product Detail — takes all remaining space -->
+    <a-button
+      block
+      class="product-detail-btn"
+      style="flex: 1;"
+      @click="handleProductDetail(product)"
+    >
+      Product Details
+    </a-button>
 
-                  <a-col span="1"></a-col>
-                  <a-col span="4">
-                    <a-button
-                      :type="isWishlisted(product.id) ? 'primary' : 'default'"
-                      @click="toggleWishlist(product)"
-                      class="sm:product-detail-btn"
-                    >
-                      <!-- style="
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    " -->
-                      <HeartOutlined />
-                    </a-button>
-                  </a-col>
+    <!-- Like button — fixed size, always on right -->
+    <a-button
+      :type="isWishlisted(product.id) ? 'primary' : 'default'"
+      @click="toggleWishlist(product)"
+      class="sm:product-detail-btn"
+      style="flex-shrink: 0; width: 40px; padding: 0;"
+    >
+      <HeartOutlined />
+    </a-button>
+
+  </div>
+</a-col>
+
                 </a-row>
               </div>
             </a-col>

@@ -71,6 +71,7 @@
         <div v-for="(item, index) in catalogItems" :key="index" style="
 background: #f2f2f2;
 border: none;
+max-height: 270px;
 border-radius: 4px;
 padding:5px;
 "

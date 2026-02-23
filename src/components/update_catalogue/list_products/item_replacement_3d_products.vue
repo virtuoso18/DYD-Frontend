@@ -182,6 +182,7 @@
           <div v-for="(item, index) in catalogItems" :key="index" @click="updateItemRendering(item['id'],item['3d_model'],item['dimensions']['width'],item['dimensions']['height'],item['dimensions']['length'],item['is_resizable'])" style="
    background: #f2f2f2;
   border: none;
+  height: 270px;
   border-radius: 4px;
   padding:5px;"
             :style="selected_item===item.id ? 'border:1px solid blue': ''">

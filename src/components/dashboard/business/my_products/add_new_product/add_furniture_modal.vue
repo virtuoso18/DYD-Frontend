@@ -259,16 +259,25 @@
       </div>
 
       <!-- Description Field -->
-      <div style="margin-bottom: 16px;">
-        <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Description</label>
-        <a-textarea 
-          v-model:value="productForm.description"
-          :rows="3"
-          placeholder="Living room lighting, interior lighting, pendant lighting
-Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas."
-          style="border-radius: 6px; background: #f3f4f6; border: 1px solid #e5e7eb; resize: none;"
-        />
-      </div>
+     <!-- Description Field -->
+<div style="margin-bottom: 16px;">
+  <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">
+    Description <span style="color: red;">*</span>
+    <span style="font-size: 12px; color: #6b7280;">&nbsp;(max 100 words)</span>
+  </label>
+  <a-textarea 
+    v-model:value="productForm.description"
+    :rows="3"
+    maxlength="100"
+    placeholder="Living room lighting, interior lighting, pendant lighting..."
+    style="border-radius: 6px; background: #f3f4f6; border: 1px solid #e5e7eb; resize: none;"
+    @input="handleDescriptionInput"
+  />
+  <span style="font-size: 11px; color: #6b7280;">
+    {{ descriptionWordCount }}/100 words
+  </span>
+</div>
+
 
       <!-- Category, Type, Price Row -->
       <a-row :gutter="12" style="margin-bottom: 16px;">
@@ -300,7 +309,7 @@ show-search
 </div>
         </a-col>
         <a-col :span="8">
-          <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Type</label>
+          <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Type<span style="color: red;">*</span></label>
           <a-select 
             v-model:value="productForm.furniture_type" 
             placeholder="Modern"
@@ -311,7 +320,7 @@ show-search
           </a-select>
         </a-col>
         <a-col :span="8">
-          <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Price <span style="color: red;">*</span></label>
+          <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Price  <span style="color: red;">*</span></label>
           <a-input-number
             v-model:value="productForm.pricing.price" 
             :min="0"
@@ -323,54 +332,67 @@ show-search
       </a-row>
 
       <!-- Dimensions Section -->
-      <div style="margin-bottom: 20px;">
-        <h4 style="margin-bottom: 12px; font-size: 14px; font-weight: 500; color: #1f2937;">Dimensions</h4>
-        <a-row :gutter="8">
-          <a-col :span="8">
-            <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Height</label>
-            <div style="display: flex; align-items: center;">
-              <a-input-number
-                v-model:value="productForm.dimensions.height" 
-                :min="0"
-                :step="0.01"
-                placeholder="0.8"
-                style="width: 100%; border-radius: 4px; background: #f3f4f6; border: 1px solid #e5e7eb; font-size: 13px;"
-              />
-              <span style="margin-left: 6px; color: #9ca3af; font-size: 12px;">meter</span>
-            </div>
-          </a-col>
-          <a-col :span="8">
-            <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Length/Depth</label>
-            <div style="display: flex; align-items: center;">
-              <a-input-number
-                v-model:value="productForm.dimensions.length" 
-                :min="0"
-                :step="0.01"
-                placeholder="0.5"
-                style="width: 100%; border-radius: 4px; background: #f3f4f6; border: 1px solid #e5e7eb; font-size: 13px;"
-              />
-              <span style="margin-left: 6px; color: #9ca3af; font-size: 12px;">meter</span>
-            </div>
-          </a-col>
-          <a-col :span="8">
-            <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Width</label>
-            <div style="display: flex; align-items: center;">
-              <a-input-number
-                v-model:value="productForm.dimensions.width" 
-                :min="0"
-                :step="0.01"
-                placeholder="1.8"
-                style="width: 100%; border-radius: 4px; background: #f3f4f6; border: 1px solid #e5e7eb; font-size: 13px;"
-              />
-              <span style="margin-left: 6px; color: #9ca3af; font-size: 12px;">meter</span>
-            </div>
-          </a-col>
-        </a-row>
+     <!-- Dimensions Section -->
+<div style="margin-bottom: 20px;">
+  <h4 style="margin-bottom: 12px; font-size: 14px; font-weight: 500; color: #1f2937;">
+    Dimensions <span style="color: red;">*</span>
+  </h4>
+  <a-row :gutter="8">
+    <a-col :span="8">
+      <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Height <span style="color: red;">*</span></label>
+      <div style="display: flex; align-items: center;">
+        <a-input-number
+          v-model:value="productForm.dimensions.height"
+          :min="0.01"
+          :precision="2"
+          :step="0.01"
+          placeholder="0.8"
+          style="width: 100%; border-radius: 4px; background: #f3f4f6; border: 1px solid #e5e7eb; font-size: 13px;"
+          @keydown="blockInvalidDimensionKey"
+          @change="(val) => { if (val <= 0) productForm.dimensions.height = null }"
+        />
+        <span style="margin-left: 6px; color: #9ca3af; font-size: 12px;">meter</span>
       </div>
+    </a-col>
+    <a-col :span="8">
+      <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Length/Depth <span style="color: red;">*</span></label>
+      <div style="display: flex; align-items: center;">
+        <a-input-number
+          v-model:value="productForm.dimensions.length"
+          :min="0.01"
+          :precision="2"
+          :step="0.01"
+          placeholder="0.5"
+          style="width: 100%; border-radius: 4px; background: #f3f4f6; border: 1px solid #e5e7eb; font-size: 13px;"
+          @keydown="blockInvalidDimensionKey"
+          @change="(val) => { if (val <= 0) productForm.dimensions.length = null }"
+        />
+        <span style="margin-left: 6px; color: #9ca3af; font-size: 12px;">meter</span>
+      </div>
+    </a-col>
+    <a-col :span="8">
+      <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Width <span style="color: red;">*</span></label>
+      <div style="display: flex; align-items: center;">
+        <a-input-number
+          v-model:value="productForm.dimensions.width"
+          :min="0.01"
+          :precision="2"
+          :step="0.01"
+          placeholder="1.8"
+          style="width: 100%; border-radius: 4px; background: #f3f4f6; border: 1px solid #e5e7eb; font-size: 13px;"
+          @keydown="blockInvalidDimensionKey"
+          @change="(val) => { if (val <= 0) productForm.dimensions.width = null }"
+        />
+        <span style="margin-left: 6px; color: #9ca3af; font-size: 12px;">meter</span>
+      </div>
+    </a-col>
+  </a-row>
+</div>
+
 
       <!-- Available Colors Section -->
        <div style="margin-bottom: 20px;">
-        <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #374151;">Available Colors</label>
+        <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #374151;">Available Colors <span style="color: red;">*</span></label>
         
         <a-popover trigger="click" placement="bottom">
           <template #title>
@@ -1075,6 +1097,33 @@ export default {
       }
     },
 
+     handleDescriptionInput() {
+    const words = (this.productForm.description?.trim() || '').split(/\s+/).filter(w => w.length > 0);
+    if (words.length > 100) {
+      this.productForm.description = words.slice(0, 100).join(' ');
+    }
+  },
+
+  // ✅ ADD THIS RIGHT HERE
+  blockInvalidDimensionKey(e) {
+    // Allow: backspace, delete, arrows, tab, home, end
+    const controlKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Tab', 'Home', 'End'];
+    if (controlKeys.includes(e.key)) return;
+
+    // Allow only one dot for decimal
+    if (e.key === '.') {
+      const currentVal = String(e.target.value || '');
+      if (currentVal.includes('.')) e.preventDefault(); // block second dot
+      return;
+    }
+
+    // Block everything except digits 0-9
+    if (!/^\d$/.test(e.key)) {
+      e.preventDefault();
+    }
+  },
+
+
     async fetch_Categories_available() {
       try {
         const store = this.$store;
@@ -1275,28 +1324,68 @@ removeColor(index) {
     },
 
     validateForm() {
-      if (!this.productForm.name?.trim()) {
-        console.error('Product name is required');
-        return false;
-      }
-      if (!this.productForm.category_name) {
-        console.error('Category is required');
-        return false;
-      }
-      if (!this.productForm.pricing.price || parseFloat(this.productForm.pricing.price) <= 0) {
-        console.error('Valid price is required');
-        return false;
-      }
-      if (this.selectedImages.length === 0) {
-        console.error('At least one product image is required');
-        return false;
-      }
-      if (!this.rendered_modal_3D_id) {
-        console.error('3D model reference is required');
-        return false;
-      }
-      return true;
-    },
+  // Name
+  if (!this.productForm.name?.trim()) {
+    this.$message.error('Product name is required');
+    return false;
+  }
+  // Category
+  if (!this.productForm.category_name || this.productForm.category_name.length === 0) {
+    this.$message.error('Category is required');
+    return false;
+  }
+  // Description - required + max 100 words
+  if (!this.productForm.description?.trim()) {
+    this.$message.error('Description is required');
+    return false;
+  }
+  const wordCount = this.productForm.description.trim().split(/\s+/).filter(w => w.length > 0).length;
+  if (wordCount > 100) {
+    this.$message.error('Description must be 100 words or less');
+    return false;
+  }
+  // Type
+  if (!this.productForm.furniture_type) {
+    this.$message.error('Type is required');
+    return false;
+  }
+  // Dimensions - all three required and > 0
+  const { height, length, width } = this.productForm.dimensions;
+  if (!height || parseFloat(height) <= 0) {
+    this.$message.error('Height is required and must be greater than 0');
+    return false;
+  }
+  if (!length || parseFloat(length) <= 0) {
+    this.$message.error('Length/Depth is required and must be greater than 0');
+    return false;
+  }
+  if (!width || parseFloat(width) <= 0) {
+    this.$message.error('Width is required and must be greater than 0');
+    return false;
+  }
+  // Colors
+  if (this.selectedColors.length === 0) {
+    this.$message.error('At least one color is required');
+    return false;
+  }
+  // Price
+  if (!this.productForm.pricing.price || parseFloat(this.productForm.pricing.price) <= 0) {
+    this.$message.error('Valid price is required');
+    return false;
+  }
+  // Images
+  if (this.selectedImages.length === 0) {
+    this.$message.error('At least one product image is required');
+    return false;
+  }
+  // 3D model
+  if (!this.rendered_modal_3D_id) {
+    this.$message.error('3D model reference is required');
+    return false;
+  }
+  return true;
+},
+
 
     // async handleSave() {
     //   if (!this.validateForm()) return;

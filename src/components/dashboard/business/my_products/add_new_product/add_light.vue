@@ -39,7 +39,7 @@
     </template>
 
     <div class="light-selection-container">
-      <div class="header-section">
+      <div class="header-section !mt-12">
         <h2 class="selection-title">Choose Your Light Type</h2>
         <p class="selection-subtitle">Select the type of light fixture you want to add to your collection</p>
       </div>

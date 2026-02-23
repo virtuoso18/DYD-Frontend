@@ -1582,72 +1582,66 @@ export default {
       }
     },
 
-     async loadBrandPurchasedPlanDetails() {
-    try {
-      const brandSlug = this.$route.query.brand;
-      
-      if (!brandSlug) {
-        console.warn('⚠️ No brand slug found in query');
-        this.business_available_actions = {
-          change_texture_3d_item: false
-        };
-        return;
-      }
-      
-      const url = `${this.$store.state.root_api}subscription/api/get-business-plan-details/${brandSlug}/`;
-      
-      console.log('🔍 Fetching plan details from:', url);
+  async loadBrandPurchasedPlanDetails() {
+  try {
+    const brandSlug = this.$route.query.brand;
 
-      const token = localStorage.getItem('token');
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Token ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      console.log('📡 Response Status:', response.status);
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const result = await response.json();
-      
-      console.log('═══════════════════════════════════════');
-      console.log('📦 Full API Response:', result);
-      console.log('📊 Plan Name:', result.plan_name);
-      console.log('🎯 Business Available Actions:', result.business_available_actions);
-      console.log('🎨 change_texture_3d_item:', result.business_available_actions?.change_texture_3d_item);
-      console.log('═══════════════════════════════════════');
-      
-      // Store plan info
-      this.currentPlanName = result.plan_name || 'Free';
-      
-      if (result.business_available_actions) {
-        this.business_available_actions = result.business_available_actions;
-        console.log('✅ Stored business_available_actions:', this.business_available_actions);
-      } else {
-        console.warn('⚠️ No business_available_actions in response');
-        this.business_available_actions = {
-          change_texture_3d_item: false
-        };
-      }
-
-    } catch (error) {
-      console.error('═══════════════════════════════════════');
-      console.error('❌ Error loading plan details:', error);
-      console.error('Error Message:', error.message);
-      console.error('═══════════════════════════════════════');
-      
-      // Default to restricted on error
+    if (!brandSlug) {
+      console.warn('⚠️ No brand slug found in query');
       this.business_available_actions = {
         change_texture_3d_item: false
       };
-      console.log('⚠️ Set default: change_texture_3d_item = false');
+      return;
     }
-  },
+
+    const url = `${this.$store.state.root_api}subscription/api/get-business-plan-details/${brandSlug}/`;
+    console.log('🔍 Fetching plan details from:', url);
+
+    const token = localStorage.getItem('token');
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Token ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    console.log('📡 Response Status:', response.status);
+
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+    const result = await response.json();
+
+    console.log('📦 Full API Response:', result);
+    console.log('📊 Plan Name:', result.data?.plan_name);  // ✅ result.data
+    console.log('🎯 Actions:', result.data);               // ✅ result.data
+    console.log('🎨 change_texture_3d_item:', result.data?.change_texture_3d_item);
+
+    if (result.success && result.data) {
+      // ✅ result.data.plan_name — NOT result.plan_name
+      this.currentPlanName = result.data.plan_name || 'Free';
+
+      // ✅ result.data — NOT result.business_available_actions
+      this.business_available_actions = result.data;
+
+      console.log('✅ Stored business_available_actions:', this.business_available_actions);
+    } else {
+      console.warn('⚠️ No plan data returned');
+      this.business_available_actions = {
+        change_texture_3d_item: false
+      };
+    }
+
+  } catch (error) {
+    console.error('❌ Error loading plan details:', error);
+    // ✅ On error — keep texture feature blocked (this is a feature lock, not page block)
+    this.business_available_actions = {
+      change_texture_3d_item: false
+    };
+    console.log('⚠️ Set default: change_texture_3d_item = false');
+  }
+},
+
   
   // ✅ UPDATED openTexturModal METHOD
   openTexturModal() {

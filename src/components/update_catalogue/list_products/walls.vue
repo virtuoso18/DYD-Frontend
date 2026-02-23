@@ -59,6 +59,9 @@
     </div>
 
     <!-- Scrollable Content Area -->
+
+
+    
     <div class="scrollable-content">
       <!-- Loading initial -->
       <div v-if="loading && catalogItems.length === 0" class="loading">
@@ -70,6 +73,7 @@
         <div v-for="(item, index) in catalogItems" :key="index" style="
 background: #f2f2f2;
 border: none;
+max-height: 270px;
 border-radius: 4px;
 padding:5px;" @click="selectTexture(item.id)"
 :style="selected_texture===item.id ? 'border:1px solid blue': ''">
@@ -174,7 +178,6 @@ padding:5px;" @click="selectTexture(item.id)"
         <p>No products found</p>
       </div>
     </div>
-
      <div class="apply-section hidden md:block">
       <a-button type="primary" size="large" block class="apply-button" @click="updateItemRendering()">
         Apply
