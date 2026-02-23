@@ -10,26 +10,56 @@
     class="add-product-modal"
   >
     <!-- Custom Header -->
-    <template #title>
-      <div style="display: flex; align-items: center; justify-content: space-between; padding: 0;">
-        <div style="display: flex; align-items: center;">
-          <a-button type="text" @click="handleCancel" style="padding: 4px; margin-right: 12px;" size="small">
-            <template #icon>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="15,18 9,12 15,6"></polyline>
-              </svg>
-            </template>
-          </a-button>
-         <span className="whitespace-nowrap pr-2 sm:text-[18px]" style=" font-weight: 600; color: #1f2937;">Add New Product</span>
-        </div>
-        <div style="display: flex; gap: 12px;">
-          <a-button @click="handleCancel" style="border-radius: 6px;">Cancel</a-button>
-          <a-button type="primary" @click="handleSave" :loading="isSaving" style="border-radius: 6px;">
-            {{ isSaving ? 'Saving...' : 'Save' }}
-          </a-button>
-        </div>
-      </div>
-    </template>
+   <template #title>
+  <div class="flex  items-center justify-between !p-0">
+    
+    <!-- Left: Back button + Title -->
+    <div class="flex !mr-3 items-center">
+      <a-button
+        type="text"
+        size="small"
+        class=" !mr-1"
+        @click="handleCancel"
+      >
+        <template #icon>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15,18 9,12 15,6"></polyline>
+          </svg>
+        </template>
+      </a-button>
+      <span class="whitespace-nowrap !pr-2 !font-semibold !text-gray-800 !text-[14px] sm:!text-lg">
+        Add New Product
+      </span>
+    </div>
+
+    <!-- Right: Cancel + Save -->
+   <div class="flex items-center gap-2 xs:gap-3">
+  
+  <button
+    class="rounded-md border border-gray-300 bg-white text-gray-700 hover:border-blue-500 hover:text-blue-500 transition-colors duration-200 text-xs xs:text-sm px-2 xs:px-4 h-7 xs:h-8 cursor-pointer"
+    @click="handleCancel"
+  >
+    Cancel
+  </button>
+
+  <button
+    class="rounded-md bg-blue-600 hover:bg-blue-700 !text-white transition-colors duration-200 !textsm xs:!text-sm !px-3 sm:!px-4 h-7 xs:h-8 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+    :disabled="isSaving"
+    @click="handleSave"
+  >
+    <svg v-if="isSaving" class="animate-spin h-3 w-3 text-white" fill="none" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+    </svg>
+    {{ isSaving ? 'Saving...' : 'Save' }}
+  </button>
+
+</div>
+
+
+  </div>
+</template>
+
 
     <div style="padding: 0;">
       <a-row :gutter="24">

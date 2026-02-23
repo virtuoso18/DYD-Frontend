@@ -1069,7 +1069,7 @@
       <div class="upload-row px-2 sm:px-0">
         <a-upload-dragger
           v-model:fileList="fileList"
-          name="base_image"
+:showUploadList="false"
           :multiple="false"
           :beforeUpload="beforeUpload"
           :customRequest="customUpload"
