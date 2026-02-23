@@ -142,9 +142,13 @@ export default {
         { label: '3:2', value: '3:2' },
         { label: '2:3', value: '2:3' }
       ],
-      showPlanUpgradeModal: false,
-      business_available_actions: null,
-      loadingPlanDetails: false // ✅ Add loading state
+     // ✅ FIX
+showPlanUpgradeModal: false,
+currentPlanName: undefined,
+business_available_actions: undefined,   // ✅ undefined = not fetched yet
+planLoading: false,
+planLoaded: false,
+
     };
   },
   
@@ -164,60 +168,85 @@ export default {
   },
   
   methods: {
-    // ✅ NEW METHOD: Load brand and plan details from API
-    async loadBrandPurchasedPlanDetails() {
-      this.loadingPlanDetails = true;
-      try {
-        const response = await fetch(
-          `${this.$store.state.root_api}account/load-brand-purchased-plan-details/`,
-          {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Token ${localStorage.getItem('token')}`,
-            }
-          }
-        );
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const result = await response.json();
-        
-        // ✅ Store business_available_actions from API response
-        if (result.business_available_actions) {
-          this.business_available_actions = result.business_available_actions;
-          
-          // ✅ Also save to localStorage for persistence
-          localStorage.setItem(
-            'business_available_actions',
-            JSON.stringify(result.business_available_actions)
-          );
-          
-          console.log('✅ Loaded plan details:', this.business_available_actions);
-        }
-        
-      } catch (error) {
-        console.error('❌ Failed to load plan details:', error);
-        
-        // ✅ Fallback: Try to load from localStorage
-        const cachedActions = localStorage.getItem('business_available_actions');
-        if (cachedActions) {
-          this.business_available_actions = JSON.parse(cachedActions);
-          console.log('⚠️ Using cached plan details from localStorage');
-        }
-      } finally {
-        this.loadingPlanDetails = false;
-      }
+    // ✅ ADD THIS — right next to hasFeature()
+    isBasicOrNoPlan() {
+      const plan = this.currentPlanName;
+      if (plan === undefined) return false; // still loading → don't block
+      return plan === null || (typeof plan === 'string' && plan.toLowerCase() === 'basic');
     },
 
+    // your existing hasFeature
     hasFeature(featureName) {
-      if (!this.business_available_actions) {
-        return false;
-      }
+      if (this.currentPlanName === undefined) return false;
+      if (this.isBasicOrNoPlan()) return false;
+      if (!this.business_available_actions) return false;
       return this.business_available_actions[featureName] === true;
     },
+
+
+    // ✅ NEW METHOD: Load brand and plan details from API
+async loadBrandPurchasedPlanDetails() {
+  if (this.planLoading || this.planLoaded) return;
+  this.planLoading = true;
+
+  try {
+    const brandSlug = this.$route.query.brand;
+
+    if (!brandSlug) {
+      console.warn('No brand slug found in query');
+      this.currentPlanName = null;
+      this.business_available_actions = { create_mockup_images: false };
+      return;
+    }
+
+    // ✅ FIXED: same endpoint as all other files
+    const url = `${this.$store.state.root_api}subscription/api/get-business-plan-details/${brandSlug}/`;
+    const token = localStorage.getItem('token');
+
+    console.log('Fetching plan from:', url);
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Token ${token}`,
+      }
+    });
+
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+    const result = await response.json();
+    console.log('Plan Details:', result);
+
+    if (result.success && result.data) {
+      // ✅ FIXED: result.data.plan_name (not result.plan_name)
+      this.currentPlanName = result.data.plan_name;
+      // ✅ FIXED: result.data (not result.business_available_actions)
+      this.business_available_actions = result.data;
+      console.log('Plan loaded:', this.currentPlanName);
+      console.log('Can create_mockup_images:', result.data.create_mockup_images);
+    } else {
+      this.currentPlanName = null;
+      this.business_available_actions = { create_mockup_images: false };
+    }
+
+  } catch (error) {
+    console.error('Failed to load plan details:', error);
+    this.currentPlanName = null;
+    this.business_available_actions = { create_mockup_images: false };
+
+  } finally {
+    this.planLoading = false;
+    this.planLoaded = true;
+  }
+},
+
+
+
+
+
+
     
     startPolling(jobId) {
       if (!jobId) return Promise.reject("Invalid job id");
@@ -281,62 +310,67 @@ export default {
       this.fileList = [];
     },
 
-    async handleGenerate() {
-      // ✅ Check if create_mockup_images feature is available
-      if (!this.hasFeature('create_mockup_images')) {
-        this.showPlanUpgradeModal = true;
-        this.$message.warning('Upgrade your plan to access Product Mockup feature');
-        return; 
+async handleGenerate() {
+  if (!this.planLoaded) {
+    await this.loadBrandPurchasedPlanDetails();
+  }
+
+  // ✅ Check plan_name, NOT feature flag (feature flags are true for all plans)
+  if (this.isBasicOrNoPlan()) {
+    this.showPlanUpgradeModal = true;
+    this.$message.warning('Upgrade your plan to access Product Mockup feature');
+    return;
+  }
+
+  if (!this.uploadedImage) {
+    this.$message.warning('Please select an image first');
+    return;
+  }
+
+  this.generating = true;
+
+  try {
+    const payload = {
+      room_id: this.$route.params.id,
+      base64_image: this.uploadedImage,
+      variations: this.selectedVariation,
+      aspect_ratio: this.selectedAspectRatio,
+      mockup_style_description: this.mockup_style_description
+    };
+
+    const response = await fetch(
+      this.$store.state.root_api + 'engine/generate-product-mockup-images/',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Token ${localStorage.getItem('token')}`,
+        },
+        body: JSON.stringify(payload)
       }
+    );
 
-      if (!this.uploadedImage) {
-        this.$message.warning('Please select an image first');
-        return;
-      }
+    if (response.status === 402) {
+      const result = await response.json();
+      this.$emit('insufficient-credits', result.msg);
+      this.generating = false;
+      return;
+    }
 
-      this.generating = true;
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
 
-      try {
-        const payload = {
-          room_id: this.$route.params.id,
-          base64_image: this.uploadedImage,
-          variations: this.selectedVariation,
-          aspect_ratio: this.selectedAspectRatio,
-          mockup_style_description: this.mockup_style_description
-        };
+    const result = await response.json();
+    this.startPolling(result?.renderer_id);
 
-        const response = await fetch(
-          this.$store.state.root_api + 'engine/generate-product-mockup-images/',
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Token ${localStorage.getItem('token')}`,
-            },
-            body: JSON.stringify(payload)
-          }
-        );
-        
-        if (response.status === 402) {
-          const result = await response.json();
-          this.$emit('insufficient-credits', result.msg);
-          this.generating = false;
-          return;
-        }
+  } catch (error) {
+    console.error('Generation failed:', error);
+    this.$message.error('Failed to generate image. Please try again.');
+    this.generating = false;
+  }
+},
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const result = await response.json();
-        this.startPolling(result?.renderer_id);
-
-      } catch (error) {
-        console.error('Generation failed:', error);
-        this.$message.error('Failed to generate image. Please try again.');
-        this.generating = false;
-      }
-    },
     
     beforeUpload(file) {
       this.uploading = true;
