@@ -545,7 +545,7 @@
                     selected_design.data.image
                   "
                   alt="Project"
-                  class="w-24 h-18 rounded-lg object-fill"
+                  class="w-24 h-18 rounded-lg object-cover"
                 />
               </div>
 

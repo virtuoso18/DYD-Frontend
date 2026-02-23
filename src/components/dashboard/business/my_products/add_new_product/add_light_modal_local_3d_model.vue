@@ -13,13 +13,13 @@
     <template #title>
       <div style="display: flex; align-items: center; justify-content: space-between; padding: 0;">
         <div style="display: flex; align-items: center;">
-          <a-button type="text" @click="handleCancel" style="padding: 4px; margin-right: 12px;" size="small">
+          <!-- <a-button type="text" @click="handleCancel" style="padding: 4px; margin-right: 12px;" size="small">
             <template #icon>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <polyline points="15,18 9,12 15,6"></polyline>
               </svg>
             </template>
-          </a-button>
+          </a-button> -->
          <span className="whitespace-nowrap pr-2 sm:text-[18px]" style=" font-weight: 600; color: #1f2937;">Add New Product</span>
         </div>
         <div style="display: flex; gap: 12px;">
@@ -1834,10 +1834,10 @@ removeColor(index) {
     this.$message.error('Please enter a valid Width greater than 0');
     return false;
   }
-  if (this.selectedTextures.length === 0) {
-  this.$message.error('Please upload at least one texture image');
-  return false;
-}
+//   if (this.selectedTextures.length === 0) {
+//   this.$message.error('Please upload at least one texture image');
+//   return false;
+// }
   if (this.selectedColors.length === 0) {
     this.$message.error('Please select at least one available color');
     return false;
@@ -1914,6 +1914,7 @@ removeColor(index) {
         }
 
         formData.append('is_resizable', this.is_resizable ? 'True' : 'False');
+        formData.append('light_type','hanging');
 
         console.log('📤 Sending product data:', {
           name: this.productForm.name,

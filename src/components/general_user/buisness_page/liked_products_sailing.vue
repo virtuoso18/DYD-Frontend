@@ -132,6 +132,13 @@ export default {
       }
     },
     goto_product_Route(product){
+      console.log(product);
+      let business_name =''
+      if (this.$route.params.buisness_name){
+        let business_name =this.$route.params.buisness_name
+      } else if (product?.business_slug){
+         business_name =product?.business_slug
+      } 
       let product_type = product.type
       if(product.type === 'light'){
         product_type = 'product'
@@ -145,7 +152,7 @@ export default {
       this.$router.push({
         name: 'buisness_product',
         params: {
-          buisness_name: this.$route.params.buisness_name,
+          buisness_name: business_name,
           product_type: product_type,
           product_id: product.product_id
         }

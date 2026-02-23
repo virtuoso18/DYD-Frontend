@@ -194,7 +194,7 @@
               <p class="plan-subtitle">MOST POPULAR</p>
             </div>
             <div class="price-section">
-              <span class="original-price">${{ calculateOriginalPrice(data.business_plan_list.standard.monthly_charges) }}</span>
+              <!-- <span class="original-price">${{ calculateOriginalPrice(data.business_plan_list.standard.monthly_charges) }}</span> -->
               <span class="currency">$</span>
               <span class="price">{{ data.business_plan_list.standard.monthly_charges }}</span>
               <p class="billing-period">{{data.business_plan_list.standard.plan_credits}} credits / month</p>
@@ -236,12 +236,12 @@
             </div>
             <div class="price-section">
               <span class="currency">$</span>
-              <span class="price">{{ data.standardfessional_plan_list.basic.monthly_charges }}</span>
-              <p class="billing-period">{{data.standardfessional_plan_list.basic.plan_credits}} credits / month</p>
+              <span class="price">{{ data.professional_plan_list.basic.monthly_charges }}</span>
+              <p class="billing-period">{{data.professional_plan_list.basic.plan_credits}} credits / month</p>
             </div>
             <button class="get-started-btn basic-btn" @click="this.$router.push('/login')">Start 7-days Free Trial</button>
             <div class="features-list">
-              <div v-for="(feature, index) in data.standardfessional_plan_list.basic.description_list" :key="index" class="feature-item">
+              <div v-for="(feature, index) in data.professional_plan_list.basic.description_list" :key="index" class="feature-item">
                 <span class="checkmark">✓</span>
                 <span>{{ feature }}</span>
               </div>
@@ -255,14 +255,14 @@
               <p class="plan-subtitle">MOST POPULAR</p>
             </div>
             <div class="price-section">
-              <span class="original-price">${{ calculateOriginalPrice(data.standardfessional_plan_list.standard.monthly_charges) }}</span>
+              <!-- <span class="original-price">${{ calculateOriginalPrice(data.professional_plan_list.standard.monthly_charges) }}</span> -->
               <span class="currency">$</span>
-              <span class="price">{{ data.standardfessional_plan_list.standard.monthly_charges }}</span>
-              <p class="billing-period">{{data.standardfessional_plan_list.standard.plan_credits}} credits / month</p>
+              <span class="price">{{ data.professional_plan_list.standard.monthly_charges }}</span>
+              <p class="billing-period">{{data.professional_plan_list.standard.plan_credits}} credits / month</p>
             </div>
             <button class="get-started-btn standard-btn" @click="this.$router.push('/login')">Start 7-days Free Trial</button>
             <div class="features-list">
-              <div v-for="(feature, index) in data.standardfessional_plan_list.standard.description_list" :key="index" class="feature-item">
+              <div v-for="(feature, index) in data.professional_plan_list.standard.description_list" :key="index" class="feature-item">
                 <span class="checkmark">✓</span>
                 <span>{{ feature }}</span>
               </div>
@@ -276,12 +276,12 @@
             </div>
             <div class="price-section">
               <span class="currency">$</span>
-              <span class="price">{{ data.standardfessional_plan_list.premium.monthly_charges }}</span>
-              <p class="billing-period">{{data.standardfessional_plan_list.premium.plan_credits}} credits / month</p>
+              <span class="price">{{ data.professional_plan_list.premium.monthly_charges }}</span>
+              <p class="billing-period">{{data.professional_plan_list.premium.plan_credits}} credits / month</p>
             </div>
             <button class="get-started-btn premium-btn" @click="this.$router.push('/login')">Start 7-days Free Trial</button>
             <div class="features-list">
-              <div v-for="(feature, index) in data.standardfessional_plan_list.premium.description_list" :key="index" class="feature-item">
+              <div v-for="(feature, index) in data.professional_plan_list.premium.description_list" :key="index" class="feature-item">
                 <span class="checkmark">✓</span>
                 <span>{{ feature }}</span>
               </div>
