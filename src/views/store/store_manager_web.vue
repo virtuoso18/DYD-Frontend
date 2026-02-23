@@ -331,10 +331,10 @@ export default {
   data() {
   return {
     showAccessDeniedModal: false,
-    currentPlanName: null,               // ✅ null, not 'Free'
+currentPlanName: undefined,
     planLoaded: false,                   // ✅ add this
     planLoading: false,                  // ✅ add this
-    business_available_actions: null,
+    business_available_actions: undefined,
     user: JSON.parse(localStorage.getItem('user')),
     profile: JSON.parse(localStorage.getItem('profile')),
     business_info: JSON.parse(localStorage.getItem('business_profile') || '{}'),
@@ -346,10 +346,14 @@ export default {
       return this.$route.name
     }
   },
-  watch: {
-  '$route.name'(newRoute) {
-    // Check access when route changes
+
+  
+watch: {
+  async '$route.name'(newRoute) {
     if (newRoute === 'manage_access') {
+      if (!this.planLoaded) {
+        await this.loadBrandPurchasedPlanDetails(); // ← wait for plan first
+      }
       this.checkStaffAccess();
     } else {
       this.showAccessDeniedModal = false;
@@ -363,6 +367,13 @@ export default {
 },
 
   methods: {
+
+    isBasicOrNoPlan() {
+  const plan = this.currentPlanName;
+  if (plan === undefined) return false; // still loading → don't block
+  return plan === null || (typeof plan === 'string' && plan.toLowerCase() === 'basic');
+},
+
   // ✅ ADD THIS METHOD
  async loadBrandPurchasedPlanDetails() {
   if (this.planLoading || this.planLoaded) return;
@@ -426,10 +437,8 @@ export default {
   
   // ✅ CHECK STAFF ACCESS
 checkStaffAccess() {
-  // ✅ has_staff is directly on result.data (business_available_actions)
-  const hasStaffAccess = this.business_available_actions?.has_staff === true;
-
-  if (!hasStaffAccess) {
+  if (this.isBasicOrNoPlan()) {
+    console.log('Basic plan - showing access denied modal');
     this.showAccessDeniedModal = true;
   } else {
     this.showAccessDeniedModal = false;

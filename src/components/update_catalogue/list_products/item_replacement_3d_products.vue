@@ -336,9 +336,11 @@ export default {
   data() {
     return {
 
-      showUpgradeModal: false,
-    currentPlanName: 'Basic',
-    business_available_actions: null,
+   showUpgradeModal: false,
+currentPlanName: undefined,        // undefined = not fetched yet
+business_available_actions: undefined,
+planLoading: false,
+planLoaded: false,
 
 
       swichFurnitureModel:false,
@@ -392,71 +394,85 @@ export default {
   },
   methods: {
 
+    isBasicOrNoPlan() {
+  const plan = this.currentPlanName;
+  if (plan === undefined) return false; // still loading → don't block
+  return plan === null || (typeof plan === 'string' && plan.toLowerCase() === 'basic');
+},
 
-     async loadBrandPurchasedPlanDetails() {
-    try {
-      const brandSlug = this.$route.query.brand;
-      
-      if (!brandSlug) {
-        console.warn('⚠️ No brand slug found in query');
-        return;
-      }
-      
-      const url = `${this.$store.state.root_api}subscription/api/get-business-plan-details/${brandSlug}/`;
-      
-      console.log('🔍 Fetching plan details from:', url);
 
-      const token = localStorage.getItem('token');
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Token ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
+ async loadBrandPurchasedPlanDetails() {
+  if (this.planLoading || this.planLoaded) return; // ✅ prevent double-fetch
+  this.planLoading = true;
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+  try {
+    const brandSlug = this.$route.query.brand;
 
-      const result = await response.json();
-      
-      console.log('📦 Plan Details:', result);
-      console.log('🎯 Switch Furniture Access:', result.business_available_actions?.switch_furniture);
-      
-      // Store plan info
-      this.currentPlanName = result.plan_name || 'Free';
-      
-      if (result.business_available_actions) {
-        this.business_available_actions = result.business_available_actions;
-      }
-
-    } catch (error) {
-      console.error('❌ Error loading product details:', error);
-      // Default to restricted on error
-      this.business_available_actions = {
-        switch_furniture: false
-      };
-    }
-  },
-  
-  // ✅ MODIFIED METHOD - Check plan before showing modal
-  showSwitchFurnitureModel() {
-    // Check if switch_furniture feature is available
-    const canSwitchFurniture = this.business_available_actions?.switch_furniture === true;
-    
-    console.log('🔍 Can Switch Furniture:', canSwitchFurniture);
-    console.log('🔍 Available Actions:', this.business_available_actions);
-    
-    if (!canSwitchFurniture) {
-      console.log('❌ Feature blocked - Showing upgrade modal');
-      this.showUpgradeModal = true;
+    if (!brandSlug) {
+      console.warn('No brand slug found in query');
+      this.currentPlanName = null;
+      this.business_available_actions = { switch_furniture: false };
       return;
     }
-    
-    console.log('✅ Feature allowed - Opening switch furniture modal');
-    this.swichFurnitureModel = !this.swichFurnitureModel;
-  },
+
+    const url = `${this.$store.state.root_api}subscription/api/get-business-plan-details/${brandSlug}/`;
+    const token = localStorage.getItem('token');
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Token ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+    const result = await response.json();
+    console.log('Plan Details:', result);
+
+    if (result.success && result.data) {
+      this.currentPlanName = result.data.plan_name;   // ✅ FIXED
+      this.business_available_actions = result.data;  // ✅ FIXED
+      console.log('Plan loaded:', this.currentPlanName);
+      console.log('Can switch_furniture:', result.data.switch_furniture);
+    } else {
+      this.currentPlanName = null;
+      this.business_available_actions = { switch_furniture: false };
+    }
+
+  } catch (error) {
+    console.error('Error loading plan details:', error);
+    this.currentPlanName = null;
+    this.business_available_actions = { switch_furniture: false };
+
+  } finally {
+    this.planLoading = false;
+    this.planLoaded = true; // ✅ marks complete
+  }
+},
+
+  
+  // ✅ MODIFIED METHOD - Check plan before showing modal
+ // ✅ make async + add planLoaded guard
+async showSwitchFurnitureModel() {
+  if (!this.planLoaded) {
+    await this.loadBrandPurchasedPlanDetails();
+  }
+
+  // ✅ Check plan_name, NOT feature flag (feature flags are true for all plans)
+  if (this.isBasicOrNoPlan()) {
+    console.log('Basic plan - showing upgrade modal');
+    this.showUpgradeModal = true;
+    return;
+  }
+
+  // ✅ Standard/Premium — allow access
+  console.log('Standard/Premium plan - opening switch furniture modal');
+  this.swichFurnitureModel = !this.swichFurnitureModel;
+},
+
+
   
   // ✅ ADD UPGRADE ACTION
   goToUpgrade() {

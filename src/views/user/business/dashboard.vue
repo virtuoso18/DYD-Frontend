@@ -1085,7 +1085,7 @@ planLoading: false,
       //   name: 'business:generate-banner'
       // });
 
-      this.$router.push('/business-dashboard/generate-banner?p=true');
+      this.$router.push('/business-dashboard/generate-banner');
       
       // Close mobile menu if open
       if (this.mobileMenuOpen) {
