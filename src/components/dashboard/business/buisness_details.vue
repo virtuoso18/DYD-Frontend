@@ -215,56 +215,89 @@
 Upload Room Photo</h2>
             <p class="!text-gray-700">Share the link with your customer for generating there room photo</p>
 
-            <label class="!text-gray-700">Copy Link</label>
-           <a-input-group compact style="display: flex; width: 100%;">
-  <a-input :value="full_url()" style="flex: 1; color: blue;" />
+           <label class="!text-gray-700">Copy Link</label>
+
+<!-- ✅ Show skeleton while plan is loading -->
+<div
+  v-if="!planLoaded"
+  style="
+    height: 32px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.2s infinite;
+    border-radius: 6px;
+    width: 100%;
+  "
+></div>
+
+<!-- ✅ Only render after plan is confirmed -->
+<a-input-group v-else compact style="display: flex; width: 100%;">
+  <a-input
+    :value="displayUrl"
+    :style="{
+      flex: 1,
+      color: isBasicPlan ? '#aaa' : 'blue',
+      filter: isBasicPlan ? 'blur(4px)' : 'none',
+      userSelect: isBasicPlan ? 'none' : 'auto',
+      pointerEvents: isBasicPlan ? 'none' : 'auto'
+    }"
+    readonly
+  />
   <a-button
     type="primary"
     @click="copyLink"
+    :style="isBasicPlan ? { background: '#d9d9d9', borderColor: '#d9d9d9', color: '#999' } : {}"
     style="min-width: 100px; display:flex; justify-content:center;"
   >
-    Copy
+    {{ isBasicPlan ? '🔒 Upgrade' : 'Copy' }}
   </a-button>
 </a-input-group>
 
-            
-            <br>
-            
-            <label class="!text-gray-700">Simulation Link</label>
-            <a-input-group
-  compact
-  style="display: flex; width: 100%;"
->
-  <a-input
-    :value="simulation_full_url()"
-    style="flex: 1; color: blue;"
-  />
+<br>
 
+<label class="!text-gray-700">Simulation Link</label>
+
+<!-- ✅ Same skeleton for simulation link -->
+<div
+  v-if="!planLoaded"
+  style="
+    height: 32px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.2s infinite;
+    border-radius: 6px;
+    width: 100%;
+  "
+></div>
+
+<a-input-group v-else compact style="display: flex; width: 100%;">
+  <a-input
+    :value="displaySimulationUrl"
+    :style="{
+      flex: 1,
+      color: isBasicPlan ? '#aaa' : 'blue',
+      filter: isBasicPlan ? 'blur(4px)' : 'none',
+      userSelect: isBasicPlan ? 'none' : 'auto',
+      pointerEvents: isBasicPlan ? 'none' : 'auto'
+    }"
+    readonly
+  />
   <a-button
     type="primary"
     @click="copyLink_Simulation"
+    :style="isBasicPlan ? { background: '#d9d9d9', borderColor: '#d9d9d9', color: '#999' } : {}"
     style="min-width: 100px; display: flex; align-items: center; justify-content: center;"
   >
-    <a-space>
-      <svg
-        width="16"
-        height="16"
-        viewBox="0 0 16 16"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M3.33203 9.9987H2.66536C2.31174 9.9987 1.9726 9.85822 1.72256 9.60817C1.47251 9.35813 1.33203 9.01899 1.33203 8.66536V2.66536C1.33203 2.31174 1.47251 1.9726 1.72256 1.72256C1.9726 1.47251 2.31174 1.33203 2.66536 1.33203H8.66536C9.01899 1.33203 9.35813 1.47251 9.60817 1.72256C9.85822 1.9726 9.9987 2.31174 9.9987 2.66536V3.33203M7.33203 5.9987H13.332C14.0684 5.9987 14.6654 6.59565 14.6654 7.33203V13.332C14.6654 14.0684 14.0684 14.6654 13.332 14.6654H7.33203C6.59565 14.6654 5.9987 14.0684 5.9987 13.332V7.33203C5.9987 6.59565 6.59565 5.9987 7.33203 5.9987Z"
-          stroke="white"
-          stroke-width="1.5"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
+    <span v-if="isBasicPlan">🔒 Upgrade</span>
+    <a-space v-else>
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3.33203 9.9987H2.66536C2.31174 9.9987 1.9726 9.85822 1.72256 9.60817C1.47251 9.35813 1.33203 9.01899 1.33203 8.66536V2.66536C1.33203 2.31174 1.47251 1.9726 1.72256 1.72256C1.9726 1.47251 2.31174 1.33203 2.66536 1.33203H8.66536C9.01899 1.33203 9.35813 1.47251 9.60817 1.72256C9.85822 1.9726 9.9987 2.31174 9.9987 2.66536V3.33203M7.33203 5.9987H13.332C14.0684 5.9987 14.6654 6.59565 14.6654 7.33203V13.332C14.6654 14.0684 14.0684 14.6654 13.332 14.6654H7.33203C6.59565 14.6654 5.9987 14.0684 5.9987 13.332V7.33203C5.9987 6.59565 6.59565 5.9987 7.33203 5.9987Z" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
       Copy
     </a-space>
   </a-button>
 </a-input-group>
+
 
             <br>
             <h4 class="!text-gray-700">or share via social media</h4>
@@ -632,9 +665,18 @@ export default {
     }
   },
 
-  async mounted() {
-    await this.loadBusinessProfile();
-  },
+async mounted() {
+  // Step 1 — load profile (sets this.slug)
+  await this.loadBusinessProfile();
+
+  // Step 2 — NOW call plan details using this.slug
+  console.log('slug after profile load:', this.slug); // 🔍 check slug exists
+  await this.loadBrandPurchasedPlanDetails();
+
+  console.log('Final currentPlanName:', this.currentPlanName);
+  console.log('isBasicPlan:', this.isBasicPlan);
+},
+
   
   data() {
     return {
@@ -642,6 +684,13 @@ export default {
       saving: false,
       avatarFile: null,
       backgroundFile: null,
+       currentPlanName: undefined,
+    business_available_actions: undefined,
+    planLoading: false,
+    planLoaded: false,
+
+    isEditMode: false,
+    saving: false,
       imageLoaded: false,
     headerImageLoaded: false, 
       avatarPreview: null,
@@ -704,7 +753,156 @@ export default {
   }
   },
 
+  computed: {
+  // ✅ REACTIVE — updates automatically when currentPlanName changes
+  isBasicPlan() {
+    const plan = this.currentPlanName;
+    if (!plan) return false;
+    return plan.toLowerCase() === 'basic';
+  },
+
+  displayUrl() {
+    return this.isBasicPlan
+      ? `${window.location.origin}/upgrade-to-standard-plan`
+      : this.full_url();
+  },
+
+  displaySimulationUrl() {
+    return this.isBasicPlan
+      ? `${window.location.origin}/upgrade-to-standard-plan`
+      : this.simulation_full_url();
+  },
+},
+
+
+
   methods: {
+
+    isBasicOrNoPlan() {
+    const plan = this.currentPlanName;
+    if (plan === undefined) return false; // still loading
+    return plan === null || (typeof plan === 'string' && plan.toLowerCase() === 'basic');
+  },
+
+  // ✅ ADD THIS
+  async loadBrandPurchasedPlanDetails() {
+    if (this.planLoading || this.planLoaded) return;
+    this.planLoading = true;
+    try {
+      const brandSlug = this.slug; // ✅ use slug loaded from loadBusinessProfile()
+      if (!brandSlug) {
+        this.currentPlanName = null;
+        return;
+      }
+      const url = `${this.$store.state.root_api}subscription/api/get-business-plan-details/${brandSlug}/`;
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Token ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      const result = await response.json();
+      if (result.success && result.data) {
+        this.currentPlanName = result.data.plan_name;
+        this.business_available_actions = result.data;
+        console.log('Plan loaded:', this.currentPlanName);
+      } else {
+        this.currentPlanName = null;
+      }
+    } catch (error) {
+      console.error('Failed to load plan:', error);
+      this.currentPlanName = null;
+    } finally {
+      this.planLoading = false;
+      this.planLoaded = true;
+    }
+  },
+
+  // ✅ UPDATE loadBusinessProfile() — call plan loader after slug is set
+  async loadBrandPurchasedPlanDetails() {
+  if (this.planLoading || this.planLoaded) return;
+  this.planLoading = true;
+
+  try {
+    const brandSlug = this.slug;
+    console.log('brandSlug:', brandSlug); // 🔍 check this in console
+
+    if (!brandSlug) {
+      console.warn('No slug found!');
+      this.currentPlanName = null;
+      this.planLoaded = true;
+      return;
+    }
+
+    const url = `${this.$store.state.root_api}subscription/api/get-business-plan-details/${brandSlug}/`;
+    console.log('Calling plan API:', url); // 🔍 check this
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Token ${localStorage.getItem('token')}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    const result = await response.json();
+    console.log('Plan API result:', result); // 🔍 check this
+
+    if (result.success && result.data) {
+      this.currentPlanName = result.data.plan_name; // ✅ "basic" / "standard"
+      this.business_available_actions = result.data;
+      console.log('✅ currentPlanName set to:', this.currentPlanName);
+    } else {
+      this.currentPlanName = null;
+    }
+  } catch (error) {
+    console.error('Plan load failed:', error);
+    this.currentPlanName = null;
+  } finally {
+    this.planLoading = false;
+    this.planLoaded = true;
+  }
+},
+
+  // ✅ UPDATE copyLink() — show upgrade message for basic plan
+  copyLink() {
+    if (this.isBasicOrNoPlan()) {
+      this.$message.warning('Upgrade your plan to access and share your room link!');
+      return;
+    }
+    const link = `${window.location.origin}/${this.slug}`;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(link).then(() => {
+        this.$message.success('Link copied to clipboard!');
+      }).catch(() => {
+        this.fallbackCopyTextToClipboard(link);
+      });
+    } else {
+      this.fallbackCopyTextToClipboard(link);
+    }
+  },
+
+  // ✅ UPDATE copyLink_Simulation() — same guard
+  copyLink_Simulation() {
+    if (this.isBasicOrNoPlan()) {
+      this.$message.warning('Upgrade your plan to access and share your simulation link!');
+      return;
+    }
+    const link = `${window.location.origin}/start-new-catalogue?brand=${this.slug}`;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(link).then(() => {
+        this.$message.success('Link copied to clipboard!');
+      }).catch(() => {
+        this.fallbackCopyTextToClipboard(link);
+      });
+    } else {
+      this.fallbackCopyTextToClipboard(link);
+    }
+    },
+
+    
     openVerifyModal() {
   this.verifyModalVisible = true;
   this.verificationStep = 1;
@@ -971,30 +1169,36 @@ async checkVerificationStatus() {
 
     // Copy link functionality
     copyLink() {
-      const link =`${window.location.origin}/${this.slug}`;
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(link).then(() => {
-          this.$message.success('Link copied to clipboard!');
-        }).catch(() => {
-          this.fallbackCopyTextToClipboard(link);
-        });
-      } else {
-        this.fallbackCopyTextToClipboard(link);
-      }
-    },
+  // ✅ Block copy for basic plan
+  if (this.isBasicPlan) {
+    this.$router.push('/pricing'); // or wherever your upgrade page is
+    return; // ← stops here, never copies
+  }
 
-    copyLink_Simulation() {
-      const link =`${window.location.origin}/start-new-catalogue?brand=${this.slug}`;
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(link).then(() => {
-          this.$message.success('Link copied to clipboard!');
-        }).catch(() => {
-          this.fallbackCopyTextToClipboard(link);
-        });
-      } else {
-        this.fallbackCopyTextToClipboard(link);
-      }
-    },
+  const link = this.full_url();
+  navigator.clipboard.writeText(link).then(() => {
+    this.$message.success('Link copied to clipboard!');
+  }).catch(() => {
+    this.fallbackCopyTextToClipboard(link);
+  });
+},
+
+
+   copyLink_Simulation() {
+  // ✅ Block copy for basic plan
+  if (this.isBasicPlan) {
+    this.$router.push('/pricing'); // or wherever your upgrade page is
+    return; // ← stops here, never copies
+  }
+
+  const link = this.simulation_full_url();
+  navigator.clipboard.writeText(link).then(() => {
+    this.$message.success('Simulation link copied!');
+  }).catch(() => {
+    this.fallbackCopyTextToClipboard(link);
+  });
+},
+
 
     fallbackCopyTextToClipboard(text) {
       const textArea = document.createElement("textarea");
@@ -1232,6 +1436,12 @@ async checkVerificationStatus() {
   align-items: center;
   justify-content: center;
 }
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
 
 
 
