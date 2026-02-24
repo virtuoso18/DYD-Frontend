@@ -1,5 +1,5 @@
 <template>
- <!-- show Rendering Failed Model  -->
+  <!-- show Rendering Failed Model  -->
   <a-modal
     v-model:open="showFailedRenderingModel"
     title=""
@@ -39,7 +39,7 @@
 
       <!-- Heading -->
       <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 10px">
-        Failed Rendering 
+        Failed Rendering
       </h2>
 
       <!-- Message -->
@@ -86,11 +86,10 @@
       </a-button> -->
     </div>
   </a-modal>
-    <div class="side-panel">
-    
+  <div class="side-panel">
     <!-- ✅ ADD PLAN UPGRADE MODAL AT THE TOP -->
-    <PlanUpgradeModal 
-      :visible="showPlanUpgradeModal" 
+    <PlanUpgradeModal
+      :visible="showPlanUpgradeModal"
       @update:visible="showPlanUpgradeModal = $event"
       @upgrade="handlePlanUpgrade"
     />
@@ -106,15 +105,17 @@
       >
         <div v-if="!uploadedImage && !uploading" class="upload-content">
           <CloudUploadOutlined class="upload-icon" />
-          <div class="upload-text">Click / upload from camera / drag and drop</div>
+          <div class="upload-text">
+            Click / upload from camera / drag and drop
+          </div>
           <div class="upload-hint">Support format: .png .jpeg</div>
         </div>
-        
+
         <div v-if="uploading" class="uploading-content">
           <a-spin size="large" />
           <div class="uploading-text">Uploading...</div>
         </div>
-        
+
         <div v-if="uploadedImage && !uploading" class="image-preview">
           <img :src="uploadedImage" alt="uploaded" />
           <div class="delete-button" @click.stop="deleteImage">
@@ -128,8 +129,8 @@
     <div class="section">
       <div class="section-title">Variations</div>
       <div class="variations-row">
-        <a-button 
-          v-for="num in [1, 2, 3, 4]" 
+        <a-button
+          v-for="num in [1, 2, 3, 4]"
           :key="num"
           :type="selectedVariation === num ? 'primary' : 'default'"
           size="small"
@@ -144,8 +145,8 @@
     <div class="section">
       <div class="section-title">Aspect ratio</div>
       <div class="aspect-options">
-        <a-checkbox 
-          v-for="ratio in aspectRatios" 
+        <a-checkbox
+          v-for="ratio in aspectRatios"
           :key="ratio.value"
           :checked="selectedAspectRatio === ratio.value"
           @change="handleAspectRatioChange(ratio.value)"
@@ -157,113 +158,132 @@
 
     <!-- Credits -->
     <div class="credits-section">
-      <svg width="17" height="18" viewBox="0 0 17 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path fill-rule="evenodd" clip-rule="evenodd" d="M8.5013 1.91602C4.58918 1.91602 1.41797 5.08722 1.41797 8.99935C1.41797 12.9115 4.58918 16.0827 8.5013 16.0827C12.4134 16.0827 15.5846 12.9115 15.5846 8.99935C15.5846 5.08722 12.4134 1.91602 8.5013 1.91602ZM8.5013 2.62435C8.5013 4.3151 7.82965 5.93661 6.63411 7.13215C5.43856 8.3277 3.81706 8.99935 2.1263 8.99935C3.81706 8.99935 5.43856 9.671 6.63411 10.8665C7.82965 12.0621 8.5013 13.6836 8.5013 15.3743C8.5013 13.6836 9.17295 12.0621 10.3685 10.8665C11.564 9.671 13.1855 8.99935 14.8763 8.99935C13.1855 8.99935 11.564 8.3277 10.3685 7.13215C9.17295 5.93661 8.5013 4.3151 8.5013 2.62435Z" fill="#3B63FB"/>
+      <svg
+        width="17"
+        height="18"
+        viewBox="0 0 17 18"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          fill-rule="evenodd"
+          clip-rule="evenodd"
+          d="M8.5013 1.91602C4.58918 1.91602 1.41797 5.08722 1.41797 8.99935C1.41797 12.9115 4.58918 16.0827 8.5013 16.0827C12.4134 16.0827 15.5846 12.9115 15.5846 8.99935C15.5846 5.08722 12.4134 1.91602 8.5013 1.91602ZM8.5013 2.62435C8.5013 4.3151 7.82965 5.93661 6.63411 7.13215C5.43856 8.3277 3.81706 8.99935 2.1263 8.99935C3.81706 8.99935 5.43856 9.671 6.63411 10.8665C7.82965 12.0621 8.5013 13.6836 8.5013 15.3743C8.5013 13.6836 9.17295 12.0621 10.3685 10.8665C11.564 9.671 13.1855 8.99935 14.8763 8.99935C13.1855 8.99935 11.564 8.3277 10.3685 7.13215C9.17295 5.93661 8.5013 4.3151 8.5013 2.62435Z"
+          fill="#3B63FB"
+        />
       </svg>
       <span>1500</span>
     </div>
 
     <!-- Generate Button -->
-    <a-button 
-      type="primary" 
-      size="large" 
+    <a-button
+      type="primary"
+      size="large"
       block
       class="generate-button"
       :loading="generating"
       @click="handleGenerateClick"
     >
       <a-icon type="thunderbolt" />
-      {{ generating ? 'Generating...' : 'Generate' }}
+      {{ generating ? "Generating..." : "Generate" }}
     </a-button>
-
   </div>
 </template>
 
-
 <script>
-import PlanUpgradeModal from '@/views/catalogue/PlanUpgradeModal.vue';
-import { DeleteOutlined, CloudUploadOutlined } from '@ant-design/icons-vue';
+import PlanUpgradeModal from "@/views/catalogue/PlanUpgradeModal.vue";
+import { DeleteOutlined, CloudUploadOutlined } from "@ant-design/icons-vue";
 
 export default {
-  name: 'SidePanel',
+  name: "SidePanel",
   components: {
     DeleteOutlined,
     CloudUploadOutlined,
-    PlanUpgradeModal
+    PlanUpgradeModal,
   },
   props: {
     base_image_url: {
       type: String,
-      default: ''
+      default: "",
     },
     home_design_access: {
       type: Boolean,
-      default: false
+      default: false,
     },
     plan_details: {
       type: Object,
-      default: null
-    }
+      default: null,
+    },
   },
   watch: {
     base_image_url: {
-      handler(newVal) {
-        if (newVal) {
-          this.uploadedImage = newVal;
-        }
-      },
-      immediate: true
-    }
+    async handler(newVal) {
+      if (newVal) {
+        this.uploadedImage = await this.urlToBase64(newVal); // ✅
+      }
+    },
+    immediate: true,
+  },
   },
   data() {
     return {
-      failure_reason:'',
-      showFailedRenderingModel:false,
-
+      failure_reason: "",
+      showFailedRenderingModel: false,
 
       fileList: [],
       generating: false,
-      uploadedImage: this.base_image_url || '',
+      uploadedImage: this.urlToBase64(this.base_image_url) || "",
       uploading: false,
       selectedVariation: 4,
-      selectedAspectRatio: '3:2',
+      selectedAspectRatio: "3:2",
       aspectRatios: [
-        { label: '1:1', value: '1:1' },
-        { label: '3:2', value: '3:2' },
-        { label: '2:3', value: '2:3' }
+        { label: "1:1", value: "1:1" },
+        { label: "3:2", value: "3:2" },
+        { label: "2:3", value: "2:3" },
       ],
       showPlanUpgradeModal: false,
       business_available_actions: null,
     };
   },
-  
+
   computed: {
     isHomeDesignAvailable() {
-      return this.hasFeature('home_design');
+      return this.hasFeature("home_design");
     },
-    
+
     canRemoveObject() {
-      return this.hasFeature('remove_object');
+      return this.hasFeature("remove_object");
     },
-    
+
     canCleanRoom() {
-      return this.hasFeature('clean_entire_room');
+      return this.hasFeature("clean_entire_room");
     },
   },
-  
-  mounted() {
+
+  async mounted() {
     // Load available actions from localStorage
-    const actions = localStorage.getItem('business_available_actions');
+    const actions = localStorage.getItem("business_available_actions");
     if (actions) {
       this.business_available_actions = JSON.parse(actions);
     }
-    
+
     if (this.base_image_url) {
-      this.uploadedImage = this.base_image_url;
+      this.uploadedImage =await this.urlToBase64(this.base_image_url);
     }
   },
-  
+
   methods: {
+    async urlToBase64(url) {
+      const res = await fetch(url);
+      const blob = await res.blob();
+
+      return await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result); 
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+    },
     // Helper method to check features
     hasFeature(featureName) {
       if (!this.business_available_actions) {
@@ -271,27 +291,26 @@ export default {
       }
       return this.business_available_actions[featureName] === true;
     },
-    
-    // ✅ CORRECTED METHOD
-handleGenerateClick() {
-  // First check if image is uploaded
-  if (!this.uploadedImage) {
-    this.$message.warning('Please upload an image first!');
-    return;
-  }
-  
-  // Then check if user has home_design access
-  // if (!this.home_design_access) {
-    // Emit event to parent to show upgrade modal
-    // this.$emit('show-upgrade-modal');
-    // return;
-  // }
-  
-  // Proceed with normal generation
-  this.handleGenerate();
-},
 
-    
+    // ✅ CORRECTED METHOD
+    handleGenerateClick() {
+      // First check if image is uploaded
+      if (!this.uploadedImage) {
+        this.$message.warning("Please upload an image first!");
+        return;
+      }
+
+      // Then check if user has home_design access
+      // if (!this.home_design_access) {
+      // Emit event to parent to show upgrade modal
+      // this.$emit('show-upgrade-modal');
+      // return;
+      // }
+
+      // Proceed with normal generation
+      this.handleGenerate();
+    },
+
     startPolling(jobId) {
       if (!jobId) return Promise.reject("Invalid job id");
 
@@ -315,20 +334,22 @@ handleGenerateClick() {
               this.loading = false;
               this.stopPolling();
               resolve(data);
-              this.$emit('home-design-generation-complete', data);
-              this.$message.success('Image generated successfully!');
+              this.$emit("home-design-generation-complete", data);
+              this.$message.success("Image generated successfully!");
               this.generating = false;
               return;
             }
 
             if (data.status === "Failed") {
               this.loading = false;
-              console.error(data)
-              this.throw_failed_rendering(data.failure_reason_if_rendering_failed)
+              console.error(data);
+              this.throw_failed_rendering(
+                data.failure_reason_if_rendering_failed,
+              );
 
               this.stopPolling();
               reject("Rendering failed");
-              this.$message.error('Image generation failed!');
+              this.$message.error("Image generation failed!");
               this.generating = false;
               return;
             }
@@ -353,75 +374,76 @@ handleGenerateClick() {
         this.pollTimer = null;
       }
     },
-     deleteImage() {
-    this.uploadedImage = ''
-    this.fileList = []
-  },
+    deleteImage() {
+      this.uploadedImage = "";
+      this.fileList = [];
+    },
 
-  async handleGenerate() {
-  // Validate that an image is selected
-  if (!this.uploadedImage) {
-    this.$message.warning('Please select an image first')
-    return
-  }
+    async handleGenerate() {
+      // Validate that an image is selected
+      if (!this.uploadedImage) {
+        this.$message.warning("Please select an image first");
+        return;
+      }
 
-  // Show loading state (optional)
-  this.generating = true // Add this to your data if you want loading state
+      // Show loading state (optional)
+      this.generating = true; // Add this to your data if you want loading state
 
-  try {
-    const payload = {
-      room_id:this.$route.params.id,
-      base64_image: this.uploadedImage,
-      variations: this.selectedVariation,
-      aspect_ratio: this.selectedAspectRatio,
-      // Add any other data you need to send
-    }
-    console.log(payload)
+      try {
+        const payload = {
+          room_id: this.$route.params.id,
+          base64_image: this.uploadedImage,
+          variations: this.selectedVariation,
+          aspect_ratio: this.selectedAspectRatio,
+          // Add any other data you need to send
+        };
+        console.log(payload);
 
-    const response = await fetch(this.$store.state.root_api+'engine/generate-home-design-images/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Token ${localStorage.getItem('token')}`,
-      },
-      body: JSON.stringify(payload)
-    })
-    // console.log("response Here ")
-    // console.log(response.status)
-    if(response.status===402){
-      let result = await response.json()
-      // console.log(result )
-       this.$emit('insufficient-credits',result.msg,result.buid) 
-      this.generating = false
-      return
-    }
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
-    }
-    
-    const result = await response.json();
-    if (result?.renderer_id) {
+        const response = await fetch(
+          this.$store.state.root_api + "engine/generate-home-design-images/",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Token ${localStorage.getItem("token")}`,
+            },
+            body: JSON.stringify(payload),
+          },
+        );
+        // console.log("response Here ")
+        // console.log(response.status)
+        if (response.status === 402) {
+          let result = await response.json();
+          // console.log(result )
+          this.$emit("insufficient-credits", result.msg, result.buid);
+          this.generating = false;
+          return;
+        }
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        if (result?.renderer_id) {
           // ⏳ WAIT until polling completes
           // const finalImage = await this.startPolling(result.renderer_id);
 
-      this.startPolling(result?.renderer_id);
+          this.startPolling(result?.renderer_id);
           // ✅ ONLYJ() NOW update canvas
-          
         }
-    // Handle successful response
-    // console.log('Generation successful:', result)
-    // this.$message.success('Image generated successfully!')
-    
-    // Emit event to parent component or handle result as needed
-    // this.$emit('home-design-generation-complete', result)
-    
-  } catch (error) {
-    console.error('Generation failed:', error)
-    this.$message.error('Failed to generate image. Please try again.');
-    this.generating = false
-  } 
-},
+        // Handle successful response
+        // console.log('Generation successful:', result)
+        // this.$message.success('Image generated successfully!')
+
+        // Emit event to parent component or handle result as needed
+        // this.$emit('home-design-generation-complete', result)
+      } catch (error) {
+        console.error("Generation failed:", error);
+        this.$message.error("Failed to generate image. Please try again.");
+        this.generating = false;
+      }
+    },
     beforeUpload(file) {
       this.uploading = true;
 
@@ -444,19 +466,15 @@ handleGenerateClick() {
     handleAspectRatioChange(value) {
       this.selectedAspectRatio = value;
     },
-    
+
     handlePlanUpgrade(selectedPlan) {
       // TODO: Call backend API to upgrade
       this.showPlanUpgradeModal = false;
       this.$message.success(`Plan upgrade initiated for ${selectedPlan}!`);
-    }
-  }
+    },
+  },
 };
 </script>
-
-
-
-
 
 <style scoped>
 .side-panel {
@@ -628,9 +646,8 @@ handleGenerateClick() {
 }
 
 @media screen and (max-width: 448px) {
- 
-.credits-section {
-  margin:  0;
-}
+  .credits-section {
+    margin: 0;
+  }
 }
 </style>
