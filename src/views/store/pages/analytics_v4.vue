@@ -17,7 +17,7 @@
       <a-col :xs="12" :sm="12" :md="6">
         <div class="stat-card total-simulations">
           <div class="whitespace-nowrap stat-label">Total Credits Consumed</div>
-          <div class="stat-value">{{ analyticsData ? Math.abs(analyticsData.credits) : '...' }}</div>
+          <div class="stat-value">{{ creditStats ? Math.abs(creditStats.total_consumed) : '...' }}</div>
         </div>
       </a-col>
       <a-col :xs="12" :sm="12" :md="6">
@@ -268,19 +268,6 @@
               <a-select-option value="success">Success</a-select-option>
               <a-select-option value="failed">Failed</a-select-option>
             </a-select>
-
-            <a-select
-              v-model:value="transactionFilterType"
-              placeholder="Filter by Status"
-              @change="fetchUserTransactionDetails"
-              style="width: 200px"
-              allow-clear
-            >
-              <a-select-option value="">All </a-select-option>
-              <a-select-option value="deposit">deposit</a-select-option>
-              <a-select-option value="consume">consume</a-select-option>
-              
-            </a-select>
             
              
           </div>
@@ -521,7 +508,7 @@ export default {
       creditLoading: false,
       creditChartDateRange: [dayjs().subtract(30, 'day'), dayjs()],
       analyticsData: null,
-      creditStats: 0,
+      creditStats: null,
       creditTransactions: [],
       dateRange: [null, null],
       filterStatus: '',
@@ -548,7 +535,6 @@ export default {
       transactionDetailsLoading: false,
       transactionDateRange: [dayjs().subtract(30, 'day'), dayjs()],
       transactionFilterStatus: '',
-      transactionFilterType:'',
       transactionPagination: {
         current: 1,
         pageSize: 20,
@@ -828,7 +814,9 @@ export default {
             return sum + (user.total_credits_consumed || 0)
           }, 0)
 
-          
+          this.creditStats = {
+            total_consumed: totalConsumed,
+          }
         } else {
           this.$message.error(data.message || 'Failed to fetch user summary')
         }
@@ -876,9 +864,6 @@ export default {
         if (this.transactionFilterStatus) {
           params.append('status', this.transactionFilterStatus)
         }
-        // if (this.transactionFilterType) {
-        //   params.append('type', this.transactionFilterType)
-        // }
 
         params.append('page', this.transactionPagination.current)
         params.append('page_size', this.transactionPagination.pageSize)

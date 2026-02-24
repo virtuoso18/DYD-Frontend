@@ -105,7 +105,9 @@ padding:5px;"
     @load="onProductImageLoad(item.id)"
     alt=""
   />
-
+      <div style="position:absolute;bottom:5px;right:5px;display:flex;gap:5px;background-color: rgba(0,0,0,0.1);padding:3px 5px;;border-radius:5px;">
+        <div v-for="color in item.colors_available.slice(0, 2)" :key="color.id" class="color-dot" style="width: 14px;height: 14px;":style="{ backgroundColor: color.color }"></div>
+      </div>
   <!-- Visible image -->
   <img
     v-show="imageLoadedMap[item.id]"
@@ -129,12 +131,12 @@ padding:5px;"
   {{ item.name || 'No name Available' }}
 </div>
   
-                <div class="product-details" style="display:flex;justify-content: space-between;">
+                <!-- <div class="product-details" style="display:flex;justify-content: space-between;">
                   <span class="product-color">Colors</span>
                   <div style="display: flex; gap: 4px; align-items: center; margin-left: 8px;">
                     <div v-for="color in item.colors_available.slice(0, 2)" :key="color.id" class="color-dot" :style="{ backgroundColor: color.color }"></div>
                   </div>
-                </div>
+                </div> -->
                 <div class="product-price">
                   <span v-if="item.pricing.is_on_sale">
                     Price 

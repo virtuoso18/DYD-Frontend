@@ -182,7 +182,7 @@
           <div v-for="(item, index) in catalogItems" :key="index" @click="updateItemRendering(item['id'],item['3d_model'],item['dimensions']['width'],item['dimensions']['height'],item['dimensions']['length'],item['is_resizable'])" style="
    background: #f2f2f2;
   border: none;
-  height: 270px;
+  height: 100%;
   border-radius: 4px;
   padding:5px;"
             :style="selected_item===item.id ? 'border:1px solid blue': ''">
@@ -202,7 +202,9 @@
     @load="onProductImageLoad(item.id)"
     alt=""
   />
-
+<div style="position:absolute;bottom:5px;right:5px;display:flex;gap:5px;background-color: rgba(0,0,0,0.1);padding:3px 5px;;border-radius:5px;">
+                    <div v-for="color in item.colors_available.slice(0, 2)" :key="color.id" class="color-dot" style="width: 14px;height: 14px;" :style="{ backgroundColor: color.color }"></div>
+                  </div>
   <!-- Visible image -->
   <img
     v-show="imageLoadedMap[item.id]"
@@ -210,6 +212,7 @@
     :alt="item.name"
     class="product-primary-image"
   />
+  
   
                 <!-- Tags -->
                 <div style="
@@ -255,12 +258,12 @@
 <div class="product-name truncate">
   {{ truncateText(item.name || 'No Name available', 2) }}
 </div>
-                <div class="product-details" style="display:flex;justify-content: space-between;">
+                <!-- <div class="product-details" style="display:flex;justify-content: space-between;">
                   <span class="product-color">Colors </span>
                   <div style="display: flex; gap: 4px; align-items: center; margin-left: 8px;">
                     <div v-for="color in item.colors_available.slice(0, 2)" :key="color.id" class="color-dot" :style="{ backgroundColor: color.color }"></div>
                   </div>
-                </div>
+                </div> -->
                 
                 <div class="product-price">Price <span style="font-weight: 600;">${{item.pricing.price}}</span></div>
               </div>
@@ -712,7 +715,7 @@ this.smoothMobileScrolltoTop()
 .ai-catalog-section {
   display: flex;
   flex-direction: column;
-  height: 77vh; 
+  height: 78vh; 
 }
 
 .upgrade-modal-content {
@@ -1184,7 +1187,8 @@ this.smoothMobileScrolltoTop()
   }
 
   .grid-view .product-info {
-    padding: 12px;
+    padding: 5px;
+    padding-bottom: 0px;
   }
 }
 

@@ -72,7 +72,7 @@
             <div v-for="item in filterItems(furniture_products, 'name')" 
             
               :key="item.id"
-              class="item relative overflow-hidden w-full h-[120px] cursor-pointer"
+              class="item relative overflow-hidden w-full h-[100px] cursor-pointer"
               :class="{ 'ring-2 ring-blue-500 shadow-lg': selected_texture === item.id }"
               @click="selectfurnitureProduct('product', item.id, item['3d_model'], item.dimensions,item.is_resizable)"
               style="position:relative !important; overflow:hidden !important;"
@@ -128,7 +128,7 @@
           
           <div v-else :class="showGrid ? 'grid' : 'list'">
             <div v-for="item in filterItems(lights, 'name')" :key="item.id"
-                 class="item relative overflow-hidden w-full h-[120px] cursor-pointer" 
+                 class="item relative overflow-hidden w-full h-[100px] cursor-pointer" 
                  :class="{selected: selected_texture === item.id}"
                  @click="selectTexture('light', item.id, item['3d_model'], item.light_type)"
                  style="position:relative !important; overflow:hidden !important;">
@@ -182,7 +182,7 @@
           
           <div v-else :class="showGrid ? 'grid' : 'list'">
             <div v-for="item in filterItems(floors)" :key="item.id" 
-                 class="item relative overflow-hidden w-full h-[120px] cursor-pointer" 
+                 class="item relative overflow-hidden w-full h-[100px] cursor-pointer" 
                  :class="{selected: selected_texture === item.id}"
                  @click="selectTexture('floor', item.id)"
                  style="position:relative !important; overflow:hidden !important;">
@@ -236,7 +236,7 @@
           
           <div v-else :class="showGrid ? 'grid' : 'list'">
             <div v-for="item in filterItems(walls)" :key="item.id"
-                 class="item relative overflow-hidden w-full h-[120px] cursor-pointer" 
+                 class="item relative overflow-hidden w-full h-[100px] cursor-pointer" 
                  :class="{selected: selected_texture === item.id}"
                  @click="selectTexture('wall', item.id)"
                  style="position:relative !important; overflow:hidden !important;">

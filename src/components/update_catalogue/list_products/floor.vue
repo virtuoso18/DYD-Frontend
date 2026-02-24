@@ -71,7 +71,7 @@
         <div v-for="(item, index) in catalogItems" :key="index" style="
 background: #f2f2f2;
 border: none;
-max-height: 270px;
+max-height: 100%;
 border-radius: 4px;
 padding:5px;
 "
@@ -93,7 +93,10 @@ padding:5px;
     @load="onTextureImageLoad(item.id)"
     alt=""
   />
-
+<div style="position:absolute;bottom:5px;right:5px;display:flex;gap:5px;background-color: rgba(0,0,0,0.1);padding:3px 5px;;border-radius:5px;">
+                  <div v-for="color in item.colors_available.slice(0, 3)" :key="color.id" class="color-dot" style="width: 14px;height: 14px;" :style="{ backgroundColor: color.color_hex }"></div>
+                </div>
+                
   <!-- Visible image -->
   <img
     v-show="imageLoadedMap[item.id]"
@@ -112,12 +115,12 @@ padding:5px;
               </div> -->
               <div class="product-name">{{ truncateText( item.title || 'No description available', 3) }}</div>
               
-              <div class="product-details" style="display:flex;justify-content: space-between;">
+              <!-- <div class="product-details" style="display:flex;justify-content: space-between;">
                 <span class="product-color">Colors </span>
                 <div style="display: flex; gap: 4px; align-items: center; margin-left: 8px;">
                   <div v-for="color in item.colors_available.slice(0, 3)" :key="color.id" class="color-dot" :style="{ backgroundColor: color.color_hex }"></div>
                 </div>
-              </div>
+              </div> -->
               <div class="product-price">Price <span style="font-weight: 600;">$ {{ item.sale_price_per_sqm || 0 }}</span></div>
             </div>
           </div>
@@ -416,7 +419,7 @@ smoothMobileScrolltoTop(){
 
 @media (min-width: 640px) {
   .ai-catalog-section {
-    height: 77vh;
+    height: 78vh;
   }
   
 }
@@ -735,7 +738,9 @@ smoothMobileScrolltoTop(){
   }
 
   .grid-view .product-info {
-    padding: 12px;
+    
+    padding: 5px;
+    padding-bottom: 0px;
   }
 }
 </style>

@@ -1800,9 +1800,12 @@ async renderItem() {
     // Camera was built with renderW/renderH aspect BUT the offscreen camera
     // is rebuilt fresh with bgWidth/bgHeight aspect — use clientWidth so
     // the aspect the user SEES is what we export at.
-    const canvasEl = this.renderer.domElement
-    const exportW = canvasEl.clientWidth  || canvasEl.width  || 800
-    const exportH = canvasEl.clientHeight || canvasEl.height || 600
+    
+    // With this:
+    const roomImg = this.$refs.roomImage
+    const exportW = (roomImg && roomImg.naturalWidth)  ? roomImg.naturalWidth  : (this.CAM_IMG_W || 800)
+    const exportH = (roomImg && roomImg.naturalHeight) ? roomImg.naturalHeight : (this.CAM_IMG_H || 600)
+    console.log(`[renderItem] Exporting at ${exportW}×${exportH} (native image size)`)
     console.log(`[renderItem] Exporting at ${exportW}×${exportH} (CSS pixels)`)
 
     // ── STEP 7: Create blobs — chair state is now guaranteed correct ──
@@ -1817,7 +1820,7 @@ async renderItem() {
   
     // return
 
-    // // ── DEBUG: remove these two lines when sending to backend ──
+    // // // ── DEBUG: remove these two lines when sending to backend ──
     // this.downloadImages(compositeBlob, maskBlob)
     // return
 
@@ -1882,8 +1885,9 @@ async createCompositeImageBlob(bgWidth, bgHeight) {
     canvas: offCanvas, antialias: true,
     preserveDrawingBuffer: true, alpha: true, precision: 'highp',
   })
-  offRenderer.setSize(bgWidth, bgHeight)
-  offRenderer.setPixelRatio(1)
+offRenderer.setSize(bgWidth, bgHeight, false)
+
+offRenderer.setPixelRatio(1)
   offRenderer.outputColorSpace  = THREE.SRGBColorSpace
   offRenderer.setClearColor(0x000000, 0)
   offRenderer.shadowMap.enabled = true
@@ -1919,6 +1923,7 @@ async createCompositeImageBlob(bgWidth, bgHeight) {
 
   // ✅ Fresh camera matching live camera exactly
   const offCamera = new THREE.PerspectiveCamera(this.CAM_FOV_V, bgWidth / bgHeight, 0.01, 200)
+  
   offCamera.position.set(0, 0, 0)
   offCamera.lookAt(0, 0, -1)
   offCamera.updateProjectionMatrix()

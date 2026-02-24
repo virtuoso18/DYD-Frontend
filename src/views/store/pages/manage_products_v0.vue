@@ -1,20 +1,12 @@
 <template>
   <div>
     <br /><a-modal
-  v-model:open="open_add_newProductModal"
-  @ok="handleOk"
-  centered
-  :width="480"
->
-  <template #title>
-    <span class="!text-sm  !font-normal text-gray-800"
-    style="font-family: var(--font-family-main)"
-    
+      v-model:open="open_add_newProductModal"
+      title="Select how you wanted to add product"
+      @ok="handleOk"
+      centered
+      :width="480"
     >
-      Select How You Wanted To Add Product
-    </span>
-  </template>
-
       <div
         style="
           display: flex;
@@ -210,10 +202,9 @@
               />
             </circle>
           </svg>
-         <span style="flex: 1; text-align: left; font-size: 13px; font-family: var(--font-family-main)">
-  Generate 3D Model with DYD AI
-</span>
-
+          <span style="flex: 1; text-align: left; font-size: 15px"
+            >Generate 3D Model with DYD AI</span
+          >
         </a-button>
 
         <!-- Local Upload Option -->
@@ -340,7 +331,7 @@
               opacity="0.8"
             />
           </svg>
-          <span style="flex: 1; text-align: left; font-size: 12px; font-family: var(--font-family-main)"
+          <span style="flex: 1; text-align: left; font-size: 15px"
             >Upload 3D Model from Local System</span
           >
         </a-button>
@@ -707,7 +698,7 @@
     />
 
     <add_furniture_modal_local_3d_model_create_variation
-      v-model:visible="show_add_new_product_locally_3d_model_create_variation"
+      v-model:visible="show_add_new_product_locally_3d_model"
       :types="[
         'Modern',
         'Scandinavian',
@@ -1001,505 +992,1000 @@
           </div>
         </div>
         <!--for mobile-->
-        <div class="flex md:hidden flex-col w-full gap-3 px-3 pt-3 pb-2">
+        <div
+          class="flex md:hidden flex-wrap items-center justify-between mb-5 w-full gap-3"
+          style="padding:2px;"
+        >
+          <!-- Title -->
+          <h2
+            className="!mt-2 text-lg lg:text-2xl font-semibold px-2 whitespace-nowrap"
+          >
+            My Products
+            <span class="text-gray-500 text-base">
+              ({{
+                products.length + wall.length + floor.length + myLights.length
+              }})
+            </span>
+          </h2>
 
-  <!-- Row 1: Title + Grid/List Toggle -->
-  <div class="flex items-center !mt-2 justify-between">
-    <h2 class="text-lg font-semibold text-gray-800 whitespace-nowrap">
-      My Products
-      <span class="text-gray-400 text-sm font-normal">
-        ({{ products.length + wall.length + floor.length + myLights.length }})
-      </span>
-    </h2>
+          <!-- Right Side Controls -->
+          <div class="flex flex-wrap items-center gap-3 w-auto sm:w-full">
+            <!-- View Toggle Buttons and Search -->
+            <div class="flex flex-wrap items-center gap-3 w-auto sm:w-full">
+              <!-- View Toggle Buttons -->
+              <div
+                class="flex border border-gray-200 rounded-md overflow-hidden"
+              >
+                <button
+                  @click="viewMode = 'grid'"
+                  :class="[
+                    'flex items-center px-3 py-2 font-semibold text-xs transition',
+                    viewMode === 'grid'
+                      ? 'bg-blue-600 !text-white'
+                      : 'bg-white !text-gray-600',
+                  ]"
+                  style="font-family: var(--font-family-main)"
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    class="mr-1"
+                  >
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                  </svg>
+                  Grid
+                </button>
+                <button
+                  @click="viewMode = 'table'"
+                  :class="[
+                    'flex items-center px-3 py-2 font-semibold text-xs transition',
+                    viewMode === 'table'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-white text-gray-600',
+                  ]"
+                  style="font-family: var(--font-family-main)"
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    class="mr-1"
+                  >
+                    <line x1="8" y1="6" x2="21" y2="6"></line>
+                    <line x1="8" y1="12" x2="21" y2="12"></line>
+                    <line x1="8" y1="18" x2="21" y2="18"></line>
+                    <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                    <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                    <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                  </svg>
+                  List
+                </button>
+              </div>
+              <!-- Search Input -->
+              <div class="relative">
+                <input
+                  type="text"
+                  placeholder="Search Product"
+                  v-model="searchQuery"
+                  class="pl-8 pr-3 py-2 border border-gray-300 rounded-md w-48 outline-none text-sm"
+                />
+                <svg
+                  class="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <path d="m21 21-4.35-4.35"></path>
+                </svg>
+              </div>
+            </div>
 
-    <!-- Grid / List Toggle -->
-    <div class="flex border border-gray-200 rounded-lg overflow-hidden shadow-sm">
-      <button
-        @click="viewMode = 'grid'"
-        :class="[
-          'flex items-center justify-center px-3 py-2 text-xs font-semibold transition-all duration-200',
-          viewMode === 'grid' ? 'bg-blue-600 !text-white' : 'bg-white !text-gray-500'
-        ]"
-        style="font-family: var(--font-family-main)"
-      >
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-          <rect x="3" y="3" width="7" height="7" rx="1"></rect>
-          <rect x="14" y="3" width="7" height="7" rx="1"></rect>
-          <rect x="3" y="14" width="7" height="7" rx="1"></rect>
-          <rect x="14" y="14" width="7" height="7" rx="1"></rect>
-        </svg>
-        <span class="ml-1">Grid</span>
-      </button>
-      <button
-        @click="viewMode = 'table'"
-        :class="[
-          'flex items-center justify-center px-3 py-2 text-xs font-semibold transition-all duration-200',
-          viewMode === 'table' ? 'bg-blue-600 !text-white' : 'bg-white !text-gray-500'
-        ]"
-        style="font-family: var(--font-family-main)"
-      >
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="8" y1="6" x2="21" y2="6"></line>
-          <line x1="8" y1="12" x2="21" y2="12"></line>
-          <line x1="8" y1="18" x2="21" y2="18"></line>
-          <line x1="3" y1="6" x2="3.01" y2="6"></line>
-          <line x1="3" y1="12" x2="3.01" y2="12"></line>
-          <line x1="3" y1="18" x2="3.01" y2="18"></line>
-        </svg>
-        <span class="ml-1">List</span>
-      </button>
-    </div>
-  </div>
-
-  <!-- Row 2: Search Bar Full Width -->
-  <div class="relative w-full">
-    <svg
-      class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-      width="15" height="15" viewBox="0 0 24 24"
-      fill="none" stroke="currentColor" stroke-width="2"
-    >
-      <circle cx="11" cy="11" r="8"></circle>
-      <path d="m21 21-4.35-4.35"></path>
-    </svg>
-    <input
-      type="text"
-      placeholder="Search products..."
-      v-model="searchQuery"
-      class="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-xl bg-gray-50 text-sm outline-none focus:border-blue-400 focus:bg-white transition-all duration-200 text-gray-700 placeholder-gray-400"
-    />
-  </div>
-
-  <!-- Row 3: 4 Action Buttons in Grid -->
-  <div class="grid grid-cols-4 gap-2">
-
-    <!-- Wall -->
-    <button
-      type="button"
-      @click="show_add_new_wall_texture = true"
-      class="flex flex-col items-center justify-center gap-1 py-2.5 rounded-xl bg-blue-100 border border-gray-100 text-blue-600 hover:bg-blue-600 hover:text-white transition-all duration-200 active:scale-95"
-      style="font-family: var(--font-family-main)"
-    >
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2">
-        <rect x="3" y="3" width="8" height="8" rx="1" />
-        <rect x="13" y="3" width="8" height="8" rx="1" />
-        <rect x="3" y="13" width="8" height="8" rx="1" />
-        <rect x="13" y="13" width="8" height="8" rx="1" />
-      </svg>
-      <span class="text-[11px] text-gray-700 font-semibold">Wall</span>
-    </button>
-
-    <!-- Floor -->
-    <button
-      type="button"
-      @click="show_add_new_floor_texture = true"
-      class="flex flex-col items-center justify-center gap-1 py-2.5 rounded-xl bg-blue-100 border border-gray-100 text-blue-600 hover:bg-blue-600 hover:text-white transition-all duration-200 active:scale-95"
-      style="font-family: var(--font-family-main)"
-    >
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2">
-        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-        <line x1="3" y1="9" x2="21" y2="9"></line>
-        <line x1="3" y1="15" x2="21" y2="15"></line>
-        <line x1="9" y1="3" x2="9" y2="21"></line>
-        <line x1="15" y1="3" x2="15" y2="21"></line>
-      </svg>
-      <span class="text-[11px] text-gray-700 font-semibold">Floor</span>
-    </button>
-
-    <!-- Light -->
-    <button
-      type="button"
-      @click="show_add_new_light = true"
-      class="flex flex-col items-center justify-center gap-1 py-2.5 rounded-xl bg-blue-100 border border-gray-100 text-blue-600 hover:bg-blue-600 hover:text-white transition-all duration-200 active:scale-95"
-      style="font-family: var(--font-family-main)"
-    >
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2">
-        <path d="M12 2a6 6 0 0 0-4.472 10.04c.46.5.872 1.28.872 2.16 0 1.1-.2 2.2-.6 3h6.4c-.4-.8-.6-1.9-.6-3 0-.88.41-1.66.87-2.16A6 6 0 0 0 12 2z"/>
-        <path d="M10 14h4" />
-        <path d="M9 19h6v2H9z" />
-      </svg>
-      <span class="text-[11px] text-gray-700 font-semibold">Light</span>
-    </button>
-
-    <!-- Add Product -->
-    <button
-      type="button"
-      @click="addProduct()"
-      class="flex flex-col  items-center justify-center gap-1 py-2.5 rounded-xl bg-blue-100 border border-gray-100  text-white hover:bg-blue-700 transition-all duration-200 active:scale-95"
-      style="font-family: var(--font-family-main)"
-    >
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2">
-        <path d="M21 8v8a2 2 0 0 1-1 1.73L12 21l-8-3.27A2 2 0 0 1 3 16V8"/>
-        <path d="M12 3v5" />
-        <path d="M3.27 6.96L12 10l8.73-3.04" />
-        <path d="M12 12v6" />
-        <path d="M9 15h6" />
-      </svg>
-      <span class="text-[11px] text-gray-700  font-semibold">Add Product</span>
-    </button>
-
-  </div>
-
-</div>
-
+            <!-- Action Buttons -->
+            <div class="flex gap-2 sm:flex-col sm:w-full">
+              <!-- Wall Button -->
+              <button
+                type="button"
+                @click="show_add_new_wall_texture = true"
+                class="flex items-center gap-2 px-1.5 py-1.5 !text-white rounded-md bg-blue-600 font-medium whitespace-nowrap w-auto sm:w-32"
+                style="font-family: var(--font-family-main)"
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <rect x="3" y="3" width="8" height="8" rx="1" />
+                  <rect x="13" y="3" width="8" height="8" rx="1" />
+                  <rect x="3" y="13" width="8" height="8" rx="1" />
+                  <rect x="13" y="13" width="8" height="8" rx="1" />
+                </svg>
+                Wall
+              </button>
+              <!-- Floor Button -->
+              <button
+                type="button"
+                @click="show_add_new_floor_texture = true"
+                class="flex items-center gap-2 px-1.5 py-1.5 !text-white rounded-md bg-blue-600 font-medium whitespace-nowrap w-auto sm:w-32"
+                style="font-family: var(--font-family-main)"
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="3" y1="9" x2="21" y2="9"></line>
+                  <line x1="3" y1="15" x2="21" y2="15"></line>
+                  <line x1="9" y1="3" x2="9" y2="21"></line>
+                  <line x1="15" y1="3" x2="15" y2="21"></line>
+                </svg>
+                Floor
+              </button>
+              <!-- Light Button -->
+              <button
+                type="button"
+                @click="show_add_new_light = true"
+                class="flex items-center gap-2 px-1.5 py-1.5 !text-white rounded-md bg-blue-600 font-medium whitespace-nowrap w-auto sm:w-32"
+                style="font-family: var(--font-family-main)"
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M12 2a6 6 0 0 0-4.472 10.04c.46.5.872 1.28.872 2.16 0 1.1-.2 2.2-.6 3h6.4c-.4-.8-.6-1.9-.6-3 0-.88.41-1.66.87-2.16A6 6 0 0 0 12 2z"
+                  />
+                  <path d="M10 14h4" />
+                  <path d="M9 19h6v2H9z" />
+                </svg>
+                Light
+              </button>
+              <!-- Add Product Button -->
+              <button
+                type="button"
+                @click="addProduct()"
+                class="flex items-center gap-2 px-1.5 py-1.5 !text-white rounded-md bg-blue-600 font-medium whitespace-nowrap w-auto sm:w-32"
+                style="font-family: var(--font-family-main)"
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M21 8v8a2 2 0 0 1-1 1.73L12 21l-8-3.27A2 2 0 0 1 3 16V8"
+                  />
+                  <path d="M12 3v5" />
+                  <path d="M3.27 6.96L12 10l8.73-3.04" />
+                  <path d="M12 12v6" />
+                  <path d="M9 15h6" />
+                </svg>
+                Add Product
+              </button>
+            </div>
+          </div>
+        </div>
 
         <!-- Grid View -->
         <div v-if="viewMode === 'grid'" class="sm:main">
-          <div class="products-list" style="padding: 2px">
-            <a-tabs v-model:activeKey="active_tab" class="!ml-2">
-
-  <!-- ===== FURNITURE ===== -->
-  <a-tab-pane key="Furniture" tab="Furniture">
-    <div
-      v-if="isLoading"
-      class="spinner-sec w-full h-[80vh] flex justify-center items-center"
-      style="font-family: var(--font-family-main)"
-    >
-      <a-spin tip="Loading..."></a-spin>
-    </div>
-    <div v-else>
-      <div
-        v-if="!filteredProducts.length"
-        style="height:70vh;gap:10px;flex-direction:column;display:flex;justify-content:center;align-items:center;"
-      >
-        <a-empty :description="'No Furniture Available'"></a-empty>
-        <a-button type="primary" @click="addProduct()">Add Furniture</a-button>
-      </div>
-
-      <a-row v-else>
-        <a-col
-          v-for="product in filteredProducts"
-          :key="product.id"
-          class="product-responsive p-1 sm:p-2"
-          style="padding: 5px"
-        >
-          <div class="product" style="padding: 5px">
-            <div
-              class="product-image-container"
-              @click="viewProduct(product)"
-              style="position: relative; overflow: hidden"
-            >
-              <div v-if="!imageLoadedMap[product.id]" class="product-skeleton"></div>
-              <img
-                :src="$store.state.root_media_api + product.primary_image"
-                style="position:absolute;width:0;height:0;opacity:0;"
-                @load="onProductImageLoad(product.id)"
-                alt=""
-              />
-              <img
-                v-show="imageLoadedMap[product.id]"
-                :src="$store.state.root_media_api + product.primary_image"
-                :alt="product.name"
-                class="product-image"
-              />
-              <div v-show="imageLoadedMap[product.id]" class="category-badge">
-                {{ product.category.name }}
-              </div>
-              <div v-show="imageLoadedMap[product.id]" class="ar-badge">AR</div>
-            </div>
-
-            <a-row>
-              <a-col span="24">
-                <b class="block w-full truncate" :title="product.name">
-                  {{ product.name || "No name available" }}
-                </b>
-              </a-col>
-              <a-col span="16" style="font-family:Poppins,sans-serif;font-size:13px;font-weight:400;">Color</a-col>
-              <a-col span="8" style="display:flex;justify-content:end;">
+          <div class="products-list " style="padding:2px">
+            <a-tabs v-model:activeKey="active_tab">
+              <a-tab-pane
+                key="Furniture"
+                tab="Furniture"
+                v-if="filteredProducts.length > 0"
+              >
                 <div
-                  v-for="(color, index) in product.colors.slice(0, 2)"
-                  :key="index"
-                  style="width:20px;height:20px;border-radius:20px;margin-left:2px;"
-                  :style="'background:' + color"
-                ></div>
-              </a-col>
-              <a-col span="12" style="font-family:Poppins,sans-serif;font-size:13px;font-weight:400;">Price</a-col>
-              <a-col span="12" style="display:flex;justify-content:end;font-weight:700;">
-                ${{ product.pricing.price }}
-              </a-col>
-              <a-col span="18">
-                <a-button block @click="viewProduct(product)" style="display:flex;justify-content:center;">
-                  Product Details
-                </a-button>
-              </a-col>
-              <a-col :span="1"></a-col>
-              <a-col span="5" style="display:flex;align-items:end;justify-content:end;">
-                <a-button @click="toggleFavorite(product, 'product')" style="padding:2px 12px;display:flex;align-items:center;justify-content:center;">
-                  <template v-if="product.is_favorited"><HeartFilled style="color:red" /></template>
-                  <template v-else><HeartOutlined /></template>
-                </a-button>
-              </a-col>
-            </a-row>
-          </div>
-        </a-col>
-      </a-row>
+                  v-if="!filteredProducts.length"
+                  style="
+                    height: 70vh;
+                    gap: 10px;
+                    flex-direction: column;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                  "
+                >
+                  <a-empty :description="'No Furniture Available'"></a-empty>
 
-      <div v-if="filteredProducts.length > 0" style="display:flex;justify-content:center;margin-top:20px;margin-bottom:20px;">
-        <a-pagination
-          v-model:current="productsPagination.currentPage"
-          :total="productsPagination.totalCount"
-          :page-size="productsPagination.pageSize"
-          @change="handleProductsPageChange"
-          show-total
-          :show-size-changer="false"
-        />
-      </div>
-    </div>
-  </a-tab-pane>
+                  <a-button type="primary" @click="addProduct()">
+                    Add Furniture
+                  </a-button>
+                </div>
 
-  <!-- ===== WALL ===== -->
-  <a-tab-pane key="Wall" tab="Wall" force-render>
-    <div
-      v-if="wall.length === 0"
-      style="height:70vh;gap:20px;flex-direction:column;display:flex;justify-content:center;align-items:center;"
-    >
-      <a-empty :description="'No Wall Textures Available'"></a-empty>
-      <a-button type="primary" @click="show_add_new_wall_texture = true">Add Wall Texture</a-button>
-    </div>
+                <a-row v-else>
+                  <a-col
+                    v-for="product in filteredProducts"
+                    :key="product.id"
+                    class="product-responsive p-1 sm:p-2"
+                  >
+                    <div class="product">
+                     <div
+  class="product-image-container"
+  @click="viewProduct(product)"
+  style="position: relative; overflow: hidden;"
+>
+  <!-- Skeleton -->
+  <div
+    v-if="!imageLoadedMap[product.id]"
+    class="product-image-skeleton"
+  ></div>
 
-    <div v-else>
-      <a-row>
-        <a-col
-          v-for="product in wall"
-          :key="product.id"
-          class="product-responsive"
-          style="padding: 5px"
-        >
-          <div class="product" style="padding: 5px">
-            <div
-              class="product-image-container"
-              @click="viewProduct(product)"
-              style="position:relative;overflow:hidden;"
-            >
-              <div v-if="!imageLoadedMap[product.id]" class="product-skeleton"></div>
-              <img
-                :src="$store.state.root_media_api + (product.product_images.length > 0 ? product.product_images[0].image : product.texture_image)"
-                style="position:absolute;width:0;height:0;opacity:0;"
-                @load="onProductImageLoad(product.id)"
-                alt=""
-              />
-              <img
-                v-show="imageLoadedMap[product.id]"
-                :src="$store.state.root_media_api + (product.product_images.length > 0 ? product.product_images[0].image : product.texture_image)"
-                :alt="product.title"
-                class="product-image"
-              />
-              <div v-show="imageLoadedMap[product.id]" class="category-badge">{{ product.texture_style }}</div>
-              <div v-show="imageLoadedMap[product.id]" class="ar-badge">AR</div>
-            </div>
+  <!-- Preload image -->
+  <img
+    :src="$store.state.root_media_api + product.primary_image"
+    style="position:absolute;width:0;height:0;opacity:0;"
+    @load="onProductImageLoad(product.id)"
+    alt=""
+  />
 
-            <a-row style="margin-top:10px;">
-              <a-col span="24"><b>{{ truncateText(product.title || "No title available", 19) }}</b></a-col>
-              <a-col span="18">Colors</a-col>
-              <a-col span="6" style="display:flex;justify-content:end;">
+  <!-- Visible image -->
+  <img
+    v-show="imageLoadedMap[product.id]"
+    :src="$store.state.root_media_api + product.primary_image"
+    :alt="product.name"
+    class="product-image"
+  />
+
+  <!-- Category Badge (stays on top) -->
+  <div class="category-badge">
+    {{ product.category.name }}
+  </div>
+  
+  <!-- AR Badge (stays on top) -->
+  <div class="ar-badge">AR</div>
+</div>
+
+                      <!-- {{ truncateText(product.description || 'No description available', 8) }} -->
+
+                      <a-row>
+                        <a-col span="24">
+                          <b
+                            class="block w-full truncate"
+                            :title="product.name"
+                          >
+                            {{ product.name || "No name available" }}
+                          </b>
+                        </a-col>
+
+                        <a-col
+                          span="16"
+                          style="
+                            font-family: 'Poppins', sans-serif;
+                            font-size: 13px;
+                            font-weight: 400;
+                          "
+                        >
+                          Color
+                        </a-col>
+
+                        <a-col
+                          span="8"
+                          style="display: flex; justify-content: end"
+                        >
+                          <div
+                            v-for="(color, index) in product.colors.slice(0, 2)"
+                            :key="index"
+                            style="
+                              width: 20px;
+                              height: 20px;
+                              border-radius: 20px;
+                              margin-left: 2px;
+                            "
+                            :style="'background:' + color"
+                          ></div>
+                        </a-col>
+
+                        <a-col
+                          span="12"
+                          style="
+                            font-family: 'Poppins', sans-serif;
+                            font-size: 13px;
+                            font-weight: 400;
+                          "
+                        >
+                          Price
+                        </a-col>
+
+                        <a-col
+                          span="12"
+                          style="
+                            display: flex;
+                            justify-content: end;
+                            font-weight: 700;
+                          "
+                        >
+                          <!-- <del style="font-size: 10px;">${{ product.pricing.price }}</del> -->
+                          ${{ product.pricing.price }}
+                        </a-col>
+
+                        <div class="flex items-center gap-2 w-full">
+                          <!-- Product Details Button - 75% width (18/24) -->
+                          <div class="w-3/4">
+                            <button
+                              @click="viewProduct(product)"
+                              class="w-full py-2 px-4 bg-white border border-gray-300 rounded hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500 transition-colors whitespace-nowrap"
+                              style="
+                                font-family: 'Poppins', sans-serif;
+                                font-size: 12px;
+                              "
+                            >
+                              Product Details
+                            </button>
+                          </div>
+
+                          <!-- Like Button - 25% width (6/24) -->
+                          <div class="w-1/4 flex items-end justify-end">
+                            <button
+                              @click="toggleFavorite(product, 'product')"
+                              class="bg-white !py-2.5 border border-gray-300 rounded hover:bg-gray-50 hover:border-blue-500 transition-colors flex items-center justify-center"
+                              style="padding: 2px 12px"
+                            >
+                              <template v-if="product.is_favorited">
+                                <HeartFilled style="color: red" />
+                              </template>
+                              <template v-else>
+                                <HeartOutlined />
+                              </template>
+                            </button>
+                          </div>
+                        </div>
+                      </a-row>
+                    </div>
+                  </a-col>
+                </a-row>
+
                 <div
-                  v-for="(color, index) in product.associated_colors.slice(0, 2)"
-                  :key="index"
-                  :style="{ background: color.color_hex, width:'20px', height:'20px', borderRadius:'20px', marginLeft:'2px' }"
-                ></div>
-              </a-col>
-              <a-col span="12" style="margin-top:4px;">Price</a-col>
-              <a-col span="12" style="margin-top:4px;width:100%;display:flex;justify-content:end;">
-                <span style="font-size:14px;font-weight:600;margin-left:4px;">${{ product.sale_price_per_sqm || 0 }}</span>
-              </a-col>
-              <a-col span="17">
-                <a-button block @click="viewProduct(product)" style="display:flex;justify-content:center;">Product Details</a-button>
-              </a-col>
-              <a-col :span="1"></a-col>
-              <a-col span="6" style="display:flex;align-items:end;justify-content:end;">
-                <a-button @click="toggleFavorite(product, 'wall_texture')" style="padding:2px 12px;display:flex;align-items:center;justify-content:center;">
-                  <template v-if="product.is_favorited"><HeartFilled style="color:red" /></template>
-                  <template v-else><HeartOutlined /></template>
-                </a-button>
-              </a-col>
-            </a-row>
-          </div>
-        </a-col>
-      </a-row>
-
-      <div style="display:flex;justify-content:center;margin-top:20px;margin-bottom:20px;">
-        <a-pagination
-          v-model:current="wallPagination.currentPage"
-          :total="wallPagination.totalCount"
-          :page-size="wallPagination.pageSize"
-          @change="handleWallPageChange"
-          show-total
-          :show-size-changer="false"
-        />
-      </div>
-    </div>
-  </a-tab-pane>
-
-  <!-- ===== FLOOR ===== -->
-  <a-tab-pane key="Floor" tab="Floor">
-    <div
-      v-if="floor.length === 0"
-      style="height:70vh;gap:20px;flex-direction:column;display:flex;justify-content:center;align-items:center;"
-    >
-      <a-empty :description="'No Floor Textures Available'"></a-empty>
-      <a-button type="primary" @click="show_add_new_floor_texture = true">Add Floor Texture</a-button>
-    </div>
-
-    <a-row v-else>
-      <a-col
-        v-for="product in floor"
-        :key="product.id"
-        class="product-responsive"
-        style="padding: 5px"
-      >
-        <div class="product" style="padding: 4px">
-          <div
-            class="product-image-container"
-            @click="viewProduct(product)"
-            style="position:relative;overflow:hidden;"
-          >
-            <div v-if="!imageLoadedMap[product.id]" class="product-skeleton"></div>
-            <img
-              :src="$store.state.root_media_api + (product.product_images.length > 0 ? product.product_images[0].image : product.texture_image)"
-              style="position:absolute;width:0;height:0;opacity:0;"
-              @load="onProductImageLoad(product.id)"
-              alt=""
-            />
-            <img
-              v-show="imageLoadedMap[product.id]"
-              :src="$store.state.root_media_api + (product.product_images.length > 0 ? product.product_images[0].image : product.texture_image)"
-              :alt="product.title"
-              class="product-image"
-            />
-            <div v-show="imageLoadedMap[product.id]" class="category-badge">{{ product.texture_style }}</div>
-            <div v-show="imageLoadedMap[product.id]" class="ar-badge">AR</div>
-          </div>
-
-          <a-row style="margin-top:10px;">
-            <a-col span="24"><b>{{ product.title }}</b></a-col>
-            <a-col span="18">Colors</a-col>
-            <a-col span="6" style="display:flex;justify-content:end;">
-              <div
-                v-for="(color, index) in product.associated_colors.slice(0, 2)"
-                :key="index"
-                :style="{ background: color.color_hex, width:'20px', height:'20px', borderRadius:'20px', marginLeft:'2px' }"
-              ></div>
-            </a-col>
-            <a-col span="12" style="margin-top:4px;">Price</a-col>
-            <a-col span="12" style="margin-top:4px;">
-              <span style="font-size:14px;font-weight:600;margin-left:4px;display:flex;justify-content:end;">
-                ${{ product.sale_price_per_sqm || 0 }}
-              </span>
-            </a-col>
-            <a-col span="17">
-              <a-button block @click="viewProduct(product)" style="font-family:Poppins,sans-serif;font-size:12px;display:flex;justify-content:center;align-items:center;">
-                Product Details
-              </a-button>
-            </a-col>
-            <a-col :span="1"></a-col>
-            <a-col span="6" style="display:flex;align-items:end;justify-content:end;">
-              <a-button @click="toggleFavorite(product, 'floor_texture')" style="padding:2px 12px;display:flex;align-items:center;justify-content:center;">
-                <template v-if="product.is_favorited"><HeartFilled style="color:red" /></template>
-                <template v-else><HeartOutlined /></template>
-              </a-button>
-            </a-col>
-          </a-row>
-        </div>
-      </a-col>
-    </a-row>
-
-    <div v-if="floor.length > 0" style="display:flex;justify-content:center;margin-top:20px;margin-bottom:20px;">
-      <a-pagination
-        v-model:current="floorPagination.currentPage"
-        :total="floorPagination.totalCount"
-        :page-size="floorPagination.pageSize"
-        @change="handleFloorPageChange"
-        show-total
-        :show-size-changer="false"
-      />
-    </div>
-  </a-tab-pane>
-
-  <!-- ===== LIGHTS ===== -->
-  <a-tab-pane key="Lights" tab="Lights">
-    <div
-      v-if="myLights.length === 0"
-      style="height:70vh;gap:20px;flex-direction:column;display:flex;justify-content:center;align-items:center;"
-    >
-      <a-empty :description="'No Lights Available'"></a-empty>
-      <a-button type="primary" @click="show_add_new_light = true">Add Lights Product</a-button>
-    </div>
-
-    <div v-else>
-      <a-row>
-        <a-col
-          v-for="product in myLights"
-          :key="product.id"
-          class="product-responsive"
-          style="padding: 5px"
-        >
-          <div class="product" style="padding: 4px">
-            <div
-              class="product-image-container"
-              @click="viewProduct(product)"
-              style="position:relative;overflow:hidden;"
-            >
-              <div v-if="!imageLoadedMap[product.id]" class="product-skeleton"></div>
-              <img
-                :src="$store.state.root_media_api + product.primary_image"
-                style="position:absolute;width:0;height:0;opacity:0;"
-                @load="onProductImageLoad(product.id)"
-                alt=""
-              />
-              <img
-                v-show="imageLoadedMap[product.id]"
-                :src="$store.state.root_media_api + product.primary_image"
-                :alt="product.name"
-                class="product-image"
-              />
-              <div v-show="imageLoadedMap[product.id]" class="category-badge">{{ product.category.name }}</div>
-              <div v-show="imageLoadedMap[product.id]" class="ar-badge">AR</div>
-            </div>
-
-            <a-row>
-              <a-col span="24"><b>{{ truncateText(product.name || "No Name available", 19) }}</b></a-col>
-              <a-col span="18">Color</a-col>
-              <a-col span="6" style="display:flex;justify-content:end;">
+                  v-if="filteredProducts.length > 0"
+                  style="
+                    display: flex;
+                    justify-content: center;
+                    margin-top: 20px;
+                    margin-bottom: 20px;
+                  "
+                >
+                  <a-pagination
+                    v-model:current="productsPagination.currentPage"
+                    :total="productsPagination.totalCount"
+                    :page-size="productsPagination.pageSize"
+                    @change="handleProductsPageChange"
+                    show-total
+                    :show-size-changer="false"
+                  />
+                </div>
+              </a-tab-pane>
+              <a-tab-pane
+                key="Wall"
+                tab="Wall"
+                v-if="wall.length > 0"
+                force-render
+              >
+                <!-- {{ wall }} -->
                 <div
-                  v-for="(color, index) in product.colors.slice(0, 2)"
-                  :key="index"
-                  style="width:20px;height:20px;border-radius:20px;margin-left:2px;"
-                  :style="'background:' + color"
-                ></div>
-              </a-col>
-              <a-col span="12">Price</a-col>
-              <a-col span="12" style="display:flex;justify-content:end;">
-                <b>${{ product.pricing.price }}</b>
-              </a-col>
-              <a-col span="18" style="font-family:Poppins,sans-serif;font-size:13px;padding-right:5px;">
-                <a-button block @click="viewProduct(product)" style="display:flex;width:100%;align-items:center;justify-content:center;">
-                  Product Details
-                </a-button>
-              </a-col>
-              <a-col span="6" style="display:flex;align-items:end;justify-content:end;">
-                <a-button @click="toggleFavorite(product, 'product')" style="padding:2px 12px;display:flex;align-items:center;justify-content:center;">
-                  <template v-if="product.is_favorited"><HeartFilled style="color:red" /></template>
-                  <template v-else><HeartOutlined /></template>
-                </a-button>
-              </a-col>
-            </a-row>
-          </div>
-        </a-col>
-      </a-row>
+                  style="
+                    height: 70vh;
+                    gap: 20px;
+                    flex-direction: column;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                  "
+                  v-if="wall.length === 0"
+                >
+                  <a-empty
+                    :description="'No Wall Textures Available'"
+                  ></a-empty>
+                  <a-button
+                    type="primary"
+                    @click="show_add_new_wall_texture = true"
+                  >
+                    Add Wall Texture
+                  </a-button>
+                </div>
+                <a-row>
+                  <a-col
+                    v-for="product in wall"
+                    :key="product.id"
+                    class="product-responsive"
+                    style="padding: 5px"
+                  >
+                    <div class="product">
+                      <!-- Product image container -->
+                      <!-- <div 
+                                class="product-image-container" 
+                                @click="viewProduct(product)"
+                                style="position: relative;"
+                                > -->
 
-      <div style="display:flex;justify-content:center;margin-top:20px;margin-bottom:20px;">
-        <a-pagination
-          v-model:current="lightsPagination.currentPage"
-          :total="lightsPagination.totalCount"
-          :page-size="lightsPagination.pageSize"
-          @change="handleLightsPageChange"
-          show-total
-          :show-size-changer="false"
-        />
-      </div>
-    </div>
-  </a-tab-pane>
+                      <div
+                        class="product-image-container"
+                        @click="viewProduct(product)"
+                      >
+                        <img
+                          :src="
+                            $store.state.root_media_api +
+                            (product.product_images.length > 0
+                              ? product.product_images[0].image
+                              : product.texture_image)
+                          "
+                          :alt="product.title"
+                          class="product-image"
+                        />
+                        <!-- Category Badge -->
+                        <div class="category-badge">
+                          {{ product.texture_style }}
+                        </div>
+                        <!-- AR Badge -->
+                        <div class="ar-badge">AR</div>
+                      </div>
+                      <!-- </div> -->
 
-</a-tabs>
+                      <!-- Product details -->
+                      <a-row style="margin-top: 10px">
+                        <a-col span="24">
+                          <!-- <b>{{ product.title }}</b> -->
+                          <b>{{
+                            truncateText(
+                              product.title || "No title available",
+                              19
+                            )
+                          }}</b>
+                        </a-col>
+
+                        <!-- Colors -->
+                        <a-col span="18">Colors</a-col>
+                        <a-col
+                          span="6"
+                          style="display: flex; justify-content: end"
+                        >
+                          <div
+                            v-for="(
+                              color, index
+                            ) in product.associated_colors.slice(0, 2)"
+                            :key="index"
+                            :style="{
+                              background: color.color_hex,
+                              width: '20px',
+                              height: '20px',
+                              borderRadius: '20px',
+                              marginLeft: '2px',
+                            }"
+                          ></div>
+                        </a-col>
+
+                        <!-- Price -->
+                        <a-col span="12" style="margin-top: 4px">Price</a-col>
+                        <a-col
+                          span="12"
+                          style="
+                            margin-top: 4px;
+                            width: 100%;
+                            display: flex;
+                            justify-content: end;
+                          "
+                        >
+                          <!-- <del v-if="product.is_on_sale" style="font-size: 10px;">
+                                    ${{ product.price}}
+                                    </del> -->
+                          <!-- {{ product.sale_price }} -->
+                          <span
+                            style="
+                              font-size: 14px;
+                              font-weight: 600;
+                              margin-left: 4px;
+                            "
+                          >
+                            ${{ product.sale_price_per_sqm || 0 }}
+                          </span>
+                        </a-col>
+
+                        <!-- Buttons -->
+
+                        <a-col span="18">
+                          <a-button block @click="viewProduct(product)"
+                            >Product Details</a-button
+                          >
+                        </a-col>
+
+                        <a-col
+                          span="6"
+                          style="
+                            display: flex;
+                            align-items: end;
+                            justify-content: end;
+                          "
+                        >
+                          <!-- <a-button><HeartOutlined /></a-button> -->
+
+                          <a-button
+                            @click="toggleFavorite(product, 'wall_texture')"
+                            style="
+                              padding: 2px 12px;
+                              display: flex;
+                              align-items: center;
+                              justify-content: center;
+                            "
+                          >
+                            <template v-if="product.is_favorited">
+                              <HeartFilled style="color: red" />
+                            </template>
+                            <template v-else>
+                              <HeartOutlined />
+                            </template>
+                          </a-button>
+                        </a-col>
+                      </a-row>
+                    </div>
+                  </a-col>
+                </a-row>
+
+                <!-- Pagination for Wall -->
+                <div
+                  v-if="wall.length > 0"
+                  style="
+                    display: flex;
+                    justify-content: center;
+                    margin-top: 20px;
+                    margin-bottom: 20px;
+                  "
+                >
+                  <a-pagination
+                    v-model:current="wallPagination.currentPage"
+                    :total="wallPagination.totalCount"
+                    :page-size="wallPagination.pageSize"
+                    @change="handleWallPageChange"
+                    show-total
+                    :show-size-changer="false"
+                  />
+                </div>
+              </a-tab-pane>
+              <a-tab-pane key="Floor" tab="Floor" v-if="floor.length > 0">
+                <!-- {{ floor }} -->
+                <div
+                  style="
+                    height: 70vh;
+                    gap: 20px;
+                    flex-direction: column;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                  "
+                  v-if="floor.length === 0"
+                >
+                  <a-empty
+                    :description="'No Floor Textures Available'"
+                  ></a-empty>
+
+                  <a-button
+                    type="primary"
+                    @click="show_add_new_floor_texture = true"
+                  >
+                    Add Floor Texture
+                  </a-button>
+                </div>
+                <a-row v-else>
+                  <a-col
+                    v-for="product in floor"
+                    :key="product.id"
+                    class="product-responsive"
+                    style="padding: 5px"
+                  >
+                    <div class="product">
+                      <!-- Product image container -->
+                      <div
+                        class="product-image-container"
+                        @click="viewProduct(product)"
+                      >
+                        <img
+                          :src="
+                            $store.state.root_media_api +
+                            (product.product_images.length > 0
+                              ? product.product_images[0].image
+                              : product.texture_image)
+                          "
+                          :alt="product.title"
+                          class="product-image"
+                        />
+                        <!-- Category Badge -->
+                        <div class="category-badge">
+                          {{ product.texture_style }}
+                        </div>
+                        <!-- AR Badge -->
+                        <div class="ar-badge">AR</div>
+                      </div>
+
+                      <!-- Product details -->
+                      <a-row style="margin-top: 10px">
+                        <a-col span="24">
+                          <b>{{ product.title }}</b>
+                        </a-col>
+
+                        <!-- Colors -->
+                        <a-col span="18">Colors</a-col>
+                        <a-col
+                          span="6"
+                          style="display: flex; justify-content: end"
+                        >
+                          <div
+                            v-for="(
+                              color, index
+                            ) in product.associated_colors.slice(0, 2)"
+                            :key="index"
+                            :style="{
+                              background: color.color_hex,
+                              width: '20px',
+                              height: '20px',
+                              borderRadius: '20px',
+                              marginLeft: '2px',
+                            }"
+                          ></div>
+                        </a-col>
+
+                        <!-- Price -->
+                        <a-col span="12" style="margin-top: 4px">Price</a-col>
+                        <a-col span="12" style="margin-top: 4px">
+                          <!-- <del v-if="product.is_on_sale" style="font-size: 10px;">
+                                    ${{ product.price_per_sqm }}
+                                    </del> -->
+                          <span
+                            style="
+                              font-size: 14px;
+                              font-weight: 600;
+                              margin-left: 4px;
+                              display: flex;
+                              justify-content: end;
+                            "
+                          >
+                            <!-- ${{ product.current_price_per_sqm }} -->
+                            ${{ product.sale_price_per_sqm || 0 }}
+                          </span>
+                        </a-col>
+
+                        <!-- Buttons -->
+                        <a-col span="18">
+                          <a-button
+                            block
+                            @click="viewProduct(product)"
+                            style="
+                              font-family: 'Poppins', sans-serif;
+                              font-size: 13px;
+                            "
+                            >Product Details</a-button
+                          >
+                        </a-col>
+
+                        <a-col
+                          span="6"
+                          style="
+                            display: flex;
+                            align-items: end;
+                            justify-content: end;
+                          "
+                        >
+                          <!-- <a-button><HeartOutlined /></a-button> -->
+
+                          <a-button
+                            @click="toggleFavorite(product, 'floor_texture')"
+                            style="
+                              padding: 2px 12px;
+                              display: flex;
+                              align-items: center;
+                              justify-content: center;
+                            "
+                          >
+                            <template v-if="product.is_favorited">
+                              <HeartFilled style="color: red" />
+                            </template>
+                            <template v-else>
+                              <HeartOutlined />
+                            </template>
+                          </a-button>
+                        </a-col>
+                      </a-row>
+                    </div>
+                  </a-col>
+                </a-row>
+
+                <!-- Pagination for Floor -->
+                <div
+                  v-if="floor.length > 0"
+                  style="
+                    display: flex;
+                    justify-content: center;
+                    margin-top: 20px;
+                    margin-bottom: 20px;
+                  "
+                >
+                  <a-pagination
+                    v-model:current="floorPagination.currentPage"
+                    :total="floorPagination.totalCount"
+                    :page-size="floorPagination.pageSize"
+                    @change="handleFloorPageChange"
+                    show-total
+                    :show-size-changer="false"
+                  />
+                </div>
+              </a-tab-pane>
+              <a-tab-pane key="Lights" tab="Lights" v-if="myLights.length > 0">
+                <div
+                  v-if="myLights.length === 0"
+                  style="
+                    height: 70vh;
+                    gap: 20px;
+                    flex-direction: column;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                  "
+                >
+                  <!-- required light configuration solution to add new light product -->
+                  <!-- <br>❌ un-sunk light <br>
+                                ❌ 3D Lamp light draggabe everywhere <br>                             
+                                ✅ sunk light <br>
+                                ✅ sticked ceiling 3D light <br>                              -->
+                  <a-empty :description="'No Lights Available'"></a-empty>
+
+                  <a-button type="primary" @click="show_add_new_light = true">
+                    Add Lights Product
+                  </a-button>
+                </div>
+
+                <a-row v-else>
+                  <a-col
+                    v-for="product in myLights"
+                    :key="product.id"
+                    class="product-responsive"
+                    style="padding: 5px"
+                  >
+                    <div class="product">
+                      <div
+                        class="product-image-container"
+                        @click="viewProduct(product)"
+                      >
+                        <img
+                          :src="
+                            $store.state.root_media_api + product.primary_image
+                          "
+                          :alt="product.name"
+                          class="product-image"
+                        />
+                        <div class="category-badge">
+                          {{ product.category.name }}
+                        </div>
+                        <div class="ar-badge">AR</div>
+                      </div>
+                      <a-row>
+                        <!-- {{ truncateText(product.description || 'No description available', 8) }} -->
+
+                        <a-col span="24"
+                          ><b>{{
+                            truncateText(
+                              product.name || "No Name available",
+                              19
+                            )
+                          }}</b></a-col
+                        >
+                        <a-col span="18">Color</a-col>
+                        <a-col
+                          span="6"
+                          style="display: flex; justify-content: end"
+                        >
+                          <div
+                            v-for="(color, index) in product.colors.slice(0, 2)"
+                            :key="index"
+                            style="
+                              width: 20px;
+                              height: 20px;
+                              border-radius: 20px;
+                              margin-left: 2px;
+                            "
+                            :style="'background:' + color"
+                          ></div>
+                        </a-col>
+                        <a-col span="12">Price</a-col>
+                        <a-col
+                          span="12"
+                          style="display: flex; justify-content: end"
+                        >
+                          <!-- <del style="font-size: 10px;">${{ product.pricing.price }}</del> -->
+                          <b>${{ product.pricing.price }}</b>
+                        </a-col>
+
+                        <a-col
+                          span="18"
+                          style="
+                            font-family: 'Poppins', sans-serif;
+                            font-size: 13px;
+                          "
+                        >
+                          <a-button block @click="viewProduct(product)"
+                            >Product Details</a-button
+                          >
+                        </a-col>
+                        <a-col
+                          span="6"
+                          style="
+                            display: flex;
+                            align-items: end;
+                            justify-content: end;
+                          "
+                        >
+                          <!-- <a-button><HeartOutlined /></a-button> -->
+
+                          <a-button
+                            @click="toggleFavorite(product, 'product')"
+                            style="
+                              padding: 2px 12px;
+                              display: flex;
+                              align-items: center;
+                              justify-content: center;
+                            "
+                          >
+                            <template v-if="product.is_favorited">
+                              <HeartFilled style="color: red" />
+                            </template>
+                            <template v-else>
+                              <HeartOutlined />
+                            </template>
+                          </a-button>
+                        </a-col>
+                      </a-row>
+                    </div>
+                  </a-col>
+                </a-row>
+
+                <!-- Pagination for Lights -->
+                <div
+                  v-if="myLights.length > 0"
+                  style="
+                    display: flex;
+                    justify-content: center;
+                    margin-top: 20px;
+                    margin-bottom: 20px;
+                  "
+                >
+                  <a-pagination
+                    v-model:current="lightsPagination.currentPage"
+                    :total="lightsPagination.totalCount"
+                    :page-size="lightsPagination.pageSize"
+                    @change="handleLightsPageChange"
+                    show-total
+                    :show-size-changer="false"
+                  />
+                </div>
+              </a-tab-pane>
+
+              <a-tab-pane
+                key="Furniture"
+                tab="Furniture"
+                v-if="filteredProducts.length === 0"
+              >
+                <div
+                  v-if="!filteredProducts.length"
+                  style="
+                    height: 70vh;
+                    gap: 20px;
+                    flex-direction: column;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                  "
+                >
+                  <a-empty :description="'No Furniture Available'"></a-empty>
+
+                  <a-button type="primary" @click="addProduct()">
+                    Add Furniture
+                  </a-button>
+                </div>
+              </a-tab-pane>
+              <a-tab-pane
+                key="Wall"
+                tab="Wall"
+                v-if="wall.length === 0"
+                force-render
+              >
+                <!-- {{ wall }} -->
+                <div
+                  style="
+                    height: 70vh;
+                    gap: 20px;
+                    flex-direction: column;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                  "
+                  v-if="wall.length === 0"
+                >
+                  <a-empty
+                    :description="'No Wall Textures Available'"
+                  ></a-empty>
+                  <a-button
+                    type="primary"
+                    @click="show_add_new_wall_texture = true"
+                  >
+                    Add Wall Texture
+                  </a-button>
+                </div>
+              </a-tab-pane>
+              <a-tab-pane key="Floor" tab="Floor" v-if="floor.length === 0">
+                <!-- {{ floor }} -->
+                <div
+                  style="
+                    height: 70vh;
+                    gap: 20px;
+                    flex-direction: column;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                  "
+                  v-if="floor.length === 0"
+                >
+                  <a-empty
+                    :description="'No Floor Textures Available'"
+                  ></a-empty>
+
+                  <a-button
+                    type="primary"
+                    @click="show_add_new_floor_texture = true"
+                  >
+                    Add Floor Texture
+                  </a-button>
+                </div></a-tab-pane
+              >
+              <a-tab-pane
+                key="Lights"
+                tab="Lights"
+                v-if="myLights.length === 0"
+              >
+                <div
+                  v-if="myLights.length === 0"
+                  style="
+                    height: 70vh;
+                    gap: 20px;
+                    flex-direction: column;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                  "
+                >
+                  <!-- required light configuration solution to add new light product -->
+                  <!-- <br>❌ un-sunk light <br>
+                                    ❌ 3D Lamp light draggabe everywhere <br>                             
+                                    ✅ sunk light <br>
+                                    ✅ sticked ceiling 3D light <br>                              -->
+                  <a-empty :description="'No Lights Available'"></a-empty>
+
+                  <a-button type="primary" @click="show_add_new_light = true">
+                    Add Lights Product
+                  </a-button>
+                </div>
+              </a-tab-pane>
+            </a-tabs>
           </div>
         </div>
 
@@ -1589,7 +2075,7 @@
                             {{
                               truncateText(
                                 record.name || "No title available",
-                                13,
+                                13
                               )
                             }}
                           </div>
@@ -1607,7 +2093,7 @@
                               truncateText(
                                 record.description ||
                                   "No description available",
-                                19,
+                                19
                               )
                             }}
                           </div>
@@ -1803,7 +2289,7 @@
                           {{
                             truncateText(
                               record.title || "No title available",
-                              13,
+                              13
                             )
                           }}
                         </div>
@@ -1814,7 +2300,7 @@
                           {{
                             truncateText(
                               record.description || "No description available",
-                              19,
+                              19
                             )
                           }}
                         </div>
@@ -1857,7 +2343,7 @@
                       <div
                         v-for="(color, index) in record.associated_colors.slice(
                           0,
-                          3,
+                          3
                         )"
                         :key="index"
                         :style="{
@@ -2020,7 +2506,7 @@
                           {{
                             truncateText(
                               record.title || "No title available",
-                              13,
+                              13
                             )
                           }}
                         </div>
@@ -2031,7 +2517,7 @@
                           {{
                             truncateText(
                               record.description || "No description available",
-                              19,
+                              19
                             )
                           }}
                         </div>
@@ -2072,7 +2558,7 @@
                       <div
                         v-for="(color, i) in record.associated_colors?.slice(
                           0,
-                          3,
+                          3
                         )"
                         :key="i"
                         :style="{
@@ -2244,7 +2730,7 @@
                             {{
                               truncateText(
                                 record.name || "No title available",
-                                13,
+                                13
                               )
                             }}
                           </div>
@@ -2262,7 +2748,7 @@
                               truncateText(
                                 record.description ||
                                   "No description available",
-                                19,
+                                19
                               )
                             }}
                           </div>
@@ -2757,16 +3243,13 @@ export default {
       active_tab: "Furniture",
       searchQuery: "",
       isLoading: false,
+      imageLoadedMap: {},
       selectedProduct: null,
-      imageLoadedMap: {}, // ✨ ADD THIS
-
-      prepopulatedProductData: null,
-      isCreatingVariation: false,
 
       // popup for the add new product where user will need to choose the local 3d model or the DYD generated 3d model there
       open_add_newProductModal: false,
       show_add_new_product_locally_3d_model: false,
-      show_add_new_product_locally_3d_model_create_variation: false,
+
       open_add_newLightModal: false,
       show_add_new_light_product_locally_3d_model: false,
 
@@ -2874,7 +3357,7 @@ export default {
             .includes(this.searchQuery.toLowerCase()) ||
           product.furniture_type
             .toLowerCase()
-            .includes(this.searchQuery.toLowerCase()),
+            .includes(this.searchQuery.toLowerCase())
       );
     },
   },
@@ -2921,7 +3404,7 @@ export default {
         };
 
         this.isEditingVariation = true;
-        this.show_add_new_product_locally_3d_model_create_variation = true;
+        this.show_add_new_product_locally_3d_model = true;
 
         console.log("Prepopulated data set:", this.prepopulatedProductData);
       } catch (error) {
@@ -2931,11 +3414,13 @@ export default {
     },
 
     onProductImageLoad(id) {
-      this.imageLoadedMap[id] = false;
-      setTimeout(() => {
-        this.imageLoadedMap[id] = true;
-      }, 2000);
-    },
+    this.imageLoadedMap[id] = false;
+    setTimeout(() => {
+      this.imageLoadedMap[id] = true;
+    }, 1000);
+  },
+
+
     handleVariantSelection(variantId) {
       // Call your existing fetchProductDetails method with the variant ID
       this.fetchProductDetails(variantId);
@@ -2956,7 +3441,7 @@ export default {
               id: product.id,
               type: product_type,
             }),
-          },
+          }
         );
 
         const data = await response.json();
@@ -3187,7 +3672,7 @@ export default {
     filteredProductsByType(type) {
       const filtered = this.filteredProducts.filter(
         (product) =>
-          product.furniture_type === type || product.category.name === type,
+          product.furniture_type === type || product.category.name === type
       );
       return filtered;
     },
@@ -3216,7 +3701,6 @@ export default {
     // },
     async fetchMyProducts(page = 1) {
       try {
-        this.isLoading = true;
         const token = localStorage.getItem("token");
         const response = await fetch(
           `${this.$store.state.root_api}product/api-product-owner/products/?page=${page}&page_size=${this.productsPagination.pageSize}`,
@@ -3225,7 +3709,7 @@ export default {
             headers: {
               Authorization: `Token ${token}`,
             },
-          },
+          }
         );
         const result = await response.json();
         if (result.success) {
@@ -3238,8 +3722,6 @@ export default {
       } catch (error) {
         console.error("Error loading products:", error);
         this.$message.error("Error loading products");
-      } finally {
-        this.isLoading = false;
       }
     },
     //  async fetchMyLights() {
@@ -3270,7 +3752,7 @@ export default {
             headers: {
               Authorization: `Token ${token}`,
             },
-          },
+          }
         );
         const result = await response.json();
         if (result.success) {
@@ -3313,7 +3795,7 @@ export default {
             headers: {
               Authorization: `Token ${token}`,
             },
-          },
+          }
         );
         const result = await response.json();
         if (result.success) {
@@ -3355,7 +3837,7 @@ export default {
             headers: {
               Authorization: `Token ${token}`,
             },
-          },
+          }
         );
         const result = await response.json();
         if (result.success) {
@@ -3442,7 +3924,7 @@ export default {
     saveProduct() {
       if (this.editingProduct) {
         const index = this.products.findIndex(
-          (p) => p.id === this.editingProduct.id,
+          (p) => p.id === this.editingProduct.id
         );
         if (index !== -1) {
           this.editingProduct.dimensions = `${this.editingProduct.length} in W x ${this.editingProduct.height} H`;
@@ -3500,7 +3982,6 @@ export default {
       // this.products.push(newProduct);
       this.showAddProduct = false;
       this.fetchMyProducts(); // Refresh the list
-      this.fetchProductDetails(newProduct.id);
     },
     onLightProductCreated(newLightProduct) {
       // this.myLights.push(newLightProduct);
@@ -3573,15 +4054,18 @@ export default {
   /* padding: 16px; */
 }
 
-.product-skeleton {
-  position: absolute;
-  inset: 0;
+.product-image-skeleton {
   width: 100%;
-  height: 100%;
-  background: linear-gradient(110deg, #e5e7eb 8%, #f9fafb 18%, #e5e7eb 33%);
+  height: 240px; /* match your product-image height */
+  border-radius: 12px;
+  background: linear-gradient(
+    110deg,
+    #e5e7eb 8%,
+    #f9fafb 18%,
+    #e5e7eb 33%
+  );
   background-size: 200% 100%;
   animation: product-shimmer 1.6s infinite linear;
-  border-radius: 8px;
 }
 
 @keyframes product-shimmer {
@@ -3589,6 +4073,14 @@ export default {
     background-position-x: -200%;
   }
 }
+
+/* Ensure badges stay on top */
+.category-badge,
+.ar-badge {
+  position: absolute;
+  z-index: 10;
+}
+
 
 .product-image {
   width: 100%;
