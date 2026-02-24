@@ -357,7 +357,6 @@ export default {
       return "";
     },
     regenerateImages() {
-      console.log("RRRRRRRRRRRRrrrrrrrrrrr");
       // Simulate regeneration by shuffling images
       // const shuffled = [...this.allImages].sort(() => Math.random() - 0.5);
       // this.images = shuffled.slice(0, this.images.length);
