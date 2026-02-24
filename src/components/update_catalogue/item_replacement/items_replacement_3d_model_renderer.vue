@@ -602,7 +602,8 @@ this._pendingTransformRestore = null
   const el = this.renderer.domElement
 // 'pan-y' lets the browser scroll vertically when the pointer lands
 // on empty space; we call preventDefault only when hitting the model or ring.
-el.style.touchAction = 'pan-y'
+el.style.touchAction = 'none'
+// el.style.touchAction = 'pan-y'
 
   el.addEventListener('pointerdown',   this.onPointerDown)
   el.addEventListener('pointermove',   this.onPointerMove)

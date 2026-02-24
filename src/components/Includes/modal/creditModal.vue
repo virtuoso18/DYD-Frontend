@@ -5,6 +5,7 @@
       @cancel="$emit('close-modal')"
       title=""
       :footer="null"
+      centered
       :width="354"
     >
       <div class="redeem-modal-content">
@@ -42,11 +43,10 @@
 
         <div class="relative">
           <h2 class="!text-center text-[20px] font-semibold">
-            Purchase Credits
+            Daily Free Credits 
           </h2>
           <p class="!text-center leading-[20px] text-[15px] !mb-12">
-            You’ve used up all your credits! Add more to keep enjoying our
-            services.
+            Your daily free credits are ready to claim — claim them now and make the most of your day.
           </p>
         </div>
 
@@ -57,7 +57,7 @@
             @click="handleBuyFreeCredits"
             class="w-full"
           >
-            Redeem Credits
+            Claim My Free Credits
           </a-button>
         </div>
       </div>

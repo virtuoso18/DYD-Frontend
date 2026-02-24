@@ -538,7 +538,8 @@ export default {
       this.animate()
 
       const el = this.renderer.domElement
-      el.style.touchAction = 'pan-y'
+      // el.style.touchAction = 'pan-y'
+      el.style.touchAction = 'none'
       el.addEventListener('pointerdown',   this.onPointerDown)
       el.addEventListener('pointermove',   this.onPointerMove)
       el.addEventListener('pointerup',     this.onPointerUp)
