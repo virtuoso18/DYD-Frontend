@@ -215,6 +215,7 @@
 
   <div class="main-panel">
     <div class="image-grid" :class="gridClass">
+      
       <div
         v-for="(image, index) in images"
         :key="index"

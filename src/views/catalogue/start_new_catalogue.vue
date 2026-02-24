@@ -505,7 +505,7 @@
                   bottom: 0,
                   left: 0,
                   right: 0,
-                  maxHeight: '85vh',
+                  maxHeight: '87vh',
                   borderTopLeftRadius: '1.5rem',
                   borderTopRightRadius: '1.5rem',
                 }
@@ -606,11 +606,11 @@
                   class="bg-white rounded-xl border border-gray-200 p-3 flex flex-col items-center justify-center text-center hover:shadow-md transition-shadow"
                 >
                   <p
-                    class="text-2xl font-bold text-blue-600 leading-none"
-                    style="font-family: poppins"
-                  >
-                    0
-                  </p>
+                        class="text-2xl font-bold text-blue-600 leading-none mb-1"
+                      >
+                        {{ selectedImage.used_products }}
+                      </p>
+                      
                   <p class="text-xs text-gray-600 mt-1 font-family-poppins">
                     Products
                   </p>
@@ -635,7 +635,7 @@
 
               <!-- Buttons -->
               <div class="!space-y-2 !pt-16 sm:!pt-0">
-                <button
+                <!-- <button
                   @click="showObjectManagement = true"
                   class="w-full bg-[#F2F2F2] hover:bg-gray-200 text-gray-900 font-semibold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg active:scale-[0.98]"
                 >
@@ -646,7 +646,7 @@
                     />
                   </svg>
                   Manage Detected Objects
-                </button>
+                </button> -->
 
                 <!-- Use This Room Button -->
                 <button
