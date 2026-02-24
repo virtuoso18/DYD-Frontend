@@ -923,12 +923,12 @@ async loadBrandPurchasedPlanDetails() {
 
       const planName = this.currentPlanName.toLowerCase();
 
-      if (planName === 'basic') {
-        console.log('❌ BLOCKING ACCESS - Basic plan detected');
-        this.showPlanBlockModal = true;
-      } else {
+      if (this.business_available_actions.mini_site) {
         console.log('✅ ACCESS GRANTED - Plan:', this.currentPlanName);
         this.showPlanBlockModal = false;
+      } else {
+        console.log('❌ BLOCKING ACCESS - Basic plan detected');
+        this.showPlanBlockModal = true;
       }
     } else {
       // API returned but no data — don't block, allow access

@@ -2510,11 +2510,7 @@ initializeDrawingCanvas() {
       this.removeObjectHighlight();
     },
 
-  isBasicOrNoPlan() {
-    const plan = this.currentPlanName;
-    if (plan === undefined) return false; // still loading → don't block
-    return plan === null || (typeof plan === 'string' && plan.toLowerCase() === 'basic');
-  },
+ 
 
 goToUpgrade() {
     this.showRemoveObjectModal = false;
@@ -2597,7 +2593,7 @@ async removeSelectedObjects() {
   }
 
   // ✅ Check plan_name, NOT feature flag
-  if (this.isBasicOrNoPlan()) {
+  if (!this.business_available_actions.remove_object) {
     console.log('Basic plan - showing upgrade modal');
     this.showRemoveObjectModal = true;
     return;
@@ -4251,7 +4247,7 @@ handleTouchEnd(e) {
   position: relative;
   width: 100%;
   height: calc(
-    100vh - 140px
+    100vh - 16vh
   ); /* Adjust 140px based on your header/footer height */
   overflow: hidden;
   background: #f5f5f5;

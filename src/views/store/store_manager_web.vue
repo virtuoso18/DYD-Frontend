@@ -368,10 +368,14 @@ watch: {
 
   methods: {
 
-    isBasicOrNoPlan() {
-  const plan = this.currentPlanName;
-  if (plan === undefined) return false; // still loading → don't block
-  return plan === null || (typeof plan === 'string' && plan.toLowerCase() === 'basic');
+    has_staffUser() {
+  // const plan = this.currentPlanName;
+  // if (plan === undefined) return false; // still loading → don't block
+  // return plan === null || (typeof plan === 'string' && plan.toLowerCase() === 'basic');
+ const has_staff = this.business_available_actions.has_staff;
+ console.log(has_staff );
+ 
+  return !has_staff ;
 },
 
   // ✅ ADD THIS METHOD
@@ -437,7 +441,7 @@ watch: {
   
   // ✅ CHECK STAFF ACCESS
 checkStaffAccess() {
-  if (this.isBasicOrNoPlan()) {
+  if (this.has_staffUser()) {
     console.log('Basic plan - showing access denied modal');
     this.showAccessDeniedModal = true;
   } else {

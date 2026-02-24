@@ -1987,7 +1987,7 @@ export default {
 .canvas-container {
   position: relative;
   width: 100%;
-  height: calc(100vh - 140px);
+  height: calc(100vh - 16vh);
   min-height: 300px;
   overflow: hidden;
   background: #f5f5f5;
@@ -2172,7 +2172,7 @@ export default {
 /* Desktop */
 @media (min-width: 769px) {
   .canvas-container {
-    height: calc(100vh - 140px);
+    height: calc(100vh - 16vh);
   }
 }
 

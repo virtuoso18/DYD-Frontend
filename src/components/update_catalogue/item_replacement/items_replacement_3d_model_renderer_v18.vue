@@ -297,21 +297,6 @@ export default {
       lastKnownQuat:null,
       lastKnownScale:null,
       _pendingTransformRestore:null,
-
-
-      _worldUp:null,
-      _tiltQ:null,
-      _fn:null,
-      _spinQ:null,
-      _spinAxis:null,
-
-      _twoFingerRafId:null,
-      _twoFingerPending:null,
-      _twoFingerNewRotY:null,
-      _finger0Y:null,
-      _finger1Y:null,
-      _finger0Id:null,
-      _finger1Id:null,
     }
   },
 
@@ -337,24 +322,6 @@ export default {
   },
 
   created() {
-    // Pre-allocate reusable objects — add these:
-    this._worldUp = markRaw(new THREE.Vector3(0, 1, 0))
-    this._tiltQ   = markRaw(new THREE.Quaternion())
-    this._fn      = markRaw(new THREE.Vector3())
-    this._spinQ   = markRaw(new THREE.Quaternion())
-    this._spinAxis = markRaw(new THREE.Vector3())
-    
-    // ── Two-finger RAF throttle ──────────────────────────────
-    this._twoFingerRafId    = null
-    this._twoFingerPending  = false
-    this._twoFingerNewRotY  = 0
-
-    // ── Cache finger Y values directly (avoid Map.values() alloc) ──
-    this._finger0Y = 0
-    this._finger1Y = 0
-    this._finger0Id = -1
-    this._finger1Id = -1
-    
     // ── Non-reactive internal state ──────────────────────────────
     this.floorNormal3        = markRaw(new THREE.Vector3(0, 1, 0))
     this.floorCentroid3      = markRaw(new THREE.Vector3())
@@ -750,44 +717,36 @@ el.style.touchAction = 'none'
     // cancel any in-progress drag/arrow-rotation and start swipe-rotation.
 
     onPointerDown(event) {
-  if (!this.chair || !this.floorPlaneTHREE) return
+      if (!this.chair || !this.floorPlaneTHREE) return
 
-  if (event.pointerType === 'touch') {
-    this.twoFingerPointers.set(event.pointerId, event.clientY)
+      // ── Track all touch pointers for two-finger gesture ─────
+      if (event.pointerType === 'touch') {
+        this.twoFingerPointers.set(event.pointerId, event.clientY)
 
-    if (this.twoFingerPointers.size === 2) {
-      this.isDragging    = false
-      this.isDraggingRef = false
-      this.isRotating    = false
-      this.isRotatingRef = false
+        // When the 2nd finger lands → switch to two-finger rotation
+        if (this.twoFingerPointers.size === 2) {
+          // Cancel any single-finger action that was in progress
+          this.isDragging    = false
+          this.isDraggingRef = false
+          this.isRotating    = false
+          this.isRotatingRef = false
 
-      // ── Cache finger IDs and Y values directly ──────────
-      const ids = Array.from(this.twoFingerPointers.keys())
-      this._finger0Id = ids[0]
-      this._finger1Id = ids[1]
-      this._finger0Y  = this.twoFingerPointers.get(ids[0])
-      this._finger1Y  = this.twoFingerPointers.get(ids[1])
+          // Snapshot start state
+          const vals = Array.from(this.twoFingerPointers.values())
+          this.twoFingerStartAvgY  = (vals[0] + vals[1]) / 2
+          this.twoFingerStartAngle = this.chair.rotation.y
+          this.isTwoFingerRotating = true
 
-      this.twoFingerStartAvgY  = (this._finger0Y + this._finger1Y) / 2
-      this.twoFingerStartAngle = this.chair.rotation.y
-      this.isTwoFingerRotating = true
+          event.preventDefault()
+          return
+        }
 
-      // Cancel any pending RAF
-      if (this._twoFingerRafId) {
-        cancelAnimationFrame(this._twoFingerRafId)
-        this._twoFingerRafId = null
+        // If a 2-finger gesture is already running, just update and return
+        if (this.isTwoFingerRotating) {
+          event.preventDefault()
+          return
+        }
       }
-      this._twoFingerPending = false
-
-      event.preventDefault()
-      return
-    }
-
-    if (this.isTwoFingerRotating) {
-      event.preventDefault()
-      return
-    }
-  }
 
       // ── Single-pointer path (mouse or first touch finger) ────
       // Block if a 2-finger gesture is active
@@ -839,59 +798,33 @@ el.style.touchAction = 'none'
       this.renderer.domElement.setPointerCapture(event.pointerId)
       event.preventDefault()
     },
-// Fast version for use during drag/rotate — skips _fitRingToCanvas()
-// since scale only needs updating when TARGET_DIMS changes, not every frame.
-_snapRingToChairFast() {
-  if (!this.rotationRing || !this.chair) return
 
-  this.rotationRing.position.copy(this.chair.position)
-  this.rotationRing.position.addScaledVector(this.floorNormal3, 0.012)
+    onPointerMove(event) {
+      // ── Two-finger rotation (mobile) ─────────────────────────
+      if (event.pointerType === 'touch' && this.isTwoFingerRotating) {
+        if (!this.twoFingerPointers.has(event.pointerId)) return
 
-  this._fn.copy(this.floorNormal3).normalize()
-  this._tiltQ.setFromUnitVectors(this._worldUp, this._fn)
-  this.rotationRing.quaternion.copy(this._tiltQ)
-  // ← NO _fitRingToCanvas() call — scale stays as-is
-},
-   onPointerMove(event) {
-  if (event.pointerType === 'touch' && this.isTwoFingerRotating) {
-    if (!this.twoFingerPointers.has(event.pointerId)) return
+        // Update the moved finger's Y
+        this.twoFingerPointers.set(event.pointerId, event.clientY)
 
-    // ── Update cached Y directly — no Map allocation ─────
-    if (event.pointerId === this._finger0Id) {
-      this._finger0Y = event.clientY
-    } else if (event.pointerId === this._finger1Id) {
-      this._finger1Y = event.clientY
-    }
-    this.twoFingerPointers.set(event.pointerId, event.clientY)
+        if (this.twoFingerPointers.size === 2) {
+          const vals   = Array.from(this.twoFingerPointers.values())
+          const avgY   = (vals[0] + vals[1]) / 2
+          const deltaY = avgY - this.twoFingerStartAvgY
 
-    if (this.twoFingerPointers.size === 2) {
-      const avgY   = (this._finger0Y + this._finger1Y) * 0.5
-      const deltaY = avgY - this.twoFingerStartAvgY
+          // Sensitivity: dragging the full canvas height (screenH px) = 360°
+          const screenH  = this.renderer.domElement.clientHeight || window.innerHeight
+          const deltaRad = (deltaY / screenH) * Math.PI * 2   // ↓ swipe = positive rotation
 
-      // ── Better sensitivity: 200px swipe = full 360° ───
-      const deltaRad = (deltaY / 200) * Math.PI * 2
-      this._twoFingerNewRotY = this.twoFingerStartAngle + deltaRad
+          const newRotY = this.twoFingerStartAngle + deltaRad
+          this.chair.rotation.y = newRotY
+          this.chairRotation = ((THREE.MathUtils.radToDeg(newRotY) % 360) + 360) % 360
+          this._snapRingToChair()
+        }
 
-      // ── RAF throttle: only apply once per frame ────────
-      if (!this._twoFingerPending) {
-        this._twoFingerPending = true
-        this._twoFingerRafId = requestAnimationFrame(() => {
-          this._twoFingerPending = false
-          this._twoFingerRafId   = null
-
-          if (!this.chair || !this.isTwoFingerRotating) return
-
-          this.chair.rotation.y = this._twoFingerNewRotY
-          // Ring snap without scale recalc (scale doesn't change during rotate)
-          this._snapRingToChairFast()
-          this.snapLightToChair()  // ← keep light in sync too
-        })
+        event.preventDefault()
+        return
       }
-    }
-
-    event.preventDefault()
-    return
-  }
 
       // ── Single-pointer path ──────────────────────────────────
       if (event.pointerType === 'touch' && event.isPrimary === false) return
@@ -906,7 +839,7 @@ _snapRingToChairFast() {
         const deltaX  = ndcX - this.rotationStartMouseX
         const newRotY = this.rotationStartAngle + deltaX * Math.PI * 2
         this.chair.rotation.y = newRotY
-        // this.chairRotation = ((THREE.MathUtils.radToDeg(newRotY) % 360) + 360) % 360
+        this.chairRotation = ((THREE.MathUtils.radToDeg(newRotY) % 360) + 360) % 360
         this._snapRingToChair()
         event.preventDefault()
         return
@@ -938,11 +871,10 @@ _snapRingToChairFast() {
           newY = (-d - n.x * newX - n.z * newZ) / n.y
         }
 
-        // Model drag — in onPointerMove
-this.chair.position.set(newX, newY + this.chairHalfH * n.y, newZ)
-this.chair.position.addScaledVector(n, this.chairHalfH)
-this._snapRingToChairFast()  // ← fast version during drag
-this.snapLightToChair()
+        this.chair.position.set(newX, newY + this.chairHalfH * n.y, newZ)
+        this.chair.position.addScaledVector(n, this.chairHalfH)
+        this._snapRingToChair()
+        this.snapLightToChair()
 
         event.preventDefault()
       }
@@ -976,21 +908,13 @@ _saveLastKnownTransform() {
 
 // ── STEP 2: Replace onPointerUp entirely ──────────────────────────────────────
 onPointerUp(event) {
+  // ── Two-finger gesture cleanup ─────────────────────────────────────────────
   if (event.pointerType === 'touch') {
     this.twoFingerPointers.delete(event.pointerId)
 
     if (this.twoFingerPointers.size < 2 && this.isTwoFingerRotating) {
-      // ── Cancel any pending RAF ──────────────────────────
-      if (this._twoFingerRafId) {
-        cancelAnimationFrame(this._twoFingerRafId)
-        this._twoFingerRafId   = null
-        this._twoFingerPending = false
-      }
       this.isTwoFingerRotating = false
-      // Sync chairRotation once after gesture ends
-      if (this.chair) {
-        this.chairRotation = ((THREE.MathUtils.radToDeg(this.chair.rotation.y) % 360) + 360) % 360
-      }
+      // ✅ Save transform after two-finger rotation ends
       this._saveLastKnownTransform()
       this._emitTransformUpdate()
       return
@@ -1017,10 +941,6 @@ onPointerUp(event) {
 
   try { this.renderer.domElement.releasePointerCapture(event.pointerId) } catch (_) {}
 
-  // Sync reactive state ONCE here instead of on every move
-  if (this.chair) {
-    this.chairRotation = ((THREE.MathUtils.radToDeg(this.chair.rotation.y) % 360) + 360) % 360
-  }
   // ✅ Save transform after every drag/rotate ends
   this._saveLastKnownTransform()
   this._emitTransformUpdate()
@@ -1154,27 +1074,21 @@ onPointerUp(event) {
     },
 
     /** Snap ring position + tilt to match floor normal under the chair. */
-    // _snapRingToChair() {
-    //   if (!this.rotationRing || !this.chair) return
+    _snapRingToChair() {
+      if (!this.rotationRing || !this.chair) return
 
-    //   // Sit just above the floor surface to avoid z-fighting
-    //   this.rotationRing.position.copy(this.chair.position)
-    //   this.rotationRing.position.addScaledVector(this.floorNormal3, 0.012)
+      // Sit just above the floor surface to avoid z-fighting
+      this.rotationRing.position.copy(this.chair.position)
+      this.rotationRing.position.addScaledVector(this.floorNormal3, 0.012)
 
-    //   // Tilt the flat XZ ring so it aligns with the actual floor plane normal
-    //   const worldUp = new THREE.Vector3(0, 1, 0)
-    //   const fn      = this.floorNormal3.clone().normalize()
-    //   const tiltQ   = new THREE.Quaternion().setFromUnitVectors(worldUp, fn)
-    //   this.rotationRing.quaternion.copy(tiltQ)
+      // Tilt the flat XZ ring so it aligns with the actual floor plane normal
+      const worldUp = new THREE.Vector3(0, 1, 0)
+      const fn      = this.floorNormal3.clone().normalize()
+      const tiltQ   = new THREE.Quaternion().setFromUnitVectors(worldUp, fn)
+      this.rotationRing.quaternion.copy(tiltQ)
 
-    //   this._fitRingToCanvas()
-    // },
-
-    // Replace _snapRingToChair — no allocations
-      _snapRingToChair() {
-  this._snapRingToChairFast()
-  this._fitRingToCanvas()  // ← only called from non-hot paths
-},
+      this._fitRingToCanvas()
+    },
 
     /**
      * Scale the ring group so the circle appears roughly the same
@@ -1384,21 +1298,13 @@ onPointerUp(event) {
       if (this.rotationRing) this._snapRingToChair()
     },
 
-    // alignChairToFloor() {
-    //   if (!this.chair) return
-    //   const worldUp = new THREE.Vector3(0, 1, 0)
-    //   const fn      = this.floorNormal3.clone().normalize()
-    //   const tiltQ   = new THREE.Quaternion().setFromUnitVectors(worldUp, fn)
-    //   const spinQ   = new THREE.Quaternion().setFromAxisAngle(fn, (this.chairRotation * Math.PI) / 180)
-    //   this.chair.quaternion.multiplyQuaternions(spinQ, tiltQ)
-    // },
-    // Replace alignChairToFloor — no allocations
     alignChairToFloor() {
       if (!this.chair) return
-      this._fn.copy(this.floorNormal3).normalize()
-      this._tiltQ.setFromUnitVectors(this._worldUp, this._fn)
-      this._spinQ.setFromAxisAngle(this._fn, (this.chairRotation * Math.PI) / 180)
-      this.chair.quaternion.multiplyQuaternions(this._spinQ, this._tiltQ)
+      const worldUp = new THREE.Vector3(0, 1, 0)
+      const fn      = this.floorNormal3.clone().normalize()
+      const tiltQ   = new THREE.Quaternion().setFromUnitVectors(worldUp, fn)
+      const spinQ   = new THREE.Quaternion().setFromAxisAngle(fn, (this.chairRotation * Math.PI) / 180)
+      this.chair.quaternion.multiplyQuaternions(spinQ, tiltQ)
     },
 
     updateChairRotation() {
@@ -2263,11 +2169,7 @@ async createBinaryMaskBlob(bgWidth, bgHeight) {
     debugMask()       { this.toggleMaskOverlay() },
     debugPointCloud() { this.togglePointCloud() },
     debugFloorMesh()  { this.toggleFloorMesh() },
-    chairRotation() {
-        // Skip watcher-driven update if we're already handling it in onPointerMove
-        if (this.isDragging || this.isRotating || this.isTwoFingerRotating) return
-        this.updateChairRotation()
-      }
+    chairRotation()   { this.updateChairRotation() },
   },
 }
 </script>

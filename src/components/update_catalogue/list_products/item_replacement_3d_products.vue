@@ -397,11 +397,7 @@ planLoaded: false,
   },
   methods: {
 
-    isBasicOrNoPlan() {
-  const plan = this.currentPlanName;
-  if (plan === undefined) return false; // still loading → don't block
-  return plan === null || (typeof plan === 'string' && plan.toLowerCase() === 'basic');
-},
+  
 
 
  async loadBrandPurchasedPlanDetails() {
@@ -464,7 +460,7 @@ async showSwitchFurnitureModel() {
   }
 
   // ✅ Check plan_name, NOT feature flag (feature flags are true for all plans)
-  if (this.isBasicOrNoPlan()) {
+  if (!this.business_available_actions.switch_furniture) {
     console.log('Basic plan - showing upgrade modal');
     this.showUpgradeModal = true;
     return;
