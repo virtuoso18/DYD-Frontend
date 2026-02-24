@@ -1,6 +1,6 @@
 <template>
-  <!-- {{ isLoading }}
-  {{ internalLoading }} -->
+  {{ isLoading }}
+  {{ internalLoading }}
 <a-modal
     v-model:open="isShowInstructionModal"
     title="Instructions"
@@ -1813,9 +1813,6 @@ async renderItem() {
     this.internalLoadingText = 'Creating binary mask...'
     const maskBlob = await this.createBinaryMaskBlob(exportW, exportH)
     if (!maskBlob || maskBlob.size === 0) throw new Error('Mask blob empty')
-    // this.downloadImages(compositeBlob, maskBlob)
-  
-    // return
 
     // // ── DEBUG: remove these two lines when sending to backend ──
     // this.downloadImages(compositeBlob, maskBlob)
@@ -1864,7 +1861,7 @@ async renderItem() {
 
   } finally {
     // Always restore ring visibility on completion/error
-    // if (this.rotationRing) this.rotationRing.visible = this.showRotationRing;
+    if (this.rotationRing) this.rotationRing.visible = this.showRotationRing;
   }
 },
 
@@ -2083,7 +2080,7 @@ async createBinaryMaskBlob(bgWidth, bgHeight) {
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* padding: 12px 0; */
+  padding: 12px 0;
   min-height: 100%;
 }
 .debug-panel {
@@ -2124,7 +2121,7 @@ async createBinaryMaskBlob(bgWidth, bgHeight) {
     object-position: center center; /* ← add this */
 
   line-height: 0;
-  /* border-radius: 6px; */
+  border-radius: 6px;
   overflow: hidden;  /* already present — keep this */
 }
 @media (min-width: 769px) {

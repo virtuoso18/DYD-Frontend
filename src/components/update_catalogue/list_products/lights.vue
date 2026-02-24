@@ -4,7 +4,7 @@
 
     <div class="ai-catalog-section p-1 ">
       <div class="apply-section  md:hidden">
-        <a-button type="primary" size="large" block class="apply-button" @click="$emit('Apply_Light', 'magnetic-light-Renerer-apply')">
+        <a-button type="primary" size="large" block class="apply-button" @click="$emit('Apply_Light_mobile', 'magnetic-light-Renerer-apply_mobile')">
           Apply
         </a-button>
       </div>
@@ -122,7 +122,12 @@ padding:5px;"
                   </div>
                   <div v-if="item['3d_model']" style="padding:3px;border:1px solid grey;border-radius:5px;padding-left:5px;padding-right:5px;padding-top:1px;height:22px;font-size:12px">AR</div>
                 </div> -->
-                <div class="product-name">{{ truncateText( item.name || 'No name Available', 3) }}</div>
+<div 
+  class="product-name" 
+  style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;"
+>
+  {{ item.name || 'No name Available' }}
+</div>
   
                 <div class="product-details" style="display:flex;justify-content: space-between;">
                   <span class="product-color">Colors</span>

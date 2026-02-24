@@ -194,7 +194,7 @@
               <p class="plan-subtitle">MOST POPULAR</p>
             </div>
             <div class="price-section">
-              <span class="original-price">${{ calculateOriginalPrice(data.business_plan_list.standard.monthly_charges) }}</span>
+              <!-- <span class="original-price">${{ calculateOriginalPrice(data.business_plan_list.standard.monthly_charges) }}</span> -->
               <span class="currency">$</span>
               <span class="price">{{ data.business_plan_list.standard.monthly_charges }}</span>
               <p class="billing-period">{{data.business_plan_list.standard.plan_credits}} credits / month</p>
@@ -236,12 +236,12 @@
             </div>
             <div class="price-section">
               <span class="currency">$</span>
-              <span class="price">{{ data.standardfessional_plan_list.basic.monthly_charges }}</span>
-              <p class="billing-period">{{data.standardfessional_plan_list.basic.plan_credits}} credits / month</p>
+              <span class="price">{{ data.professional_plan_list.basic.monthly_charges }}</span>
+              <p class="billing-period">{{data.professional_plan_list.basic.plan_credits}} credits / month</p>
             </div>
             <button class="get-started-btn basic-btn" @click="this.$router.push('/login')">Start 7-days Free Trial</button>
             <div class="features-list">
-              <div v-for="(feature, index) in data.standardfessional_plan_list.basic.description_list" :key="index" class="feature-item">
+              <div v-for="(feature, index) in data.professional_plan_list.basic.description_list" :key="index" class="feature-item">
                 <span class="checkmark">✓</span>
                 <span>{{ feature }}</span>
               </div>
@@ -255,14 +255,14 @@
               <p class="plan-subtitle">MOST POPULAR</p>
             </div>
             <div class="price-section">
-              <span class="original-price">${{ calculateOriginalPrice(data.standardfessional_plan_list.standard.monthly_charges) }}</span>
+              <!-- <span class="original-price">${{ calculateOriginalPrice(data.professional_plan_list.standard.monthly_charges) }}</span> -->
               <span class="currency">$</span>
-              <span class="price">{{ data.standardfessional_plan_list.standard.monthly_charges }}</span>
-              <p class="billing-period">{{data.standardfessional_plan_list.standard.plan_credits}} credits / month</p>
+              <span class="price">{{ data.professional_plan_list.standard.monthly_charges }}</span>
+              <p class="billing-period">{{data.professional_plan_list.standard.plan_credits}} credits / month</p>
             </div>
             <button class="get-started-btn standard-btn" @click="this.$router.push('/login')">Start 7-days Free Trial</button>
             <div class="features-list">
-              <div v-for="(feature, index) in data.standardfessional_plan_list.standard.description_list" :key="index" class="feature-item">
+              <div v-for="(feature, index) in data.professional_plan_list.standard.description_list" :key="index" class="feature-item">
                 <span class="checkmark">✓</span>
                 <span>{{ feature }}</span>
               </div>
@@ -276,12 +276,12 @@
             </div>
             <div class="price-section">
               <span class="currency">$</span>
-              <span class="price">{{ data.standardfessional_plan_list.premium.monthly_charges }}</span>
-              <p class="billing-period">{{data.standardfessional_plan_list.premium.plan_credits}} credits / month</p>
+              <span class="price">{{ data.professional_plan_list.premium.monthly_charges }}</span>
+              <p class="billing-period">{{data.professional_plan_list.premium.plan_credits}} credits / month</p>
             </div>
             <button class="get-started-btn premium-btn" @click="this.$router.push('/login')">Start 7-days Free Trial</button>
             <div class="features-list">
-              <div v-for="(feature, index) in data.standardfessional_plan_list.premium.description_list" :key="index" class="feature-item">
+              <div v-for="(feature, index) in data.professional_plan_list.premium.description_list" :key="index" class="feature-item">
                 <span class="checkmark">✓</span>
                 <span>{{ feature }}</span>
               </div>
@@ -499,7 +499,7 @@ export default {
 }
 
 .header-section {
-  background: linear-gradient(135deg, #0d00ff 0%, #7C3AED 100%);
+  background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
   position: relative;
   padding: 80px 20px 120px;
   overflow: hidden;
@@ -604,14 +604,14 @@ export default {
 }
 
 .toggle-btn:hover {
-  border-color: #0d00ff;
-  color: #0d00ff;
+  border-color: #4F46E5;
+  color: #4F46E5;
 }
 
 .toggle-btn.active {
-  background: linear-gradient(135deg, #201b85 0%, #0d00ff 100%);
+  background: linear-gradient(135deg, #201b85 0%, #0d00ff 100%);;
   color: white;
-  border-color: transparent;
+  border-color: linear-gradient(135deg, #201b85 0%, #0d00ff 100%);;
 }
 
 .pricing-cards {
@@ -640,7 +640,7 @@ export default {
 }
 
 .standard-card {
-  background: linear-gradient(135deg, #201b85 0%, #0d00ff 100%);
+  background: linear-gradient(135deg, #201b85 0%, #0d00ff 100%);;
   color: white;
   transform: scale(1.05);
   box-shadow: 0 8px 30px rgba(45, 45, 45, 0.3);
@@ -802,12 +802,12 @@ export default {
 }
 
 .basic-btn, .premium-btn {
-  background: #0d00ff;
+  background: #4F46E5;
   color: white;
 }
 
 .basic-btn:hover:not(:disabled), .premium-btn:hover:not(:disabled) {
-  background: #0d00ff;
+  background: #4338CA;
 }
 
 .standard-btn {
@@ -901,7 +901,7 @@ export default {
 .credits-amount {
   font-size: 32px;
   font-weight: 700;
-  color: #0d00ff;
+  color: #4F46E5;
   margin-bottom: 12px;
 }
 
@@ -913,7 +913,7 @@ export default {
 
 .buy-btn {
   padding: 10px 28px;
-  background: #0d00ff;
+  background: #4F46E5;
   color: white;
   border: none;
   border-radius: 8px;
@@ -923,7 +923,7 @@ export default {
 }
 
 .buy-btn:hover {
-  background: #0d00ff;
+  background: #4338CA;
 }
 
 @media (max-width: 768px) {

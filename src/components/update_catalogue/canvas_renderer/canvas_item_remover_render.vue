@@ -945,9 +945,11 @@ export default {
   data() {
     return {
       isShowInstructionModal: false,
-      showRemoveObjectModal: false,
-    currentPlanName: 'Basic',
-    business_available_actions: null,
+    currentPlanName: undefined,
+    business_available_actions: undefined,
+    planLoading: false,
+    planLoaded: false,
+    showRemoveObjectModal: false,
       instructionConfig: [
         {
           key: "Pinch out zoom out",
@@ -1130,9 +1132,7 @@ export default {
 
   mounted() {
 
-     if (this.$route.query.brand) {
-    this.loadBrandPurchasedPlanDetails();
-    }
+   this.loadBrandPurchasedPlanDetails();
   
     this.cycleLoadingMessage();
     this.setupResizeObserver();
@@ -2510,121 +2510,114 @@ initializeDrawingCanvas() {
       this.removeObjectHighlight();
     },
 
-    async loadBrandPurchasedPlanDetails() {
-    try {
-      const brandSlug = this.$route.query.brand;
-      
-      if (!brandSlug) {
-        console.warn('⚠️ No brand slug found in query');
-        this.business_available_actions = {
-          remove_object: false
-        };
-        return;
-      }
-      
-      const url = `${this.$store.state.root_api}subscription/api/get-business-plan-details/${brandSlug}/`;
-      
-      console.log('🔍 Fetching plan details from:', url);
-
-      const token = localStorage.getItem('token');
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Token ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      console.log('📡 Response Status:', response.status);
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const result = await response.json();
-      
-      console.log('═══════════════════════════════════════');
-      console.log('📦 Full API Response:', result);
-      console.log('📊 Plan Name:', result.plan_name);
-      console.log('🎯 Business Available Actions:', result.business_available_actions);
-      console.log('🗑️ remove_object:', result.business_available_actions?.remove_object);
-      console.log('═══════════════════════════════════════');
-      
-      // Store plan info
-      this.currentPlanName = result.plan_name || 'Free';
-      
-      if (result.business_available_actions) {
-        this.business_available_actions = result.business_available_actions;
-        console.log('✅ Stored business_available_actions:', this.business_available_actions);
-      } else {
-        console.warn('⚠️ No business_available_actions in response');
-        this.business_available_actions = {
-          remove_object: false
-        };
-      }
-
-    } catch (error) {
-      console.error('═══════════════════════════════════════');
-      console.error('❌ Error loading plan details:', error);
-      console.error('═══════════════════════════════════════');
-      
-      // Default to restricted on error
-      this.business_available_actions = {
-        remove_object: false
-      };
-      console.log('⚠️ Set default: remove_object = false');
-    }
+  isBasicOrNoPlan() {
+    const plan = this.currentPlanName;
+    if (plan === undefined) return false; // still loading → don't block
+    return plan === null || (typeof plan === 'string' && plan.toLowerCase() === 'basic');
   },
-  
-  // ✅ UPDATED removeSelectedObjects METHOD
-  removeSelectedObjects() {
-    console.log('═══════════════════════════════════════');
-    console.log('🗑️ Remove Objects Clicked');
-    console.log('📦 business_available_actions:', this.business_available_actions);
-    
-    // Check if no objects selected
-    if (this.selectedObjects.length === 0) {
-      console.log('⚠️ No objects selected');
+
+goToUpgrade() {
+    this.showRemoveObjectModal = false;
+    this.$router.push('/pricing');
+  },
+
+
+async loadBrandPurchasedPlanDetails() {
+  // Prevent double-fetch
+  if (this.planLoading || this.planLoaded) return;
+
+  this.planLoading = true;
+
+  try {
+    const brandSlug = this.$route.query.brand;
+
+    if (!brandSlug) {
+      console.warn('No brand slug found in route query');
+      this.currentPlanName = null;
+      this.business_available_actions = { remove_object: false };
       return;
     }
 
-    // ✅ Check if plan data is loaded
-    if (!this.business_available_actions) {
-      console.warn('⚠️ Plan data not loaded yet! Blocking access by default.');
-      this.showRemoveObjectModal = true;
-      return;
-    }
+    const url = `${this.$store.state.root_api}subscription/api/get-business-plan-details/${brandSlug}/`;
+    const token = localStorage.getItem('token');
 
-    // ✅ Check remove_object permission
-    const canRemoveObject = this.business_available_actions.remove_object === true;
-    
-    console.log('🗑️ remove_object value:', this.business_available_actions.remove_object);
-    console.log('🚦 Can Remove Object:', canRemoveObject);
-    console.log('═══════════════════════════════════════');
+    console.log('Fetching plan for brand:', brandSlug);
 
-    if (!canRemoveObject) {
-      console.log('❌ Feature BLOCKED - Showing upgrade modal');
-      this.showRemoveObjectModal = true;
-      return;
-    }
-
-    console.log('✅ Feature ALLOWED - Removing objects');
-    console.log("Removing selected objects:", this.selectedObjects);
-
-    // ✅ ORIGINAL FUNCTIONALITY - Only runs if access is granted
-    this.$emit("objects-selected-for-removal", {
-      selectedObjects: [...this.selectedObjects],
-      objectMasks: this.selectedObjects.reduce((acc, key) => {
-        if (this.objectMasks[key]) {
-          acc[key] = this.objectMasks[key];
-        }
-        return acc;
-      }, {}),
-      canvasDimensions: this.getCanvasDimensions(),
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Token ${token}`,
+        'Content-Type': 'application/json',
+      },
     });
 
-    this.clearSelections();
-  },
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+
+    console.log('Full API result:', result);
+
+    if (result.success && result.data) {
+      // ✅ FIXED: was result.plan_name (wrong) → now result.data.plan_name (correct)
+      this.currentPlanName = result.data.plan_name;
+
+      // ✅ FIXED: was result.business_available_actions (wrong) → now result.data (correct)
+      this.business_available_actions = result.data;
+
+      console.log('Plan loaded:', this.currentPlanName);
+      console.log('Can remove_object:', this.business_available_actions.remove_object);
+    } else {
+      console.warn('result.success false or result.data missing');
+      this.currentPlanName = null;
+      this.business_available_actions = { remove_object: false };
+    }
+
+  } catch (error) {
+    console.error('Error loading plan details:', error);
+    this.currentPlanName = null;
+    this.business_available_actions = { remove_object: false };
+
+  } finally {
+    // ✅ Always runs — marks plan as loaded so removeSelectedObjects() can proceed
+    this.planLoading = false;
+    this.planLoaded = true;
+  }
+},
+
+
+
+  
+async removeSelectedObjects() {
+  if (this.selectedObjects.length === 0) return;
+
+  if (!this.planLoaded) {
+    await this.loadBrandPurchasedPlanDetails();
+  }
+
+  // ✅ Check plan_name, NOT feature flag
+  if (this.isBasicOrNoPlan()) {
+    console.log('Basic plan - showing upgrade modal');
+    this.showRemoveObjectModal = true;
+    return;
+  }
+
+  // ✅ Standard/Premium — allow removal
+  console.log('Feature ALLOWED - Removing objects');
+  this.$emit('objects-selected-for-removal', {
+    selectedObjects: [...this.selectedObjects],
+    objectMasks: this.selectedObjects.reduce((acc, key) => {
+      if (this.objectMasks[key]) acc[key] = this.objectMasks[key];
+      return acc;
+    }, {}),
+    canvasDimensions: this.getCanvasDimensions(),
+  });
+  this.clearSelections();
+},
+
+
+
   
   // ✅ ADD UPGRADE ACTION
   goToUpgrade() {
@@ -2634,8 +2627,11 @@ initializeDrawingCanvas() {
   
   // Your existing methods...
   getCanvasDimensions() {
-    // Your existing implementation
-  },
+      return {
+        width: this.canvas?.width || 800,
+        height: this.canvas?.height || 600,
+      };
+    },
   
   clearSelections() {
     // Your existing implementation

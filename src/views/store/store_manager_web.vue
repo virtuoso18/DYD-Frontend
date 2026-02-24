@@ -329,26 +329,31 @@ export default {
   name: 'store_manager',
   
   data() {
-    return {
-
-       showAccessDeniedModal: false,
-    currentPlanName: 'Free',
-    business_available_actions: null,
-      user: JSON.parse(localStorage.getItem('user') ),
-      profile: JSON.parse(localStorage.getItem('profile') ),
-      business_info: JSON.parse(localStorage.getItem('business_profile') || '{}'),
-
-    }
+  return {
+    showAccessDeniedModal: false,
+currentPlanName: undefined,
+    planLoaded: false,                   // ✅ add this
+    planLoading: false,                  // ✅ add this
+    business_available_actions: undefined,
+    user: JSON.parse(localStorage.getItem('user')),
+    profile: JSON.parse(localStorage.getItem('profile')),
+    business_info: JSON.parse(localStorage.getItem('business_profile') || '{}'),
+  };
   },
+
   computed: {
     currentRouteName() {
       return this.$route.name
     }
   },
-  watch: {
-  '$route.name'(newRoute) {
-    // Check access when route changes
+
+  
+watch: {
+  async '$route.name'(newRoute) {
     if (newRoute === 'manage_access') {
+      if (!this.planLoaded) {
+        await this.loadBrandPurchasedPlanDetails(); // ← wait for plan first
+      }
       this.checkStaffAccess();
     } else {
       this.showAccessDeniedModal = false;
@@ -362,89 +367,84 @@ export default {
 },
 
   methods: {
+
+    isBasicOrNoPlan() {
+  const plan = this.currentPlanName;
+  if (plan === undefined) return false; // still loading → don't block
+  return plan === null || (typeof plan === 'string' && plan.toLowerCase() === 'basic');
+},
+
   // ✅ ADD THIS METHOD
-  async loadBrandPurchasedPlanDetails() {
-    try {
-      // Get brand from route or localStorage
-      const brandSlug = this.$route.query.brand || this.business_info.slug;
-      
-      if (!brandSlug) {
-        console.warn('⚠️ No brand slug found');
-        this.business_available_actions = { has_staff: false };
-        return;
-      }
-      
-      const url = `${this.$store.state.root_api}subscription/api/get-business-plan-details/${brandSlug}/`;
-      
-      console.log('🔍 Fetching plan details from:', url);
+ async loadBrandPurchasedPlanDetails() {
+  if (this.planLoading || this.planLoaded) return;
+  this.planLoading = true;
 
-      const token = localStorage.getItem('token');
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Token ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
+  try {
+    const brandSlug = this.$route.query.brand || this.business_info?.slug;
 
-      console.log('📡 Response Status:', response.status);
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const result = await response.json();
-      
-      console.log('═══════════════════════════════════════');
-      console.log('📦 Full API Response:', result);
-      console.log('📊 Plan Name:', result.plan_name);
-      console.log('🎯 Business Available Actions:', result.business_available_actions);
-      console.log('👥 has_staff:', result.business_available_actions?.has_staff);
-      console.log('═══════════════════════════════════════');
-      
-      // Store plan info
-      this.currentPlanName = result.plan_name || 'Free';
-      
-      if (result.business_available_actions) {
-        this.business_available_actions = result.business_available_actions;
-      } else {
-        this.business_available_actions = { has_staff: false };
-      }
-
-      // ✅ CHECK IF ON MANAGE ACCESS PAGE
-      if (this.$route.name === 'manage_access') {
-        this.checkStaffAccess();
-      }
-
-    } catch (error) {
-      console.error('═══════════════════════════════════════');
-      console.error('❌ Error loading plan details:', error);
-      console.error('═══════════════════════════════════════');
-      
+    if (!brandSlug) {
+      console.warn('⚠️ No brand slug found');
       this.business_available_actions = { has_staff: false };
-      
-      if (this.$route.name === 'manage_access') {
-        this.checkStaffAccess();
-      }
+      return;
     }
-  },
+
+    const url = `${this.$store.state.root_api}subscription/api/get-business-plan-details/${brandSlug}/`;
+    const token = localStorage.getItem('token');
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        Authorization: `Token ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+    const result = await response.json();
+
+    console.log('📦 Full API Response:', result);
+    console.log('🏷️ plan_name:', result.data?.plan_name);        // ✅ result.data
+    console.log('👥 has_staff:', result.data?.has_staff);         // ✅ result.data
+
+    if (result.success && result.data) {
+      this.currentPlanName = result.data.plan_name || null;       // ✅ result.data.plan_name
+      this.business_available_actions = result.data;              // ✅ result.data not result.business_available_actions
+    } else {
+      this.currentPlanName = null;
+      this.business_available_actions = { has_staff: false };
+    }
+
+    // Check if on manage_access page after plan loads
+    if (this.$route.name === 'manage_access') {
+      this.checkStaffAccess();
+    }
+
+  } catch (error) {
+    console.error('❌ Error loading plan details:', error);
+    this.currentPlanName = null;
+    this.business_available_actions = { has_staff: false };
+
+    if (this.$route.name === 'manage_access') {
+      this.checkStaffAccess();
+    }
+  } finally {
+    this.planLoading = false;
+    this.planLoaded = true;
+  }
+},
+
   
   // ✅ CHECK STAFF ACCESS
-  checkStaffAccess() {
-    console.log('🔍 Checking staff access');
-    console.log('📦 business_available_actions:', this.business_available_actions);
-    console.log('👥 has_staff:', this.business_available_actions?.has_staff);
-    
-    const hasStaffAccess = this.business_available_actions?.has_staff === true;
-    
-    if (!hasStaffAccess) {
-      console.log('❌ NO STAFF ACCESS - Showing modal');
-      this.showAccessDeniedModal = true;
-    } else {
-      console.log('✅ STAFF ACCESS GRANTED');
-      this.showAccessDeniedModal = false;
-    }
-  },
+checkStaffAccess() {
+  if (this.isBasicOrNoPlan()) {
+    console.log('Basic plan - showing access denied modal');
+    this.showAccessDeniedModal = true;
+  } else {
+    this.showAccessDeniedModal = false;
+  }
+},
+
   
   // ✅ UPGRADE ACTION
   goToUpgrade() {

@@ -917,6 +917,9 @@ business_info: JSON.parse(localStorage.getItem('business_profile') || '{}'),
       mobileMenuOpen: false,
       isMobile: false,
       userAvatarLoaded: false,
+
+      planLoaded: false,   // ✅ add this
+planLoading: false,
       
       // Profile Completion Modal
       showCompletionModal: false,
@@ -1018,52 +1021,55 @@ business_info: JSON.parse(localStorage.getItem('business_profile') || '{}'),
     },
     
     // ✅ ADD API CALL METHOD
-    async loadBrandPurchasedPlanDetails() {
-      try {
-        const brandSlug = this.$route.query.brand;
-        
-        if (!brandSlug) {
-          console.warn('No brand slug found in query');
-          return;
-        }
-        
-        const url = `${this.$store.state.root_api}subscription/api/get-business-plan-details/${brandSlug}/`;
-        
-        console.log('Fetching plan details from:', url);
+ async loadBrandPurchasedPlanDetails() {
+  if (this.planLoading || this.planLoaded) return;
+  this.planLoading = true;
 
-        const token = localStorage.getItem('token');
-        const response = await fetch(url, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Token ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
+  try {
+    const brandSlug = this.business_info?.slug || this.$route.query.brand;
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+    if (!brandSlug) {
+      console.warn('No brand slug found');
+      this.business_available_actions = { generate_banner: false };
+      return;
+    }
 
-        const result = await response.json();
-        console.log('Plan details received:', result);
-        
-        // ✅ Store business_available_actions
-        if (result.business_available_actions) {
-          this.business_available_actions = result.business_available_actions;
-          localStorage.setItem(
-            'business_available_actions', 
-            JSON.stringify(result.business_available_actions)
-          );
-        }
+    const url = `${this.$store.state.root_api}subscription/api/get-business-plan-details/${brandSlug}/`;
+    const token = localStorage.getItem('token');
 
-      } catch (error) {
-        console.error('Error loading plan details:', error);
-        // Default to restrictive
-        this.business_available_actions = {
-          generate_banner: false
-        };
-      }
-    },
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        Authorization: `Token ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+    const result = await response.json();
+
+    console.log('📦 Full API Response:', result);
+    console.log('🏷️ plan_name:', result.data?.plan_name);
+    console.log('🖼️ generate_banner:', result.data?.generate_banner);
+
+    if (result.success && result.data) {
+      this.business_available_actions = result.data;
+    } else {
+      this.business_available_actions = { generate_banner: false };
+    }
+
+  } catch (error) {
+    console.error('❌ Error loading plan details:', error);
+    this.business_available_actions = { generate_banner: false };
+
+  } finally {                  // ✅ directly after catch, no comma, no extra }
+    this.planLoading = false;
+    this.planLoaded = true;
+  }
+},
+
+
     
     // ✅ ADD BANNER CLICK HANDLER
     handleGenerateBannerClick() {
@@ -1079,7 +1085,7 @@ business_info: JSON.parse(localStorage.getItem('business_profile') || '{}'),
       //   name: 'business:generate-banner'
       // });
 
-      this.$router.push('/business-dashboard/generate-banner?p=true');
+      this.$router.push('/business-dashboard/generate-banner');
       
       // Close mobile menu if open
       if (this.mobileMenuOpen) {

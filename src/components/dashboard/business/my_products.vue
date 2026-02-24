@@ -1,12 +1,20 @@
 <template>
   <div>
     <br /><a-modal
-      v-model:open="open_add_newProductModal"
-      title="Select how you wanted to add product"
-      @ok="handleOk"
-      centered
-      :width="480"
+  v-model:open="open_add_newProductModal"
+  @ok="handleOk"
+  centered
+  :width="480"
+>
+  <template #title>
+    <span class="!text-sm  !font-normal text-gray-800"
+    style="font-family: var(--font-family-main)"
+    
     >
+      Select How You Wanted To Add Product
+    </span>
+  </template>
+
       <div
         style="
           display: flex;
@@ -202,9 +210,10 @@
               />
             </circle>
           </svg>
-          <span style="flex: 1; text-align: left; font-size: 14px"
-            >Generate 3D Model with DYD AI</span
-          >
+         <span style="flex: 1; text-align: left; font-size: 13px; font-family: var(--font-family-main)">
+  Generate 3D Model with DYD AI
+</span>
+
         </a-button>
 
         <!-- Local Upload Option -->
@@ -331,7 +340,7 @@
               opacity="0.8"
             />
           </svg>
-          <span style="flex: 1; text-align: left; font-size: 14px"
+          <span style="flex: 1; text-align: left; font-size: 12px; font-family: var(--font-family-main)"
             >Upload 3D Model from Local System</span
           >
         </a-button>
@@ -992,213 +1001,156 @@
           </div>
         </div>
         <!--for mobile-->
-        <div
-          class="flex md:hidden flex-wrap items-center justify-between mb-5 w-full gap-3"
-          style="padding: 2px"
-        >
-          <!-- Title -->
-          <h2
-            className="!mt-4 sm:mt-6 text-lg lg:text-2xl font-semibold px-2 whitespace-nowrap"
-          >
-            My Products
-            <span class="text-gray-500 text-base">
-              ({{
-                products.length + wall.length + floor.length + myLights.length
-              }})
-            </span>
-          </h2>
+        <div class="flex md:hidden flex-col w-full gap-3 px-3 pt-3 pb-2">
 
-          <!-- Right Side Controls -->
-          <div class="flex flex-wrap items-center gap-3 w-auto sm:w-full">
-            <!-- View Toggle Buttons and Search -->
-            <div class="flex flex-wrap items-center gap-3 w-auto sm:w-full">
-              <!-- View Toggle Buttons -->
-              <div
-                class="flex border border-gray-200 rounded-md overflow-hidden"
-              >
-                <button
-                  @click="viewMode = 'grid'"
-                  :class="[
-                    'flex items-center px-3 py-2 font-semibold text-xs transition',
-                    viewMode === 'grid'
-                      ? 'bg-blue-600 !text-white'
-                      : 'bg-white !text-gray-600',
-                  ]"
-                  style="font-family: var(--font-family-main)"
-                >
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    class="mr-1"
-                  >
-                    <rect x="3" y="3" width="7" height="7"></rect>
-                    <rect x="14" y="3" width="7" height="7"></rect>
-                    <rect x="3" y="14" width="7" height="7"></rect>
-                    <rect x="14" y="14" width="7" height="7"></rect>
-                  </svg>
-                  Grid
-                </button>
-                <button
-                  @click="viewMode = 'table'"
-                  :class="[
-                    'flex items-center px-3 py-2 font-semibold text-xs transition ',
-                    viewMode === 'table'
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-white !text-gray-600',
-                  ]"
-                  style="font-family: var(--font-family-main); color: white"
-                >
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    class="mr-1"
-                  >
-                    <line x1="8" y1="6" x2="21" y2="6"></line>
-                    <line x1="8" y1="12" x2="21" y2="12"></line>
-                    <line x1="8" y1="18" x2="21" y2="18"></line>
-                    <line x1="3" y1="6" x2="3.01" y2="6"></line>
-                    <line x1="3" y1="12" x2="3.01" y2="12"></line>
-                    <line x1="3" y1="18" x2="3.01" y2="18"></line>
-                  </svg>
-                  List
-                </button>
-              </div>
-              <!-- Search Input -->
-              <div class="relative">
-                <input
-                  type="text"
-                  placeholder="Search Product"
-                  v-model="searchQuery"
-                  class="pl-8 pr-3 py-2 border border-gray-300 rounded-md w-48 outline-none text-sm"
-                />
-                <svg
-                  class="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <circle cx="11" cy="11" r="8"></circle>
-                  <path d="m21 21-4.35-4.35"></path>
-                </svg>
-              </div>
-            </div>
+  <!-- Row 1: Title + Grid/List Toggle -->
+  <div class="flex items-center !mt-2 justify-between">
+    <h2 class="text-lg font-semibold text-gray-800 whitespace-nowrap">
+      My Products
+      <span class="text-gray-400 text-sm font-normal">
+        ({{ products.length + wall.length + floor.length + myLights.length }})
+      </span>
+    </h2>
 
-            <!-- Action Buttons -->
-            <div class="flex gap-2 sm:flex-col sm:w-full">
-              <!-- Wall Button -->
-              <button
-                type="button"
-                @click="show_add_new_wall_texture = true"
-                class="flex items-center gap-2 px-1.5 py-1.5 !text-white rounded-md bg-blue-600 font-medium whitespace-nowrap w-auto sm:w-32"
-                style="font-family: var(--font-family-main)"
-              >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <rect x="3" y="3" width="8" height="8" rx="1" />
-                  <rect x="13" y="3" width="8" height="8" rx="1" />
-                  <rect x="3" y="13" width="8" height="8" rx="1" />
-                  <rect x="13" y="13" width="8" height="8" rx="1" />
-                </svg>
-                Wall
-              </button>
-              <!-- Floor Button -->
-              <button
-                type="button"
-                @click="show_add_new_floor_texture = true"
-                class="flex items-center gap-2 px-1.5 py-1.5 !text-white rounded-md bg-blue-600 font-medium whitespace-nowrap w-auto sm:w-32"
-                style="font-family: var(--font-family-main)"
-              >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                  <line x1="3" y1="9" x2="21" y2="9"></line>
-                  <line x1="3" y1="15" x2="21" y2="15"></line>
-                  <line x1="9" y1="3" x2="9" y2="21"></line>
-                  <line x1="15" y1="3" x2="15" y2="21"></line>
-                </svg>
-                Floor
-              </button>
-              <!-- Light Button -->
-              <button
-                type="button"
-                @click="show_add_new_light = true"
-                class="flex items-center gap-2 px-1.5 py-1.5 !text-white rounded-md bg-blue-600 font-medium whitespace-nowrap w-auto sm:w-32"
-                style="font-family: var(--font-family-main)"
-              >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <path
-                    d="M12 2a6 6 0 0 0-4.472 10.04c.46.5.872 1.28.872 2.16 0 1.1-.2 2.2-.6 3h6.4c-.4-.8-.6-1.9-.6-3 0-.88.41-1.66.87-2.16A6 6 0 0 0 12 2z"
-                  />
-                  <path d="M10 14h4" />
-                  <path d="M9 19h6v2H9z" />
-                </svg>
-                Light
-              </button>
-              <!-- Add Product Button -->
-              <button
-                type="button"
-                @click="addProduct()"
-                class="flex items-center gap-2 px-1.5 py-1.5 !text-white rounded-md bg-blue-600 font-medium whitespace-nowrap w-auto sm:w-32"
-                style="font-family: var(--font-family-main)"
-              >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <path
-                    d="M21 8v8a2 2 0 0 1-1 1.73L12 21l-8-3.27A2 2 0 0 1 3 16V8"
-                  />
-                  <path d="M12 3v5" />
-                  <path d="M3.27 6.96L12 10l8.73-3.04" />
-                  <path d="M12 12v6" />
-                  <path d="M9 15h6" />
-                </svg>
-                Add Product
-              </button>
-            </div>
-          </div>
-        </div>
+    <!-- Grid / List Toggle -->
+    <div class="flex border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+      <button
+        @click="viewMode = 'grid'"
+        :class="[
+          'flex items-center justify-center px-3 py-2 text-xs font-semibold transition-all duration-200',
+          viewMode === 'grid' ? 'bg-blue-600 !text-white' : 'bg-white !text-gray-500'
+        ]"
+        style="font-family: var(--font-family-main)"
+      >
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+          <rect x="3" y="3" width="7" height="7" rx="1"></rect>
+          <rect x="14" y="3" width="7" height="7" rx="1"></rect>
+          <rect x="3" y="14" width="7" height="7" rx="1"></rect>
+          <rect x="14" y="14" width="7" height="7" rx="1"></rect>
+        </svg>
+        <span class="ml-1">Grid</span>
+      </button>
+      <button
+        @click="viewMode = 'table'"
+        :class="[
+          'flex items-center justify-center px-3 py-2 text-xs font-semibold transition-all duration-200',
+          viewMode === 'table' ? 'bg-blue-600 !text-white' : 'bg-white !text-gray-500'
+        ]"
+        style="font-family: var(--font-family-main)"
+      >
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="8" y1="6" x2="21" y2="6"></line>
+          <line x1="8" y1="12" x2="21" y2="12"></line>
+          <line x1="8" y1="18" x2="21" y2="18"></line>
+          <line x1="3" y1="6" x2="3.01" y2="6"></line>
+          <line x1="3" y1="12" x2="3.01" y2="12"></line>
+          <line x1="3" y1="18" x2="3.01" y2="18"></line>
+        </svg>
+        <span class="ml-1">List</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Row 2: Search Bar Full Width -->
+  <div class="relative w-full">
+    <svg
+      class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+      width="15" height="15" viewBox="0 0 24 24"
+      fill="none" stroke="currentColor" stroke-width="2"
+    >
+      <circle cx="11" cy="11" r="8"></circle>
+      <path d="m21 21-4.35-4.35"></path>
+    </svg>
+    <input
+      type="text"
+      placeholder="Search products..."
+      v-model="searchQuery"
+      class="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-xl bg-gray-50 text-sm outline-none focus:border-blue-400 focus:bg-white transition-all duration-200 text-gray-700 placeholder-gray-400"
+    />
+  </div>
+
+  <!-- Row 3: 4 Action Buttons in Grid -->
+  <div class="grid grid-cols-4 gap-2">
+
+    <!-- Wall -->
+    <button
+      type="button"
+      @click="show_add_new_wall_texture = true"
+      class="flex flex-col items-center justify-center gap-1 py-2.5 rounded-xl bg-blue-100 border border-gray-100 text-blue-600 hover:bg-blue-600 hover:text-white transition-all duration-200 active:scale-95"
+      style="font-family: var(--font-family-main)"
+    >
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2">
+        <rect x="3" y="3" width="8" height="8" rx="1" />
+        <rect x="13" y="3" width="8" height="8" rx="1" />
+        <rect x="3" y="13" width="8" height="8" rx="1" />
+        <rect x="13" y="13" width="8" height="8" rx="1" />
+      </svg>
+      <span class="text-[11px] text-gray-700 font-semibold">Wall</span>
+    </button>
+
+    <!-- Floor -->
+    <button
+      type="button"
+      @click="show_add_new_floor_texture = true"
+      class="flex flex-col items-center justify-center gap-1 py-2.5 rounded-xl bg-blue-100 border border-gray-100 text-blue-600 hover:bg-blue-600 hover:text-white transition-all duration-200 active:scale-95"
+      style="font-family: var(--font-family-main)"
+    >
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2">
+        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+        <line x1="3" y1="9" x2="21" y2="9"></line>
+        <line x1="3" y1="15" x2="21" y2="15"></line>
+        <line x1="9" y1="3" x2="9" y2="21"></line>
+        <line x1="15" y1="3" x2="15" y2="21"></line>
+      </svg>
+      <span class="text-[11px] text-gray-700 font-semibold">Floor</span>
+    </button>
+
+    <!-- Light -->
+    <button
+      type="button"
+      @click="show_add_new_light = true"
+      class="flex flex-col items-center justify-center gap-1 py-2.5 rounded-xl bg-blue-100 border border-gray-100 text-blue-600 hover:bg-blue-600 hover:text-white transition-all duration-200 active:scale-95"
+      style="font-family: var(--font-family-main)"
+    >
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2">
+        <path d="M12 2a6 6 0 0 0-4.472 10.04c.46.5.872 1.28.872 2.16 0 1.1-.2 2.2-.6 3h6.4c-.4-.8-.6-1.9-.6-3 0-.88.41-1.66.87-2.16A6 6 0 0 0 12 2z"/>
+        <path d="M10 14h4" />
+        <path d="M9 19h6v2H9z" />
+      </svg>
+      <span class="text-[11px] text-gray-700 font-semibold">Light</span>
+    </button>
+
+    <!-- Add Product -->
+    <button
+      type="button"
+      @click="addProduct()"
+      class="flex flex-col  items-center justify-center gap-1 py-2.5 rounded-xl bg-blue-100 border border-gray-100  text-white hover:bg-blue-700 transition-all duration-200 active:scale-95"
+      style="font-family: var(--font-family-main)"
+    >
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2">
+        <path d="M21 8v8a2 2 0 0 1-1 1.73L12 21l-8-3.27A2 2 0 0 1 3 16V8"/>
+        <path d="M12 3v5" />
+        <path d="M3.27 6.96L12 10l8.73-3.04" />
+        <path d="M12 12v6" />
+        <path d="M9 15h6" />
+      </svg>
+      <span class="text-[11px] text-gray-700  font-semibold">Add Product</span>
+    </button>
+
+  </div>
+
+</div>
+
 
         <!-- Grid View -->
         <div v-if="viewMode === 'grid'" class="sm:main">
           <div class="products-list" style="padding: 2px">
-            <a-tabs v-model:activeKey="active_tab">
+            <a-tabs v-model:activeKey="active_tab" class="!ml-2">
               <a-tab-pane key="Furniture" tab="Furniture">
                 <div
                   v-if="isLoading"
                   class="spinner-sec w-full h-[80vh] flex justify-center items-center"
+                  style="font-family: var(--font-family-main)"
                 >
                   <a-spin tip="Loading..."> </a-spin>
                 </div>

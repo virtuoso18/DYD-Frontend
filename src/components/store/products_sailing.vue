@@ -223,84 +223,88 @@ export default {
   data() {
     return {
       imageLoadedMap: {},
-      business_available_actions: null,
-      iframeLoaded: false,
-      showAccessModal: false, // ✅ Modal state
-      productPageUrl: null, // ✅ Store product page URL
-      pendingProduct: null, // ✅ Store clicked product
+    business_available_actions: null,
+    iframeLoaded: false,
+    showAccessModal: false,
+    productPageUrl: null,
+    pendingProduct: null,
+    currentPlanName: undefined, // ← undefined means "not fetched yet", null means "fetched but no plan"
+    planLoading: false,
+    planLoaded: false,
     };
   },
-  
-  computed: {
-    canAccessARProducts() {
-      return this.hasFeature('ar_available_for_products');
-    }
-  },
-  
+
   mounted() {
     this.loadBrandPurchasedPlanDetails();
   },
-  
+
   methods: {
-    // ✅ HELPER METHOD
-    hasFeature(featureName) {
-      if (!this.business_available_actions) {
-        return false;
-      }
-      return this.business_available_actions[featureName] === true;
-    },
-    
-    // ✅ API CALL TO GET BUSINESS PLAN
-    async loadBrandPurchasedPlanDetails() {
-      try {
-        const brandSlug = this.$route.query.brand || 
-                         (this.products && this.products[0]?.business_slug);
-        
-        if (!brandSlug) {
-          console.warn('No brand slug found');
-          return;
-        }
-        
-        const url = `${this.$store.state.root_api}subscription/api/get-business-plan-details/${brandSlug}/`;
-        
-        console.log('Fetching plan details from:', url);
+    // ✅ Check if plan is basic or null (should show modal)
+isBasicOrNoPlan() {
+  const plan = this.currentPlanName;
+  // undefined = still loading, don't show modal yet
+  // null = no plan returned from API = treat as basic
+  // "basic" = basic plan
+  return plan === null || (typeof plan === 'string' && plan.toLowerCase() === 'basic');
+},
 
-        const token = localStorage.getItem('token');
-        const response = await fetch(url, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Token ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
+// ✅ API CALL TO GET BUSINESS PLAN
+async loadBrandPurchasedPlanDetails() {
+  if (this.planLoading || this.planLoaded) return;
+  this.planLoading = true;
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+  try {
+    // ✅ business_slug with underscore
+    const brandSlug = this.$route.query.brand || this.products[0]?.business_slug;
 
-        const result = await response.json();
-        console.log('Plan details received:', result);
+    if (!brandSlug) {
+      console.warn('❌ No brand slug found');
+      this.currentPlanName = null;
+      this.planLoaded = true;
+      return;
+    }
 
-        debugger
-        
-        if (result.business_available_actions) {
-          this.business_available_actions = result.business_available_actions;
-          localStorage.setItem(
-            'business_available_actions', 
-            JSON.stringify(result.business_available_actions)
-          );
-        }
+    console.log('✅ brandSlug:', brandSlug);
 
-      } catch (error) {
-        console.error('Error loading plan details:', error);
-        this.business_available_actions = {
-          ar_available_for_products: true  
+    const url = `${this.$store.state.root_api}subscription/api/get-business-plan-details/${brandSlug}`;
+    const token = localStorage.getItem('token');
 
-          //just add true here to open 
-        };
-      }
-    },
-    
+    console.log('🌐 Fetching URL:', url);
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        Authorization: `Token ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+    const result = await response.json();
+
+    console.log('📦 Full API result:', result);
+    console.log('🏷️ plan_name:', result.data?.plan_name);
+
+    if (result.success && result.data) {
+      this.currentPlanName = result.data.plan_name || null;
+      this.businessavailableactions = result.data;
+      console.log('✅ currentPlanName set to:', this.currentPlanName);
+    } else {
+      console.warn('⚠️ result.success false or result.data missing');
+      this.currentPlanName = null;
+    }
+
+  } catch (error) {
+    console.error('❌ Error loading plan details:', error);
+    this.currentPlanName = null;
+  } finally {
+    this.planLoading = false;
+    this.planLoaded = true;
+  }
+},
+
+
     // ✅ BUILD PRODUCT PAGE URL
     buildProductPageUrl(product) {
       let produuct_type = "product";
@@ -313,8 +317,7 @@ export default {
       } else {
         produuct_type = product.type;
       }
-      
-      // Build the full URL for iframe
+
       const baseUrl = window.location.origin;
       const route = this.$router.resolve({
         name: "buisness_product",
@@ -324,31 +327,33 @@ export default {
           product_id: product.product_id,
         },
       });
-      
+
       return baseUrl + route.href;
     },
-    
-    // ✅ HANDLE PRODUCT CLICK
-    async handleProductClick(product) {
-      this.pendingProduct = product;
-      
-      // Check if AR feature is available
-      if (!this.hasFeature('ar_available_for_products')) {
 
-         this.iframeLoaded = false;
-        // Build product page URL for iframe
-        this.productPageUrl = this.buildProductPageUrl(product);
-        
-        // Show modal with blurred product page
-        this.showAccessModal = true;
-        this.$message.warning('Upgrade your plan to access AR Product Details');
-        return;
-      }
-      
-      // If access granted, navigate normally
-      this.goto_product_Route(product);
-    },
-    
+    // ✅ HANDLE PRODUCT CLICK — shows modal ONLY if plan is basic or null
+   async handleProductClick(product) {
+  this.pendingProduct = product;
+
+  // Wait for plan to finish loading if still in progress
+  if (!this.planLoaded) {
+    await this.loadBrandPurchasedPlanDetails();
+  }
+
+  console.log('🎯 Product click - plan name:', this.currentPlanName);
+
+  if (this.isBasicOrNoPlan()) {
+    console.log('🔒 Basic/no plan - showing modal');
+    this.iframeLoaded = false;
+    this.productPageUrl = this.buildProductPageUrl(product);
+    this.showAccessModal = true;
+    this.$message.warning('Upgrade your plan to access AR Product Details');
+    return;
+  }
+
+  console.log('✅ Standard/Premium plan - navigating to product');
+  this.goto_product_Route(product);
+},
     // ✅ NORMAL NAVIGATION
     goto_product_Route(product) {
       let produuct_type = "product";
@@ -361,7 +366,7 @@ export default {
       } else {
         produuct_type = product.type;
       }
-      
+
       this.$router.push({
         name: "buisness_product",
         params: {
@@ -371,32 +376,29 @@ export default {
         },
       });
     },
-    
+
     // ✅ CLOSE MODAL AND RESET
     closeModalAndNavigateBack() {
       this.showAccessModal = false;
       this.productPageUrl = null;
       this.pendingProduct = null;
-       this.iframeLoaded = false;
+      this.iframeLoaded = false;
     },
-    
+
     // ✅ HANDLE UPGRADE
     handleUpgrade() {
       this.showAccessModal = false;
       this.$message.success('Redirecting to upgrade page...');
-      // TODO: Navigate to pricing page
       // this.$router.push('/pricing');
     },
-    
+
     // ✅ IFRAME LOADED
-     onIframeLoad() {
-      console.log('Product page loaded in iframe');
-      // Add small delay for smooth transition
+    onIframeLoad() {
       setTimeout(() => {
-        this.iframeLoaded = true; // ✅ UPDATE THIS
-      },);
+        this.iframeLoaded = true;
+      }, 300);
     },
-    
+
     truncateText(text, charLimit = 18) {
       if (!text) return "";
       if (text.length <= charLimit) return text;

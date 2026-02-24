@@ -890,80 +890,61 @@ export default {
 
 async loadBrandPurchasedPlanDetails() {
   try {
+    // ✅ This file correctly uses route params — keep this
     const brandSlug = this.$route.params.buisness_name;
-    
+
     if (!brandSlug) {
       console.warn('⚠️ No brand slug found in route params');
       return;
     }
-    
+
     const url = `${this.$store.state.root_api}subscription/api/get-business-plan-details/${brandSlug}/`;
-    
-    
     const token = localStorage.getItem('token');
+
     const response = await fetch(url, {
       method: 'GET',
       headers: {
-        'Authorization': `Token ${token}`,
-        'Content-Type': 'application/json'
-      }
+        Authorization: `Token ${token}`,
+        'Content-Type': 'application/json',
+      },
     });
 
-    
-    
-    // Now check the Network tab to see the raw response
-    // Look for the request to: get-business-plan-details/${brandSlug}/
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
     const result = await response.json();
-    // debugger
-    
-    // DEBUGGER: After parsing JSON, inspect the result object
-   
-    
+
     console.log('📦 Plan Details Result:', result);
-    
-    // Store plan name
-    this.currentPlanName = result.plan_name ;
-    
-    // Store business actions
-    if (result.business_available_actions) {
-      this.business_available_actions = result.business_available_actions;
-    }
-    
-    // CHECK IF PLAN IS BASIC OR FALSE
-    const planName = (result.plan_name ).toLowerCase();
-    const isBasicPlan = (planName === 'basic');
-    
-    // DEBUGGER: Before setting modal state
-    console.log(isBasicPlan);
-    debugger;
-    
-    if (isBasicPlan) {
-      console.log('❌ BLOCKING ACCESS - Basic plan detected');
-      this.showPlanBlockModal = true;
+    console.log('🏷️ plan_name:', result.data?.plan_name);  // ✅ result.data
+
+    // ✅ result.data.plan_name — NOT result.plan_name
+    if (result.success && result.data) {
+      this.currentPlanName = result.data.plan_name || 'unknown';
+      this.business_available_actions = result.data; // ✅ result.data — NOT result.business_available_actions
+
+      const planName = this.currentPlanName.toLowerCase();
+
+      if (planName === 'basic') {
+        console.log('❌ BLOCKING ACCESS - Basic plan detected');
+        this.showPlanBlockModal = true;
+      } else {
+        console.log('✅ ACCESS GRANTED - Plan:', this.currentPlanName);
+        this.showPlanBlockModal = false;
+      }
     } else {
-      console.log('✅ ACCESS GRANTED - Premium plan detected');
+      // API returned but no data — don't block, allow access
+      console.warn('⚠️ No plan data returned');
       this.showPlanBlockModal = false;
     }
 
-    // DEBUGGER: After setting modal state
-    // debugger;
-
   } catch (error) {
     console.error('❌ Error loading plan details:', error);
-    // On error, block access as safety measure
-    
-    this.showPlanBlockModal = true;
-    this.currentPlanName = 'Unknown';
-    
-    // DEBUGGER: Error state
-    // debugger;
+    // ✅ On error — do NOT block the whole page
+    // Fail open — let user see the store
+    this.showPlanBlockModal = false;
+    this.currentPlanName = 'unknown';
   }
 },
+
   
   // ✅ ADD MODAL ACTION METHODS
   goToPricing() {

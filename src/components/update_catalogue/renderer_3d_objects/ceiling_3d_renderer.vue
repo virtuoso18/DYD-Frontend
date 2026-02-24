@@ -138,86 +138,89 @@
         </div>
       </div>
 
-      <!-- BOTTOM ACTION BAR -->
-      <div class="flex flex-wrap justify-between items-center py-2 px-2 bg-white w-full gap-2">
+        <!-- BOTTOM ACTION BAR -->
+        <!-- BOTTOM ACTION BAR -->
+<div class="flex flex-wrap justify-between items-center py-2 px-2 bg-white w-full gap-2">
 
-        <!-- Controls row -->
-        <div class="flex flex-row gap-4 items-center overflow-x-auto flex-1 min-w-0">
+  <!-- Controls row -->
+  <div class="flex flex-wrap gap-4 items-center  " >
 
-          <!-- Roll -->
-          <div class="flex flex-col md:flex-row md:items-center gap-1 flex-shrink-0">
-            <label class="text-[10px] font-bold whitespace-nowrap">Roll</label>
-            <div class="flex md:hidden items-center gap-1">
-              <button type="button" @click="adjustRoll = Math.max(-45, adjustRoll - 1)" :disabled="adjustRoll <= -45" class="w-6 h-6 flex items-center justify-center bg-gray-200 rounded-md disabled:opacity-50">
-                <span class="text-sm font-bold">−</span>
-              </button>
-              <span class="text-[10px] min-w-[35px] text-center font-semibold">{{ adjustRoll }}°</span>
-              <button type="button" @click="adjustRoll = Math.min(45, adjustRoll + 1)" :disabled="adjustRoll >= 45" class="w-6 h-6 flex items-center justify-center bg-gray-200 rounded-md disabled:opacity-50">
-                <span class="text-sm font-bold">+</span>
-              </button>
-            </div>
-            <div class="hidden md:flex items-center gap-1">
-              <a-slider v-model:value="adjustRoll" :min="-45" :max="45" :step="1" :tooltip-formatter="v => `${v}°`" style="width:120px" />
-              <span style="font-size:9px;min-width:25px;text-align:center">{{ adjustRoll }}°</span>
-            </div>
-          </div>
-
-          <!-- Pitch -->
-          <div class="flex flex-col md:flex-row md:items-center gap-1 flex-shrink-0">
-            <label class="text-[10px] font-bold whitespace-nowrap">Pitch</label>
-            <div class="flex md:hidden items-center gap-1">
-              <button type="button" @click="adjustPitch = Math.max(-45, adjustPitch - 1)" :disabled="adjustPitch <= -45" class="w-6 h-6 flex items-center justify-center bg-gray-200 rounded-md disabled:opacity-50">
-                <span class="text-sm font-bold">−</span>
-              </button>
-              <span class="text-[10px] min-w-[35px] text-center font-semibold">{{ adjustPitch }}°</span>
-              <button type="button" @click="adjustPitch = Math.min(45, adjustPitch + 1)" :disabled="adjustPitch >= 45" class="w-6 h-6 flex items-center justify-center bg-gray-200 rounded-md disabled:opacity-50">
-                <span class="text-sm font-bold">+</span>
-              </button>
-            </div>
-            <div class="hidden md:flex items-center gap-1">
-              <a-slider v-model:value="adjustPitch" :min="-45" :max="45" :step="1" :tooltip-formatter="v => `${v}°`" style="width:120px" />
-              <span style="font-size:9px;min-width:25px;text-align:center">{{ adjustPitch }}°</span>
-            </div>
-          </div>
-
-          <!-- Size -->
-          <!-- <div class="flex flex-col md:flex-row md:items-center gap-1 flex-shrink-0">
-            <label class="text-[10px] font-bold whitespace-nowrap">Size</label>
-            <div class="flex md:hidden items-center gap-1">
-              <button type="button" @click="modelSizeScale = Math.max(0.5, parseFloat((modelSizeScale - 0.1).toFixed(1)))" :disabled="modelSizeScale <= 0.5" class="w-6 h-6 flex items-center justify-center bg-gray-200 rounded-md disabled:opacity-50">
-                <span class="text-sm font-bold">−</span>
-              </button>
-              <span class="text-[10px] min-w-[35px] text-center font-semibold">{{ modelSizeScale }}x</span>
-              <button type="button" @click="modelSizeScale = Math.min(4.0, parseFloat((modelSizeScale + 0.1).toFixed(1)))" :disabled="modelSizeScale >= 4.0" class="w-6 h-6 flex items-center justify-center bg-gray-200 rounded-md disabled:opacity-50">
-                <span class="text-sm font-bold">+</span>
-              </button>
-            </div>
-            <div class="hidden md:flex items-center gap-1">
-              <a-slider v-model:value="modelSizeScale" :min="0.5" :max="4.0" :step="0.1" :tooltip-formatter="v => `${v}x`" style="width:120px" />
-              <span style="font-size:9px;min-width:25px;text-align:center">{{ modelSizeScale }}x</span>
-            </div>
-          </div> -->
-        </div>
-
-        <!-- Action buttons -->
-        <div class="flex gap-2 flex-shrink-0">
-          <button
-            @click="resetLightPosition"
-            :disabled="!lightLoaded || !planeReady"
-            style="font-family:Poppins;font-weight:500;font-size:14px;line-height:20px;background:#e5e7eb;padding:4px 16px;border-radius:6px;"
-          >
-            Recenter
-          </button>
-          <a-button
-            type="primary"
-            @click="$emit('Apply-Changes', '3d-ceiling-light-Renerer')"
-            :disabled="!lightLoaded || !planeReady || isLoading"
-            style="padding:4px 12px;border-radius:6px;"
-          >
-            Finalise Changes
-          </a-button>
-        </div>
+    <!-- Roll -->
+    <div class="flex flex-col md:flex-row md:items-center gap-1 flex-shrink-0">
+      <label class="text-[10px] font-bold whitespace-nowrap">Roll</label>
+      <div class="flex md:hidden items-center gap-1">
+        <button type="button" @click="adjustRoll = Math.max(-45, adjustRoll - 1)" :disabled="adjustRoll <= -45" class="w-6 h-6 flex items-center justify-center bg-gray-200 rounded-md disabled:opacity-50">
+          <span class="text-sm font-bold">−</span>
+        </button>
+        <span class="text-[10px] min-w-[35px] text-center font-semibold">{{ adjustRoll }}°</span>
+        <button type="button" @click="adjustRoll = Math.min(45, adjustRoll + 1)" :disabled="adjustRoll >= 45" class="w-6 h-6 flex items-center justify-center bg-gray-200 rounded-md disabled:opacity-50">
+          <span class="text-sm font-bold">+</span>
+        </button>
       </div>
+      <div class="hidden md:flex items-center gap-1">
+        <a-slider v-model:value="adjustRoll" :min="-45" :max="45" :step="1" :tooltip-formatter="v => `${v}°`" style="width:120px" />
+        <span style="font-size:9px;min-width:25px;text-align:center">{{ adjustRoll }}°</span>
+      </div>
+    </div>
+
+    <!-- Pitch -->
+    <div class="flex flex-col md:flex-row md:items-center gap-1 flex-shrink-0">
+      <label class="text-[10px] font-bold whitespace-nowrap">Pitch</label>
+      <div class="flex md:hidden items-center gap-1">
+        <button type="button" @click="adjustPitch = Math.max(-45, adjustPitch - 1)" :disabled="adjustPitch <= -45" class="w-6 h-6 flex items-center justify-center bg-gray-200 rounded-md disabled:opacity-50">
+          <span class="text-sm font-bold">−</span>
+        </button>
+        <span class="text-[10px] min-w-[35px] text-center font-semibold">{{ adjustPitch }}°</span>
+        <button type="button" @click="adjustPitch = Math.min(45, adjustPitch + 1)" :disabled="adjustPitch >= 45" class="w-6 h-6 flex items-center justify-center bg-gray-200 rounded-md disabled:opacity-50">
+          <span class="text-sm font-bold">+</span>
+        </button>
+      </div>
+      <div class="hidden md:flex items-center gap-1">
+        <a-slider v-model:value="adjustPitch" :min="-45" :max="45" :step="1" :tooltip-formatter="v => `${v}°`" style="width:120px" />
+        <span style="font-size:9px;min-width:25px;text-align:center">{{ adjustPitch }}°</span>
+      </div>
+    </div>
+
+    <!-- Size -->
+    <!-- <div class="flex flex-col md:flex-row md:items-center gap-1 flex-shrink-0">
+      <label class="text-[10px] font-bold whitespace-nowrap">Size</label>
+      <div class="flex md:hidden items-center gap-1">
+        <button type="button" @click="modelSizeScale = Math.max(0.5, parseFloat((modelSizeScale - 0.1).toFixed(1)))" :disabled="modelSizeScale <= 0.5" class="w-6 h-6 flex items-center justify-center bg-gray-200 rounded-md disabled:opacity-50">
+          <span class="text-sm font-bold">−</span>
+        </button>
+        <span class="text-[10px] min-w-[35px] text-center font-semibold">{{ modelSizeScale }}x</span>
+        <button type="button" @click="modelSizeScale = Math.min(4.0, parseFloat((modelSizeScale + 0.1).toFixed(1)))" :disabled="modelSizeScale >= 4.0" class="w-6 h-6 flex items-center justify-center bg-gray-200 rounded-md disabled:opacity-50">
+          <span class="text-sm font-bold">+</span>
+        </button>
+      </div>
+      <div class="hidden md:flex items-center gap-1">
+        <a-slider v-model:value="modelSizeScale" :min="0.5" :max="4.0" :step="0.1" :tooltip-formatter="v => `${v}x`" style="width:120px" />
+        <span style="font-size:9px;min-width:25px;text-align:center">{{ modelSizeScale }}x</span>
+      </div>
+    </div> -->
+
+  </div>
+
+  <!-- Action buttons -->
+  <div class="flex gap-2 flex-shrink-0 w-full justify-between md:w-auto">
+    <button
+      @click="resetLightPosition"
+      :disabled="!lightLoaded || !planeReady"
+      style="font-family:Poppins;font-weight:500;font-size:14px;line-height:20px;background:#e5e7eb;padding:4px 16px;border-radius:6px;"
+    >
+      Recenter
+    </button>
+    <a-button
+      type="primary"
+      @click="$emit('Apply-Changes', '3d-ceiling-light-Renerer')"
+      :disabled="!lightLoaded || !planeReady || isLoading"
+      style="padding:4px 12px;border-radius:6px;"
+    >
+      Finalise Changes
+    </a-button>
+  </div>
+
+</div>
     </div>
   </div>
 </template>
@@ -636,81 +639,84 @@ export default {
       event.preventDefault()
     },
 
-    onPointerMove(event) {
-      if (event.pointerType === 'touch' && this.isTwoFingerRotating) {
-        if (!this.twoFingerPointers.has(event.pointerId)) return
-        this.twoFingerPointers.set(event.pointerId, {
-          clientX: event.clientX,
-          clientY: event.clientY,
-        })
-        if (this.twoFingerPointers.size === 2) {
-          const vals = Array.from(this.twoFingerPointers.values())
-          const avgX = (vals[0].clientX + vals[1].clientX) / 2
-          const deltaX = avgX - this.twoFingerStartAvgX
-          const deltaRad = (deltaX / 300) * Math.PI
-          const newRotY = this.twoFingerStartAngle + deltaRad
-          this.light.rotation.y = newRotY
-          this.lightRotation = ((THREE.MathUtils.radToDeg(newRotY) % 360) + 360) % 360
-          this._snapRingToLight()
-        }
-        event.preventDefault(); return
-      }
+   onPointerMove(event) {
+  if (event.pointerType === 'touch' && this.isTwoFingerRotating) {
+    if (!this.twoFingerPointers.has(event.pointerId)) return
+    this.twoFingerPointers.set(event.pointerId, {
+      clientX: event.clientX,
+      clientY: event.clientY,
+    })
+    if (this.twoFingerPointers.size === 2) {
+      const vals = Array.from(this.twoFingerPointers.values())
+      const avgX = (vals[0].clientX + vals[1].clientX) / 2
+      const deltaX = avgX - this.twoFingerStartAvgX
+      const deltaRad = (deltaX / 300) * Math.PI
+      const newRotY = this.twoFingerStartAngle + deltaRad
+      this.light.rotation.y = newRotY
+      this.lightRotation = ((THREE.MathUtils.radToDeg(newRotY) % 360) + 360) % 360
+      this._snapRingToLight()
+    }
+    event.preventDefault(); return
+  }
 
-      if (event.pointerType === 'touch' && !event.isPrimary) return
-      if (!this.isDragging && !this.isRotating) return
+  if (event.pointerType === 'touch' && !event.isPrimary) return
+  if (!this.isDragging && !this.isRotating) return
 
-      const el   = this.renderer.domElement
-      const rect = el.getBoundingClientRect()
-      const relX = (event.clientX - rect.left)  / rect.width
-      const relY = (event.clientY - rect.top)   / rect.height
-      const clampedRelX = Math.max(0, Math.min(1, relX))
-      const clampedRelY = Math.max(0, Math.min(1, relY))
-      const ndcX =  clampedRelX * 2 - 1
-      const ndcY = -clampedRelY * 2 + 1
+  const el   = this.renderer.domElement
+  const rect = el.getBoundingClientRect()
+  const relX = (event.clientX - rect.left)  / rect.width
+  const relY = (event.clientY - rect.top)   / rect.height
+  const clampedRelX = Math.max(0, Math.min(1, relX))
+  const clampedRelY = Math.max(0, Math.min(1, relY))
+  const ndcX =  clampedRelX * 2 - 1
+  const ndcY = -clampedRelY * 2 + 1
 
-      this.mouse.set(ndcX, ndcY)
+  this.mouse.set(ndcX, ndcY)
 
-      if (this.isRotating) {
-        const deltaX  = ndcX - this.rotationStartMouseX
-        const newRotY = this.rotationStartAngle + deltaX * Math.PI
-        this.light.rotation.y = newRotY
-        this.lightRotation = ((THREE.MathUtils.radToDeg(newRotY) % 360) + 360) % 360
-        this._snapRingToLight()
-        event.preventDefault(); return
-      }
+  if (this.isRotating) {
+    const deltaX  = ndcX - this.rotationStartMouseX
+    const newRotY = this.rotationStartAngle + deltaX * Math.PI
+    this.light.rotation.y = newRotY
+    this.lightRotation = ((THREE.MathUtils.radToDeg(newRotY) % 360) + 360) % 360
+    this._snapRingToLight()
+    event.preventDefault(); return
+  }
 
-      if (this.isDragging) {
-        this.raycaster.setFromCamera(this.mouse, this.camera)
-        this.light.visible = false
-        const ceilHit = this.raycastCeiling()
-        this.light.visible = true
+  if (this.isDragging) {
+    this.raycaster.setFromCamera(this.mouse, this.camera)
+    this.light.visible = false
+    const ceilHit = this.raycastCeiling()
+    this.light.visible = true
 
-        const hit = ceilHit || this._lastDragHit
-        if (!hit) return
-        if (ceilHit) this._lastDragHit = ceilHit.clone()
+    const hit = ceilHit || this._lastDragHit
+    if (!hit) return
+    if (ceilHit) this._lastDragHit = ceilHit.clone()
 
-        const rawX = hit.x + this.dragOffset.x
-        const rawZ = hit.z + this.dragOffset.z
+    const rawX = hit.x + this.dragOffset.x
+    const rawZ = hit.z + this.dragOffset.z
 
-        const S = event.pointerType === 'touch' ? 0.25 : (this.DRAG_SMOOTH ?? 0.15)
-        this._dragSmoothX += (rawX - this._dragSmoothX) * (1 - S)
-        this._dragSmoothZ += (rawZ - this._dragSmoothZ) * (1 - S)
+    // ✅ FIX: Use appropriate smoothing for touch vs mouse
+    // touch = 0.85 (smooth, responsive)
+    // mouse = 0.15 (more direct)
+    const S = event.pointerType === 'touch' ? 0.85 : 0.15
+    this._dragSmoothX += (rawX - this._dragSmoothX) * S
+    this._dragSmoothZ += (rawZ - this._dragSmoothZ) * S
 
-        const newX = this._dragSmoothX
-        const newZ = this._dragSmoothZ
+    const newX = this._dragSmoothX
+    const newZ = this._dragSmoothZ
 
-        const n = this.ceilingNormal3
-        const d = this.ceilingPlaneTHREE.constant
-        let newY = this.ceilingCentroid3.y
-        if (Math.abs(n.y) > 1e-6) {
-          newY = (-d - n.x * newX - n.z * newZ) / n.y
-        }
+    const n = this.ceilingNormal3
+    const d = this.ceilingPlaneTHREE.constant
+    let newY = this.ceilingCentroid3.y
+    if (Math.abs(n.y) > 1e-6) {
+      newY = (-d - n.x * newX - n.z * newZ) / n.y
+    }
 
-        this.light.position.set(newX, newY, newZ)
-        this._snapRingToLight()
-        event.preventDefault()
-      }
-    },
+    this.light.position.set(newX, newY, newZ)
+    this._snapRingToLight()
+    event.preventDefault()
+  }
+},
 
     onPointerUp(event) {
       if (event.pointerType === 'touch') {
@@ -1245,12 +1251,43 @@ export default {
     // ─────────────────────────────────────────────────────
     // EXPORT  ← THE FIXED METHOD
     // ─────────────────────────────────────────────────────
-
+      _removeLight3DAndRing() {
+        console.log('[ceiling] Removing 3D light and rotation ring from canvas')
+        
+        // Remove rotation ring
+        if (this.rotationRing) {
+          this._disposeRotationRing()
+        }
+        
+        // Remove light from scene
+        if (this.light && this.scene) {
+          this.scene.remove(this.light)
+          this.light.traverse((child) => {
+            if (child.geometry) child.geometry.dispose()
+            if (child.material) {
+              Array.isArray(child.material) 
+                ? child.material.forEach(m => m.dispose()) 
+                : child.material.dispose()
+            }
+          })
+        }
+        
+        // Reset states
+        this.light = null
+        this.rotationRing = null
+        this.lightLoaded = false
+        this.lightRotation = 0
+        this.adjustRoll = 0
+        this.adjustPitch = 0
+        
+        console.log('[ceiling] ✅ Light and ring removed')
+      },
     async downloadCurrentSceneImage() {
       if (!this.renderer || !this.scene || !this.camera || !this.currentBgTexture || !this.light) {
         console.warn('Required components not available'); return
       }
 
+      
       // ── STEP 1: Snapshot ──────────────────────────────────────────────────
       this.light.updateMatrixWorld(true)
       const snapPos   = { x: this.light.position.x,   y: this.light.position.y,   z: this.light.position.z   }
@@ -1355,6 +1392,7 @@ export default {
         })
 
         offRenderer.dispose()
+      
 
         if (!finalDataURL) {
           console.error('[ceiling export] Failed to generate composite image')
@@ -1412,13 +1450,14 @@ export default {
           link.href = finalDataURL
           document.body.appendChild(link); link.click(); document.body.removeChild(link)
         }
-
       } catch (error) {
         console.error('[ceiling export] Error:', error)
       } finally {
         if (this.rotationRing)     this.rotationRing.visible     = wasRingVisible
         if (this.pointCloudObj)    this.pointCloudObj.visible    = wasPointCloudVisible
         if (this.ceilingDebugMesh) this.ceilingDebugMesh.visible = wasCeilingMeshVisible
+        
+        this._removeLight3DAndRing()
       }
     },
 
@@ -1565,7 +1604,7 @@ export default {
   min-height: 400px;
   max-height: calc(100vh - 140px);
   line-height: 0;
-  border-radius: 6px;
+  /* border-radius: 6px; */
   overflow: hidden;
 }
 
