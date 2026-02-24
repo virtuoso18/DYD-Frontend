@@ -1771,6 +1771,10 @@ async renderItem() {
     // ── STEP 2: Hide ring & do live render BEFORE reactive state changes ──
     if (this.rotationRing) this.rotationRing.visible = false
     this.renderer.render(this.scene, this.camera)
+    
+    // ✅ Immediately hide 3D model and ring before loading screen shows
+    if (this.chair) this.chair.visible = false
+    if (this.rotationRing) this.rotationRing.visible = false
 
     // ── STEP 3: NOW change reactive state (triggers Vue watchers/flush) ──
     this.internalLoading     = true
@@ -1980,28 +1984,89 @@ async createBinaryMaskBlob(bgWidth, bgHeight) {
 
 
 
-    async switchFurniture() {
-      if (!this.chair) { console.warn('No chair loaded'); return }
-      try {
-        this.loadingProxy = true ; this.loadingText = 'Switching Product...'
-        if (this.chair) this.chair.visible = false
-        const formData = new FormData()
-        formData.append('room_id', this.$route.params.id)
-        formData.append('prod_id', this.product_id)
-        const url      = `${this.$store.state.root_api}engine/switch-furniture-ref/`
-        const response = await fetch(url, { method:'POST', headers:{ Authorization:`Token ${localStorage.getItem('token')}` }, body:formData })
-        if (response.status===402) { const r=await response.json(); this.$emit('insufficient-credits',r.msg); return }
-        if (!response.ok) throw new Error(`HTTP ${response.status}`)
-        const result = await response.json()
-        if (result?.renderer_id) this.$emit('add-3d-furniture-to-room-start-polling', result.renderer_id)
-        this.$emit('rendered-comfyui-workflow', result.final_output)
-        return result
-      } catch (error) {
-        console.error('Error switching furniture:', error)
-        this.loadingProxy = false
-        throw error
-      }
-    },
+   //  async switchFurniture() {
+   //    if (!this.chair) { console.warn('No chair loaded'); return }
+   //    try {
+   //      
+   //      this.loadingProxy = true ;
+   //      this.loadingText = 'Switching Product...'
+   //      this.internalLoading     = true
+   //      this.internalLoadingText = 'Rendering Item...'
+   //      
+   //      
+   //      if (this.chair) this.chair.visible = false
+   //      const formData = new FormData()
+   //      formData.append('room_id', this.$route.params.id)
+   //      formData.append('prod_id', this.product_id)
+   //      const url      = `${this.$store.state.root_api}engine/switch-furniture-ref/`
+   //      const response = await fetch(url, { method:'POST', headers:{ Authorization:`Token ${localStorage.getItem('token')}` }, body:formData })
+   //      if (response.status===402) { const r=await response.json(); this.$emit('insufficient-credits',r.msg); return }
+   //      if (!response.ok) throw new Error(`HTTP ${response.status}`)
+   //      const result = await response.json()
+   //      if (result?.renderer_id) this.$emit('add-3d-furniture-to-room-start-polling', result.renderer_id)
+   //      this.$emit('rendered-comfyui-workflow', result.final_output)
+   //      return result
+   //    } catch (error) {
+   //      console.error('Error switching furniture:', error)
+   //      this.loadingProxy = false
+   //      throw error
+   //    }
+   //    finally{
+   //      this.internalLoading = false;
+   //      this.loadingProxy    = false;
+   //      
+   //      this.loadingProxy = true ;
+   //      this.loadingText = 'Switching Product...'
+   //      this.internalLoading     = true
+   //      this.internalLoadingText = 'Rendering Item...'
+   //      
+// 
+   //    }
+   //  },
+
+
+   async switchFurniture() {
+  if (!this.chair) { console.warn('No chair loaded'); return }
+  try {
+    // Hide ring & do live render BEFORE reactive state changes
+    if (this.rotationRing) this.rotationRing.visible = false
+    this.renderer.render(this.scene, this.camera)
+
+    // ✅ Immediately hide 3D model and ring before loading screen shows
+    if (this.chair) this.chair.visible = false
+    if (this.rotationRing) this.rotationRing.visible = false
+
+    // Show loading overlay
+    this.internalLoading     = true
+    this.internalLoadingText = 'Rendering Item...'
+    this.isDraggingRef       = false
+    this.loadingProxy        = true
+
+    // ✅ Let Vue actually paint the loading screen before return fires
+    await this.$nextTick()
+
+
+    const formData = new FormData()
+    formData.append('room_id', this.$route.params.id)
+    formData.append('prod_id', this.product_id)
+    const url      = `${this.$store.state.root_api}engine/switch-furniture-ref/`
+    const response = await fetch(url, { method:'POST', headers:{ Authorization:`Token ${localStorage.getItem('token')}` }, body:formData })
+    if (response.status===402) { const r=await response.json(); this.$emit('insufficient-credits',r.msg); return }
+    if (!response.ok) throw new Error(`HTTP ${response.status}`)
+    const result = await response.json()
+    if (result?.renderer_id) this.$emit('add-3d-furniture-to-room-start-polling', result.renderer_id)
+    this.$emit('rendered-comfyui-workflow', result.final_output)
+    return result
+  } catch (error) {
+    console.error('Error switching furniture:', error)
+    this.loadingProxy    = false
+    this.internalLoading = false
+    // ✅ Restore visibility on error
+    if (this.chair) this.chair.visible = true
+    if (this.rotationRing) this.rotationRing.visible = true
+    throw error
+  }
+},
 
     // ── CLEANUP ─────────────────────────────────────────────────
 
@@ -2178,11 +2243,41 @@ async createBinaryMaskBlob(bgWidth, bgHeight) {
 @keyframes moveWaveLeftToRight { from{transform:translateX(-100%)} to{transform:translateX(50%)} }
 @keyframes waveFade { 0%{opacity:0} 10%{opacity:1} 90%{opacity:1} 100%{opacity:0} }
 .loading-text {
-  position:relative;color:#fff;text-align:center;z-index:3;text-shadow:0 2px 6px rgba(0,0,0,.6);
-  background:rgba(0,0,0,.3);padding:20px 30px;border-radius:10px;backdrop-filter:blur(8px);
-  border:1px solid rgba(255,255,255,.1);
+  position: relative;
+  color: #fff;
+  text-align: center;
+  z-index: 3;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.3);
+  padding: 20px 16px;         /* ✅ reduced horizontal padding on small screens */
+  border-radius: 10px;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  width: 80%;                 /* ✅ take 80% of container width */
+  max-width: 320px;           /* ✅ cap on larger screens */
+  box-sizing: border-box;
+  word-break: break-word;     /* ✅ prevent overflow */
 }
-.process-text { font-size:18px;opacity:.9;letter-spacing:1px;text-transform:uppercase; }
+
+.process-text {
+  font-size: 14px;            /* ✅ smaller font on mobile */
+  opacity: 0.9;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  white-space: normal;        /* ✅ allow wrapping instead of cutting off */
+  word-break: break-word;
+  line-height: 1.5;           /* ✅ readable when wrapped */
+}
+
+@media (min-width: 768px) {
+  .process-text {
+    font-size: 18px;          /* ✅ restore original size on desktop */
+  }
+  .loading-text {
+    max-width: 420px;
+    padding: 20px 30px;
+  }
+}
 .status-badge {
   position:absolute;top:12px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.75);
   color:#facc15;font-size:12px;padding:5px 14px;border-radius:20px;pointer-events:none;

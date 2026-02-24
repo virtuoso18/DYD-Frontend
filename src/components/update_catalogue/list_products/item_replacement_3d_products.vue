@@ -58,7 +58,7 @@
       <a-col :sm="0" :xs="0" :lg="24" :md="24"><a-button type="primary" @click="startFurrnitureSwitch">
       Start Furniture Switch
     </a-button></a-col>
-      <a-col :sm="24" :xs="24" :lg="0" :md="0"> <a-button type="primary" @click="startFurrnitureSwitch">
+      <a-col :sm="24" :xs="24" :lg="0" :md="0"> <a-button type="primary" @click="startFurrnitureSwitch_mobile">
       Start Furniture Switch
     </a-button></a-col>
     </a-row>
