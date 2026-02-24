@@ -1,22 +1,12 @@
 <template>
   <div>
     <a-modal
-      v-model:visible="isShowModal"
+      :visible="isShowModal"
       @cancel="$emit('close-modal')"
       title=""
-      size="small"
       :footer="null"
       :width="354"
-      
     >
-      <!-- <div v-if="successCredit" class="seccess-animation w-full h-full">
-         <DotLottieVue
-          autoplay
-          loop
-          ref="playerRef"
-          src="https://lottie.host/7665c805-0ebe-4178-aca1-8828e05d3707/5tbkJuNDQ9.lottie"
-        /> 
-      </div> -->
       <div class="redeem-modal-content">
         <div class="star-sec h-[80px] !pt-6 relative">
           <svg
@@ -24,7 +14,6 @@
             height="50"
             viewBox="0 0 50 50"
             fill="none"
-            xmlns="http://www.w3.org/2000/svg"
             class="absolute left-[44%]"
           >
             <path
@@ -34,12 +23,12 @@
               fill="#3B63FB"
             />
           </svg>
+
           <svg
             width="18"
             height="18"
             viewBox="0 0 18 18"
             fill="none"
-            xmlns="http://www.w3.org/2000/svg"
             class="absolute left-[62%]"
           >
             <path
@@ -50,6 +39,7 @@
             />
           </svg>
         </div>
+
         <div class="relative">
           <h2 class="!text-center text-[20px] font-semibold">
             Purchase Credits
@@ -59,27 +49,26 @@
             services.
           </p>
         </div>
+
         <div class="!flex justify-center">
           <a-button
             :loading="freeCreditCrediting"
             type="primary"
             @click="handleBuyFreeCredits"
             class="w-full"
-            >Redeem Credits</a-button
           >
+            Redeem Credits
+          </a-button>
         </div>
       </div>
     </a-modal>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
-import { notification } from "ant-design-vue";
-import { DotLottieVue } from "@lottiefiles/dotlottie-vue";
-
-export default defineComponent({
+<script>
+export default {
   name: "GetCreditModal",
+
   props: {
     isShowModal: {
       type: Boolean,
@@ -98,37 +87,28 @@ export default defineComponent({
       required: true,
     },
   },
-  data() {
-    return {
-      isShowModal: this.isShowModal,
-      loading: false,
-      freeCreditsLoading: 0,
-      successMessage: "",
-      errorMessage: "",
-    };
-  },
-  components: {
-    DotLottieVue,
-  },
 
   methods: {
     showModal() {
-      this.isShowModal = true;
+      this.$emit("update:isShowModal", true);
     },
 
     handleOk() {
-      this.isShowModal = false;
+      this.$emit("update:isShowModal", false);
     },
   },
-});
+};
 </script>
+
 <style scoped>
 :deep(.ant-modal-content) {
   padding: 0 !important;
 }
-:deep(.ant-modal){
+
+:deep(.ant-modal) {
   padding: 0 !important;
 }
+
 .redeem-modal-content {
   padding: 10px;
 }
