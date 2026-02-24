@@ -75,21 +75,26 @@
         <!-- Desktop Subscription Card -->
         <div v-if="currentPlan !== null" class="bg-[#3B63FB] hidden md:flex rounded-[20px] w-full min-h-[160px] p-2 items-center shadow-[0_4px_16px_rgba(79,124,255,0.3)]">
           <div class="relative w-full h-full flex items-stretch">
-            <div class="bg-white w-[70%] rounded-[15px] p-5 flex flex-col justify-center min-h-[114px]">
-              <h3 class="text-[clamp(24px,3vw,32px)] font-semibold text-[#262626] font-[Poppins]">
+            <div class="bg-white w-[60%] rounded-[15px] p-5 flex flex-col justify-center min-h-[114px]">
+              <h3 class="text-[clamp(24px,3vw,32px)] font-semibold text-[#262626] font-[Poppins] uppercase ">
                 {{ currentSubscription?.plan_name }}
               </h3>
               <p class="m-0 text-[#8c8c8c] text-xs uppercase font-[Poppins]">BILLED YEARLY</p>
-              <a-button type="link" class="!p-0 !text-[#3B63FB] !font-[Poppins] font-medium translate-x-[-40%] flex items-center gap-1">
-                <span>View all plans</span>
-                <span class="translate-y-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M5 12h14M12 5l7 7-7 7" />
-                  </svg>
-                </span>
-              </a-button>
+              <a-button
+  type="link"
+  class="!p-0 !text-[#3B63FB] !font-[Poppins] font-medium translate-x-[-40%] flex items-center gap-1"
+  @click="$router.push('/pricing')"
+>
+  <span>View all plans</span>
+  <span class="translate-y-2">
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M5 12h14M12 5l7 7-7 7" />
+    </svg>
+  </span>
+</a-button>
+
             </div>
-            <div class="absolute right-0 top-0 bottom-0 bg-[#3B63FB] rounded-r-[15px] px-6 py-5 flex flex-col justify-center items-center text-center w-[30%]">
+            <div class="absolute right-0 top-0 bottom-0 bg-[#3B63FB] rounded-r-[15px] px-4 py-5 flex flex-col justify-center items-center text-center w-[40%]">
               <h1 class="text-[clamp(32px,4vw,45px)] text-white m-0 mb-2 font-bold font-[Poppins] leading-[36px]">
                 ${{ currentSubscription?.monthly_charges }}
               </h1>
@@ -97,13 +102,13 @@
                 {{ currentSubscription?.plan_credits / 12 }} credits / month
               </p>
               <template v-if="currentPlan === 'basic'">
-                <div class="flex flex-col gap-2 w-full">
-                  <button @click="handleUpgrade('standard')" class="bg-white text-[#3B63FB] font-semibold rounded-lg px-4 h-9 w-full transition-all duration-500 ease-out hover:scale-105 text-sm">Upgrade to Standard</button>
-                  <button @click="handleUpgrade('premium')" class="bg-white text-[#3B63FB] font-semibold rounded-lg px-4 h-9 w-full transition-all duration-500 ease-out hover:scale-105 text-sm">Upgrade to Premium</button>
+                <div class="flex flex-row gap-2 w-full">
+                  <button @click="handleUpgrade('standard')" class="bg-white !text-gray-700 whitespace-nowrap  !font-[Poppins] font-semibold rounded-lg !px-3 h-9 w-full transition-all duration-500 ease-out hover:scale-105 !text-[11px]">Upgrade to Standard</button>
+                  <button @click="handleUpgrade('premium')" class="bg-white !text-gray-700 whitespace-nowrap !font-[Poppins] font-semibold rounded-lg !px-3 h-9 w-full transition-all duration-500 ease-out hover:scale-105 !text-[11px]">Upgrade to Premium</button>
                 </div>
               </template>
               <template v-else-if="currentPlan === 'standard'">
-                <button @click="handleUpgrade('premium')" class="bg-white text-[#3B63FB] font-semibold rounded-lg px-4 h-9 w-full transition-all duration-500 ease-out hover:scale-105 text-sm">Upgrade to Premium</button>
+                <button @click="handleUpgrade('premium')" class="bg-white !text-gray-700 font-semibold rounded-lg px-4 h-9 w-full transition-all duration-500 ease-out hover:scale-105 text-sm">Upgrade to Premium</button>
               </template>
               <template v-else-if="currentPlan === 'premium'">
                 <span class="bg-white/20 text-white text-xs font-medium px-3 py-1 rounded-full">✓ Top Plan</span>
