@@ -1,15 +1,76 @@
 <template>
-  <a-modal
-    v-model:open="isShowInstructionModal"
-    title="Instructions"
-    @ok="closeInstructionModal"
-    :width="500"
+  <Teleport to="body">
+  <Transition
+    enter-active-class="transition duration-200 ease-out"
+    enter-from-class="opacity-0 scale-95"
+    enter-to-class="opacity-100 scale-100"
+    leave-active-class="transition duration-150 ease-in"
+    leave-from-class="opacity-100 scale-100"
+    leave-to-class="opacity-0 scale-95"
   >
-    <div class="instruction-item" v-for="item in instructionConfig" :key="item.key">
-      <span class="instruction">{{ item?.key }}</span>
-      <img :src="item?.value" alt="gesture" class="gesture-icon" />
+    <div
+      v-if="isShowInstructionModal"
+      class="fixed inset-0 z-[9999] flex items-center justify-center px-4"
+      @keydown.esc="closeInstructionModal"
+    >
+      <!-- Backdrop -->
+      <div
+        class="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        @click="closeInstructionModal"
+      />
+
+      <!-- Modal Panel -->
+      <div class="relative z-10 w-full max-w-[500px] bg-white rounded-2xl shadow-2xl overflow-hidden">
+
+        <!-- Header -->
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+          <h3 class="text-[15px] font-semibold text-gray-800 tracking-wide">
+            Instructions
+          </h3>
+          <button
+            @click="closeInstructionModal"
+            class="w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-all duration-150"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none"
+              viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Body -->
+        <div class="px-6 py-2 divide-y divide-gray-100">
+          <div
+            v-for="item in instructionConfig"
+            :key="item.key"
+            class="flex items-center justify-between py-4"
+          >
+            <span class="text-sm font-medium text-gray-700 flex-1 leading-snug">
+              {{ item?.key }}
+            </span>
+            <img
+              :src="item?.value"
+              alt="gesture"
+              class="w-10 h-10 object-contain ml-6 shrink-0 select-none"
+            />
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="flex justify-end px-6 py-4 bg-gray-50 border-t border-gray-100">
+          <button
+            @click="closeInstructionModal"
+            class="px-5 py-[7px] bg-blue-500 hover:bg-blue-600 active:scale-95 !text-white text-sm font-medium rounded-lg transition-all duration-150 shadow-sm"
+          >
+            OK
+          </button>
+        </div>
+
+      </div>
     </div>
-  </a-modal>
+  </Transition>
+</Teleport>
+
 
   <div>
     <!-- ✅ NO-MODEL fallback -->
@@ -234,7 +295,9 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import ZoomInIcon  from '@/assets/icons/zoomout.png'
 import ZoomOutIcon from '@/assets/icons/zoomin.png'
 import TapToSelect from '@/assets/icons/tap.png'
-import DragToMove  from '@/assets/icons/tapAndMove.png'
+import DragToMove from '@/assets/icons/tapAndMove.png'
+import threetapnove  from '@/assets/icons/threetapnove.png'
+
 
 export default {
   name: 'ceiling_light_renderer_3d_ptcld',
@@ -270,10 +333,12 @@ export default {
     return {
       isShowInstructionModal: false,
       instructionConfig: [
-        { key: 'Pinch out to zoom', value: ZoomInIcon },
-        { key: 'Pinch in to zoom',  value: ZoomOutIcon },
+        // { key: 'Pinch out to zoom', value: ZoomInIcon },
+        // { key: 'Pinch in to zoom',  value: ZoomOutIcon },
         { key: 'Tap to select',     value: TapToSelect },
-        { key: 'Drag to move',      value: DragToMove  },
+        { key: 'Drag to move', value: DragToMove },
+                { key: "Two finger swipe left or right to Rotate the Furniture", value: threetapnove },
+
       ],
       internalLoading:     true,
       internalLoadingText: 'Loading assets…',
