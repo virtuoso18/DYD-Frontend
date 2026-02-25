@@ -260,7 +260,7 @@
   <!-- Regenerate (Text only - calls method) -->
   <button 
     @click="regenerateImages"
-    class="flex items-center gap-2 text-gray-700 hover:text-gray-900 font-medium text-[15px] cursor-pointer bg-transparent border-none"
+    class="flex items-center mt-4 gap-2 text-gray-700 hover:text-gray-900 font-medium text-[15px] cursor-pointer bg-transparent border-none"
   >
     <svg width="14" height="14" viewBox="0 0 16 16" fill="none" class="text-gray-600">
       <path

@@ -649,5 +649,8 @@ export default {
   .credits-section {
     margin: 0;
   }
+  .upload-area{
+    margin-top: 10px;
+  }
 }
 </style>
