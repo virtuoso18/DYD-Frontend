@@ -651,6 +651,7 @@ export default {
   }
   .upload-area{
     margin-top: 10px;
+    top:25px;
   }
 }
 </style>
