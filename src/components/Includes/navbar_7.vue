@@ -524,7 +524,7 @@ export default {
 
     this.token = localStorage.getItem("token");
 
-    if (this.token) {
+    if (localStorage.getItem("token")) {
       this.connectCreditsWebSocket();
       this.connectNotificationsWebSocket();
     } else {
@@ -673,7 +673,7 @@ export default {
         this.creditsWs.close();
       }
 
-      if (!this.token) {
+      if (!localStorage.getItem("token")) {
         console.error("Cannot connect: No token available");
         return;
       }
@@ -732,7 +732,7 @@ export default {
         this.notificationsWs.close();
       }
 
-      if (!this.token) {
+      if (!localStorage.getItem("token")) {
         console.error("Cannot connect: No token available");
         return;
       }
@@ -854,7 +854,7 @@ export default {
       console.log(`Attempting to reconnect notifications in ${delay}ms`);
 
       this.reconnectInterval = setTimeout(() => {
-        if (this.token) {
+        if (localStorage.getItem("token")) {
           this.connectNotificationsWebSocket();
         }
       }, delay);

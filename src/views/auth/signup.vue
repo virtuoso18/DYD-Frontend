@@ -207,32 +207,79 @@
       </div>
 
       <div class="form-container">
-        <div class="!mb-4">
-  <div class="border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center bg-gray-50 hover:border-blue-400 hover:bg-blue-50 transition-colors cursor-pointer flex flex-col items-center justify-center">
-    
-    <!-- SVG - Centered at top -->
-    <svg class="w-12 h-12 mx-auto mb-4 text-gray-400 flex-shrink-0"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      viewBox="0 0 24 24">
-      <path d="M20 16.5a4.5 4.5 0 0 0-1-8.9 5.5 5.5 0 0 0-10.6 1.5A4 4 0 0 0 8 17h12"/>
-      <path d="M12 12v7"/>
-      <path d="M9 15l3-3 3 3"/>
-    </svg>
-    
-    <!-- Text below SVG - Centered -->
-    <div class="space-y-1">
-      <p class="text-sm font-semibold text-gray-700">
-        Upload your business logo
-      </p>
-      <p class="text-xs text-gray-500">PNG, JPG or SVG (max 2MB)</p>
+   <!-- Business Logo Upload -->
+<div class="">
+  <input
+    ref="logoInput"
+    type="file"
+    accept=".png,.jpg,.jpeg,.svg"
+    class="!hidden"
+    @change="handleLogoUpload"
+  />
+
+  <div class="!flex !flex-col !items-center !justify-center">
+    <!-- Circle with logo/preview -->
+    <div
+      class="!relative !w-32 !h-32 !rounded-full !bg-gray-100 !flex !items-center !justify-center !cursor-pointer !border !border-gray-200"
+      @click="$refs.logoInput.click()"
+    >
+      <!-- Preview if logo selected -->
+      <template v-if="businessInfo.logoPreview">
+        <img
+          :src="businessInfo.logoPreview"
+          alt="Business Logo"
+          class="!w-24 !h-24 !object-contain !rounded-full"
+        />
+      </template>
+
+      <!-- Default upload state: building SVG icon -->
+      <template v-else>
+        <svg
+          class="!w-14 !h-14 !text-gray-400 !flex-shrink-0"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          viewBox="0 0 24 24"
+        >
+          <!-- Building / business icon -->
+          <path d="M3 21h18"/>
+          <path d="M5 21V7l7-4 7 4v14"/>
+          <path d="M9 21v-4h6v4"/>
+          <path d="M9 9h1m4 0h1M9 13h1m4 0h1"/>
+        </svg>
+      </template>
+
+      <!-- Camera button overlay at bottom -->
+      <button
+        type="button"
+        class="!absolute !-bottom-1 !left-1/2 !-translate-x-1/2 translate-y-2 !rounded-full !w-8 !h-8 !flex !items-center !justify-center !shadow-md !border-2 !border-white"
+        @click.stop="$refs.logoInput.click()"
+      >
+       <svg width="19" height="17" viewBox="0 0 19 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M7.3891 17H11.6109C14.5758 17 16.0588 17 17.1237 16.3058C17.5834 16.0066 17.9792 15.6202 18.2884 15.1687C19 14.1298 19 12.682 19 9.78824C19 6.89447 19 5.44664 18.2884 4.40775C17.9792 3.9563 17.5834 3.5699 17.1237 3.27065C16.4397 2.82393 15.5828 2.66431 14.2709 2.60765C13.6448 2.60765 13.1062 2.14487 12.9836 1.54515C12.89 1.10586 12.6467 0.712187 12.2948 0.430663C11.9429 0.149139 11.504 -0.00297009 11.0523 4.39457e-05H7.9477C7.0091 4.39457e-05 6.20065 0.646987 6.01635 1.54515C5.8938 2.14487 5.35515 2.60765 4.7291 2.60765C3.4181 2.66431 2.5612 2.82487 1.87625 3.27065C1.41696 3.57 1.02151 3.9564 0.7125 4.40775C0 5.44664 0 6.89353 0 9.78824C0 12.683 5.66244e-08 14.1289 0.71155 15.1687C1.01935 15.6183 1.41455 16.0046 1.87625 16.3058C2.9412 17 4.42415 17 7.3891 17ZM9.5 5.92453C7.31405 5.92453 5.54135 7.6538 5.54135 9.7873C5.54135 11.9208 7.315 13.6529 9.5 13.6529C11.685 13.6529 13.4586 11.9227 13.4586 9.78919C13.4586 7.65569 11.685 5.92453 9.5 5.92453ZM9.5 7.46964C8.189 7.46964 7.125 8.50758 7.125 9.78824C7.125 11.068 8.189 12.1059 9.5 12.1059C10.811 12.1059 11.875 11.068 11.875 9.78824C11.875 8.50852 10.811 7.46964 9.5 7.46964ZM13.9859 6.69708C13.9859 6.27019 14.3403 5.92453 14.7782 5.92453H15.8327C16.2697 5.92453 16.625 6.27019 16.625 6.69708C16.623 6.90382 16.5385 7.10131 16.3901 7.24616C16.2418 7.39102 16.0416 7.4714 15.8336 7.46964H14.7782C14.6751 7.47063 14.5729 7.45144 14.4773 7.41316C14.3817 7.37487 14.2947 7.31824 14.2211 7.2465C14.1475 7.17476 14.0889 7.08932 14.0485 6.99505C14.0082 6.90078 13.9869 6.79953 13.9859 6.69708Z" fill="#333333"/>
+</svg>
+
+      </button>
     </div>
-    
+
+    <!-- Status text below circle -->
+    <template v-if="businessInfo.logoPreview">
+      <p class="!text-sm !font-semibold !text-green-600 !mt-4">Logo uploaded ✓</p>
+      <p class="!text-xs !text-gray-500 !mt-1">Click to change</p>
+    </template>
+    <template v-else>
+      <p class="!text-sm !font-semibold !text-gray-700 !mt-4">Upload your business logo</p>
+      <p class="!text-xs !text-gray-500 !mt-1">PNG, JPG or SVG (max 2MB)</p>
+    </template>
   </div>
+
+  <span v-if="errors.businessLogo" class="!text-red-500 !text-xs !mt-1 !block error-message">
+    {{ errors.businessLogo }}
+  </span>
 </div>
+
 
 
         <div class="input-group">
@@ -275,41 +322,23 @@
           </div>
         </div>
 
-       <div class="input-group">
+     <div class="input-group">
   <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-  
-  <!-- Country code dropdown + Input -->
-  <div class="flex gap-2">
-    <!-- Country code selector -->
-    <select 
-      v-model="businessInfo.countryCode" 
-      class="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 min-w-[90px]"
-    >
-      <option value="+91">🇮🇳 +91</option>
-  <option value="+972">🇮🇱 +972</option>
-  <option value="+1">🇺🇸 +1</option>
-  <option value="+44">🇬🇧 +44</option>
-  <option value="+49">🇩🇪 +49</option>
-  <option value="+33">🇫🇷 +33</option>
-  
-    </select>
-    
-    <!-- Phone input -->
-    <input
-      v-model="businessInfo.phone"
-      :placeholder="businessInfo.countryCode === '+91' ? '+91 Enter 10-digit number' : '+972 Enter 9-digit number'"
-      class="flex-1 custom-input border border-gray-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-      :class="{ 'border-red-500 bg-red-50': phoneError }"
-      @input="businessInfo.phone = $event.target.value.replace(/\D/g, '').slice(0, businessInfo.countryCode === '+91' ? 10 : 9)"
-      @blur="phoneError = !/^\d+$/.test(businessInfo.phone) || (businessInfo.countryCode === '+91' ? businessInfo.phone.length !== 10 : businessInfo.phone.length !== 9) ? 'Invalid phone number' : ''"
-    />
-  </div>
-  
-  <!-- Error message -->
+  <input
+    v-model="businessInfo.phone"
+    placeholder="Enter Valid phone number"
+    maxlength="10"
+    inputmode="numeric"
+    class="flex-1 custom-input border border-gray-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full"
+    :class="{ 'border-red-500 bg-red-50': phoneError }"
+    @input="businessInfo.phone = $event.target.value.replace(/\D/g, '').slice(0, 10)"
+    @blur="phoneError = businessInfo.phone.length !== 10 ? 'Please enter a valid 10-digit phone number' : ''"
+  />
   <span v-if="phoneError" class="error-message text-red-500 text-xs mt-1 block">
     {{ phoneError }}
   </span>
 </div>
+
 
         <div class="input-group">
           <label>License</label>
@@ -323,32 +352,29 @@
 
         <div class="input-group">
           <label>Category</label>
-          <div class="category-tags">
-            <span
-              class="tag"
-              :class="{
-                active: businessInfo.categories.includes('Architecture'),
-              }"
-              @click="toggleCategory('Architecture')"
-              >Architecture</span
-            >
-            <span
-              class="tag"
-              :class="{
-                active: businessInfo.categories.includes('Interior Design'),
-              }"
-              @click="toggleCategory('Interior Design')"
-              >Interior Design</span
-            >
-            <span
-              class="tag"
-              :class="{
-                active: businessInfo.categories.includes('Kitchen Design'),
-              }"
-              @click="toggleCategory('Kitchen Design')"
-              >Kitchen Design</span
-            >
-          </div>
+         <div class="category-tags">
+  <span
+    class="tag"
+    :class="{ active: businessInfo.categories.includes('Furniture') }"
+    @click="toggleCategory('Furniture')"
+  >Furniture</span>
+  <span
+    class="tag"
+    :class="{ active: businessInfo.categories.includes('Lights') }"
+    @click="toggleCategory('Lights')"
+  >Lights</span>
+  <span
+    class="tag"
+    :class="{ active: businessInfo.categories.includes('Floors') }"
+    @click="toggleCategory('Floors')"
+  >Floors</span>
+  <span
+    class="tag"
+    :class="{ active: businessInfo.categories.includes('Walls') }"
+    @click="toggleCategory('Walls')"
+  >Walls</span>
+</div>
+
         </div>
 
         <a-button
@@ -601,7 +627,7 @@
 
     <!-- Success Step -->
     <div v-if="currentStep === 5" class="step-content success-content">
-      <div class="success-icon">
+      <div class="success-icon flex items-center justify-center">
         <svg width="64" height="64" viewBox="0 0 24 24" fill="#52c41a">
           <path
             d="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M11,16.5L18,9.5L16.59,8.09L11,13.67L7.41,10.09L6,11.5L11,16.5Z"
@@ -633,10 +659,7 @@ export default {
       currentStep: 1,
       selectedType: null,
       loading: false,
-       businessInfo: {
-      countryCode: '+91',
-      phone: ''
-    },
+     
     phoneError: '',
       verifyingOtp: false,
       resendingOtp: false,
@@ -652,6 +675,8 @@ export default {
         email: "",
         phone: "",
         license: "",
+        logo: null,           
+  logoPreview: null, 
         categories: [],
       },
       finalApproval: {
@@ -716,6 +741,31 @@ export default {
     selectPersonalization(type) {
       this.selectedType = type;
     },
+
+    handleLogoUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const allowedTypes = ['image/png', 'image/jpeg', 'image/svg+xml'];
+  if (!allowedTypes.includes(file.type)) {
+    this.errors.businessLogo = 'Only PNG, JPG, or SVG files are allowed';
+    return;
+  }
+  if (file.size > 2 * 1024 * 1024) {
+    this.errors.businessLogo = 'File size must be under 2MB';
+    return;
+  }
+
+  delete this.errors.businessLogo;
+  this.businessInfo.logo = file;
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    this.businessInfo.logoPreview = e.target.result;
+  };
+  reader.readAsDataURL(file);
+},
+
 
     handleFirstName(e) {
       const value = e.target.value;
@@ -915,73 +965,141 @@ export default {
       }
     },
 
+    // async submitRegistration() {
+    //   // Validate based on user type
+    //   if (this.selectedType === "business" && !this.validateBusinessInfo()) {
+    //     return;
+    //   }
+
+    //   this.loading = true;
+
+    //   try {
+    //     const requestData = this.prepareRegistrationData();
+
+    //     const response = await fetch(
+    //       this.$store.state.root_api + "Auth/api/register/",
+    //       {
+    //         method: "POST",
+    //         headers: {
+    //           "Content-Type": "application/json",
+    //         },
+    //         body: JSON.stringify(requestData),
+    //       },
+    //     );
+
+    //     const data = await response.json();
+
+    //     if (!response.ok) {
+    //       this.$notification.error({
+    //         message: "Registration Failed",
+    //         description:
+    //           data.message || "Registration failed. Please try again.",
+    //         placement: "bottomLeft",
+    //       });
+    //       return;
+    //     }
+
+    //     if (!data.error) {
+    //       this.$notification.success({
+    //         message: "OTP Sent Successfully",
+    //         description:
+    //           data.message ||
+    //           "Please check your email and enter the OTP to verify your account.",
+    //         placement: "bottomLeft",
+    //         duration: 5,
+    //       });
+
+    //       // Move to OTP verification step
+    //       this.currentStep = 4;
+    //       this.startOtpTimer();
+    //     } else {
+    //       this.$notification.error({
+    //         message: "Registration Failed",
+    //         description:
+    //           data.message || "Registration failed. Please try again.",
+    //         placement: "bottomLeft",
+    //       });
+    //     }
+    //   } catch (error) {
+    //     console.error("Registration error:", error);
+    //     this.$notification.error({
+    //       message: "Server Error",
+    //       description: "Something went wrong. Please try again.",
+    //       placement: "bottomLeft",
+    //     });
+    //   } finally {
+    //     this.loading = false;
+    //   }
+    // },
+
     async submitRegistration() {
-      // Validate based on user type
-      if (this.selectedType === "business" && !this.validateBusinessInfo()) {
-        return;
+  if (this.selectedType === "business" && !this.validateBusinessInfo()) {
+    return;
+  }
+
+  this.loading = true;
+
+  try {
+    const formData = new FormData();
+
+    // Base fields
+    formData.append("firstName", this.personalInfo.firstName.trim());
+    formData.append("lastName", this.personalInfo.lastName.trim());
+    formData.append("email", this.personalInfo.email.trim());
+    formData.append("password", this.personalInfo.password);
+    formData.append("userType", this.selectedType);
+    formData.append("username", this.personalInfo.email.split("@")[0]);
+
+    // Business fields
+    if (this.selectedType === "business") {
+      formData.append("businessName", this.businessInfo.businessName.trim());
+      formData.append("businessEmail", this.businessInfo.email.trim());
+      formData.append("phoneNumber", this.businessInfo.phone.trim());
+      formData.append("businessCategory", this.businessInfo.categories.join(", "));
+      formData.append(
+        "servicesOffered",
+        this.businessInfo.categories.join(",")
+      );
+      // 🔥 THIS IS IMPORTANT
+      if (this.businessInfo.logo) {
+        formData.append("banner_picture", this.businessInfo.logo); 
+        // must match Django field name
       }
+    }
 
-      this.loading = true;
-
-      try {
-        const requestData = this.prepareRegistrationData();
-
-        const response = await fetch(
-          this.$store.state.root_api + "Auth/api/register/",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(requestData),
-          },
-        );
-
-        const data = await response.json();
-
-        if (!response.ok) {
-          this.$notification.error({
-            message: "Registration Failed",
-            description:
-              data.message || "Registration failed. Please try again.",
-            placement: "bottomLeft",
-          });
-          return;
-        }
-
-        if (!data.error) {
-          this.$notification.success({
-            message: "OTP Sent Successfully",
-            description:
-              data.message ||
-              "Please check your email and enter the OTP to verify your account.",
-            placement: "bottomLeft",
-            duration: 5,
-          });
-
-          // Move to OTP verification step
-          this.currentStep = 4;
-          this.startOtpTimer();
-        } else {
-          this.$notification.error({
-            message: "Registration Failed",
-            description:
-              data.message || "Registration failed. Please try again.",
-            placement: "bottomLeft",
-          });
-        }
-      } catch (error) {
-        console.error("Registration error:", error);
-        this.$notification.error({
-          message: "Server Error",
-          description: "Something went wrong. Please try again.",
-          placement: "bottomLeft",
-        });
-      } finally {
-        this.loading = false;
+    const response = await fetch(
+      this.$store.state.root_api + "Auth/api/register/",
+      {
+        method: "POST",
+        body: formData,   // 🔥 NO JSON.stringify
       }
-    },
+    );
 
+    const data = await response.json();
+
+    if (!response.ok) {
+      this.$notification.error({
+        message: "Registration Failed",
+        description: data.message || "Registration failed.",
+        placement: "bottomLeft",
+      });
+      return;
+    }
+
+    this.$notification.success({
+      message: "OTP Sent Successfully",
+      placement: "bottomLeft",
+    });
+
+    this.currentStep = 4;
+    this.startOtpTimer();
+
+  } catch (error) {
+    console.error(error);
+  } finally {
+    this.loading = false;
+  }
+},
     prepareRegistrationData() {
       const baseData = {
         firstName: this.personalInfo.firstName.trim(),
@@ -1000,7 +1118,9 @@ export default {
           phoneNumber: this.businessInfo.phone.trim(),
           businessDescription: "",
           businessCategory: this.businessInfo.categories.join(", "),
-          servicesOffered: "",
+          servicesOffered: "['floor', 'walls','furniture', 'lights']",
+               businessLogo: this.businessInfo.logo ? this.businessInfo.logo.name : null, 
+
         };
       } else if (this.selectedType === "professional") {
         return {
@@ -1291,11 +1411,11 @@ export default {
       return { valid: true, message: "" };
     },
 
-    validatePhone(phone) {
-      if (!phone) return false;
-      const phoneRegex = /^(\+91|91)?[6-9]\d{9}$/;
-      return phoneRegex.test(phone.replace(/\s+/g, ""));
-    },
+   validatePhone(phone) {
+  if (!phone) return false;
+  return /^\d{10}$/.test(phone.trim());
+},
+
   },
 
   beforeUnmount() {

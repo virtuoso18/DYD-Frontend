@@ -334,7 +334,7 @@ export default {
   name: 'AiCatalog',
   
   props:{
-    brand_data:Object
+    brand_data:Object,
   },
   data() {
     return {
@@ -396,7 +396,9 @@ planLoaded: false,
     }
   },
   methods: {
-
+makeUnselectItem(){
+  this.selected_item=''
+},
   
 
 
