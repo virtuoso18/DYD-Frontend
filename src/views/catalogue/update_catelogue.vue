@@ -1440,6 +1440,9 @@ Switch Furniture</a-button> -->
               @add-3d-furniture-to-room-start-polling="
                 updateBaskeImageURL_CANVAS
               "
+              :colors_available_for_3d_model="colors_available_for_3d_model"
+              :switched_color="switched_color"
+
               :product_id="selected_3d_product_model"
               @Apply-Changes="ApplyChanges"
               @insufficient-credits="throw_Insufficient_credits"
@@ -3151,6 +3154,12 @@ Switch Furniture</a-button> -->
                   }"
                   :BASE_ROOT_MAIN_IMAGE="base_image_url"
                   :CHAIR_MODEL="item_replacement_renderer_3d_model_url"
+
+                  
+                  :colors_available_for_3d_model="colors_available_for_3d_model"
+                  :switched_color="switched_color"
+                  @switch-3d-model-change-color="switched_3D_model_same_product_different_color"
+
                   @model-transform-updated="handle3DModelTransformUpdate"
                   @update:isLoading="StartEndCanvasLoading"
                   @add-3d-furniture-to-room-start-polling="
@@ -3464,6 +3473,8 @@ export default {
       item_replacement_renderer_3d_model_url: "",
       is_resizable: false,
       selected_3d_product_model: "",
+      colors_available_for_3d_model:null,
+      switched_color:null,
       maskUpdateTrigger: 0,
 
       // selected 3d model width,height,depth
@@ -3682,6 +3693,11 @@ export default {
   },
 
   methods: {
+    switched_3D_model_same_product_different_color(e){
+      
+      this.switched_color=e
+      this.item_replacement_renderer_3d_model_url=this.$store.state.root_media_api+e['3d_model_available']
+    },
     unselect_currrent_selected_object(){
        this.selected_model_width = 0.00;
         this.selected_model_height = 0.00;
@@ -5192,7 +5208,8 @@ export default {
 
     selectCategory(category) {
       this.select_replace = category;
-
+      this.canvasLoading=false
+      
       // this.item_replacement_renderer_3d_model_url = "";
       this.selected_model_width = 0.0;
       this.selected_model_height = 0.0;
@@ -5229,7 +5246,7 @@ export default {
       } else if (category === "Wall") {
         this.showSelectionButtons = true;
         this.selected_objects_binary_masks = [];
-
+        
         const query = { ...this.$route.query };
         delete query.product_id; // ✅ remove it
         delete query.product_type; // ✅ remove it
@@ -5852,7 +5869,9 @@ export default {
 
         this.is_resizable = e.is_resizable;
         this.selected_3d_product_model = e.model_uuid;
+        this.colors_available_for_3d_model=e.colors_available
 
+        
         this.$router.replace({
           query: {
             ...this.$route.query, // keep existing query params

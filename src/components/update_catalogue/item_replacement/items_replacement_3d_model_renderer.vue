@@ -1,6 +1,7 @@
 <template>
-  <!-- {{ isLoading }}
-  {{ internalLoading }} -->
+  <!-- {{ isLoading }}-->
+  <!-- {{ internalLoading }}  -->
+<!-- {{ switched_color }}    -->
 <!-- ✅ Pure Tailwind Instruction Modal -->
 <Teleport to="body">
   <Transition
@@ -231,7 +232,12 @@
           Recenter
         </button>
       </div>
-
+<!-- {{ colors_available_for_3d_model }} -->
+<div style="display: flex;gap:10px;">
+  <div @click="changeColorModel(color)" class="color-switch" :key="color.id" v-for="color in colors_available_for_3d_model" :style="'background:'+color.color">
+    {{color.model_file_colored_product}}
+  </div>
+</div>
         <a-button
           type="primary"
           @click="$emit('Apply-Changes', 'item-replacement-3d-renderer')"
@@ -276,6 +282,8 @@ export default {
     TARGET_DIMS: Object,
     debug: Boolean,
     product_id: { type: String, required: true },
+    colors_available_for_3d_model:Object,
+    switched_color:Object,
   },
 
   data() {
@@ -453,6 +461,43 @@ export default {
   },
 
   methods: {
+    changeColorModel(color){
+      this.loadChangeColorModel(color)
+    },
+    async loadChangeColorModel(color){
+      try {
+        // const url = `${this.$store.state.root_api}product/api/product-details/${this.product_id}/`;
+        const url = `${this.$store.state.root_api}product/api/load-product-different-color/${color.id}/`;
+
+        console.log("📡 Fetching from:", url);
+
+        const token = localStorage.getItem("token");
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            Authorization: `Token ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+
+        const data = result;
+        console.log(data);
+
+        this.$emit('switch-3d-model-change-color',data)
+
+        
+      } catch (error) {
+        console.error("❌ Error loading product details:", error);
+        throw error;
+      }
+    },
+
     showInstructionModal() { this.isShowInstructionModal = true },
     closeInstructionModal() { this.isShowInstructionModal = false },
 
@@ -1578,6 +1623,13 @@ export default {
         formData.append('composite_image', compositeBlob, 'composite_image.png')
         formData.append('binary_mask',     maskBlob,      'binary_mask.png')
         formData.append('room_id',  this.$route.params.id)
+        
+        if(this.switched_color){
+          formData.append('switch_model_color_id',  this.switched_color?.product_color_id )
+        }
+console.log(this.switched_color);
+        debugger
+        
         formData.append('prod_id',  this.$route.query.product_id)
 
         this.internalLoadingText = 'Adding Product to Your Room...'
@@ -2015,5 +2067,17 @@ export default {
   position:absolute;top:12px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.75);
   color:#facc15;font-size:12px;padding:5px 14px;border-radius:20px;pointer-events:none;
   border:1px solid #444;backdrop-filter:blur(4px);
+}
+.color-switch{
+  width:30px;
+  height:30px;
+  border-radius:100%;
+  cursor:pointer
+}
+
+.color-switch:hover{
+border:2px solid blue;
+width:30px;
+height:30px;
 }
 </style>

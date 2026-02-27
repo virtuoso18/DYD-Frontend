@@ -1010,9 +1010,9 @@
                       </template>
                       <a-button
                         class="!flex !justify-center !align-center"
-                        style="border-radius: 6px; border: 2px dashed #d1d5db"
+                        style="border-radius: 6px; border: 2px dashed #d1d5db;display: flex;justify-content: center;align-items: center;gap:10px;"
                       >
-                        <template #icon>
+                        
                           <svg
                             width="16"
                             height="16"
@@ -1024,7 +1024,7 @@
                             <line x1="12" y1="5" x2="12" y2="19"></line>
                             <line x1="5" y1="12" x2="19" y2="12"></line>
                           </svg>
-                        </template>
+                        
                         Add Colors
                       </a-button>
                     </a-popover>
@@ -2254,7 +2254,8 @@ export default {
           );
         }
 
-        formData.append("model_file_colored_product", fileToUpload);
+        // formData.append("model_file_colored_product", fileToUpload);
+        formData.append("selected_file_id_model_file_colored_product", this.selected_model_uuid_primary_key);
 
         // Add texture association
         if (

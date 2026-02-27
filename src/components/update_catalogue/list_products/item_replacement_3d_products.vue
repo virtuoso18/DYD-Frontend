@@ -179,14 +179,15 @@
   
         <!-- Product Grid/List -->
         <div v-if="!loading || catalogItems.length > 0" class="product-container" :class="{ 'grid-view': showGrid, 'list-view': !showGrid }">
-          <div v-for="(item, index) in catalogItems" :key="index" @click="updateItemRendering(item['id'],item['3d_model'],item['dimensions']['width'],item['dimensions']['height'],item['dimensions']['length'],item['is_resizable'])" style="
+          <div v-for="(item, index) in catalogItems" :key="index" @click="updateItemRendering(item['id'],item['3d_model'],item['dimensions']['width'],item['dimensions']['height'],item['dimensions']['length'],item['is_resizable'],item['colors_available'])" style="
    background: #f2f2f2;
   border: none;
   height: 100%;
   border-radius: 4px;
   padding:5px;"
             :style="selected_item===item.id ? 'border:1px solid blue': ''">
-          <!-- {{item['dimensions']['width']}},{{item['dimensions']['height']}},{{item['dimensions']['length'] }}   -->
+<!-- {{ item.colors_available }} -->
+            <!-- {{item['dimensions']['width']}},{{item['dimensions']['height']}},{{item['dimensions']['length'] }}   -->
             <div class="product-item">
               <div class="product-image" style="position:relative; overflow: hidden;">
   <!-- Skeleton -->
@@ -621,7 +622,7 @@ smoothMobileScrolltoTop(){
             smoothScrollToTop(900); // 900ms = very smooth
           }
         },
-    updateItemRendering(model_id, model_url, width, height, depth,is_resizable=false) {
+    updateItemRendering(model_id, model_url, width, height, depth,is_resizable=false,colors_available={}) {
 this.smoothMobileScrolltoTop()
 
         if (window.innerWidth < 500) {
@@ -667,7 +668,8 @@ this.smoothMobileScrolltoTop()
         'is_resizable': is_resizable,
         'width': width,
         'height': height,
-        'depth': depth
+        'depth': depth,
+        'colors_available':colors_available
       });
     },
     async toggleLike(itemId, itemIndex) {

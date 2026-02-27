@@ -19,8 +19,6 @@
           line-height: 20px;
           letter-spacing: 0;margin-top:-6px
           ">AI Catalog</span>
-        <!-- {{ brand_data }} -->
-          <!-- <b>  {{truncateChars(brand_data.name,limit=15)}}</b> -->
         </div>
       </router-link>
       <a-button size='small' type="default" class="see-all-link" @click="seeAllClicked">See all</a-button>
@@ -42,11 +40,15 @@
         </template>
       </a-input>
       <div class="filter-icons">
-        <button @click="showGrid = false" class="filter-btn" :class="{ active: !showGrid }">
+        <!-- Filter Button -->
+        <button @click="openFilterDrawer" class="filter-btn" :class="{ 'filter-btn--active-filters': hasActiveFilters }">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <path d="M5 10H15M2.5 5H17.5M7.5 15H12.5" stroke="#666" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M2.5 5H17.5M5.5 10H14.5M8.5 15H11.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
           </svg>
+          <span v-if="activeFilterCount > 0" class="filter-badge">{{ activeFilterCount }}</span>
         </button>
+
+        <!-- Grid View Toggle Button -->
         <button @click="showGrid = true" class="filter-btn" :class="{ active: showGrid }">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
             <rect x="3" y="3" width="6" height="6" stroke="#666" stroke-width="1.5"/>
@@ -55,6 +57,45 @@
             <rect x="11" y="11" width="6" height="6" stroke="#666" stroke-width="1.5"/>
           </svg>
         </button>
+      </div>
+    </div>
+
+    <!-- Active Filter Chips -->
+    <div v-if="hasActiveFilters" class="active-filters-bar">
+      <div class="active-filters-chips">
+        <span v-if="appliedFilters.priceRange[0] > 0 || appliedFilters.priceRange[1] < 500000" class="filter-chip">
+          Price: ${{ appliedFilters.priceRange[0].toLocaleString('en-IN') }} – ${{ appliedFilters.priceRange[1].toLocaleString('en-IN') }}
+          <button class="chip-remove" @click="removeFilter('price')">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+              <path d="M1 1L9 9M9 1L1 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </span>
+        <span v-if="appliedFilters.selectedColors.length > 0" class="filter-chip">
+          Colors: {{ appliedFilters.selectedColors.length }} selected
+          <button class="chip-remove" @click="removeFilter('color')">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+              <path d="M1 1L9 9M9 1L1 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </span>
+        <span v-if="activeStyleLabels.length > 0" class="filter-chip">
+          Style: {{ activeStyleLabels.join(', ') }}
+          <button class="chip-remove" @click="removeFilter('styles')">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+              <path d="M1 1L9 9M9 1L1 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </span>
+        <span v-if="appliedFilters.sort_by" class="filter-chip">
+          Sort: {{ sortByLabel }}
+          <button class="chip-remove" @click="removeFilter('sort_by')">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+              <path d="M1 1L9 9M9 1L1 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </span>
+        <button class="clear-all-btn" @click="clearAllFilters">Clear all</button>
       </div>
     </div>
 
@@ -107,12 +148,6 @@ padding:5px;
 </div>
 
             <div class="product-info">
-              <!-- <div style="display:flex;justify-content: space-between;" class="">
-                <div style="background-color: grey;color :white;border-radius:5px;padding-left:5px;padding-right:5px;padding-top:1px;height:22px;font-size:12px">
-                  Floor
-                </div>
-                <div class="!text-gray-700" style="padding:3px;border:1px solid grey;border-radius:5px;padding-left:5px;padding-right:5px;padding-top:1px;height:22px;font-size:12px">AR</div>
-              </div> -->
               <div class="product-name">{{ truncateText( item.title || 'No description available', 3) }}</div>
               
               <!-- <div class="product-details" style="display:flex;justify-content: space-between;">
@@ -160,11 +195,97 @@ padding:5px;
         <p>No products found</p>
       </div>
     </div>
-<div class="apply-section hidden md:block">
+
+    <div class="apply-section hidden md:block">
       <a-button type="primary" size="large" block class="apply-button" @click="updateItemRendering()">
         Apply
       </a-button>
     </div>
+
+    <!-- ===== FILTER POPOVER (inline, slides from left) ===== -->
+    <transition name="filter-pop">
+      <div v-if="showFilterDrawer" class="filter-popover">
+        <div class="filter-drawer-header">
+          <span class="filter-drawer-title">Filters</span>
+          <button class="drawer-close-btn" @click="showFilterDrawer = false">
+            <svg width="16" height="16" viewBox="0 0 18 18" fill="none">
+              <path d="M1 1L17 17M17 1L1 17" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="filter-drawer-body">
+
+          <!-- Price Range (Slider) -->
+          <div class="filter-group">
+            <div class="filter-group-label">Price Range (per sqm)</div>
+            <a-slider
+              :min="0"
+              :max="500000"
+              v-model:value="draftFilters.priceRange"
+              range
+              :tip-formatter="(val) => '$' + val.toLocaleString('en-IN')"
+            />
+            <p class="price-range-label">
+              ${{ draftFilters.priceRange[0].toLocaleString('en-IN') }} – ${{ draftFilters.priceRange[1].toLocaleString('en-IN') }}
+            </p>
+          </div>
+
+          <!-- Style Filter -->
+          <div class="filter-group">
+            <div class="filter-group-label">Style</div>
+            <div class="filter-style-options">
+              <button
+                v-for="style in styleOptions" :key="style.value"
+                class="sort-option-btn"
+                :class="{ active: draftFilters.styles[style.value] }"
+                @click="draftFilters.styles[style.value] = !draftFilters.styles[style.value]"
+              >
+                {{ style.label }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Color Filter (Dynamic from API) -->
+          <div class="filter-group">
+            <div class="filter-group-label">Color</div>
+            <div v-if="loadingColors" style="text-align:center;padding:10px;">
+              <a-spin size="small" />
+            </div>
+            <div v-else class="filter-color-swatches">
+              <button
+                v-for="color in availableColors" :key="color.id"
+                class="color-swatch-btn"
+                :class="{ active: draftFilters.selectedColors.includes(color.color_hex) }"
+                :title="color.title"
+                @click="toggleDraftColor(color.color_hex)"
+              >
+                <span
+                  class="swatch-circle"
+                  :style="{ background: color.color_hex, border: color.color_hex === '#ffffff' || color.color_hex === '#FFFFFF' ? '1px solid #ddd' : 'none' }"
+                >
+                  <span
+                    v-if="draftFilters.selectedColors.includes(color.color_hex)"
+                    class="swatch-check"
+                  >✓</span>
+                </span>
+                <span class="swatch-label">{{ color.title }}</span>
+              </button>
+              <div v-if="availableColors.length === 0" style="color:#999;font-size:12px;">
+                No colors available
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="filter-drawer-footer">
+          <button class="btn-reset-filters" @click="resetDraftFilters">Reset</button>
+          <button class="btn-apply-filters" @click="applyFilters">Apply</button>
+        </div>
+      </div>
+    </transition>
+
   </div>
 </template>
 
@@ -183,6 +304,7 @@ export default {
       selected_texture: '',
       loading: false,
       loadingMore: false,
+      loadingColors: false,
       error: null,
       imageLoadedMap: {},
       catalogItems: [],
@@ -196,16 +318,101 @@ export default {
         has_previous: false,
       },
       searchTimeout: null,
-      likeTogglingIds: new Set(), // Track items being toggled
+      likeTogglingIds: new Set(),
+
+      // Dynamic colors from API
+      availableColors: [],
+
+      // Filter Drawer
+      showFilterDrawer: false,
+
+      // Draft filters (inside drawer, not yet applied)
+      draftFilters: {
+        sort_by: '',
+        priceRange: [0, 500000],
+        selectedColors: [],
+        styles: {
+          modern: false,
+          scandinavian: false,
+          classic: false,
+          minimalist: false,
+          industrial: false,
+          rustic: false,
+          boho: false,
+          other: false,
+        },
+      },
+
+      // Applied filters (used in API calls)
+      appliedFilters: {
+        sort_by: '',
+        priceRange: [0, 500000],
+        selectedColors: [],
+        styles: {
+          modern: false,
+          scandinavian: false,
+          classic: false,
+          minimalist: false,
+          industrial: false,
+          rustic: false,
+          boho: false,
+          other: false,
+        },
+      },
+
+      sortOptions: [
+        { label: 'Price: Low to High', value: 'price_asc' },
+        { label: 'Price: High to Low', value: 'price_desc' },
+        { label: 'Newest First', value: 'newest' },
+        { label: 'Most Popular', value: 'popular' },
+      ],
+
+      styleOptions: [
+        { label: 'Modern', value: 'modern' },
+        { label: 'Scandinavian', value: 'scandinavian' },
+        { label: 'Classic', value: 'classic' },
+        { label: 'Minimalist', value: 'minimalist' },
+        { label: 'Industrial', value: 'industrial' },
+        { label: 'Rustic', value: 'rustic' },
+        { label: 'Boho', value: 'boho' },
+        { label: 'Other', value: 'other' },
+      ],
     };
   },
   components: {
     HeartFilled,
     HeartOutlined
   },
+  computed: {
+    hasActiveFilters() {
+      const f = this.appliedFilters;
+      const priceChanged = f.priceRange[0] > 0 || f.priceRange[1] < 500000;
+      const stylesActive = Object.values(f.styles).some(Boolean);
+      return !!(f.sort_by || priceChanged || f.selectedColors.length > 0 || stylesActive);
+    },
+    activeFilterCount() {
+      const f = this.appliedFilters;
+      let count = 0;
+      if (f.sort_by) count++;
+      if (f.priceRange[0] > 0 || f.priceRange[1] < 500000) count++;
+      if (f.selectedColors.length > 0) count++;
+      if (Object.values(f.styles).some(Boolean)) count++;
+      return count;
+    },
+    sortByLabel() {
+      const opt = this.sortOptions.find(o => o.value === this.appliedFilters.sort_by);
+      return opt ? opt.label : '';
+    },
+    activeStyleLabels() {
+      return this.styleOptions
+        .filter(s => this.appliedFilters.styles[s.value])
+        .map(s => s.label);
+    },
+  },
   mounted() {
     const route = this.$route;
     this.brand = route.query.brand;
+    this.loadAvailableColors();
 
     if (this.brand) {
       console.log('Loading catalogue for brand:', this.brand);
@@ -216,27 +423,76 @@ export default {
     }
 
     if(this.$route.query.product_type=='floor' && this.$route.query.product_id){
-      // if (this.catalogItems > 0){
-        this.selectTexture(this.$route.query.product_id)
-      // }
+      this.selectTexture(this.$route.query.product_id)
     }
   },
   methods: {
-      truncateChars(text, limit = 11) {
-  if (!text) return ''
-  return text.length > limit
-    ? text.slice(0, limit) + '...'
-    : text
-},
+    truncateChars(text, limit = 11) {
+      if (!text) return ''
+      return text.length > limit
+        ? text.slice(0, limit) + '...'
+        : text
+    },
 
- onTextureImageLoad(id) {
-    this.imageLoadedMap[id] = false;
-    setTimeout(() => {
-      this.imageLoadedMap[id] = true;
-    }, 1000);
-  },
+    onTextureImageLoad(id) {
+      this.imageLoadedMap[id] = false;
+      setTimeout(() => {
+        this.imageLoadedMap[id] = true;
+      }, 1000);
+    },
 
+    // ---- Load colors from API ----
+    async loadAvailableColors() {
+      try {
+        this.loadingColors = true;
+        const brand = this.$route.query.brand;
+        const url = brand
+          ? `${this.$store.state.root_api}room/api/floors/colors/?brand=${brand}`
+          : `${this.$store.state.root_api}room/api/floors/colors/`;
 
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            Authorization: `Token ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        const data = await response.json();
+        if (data.success) {
+          this.availableColors = data.data.map((color) => ({
+            id: color.color_hex,
+            title: color.title,
+            color_hex: color.color_hex,
+          }));
+        }
+      } catch (error) {
+        console.error('Failed to load colors:', error);
+      } finally {
+        this.loadingColors = false;
+      }
+    },
+
+    // Toggle color in draft filters
+    toggleDraftColor(hexCode) {
+      const index = this.draftFilters.selectedColors.indexOf(hexCode);
+      if (index > -1) {
+        this.draftFilters.selectedColors.splice(index, 1);
+      } else {
+        this.draftFilters.selectedColors.push(hexCode);
+      }
+    },
+
+    // Open drawer and sync draft from applied
+    openFilterDrawer() {
+      this.draftFilters = {
+        sort_by: this.appliedFilters.sort_by,
+        priceRange: [...this.appliedFilters.priceRange],
+        selectedColors: [...this.appliedFilters.selectedColors],
+        styles: { ...this.appliedFilters.styles },
+      };
+      this.showFilterDrawer = true;
+    },
 
     async fetchCatalogItems(brand = null, page = 1, isLoadMore = false) {
       if (page === 1 && !isLoadMore) {
@@ -253,13 +509,31 @@ export default {
           url = `${this.$store.state.root_api}room/api/load-brand-products/floors/${brand}`;
         }
 
-        // Add pagination parameters
         const separator = url.includes('?') ? '&' : '?';
         url += `${separator}page=${page}&page_size=${this.pageSize}`;
 
-        // Add search parameter if exists
         if (this.searchText) {
           url += `&search=${encodeURIComponent(this.searchText)}`;
+        }
+
+        // Price range
+        const f = this.appliedFilters;
+        url += `&price_per_sqm_min=${f.priceRange[0]}&price_per_sqm_max=${f.priceRange[1]}`;
+
+        // Sort
+        if (f.sort_by) url += `&sort_by=${encodeURIComponent(f.sort_by)}`;
+
+        // Colors
+        if (f.selectedColors.length > 0) {
+          url += `&color_hex=${encodeURIComponent(f.selectedColors.join(','))}`;
+        }
+
+        // Styles
+        const selectedStyles = this.styleOptions
+          .filter(s => f.styles[s.value])
+          .map(s => s.label);
+        if (selectedStyles.length > 0) {
+          url += `&texture_style=${encodeURIComponent(selectedStyles.join(','))}`;
         }
 
         const response = await fetch(url, {
@@ -273,14 +547,11 @@ export default {
 
         if (data && data.data) {
           if (isLoadMore) {
-            // Append new items to existing list
             this.catalogItems = [...this.catalogItems, ...data.data];
           } else {
-            // Replace with new items
             this.catalogItems = data.data;
           }
 
-          // Update pagination info
           if (data.pagination) {
             this.paginationInfo = data.pagination;
             this.currentPage = data.pagination.page;
@@ -301,7 +572,6 @@ export default {
     },
 
     handleSearchChange() {
-      // Debounce search to avoid too many API calls
       clearTimeout(this.searchTimeout);
       this.searchTimeout = setTimeout(() => {
         this.currentPage = 1;
@@ -320,59 +590,129 @@ export default {
       this.$emit('floor-see-all', true);
     },
 
-smoothMobileScrolltoTop(){
-        if (window.innerWidth < 500) {
-            const smoothScrollToTop = (duration = 800) => {
-              const start = window.scrollY;
-              const startTime = performance.now();
+    smoothMobileScrolltoTop(){
+      if (window.innerWidth < 500) {
+        const smoothScrollToTop = (duration = 800) => {
+          const start = window.scrollY;
+          const startTime = performance.now();
 
-              const easeInOutCubic = (t) =>
-                t < 0.5
-                  ? 4 * t * t * t
-                  : 1 - Math.pow(-2 * t + 2, 3) / 2;
+          const easeInOutCubic = (t) =>
+            t < 0.5
+              ? 4 * t * t * t
+              : 1 - Math.pow(-2 * t + 2, 3) / 2;
 
-              const animate = (currentTime) => {
-                const elapsed = currentTime - startTime;
-                const progress = Math.min(elapsed / duration, 1);
-                const ease = easeInOutCubic(progress);
+          const animate = (currentTime) => {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const ease = easeInOutCubic(progress);
 
-                window.scrollTo(0, start * (1 - ease));
+            window.scrollTo(0, start * (1 - ease));
 
-                if (progress < 1) {
-                  requestAnimationFrame(animate);
-                }
-              };
-
+            if (progress < 1) {
               requestAnimationFrame(animate);
-            };
+            }
+          };
 
-            smoothScrollToTop(900); // 900ms = very smooth
-          }
-        },
+          requestAnimationFrame(animate);
+        };
+
+        smoothScrollToTop(900);
+      }
+    },
+
     selectTexture(uuid) {
       this.smoothMobileScrolltoTop()
-
       console.log(uuid);
       this.selected_texture = uuid;
       this.$emit('texture-floor-product-selected', this.selected_texture);
-
     },
 
     updateItemRendering() {
       this.$emit('texture-selected', this.selected_texture);
     },
 
+    // ---- Filter Methods ----
+
+    applyFilters() {
+      this.appliedFilters = {
+        sort_by: this.draftFilters.sort_by,
+        priceRange: [...this.draftFilters.priceRange],
+        selectedColors: [...this.draftFilters.selectedColors],
+        styles: { ...this.draftFilters.styles },
+      };
+      this.showFilterDrawer = false;
+      this.currentPage = 1;
+      this.fetchCatalogItems(this.brand, 1);
+    },
+
+    resetDraftFilters() {
+      this.draftFilters = {
+        sort_by: '',
+        priceRange: [0, 500000],
+        selectedColors: [],
+        styles: {
+          modern: false,
+          scandinavian: false,
+          classic: false,
+          minimalist: false,
+          industrial: false,
+          rustic: false,
+          boho: false,
+          other: false,
+        },
+      };
+    },
+
+    clearAllFilters() {
+      const empty = {
+        sort_by: '',
+        priceRange: [0, 500000],
+        selectedColors: [],
+        styles: {
+          modern: false,
+          scandinavian: false,
+          classic: false,
+          minimalist: false,
+          industrial: false,
+          rustic: false,
+          boho: false,
+          other: false,
+        },
+      };
+      this.appliedFilters = { ...empty, priceRange: [0, 500000], selectedColors: [], styles: { ...empty.styles } };
+      this.draftFilters   = { ...empty, priceRange: [0, 500000], selectedColors: [], styles: { ...empty.styles } };
+      this.currentPage = 1;
+      this.fetchCatalogItems(this.brand, 1);
+    },
+
+    removeFilter(type) {
+      if (type === 'price') {
+        this.appliedFilters.priceRange = [0, 500000];
+        this.draftFilters.priceRange   = [0, 500000];
+      } else if (type === 'color') {
+        this.appliedFilters.selectedColors = [];
+        this.draftFilters.selectedColors   = [];
+      } else if (type === 'styles') {
+        const reset = { modern: false, scandinavian: false, classic: false, minimalist: false, industrial: false, rustic: false, boho: false, other: false };
+        this.appliedFilters.styles = { ...reset };
+        this.draftFilters.styles   = { ...reset };
+      } else {
+        this.appliedFilters[type] = '';
+        this.draftFilters[type]   = '';
+      }
+      this.currentPage = 1;
+      this.fetchCatalogItems(this.brand, 1);
+    },
+
     async toggleLike(itemId, itemIndex) {
       try {
         const token = localStorage.getItem('token');
         
-        // Check if user is authenticated
         if (!token) {
           this.$message.warning('Please login to add favorites');
           return;
         }
 
-        // Add to toggling set
         this.likeTogglingIds.add(itemId);
 
         const response = await fetch(
@@ -392,10 +732,8 @@ smoothMobileScrolltoTop(){
 
         const data = await response.json();
 
-        // Update the item's like status
         this.catalogItems[itemIndex].is_liked = data.favorited;
         
-        // Show success message
         const message = data.favorited ? 'Added to favorites' : 'Removed from favorites';
         this.$message.success(message);
 
@@ -403,7 +741,6 @@ smoothMobileScrolltoTop(){
         console.error("Like toggle failed", error);
         this.$message.error('Failed to update favorite');
       } finally {
-        // Remove from toggling set
         this.likeTogglingIds.delete(itemId);
       }
     }
@@ -415,13 +752,14 @@ smoothMobileScrolltoTop(){
 .ai-catalog-section {
   display: flex;
   flex-direction: column;
+  position: relative;
+  overflow: hidden;
 }
 
 @media (min-width: 640px) {
   .ai-catalog-section {
     height: 78vh;
   }
-  
 }
 
 .ai-catalog-header {
@@ -454,6 +792,112 @@ smoothMobileScrolltoTop(){
   display: flex;
   gap: 8px;
 }
+
+/* ---- Filter & Toggle Buttons ---- */
+.filter-btn {
+  position: relative;
+  padding: 5px;
+  border: 1px solid #d9d9d9;
+  background: white;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  transition: background 0.18s, border-color 0.18s, color 0.18s;
+}
+
+.filter-btn:hover {
+  background: #f5f5f5;
+  border-color: #bbb;
+}
+
+.filter-btn--active-filters {
+  border-color: #3B63FB;
+  color: #3B63FB;
+}
+
+.filter-btn.active {
+  background: #3B63FB;
+  border-color: #3B63FB;
+}
+
+.filter-btn.active svg path,
+.filter-btn.active svg rect {
+  stroke: white;
+}
+
+.filter-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #3B63FB;
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* ---- Active Filter Chips ---- */
+.active-filters-bar {
+  margin-bottom: 8px;
+  flex-shrink: 0;
+}
+
+.active-filters-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #eef2ff;
+  border: 1px solid #c7d2fe;
+  color: #3B63FB;
+  border-radius: 20px;
+  padding: 3px 10px 3px 10px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.chip-remove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  color: #3B63FB;
+  opacity: 0.7;
+  transition: opacity 0.15s;
+}
+
+.chip-remove:hover { opacity: 1; }
+
+.clear-all-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #ff4d4f;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 6px;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+
+.clear-all-btn:hover { background: #fff1f0; }
 
 .scrollable-content {
   flex: 1;
@@ -509,10 +953,9 @@ smoothMobileScrolltoTop(){
   gap: 12px;
 }
 
-
 .texture-image-skeleton {
   width: 100%;
-  height: 200px; /* adjust to match your product-image height */
+  height: 200px;
   border-radius: 8px;
   background: linear-gradient(
     110deg,
@@ -532,33 +975,9 @@ smoothMobileScrolltoTop(){
 
 .texture-image {
   width: 100%;
-  height: 200px; /* match skeleton height */
+  height: 200px;
   object-fit: cover;
   border-radius: 8px;
-}
-
-
-
-
-.filter-btn {
-  padding: 3px;
-  border: 1px solid #d9d9d9;
-  background: white;
-  border-radius: 4px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.filter-btn.active {
-  background: #3B63FB;
-  border-color: #3B63FB;
-}
-
-.filter-btn.active svg path,
-.filter-btn.active svg rect {
-  stroke: white;
 }
 
 .product-item {
@@ -684,7 +1103,6 @@ smoothMobileScrolltoTop(){
 
 .apply-section {
   flex-shrink: 0;
- 
   padding-top: 8px
 }
 
@@ -718,8 +1136,9 @@ smoothMobileScrolltoTop(){
 
 @media (max-width: 768px) {
   .apply-section {
-  padding-bottom: 20px;}
- 
+    padding-bottom: 20px;
+  }
+
   .list-view .product-image {
     width: 100px;
     height: 100px;
@@ -742,5 +1161,206 @@ smoothMobileScrolltoTop(){
     padding: 5px;
     padding-bottom: 0px;
   }
+}
+
+/* ======= FILTER POPOVER (inline, slides from left) ======= */
+
+.filter-popover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background: #fff;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 4px 0 20px rgba(0,0,0,0.10);
+  border-radius: 4px;
+}
+
+.filter-drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px 14px;
+  border-bottom: 1px solid #f0f0f0;
+  flex-shrink: 0;
+}
+
+.filter-drawer-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1a1a;
+  font-family: Poppins, sans-serif;
+}
+
+.drawer-close-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+
+.drawer-close-btn:hover { background: #f5f5f5; }
+
+.filter-drawer-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.filter-group {}
+
+.filter-group-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #444;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.filter-style-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.sort-option-btn {
+  padding: 6px 14px;
+  border: 1px solid #e0e0e0;
+  border-radius: 20px;
+  background: white;
+  font-size: 13px;
+  color: #555;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-weight: 500;
+}
+
+.sort-option-btn:hover { border-color: #3B63FB; color: #3B63FB; }
+
+.sort-option-btn.active {
+  background: #3B63FB;
+  border-color: #3B63FB;
+  color: white;
+}
+
+.price-range-label {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #666;
+}
+
+.filter-color-swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.color-swatch-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  padding: 4px 6px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.color-swatch-btn:hover { border-color: #bbb; }
+
+.color-swatch-btn.active { border-color: #3B63FB; }
+
+.swatch-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid rgba(0,0,0,0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.swatch-check {
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  text-shadow: 0 0 3px rgba(0,0,0,0.5);
+  line-height: 1;
+}
+
+.swatch-label {
+  font-size: 10px;
+  color: #666;
+  white-space: nowrap;
+}
+
+.filter-drawer-footer {
+  display: flex;
+  gap: 10px;
+  padding: 14px 20px;
+  border-top: 1px solid #f0f0f0;
+  flex-shrink: 0;
+  background: #fff;
+}
+
+.btn-reset-filters {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  background: white;
+  font-size: 14px;
+  font-weight: 600;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-reset-filters:hover { border-color: #ff4d4f; color: #ff4d4f; }
+
+.btn-apply-filters {
+  flex: 2;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background: #3B63FB;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btn-apply-filters:hover { background: #2a52e0; }
+
+/* Filter popover slide-from-left animation */
+.filter-pop-enter-active,
+.filter-pop-leave-active {
+  transition: transform 0.26s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.filter-pop-enter-from,
+.filter-pop-leave-to {
+  transform: translateX(-100%);
+}
+
+.filter-pop-enter-to,
+.filter-pop-leave-from {
+  transform: translateX(0);
 }
 </style>
