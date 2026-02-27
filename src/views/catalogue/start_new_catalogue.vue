@@ -1436,10 +1436,8 @@ export default {
     },
 
     demoImage() {
-      console.log("DDDDDDDDDDDDDDDDDEEEEEEEMMMMMMMMMMOOOOOOOOOO",this.$route.query.source);
       const isTryFree = this.$route.query.source === "try-free";
       const file = this.$store.state.HomePageTryFeeSelectedFile;
-      console.log("FFFFFFFFFFFfff",isTryFree,file);
       if (isTryFree && file) {
         return file;
       }
@@ -1452,8 +1450,8 @@ export default {
     handler(newFile) {
       if (newFile) {
         console.log("URRRR", newFile);
+        this.modalFile=newFile;
         this.modalPreviewImage = URL.createObjectURL(newFile);
-        this.convertUrlToFile(newFile);
       }
     }
   }

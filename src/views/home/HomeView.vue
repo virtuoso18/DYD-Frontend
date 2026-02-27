@@ -610,6 +610,7 @@
                 height: 220px;
                 width: 100%;
                 height: 70%;
+                max-height: 300px;
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
@@ -662,8 +663,8 @@
               </a-button>
               </span>
               <span v-else class="w-full h-full p-2 relative">
-                <img :src="selectedFileDataTryFree" class="w-full h-full !mb-2 rounded-lg" alt=""/>
-                <a-button type="primary" class="absolute bottom-16 left-[40%] change-room">Change Room Image</a-button>
+                <img :src="selectedFileDataTryFree" class="w-full h-full !mb-2 object-cover rounded-lg" alt=""/>
+                <a-button type="primary" @click="handleHomeFileUploadTryFree" class="absolute bottom-16 left-[28%] sm:left-[30%] md:left-[40%]">Change Room Image</a-button>
                 <!-- <button
                   class="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed !text-white font-semibold py-3 px-4 text-[14px] !font-family-poppins rounded-lg flex items-center justify-center gap-2 transition-colors"
                 >
@@ -2869,8 +2870,8 @@ export default {
   },
   computed: {
     selectedFileDataTryFree() {
-      const file=this.$store.state.HomePageTryFeeSelectedFile
-      return file ? URL.createObjectURL(file) : "";
+      const file= this.$store.state.HomePageTryFeeSelectedFile 
+      return file ? URL.createObjectURL(file) : ""
     },
   },
   mounted() {
@@ -2905,12 +2906,21 @@ export default {
 
   methods: {
     handleHomeFileUpload(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-     this.fileRefKey=Number(new Date());
-      //  Store file in Vuex
-      this.$store.commit("setSelectedFile", file);
-    },
+  const file = event.target.files[0];
+  if (!file) return;
+
+  this.fileRefKey = Number(new Date());
+  this.$store.commit("setSelectedFile", file);
+
+  // const reader = new FileReader();
+
+  // reader.onload = (e) => {
+  //   console.log("File loaded");
+  //   this.$store.commit("setSelectedFile", e.target.result);
+  // };
+
+  // reader.readAsDataURL(file); // 🔥 THIS WAS MISSING
+},
     handleHomeFileUploadTryFree() {
       
       // This opens the file selector

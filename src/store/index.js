@@ -15,9 +15,9 @@ export default createStore({
     // websockets_address:'ws://localhost:8000',
     // root_api: 'http://127.0.0.1:8000/',
     // root_media_api: 'http://127.0.0.1:8000',
-    websockets_address: "wss://zjdngulb0ry9kk-8000.proxy.runpod.net",
-    root_api: "https://zjdngulb0ry9kk-8000.proxy.runpod.net/",
-    root_media_api: "https://zjdngulb0ry9kk-8000.proxy.runpod.net",
+    websockets_address: "wss://m3eqemnejixp5p-8000.proxy.runpod.net",
+    root_api: "https://m3eqemnejixp5p-8000.proxy.runpod.net/",
+    root_media_api: "https://m3eqemnejixp5p-8000.proxy.runpod.net",
   },
 
   getters: {
@@ -86,7 +86,6 @@ export default createStore({
       state.isLoading = status;
     },
     setSelectedFile(state, file) {
-      console.log("firrrrrrrrrrrrrr");
       state.HomePageTryFeeSelectedFile = file;
     },
 
