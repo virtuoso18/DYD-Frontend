@@ -6073,7 +6073,7 @@ export default {
     async updateBaskeImageURL_CANVAS(renderer_id) {
       // ⏳ WAIT until polling completes
       await this.startPolling(renderer_id);
-
+      this.unselect_currrent_selected_object()
       // ✅ ONLY NOW update canvas
       // this.base_image_url =
       //   this.$store.state.root_media_api +
@@ -6346,7 +6346,7 @@ export default {
 .middle-panel {
   background: #fff;
   border-right: 1px solid #e5e5e5;
-  overflow: auto; /* Change from overflow-y: auto to hidden */
+  /*overflow: auto; /* Change from overflow-y: auto to hidden */
   height: 100%;
 }
 

@@ -1643,7 +1643,7 @@
               />
             </a-col>
           </a-row>
-
+<!-- {{ selected_model_uuid_primary_key }} -->
           <!-- {{list_history_generated_3d_models }} -->
 
           <div></div>
@@ -1827,6 +1827,7 @@ export default {
         "#FFB6C1",
         "#87CEEB",
       ],
+      selected_model_uuid_primary_key:'',
       loading_generated_models_history: true,
       list_history_generated_3d_models: [],
       selected_color_model_url: "",
@@ -2103,6 +2104,7 @@ export default {
       this.is_resizable = value;
     },
     clickedModel(e) {
+      this.selected_model_uuid_primary_key= e['new3d_model_instance']
       const fixedUrl = e["media_url"].replace(/\\/g, "/");
       this.selected_color_model_url =
         this.$store.state.root_media_api + fixedUrl;

@@ -245,15 +245,13 @@
   </div>
 </template>
 
+
 <script>
 import { markRaw } from 'vue'
 import * as THREE from 'three'
 import { PLYLoader } from 'three/examples/jsm/loaders/PLYLoader'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 
-
-import ZoomInIcon from "@/assets/icons/zoomout.png";
-import ZoomOutIcon from "@/assets/icons/zoomin.png";
 import TapToSelect from "@/assets/icons/tap.png";
 import DragToMove from "@/assets/icons/tapAndMove.png";
 import threetapnove from "@/assets/icons/threetapnove.png";
@@ -282,16 +280,18 @@ export default {
 
   data() {
     return {
+      // ✅ FIX 1 OF 4: _spinAngleRad is the ONLY source of truth for spin.
+      // alignChairToFloor READS this — never overwrites it.
+      // Only updateChairRotation() and pointer handlers WRITE to it.
+      _spinAngleRad: 0,
+
+      // ✅ FIX 4 OF 4: blocks chairRotation watcher during renderItem
+      _renderLock: false,
+
       isShowInstructionModal: false,
       instructionConfig: [
-        {
-          key: "Tap to select a product",
-          value: TapToSelect,
-        },
-        {
-          key: "Drag to move 3D Furniture",
-          value: DragToMove,
-        },
+        { key: "Tap to select a product", value: TapToSelect },
+        { key: "Drag to move 3D Furniture", value: DragToMove },
         { key: "Two finger swipe left or right to Rotate the Furniture", value: threetapnove },
       ],
 
@@ -316,17 +316,6 @@ export default {
       isDraggingRef: false,
       isRotatingRef: false,
 
-      // ─────────────────────────────────────────────────────────
-      // ✅ FIX: Single source of truth for spin angle in RADIANS.
-      // NEVER read chair.rotation.y back as spin — the floor-tilt
-      // quaternion contaminates all Euler components.
-      // ─────────────────────────────────────────────────────────
-      _spinAngleRad: 0,
-
-      // ✅ Blocks chairRotation watcher from firing alignChairToFloor
-      // during renderItem() blob creation (prevents quaternion corruption)
-      _renderLock: false,
-
       chairRotation: 0,
       lastHit: null,
       lastMaskResult: false,
@@ -340,7 +329,6 @@ export default {
       _floorNY: 1,
       _floorNZ: 0,
 
-      // THREE.JS OBJECTS
       scene: null,
       camera: null,
       renderer: null,
@@ -365,24 +353,24 @@ export default {
       rotationArrows: [],
       showRotationRing: true,
 
-      lastKnownPos:null,
-      lastKnownQuat:null,
-      lastKnownScale:null,
-      _pendingTransformRestore:null,
+      lastKnownPos: null,
+      lastKnownQuat: null,
+      lastKnownScale: null,
+      _pendingTransformRestore: null,
 
-      _worldUp:null,
-      _tiltQ:null,
-      _fn:null,
-      _spinQ:null,
-      _spinAxis:null,
+      _worldUp: null,
+      _tiltQ: null,
+      _fn: null,
+      _spinQ: null,
+      _spinAxis: null,
 
-      _twoFingerRafId:null,
-      _twoFingerPending:null,
-      _twoFingerNewRotRad:null,   // ✅ renamed: stores radians not just rotY
-      _finger0Y:null,
-      _finger1Y:null,
-      _finger0Id:null,
-      _finger1Id:null,
+      _twoFingerRafId: null,
+      _twoFingerPending: null,
+      _twoFingerNewRotRad: null,
+      _finger0Y: null,
+      _finger1Y: null,
+      _finger0Id: null,
+      _finger1Id: null,
     }
   },
 
@@ -392,8 +380,6 @@ export default {
     'add-3d-furniture-to-room-start-polling',
     'rendered-comfyui-workflow',
     'Apply-Changes',
-    'unselect-object',
-    'model-transform-updated',
   ],
 
   computed: {
@@ -415,16 +401,16 @@ export default {
     this._fn       = markRaw(new THREE.Vector3())
     this._spinQ    = markRaw(new THREE.Quaternion())
     this._spinAxis = markRaw(new THREE.Vector3())
-    
-    this._twoFingerRafId      = null
-    this._twoFingerPending    = false
-    this._twoFingerNewRotRad  = 0   // ✅ radians
+
+    this._twoFingerRafId     = null
+    this._twoFingerPending   = false
+    this._twoFingerNewRotRad = 0
 
     this._finger0Y  = 0
     this._finger1Y  = 0
     this._finger0Id = -1
     this._finger1Id = -1
-    
+
     this.floorNormal3   = markRaw(new THREE.Vector3(0, 1, 0))
     this.floorCentroid3 = markRaw(new THREE.Vector3())
 
@@ -434,11 +420,11 @@ export default {
     this.mouse               = markRaw(new THREE.Vector2())
 
     this.isRotating          = false
-    this.rotationStartAngle  = 0   // ✅ will now always be in radians from _spinAngleRad
+    this.rotationStartAngle  = 0
     this.rotationStartMouseX = 0
 
     this.twoFingerPointers   = new Map()
-    this.twoFingerStartAngle = 0   // ✅ radians snapshot at gesture start
+    this.twoFingerStartAngle = 0
     this.twoFingerStartAvgY  = 0
     this.isTwoFingerRotating = false
 
@@ -467,14 +453,8 @@ export default {
   },
 
   methods: {
-    showInstructionModal() {
-      this.isShowInstructionModal = true;
-    },
-    closeInstructionModal() {
-      this.isShowInstructionModal = false;
-    },
-
-    // ── HELPERS ─────────────────────────────────────────────────
+    showInstructionModal() { this.isShowInstructionModal = true },
+    closeInstructionModal() { this.isShowInstructionModal = false },
 
     resolveModelUrl(url) {
       if (!url) return url
@@ -503,8 +483,6 @@ export default {
         return { clientX: event.changedTouches[0].clientX, clientY: event.changedTouches[0].clientY }
       return { clientX: event.clientX, clientY: event.clientY }
     },
-
-    // ── INIT ────────────────────────────────────────────────────
 
     initThree() {
       if (this.renderer) return
@@ -541,7 +519,6 @@ export default {
       this.maskOverlayCanvas.width  = renderW
       this.maskOverlayCanvas.height = renderH
 
-      // ── LIGHTING ────────────────────────────────────────────
       this.scene.add(new THREE.AmbientLight(0xfff4e0, 1.2))
 
       const sun = new THREE.DirectionalLight(0xfff5e8, 2.0)
@@ -592,7 +569,6 @@ export default {
 
       const el = this.renderer.domElement
       el.style.touchAction = 'none'
-
       el.addEventListener('pointerdown',   this.onPointerDown)
       el.addEventListener('pointermove',   this.onPointerMove)
       el.addEventListener('pointerup',     this.onPointerUp)
@@ -654,8 +630,6 @@ export default {
       if (this.rotationRing) this._fitRingToCanvas()
     },
 
-    // ── POINTER EVENTS ──────────────────────────────────────────
-
     onPointerDown(event) {
       if (!this.chair || !this.floorPlaneTHREE) return
 
@@ -675,7 +649,8 @@ export default {
           this._finger1Y  = this.twoFingerPointers.get(ids[1])
 
           this.twoFingerStartAvgY  = (this._finger0Y + this._finger1Y) / 2
-          // ✅ FIX: snapshot the clean spin angle in radians (not euler Y)
+          // ✅ FIX 2 OF 4: snapshot clean radian spin — NOT chair.rotation.y
+          // chair.rotation.y is corrupted by tiltQ; only _spinAngleRad is clean
           this.twoFingerStartAngle = this._spinAngleRad
           this.isTwoFingerRotating = true
 
@@ -702,7 +677,6 @@ export default {
       this.mouse.set(ndcX, ndcY)
       this.raycaster.setFromCamera(this.mouse, this.camera)
 
-      // 1. Check rotation ring arrows first
       if (this.rotationRing && this.showRotationRing) {
         const arrowHits = this.raycaster.intersectObject(this.rotationRing, true)
         const arrowHit  = arrowHits.find(h => h.object.userData.isRotationArrow)
@@ -713,7 +687,7 @@ export default {
 
           this.isRotating          = true
           this.isRotatingRef       = true
-          // ✅ FIX: store clean radian spin angle, NOT chair.rotation.y (corrupted euler)
+          // ✅ snapshot clean radian spin
           this.rotationStartAngle  = this._spinAngleRad
           this.rotationStartMouseX = ndcX
 
@@ -723,7 +697,6 @@ export default {
         }
       }
 
-      // 2. Check model body for dragging
       const hits = this.raycaster.intersectObject(this.chair, true)
       if (hits.length === 0) return
 
@@ -745,20 +718,16 @@ export default {
       event.preventDefault()
     },
 
-    // Fast ring snap — no scale recalc
     _snapRingToChairFast() {
       if (!this.rotationRing || !this.chair) return
-
       this.rotationRing.position.copy(this.chair.position)
       this.rotationRing.position.addScaledVector(this.floorNormal3, 0.012)
-
       this._fn.copy(this.floorNormal3).normalize()
       this._tiltQ.setFromUnitVectors(this._worldUp, this._fn)
       this.rotationRing.quaternion.copy(this._tiltQ)
     },
 
     onPointerMove(event) {
-      // ── Two-finger rotate ──────────────────────────────────────
       if (event.pointerType === 'touch' && this.isTwoFingerRotating) {
         if (!this.twoFingerPointers.has(event.pointerId)) return
 
@@ -770,11 +739,10 @@ export default {
         this.twoFingerPointers.set(event.pointerId, event.clientY)
 
         if (this.twoFingerPointers.size === 2) {
-          const avgY    = (this._finger0Y + this._finger1Y) * 0.5
-          const deltaY  = avgY - this.twoFingerStartAvgY
-          // 200px swipe = full 360°
+          const avgY     = (this._finger0Y + this._finger1Y) * 0.5
+          const deltaY   = avgY - this.twoFingerStartAvgY
           const deltaRad = (deltaY / 200) * Math.PI * 2
-          // ✅ FIX: compute new spin in radians from clean baseline
+          // ✅ compute from clean radian baseline — no degree round-trip
           this._twoFingerNewRotRad = this.twoFingerStartAngle + deltaRad
 
           if (!this._twoFingerPending) {
@@ -782,11 +750,9 @@ export default {
             this._twoFingerRafId = requestAnimationFrame(() => {
               this._twoFingerPending = false
               this._twoFingerRafId   = null
-
               if (!this.chair || !this.isTwoFingerRotating) return
 
-              // ✅ FIX: update _spinAngleRad then go through alignChairToFloor
-              // so the floor-tilt quaternion is always correctly applied
+              // ✅ Write to _spinAngleRad FIRST, then sync degrees for UI
               this._spinAngleRad = this._twoFingerNewRotRad
               this.chairRotation = ((THREE.MathUtils.radToDeg(this._spinAngleRad) % 360) + 360) % 360
               this.alignChairToFloor()
@@ -800,7 +766,6 @@ export default {
         return
       }
 
-      // ── Single-pointer path ──────────────────────────────────
       if (event.pointerType === 'touch' && event.isPrimary === false) return
       if (!this.isDragging && !this.isRotating) return
 
@@ -808,17 +773,14 @@ export default {
       const { ndcX, ndcY, sx, sy } = this._eventToNDC(clientX, clientY)
       this.mouse.set(ndcX, ndcY)
 
-      // Arrow rotation
       if (this.isRotating) {
         const deltaX  = ndcX - this.rotationStartMouseX
-        // ✅ FIX: rotationStartAngle is clean radians from _spinAngleRad
         const newRotRad = this.rotationStartAngle + deltaX * Math.PI * 2
 
-        // Update both radian source-of-truth AND degree UI value
+        // ✅ Write _spinAngleRad FIRST, then sync UI degrees
         this._spinAngleRad = newRotRad
         this.chairRotation = ((THREE.MathUtils.radToDeg(newRotRad) % 360) + 360) % 360
 
-        // Directly call alignChairToFloor — watcher is blocked by isRotatingRef=true
         this.alignChairToFloor()
         this._snapRingToChairFast()
         this.snapLightToChair()
@@ -827,7 +789,6 @@ export default {
         return
       }
 
-      // Model drag
       if (this.isDragging) {
         this.raycaster.setFromCamera(this.mouse, this.camera)
 
@@ -864,29 +825,22 @@ export default {
 
     _saveLastKnownTransform() {
       if (!this.chair) return
-
-      // ✅ Number() strips Vue proxy wrapper → guarantees raw JS primitives
-      // Without this, parent receives Proxy(Object) that can mutate later
       this.lastKnownPos = {
-        x: Number(this.chair.position.x),
-        y: Number(this.chair.position.y),
-        z: Number(this.chair.position.z),
+        x: this.chair.position.x,
+        y: this.chair.position.y,
+        z: this.chair.position.z,
       }
       this.lastKnownQuat = {
-        x: Number(this.chair.quaternion.x),
-        y: Number(this.chair.quaternion.y),
-        z: Number(this.chair.quaternion.z),
-        w: Number(this.chair.quaternion.w),
+        x: this.chair.quaternion.x,
+        y: this.chair.quaternion.y,
+        z: this.chair.quaternion.z,
+        w: this.chair.quaternion.w,
       }
       this.lastKnownScale = {
-        x: Number(this.chair.scale.x),
-        y: Number(this.chair.scale.y),
-        z: Number(this.chair.scale.z),
+        x: this.chair.scale.x,
+        y: this.chair.scale.y,
+        z: this.chair.scale.z,
       }
-
-      console.log('[lastKnown saved] pos x:', Number(this.chair.position.x).toFixed(3),
-                  'z:', Number(this.chair.position.z).toFixed(3),
-                  'spinDeg:', THREE.MathUtils.radToDeg(this._spinAngleRad).toFixed(1) + '°')
     },
 
     onPointerUp(event) {
@@ -900,18 +854,17 @@ export default {
             this._twoFingerPending = false
           }
           this.isTwoFingerRotating = false
-          // ✅ FIX: sync degree value from _spinAngleRad (not from euler Y)
+          // ✅ FIX 3 OF 4: sync degrees from _spinAngleRad — NOT from chair.rotation.y
+          // After multiplyQuaternions(spinQ, tiltQ), euler.y is contaminated by tiltQ
           if (this.chair) {
             this.chairRotation = ((THREE.MathUtils.radToDeg(this._spinAngleRad) % 360) + 360) % 360
           }
           this._saveLastKnownTransform()
-          this._emitTransformUpdate()
           return
         }
         if (this.isTwoFingerRotating) return
       }
 
-      // Restore highlighted arrow colour
       if (this.isRotating && this.rotationRing) {
         this.rotationRing.traverse((child) => {
           if (child.userData && child.userData.visMesh) {
@@ -930,15 +883,12 @@ export default {
 
       try { this.renderer.domElement.releasePointerCapture(event.pointerId) } catch (_) {}
 
-      // ✅ FIX: sync degree value from _spinAngleRad (not from euler Y)
+      // ✅ FIX 3 OF 4 (single pointer path): same fix — read _spinAngleRad
       if (this.chair) {
         this.chairRotation = ((THREE.MathUtils.radToDeg(this._spinAngleRad) % 360) + 360) % 360
       }
       this._saveLastKnownTransform()
-      this._emitTransformUpdate()
     },
-
-    // ── READY CHECK ─────────────────────────────────────────────
 
     _checkAllReady() {
       if (this.planeReady && this.chairLoaded) {
@@ -954,8 +904,6 @@ export default {
       }
     },
 
-    // ── FLOOR RAYCAST ───────────────────────────────────────────
-
     raycastFloor() {
       if (this.floorPlaneTHREE) {
         const pt = new THREE.Vector3()
@@ -966,8 +914,6 @@ export default {
       if (this.raycaster.ray.intersectPlane(yPlane, pt)) return pt
       return null
     },
-
-    // ── ROTATION RING ───────────────────────────────────────────
 
     createRotationRing() {
       this._disposeRotationRing()
@@ -1009,9 +955,9 @@ export default {
 
         const visGeo = new THREE.BufferGeometry()
         visGeo.setAttribute('position', new THREE.Float32BufferAttribute([
-          cx + tx * AH,  0, cz + tz * AH,
-          cx + nx * AW,  0, cz + nz * AW,
-          cx - nx * AW,  0, cz - nz * AW,
+          cx + tx * AH, 0, cz + tz * AH,
+          cx + nx * AW, 0, cz + nz * AW,
+          cx - nx * AW, 0, cz - nz * AW,
         ], 3))
         visGeo.setIndex([0, 1, 2])
         visGeo.computeVertexNormals()
@@ -1055,12 +1001,10 @@ export default {
 
     _fitRingToCanvas() {
       if (!this.rotationRing || !this.renderer || !this.chair || !this.camera) return
-
       let footprintHalf = 0.6
       if (this.TARGET_DIMS && this.TARGET_DIMS.width) {
         footprintHalf = (parseFloat(this.TARGET_DIMS.width) / 2) * 1.35
       }
-
       const desiredRadius = Math.max(0.25, footprintHalf)
       this.rotationRing.scale.setScalar(desiredRadius)
     },
@@ -1072,14 +1016,23 @@ export default {
         if (child.geometry) child.geometry.dispose()
         if (child.material) child.material.dispose()
       })
-      this.rotationRing  = null
+      this.rotationRing   = null
       this.rotationArrows = []
     },
 
-    // ── CHAIR LOAD / RELOAD ─────────────────────────────────────
-
     reloadChair() {
       if (!this.scene) { console.warn('⚠️ reloadChair: scene not ready'); return }
+      // ✅ Clear the WebGL canvas immediately so old model doesn't ghost
+      
+      // ✅ Hide old chair from animate() loop IMMEDIATELY
+      if (this.chair) this.chair.visible = false
+
+      // ✅ Force one blank frame right now — clears the canvas visually
+      if (this.renderer && this.scene && this.camera) {
+        this.renderer.setClearColor(0x000000, 0)
+        this.renderer.clear(true, true, true)
+        this.renderer.render(this.scene, this.camera)
+      }
 
       this.isDragging          = false
       this.isDraggingRef       = false
@@ -1104,7 +1057,7 @@ export default {
         this.chair = null
       }
 
-      // ✅ Reset spin angle on model reload
+      // ✅ reset spin on reload
       this._spinAngleRad     = 0
       this.chairRotation     = 0
       this.modelLoadProgress = 0
@@ -1126,9 +1079,9 @@ export default {
           const flippedSize = new THREE.Vector3()
           flippedBox.getSize(flippedSize)
 
-          const fovRad = (this.CAM_FOV_V * Math.PI) / 180
-          const fy_threejs        = this.CAM_IMG_H / 2 / Math.tan(fovRad / 2)
-          const focalCorrection   = this.CAM_FY / fy_threejs
+          const fovRad          = (this.CAM_FOV_V * Math.PI) / 180
+          const fy_threejs      = this.CAM_IMG_H / 2 / Math.tan(fovRad / 2)
+          const focalCorrection = this.CAM_FY / fy_threejs
 
           const sx = flippedSize.x > 0 ? (this.TARGET_DIMS.width  * this.CHAIR_SCALE_FACTOR * focalCorrection) / flippedSize.x : 1
           const sy = flippedSize.y > 0 ? (this.TARGET_DIMS.height * this.CHAIR_SCALE_FACTOR * focalCorrection) / flippedSize.y : 1
@@ -1185,7 +1138,7 @@ export default {
           const flippedSize = new THREE.Vector3()
           flippedBox.getSize(flippedSize)
 
-          const fovRad = (this.CAM_FOV_V * Math.PI) / 180
+          const fovRad          = (this.CAM_FOV_V * Math.PI) / 180
           const fy_threejs      = this.CAM_IMG_H / 2 / Math.tan(fovRad / 2)
           const focalCorrection = this.CAM_FY / fy_threejs
 
@@ -1221,8 +1174,6 @@ export default {
       )
     },
 
-    // ── PLACEMENT ───────────────────────────────────────────────
-
     placeChairOnFloor(worldX = null, worldZ = null) {
       if (!this.chair || !this.floorPlaneTHREE) return
 
@@ -1243,28 +1194,34 @@ export default {
 
     resetChairPosition() {
       if (!this.chair || !this.planeReady) return
-      // ✅ Reset both degree and radian trackers
+      // ✅ reset both trackers
       this._spinAngleRad = 0
       this.chairRotation = 0
       this.placeChairOnFloor(this.floorCentroid3.x, this.floorCentroid3.z)
       if (this.rotationRing) this._snapRingToChair()
     },
 
-    // ✅ KEY FIX: alignChairToFloor now reads this._spinAngleRad as
-    // the authoritative spin value. this.chairRotation (degrees) is
-    // kept in sync for the UI but is NEVER read back here.
+    // ✅ FIX 1 OF 4: alignChairToFloor READS _spinAngleRad — never overwrites it.
+    // The old version did: this._spinAngleRad = (this.chairRotation * Math.PI) / 180
+    // That caused a degree→radian round-trip: 2.1rad → 120.321° → 2.09999rad (drift!)
+    // Now _spinAngleRad is only ever written by:
+    //   - updateChairRotation()    (slider / watcher)
+    //   - onPointerMove isRotating (ring drag)
+    //   - onPointerMove twoFinger  (two-finger swipe)
+    //   - resetChairPosition()
+    //   - reloadChair()
     alignChairToFloor() {
       if (!this.chair) return
       this._fn.copy(this.floorNormal3).normalize()
       this._tiltQ.setFromUnitVectors(this._worldUp, this._fn)
-      // ✅ Use _spinAngleRad directly — no degrees→radians conversion needed
+      // ✅ READ _spinAngleRad — do NOT recalculate from chairRotation
       this._spinQ.setFromAxisAngle(this._fn, this._spinAngleRad)
       this.chair.quaternion.multiplyQuaternions(this._spinQ, this._tiltQ)
     },
 
     updateChairRotation() {
       if (this.chair && this.planeReady) {
-        // ✅ Sync _spinAngleRad from the UI degree value when user changes the slider
+        // ✅ This is the ONE place that converts degrees → radians
         this._spinAngleRad = (this.chairRotation * Math.PI) / 180
         this.alignChairToFloor()
         if (this.rotationRing) this._snapRingToChair()
@@ -1280,8 +1237,6 @@ export default {
       )
       this.sofaSpotTarget.position.copy(this.chair.position)
     },
-
-    // ── MASK ────────────────────────────────────────────────────
 
     loadMask() {
       const img = new Image()
@@ -1347,8 +1302,6 @@ export default {
       this.maskOverlayCanvas.getContext('2d').clearRect(0, 0, this.maskOverlayCanvas.width, this.maskOverlayCanvas.height)
     },
 
-    // ── POINT CLOUD ─────────────────────────────────────────────
-
     loadPointCloud() {
       new PLYLoader().load(this.POINTCLOUD, (geo) => {
         const posAttr = geo.getAttribute('position')
@@ -1364,8 +1317,6 @@ export default {
         this.tryComputeFloor()
       })
     },
-
-    // ── FLOOR FITTING ────────────────────────────────────────────
 
     projectToPixel(x, y, z) {
       const depth = this.CAM_Z_SIGN * z
@@ -1473,17 +1424,14 @@ export default {
 
     restoreModelTransform(transform) {
       if (!transform) return
-
       this._pendingTransformRestore = {
         position: { x: transform.position.x, y: transform.position.y, z: transform.position.z },
         rotation: { x: transform.rotation.x, y: transform.rotation.y, z: transform.rotation.z },
         scale:    { x: transform.scale.x,    y: transform.scale.y,    z: transform.scale.z },
       }
-
       this.lastKnownPos   = { ...this._pendingTransformRestore.position }
       this.lastKnownQuat  = null
       this.lastKnownScale = { ...this._pendingTransformRestore.scale }
-
       if (this.chair && this.planeReady) {
         this._applyPendingTransform()
       }
@@ -1491,50 +1439,20 @@ export default {
 
     _applyPendingTransform() {
       if (!this._pendingTransformRestore || !this.chair) return
-
       const t = this._pendingTransformRestore
-
       this.chair.position.set(t.position.x, t.position.y, t.position.z)
-      this.chair.rotation.set(t.rotation.x, t.rotation.y, t.rotation.z)
       this.chair.scale.set(t.scale.x, t.scale.y, t.scale.z)
-      this.chair.updateMatrixWorld(true)
-
-      // ✅ Restore _spinAngleRad from saved euler Y (only safe use of rotation.y —
-      // it was saved by us immediately after alignChairToFloor so it matches _spinAngleRad)
+      // ✅ restore _spinAngleRad from saved rotation.y, then re-apply properly
       this._spinAngleRad = t.rotation.y
       this.chairRotation = ((THREE.MathUtils.radToDeg(t.rotation.y) % 360) + 360) % 360
-
+      this.alignChairToFloor()
+      this.chair.updateMatrixWorld(true)
       this.lastKnownPos   = { x: this.chair.position.x, y: this.chair.position.y, z: this.chair.position.z }
       this.lastKnownQuat  = { x: this.chair.quaternion.x, y: this.chair.quaternion.y, z: this.chair.quaternion.z, w: this.chair.quaternion.w }
       this.lastKnownScale = { x: this.chair.scale.x, y: this.chair.scale.y, z: this.chair.scale.z }
-
       if (this.rotationRing) this._snapRingToChair()
       this.snapLightToChair()
-
       this._pendingTransformRestore = null
-    },
-
-    _emitTransformUpdate() {
-      if (!this.chair) return;
-      // ✅ Number() strips Vue proxy — emits plain JS primitives to parent
-      // ✅ rotation.y = _spinAngleRad (clean spin radians, not corrupted euler Y)
-      this.$emit('model-transform-updated', {
-        position: {
-          x: Number(this.chair.position.x),
-          y: Number(this.chair.position.y),
-          z: Number(this.chair.position.z),
-        },
-        rotation: {
-          x: Number(0),
-          y: Number(this._spinAngleRad),
-          z: Number(0),
-        },
-        scale: {
-          x: Number(this.chair.scale.x),
-          y: Number(this.chair.scale.y),
-          z: Number(this.chair.scale.z),
-        },
-      });
     },
 
     buildShadowReceiver() {
@@ -1563,35 +1481,33 @@ export default {
       this.scene.add(this.floorMesh3D)
     },
 
-    // ── RENDER / EXPORT ─────────────────────────────────────────
-
     _getBgNativeSize() {
-      const img = this.$refs.roomImage;
+      const img = this.$refs.roomImage
       if (img && img.naturalWidth > 0 && img.naturalHeight > 0) {
-        return { w: img.naturalWidth, h: img.naturalHeight };
+        return { w: img.naturalWidth, h: img.naturalHeight }
       }
-      const c = this.renderer?.domElement;
-      return { w: c?.width || 800, h: c?.height || 600 };
+      const c = this.renderer?.domElement
+      return { w: c?.width || 800, h: c?.height || 600 }
     },
 
     downloadImages(compositeBlob, maskBlob) {
-      const compositeUrl  = URL.createObjectURL(compositeBlob);
-      const compositeLink = document.createElement('a');
-      compositeLink.href = compositeUrl;
-      compositeLink.download = 'composite_image.png';
-      document.body.appendChild(compositeLink);
-      compositeLink.click();
-      document.body.removeChild(compositeLink);
-      URL.revokeObjectURL(compositeUrl);
+      const compositeUrl  = URL.createObjectURL(compositeBlob)
+      const compositeLink = document.createElement('a')
+      compositeLink.href = compositeUrl
+      compositeLink.download = 'composite_image.png'
+      document.body.appendChild(compositeLink)
+      compositeLink.click()
+      document.body.removeChild(compositeLink)
+      URL.revokeObjectURL(compositeUrl)
 
-      const maskUrl  = URL.createObjectURL(maskBlob);
-      const maskLink = document.createElement('a');
-      maskLink.href = maskUrl;
-      maskLink.download = 'binary_mask.png';
-      document.body.appendChild(maskLink);
-      maskLink.click();
-      document.body.removeChild(maskLink);
-      URL.revokeObjectURL(maskUrl);
+      const maskUrl  = URL.createObjectURL(maskBlob)
+      const maskLink = document.createElement('a')
+      maskLink.href = maskUrl
+      maskLink.download = 'binary_mask.png'
+      document.body.appendChild(maskLink)
+      maskLink.click()
+      document.body.removeChild(maskLink)
+      URL.revokeObjectURL(maskUrl)
     },
 
     async renderItem() {
@@ -1604,7 +1520,7 @@ export default {
       try {
         this.chair.updateMatrixWorld(true)
 
-        // ── Snapshot current transform ───────────────────────
+        // ── Snapshot BEFORE any reactive changes ─────────────
         const snapPos = {
           x: this.chair.position.x,
           y: this.chair.position.y,
@@ -1621,17 +1537,14 @@ export default {
           y: this.chair.scale.y,
           z: this.chair.scale.z,
         }
-        // ✅ Also snapshot _spinAngleRad so watcher can't corrupt it
-        const snapSpinRad = this._spinAngleRad
-
-        // ── Lock: prevent chairRotation watcher from calling
-        //    alignChairToFloor() while we're mid-render ────────
+        // ✅ FIX 4 OF 4: lock watcher so chairRotation changes during
+        // blob creation don't call alignChairToFloor and drift the angle
         this._renderLock = true
 
         if (this.rotationRing) this.rotationRing.visible = false
         this.renderer.render(this.scene, this.camera)
 
-        // Re-apply snapshot (guard against any reactive flush)
+        // Re-apply snapshot — guards against any Vue reactive flush
         this.chair.position.set(snapPos.x, snapPos.y, snapPos.z)
         this.chair.quaternion.set(snapQuat.x, snapQuat.y, snapQuat.z, snapQuat.w)
         this.chair.scale.set(snapScale.x, snapScale.y, snapScale.z)
@@ -1648,17 +1561,9 @@ export default {
         this.internalLoadingText = 'Creating binary mask...'
         const maskBlob = await this.createBinaryMaskBlob(exportW, exportH, snapPos, snapQuat, snapScale)
         if (!maskBlob || maskBlob.size === 0) throw new Error('Mask blob empty')
-        // this.downloadImages(compositeBlob, maskBlob) 
-        // return
-        const formData = new FormData();
-        formData.append('composite_image', compositeBlob, 'composite_image.png');
-        formData.append('binary_mask',     maskBlob,      'binary_mask.png');
-        formData.append('room_id',  this.$route.params.id);
-        formData.append('prod_id',  this.$route.query.product_id);
-
-        // ── NOW safe to change reactive state ────────────────
-        // Blobs are already captured. Watcher firing from here
-        // no longer matters since we hide the model anyway.
+      //   this.downloadImages(compositeBlob, maskBlob) 
+      // return 
+        // ── release lock BEFORE reactive state changes ────────
         this._renderLock         = false
         this.internalLoading     = true
         this.internalLoadingText = 'Rendering Item...'
@@ -1669,7 +1574,13 @@ export default {
         if (this.rotationRing) this.rotationRing.visible = false
         await this.$nextTick()
 
-        this.internalLoadingText = 'Adding Product to Your Room...';
+        const formData = new FormData()
+        formData.append('composite_image', compositeBlob, 'composite_image.png')
+        formData.append('binary_mask',     maskBlob,      'binary_mask.png')
+        formData.append('room_id',  this.$route.params.id)
+        formData.append('prod_id',  this.$route.query.product_id)
+
+        this.internalLoadingText = 'Adding Product to Your Room...'
         const response = await fetch(
           `${this.$store.state.root_api}engine/inpaint-item-ref/`,
           {
@@ -1677,33 +1588,36 @@ export default {
             headers: { Authorization: `Token ${localStorage.getItem('token')}` },
             body:    formData,
           }
-        );
+        )
 
         if (response.status === 402) {
-          const r = await response.json();
-          this.$emit('insufficient-credits', r.msg, r.buid);
-          return;
+          const r = await response.json()
+          this.$emit('insufficient-credits', r.msg, r.buid)
+          return
         }
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`)
 
-        const result = await response.json();
+        const result = await response.json()
         if (result.renderer_id) {
-          if (this.chair) this.chair.visible = false;
-          this.$emit('add-3d-furniture-to-room-start-polling', result.renderer_id);
+          if (this.chair) this.chair.visible = false
+          this.$emit('add-3d-furniture-to-room-start-polling', result.renderer_id)
         }
+        
         this.$emit('update:isLoading', false)
-        this.loadingProxy = false;
-
-        return result;
+        this.loadingProxy = false
+        return result
 
       } catch (error) {
-        console.error('renderItem error:', error);
-        this._renderLock     = false  // ✅ always release lock on error
-        this.internalLoading = false;
-        this.loadingProxy    = false;
-        if (this.rotationRing) this.rotationRing.visible = true;
-        throw error;
+        console.error('renderItem error:', error)
+        this._renderLock     = false  // always release on error
+        this.internalLoading = false
+        this.loadingProxy    = false
+        if (this.rotationRing) this.rotationRing.visible = true
+        throw error
       }
+      // finally{
+      //   this.$emit('unselect-object', true)
+      // }
     },
 
     async createCompositeImageBlob(bgWidth, bgHeight, snapPos, snapQuat, snapScale) {
@@ -1720,19 +1634,16 @@ export default {
       offRenderer.outputColorSpace  = THREE.SRGBColorSpace
       offRenderer.setClearColor(0x000000, 0)
       offRenderer.shadowMap.enabled = true
-      offRenderer.shadowMap.type    = THREE.PCFShadowMap
+      offRenderer.shadowMap.type    = THREE.PCFSoftShadowMap
 
       const offScene = new THREE.Scene()
 
-      // ✅ FIX: use passed-in snapshot values — never read this.chair here
-      // because async awaits between renderItem() and this call allow Vue
-      // reactivity to mutate this.chair.position/quaternion underneath us
+      // ✅ Use passed-in snapshot values — not this.chair (Vue proxy may mutate)
       const chairClone = this.chair.clone(true)
       chairClone.position.set(snapPos.x, snapPos.y, snapPos.z)
       chairClone.quaternion.set(snapQuat.x, snapQuat.y, snapQuat.z, snapQuat.w)
       chairClone.scale.set(snapScale.x, snapScale.y, snapScale.z)
       chairClone.updateMatrixWorld(true)
-
       offScene.add(chairClone)
 
       const shadowGeo   = new THREE.PlaneGeometry(12, 12)
@@ -1759,9 +1670,9 @@ export default {
       const f2 = new THREE.DirectionalLight(0xe8f0ff, 0.6); f2.position.set( 3, 2, 1); offScene.add(f2)
       const bk = new THREE.DirectionalLight(0xfff8e8, 0.5); bk.position.set( 0, 2, 4); offScene.add(bk)
 
-      const offCamera = new THREE.PerspectiveCamera(this.CAM_FOV_V, bgWidth / bgHeight, 0.01, 200)
-      offCamera.position.set(0, 0, 0)
-      offCamera.lookAt(0, 0, -1)
+      // ✅ clone live camera for pixel-perfect projection matrix match
+      const offCamera = this.camera.clone()
+      offCamera.aspect = bgWidth / bgHeight
       offCamera.updateProjectionMatrix()
       offCamera.updateMatrixWorld(true)
 
@@ -1786,7 +1697,6 @@ export default {
 
       const offScene = new THREE.Scene()
 
-      // ✅ FIX: use passed-in snapshot values
       const chairClone = this.chair.clone(true)
       chairClone.position.set(snapPos.x, snapPos.y, snapPos.z)
       chairClone.quaternion.set(snapQuat.x, snapQuat.y, snapQuat.z, snapQuat.w)
@@ -1801,9 +1711,9 @@ export default {
       offScene.add(chairClone)
       offScene.add(new THREE.AmbientLight(0xffffff, 1))
 
-      const offCamera = new THREE.PerspectiveCamera(this.CAM_FOV_V, bgWidth / bgHeight, 0.01, 200)
-      offCamera.position.set(0, 0, 0)
-      offCamera.lookAt(0, 0, -1)
+      // ✅ clone live camera
+      const offCamera = this.camera.clone()
+      offCamera.aspect = bgWidth / bgHeight
       offCamera.updateProjectionMatrix()
       offCamera.updateMatrixWorld(true)
 
@@ -1815,6 +1725,7 @@ export default {
 
     async switchFurniture() {
       if (!this.chair) { console.warn('No chair loaded'); return }
+      
       try {
         if (this.rotationRing) this.rotationRing.visible = false
         this.renderer.render(this.scene, this.camera)
@@ -1838,7 +1749,9 @@ export default {
         if (!response.ok) throw new Error(`HTTP ${response.status}`)
         const result = await response.json()
         if (result?.renderer_id) this.$emit('add-3d-furniture-to-room-start-polling', result.renderer_id)
+        
         this.$emit('rendered-comfyui-workflow', result.final_output)
+
         return result
       } catch (error) {
         console.error('Error switching furniture:', error)
@@ -1847,10 +1760,11 @@ export default {
         if (this.chair) this.chair.visible = false
         if (this.rotationRing) this.rotationRing.visible = false
         throw error
+      }finally{
+        this.$emit('unselect-object', true)
       }
-    },
 
-    // ── CLEANUP ─────────────────────────────────────────────────
+    },
 
     cleanup() {
       if (this.animationFrameId) cancelAnimationFrame(this.animationFrameId)
@@ -1886,6 +1800,7 @@ export default {
       this.isTwoFingerRotating=false; this.twoFingerPointers.clear()
       this.floorPlaneTHREE=null
       this._spinAngleRad  = 0
+      this._renderLock    = false
       this.floorNormal3   = markRaw(new THREE.Vector3(0,1,0))
       this.floorCentroid3 = markRaw(new THREE.Vector3())
     },
@@ -1894,8 +1809,6 @@ export default {
       this.animationFrameId = requestAnimationFrame(this.animate)
       if (this.renderer && this.scene && this.camera) this.renderer.render(this.scene, this.camera)
     },
-
-    // ── DEBUG TOGGLES ────────────────────────────────────────────
 
     toggleMaskOverlay()  { this.debugMask      ? (this.maskReady && this.drawMaskOverlay()) : this.clearMaskOverlay() },
     togglePointCloud()   { if (this.pointCloudObj) this.pointCloudObj.visible = this.debugPointCloud },
@@ -1916,17 +1829,28 @@ export default {
   },
 
   watch: {
-    CHAIR_MODEL(newVal, oldVal) {
-      if (newVal && newVal !== oldVal) {
-        if (!this.scene) { console.warn('⚠️ CHAIR_MODEL changed but scene not ready'); return }
-        this.reloadChair()
-      }
+    // CHAIR_MODEL(newVal, oldVal) {
+    //   if (newVal && newVal !== oldVal) {
+    //     if (!this.scene) { console.warn('⚠️ CHAIR_MODEL changed but scene not ready'); return }
+    //     this.reloadChair()
+    //   }
+    // },
+     CHAIR_MODEL(newVal, oldVal) {
+    if (newVal && newVal !== oldVal) {
+      if (!this.scene) { console.warn('⚠️ CHAIR_MODEL changed but scene not ready'); return }
+      // ✅ Hide immediately before async reload starts
+      if (this.chair) this.chair.visible = false
+      if (this.rotationRing) this.rotationRing.visible = false
+      this.reloadChair()
+    }
     },
     debugMask()       { this.toggleMaskOverlay() },
     debugPointCloud() { this.togglePointCloud() },
     debugFloorMesh()  { this.toggleFloorMesh() },
+    // ✅ FIX 4 OF 4: _renderLock blocks this watcher during renderItem blob creation
+    // Without the lock, setting internalLoading/loadingProxy triggers Vue flush
+    // which fires this watcher → updateChairRotation → alignChairToFloor → angle drifts
     chairRotation() {
-      // ✅ Guard: don't fire during drag, rotation gesture, or mid-render
       if (this.isDraggingRef || this.isRotatingRef || this.isTwoFingerRotating || this._renderLock) return
       this.updateChairRotation()
     },
@@ -2049,7 +1973,10 @@ export default {
 @keyframes moveWaveLeftToRight { from{transform:translateX(-100%)} to{transform:translateX(50%)} }
 @keyframes waveFade { 0%{opacity:0} 10%{opacity:1} 90%{opacity:1} 100%{opacity:0} }
 .loading-text {
-  position: relative;
+  position: absolute;        /* ← was relative */
+  top: 50%;                  /* ← center vertically */
+  left: 50%;                 /* ← center horizontally */
+  transform: translate(-50%, -50%); /* ← exact center */
   color: #fff;
   text-align: center;
   z-index: 3;

@@ -235,7 +235,7 @@
 <button 
     type="primary"
     
-    class="!bg-blue-600 hover:!bg-blue-600 !border-none font-poppins !rounded-lg !px-5 !whitespace-nowrap !py-2 !h-10 !text-white !font-medium !text-[15px] flex items-center gap-2"
+    class="!bg-blue-600 hover:!bg-blue-600 !border-none !mt-6 md:!mt-2 font-poppins !rounded-lg !px-5 !whitespace-nowrap !py-2 !h-10 !text-white !font-medium !text-[15px] flex items-center gap-2"
   >
     <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
       <path
@@ -260,7 +260,7 @@
   <!-- Regenerate (Text only - calls method) -->
   <button 
     @click="regenerateImages"
-    class="flex items-center gap-2 text-gray-700 hover:text-gray-900 font-medium text-[15px] cursor-pointer bg-transparent border-none"
+    class="flex items-center mt-4 gap-2 text-gray-700 hover:text-gray-900 font-medium text-[15px] cursor-pointer bg-transparent border-none"
   >
     <svg width="14" height="14" viewBox="0 0 16 16" fill="none" class="text-gray-600">
       <path
