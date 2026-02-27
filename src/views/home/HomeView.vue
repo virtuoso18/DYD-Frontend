@@ -40,28 +40,31 @@
                     line-height: 52px;
                   "
                 >
-    {{ t('line1') }}
+                  {{ t("line1") }}
                 </div>
 
                 <div
                   class="my-2 text-center tracking-[-0.02em]"
                   style="
-      font-family: 'Proza Libre', sans-serif;
+                    font-family: &quot;Proza Libre&quot;, sans-serif;
                     font-weight: 700;
                     font-style: normal;
                     font-size: 44px;
                     line-height: 52px;
                   "
                 >
-    {{ t('line2') }}
+                  {{ t("line2") }}
                 </div>
               </div>
-
 
               <div className="md:hidden">
                 <div
                   class="my-2 text-[32px] !font-bold text-[#111111] !text-center !tracking-[-0.02em]"
-                  style="font-family: Proza Libre, sans-serif"
+                  style="
+                    font-family:
+                      Proza Libre,
+                      sans-serif;
+                  "
                 >
                   {{ t("line1") }} {{ t("line2") }}
                 </div>
@@ -215,8 +218,8 @@
             :sm="24"
             :md="16"
             :lg="16"
-  class="rounded-[10px] pt-[2px] md:pt-[20px] pb-[40px] pr-0" style="padding-left: 12px"
-
+            class="rounded-[10px] pt-[2px] md:pt-[20px] pb-[40px] pr-0"
+            style="padding-left: 12px"
           >
             <div
               style="
@@ -619,7 +622,7 @@
                 font-family: Poppins, sans-serif;
               "
             >
-               <input
+              <input
                 type="file"
                 ref="fileTryFree"
                 accept="image/*"
@@ -652,19 +655,28 @@
                 </svg>
                 <br />
                 Drag & drop Image
-              <br />
-              <br />
-              <a-button
-                @click="handleHomeFileUploadTryFree"
-                type="primary"
-                class="font-poppins"
-              >
-                Click to upload
-              </a-button>
+                <br />
+                <br />
+                <a-button
+                  @click="handleHomeFileUploadTryFree"
+                  type="primary"
+                  class="font-poppins"
+                >
+                  Click to upload
+                </a-button>
               </span>
               <span v-else class="w-full h-full p-2 relative">
-                <img :src="selectedFileDataTryFree" class="w-full h-full !mb-2 object-cover rounded-lg" alt=""/>
-                <a-button type="primary" @click="handleHomeFileUploadTryFree" class="absolute bottom-16 left-[28%] sm:left-[30%] md:left-[40%]">Change Room Image</a-button>
+                <img
+                  :src="selectedFileDataTryFree"
+                  class="w-full h-full !mb-2 object-cover rounded-lg"
+                  alt=""
+                />
+                <a-button
+                  type="primary"
+                  @click="handleHomeFileUploadTryFree"
+                  class="absolute bottom-16 left-[28%] sm:left-[30%] md:left-[40%]"
+                  >Change Room Image</a-button
+                >
                 <!-- <button
                   class="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed !text-white font-semibold py-3 px-4 text-[14px] !font-family-poppins rounded-lg flex items-center justify-center gap-2 transition-colors"
                 >
@@ -690,14 +702,12 @@
                   </svg>
                   {{ uploading ? "Processing..." : "Continue" }}
                 </button> -->
-              
               </span>
             </div>
           </a-col>
 
           <a-col :sm="24" :xs="24" :md="12" :lg="12">
             <div className="md:pl-12">
-
               <div
                 style="
                   border-radius: 20px;
@@ -718,28 +728,22 @@
                     class="no-scrollbar overflow-x-auto sm:overflow-x-visible"
                     style="max-width: 350px"
                   >
-  
                     <a-button class="!px-2 !py-1 text-sm">
                       Living Room
                     </a-button>
-  <a-button class="!px-1 !py-1 text-sm">
-        Kitchen</a-button>
-      <a-button class="!px-1 !py-1 text-sm">
-  
-        
-        Bedroom</a-button>
+                    <a-button class="!px-1 !py-1 text-sm"> Kitchen</a-button>
+                    <a-button class="!px-1 !py-1 text-sm"> Bedroom</a-button>
                     <a-button class="!px-2 !py-1 text-sm">
-  
-        Dianing Room</a-button>
-     <a-button class="!px-2 !py-1 text-sm">
-  
-        Outdoor</a-button>
+                      Dianing Room</a-button
+                    >
+                    <a-button class="!px-2 !py-1 text-sm"> Outdoor</a-button>
                   </a-space>
                 </div>
 
                 <br />
-<div class="flex gap-[10px] overflow-x-auto md:overflow-x-visible w-full">
-
+                <div
+                  class="flex gap-[10px] overflow-x-auto md:overflow-x-visible w-full"
+                >
                   <img
                     src="../../assets/home_main_banner.jpg"
                     style="border-radius: 10px; width: 124px; height: 91px"
@@ -786,7 +790,7 @@
         </a-row>
       </a-col>
     </a-row>
-
+  
     <br />
     <a-row style="background: #3b63fb; height: 300px">
       <a-col
@@ -1112,11 +1116,7 @@
     >
       <!-- Header Section -->
       <div class="text-center mb-16">
-        <h1
-          class="banner-text"
-        >
-          Get listing-ready results in seconds
-        </h1>
+        <h1 class="banner-text">Get listing-ready results in seconds</h1>
         <p class="!font-poppins text-base text-gray-500 leading-relaxed">
           Turn your property photos into stunning visuals in three simple
         </p>
@@ -1136,9 +1136,9 @@
             <!-- LEFT SIDE -->
             <div>
               <h2
-  class="!text-black !mb-2  lg:!mt-0"
+                class="!text-black !mb-2 lg:!mt-0"
                 style="
-    font-family: 'Poppins', sans-serif;
+                  font-family: &quot;Poppins&quot;, sans-serif;
                   font-weight: 600;
                   font-style: normal; /* 'SemiBold' is not valid in CSS; use weight 600 */
                   font-size: 24px;
@@ -1197,9 +1197,9 @@
             <!-- LEFT SIDE -->
             <div>
               <h2
-  class="!text-black !mb-2  lg:!mt-0"
+                class="!text-black !mb-2 lg:!mt-0"
                 style="
-    font-family: 'Poppins', sans-serif;
+                  font-family: &quot;Poppins&quot;, sans-serif;
                   font-weight: 600;
                   font-style: normal; /* 'SemiBold' is not valid in CSS; use weight 600 */
                   font-size: 24px;
@@ -1281,9 +1281,9 @@
             <!-- LEFT SIDE -->
             <div>
               <h2
-  class="!text-black !mb-2  lg:!mt-0"
+                class="!text-black !mb-2 lg:!mt-0"
                 style="
-    font-family: 'Poppins', sans-serif;
+                  font-family: &quot;Poppins&quot;, sans-serif;
                   font-weight: 600;
                   font-style: normal; /* 'SemiBold' is not valid in CSS; use weight 600 */
                   font-size: 24px;
@@ -1479,7 +1479,7 @@
         <h1
           class="text-center text-black mb-12"
           style="
-    font-family: 'Poppins', sans-serif;
+            font-family: &quot;Poppins&quot;, sans-serif;
             font-weight: 700;
             font-style: normal;
             font-size: 30px;
@@ -1613,7 +1613,7 @@
               style="
                 text-align: left;
                 color: var(--Black-Black-100, #000000);
-        font-family: 'Poppins', sans-serif;
+                font-family: &quot;Poppins&quot;, sans-serif;
 
                 font-style: normal; /* Bold handled by weight */
                 font-size: 26px;
@@ -1670,15 +1670,15 @@
               style="
                 text-align: left;
                 color: var(--Black-Black-100, #000000);
-        font-family: 'Poppins', sans-serif;
-
+                font-family: &quot;Poppins&quot;, sans-serif;
 
                 font-style: normal; /* Bold handled by weight */
                 font-size: 26px;
                 line-height: 34px;
                 letter-spacing: -0.02em; /* -2% */
               "
->              3D Rendering
+            >
+              3D Rendering
             </h2>
 
             <p class="text-gray-600 text-base md:text-lg leading-relaxed mb-6">
@@ -1965,7 +1965,7 @@
               style="
                 text-align: left;
                 color: var(--Black-Black-100, #000000);
-        font-family: 'Poppins', sans-serif;
+                font-family: &quot;Poppins&quot;, sans-serif;
 
                 font-style: normal; /* Bold handled by weight */
                 font-size: 26px;
@@ -2023,14 +2023,15 @@
               style="
                 text-align: left;
                 color: var(--Black-Black-100, #000000);
-        font-family: 'Poppins', sans-serif;
+                font-family: &quot;Poppins&quot;, sans-serif;
 
                 font-style: normal; /* Bold handled by weight */
                 font-size: 26px;
                 line-height: 34px;
                 letter-spacing: -0.02em; /* -2% */
               "
->               Floor Changing
+            >
+              Floor Changing
             </h2>
 
             <p class="text-gray-600 text-base md:text-lg leading-relaxed mb-6">
@@ -2328,7 +2329,7 @@
         style="
           text-align: center;
           color: var(--Black-Black-100, #000000);
-        font-family: 'Poppins', sans-serif;
+          font-family: &quot;Poppins&quot;, sans-serif;
 
           font-weight: 700;
           font-style: normal; /* Bold handled by weight */
@@ -2340,31 +2341,39 @@
         Got questions? We have answers
       </h1>
       <br />
-   <div style="margin: 50px auto; max-width: 800px;">
+      <div style="margin: 50px auto; max-width: 800px">
         <a-collapse
           v-model:activeKey="expand_faq"
           accordion
           class="faq-collapse"
-      style="background: #fff; border: none;"
+          style="background: #fff; border: none"
         >
-      <a-collapse-panel 
-        key="1" 
-        style="font-size: 18px; font-weight: 400;"
-      >
+          <a-collapse-panel key="1" style="font-size: 18px; font-weight: 400">
             <template #header>
               <span
                 :style="{
                   fontSize: expand_faq === '1' ? '20px' : '18px',
                   fontWeight: expand_faq === '1' ? '600' : '400',
                   fontFamily: 'Poppins, sans-serif',
-              transition: 'all 0.3s ease'
+                  transition: 'all 0.3s ease',
                 }"
               >
                 What is virtual staging?
               </span>
             </template>
-        <p style="margin: 0; color: #444; font-family: 'Poppins', sans-serif; font-weight: 400; font-size: 16px; line-height: 24px; letter-spacing: 0px;">
-          Virtual staging is a process of using computer technology to furnish and decorate real estate photos digitally.
+            <p
+              style="
+                margin: 0;
+                color: #444;
+                font-family: &quot;Poppins&quot;, sans-serif;
+                font-weight: 400;
+                font-size: 16px;
+                line-height: 24px;
+                letter-spacing: 0px;
+              "
+            >
+              Virtual staging is a process of using computer technology to
+              furnish and decorate real estate photos digitally.
             </p>
           </a-collapse-panel>
 
@@ -2381,8 +2390,24 @@
                 Why should I pick virtual staging over physical staging?
               </span>
             </template>
-        <p style="margin: 0; color: #444; font-family: 'Poppins', sans-serif; font-weight: 400; font-size: 16px; line-height: 24px; letter-spacing: 0px;">
-          Virtual staging offers several advantages over physical staging. It's more cost-effective, as it eliminates the need for furniture rentals and setup. It's also faster, allowing for quicker turnaround times and adjustments to suit different buyer preferences. Additionally, virtual staging is highly flexible, enabling you to create multiple design styles and settings without the physical limitations of a space.
+            <p
+              style="
+                margin: 0;
+                color: #444;
+                font-family: &quot;Poppins&quot;, sans-serif;
+                font-weight: 400;
+                font-size: 16px;
+                line-height: 24px;
+                letter-spacing: 0px;
+              "
+            >
+              Virtual staging offers several advantages over physical staging.
+              It's more cost-effective, as it eliminates the need for furniture
+              rentals and setup. It's also faster, allowing for quicker
+              turnaround times and adjustments to suit different buyer
+              preferences. Additionally, virtual staging is highly flexible,
+              enabling you to create multiple design styles and settings without
+              the physical limitations of a space.
             </p>
           </a-collapse-panel>
 
@@ -2399,8 +2424,20 @@
                 What is AI virtual staging?
               </span>
             </template>
-        <p style="margin: 0; color: #444; font-family: 'Poppins', sans-serif; font-weight: 400; font-size: 16px; line-height: 24px; letter-spacing: 0px;">
-          AI virtual staging uses artificial intelligence models to automatically place furniture and décor in photos, saving time while creating realistic results.
+            <p
+              style="
+                margin: 0;
+                color: #444;
+                font-family: &quot;Poppins&quot;, sans-serif;
+                font-weight: 400;
+                font-size: 16px;
+                line-height: 24px;
+                letter-spacing: 0px;
+              "
+            >
+              AI virtual staging uses artificial intelligence models to
+              automatically place furniture and décor in photos, saving time
+              while creating realistic results.
             </p>
           </a-collapse-panel>
 
@@ -2417,8 +2454,19 @@
                 What kind of photos do you support?
               </span>
             </template>
-        <p style="margin: 0; color: #444; font-family: 'Poppins', sans-serif; font-weight: 400; font-size: 16px; line-height: 24px; letter-spacing: 0px;">
-          We support wide-angle interior property photos such as living rooms, bedrooms, dining areas, and more.
+            <p
+              style="
+                margin: 0;
+                color: #444;
+                font-family: &quot;Poppins&quot;, sans-serif;
+                font-weight: 400;
+                font-size: 16px;
+                line-height: 24px;
+                letter-spacing: 0px;
+              "
+            >
+              We support wide-angle interior property photos such as living
+              rooms, bedrooms, dining areas, and more.
             </p>
           </a-collapse-panel>
 
@@ -2435,8 +2483,19 @@
                 How long does it take to virtually stage by AI?
               </span>
             </template>
-        <p style="margin: 0; color: #444; font-family: 'Poppins', sans-serif; font-weight: 400; font-size: 16px; line-height: 24px; letter-spacing: 0px;">
-          AI staging usually takes just a few minutes, depending on the complexity of the design and processing load.
+            <p
+              style="
+                margin: 0;
+                color: #444;
+                font-family: &quot;Poppins&quot;, sans-serif;
+                font-weight: 400;
+                font-size: 16px;
+                line-height: 24px;
+                letter-spacing: 0px;
+              "
+            >
+              AI staging usually takes just a few minutes, depending on the
+              complexity of the design and processing load.
             </p>
           </a-collapse-panel>
         </a-collapse>
@@ -2447,7 +2506,7 @@
         style="
           text-align: center;
           color: var(--Black-Black-100, #000000);
-        font-family: 'Poppins', sans-serif;
+          font-family: &quot;Poppins&quot;, sans-serif;
 
           font-weight: 700;
           font-style: normal; /* Bold handled by weight */
@@ -2604,11 +2663,13 @@
       </div>
     </div>
   </div>
+  
 </template>
 
 <script>
 import bannerImage from "@/assets/home_main_banner.jpg";
 import { useI18n } from "vue-i18n";
+import { notification } from "ant-design-vue";
 
 import swiper_bg from "@/assets/bg-swiper.jpg";
 
@@ -2693,8 +2754,9 @@ export default {
     return {
       isLogedIn: localStorage.getItem("token") ? true : false,
       bannerImage,
+      messageTryForFree:"",
       selectedFileData: null,
-      fileRefKey:Number(new Date()),
+      fileRefKey: Number(new Date()),
       swiper_bg,
       expand_faq: undefined,
       slidesPerView: window.innerWidth <= 768 ? 1 : 4,
@@ -2702,13 +2764,13 @@ export default {
       step3Img,
       step2Img,
       step1Img,
-      imageContainerFullWidth: false, // 👈 Add this
+      imageContainerFullWidth: false, // 
 
       showProductModal: false,
       selectedProduct: "Modern Chair", // Dynamic from mask area
-      isProcessing: false, // ⬅️ ADD THIS
+      isProcessing: false, // ADD THIS
       showFurnitureMask: false,
-      imageSrc: "../../assets/home_main_banner.jpg", // ⬅️ your image
+      imageSrc: "../../assets/home_main_banner.jpg", // your image
       altText: "Room image",
 
       overlayVisible: false,
@@ -2870,8 +2932,8 @@ export default {
   },
   computed: {
     selectedFileDataTryFree() {
-      const file= this.$store.state.HomePageTryFeeSelectedFile 
-      return file ? URL.createObjectURL(file) : ""
+      const file = this.$store.state.HomePageTryFeeSelectedFile;
+      return file ? URL.createObjectURL(file) : "";
     },
   },
   mounted() {
@@ -2906,34 +2968,55 @@ export default {
 
   methods: {
     handleHomeFileUpload(event) {
-  const file = event.target.files[0];
-  if (!file) return;
+      const file = event.target.files[0];
+      if (!file) return;
 
-  this.fileRefKey = Number(new Date());
-  this.$store.commit("setSelectedFile", file);
+      this.fileRefKey = Number(new Date());
+      this.$store.commit("setSelectedFile", file);
 
-  // const reader = new FileReader();
+      // const reader = new FileReader();
 
-  // reader.onload = (e) => {
-  //   console.log("File loaded");
-  //   this.$store.commit("setSelectedFile", e.target.result);
-  // };
+      // reader.onload = (e) => {
+      //   console.log("File loaded");
+      //   this.$store.commit("setSelectedFile", e.target.result);
+      // };
 
-  // reader.readAsDataURL(file); // 🔥 THIS WAS MISSING
-},
+      // reader.readAsDataURL(file); // 🔥 THIS WAS MISSING
+    },
     handleHomeFileUploadTryFree() {
-      
       // This opens the file selector
       this.$refs.fileTryFree.click();
     },
     handleTryFreeNavigateSimulation() {
-      this.$router.push({
+      if(!this.selectedFileDataTryFree){
+        notification.open({
+        message: "Try For Free ",
+        description:
+          "Kindly Upload a Room Image to Try For Free",
+        onClick: () => {
+          console.log("Notification Clicked!");
+        },
+      });
+      return
+      }
+      const isLoggedIn = localStorage.getItem("token");
+
+      if (isLoggedIn) {
+        this.$router.push({
         path: "/start-new-catalogue",
         query: {
           brand: "dyd-testing",
-          source: 'try-free'
+          source: "try-free",
         },
       });
+      } else {
+        this.$router.push({
+          path:"/login",
+          query: { redirect: `/start-new-catalogue?brand=dyd-testing&source=try-free`},
+        });
+      }
+
+      //-----------------------
     },
     // start services sliding window animation
     // start service section Animation
