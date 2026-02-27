@@ -50,6 +50,9 @@
             color: #666;
             margin-bottom: 8px;
             font-weight: 500;
+            margin-bottom: 10px;
+            margin-top: 10px;
+            line-height: 15px;
           "
         >
           {{ item.date }}
@@ -336,13 +339,13 @@ export default {
 }
 .Generated_history {
   height: 90vh;
-  overflow-y: auto;
+  /* overflow-y: auto; */
 }
 
 @media screen and (max-width: 500px) {
   .Generated_history {
-    height: 100%;
-    overflow-y: none;
+    /* height: 100%; */
+    /* overflow-y: none; */
   }
 }
 </style>

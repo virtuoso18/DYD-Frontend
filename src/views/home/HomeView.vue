@@ -4,13 +4,13 @@
     <a-row>
       <a-col :sm="24" :xs="24" :md="24" :lg="24">
         <div
-        class="!h-[600px] md:!h-[800px]"
+          class="!h-[600px] md:!h-[800px]"
           :style="{
             backgroundImage: `url(${bannerImage})`,
             backgroundPosition: 'center 60%',
             backgroundSize: 'cover',
             backgroundRepeat: 'no-repeat',
-           
+
             width: '100%',
             display: 'flex',
             justifyContent: 'center',
@@ -27,33 +27,35 @@
                 margin-bottom: 24px;
               "
             >
-             <div className="hidden md:block">
-  <div
-    class="my-2 text-center tracking-[-0.02em]"
-    style="
-      font-family: 'Proza Libre', sans-serif;
-      font-weight: 700;
-      font-style: normal;
-      font-size: 44px;
-      line-height: 52px;
-    "
-  >
+              <div className="hidden md:block">
+                <div
+                  class="my-2 text-center tracking-[-0.02em]"
+                  style="
+                    font-family:
+                      Proza Libre,
+                      sans-serif;
+                    font-weight: 700;
+                    font-style: normal;
+                    font-size: 44px;
+                    line-height: 52px;
+                  "
+                >
     {{ t('line1') }}
-  </div>
+                </div>
 
-  <div
-    class="my-2 text-center tracking-[-0.02em]"
-    style="
+                <div
+                  class="my-2 text-center tracking-[-0.02em]"
+                  style="
       font-family: 'Proza Libre', sans-serif;
-      font-weight: 700;
-      font-style: normal;
-      font-size: 44px;
-      line-height: 52px;
-    "
-  >
+                    font-weight: 700;
+                    font-style: normal;
+                    font-size: 44px;
+                    line-height: 52px;
+                  "
+                >
     {{ t('line2') }}
-  </div>
-</div>
+                </div>
+              </div>
 
 
               <div className="md:hidden">
@@ -209,14 +211,13 @@
 
           <!-- Third Card - Features -->
           <a-col
-  :xs="24"
-  :sm="24"
-  :md="16"
-  :lg="16"
+            :xs="24"
+            :sm="24"
+            :md="16"
+            :lg="16"
   class="rounded-[10px] pt-[2px] md:pt-[20px] pb-[40px] pr-0" style="padding-left: 12px"
 
->
-
+          >
             <div
               style="
                 width: 100%;
@@ -599,26 +600,35 @@
       </a-col>
       <a-col :span="24" style="max-width: 1200px; margin: auto">
         <a-row>
-          
-
-            <a-col :sm="24" :xs="23" :md="12" :lg="12" class="pl-2">
-              <br />
-              <div 
-                style="
-                  border-radius: 20px;
-                  background-color: white;
-                  border: 2px dashed  #B3B3B3;
-                  height: 220px;
-                  width: 100%;
-                  display: flex;
-                  flex-direction: column;
-                  justify-content: center;
-                  align-items: center;
-                  font-size: 18px;
-                  font-family: 'Poppins', sans-serif;
-                "
-              >
-                <svg
+          <a-col :sm="24" :xs="23" :md="12" :lg="12" class="pl-2">
+            <br />
+            <div
+              style="
+                border-radius: 20px;
+                background-color: white;
+                border: 2px dashed #b3b3b3;
+                height: 220px;
+                width: 100%;
+                height: 70%;
+                max-height: 300px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                font-size: 18px;
+                font-family: Poppins, sans-serif;
+              "
+            >
+               <input
+                type="file"
+                ref="fileTryFree"
+                accept="image/*"
+                style="display: none"
+                @change="handleHomeFileUpload"
+                :key="fileRefKey"
+              />
+              <span v-if="!selectedFileDataTryFree"
+                ><svg
                   width="26"
                   height="26"
                   viewBox="0 0 26 26"
@@ -642,20 +652,49 @@
                 </svg>
                 <br />
                 Drag & drop Image
-                <br />
-                <br />
-                <a-button
-    @click="handleAuthorizeClick('uploadImage')"
-    type="primary"
-    class="font-poppins"
-  >
-    Click to upload
-  </a-button>
-  
-                
-              </div>
-            </a-col>
-          
+              <br />
+              <br />
+              <a-button
+                @click="handleHomeFileUploadTryFree"
+                type="primary"
+                class="font-poppins"
+              >
+                Click to upload
+              </a-button>
+              </span>
+              <span v-else class="w-full h-full p-2 relative">
+                <img :src="selectedFileDataTryFree" class="w-full h-full !mb-2 object-cover rounded-lg" alt=""/>
+                <a-button type="primary" @click="handleHomeFileUploadTryFree" class="absolute bottom-16 left-[28%] sm:left-[30%] md:left-[40%]">Change Room Image</a-button>
+                <!-- <button
+                  class="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed !text-white font-semibold py-3 px-4 text-[14px] !font-family-poppins rounded-lg flex items-center justify-center gap-2 transition-colors"
+                >
+                  <svg
+                    class="animate-spin h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      class="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      stroke-width="4"
+                    ></circle>
+                    <path
+                      class="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  {{ uploading ? "Processing..." : "Continue" }}
+                </button> -->
+              
+              </span>
+            </div>
+          </a-col>
+
           <a-col :sm="24" :xs="24" :md="12" :lg="12">
             <div className="md:pl-12">
 
@@ -664,7 +703,7 @@
                   border-radius: 20px;
                   height: 400px;
                   max-width: 450px;
-                  
+
                   display: flex;
                   flex-direction: column;
                   justify-content: center;
@@ -674,30 +713,30 @@
                 "
               >
                 <p>or use an example image</p>
-               <div class="">
-   <a-space
-    class="no-scrollbar overflow-x-auto sm:overflow-x-visible"
-    style="max-width: 350px"
-  >
+                <div class="">
+                  <a-space
+                    class="no-scrollbar overflow-x-auto sm:overflow-x-visible"
+                    style="max-width: 350px"
+                  >
   
-  <a-button class="!px-2 !py-1 text-sm">
-    Living Room
-  </a-button>
+                    <a-button class="!px-2 !py-1 text-sm">
+                      Living Room
+                    </a-button>
   <a-button class="!px-1 !py-1 text-sm">
         Kitchen</a-button>
       <a-button class="!px-1 !py-1 text-sm">
   
         
         Bedroom</a-button>
-     <a-button class="!px-2 !py-1 text-sm">
+                    <a-button class="!px-2 !py-1 text-sm">
   
         Dianing Room</a-button>
      <a-button class="!px-2 !py-1 text-sm">
   
         Outdoor</a-button>
-    </a-space>
-  </div>
-  
+                  </a-space>
+                </div>
+
                 <br />
 <div class="flex gap-[10px] overflow-x-auto md:overflow-x-visible w-full">
 
@@ -723,24 +762,24 @@
                   />
                 </div>
                 <br />
-<div className=" w-full md:pl-18">
-
-  <a-button
-    @click="handleAuthorizeClick('tryForFree')"
-    type="primary"
-    block
-     style="height: 48px; background-color: #3B63FB;font-family: 'Poppins', sans-serif;"
-    >Try For Free</a-button
-  >
- <h6 class="text-[12px] text-center  text-[#333333] font-poppins font-normal !mt-[20px]">
-  No credit card Needed
-</h6>
-
-</div>
-                
-
-                
-  
+                <div className=" w-full md:pl-18">
+                  <a-button
+                    @click="handleTryFreeNavigateSimulation"
+                    type="primary"
+                    block
+                    style="
+                      height: 48px;
+                      background-color: #3b63fb;
+                      font-family: Poppins, sans-serif;
+                    "
+                    >Try For Free</a-button
+                  >
+                  <h6
+                    class="text-[12px] text-center text-[#333333] font-poppins font-normal !mt-[20px]"
+                  >
+                    No credit card Needed
+                  </h6>
+                </div>
               </div>
             </div>
           </a-col>
@@ -1096,19 +1135,19 @@
           <div class="flex w-full justify-between pt-12 items-start">
             <!-- LEFT SIDE -->
             <div>
-             <h2
+              <h2
   class="!text-black !mb-2  lg:!mt-0"
-  style="
+                style="
     font-family: 'Poppins', sans-serif;
-    font-weight: 600;
-    font-style: normal; /* 'SemiBold' is not valid in CSS; use weight 600 */
-    font-size: 24px;
-    line-height: 32px;
-    letter-spacing: -0.02em; /* -2% = -0.02em */
-  "
->
-  Upload
-</h2>
+                  font-weight: 600;
+                  font-style: normal; /* 'SemiBold' is not valid in CSS; use weight 600 */
+                  font-size: 24px;
+                  line-height: 32px;
+                  letter-spacing: -0.02em; /* -2% = -0.02em */
+                "
+              >
+                Upload
+              </h2>
 
               <p class="font-poppins text-gray-500 leading-snug">
                 We support both furnished
@@ -1157,17 +1196,17 @@
           <div class="flex w-full justify-between pt-6 items-start">
             <!-- LEFT SIDE -->
             <div>
-                       <h2
+              <h2
   class="!text-black !mb-2  lg:!mt-0"
-  style="
+                style="
     font-family: 'Poppins', sans-serif;
-    font-weight: 600;
-    font-style: normal; /* 'SemiBold' is not valid in CSS; use weight 600 */
-    font-size: 24px;
-    line-height: 32px;
-    letter-spacing: -0.02em; /* -2% = -0.02em */
-  "
->
+                  font-weight: 600;
+                  font-style: normal; /* 'SemiBold' is not valid in CSS; use weight 600 */
+                  font-size: 24px;
+                  line-height: 32px;
+                  letter-spacing: -0.02em; /* -2% = -0.02em */
+                "
+              >
                 AI Finished
               </h2>
               <p class="font-poppins text-gray-500 leading-snug">
@@ -1241,17 +1280,17 @@
           <div class="flex w-full justify-between pt-12 items-start">
             <!-- LEFT SIDE -->
             <div>
-                       <h2
+              <h2
   class="!text-black !mb-2  lg:!mt-0"
-  style="
+                style="
     font-family: 'Poppins', sans-serif;
-    font-weight: 600;
-    font-style: normal; /* 'SemiBold' is not valid in CSS; use weight 600 */
-    font-size: 24px;
-    line-height: 32px;
-    letter-spacing: -0.02em; /* -2% = -0.02em */
-  "
->
+                  font-weight: 600;
+                  font-style: normal; /* 'SemiBold' is not valid in CSS; use weight 600 */
+                  font-size: 24px;
+                  line-height: 32px;
+                  letter-spacing: -0.02em; /* -2% = -0.02em */
+                "
+              >
                 Download & Share
               </h2>
               <p class="font-poppins text-gray-500 leading-snug">
@@ -1570,18 +1609,18 @@
 
           <!-- Content -->
           <div class="lg:col-span-6 order-2 !mb-4 flex flex-col justify-center">
-<h2
-  style="
-    text-align: left;
-    color: var(--Black-Black-100, #000000);
+            <h2
+              style="
+                text-align: left;
+                color: var(--Black-Black-100, #000000);
         font-family: 'Poppins', sans-serif;
 
-    font-style: normal; /* Bold handled by weight */
-    font-size: 26px;
-    line-height: 34px;
-    letter-spacing: -0.02em; /* -2% */
-  "
-> 
+                font-style: normal; /* Bold handled by weight */
+                font-size: 26px;
+                line-height: 34px;
+                letter-spacing: -0.02em; /* -2% */
+              "
+            >
               Virtual Staging
             </h2>
 
@@ -1627,18 +1666,18 @@
           <div
             class="lg:col-span-6 order-2 lg:order-1 flex flex-col justify-center"
           >
-<h2
-  style="
-    text-align: left;
-    color: var(--Black-Black-100, #000000);
+            <h2
+              style="
+                text-align: left;
+                color: var(--Black-Black-100, #000000);
         font-family: 'Poppins', sans-serif;
 
-    
-    font-style: normal; /* Bold handled by weight */
-    font-size: 26px;
-    line-height: 34px;
-    letter-spacing: -0.02em; /* -2% */
-  "
+
+                font-style: normal; /* Bold handled by weight */
+                font-size: 26px;
+                line-height: 34px;
+                letter-spacing: -0.02em; /* -2% */
+              "
 >              3D Rendering
             </h2>
 
@@ -1922,18 +1961,18 @@
 
           <!-- Content -->
           <div class="lg:col-span-6 order-2 flex flex-col justify-center">
-<h2
-  style="
-    text-align: left;
-    color: var(--Black-Black-100, #000000);
+            <h2
+              style="
+                text-align: left;
+                color: var(--Black-Black-100, #000000);
         font-family: 'Poppins', sans-serif;
 
-    font-style: normal; /* Bold handled by weight */
-    font-size: 26px;
-    line-height: 34px;
-    letter-spacing: -0.02em; /* -2% */
-  "
-> 
+                font-style: normal; /* Bold handled by weight */
+                font-size: 26px;
+                line-height: 34px;
+                letter-spacing: -0.02em; /* -2% */
+              "
+            >
               Object Removal
             </h2>
 
@@ -1980,17 +2019,17 @@
           <div
             class="lg:col-span-6 order-2 lg:order-1 flex flex-col justify-center"
           >
-<h2
-  style="
-    text-align: left;
-    color: var(--Black-Black-100, #000000);
+            <h2
+              style="
+                text-align: left;
+                color: var(--Black-Black-100, #000000);
         font-family: 'Poppins', sans-serif;
 
-    font-style: normal; /* Bold handled by weight */
-    font-size: 26px;
-    line-height: 34px;
-    letter-spacing: -0.02em; /* -2% */
-  "
+                font-style: normal; /* Bold handled by weight */
+                font-size: 26px;
+                line-height: 34px;
+                letter-spacing: -0.02em; /* -2% */
+              "
 >               Floor Changing
             </h2>
 
@@ -2283,165 +2322,152 @@
       </div>
     </div>
 
- 
-
-
     <div style="padding: 10px; max-width: 1200px; margin: auto">
       <br /><br /><br />
-<h1
-  style="
-    text-align: center;
-    color: var(--Black-Black-100, #000000);
+      <h1
+        style="
+          text-align: center;
+          color: var(--Black-Black-100, #000000);
         font-family: 'Poppins', sans-serif;
 
-    font-weight: 700;
-    font-style: normal; /* Bold handled by weight */
-    font-size: 26px;
-    line-height: 34px;
-    letter-spacing: -0.02em; /* -2% */
-  "
->
-  Got questions? We have answers
-</h1>
+          font-weight: 700;
+          font-style: normal; /* Bold handled by weight */
+          font-size: 26px;
+          line-height: 34px;
+          letter-spacing: -0.02em; /* -2% */
+        "
+      >
+        Got questions? We have answers
+      </h1>
       <br />
    <div style="margin: 50px auto; max-width: 800px;">
-    <a-collapse
-      v-model:activeKey="expand_faq"
-      accordion
-      class="faq-collapse"
+        <a-collapse
+          v-model:activeKey="expand_faq"
+          accordion
+          class="faq-collapse"
       style="background: #fff; border: none;"
-    >
+        >
       <a-collapse-panel 
         key="1" 
         style="font-size: 18px; font-weight: 400;"
       >
-        <template #header>
-          <span 
-            :style="{
-              fontSize: expand_faq === '1' ? '20px' : '18px',
-              fontWeight: expand_faq === '1' ? '600' : '400',
-              fontFamily: 'Poppins, sans-serif',
+            <template #header>
+              <span
+                :style="{
+                  fontSize: expand_faq === '1' ? '20px' : '18px',
+                  fontWeight: expand_faq === '1' ? '600' : '400',
+                  fontFamily: 'Poppins, sans-serif',
               transition: 'all 0.3s ease'
-            }"
-          >
-            What is virtual staging?
-          </span>
-        </template>
+                }"
+              >
+                What is virtual staging?
+              </span>
+            </template>
         <p style="margin: 0; color: #444; font-family: 'Poppins', sans-serif; font-weight: 400; font-size: 16px; line-height: 24px; letter-spacing: 0px;">
           Virtual staging is a process of using computer technology to furnish and decorate real estate photos digitally.
-        </p>
-      </a-collapse-panel>
+            </p>
+          </a-collapse-panel>
 
-      <a-collapse-panel 
-        key="2"
-        style="font-size: 18px; font-weight: 400;"
-      >
-        <template #header>
-          <span 
-            :style="{
-              fontSize: expand_faq === '2' ? '20px' : '18px',
-              fontWeight: expand_faq === '2' ? '600' : '400',
-              fontFamily: 'Poppins, sans-serif',
-              transition: 'all 0.3s ease'
-            }"
-          >
-            Why should I pick virtual staging over physical staging?
-          </span>
-        </template>
+          <a-collapse-panel key="2" style="font-size: 18px; font-weight: 400">
+            <template #header>
+              <span
+                :style="{
+                  fontSize: expand_faq === '2' ? '20px' : '18px',
+                  fontWeight: expand_faq === '2' ? '600' : '400',
+                  fontFamily: 'Poppins, sans-serif',
+                  transition: 'all 0.3s ease',
+                }"
+              >
+                Why should I pick virtual staging over physical staging?
+              </span>
+            </template>
         <p style="margin: 0; color: #444; font-family: 'Poppins', sans-serif; font-weight: 400; font-size: 16px; line-height: 24px; letter-spacing: 0px;">
           Virtual staging offers several advantages over physical staging. It's more cost-effective, as it eliminates the need for furniture rentals and setup. It's also faster, allowing for quicker turnaround times and adjustments to suit different buyer preferences. Additionally, virtual staging is highly flexible, enabling you to create multiple design styles and settings without the physical limitations of a space.
-        </p>
-      </a-collapse-panel>
+            </p>
+          </a-collapse-panel>
 
-      <a-collapse-panel 
-        key="3"
-        style="font-size: 18px; font-weight: 400;"
-      >
-        <template #header>
-          <span 
-            :style="{
-              fontSize: expand_faq === '3' ? '20px' : '18px',
-              fontWeight: expand_faq === '3' ? '600' : '400',
-              fontFamily: 'Poppins, sans-serif',
-              transition: 'all 0.3s ease'
-            }"
-          >
-            What is AI virtual staging?
-          </span>
-        </template>
+          <a-collapse-panel key="3" style="font-size: 18px; font-weight: 400">
+            <template #header>
+              <span
+                :style="{
+                  fontSize: expand_faq === '3' ? '20px' : '18px',
+                  fontWeight: expand_faq === '3' ? '600' : '400',
+                  fontFamily: 'Poppins, sans-serif',
+                  transition: 'all 0.3s ease',
+                }"
+              >
+                What is AI virtual staging?
+              </span>
+            </template>
         <p style="margin: 0; color: #444; font-family: 'Poppins', sans-serif; font-weight: 400; font-size: 16px; line-height: 24px; letter-spacing: 0px;">
           AI virtual staging uses artificial intelligence models to automatically place furniture and décor in photos, saving time while creating realistic results.
-        </p>
-      </a-collapse-panel>
+            </p>
+          </a-collapse-panel>
 
-      <a-collapse-panel 
-        key="4"
-        style="font-size: 18px; font-weight: 400;"
-      >
-        <template #header>
-          <span 
-            :style="{
-              fontSize: expand_faq === '4' ? '20px' : '18px',
-              fontWeight: expand_faq === '4' ? '600' : '400',
-              fontFamily: 'Poppins, sans-serif',
-              transition: 'all 0.3s ease'
-            }"
-          >
-            What kind of photos do you support?
-          </span>
-        </template>
+          <a-collapse-panel key="4" style="font-size: 18px; font-weight: 400">
+            <template #header>
+              <span
+                :style="{
+                  fontSize: expand_faq === '4' ? '20px' : '18px',
+                  fontWeight: expand_faq === '4' ? '600' : '400',
+                  fontFamily: 'Poppins, sans-serif',
+                  transition: 'all 0.3s ease',
+                }"
+              >
+                What kind of photos do you support?
+              </span>
+            </template>
         <p style="margin: 0; color: #444; font-family: 'Poppins', sans-serif; font-weight: 400; font-size: 16px; line-height: 24px; letter-spacing: 0px;">
           We support wide-angle interior property photos such as living rooms, bedrooms, dining areas, and more.
-        </p>
-      </a-collapse-panel>
+            </p>
+          </a-collapse-panel>
 
-      <a-collapse-panel 
-        key="5"
-        style="font-size: 18px; font-weight: 400;"
-      >
-        <template #header>
-          <span 
-            :style="{
-              fontSize: expand_faq === '5' ? '20px' : '18px',
-              fontWeight: expand_faq === '5' ? '600' : '400',
-              fontFamily: 'Poppins, sans-serif',
-              transition: 'all 0.3s ease'
-            }"
-          >
-            How long does it take to virtually stage by AI?
-          </span>
-        </template>
+          <a-collapse-panel key="5" style="font-size: 18px; font-weight: 400">
+            <template #header>
+              <span
+                :style="{
+                  fontSize: expand_faq === '5' ? '20px' : '18px',
+                  fontWeight: expand_faq === '5' ? '600' : '400',
+                  fontFamily: 'Poppins, sans-serif',
+                  transition: 'all 0.3s ease',
+                }"
+              >
+                How long does it take to virtually stage by AI?
+              </span>
+            </template>
         <p style="margin: 0; color: #444; font-family: 'Poppins', sans-serif; font-weight: 400; font-size: 16px; line-height: 24px; letter-spacing: 0px;">
           AI staging usually takes just a few minutes, depending on the complexity of the design and processing load.
-        </p>
-      </a-collapse-panel>
-    </a-collapse>
-  </div>
+            </p>
+          </a-collapse-panel>
+        </a-collapse>
+      </div>
     </div>
     <div>
-<h1
-  style="
-    text-align: center;
-    color: var(--Black-Black-100, #000000);
+      <h1
+        style="
+          text-align: center;
+          color: var(--Black-Black-100, #000000);
         font-family: 'Poppins', sans-serif;
 
-    font-weight: 700;
-    font-style: normal; /* Bold handled by weight */
-    font-size: 26px;
-    line-height: 34px;
-    letter-spacing: -0.02em; /* -2% */
-  "
->
-  Feel free to contact us
-</h1>
+          font-weight: 700;
+          font-style: normal; /* Bold handled by weight */
+          font-size: 26px;
+          line-height: 34px;
+          letter-spacing: -0.02em; /* -2% */
+        "
+      >
+        Feel free to contact us
+      </h1>
 
-<p class="font-poppins text-center !mx-4 md:!mx-0 text-gray-500 leading-snug">
-               Revolutionizing Interior Design with Virtual Technology & AI
-              </p>
+      <p
+        class="font-poppins text-center !mx-4 md:!mx-0 text-gray-500 leading-snug"
+      >
+        Revolutionizing Interior Design with Virtual Technology & AI
+      </p>
     </div>
-    <div class="flex justify-center items-center  !mx-4 ">
+    <div class="flex justify-center items-center !mx-4">
       <div
-        class="bg-white  p-6 sm:p-6 rounded-xl shadow-[0_20px_60px_rgba(59,130,246,0.7)] max-w-[450px] w-full border-t-[4px] border-blue-500 blue-glow-border"
+        class="bg-white p-6 sm:p-6 rounded-xl shadow-[0_20px_60px_rgba(59,130,246,0.7)] max-w-[450px] w-full border-t-[4px] border-blue-500 blue-glow-border"
       >
         <form @submit.prevent="submitForm" class="flex flex-col gap-5">
           <div class="flex gap-2 sm:gap-4">
@@ -2667,9 +2693,11 @@ export default {
     return {
       isLogedIn: localStorage.getItem("token") ? true : false,
       bannerImage,
+      selectedFileData: null,
+      fileRefKey:Number(new Date()),
       swiper_bg,
       expand_faq: undefined,
-       slidesPerView: window.innerWidth <= 768 ? 1 : 4,
+      slidesPerView: window.innerWidth <= 768 ? 1 : 4,
       //stepper image---
       step3Img,
       step2Img,
@@ -2840,6 +2868,12 @@ export default {
       },
     };
   },
+  computed: {
+    selectedFileDataTryFree() {
+      const file= this.$store.state.HomePageTryFeeSelectedFile 
+      return file ? URL.createObjectURL(file) : ""
+    },
+  },
   mounted() {
     this.startServiceSection();
 
@@ -2871,6 +2905,36 @@ export default {
   },
 
   methods: {
+    handleHomeFileUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  this.fileRefKey = Number(new Date());
+  this.$store.commit("setSelectedFile", file);
+
+  // const reader = new FileReader();
+
+  // reader.onload = (e) => {
+  //   console.log("File loaded");
+  //   this.$store.commit("setSelectedFile", e.target.result);
+  // };
+
+  // reader.readAsDataURL(file); // 🔥 THIS WAS MISSING
+},
+    handleHomeFileUploadTryFree() {
+      
+      // This opens the file selector
+      this.$refs.fileTryFree.click();
+    },
+    handleTryFreeNavigateSimulation() {
+      this.$router.push({
+        path: "/start-new-catalogue",
+        query: {
+          brand: "dyd-testing",
+          source: 'try-free'
+        },
+      });
+    },
     // start services sliding window animation
     // start service section Animation
     startServiceSection() {
@@ -3424,7 +3488,7 @@ export default {
 @import url("https://fonts.googleapis.com/css2?family=Proza+Libre:wght@400;500;600;700;800;900&display=swap");
 
 .banner-text {
-      font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
 
   font-size: 26px;
   line-height: 1.2;
@@ -3714,7 +3778,6 @@ export default {
   z-index: 10;
 }
 
-
 /* @keyframes shimmer-single-line {
   0% {
     transform: translateX(-7960%);
@@ -3808,13 +3871,12 @@ export default {
   height: 1px;
   background: linear-gradient(
     to right,
-    rgba(0, 0, 0, 0.35), /* dark left */
-    rgba(0, 0, 0, 0.15) 40%,
+    rgba(0, 0, 0, 0.35),
+    /* dark left */ rgba(0, 0, 0, 0.15) 40%,
     rgba(0, 0, 0, 0.05) 70%,
     rgba(0, 0, 0, 0) 100% /* fade right */
   );
 }
-
 
 .step2-text {
   transform: translateX(40px);
@@ -3996,7 +4058,6 @@ export default {
   filter: blur(25px);
   z-index: 0;
 }
-
 
 .dyad-button {
   position: relative;

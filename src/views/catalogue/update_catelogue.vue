@@ -6325,7 +6325,7 @@ export default {
 .middle-panel {
   background: #fff;
   border-right: 1px solid #e5e5e5;
-  overflow: auto; /* Change from overflow-y: auto to hidden */
+  /*overflow: auto; /* Change from overflow-y: auto to hidden */
   height: 100%;
 }
 

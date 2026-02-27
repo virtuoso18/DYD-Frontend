@@ -38,10 +38,9 @@
       </div>
 
       <!-- Heading -->
-      
-      <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 10px">
 
-        {{errorTitle || "Insufficient Credits"}}
+      <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 10px">
+        {{ errorTitle || "Insufficient Credits" }}
       </h2>
 
       <!-- Message -->
@@ -64,7 +63,7 @@
         style="height: 46px; font-size: 16px; border-radius: 8px"
         @click="goToPurchaseCredits"
       >
-       {{ btnText || "Purchase Credits" }} 
+        {{ btnText || "Purchase Credits" }}
       </a-button>
 
       <a-button
@@ -175,7 +174,6 @@
 
           <div class="pt-12 px-3 pb-6">
             <h2 class="text-xl font-bold text-center mb-8"></h2>
-
             <div
               v-if="!modalPreviewImage"
               class="border-2 border-dashed border-gray-300 rounded-xl p-5 mb-6"
@@ -325,9 +323,12 @@
 
             <!-- Show preview if image is selected, else show upload button -->
             <div v-if="!modalPreviewImage" class="space-y-3">
-          <a-alert style="margin-bottom:10px" v-show="this.$route.query.product_id"
-            description="You’ve selected a product to preview in your room. Please capture and upload a well-lit photo of your room to continue.">
-          </a-alert>
+              <a-alert
+                style="margin-bottom: 10px"
+                v-show="this.$route.query.product_id"
+                description="You’ve selected a product to preview in your room. Please capture and upload a well-lit photo of your room to continue."
+              >
+              </a-alert>
               <button
                 @click="triggerFileUpload"
                 :disabled="uploading"
@@ -525,37 +526,57 @@
             ></div>
           </div>
 
-      <!-- Scrollable Content -->
-      <div class="overflow-y-auto flex-1 pb-6">
-        <!-- Image Preview -->
-        <div class="px-4 pt-4">
-          <div class="flex items-center justify-between mb-4">
-      <router-link :to="'/'+selectedImage.brand" class="block">
-        <span class="text-sm font-semibold text-gray-700 inline-flex items-center gap-2 hover:text-blue-600 transition-colors" style="font-weight:600;">
-          <a-avatar size="18" style="border:1px solid rgba(0,0,0,0.2)" :src="this.$store.state.root_media_api+selectedImage.brand_banner"></a-avatar> 
-          {{selectedImage.brand_name}}
-        </span>
-      </router-link>
-      
-      <!-- Close Button -->
-      <button 
-        @click="closeDrawer"
-        class="p-2 hover:bg-gray-100 rounded-full transition-colors"
-        aria-label="Close"
-      >
-        <svg class="w-5 h-5 text-gray-600 hover:text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-        </svg>
-      </button>
-    </div>
-          
-          <img 
-            v-if="selectedImage"
-            :src="$store.state.root_media_api + selectedImage.image"
-            alt="Selected room"
-            class="w-full h-64 object-cover rounded-xl shadow-lg"
-          />
-        </div>
+          <!-- Scrollable Content -->
+          <div class="overflow-y-auto flex-1 pb-6">
+            <!-- Image Preview -->
+            <div class="px-4 pt-4">
+              <div class="flex items-center justify-between mb-4">
+                <router-link :to="'/' + selectedImage.brand" class="block">
+                  <span
+                    class="text-sm font-semibold text-gray-700 inline-flex items-center gap-2 hover:text-blue-600 transition-colors"
+                    style="font-weight: 600"
+                  >
+                    <a-avatar
+                      size="18"
+                      style="border: 1px solid rgba(0, 0, 0, 0.2)"
+                      :src="
+                        this.$store.state.root_media_api +
+                        selectedImage.brand_banner
+                      "
+                    ></a-avatar>
+                    {{ selectedImage.brand_name }}
+                  </span>
+                </router-link>
+
+                <!-- Close Button -->
+                <button
+                  @click="closeDrawer"
+                  class="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                  aria-label="Close"
+                >
+                  <svg
+                    class="w-5 h-5 text-gray-600 hover:text-gray-900"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              <img
+                v-if="selectedImage"
+                :src="$store.state.root_media_api + selectedImage.image"
+                alt="Selected room"
+                class="w-full h-64 object-cover rounded-xl shadow-lg"
+              />
+            </div>
 
             <!-- Content -->
             <div class="px-6 !pt-6 sm:!pt-0">
@@ -605,12 +626,10 @@
                 <div
                   class="bg-white rounded-xl border border-gray-200 p-3 flex flex-col items-center justify-center text-center hover:shadow-md transition-shadow"
                 >
-                  <p
-                        class="text-2xl font-bold text-blue-600 leading-none mb-1"
-                      >
-                        {{ selectedImage.used_products }}
-                      </p>
-                      
+                  <p class="text-2xl font-bold text-blue-600 leading-none mb-1">
+                    {{ selectedImage.used_products }}
+                  </p>
+
                   <p class="text-xs text-gray-600 mt-1 font-family-poppins">
                     Products
                   </p>
@@ -672,8 +691,9 @@
                 <button
                   v-else
                   @click="handleUseSelectedRoom"
-                  style="color:white"
-                  class="w-full bg-blue-600 text-white hover:bg-blue-700 font-semibold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg hover:shadow-xl active:scale-[0.98]">
+                  style="color: white"
+                  class="w-full bg-blue-600 text-white hover:bg-blue-700 font-semibold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg hover:shadow-xl active:scale-[0.98]"
+                >
                   <svg
                     class="w-5 h-5"
                     fill="none"
@@ -1069,7 +1089,7 @@
       <div class="upload-row px-2 sm:px-0">
         <a-upload-dragger
           v-model:fileList="fileList"
-:showUploadList="false"
+          :showUploadList="false"
           :multiple="false"
           :beforeUpload="beforeUpload"
           :customRequest="customUpload"
@@ -1086,117 +1106,126 @@
             </a-button>
           </div>
         </a-upload-dragger>
-        <a-alert style="margin-bottom:10px" v-show="this.$route.query.product_id"
-            description="You’ve selected a product to preview in your room. Please capture and upload a well-lit photo of your room to continue, or select a previously saved room from your history that belongs to the same brand as this product you selected.">
-          </a-alert>
+        <a-alert
+          style="margin-bottom: 10px"
+          v-show="this.$route.query.product_id"
+          description="You’ve selected a product to preview in your room. Please capture and upload a well-lit photo of your room to continue, or select a previously saved room from your history that belongs to the same brand as this product you selected."
+        >
+        </a-alert>
       </div>
 
       <!-- History -->
       <!-- History -->
-<div v-if="your_history.length || loading_user_history_rooms">
-  <p class="history-label pl-2">
-    <a-spin v-if="loading_user_history_rooms" /> Your History
-  </p>
+      <div v-if="your_history.length || loading_user_history_rooms">
+        <p class="history-label pl-2">
+          <a-spin v-if="loading_user_history_rooms" /> Your History
+        </p>
 
-  <div
-    class="grid grid-cols-3 !space-y-2 sm:grid-cols-3 gap-1 sm:gap-2 sm:px-5 max-w-[1300px]"
-  >
-    <div
-      v-for="histry_card in your_history"
-      :key="histry_card.id"
-      class="px-[5px]"
-    >
-      <div
-        @click="openImageDrawer(histry_card)"
-        class="cursor-pointer hover:opacity-80 transition-opacity"
-      >
-        <div class="history-image-wrapper">
-          <!-- Skeleton -->
+        <div
+          class="grid grid-cols-3 !space-y-2 sm:grid-cols-3 gap-1 sm:gap-2 sm:px-5 max-w-[1300px]"
+        >
           <div
-            v-if="!imageLoadedMap[histry_card.id]"
-            class="history-image-skeleton"
-          ></div>
-
-          <!-- Preload image -->
-          <img
-            :src="$store.state.root_media_api + histry_card.image"
-            style="position: absolute; width: 0; height: 0; opacity: 0"
-            @load="onHistoryImageLoad(histry_card.id)"
-            alt=""
-          />
-
-          <!-- Visible image -->
-          <img
-            v-show="imageLoadedMap[histry_card.id]"
-            :src="$store.state.root_media_api + histry_card.image"
-            alt="Example"
-            class="example-image w-full !h-32 sm:!h-48 object-cover rounded-lg"
-            style="display: block"
-          />
-
-          <!-- Brand badge -->
-          <div
-            v-if="histry_card.brand_banner"
-            class="history-brand-badge"
+            v-for="histry_card in your_history"
+            :key="histry_card.id"
+            class="px-[5px]"
           >
-            <a-avatar
-              :src="$store.state.root_media_api + histry_card.brand_banner"
-            ></a-avatar>
+            <div
+              @click="openImageDrawer(histry_card)"
+              class="cursor-pointer hover:opacity-80 transition-opacity"
+            >
+              <div class="history-image-wrapper">
+                <!-- Skeleton -->
+                <div
+                  v-if="!imageLoadedMap[histry_card.id]"
+                  class="history-image-skeleton"
+                ></div>
+
+                <!-- Preload image -->
+                <img
+                  :src="$store.state.root_media_api + histry_card.image"
+                  style="position: absolute; width: 0; height: 0; opacity: 0"
+                  @load="onHistoryImageLoad(histry_card.id)"
+                  alt=""
+                />
+
+                <!-- Visible image -->
+                <img
+                  v-show="imageLoadedMap[histry_card.id]"
+                  :src="$store.state.root_media_api + histry_card.image"
+                  alt="Example"
+                  class="example-image w-full !h-32 sm:!h-48 object-cover rounded-lg"
+                  style="display: block"
+                />
+
+                <!-- Brand badge -->
+                <div
+                  v-if="histry_card.brand_banner"
+                  class="history-brand-badge"
+                >
+                  <a-avatar
+                    :src="
+                      $store.state.root_media_api + histry_card.brand_banner
+                    "
+                  ></a-avatar>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
 
-  <!-- Load More Button -->
-  <div
-    v-if="history_pagination.next"
-    class="flex justify-center mt-4 mb-2 px-4"
-  >
-    <button
-      @click="fetchUserHistoryRooms(true)"
-      :disabled="loading_more_history"
-      class="flex items-center gap-2 px-6 py-2.5 bg-white border border-gray-300 hover:border-blue-500 hover:text-blue-600 text-gray-700 font-medium text-sm rounded-xl shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-    >
-      <svg
-        v-if="loading_more_history"
-        class="animate-spin h-4 w-4 text-blue-600"
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-      >
-        <circle
-          class="opacity-25"
-          cx="12"
-          cy="12"
-          r="10"
-          stroke="currentColor"
-          stroke-width="4"
-        ></circle>
-        <path
-          class="opacity-75"
-          fill="currentColor"
-          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-        ></path>
-      </svg>
-      <svg
-        v-else
-        class="w-4 h-4"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M19 9l-7 7-7-7"
-        />
-      </svg>
-      {{ loading_more_history ? "Loading..." : `Load More (${history_pagination.count - your_history.length} remaining)` }}
-    </button>
-  </div>
-</div>
+        <!-- Load More Button -->
+        <div
+          v-if="history_pagination.next"
+          class="flex justify-center mt-4 mb-2 px-4"
+        >
+          <button
+            @click="fetchUserHistoryRooms(true)"
+            :disabled="loading_more_history"
+            class="flex items-center gap-2 px-6 py-2.5 bg-white border border-gray-300 hover:border-blue-500 hover:text-blue-600 text-gray-700 font-medium text-sm rounded-xl shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <svg
+              v-if="loading_more_history"
+              class="animate-spin h-4 w-4 text-blue-600"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              ></circle>
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
+            </svg>
+            <svg
+              v-else
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+            {{
+              loading_more_history
+                ? "Loading..."
+                : `Load More (${history_pagination.count - your_history.length} remaining)`
+            }}
+          </button>
+        </div>
+      </div>
 
       <!-- Examples -->
       <!-- Examples Section -->
@@ -1344,8 +1373,8 @@ export default {
       LoadingMessageButton: false,
       buid: null,
       showCreditModal: false,
-      errorTitle:"",
-      btnText:"",
+      errorTitle: "",
+      btnText: "",
       creditErrorMessage: "",
 
       showLoadingModal: false,
@@ -1405,7 +1434,28 @@ export default {
         (img) => img.demo_room_type === this.selectedRoomType,
       );
     },
+
+    demoImage() {
+      const isTryFree = this.$route.query.source === "try-free";
+      const file = this.$store.state.HomePageTryFeeSelectedFile;
+      if (isTryFree && file) {
+        return file;
+      }
+      return null;
+    },
   },
+ watch: {
+  demoImage: {
+    immediate: true,
+    handler(newFile) {
+      if (newFile) {
+        console.log("URRRR", newFile);
+        this.modalFile=newFile;
+        this.modalPreviewImage = URL.createObjectURL(newFile);
+      }
+    }
+  }
+},
 
   mounted() {
     this.isExpanded = false;
@@ -1426,14 +1476,36 @@ export default {
 
     this.fetchExampleRooms();
     this.fetchUserHistoryRooms();
+
+    //---------------
+    // const demoImage = history.state.demoImage;
+
+    // if (demoImage) {
+    //   this.modalPreviewImage = demoImage;
+
+    //   // OPTIONAL: if your API needs a File object
+    //   this.convertUrlToFile(demoImage);
+    // }
   },
 
   methods: {
+    async convertUrlToFile(imageUrl) {
+      const response = await fetch(imageUrl);
+      const blob = await response.blob();
+
+      this.modalFile = new File([blob], "simulation-image.jpg", {
+        type: blob.type,
+      });
+    },
     showConfirm() {
       Modal.confirm({
         title: "Brand Mismatch",
         icon: "",
-        content: h("div", { style: "color:red;" }, "The product you are viewing already belongs to a different brand, and the room you have selected also belongs to another brand. Please either select a room that belongs to the same brand, or if you wish to proceed with this brand, you will not be able to view this product. Alternatively, you can upload a new image for a new room."),
+        content: h(
+          "div",
+          { style: "color:red;" },
+          "The product you are viewing already belongs to a different brand, and the room you have selected also belongs to another brand. Please either select a room that belongs to the same brand, or if you wish to proceed with this brand, you will not be able to view this product. Alternatively, you can upload a new image for a new room.",
+        ),
         onOk: () => {
           this.useSelectedRoom();
         },
@@ -1456,36 +1528,35 @@ export default {
       this.$router.push("/pricing"); // or your actual route
     },
 
-closeDrawer() {
-  // IMMEDIATE close - no animations or state changes
-  this.isDragging = false;
-  this.isExpanded = false;
-  this.showImageDrawer = false;
-  this.showImageDrawer_test_room = false;
-  this.showObjectManagement = false;
-  
-  // Immediately reset drawer transform
-  if (this.drawerRef) {
-    this.drawerRef.style.transition = 'none'; // Disable transition
-    this.drawerRef.style.transform = '';
-    this.drawerRef.style.top = '';
-    this.drawerRef.style.height = '';
-    this.drawerRef.style.width = '';
-    this.drawerRef.style.borderRadius = '';
-    
-    // Re-enable transitions after a frame
-    requestAnimationFrame(() => {
-      if (this.drawerRef) {
-        this.drawerRef.style.transition = '';
-      }
-    });
-  }
-  
-  // Clear selection immediately
-  this.selectedImage = null;
-  this.detectedObjects = [];
-},
+    closeDrawer() {
+      // IMMEDIATE close - no animations or state changes
+      this.isDragging = false;
+      this.isExpanded = false;
+      this.showImageDrawer = false;
+      this.showImageDrawer_test_room = false;
+      this.showObjectManagement = false;
 
+      // Immediately reset drawer transform
+      if (this.drawerRef) {
+        this.drawerRef.style.transition = "none"; // Disable transition
+        this.drawerRef.style.transform = "";
+        this.drawerRef.style.top = "";
+        this.drawerRef.style.height = "";
+        this.drawerRef.style.width = "";
+        this.drawerRef.style.borderRadius = "";
+
+        // Re-enable transitions after a frame
+        requestAnimationFrame(() => {
+          if (this.drawerRef) {
+            this.drawerRef.style.transition = "";
+          }
+        });
+      }
+
+      // Clear selection immediately
+      this.selectedImage = null;
+      this.detectedObjects = [];
+    },
 
     async startchat_with_buisness_user() {
       const selectedUser = this.buid;
@@ -1563,67 +1634,65 @@ closeDrawer() {
       }
     },
 
-handleTouchEnd(e) {
-  if (!this.isDragging) return;
-  
-  // Check if touch ended on a button - if so, ignore drag logic
-  const target = e.target;
-  if (target.closest('button') || target.tagName === 'BUTTON') {
-    this.isDragging = false;
-    if (this.drawerRef) {
-      this.drawerRef.style.transform = '';
-    }
-    return;
-  }
-  
-  const deltaY = this.currentY - this.startY;
-  
-  // Drag UP to expand (more than 80px)
-  if (deltaY < -this.threshold) {
-    this.isExpanded = true;
-  } 
-  // Drag DOWN to close (from expanded) OR collapse (from partial)
-  else if (deltaY > this.threshold || (this.isExpanded && deltaY > 20)) {
-    this.closeDrawer();
-  }
-  // Snap back if small drag
-  else {
-    this.isExpanded = false;
-  }
-  
-  // Reset transform immediately
-  if (this.drawerRef) {
-    this.drawerRef.style.transform = '';
-  }
-  this.isDragging = false;
-},
+    handleTouchEnd(e) {
+      if (!this.isDragging) return;
 
-  // Update your existing closeDrawer method
-closeDrawer() {
-  // ALWAYS reset expanded state
-  this.isExpanded = false;
-  
-  this.showImageDrawer = false;
-  this.showImageDrawer_test_room = false;
-  this.showObjectManagement = false;
-  
-  // Force immediate reset of drawer transform and position
-  if (this.drawerRef) {
-    this.drawerRef.style.transform = '';
-    this.drawerRef.style.top = '';
-    this.drawerRef.style.height = '';
-    this.drawerRef.style.width = '';
-    this.drawerRef.style.borderRadius = '';
-  }
-  
-  // Clear selection after animation
-  setTimeout(() => {
-    this.selectedImage = null;
-    this.detectedObjects = [];
-  }, 250);
-},
+      // Check if touch ended on a button - if so, ignore drag logic
+      const target = e.target;
+      if (target.closest("button") || target.tagName === "BUTTON") {
+        this.isDragging = false;
+        if (this.drawerRef) {
+          this.drawerRef.style.transform = "";
+        }
+        return;
+      }
 
+      const deltaY = this.currentY - this.startY;
 
+      // Drag UP to expand (more than 80px)
+      if (deltaY < -this.threshold) {
+        this.isExpanded = true;
+      }
+      // Drag DOWN to close (from expanded) OR collapse (from partial)
+      else if (deltaY > this.threshold || (this.isExpanded && deltaY > 20)) {
+        this.closeDrawer();
+      }
+      // Snap back if small drag
+      else {
+        this.isExpanded = false;
+      }
+
+      // Reset transform immediately
+      if (this.drawerRef) {
+        this.drawerRef.style.transform = "";
+      }
+      this.isDragging = false;
+    },
+
+    // Update your existing closeDrawer method
+    closeDrawer() {
+      // ALWAYS reset expanded state
+      this.isExpanded = false;
+
+      this.showImageDrawer = false;
+      this.showImageDrawer_test_room = false;
+      this.showObjectManagement = false;
+
+      // Force immediate reset of drawer transform and position
+      if (this.drawerRef) {
+        this.drawerRef.style.transform = "";
+        this.drawerRef.style.top = "";
+        this.drawerRef.style.height = "";
+        this.drawerRef.style.width = "";
+        this.drawerRef.style.borderRadius = "";
+      }
+
+      // Clear selection after animation
+      setTimeout(() => {
+        this.selectedImage = null;
+        this.detectedObjects = [];
+      }, 250);
+    },
 
     // NEW METHOD: Trigger modal file input
     triggerFileUpload() {
@@ -1711,8 +1780,8 @@ closeDrawer() {
 
         if (responseData.error) {
           this.showInstructionsModal = false;
-          this.errorTitle=responseData?.title;
-          this.btnText=responseData?.btn_text;
+          this.errorTitle = responseData?.title;
+          this.btnText = responseData?.btn_text;
           this.creditErrorMessage = responseData.msg;
           this.showCreditModal = true;
           this.buid = responseData.buid;
@@ -1971,40 +2040,40 @@ closeDrawer() {
     },
 
     async fetchUserHistoryRooms(loadMore = false) {
-            if (loadMore) {
-              this.loading_more_history = true;
-            } else {
-              this.loading_user_history_rooms = true;
-              this.history_pagination.offset = 0;
-              this.your_history = [];
-            }
+      if (loadMore) {
+        this.loading_more_history = true;
+      } else {
+        this.loading_user_history_rooms = true;
+        this.history_pagination.offset = 0;
+        this.your_history = [];
+      }
 
-            try {
-              const { limit, offset } = this.history_pagination;
-              const url = `${this.$store.state.root_api}room/api/user-history-rooms/?limit=${limit}&offset=${offset}`;
-              const response = await fetch(url, {
-                method: "GET",
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Token ${localStorage.getItem("token")}`,
-                },
-              });
-              const data = await response.json();
-
-              if (data && data.results?.data) {
-                this.your_history = [...this.your_history, ...data.results.data];
-                this.history_pagination.count = data.count;
-                this.history_pagination.next = data.next;
-                // Advance offset for next load
-                this.history_pagination.offset += this.history_pagination.limit;
-              }
-            } catch (error) {
-              console.error("Failed to fetch:", error);
-            } finally {
-              this.loading_user_history_rooms = false;
-              this.loading_more_history = false;
-            }
+      try {
+        const { limit, offset } = this.history_pagination;
+        const url = `${this.$store.state.root_api}room/api/user-history-rooms/?limit=${limit}&offset=${offset}`;
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Token ${localStorage.getItem("token")}`,
           },
+        });
+        const data = await response.json();
+
+        if (data && data.results?.data) {
+          this.your_history = [...this.your_history, ...data.results.data];
+          this.history_pagination.count = data.count;
+          this.history_pagination.next = data.next;
+          // Advance offset for next load
+          this.history_pagination.offset += this.history_pagination.limit;
+        }
+      } catch (error) {
+        console.error("Failed to fetch:", error);
+      } finally {
+        this.loading_user_history_rooms = false;
+        this.loading_more_history = false;
+      }
+    },
 
     beforeUpload(file) {
       const isImage = file.type.startsWith("image/");
@@ -2058,7 +2127,7 @@ closeDrawer() {
 
         if (responseData.error) {
           this.creditErrorMessage = responseData.msg;
-          this.errorTitle=responseData?.title
+          this.errorTitle = responseData?.title;
           this.showCreditModal = true;
           this.buid = responseData.buid;
           return;
