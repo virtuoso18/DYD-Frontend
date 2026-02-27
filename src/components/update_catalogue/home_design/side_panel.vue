@@ -301,11 +301,11 @@ export default {
       }
 
       // Then check if user has home_design access
-      // if (!this.home_design_access) {
+      if (!this.home_design_access) {
       // Emit event to parent to show upgrade modal
-      // this.$emit('show-upgrade-modal');
-      // return;
-      // }
+      this.$emit('show-upgrade-modal');
+      return;
+      }
 
       // Proceed with normal generation
       this.handleGenerate();

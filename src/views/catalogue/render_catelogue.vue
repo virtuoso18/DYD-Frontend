@@ -1211,6 +1211,9 @@
           <div style="display: flex; gap: 12px; align-items: center">
             <a-button
               type="default"
+              
+  :disabled="loading || out_of_credits"
+  @click="downloadImage(base_image_url)"
               style="
                 display: flex;
                 align-items: center;
@@ -2414,6 +2417,12 @@
           <a-button
             type="default"
             block
+            
+            
+  :disabled="loading || out_of_credits"
+  @click="downloadImage(base_image_url)"
+
+
             style="
               display: flex;
               justify-content: center;
@@ -2891,6 +2900,32 @@ export default {
   },
 
   methods: {
+     async downloadImage(image_url) {
+    if (!image_url) return;
+
+    try {
+      const response = await fetch(image_url);
+      const blob = await response.blob();
+
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+
+      // ✅ Remove query params
+      const cleanUrl = image_url.split("?")[0];
+      const fileName = cleanUrl.split("/").pop() || "downloaded_image.png";
+
+      link.download = fileName;
+
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Download failed:", error);
+    }
+  },
   async toggleFavorite(product, product_type) {
       try {
         const token = localStorage.getItem("token");

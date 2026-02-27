@@ -323,10 +323,6 @@ export default {
       // ─────────────────────────────────────────────────────────
       _spinAngleRad: 0,
 
-      // ✅ Blocks chairRotation watcher from firing alignChairToFloor
-      // during renderItem() blob creation (prevents quaternion corruption)
-      _renderLock: false,
-
       chairRotation: 0,
       lastHit: null,
       lastMaskResult: false,
@@ -865,28 +861,22 @@ export default {
     _saveLastKnownTransform() {
       if (!this.chair) return
 
-      // ✅ Number() strips Vue proxy wrapper → guarantees raw JS primitives
-      // Without this, parent receives Proxy(Object) that can mutate later
       this.lastKnownPos = {
-        x: Number(this.chair.position.x),
-        y: Number(this.chair.position.y),
-        z: Number(this.chair.position.z),
+        x: this.chair.position.x,
+        y: this.chair.position.y,
+        z: this.chair.position.z,
       }
       this.lastKnownQuat = {
-        x: Number(this.chair.quaternion.x),
-        y: Number(this.chair.quaternion.y),
-        z: Number(this.chair.quaternion.z),
-        w: Number(this.chair.quaternion.w),
+        x: this.chair.quaternion.x,
+        y: this.chair.quaternion.y,
+        z: this.chair.quaternion.z,
+        w: this.chair.quaternion.w,
       }
       this.lastKnownScale = {
-        x: Number(this.chair.scale.x),
-        y: Number(this.chair.scale.y),
-        z: Number(this.chair.scale.z),
+        x: this.chair.scale.x,
+        y: this.chair.scale.y,
+        z: this.chair.scale.z,
       }
-
-      console.log('[lastKnown saved] pos x:', Number(this.chair.position.x).toFixed(3),
-                  'z:', Number(this.chair.position.z).toFixed(3),
-                  'spinDeg:', THREE.MathUtils.radToDeg(this._spinAngleRad).toFixed(1) + '°')
     },
 
     onPointerUp(event) {
@@ -1516,23 +1506,22 @@ export default {
 
     _emitTransformUpdate() {
       if (!this.chair) return;
-      // ✅ Number() strips Vue proxy — emits plain JS primitives to parent
-      // ✅ rotation.y = _spinAngleRad (clean spin radians, not corrupted euler Y)
       this.$emit('model-transform-updated', {
         position: {
-          x: Number(this.chair.position.x),
-          y: Number(this.chair.position.y),
-          z: Number(this.chair.position.z),
+          x: this.chair.position.x,
+          y: this.chair.position.y,
+          z: this.chair.position.z,
         },
         rotation: {
-          x: Number(0),
-          y: Number(this._spinAngleRad),
-          z: Number(0),
+          // ✅ Emit _spinAngleRad as the Y value so restore is accurate
+          x: this.chair.rotation.x,
+          y: this._spinAngleRad,
+          z: this.chair.rotation.z,
         },
         scale: {
-          x: Number(this.chair.scale.x),
-          y: Number(this.chair.scale.y),
-          z: Number(this.chair.scale.z),
+          x: this.chair.scale.x,
+          y: this.chair.scale.y,
+          z: this.chair.scale.z,
         },
       });
     },
@@ -1604,7 +1593,6 @@ export default {
       try {
         this.chair.updateMatrixWorld(true)
 
-        // ── Snapshot current transform ───────────────────────
         const snapPos = {
           x: this.chair.position.x,
           y: this.chair.position.y,
@@ -1621,17 +1609,10 @@ export default {
           y: this.chair.scale.y,
           z: this.chair.scale.z,
         }
-        // ✅ Also snapshot _spinAngleRad so watcher can't corrupt it
-        const snapSpinRad = this._spinAngleRad
-
-        // ── Lock: prevent chairRotation watcher from calling
-        //    alignChairToFloor() while we're mid-render ────────
-        this._renderLock = true
 
         if (this.rotationRing) this.rotationRing.visible = false
         this.renderer.render(this.scene, this.camera)
 
-        // Re-apply snapshot (guard against any reactive flush)
         this.chair.position.set(snapPos.x, snapPos.y, snapPos.z)
         this.chair.quaternion.set(snapQuat.x, snapQuat.y, snapQuat.z, snapQuat.w)
         this.chair.scale.set(snapScale.x, snapScale.y, snapScale.z)
@@ -1642,24 +1623,19 @@ export default {
         const exportH = (roomImg && roomImg.naturalHeight) ? roomImg.naturalHeight : (this.CAM_IMG_H || 600)
 
         this.internalLoadingText = 'Creating composite image...'
-        const compositeBlob = await this.createCompositeImageBlob(exportW, exportH, snapPos, snapQuat, snapScale)
+        const compositeBlob = await this.createCompositeImageBlob(exportW, exportH)
         if (!compositeBlob || compositeBlob.size === 0) throw new Error('Composite blob empty')
 
         this.internalLoadingText = 'Creating binary mask...'
-        const maskBlob = await this.createBinaryMaskBlob(exportW, exportH, snapPos, snapQuat, snapScale)
+        const maskBlob = await this.createBinaryMaskBlob(exportW, exportH)
         if (!maskBlob || maskBlob.size === 0) throw new Error('Mask blob empty')
-        // this.downloadImages(compositeBlob, maskBlob) 
-        // return
+
         const formData = new FormData();
         formData.append('composite_image', compositeBlob, 'composite_image.png');
         formData.append('binary_mask',     maskBlob,      'binary_mask.png');
         formData.append('room_id',  this.$route.params.id);
         formData.append('prod_id',  this.$route.query.product_id);
 
-        // ── NOW safe to change reactive state ────────────────
-        // Blobs are already captured. Watcher firing from here
-        // no longer matters since we hide the model anyway.
-        this._renderLock         = false
         this.internalLoading     = true
         this.internalLoadingText = 'Rendering Item...'
         this.isDraggingRef       = false
@@ -1698,7 +1674,6 @@ export default {
 
       } catch (error) {
         console.error('renderItem error:', error);
-        this._renderLock     = false  // ✅ always release lock on error
         this.internalLoading = false;
         this.loadingProxy    = false;
         if (this.rotationRing) this.rotationRing.visible = true;
@@ -1706,7 +1681,7 @@ export default {
       }
     },
 
-    async createCompositeImageBlob(bgWidth, bgHeight, snapPos, snapQuat, snapScale) {
+    async createCompositeImageBlob(bgWidth, bgHeight) {
       const offCanvas = document.createElement('canvas')
       offCanvas.width  = bgWidth
       offCanvas.height = bgHeight
@@ -1724,13 +1699,11 @@ export default {
 
       const offScene = new THREE.Scene()
 
-      // ✅ FIX: use passed-in snapshot values — never read this.chair here
-      // because async awaits between renderItem() and this call allow Vue
-      // reactivity to mutate this.chair.position/quaternion underneath us
       const chairClone = this.chair.clone(true)
-      chairClone.position.set(snapPos.x, snapPos.y, snapPos.z)
-      chairClone.quaternion.set(snapQuat.x, snapQuat.y, snapQuat.z, snapQuat.w)
-      chairClone.scale.set(snapScale.x, snapScale.y, snapScale.z)
+      this.chair.updateMatrixWorld(true)
+      chairClone.position.copy(this.chair.position)
+      chairClone.quaternion.copy(this.chair.quaternion)
+      chairClone.scale.copy(this.chair.scale)
       chairClone.updateMatrixWorld(true)
 
       offScene.add(chairClone)
@@ -1771,7 +1744,7 @@ export default {
       return blob
     },
 
-    async createBinaryMaskBlob(bgWidth, bgHeight, snapPos, snapQuat, snapScale) {
+    async createBinaryMaskBlob(bgWidth, bgHeight) {
       const offCanvas = document.createElement('canvas')
       offCanvas.width  = bgWidth
       offCanvas.height = bgHeight
@@ -1786,11 +1759,10 @@ export default {
 
       const offScene = new THREE.Scene()
 
-      // ✅ FIX: use passed-in snapshot values
       const chairClone = this.chair.clone(true)
-      chairClone.position.set(snapPos.x, snapPos.y, snapPos.z)
-      chairClone.quaternion.set(snapQuat.x, snapQuat.y, snapQuat.z, snapQuat.w)
-      chairClone.scale.set(snapScale.x, snapScale.y, snapScale.z)
+      chairClone.position.copy(this.chair.position)
+      chairClone.quaternion.copy(this.chair.quaternion)
+      chairClone.scale.copy(this.chair.scale)
       chairClone.updateMatrixWorld(true)
       chairClone.traverse(child => {
         if (child.isMesh) {
@@ -1926,8 +1898,9 @@ export default {
     debugPointCloud() { this.togglePointCloud() },
     debugFloorMesh()  { this.toggleFloorMesh() },
     chairRotation() {
-      // ✅ Guard: don't fire during drag, rotation gesture, or mid-render
-      if (this.isDraggingRef || this.isRotatingRef || this.isTwoFingerRotating || this._renderLock) return
+      // ✅ FIX: guard uses REACTIVE flags (isRotatingRef / isDraggingRef)
+      // so watcher doesn't double-fire during arrow drag or model drag
+      if (this.isDraggingRef || this.isRotatingRef || this.isTwoFingerRotating) return
       this.updateChairRotation()
     },
   },

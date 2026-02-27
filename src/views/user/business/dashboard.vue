@@ -877,7 +877,7 @@
   v-else
   style="margin-top:10px;background:white;border-radius:15px;height:90vh;padding:10px;border:1px solid rgba(0,0,0,0.1);display:flex;justify-content:center;align-items:center;"
 >
-  <div style="text-align:center">
+  <div style="text-align:center;display: flex;justify-content: center;align-items: center;flex-direction: column;">
     <img src="../../../assets/emailverify.jpg" style="max-width:200px;max-height:400px" alt=""/><br/><br/>
     <p style="font-size:15px;color:#374151;margin-bottom:16px;">
       Your Business email is <b>not verified</b> yet.<br/>
