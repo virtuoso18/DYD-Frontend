@@ -2997,6 +2997,7 @@ export default {
           console.log("Notification Clicked!");
         },
       });
+      return
       }
       const isLoggedIn = localStorage.getItem("token");
 
