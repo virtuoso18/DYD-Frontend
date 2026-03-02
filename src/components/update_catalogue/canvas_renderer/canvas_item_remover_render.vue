@@ -1,11 +1,11 @@
 <template>
 
-   <div 
-    v-if="showRemoveObjectModal" 
+  <div
+    v-if="showRemoveObjectModal"
     class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/10 backdrop-blur-sm"
     @click="showRemoveObjectModal = false"
   >
-    <div 
+    <div
       class="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 animate-slideUp"
       @click.stop
     >
@@ -28,10 +28,10 @@
 
       <!-- Description -->
       <p class="text-base text-gray-600 text-center mb-3 leading-relaxed">
-        Your current plan 
-        <span class="font-semibold text-red-500">{{ currentPlanName }}</span> 
-        doesn't include the 
-        <span class="font-semibold text-gray-900">Remove Objects</span> 
+        Your current plan
+        <span class="font-semibold text-red-500">{{ currentPlanName }}</span>
+        doesn't include the
+        <span class="font-semibold text-gray-900">Remove Objects</span>
         feature.
       </p>
 
@@ -42,7 +42,7 @@
 
       <!-- Actions -->
       <div class="space-y-3">
-        <button 
+        <button
           @click="goToUpgrade"
           class="w-full h-12 !mb-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold rounded-lg flex items-center justify-center gap-2 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl"
         >
@@ -53,7 +53,7 @@
           Upgrade Now
         </button>
 
-        <button 
+        <button
           @click="showRemoveObjectModal = false"
           class="w-full h-12 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-lg transition-colors duration-200"
         >
@@ -151,7 +151,7 @@
       </a-col>
     </a-row>
   </a-drawer>
-<a-modal
+  <a-modal
     v-model:open="isShowInstructionModal"
     title="Instructions"
     @ok="closeInstructionModal"
@@ -520,6 +520,12 @@
           <!-- Draw removal -->
         </a-button>
         <!-- class="control-btn" -->
+         <a-button
+         @click="toggleFreeDrawMode"
+         title="draw circle to detect object"
+         >
+          <img class="w-[20px]" src="../../../assets/icons/pencil.svg"  />
+         </a-button>
 
         <a-button
           @click="toggleSelection"
@@ -676,6 +682,13 @@
           </svg>
           <!-- Draw removal -->
         </a-button>
+         <a-button
+         @click="toggleFreeDrawMode"
+         title="draw circle to detect object"
+         >
+          <img class="w-[20px]" src="../../../assets/icons/pencil.svg"  />
+         </a-button>
+
         <!-- class="control-btn" -->
 
         <!-- <a-button
@@ -945,11 +958,11 @@ export default {
   data() {
     return {
       isShowInstructionModal: false,
-    currentPlanName: undefined,
-    business_available_actions: undefined,
-    planLoading: false,
-    planLoaded: false,
-    showRemoveObjectModal: false,
+      currentPlanName: undefined,
+      business_available_actions: undefined,
+      planLoading: false,
+      planLoaded: false,
+      showRemoveObjectModal: false,
       instructionConfig: [
         {
           key: "Pinch out zoom out",
@@ -965,8 +978,7 @@ export default {
       highlightPixelStep: 3, // ← CHANGE THIS VALUE
 
       // This controls the pixelation for hover/normal highlights
-      // Use same or higher value than highlightPixelStep for consistency
-      hoverPixelStep: 3, // ← CHANGE THIS VALUE
+      // Use same or higher value than highlightPixelStep for consistencyhoverPixelStep: 1, // ← CHANGE THIS VALUE
 
       // loading screen
 
@@ -1074,6 +1086,14 @@ export default {
 
       // Backend communication
       switchingInProgress: false,
+
+      //drwawing assets
+      freeDrawMode: false,
+freeDrawCanvas: null,
+freeDrawCtx: null,
+freeDrawing: false,
+freeDrawPath: [],
+
     };
   },
   setup() {
@@ -1132,8 +1152,8 @@ export default {
 
   mounted() {
 
-   this.loadBrandPurchasedPlanDetails();
-  
+    this.loadBrandPurchasedPlanDetails();
+
     this.cycleLoadingMessage();
     this.setupResizeObserver();
     this.updateCanvasDimensions();
@@ -1240,6 +1260,228 @@ export default {
   },
 
   methods: {
+
+    toggleFreeDrawMode() {
+  if (this.freeDrawMode) {
+    this.closeFreeDrawMode();
+  } else {
+    this.openFreeDrawMode();
+  }
+},
+
+openFreeDrawMode() {
+  this.freeDrawMode = true;
+  this.freeDrawPath = [];
+
+  if (!this.freeDrawCanvas) {
+    this.freeDrawCanvas = document.createElement('canvas');
+    this.freeDrawCanvas.style.position = 'absolute';
+    this.freeDrawCanvas.style.top = '0';
+    this.freeDrawCanvas.style.left = '0';
+    this.freeDrawCanvas.style.zIndex = '10';
+    this.freeDrawCanvas.style.cursor = 'crosshair';
+    this.$refs.canvasContainer.appendChild(this.freeDrawCanvas);
+  }
+
+  const dpr = window.devicePixelRatio || 1;
+  this.freeDrawCanvas.width  = this.canvasWidth * dpr;
+  this.freeDrawCanvas.height = this.canvasHeight * dpr;
+  this.freeDrawCanvas.style.width  = this.canvasWidth + 'px';
+  this.freeDrawCanvas.style.height = this.canvasHeight + 'px';
+
+  this.freeDrawCtx = this.freeDrawCanvas.getContext('2d');
+  this.freeDrawCtx.scale(dpr, dpr);
+
+  this.freeDrawCanvas.addEventListener('mousedown',  this.onFreeDrawStart);
+  this.freeDrawCanvas.addEventListener('mousemove',  this.onFreeDrawMove);
+  this.freeDrawCanvas.addEventListener('mouseup',    this.onFreeDrawEnd);
+  this.freeDrawCanvas.addEventListener('mouseleave', this.onFreeDrawEnd);
+  this.freeDrawCanvas.addEventListener('touchstart', this.onFreeDrawTouchStart, { passive: false });
+  this.freeDrawCanvas.addEventListener('touchmove',  this.onFreeDrawTouchMove,  { passive: false });
+  this.freeDrawCanvas.addEventListener('touchend',   this.onFreeDrawTouchEnd,   { passive: false });
+},
+
+closeFreeDrawMode() {
+  this.freeDrawMode   = false;
+  this.freeDrawing    = false;
+  this.freeDrawPath   = [];
+
+  if (this.freeDrawCanvas) {
+    this.freeDrawCanvas.removeEventListener('mousedown',  this.onFreeDrawStart);
+    this.freeDrawCanvas.removeEventListener('mousemove',  this.onFreeDrawMove);
+    this.freeDrawCanvas.removeEventListener('mouseup',    this.onFreeDrawEnd);
+    this.freeDrawCanvas.removeEventListener('mouseleave', this.onFreeDrawEnd);
+    this.freeDrawCanvas.removeEventListener('touchstart', this.onFreeDrawTouchStart);
+    this.freeDrawCanvas.removeEventListener('touchmove',  this.onFreeDrawTouchMove);
+    this.freeDrawCanvas.removeEventListener('touchend',   this.onFreeDrawTouchEnd);
+
+    if (this.freeDrawCanvas.parentNode) {
+      this.freeDrawCanvas.parentNode.removeChild(this.freeDrawCanvas);
+    }
+    this.freeDrawCanvas = null;
+    this.freeDrawCtx    = null;
+  }
+},
+
+getFreeDrawPos(e) {
+  const rect = this.freeDrawCanvas.getBoundingClientRect();
+  return {
+    x: ((e.clientX ?? e.pageX) - rect.left - this.panX) / this.zoom,
+    y: ((e.clientY ?? e.pageY) - rect.top  - this.panY) / this.zoom,
+  };
+},
+
+onFreeDrawStart(e) {
+  this.freeDrawing  = true;
+  this.freeDrawPath = [];
+  const { x, y } = this.getFreeDrawPos(e);
+  this.freeDrawPath.push({ x, y });
+},
+
+onFreeDrawMove(e) {
+  if (!this.freeDrawing) return;
+  const { x, y } = this.getFreeDrawPos(e);
+  this.freeDrawPath.push({ x, y });
+  this.redrawFreePath(false);
+},
+
+onFreeDrawEnd() {
+  if (!this.freeDrawing) return;
+  this.freeDrawing = false;
+
+  if (this.freeDrawPath.length > 5) {
+    // close the shape back to start
+    this.freeDrawPath.push({ ...this.freeDrawPath[0] });
+    this.redrawFreePath(true);
+    // auto submit after short delay so user sees the closed shape
+    setTimeout(() => this.submitFreeDrawDetection(), 300);
+  } else {
+    // too small — reset
+    this.freeDrawCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+    this.freeDrawPath = [];
+  }
+},
+
+onFreeDrawTouchStart(e) {
+  e.preventDefault();
+  this.onFreeDrawStart(e.touches[0]);
+},
+
+onFreeDrawTouchMove(e) {
+  e.preventDefault();
+  this.onFreeDrawMove(e.touches[0]);
+},
+
+onFreeDrawTouchEnd(e) {
+  e.preventDefault();
+  this.onFreeDrawEnd();
+},
+
+redrawFreePath(closed = false) {
+  if (!this.freeDrawCtx || this.freeDrawPath.length < 2) return;
+
+  const ctx = this.freeDrawCtx;
+  ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+  ctx.save();
+  ctx.translate(this.panX, this.panY);
+  ctx.scale(this.zoom, this.zoom);
+
+  ctx.beginPath();
+  ctx.moveTo(this.freeDrawPath[0].x, this.freeDrawPath[0].y);
+  this.freeDrawPath.forEach(p => ctx.lineTo(p.x, p.y));
+  if (closed) ctx.closePath();
+
+  ctx.fillStyle   = 'rgba(99, 102, 241, 0.15)';
+  ctx.strokeStyle = '#6366f1';
+  ctx.lineWidth   = 2 / this.zoom;
+  ctx.setLineDash(closed ? [] : [5, 3]);
+  ctx.fill();
+  ctx.stroke();
+
+  // start point dot
+  ctx.beginPath();
+  ctx.arc(this.freeDrawPath[0].x, this.freeDrawPath[0].y, 5 / this.zoom, 0, Math.PI * 2);
+  ctx.fillStyle = '#6366f1';
+  ctx.setLineDash([]);
+  ctx.fill();
+
+  ctx.restore();
+},
+
+async submitFreeDrawDetection() {
+  if (this.freeDrawPath.length < 3) return;
+
+  const detectedObjects = [];
+
+  //  Convert freeDrawPath (canvas-space) → image-space for mask comparison
+  const imageSpacePath = this.freeDrawPath.map(p => ({
+    x: (p.x - this.panX) / this.zoom,
+    y: (p.y - this.panY) / this.zoom,
+  }));
+
+  this.selectedObjects = [];
+  this.objectMaskRegions.forEach((region) => {
+    if (!region.imageData) return;
+
+    const data = region.imageData.data;
+    let overlapCount = 0;
+    let totalWhitePixels = 0;
+
+    for (let y = 0; y < this.canvasHeight; y += 4) {
+      for (let x = 0; x < this.canvasWidth; x += 4) {
+        const index = (y * this.canvasWidth + x) * 4;
+        const r = data[index];
+        const g = data[index + 1];
+        const b = data[index + 2];
+
+        if (r > 200 && g > 200 && b > 200) {
+          totalWhitePixels++;
+          // ✅ Check against imageSpacePath using image-space x,y
+          if (this.isPointInPath(x, y, imageSpacePath)) {
+            overlapCount++;
+          }
+        }
+      }
+    }
+
+    if (totalWhitePixels > 0 && overlapCount / totalWhitePixels > 0.2) {
+      detectedObjects.push(region.objectKey);
+    }
+  });
+
+  if (detectedObjects.length > 0) {
+    detectedObjects.forEach((key) => {
+      if (!this.selectedObjects.includes(key)) {
+        this.selectedObjects.push(key);
+      }
+    });
+
+    this.$nextTick(() => {
+      this.drawPersistentSelectionHighlight();
+    });
+
+    this.$message.success(`${detectedObjects.length} object(s) selected!`);
+  } else {
+    this.$message.warning('No objects found in drawn area.');
+  }
+
+  this.closeFreeDrawMode();
+},
+
+// ✅ Rename to generic - accepts any path array
+isPointInPath(x, y, path) {
+  let inside = false;
+  for (let i = 0, j = path.length - 1; i < path.length; j = i++) {
+    const xi = path[i].x, yi = path[i].y;
+    const xj = path[j].x, yj = path[j].y;
+    const intersect =
+      yi > y !== yj > y &&
+      x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
+    if (intersect) inside = !inside;
+  }
+  return inside;
+},
+
     showInstructionModal() {
       this.isShowInstructionModal = true;
     },
@@ -1638,42 +1880,42 @@ export default {
     //   this.saveDrawingState();
     //   this.setupDrawingEventListeners();
     // },
-initializeDrawingCanvas() {
-  if (!this.drawingCanvas) {
-    this.drawingCanvas = document.createElement("canvas");
-    
-    // ===== ADD HIGH-DPI SUPPORT =====
-    const dpr = window.devicePixelRatio || 1;
-    this.drawingCanvas.width = this.canvasWidth * dpr;
-    this.drawingCanvas.height = this.canvasHeight * dpr;
+    initializeDrawingCanvas() {
+      if (!this.drawingCanvas) {
+        this.drawingCanvas = document.createElement("canvas");
+
+        // ===== ADD HIGH-DPI SUPPORT =====
+        const dpr = window.devicePixelRatio || 1;
+        this.drawingCanvas.width = this.canvasWidth * dpr;
+        this.drawingCanvas.height = this.canvasHeight * dpr;
     this.drawingCanvas.style.width = this.canvasWidth + 'px';
     this.drawingCanvas.style.height = this.canvasHeight + 'px';
-    // ===== END =====
-    
-    this.drawingCanvas.className = "drawing-overlay-canvas";
-    this.drawingCanvas.style.position = "absolute";
-    this.drawingCanvas.style.top = "0";
-    this.drawingCanvas.style.left = "0";
-    this.drawingCanvas.style.zIndex = "3";
-    this.drawingCanvas.style.cursor = "crosshair";
-    this.drawingCanvas.style.pointerEvents = "auto";
+        // ===== END =====
 
-    this.$refs.canvasContainer.appendChild(this.drawingCanvas);
-  }
+        this.drawingCanvas.className = "drawing-overlay-canvas";
+        this.drawingCanvas.style.position = "absolute";
+        this.drawingCanvas.style.top = "0";
+        this.drawingCanvas.style.left = "0";
+        this.drawingCanvas.style.zIndex = "3";
+        this.drawingCanvas.style.cursor = "crosshair";
+        this.drawingCanvas.style.pointerEvents = "auto";
 
-  this.drawingCtx = this.drawingCanvas.getContext("2d");
-  
-  // ===== ADD THIS =====
-  const dpr = window.devicePixelRatio || 1;
-  this.drawingCtx.scale(dpr, dpr);
-  // ===== END =====
+        this.$refs.canvasContainer.appendChild(this.drawingCanvas);
+      }
 
-  this.drawingCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+      this.drawingCtx = this.drawingCanvas.getContext("2d");
 
-  this.drawSelectedFurnitureHighlight();
-  this.saveDrawingState();
-  this.setupDrawingEventListeners();
-},
+      // ===== ADD THIS =====
+      const dpr = window.devicePixelRatio || 1;
+      this.drawingCtx.scale(dpr, dpr);
+      // ===== END =====
+
+      this.drawingCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+
+      this.drawSelectedFurnitureHighlight();
+      this.saveDrawingState();
+      this.setupDrawingEventListeners();
+    },
     // Add this new method to highlight all selected furniture
     drawSelectedFurnitureHighlight() {
       if (!this.drawingCtx) return;
@@ -2512,126 +2754,126 @@ initializeDrawingCanvas() {
 
  
 
-goToUpgrade() {
-    this.showRemoveObjectModal = false;
+    goToUpgrade() {
+      this.showRemoveObjectModal = false;
     this.$router.push('/pricing');
-  },
+    },
 
 
-async loadBrandPurchasedPlanDetails() {
-  // Prevent double-fetch
-  if (this.planLoading || this.planLoaded) return;
+    async loadBrandPurchasedPlanDetails() {
+      // Prevent double-fetch
+      if (this.planLoading || this.planLoaded) return;
 
-  this.planLoading = true;
+      this.planLoading = true;
 
-  try {
-    const brandSlug = this.$route.query.brand;
+      try {
+        const brandSlug = this.$route.query.brand;
 
-    if (!brandSlug) {
+        if (!brandSlug) {
       console.warn('No brand slug found in route query');
-      this.currentPlanName = null;
-      this.business_available_actions = { remove_object: false };
-      return;
-    }
+          this.currentPlanName = null;
+          this.business_available_actions = { remove_object: false };
+          return;
+        }
 
-    const url = `${this.$store.state.root_api}subscription/api/get-business-plan-details/${brandSlug}/`;
+        const url = `${this.$store.state.root_api}subscription/api/get-business-plan-details/${brandSlug}/`;
     const token = localStorage.getItem('token');
 
     console.log('Fetching plan for brand:', brandSlug);
 
-    const response = await fetch(url, {
+        const response = await fetch(url, {
       method: 'GET',
-      headers: {
+          headers: {
         'Authorization': `Token ${token}`,
         'Content-Type': 'application/json',
-      },
-    });
+          },
+        });
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
-    const result = await response.json();
+        const result = await response.json();
 
     console.log('Full API result:', result);
 
-    if (result.success && result.data) {
-      // ✅ FIXED: was result.plan_name (wrong) → now result.data.plan_name (correct)
-      this.currentPlanName = result.data.plan_name;
+        if (result.success && result.data) {
+          // ✅ FIXED: was result.plan_name (wrong) → now result.data.plan_name (correct)
+          this.currentPlanName = result.data.plan_name;
 
-      // ✅ FIXED: was result.business_available_actions (wrong) → now result.data (correct)
-      this.business_available_actions = result.data;
+          // ✅ FIXED: was result.business_available_actions (wrong) → now result.data (correct)
+          this.business_available_actions = result.data;
 
       console.log('Plan loaded:', this.currentPlanName);
       console.log('Can remove_object:', this.business_available_actions.remove_object);
-    } else {
+        } else {
       console.warn('result.success false or result.data missing');
-      this.currentPlanName = null;
-      this.business_available_actions = { remove_object: false };
-    }
+          this.currentPlanName = null;
+          this.business_available_actions = { remove_object: false };
+        }
 
-  } catch (error) {
+      } catch (error) {
     console.error('Error loading plan details:', error);
-    this.currentPlanName = null;
-    this.business_available_actions = { remove_object: false };
+        this.currentPlanName = null;
+        this.business_available_actions = { remove_object: false };
 
-  } finally {
-    // ✅ Always runs — marks plan as loaded so removeSelectedObjects() can proceed
-    this.planLoading = false;
-    this.planLoaded = true;
-  }
-},
+      } finally {
+        // ✅ Always runs — marks plan as loaded so removeSelectedObjects() can proceed
+        this.planLoading = false;
+        this.planLoaded = true;
+      }
+    },
 
 
 
-  
-async removeSelectedObjects() {
-  if (this.selectedObjects.length === 0) return;
 
-  if (!this.planLoaded) {
-    await this.loadBrandPurchasedPlanDetails();
-  }
+    async removeSelectedObjects() {
+      if (this.selectedObjects.length === 0) return;
 
-  // ✅ Check plan_name, NOT feature flag
-  if (!this.business_available_actions.remove_object) {
+      if (!this.planLoaded) {
+        await this.loadBrandPurchasedPlanDetails();
+      }
+
+      // ✅ Check plan_name, NOT feature flag
+      if (!this.business_available_actions.remove_object) {
     console.log('Basic plan - showing upgrade modal');
-    this.showRemoveObjectModal = true;
-    return;
-  }
+        this.showRemoveObjectModal = true;
+        return;
+      }
 
-  // ✅ Standard/Premium — allow removal
+      // ✅ Standard/Premium — allow removal
   console.log('Feature ALLOWED - Removing objects');
   this.$emit('objects-selected-for-removal', {
-    selectedObjects: [...this.selectedObjects],
-    objectMasks: this.selectedObjects.reduce((acc, key) => {
-      if (this.objectMasks[key]) acc[key] = this.objectMasks[key];
-      return acc;
-    }, {}),
-    canvasDimensions: this.getCanvasDimensions(),
-  });
-  this.clearSelections();
-},
+        selectedObjects: [...this.selectedObjects],
+        objectMasks: this.selectedObjects.reduce((acc, key) => {
+          if (this.objectMasks[key]) acc[key] = this.objectMasks[key];
+          return acc;
+        }, {}),
+        canvasDimensions: this.getCanvasDimensions(),
+      });
+      this.clearSelections();
+    },
 
 
 
-  
-  // ✅ ADD UPGRADE ACTION
-  goToUpgrade() {
-    this.showRemoveObjectModal = false;
+
+    // ✅ ADD UPGRADE ACTION
+    goToUpgrade() {
+      this.showRemoveObjectModal = false;
     this.$router.push('/pricing');
-  },
-  
-  // Your existing methods...
-  getCanvasDimensions() {
+    },
+
+    // Your existing methods...
+    getCanvasDimensions() {
       return {
         width: this.canvas?.width || 800,
         height: this.canvas?.height || 600,
       };
     },
-  
-  clearSelections() {
-    // Your existing implementation
-  },
+
+    clearSelections() {
+      // Your existing implementation
+    },
 
     make_room_empty() {
       this.$emit("make-room-empty", true);
@@ -2668,64 +2910,64 @@ async removeSelectedObjects() {
     },
 
     updateCanvasDimensions() {
-  if (this.$refs.canvasContainer) {
-    const rect = this.$refs.canvasContainer.getBoundingClientRect();
-    this.containerWidth = Math.floor(rect.width);
-    this.containerHeight = Math.floor(rect.height);
-    
-    // ===== ADD THIS =====
-    // Ensure canvas matches container pixel-perfectly
-    this.canvasWidth = this.containerWidth;
-    this.canvasHeight = this.containerHeight;
-    
-    // Force re-initialization with new DPI settings
-    if (this.canvas) {
-      const dpr = window.devicePixelRatio || 1;
-      this.canvas.width = this.canvasWidth * dpr;
-      this.canvas.height = this.canvasHeight * dpr;
+      if (this.$refs.canvasContainer) {
+        const rect = this.$refs.canvasContainer.getBoundingClientRect();
+        this.containerWidth = Math.floor(rect.width);
+        this.containerHeight = Math.floor(rect.height);
+
+        // ===== ADD THIS =====
+        // Ensure canvas matches container pixel-perfectly
+        this.canvasWidth = this.containerWidth;
+        this.canvasHeight = this.containerHeight;
+
+        // Force re-initialization with new DPI settings
+        if (this.canvas) {
+          const dpr = window.devicePixelRatio || 1;
+          this.canvas.width = this.canvasWidth * dpr;
+          this.canvas.height = this.canvasHeight * dpr;
       this.canvas.style.width = this.canvasWidth + 'px';
       this.canvas.style.height = this.canvasHeight + 'px';
-      this.ctx.scale(dpr, dpr);
-    }
-    // ===== END =====
-  }
-},
+          this.ctx.scale(dpr, dpr);
+        }
+        // ===== END =====
+      }
+    },
 
     initCanvas() {
-  this.canvas = this.$refs.canvas;
-  this.overlayCanvas = this.$refs.overlayCanvas;
+      this.canvas = this.$refs.canvas;
+      this.overlayCanvas = this.$refs.overlayCanvas;
 
-  if (!this.canvas || !this.overlayCanvas) {
-    console.error("Canvas refs not found");
-    return;
-  }
+      if (!this.canvas || !this.overlayCanvas) {
+        console.error("Canvas refs not found");
+        return;
+      }
 
-  // ===== ADD THIS SECTION =====
-  const dpr = window.devicePixelRatio || 1;
-  
-  // Set canvas size with device pixel ratio
-  this.canvas.width = this.canvasWidth * dpr;
-  this.canvas.height = this.canvasHeight * dpr;
-  this.overlayCanvas.width = this.canvasWidth * dpr;
-  this.overlayCanvas.height = this.canvasHeight * dpr;
-  
-  // Set display size (CSS pixels)
+      // ===== ADD THIS SECTION =====
+      const dpr = window.devicePixelRatio || 1;
+
+      // Set canvas size with device pixel ratio
+      this.canvas.width = this.canvasWidth * dpr;
+      this.canvas.height = this.canvasHeight * dpr;
+      this.overlayCanvas.width = this.canvasWidth * dpr;
+      this.overlayCanvas.height = this.canvasHeight * dpr;
+
+      // Set display size (CSS pixels)
   this.canvas.style.width = this.canvasWidth + 'px';
   this.canvas.style.height = this.canvasHeight + 'px';
   this.overlayCanvas.style.width = this.canvasWidth + 'px';
   this.overlayCanvas.style.height = this.canvasHeight + 'px';
 
-  this.ctx = this.canvas.getContext("2d");
-  this.overlayCtx = this.overlayCanvas.getContext("2d");
+      this.ctx = this.canvas.getContext("2d");
+      this.overlayCtx = this.overlayCanvas.getContext("2d");
 
-  // Scale context to account for device pixel ratio
-  this.ctx.scale(dpr, dpr);
-  this.overlayCtx.scale(dpr, dpr);
-  // ===== END OF NEW SECTION =====
+      // Scale context to account for device pixel ratio
+      this.ctx.scale(dpr, dpr);
+      this.overlayCtx.scale(dpr, dpr);
+      // ===== END OF NEW SECTION =====
 
-  this.ctx.fillStyle = "#f0f0f0";
-  this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
-},
+      this.ctx.fillStyle = "#f0f0f0";
+      this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+    },
 
     // =================== EVENT LISTENERS ===================
 
@@ -2920,146 +3162,146 @@ async removeSelectedObjects() {
       this.removeObjectHighlight();
     },
 
-handleTouchStart(e) {
-  if (this.isLoading) return;
+    handleTouchStart(e) {
+      if (this.isLoading) return;
 
-  // ALWAYS allow page scroll with single touch
-  if (e.touches.length === 1) {
-    this.isDragging = false;
-    return; // Don't prevent default - allow scroll
-  }
+      // ALWAYS allow page scroll with single touch
+      if (e.touches.length === 1) {
+        this.isDragging = false;
+        return; // Don't prevent default - allow scroll
+      }
 
-  e.preventDefault(); // Prevent ONLY for two-finger gestures
+      e.preventDefault(); // Prevent ONLY for two-finger gestures
 
-  if (e.touches.length === 2) {
-    // Two fingers - prepare for zoom OR pan
-    this.isDragging = false;
-    const touch1 = e.touches[0];
-    const touch2 = e.touches[1];
-    
-    // Calculate initial distance
-    const dx = touch2.clientX - touch1.clientX;
-    const dy = touch2.clientY - touch1.clientY;
-    this.lastTouchDistance = Math.sqrt(dx * dx + dy * dy);
-    this.initialTouchDistance = this.lastTouchDistance;
-    this.lastPinchZoom = this.zoom;
-    
-    // Store center point for two-finger panning
-    this.twoFingerPanStartX = (touch1.clientX + touch2.clientX) / 2;
-    this.twoFingerPanStartY = (touch1.clientY + touch2.clientY) / 2;
-    this.dragStartPanX = this.panX;
-    this.dragStartPanY = this.panY;
-    this.twoFingerPanning = false;
-  }
-},
-handleTouchMove(e) {
-  if (this.isLoading) return;
+      if (e.touches.length === 2) {
+        // Two fingers - prepare for zoom OR pan
+        this.isDragging = false;
+        const touch1 = e.touches[0];
+        const touch2 = e.touches[1];
 
-  // ALWAYS allow page scroll with single touch
-  if (e.touches.length === 1) {
-    return; // Don't prevent default - allow scroll
-  }
+        // Calculate initial distance
+        const dx = touch2.clientX - touch1.clientX;
+        const dy = touch2.clientY - touch1.clientY;
+        this.lastTouchDistance = Math.sqrt(dx * dx + dy * dy);
+        this.initialTouchDistance = this.lastTouchDistance;
+        this.lastPinchZoom = this.zoom;
 
-  e.preventDefault(); // Prevent ONLY for two-finger gestures
+        // Store center point for two-finger panning
+        this.twoFingerPanStartX = (touch1.clientX + touch2.clientX) / 2;
+        this.twoFingerPanStartY = (touch1.clientY + touch2.clientY) / 2;
+        this.dragStartPanX = this.panX;
+        this.dragStartPanY = this.panY;
+        this.twoFingerPanning = false;
+      }
+    },
+    handleTouchMove(e) {
+      if (this.isLoading) return;
 
-  if (e.touches.length === 2) {
-    // Two fingers - detect zoom OR pan
-    const touch1 = e.touches[0];
-    const touch2 = e.touches[1];
-    
-    // Calculate current distance
-    const dx = touch2.clientX - touch1.clientX;
-    const dy = touch2.clientY - touch1.clientY;
-    const currentDistance = Math.sqrt(dx * dx + dy * dy);
-    
-    // Calculate distance change threshold (5% of initial distance)
-    const distanceThreshold = this.initialTouchDistance * 0.05;
+      // ALWAYS allow page scroll with single touch
+      if (e.touches.length === 1) {
+        return; // Don't prevent default - allow scroll
+      }
+
+      e.preventDefault(); // Prevent ONLY for two-finger gestures
+
+      if (e.touches.length === 2) {
+        // Two fingers - detect zoom OR pan
+        const touch1 = e.touches[0];
+        const touch2 = e.touches[1];
+
+        // Calculate current distance
+        const dx = touch2.clientX - touch1.clientX;
+        const dy = touch2.clientY - touch1.clientY;
+        const currentDistance = Math.sqrt(dx * dx + dy * dy);
+
+        // Calculate distance change threshold (5% of initial distance)
+        const distanceThreshold = this.initialTouchDistance * 0.05;
     const distanceChange = Math.abs(currentDistance - this.initialTouchDistance);
-    
-    if (distanceChange > distanceThreshold) {
-      // ZOOM MODE - distance changed significantly
-      this.twoFingerPanning = false;
-      
-      if (this.lastTouchDistance > 0) {
-        const zoomFactor = currentDistance / this.lastTouchDistance;
-        const newZoom = Math.max(
-          this.minZoom,
-          Math.min(this.maxZoom, this.lastPinchZoom * zoomFactor)
-        );
 
-        if (newZoom !== this.zoom) {
+        if (distanceChange > distanceThreshold) {
+          // ZOOM MODE - distance changed significantly
+          this.twoFingerPanning = false;
+
+          if (this.lastTouchDistance > 0) {
+            const zoomFactor = currentDistance / this.lastTouchDistance;
+            const newZoom = Math.max(
+              this.minZoom,
+          Math.min(this.maxZoom, this.lastPinchZoom * zoomFactor)
+            );
+
+            if (newZoom !== this.zoom) {
+              const centerX = (touch1.clientX + touch2.clientX) / 2;
+              const centerY = (touch1.clientY + touch2.clientY) / 2;
+              const rect = this.canvas.getBoundingClientRect();
+              const canvasCenterX = centerX - rect.left;
+              const canvasCenterY = centerY - rect.top;
+
+              const imageX = (canvasCenterX - this.panX) / this.zoom;
+              const imageY = (canvasCenterY - this.panY) / this.zoom;
+
+              this.zoom = newZoom;
+              this.panX = canvasCenterX - imageX * this.zoom;
+              this.panY = canvasCenterY - imageY * this.zoom;
+
+              this.constrainPan();
+              this.render();
+            }
+          }
+        } else {
+          // PAN MODE - distance stayed constant
+          this.twoFingerPanning = true;
+
           const centerX = (touch1.clientX + touch2.clientX) / 2;
           const centerY = (touch1.clientY + touch2.clientY) / 2;
-          const rect = this.canvas.getBoundingClientRect();
-          const canvasCenterX = centerX - rect.left;
-          const canvasCenterY = centerY - rect.top;
 
-          const imageX = (canvasCenterX - this.panX) / this.zoom;
-          const imageY = (canvasCenterY - this.panY) / this.zoom;
+          const deltaX = centerX - this.twoFingerPanStartX;
+          const deltaY = centerY - this.twoFingerPanStartY;
 
-          this.zoom = newZoom;
-          this.panX = canvasCenterX - imageX * this.zoom;
-          this.panY = canvasCenterY - imageY * this.zoom;
+          this.panX = this.dragStartPanX + deltaX;
+          this.panY = this.dragStartPanY + deltaY;
 
           this.constrainPan();
           this.render();
         }
       }
-    } else {
-      // PAN MODE - distance stayed constant
-      this.twoFingerPanning = true;
-      
-      const centerX = (touch1.clientX + touch2.clientX) / 2;
-      const centerY = (touch1.clientY + touch2.clientY) / 2;
-      
-      const deltaX = centerX - this.twoFingerPanStartX;
-      const deltaY = centerY - this.twoFingerPanStartY;
-      
-      this.panX = this.dragStartPanX + deltaX;
-      this.panY = this.dragStartPanY + deltaY;
-      
-      this.constrainPan();
-      this.render();
-    }
-  }
-},
-  //   handleTouchEnd(e) {
-  //     if (this.isLoading) return;
-  //     if (this.zoom === 1) {
-  //   this.isDragging = false;
-  //   this.lastTouchDistance = 0;
-  //   return; // Allow scroll
-  // }
-  //     e.preventDefault();
+    },
+    //   handleTouchEnd(e) {
+    //     if (this.isLoading) return;
+    //     if (this.zoom === 1) {
+    //   this.isDragging = false;
+    //   this.lastTouchDistance = 0;
+    //   return; // Allow scroll
+    // }
+    //     e.preventDefault();
 
-  //     this.isDragging = false;
-  //     this.lastTouchDistance = 0;
-  //     this.removeObjectHighlight();
-  //   },
+    //     this.isDragging = false;
+    //     this.lastTouchDistance = 0;
+    //     this.removeObjectHighlight();
+    //   },
 
     // =================== ZOOM & PAN CONTROLS ===================
-handleTouchEnd(e) {
-  if (this.isLoading) return;
+    handleTouchEnd(e) {
+      if (this.isLoading) return;
 
-  // ALWAYS allow scroll with single touch
-  if (e.touches.length <= 1) {
-    this.isDragging = false;
-    this.lastTouchDistance = 0;
-    this.twoFingerPanning = false;
-    this.initialTouchDistance = 0;
-    return; // Don't prevent default
-  }
+      // ALWAYS allow scroll with single touch
+      if (e.touches.length <= 1) {
+        this.isDragging = false;
+        this.lastTouchDistance = 0;
+        this.twoFingerPanning = false;
+        this.initialTouchDistance = 0;
+        return; // Don't prevent default
+      }
 
-  e.preventDefault(); // Prevent ONLY when still using two fingers
+      e.preventDefault(); // Prevent ONLY when still using two fingers
 
-  if (e.touches.length === 0) {
-    this.isDragging = false;
-    this.lastTouchDistance = 0;
-    this.twoFingerPanning = false;
-    this.initialTouchDistance = 0;
-    this.removeObjectHighlight();
-  }
-},
+      if (e.touches.length === 0) {
+        this.isDragging = false;
+        this.lastTouchDistance = 0;
+        this.twoFingerPanning = false;
+        this.initialTouchDistance = 0;
+        this.removeObjectHighlight();
+      }
+    },
     constrainPan() {
       if (!this.baseImg) return;
 
@@ -3144,30 +3386,30 @@ handleTouchEnd(e) {
     //   }
     // },
     async loadImage() {
-  if (!this.baseImage) {
-    console.warn("No base image provided");
-    return;
-  }
+      if (!this.baseImage) {
+        console.warn("No base image provided");
+        return;
+      }
 
-  try {
-    this.baseImg = await this.createImageFromSrc(this.baseImage);
-    
-    // ===== ADD THIS =====
-    // Don't downscale the image quality
-    // Let the canvas handle scaling instead
+      try {
+        this.baseImg = await this.createImageFromSrc(this.baseImage);
+
+        // ===== ADD THIS =====
+        // Don't downscale the image quality
+        // Let the canvas handle scaling instead
     if (this.baseImg.naturalWidth > 4000 || this.baseImg.naturalHeight > 4000) {
-      console.log("Large image detected, maintaining quality");
-    }
-    // ===== END =====
-    
-    this.calculateImageDimensions();
-    this.render();
-    await this.processInitialObjectMasks();
-  } catch (error) {
-    console.error("Error loading image:", error);
-    this.showErrorState();
-  }
-},
+          console.log("Large image detected, maintaining quality");
+        }
+        // ===== END =====
+
+        this.calculateImageDimensions();
+        this.render();
+        await this.processInitialObjectMasks();
+      } catch (error) {
+        console.error("Error loading image:", error);
+        this.showErrorState();
+      }
+    },
 
     async processInitialObjectMasks() {
       this.currentObjectMasksHash = this.objectMasksHash;
@@ -3201,36 +3443,36 @@ handleTouchEnd(e) {
     },
 
     calculateImageDimensions() {
-  if (!this.baseImg) return;
+      if (!this.baseImg) return;
 
-  const maxWidth = this.canvasWidth;
-  const maxHeight = this.canvasHeight;
+      const maxWidth = this.canvasWidth;
+      const maxHeight = this.canvasHeight;
 
-  const imgAspectRatio = this.baseImg.width / this.baseImg.height;
-  const canvasAspectRatio = maxWidth / maxHeight;
+      const imgAspectRatio = this.baseImg.width / this.baseImg.height;
+      const canvasAspectRatio = maxWidth / maxHeight;
 
-  // Always fit to width first (100% width)
-  this.renderWidth = maxWidth;
-  this.renderHeight = Math.round(maxWidth / imgAspectRatio);
-  this.renderOffsetX = 0;
+      // Always fit to width first (100% width)
+      this.renderWidth = maxWidth;
+      this.renderHeight = Math.round(maxWidth / imgAspectRatio);
+      this.renderOffsetX = 0;
 
-  // If calculated height exceeds available height, fit to height instead
-  if (this.renderHeight > maxHeight) {
-    this.renderHeight = maxHeight;
-    this.renderWidth = Math.round(maxHeight * imgAspectRatio);
-    this.renderOffsetX = Math.round((maxWidth - this.renderWidth) / 2);
-    this.renderOffsetY = 0;
-  } else {
-    // Center vertically if height is less than container
-    this.renderOffsetY = Math.round((maxHeight - this.renderHeight) / 2);
-  }
+      // If calculated height exceeds available height, fit to height instead
+      if (this.renderHeight > maxHeight) {
+        this.renderHeight = maxHeight;
+        this.renderWidth = Math.round(maxHeight * imgAspectRatio);
+        this.renderOffsetX = Math.round((maxWidth - this.renderWidth) / 2);
+        this.renderOffsetY = 0;
+      } else {
+        // Center vertically if height is less than container
+        this.renderOffsetY = Math.round((maxHeight - this.renderHeight) / 2);
+      }
 
-  // ===== ADD THIS FOR BETTER QUALITY =====
-  // Use natural dimensions to avoid quality loss
-  this.scaleX = this.renderWidth / this.baseImg.naturalWidth;
-  this.scaleY = this.renderHeight / this.baseImg.naturalHeight;
-  // ===== END =====
-},
+      // ===== ADD THIS FOR BETTER QUALITY =====
+      // Use natural dimensions to avoid quality loss
+      this.scaleX = this.renderWidth / this.baseImg.naturalWidth;
+      this.scaleY = this.renderHeight / this.baseImg.naturalHeight;
+      // ===== END =====
+    },
 
     // =================== OBJECT MASK CACHING ===================
 
