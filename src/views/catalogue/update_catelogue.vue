@@ -1435,14 +1435,18 @@ Switch Furniture</a-button> -->
               }"
               :BASE_ROOT_MAIN_IMAGE="base_image_url"
               :CHAIR_MODEL="item_replacement_renderer_3d_model_url"
+              
+              :is_resizable="is_resizable"
+              @switch-to-original-primary-3d-model="switch_to_original_primary_3d_model"
+              :colors_available_for_3d_model="colors_available_for_3d_model"
+              :switched_color="switched_color"
+              @switch-3d-model-change-color="switched_3D_model_same_product_different_color"
+
               @model-transform-updated="handle3DModelTransformUpdate"
               @update:isLoading="StartEndCanvasLoading"
               @add-3d-furniture-to-room-start-polling="
                 updateBaskeImageURL_CANVAS
               "
-              :colors_available_for_3d_model="colors_available_for_3d_model"
-              :switched_color="switched_color"
-
               :product_id="selected_3d_product_model"
               @Apply-Changes="ApplyChanges"
               @insufficient-credits="throw_Insufficient_credits"
@@ -3154,8 +3158,8 @@ Switch Furniture</a-button> -->
                   }"
                   :BASE_ROOT_MAIN_IMAGE="base_image_url"
                   :CHAIR_MODEL="item_replacement_renderer_3d_model_url"
-
-                  
+                  :is_resizable="is_resizable"
+                  @switch-to-original-primary-3d-model="switch_to_original_primary_3d_model"
                   :colors_available_for_3d_model="colors_available_for_3d_model"
                   :switched_color="switched_color"
                   @switch-3d-model-change-color="switched_3D_model_same_product_different_color"
@@ -3470,6 +3474,7 @@ export default {
       selectedlightuuid: "",
       selected_light_type: "",
       model_3d_url: "",
+      primary_model_3d_url: "",
       item_replacement_renderer_3d_model_url: "",
       is_resizable: false,
       selected_3d_product_model: "",
@@ -3693,6 +3698,10 @@ export default {
   },
 
   methods: {
+    switch_to_original_primary_3d_model(e){
+      this.switched_color=null
+      this.item_replacement_renderer_3d_model_url=this.primary_model_3d_url
+    },
     switched_3D_model_same_product_different_color(e){
       
       this.switched_color=e
@@ -5869,6 +5878,8 @@ export default {
 
         this.is_resizable = e.is_resizable;
         this.selected_3d_product_model = e.model_uuid;
+        this.primary_model_3d_url = this.$store.state.root_media_api + e.model_url;
+
         this.colors_available_for_3d_model=e.colors_available
 
         
