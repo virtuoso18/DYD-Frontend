@@ -1,51 +1,4 @@
 <template>
-<!-- {{ TARGET_DIMS }}   -->
-    <a-modal
-  v-model:open="edit_hwd_modal"
-  title="Edit Model Dimensions (Meters)"
-  centered
-  @ok="handleOk_edit_hwd"
->
-  <div style="display: flex; flex-direction: column; gap: 16px;">
-
-    <!-- Width -->
-    <div>
-      <label>Width (m)</label>
-      <a-input-number
-        v-model:value="update_dimensions.width"
-        :min="0"
-        :max="TARGET_DIMS?.width + 1"
-        :step="0.01"
-        style="width: 100%;"
-      />
-    </div>
-
-    <!-- Height -->
-    <div>
-      <label>Height (m)</label>
-      <a-input-number
-        v-model:value="update_dimensions.height"
-        :min="0"
-        :max="TARGET_DIMS?.height + 1"
-        :step="0.01"
-        style="width: 100%;"
-      />
-    </div>
-
-    <!-- Depth -->
-    <div>
-      <label>Depth (m)</label>
-      <a-input-number
-        v-model:value="update_dimensions.depth"
-        :min="0"
-        :max="TARGET_DIMS?.depth + 1"
-        :step="0.01"
-        style="width: 100%;"
-      />
-    </div>
-
-  </div>
-</a-modal>
   <!-- {{ isLoading }}-->
   <!-- {{ internalLoading }}  -->
 <!-- {{ switched_color }}    -->
@@ -184,31 +137,19 @@
         </div>
 
         <span style="
-          position: absolute;
-          z-index: 5;
-          
-          line-height: 1.4;
-          bottom: 10px;
-          left: 10px;
-        ">
-        <div style="display: flex;
-          gap:10px;">
-
-<a-button v-if="is_resizable" @click="showModal_Edithwd" type="primary" size="small" shape="circle" style="display: flex;justify-content: center;align-items: center;">
-  <EditOutlined />
-</a-button>
-<div style="
-display: flex;justify-content: center;align-items: center;
           background: white;
           border-radius: 5px;
           padding-left: 5px;
           padding-right: 5px;
           font-size: 12px;
-          font-weight: 600;">
-
-W-{{ TARGET_DIMS?.width }}m X H-{{TARGET_DIMS?.height}}m X D-{{ TARGET_DIMS?.depth }}m  
-</div>
-</div>
+          font-weight: 600;
+          position: absolute;
+          z-index: 5;
+          line-height: 1.4;
+          bottom: 10px;
+          left: 10px;
+        ">
+          W-{{ TARGET_DIMS?.width }}m X H-{{TARGET_DIMS?.height}}m X D-{{ TARGET_DIMS?.depth }}m
         </span>
 
         
@@ -337,8 +278,6 @@ import * as THREE from 'three'
 import { PLYLoader } from 'three/examples/jsm/loaders/PLYLoader'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 
-import { EditOutlined } from '@ant-design/icons-vue';
-
 import TapToSelect from "@/assets/icons/tap.png";
 import DragToMove from "@/assets/icons/tapAndMove.png";
 import threetapnove from "@/assets/icons/threetapnove.png";
@@ -365,22 +304,16 @@ export default {
     product_id: { type: String, required: true },
     colors_available_for_3d_model:Object,
     switched_color:Object,
-    primary_model_3d_url:String,
-    is_resizable:Boolean
+    primary_model_3d_url:String
   },
 
   data() {
     return {
-      edit_hwd_modal:false,
-update_dimensions: {
-      width: 0,
-      height: 0,
-      depth: 0
-    },
       // ✅ FIX 1 OF 4: _spinAngleRad is the ONLY source of truth for spin.
       // alignChairToFloor READS this — never overwrites it.
       // Only updateChairRotation() and pointer handlers WRITE to it.
       _spinAngleRad: 0,
+
       // ✅ FIX 4 OF 4: blocks chairRotation watcher during renderItem
       _renderLock: false,
 
@@ -547,17 +480,8 @@ update_dimensions: {
   beforeUnmount() {
     this.cleanup()
   },
-components:{
-  EditOutlined
-},
+
   methods: {
-    handleOk_edit_hwd() {
-    console.log("Updated Dimensions:", this.dimensions);
-    this.edit_hwd_modal = false;
-  },
-    showModal_Edithwd(){
-      this.edit_hwd_modal=!this.edit_hwd_modal
-    },
     No3dModelAvailableWithThisColor(){
         this.$message.error('This color furniture 3D model is not available');
     },
@@ -1999,8 +1923,6 @@ components:{
       // ✅ Hide immediately before async reload starts
       if (this.chair) this.chair.visible = false
       if (this.rotationRing) this.rotationRing.visible = false
-      
-
       this.reloadChair()
     }
     },
