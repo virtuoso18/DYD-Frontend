@@ -623,47 +623,31 @@
 
           <!-- Category, Type, Price -->
           <a-row :gutter="16" style="margin-bottom: 20px">
-            <a-col :span="6">
-  <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151;">
-    Room Type<span style="color: red">*</span>
-  </label>
-  <a-select
-    v-model:value="selectedRoomTypeName"
-    style="width: 100%"
-    size="large"
-    :loading="loadingRoomTypes"
-    :allow-clear="true"
-    @change="handleRoomTypeChange"
-  >
-    <a-select-option v-for="rt in roomTypes" :key="rt.id" :value="rt.id">
-     
-      {{ rt.name }}
-    </a-select-option>
-  </a-select>
-            </a-col>
-
-            <!-- Category -->
-            <a-col :span="6">
-              <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151;">
-                Category<span style="color: red">*</span>
-              </label>
+            <a-col :span="8">
+              <label
+                style="
+                  display: block;
+                  margin-bottom: 6px;
+                  font-weight: 500;
+                  font-size: 14px;
+                  color: #374151;
+                "
+                >Category<span style="color: red">*</span></label
+              >
               <a-select
                 v-model:value="productForm.category_name"
                 style="width: 100%"
                 size="large"
-                mode="tags"
-                :options="categoryOptions"
-                :loading="loadingCategories"
-                :filter-option="false"
-                :allow-clear="true"
-                show-search
-                :disabled="!selectedRoomType"
-                @search="handleCategorySearch"
-                @change="handleCategoryChange"
-                @focus="handleSelectFocus"
-              />
+              >
+                <a-select-option
+                  v-for="cat in categories_available"
+                  :key="cat"
+                  :value="cat"
+                  >{{ cat }}</a-select-option
+                >
+              </a-select>
             </a-col>
-            <a-col :span="6">
+            <a-col :span="8">
               <label
                 style="
                   display: block;
@@ -687,7 +671,7 @@
                 >
               </a-select>
             </a-col>
-            <a-col :span="6">
+            <a-col :span="8">
               <label
                 style="
                   display: block;
@@ -1879,15 +1863,6 @@ export default {
       texturesPaginationLimit: 10,
       hasMoreTextures: false,
       loadingMoreTextures: false,
-      // Room type & category
-      selectedRoomType: null,
-      selectedRoomTypeName: null,
-      roomTypes: [],
-      loadingRoomTypes: false,
-      categoryOptions: [],
-      allCategories: [],
-      loadingCategories: false,
-      categorySearchTimeout: null,
     };
   },
   computed: {
@@ -1901,151 +1876,33 @@ export default {
       );
     },
   },
- async mounted() {
-  await this.loadRoomTypes();  // Wait for room types to load first
-  this.initializeForm();       // Then initialize the form with the loaded room types
-  this.fetch3d_models_generated_by_user();
-  this.loadAvailableTexturesLibrary();
-  window.addEventListener("beforeunload", this.handleBeforeUnload);
-},
+  mounted() {
+    this.initializeForm();
+    this.fetch3d_models_generated_by_user();
+    this.loadAvailableTexturesLibrary();
+
+    window.addEventListener("beforeunload", this.handleBeforeUnload);
+  },
   beforeUnmount() {
     window.removeEventListener("beforeunload", this.handleBeforeUnload);
     this.cleanupPreviews();
   },
   watch: {
-  selectedProduct: {
-  async handler() {
-    if (this.roomTypes.length === 0) {
-      await this.loadRoomTypes(); // ensure roomTypes loaded before initializing
-    }
-    this.initializeForm();
-    this.loadAvailableTexturesLibrary();
-  },
-  deep: true,
-  immediate: false, // ← don't fire on component creation, let mounted() handle it
-},
-  productForm: {
-    handler() {
-      this.hasUnsavedChanges = true;
+    selectedProduct: {
+      handler() {
+        this.initializeForm();
+        this.loadAvailableTexturesLibrary();
+      },
+      deep: true,
     },
-    deep: true,
+    productForm: {
+      handler() {
+        this.hasUnsavedChanges = true;
+      },
+      deep: true,
+    },
   },
-},
   methods: {
-    async loadRoomTypes() {
-  try {
-    this.loadingRoomTypes = true;
-    const token = localStorage.getItem('token');
-    const response = await fetch(`${this.$store.state.root_api}product/api/room-types/`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Token ${token}` }
-    });
-    const result = await response.json();
-    this.roomTypes = result || [];
-  } catch (error) {
-    console.error('Error loading room types:', error);
-    this.roomTypes = [];
-  } finally {
-    this.loadingRoomTypes = false;
-  }
-},
-
-handleRoomTypeChange(value) {
-  const selectedRoom = this.roomTypes.find(rt => rt.id === value);
-  this.selectedRoomType = value;
-  this.selectedRoomTypeName = selectedRoom ? selectedRoom.name : null;
-  
-  // Properly reset the category
-  this.productForm.category_name =[];  
-  this.categoryOptions = [];
-  this.allCategories = [];
-  
-  if (value) {
-    this.loadInitialCategories();
-  }
-},
-
-async loadInitialCategories() {
-  try {
-    this.loadingCategories = true;
-    const token = localStorage.getItem('token');
-    const roomTypeParam = this.selectedRoomType ? `?room_type=${encodeURIComponent(this.selectedRoomType)}` : '';
-    const response = await fetch(`${this.$store.state.root_api}product/api/categories/${roomTypeParam}`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Token ${token}` }
-    });
-    const result = await response.json();
-    if (result.success) {
-      this.allCategories = result.data || [];
-      this.categoryOptions = this.allCategories.map(cat => ({
-        label: cat.name,
-        value: cat.name,
-        data: cat
-      }));
-    }
-  } catch (error) {
-    console.error('Error loading categories:', error);
-  } finally {
-    this.loadingCategories = false;
-  }
-},
-
-async handleCategorySearch(searchValue) {
-  if (this.categorySearchTimeout) clearTimeout(this.categorySearchTimeout);
-  if (!searchValue?.trim()) {
-    this.categoryOptions = this.allCategories.map(cat => ({ label: cat.name, value: cat.name }));
-    return;
-  }
-  this.loadingCategories = true;
-  this.categorySearchTimeout = setTimeout(async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(
-        `${this.$store.state.root_api}product/api/categories/?q=${encodeURIComponent(searchValue)}`,
-        { method: 'GET', headers: { 'Content-Type': 'application/json', 'Authorization': `Token ${token}` } }
-      );
-      const result = await response.json();
-      this.categoryOptions = result.success
-        ? result.data.map(cat => ({ label: cat.name, value: cat.name }))
-        : [];
-    } catch (error) {
-      this.categoryOptions = [];
-    } finally {
-      this.loadingCategories = false;
-    }
-  }, 300);
-},
-
-handleSelectFocus() {
-  if (this.categoryOptions.length === 0) {
-    this.categoryOptions = this.allCategories.map(cat => ({ label: cat.name, value: cat.name }));
-  }
-},
-
- handleCategoryChange(value) {
-    console.log('Category changed:', value);
-   
-    
-   
-    if (Array.isArray(value)) {
-     
-      if (value.length > 1) {
-        console.log('⚠️ Only one category allowed, keeping last selected');
-        this.productForm.category_name = [value[value.length - 1]];
-      } else if (value.length === 1) {
-        console.log('✅ Category selected:', value[0]);
-        this.productForm.category_name = value;
-      } else {
-        console.log('🗑️ Category cleared');
-        this.productForm.category_name = [];
-      }
-    } else {
-      
-      this.productForm.category_name = value ? [value] : [];
-    }
-    
-    console.log('Final value stored:', this.productForm.category_name);
-  },
     addAvailableColor() {
       if (
         this.tempColor &&
@@ -2461,55 +2318,34 @@ handleSelectFocus() {
         this.$message.error("Error updating color model. Please try again.");
       }
     },
-   initializeForm() {
-  if (this.selectedProduct) {
-    this.productForm = {
-      name: this.selectedProduct.name || "",
-      description: this.selectedProduct.description || "",
-      category_name: this.selectedProduct.category?.name || "",
-      furniture_type: this.selectedProduct.furniture_type || "",
-      pricing: {
-        price: this.selectedProduct.pricing?.price?.toString() || "",
-        sale_price:
-          this.selectedProduct.pricing?.sale_price?.toString() || "",
-      },
-      dimensions: {
-        height: this.selectedProduct.dimensions?.height?.toString() || "",
-        length: this.selectedProduct.dimensions?.length?.toString() || "",
-        width: this.selectedProduct.dimensions?.width?.toString() || "",
-        depth: this.selectedProduct.dimensions?.depth?.toString() || "",
-      },
-      colors: {
-        primary_color: this.selectedProduct.colors?.primary_color || "",
-      },
-    };
-    this.hasUnsavedChanges = false;
-    this.imagePreviewsState = [];
-    this.pending3DModel = null;
-    this.is_resizable = this.selectedProduct?.is_resizable || false;
-    
-    // FIX: Access room_type correctly from the API response
-    if (this.selectedProduct?.room_type) {
-      this.selectedRoomType = this.selectedProduct.room_type.id || null;
-      this.selectedRoomTypeName = this.selectedProduct.room_type.name || null;
-      
-      // Log to verify values
-      console.log('Setting room type:', {
-        id: this.selectedRoomType,
-        name: this.selectedRoomTypeName,
-        availableRoomTypes: this.roomTypes
-      });
-      
-      // Load categories for this room type
-      if (this.selectedRoomType) {
-        this.loadInitialCategories();
+    initializeForm() {
+      if (this.selectedProduct) {
+        this.productForm = {
+          name: this.selectedProduct.name || "",
+          description: this.selectedProduct.description || "",
+          category_name: this.selectedProduct.category?.name || "",
+          furniture_type: this.selectedProduct.furniture_type || "",
+          pricing: {
+            price: this.selectedProduct.pricing?.price?.toString() || "",
+            sale_price:
+              this.selectedProduct.pricing?.sale_price?.toString() || "",
+          },
+          dimensions: {
+            height: this.selectedProduct.dimensions?.height?.toString() || "",
+            length: this.selectedProduct.dimensions?.length?.toString() || "",
+            width: this.selectedProduct.dimensions?.width?.toString() || "",
+            depth: this.selectedProduct.dimensions?.depth?.toString() || "",
+          },
+          colors: {
+            primary_color: this.selectedProduct.colors?.primary_color || "",
+          },
+        };
+        this.hasUnsavedChanges = false;
+        this.imagePreviewsState = [];
+        this.pending3DModel = null;
+        this.is_resizable = this.selectedProduct?.is_resizable || false;
       }
-    } else {
-      this.selectedRoomType = null;
-      this.selectedRoomTypeName = null;
-    }
-  }
-},
+    },
 
     get3DModelUrl() {
       return this.pending3DModel
@@ -3222,9 +3058,6 @@ handleSelectFocus() {
           "is_resizable",
           this.is_resizable ? "True" : "False",
         );
-        if (this.selectedRoomTypeName) {
-          productData.append('room_type_name', this.selectedRoomTypeName);
-        }
 
         const response = await fetch(
           `${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/`,

@@ -36,16 +36,16 @@
     <div style="padding: 0;">
       <a-row :gutter="24">
 
-                <div className="flex flex-col lg:flex-row">
+                <!-- <div className="flex flex-col lg:flex-row"> -->
 
-                  <div>
+                  <!-- <div> -->
 
                     <!-- Left Column - 3D Model Preview -->
                    <a-col
     :xs="24"
     :sm="24"
     :md="24"
-    :lg="24"
+    :lg="10"
   > 
                       <div style="position: relative; padding:10px;;">
             
@@ -156,16 +156,16 @@
             
                       
                     </a-col>
-                  </div>
+                  <!-- </div> -->
           
                   <!-- Right Column - Product Details -->
-                   <div>
+                   <!-- <div> -->
 
                      <a-col
 :xs="24"
 :sm="24"
 :md="24"
-:lg="20"
+:lg="14"
 >
             
             <div style="padding-left: 12px;">
@@ -530,8 +530,8 @@
               </div>
             </div>
           </a-col>
-                   </div>
-</div>
+                   <!-- </div> -->
+<!-- </div> -->
       </a-row>
     </div>
 

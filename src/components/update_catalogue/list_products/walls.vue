@@ -108,7 +108,7 @@
         <div v-for="(item, index) in catalogItems" :key="index" style="
 background: #f2f2f2;
 border: none;
-max-height: 270px;
+max-height: 250px;
 border-radius: 4px;
 padding:5px;" @click="selectTexture(item.id)"
 :style="selected_texture===item.id ? 'border:1px solid blue': ''">
@@ -214,10 +214,18 @@ padding:5px;" @click="selectTexture(item.id)"
         Apply
       </a-button>
     </div>
-
+<!-- Backdrop (mobile only) -->
+<transition name="fade">
+  <div 
+    v-if="showFilterDrawer && isMobile" 
+    class="filter-backdrop"
+    @click="showFilterDrawer = false"
+  />
+</transition>
     <!-- ===== FILTER POPOVER (inline, slides from left) ===== -->
-    <transition name="filter-pop">
-      <div v-if="showFilterDrawer" class="filter-popover">
+<transition :name="isMobile ? 'filter-bottom' : 'filter-pop'">
+  <div v-if="showFilterDrawer" class="filter-popover" :class="{ 'filter-popover--mobile': isMobile }">
+
         <div class="filter-drawer-header">
           <span class="filter-drawer-title">Filters</span>
           <button class="drawer-close-btn" @click="showFilterDrawer = false">
@@ -324,6 +332,8 @@ export default {
   name: 'AiCatalog',
   data() {
     return {
+          isMobile: window.innerWidth < 768,
+
       searchText: '',
       loading: false,
       loadingMore: false,
@@ -1162,6 +1172,18 @@ export default {
   }
 }
 
+.btn-apply-filters {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  background: #2a52e0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.15s;
+}
 .btn-apply-filters:hover { background: #2a52e0; }
 
 /* Filter popover slide-from-left animation */
@@ -1178,5 +1200,65 @@ export default {
 .filter-pop-enter-to,
 .filter-pop-leave-from {
   transform: translateX(0);
+}
+/* ── Backdrop ── */
+.filter-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 998;
+}
+
+.fade-enter-active, .fade-leave-active { transition: opacity 0.25s; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
+
+/* ── Mobile bottom drawer override ── */
+.filter-popover--mobile {
+  position: fixed !important;
+  top: auto !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  height: 80vh !important;
+  border-radius: 16px 16px 0 0 !important;
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.15) !important;
+  z-index: 999 !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* drag handle bar on mobile */
+.filter-popover--mobile::before {
+  content: '';
+  display: block;
+  width: 36px;
+  height: 4px;
+  background: #ddd;
+  border-radius: 2px;
+  margin: 10px auto 0;
+  flex-shrink: 0;
+}
+
+/* ── Bottom slide animation ── */
+.filter-bottom-enter-active,
+.filter-bottom-leave-active {
+  transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.filter-bottom-enter-from,
+.filter-bottom-leave-to { transform: translateY(100%); }
+.filter-bottom-enter-to,
+.filter-bottom-leave-from { transform: translateY(0); }
+
+/* ── Fix mobile page scroll being blocked ── */
+@media (max-width: 767px) {
+  .ai-catalog-section {
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .scrollable-content {
+    overflow: visible !important;
+    height: auto !important;
+  }
 }
 </style>

@@ -1,51 +1,6 @@
 <template>
 <!-- {{ TARGET_DIMS }}   -->
-    <a-modal
-  v-model:open="edit_hwd_modal"
-  title="Edit Model Dimensions (Meters)"
-  centered
-  @ok="handleOk_edit_hwd"
->
-  <div style="display: flex; flex-direction: column; gap: 16px;">
-
-    <!-- Width -->
-    <div>
-      <label>Width (m)</label>
-      <a-input-number
-        v-model:value="update_dimensions.width"
-        :min="0"
-        :max="TARGET_DIMS?.width + 1"
-        :step="0.01"
-        style="width: 100%;"
-      />
-    </div>
-
-    <!-- Height -->
-    <div>
-      <label>Height (m)</label>
-      <a-input-number
-        v-model:value="update_dimensions.height"
-        :min="0"
-        :max="TARGET_DIMS?.height + 1"
-        :step="0.01"
-        style="width: 100%;"
-      />
-    </div>
-
-    <!-- Depth -->
-    <div>
-      <label>Depth (m)</label>
-      <a-input-number
-        v-model:value="update_dimensions.depth"
-        :min="0"
-        :max="TARGET_DIMS?.depth + 1"
-        :step="0.01"
-        style="width: 100%;"
-      />
-    </div>
-
-  </div>
-</a-modal>
+  <!-- {{ colors_available_for_3d_model }} -->
   <!-- {{ isLoading }}-->
   <!-- {{ internalLoading }}  -->
 <!-- {{ switched_color }}    -->
@@ -183,33 +138,94 @@
           {{ plyReady && maskReady ? '🔄 Fitting floor plane…' : '⏳ Loading assets…' }}
         </div>
 
-        <span style="
-          position: absolute;
-          z-index: 5;
-          
-          line-height: 1.4;
-          bottom: 10px;
-          left: 10px;
-        ">
-        <div style="display: flex;
-          gap:10px;">
+      <span style="
+  position: absolute;
+  z-index: 5;
+  line-height: 1.4;
+  bottom: 10px;
+  left: 10px;
+">
+  <div style="display: flex; gap: 10px; align-items: center;">
 
-<a-button v-if="is_resizable" @click="showModal_Edithwd" type="primary" size="small" shape="circle" style="display: flex;justify-content: center;align-items: center;">
-  <EditOutlined />
-</a-button>
-<div style="
-display: flex;justify-content: center;align-items: center;
-          background: white;
-          border-radius: 5px;
-          padding-left: 5px;
-          padding-right: 5px;
-          font-size: 12px;
-          font-weight: 600;">
+    <!-- ✅ Edit button only if resizable -->
+     <div style="display: flex;flex-direction: column;gap:5px;">
 
-W-{{ TARGET_DIMS?.width }}m X H-{{TARGET_DIMS?.height}}m X D-{{ TARGET_DIMS?.depth }}m  
-</div>
-</div>
-        </span>
+       <a-button 
+       v-if="is_resizable" 
+       @click="show_inline_dims_editor = !show_inline_dims_editor" 
+       type="primary" 
+       size="small" 
+       shape="circle" 
+       style="display: flex; justify-content: center; align-items: center; flex-shrink: 0;"
+       >
+       <EditOutlined v-if="!show_inline_dims_editor" />
+       <CloseCircleOutlined v-if="show_inline_dims_editor"  />
+      </a-button>
+      <a-button 
+      v-if="show_inline_dims_editor" 
+      @click="reset_targtet_dims"
+      type="primary" 
+      size="small" 
+      shape="circle" 
+      style="display: flex; justify-content: center; align-items: center; flex-shrink: 0;"
+      >
+      
+      <ReloadOutlined  v-if="show_inline_dims_editor"  />
+    </a-button>
+  </div>
+
+    <!-- ✅ Static dims display (always visible) -->
+    <div v-if="!show_inline_dims_editor" style="
+      display: flex; justify-content: center; align-items: center;
+      background: white;
+      border-radius: 5px;
+      padding-left: 5px;
+      padding-right: 5px;
+      font-size: 12px;
+      font-weight: 600;
+    ">
+      W-{{ TARGET_DIMS?.width }}m X H-{{ TARGET_DIMS?.height }}m X D-{{ TARGET_DIMS?.depth }}m
+    </div>
+
+    <!-- ✅ Inline +/- editor (only when edit clicked AND is_resizable) -->
+    <div v-if="show_inline_dims_editor && is_resizable" style="
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      background: white;
+      border-radius: 8px;
+      padding: 6px 8px;
+      font-size: 11px;
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    ">
+      <!-- Width -->
+      <div style="display: flex; align-items: center; gap: 6px;">
+        <span style="width: 14px; color: #666;">W</span>
+        <button @click="adjustDim('width', -0.1)" style="width:20px;height:20px;border:1px solid #ddd;border-radius:4px;background:#f5f5f5;cursor:pointer;font-size:14px;line-height:1;display:flex;align-items:center;justify-content:center;padding:0;">−</button>
+        <span style="min-width: 38px; text-align: center;">{{ formatDim(TARGET_DIMS?.width) }}m</span>
+        <button @click="adjustDim('width', +0.1)" style="width:20px;height:20px;border:1px solid #ddd;border-radius:4px;background:#f5f5f5;cursor:pointer;font-size:14px;line-height:1;display:flex;align-items:center;justify-content:center;padding:0;">+</button>
+      </div>
+
+      <!-- Height -->
+      <div style="display: flex; align-items: center; gap: 6px;">
+        <span style="width: 14px; color: #666;">H</span>
+        <button @click="adjustDim('height', -0.1)" style="width:20px;height:20px;border:1px solid #ddd;border-radius:4px;background:#f5f5f5;cursor:pointer;font-size:14px;line-height:1;display:flex;align-items:center;justify-content:center;padding:0;">−</button>
+        <span style="min-width: 38px; text-align: center;">{{ formatDim(TARGET_DIMS?.height) }}m</span>
+        <button @click="adjustDim('height', +0.1)" style="width:20px;height:20px;border:1px solid #ddd;border-radius:4px;background:#f5f5f5;cursor:pointer;font-size:14px;line-height:1;display:flex;align-items:center;justify-content:center;padding:0;">+</button>
+      </div>
+
+      <!-- Depth -->
+      <div style="display: flex; align-items: center; gap: 6px;">
+        <span style="width: 14px; color: #666;">D</span>
+        <button @click="adjustDim('depth', -0.1)" style="width:20px;height:20px;border:1px solid #ddd;border-radius:4px;background:#f5f5f5;cursor:pointer;font-size:14px;line-height:1;display:flex;align-items:center;justify-content:center;padding:0;">−</button>
+        <span style="min-width: 38px; text-align: center;">{{ formatDim(TARGET_DIMS?.depth) }}m</span>
+        <button @click="adjustDim('depth', +0.1)" style="width:20px;height:20px;border:1px solid #ddd;border-radius:4px;background:#f5f5f5;cursor:pointer;font-size:14px;line-height:1;display:flex;align-items:center;justify-content:center;padding:0;">+</button>
+      </div>
+    </div>
+
+  </div>
+</span>
 
         
       <a-button type="primary" @click="$emit('unselect-object', true)"
@@ -230,10 +246,10 @@ W-{{ TARGET_DIMS?.width }}m X H-{{TARGET_DIMS?.height}}m X D-{{ TARGET_DIMS?.dep
            border:none;
             color: white;
             font-weight: bold;
-          pointer-events: all;"
+          pointer-events: all;display: flex;justify-content: center;align-items: center;"
         
       >
-        X &nbsp; Unselect Object
+        <CloseCircleOutlined style="font-size: 18px;;"/> Unselect Object
       </a-button>
       </div>
 
@@ -337,7 +353,7 @@ import * as THREE from 'three'
 import { PLYLoader } from 'three/examples/jsm/loaders/PLYLoader'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 
-import { EditOutlined } from '@ant-design/icons-vue';
+import { EditOutlined,CloseCircleOutlined,ReloadOutlined } from '@ant-design/icons-vue';
 
 import TapToSelect from "@/assets/icons/tap.png";
 import DragToMove from "@/assets/icons/tapAndMove.png";
@@ -371,7 +387,11 @@ export default {
 
   data() {
     return {
-      edit_hwd_modal:false,
+      _isReloading: false,
+      _pendingReload: false,
+      
+
+      show_inline_dims_editor: false,
 update_dimensions: {
       width: 0,
       height: 0,
@@ -476,6 +496,8 @@ update_dimensions: {
     'add-3d-furniture-to-room-start-polling',
     'rendered-comfyui-workflow',
     'Apply-Changes',
+    'update-dimensions',
+
   ],
 
   computed: {
@@ -548,16 +570,62 @@ update_dimensions: {
     this.cleanup()
   },
 components:{
-  EditOutlined
+  EditOutlined,
+  CloseCircleOutlined,
+  ReloadOutlined
 },
   methods: {
-    handleOk_edit_hwd() {
-    console.log("Updated Dimensions:", this.dimensions);
-    this.edit_hwd_modal = false;
-  },
-    showModal_Edithwd(){
-      this.edit_hwd_modal=!this.edit_hwd_modal
+    reset_targtet_dims(){
+this.show_inline_dims_editor=false
+      this.$emit('reset_target_dimensions',true)
     },
+adjustDim(axis, delta) {
+  if (!this.TARGET_DIMS) return
+  const current = parseFloat(this.TARGET_DIMS[axis]) || 0
+  const updated = Math.max(0.01, parseFloat((current + delta).toFixed(2)))
+  this.$emit('update-dimensions', {
+    ...this.TARGET_DIMS,
+    [axis]: updated,
+  })
+},
+
+formatDim(val) {
+  return val ? parseFloat(val).toFixed(2) : '0.00'
+},
+ 
+rescaleChair() {
+  if (!this.chair) return
+  const innerMesh = this.chair.children[0]
+  if (!innerMesh) return
+
+  const fovRad     = (this.CAM_FOV_V * Math.PI) / 180
+  const fy_threejs = this.CAM_IMG_H / 2 / Math.tan(fovRad / 2)
+  const focal      = this.CAM_FY / fy_threejs
+
+  // Get original unscaled size by reversing current scale
+  const origSizeX = innerMesh.scale.x > 0 ? (this.chairBaseScaleX > 0 ? innerMesh.scale.x / this.chairBaseScaleX : 1) : 1
+
+  // Reset to base 1 to get natural size, then apply new dims
+  innerMesh.scale.set(1, 1, 1)
+  innerMesh.updateMatrixWorld(true)
+  const box  = new THREE.Box3().setFromObject(innerMesh)
+  const size = new THREE.Vector3()
+  box.getSize(size)
+
+  const sx = size.x > 0 ? (this.TARGET_DIMS.width  * this.CHAIR_SCALE_FACTOR * focal) / size.x : 1
+  const sy = size.y > 0 ? (this.TARGET_DIMS.height * this.CHAIR_SCALE_FACTOR * focal) / size.y : 1
+  const sz = size.z > 0 ? (this.TARGET_DIMS.depth  * this.CHAIR_SCALE_FACTOR * focal) / size.z : 1
+
+  innerMesh.scale.set(sx, sy, sz)
+  this.chairBaseScaleX = sx
+  this.chairBaseScaleY = sy
+  this.chairBaseScaleZ = sz
+  innerMesh.updateMatrixWorld(true)
+
+  // Re-seat on floor
+  this.placeChairOnFloor(this.chair.position.x, this.chair.position.z)
+  if (this.rotationRing) this._snapRingToChair()
+},
     No3dModelAvailableWithThisColor(){
         this.$message.error('This color furniture 3D model is not available');
     },
@@ -1171,31 +1239,171 @@ components:{
       this.rotationArrows = []
     },
 
-    reloadChair() {
-      if (!this.scene) { console.warn('⚠️ reloadChair: scene not ready'); return }
-      // ✅ Clear the WebGL canvas immediately so old model doesn't ghost
+    // reloadChair() {
+    //   if (!this.scene) { console.warn('⚠️ reloadChair: scene not ready'); return }
+    //   // ✅ Clear the WebGL canvas immediately so old model doesn't ghost
       
-      // ✅ Hide old chair from animate() loop IMMEDIATELY
-      if (this.chair) this.chair.visible = false
+    //   // ✅ Hide old chair from animate() loop IMMEDIATELY
+    //   if (this.chair) this.chair.visible = false
 
-      // ✅ Force one blank frame right now — clears the canvas visually
-      if (this.renderer && this.scene && this.camera) {
-        this.renderer.setClearColor(0x000000, 0)
-        this.renderer.clear(true, true, true)
-        this.renderer.render(this.scene, this.camera)
+    //   // ✅ Force one blank frame right now — clears the canvas visually
+    //   if (this.renderer && this.scene && this.camera) {
+    //     this.renderer.setClearColor(0x000000, 0)
+    //     this.renderer.clear(true, true, true)
+    //     this.renderer.render(this.scene, this.camera)
+    //   }
+
+    //   this.isDragging          = false
+    //   this.isDraggingRef       = false
+    //   this.isRotating          = false
+    //   this.isRotatingRef       = false
+    //   this.chairLoaded         = false
+    //   this.internalLoading     = true
+    //   this.internalLoadingText = 'Loading 3D model…'
+
+    //   this._disposeRotationRing()
+
+    //   if (this.chair) {
+    //     this.scene.remove(this.chair)
+    //     this.chair.traverse((child) => {
+    //       if (child.geometry) child.geometry.dispose()
+    //       if (child.material) {
+    //         Array.isArray(child.material)
+    //           ? child.material.forEach(m => m.dispose())
+    //           : child.material.dispose()
+    //       }
+    //     })
+    //     this.chair = null
+    //   }
+
+    //   // ✅ reset spin on reload
+    //   this._spinAngleRad     = 0
+    //   this.chairRotation     = 0
+    //   this.modelLoadProgress = 0
+    //   this.modelLoading      = true
+
+    //   const modelUrl = this.resolveModelUrl(this.CHAIR_MODEL)
+
+    //   new GLTFLoader().load(
+    //     modelUrl,
+    //     (gltf) => {
+    //       const innerMesh = gltf.scene
+    //       innerMesh.traverse(n => { if (n.isMesh) { n.castShadow = true; n.receiveShadow = true } })
+    //       innerMesh.position.set(0, 0, 0)
+    //       innerMesh.rotation.set(0, 0, 0)
+    //       innerMesh.scale.set(1, 1, 1)
+    //       innerMesh.updateMatrixWorld(true)
+
+    //       const flippedBox  = new THREE.Box3().setFromObject(innerMesh)
+    //       const flippedSize = new THREE.Vector3()
+    //       flippedBox.getSize(flippedSize)
+
+    //       const fovRad          = (this.CAM_FOV_V * Math.PI) / 180
+    //       const fy_threejs      = this.CAM_IMG_H / 2 / Math.tan(fovRad / 2)
+    //       const focalCorrection = this.CAM_FY / fy_threejs
+
+    //       const sx = flippedSize.x > 0 ? (this.TARGET_DIMS.width  * this.CHAIR_SCALE_FACTOR * focalCorrection) / flippedSize.x : 1
+    //       const sy = flippedSize.y > 0 ? (this.TARGET_DIMS.height * this.CHAIR_SCALE_FACTOR * focalCorrection) / flippedSize.y : 1
+    //       const sz = flippedSize.z > 0 ? (this.TARGET_DIMS.depth  * this.CHAIR_SCALE_FACTOR * focalCorrection) / flippedSize.z : 1
+    //       innerMesh.scale.set(sx, sy, sz)
+    //       innerMesh.updateMatrixWorld(true)
+
+    //       this.chairBaseScaleX = sx ; this.chairBaseScaleY = sy ; this.chairBaseScaleZ = sz
+
+    //       const pivotGroup = new THREE.Group()
+    //       pivotGroup.add(innerMesh)
+    //       this.scene.add(pivotGroup)
+
+    //       const scaledBox = new THREE.Box3().setFromObject(pivotGroup)
+    //       innerMesh.position.y -= scaledBox.min.y
+    //       innerMesh.updateMatrixWorld(true)
+
+    //       this.chairHalfH        = 0.001
+    //       this.chair             = markRaw(pivotGroup)
+    //       this.chairLoaded       = true
+    //       this.modelLoadProgress = 100
+    //       this.modelLoading      = false
+
+    //       if (this.planeReady) {
+    //         this.placeChairOnFloor()
+    //         this.createRotationRing()
+    //         this._snapRingToChair()
+
+    //         if (this._pendingTransformRestore) {
+    //           this._applyPendingTransform()
+    //         }
+    //       }
+    //       this._checkAllReady()
+    //     },
+    //     xhr => { if (xhr.total > 0) this.modelLoadProgress = Math.round((xhr.loaded / xhr.total) * 100) },
+    //     err => { console.error('❌ Chair reload failed:', err); this.modelLoading = false; this._checkAllReady() },
+    //   )
+    // },
+
+    reloadChair() {
+  if (!this.scene) { console.warn('⚠️ reloadChair: scene not ready'); return }
+
+  // ✅ Prevent concurrent reloads (color spam clicking)
+  if (this._isReloading) {
+    console.warn('⚠️ reloadChair: already reloading, queuing...')
+    this._pendingReload = true
+    return
+  }
+  this._isReloading = true
+  this._pendingReload = false
+
+  // ✅ Step 1: Immediately dispose OLD chair completely
+  this._disposeRotationRing()
+
+  if (this.chair) {
+    this.chair.visible = false
+    this.scene.remove(this.chair)
+    this.chair.traverse((child) => {
+      if (child.geometry) child.geometry.dispose()
+      if (child.material) {
+        Array.isArray(child.material)
+          ? child.material.forEach(m => m.dispose())
+          : child.material.dispose()
+      }
+    })
+    this.chair = null
+  }
+
+  // ✅ Step 2: Force a blank render immediately to clear canvas
+  if (this.renderer && this.scene && this.camera) {
+    this.renderer.setClearColor(0x000000, 0)
+    this.renderer.clear(true, true, true)
+    this.renderer.render(this.scene, this.camera)
+  }
+
+  this.isDragging          = false
+  this.isDraggingRef       = false
+  this.isRotating          = false
+  this.isRotatingRef       = false
+  this.chairLoaded         = false
+  this.internalLoading     = true
+  this.internalLoadingText = 'Loading 3D model…'
+  this._spinAngleRad       = 0
+  this.chairRotation       = 0
+  this.modelLoadProgress   = 0
+  this.modelLoading        = true
+
+  const modelUrl = this.resolveModelUrl(this.CHAIR_MODEL)
+
+  new GLTFLoader().load(
+    modelUrl,
+    (gltf) => {
+      // ✅ If another reload was queued while this was loading, abort this result
+      if (this._pendingReload) {
+        console.warn('⚠️ Newer reload queued, discarding this result')
+        this._isReloading = false
+        this.reloadChair()
+        return
       }
 
-      this.isDragging          = false
-      this.isDraggingRef       = false
-      this.isRotating          = false
-      this.isRotatingRef       = false
-      this.chairLoaded         = false
-      this.internalLoading     = true
-      this.internalLoadingText = 'Loading 3D model…'
-
-      this._disposeRotationRing()
-
+      // ✅ Safety: dispose any chair that might have snuck in
       if (this.chair) {
+        this.chair.visible = false
         this.scene.remove(this.chair)
         this.chair.traverse((child) => {
           if (child.geometry) child.geometry.dispose()
@@ -1208,70 +1416,66 @@ components:{
         this.chair = null
       }
 
-      // ✅ reset spin on reload
-      this._spinAngleRad     = 0
-      this.chairRotation     = 0
-      this.modelLoadProgress = 0
-      this.modelLoading      = true
+      const innerMesh = gltf.scene
+      innerMesh.traverse(n => { if (n.isMesh) { n.castShadow = true; n.receiveShadow = true } })
+      innerMesh.position.set(0, 0, 0)
+      innerMesh.rotation.set(0, 0, 0)
+      innerMesh.scale.set(1, 1, 1)
+      innerMesh.updateMatrixWorld(true)
 
-      const modelUrl = this.resolveModelUrl(this.CHAIR_MODEL)
+      const flippedBox  = new THREE.Box3().setFromObject(innerMesh)
+      const flippedSize = new THREE.Vector3()
+      flippedBox.getSize(flippedSize)
 
-      new GLTFLoader().load(
-        modelUrl,
-        (gltf) => {
-          const innerMesh = gltf.scene
-          innerMesh.traverse(n => { if (n.isMesh) { n.castShadow = true; n.receiveShadow = true } })
-          innerMesh.position.set(0, 0, 0)
-          innerMesh.rotation.set(0, 0, 0)
-          innerMesh.scale.set(1, 1, 1)
-          innerMesh.updateMatrixWorld(true)
+      const fovRad          = (this.CAM_FOV_V * Math.PI) / 180
+      const fy_threejs      = this.CAM_IMG_H / 2 / Math.tan(fovRad / 2)
+      const focalCorrection = this.CAM_FY / fy_threejs
 
-          const flippedBox  = new THREE.Box3().setFromObject(innerMesh)
-          const flippedSize = new THREE.Vector3()
-          flippedBox.getSize(flippedSize)
+      const sx = flippedSize.x > 0 ? (this.TARGET_DIMS.width  * this.CHAIR_SCALE_FACTOR * focalCorrection) / flippedSize.x : 1
+      const sy = flippedSize.y > 0 ? (this.TARGET_DIMS.height * this.CHAIR_SCALE_FACTOR * focalCorrection) / flippedSize.y : 1
+      const sz = flippedSize.z > 0 ? (this.TARGET_DIMS.depth  * this.CHAIR_SCALE_FACTOR * focalCorrection) / flippedSize.z : 1
+      innerMesh.scale.set(sx, sy, sz)
+      innerMesh.updateMatrixWorld(true)
 
-          const fovRad          = (this.CAM_FOV_V * Math.PI) / 180
-          const fy_threejs      = this.CAM_IMG_H / 2 / Math.tan(fovRad / 2)
-          const focalCorrection = this.CAM_FY / fy_threejs
+      this.chairBaseScaleX = sx
+      this.chairBaseScaleY = sy
+      this.chairBaseScaleZ = sz
 
-          const sx = flippedSize.x > 0 ? (this.TARGET_DIMS.width  * this.CHAIR_SCALE_FACTOR * focalCorrection) / flippedSize.x : 1
-          const sy = flippedSize.y > 0 ? (this.TARGET_DIMS.height * this.CHAIR_SCALE_FACTOR * focalCorrection) / flippedSize.y : 1
-          const sz = flippedSize.z > 0 ? (this.TARGET_DIMS.depth  * this.CHAIR_SCALE_FACTOR * focalCorrection) / flippedSize.z : 1
-          innerMesh.scale.set(sx, sy, sz)
-          innerMesh.updateMatrixWorld(true)
+      const pivotGroup = new THREE.Group()
+      pivotGroup.add(innerMesh)
+      this.scene.add(pivotGroup)
 
-          this.chairBaseScaleX = sx ; this.chairBaseScaleY = sy ; this.chairBaseScaleZ = sz
+      const scaledBox = new THREE.Box3().setFromObject(pivotGroup)
+      innerMesh.position.y -= scaledBox.min.y
+      innerMesh.updateMatrixWorld(true)
 
-          const pivotGroup = new THREE.Group()
-          pivotGroup.add(innerMesh)
-          this.scene.add(pivotGroup)
+      this.chairHalfH        = 0.001
+      this.chair             = markRaw(pivotGroup)
+      this.chairLoaded       = true
+      this.modelLoadProgress = 100
+      this.modelLoading      = false
+      this._isReloading      = false  // ✅ release lock
 
-          const scaledBox = new THREE.Box3().setFromObject(pivotGroup)
-          innerMesh.position.y -= scaledBox.min.y
-          innerMesh.updateMatrixWorld(true)
+      if (this.planeReady) {
+        this.placeChairOnFloor()
+        this.createRotationRing()
+        this._snapRingToChair()
 
-          this.chairHalfH        = 0.001
-          this.chair             = markRaw(pivotGroup)
-          this.chairLoaded       = true
-          this.modelLoadProgress = 100
-          this.modelLoading      = false
-
-          if (this.planeReady) {
-            this.placeChairOnFloor()
-            this.createRotationRing()
-            this._snapRingToChair()
-
-            if (this._pendingTransformRestore) {
-              this._applyPendingTransform()
-            }
-          }
-          this._checkAllReady()
-        },
-        xhr => { if (xhr.total > 0) this.modelLoadProgress = Math.round((xhr.loaded / xhr.total) * 100) },
-        err => { console.error('❌ Chair reload failed:', err); this.modelLoading = false; this._checkAllReady() },
-      )
+        if (this._pendingTransformRestore) {
+          this._applyPendingTransform()
+        }
+      }
+      this._checkAllReady()
     },
-
+    xhr => { if (xhr.total > 0) this.modelLoadProgress = Math.round((xhr.loaded / xhr.total) * 100) },
+    err => {
+      console.error('❌ Chair reload failed:', err)
+      this.modelLoading  = false
+      this._isReloading  = false  // ✅ release lock on error too
+      this._checkAllReady()
+    },
+  )
+},
     loadChair() {
       const modelUrl = this.resolveModelUrl(this.CHAIR_MODEL)
       if (!modelUrl) { console.warn('⚠️ loadChair: no model URL'); return }
@@ -1987,6 +2191,13 @@ components:{
   },
 
   watch: {
+    TARGET_DIMS: {
+    deep: true,
+    handler() {
+      if (!this.chair || !this.planeReady) return
+      this.rescaleChair()
+    }
+  },
     // CHAIR_MODEL(newVal, oldVal) {
     //   if (newVal && newVal !== oldVal) {
     //     if (!this.scene) { console.warn('⚠️ CHAIR_MODEL changed but scene not ready'); return }
