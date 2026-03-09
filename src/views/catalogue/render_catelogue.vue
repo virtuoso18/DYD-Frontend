@@ -68,16 +68,8 @@
               <div
                 v-for="(color, index) in product.product_colors.slice(0, 2)"
                 :key="index"
-                style="
-                  width: 20px;
-                  height: 20px;
-                  border-radius: 20px;
-                  margin-left: 2px;
-                "
-                :style="
-                  'background:' +
-                  (color.color_hex ? color.color_hex : color.color)
-                "
+                style="width: 20px;height: 20px;border-radius: 20px;margin-left: 2px;"
+                :style=" 'background:' + (color.color_hex ? color.color_hex : color.color)"
               >
                 <!-- {{ color }} -->
               </div>
@@ -1865,7 +1857,7 @@
   </a-button>
 </div> -->
         <div
-          class="relative inline-flex items-center translate-y-6 bg-gray-100 rounded-xl p-1 w-full max-w-[150px] z-[200]"
+          class="relative inline-flex items-center translate-y-6 bg-gray-100 rounded-xl p-1 w-full max-w-[150px] z-[2]"
         >
           <!-- Sliding background indicator -->
           <div
@@ -2417,10 +2409,8 @@
           <a-button
             type="default"
             block
-            
-            
-  :disabled="loading || out_of_credits"
-  @click="downloadImage(base_image_url)"
+            :disabled="loading || out_of_credits"
+            @click="downloadImage(base_image_url)"
 
 
             style="
@@ -2496,18 +2486,11 @@
                     <a-option-select value="Modern">Modern</a-option-select>
                     <a-option-select value="Classic">Classic</a-option-select>
                     <a-option-select value="Rustic">Rustic</a-option-select>
-                    <a-option-select value="Industrial"
-                      >Industrial</a-option-select
-                    >
-                    <a-option-select value="Minimalist"
-                      >Minimalist</a-option-select
-                    >
-                    <a-option-select value="Traditional"
-                      >Traditional</a-option-select
-                    >
-                    <a-option-select value="Contemporary"
-                      >Contemporary</a-option-select
-                    >
+                    <a-option-select value="Industrial">Industrial</a-option-select>
+                    <a-option-select value="Minimalist">Minimalist</a-option-select>
+
+                    <a-option-select value="Traditional">Traditional</a-option-select>
+                    <a-option-select value="Contemporary">Contemporary</a-option-select>
                     <a-option-select value="Vintage">Vintage</a-option-select>
                   </a-select>
                   <!-- {{ room_type || 'Living Room' }} -->
@@ -2515,21 +2498,13 @@
                 <div>
                   <strong>Room Type:</strong>
                   <a-select v-model:value="room_type_select">
-                    <a-option-select value="Living Room"
-                      >Living Room</a-option-select
-                    >
-                    <a-option-select value="Dinning Room"
-                      >Dinning Room</a-option-select
-                    >
+                    <a-option-select value="Living Room">Living Room</a-option-select>
+                    <a-option-select value="Dinning Room">Dinning Room</a-option-select>
                     <a-option-select value="Kitchen">Kitchen</a-option-select>
-                    <a-option-select value="Home Office"
-                      >Home Office</a-option-select
-                    >
+                    <a-option-select value="Home Office">Home Office</a-option-select>
                     <a-option-select value="Bedroom">Bedroom</a-option-select>
                     <a-option-select value="Office">Office</a-option-select>
-                    <a-option-select value="Rest Room"
-                      >Rest Room</a-option-select
-                    >
+                    <a-option-select value="Rest Room">Rest Room</a-option-select>
                   </a-select>
                   <!-- {{ room_design_type || 'Modern' }} -->
                 </div>

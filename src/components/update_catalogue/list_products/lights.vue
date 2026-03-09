@@ -81,6 +81,12 @@
               <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1 1L9 9M9 1L1 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
             </button>
           </span>
+          <span v-if="appliedFilters.selectedRoomTypes.length > 0" class="filter-chip">
+          Room: {{ appliedFilters.selectedRoomTypes.length }} selected
+          <button class="chip-remove" @click="removeFilter('selectedRoomTypes')">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1 1L9 9M9 1L1 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </button>
+        </span>
           <span v-if="appliedFilters.selectedColors.length > 0" class="filter-chip">
             Colors: {{ appliedFilters.selectedColors.length }} selected
             <button class="chip-remove" @click="removeFilter('selectedColors')">
@@ -230,7 +236,7 @@ padding:5px;"
             <template v-else>
 
               <!-- ── Price Range ── -->
-              <div class="filter-group">
+              <!-- <div class="filter-group">
                 <div class="filter-group-label">Price Range</div>
                 <a-slider
                   :min="0"
@@ -242,8 +248,22 @@ padding:5px;"
                 <p class="price-range-label">
                   ${{ draftFilters.priceRange[0].toLocaleString('en-IN') }} – ${{ draftFilters.priceRange[1].toLocaleString('en-IN') }}
                 </p>
+              </div> -->
+              <div class="filter-group" v-if="availableRoomTypes.length > 0">
+              <div class="filter-group-label">Room Type</div>
+              <div class="filter-pills">
+                <button
+                  v-for="room in availableRoomTypes"
+                  :key="room.id"
+                  class="filter-pill"
+                  :class="{ active: draftFilters.selectedRoomTypes.includes(room.id) }"
+                  @click="toggleDraftRoomType(room.id)"
+                >
+                  {{ room.name }}
+                  <span class="pill-count">({{ room.product_count }})</span>
+                </button>
               </div>
-
+            </div>
               <!-- ── Category ── -->
               <div class="filter-group" v-if="availableCategories.length > 0">
                 <div class="filter-group-label">Category</div>
@@ -327,8 +347,6 @@ export default {
   name: 'AiCatalog',
   data() {
     return {
-          isMobile: window.innerWidth < 768,
-
       searchText: '',
       selected_light: '',
       loading: false,
@@ -348,30 +366,28 @@ export default {
       },
       searchTimeout: null,
       productItems: [],
-
+      showFilterDrawer: false,
       // Filter options from API
       availableCategories: [],
-      availableLightTypes: [],   // populated from data.data.furniture_types
+      availableLightTypes: [],
       availableColors: [],
+      availableRoomTypes: [],
       loadingFilterOptions: false,
 
-      // Filter Drawer
-      showFilterDrawer: false,
-
-      // Draft filters (live inside drawer before Apply)
       draftFilters: {
         priceRange: [0, 500000],
-        selectedCategories: [],   // array of category IDs (numbers)
-        selectedLightTypes: [],   // array of furniture_type strings
-        selectedColors: [],       // array of hex strings
+        selectedCategories: [],
+        selectedLightTypes: [],
+        selectedColors: [],
+        selectedRoomTypes: [],
       },
 
-      // Applied filters (used in API fetch calls)
       appliedFilters: {
         priceRange: [0, 500000],
         selectedCategories: [],
         selectedLightTypes: [],
         selectedColors: [],
+        selectedRoomTypes: [],
       },
     };
   },
@@ -385,6 +401,9 @@ export default {
   },
 
   computed: {
+    isMobile() {
+    return window.innerWidth < 768;
+  },
     hasActiveFilters() {
       const f = this.appliedFilters;
       return !!(
@@ -392,7 +411,8 @@ export default {
         f.priceRange[1] < 500000 ||
         f.selectedCategories.length > 0 ||
         f.selectedLightTypes.length > 0 ||
-        f.selectedColors.length > 0
+        f.selectedColors.length > 0 ||
+        f.selectedRoomTypes.length > 0   // ← add
       );
     },
     activeFilterCount() {
@@ -402,6 +422,7 @@ export default {
       if (f.selectedCategories.length > 0) count++;
       if (f.selectedLightTypes.length > 0) count++;
       if (f.selectedColors.length > 0) count++;
+      if (f.selectedRoomTypes.length > 0) count++;  // ← add
       return count;
     },
   },
@@ -453,11 +474,11 @@ export default {
           },
         });
         const data = await response.json();
-        if (data.success) {
+       if (data.success) {
           this.availableColors     = data.data.colors         || [];
           this.availableCategories = data.data.categories     || [];
-          // API returns furniture_types (same as LightsProducts component)
           this.availableLightTypes = data.data.furniture_types || [];
+          this.availableRoomTypes  = data.data.room_types     || [];  // ← add
         }
       } catch (error) {
         console.error('Failed to load filter options:', error);
@@ -466,11 +487,55 @@ export default {
       }
     },
 
-    // ─── Draft toggle helpers ─────────────────────────────────────────────────
+    toggleDraftRoomType(roomTypeId) {
+      const idx = this.draftFilters.selectedRoomTypes.indexOf(roomTypeId);
+      const roomCategoryIds = this.availableCategories
+        .filter(c => c.room_type_id === roomTypeId)
+        .map(c => c.id);
+
+      if (idx > -1) {
+        this.draftFilters.selectedRoomTypes.splice(idx, 1);
+        this.draftFilters.selectedCategories = this.draftFilters.selectedCategories
+          .filter(catId => !roomCategoryIds.includes(catId));
+      } else {
+        this.draftFilters.selectedRoomTypes.push(roomTypeId);
+        roomCategoryIds.forEach(catId => {
+          if (!this.draftFilters.selectedCategories.includes(catId)) {
+            this.draftFilters.selectedCategories.push(catId);
+          }
+        });
+      }
+    },
+
     toggleDraftCategory(categoryId) {
       const idx = this.draftFilters.selectedCategories.indexOf(categoryId);
-      if (idx > -1) this.draftFilters.selectedCategories.splice(idx, 1);
-      else          this.draftFilters.selectedCategories.push(categoryId);
+      if (idx > -1) {
+        this.draftFilters.selectedCategories.splice(idx, 1);
+        const cat = this.availableCategories.find(c => c.id === categoryId);
+        if (cat && cat.room_type_id) {
+          const siblingsSelected = this.availableCategories.filter(c =>
+            c.room_type_id === cat.room_type_id &&
+            this.draftFilters.selectedCategories.includes(c.id)
+          );
+          if (siblingsSelected.length === 0) {
+            this.draftFilters.selectedRoomTypes = this.draftFilters.selectedRoomTypes
+              .filter(rtId => rtId !== cat.room_type_id);
+          }
+        }
+      } else {
+        this.draftFilters.selectedCategories.push(categoryId);
+        const cat = this.availableCategories.find(c => c.id === categoryId);
+        if (cat && cat.room_type_id) {
+          const allSiblingIds = this.availableCategories
+            .filter(c => c.room_type_id === cat.room_type_id).map(c => c.id);
+          const allSelected = allSiblingIds.every(id =>
+            this.draftFilters.selectedCategories.includes(id)
+          );
+          if (allSelected && !this.draftFilters.selectedRoomTypes.includes(cat.room_type_id)) {
+            this.draftFilters.selectedRoomTypes.push(cat.room_type_id);
+          }
+        }
+      }
     },
 
     toggleDraftLightType(typeValue) {
@@ -492,6 +557,7 @@ export default {
         selectedCategories: [...this.appliedFilters.selectedCategories],
         selectedLightTypes: [...this.appliedFilters.selectedLightTypes],
         selectedColors:     [...this.appliedFilters.selectedColors],
+        selectedRoomTypes:  [...this.appliedFilters.selectedRoomTypes]
       };
       this.showFilterDrawer = true;
     },
@@ -502,6 +568,7 @@ export default {
         selectedCategories: [...this.draftFilters.selectedCategories],
         selectedLightTypes: [...this.draftFilters.selectedLightTypes],
         selectedColors:     [...this.draftFilters.selectedColors],
+        selectedRoomTypes:  [...this.draftFilters.selectedRoomTypes]
       };
       this.showFilterDrawer = false;
       this.currentPage = 1;
@@ -514,11 +581,12 @@ export default {
         selectedCategories: [],
         selectedLightTypes: [],
         selectedColors: [],
+        selectedRoomTypes: []
       };
     },
 
     clearAllFilters() {
-      const empty = { priceRange: [0, 500000], selectedCategories: [], selectedLightTypes: [], selectedColors: [] };
+      const empty = { priceRange: [0, 500000], selectedCategories: [], selectedLightTypes: [], selectedColors: [], selectedRoomTypes: [] };
       this.appliedFilters = { ...empty, priceRange: [...empty.priceRange] };
       this.draftFilters   = { ...empty, priceRange: [...empty.priceRange] };
       this.currentPage = 1;
@@ -575,6 +643,10 @@ export default {
         // ── Colors: comma-separated hex codes (matching LightsProducts: color) ──
         if (f.selectedColors.length > 0) {
           params.append('color', f.selectedColors.join(','));
+        }
+
+        if (f.selectedRoomTypes.length > 0) {
+          params.append('room_type', f.selectedRoomTypes.join(','));
         }
 
         let url;
@@ -680,7 +752,7 @@ export default {
   display: flex;
   flex-direction: column;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
 }
 
 @media (min-width: 640px) {

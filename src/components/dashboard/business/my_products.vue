@@ -2607,13 +2607,13 @@
         <!-- <edit_Light :selectedProduct="selectedProduct" v-if="active_tab===  'Lights' && selectedProduct" :categories_available="categories_available" :types="types" @cancel_edit_back_product_list="backToList" /> -->
 
         <edit_Light_hanging_3d
-          :selectedProduct="selectedProduct"
-          v-if="
+        v-if="
             active_tab === 'Lights' &&
             selectedProduct &&
             selectedProduct.is_ceiling_light_product &&
             selectedProduct.light_type == 'hanging'
-          "
+            "
+        :selectedProduct="selectedProduct"
           :categories_available="categories_available"
           :types="types"
           @cancel_edit_back_product_list="backToList"
@@ -2750,8 +2750,7 @@ export default {
   },
   data() {
     return {
-      prepopulatedProductData: null,
-      isCreatingVariation: false,
+      
       currentView: "list", // 'list', 'details', 'edit'
       viewMode: "grid", // 'grid', 'table'
       active_tab: "Furniture",

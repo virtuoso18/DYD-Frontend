@@ -1,5 +1,8 @@
 <template>
-<!-- {{ CAM_FOV_H }}   -->
+<br>
+<br>
+<br>
+{{ CAM_FOV_H }}  
   <!-- {{ colors_available_for_3d_model }} -->
   <!-- {{ isLoading }}-->
   <!-- {{ internalLoading }}  -->
@@ -90,7 +93,7 @@
       <img
         :src="BASE_ROOT_MAIN_IMAGE"
         alt=""
-        class="max-w-full max-h-[54vh] md:max-h-[83vh] mx-auto"
+        class="max-w-full max-h-[54vh] md:max-h-[90vh] mx-auto"
       />
     </div>
 
@@ -343,17 +346,6 @@
         </a-button>
       </div>
     </div>
-     <div class="flex justify-end items-center py-2 px-2 bg-white w-full gap-2" v-show="!CHAIR_MODEL && CHAIR_MODEL === ''">
-        
-        <a-button
-          type="primary"
-          @click="$emit('Apply-Changes', 'item-replacement-3d-renderer')"
-          :disabled="!planeReady"
-          style="padding:4px 12px;border-radius:6px;"
-        >
-          Finalise Changes
-        </a-button>
-      </div>
   </div>
 </template>
 
@@ -363,7 +355,6 @@ import { markRaw } from 'vue'
 import * as THREE from 'three'
 import { PLYLoader } from 'three/examples/jsm/loaders/PLYLoader'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
-import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js'
 
 import { EditOutlined,CloseCircleOutlined,ReloadOutlined } from '@ant-design/icons-vue';
 
@@ -1403,9 +1394,7 @@ rescaleChair() {
 
   const modelUrl = this.resolveModelUrl(this.CHAIR_MODEL)
 
-  const chairLoader = new GLTFLoader()
-  chairLoader.setMeshoptDecoder(MeshoptDecoder)
-  chairLoader.load(
+  new GLTFLoader().load(
     modelUrl,
     (gltf) => {
       // ✅ If another reload was queued while this was loading, abort this result
@@ -1494,9 +1483,7 @@ rescaleChair() {
     loadChair() {
       const modelUrl = this.resolveModelUrl(this.CHAIR_MODEL)
       if (!modelUrl) { console.warn('⚠️ loadChair: no model URL'); return }
-        const chairLoader = new GLTFLoader()
-        chairLoader.setMeshoptDecoder(MeshoptDecoder)
-        chairLoader.load(
+      new GLTFLoader().load(
         modelUrl,
         (gltf) => {
           const innerMesh = gltf.scene

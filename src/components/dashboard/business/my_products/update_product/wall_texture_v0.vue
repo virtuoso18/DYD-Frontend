@@ -30,8 +30,10 @@
             </svg>
           </template>
         </a-button>
-        <h2 style="margin: 0; font-size: 20px; font-weight: 600; color: #1f2937">
-          Edit Floor Texture
+        <h2
+          style="margin: 0; font-size: 20px; font-weight: 600; color: #1f2937"
+        >
+          Edit Wall Texture
         </h2>
       </div>
       <div style="display: flex; gap: 12px">
@@ -338,7 +340,7 @@
               color: #1f2937;
             "
           >
-            Floor Texture Details
+            Wall Texture Details
           </h3>
 
           <!-- Title & Description -->
@@ -351,11 +353,11 @@
                 font-size: 14px;
                 color: #374151;
               "
-              >Title <span style="color: red">*</span></label
+              >Title<span style="color: red">*</span></label
             >
             <a-input
               v-model:value="textureForm.title"
-              placeholder="Floor Texture Title"
+              placeholder="Wall Texture Title"
               style="border-radius: 8px"
               size="large"
             />
@@ -370,38 +372,18 @@
                 font-size: 14px;
                 color: #374151;
               "
-              >Description <span style="color: red">*</span></label
+              >Description<span style="color: red">*</span></label
             >
             <a-textarea
               v-model:value="textureForm.description"
               :rows="4"
-              placeholder="Floor Texture Description"
+              placeholder="Wall Texture Description"
               style="border-radius: 8px; resize: none"
             />
           </div>
 
           <!-- Texture Style, Brand, Model Number -->
           <a-row :gutter="16" style="margin-bottom: 20px">
-            <a-col :span="6">
-            <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151;">
-              Room Type
-            </label>
-            <a-select
-              v-model:value="selectedRoomTypeName"
-              style="width: 100%"
-              size="large"
-              :loading="loadingRoomTypes"
-              :allow-clear="true"
-              placeholder="Select Room Type"
-              @change="handleRoomTypeChange"
-            >
-              <a-select-option
-                v-for="rt in roomTypes"
-                :key="rt.id"
-                :value="rt.id"
-              >{{ rt.name }}</a-select-option>
-            </a-select>
-          </a-col>
             <a-col :span="6">
               <label
                 style="
@@ -411,7 +393,7 @@
                   font-size: 14px;
                   color: #374151;
                 "
-                >Texture Style <span style="color: red">*</span></label
+                >Texture Style<span style="color: red">*</span></label
               >
               <a-select
                 v-model:value="textureForm.texture_style"
@@ -456,13 +438,13 @@
                   font-size: 13px;
                   color: #6b7280;
                 "
-                >Pattern Width (m) <span style="color: red">*</span></label
+                >Tile Width (cm) <span style="color: red">*</span></label
               >
               <a-input-number
-                v-model:value="textureForm.size_width"
+                v-model:value="textureForm.tile_width"
                 :min="0.01"
                 :step="0.01"
-                placeholder="10.00"
+                placeholder="100.00"
                 style="width: 100%; border-radius: 6px"
               />
             </a-col>
@@ -475,24 +457,16 @@
                   font-size: 13px;
                   color: #6b7280;
                 "
-                >Pattern Height (m) <span style="color: red">*</span></label
+                >Tile Height (cm) <span style="color: red">*</span></label
               >
               <a-input-number
-                v-model:value="textureForm.size_height"
+                v-model:value="textureForm.tile_height"
                 :min="0.01"
                 :step="0.01"
-                placeholder="10.00"
+                placeholder="100.00"
                 style="width: 100%; border-radius: 6px"
               />
             </a-col>
-            <!-- <a-col :span="6">
-                <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 13px; color: #6b7280;">Tile Width (cm)</label>
-                <a-input-number v-model:value="textureForm.tile_width" :min="0.01" :step="0.01" placeholder="100.00" style="width: 100%; border-radius: 6px;" />
-              </a-col>
-              <a-col :span="6">
-                <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 13px; color: #6b7280;">Tile Height (cm)</label>
-                <a-input-number v-model:value="textureForm.tile_height" :min="0.01" :step="0.01" placeholder="100.00" style="width: 100%; border-radius: 6px;" />
-              </a-col> -->
             <!-- <a-col :span="8">
               <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151;">Brand</label>
               <a-input v-model:value="textureForm.brand" placeholder="Brand Name" style="border-radius: 8px;" size="large" />
@@ -501,149 +475,6 @@
               <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151;">Model Number</label>
               <a-input v-model:value="textureForm.model_number" placeholder="Model Number" style="border-radius: 8px;" size="large" />
             </a-col> -->
-            <br />
-
-            <a-col :span="24">
-              <h4
-                class="!pt-4"
-                style="
-                  margin-bottom: 16px;
-                  font-weight: 500;
-                  font-size: 14px;
-                  color: #1f2937;
-                "
-              >
-                Available Colors <span style="color: red">*</span>
-              </h4>
-              <!-- Available Colors (Multiple Selection) -->
-              <div style="margin-bottom: 20px">
-                <!-- Display Selected Available Colors -->
-                <div
-                  style="
-                    display: flex;
-                    gap: 12px;
-                    align-items: center;
-                    flex-wrap: wrap;
-                    margin-top: 12px;
-                    margin-bottom: 5px;
-                  "
-                >
-                  <!-- Existing Colors -->
-                  <div
-                    v-for="color in selectedTexture?.associated_colors || []"
-                    :key="color.id"
-                    style="position: relative"
-                  >
-                    <div
-                      :style="{
-                        width: '58px',
-                        height: '58px',
-                        borderRadius: '5px',
-                        backgroundColor: color.color_hex,
-                        cursor: 'pointer',
-                        border: '2px solid #e5e7eb',
-                      }"
-                    ></div>
-                    <!-- Remove color button -->
-                    <a-button
-                      type="text"
-                      size="small"
-                      @click="deleteColor(color.id)"
-                      class="!absolute -top-2 -right-2 !flex !items-center !justify-center !bg-red-500 !text-white !rounded-full !w-5 !h-5 !min-w-5 !p-0"
-                    >
-                      <svg
-                        class="w-3 h-3"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="3"
-                      >
-                        <line x1="18" y1="6" x2="6" y2="18" />
-                        <line x1="6" y1="6" x2="18" y2="18" />
-                      </svg>
-                    </a-button>
-                  </div>
-                </div>
-                <!-- Color Picker for Available Colors -->
-                <a-popover trigger="click" placement="bottom">
-                  <template #title>
-                    <div style="display: flex; align-items: center; gap: 8px">
-                      <span>Add Available Colors</span>
-                      <input
-                        type="color"
-                        :value="tempColor"
-                        @input="tempColor = $event.target.value"
-                        style="
-                          width: 30px;
-                          height: 25px;
-                          border: none;
-                          border-radius: 4px;
-                          cursor: pointer;
-                        "
-                      />
-                      <a-button
-                        type="primary"
-                        size="small"
-                        @click="addColorFromTemp"
-                        style="margin-left: 8px"
-                      >
-                        Add
-                      </a-button>
-                    </div>
-                  </template>
-                  <template #content>
-                    <div
-                      style="
-                        display: grid;
-                        grid-template-columns: repeat(6, 32px);
-                        gap: 8px;
-                        padding: 8px;
-                      "
-                    >
-                      <div
-                        v-for="(color, index) in presetColors"
-                        :key="index"
-                        @click="addPresetColor(color)"
-                        :style="{
-                          width: '32px',
-                          height: '32px',
-                          borderRadius: '6px',
-                          backgroundColor: color,
-                          cursor: 'pointer',
-                          border: '1px solid #e5e7eb',
-                          opacity: isColorAlreadyAdded(color) ? 0.5 : 1,
-                        }"
-                      ></div>
-                    </div>
-                  </template>
-                  <a-button
-                    style="
-                      border-radius: 6px;
-                      border: 2px dashed #d1d5db;
-                      display: flex;
-                      justify-content: space-between;
-                      gap: 10px;
-                      align-items: center;
-                    "
-                  >
-                    <!-- <template #icon> -->
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                    >
-                      <line x1="12" y1="5" x2="12" y2="19"></line>
-                      <line x1="5" y1="12" x2="19" y2="12"></line>
-                    </svg>
-                    <!-- </template> -->
-                    Add Colors
-                  </a-button>
-                </a-popover>
-              </div>
-            </a-col>
           </a-row>
 
           <!-- Material, Thickness, Weight -->
@@ -683,18 +514,18 @@
           <!-- </a-row> -->
 
           <!-- Dimensions -->
-          <!-- <div style="margin-bottom: 24px;"> -->
-          <!-- <h4 style="margin-bottom: 16px; font-weight: 500; font-size: 14px; color: #1f2937;">Pattern & Coverage Dimensions</h4> -->
-          <!-- <a-row :gutter="16"> -->
-          <!-- <a-col :span="6">
+          <div style="margin-bottom: 24px">
+            <!-- <h4 style="margin-bottom: 16px; font-weight: 500; font-size: 14px; color: #1f2937;">Pattern & Coverage Dimensions</h4> -->
+            <a-row :gutter="16">
+              <!-- <a-col :span="6">
                 <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 13px; color: #6b7280;">Pattern Width (m)</label>
                 <a-input-number v-model:value="textureForm.size_width" :min="0.01" :step="0.01" placeholder="10.00" style="width: 100%; border-radius: 6px;" />
-              </a-col>
-              <a-col :span="6">
+              </a-col> -->
+              <!-- <a-col :span="6">
                 <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 13px; color: #6b7280;">Pattern Height (m)</label>
                 <a-input-number v-model:value="textureForm.size_height" :min="0.01" :step="0.01" placeholder="10.00" style="width: 100%; border-radius: 6px;" />
               </a-col> -->
-          <!-- <a-col :span="6">
+              <!-- <a-col :span="6">
                 <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 13px; color: #6b7280;">Tile Width (cm)</label>
                 <a-input-number v-model:value="textureForm.tile_width" :min="0.01" :step="0.01" placeholder="100.00" style="width: 100%; border-radius: 6px;" />
               </a-col>
@@ -702,26 +533,164 @@
                 <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 13px; color: #6b7280;">Tile Height (cm)</label>
                 <a-input-number v-model:value="textureForm.tile_height" :min="0.01" :step="0.01" placeholder="100.00" style="width: 100%; border-radius: 6px;" />
               </a-col> -->
-          <!-- </a-row> -->
-          <!-- <a-row :gutter="16" style="margin-top: 16px;">
-              <a-col :span="6">
+
+              <a-col :span="12">
+                <h4
+                  style="
+                    margin-bottom: 16px;
+                    font-weight: 500;
+                    font-size: 14px;
+                    color: #1f2937;
+                  "
+                >
+                  Available Colors <span style="color: red">*</span>
+                </h4>
+
+                <div style="margin-bottom: 20px">
+                  <div
+                    style="
+                      display: flex;
+                      gap: 12px;
+                      align-items: center;
+                      flex-wrap: wrap;
+                      margin-top: 12px;
+                      margin-bottom: 5px;
+                    "
+                  >
+                    <div
+                      v-for="color in selectedTexture?.associated_colors || []"
+                      :key="color.id"
+                      style="position: relative"
+                    >
+                      <div
+                        :style="{
+                         width: '58px',
+                        height: '58px',
+                        borderRadius: '5px',
+                          backgroundColor: color.color_hex,
+                          cursor: 'pointer',
+                          border: '2px solid #e5e7eb',
+                        }"
+                      ></div>
+
+                      <a-button
+                        type="text"
+                        size="small"
+                        @click="deleteColor(color.id)"
+                        class="!absolute -top-2 -right-2 !flex !items-center !justify-center !bg-red-500 !text-white !rounded-full !w-5 !h-5 !min-w-5 !p-0"
+                      >
+                        <svg
+                          class="w-3 h-3"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="3"
+                        >
+                          <line x1="18" y1="6" x2="6" y2="18" />
+                          <line x1="6" y1="6" x2="18" y2="18" />
+                        </svg>
+                      </a-button>
+                    </div>
+                  </div>
+                  <a-popover trigger="click" placement="bottom">
+                    <template #title>
+                      <div style="display: flex; align-items: center; gap: 8px">
+                        <span>Add Available Colors</span>
+                        <input
+                          type="color"
+                          :value="tempColor"
+                          @input="tempColor = $event.target.value"
+                          style="
+                            width: 30px;
+                            height: 25px;
+                            border: none;
+                            border-radius: 4px;
+                            cursor: pointer;
+                          "
+                        />
+                        <a-button
+                          type="primary"
+                          size="small"
+                          @click="addColorFromTemp"
+                          style="margin-left: 8px"
+                        >
+                          Add
+                        </a-button>
+                      </div>
+                    </template>
+                    <template #content>
+                      <div
+                        style="
+                          display: grid;
+                          grid-template-columns: repeat(6, 32px);
+                          gap: 8px;
+                          padding: 8px;
+                        "
+                      >
+                        <div
+                          v-for="(color, index) in presetColors"
+                          :key="index"
+                          @click="addPresetColor(color)"
+                          :style="{
+                            width: '32px',
+                            height: '32px',
+                            borderRadius: '6px',
+                            backgroundColor: color,
+                            cursor: 'pointer',
+                            border: '1px solid #e5e7eb',
+                            opacity: isColorAlreadyAdded(color) ? 0.5 : 1,
+                          }"
+                        ></div>
+                      </div>
+                    </template>
+                    <a-button
+                      style="
+                        border-radius: 6px;
+                        border: 2px dashed #d1d5db;
+                        display: flex;
+                        justify-content: space-between;
+                        gap: 10px;
+                        align-items: center;
+                      "
+                    >
+                      <!-- <template #icon> -->
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                      </svg>
+                      <!-- </template> -->
+                      Add Colors
+                    </a-button>
+                  </a-popover>
+                </div>
+              </a-col>
+            </a-row>
+            <a-row :gutter="16" style="margin-top: 16px">
+              <!-- <a-col :span="6">
                 <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 13px; color: #6b7280;">Coverage per Unit (sqm)</label>
                 <a-input-number v-model:value="textureForm.coverage_per_unit" :min="0.01" :step="0.01" placeholder="5.00" style="width: 100%; border-radius: 6px;" />
-              </a-col>
-              <a-col :span="6">
+              </a-col> -->
+              <!-- <a-col :span="6">
                 <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 13px; color: #6b7280;">Seamless Pattern</label>
                 <div style="margin-top: 8px;">
                   <a-switch v-model:checked="textureForm.is_seamless" />
                 </div>
-              </a-col>
-            </a-row> -->
-          <!-- </div> -->
+              </a-col> -->
+            </a-row>
+          </div>
 
           <!-- Colors -->
           <a-row :gutter="24">
-            <!-- <a-col :span="12">
-    <h4 style="margin-bottom: 16px; font-weight: 500; font-size: 14px; color: #1f2937;">Primary & Secondary Colors</h4>
-    <a-row :gutter="12" style="margin-bottom: 16px;"> -->
+            <!-- <a-col :span="12"> -->
+            <!-- <h4 style="margin-bottom: 16px; font-weight: 500; font-size: 14px; color: #1f2937;">Primary & Secondary Colors</h4> -->
+            <!-- <a-row :gutter="12" style="margin-bottom: 16px;"> -->
             <!-- <a-col :span="12">
         <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 13px; color: #6b7280;">Primary Color</label>
         <div style="display: flex; align-items: center; gap: 8px;">
@@ -762,9 +731,8 @@
                   />
                 </a-popover>
 
-
-        </div> 
-      </a-col>-->
+        </div>
+      </a-col> -->
             <!-- <a-col :span="12">
         <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 13px; color: #6b7280;">Secondary Color</label>
         <div style="display: flex; align-items: center; gap: 8px;">
@@ -904,7 +872,6 @@
       </a-col>
     </a-row>
 
-    <!-- Hidden File Inputs -->
     <input
       ref="imageInput"
       type="file"
@@ -918,7 +885,7 @@
 
 <script>
 export default {
-  name: "edit_Floor_texture_details_page",
+  name: "edit_wall_texture_details_page",
   props: {
     selectedTexture: { type: Object, required: true },
   },
@@ -947,10 +914,6 @@ export default {
         stock_quantity: null,
       },
       tempColor: "#000000",
-      roomTypes: [],
-      loadingRoomTypes: false,
-      selectedRoomTypeId: null,
-      selectedRoomTypeName: null,
 
       presetColors: [
         "#000000",
@@ -1022,7 +985,6 @@ export default {
   },
   mounted() {
     this.initializeForm();
-    this.loadRoomTypes();
     window.addEventListener("beforeunload", this.handleBeforeUnload);
   },
   beforeUnmount() {
@@ -1069,47 +1031,10 @@ export default {
           secondary_color: this.selectedTexture.secondary_color || "",
           stock_quantity: this.selectedTexture.stock_quantity || null,
         };
-        if (this.selectedTexture.room_type) {
-          this.selectedRoomTypeId = this.selectedTexture.room_type.id;
-          this.selectedRoomTypeName = this.selectedTexture.room_type.name;
-        } else {
-          this.selectedRoomTypeId = null;
-          this.selectedRoomTypeName = null;
-        }
         this.hasUnsavedChanges = false;
         this.imagePreviewsState = [];
       }
     },
-    async loadRoomTypes() {
-    try {
-      this.loadingRoomTypes = true;
-      const token = localStorage.getItem("token");
-      const response = await fetch(
-        `${this.$store.state.root_api}product/api/room-types/`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Token ${token}`,
-          },
-        }
-      );
-      const result = await response.json();
-      this.roomTypes = result || [];
-    } catch (error) {
-      console.error("Error loading room types:", error);
-      this.roomTypes = [];
-    } finally {
-      this.loadingRoomTypes = false;
-    }
-  },
-
-  handleRoomTypeChange(value) {
-    const selectedRoom = this.roomTypes.find((rt) => rt.id === value);
-    this.selectedRoomTypeId = value;
-    this.selectedRoomTypeName = selectedRoom ? selectedRoom.name : null;
-    this.hasUnsavedChanges = true;
-  },
 
     handleBeforeUnload(e) {
       if (this.hasUnsavedChanges) {
@@ -1220,7 +1145,7 @@ export default {
       try {
         const token = localStorage.getItem("token");
         const response = await fetch(
-          `${this.$store.state.root_api}room/api-owner/floor/${this.selectedTexture.id}/images/${imageId}/set-primary/`,
+          `${this.$store.state.root_api}room/api-owner/wall/${this.selectedTexture.id}/images/${imageId}/set-primary/`,
           {
             method: "PATCH",
             headers: { Authorization: `Token ${token}` },
@@ -1259,7 +1184,7 @@ export default {
       try {
         const token = localStorage.getItem("token");
         const response = await fetch(
-          `${this.$store.state.root_api}room/api-owner/floor/${this.selectedTexture.id}/colors/`,
+          `${this.$store.state.root_api}room/api-owner/wall/${this.selectedTexture.id}/colors/`,
           {
             method: "POST",
             headers: {
@@ -1299,7 +1224,7 @@ export default {
           try {
             const token = localStorage.getItem("token");
             const response = await fetch(
-              `${this.$store.state.root_api}room/api-owner/floor/${this.selectedTexture.id}/colors/${colorId}/`,
+              `${this.$store.state.root_api}room/api-owner/wall/${this.selectedTexture.id}/colors/${colorId}/`,
               {
                 method: "DELETE",
                 headers: { Authorization: `Token ${token}` },
@@ -1337,7 +1262,7 @@ export default {
           try {
             const token = localStorage.getItem("token");
             const response = await fetch(
-              `${this.$store.state.root_api}room/api-owner/floor/${this.selectedTexture.id}/images/${imageId}/`,
+              `${this.$store.state.root_api}room/api-owner/wall/${this.selectedTexture.id}/images/${imageId}/`,
               {
                 method: "DELETE",
                 headers: { Authorization: `Token ${token}` },
@@ -1365,25 +1290,18 @@ export default {
     },
 
     validateForm() {
-      // Title validation
       if (!this.textureForm.title.trim()) {
         this.$message.error("Title is required");
         return false;
       }
-
-      // Description validation
       if (!this.textureForm.description.trim()) {
         this.$message.error("Description is required");
         return false;
       }
-
-      // Texture Style validation
       if (!this.textureForm.texture_style) {
         this.$message.error("Texture Style is required");
         return false;
       }
-
-      // Sale Price per SQM validation
       if (
         !this.textureForm.sale_price_per_sqm ||
         parseFloat(this.textureForm.sale_price_per_sqm) <= 0
@@ -1394,29 +1312,27 @@ export default {
         return false;
       }
 
-      // Pattern Width validation
+      // Tile dimensions validation
       if (
-        !this.textureForm.size_width ||
-        parseFloat(this.textureForm.size_width) <= 0
+        !this.textureForm.tile_width ||
+        parseFloat(this.textureForm.tile_width) <= 0
       ) {
         this.$message.error(
-          "Pattern Width is required and must be greater than 0",
+          "Tile Width is required and must be greater than 0",
+        );
+        return false;
+      }
+      if (
+        !this.textureForm.tile_height ||
+        parseFloat(this.textureForm.tile_height) <= 0
+      ) {
+        this.$message.error(
+          "Tile Height is required and must be greater than 0",
         );
         return false;
       }
 
-      // Pattern Height validation
-      if (
-        !this.textureForm.size_height ||
-        parseFloat(this.textureForm.size_height) <= 0
-      ) {
-        this.$message.error(
-          "Pattern Height is required and must be greater than 0",
-        );
-        return false;
-      }
-
-      // Available Colors validation
+      // Available colors validation
       if (
         !this.selectedTexture?.associated_colors ||
         this.selectedTexture.associated_colors.length === 0
@@ -1450,7 +1366,7 @@ export default {
           });
 
           const imageResponse = await fetch(
-            `${this.$store.state.root_api}room/api-owner/floor/${this.selectedTexture.id}/images/`,
+            `${this.$store.state.root_api}room/api-owner/wall/${this.selectedTexture.id}/images/`,
             {
               method: "POST",
               headers: { Authorization: `Token ${token}` },
@@ -1475,12 +1391,9 @@ export default {
             textureData.append(key, this.textureForm[key]);
           }
         });
-        if (this.selectedRoomTypeName) {
-          textureData.append("room_type_name", this.selectedRoomTypeName);
-        }
 
         const response = await fetch(
-          `${this.$store.state.root_api}room/api-owner/floors/${this.selectedTexture.id}/`,
+          `${this.$store.state.root_api}room/api-owner/walls/${this.selectedTexture.id}/`,
           {
             method: "PUT",
             headers: { Authorization: `Token ${token}` },
@@ -1489,17 +1402,20 @@ export default {
         );
 
         const result = await response.json();
+
         if (result.success) {
-          this.$message.success("Floor texture updated successfully");
+          this.$message.success("Wall texture updated successfully");
           this.hasUnsavedChanges = false;
           // Update parent component with new data
           this.$emit("texture-updated", result.data);
         } else {
-          this.$message.error(result.message || "Failed to update Floor texture");
+          this.$message.error(
+            result.message || "Failed to update wall texture",
+          );
         }
       } catch (error) {
-        console.error("Error saving Floor texture:", error);
-        this.$message.error("Error saving Floor texture. Please try again.");
+        console.error("Error saving wall texture:", error);
+        this.$message.error("Error saving wall texture. Please try again.");
       } finally {
         this.isSaving = false;
       }

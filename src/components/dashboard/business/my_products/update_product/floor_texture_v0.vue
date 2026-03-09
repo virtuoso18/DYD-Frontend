@@ -30,7 +30,9 @@
             </svg>
           </template>
         </a-button>
-        <h2 style="margin: 0; font-size: 20px; font-weight: 600; color: #1f2937">
+        <h2
+          style="margin: 0; font-size: 20px; font-weight: 600; color: #1f2937"
+        >
           Edit Floor Texture
         </h2>
       </div>
@@ -382,26 +384,6 @@
 
           <!-- Texture Style, Brand, Model Number -->
           <a-row :gutter="16" style="margin-bottom: 20px">
-            <a-col :span="6">
-            <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151;">
-              Room Type
-            </label>
-            <a-select
-              v-model:value="selectedRoomTypeName"
-              style="width: 100%"
-              size="large"
-              :loading="loadingRoomTypes"
-              :allow-clear="true"
-              placeholder="Select Room Type"
-              @change="handleRoomTypeChange"
-            >
-              <a-select-option
-                v-for="rt in roomTypes"
-                :key="rt.id"
-                :value="rt.id"
-              >{{ rt.name }}</a-select-option>
-            </a-select>
-          </a-col>
             <a-col :span="6">
               <label
                 style="
@@ -947,10 +929,6 @@ export default {
         stock_quantity: null,
       },
       tempColor: "#000000",
-      roomTypes: [],
-      loadingRoomTypes: false,
-      selectedRoomTypeId: null,
-      selectedRoomTypeName: null,
 
       presetColors: [
         "#000000",
@@ -1022,7 +1000,6 @@ export default {
   },
   mounted() {
     this.initializeForm();
-    this.loadRoomTypes();
     window.addEventListener("beforeunload", this.handleBeforeUnload);
   },
   beforeUnmount() {
@@ -1069,47 +1046,10 @@ export default {
           secondary_color: this.selectedTexture.secondary_color || "",
           stock_quantity: this.selectedTexture.stock_quantity || null,
         };
-        if (this.selectedTexture.room_type) {
-          this.selectedRoomTypeId = this.selectedTexture.room_type.id;
-          this.selectedRoomTypeName = this.selectedTexture.room_type.name;
-        } else {
-          this.selectedRoomTypeId = null;
-          this.selectedRoomTypeName = null;
-        }
         this.hasUnsavedChanges = false;
         this.imagePreviewsState = [];
       }
     },
-    async loadRoomTypes() {
-    try {
-      this.loadingRoomTypes = true;
-      const token = localStorage.getItem("token");
-      const response = await fetch(
-        `${this.$store.state.root_api}product/api/room-types/`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Token ${token}`,
-          },
-        }
-      );
-      const result = await response.json();
-      this.roomTypes = result || [];
-    } catch (error) {
-      console.error("Error loading room types:", error);
-      this.roomTypes = [];
-    } finally {
-      this.loadingRoomTypes = false;
-    }
-  },
-
-  handleRoomTypeChange(value) {
-    const selectedRoom = this.roomTypes.find((rt) => rt.id === value);
-    this.selectedRoomTypeId = value;
-    this.selectedRoomTypeName = selectedRoom ? selectedRoom.name : null;
-    this.hasUnsavedChanges = true;
-  },
 
     handleBeforeUnload(e) {
       if (this.hasUnsavedChanges) {
@@ -1475,9 +1415,6 @@ export default {
             textureData.append(key, this.textureForm[key]);
           }
         });
-        if (this.selectedRoomTypeName) {
-          textureData.append("room_type_name", this.selectedRoomTypeName);
-        }
 
         const response = await fetch(
           `${this.$store.state.root_api}room/api-owner/floors/${this.selectedTexture.id}/`,
@@ -1495,7 +1432,9 @@ export default {
           // Update parent component with new data
           this.$emit("texture-updated", result.data);
         } else {
-          this.$message.error(result.message || "Failed to update Floor texture");
+          this.$message.error(
+            result.message || "Failed to update Floor texture",
+          );
         }
       } catch (error) {
         console.error("Error saving Floor texture:", error);

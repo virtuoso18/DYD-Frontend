@@ -382,66 +382,9 @@
             />
           </div>
 
-          <!-- Room Type, Category, Furniture Type, Price -->
-          <a-row :gutter="16" style="margin-bottom: 20px">
-
-            <!-- Room Type -->
-            <a-col :span="6">
-              <label
-                style="
-                  display: block;
-                  margin-bottom: 6px;
-                  font-weight: 500;
-                  font-size: 14px;
-                  color: #374151;
-                "
-              >Room Type <span style="color: red">*</span></label>
-              <a-select
-                v-model:value="selectedRoomTypeName"
-                style="width: 100%"
-                size="large"
-                :loading="loadingRoomTypes"
-                :allow-clear="true"
-                @change="handleRoomTypeChange"
-              >
-                <a-select-option
-                  v-for="rt in roomTypes"
-                  :key="rt.id"
-                  :value="rt.id"
-                >{{ rt.name }}</a-select-option>
-              </a-select>
-            </a-col>
-
-            <!-- Category -->
-            <a-col :span="6">
-              <label
-                style="
-                  display: block;
-                  margin-bottom: 6px;
-                  font-weight: 500;
-                  font-size: 14px;
-                  color: #374151;
-                "
-              >Category <span style="color: red">*</span></label>
-              <a-select
-                v-model:value="productForm.category_name"
-                style="width: 100%"
-                size="large"
-                mode="tags"
-                :options="categoryOptions"
-                :loading="loadingCategories"
-                :filter-option="false"
-                :allow-clear="true"
-                show-search
-                :disabled="!selectedRoomType"
-                @search="handleCategorySearch"
-                @change="handleCategoryChange"
-                @focus="handleSelectFocus"
-              />
-            </a-col>
-
-            <!-- Furniture Type -->
-            <a-col :span="6">
+          <!-- Basic Info -->
+          <a-row :gutter="6" style="margin-bottom: 20px">
+            <a-col :span="12">
               <label
                 style="
                   display: block;
@@ -466,9 +409,7 @@
                 >
               </a-select>
             </a-col>
-
-            <!-- Price -->
-            <a-col :span="6">
+            <a-col :span="12">
               <label
                 style="
                   display: block;
@@ -687,6 +628,7 @@
                     align-items: center;
                   "
                 >
+                  <!-- <template #icon> -->
                   <svg
                     width="16"
                     height="16"
@@ -698,6 +640,7 @@
                     <line x1="12" y1="5" x2="12" y2="19"></line>
                     <line x1="5" y1="12" x2="19" y2="12"></line>
                   </svg>
+                  <!-- </template> -->
                   Add Colors
                 </a-button>
               </a-popover>
@@ -736,7 +679,6 @@ export default {
         brand: "",
         model_number: "",
         material: "",
-        category_name: [],
         dimensions: {
           width: null,
           height: null,
@@ -763,30 +705,57 @@ export default {
       },
       tempColor: "#000000",
       presetColors: [
-        "#000000", "#FFFFFF", "#FF0000", "#00FF00", "#0000FF", "#FFFF00",
-        "#FF00FF", "#00FFFF", "#C0C0C0", "#808080", "#800000", "#808000",
-        "#008000", "#800080", "#008080", "#000080", "#FFA500", "#FFC0CB",
-        "#A52A2A", "#DDA0DD", "#98FB98", "#F0E68C", "#DEB887", "#D2691E",
-        "#FF6347", "#40E0D0", "#EE82EE", "#90EE90", "#FFB6C1", "#87CEEB",
+        "#000000",
+        "#FFFFFF",
+        "#FF0000",
+        "#00FF00",
+        "#0000FF",
+        "#FFFF00",
+        "#FF00FF",
+        "#00FFFF",
+        "#C0C0C0",
+        "#808080",
+        "#800000",
+        "#808000",
+        "#008000",
+        "#800080",
+        "#008080",
+        "#000080",
+        "#FFA500",
+        "#FFC0CB",
+        "#A52A2A",
+        "#DDA0DD",
+        "#98FB98",
+        "#F0E68C",
+        "#DEB887",
+        "#D2691E",
+        "#FF6347",
+        "#40E0D0",
+        "#EE82EE",
+        "#90EE90",
+        "#FFB6C1",
+        "#87CEEB",
       ],
       furnitureTypes: [
-        "Modern", "Traditional", "Contemporary", "Industrial",
-        "Rustic", "Minimalist", "Classic", "Vintage",
+        "Modern",
+        "Traditional",
+        "Contemporary",
+        "Industrial",
+        "Rustic",
+        "Minimalist",
+        "Classic",
+        "Vintage",
       ],
       lightTypes: [
-        "sunk", "pendant", "ceiling", "wall", "floor", "table", "accent", "outdoor",
+        "sunk",
+        "pendant",
+        "ceiling",
+        "wall",
+        "floor",
+        "table",
+        "accent",
+        "outdoor",
       ],
-
-      // Room Type & Category
-      selectedRoomType: null,
-      selectedRoomTypeName: null,
-      roomTypes: [],
-      loadingRoomTypes: false,
-      categoryOptions: [],
-      allCategories: [],
-      loadingCategories: false,
-      categorySearchTimeout: null,
-
       isSaving: false,
       imagePreviewsState: [],
       hasUnsavedChanges: false,
@@ -794,22 +763,25 @@ export default {
   },
   computed: {
     primaryImage() {
+      // Find primary image from existing images
       const primaryImg = this.selectedProduct.images?.find(
         (img) => img.is_primary,
       );
       if (primaryImg) {
         return { url: this.$store.state.root_media_api + primaryImg.image };
       }
+      // Fallback to primary_image if available
       if (this.selectedProduct.primary_image) {
         return {
-          url: this.$store.state.root_media_api + this.selectedProduct.primary_image,
+          url:
+            this.$store.state.root_media_api +
+            this.selectedProduct.primary_image,
         };
       }
       return null;
     },
   },
-  async mounted() {
-    await this.loadRoomTypes();
+  mounted() {
     this.initializeForm();
     window.addEventListener("beforeunload", this.handleBeforeUnload);
   },
@@ -819,10 +791,7 @@ export default {
   },
   watch: {
     selectedProduct: {
-      async handler() {
-        if (this.roomTypes.length === 0) {
-          await this.loadRoomTypes();
-        }
+      handler() {
         this.initializeForm();
       },
       deep: true,
@@ -835,141 +804,6 @@ export default {
     },
   },
   methods: {
-    // ── Room Type & Category ───────────────────────────────────────────────
-
-    async loadRoomTypes() {
-      try {
-        this.loadingRoomTypes = true;
-        const token = localStorage.getItem("token");
-        const response = await fetch(
-          `${this.$store.state.root_api}product/api/room-types/`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Token ${token}`,
-            },
-          }
-        );
-        const result = await response.json();
-        this.roomTypes = result || [];
-      } catch (error) {
-        console.error("Error loading room types:", error);
-        this.roomTypes = [];
-      } finally {
-        this.loadingRoomTypes = false;
-      }
-    },
-
-    handleRoomTypeChange(value) {
-      const selectedRoom = this.roomTypes.find((rt) => rt.id === value);
-      this.selectedRoomType = value;
-      this.selectedRoomTypeName = selectedRoom ? selectedRoom.name : null;
-
-      // Reset category when room type changes
-      this.productForm.category_name = [];
-      this.categoryOptions = [];
-      this.allCategories = [];
-
-      if (value) {
-        this.loadInitialCategories();
-      }
-    },
-
-    async loadInitialCategories() {
-      try {
-        this.loadingCategories = true;
-        const token = localStorage.getItem("token");
-        const roomTypeParam = this.selectedRoomType
-          ? `?room_type=${encodeURIComponent(this.selectedRoomType)}`
-          : "";
-        const response = await fetch(
-          `${this.$store.state.root_api}product/api/categories/${roomTypeParam}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Token ${token}`,
-            },
-          }
-        );
-        const result = await response.json();
-        if (result.success) {
-          this.allCategories = result.data || [];
-          this.categoryOptions = this.allCategories.map((cat) => ({
-            label: cat.name,
-            value: cat.name,
-            data: cat,
-          }));
-        }
-      } catch (error) {
-        console.error("Error loading categories:", error);
-      } finally {
-        this.loadingCategories = false;
-      }
-    },
-
-    async handleCategorySearch(searchValue) {
-      if (this.categorySearchTimeout) clearTimeout(this.categorySearchTimeout);
-      if (!searchValue?.trim()) {
-        this.categoryOptions = this.allCategories.map((cat) => ({
-          label: cat.name,
-          value: cat.name,
-        }));
-        return;
-      }
-      this.loadingCategories = true;
-      this.categorySearchTimeout = setTimeout(async () => {
-        try {
-          const token = localStorage.getItem("token");
-          const response = await fetch(
-            `${this.$store.state.root_api}product/api/categories/?q=${encodeURIComponent(searchValue)}`,
-            {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Token ${token}`,
-              },
-            }
-          );
-          const result = await response.json();
-          this.categoryOptions = result.success
-            ? result.data.map((cat) => ({ label: cat.name, value: cat.name }))
-            : [];
-        } catch (error) {
-          this.categoryOptions = [];
-        } finally {
-          this.loadingCategories = false;
-        }
-      }, 300);
-    },
-
-    handleSelectFocus() {
-      if (this.categoryOptions.length === 0) {
-        this.categoryOptions = this.allCategories.map((cat) => ({
-          label: cat.name,
-          value: cat.name,
-        }));
-      }
-    },
-
-    handleCategoryChange(value) {
-      if (Array.isArray(value)) {
-        if (value.length > 1) {
-          // Only one category allowed — keep last selected
-          this.productForm.category_name = [value[value.length - 1]];
-        } else if (value.length === 1) {
-          this.productForm.category_name = value;
-        } else {
-          this.productForm.category_name = [];
-        }
-      } else {
-        this.productForm.category_name = value ? [value] : [];
-      }
-    },
-
-    // ── Form Init ──────────────────────────────────────────────────────────
-
     initializeForm() {
       if (this.selectedProduct) {
         this.productForm = {
@@ -981,9 +815,6 @@ export default {
           brand: this.selectedProduct.brand || "",
           model_number: this.selectedProduct.model_number || "",
           material: this.selectedProduct.material || "",
-          category_name: this.selectedProduct.category?.name
-            ? [this.selectedProduct.category.name]
-            : [],
           dimensions: {
             width: this.selectedProduct.dimensions?.width || null,
             height: this.selectedProduct.dimensions?.height || null,
@@ -1010,18 +841,6 @@ export default {
         };
         this.hasUnsavedChanges = false;
         this.imagePreviewsState = [];
-
-        // Hydrate room type from the product's room_type object
-        if (this.selectedProduct?.room_type) {
-          this.selectedRoomType = this.selectedProduct.room_type.id || null;
-          this.selectedRoomTypeName = this.selectedProduct.room_type.name || null;
-          if (this.selectedRoomType) {
-            this.loadInitialCategories();
-          }
-        } else {
-          this.selectedRoomType = null;
-          this.selectedRoomTypeName = null;
-        }
       }
     },
 
@@ -1107,7 +926,7 @@ export default {
     addColorFromTemp() {
       if (this.tempColor && !this.isColorAlreadyAdded(this.tempColor)) {
         this.addColor(this.tempColor);
-        this.tempColor = "#000000";
+        this.tempColor = "#000000"; // Reset temp color
       } else if (this.isColorAlreadyAdded(this.tempColor)) {
         this.$message.warning("Color already exists");
       }
@@ -1129,6 +948,7 @@ export default {
       );
     },
 
+    // Primary Image Toggle - Updated API endpoint
     async togglePrimaryImage(imageId) {
       try {
         const token = localStorage.getItem("token");
@@ -1142,14 +962,19 @@ export default {
 
         const result = await response.json();
         if (result.success) {
-          this.selectedProduct.images.forEach((img) => (img.is_primary = false));
+          // Update local data
+          this.selectedProduct.images.forEach(
+            (img) => (img.is_primary = false),
+          );
           const targetImage = this.selectedProduct.images.find(
             (img) => img.id === imageId,
           );
           if (targetImage) targetImage.is_primary = true;
           this.$message.success("Primary image updated successfully");
         } else {
-          this.$message.error(result.message || "Failed to update primary image");
+          this.$message.error(
+            result.message || "Failed to update primary image",
+          );
         }
       } catch (error) {
         this.$message.error("Error updating primary image");
@@ -1157,6 +982,7 @@ export default {
       }
     },
 
+    // Color Management - Updated API endpoint
     async addColor(colorHex) {
       if (this.isColorAlreadyAdded(colorHex)) {
         this.$message.warning("Color already exists");
@@ -1179,12 +1005,14 @@ export default {
 
         const result = await response.json();
         if (result.success) {
+          // Ensure colors object exists
           if (!this.selectedProduct.colors) {
             this.selectedProduct.colors = { available_colors: [] };
           }
           if (!this.selectedProduct.colors.available_colors) {
             this.selectedProduct.colors.available_colors = [];
           }
+
           this.selectedProduct.colors.available_colors.push({
             id: result.data.id,
             color: result.data.color,
@@ -1307,6 +1135,7 @@ export default {
         return false;
       }
 
+      // Validate dimensions if provided
       const dimensionFields = ["width", "height", "length", "depth", "weight"];
       for (let field of dimensionFields) {
         if (
@@ -1333,7 +1162,7 @@ export default {
       try {
         const token = localStorage.getItem("token");
 
-        // Upload pending images first if any
+        // Upload pending images first if any - Updated API endpoint
         if (this.imagePreviewsState.length > 0) {
           const formData = new FormData();
           this.imagePreviewsState.forEach((preview) => {
@@ -1352,12 +1181,13 @@ export default {
 
           const imageResult = await imageResponse.json();
           if (imageResult.success) {
+            // Add new images to the existing array
             this.selectedProduct.images.push(...imageResult.data);
             this.cleanupPreviews();
           }
         }
 
-        // Update product details
+        // Update product details - Updated API endpoint and structure
         const productData = new FormData();
         productData.append("name", this.productForm.name);
         productData.append("description", this.productForm.description);
@@ -1367,23 +1197,12 @@ export default {
           productData.append("light_type", this.productForm.light_type);
         }
 
-        // Send the first (and only) selected category name
-        const categoryValue = Array.isArray(this.productForm.category_name)
-          ? this.productForm.category_name[0] || ""
-          : this.productForm.category_name || "";
-        if (categoryValue) {
-          productData.append("category_name", categoryValue);
-        }
-
-        // Send room_type_name
-        if (this.selectedRoomTypeName) {
-          productData.append("room_type_name", this.selectedRoomTypeName);
-        }
-
+        // Add pricing
         if (this.productForm.pricing.price) {
           productData.append("price", this.productForm.pricing.price);
         }
 
+        // Add dimensions
         ["height", "length", "width"].forEach((dim) => {
           if (this.productForm.dimensions[dim]) {
             productData.append(dim, this.productForm.dimensions[dim]);
@@ -1404,6 +1223,7 @@ export default {
         if (result.success) {
           this.$message.success("Product updated successfully");
           this.hasUnsavedChanges = false;
+          // Update parent component with new data
           this.$emit("product-updated", result.data);
         } else {
           this.$message.error(result.message || "Failed to update product");

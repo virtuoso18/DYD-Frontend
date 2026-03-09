@@ -227,6 +227,7 @@ import { markRaw } from 'vue'
 import * as THREE from 'three'
 import { PLYLoader } from 'three/examples/jsm/loaders/PLYLoader'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
+import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js'
 
 import ZoomInIcon  from '@/assets/icons/zoomout.png'
 import ZoomOutIcon from '@/assets/icons/zoomin.png'
@@ -1177,7 +1178,9 @@ export default {
     },
 
     _loadGLTF(modelUrl) {
-      new GLTFLoader().load(
+      const chairLoader = new GLTFLoader()
+      chairLoader.setMeshoptDecoder(MeshoptDecoder)
+      chairLoader.load(
         modelUrl,
         (gltf) => {
           const innerMesh = gltf.scene

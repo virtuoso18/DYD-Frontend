@@ -1417,7 +1417,7 @@ Switch Furniture</a-button> -->
             /> 
             -->
             
-<!-- {{ colors_available_for_3d_model }} -->
+<!-- {{ active_room_ptcld_cords }} -->
             <items_replacement_renderer
               v-if="
                 current_tab == 'image' &&
@@ -3141,7 +3141,8 @@ Switch Furniture</a-button> -->
                   @Apply-Changes="ApplyChanges"
                   @insufficient-credits="throw_Insufficient_credits"
                 /> -->
-
+               
+<!-- {{ active_room_ptcld_cords }} -->
                 <items_replacement_renderer
                   v-if="
                     current_tab == 'image' &&

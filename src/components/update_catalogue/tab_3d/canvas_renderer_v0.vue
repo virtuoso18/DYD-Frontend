@@ -220,6 +220,7 @@ Regererate </a-button>
   import * as THREE from "three";
   import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
   import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { MeshoptDecoder } from "three/examples/jsm/libs/meshopt_decoder.module.js";
 
   const emit = defineEmits(['clicked-add-product']);
 
@@ -423,6 +424,7 @@ Regererate </a-button>
   }
   
   const loader = new GLTFLoader();
+  loader.setMeshoptDecoder(MeshoptDecoder)
   loader.load(
     props.glbModelUrl,
     (gltf) => {

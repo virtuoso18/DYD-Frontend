@@ -238,9 +238,7 @@
                 type="primary" 
                 block
                 @click="editProduct()"
-                style="display:flex;gap:10px;justify-content: center;align-items: center;"
-
-              ><EditOutlined/>
+              > <template #icon> <EditOutlined/></template>
                 Edit Product
               </a-button>
             </a-col>
@@ -250,8 +248,7 @@
                 danger
                 block
                 @click="deleteProduct()"
-                style="display:flex;gap:10px;justify-content: center;align-items: center;"
-              > <DeleteOutlined/>
+              > <template #icon> <DeleteOutlined/></template>
                 Delete Product
               </a-button>
             </a-col>

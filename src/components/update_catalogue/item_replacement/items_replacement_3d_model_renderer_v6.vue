@@ -196,6 +196,7 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { MeshoptDecoder } from "three/examples/jsm/libs/meshopt_decoder.module.js";
 
 export default {
   name: "ItemReplacementRenderer",
@@ -1287,6 +1288,7 @@ export default {
         this.loadingText = "Loading 3D Model...";
 
         const loader = new GLTFLoader();
+        loader.setMeshoptDecoder(MeshoptDecoder)
         loader.load(
           this.glbUrl,
           (gltf) => {

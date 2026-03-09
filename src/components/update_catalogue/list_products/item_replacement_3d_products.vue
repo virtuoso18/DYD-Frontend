@@ -143,6 +143,12 @@
               <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1 1L9 9M9 1L1 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
             </button>
           </span>
+          <span v-if="appliedFilters.selectedRoomTypes.length > 0" class="filter-chip">
+            Room: {{ appliedFilters.selectedRoomTypes.length }} selected
+            <button class="chip-remove" @click="removeFilter('selectedRoomTypes')">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1 1L9 9M9 1L1 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </button>
+          </span>
           <span v-if="appliedFilters.selectedColors.length > 0" class="filter-chip">
             Colors: {{ appliedFilters.selectedColors.length }} selected
             <button class="chip-remove" @click="removeFilter('selectedColors')">
@@ -265,7 +271,7 @@ max-height: 250px;
             <template v-else>
 
               <!-- ── Price Range ── -->
-              <div class="filter-group">
+              <!-- <div class="filter-group">
                 <div class="filter-group-label">Price Range</div>
                 <a-slider
                   :min="0"
@@ -277,6 +283,23 @@ max-height: 250px;
                 <p class="price-range-label">
                   ${{ draftFilters.priceRange[0].toLocaleString('en-IN') }} – ${{ draftFilters.priceRange[1].toLocaleString('en-IN') }}
                 </p>
+              </div> -->
+              
+              <!-- ── Room Type ── -->
+              <div class="filter-group" v-if="availableRoomTypes.length > 0">
+                <div class="filter-group-label">Room Type</div>
+                <div class="filter-pills">
+                  <button
+                    v-for="room in availableRoomTypes"
+                    :key="room.id"
+                    class="filter-pill"
+                    :class="{ active: draftFilters.selectedRoomTypes.includes(room.id) }"
+                    @click="toggleDraftRoomType(room.id)"
+                  >
+                    {{ room.name }}
+                    <span class="pill-count">({{ room.product_count }})</span>
+                  </button>
+                </div>
               </div>
 
               <!-- ── Category ── -->
@@ -295,7 +318,7 @@ max-height: 250px;
                   </button>
                 </div>
               </div>
-
+             
               <!-- ── Furniture Type ── -->
               <div class="filter-group" v-if="availableFurnitureTypes.length > 0">
                 <div class="filter-group-label">Furniture Type</div>
@@ -408,6 +431,7 @@ export default {
         selectedCategories: [],
         selectedFurnitureTypes: [],
         selectedColors: [],
+        selectedRoomTypes: []
       },
 
       // Applied filters (used in API fetch calls)
@@ -416,6 +440,7 @@ export default {
         selectedCategories: [],
         selectedFurnitureTypes: [],
         selectedColors: [],
+        selectedRoomTypes: []
       },
     };
   },
@@ -436,7 +461,8 @@ export default {
         f.priceRange[1] < 500000 ||
         f.selectedCategories.length > 0 ||
         f.selectedFurnitureTypes.length > 0 ||
-        f.selectedColors.length > 0
+        f.selectedColors.length > 0 ||
+        f.selectedRoomTypes.length > 0 
       );
     },
     activeFilterCount() {
@@ -446,6 +472,7 @@ export default {
       if (f.selectedCategories.length > 0) count++;
       if (f.selectedFurnitureTypes.length > 0) count++;
       if (f.selectedColors.length > 0) count++;
+      if (f.selectedRoomTypes.length > 0) count++;
       return count;
     },
   },
@@ -476,7 +503,6 @@ export default {
       this.selected_item = '';
     },
 
-    // ─── Filter Options API ───────────────────────────────────────────────────
     async loadFilterOptions() {
       try {
         this.loadingFilterOptions = true;
@@ -497,6 +523,7 @@ export default {
           this.availableColors         = data.data.colors          || [];
           this.availableCategories     = data.data.categories      || [];
           this.availableFurnitureTypes = data.data.furniture_types || [];
+          this.availableRoomTypes      = data.data.room_types      || [];
         }
       } catch (error) {
         console.error('Failed to load filter options:', error);
@@ -523,6 +550,74 @@ export default {
       if (idx > -1) this.draftFilters.selectedColors.splice(idx, 1);
       else          this.draftFilters.selectedColors.push(hexCode);
     },
+    
+    // ─── Room type → auto-select/deselect its categories ─────────────────────
+toggleDraftRoomType(roomTypeId) {
+  const idx = this.draftFilters.selectedRoomTypes.indexOf(roomTypeId);
+  
+  // Get all category IDs that belong to this room type
+  const roomCategoryIds = this.availableCategories
+    .filter(c => c.room_type_id === roomTypeId)
+    .map(c => c.id);
+
+  if (idx > -1) {
+    // Deselecting room type → remove only its categories
+    this.draftFilters.selectedRoomTypes.splice(idx, 1);
+    this.draftFilters.selectedCategories = this.draftFilters.selectedCategories
+      .filter(catId => !roomCategoryIds.includes(catId));
+  } else {
+    // Selecting room type → add it and auto-select all its categories
+    this.draftFilters.selectedRoomTypes.push(roomTypeId);
+    roomCategoryIds.forEach(catId => {
+      if (!this.draftFilters.selectedCategories.includes(catId)) {
+        this.draftFilters.selectedCategories.push(catId);
+      }
+    });
+  }
+},
+
+// ─── Category toggle → sync room type selection state ────────────────────
+toggleDraftCategory(categoryId) {
+  const idx = this.draftFilters.selectedCategories.indexOf(categoryId);
+
+  if (idx > -1) {
+    // Removing a category
+    this.draftFilters.selectedCategories.splice(idx, 1);
+
+    // Check if the parent room type should be deselected
+    // (deselect room type if none of its categories remain selected)
+    const cat = this.availableCategories.find(c => c.id === categoryId);
+    if (cat && cat.room_type_id) {
+      const siblingsSelected = this.availableCategories
+        .filter(c => 
+          c.room_type_id === cat.room_type_id &&
+          this.draftFilters.selectedCategories.includes(c.id)
+        );
+      if (siblingsSelected.length === 0) {
+        // No more categories of this room type selected → deselect the room type too
+        this.draftFilters.selectedRoomTypes = this.draftFilters.selectedRoomTypes
+          .filter(rtId => rtId !== cat.room_type_id);
+      }
+    }
+  } else {
+    // Adding a category manually
+    this.draftFilters.selectedCategories.push(categoryId);
+
+    // Optionally auto-select the room type if all its categories are now selected
+    const cat = this.availableCategories.find(c => c.id === categoryId);
+    if (cat && cat.room_type_id) {
+      const allSiblingIds = this.availableCategories
+        .filter(c => c.room_type_id === cat.room_type_id)
+        .map(c => c.id);
+      const allSelected = allSiblingIds.every(id => 
+        this.draftFilters.selectedCategories.includes(id)
+      );
+      if (allSelected && !this.draftFilters.selectedRoomTypes.includes(cat.room_type_id)) {
+        this.draftFilters.selectedRoomTypes.push(cat.room_type_id);
+      }
+    }
+  }
+},
 
     // ─── Drawer open / apply / reset ─────────────────────────────────────────
     openFilterDrawer() {
@@ -532,6 +627,7 @@ export default {
         selectedCategories:     [...this.appliedFilters.selectedCategories],
         selectedFurnitureTypes: [...this.appliedFilters.selectedFurnitureTypes],
         selectedColors:         [...this.appliedFilters.selectedColors],
+        selectedRoomTypes:      [...this.appliedFilters.selectedRoomTypes]
       };
       this.showFilterDrawer = true;
     },
@@ -542,6 +638,7 @@ export default {
         selectedCategories:     [...this.draftFilters.selectedCategories],
         selectedFurnitureTypes: [...this.draftFilters.selectedFurnitureTypes],
         selectedColors:         [...this.draftFilters.selectedColors],
+        selectedRoomTypes:      [...this.draftFilters.selectedRoomTypes]
       };
       this.showFilterDrawer = false;
       this.currentPage = 1;
@@ -554,11 +651,12 @@ export default {
         selectedCategories: [],
         selectedFurnitureTypes: [],
         selectedColors: [],
+        selectedRoomTypes: []
       };
     },
 
     clearAllFilters() {
-      const empty = { priceRange: [0, 500000], selectedCategories: [], selectedFurnitureTypes: [], selectedColors: [] };
+      const empty = { priceRange: [0, 500000], selectedCategories: [], selectedFurnitureTypes: [], selectedColors: [], selectedRoomTypes: [] };
       this.appliedFilters = { ...empty, priceRange: [...empty.priceRange] };
       this.draftFilters   = { ...empty, priceRange: [...empty.priceRange] };
       this.currentPage = 1;
@@ -676,6 +774,9 @@ export default {
 
         if (f.selectedColors.length > 0) {
           url += `&color_hex=${encodeURIComponent(f.selectedColors.join(','))}`;
+        }
+        if (f.selectedRoomTypes.length > 0) {
+          url += `&room_type=${encodeURIComponent(f.selectedRoomTypes.join(','))}`;
         }
 
         const response = await fetch(url, {
