@@ -38,12 +38,35 @@
     </div>
 
     <!-- Mockup Description -->
-    <a-textarea
-      :rows="4"
-      v-model:value="mockup_style_description"
-      placeholder="Describe what background you want for mockup"
-    />
+      <a-radio-group v-model:value="type_input_prompt">
+        <a-radio-button value="enter"><EditOutlined/> Enter</a-radio-button>
+        <a-radio-button value="select"><SelectOutlined/> Select</a-radio-button>
+      </a-radio-group>
 
+      <div v-if="type_input_prompt==='enter'" style="padding-top:10px;padding-bottom:10px;">
+      <a-textarea
+        :rows="4"
+        v-model:value="mockup_style_description"
+        placeholder="Describe what background you want for mockup" />
+      
+      </div>
+      
+      <div v-if="type_input_prompt === 'select'" style="padding-top:10px; padding-bottom:10px;">
+  <div class="view-cards-grid">
+    <div
+      v-for="item in list_in_prompts"
+      :key="item.key"
+      class="view-card"
+      :class="{ 'view-card--active': mockup_style_description === item.prompt }"
+      @click="mockup_style_description = item.prompt"
+    >
+      <!-- <div class="view-card__icon">{{ item.icon }}</div> -->
+      <div class="view-card__title">{{ item.icon }}&nbsp;{{ item.title }}</div>
+      <div class="view-card__check" v-if="mockup_style_description === item.prompt">✓</div>
+    </div>
+  </div>
+</div>
+  
     <!-- Variations -->
     <div class="section">
       <div class="section-title">Variations</div>
@@ -102,7 +125,7 @@
 
 
 <script>
-import { DeleteOutlined, CloudUploadOutlined } from '@ant-design/icons-vue';
+import { DeleteOutlined, CloudUploadOutlined,SelectOutlined,EditOutlined   } from '@ant-design/icons-vue';
 import PlanUpgradeModal from '@/views/catalogue/PlanUpgradeModal.vue';
 
 export default {
@@ -110,7 +133,8 @@ export default {
   components: {
     DeleteOutlined,
     CloudUploadOutlined,
-    PlanUpgradeModal
+    PlanUpgradeModal,
+    SelectOutlined,EditOutlined
   },
   props: {
     base_image_url: {
@@ -130,6 +154,34 @@ export default {
   },
   data() {
     return {
+     list_in_prompts: [
+        {
+          key: 'front_view',
+          title: 'Front View',
+          icon: '⬛',
+          prompt: 'Front view of the product, pure white background, white floor, centered, clean studio lighting, no shadows, no props'
+        },
+        {
+          key: 'back_view',
+          title: 'Back View',
+          icon: '🔲',
+          prompt: 'Back view of the product, pure white background, white floor, centered, clean studio lighting, no shadows, no props'
+        },
+        {
+          key: 'right_view',
+          title: 'Right Side View',
+          icon: '▶️',
+          prompt: 'Right side view of the product, pure white background, white floor, centered, clean studio lighting, no shadows, no props'
+        },
+        {
+          key: 'left_view',
+          title: 'Left Side View',
+          icon: '◀️',
+          prompt: 'Left side view of the product, pure white background, white floor, centered, clean studio lighting, no shadows, no props'
+        },
+      ],
+
+      type_input_prompt:'enter',
       fileList: [],
       generating: false,
       uploadedImage: this.base_image_url || '',
@@ -577,5 +629,86 @@ async handleGenerate() {
 
 .delete-button:hover {
   background: rgba(255, 13, 13, 0.8);
+}
+
+
+.available-mockup-preprompts{
+  width:100%;
+  padding:10px;
+  border:1px solid rgba(0,0,0,0.2);
+  margin-bottom: 10px;
+  cursor:pointer;
+}
+.available-mockup-preprompts:hover{
+  border:1px solid rgba(0,0,255);
+}
+
+
+.view-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.view-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 8px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 10px;
+  cursor: pointer;
+  background: #fafafa;
+  transition: all 0.2s ease;
+  user-select: none;
+  gap: 6px;
+}
+
+.view-card:hover {
+  border-color: #3B63FB;
+  background: #f0f4ff;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(59, 99, 251, 0.12);
+}
+
+.view-card--active {
+  border-color: #3B63FB;
+  background: #eef2ff;
+  box-shadow: 0 0 0 2px rgba(59, 99, 251, 0.2);
+}
+
+.view-card__icon {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.view-card__title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #262626;
+  text-align: center;
+  line-height: 1.3;
+}
+
+.view-card--active .view-card__title {
+  color: #3B63FB;
+}
+
+.view-card__check {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #3B63FB;
+  background: #dde6ff;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

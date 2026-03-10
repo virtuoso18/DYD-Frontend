@@ -81,6 +81,14 @@
             </svg>
           </button>
         </span>
+        <span v-if="appliedFilters.selectedRoomTypes.length > 0" class="filter-chip">
+          Room: {{ appliedFilters.selectedRoomTypes.length }} selected
+          <button class="chip-remove" @click="removeFilter('selectedRoomTypes')">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+              <path d="M1 1L9 9M9 1L1 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </span>
         <span v-if="appliedFilters.sort_by" class="filter-chip">
           Sort: {{ sortByLabel }}
           <button class="chip-remove" @click="removeFilter('sort_by')">
@@ -108,7 +116,7 @@
         <div v-for="(item, index) in catalogItems" :key="index" style="
 background: #f2f2f2;
 border: none;
-max-height: 270px;
+max-height: 250px;
 border-radius: 4px;
 padding:5px;" @click="selectTexture(item.id)"
 :style="selected_texture===item.id ? 'border:1px solid blue': ''">
@@ -214,10 +222,18 @@ padding:5px;" @click="selectTexture(item.id)"
         Apply
       </a-button>
     </div>
-
+<!-- Backdrop (mobile only) -->
+<transition name="fade">
+  <div 
+    v-if="showFilterDrawer && isMobile" 
+    class="filter-backdrop"
+    @click="showFilterDrawer = false"
+  />
+</transition>
     <!-- ===== FILTER POPOVER (inline, slides from left) ===== -->
-    <transition name="filter-pop">
-      <div v-if="showFilterDrawer" class="filter-popover">
+<transition :name="isMobile ? 'filter-bottom' : 'filter-pop'">
+  <div v-if="showFilterDrawer" class="filter-popover" :class="{ 'filter-popover--mobile': isMobile }">
+
         <div class="filter-drawer-header">
           <span class="filter-drawer-title">Filters</span>
           <button class="drawer-close-btn" @click="showFilterDrawer = false">
@@ -245,7 +261,7 @@ padding:5px;" @click="selectTexture(item.id)"
           </div> -->
 
           <!-- Price Range (Slider) -->
-          <div class="filter-group">
+          <!-- <div class="filter-group">
             <div class="filter-group-label">Price Range (per sqm)</div>
             <a-slider
               :min="0"
@@ -257,7 +273,24 @@ padding:5px;" @click="selectTexture(item.id)"
             <p class="price-range-label">
               ${{ draftFilters.priceRange[0].toLocaleString('en-IN') }} – ${{ draftFilters.priceRange[1].toLocaleString('en-IN') }}
             </p>
+          </div> -->
+<!-- ── Room Type ── -->
+          <div class="filter-group" v-if="availableRoomTypes.length > 0">
+            <div class="filter-group-label">Room Type</div>
+            <div class="filter-style-options">
+              <button
+                v-for="room in availableRoomTypes"
+                :key="room.id"
+                class="sort-option-btn"
+                :class="{ active: draftFilters.selectedRoomTypes.includes(room.id) }"
+                @click="toggleDraftRoomType(room.id)"
+              >
+                {{ room.name }}
+                <span style="opacity:0.6;font-size:11px;">({{ room.product_count }})</span>
+              </button>
+            </div>
           </div>
+
 
           <!-- Style Filter -->
           <div class="filter-group">
@@ -273,6 +306,7 @@ padding:5px;" @click="selectTexture(item.id)"
               </button>
             </div>
           </div>
+          
 
           <!-- Color Filter (Dynamic from API) -->
           <div class="filter-group">
@@ -324,6 +358,8 @@ export default {
   name: 'AiCatalog',
   data() {
     return {
+          isMobile: window.innerWidth < 768,
+
       searchText: '',
       loading: false,
       loadingMore: false,
@@ -345,6 +381,7 @@ export default {
 
       // Dynamic colors from API
       availableColors: [],
+      availableRoomTypes: [],
 
       // Filter Drawer
       showFilterDrawer: false,
@@ -364,6 +401,7 @@ export default {
           boho: false,
           other: false,
         },
+        selectedRoomTypes: []
       },
 
       // Applied filters (used in API calls)
@@ -381,6 +419,7 @@ export default {
           boho: false,
           other: false,
         },
+        selectedRoomTypes: []
       },
 
       sortOptions: [
@@ -414,7 +453,8 @@ export default {
       const f = this.appliedFilters;
       const priceChanged = f.priceRange[0] > 0 || f.priceRange[1] < 500000;
       const stylesActive = Object.values(f.styles).some(Boolean);
-      return !!(f.sort_by || priceChanged || f.selectedColors.length > 0 || stylesActive);
+      return !!(f.sort_by || priceChanged || f.selectedColors.length > 0 || stylesActive || f.selectedRoomTypes.length > 0);
+
     },
     activeFilterCount() {
       const f = this.appliedFilters;
@@ -423,6 +463,7 @@ export default {
       if (f.priceRange[0] > 0 || f.priceRange[1] < 500000) count++;
       if (f.selectedColors.length > 0) count++;
       if (Object.values(f.styles).some(Boolean)) count++;
+      if (f.selectedRoomTypes.length > 0) count++;
       return count;
     },
     sortByLabel() {
@@ -450,36 +491,37 @@ export default {
   },
   methods: {
     // ---- Load colors from API (same as WallProducts.vue) ----
-    async loadAvailableColors() {
-      try {
-        this.loadingColors = true;
-        const brand = this.$route.query.brand;
-        const url = brand
-          ? `${this.$store.state.root_api}room/api/walls/colors/?brand=${brand}`
-          : `${this.$store.state.root_api}room/api/walls/colors/`;
+   async loadAvailableColors() {
+  try {
+    this.loadingColors = true;
+    const brand = this.$route.query.brand;
+    const url = brand
+      ? `${this.$store.state.root_api}room/api/walls/colors/?brand=${brand}`
+      : `${this.$store.state.root_api}room/api/walls/colors/`;
 
-        const response = await fetch(url, {
-          method: 'GET',
-          headers: {
-            Authorization: `Token ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json',
-          },
-        });
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        Authorization: `Token ${localStorage.getItem('token')}`,
+        'Content-Type': 'application/json',
+      },
+    });
 
-        const data = await response.json();
-        if (data.success) {
-          this.availableColors = data.data.map((color) => ({
-            id: color.color_hex,
-            title: color.title,
-            color_hex: color.color_hex,
-          }));
-        }
-      } catch (error) {
-        console.error('Failed to load colors:', error);
-      } finally {
-        this.loadingColors = false;
-      }
-    },
+    const data = await response.json();
+    if (data.success) {
+      this.availableColors = data.data.map((color) => ({
+        id: color.color_hex,
+        title: color.title,
+        color_hex: color.color_hex,
+      }));
+      this.availableRoomTypes = data.room_types || [];   // 👈 Add
+    }
+  } catch (error) {
+    console.error('Failed to load colors:', error);
+  } finally {
+    this.loadingColors = false;
+  }
+},
 
     // Toggle color in draft filters
     toggleDraftColor(hexCode) {
@@ -490,6 +532,11 @@ export default {
         this.draftFilters.selectedColors.push(hexCode);
       }
     },
+    toggleDraftRoomType(roomTypeId) {
+      const idx = this.draftFilters.selectedRoomTypes.indexOf(roomTypeId);
+      if (idx > -1) this.draftFilters.selectedRoomTypes.splice(idx, 1);
+      else          this.draftFilters.selectedRoomTypes.push(roomTypeId);
+    },
 
     // Open drawer and sync draft from applied
     openFilterDrawer() {
@@ -498,6 +545,7 @@ export default {
         priceRange: [...this.appliedFilters.priceRange],
         selectedColors: [...this.appliedFilters.selectedColors],
         styles: { ...this.appliedFilters.styles },
+        selectedRoomTypes: [...this.appliedFilters.selectedRoomTypes]
       };
       this.showFilterDrawer = true;
     },
@@ -543,6 +591,9 @@ export default {
         // Colors
         if (f.selectedColors.length > 0) {
           url += `&color_hex=${encodeURIComponent(f.selectedColors.join(','))}`;
+        }
+        if (f.selectedRoomTypes.length > 0) {
+          url += `&room_type=${encodeURIComponent(f.selectedRoomTypes.join(','))}`;
         }
 
         // Styles
@@ -638,6 +689,7 @@ export default {
         priceRange: [...this.draftFilters.priceRange],
         selectedColors: [...this.draftFilters.selectedColors],
         styles: { ...this.draftFilters.styles },
+        selectedRoomTypes: [...this.draftFilters.selectedRoomTypes]
       };
       this.showFilterDrawer = false;
       this.currentPage = 1;
@@ -659,6 +711,7 @@ export default {
           boho: false,
           other: false,
         },
+        selectedRoomTypes: []
       };
     },
 
@@ -667,6 +720,7 @@ export default {
         sort_by: '',
         priceRange: [0, 500000],
         selectedColors: [],
+        selectedRoomTypes: [],
         styles: {
           modern: false,
           scandinavian: false,
@@ -695,6 +749,9 @@ export default {
         const reset = { modern: false, scandinavian: false, classic: false, minimalist: false, industrial: false, rustic: false, boho: false, other: false };
         this.appliedFilters.styles = { ...reset };
         this.draftFilters.styles   = { ...reset };
+      } else if (type === 'selectedRoomTypes') {    
+        this.appliedFilters.selectedRoomTypes = [];
+        this.draftFilters.selectedRoomTypes   = [];
       } else {
         this.appliedFilters[type] = '';
         this.draftFilters[type]   = '';
@@ -1162,6 +1219,18 @@ export default {
   }
 }
 
+.btn-apply-filters {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  background: #2a52e0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.15s;
+}
 .btn-apply-filters:hover { background: #2a52e0; }
 
 /* Filter popover slide-from-left animation */
@@ -1178,5 +1247,65 @@ export default {
 .filter-pop-enter-to,
 .filter-pop-leave-from {
   transform: translateX(0);
+}
+/* ── Backdrop ── */
+.filter-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 998;
+}
+
+.fade-enter-active, .fade-leave-active { transition: opacity 0.25s; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
+
+/* ── Mobile bottom drawer override ── */
+.filter-popover--mobile {
+  position: fixed !important;
+  top: auto !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  height: 80vh !important;
+  border-radius: 16px 16px 0 0 !important;
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.15) !important;
+  z-index: 999 !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* drag handle bar on mobile */
+.filter-popover--mobile::before {
+  content: '';
+  display: block;
+  width: 36px;
+  height: 4px;
+  background: #ddd;
+  border-radius: 2px;
+  margin: 10px auto 0;
+  flex-shrink: 0;
+}
+
+/* ── Bottom slide animation ── */
+.filter-bottom-enter-active,
+.filter-bottom-leave-active {
+  transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.filter-bottom-enter-from,
+.filter-bottom-leave-to { transform: translateY(100%); }
+.filter-bottom-enter-to,
+.filter-bottom-leave-from { transform: translateY(0); }
+
+/* ── Fix mobile page scroll being blocked ── */
+@media (max-width: 767px) {
+  .ai-catalog-section {
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .scrollable-content {
+    overflow: visible !important;
+    height: auto !important;
+  }
 }
 </style>

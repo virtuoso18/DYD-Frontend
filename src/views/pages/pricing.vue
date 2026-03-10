@@ -174,6 +174,7 @@
               <p class="plan-subtitle">Basic Plan</p>
             </div>
             <div class="price-section">
+
               <span class="currency">$</span>
               <span class="price">{{ data.business_plan_list.basic.monthly_charges }}</span>
               <p class="billing-period">{{data.business_plan_list.basic.plan_credits}} credits / month</p>
@@ -303,7 +304,7 @@
         </div>
         <div class="topup-offer">
           <div class="credits-amount">1,000 <span class="credits-label">credits</span></div>
-          <button class="buy-btn" @click="showCreditTopupModal = true">Explore and Buy</button>
+          <a-button type="primary" style="width:100%" size="large" @click="showCreditTopupModal = true">Explore and Buy</a-button>
         </div>
       </div>
       <br><br>
@@ -327,7 +328,7 @@
       >
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'action'">
-            <a-button type="primary" @click="handleBuyCredit(record)">
+            <a-button type="primary" @click="handleBuyCredit(record)" style="width:100%">
               Buy Now
             </a-button>
           </template>
@@ -802,12 +803,12 @@ export default {
 }
 
 .basic-btn, .premium-btn {
-  background: #4F46E5;
+  background: #3B63FB;
   color: white;
 }
 
 .basic-btn:hover:not(:disabled), .premium-btn:hover:not(:disabled) {
-  background: #4338CA;
+  background: #1e4bff;
 }
 
 .standard-btn {

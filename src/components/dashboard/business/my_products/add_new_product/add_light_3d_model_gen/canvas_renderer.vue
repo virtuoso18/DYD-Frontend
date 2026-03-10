@@ -630,6 +630,7 @@ import { ref, onMounted, onBeforeUnmount, watch, nextTick } from "vue";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { MeshoptDecoder } from "three/examples/jsm/libs/meshopt_decoder.module.js";
 
 const emit = defineEmits(["clicked-add-product","updateInputImage"]);
 const canvasContainer = ref(null);
@@ -837,6 +838,7 @@ function loadModel() {
   modelLoaded.value = false
 
   const loader = new GLTFLoader()
+  loader.setMeshoptDecoder(MeshoptDecoder)
   loader.load(
     props.glbModelUrl,
     (gltf) => {

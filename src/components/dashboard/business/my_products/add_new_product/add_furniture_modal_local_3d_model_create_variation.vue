@@ -378,57 +378,82 @@
                 </div>
     
                 <!-- Category, Type, Price Row -->
-                <a-row :gutter="12" style="margin-bottom: 16px;">
-                  <a-col :span="12">
-           
-                 
-                       
-    <div style="margin-bottom: 16px;">
-      <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">
-        Category <span style="color: red;">*</span>
-      </label>
-      
-      <a-select
-        v-model:value="productForm.category_name"
-        placeholder="Search and select category"
-        style="width: 100%;"
-        mode="tags"
-        :style="{ background: '#f3f4f6' }"
-        :options="categoryOptions"
-        :loading="loadingCategories"
-        :filter-option="false"
-        :allow-clear="true"
-        show-search
-        @search="handleCategorySearch"
-        @change="handleCategoryChange"
-        @focus="handleSelectFocus"
-      >
-      </a-select>
-      
-    </div>
-                  </a-col>
-                  <a-col :span="12">
-                    <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Type</label>
-                    <a-select 
-                      v-model:value="productForm.furniture_type" 
-                      placeholder="Modern"
-                      style="width: 100%;"
-                      :style="{ background: '#f3f4f6' }"
-                    >
-                      <a-select-option v-for="type in types" :key="type" :value="type">{{ type }}</a-select-option>
-                    </a-select>
-                  </a-col>
-                  <a-col :span="24">
-                    <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Price <span style="color: red;">*</span></label>
-                    <a-input-number
-                      v-model:value="productForm.pricing.price" 
-                      :min="0"
-                      :step="0.01"
-                      placeholder="680"
-                      style="width: 100%; border-radius: 6px; background: #f3f4f6; border: 1px solid #e5e7eb;"
-                    />
-                  </a-col>
-                </a-row>
+                 <a-row :gutter="12" style="margin-bottom: 16px;">
+                                  <a-col :span="6">
+                                    <div style="margin-bottom: 16px;">
+                                      <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">
+                                        Room Type <span style="color: red;">*</span>
+                                      </label>
+                                      <a-select
+                                        v-model:value="selectedRoomType"
+                                        placeholder="Select room type"
+                                        style="width: 100%;"
+                                        :style="{ background: '#f3f4f6' }"
+                                        :loading="loadingRoomTypes"
+                                        :allow-clear="true"
+                                        @change="handleRoomTypeChange"
+                                      >
+                                        <a-select-option
+                                          v-for="rt in roomTypes"
+                                          :key="rt.id"
+                                          :value="rt.id"
+                                        >
+                                          {{ rt.name }}
+                                        </a-select-option>
+                                      </a-select>
+                                    </div>
+                                  </a-col>
+                                  <a-col :span="6">
+                           
+                                 
+                                       
+                    <div style="margin-bottom: 16px;">
+                      <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">
+                        Category <span style="color: red;">*</span>
+                      </label>
+                      
+                      <a-select
+                        v-model:value="productForm.category_name"
+                        placeholder="Search and select category"
+                        style="width: 100%;"
+                        mode="tags"
+                        :style="{ background: '#f3f4f6' }"
+                        :options="categoryOptions"
+                        :loading="loadingCategories"
+                        :filter-option="false"
+                        :allow-clear="true"
+                        show-search
+                        :disabled="!selectedRoomType"
+                        @search="handleCategorySearch"
+                        @change="handleCategoryChange"
+                        @focus="handleSelectFocus"
+                      >
+                      </a-select>
+                      
+                    </div>
+                                  </a-col>
+                                  <a-col :span="6">
+                                    <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Type <span style="color: red;">*</span> </label>
+                                    <a-select 
+                                      v-model:value="productForm.furniture_type" 
+                                      placeholder="Modern"
+                                      style="width: 100%;"  
+                                      :style="{ background: '#f3f4f6' }"
+                                    >
+                                      <a-select-option v-for="type in types" :key="type" :value="type">{{ type }}</a-select-option>
+                                    </a-select>
+                                  </a-col>
+                                  <a-col :span="6">
+                                    <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Price <span style="color: red;">*</span></label>
+                                    <a-input-number
+                                      v-model:value="productForm.pricing.price" 
+                                      :min="0"
+                                      :step="0.01"
+                                      placeholder="680"
+                                      style="width: 100%; border-radius: 6px; background: #f3f4f6; border: 1px solid #e5e7eb;"
+                                    />
+                                  </a-col>
+                                </a-row>
     
                 <!-- Dimensions Section -->
                 <div style="margin-bottom: 20px;">
@@ -801,7 +826,7 @@ export default {
       default: () => ({
         name: 'demo product',
         description: 'description sample',
-        category_name: 'Chair',
+        category_name: null,
         furniture_type: '',
         pricing: { price: 10 },
         dimensions: { height: 1, length: 1, width: 2 },
@@ -878,6 +903,10 @@ export default {
       categoryOptions: [],
       allCategories: [],
       loadingCategories: false,
+      selectedRoomType: null,
+      roomTypes: [],
+      loadingRoomTypes: false,
+      selectedRoomTypeName: null,
       categorySearchError: null,
       categorySearchTimeout: null,
       
@@ -944,8 +973,8 @@ export default {
       console.log('🚀 Component mounted, fetching 3D model details...');
       this.get3dRenderedModelDetails(this.rendered_modal_3D_id);
     }
-    
-    this.loadInitialCategories();
+    this.loadRoomTypes();
+    // this.loadInitialCategories();
     this.loadAvailableTextures();
     
     // ========== NEW: Initialize pagination ==========
@@ -960,6 +989,41 @@ export default {
      * Loads the next batch of 3D models from the API
      * Appends them to the existing list for infinite scroll effect
      */
+     handleRoomTypeChange(value) {
+      console.log(' Room type changed:', value);
+      const selectedRoom = this.roomTypes.find(rt => rt.id === value);
+      this.selectedRoomType = value;
+      this.selectedRoomTypeName = selectedRoom ? selectedRoom.name : null;
+      // Reset category selection when room type changes
+      this.productForm.category_name = [];
+      this.categoryOptions = [];
+      this.allCategories = [];
+
+      if (value) {
+        this.loadInitialCategories();
+      }
+    },
+    async loadRoomTypes() {
+      try {
+        this.loadingRoomTypes = true;
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${this.$store.state.root_api}product/api/room-types/`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${token}`
+          }
+        });
+        const result = await response.json();
+        this.roomTypes = result || [];
+        console.log(' Room types loaded:', this.roomTypes.length);
+      } catch (error) {
+        console.error(' Error loading room types:', error);
+        this.roomTypes = [];
+      } finally {
+        this.loadingRoomTypes = false;
+      }
+    },
     async loadMoreModels() {
       // Prevent multiple simultaneous requests
       if (this.loadingMoreModels || !this.pagination.hasMoreModels) {
@@ -1322,8 +1386,8 @@ export default {
         this.loadingCategories = true;
         const store = this.$store;
         const token = localStorage.getItem('token');
-        
-        const response = await fetch(`${store.state.root_api}product/api/categories/`, {
+        const roomTypeParam = this.selectedRoomType ? `?room_type=${encodeURIComponent(this.selectedRoomType)}` : '';
+        const response = await fetch(`${store.state.root_api}product/api/categories/${roomTypeParam}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -1376,7 +1440,7 @@ export default {
           const token = localStorage.getItem('token');
           
           const response = await fetch(
-            `${store.state.root_api}product/api/categories/search/?q=${encodeURIComponent(searchValue)}`,
+            `${store.state.root_api}product/api/categories/?q=${encodeURIComponent(searchValue)}`,
             {
               method: 'GET',
               headers: {
@@ -1534,6 +1598,10 @@ export default {
     },
 
     resetForm() {
+    this.selectedRoomType = null;
+    this.categoryOptions = [];
+    this.allCategories = [];
+
       this.initializeFormWithDefaults(this.defaultValues);
       
       if (!this.defaultValues.modelUrl && this.local3dModelUrl) {
@@ -1722,10 +1790,10 @@ export default {
         this.$message.error('At least one product image is required');
         return false;
       }
-      if (!this.local3dModelUrl && !this.rendered_modal_3D_id) {
-        console.error('3D model is required');
-        return false;
-      }
+      // if (!this.local3dModelUrl && !this.rendered_modal_3D_id) {
+      //   console.error('3D model is required');
+      //   return false;
+      // }
       return true;
     },
 
@@ -1795,7 +1863,7 @@ export default {
         if (textureIds.length > 0) {
           formData.append('texture_ids', JSON.stringify(textureIds));
         }
-
+        formData.append('room_type_name', this.selectedRoomTypeName);
         const response = await fetch(`${store.state.root_api}product/api-product-owner/products/`, {
           method: 'POST',
           headers: { 

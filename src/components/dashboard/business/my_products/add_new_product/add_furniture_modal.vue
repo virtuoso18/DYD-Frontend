@@ -281,55 +281,78 @@
 
       <!-- Category, Type, Price Row -->
       <a-row :gutter="12" style="margin-bottom: 16px;">
-        <a-col :span="8">
-        
-             
-<div style="margin-bottom: 16px;">
-<label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">
-Category <span style="color: red;">*</span>
-</label>
+  <!-- Room Type -->
+  <a-col :span="6">
+    <div style="margin-bottom: 16px;">
+      <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">
+        Room Type <span style="color: red;">*</span>
+      </label>
+      <a-select
+        v-model:value="selectedRoomType"
+        placeholder="Select room type"
+        style="width: 100%;"
+        :style="{ background: '#f3f4f6' }"
+        :loading="loadingRoomTypes"
+        :allow-clear="true"
+        @change="handleRoomTypeChange"
+      >
+        <a-select-option v-for="rt in roomTypes" :key="rt.id" :value="rt.id">
+          {{ rt.name }}
+        </a-select-option>
+      </a-select>
+    </div>
+  </a-col>
 
-<a-select
-v-model:value="productForm.category_name"
-placeholder="Search and select category"
-style="width: 100%;"
-mode="tags"
-:style="{ background: '#f3f4f6' }"
-:options="categoryOptions"
-:loading="loadingCategories"
-:filter-option="false"
-:allow-clear="true"
-show-search
-@search="handleCategorySearch"
-@change="handleCategoryChange"
-@focus="handleSelectFocus"
->
-</a-select>
+  <!-- Category -->
+  <a-col :span="6">
+    <div style="margin-bottom: 16px;">
+      <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">
+        Category <span style="color: red;">*</span>
+      </label>
+      <a-select
+        v-model:value="productForm.category_name"
+        placeholder="Search and select category"
+        style="width: 100%;"
+        mode="tags"
+        :style="{ background: '#f3f4f6' }"
+        :options="categoryOptions"
+        :loading="loadingCategories"
+        :filter-option="false"
+        :allow-clear="true"
+        show-search
+        :disabled="!selectedRoomType"
+        @search="handleCategorySearch"
+        @change="handleCategoryChange"
+        @focus="handleSelectFocus"
+      />
+    </div>
+  </a-col>
 
-</div>
-        </a-col>
-        <a-col :span="8">
-          <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Type<span style="color: red;">*</span></label>
-          <a-select 
-            v-model:value="productForm.furniture_type" 
-            placeholder="Modern"
-            style="width: 100%;"
-            :style="{ background: '#f3f4f6' }"
-          >
-            <a-select-option v-for="type in types" :key="type" :value="type">{{ type }}</a-select-option>
-          </a-select>
-        </a-col>
-        <a-col :span="8">
-          <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Price  <span style="color: red;">*</span></label>
-          <a-input-number
-            v-model:value="productForm.pricing.price" 
-            :min="0"
-            :step="0.01"
-            placeholder="680"
-            style="width: 100%; border-radius: 6px; background: #f3f4f6; border: 1px solid #e5e7eb;"
-          />
-        </a-col>
-      </a-row>
+  <!-- Type -->
+  <a-col :span="6">
+    <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Type <span style="color: red;">*</span></label>
+    <a-select
+      v-model:value="productForm.furniture_type"
+      placeholder="Modern"
+      style="width: 100%;"
+      :style="{ background: '#f3f4f6' }"
+    >
+      <a-select-option v-for="type in types" :key="type" :value="type">{{ type }}</a-select-option>
+    </a-select>
+  </a-col>
+
+  <!-- Price -->
+  <a-col :span="6">
+    <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Price <span style="color: red;">*</span></label>
+    <a-input-number
+      v-model:value="productForm.pricing.price"
+      :min="0"
+      :step="0.01"
+      placeholder="680"
+      style="width: 100%; border-radius: 6px; background: #f3f4f6; border: 1px solid #e5e7eb;"
+    />
+  </a-col>
+</a-row>
 
       <!-- Dimensions Section -->
      <!-- Dimensions Section -->
@@ -706,6 +729,10 @@ export default {
   
   data() {
     return {
+      selectedRoomType: null,
+      roomTypes: [],
+      loadingRoomTypes: false,
+      selectedRoomTypeName: null,
       isSaving: false,
       tempColor: '#000000',
       
@@ -781,6 +808,7 @@ export default {
   },
 
   mounted() {
+    this.loadRoomTypes();
     if (this.rendered_modal_3D_id) {
       console.log('🚀 Component mounted, fetching 3D model details...');
       this.get3dRenderedModelDetails(this.rendered_modal_3D_id);
@@ -791,7 +819,37 @@ export default {
   },
 
   methods: {
+    async loadRoomTypes() {
+        try {
+          this.loadingRoomTypes = true;
+          const token = localStorage.getItem('token');
+          const response = await fetch(`${this.$store.state.root_api}product/api/room-types/`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Token ${token}`
+            }
+          });
+          const result = await response.json();
+          this.roomTypes = result || [];
+        } catch (error) {
+          this.roomTypes = [];
+        } finally {
+          this.loadingRoomTypes = false;
+        }
+      },
 
+      handleRoomTypeChange(value) {
+        const selectedRoom = this.roomTypes.find(rt => rt.id === value);
+        this.selectedRoomType = value;
+        this.selectedRoomTypeName = selectedRoom ? selectedRoom.name : null;
+        this.productForm.category_name = [];
+        this.categoryOptions = [];
+        this.allCategories = [];
+        if (value) {
+          this.loadInitialCategories();
+        }
+      },
      async loadAvailableTextures() {
     try {
       this.loadingTextures = true;
@@ -888,8 +946,8 @@ export default {
         this.loadingCategories = true;
         const store = this.$store;
         const token = localStorage.getItem('token');
-        
-        const response = await fetch(`${store.state.root_api}product/api/categories/`, {
+        const roomTypeParam = this.selectedRoomType ? `?room_type=${encodeURIComponent(this.selectedRoomType)}` : '';
+        const response = await fetch(`${store.state.root_api}product/api/categories/${roomTypeParam}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -954,7 +1012,7 @@ export default {
           const token = localStorage.getItem('token');
           
           const response = await fetch(
-            `${store.state.root_api}product/api/categories/search/?q=${encodeURIComponent(searchValue)}`,
+            `${store.state.root_api}product/api/categories/?q=${encodeURIComponent(searchValue)}`,
             {
               method: 'GET',
               headers: {
@@ -1005,7 +1063,7 @@ export default {
     
   // Handle category selection - ONLY ALLOW ONE
   handleCategoryChange(value) {
-    console.log('📌 Category changed:', value);
+    console.log(' Category changed:', value);
     this.categorySearchError = null;
     
     // mode="tags" returns an array, but we want only one
@@ -1030,7 +1088,11 @@ export default {
   },
 
     resetForm() {
-      this.productForm = {
+        this.selectedRoomType = null;
+        this.selectedRoomTypeName = null;
+        this.categoryOptions = [];
+        this.allCategories = [];
+        this.productForm = {
         name: '',
         description: '',
         category_name: '',
@@ -1383,6 +1445,12 @@ removeColor(index) {
     this.$message.error('3D model reference is required');
     return false;
   }
+
+  if (!this.selectedRoomType) {
+    this.$message.error('Room type is required');
+    return false;
+  }
+
   return true;
 },
 
@@ -1604,7 +1672,7 @@ async handleSave() {
       uploaded_textures: uploadedTexturesCount,
       library_textures: textureIds.length
     });
-
+    formData.append('room_type_name', this.selectedRoomTypeName);
     const response = await fetch(`${store.state.root_api}product/api-product-owner/products/`, {
       method: 'POST',
       headers: { 

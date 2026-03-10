@@ -261,7 +261,24 @@
   />
 </div>
 
-  
+  <div style="margin-bottom: 16px;">
+  <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">
+    Room Type <span style="color: red;">*</span>
+  </label>
+  <a-select
+    v-model:value="selectedRoomType"
+    placeholder="Select room type"
+    style="width: 100%;"
+    :style="{ background: '#f3f4f6' }"
+    :loading="loadingRoomTypes"
+    :allow-clear="true"
+    @change="handleRoomTypeChange"
+  >
+    <a-select-option v-for="rt in roomTypes" :key="rt.id" :value="rt.id">
+      {{ rt.name }}
+    </a-select-option>
+  </a-select>
+</div>
         <!-- Texture Style, Brand, Model Number Row -->
         <a-row :gutter="12" style="margin-bottom: 16px;">
           <a-col :span="12">
@@ -367,7 +384,10 @@ export default defineComponent({
 
     const selectedImages = ref([]);
     const imageInput = ref(null);
-
+const selectedRoomType = ref(null);
+const roomTypes = ref([]);
+const loadingRoomTypes = ref(false);
+const selectedRoomTypeName = ref(null);
     // Computed property for primary image
     const primaryImage = computed(() => {
       return selectedImages.value.find(img => img.isPrimary) || selectedImages.value[0] || null;
@@ -406,6 +426,8 @@ export default defineComponent({
       
       selectedImages.value = [];
       tempColor.value = '#000000';
+      selectedRoomType.value = null;
+selectedRoomTypeName.value = null;
     };
 
     // Image handling functions
@@ -443,7 +465,32 @@ export default defineComponent({
       selectedImages.value.forEach(img => img.isPrimary = false);
       image.isPrimary = true;
     };
+const loadRoomTypes = async () => {
+  try {
+    loadingRoomTypes.value = true;
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${store.state.root_api}product/api/room-types/`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Token ${token}`
+      }
+    });
+    const result = await response.json();
+    roomTypes.value = result || [];
+  } catch (error) {
+    console.error('Error loading room types:', error);
+    roomTypes.value = [];
+  } finally {
+    loadingRoomTypes.value = false;
+  }
+};
 
+const handleRoomTypeChange = (value) => {
+  const found = roomTypes.value.find(rt => rt.id === value);
+  selectedRoomType.value = value;
+  selectedRoomTypeName.value = found ? found.name : null;
+};
     const removeImage = (index) => {
       const removedImage = selectedImages.value[index];
       selectedImages.value.splice(index, 1);
@@ -554,7 +601,9 @@ export default defineComponent({
             formData.append('primary_image_index', index);
           }
         });
-        
+        if (selectedRoomTypeName.value) {
+  formData.append('room_type_name', selectedRoomTypeName.value);
+}
         // API call for wall texture
         const response = await fetch(`${store.state.root_api}room/api-owner/wall/`, {
           method: 'POST',
@@ -603,10 +652,12 @@ export default defineComponent({
 
     // Watch for modal visibility changes
     watch(() => props.visible, (newValue) => {
-      if (!newValue) {
-        resetForm();
-      }
-    });
+  if (!newValue) {
+    resetForm();
+  } else {
+    loadRoomTypes(); // ← ADD THIS
+  }
+});
 
     return {
       form,
@@ -617,6 +668,12 @@ export default defineComponent({
       tempColor,
       textureStyles,
       presetColors,
+
+      selectedRoomType,
+roomTypes,
+loadingRoomTypes,
+handleRoomTypeChange,
+
       handleSave,
       handleCancel,
       uploadImages,

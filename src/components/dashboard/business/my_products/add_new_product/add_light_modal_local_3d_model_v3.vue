@@ -13,6 +13,13 @@
     <template #title>
       <div style="display: flex; align-items: center; justify-content: space-between; padding: 0;">
         <div style="display: flex; align-items: center;">
+          <!-- <a-button type="text" @click="handleCancel" style="padding: 4px; margin-right: 12px;" size="small">
+            <template #icon>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="15,18 9,12 15,6"></polyline>
+              </svg>
+            </template>
+          </a-button> -->
          <span className="whitespace-nowrap pr-2 sm:text-[18px]" style=" font-weight: 600; color: #1f2937;">Add New Product</span>
         </div>
         <div style="display: flex; gap: 12px;">
@@ -38,6 +45,36 @@
   >
                       <div style="position: relative; padding:10px;">
             
+                        <!-- 3D Model Upload Area (shown when no model is uploaded) -->
+                        <!-- <div 
+                          v-if="!local3dModelUrl"
+                          @drop.prevent="handleModelDrop"
+                          @dragover.prevent="isDragging = true"
+                          @dragleave.prevent="isDragging = false"
+                          @click="upload3dModel"
+                          :style="{
+                            border: isDragging ? '2px solid #3b82f6' : '2px dashed #d1d5db',
+                            borderRadius: '12px',
+                            padding: '40px 16px',
+                            background: isDragging ? '#f8faff' : '#f9fafb',
+                            minHeight: '250px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            cursor: 'pointer',
+                            transition: 'all 0.3s ease'
+                          }"
+                        >
+                          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" style="margin-bottom: 16px;">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                            <polyline points="3.27,6.96 12,12.01 20.73,6.96"></polyline>
+                            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                          </svg>
+                          <p style="font-size: 14px; color: #374151; font-weight: 500; margin-bottom: 8px;">Drag and drop 3D model here or click to upload</p>
+                          <p style="font-size: 12px; color: #6b7280; margin: 0;">Supported file format: .gltf / .glb</p>
+                          <p style="font-size: 12px; color: #6b7280; margin: 4px 0 0 0;">File size: 50MB</p>
+                        </div> -->
                            <router-link 
                   v-if="!local3dModelUrl"
                   :to="'/my-products/add-new-furniture'"
@@ -83,6 +120,15 @@
                             </svg>
                             3D View
                           </div>
+                          
+                          <!-- Change Model Button -->
+                          <!-- <a-button 
+                            @click="upload3dModel"
+                            style="position: absolute; top: 10px; right: 10px; background: white; border-radius: 6px; font-size: 11px;"
+                            size="small"
+                          >
+                            Change Model
+                          </a-button> -->
             
                           <!-- Display uploaded model info -->
                           <div style="margin-top: 12px;  background: #f8faff; border: 1px solid #e5e7eb; border-radius: 6px;">
@@ -164,6 +210,20 @@
               />
             </div>
                       </div>
+                       <!-- <div style="margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; padding: 12px; background: #f8faff; border-radius: 8px; border: 1px solid #e5e7eb;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2">
+                        <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+                      </svg>
+                      <span style="font-size: 13px; font-weight: 500; color: #374151;">Model Resizable</span>
+                    </div>
+                    
+                    <a-switch 
+                      v-model:checked="is_resizable"
+                      @change="handleResizableChange"
+                      style="background-color: #3b82f6;"
+                    />
+                       </div> -->
                         <select3d_model_for_color 
                  :list_history_generated_3d_models="list_history_generated_3d_models"
                  :loading_generated_models_history="loading_generated_models_history" 
@@ -207,7 +267,7 @@
                   
 
                     
-                            <!-- Right Column - Product Details -->
+                            <!-- Right Column - Product Details (keeping existing code) -->
                             <a-col
             :xs="24"
             :sm="24"
@@ -293,62 +353,37 @@
                                   />
                                 </div>
                     
-                                <!-- Room Type, Category, Type, Price Row -->
+                                <!-- Category, Type, Price Row -->
                                 <a-row :gutter="12" style="margin-bottom: 16px;">
-                                  <!-- Room Type -->
-                                  <a-col :span="6">
-                                    <div style="margin-bottom: 16px;">
-                                      <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">
-                                        Room Type <span style="color: red;">*</span>
-                                      </label>
-                                      <a-select
-                                        v-model:value="selectedRoomType"
-                                        placeholder="Select room type"
-                                        style="width: 100%;"
-                                        :style="{ background: '#f3f4f6' }"
-                                        :loading="loadingRoomTypes"
-                                        :allow-clear="true"
-                                        @change="handleRoomTypeChange"
-                                      >
-                                        <a-select-option
-                                          v-for="rt in roomTypes"
-                                          :key="rt.id"
-                                          :value="rt.id"
-                                        >
-                                          {{ rt.name }}
-                                        </a-select-option>
-                                      </a-select>
-                                    </div>
+                                  <a-col :span="8">
+                           
+                                 
+                                       
+                    <div style="margin-bottom: 16px;">
+                      <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">
+                        Category <span style="color: red;">*</span>
+                      </label>
+                      
+                      <a-select
+                        v-model:value="productForm.category_name"
+                        placeholder="Search and select category"
+                        style="width: 100%;"
+                        mode="tags"
+                        :style="{ background: '#f3f4f6' }"
+                        :options="categoryOptions"
+                        :loading="loadingCategories"
+                        :filter-option="false"
+                        :allow-clear="true"
+                        show-search
+                        @search="handleCategorySearch"
+                        @change="handleCategoryChange"
+                        @focus="handleSelectFocus"
+                      >
+                      </a-select>
+                      
+                    </div>
                                   </a-col>
-
-                                  <!-- Category -->
-                                  <a-col :span="6">
-                                    <div style="margin-bottom: 16px;">
-                                      <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">
-                                        Category <span style="color: red;">*</span>
-                                      </label>
-                                      <a-select
-                                        v-model:value="productForm.category_name"
-                                        placeholder="Search and select category"
-                                        style="width: 100%;"
-                                        mode="tags"
-                                        :style="{ background: '#f3f4f6' }"
-                                        :options="categoryOptions"
-                                        :loading="loadingCategories"
-                                        :filter-option="false"
-                                        :allow-clear="true"
-                                        show-search
-                                        :disabled="!selectedRoomType"
-                                        @search="handleCategorySearch"
-                                        @change="handleCategoryChange"
-                                        @focus="handleSelectFocus"
-                                      >
-                                      </a-select>
-                                    </div>
-                                  </a-col>
-
-                                  <!-- Type -->
-                                  <a-col :span="6">
+                                  <a-col :span="8">
                                     <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Type</label>
                                     <a-select 
                                       v-model:value="productForm.furniture_type" 
@@ -359,9 +394,7 @@
                                       <a-select-option v-for="type in types" :key="type" :value="type">{{ type }}</a-select-option>
                                     </a-select>
                                   </a-col>
-
-                                  <!-- Price -->
-                                  <a-col :span="6">
+                                  <a-col :span="8">
                                     <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Price <span style="color: red;">*</span></label>
                                     <a-input-number
                                       v-model:value="productForm.pricing.price" 
@@ -521,6 +554,171 @@
                                     </div>
                                   </div>
                                 </div>
+                    
+                                <!-- Textures Section -->
+                                <!-- <div style="margin-bottom: 20px;">
+                                  <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #374151;">Texture Images</label>
+                                  
+                                  <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 12px;">
+                                    
+                                   
+                                    <a-popover trigger="click" placement="bottom">
+                                      
+                                    
+                                      <template #title>
+                                        <a-button 
+                                      @click="uploadTexture"
+                                      style="border-radius: 6px; border: 2px dashed #d1d5db;"
+                                    >
+                                      <template #icon>
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                          <line x1="12" y1="5" x2="12" y2="19"></line>
+                                          <line x1="5" y1="12" x2="19" y2="12"></line>
+                                        </svg>
+                                      </template>
+                                      Upload Custom
+                                    </a-button>
+                                        <div style="display: flex; align-items: center; justify-content: space-between;">
+                                          <span>Select Texture from Library</span>
+                                          <a-spin v-if="loadingTextures" size="small" style="margin-left: 8px;" />
+                                        </div>
+                                      </template>
+                                      <template #content>
+                                        <div v-if="loadingTextures" style="text-align: center; padding: 20px;">
+                                          <a-spin />
+                                        </div>
+                                        <div v-else-if="availableTextures.length === 0" style="text-align: center; padding: 20px; color: #6b7280;">
+                                          <p style="font-size: 12px; margin: 0;">No textures available</p>
+                                        </div>
+                                        <div v-else style="display: grid; grid-template-columns: repeat(4, 60px); gap: 8px; max-height: 300px; overflow-y: auto; padding: 8px;">
+                                          <div
+                                            v-for="(texture, index) in availableTextures"
+                                            :key="index"
+                                            @click="addPresetTexture(texture)"
+                                            :style="{
+                                              width: '60px',
+                                              height: '60px',
+                                              borderRadius: '8px',
+                                              backgroundImage: `url('${getTextureUrl(texture.url)}')`,
+                                              backgroundSize: 'cover',
+                                              backgroundPosition: 'center',
+                                              cursor: 'pointer',
+                                              border: selectedTextures.some(t => t.id === texture.id) ? '2px solid #22c55e' : '2px solid #e5e7eb',
+                                              opacity: selectedTextures.some(t => t.id === texture.id) ? 0.6 : 1,
+                                              transition: 'all 0.2s ease'
+                                            }"
+                                            :title="texture.name"
+                                          >
+                                            <div v-if="selectedTextures.some(t => t.id === texture.id)" 
+                                              style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.3); border-radius: 6px;">
+                                              <svg width="20" height="20" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2">
+                                                <polyline points="20 6 9 17 4 12"></polyline>
+                                              </svg>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </template>
+                                      <a-button style="border-radius: 6px; border: 2px dashed #d1d5db;">
+                                        <template #icon>
+                                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <line x1="12" y1="8" x2="12" y2="16"></line>
+                                            <line x1="8" y1="12" x2="16" y2="12"></line>
+                                          </svg>
+                                        </template>
+                                        Select Texture
+                                      </a-button>
+                                    </a-popover>
+                                  </div>
+                                  <div v-if="selectedTextures.length > 0" style="margin-top: 12px;">
+                                    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                                      <div 
+                                        v-for="(texture, index) in selectedTextures" 
+                                        :key="index" 
+                                        style="position: relative;"
+                                      >
+                                        <div 
+                                          :style="{ 
+                                            width: '60px', 
+                                            height: '60px', 
+                                            backgroundImage: `url('${getTextureUrl(texture.url)}')`, 
+                                            backgroundSize: 'cover', 
+                                            backgroundPosition: 'center', 
+                                            borderRadius: '8px', 
+                                            border: '2px solid #e5e7eb', 
+                                            cursor: 'pointer',
+                                            transition: 'all 0.2s ease'
+                                          }"
+                                          :title="texture.name || 'Texture'"
+                                        ></div>
+                                        <div 
+                                          v-if="!texture.id"
+                                          style="position: absolute; left: -5px; bottom: -5px; background: #8b5cf6; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 10px; box-shadow: 0 2px 4px rgba(139, 92, 246, 0.3);"
+                                          title="Custom uploaded texture"
+                                        >
+                                          📤
+                                        </div>
+                                        <a-button 
+                                          type="text" 
+                                          size="small" 
+                                          @click="removeTexture(index)"
+                                          style="position: absolute; top: -8px; right: -8px; background: #ef4444; color: white; border-radius: 50%; width: 20px; height: 20px; padding: 0; min-width: 20px;"
+                                        >
+                                          <template #icon>
+                                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                              <line x1="18" y1="6" x2="6" y2="18"></line>
+                                              <line x1="6" y1="6" x2="18" y2="18"></line>
+                                            </svg>
+                                          </template>
+                                        </a-button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div> -->
+                    
+                                <!-- PBR Files Section -->
+                                <!-- <div style="margin-bottom: 20px;">
+                                  <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #374151;">PBR Files</label>
+                                  
+                                  <div style="cursor: pointer;" @click="uploadPbr">
+                                    <div style="width: 100%; height: 48px; background: #f3f4f6; border: 2px dashed #d1d5db; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                        <polyline points="17,8 12,3 7,8"></polyline>
+                                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                                      </svg>
+                                      <span style="font-size: 12px; color: #6b7280;">Upload PBR files (.pbr, .zip, .rar, etc.)</span>
+                                    </div>
+                                  </div>
+                    
+                                  <div v-if="selectedPbrFiles.length > 0" style="margin-top: 12px;">
+                                    <div v-for="(pbrFile, index) in selectedPbrFiles" :key="index" 
+                                        style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: #f8faff; border: 1px solid #e5e7eb; border-radius: 6px; margin-bottom: 6px;">
+                                      <div style="display: flex; align-items: center; gap: 8px;">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2">
+                                          <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"></path>
+                                        </svg>
+                                        <div>
+                                          <div style="font-size: 13px; font-weight: 500; color: #1f2937;">{{ pbrFile.name }}</div>
+                                          <div style="font-size: 11px; color: #6b7280;">{{ pbrFile.size }}</div>
+                                        </div>
+                                      </div>
+                                      <a-button 
+                                        type="text" 
+                                        size="small" 
+                                        @click="removePbrFile(index)"
+                                        style="color: #ef4444; padding: 4px;"
+                                      >
+                                        <template #icon>
+                                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                                          </svg>
+                                        </template>
+                                      </a-button>
+                                    </div>
+                                  </div>
+                                </div> -->
                               </div>
                             </a-col>
                   
@@ -541,7 +739,9 @@ import { computed } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import { message } from 'ant-design-vue';
+// import canvas_3d_model_renderer from "@/components/store/canvas_3d_model_renderer.vue"
 import canvas_3d_model_renderer from "@/components/dashboard/business/my_products/canvas_3d_model_renderer_light.vue"
+
 import select3d_model_for_color from '@/components/dashboard/business/my_products/add_color_3d_model/dyd_generated.vue'
 
 export default {
@@ -550,12 +750,13 @@ export default {
   visible: { type: Boolean, default: false },
   rendered_modal_3D_id: { type: String, default: "" },
   types: { type: Array, default: () => ['Modern','Scandinavian','Classic','Minimalist','Industrial','Rustic','Boho','other'] },
+  // Add this new prop
   defaultValues: { 
     type: Object, 
     default: () => ({
       name: 'demo product',
       description: 'description sample',
-      category_name: null,
+      category_name: 'Chair',
       furniture_type: 'Modern',
       pricing: { price: 10 },
       dimensions: { height: 1, length: 1, width: 2 },
@@ -568,7 +769,7 @@ export default {
   },
    prepopulatedData: { 
     type: Object, 
-    default: () => null
+    default: () => null  // Changed from defaultValues
   },
 },
   components: {
@@ -579,13 +780,6 @@ export default {
   
  data() {
   return {
-    // ===== ADDED: Room Type Properties (same as furniture) =====
-    selectedRoomType: null,
-    roomTypes: [],
-    loadingRoomTypes: false,
-    selectedRoomTypeName: null,
-    // ==========================================================
-
     isSaving: false,
     tempColor: '#000000',
     isDragging: false,
@@ -603,14 +797,15 @@ export default {
     loading_generated_models_history: true,
     list_history_generated_3d_models: [],
 
+    // ========== NEW: Pagination Properties ==========
     pagination: {
-        currentOffset: 0,
-        pageSize: 8,
-        totalCount: 0,
-        hasMoreModels: false
+        currentOffset: 0,      // Current pagination offset
+        pageSize: 8,          // Models per page
+        totalCount: 0,         // Total available models
+        hasMoreModels: false   // Whether more models exist
     },
     loadingMoreModels: false,
-
+    // Form data - initialized with defaultValues
     productForm: {
       name: this.defaultValues.name || '',
       description: this.defaultValues.description || '',
@@ -626,15 +821,17 @@ export default {
       }
     },
     
+    // Collections - initialized with defaultValues
     selectedImages: this.defaultValues.images || [],
     selectedColors: (this.defaultValues.colors || []).map((color, index) => ({
-      value: typeof color === 'string' ? color : color.value,
-      isPrimary: index === 0
-    })),
+    value: typeof color === 'string' ? color : color.value,
+    isPrimary: index === 0
+  })),
     selectedTextures: this.defaultValues.textures || [],
     selectedPbrFiles: this.defaultValues.pbrFiles || [],
     categories_available: [],
 
+    // Category search related
     categoryOptions: [],
     allCategories: [],
     loadingCategories: false,
@@ -655,12 +852,13 @@ export default {
     primaryImage() {
       return this.selectedImages.find(img => img.isPrimary) || this.selectedImages[0] || null;
     },
-    categoryNameDisplay() {
-      if (Array.isArray(this.productForm.category_name)) {
-        return this.productForm.category_name[0] || '';
-      }
-      return this.productForm.category_name || '';
+    // Display the selected category as string (not array)
+  categoryNameDisplay() {
+    if (Array.isArray(this.productForm.category_name)) {
+      return this.productForm.category_name[0] || '';
     }
+    return this.productForm.category_name || '';
+  }
   },
 
 watch: {
@@ -672,6 +870,7 @@ watch: {
       this.pagination.totalCount = 0;
       this.pagination.hasMoreModels = false;
       this.list_history_generated_3d_models = [];
+      // Load available textures when modal opens
       this.loadAvailableTextures();
       this.fetch3d_models_generated_by_user();
     }
@@ -683,6 +882,7 @@ watch: {
       this.loadInitialCategories();
     }
   },
+  // Add watcher for defaultValues
   defaultValues: {
     handler(newValues) {
       this.initializeFormWithDefaults(newValues);
@@ -693,10 +893,7 @@ watch: {
 },
 
  mounted() {
-  // ===== ADDED: Load room types on mount (same as furniture) =====
-  this.loadRoomTypes();
-  // ==============================================================
-
+  // Initialize with default values first
   this.initializeFormWithDefaults(this.defaultValues);
   
   if (this.rendered_modal_3D_id) {
@@ -710,46 +907,8 @@ watch: {
 },
 
   methods: {
-    // ===== ADDED: Room Type Methods (same as furniture) =====
-    handleRoomTypeChange(value) {
-      console.log('🏠 Room type changed:', value);
-      const selectedRoom = this.roomTypes.find(rt => rt.id === value);
-      this.selectedRoomType = value;
-      this.selectedRoomTypeName = selectedRoom ? selectedRoom.name : null;
-      // Reset category selection when room type changes
-      this.productForm.category_name = [];
-      this.categoryOptions = [];
-      this.allCategories = [];
-
-      if (value) {
-        this.loadInitialCategories();
-      }
-    },
-
-    async loadRoomTypes() {
-      try {
-        this.loadingRoomTypes = true;
-        const token = localStorage.getItem('token');
-        const response = await fetch(`${this.$store.state.root_api}product/api/room-types/`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Token ${token}`
-          }
-        });
-        const result = await response.json();
-        this.roomTypes = result || [];
-        console.log('✅ Room types loaded:', this.roomTypes.length);
-      } catch (error) {
-        console.error('❌ Error loading room types:', error);
-        this.roomTypes = [];
-      } finally {
-        this.loadingRoomTypes = false;
-      }
-    },
-    // =======================================================
-
      async loadMoreModels() {
+      // Prevent multiple simultaneous requests
       if (this.loadingMoreModels || !this.pagination.hasMoreModels) {
         console.warn('⚠️ Cannot load more: already loading or no more models');
         return;
@@ -762,6 +921,12 @@ watch: {
         const offset = this.pagination.currentOffset;
         
         const url = `${this.$store.state.root_api}engine/generated-3d-models-list/?limit=${limit}&offset=${offset}&is_light_type=true`;
+
+        console.log(' Loading more 3D models...', { 
+          offset: offset,
+          limit: limit,
+          currentTotal: this.list_history_generated_3d_models.length
+        });
 
         const response = await fetch(url, {
           method: 'GET',
@@ -777,12 +942,18 @@ watch: {
 
         const responseData = await response.json();
 
+        // Append new models to the list
         if (!responseData.results?.error && responseData.results?.models) {
           const newModels = responseData.results.models;
           const previousCount = this.list_history_generated_3d_models.length;
           
+          // Append new models
           this.list_history_generated_3d_models.push(...newModels);
+
+          // Update offset for next request
           this.pagination.currentOffset += this.pagination.pageSize;
+
+          // Check if more models exist
           this.pagination.hasMoreModels = this.list_history_generated_3d_models.length < this.pagination.totalCount;
 
           console.log('✅ More models loaded:', {
@@ -807,7 +978,11 @@ watch: {
         this.loadingMoreModels = false;
       }
     },
+    // ================================================
 
+    /**
+     * Handle model selection from the history list
+     */
     async clickedModel(modelData) {
       console.log('🎯 Model clicked:', modelData);
       
@@ -826,6 +1001,8 @@ watch: {
 
       const fixedUrl = mediaUrl.replace(/\\/g, '/');
       const fullUrl = this.$store.state.root_media_api + fixedUrl;
+      
+      console.log('📥 Fetching model file from:', fullUrl);
 
       try {
         const response = await fetch(fullUrl);
@@ -835,6 +1012,8 @@ watch: {
         }
 
         const blob = await response.blob();
+        console.log('✅ File fetched, size:', blob.size, 'bytes');
+
         const fileName = modelData.name || 'model.glb';
         const file = new File([blob], fileName, { type: blob.type });
         
@@ -856,14 +1035,23 @@ watch: {
       }
     },
 
+    /**
+     * Fetch generated 3D models with pagination support
+     */
     async fetch3d_models_generated_by_user() {
       this.loading_generated_models_history = true;
 
       try {
+        
         const limit = this.pagination.pageSize;
         const offset = this.pagination.currentOffset;
         
         const url = `${this.$store.state.root_api}engine/generated-3d-models-list/?limit=${limit}&offset=${offset}&is_light_type=true`;
+
+        console.log('📡 Fetching 3D models history...', { 
+          offset: offset,
+          limit: limit 
+        });
 
         const response = await fetch(url, {
           method: 'GET',
@@ -878,17 +1066,36 @@ watch: {
         }
 
         const responseData = await response.json();
+        
+        console.log('✅ API Response received:', {
+          totalCount: responseData.count,
+          modelsCount: responseData.results?.models?.length || 0
+        });
 
+        // ========== NEW: Handle paginated response ==========
         if (!responseData.results?.error) {
+          // On first load (offset=0), initialize the list
           if (this.pagination.currentOffset === 0) {
             this.list_history_generated_3d_models = responseData.results.models || [];
+            console.log('📌 First batch loaded');
           } else {
+            // On "Load More", append to existing list
             this.list_history_generated_3d_models.push(...(responseData.results.models || []));
+            console.log('📌 Additional batch appended');
           }
 
+          // Update pagination info from API response
           this.pagination.totalCount = responseData.count || 0;
+
+          // Calculate if more models exist
           this.pagination.hasMoreModels = this.list_history_generated_3d_models.length < this.pagination.totalCount;
-          this.pagination.currentOffset = this.pagination.currentOffset + this.pagination.pageSize;
+          this.pagination.currentOffset = this.pagination.currentOffset + this.pagination.pageSize
+          console.log('✅ Pagination Status:', {
+            loaded: this.list_history_generated_3d_models.length,
+            total: this.pagination.totalCount,
+            hasMore: this.pagination.hasMoreModels,
+            // nextOffset: this.pagination.currentOffset + this.pagination.pageSize
+          });
 
         } else {
           throw new Error(responseData.results?.message || 'Failed to fetch models');
@@ -905,13 +1112,16 @@ watch: {
     },
 
     getImageUrl(imagePath) {
+      console.log(`${this.$store.state.root_media_api}${imagePath}`)
       return `${this.$store.state.root_media_api}${imagePath}`;
     },
-
     getTextureUrl(texture) {
+
+  
       if (texture && texture.startsWith('data:')) {
         return texture;
       }
+  
       if (texture) {
         return `${this.$store.state.root_media_api}${texture}`;
       }
@@ -919,256 +1129,327 @@ watch: {
     }, 
 
     handleResizableChange(value) {
-      this.is_resizable = value;
-    },
-
-    handlePaste(e) {
-      e.preventDefault();
-      const pastedText = (e.clipboardData || window.clipboardData).getData('text');
-      let cleanValue = pastedText.replace(/[^0-9.]/g, '');
-      const parts = cleanValue.split('.');
-      if (parts.length > 2) {
-        cleanValue = parts[0] + '.' + parts.slice(1).join('');
-      }
-      const input = e.target;
-      const start = input.selectionStart;
-      const end = input.selectionEnd;
-      const currentValue = input.value;
-      input.value = currentValue.substring(0, start) + cleanValue + currentValue.substring(end);
-      input.dispatchEvent(new Event('input'));
-    },
-
-    allowOnlyDecimal(e) {
-      const char = String.fromCharCode(e.keyCode);
-      const value = e.target.value;
-      if (!/[0-9]/.test(char) && char !== '.') {
-        e.preventDefault();
-        return;
-      }
-      if (char === '.' && value.includes('.')) {
-        e.preventDefault();
-        return;
-      }
-    },
-
-    initializeFormWithDefaults(defaults) {
-      this.productForm = {
-        name: defaults.name || '',
-        description: defaults.description || '',
-        category_name: defaults.category_name || [],
-        furniture_type: defaults.furniture_type || '',
-        pricing: { 
-          price: defaults.pricing?.price || null 
-        },
-        dimensions: { 
-          height: defaults.dimensions?.height || null,
-          length: defaults.dimensions?.length || null,
-          width: defaults.dimensions?.width || null
-        }
-      };
-
-      this.selectedImages = defaults.images || [];
-      this.selectedColors = (defaults.colors || []).map((color, index) => ({
-        value: typeof color === 'string' ? color : color.value,
-        isPrimary: index === 0
-      }));
-      this.selectedTextures = defaults.textures || [];
-      this.selectedPbrFiles = defaults.pbrFiles || [];
-      
-      if (defaults.modelUrl) {
-        this.local3dModelUrl = defaults.modelUrl;
-      }
-
-      if (defaults.category_name) {
-        if (typeof defaults.category_name === 'string') {
-          this.productForm.category_name = [defaults.category_name];
-        }
-        this.handleCategoryPreSelect(defaults.category_name);
-      }
-    },
-
-    async handleCategoryPreSelect(categoryName) {
-      if (this.allCategories.length > 0) {
-        const foundCategory = this.allCategories.find(cat => cat.name === categoryName);
-        if (foundCategory) {
-          const exists = this.categoryOptions.some(opt => opt.value === foundCategory.name);
-          if (!exists) {
-            this.categoryOptions.unshift({
-              label: foundCategory.name,
-              value: foundCategory.name,
-              data: foundCategory
-            });
-          }
-        }
-      }
-    },
     
-    // ===== UPDATED: loadInitialCategories now uses room_type filter (same as furniture) =====
-    async loadInitialCategories() {
+    this.is_resizable = value;
+    
+  },
+    // Handle paste event
+  handlePaste(e) {
+    e.preventDefault();
+    const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+    
+    // Clean the pasted text
+    let cleanValue = pastedText.replace(/[^0-9.]/g, '');
+    
+    // Ensure only one decimal point
+    const parts = cleanValue.split('.');
+    if (parts.length > 2) {
+      cleanValue = parts[0] + '.' + parts.slice(1).join('');
+    }
+    
+    // Insert cleaned value
+    const input = e.target;
+    const start = input.selectionStart;
+    const end = input.selectionEnd;
+    const currentValue = input.value;
+    
+    input.value = currentValue.substring(0, start) + cleanValue + currentValue.substring(end);
+    
+    // Trigger input event to update v-model
+    input.dispatchEvent(new Event('input'));
+  },
+  // Prevent non-numeric keys
+  allowOnlyDecimal(e) {
+    const char = String.fromCharCode(e.keyCode);
+    const value = e.target.value;
+    
+    // Allow: numbers, decimal point (only one), backspace, delete, tab, escape, enter
+    if (!/[0-9]/.test(char) && char !== '.') {
+      e.preventDefault();
+      return;
+    }
+    
+    // Prevent multiple decimal points
+    if (char === '.' && value.includes('.')) {
+      e.preventDefault();
+      return;
+    }
+  },
+    // Load all categories on component mount
+    initializeFormWithDefaults(defaults) {
+    // Update form fields
+    this.productForm = {
+      name: defaults.name || '',
+      description: defaults.description || '',
+      category_name: defaults.category_name || [],
+      furniture_type: defaults.furniture_type || '',
+      pricing: { 
+        price: defaults.pricing?.price || null 
+      },
+      dimensions: { 
+        height: defaults.dimensions?.height || null,
+        length: defaults.dimensions?.length || null,
+        width: defaults.dimensions?.width || null
+      }
+    };
+
+    // Update collections
+    this.selectedImages = defaults.images || [];
+    this.selectedColors = (defaults.colors || []).map((color, index) => ({
+    value: typeof color === 'string' ? color : color.value,
+    isPrimary: index === 0
+  })),
+    this.selectedTextures = defaults.textures || [];
+    this.selectedPbrFiles = defaults.pbrFiles || [];
+    
+    // Set 3D model URL if provided
+    if (defaults.modelUrl) {
+      this.local3dModelUrl = defaults.modelUrl;
+    }
+
+    // Handle category if provided
+    if (defaults.category_name) {
+      // If category_name is a string, convert to array for the select component
+      if (typeof defaults.category_name === 'string') {
+        this.productForm.category_name = [defaults.category_name];
+      }
+      
+      // Pre-select in dropdown if needed
+      this.handleCategoryPreSelect(defaults.category_name);
+    }
+  },
+
+  async handleCategoryPreSelect(categoryName) {
+    // If we already have categories loaded, find and select it
+    if (this.allCategories.length > 0) {
+      const foundCategory = this.allCategories.find(
+        cat => cat.name === categoryName
+      );
+      
+      if (foundCategory) {
+        // Ensure it's in the options
+        const exists = this.categoryOptions.some(
+          opt => opt.value === foundCategory.name
+        );
+        
+        if (!exists) {
+          this.categoryOptions.unshift({
+            label: foundCategory.name,
+            value: foundCategory.name,
+            data: foundCategory
+          });
+        }
+      }
+    }
+  },
+    
+async loadInitialCategories() {
+  try {
+    this.loadingCategories = true;
+    const store = this.$store;
+    const token = localStorage.getItem('token');
+    
+    const response = await fetch(`${store.state.root_api}product/api/categories/`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Token ${token}`
+      }
+    });
+    
+    const result = await response.json();
+    console.log("API Response:", result);
+    
+    if (result.success) {
+      // ✅ CORRECT: result.data is already an array
+      this.allCategories = result.data || [];
+      
+      console.log('✅ All categories:', this.allCategories);
+      
+      // Map to format needed by a-select
+      this.categoryOptions = this.allCategories.map(cat => ({
+        label: cat.name,
+        value: cat.name,
+        data: cat
+      }));
+      
+      console.log('✅ Category options for dropdown:', this.categoryOptions);
+      console.log('✅ Total categories loaded:', this.allCategories.length);
+      
+    } else {
+      throw new Error(result.message || 'Failed to load categories');
+    }
+  } catch (error) {
+    console.error('❌ Error loading categories:', error);
+    this.categorySearchError = 'Error loading categories';
+  } finally {
+    this.loadingCategories = false;
+  }
+},
+
+  // Handle search with API
+  async handleCategorySearch(searchValue) {
+    console.log('🔍 Searching categories:', searchValue);
+    
+    if (this.categorySearchTimeout) {
+      clearTimeout(this.categorySearchTimeout);
+    }
+    
+    // If empty, show all categories
+    if (!searchValue || searchValue.trim().length === 0) {
+      this.categoryOptions = this.allCategories.map(cat => ({
+        label: cat.name,
+        value: cat.name,
+        data: cat
+      }));
+      return;
+    }
+    
+    this.loadingCategories = true;
+    this.categorySearchError = null;
+    
+    // Debounce the search
+    this.categorySearchTimeout = setTimeout(async () => {
       try {
-        this.loadingCategories = true;
         const store = this.$store;
         const token = localStorage.getItem('token');
-        const roomTypeParam = this.selectedRoomType ? `?room_type=${encodeURIComponent(this.selectedRoomType)}` : '';
-        const response = await fetch(`${store.state.root_api}product/api/categories/${roomTypeParam}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Token ${token}`
+        
+        const response = await fetch(
+          `${store.state.root_api}product/api/categories/search/?q=${encodeURIComponent(searchValue)}`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Token ${token}`
+            }
           }
-        });
+        );
         
         const result = await response.json();
-        console.log("API Response:", result);
         
         if (result.success) {
-          this.allCategories = result.data || [];
-          this.categoryOptions = this.allCategories.map(cat => ({
+          // Format search results as options
+          this.categoryOptions = result.data.map(cat => ({
             label: cat.name,
             value: cat.name,
             data: cat
           }));
-          console.log('✅ Total categories loaded:', this.allCategories.length);
+          console.log('✅ Search results found:', this.categoryOptions.length);
         } else {
-          throw new Error(result.message || 'Failed to load categories');
+          this.categoryOptions = [];
+          console.log('ℹ️ No categories found for search:', searchValue);
         }
+        
       } catch (error) {
-        console.error('❌ Error loading categories:', error);
-        this.categorySearchError = 'Error loading categories';
+        console.error('❌ Error searching categories:', error);
+        this.categorySearchError = 'Error searching categories';
+        this.categoryOptions = [];
       } finally {
         this.loadingCategories = false;
       }
-    },
-    // =====================================================================================
+    }, 300); // 300ms debounce
+  },
 
-    async handleCategorySearch(searchValue) {
-      console.log('🔍 Searching categories:', searchValue);
-      
-      if (this.categorySearchTimeout) {
-        clearTimeout(this.categorySearchTimeout);
-      }
-      
-      if (!searchValue || searchValue.trim().length === 0) {
-        this.categoryOptions = this.allCategories.map(cat => ({
-          label: cat.name,
-          value: cat.name,
-          data: cat
-        }));
-        return;
-      }
-      
-      this.loadingCategories = true;
-      this.categorySearchError = null;
-      
-      this.categorySearchTimeout = setTimeout(async () => {
-        try {
-          const store = this.$store;
-          const token = localStorage.getItem('token');
-          
-          const response = await fetch(
-            `${store.state.root_api}product/api/categories/search/?q=${encodeURIComponent(searchValue)}`,
-            {
-              method: 'GET',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Token ${token}`
-              }
-            }
-          );
-          
-          const result = await response.json();
-          
-          if (result.success) {
-            this.categoryOptions = result.data.map(cat => ({
-              label: cat.name,
-              value: cat.name,
-              data: cat
-            }));
-            console.log('✅ Search results found:', this.categoryOptions.length);
-          } else {
-            this.categoryOptions = [];
-          }
-          
-        } catch (error) {
-          console.error('❌ Error searching categories:', error);
-          this.categorySearchError = 'Error searching categories';
-          this.categoryOptions = [];
-        } finally {
-          this.loadingCategories = false;
-        }
-      }, 300);
-    },
-
-    handleSelectFocus() {
-      if (this.categoryOptions.length === 0) {
-        this.categoryOptions = this.allCategories.map(cat => ({
-          label: cat.name,
-          value: cat.name,
-          data: cat
-        }));
-      }
-    },
+   // Handle when user focuses on the select
+  handleSelectFocus() {
+    console.log('🔍 Select focused - showing all categories');
+    if (this.categoryOptions.length === 0) {
+      this.categoryOptions = this.allCategories.map(cat => ({
+        label: cat.name,
+        value: cat.name,
+        data: cat
+      }));
+    }
+  },
   
-    handleCategoryChange(value) {
-      console.log('📌 Category changed:', value);
-      this.categorySearchError = null;
-      
-      if (Array.isArray(value)) {
-        if (value.length > 1) {
-          this.productForm.category_name = [value[value.length - 1]];
-        } else if (value.length === 1) {
-          this.productForm.category_name = value;
-        } else {
-          this.productForm.category_name = [];
-        }
-      } else {
-        this.productForm.category_name = value ? [value] : [];
-      }
-    },
-
-    async loadAvailableTextures() {
-      try {
-        this.loadingTextures = true;
-        const store = this.$store;
-        const token = localStorage.getItem('token');
-        
-        const response = await fetch(`${store.state.root_api}product/api/products/user-textures/`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Token ${token}`
-          }
-        });
-        
-        const result = await response.json();
-        
-        if (result) {
-          this.availableTextures = (result.results.data || []).map(texture => ({
-            id: texture?.id,
-            url: texture?.image_url || texture.url,
-          }));
-        } else {
-          this.availableTextures = [];
-        }
-      } catch (error) {
-        console.error('❌ Error loading textures:', error);
-        this.availableTextures = [];
-      } finally {
-        this.loadingTextures = false;
-      }
-    },
-
-    addPresetTexture(texture) {
-      if (!this.selectedTextures.some(t => t.id === texture.id)) {
-        this.selectedTextures.push({ id: texture?.id, url: texture?.url });
-      } else {
-        const index = this.selectedTextures.findIndex(t => t.id === texture.id);
-        if (index > -1) {
-          this.selectedTextures.splice(index, 1);
-        }
-      }
-    },
+  // Handle category selection - ONLY ALLOW ONE
+  handleCategoryChange(value) {
+    console.log('📌 Category changed:', value);
+    this.categorySearchError = null;
     
+    // mode="tags" returns an array, but we want only one
+    if (Array.isArray(value)) {
+      // Keep only the last selected item (single select)
+      if (value.length > 1) {
+        console.log('⚠️ Only one category allowed, keeping last selected');
+        this.productForm.category_name = [value[value.length - 1]];
+      } else if (value.length === 1) {
+        console.log('✅ Category selected:', value[0]);
+        this.productForm.category_name = value;
+      } else {
+        console.log('🗑️ Category cleared');
+        this.productForm.category_name = [];
+      }
+    } else {
+      
+      this.productForm.category_name = value ? [value] : [];
+    }
+    
+    console.log('Final value stored:', this.productForm.category_name);
+  },
+
+  // Load available textures from API
+  async loadAvailableTextures() {
+    try {
+      this.loadingTextures = true;
+      const store = this.$store;
+      const token = localStorage.getItem('token');
+      
+      const response = await fetch(`${store.state.root_api}product/api/products/user-textures/`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Token ${token}`
+        }
+      });
+      
+      const result = await response.json();
+      console.log('📦 Available textures:', result);
+      
+      if (result) {
+        // Map textures to include proper URL format
+        this.availableTextures = (result.results.data || []).map(texture => ({
+          id: texture?.id,
+    
+          url: texture?.image_url || texture.url, // Adjust based on API response
+      
+        }));
+        
+        console.log('✅ Textures loaded:', this.availableTextures.length);
+      } else {
+        console.warn('⚠️ Failed to load textures:', result.message);
+        this.availableTextures = [];
+      }
+    } catch (error) {
+      console.error('❌ Error loading textures:', error);
+      this.availableTextures = [];
+    } finally {
+      this.loadingTextures = false;
+    }
+  },
+
+  // Add preset texture from library
+  addPresetTexture(texture) {
+    // Check if texture is already selected
+    if (!this.selectedTextures.some(t => t.id === texture.id)) {
+      this.selectedTextures.push({
+        id: texture?.id,
+    
+        url: texture?.url,
+   
+      });
+      
+    } else {
+      // Remove if already selected (toggle)
+      const index = this.selectedTextures.findIndex(t => t.id === texture.id);
+      if (index > -1) {
+        this.selectedTextures.splice(index, 1);
+    
+      }
+    }
+  },
+    
+    // 3D Model Upload Methods
     upload3dModel() {
       this.$refs.modelInput?.click();
     },
@@ -1215,6 +1496,7 @@ watch: {
         name: file.name,
         size: (file.size / 1024 / 1024).toFixed(2) + ' MB'
       };
+      console.log('✅ 3D Model loaded locally:', file.name);
     },
 
     remove3dModel() {
@@ -1223,6 +1505,7 @@ watch: {
       }
       this.local3dModelUrl = null;
       this.uploaded3dModelFile = null;
+      console.log('🗑️ 3D Model removed');
     },
 
     async get3dRenderedModelDetails(generated3dModelId) {
@@ -1238,6 +1521,9 @@ watch: {
         }
 
         const url = `${store.state.root_api}product/api-product-owner/get-rendered-3d-model-details/${renderedModal3dId}/`;
+        
+        console.log('📡 Fetching generated 3d models history...', { generated3dModelId, renderedModal3dId });
+        
         const token = localStorage.getItem('token');
         if (!token) {
           throw new Error('No authentication token found');
@@ -1259,6 +1545,7 @@ watch: {
         
         if (responseData.success) {
           const details = responseData.data || {};
+          console.log('✅ 3D Model Details:', details);
           this.modelDetails = details;
           return details;
         } else {
@@ -1273,23 +1560,61 @@ watch: {
       }
     },
 
-    // ===== UPDATED: resetForm now also resets room type (same as furniture) =====
-    resetForm() {
-      this.selectedRoomType = null;
-      this.selectedRoomTypeName = null;
-      this.categoryOptions = [];
-      this.allCategories = [];
+    async fetch_Categories_available() {
+      try {
+        const store = this.$store;
+        const url = `${store.state.root_api}product/api/categories/`;
+        
+        console.log('📡 Fetching Product categories Available history...');
+        
+        const token = localStorage.getItem('token');
+        if (!token) {
+          throw new Error('No authentication token found');
+        }
 
-      this.initializeFormWithDefaults(this.defaultValues);
-      
-      if (!this.defaultValues.modelUrl && this.local3dModelUrl) {
-        URL.revokeObjectURL(this.local3dModelUrl);
-        this.local3dModelUrl = null;
-        this.uploaded3dModelFile = null;
-      }
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const responseData = await response.json();
+        console.log('Categories Available:', responseData);
+        
+        if (responseData.success) {
+          
+          const details = responseData.data || {};
+          console.log('Categories Available:', details);
+          this.categories_available = details;
+          return details;
+        } else {
+          throw new Error(responseData.message || 'Failed to categories Available model details');
+        }
+        
+      } catch (error) {
+        console.error("❌ Failed to categories Available model details:", error);
+      } 
     },
-    // ===========================================================================
 
+  resetForm() {
+  // Reset to default values instead of empty
+  this.initializeFormWithDefaults(this.defaultValues);
+  
+  // Clear 3D model if no default model URL
+  if (!this.defaultValues.modelUrl && this.local3dModelUrl) {
+    URL.revokeObjectURL(this.local3dModelUrl);
+    this.local3dModelUrl = null;
+    this.uploaded3dModelFile = null;
+  }
+},
+
+    // Image Upload Methods
     uploadImages() {
       this.$refs.imageInput?.click();
     },
@@ -1327,39 +1652,50 @@ watch: {
     removeImage(index) {
       const removedImage = this.selectedImages[index];
       this.selectedImages.splice(index, 1);
+      
       if (removedImage.isPrimary && this.selectedImages.length > 0) {
         this.selectedImages[0].isPrimary = true;
       }
     },
 
-    addAvailableColor() {
-      if (this.tempColor && !this.selectedColors.some(c => c.value === this.tempColor)) {
-        const colorObj = { value: this.tempColor, isPrimary: this.selectedColors.length === 0 };
-        this.selectedColors.push(colorObj);
-        this.tempColor = '#000000';
-      }
-    },
+addAvailableColor() {
+  if (this.tempColor && !this.selectedColors.some(c => c.value === this.tempColor)) {
+    // Create color object with isPrimary flag
+    const colorObj = {
+      value: this.tempColor,
+      isPrimary: this.selectedColors.length === 0 // First color is primary
+    };
+    this.selectedColors.push(colorObj);
+    this.tempColor = '#000000';
+  }
+},
 
-    addPresetColor(color) {
-      if (!this.selectedColors.some(c => c.value === color)) {
-        const colorObj = { value: color, isPrimary: this.selectedColors.length === 0 };
-        this.selectedColors.push(colorObj);
-      }
-    },
+addPresetColor(color) {
+  if (!this.selectedColors.some(c => c.value === color)) {
+    const colorObj = {
+      value: color,
+      isPrimary: this.selectedColors.length === 0 // First color is primary
+    };
+    this.selectedColors.push(colorObj);
+  }
+},
 
-    setPrimaryColor(color) {
-      this.selectedColors.forEach(c => c.isPrimary = false);
-      color.isPrimary = true;
-    },
+setPrimaryColor(color) {
+  this.selectedColors.forEach(c => c.isPrimary = false);
+  color.isPrimary = true;
+},
 
-    removeColor(index) {
-      const removedColor = this.selectedColors[index];
-      this.selectedColors.splice(index, 1);
-      if (removedColor.isPrimary && this.selectedColors.length > 0) {
-        this.selectedColors[0].isPrimary = true;
-      }
-    },
+removeColor(index) {
+  const removedColor = this.selectedColors[index];
+  this.selectedColors.splice(index, 1);
+  
+  // If removed color was primary and there are colors left, make first one primary
+  if (removedColor.isPrimary && this.selectedColors.length > 0) {
+    this.selectedColors[0].isPrimary = true;
+  }
+},
 
+    // PBR File Methods
     uploadPbr() {
       this.$refs.pbrInput?.click();
     },
@@ -1384,12 +1720,12 @@ watch: {
       const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
 
       if (!validTypes.includes(fileExtension)) {
-        console.error(`Invalid file type for ${file.name}.`);
+        console.error(`Invalid file type for ${file.name}. Please upload PBR, ZIP, RAR, 7Z, TAR, or GZ files only.`);
         return false;
       }
 
       if (file.size > maxSize) {
-        console.error(`File ${file.name} is too large.`);
+        console.error(`File ${file.name} is too large. Please upload files smaller than 50MB.`);
         return false;
       }
 
@@ -1400,6 +1736,7 @@ watch: {
       this.selectedPbrFiles.splice(index, 1);
     },
 
+    // Texture Methods
     uploadTexture() {
       this.$refs.textureInput?.click();
     },
@@ -1411,7 +1748,7 @@ watch: {
           const reader = new FileReader();
           reader.onload = (e) => {
             this.selectedTextures.push({ 
-              id: null,
+              id: null, // Mark as custom uploaded file
               file, 
               name: file.name,
               url: e.target.result 
@@ -1432,66 +1769,81 @@ watch: {
       const maxSize = 10 * 1024 * 1024;
 
       if (!validTypes.includes(file.type)) {
-        console.error(`Invalid file type for ${file.name}.`);
+        console.error(`Invalid file type for ${file.name}. Please upload JPEG, JPG, or PNG files only.`);
         return false;
       }
 
       if (file.size > maxSize) {
-        console.error(`File ${file.name} is too large.`);
+        console.error(`File ${file.name} is too large. Please upload files smaller than 10MB.`);
         return false;
       }
 
       return true;
     },
 
-    validateForm() {
-      if (!this.productForm.name?.trim()) {
-        this.$message.error('Please fill the Name field');
-        return false;
-      }
-      if (!this.productForm.description?.trim()) {
-        this.$message.error('Please fill the Description field');
-        return false;
-      }
-      if (!this.productForm.category_name || this.productForm.category_name.length === 0) {
-        this.$message.error('Please select a Category');
-        return false;
-      }
-      if (!this.productForm.furniture_type) {
-        this.$message.error('Please select a Type');
-        return false;
-      }
-      if (!this.productForm.pricing.price || parseFloat(this.productForm.pricing.price) <= 0) {
-        this.$message.error('Please enter a valid Price greater than 0');
-        return false;
-      }
-      if (this.selectedImages.length === 0) {
-        this.$message.error('Please upload at least one product image');
-        return false;
-      }
-      if (!this.local3dModelUrl && !this.rendered_modal_3D_id) {
-        this.$message.error('Please select or upload a 3D model');
-        return false;
-      }
-      if (!this.productForm.dimensions.height || parseFloat(this.productForm.dimensions.height) <= 0) {
-        this.$message.error('Please enter a valid Height greater than 0');
-        return false;
-      }
-      if (!this.productForm.dimensions.length || parseFloat(this.productForm.dimensions.length) <= 0) {
-        this.$message.error('Please enter a valid Length/Depth greater than 0');
-        return false;
-      }
-      if (!this.productForm.dimensions.width || parseFloat(this.productForm.dimensions.width) <= 0) {
-        this.$message.error('Please enter a valid Width greater than 0');
-        return false;
-      }
-      if (this.selectedColors.length === 0) {
-        this.$message.error('Please select at least one available color');
-        return false;
-      }
-      return true;
-    },
+  
+  validateForm() {
+  if (!this.productForm.name?.trim()) {
+    this.$message.error('Please fill the Name field');
+    return false;
+  }
+  if (!this.productForm.description?.trim()) {
 
+    this.$message.error('Please fill the Description field');
+
+    return false;
+
+  }
+  if (!this.productForm.category_name || this.productForm.category_name.length === 0) {
+
+    this.$message.error('Please select a Category');
+
+    return false;
+
+  }
+  if (!this.productForm.furniture_type) {
+
+    this.$message.error('Please select a Type');
+
+    return false;
+
+  }
+  if (!this.productForm.pricing.price || parseFloat(this.productForm.pricing.price) <= 0) {
+   this.$message.error('Please enter a valid Price greater than 0');
+    return false;
+  }
+  if (this.selectedImages.length === 0) {
+    this.$message.error('Please upload at least one product image');
+    return false;
+  }
+  if (!this.local3dModelUrl && !this.rendered_modal_3D_id) {
+    this.$message.error('Please select or upload a 3D model');
+    return false;
+  }
+
+  if (!this.productForm.dimensions.height || parseFloat(this.productForm.dimensions.height) <= 0) {
+    this.$message.error('Please enter a valid Height greater than 0');
+    return false;
+
+  }
+  if (!this.productForm.dimensions.length || parseFloat(this.productForm.dimensions.length) <= 0) {
+    this.$message.error('Please enter a valid Length/Depth greater than 0');
+    return false;
+  }
+  if (!this.productForm.dimensions.width || parseFloat(this.productForm.dimensions.width) <= 0) {
+    this.$message.error('Please enter a valid Width greater than 0');
+    return false;
+  }
+//   if (this.selectedTextures.length === 0) {
+//   this.$message.error('Please upload at least one texture image');
+//   return false;
+// }
+  if (this.selectedColors.length === 0) {
+    this.$message.error('Please select at least one available color');
+    return false;
+  }
+  return true;
+},
     async handleSave() {
       if (!this.validateForm()) return;
 
@@ -1501,7 +1853,7 @@ watch: {
         const store = this.$store;
         const token = localStorage.getItem('token');
         const formData = new FormData();
-
+        // formData.append('variation_id',this.prepopulatedData.id);
         formData.append('name', this.productForm.name);
         formData.append('description', this.productForm.description || '');
         formData.append('category_name', this.categoryNameDisplay);
@@ -1510,6 +1862,7 @@ watch: {
         }
         formData.append('price', this.productForm.pricing.price);
 
+        // Add 3D model - either uploaded file or existing rendered model ID
         if (this.uploaded3dModelFile) {
           formData.append('model_file', this.uploaded3dModelFile.file);
         } else if (this.rendered_modal_3D_id) {
@@ -1537,16 +1890,17 @@ watch: {
           formData.append('pbr_files', pbrFile.file);
         });
 
-        if (this.selectedColors.length > 0) {
-          const colorsData = this.selectedColors.map(c => ({
-            value: c.value,
-            isPrimary: c.isPrimary
-          }));
-          formData.append('available_colors', JSON.stringify(colorsData));
-        }
-     
+       if (this.selectedColors.length > 0) {
+        const colorsData = this.selectedColors.map(c => ({
+          value: c.value,
+          isPrimary: c.isPrimary
+        }));
+        formData.append('available_colors', JSON.stringify(colorsData));
+      }
         
+        // Handle textures - separate uploaded files from library textures
         const textureIds = [];
+
         this.selectedTextures.forEach((texture) => {
           if (texture.file) {
             formData.append('textures', texture.file);
@@ -1554,17 +1908,25 @@ watch: {
             textureIds.push(texture.id);
           }
         });
+
         if (textureIds.length > 0) {
           formData.append('texture_ids', JSON.stringify(textureIds));
         }
 
         formData.append('is_resizable', this.is_resizable ? 'True' : 'False');
-        formData.append('light_type', 'hanging');
+        formData.append('light_type','hanging');
 
-        // ===== ADDED: Append room_type_name (same as furniture) =====
-        formData.append('room_type_name', this.selectedRoomTypeName);
-        // ============================================================
-        console.log('formdata',formData)
+        console.log('📤 Sending product data:', {
+          name: this.productForm.name,
+          category_name: this.productForm.category_name,
+          has_local_model: !!this.uploaded3dModelFile,
+          rendered_modal_3D_id: this.rendered_modal_3D_id,
+          images_count: this.selectedImages.length,
+          colors_count: this.selectedColors.length,
+          textures_count: this.selectedTextures.length,
+          pbr_files_count: this.selectedPbrFiles.length
+        });
+
         const response = await fetch(`${store.state.root_api}product/api-product-owner/lights/`, {
           method: 'POST',
           headers: { 
@@ -1577,9 +1939,12 @@ watch: {
 
         if (response.ok && result.success) {
           console.log('✅ Product created successfully:', result.data);
+          console.log('Product created successfully!');
+          
           this.$emit('product-created', result.data);
           this.$emit('update:visible', false);
           this.resetForm();
+          
         } else {
           console.error('❌ API Error:', result.message || 'Failed to create product');
           throw new Error(result.message || 'Failed to create product');
@@ -1588,6 +1953,7 @@ watch: {
       } catch (error) {
         console.error('❌ Error creating product:', error);
         console.error('Error creating product. Please try again.');
+        
       } finally {
         this.isSaving = false;
       }
@@ -1638,6 +2004,7 @@ watch: {
   box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
 }
 
+/* Custom scrollbar for modal body */
 .add-product-modal :deep(.ant-modal-body::-webkit-scrollbar) {
   width: 6px;
 }
@@ -1656,6 +2023,7 @@ watch: {
   background: #a8a8a8;
 }
 
+/* Image gallery improvements */
 .image-gallery img {
   transition: all 0.2s ease;
 }
@@ -1665,11 +2033,13 @@ watch: {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
+/* Primary image indicator */
 .primary-indicator {
   background: linear-gradient(45deg, #22c55e, #16a34a);
   box-shadow: 0 2px 4px rgba(34, 197, 94, 0.3);
 }
 
+/* Responsive adjustments */
 @media (max-width: 768px) {
   .add-product-modal {
     width: 95% !important;
@@ -1681,6 +2051,7 @@ watch: {
   }
 }
 
+/* Button improvements */
 .ant-btn {
   display: inline-flex;
   align-items: center;
@@ -1688,6 +2059,7 @@ watch: {
   gap: 6px;
 }
 
+/* Color picker improvements */
 .color-picker-input {
   cursor: pointer !important;
 }
@@ -1696,6 +2068,7 @@ watch: {
   border-color: #3b82f6 !important;
 }
 
+/* Upload area styling */
 .image-upload-area {
   border: 2px dashed #d1d5db;
   border-radius: 8px;

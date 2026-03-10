@@ -576,11 +576,9 @@
             />
           </div>
 
-          <!-- Room Type, Category, Type, Price -->
+          <!-- Category, Type, Price -->
           <a-row :gutter="16" style="margin-bottom: 20px">
-
-            <!-- Room Type -->
-            <a-col :span="6">
+            <a-col :span="8">
               <label
                 style="
                   display: block;
@@ -589,53 +587,22 @@
                   font-size: 14px;
                   color: #374151;
                 "
-              >Room Type <span style="color: red">*</span></label>
-              <a-select
-                v-model:value="selectedRoomTypeName"
-                style="width: 100%"
-                size="large"
-                :loading="loadingRoomTypes"
-                :allow-clear="true"
-                @change="handleRoomTypeChange"
+                >Category <span style="color: red">*</span></label
               >
-                <a-select-option
-                  v-for="rt in roomTypes"
-                  :key="rt.id"
-                  :value="rt.id"
-                >{{ rt.name }}</a-select-option>
-              </a-select>
-            </a-col>
-
-            <!-- Category -->
-            <a-col :span="6">
-              <label
-                style="
-                  display: block;
-                  margin-bottom: 6px;
-                  font-weight: 500;
-                  font-size: 14px;
-                  color: #374151;
-                "
-              >Category <span style="color: red">*</span></label>
               <a-select
                 v-model:value="productForm.category_name"
                 style="width: 100%"
                 size="large"
-                mode="tags"
-                :options="categoryOptions"
-                :loading="loadingCategories"
-                :filter-option="false"
-                :allow-clear="true"
-                show-search
-                :disabled="!selectedRoomType"
-                @search="handleCategorySearch"
-                @change="handleCategoryChange"
-                @focus="handleSelectFocus"
-              />
+              >
+                <a-select-option
+                  v-for="cat in categories_available"
+                  :key="cat"
+                  :value="cat"
+                  >{{ cat }}</a-select-option
+                >
+              </a-select>
             </a-col>
-
-            <!-- Type -->
-            <a-col :span="6">
+            <a-col :span="8">
               <label
                 style="
                   display: block;
@@ -659,9 +626,7 @@
                 >
               </a-select>
             </a-col>
-
-            <!-- Price -->
-            <a-col :span="6">
+            <a-col :span="8">
               <label
                 style="
                   display: block;
@@ -681,6 +646,13 @@
               />
             </a-col>
           </a-row>
+
+          <!-- <a-row :gutter="16" style="margin-bottom: 24px;">
+            <a-col :span="8">
+              <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151;">Sale Price</label>
+              <a-input v-model:value="productForm.pricing.sale_price" placeholder="600" suffix="$" style="border-radius: 8px;" size="large" />
+            </a-col>
+          </a-row> -->
 
           <!-- Dimensions -->
           <div style="margin-bottom: 24px">
@@ -759,7 +731,6 @@
                   :key="color.id"
                   style="position: relative"
                 >
-                <!-- {{ color }} -->
                   <div
                     @click="selectColor(color.color)"
                     :style="{
@@ -983,8 +954,122 @@
                     </a-popover>
                   </div>
                 </div>
+                <!-- Add Color -->
+                <!-- <div style="position: relative;">
+                  <input type="color" v-model="customColor" @change="addColor(customColor)" style="opacity: 0; position: absolute; width: 36px; height: 36px; cursor: pointer;" />
+                  <div style="width: 36px; height: 36px; border-radius: 8px; border: 2px dashed #d1d5db; display: flex; align-items: center; justify-content: center; cursor: pointer; background: #f9fafb;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2">
+                      <line x1="12" y1="5" x2="12" y2="19"></line>
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                  </div>
+                </div> -->
               </div>
             </a-col>
+
+            <!-- <a-col :span="12">
+              <h4
+                style="
+                  margin-bottom: 16px;
+                  font-weight: 500;
+                  font-size: 14px;
+                  color: #1f2937;
+                "
+              >
+                Textures <span style="color: red">*</span>
+              </h4>
+              <div
+                style="
+                  display: flex;
+                  gap: 12px;
+                  align-items: center;
+                  flex-wrap: wrap;
+                "
+              >
+                <!-- Existing Textures 
+                <div
+                  v-for="texture in selectedProduct.textures"
+                  :key="texture.id"
+                  style="position: relative"
+                >
+                  <div
+                    @click="selectTexture(texture.id)"
+                    :style="{
+                      width: '48px',
+                      height: '36px',
+                      borderRadius: '8px',
+                      backgroundImage: `url(${$store.state.root_media_api + texture.texture})`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                      border:
+                        selectedTexture === texture.id
+                          ? '3px solid #3b82f6'
+                          : '2px solid #e5e7eb',
+                      cursor: 'pointer',
+                    }"
+                  ></div>
+                  <a-button
+                    type="text"
+                    danger
+                    size="small"
+                    @click.stop="deleteTexture(texture.id)"
+                    style="
+                      position: absolute;
+                      top: -8px;
+                      right: -8px;
+                      background: #ef4444;
+                      color: white;
+                      border-radius: 50%;
+                      width: 16px;
+                      height: 16px;
+                      padding: 0;
+                    "
+                  >
+                    <template #icon>
+                      <svg
+                        width="8"
+                        height="8"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="3"
+                      >
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                      </svg>
+                    </template>
+                  </a-button>
+                </div>
+
+                <!-- Add Texture 
+                <div
+                  @click="uploadTexture"
+                  style="
+                    width: 48px;
+                    height: 36px;
+                    border-radius: 8px;
+                    border: 2px dashed #d1d5db;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    cursor: pointer;
+                    background: #f9fafb;
+                  "
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#9ca3af"
+                    stroke-width="2"
+                  >
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                </div>
+              </div>
+            </a-col> -->
           </a-row>
         </div>
       </a-col>
@@ -1064,7 +1149,7 @@ export default {
       productForm: {
         name: "",
         description: "",
-        category_name: [],
+        category_name: "",
         furniture_type: "",
         pricing: { price: "", sale_price: "" },
         dimensions: { height: "", length: "", width: "", depth: "" },
@@ -1077,16 +1162,6 @@ export default {
       pending3DModel: null,
       imagePreviewsState: [],
       hasUnsavedChanges: false,
-
-      // Room Type & Category
-      selectedRoomType: null,
-      selectedRoomTypeName: null,
-      roomTypes: [],
-      loadingRoomTypes: false,
-      categoryOptions: [],
-      allCategories: [],
-      loadingCategories: false,
-      categorySearchTimeout: null,
     };
   },
   computed: {
@@ -1094,8 +1169,7 @@ export default {
       return this.selectedProduct["3d_model"] || this.pending3DModel;
     },
   },
-  async mounted() {
-    await this.loadRoomTypes();
+  mounted() {
     this.initializeForm();
     window.addEventListener("beforeunload", this.handleBeforeUnload);
   },
@@ -1105,14 +1179,10 @@ export default {
   },
   watch: {
     selectedProduct: {
-      async handler() {
-        if (this.roomTypes.length === 0) {
-          await this.loadRoomTypes();
-        }
+      handler() {
         this.initializeForm();
       },
       deep: true,
-      immediate: false,
     },
     productForm: {
       handler() {
@@ -1122,149 +1192,12 @@ export default {
     },
   },
   methods: {
-    // ── Room Type & Category ───────────────────────────────────────────────
-
-    async loadRoomTypes() {
-      try {
-        this.loadingRoomTypes = true;
-        const token = localStorage.getItem("token");
-        const response = await fetch(
-          `${this.$store.state.root_api}product/api/room-types/`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Token ${token}`,
-            },
-          }
-        );
-        const result = await response.json();
-        this.roomTypes = result || [];
-      } catch (error) {
-        console.error("Error loading room types:", error);
-        this.roomTypes = [];
-      } finally {
-        this.loadingRoomTypes = false;
-      }
-    },
-
-    handleRoomTypeChange(value) {
-      const selectedRoom = this.roomTypes.find((rt) => rt.id === value);
-      this.selectedRoomType = value;
-      this.selectedRoomTypeName = selectedRoom ? selectedRoom.name : null;
-
-      // Reset category when room type changes
-      this.productForm.category_name = [];
-      this.categoryOptions = [];
-      this.allCategories = [];
-
-      if (value) {
-        this.loadInitialCategories();
-      }
-    },
-
-    async loadInitialCategories() {
-      try {
-        this.loadingCategories = true;
-        const token = localStorage.getItem("token");
-        const roomTypeParam = this.selectedRoomType
-          ? `?room_type=${encodeURIComponent(this.selectedRoomType)}`
-          : "";
-        const response = await fetch(
-          `${this.$store.state.root_api}product/api/categories/${roomTypeParam}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Token ${token}`,
-            },
-          }
-        );
-        const result = await response.json();
-        if (result.success) {
-          this.allCategories = result.data || [];
-          this.categoryOptions = this.allCategories.map((cat) => ({
-            label: cat.name,
-            value: cat.name,
-            data: cat,
-          }));
-        }
-      } catch (error) {
-        console.error("Error loading categories:", error);
-      } finally {
-        this.loadingCategories = false;
-      }
-    },
-
-    async handleCategorySearch(searchValue) {
-      if (this.categorySearchTimeout) clearTimeout(this.categorySearchTimeout);
-      if (!searchValue?.trim()) {
-        this.categoryOptions = this.allCategories.map((cat) => ({
-          label: cat.name,
-          value: cat.name,
-        }));
-        return;
-      }
-      this.loadingCategories = true;
-      this.categorySearchTimeout = setTimeout(async () => {
-        try {
-          const token = localStorage.getItem("token");
-          const response = await fetch(
-            `${this.$store.state.root_api}product/api/categories/?q=${encodeURIComponent(searchValue)}`,
-            {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Token ${token}`,
-              },
-            }
-          );
-          const result = await response.json();
-          this.categoryOptions = result.success
-            ? result.data.map((cat) => ({ label: cat.name, value: cat.name }))
-            : [];
-        } catch (error) {
-          this.categoryOptions = [];
-        } finally {
-          this.loadingCategories = false;
-        }
-      }, 300);
-    },
-
-    handleSelectFocus() {
-      if (this.categoryOptions.length === 0) {
-        this.categoryOptions = this.allCategories.map((cat) => ({
-          label: cat.name,
-          value: cat.name,
-        }));
-      }
-    },
-
-    handleCategoryChange(value) {
-      if (Array.isArray(value)) {
-        if (value.length > 1) {
-          // Only one category allowed — keep last selected
-          this.productForm.category_name = [value[value.length - 1]];
-        } else if (value.length === 1) {
-          this.productForm.category_name = value;
-        } else {
-          this.productForm.category_name = [];
-        }
-      } else {
-        this.productForm.category_name = value ? [value] : [];
-      }
-    },
-
-    // ── Form Init ──────────────────────────────────────────────────────────
-
     initializeForm() {
       if (this.selectedProduct) {
         this.productForm = {
           name: this.selectedProduct.name || "",
           description: this.selectedProduct.description || "",
-          category_name: this.selectedProduct.category?.name
-            ? [this.selectedProduct.category.name]
-            : [],
+          category_name: this.selectedProduct.category?.name || "",
           furniture_type: this.selectedProduct.furniture_type || "",
           pricing: {
             price: this.selectedProduct.pricing?.price?.toString() || "",
@@ -1284,19 +1217,6 @@ export default {
         this.hasUnsavedChanges = false;
         this.imagePreviewsState = [];
         this.pending3DModel = null;
-        debugger
-        console.log(this.selectedProduct)
-        // Hydrate room type from the product's room_type object
-        if (this.selectedProduct?.room_type) {
-          this.selectedRoomType = this.selectedProduct.room_type.id || null;
-          this.selectedRoomTypeName = this.selectedProduct.room_type.name || null;
-          if (this.selectedRoomType) {
-            this.loadInitialCategories();
-          }
-        } else {
-          this.selectedRoomType = null;
-          this.selectedRoomTypeName = null;
-        }
       }
     },
 
@@ -1506,6 +1426,7 @@ export default {
 
         const result = await response.json();
         if (result.success) {
+          // Update local data - remove primary from all, set on selected
           this.selectedProduct.images.forEach(
             (img) => (img.is_primary = false),
           );
@@ -1711,30 +1632,31 @@ export default {
 
     // Form Validation & Save
     validateForm() {
+      // Name validation
       if (!this.productForm.name.trim()) {
         this.$message.error("Product name is required");
         return false;
       }
+
+      // Description validation
       if (!this.productForm.description.trim()) {
         this.$message.error("Product description is required");
         return false;
       }
-      if (!this.selectedRoomType) {
-        this.$message.error("Room type is required");
-        return false;
-      }
-      if (
-        !this.productForm.category_name ||
-        (Array.isArray(this.productForm.category_name) &&
-          this.productForm.category_name.length === 0)
-      ) {
+
+      // Category validation
+      if (!this.productForm.category_name) {
         this.$message.error("Category is required");
         return false;
       }
+
+      // Type validation
       if (!this.productForm.furniture_type) {
         this.$message.error("Type is required");
         return false;
       }
+
+      // Price validation
       if (
         !this.productForm.pricing.price ||
         parseFloat(this.productForm.pricing.price) <= 0
@@ -1742,6 +1664,8 @@ export default {
         this.$message.error("Valid price is required");
         return false;
       }
+
+      // Sale price validation (if provided)
       if (
         this.productForm.pricing.sale_price &&
         parseFloat(this.productForm.pricing.sale_price) <= 0
@@ -1750,6 +1674,7 @@ export default {
         return false;
       }
 
+      // Dimensions validation - all required
       const dimensions = ["height", "length", "width"];
       for (let dim of dimensions) {
         if (
@@ -1763,11 +1688,13 @@ export default {
         }
       }
 
+      // 3D Model validation
       if (!this.selectedProduct["3d_model"] && !this.pending3DModel) {
         this.$message.error("3D Model is required");
         return false;
       }
 
+      // Colors validation
       if (
         !this.selectedProduct.colors.available_colors ||
         this.selectedProduct.colors.available_colors.length === 0
@@ -1775,6 +1702,15 @@ export default {
         this.$message.error("At least one color is required");
         return false;
       }
+
+      // Textures validation
+      // if (
+      //   !this.selectedProduct.textures ||
+      //   this.selectedProduct.textures.length === 0
+      // ) {
+      //   this.$message.error("At least one texture is required");
+      //   return false;
+      // }
 
       return true;
     },
@@ -1816,7 +1752,7 @@ export default {
           const imageResult = await imageResponse.json();
           if (imageResult.success) {
             this.selectedProduct.images.push(...imageResult.data);
-            this.cleanupPreviews();
+            this.cleanupPreviews(); // Clean up previews after successful upload
           }
         }
 
@@ -1824,13 +1760,7 @@ export default {
         const productData = new FormData();
         productData.append("name", this.productForm.name);
         productData.append("description", this.productForm.description);
-
-        // Send the first (and only) selected category name
-        const categoryValue = Array.isArray(this.productForm.category_name)
-          ? this.productForm.category_name[0] || ""
-          : this.productForm.category_name || "";
-        productData.append("category_name", categoryValue);
-
+        productData.append("category_name", this.productForm.category_name);
         productData.append("furniture_type", this.productForm.furniture_type);
         productData.append("price", this.productForm.pricing.price);
 
@@ -1838,6 +1768,7 @@ export default {
           productData.append("sale_price", this.productForm.pricing.sale_price);
         }
 
+        // Add dimensions
         ["height", "length", "width", "depth"].forEach((dim) => {
           if (this.productForm.dimensions[dim]) {
             productData.append(dim, this.productForm.dimensions[dim]);
@@ -1853,11 +1784,6 @@ export default {
 
         if (this.pending3DModel) {
           productData.append("model_file", this.pending3DModel);
-        }
-
-        // Send room_type_name
-        if (this.selectedRoomTypeName) {
-          productData.append("room_type_name", this.selectedRoomTypeName);
         }
 
         const response = await fetch(

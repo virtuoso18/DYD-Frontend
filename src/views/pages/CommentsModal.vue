@@ -29,7 +29,8 @@
               <img 
                 :src="post.image" 
                 alt="Post" 
-                class="w-full h-auto rounded-lg"
+                class="w-[full] max-w-[250px] h-auto rounded-lg "
+                style="margin:auto"
               />
             </div>
 

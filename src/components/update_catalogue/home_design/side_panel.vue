@@ -546,25 +546,6 @@ export default {
   font-size: 14px;
 }
 
-.image-preview {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  /* padding: 8px; */
-  /* padding: 8px; */
-  padding-left: 8px;
-  padding-right: 8px;
-}
-
-.image-preview img {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-  border-radius: 6px;
-}
-
 .section {
   margin-bottom: 15px;
 }
@@ -608,6 +589,7 @@ export default {
 .image-preview {
   width: 100%;
   height: 100%;
+  max-height:200px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -618,7 +600,8 @@ export default {
 
 .image-preview img {
   max-width: 100%;
-  max-height: 100%;
+  height: 100%;
+  max-height:200px;
   object-fit: contain;
   border-radius: 6px;
 }

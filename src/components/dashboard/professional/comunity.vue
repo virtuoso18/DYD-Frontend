@@ -957,6 +957,7 @@ export default {
   },
   
     goto_product_Route(product){
+      // console.log(product.product_type);
       let produuct_type='product'
       if (product.product_type=='light'){
         produuct_type='product'
@@ -966,7 +967,7 @@ export default {
         produuct_type='wall'
       }
       else{
-        produuct_type=product.type
+        produuct_type=product.product_type
       }
       this.$router.push({
       name: 'buisness_product',

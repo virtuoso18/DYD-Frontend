@@ -371,6 +371,7 @@ import { nextTick } from "vue";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { MeshoptDecoder } from "three/examples/jsm/libs/meshopt_decoder.module.js"; 
 
 export default {
   name: "3DModelViewer",
@@ -634,6 +635,7 @@ export default {
       }
 
       const loader = new GLTFLoader();
+      loader.setMeshoptDecoder(MeshoptDecoder);
       loader.load(
         this.glbModelUrl,
         (gltf) => {

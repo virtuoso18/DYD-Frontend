@@ -1416,7 +1416,8 @@ Switch Furniture</a-button> -->
               @insufficient-credits="throw_Insufficient_credits"
             /> 
             -->
-
+            
+<!-- {{ active_room_ptcld_cords }} -->
             <items_replacement_renderer
               v-if="
                 current_tab == 'image' &&
@@ -1450,7 +1451,8 @@ Switch Furniture</a-button> -->
               :product_id="selected_3d_product_model"
               @Apply-Changes="ApplyChanges"
               @insufficient-credits="throw_Insufficient_credits"
-
+@update-dimensions="update_3d_product_diamensions"
+@reset_target_dimensions="reset_target_dimensions"
               @unselect-object="unselect_currrent_selected_object"
 
             >
@@ -3139,7 +3141,8 @@ Switch Furniture</a-button> -->
                   @Apply-Changes="ApplyChanges"
                   @insufficient-credits="throw_Insufficient_credits"
                 /> -->
-
+               
+<!-- {{ active_room_ptcld_cords }} -->
                 <items_replacement_renderer
                   v-if="
                     current_tab == 'image' &&
@@ -3169,6 +3172,9 @@ Switch Furniture</a-button> -->
                   @add-3d-furniture-to-room-start-polling="
                     updateBaskeImageURL_CANVAS
                   "
+                  @update-dimensions="update_3d_product_diamensions"
+                  @reset_target_dimensions="reset_target_dimensions"
+
                   :product_id="selected_3d_product_model"
                   @Apply-Changes="ApplyChanges"
                   @insufficient-credits="throw_Insufficient_credits"
@@ -3481,12 +3487,12 @@ export default {
       colors_available_for_3d_model:null,
       switched_color:null,
       maskUpdateTrigger: 0,
-
       // selected 3d model width,height,depth
       selected_model_width: 0,
       selected_model_height: 0,
       selected_model_depth: 0,
-
+      main_object_dims:null,
+      
       // 3D Tab
       generated3dModel_url: "",
       model_instance_id: "",
@@ -3698,6 +3704,20 @@ export default {
   },
 
   methods: {
+    update_3d_product_diamensions(e){
+      console.log(e);
+      this.selected_model_width=e.width 
+      this.selected_model_height=e.height 
+      this.selected_model_depth=e.depth 
+      // debugger
+    },
+    reset_target_dimensions(e){
+      console.log(e);
+      this.selected_model_width=this.main_object_dims.width;
+      this.selected_model_height=this.main_object_dims.height;
+      this.selected_model_depth=this.main_object_dims.depth;
+      // debugger
+    },
     switch_to_original_primary_3d_model(e){
       this.switched_color=null
       this.item_replacement_renderer_3d_model_url=this.primary_model_3d_url
@@ -5557,7 +5577,9 @@ export default {
         this.selected_model_depth = e.depth;
         this.is_resizable = e.is_resizable;
         this.selected_3d_product_model = e.id;
-
+        this.colors_available_for_3d_model=e.colors_available
+        console.log(this.colors_available_for_3d_model);
+        debugger
         console.log(e);
         console.log(
           " >>------------------------------------------> selected_model_width ",
@@ -5602,6 +5624,7 @@ export default {
               e.height,
               e.depth,
               e.is_resizable,
+              e.colors_available
             );
             this.$refs.furniture_products_list_mobile.updateItemRendering(
               e.id,
@@ -5610,6 +5633,7 @@ export default {
               e.height,
               e.depth,
               e.is_resizable,
+              e.colors_available
             );
 
             //  const f={
@@ -5875,6 +5899,12 @@ export default {
         this.selected_model_width = width;
         this.selected_model_height = height;
         this.selected_model_depth = depth;
+
+        this.main_object_dims={
+          width: this.selected_model_width,
+          height: this.selected_model_height,
+          depth: this.selected_model_depth,
+        }
 
         this.is_resizable = e.is_resizable;
         this.selected_3d_product_model = e.model_uuid;
