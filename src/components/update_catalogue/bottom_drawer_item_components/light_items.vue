@@ -35,6 +35,98 @@
           </p>
         </div>
 
+        <!-- Room Type Filter -->
+        <div
+          style="
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f0f0f0;
+          "
+        >
+          <a-row>
+            <a-col :xs="0" :sm="0" :md="0" :lg="24">
+              <h4 style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600">
+                Room Type
+              </h4>
+              <div
+                v-if="loadingFilters"
+                style="text-align: center; padding: 10px"
+              >
+                <a-spin size="small" />
+              </div>
+              <div
+                v-else
+                style="max-height: 200px; overflow-y: auto; padding-right: 8px"
+              >
+                <a-checkbox
+                  v-for="room in availableRoomTypes"
+                  :key="room.id"
+                  v-model:checked="filters.selectedRoomTypes[room.id]"
+                  @change="handleRoomTypeChange(room.id, $event.target.checked)"
+                  style="display: flex; align-items: center; margin-bottom: 8px"
+                >
+                  <span
+                    >{{ room.name }}
+                    <span style="color: #999; font-size: 11px; margin-left: 4px"
+                      >({{ room.product_count }})</span
+                    ></span
+                  >
+                </a-checkbox>
+                <div
+                  v-if="availableRoomTypes.length === 0"
+                  style="color: #999; font-size: 12px"
+                >
+                  No room types available
+                </div>
+              </div>
+            </a-col>
+            <a-col :xs="24" :sm="24" :md="24" :lg="0">
+              <a-collapse v-model:activeKey="roomTypeKey">
+                <a-collapse-panel key="1" header="Room Type">
+                  <div
+                    v-if="loadingFilters"
+                    style="text-align: center; padding: 10px"
+                  >
+                    <a-spin size="small" />
+                  </div>
+                  <div
+                    v-else
+                    style="
+                      padding-right: 8px;
+                    "
+                  >
+                    <a-checkbox
+                      v-for="room in availableRoomTypes"
+                      :key="room.id"
+                      v-model:checked="filters.selectedRoomTypes[room.id]"
+                      @change="handleRoomTypeChange(room.id, $event.target.checked)"
+                      style="
+                        display: flex;
+                        align-items: center;
+                        margin-bottom: 8px;
+                      "
+                    >
+                      <span
+                        >{{ room.name }}
+                        <span
+                          style="color: #999; font-size: 11px; margin-left: 4px"
+                          >({{ room.product_count }})</span
+                        ></span
+                      >
+                    </a-checkbox>
+                    <div
+                      v-if="availableRoomTypes.length === 0"
+                      style="color: #999; font-size: 12px"
+                    >
+                      No room types available
+                    </div>
+                  </div>
+                </a-collapse-panel>
+              </a-collapse>
+            </a-col>
+          </a-row>
+        </div>
+
         <!-- Category Filter -->
         <div
           style="
@@ -62,7 +154,7 @@
                   v-for="category in availableCategories"
                   :key="category.id"
                   v-model:checked="filters.selectedCategories[category.id]"
-                  @change="applyFilters"
+                  @change="handleCategoryChange(category.id, $event.target.checked)"
                   style="display: flex; align-items: center; margin-bottom: 8px"
                 >
                   <span
@@ -99,7 +191,7 @@
                       v-for="category in availableCategories"
                       :key="category.id"
                       v-model:checked="filters.selectedCategories[category.id]"
-                      @change="applyFilters"
+                      @change="handleCategoryChange(category.id, $event.target.checked)"
                       style="
                         display: flex;
                         align-items: center;
@@ -288,10 +380,6 @@
           </a-collapse>
         </div>
 
-        <!-- Clear Button -->
-        <!-- <a-button block type="primary" @click="clearFilters"
-          >Clear Filters</a-button
-        > -->
       </a-col>
 
       <a-col :sm="24" :md="24" :lg="20">
@@ -315,10 +403,10 @@
               @change="handlePageSizeChange"
               style="width: 80px"
             >
-              <a-select-option :value="12">12</a-select-option>
               <a-select-option :value="20">20</a-select-option>
               <a-select-option :value="40">40</a-select-option>
               <a-select-option :value="60">60</a-select-option>
+              <a-select-option :value="80">80</a-select-option>
             </a-select>
           </div>
         </div>
@@ -401,27 +489,30 @@
                     ${{ getPrice(product) }}
                   </a-col>
 
-                  <a-col span="17">
-                    <a-button block class="product-detail-btn" @click="handleProductDetail(product)"
-                      >Product Details</a-button
-                    >
-                  </a-col>
+                  <a-col span="24">
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                          
+                          <a-button
+                            block
+                            class="product-detail-btn"
+                            style="flex: 1;"
+                            @click="handleProductDetail(product)"
+                          >
+                            Product Details
+                          </a-button>
 
-                  <a-col span="1"></a-col>
-                  <a-col span="4">
-                    <a-button
-                      :type="isWishlisted(product.id) ? 'primary' : 'default'"
-                      @click="toggleWishlist(product)"
+                          <!-- Fixed: removed nested a-col, just a plain a-button -->
+                          <a-button
+                            type="default"
+                            style="padding: 0; width: 36px; display: flex; justify-content: center; align-items: center; border: none; flex-shrink: 0;"
+                            @click.stop="toggleLike(product.id, products.indexOf(product))"
+                          >
+                            <HeartFilled v-if="product.is_liked" style="color: red; font-size: 18px;" />
+                            <HeartOutlined v-else style="font-size: 18px;" />
+                          </a-button>
 
-                        style="
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    "
-                    >
-                      <HeartOutlined />
-                    </a-button>
-                  </a-col>
+                        </div>
+                      </a-col>
                 </a-row>
               </div>
             </a-col>
@@ -458,17 +549,18 @@
 </template>
 
 <script>
-import { HeartOutlined } from "@ant-design/icons-vue";
+import { HeartFilled, HeartOutlined } from "@ant-design/icons-vue";
 
 export default {
   name: "LightsProducts",
   components: {
-    HeartOutlined,
+    HeartOutlined,HeartFilled
   },
   data() {
     return {
       categoryKey: ["1"],
       lightTypeKey: ["1"],
+      roomTypeKey: ["1"],
       colourAcitveKey: ["1"],
       products: [],
       wishlisted: new Set(),
@@ -479,6 +571,7 @@ export default {
 
       availableCategories: [],
       availableFurnitureTypes: [],
+      availableRoomTypes: [],
       pagination: {
         current_page: 1,
         page_size: 20,
@@ -489,6 +582,7 @@ export default {
         priceRange: [0, 500000],
         selectedCategories: {},
         selectedTypes: {},
+        selectedRoomTypes: {},
         selectedColors: [],
       },
       filterTimeout: null,
@@ -499,7 +593,24 @@ export default {
     this.loadProducts();
   },
   methods: {
-     async toggleFavorite(product, product_type) {
+    async toggleLike(itemId, itemIndex) {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) { this.$message.warning('Please login to add favorites'); return; }
+        const response = await fetch(`${this.$store.state.root_api}likes/favorites/toggle/`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": `Token ${token}` },
+          body: JSON.stringify({ id: itemId, type: 'light' }),
+        });
+        const data = await response.json();
+        this.products[itemIndex].is_liked = data.favorited;
+        this.$message.success(data.favorited ? 'Added to favorites' : 'Removed from favorites');
+      } catch (error) {
+        console.error("Like toggle failed", error);
+        this.$message.error('Failed to update favorite');
+      }
+    },
+    async toggleFavorite(product, product_type) {
       try {
         const token = localStorage.getItem("token");
         const response = await fetch(
@@ -525,6 +636,7 @@ export default {
         console.error("Favorite toggle failed", error);
       }
     },
+
     /**
      * Load filter options from API
      */
@@ -548,7 +660,9 @@ export default {
           this.availableColors = data.data.colors || [];
           this.availableCategories = data.data.categories || [];
           this.availableFurnitureTypes = data.data.furniture_types || [];
+          this.availableRoomTypes = data.data.room_types || [];
 
+          // Initialise checkbox maps
           this.filters.selectedCategories = {};
           this.availableCategories.forEach((cat) => {
             this.filters.selectedCategories[cat.id] = false;
@@ -557,6 +671,11 @@ export default {
           this.filters.selectedTypes = {};
           this.availableFurnitureTypes.forEach((type) => {
             this.filters.selectedTypes[type.furniture_type] = false;
+          });
+
+          this.filters.selectedRoomTypes = {};
+          this.availableRoomTypes.forEach((room) => {
+            this.filters.selectedRoomTypes[room.id] = false;
           });
         } else {
           this.$message.error("Failed to load filter options");
@@ -570,12 +689,11 @@ export default {
     },
 
     onProductImageLoad(id) {
-  this.imageLoadedMap[id] = false;
-  setTimeout(() => {
-    this.imageLoadedMap[id] = true;
-  }, 1000);
-},
-
+      this.imageLoadedMap[id] = false;
+      setTimeout(() => {
+        this.imageLoadedMap[id] = true;
+      }, 1000);
+    },
 
     /**
      * Toggle color filter selection
@@ -625,10 +743,20 @@ export default {
           params.append("furniture_type", selectedTypes.join(","));
         }
 
+        // Add selected room types
+        const selectedRoomTypeIds = Object.keys(
+          this.filters.selectedRoomTypes
+        ).filter((id) => this.filters.selectedRoomTypes[id]);
+
+        if (selectedRoomTypeIds.length > 0) {
+          params.append("room_type", selectedRoomTypeIds.join(","));
+        }
+
         // Add selected colors - send as comma-separated hex codes
         if (this.filters.selectedColors.length > 0) {
           params.append("color", this.filters.selectedColors.join(","));
         }
+
         let url = "";
         if (this.$route.query.brand) {
           url = `${
@@ -655,16 +783,16 @@ export default {
         if (data.success) {
           this.products = data.data || [];
 
-          // Update pagination info from response
-          this.pagination.current_page = data.page || 1;
-          this.pagination.page_size = data.page_size || 20;
-          this.pagination.total_count = data.total_count || 0;
-          this.pagination.total_pages = data.total_pages || 1;
+          
+          const p = data.pagination || {};
+          this.pagination.current_page = p.page || 1;
+          this.pagination.page_size = p.page_size || 20;
+          this.pagination.total_count = p.total_count || 0;
+          this.pagination.total_pages = p.total_pages || 1;
 
           this.addInitWishListed();
-          // Scroll to top when page changes
           window.scrollTo({ top: 0, behavior: "smooth" });
-        } else {
+        }else {
           this.$message.error(data.message || "Failed to load products");
         }
       } catch (error) {
@@ -703,6 +831,57 @@ export default {
     },
 
     /**
+     * When a room type checkbox is toggled, auto-check/uncheck all its child categories.
+     * Uses the same room_type_id link that AiCatalog uses.
+     */
+    handleRoomTypeChange(roomId, checked) {
+      // Find every category that belongs to this room type
+      const siblingCatIds = this.availableCategories
+        .filter((c) => c.room_type_id === roomId)
+        .map((c) => c.id);
+
+      siblingCatIds.forEach((catId) => {
+        this.filters.selectedCategories[catId] = checked;
+      });
+
+      this.applyFilters();
+    },
+
+    /**
+     * When a category checkbox is toggled, sync the parent room type checkbox:
+     * - check room if ALL its categories are now checked
+     * - uncheck room if ANY category is unchecked
+     */
+    handleCategoryChange(categoryId, checked) {
+      this.filters.selectedCategories[categoryId] = checked;
+
+      const cat = this.availableCategories.find((c) => c.id === categoryId);
+      if (cat && cat.room_type_id) {
+        const siblingIds = this.availableCategories
+          .filter((c) => c.room_type_id === cat.room_type_id)
+          .map((c) => c.id);
+
+        const allChecked = siblingIds.every(
+          (id) => this.filters.selectedCategories[id]
+        );
+        const anyChecked = siblingIds.some(
+          (id) => this.filters.selectedCategories[id]
+        );
+
+        // Check room only when every sibling is selected; uncheck when none are
+        if (allChecked) {
+          this.filters.selectedRoomTypes[cat.room_type_id] = true;
+        } else if (!anyChecked) {
+          this.filters.selectedRoomTypes[cat.room_type_id] = false;
+        }
+        // If some (but not all) siblings are checked, leave the room checkbox
+        // in its current state so it doesn't feel erratic to the user
+      }
+
+      this.applyFilters();
+    },
+
+    /**
      * Apply all filters (reset to page 1)
      */
     applyFilters() {
@@ -718,6 +897,7 @@ export default {
         priceRange: [0, 500000],
         selectedCategories: {},
         selectedTypes: {},
+        selectedRoomTypes: {},
         selectedColors: [],
       };
 
@@ -727,6 +907,10 @@ export default {
 
       this.availableFurnitureTypes.forEach((type) => {
         this.filters.selectedTypes[type.furniture_type] = false;
+      });
+
+      this.availableRoomTypes.forEach((room) => {
+        this.filters.selectedRoomTypes[room.id] = false;
       });
 
       this.pagination.current_page = 1;
@@ -765,7 +949,7 @@ export default {
       return this.wishlisted.has(productId);
     },
 
-     addInitWishListed(){
+    addInitWishListed() {
       this.products.forEach((product) => {
         if (product.is_favorited) {
           this.wishlisted.add(product.id);

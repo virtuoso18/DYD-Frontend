@@ -80,7 +80,7 @@
             align-items: center;
           "
           type="primary"
-@click.stop="$router.push('/' + ProductDetails.business_slug)"
+          @click.stop="this.$router.push('/' + ProductDetails.business_slug)"
           ><LeftOutlined />
         </a-button>
         <model-viewer
@@ -137,37 +137,41 @@
           </div>
           <!-- Floating Color Selector for AR Mode -->
           <div v-if="isARActive && ProductDetails" class="ar-floating-colors">
-            <div class="!flex gap-1 w-1/2">
-              <div
-                v-for="(color, index) in ProductDetails.colors.available_colors"
-                v-if="color.color && color.model_file_colored_product"
-                :key="color.id"
-                @click="switchColorInAR(index, color)"
-                :class="[
-                  'ar-color-dot',
-                  selectedColorIndex === index ? 'active' : '',
-                ]"
-                :style="{ backgroundColor: color.color }"
-              ></div>
+              
+              <!-- Colors -->
+              <div class="!flex gap-1 w-1/2">
+                <div
+                  v-for="(color, index) in ProductDetails?.colors?.available_colors?.filter(c => c?.color && c?.model_file_colored_product)"
+                  :key="color.id"
+                  @click="switchColorInAR(index, color)"
+                  :class="[
+                    'ar-color-dot',
+                    selectedColorIndex === index ? 'active' : ''
+                  ]"
+                  :style="{ backgroundColor: color.color }"
+                ></div>
+              </div>
+
+              <!-- Wishlist Button -->
+              <div class="!flex !justify-end w-1/2">
+                <a-button
+                  style="
+                    padding: 2px 12px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                  "
+                >
+                  <template v-if="true">
+                    <HeartFilled style="color: red" />
+                  </template>
+                  <template v-else>
+                    <HeartOutlined />
+                  </template>
+                </a-button>
+              </div>
+
             </div>
-            <div class="!flex !justify-end w-1/2">
-              <a-button
-                style="
-                  padding: 2px 12px;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                "
-              >
-                <template v-if="true">
-                  <HeartFilled style="color: red" />
-                </template>
-                <template>
-                  <HeartOutlined />
-                </template>
-              </a-button>
-            </div>
-          </div>
         </model-viewer>
       </div>
     </div>
@@ -719,7 +723,7 @@ export default {
       // Drawer State
       drawerState: "collapsed",
       collapsedHeight: 100,
-      expandedHeight: 500,
+      expandedHeight: 300,
       currentDrawerHeight: 100,
       isDragging: false,
       startY: 0,
@@ -1415,7 +1419,7 @@ export default {
         this.isARActive = false;
         this.isFullScreen = false;
       } else {
-        this.$route.back();
+        window.history.back();
       }
     },
 
@@ -1502,6 +1506,7 @@ export default {
   width: 100%;
   height: 80vh;
   min-height: 400px;
+  pointer-events: none;
 }
 
 .model-viewer {
@@ -1816,8 +1821,8 @@ export default {
 }
 
 .drawer-content {
-  height: 100vh;
-  max-height: 100vh;
+  height: 300px;
+  max-height: calc(350px - 5px);
   padding: 0 20px 20px;
   overflow-y: auto;
   padding-bottom: 40px;

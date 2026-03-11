@@ -1,31 +1,19 @@
 <template>
-<div
-    v-if="showRemoveObjectModal"
+
+   <div 
+    v-if="showRemoveObjectModal" 
     class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/10 backdrop-blur-sm"
     @click="showRemoveObjectModal = false"
   >
-    <div
+    <div 
       class="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 animate-slideUp"
       @click.stop
     >
       <!-- Icon -->
       <div class="flex justify-center mb-6">
         <div class="relative">
-          <div
-            class="absolute inset-0 bg-red-500 blur-2xl opacity-30 rounded-full animate-pulse"
-          ></div>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="72"
-            height="72"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#ef4444"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="relative"
-          >
+          <div class="absolute inset-0 bg-red-500 blur-2xl opacity-30 rounded-full animate-pulse"></div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="relative">
             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
             <line x1="15" y1="9" x2="9" y2="15"></line>
             <line x1="9" y1="9" x2="15" y2="15"></line>
@@ -40,10 +28,10 @@
 
       <!-- Description -->
       <p class="text-base text-gray-600 text-center mb-3 leading-relaxed">
-        Your current plan
-        <span class="font-semibold text-red-500">{{ currentPlanName }}</span>
-        doesn't include the
-        <span class="font-semibold text-gray-900">Remove Objects</span>
+        Your current plan 
+        <span class="font-semibold text-red-500">{{ currentPlanName }}</span> 
+        doesn't include the 
+        <span class="font-semibold text-gray-900">Remove Objects</span> 
         feature.
       </p>
 
@@ -54,28 +42,18 @@
 
       <!-- Actions -->
       <div class="space-y-3">
-        <button
+        <button 
           @click="goToUpgrade"
           class="w-full h-12 !mb-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold rounded-lg flex items-center justify-center gap-2 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
             <path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path>
           </svg>
           Upgrade Now
         </button>
 
-        <button
+        <button 
           @click="showRemoveObjectModal = false"
           class="w-full h-12 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-lg transition-colors duration-200"
         >
@@ -88,44 +66,20 @@
         <p class="text-xs text-gray-500 text-center mb-3">Premium features:</p>
         <div class="flex justify-center gap-4 flex-wrap">
           <div class="flex items-center gap-1 text-xs text-gray-600">
-            <svg
-              class="w-4 h-4 text-green-500"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                clip-rule="evenodd"
-              ></path>
+            <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
             </svg>
             Remove Objects
           </div>
           <div class="flex items-center gap-1 text-xs text-gray-600">
-            <svg
-              class="w-4 h-4 text-green-500"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                clip-rule="evenodd"
-              ></path>
+            <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
             </svg>
             AI Inpainting
           </div>
           <div class="flex items-center gap-1 text-xs text-gray-600">
-            <svg
-              class="w-4 h-4 text-green-500"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                clip-rule="evenodd"
-              ></path>
+            <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
             </svg>
             Unlimited Edits
           </div>
@@ -133,6 +87,7 @@
       </div>
     </div>
   </div>
+
 
   <contextHolder />
   <a-drawer
@@ -196,7 +151,7 @@
       </a-col>
     </a-row>
   </a-drawer>
-  <a-modal
+<a-modal
     v-model:open="isShowInstructionModal"
     title="Instructions"
     @ok="closeInstructionModal"
@@ -214,6 +169,7 @@
     @update:visible="draw_removal_modal = $event"
     @submit-removal="handleDrawnAreaRemoval"
     @insufficient-credits="throw_Insufficient_credits"
+
     @removal-success="handleRemovalSuccess"
     @cancel="draw_removal_modal = false"
   />
@@ -294,190 +250,33 @@
         @click="showInstructionModal"
         title="see instruction"
       />
-      <div
-        class="detect-object-sec absolute top-10  z-[20] bg-white w-[100%]"
-      >
-       <!-- MODE TOOLBAR -->
-  <div class="detect-toolbar absolute top-3 left-1/2 -translate-x-1/2 z-[a0]">
-    
-    <!-- Mode Pills -->
-    <div style="display:flex;gap:10px;justify-content: space-between;align-items: center;">
-    <div class="mode-pills">
-      <button
-        v-for="mode in modes"
-        :key="mode.value"
-        :ref="el => { if (el) modePillRefs[mode.value] = el }"
-        @click="handleProtocolChange(mode.value); selectedOption = mode.value"
-        class="mode-pill"
-        :class="{ active: selectedOption === mode.value }"
-      >
-        <span class="pill-icon">{{ mode.icon }}</span>
-        <span class="pill-label">{{ mode.label }}</span>
-      </button>
-      
-    </div>
-    <div style="background-color: rgba(0,0,0,0.6);padding:5px;border-radius: 100%;">
-  <button class="how-btn" @click="$refs.toolbarTour.openTour()">?</button>
-</div>
+      <!-- Main Canvas -->
+      <canvas
+        ref="canvas"
+        :width="canvasWidth"
+        :height="canvasHeight"
+        class="main-canvas"
+        :class="{
+          disabled: isLoading,
+          'furniture-mode': true,
+        }"
+      ></canvas>
 
-    </div>
-    <!-- Context Bar — changes per mode -->
-    <!-- Context Bar — changes per mode -->
-<div  class="context-bar" 
-  :class="'mode-' + selectedOption"
-  v-show="showContextBar "
-  >
-
-  <!-- Click on Object -->
-  <template v-if="selectedOption === 'clickonobject'">
-    <div class="sam2-bar">
-      <button class="how-btn" @click="activeInfoStrip = activeInfoStrip === 'clickonobject' ? null : 'clickonobject'">?</button>
-      <transition name="info-fade">
-        <span v-if="activeInfoStrip === 'clickonobject'" class="info-text">Click directly on any object to select it</span>
-      </transition>
-      
-    </div>
-  </template>
-
-  <!-- Draw Circle -->
-  <template v-else-if="selectedOption === 'drawcircle'">
-    <div class="sam2-bar">
-      <button class="how-btn" @click="activeInfoStrip = activeInfoStrip === 'drawcircle' ? null : 'drawcircle'">?</button>
-      <transition name="info-fade">
-        <span v-if="activeInfoStrip === 'drawcircle'" class="info-text">Draw a circle around the object you want to detect</span>
-      </transition>
-    </div>
-  </template>
-
-  <!-- Draw Mask -->
-  <template v-else-if="selectedOption === 'draw'">
-    <div class="sam2-bar">
-      <button class="how-btn" @click="activeInfoStrip = activeInfoStrip === 'draw' ? null : 'draw'">?</button>
-      <transition name="info-fade">
-        <span v-if="activeInfoStrip === 'draw'" class="info-text">Paint over the area you want to remove</span>
-      </transition>
-    </div>
-  </template>
-
-  <!-- SAM 2 -->
-  <!-- <template v-else-if="selectedOption === 'sam2'">
-    <div class="sam2-bar">
-      <span class="info-dot pulse"></span>
-      <transition name="info-fade">
-        <span class="info-text">Click on objects to place segmentation points</span>
-      </transition>
-        <button class="detect-btn" ref="detectBtnRef" style="margin-left:auto" @click="handleDetectObjectwithSAM2">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        Detect
-      </button>
-    </div>
-  </template> -->
-
-  <!-- SAM 3 -->
-  <!-- <template v-else-if="selectedOption === 'sam3'">
-    <div class="sam3-bar">
-      <transition name="info-fade">
-        <span v-if="activeInfoStrip === 'sam3'" class="info-text">Type object names separated by commas, then hit Run</span>
-      </transition>
-      <div class="sam3-input-wrap" v-if="activeInfoStrip !== 'sam3'">
-        <svg class="sam3-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/><circle cx="18" cy="6" r="3" fill="currentColor"/></svg>
-        <input
-  v-model="ModeTextInstruction"
-  ref="sam3InputRef"
-  class="sam3-input"
-  placeholder="sofa, bed, pillow..."
-  @keyup.enter="handleDetectObjectWithSAM3"
-/>
-      </div>
-      <button class="detect-btn sam3-detect" ref="runBtnRef" style="margin-left:auto" @click="handleDetectObjectWithSAM3">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-        Run
-      </button>
-    </div>
-  </template> -->
-
-</div>
-  </div>
-
-  <!-- SAM 2 How-To Modal -->
-  <a-modal
-    v-model:open="showSAM2Modal"
-    :footer="null"
-    :width="480"
-    class="sam2-modal"
-    :bodyStyle="{ padding: 0, background: '#0a0a0f', borderRadius: '16px' }"
-  >
-    <div class="sam2-modal-body">
-      <div class="modal-header">
-        <div class="modal-badge">SAM 2</div>
-        <h3>Segment Anything Model</h3>
-        <p>AI-powered precise object segmentation</p>
-      </div>
-      <div class="modal-steps">
-        <div class="step" v-for="(step, i) in sam2Steps" :key="i">
-          <div class="step-num">{{ i + 1 }}</div>
-          <div class="step-content">
-            <strong>{{ step.title }}</strong>
-            <span>{{ step.desc }}</span>
-          </div>
-        </div>
-      </div>
-      <button class="modal-close-btn" @click="showSAM2Modal = false">Got it →</button>
-    </div>
-  </a-modal>
-         
-      </div>
-      <div
-        v-if="
-          selectedOption === 'draw' ||
-          selectedOption === 'sam2' ||
-          selectedOption === 'sam3'
+      <!-- Hover overlay for object highlighting -->
+      <canvas
+        ref="overlayCanvas"
+        :width="canvasWidth"
+        :height="canvasHeight"
+        class="overlay-canvas"
+        :class="{ disabled: isLoading }"
+        style="
+          position: absolute;
+          top: 0;
+          left: 0;
+          z-index: 2;
+          pointer-events: none;
         "
-      >
-       <canvasForSAMAndDrawMask
-  ref="canvasRefForSAMAndDrawMask"
-  :baseImage="baseImage"
-  :roomId="this.$route.params.id"
-  :key="draw_removal_modal_key"
-  :initialMode="selectedOption"
-  @submit-removal="handleDrawnAreaRemoval"
-  @insufficient-credits="throw_Insufficient_credits"
-  @removal-success="handleRemovalSuccess"
-  @mask-ready="markMaskIsReady"  
-  @cancel-selection="handleCancelSelection"
-
-  @sam_rendering_results="sam_rendering_results"
-/>
-      </div>
-      <div v-else>
-        <!-- Main Canvas -->
-        <canvas
-          ref="canvas"
-          :width="canvasWidth"
-          :height="canvasHeight"
-          class="main-canvas"
-          :class="{
-            disabled: isLoading,
-            'furniture-mode': true,
-          }"
-        ></canvas>
-
-        <!-- Hover overlay for object highlighting -->
-        <canvas
-          ref="overlayCanvas"
-          :width="canvasWidth"
-          :height="canvasHeight"
-          class="overlay-canvas"
-          :class="{ disabled: isLoading }"
-          style="
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 2;
-            pointer-events: none;
-          "
-        ></canvas>
-      </div>
+      ></canvas>
     </div>
 
     <!-- Object Selection Indicators -->
@@ -500,7 +299,7 @@
             <span class="object-name">{{ formatObjectName(objectKey) }}</span>
             <button
               class="remove-object-btn"
-              @click.stop="toggleObjectSelection(objectKey)"
+              @click="toggleObjectSelection(objectKey)"
               title="Remove selection"
             >
               ×
@@ -658,156 +457,14 @@
       >
         🔄 Switch Furniture
       </a-button> -->
-        
-  <a-row>
-    <a-col :sm="24" :xs="24" :lg="16" :md="16" v-if=" !hasMaskReady">
-<a-space>
-<div class="sam3-bar" v-if="selectedOption === 'sam3'" style="background-color: rgba(0,0,0,0.6);padding: 5px 12px;border-radius:10px">
-      <transition name="info-fade">
-        <span v-if="activeInfoStrip === 'sam3'" class="info-text">Type object names separated by commas, then hit Run</span>
-      </transition>
-      <div class="sam3-input-wrap" v-if="activeInfoStrip !== 'sam3'">
-        <svg class="sam3-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/><circle cx="18" cy="6" r="3" fill="currentColor"/></svg>
-        <input
-  v-model="ModeTextInstruction"
-  ref="sam3InputRef"
-  class="sam3-input"
-  placeholder="sofa, bed, pillow..."
-  
-  @keyup.enter="handleDetectObjectWithSAM3"
-/>
-      </div>
-      <button
-      class="detect-btn sam3-detect"
-      style="margin-left:auto"
-      :disabled="sam_rendering_results_loading"
-      @click="handleDetectObjectWithSAM3"
-    >
-      <span v-if="!sam_rendering_results_loading" class="btn-content" style="display:flex;gap:5px;justify-content: center;align-items: center;">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <polygon points="5 3 19 12 5 21 5 3"/>
-        </svg>
-        Run
-      </span>
 
-      <span v-else class="btn-loading">
-        <span class="spinner"></span>
-        Processing...
-      </span>
-    </button>
-    </div>
-
-    <button
-  v-if="selectedOption === 'sam2'"
-  class="detect-btn"
-  style="margin-left:auto"
-  :disabled="sam_rendering_results_loading"
-  @click="handleDetectObjectwithSAM2"
->
-  <span v-if="!sam_rendering_results_loading" class="btn-content" style="display: flex;justify-content:center;gap:10px;align-items: center;">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-      <circle cx="11" cy="11" r="8"/>
-      <path d="m21 21-4.35-4.35"/>
-    </svg>
-    Detect
-  </span>
-
-  <span v-else class="btn-loading">
-    <span class="spinner"></span>
-    Detecting...
-  </span>
-</button>
-    
-    <a-button
-    class="toolbar-btn primary-btn"
-    @click="make_room_empty"
-    v-if="!isLoading && selectedObjects.length === 0 && selectedOption =='clickonobject'"
-    >
-    Make room empty
-  </a-button>
-
-   <!-- class="control-btn remove" -->
-        <a-button
-        v-if="selectedObjects.length !== 0"
-          ref="removeBtnRef"
-          @click="removeSelectedObjects"
-          style="
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: red;
-            color: white;
-          "
-          :style="{
-            color: 'white',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor:
-              selectedObjects.length === 0 ? 'rgb(285, 85, 96)' : 'red',
-          }"
-          :disabled="selectedObjects.length === 0 || drawingMode"
-        >
-          <DeleteOutlined /> Delete  
-          <!--  {{ selectedObjects.length }} -->
-        </a-button>
-        <!-- Remove Object button for SAM2 / SAM3 / Draw modes -->
-     
-
-
-        <!-- <button
-  v-if="hasMaskReady || initialMode === 'draw'"
-  @click="removeObjectByBinaryMask"
-  :disabled="isProcessing"
-  class="remove-object-api-btn"
->
-  {{ isProcessing ? '⟳ Removing...' : '🗑 Remove Object' }}
-</button> -->
-</a-space>
-
-</a-col>
-    <a-col :sm="24" :xs="24" :lg="24" :md="24" >
-      <!-- {{ selectedOption === 'draw' }}
-      {{  hasMaskReady }} -->
-      <a-space v-if="(selectedOption === 'draw' || hasMaskReady)">
-      <button
-        class="remove-object-api-btn"
-        @click="cancelSelection()"
-        >
-          ✖️ Cancel Selection
-        </button>
-      
-      <button
-        v-if="['sam2', 'sam3', 'draw'].includes(selectedOption) "
-        @click="triggerChildRemoval"
-        :disabled="isSAMProcessing || (selectedOption !== 'draw' && !hasMaskReady)"
-        class="remove-object-api-btn"
-        style="
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          padding: 6px 16px;
-          border-radius: 8px;
-          border: none;
-          font-size: 13px;
-          font-weight: 600;
-          cursor: pointer;
-          background: linear-gradient(135deg, #ef4444, #dc2626);
-          color: white;
-          box-shadow: 0 0 16px rgba(239,68,68,0.3);
-          transition: all 0.2s;
-        "
+      <a-button
+        class="toolbar-btn primary-btn"
+        @click="make_room_empty"
+        v-if="!isLoading && selectedObjects.length === 0"
       >
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <polyline points="3 6 5 6 21 6"/>
-          <path d="M19 6l-1 14H6L5 6"/>
-          <path d="M10 11v6M14 11v6"/>
-        </svg>
-        {{ isSAMProcessing ? 'Removing...' : 'Remove Object' }}
-      </button>
-      </a-space>
-    </a-col>
-  </a-row>  
+        Remove All Furniture
+      </a-button>
     </div>
 
     <!-- Zoom Controls -->
@@ -823,14 +480,6 @@
         ⌂
       </button>
     </div>
-    <!-- Debug Info -->
-    <ToolbarTour
-      ref="toolbarTour"
-      :selected-option="selectedOption"
-      :tour-refs="tourRefs"
-      @close="() => {}"
-    />
-
     <!-- Debug Info -->
     <div v-if="showDebugInfo" class="debug-info">
       <div>Objects detected: {{ Object.keys(objectMasks || {}).length }}</div>
@@ -852,7 +501,7 @@
       "
     >
       <div style="display: flex; gap: 5px; padding-top: 5px">
-        <!-- <a-button
+        <a-button
           @click="DrawRemoval_model"
           style="display: flex; gap: 5px; gap: 10px"
         >
@@ -868,16 +517,11 @@
               stroke-linejoin="round"
             />
           </svg>
-        </a-button> -->
+          <!-- Draw removal -->
+        </a-button>
         <!-- class="control-btn" -->
-        <!-- <a-button
-          @click="toggleFreeDrawMode"
-          title="draw circle to detect object"
-        >
-          <img class="w-[20px]" src="../../../assets/icons/pencil.svg" />
-        </a-button> -->
 
-        <!-- <a-button
+        <a-button
           @click="toggleSelection"
           type="default"
           style="
@@ -953,14 +597,13 @@
               stroke-linejoin="round"
             />
           </svg>
-           <span v-if="selectedObjects.length === objectMaskRegions.length">
+          <!-- <span v-if="selectedObjects.length === objectMaskRegions.length">
           {{selectedObjects.length}} 
-        </span> 
-        </a-button> -->
+        </span> -->
+        </a-button>
 
         <!-- class="control-btn remove" -->
-        <!-- <a-button
-          ref="removeBtnRef"
+        <a-button
           @click="removeSelectedObjects"
           style="
             display: flex;
@@ -980,7 +623,7 @@
           :disabled="selectedObjects.length === 0 || drawingMode"
         >
           <DeleteOutlined /> {{ selectedObjects.length }}
-        </a-button> -->
+        </a-button>
 
         <a-button
           type="primary"
@@ -1015,7 +658,7 @@
     <!-- Left Buttons -->
     <div class="flex flex-col gap-2 pt-1 px-2">
       <div className="flex flex-row gap-6 justify-center">
-        <!-- <a-button
+        <a-button
           @click="DrawRemoval_model"
           style="display: flex; gap: 5px; gap: 10px"
         >
@@ -1031,14 +674,8 @@
               stroke-linejoin="round"
             />
           </svg>
-        </a-button> -->
-        <!-- <a-button
-          @click="toggleFreeDrawMode"
-          title="draw circle to detect object"
-        >
-          <img class="w-[20px]" src="../../../assets/icons/pencil.svg" />
-        </a-button> -->
-
+          <!-- Draw removal -->
+        </a-button>
         <!-- class="control-btn" -->
 
         <!-- <a-button
@@ -1123,7 +760,7 @@
         </a-button> -->
 
         <!-- Remove Selected -->
-        <!-- <a-button
+        <a-button
           @click="removeSelectedObjects"
           danger
           :style="{
@@ -1138,7 +775,7 @@
         >
           <DeleteOutlined />
           {{ selectedObjects.length }}
-        </a-button> -->
+        </a-button>
 
         <!-- Reset Room -->
         <a-button
@@ -1254,10 +891,9 @@ import { DotLottieVue } from "@lottiefiles/dotlottie-vue";
 import { DeleteOutlined, RedoOutlined } from "@ant-design/icons-vue";
 import SwitchFurnitureModal from "@/components/update_catalogue/canvas_renderer/switch_furniture.vue";
 import SwitchFurnitureDrawerForMobile from "@/components/update_catalogue/canvas_renderer/SwitchFurnitureDrawerForMobile.vue";
-import canvasForSAMAndDrawMask from "./canvasForSAMAndDrawMask/canvasForSAMAndDrawMask.vue";
+
 import ZoomInIcon from "@/assets/icons/zoomout.png";
 import ZoomOutIcon from "@/assets/icons/zoomin.png";
-import ToolbarTour from './canvasForSAMAndDrawMask/ToolbarTour.vue';   // adjust path
 
 export default {
   name: "item_remove_renderer",
@@ -1298,8 +934,6 @@ export default {
     },
   },
   components: {
-      ToolbarTour,
-
     DrawRemovalModal,
     switch_furniture,
     DotLottieVue,
@@ -1307,23 +941,15 @@ export default {
     RedoOutlined,
     SwitchFurnitureModal,
     SwitchFurnitureDrawerForMobile,
-    canvasForSAMAndDrawMask,
   },
   data() {
     return {
-      sam_rendering_results_loading :false,
-      
-      activeInfoStrip: null,
-showContextBar: false,
-    hasMaskReady: false,
-    isSAMProcessing: false,
-      
       isShowInstructionModal: false,
-      currentPlanName: undefined,
-      business_available_actions: undefined,
-      planLoading: false,
-      planLoaded: false,
-      showRemoveObjectModal: false,
+    currentPlanName: undefined,
+    business_available_actions: undefined,
+    planLoading: false,
+    planLoaded: false,
+    showRemoveObjectModal: false,
       instructionConfig: [
         {
           key: "Pinch out zoom out",
@@ -1339,7 +965,8 @@ showContextBar: false,
       highlightPixelStep: 3, // ← CHANGE THIS VALUE
 
       // This controls the pixelation for hover/normal highlights
-      // Use same or higher value than highlightPixelStep for consistencyhoverPixelStep: 1, // ← CHANGE THIS VALUE
+      // Use same or higher value than highlightPixelStep for consistency
+      hoverPixelStep: 3, // ← CHANGE THIS VALUE
 
       // loading screen
 
@@ -1447,35 +1074,6 @@ showContextBar: false,
 
       // Backend communication
       switchingInProgress: false,
-
-      //drwawing assets
-      freeDrawMode: false,
-      freeDrawCanvas: null,
-      freeDrawCtx: null,
-      freeDrawing: false,
-      freeDrawPath: [],
-      //---------------
-      ModeTextInstruction: "Draw to Detect",
-      selectedOption: "clickonobject",
-      draw_removal_modal_key: 0,
-
-
-      showSAM2Modal: false,
-      modePillRefs: {},   
-      
-      modes: [
-        { value: 'clickonobject', label: 'Click', icon: '⊕' },
-        { value: 'drawcircle',   label: 'Circle', icon: '◯' },
-        { value: 'draw',         label: 'Mask',   icon: '✏' },
-        { value: 'sam2',         label: 'SAM 2',  icon: '⬡' },
-        { value: 'sam3',         label: 'SAM 3',  icon: '✦' },
-      ],
-      sam2Steps: [
-        { title: 'Place Points', desc: 'Click directly on the object you want to segment. Each click adds a precision anchor point.' },
-        { title: 'Multiple Points', desc: 'Add 2–4 points across the object for best accuracy — spread them across the surface.' },
-        { title: 'Hit Detect', desc: 'Press Detect to run the AI segmentation. The mask will appear highlighted in red.' },
-        { title: 'Remove or Switch', desc: 'Once masked, use the toolbar below to remove the object or switch furniture.' },
-      ],
     };
   },
   setup() {
@@ -1530,21 +1128,12 @@ showContextBar: false,
     objectMasksHash() {
       return JSON.stringify(this.objectMasks || {});
     },
-tourRefs() {
-  return {
-    pillClick:  this.modePillRefs['clickonobject'] || null,
-    pillCircle: this.modePillRefs['drawcircle'] || null,
-    pillMask:   this.modePillRefs['draw'] || null,
-    pillSAM2:   this.modePillRefs['sam2'] || null,
-    pillSAM3:   this.modePillRefs['sam3'] || null,  // ← must be here
-    removeBtn:  this.$refs.removeBtnRef?.$el || null,
-  };
-},
   },
 
   mounted() {
-    this.loadBrandPurchasedPlanDetails();
 
+   this.loadBrandPurchasedPlanDetails();
+  
     this.cycleLoadingMessage();
     this.setupResizeObserver();
     this.updateCanvasDimensions();
@@ -1651,409 +1240,6 @@ tourRefs() {
   },
 
   methods: {
-    sam_rendering_results(e){
-      this.sam_rendering_results_loading = e
-    },
-    markMaskIsReady(e){
-      this.hasMaskReady = e
-    },
-
-     async redrawCanvas() {
-      await this.drawBaseImage();
-    },
-
-    redrawAllStrokes() {
-      this.drawingHistory.forEach((stroke) => {
-        if (!stroke.points.length) return;
-        if (stroke.isEraser) {
-          // Replay ALL eraser points
-          stroke.points.forEach((p) => {
-            this.ctx.clearRect(
-              p.x - stroke.brushSize / 2,
-              p.y - stroke.brushSize / 2,
-              stroke.brushSize,
-              stroke.brushSize,
-            );
-          });
-        } else {
-          this.ctx.strokeStyle = stroke.brushColor;
-          this.ctx.lineWidth = stroke.brushSize;
-          this.ctx.beginPath();
-          this.ctx.moveTo(stroke.points[0].x, stroke.points[0].y);
-          stroke.points.forEach((p) => this.ctx.lineTo(p.x, p.y));
-          this.ctx.stroke();
-        }
-      });
-    },
-
-    async drawBaseImage() {
-      if (!this.baseImg || !this.ctx || this.isDestroyed) return;
-      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-      this.ctx.drawImage(
-        this.baseImg,
-        0,
-        0,
-        this.canvas.width,
-        this.canvas.height,
-      );
-
-      if (this.removalMode === "draw") {
-        this.redrawAllStrokes();
-      } else if (
-        (this.removalMode === "sam2" || this.removalMode === "sam3") &&
-        this.samMaskGenerated
-      ) {
-        await this.drawSAMMask();
-      }
-    },
-    clearMask() {
-  this.samMask = null;
-  this.samMaskGenerated = false;
-  this.samPoints = [];
-  this.sam3MasksList = [];
-  this.currentStroke = [];
-  this.drawingHistory = [];
-  this.samConfidence = 0.8;
-  this.sam3TextPrompt = '';
-  this.$emit('mask-ready', false); // Emit that mask is no longer ready
-  this.redrawCanvas();
-},
-    handleCancelSelection() {
-  this.hasMaskReady = false;
-  this.selectedObjects = [];
-  this.$message.info('Selection cancelled');
-  // Optionally reset the canvas/UI
-  this.removeObjectHighlight();
-},
- cancelSelection() {
-  console.log('cancelSelection called');
-  console.log('canvasRef exists:', !!this.$refs.canvasRefForSAMAndDrawMask);
-  
-  this.hasMaskReady = false;
-  this.selectedObjects = [];
-  
-  if (this.$refs.canvasRefForSAMAndDrawMask) {
-    console.log('Calling clearAll on child');
-    this.$refs.canvasRefForSAMAndDrawMask.clearAll();
-  }
-  
-  this.$message.info('Selection cancelled');
-  this.$emit('cancel-selection');
-},
-    async triggerChildRemoval() {
-      if (!this.$refs.canvasRefForSAMAndDrawMask) return;
-      this.isSAMProcessing = true;
-      try {
-        await this.$refs.canvasRefForSAMAndDrawMask.triggerRemoval();
-      } finally {
-        this.isSAMProcessing = false;
-        this.hasMaskReady = false;
-      }
-    },
-
-    handleDetectObjectwithSAM2() {
-      this.$refs.canvasRefForSAMAndDrawMask.fetchSAMMask();
-    },
-    handleDetectObjectWithSAM3() {
-      this.$refs.canvasRefForSAMAndDrawMask.fetchSAM3Mask(
-        this.ModeTextInstruction,
-      );
-    },
-    async handleProtocolChange(val) {
-      this.activeInfoStrip = null;
-      this.hasMaskReady = false;  // ← ADD THIS LINE
-      this.selectedObjects = [];
-      if (this.freeDrawMode) this.closeFreeDrawMode();
-
-      if (val === "clickonobject") {
-        this.ModeTextInstruction = "Click to Select Object";
-        await this.$nextTick();
-        await this.$nextTick(); // double tick — Vue needs two cycles to swap DOM
-        this.initCanvas();
-        this.setupEventListeners();
-        await this.loadImage();
-      } else if (val === "drawcircle") {
-        this.ModeTextInstruction = "Draw Curve to Select";
-        await this.$nextTick();
-        await this.$nextTick();
-        this.initCanvas();
-        this.setupEventListeners();
-        await this.loadImage();
-        if (this.$refs.canvasContainer) {
-          this.openFreeDrawMode();
-        }
-      } else if (val === "draw") {
-        this.ModeTextInstruction = "Draw Mask to Remove";
-        this.draw_removal_modal_key++;
-      } else if (val === "sam2") {
-        this.ModeTextInstruction = "SAM 2 - Click to Segment";
-        this.draw_removal_modal_key++;
-      } else if (val === "sam3") {
-        this.ModeTextInstruction = "";
-        this.draw_removal_modal_key++;
-      }
-    },
-    toggleFreeDrawMode() {
-      if (this.freeDrawMode) {
-        this.closeFreeDrawMode();
-      } else {
-        this.openFreeDrawMode();
-      }
-    },
-
-    openFreeDrawMode() {
-      this.freeDrawMode = true;
-      this.freeDrawPath = [];
-
-      if (!this.freeDrawCanvas) {
-        this.freeDrawCanvas = document.createElement("canvas");
-        this.freeDrawCanvas.style.position = "absolute";
-        this.freeDrawCanvas.style.top = "0";
-        this.freeDrawCanvas.style.left = "0";
-        this.freeDrawCanvas.style.zIndex = "10";
-        this.freeDrawCanvas.style.cursor = "crosshair";
-        this.$refs.canvasContainer.appendChild(this.freeDrawCanvas);
-      }
-
-      const dpr = window.devicePixelRatio || 1;
-      this.freeDrawCanvas.width = this.canvasWidth * dpr;
-      this.freeDrawCanvas.height = this.canvasHeight * dpr;
-      this.freeDrawCanvas.style.width = this.canvasWidth + "px";
-      this.freeDrawCanvas.style.height = this.canvasHeight + "px";
-
-      this.freeDrawCtx = this.freeDrawCanvas.getContext("2d");
-      this.freeDrawCtx.scale(dpr, dpr);
-
-      this.freeDrawCanvas.addEventListener("mousedown", this.onFreeDrawStart);
-      this.freeDrawCanvas.addEventListener("mousemove", this.onFreeDrawMove);
-      this.freeDrawCanvas.addEventListener("mouseup", this.onFreeDrawEnd);
-      this.freeDrawCanvas.addEventListener("mouseleave", this.onFreeDrawEnd);
-      this.freeDrawCanvas.addEventListener(
-        "touchstart",
-        this.onFreeDrawTouchStart,
-        { passive: false },
-      );
-      this.freeDrawCanvas.addEventListener(
-        "touchmove",
-        this.onFreeDrawTouchMove,
-        { passive: false },
-      );
-      this.freeDrawCanvas.addEventListener(
-        "touchend",
-        this.onFreeDrawTouchEnd,
-        { passive: false },
-      );
-    },
-
-    closeFreeDrawMode() {
-      this.freeDrawMode = false;
-      this.freeDrawing = false;
-      this.freeDrawPath = [];
-      if (this.freeDrawCanvas) {
-        this.freeDrawCanvas.removeEventListener(
-          "mousedown",
-          this.onFreeDrawStart,
-        );
-        this.freeDrawCanvas.removeEventListener(
-          "mousemove",
-          this.onFreeDrawMove,
-        );
-        this.freeDrawCanvas.removeEventListener("mouseup", this.onFreeDrawEnd);
-        this.freeDrawCanvas.removeEventListener(
-          "mouseleave",
-          this.onFreeDrawEnd,
-        );
-        this.freeDrawCanvas.removeEventListener(
-          "touchstart",
-          this.onFreeDrawTouchStart,
-        );
-        this.freeDrawCanvas.removeEventListener(
-          "touchmove",
-          this.onFreeDrawTouchMove,
-        );
-        this.freeDrawCanvas.removeEventListener(
-          "touchend",
-          this.onFreeDrawTouchEnd,
-        );
-
-        if (this.freeDrawCanvas.parentNode) {
-          this.freeDrawCanvas.parentNode.removeChild(this.freeDrawCanvas);
-        }
-        this.freeDrawCanvas = null;
-        this.freeDrawCtx = null;
-      }
-    },
-
-    getFreeDrawPos(e) {
-      const rect = this.freeDrawCanvas.getBoundingClientRect();
-      return {
-        x: ((e.clientX ?? e.pageX) - rect.left - this.panX) / this.zoom,
-        y: ((e.clientY ?? e.pageY) - rect.top - this.panY) / this.zoom,
-      };
-    },
-
-    onFreeDrawStart(e) {
-      this.freeDrawing = true;
-      this.freeDrawPath = [];
-      const { x, y } = this.getFreeDrawPos(e);
-      this.freeDrawPath.push({ x, y });
-    },
-
-    onFreeDrawMove(e) {
-      if (!this.freeDrawing) return;
-      const { x, y } = this.getFreeDrawPos(e);
-      this.freeDrawPath.push({ x, y });
-      this.redrawFreePath(false);
-    },
-
-    onFreeDrawEnd() {
-      if (!this.freeDrawing) return;
-      this.freeDrawing = false;
-
-      if (this.freeDrawPath.length > 5) {
-        // close the shape back to start
-        this.freeDrawPath.push({ ...this.freeDrawPath[0] });
-        this.redrawFreePath(true);
-        // auto submit after short delay so user sees the closed shape
-        setTimeout(() => this.submitFreeDrawDetection(), 300);
-      } else {
-        // too small — reset
-        this.freeDrawCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-        this.freeDrawPath = [];
-      }
-    },
-
-    onFreeDrawTouchStart(e) {
-      e.preventDefault();
-      this.onFreeDrawStart(e.touches[0]);
-    },
-
-    onFreeDrawTouchMove(e) {
-      e.preventDefault();
-      this.onFreeDrawMove(e.touches[0]);
-    },
-
-    onFreeDrawTouchEnd(e) {
-      e.preventDefault();
-      this.onFreeDrawEnd();
-    },
-
-    redrawFreePath(closed = false) {
-      if (!this.freeDrawCtx || this.freeDrawPath.length < 2) return;
-
-      const ctx = this.freeDrawCtx;
-      ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-      ctx.save();
-      ctx.translate(this.panX, this.panY);
-      ctx.scale(this.zoom, this.zoom);
-
-      ctx.beginPath();
-      ctx.moveTo(this.freeDrawPath[0].x, this.freeDrawPath[0].y);
-      this.freeDrawPath.forEach((p) => ctx.lineTo(p.x, p.y));
-      if (closed) ctx.closePath();
-
-      ctx.fillStyle = "rgba(99, 102, 241, 0.15)";
-      ctx.strokeStyle = "#6366f1";
-      ctx.lineWidth = 5 / this.zoom;
-      // ctx.setLineDash(closed ? [] : [5, 3]);
-      ctx.fill();
-      ctx.stroke();
-
-      // start point dot
-      ctx.beginPath();
-      ctx.arc(
-        this.freeDrawPath[0].x,
-        this.freeDrawPath[0].y,
-        5 / this.zoom,
-        0,
-        Math.PI * 2,
-      );
-      ctx.fillStyle = "#6366f1";
-      ctx.setLineDash([]);
-      ctx.fill();
-
-      ctx.restore();
-    },
-
-    async submitFreeDrawDetection() {
-      if (this.freeDrawPath.length < 3) return;
-
-      const detectedObjects = [];
-
-      //  Convert freeDrawPath (canvas-space) → image-space for mask comparison
-      const imageSpacePath = this.freeDrawPath.map((p) => ({
-        x: (p.x - this.panX) / this.zoom,
-        y: (p.y - this.panY) / this.zoom,
-      }));
-
-      this.selectedObjects = [];
-      this.objectMaskRegions.forEach((region) => {
-        if (!region.imageData) return;
-
-        const data = region.imageData.data;
-        let overlapCount = 0;
-        let totalWhitePixels = 0;
-
-        for (let y = 0; y < this.canvasHeight; y += 4) {
-          for (let x = 0; x < this.canvasWidth; x += 4) {
-            const index = (y * this.canvasWidth + x) * 4;
-            const r = data[index];
-            const g = data[index + 1];
-            const b = data[index + 2];
-
-            if (r > 200 && g > 200 && b > 200) {
-              totalWhitePixels++;
-              // ✅ Check against imageSpacePath using image-space x,y
-              if (this.isPointInPath(x, y, imageSpacePath)) {
-                overlapCount++;
-              }
-            }
-          }
-        }
-
-        if (totalWhitePixels > 0 && overlapCount / totalWhitePixels > 0.2) {
-          detectedObjects.push(region.objectKey);
-        }
-      });
-
-      if (detectedObjects.length > 0) {
-        detectedObjects.forEach((key) => {
-          if (!this.selectedObjects.includes(key)) {
-            this.selectedObjects.push(key);
-          }
-        });
-
-        this.$nextTick(() => {
-          this.drawPersistentSelectionHighlight();
-        });
-
-        this.$message.success(`${detectedObjects.length} object(s) selected!`);
-      } else {
-        this.$message.warning("No objects found in drawn area.");
-      }
-
-      // this.closeFreeDrawMode();
-      if (this.freeDrawCtx) {
-        this.freeDrawCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-      }
-      this.freeDrawPath = [];
-    },
-
-    // ✅ Rename to generic - accepts any path array
-    isPointInPath(x, y, path) {
-      let inside = false;
-      for (let i = 0, j = path.length - 1; i < path.length; j = i++) {
-        const xi = path[i].x,
-          yi = path[i].y;
-        const xj = path[j].x,
-          yj = path[j].y;
-        const intersect =
-          yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
-        if (intersect) inside = !inside;
-      }
-      return inside;
-    },
-
     showInstructionModal() {
       this.isShowInstructionModal = true;
     },
@@ -2061,10 +1247,11 @@ tourRefs() {
       this.isShowInstructionModal = false;
     },
 
-    throw_Insufficient_credits(msg, buid) {
+    throw_Insufficient_credits(msg,buid){
       // console.log(msg);
       // console.log(buid);
-      this.$emit("insufficient-credits", msg, buid);
+          this.$emit("insufficient-credits",msg,buid);
+      
     },
     openSwitchFurnitureModal() {
       if (this.selectedObjects.length === 0) return;
@@ -2236,12 +1423,12 @@ tourRefs() {
     /**
      * Get current canvas dimensions
      */
-    // getCanvasDimensions() {
-    //   return {
-    //     width: this.canvas?.width || 800,
-    //     height: this.canvas?.height || 600,
-    //   };
-    // },
+    getCanvasDimensions() {
+      return {
+        width: this.canvas?.width || 800,
+        height: this.canvas?.height || 600,
+      };
+    },
 
     // Update syncOverlayTransform to use the new method
     syncOverlayTransform() {
@@ -2451,42 +1638,42 @@ tourRefs() {
     //   this.saveDrawingState();
     //   this.setupDrawingEventListeners();
     // },
-    initializeDrawingCanvas() {
-      if (!this.drawingCanvas) {
-        this.drawingCanvas = document.createElement("canvas");
+initializeDrawingCanvas() {
+  if (!this.drawingCanvas) {
+    this.drawingCanvas = document.createElement("canvas");
+    
+    // ===== ADD HIGH-DPI SUPPORT =====
+    const dpr = window.devicePixelRatio || 1;
+    this.drawingCanvas.width = this.canvasWidth * dpr;
+    this.drawingCanvas.height = this.canvasHeight * dpr;
+    this.drawingCanvas.style.width = this.canvasWidth + 'px';
+    this.drawingCanvas.style.height = this.canvasHeight + 'px';
+    // ===== END =====
+    
+    this.drawingCanvas.className = "drawing-overlay-canvas";
+    this.drawingCanvas.style.position = "absolute";
+    this.drawingCanvas.style.top = "0";
+    this.drawingCanvas.style.left = "0";
+    this.drawingCanvas.style.zIndex = "3";
+    this.drawingCanvas.style.cursor = "crosshair";
+    this.drawingCanvas.style.pointerEvents = "auto";
 
-        // ===== ADD HIGH-DPI SUPPORT =====
-        const dpr = window.devicePixelRatio || 1;
-        this.drawingCanvas.width = this.canvasWidth * dpr;
-        this.drawingCanvas.height = this.canvasHeight * dpr;
-        this.drawingCanvas.style.width = this.canvasWidth + "px";
-        this.drawingCanvas.style.height = this.canvasHeight + "px";
-        // ===== END =====
+    this.$refs.canvasContainer.appendChild(this.drawingCanvas);
+  }
 
-        this.drawingCanvas.className = "drawing-overlay-canvas";
-        this.drawingCanvas.style.position = "absolute";
-        this.drawingCanvas.style.top = "0";
-        this.drawingCanvas.style.left = "0";
-        this.drawingCanvas.style.zIndex = "3";
-        this.drawingCanvas.style.cursor = "crosshair";
-        this.drawingCanvas.style.pointerEvents = "auto";
+  this.drawingCtx = this.drawingCanvas.getContext("2d");
+  
+  // ===== ADD THIS =====
+  const dpr = window.devicePixelRatio || 1;
+  this.drawingCtx.scale(dpr, dpr);
+  // ===== END =====
 
-        this.$refs.canvasContainer.appendChild(this.drawingCanvas);
-      }
+  this.drawingCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
 
-      this.drawingCtx = this.drawingCanvas.getContext("2d");
-
-      // ===== ADD THIS =====
-      const dpr = window.devicePixelRatio || 1;
-      this.drawingCtx.scale(dpr, dpr);
-      // ===== END =====
-
-      this.drawingCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-
-      this.drawSelectedFurnitureHighlight();
-      this.saveDrawingState();
-      this.setupDrawingEventListeners();
-    },
+  this.drawSelectedFurnitureHighlight();
+  this.saveDrawingState();
+  this.setupDrawingEventListeners();
+},
     // Add this new method to highlight all selected furniture
     drawSelectedFurnitureHighlight() {
       if (!this.drawingCtx) return;
@@ -3298,7 +2485,7 @@ tourRefs() {
     // =================== SELECTION CONTROLS ===================
 
     DrawRemoval_model() {
-      // this.draw_removal_modal = true;
+      this.draw_removal_modal = true;
     },
 
     toggleSelection() {
@@ -3323,120 +2510,128 @@ tourRefs() {
       this.removeObjectHighlight();
     },
 
-    goToUpgrade() {
-      this.showRemoveObjectModal = false;
-      this.$router.push("/pricing");
+ 
+
+goToUpgrade() {
+    this.showRemoveObjectModal = false;
+    this.$router.push('/pricing');
+  },
+
+
+async loadBrandPurchasedPlanDetails() {
+  // Prevent double-fetch
+  if (this.planLoading || this.planLoaded) return;
+
+  this.planLoading = true;
+
+  try {
+    const brandSlug = this.$route.query.brand;
+
+    if (!brandSlug) {
+      console.warn('No brand slug found in route query');
+      this.currentPlanName = null;
+      this.business_available_actions = { remove_object: false };
+      return;
+    }
+
+    const url = `${this.$store.state.root_api}subscription/api/get-business-plan-details/${brandSlug}/`;
+    const token = localStorage.getItem('token');
+
+    console.log('Fetching plan for brand:', brandSlug);
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Token ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+
+    console.log('Full API result:', result);
+
+    if (result.success && result.data) {
+      // ✅ FIXED: was result.plan_name (wrong) → now result.data.plan_name (correct)
+      this.currentPlanName = result.data.plan_name;
+
+      // ✅ FIXED: was result.business_available_actions (wrong) → now result.data (correct)
+      this.business_available_actions = result.data;
+
+      console.log('Plan loaded:', this.currentPlanName);
+      console.log('Can remove_object:', this.business_available_actions.remove_object);
+    } else {
+      console.warn('result.success false or result.data missing');
+      this.currentPlanName = null;
+      this.business_available_actions = { remove_object: false };
+    }
+
+  } catch (error) {
+    console.error('Error loading plan details:', error);
+    this.currentPlanName = null;
+    this.business_available_actions = { remove_object: false };
+
+  } finally {
+    // ✅ Always runs — marks plan as loaded so removeSelectedObjects() can proceed
+    this.planLoading = false;
+    this.planLoaded = true;
+  }
+},
+
+
+
+  
+async removeSelectedObjects() {
+  if (this.selectedObjects.length === 0) return;
+
+  if (!this.planLoaded) {
+    await this.loadBrandPurchasedPlanDetails();
+  }
+
+  // ✅ Check plan_name, NOT feature flag
+  if (!this.business_available_actions.remove_object) {
+    console.log('Basic plan - showing upgrade modal');
+    this.showRemoveObjectModal = true;
+    return;
+  }
+
+  // ✅ Standard/Premium — allow removal
+  console.log('Feature ALLOWED - Removing objects');
+  this.$emit('objects-selected-for-removal', {
+    selectedObjects: [...this.selectedObjects],
+    objectMasks: this.selectedObjects.reduce((acc, key) => {
+      if (this.objectMasks[key]) acc[key] = this.objectMasks[key];
+      return acc;
+    }, {}),
+    canvasDimensions: this.getCanvasDimensions(),
+  });
+  this.clearSelections();
+},
+
+
+
+  
+  // ✅ ADD UPGRADE ACTION
+  goToUpgrade() {
+    this.showRemoveObjectModal = false;
+    this.$router.push('/pricing');
+  },
+  
+  // Your existing methods...
+  getCanvasDimensions() {
+      return {
+        width: this.canvas?.width || 800,
+        height: this.canvas?.height || 600,
+      };
     },
-
-    async loadBrandPurchasedPlanDetails() {
-      // Prevent double-fetch
-      if (this.planLoading || this.planLoaded) return;
-
-      this.planLoading = true;
-
-      try {
-        const brandSlug = this.$route.query.brand;
-
-        if (!brandSlug) {
-          console.warn("No brand slug found in route query");
-          this.currentPlanName = null;
-          this.business_available_actions = { remove_object: false };
-          return;
-        }
-
-        const url = `${this.$store.state.root_api}subscription/api/get-business-plan-details/${brandSlug}/`;
-        const token = localStorage.getItem("token");
-
-        console.log("Fetching plan for brand:", brandSlug);
-
-        const response = await fetch(url, {
-          method: "GET",
-          headers: {
-            Authorization: `Token ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const result = await response.json();
-
-        console.log("Full API result:", result);
-
-        if (result.success && result.data) {
-          // ✅ FIXED: was result.plan_name (wrong) → now result.data.plan_name (correct)
-          this.currentPlanName = result.data.plan_name;
-
-          // ✅ FIXED: was result.business_available_actions (wrong) → now result.data (correct)
-          this.business_available_actions = result.data;
-
-          console.log("Plan loaded:", this.currentPlanName);
-          console.log(
-            "Can remove_object:",
-            this.business_available_actions.remove_object,
-          );
-        } else {
-          console.warn("result.success false or result.data missing");
-          this.currentPlanName = null;
-          this.business_available_actions = { remove_object: false };
-        }
-      } catch (error) {
-        console.error("Error loading plan details:", error);
-        this.currentPlanName = null;
-        this.business_available_actions = { remove_object: false };
-      } finally {
-        // ✅ Always runs — marks plan as loaded so removeSelectedObjects() can proceed
-        this.planLoading = false;
-        this.planLoaded = true;
-      }
-    },
-
-    async removeSelectedObjects() {
-      if (this.selectedObjects.length === 0) return;
-
-      if (!this.planLoaded) {
-        await this.loadBrandPurchasedPlanDetails();
-      }
-
-      // ✅ Check plan_name, NOT feature flag
-      if (!this.business_available_actions.remove_object) {
-        console.log("Basic plan - showing upgrade modal");
-        this.showRemoveObjectModal = true;
-        return;
-      }
-
-      // ✅ Standard/Premium — allow removal
-      console.log("Feature ALLOWED - Removing objects");
-      this.$emit("objects-selected-for-removal", {
-        selectedObjects: [...this.selectedObjects],
-        objectMasks: this.selectedObjects.reduce((acc, key) => {
-          if (this.objectMasks[key]) acc[key] = this.objectMasks[key];
-          return acc;
-        }, {}),
-        canvasDimensions: this.getCanvasDimensions(),
-      });
-      this.clearSelections();
-    },
-
-    // ✅ ADD UPGRADE ACTION
-    goToUpgrade() {
-      this.showRemoveObjectModal = false;
-      this.$router.push("/pricing");
-    },
-
-    // Your existing methods...
-    // getCanvasDimensions() {
-    //   return {
-    //     width: this.canvas?.width || 800,
-    //     height: this.canvas?.height || 600,
-    //   };
-    // },
-
-    clearSelections() {
-      // Your existing implementation
-    },
+  
+  clearSelections() {
+    // Your existing implementation
+  },
 
     make_room_empty() {
       this.$emit("make-room-empty", true);
@@ -3473,64 +2668,64 @@ tourRefs() {
     },
 
     updateCanvasDimensions() {
-      if (this.$refs.canvasContainer) {
-        const rect = this.$refs.canvasContainer.getBoundingClientRect();
-        this.containerWidth = Math.floor(rect.width);
-        this.containerHeight = Math.floor(rect.height);
-
-        // ===== ADD THIS =====
-        // Ensure canvas matches container pixel-perfectly
-        this.canvasWidth = this.containerWidth;
-        this.canvasHeight = this.containerHeight;
-
-        // Force re-initialization with new DPI settings
-        if (this.canvas) {
-          const dpr = window.devicePixelRatio || 1;
-          this.canvas.width = this.canvasWidth * dpr;
-          this.canvas.height = this.canvasHeight * dpr;
-          this.canvas.style.width = this.canvasWidth + "px";
-          this.canvas.style.height = this.canvasHeight + "px";
-          this.ctx.scale(dpr, dpr);
-        }
-        // ===== END =====
-      }
-    },
-
-    initCanvas() {
-      this.canvas = this.$refs.canvas;
-      this.overlayCanvas = this.$refs.overlayCanvas;
-
-      if (!this.canvas || !this.overlayCanvas) {
-        console.error("Canvas refs not found");
-        return;
-      }
-
-      // ===== ADD THIS SECTION =====
+  if (this.$refs.canvasContainer) {
+    const rect = this.$refs.canvasContainer.getBoundingClientRect();
+    this.containerWidth = Math.floor(rect.width);
+    this.containerHeight = Math.floor(rect.height);
+    
+    // ===== ADD THIS =====
+    // Ensure canvas matches container pixel-perfectly
+    this.canvasWidth = this.containerWidth;
+    this.canvasHeight = this.containerHeight;
+    
+    // Force re-initialization with new DPI settings
+    if (this.canvas) {
       const dpr = window.devicePixelRatio || 1;
-
-      // Set canvas size with device pixel ratio
       this.canvas.width = this.canvasWidth * dpr;
       this.canvas.height = this.canvasHeight * dpr;
-      this.overlayCanvas.width = this.canvasWidth * dpr;
-      this.overlayCanvas.height = this.canvasHeight * dpr;
-
-      // Set display size (CSS pixels)
-      this.canvas.style.width = this.canvasWidth + "px";
-      this.canvas.style.height = this.canvasHeight + "px";
-      this.overlayCanvas.style.width = this.canvasWidth + "px";
-      this.overlayCanvas.style.height = this.canvasHeight + "px";
-
-      this.ctx = this.canvas.getContext("2d");
-      this.overlayCtx = this.overlayCanvas.getContext("2d");
-
-      // Scale context to account for device pixel ratio
+      this.canvas.style.width = this.canvasWidth + 'px';
+      this.canvas.style.height = this.canvasHeight + 'px';
       this.ctx.scale(dpr, dpr);
-      this.overlayCtx.scale(dpr, dpr);
-      // ===== END OF NEW SECTION =====
+    }
+    // ===== END =====
+  }
+},
 
-      this.ctx.fillStyle = "#f0f0f0";
-      this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
-    },
+    initCanvas() {
+  this.canvas = this.$refs.canvas;
+  this.overlayCanvas = this.$refs.overlayCanvas;
+
+  if (!this.canvas || !this.overlayCanvas) {
+    console.error("Canvas refs not found");
+    return;
+  }
+
+  // ===== ADD THIS SECTION =====
+  const dpr = window.devicePixelRatio || 1;
+  
+  // Set canvas size with device pixel ratio
+  this.canvas.width = this.canvasWidth * dpr;
+  this.canvas.height = this.canvasHeight * dpr;
+  this.overlayCanvas.width = this.canvasWidth * dpr;
+  this.overlayCanvas.height = this.canvasHeight * dpr;
+  
+  // Set display size (CSS pixels)
+  this.canvas.style.width = this.canvasWidth + 'px';
+  this.canvas.style.height = this.canvasHeight + 'px';
+  this.overlayCanvas.style.width = this.canvasWidth + 'px';
+  this.overlayCanvas.style.height = this.canvasHeight + 'px';
+
+  this.ctx = this.canvas.getContext("2d");
+  this.overlayCtx = this.overlayCanvas.getContext("2d");
+
+  // Scale context to account for device pixel ratio
+  this.ctx.scale(dpr, dpr);
+  this.overlayCtx.scale(dpr, dpr);
+  // ===== END OF NEW SECTION =====
+
+  this.ctx.fillStyle = "#f0f0f0";
+  this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+},
 
     // =================== EVENT LISTENERS ===================
 
@@ -3725,148 +2920,146 @@ tourRefs() {
       this.removeObjectHighlight();
     },
 
-    handleTouchStart(e) {
-      if (this.isLoading) return;
+handleTouchStart(e) {
+  if (this.isLoading) return;
 
-      // ALWAYS allow page scroll with single touch
-      if (e.touches.length === 1) {
-        this.isDragging = false;
-        return; // Don't prevent default - allow scroll
-      }
+  // ALWAYS allow page scroll with single touch
+  if (e.touches.length === 1) {
+    this.isDragging = false;
+    return; // Don't prevent default - allow scroll
+  }
 
-      e.preventDefault(); // Prevent ONLY for two-finger gestures
+  e.preventDefault(); // Prevent ONLY for two-finger gestures
 
-      if (e.touches.length === 2) {
-        // Two fingers - prepare for zoom OR pan
-        this.isDragging = false;
-        const touch1 = e.touches[0];
-        const touch2 = e.touches[1];
+  if (e.touches.length === 2) {
+    // Two fingers - prepare for zoom OR pan
+    this.isDragging = false;
+    const touch1 = e.touches[0];
+    const touch2 = e.touches[1];
+    
+    // Calculate initial distance
+    const dx = touch2.clientX - touch1.clientX;
+    const dy = touch2.clientY - touch1.clientY;
+    this.lastTouchDistance = Math.sqrt(dx * dx + dy * dy);
+    this.initialTouchDistance = this.lastTouchDistance;
+    this.lastPinchZoom = this.zoom;
+    
+    // Store center point for two-finger panning
+    this.twoFingerPanStartX = (touch1.clientX + touch2.clientX) / 2;
+    this.twoFingerPanStartY = (touch1.clientY + touch2.clientY) / 2;
+    this.dragStartPanX = this.panX;
+    this.dragStartPanY = this.panY;
+    this.twoFingerPanning = false;
+  }
+},
+handleTouchMove(e) {
+  if (this.isLoading) return;
 
-        // Calculate initial distance
-        const dx = touch2.clientX - touch1.clientX;
-        const dy = touch2.clientY - touch1.clientY;
-        this.lastTouchDistance = Math.sqrt(dx * dx + dy * dy);
-        this.initialTouchDistance = this.lastTouchDistance;
-        this.lastPinchZoom = this.zoom;
+  // ALWAYS allow page scroll with single touch
+  if (e.touches.length === 1) {
+    return; // Don't prevent default - allow scroll
+  }
 
-        // Store center point for two-finger panning
-        this.twoFingerPanStartX = (touch1.clientX + touch2.clientX) / 2;
-        this.twoFingerPanStartY = (touch1.clientY + touch2.clientY) / 2;
-        this.dragStartPanX = this.panX;
-        this.dragStartPanY = this.panY;
-        this.twoFingerPanning = false;
-      }
-    },
-    handleTouchMove(e) {
-      if (this.isLoading) return;
+  e.preventDefault(); // Prevent ONLY for two-finger gestures
 
-      // ALWAYS allow page scroll with single touch
-      if (e.touches.length === 1) {
-        return; // Don't prevent default - allow scroll
-      }
-
-      e.preventDefault(); // Prevent ONLY for two-finger gestures
-
-      if (e.touches.length === 2) {
-        // Two fingers - detect zoom OR pan
-        const touch1 = e.touches[0];
-        const touch2 = e.touches[1];
-
-        // Calculate current distance
-        const dx = touch2.clientX - touch1.clientX;
-        const dy = touch2.clientY - touch1.clientY;
-        const currentDistance = Math.sqrt(dx * dx + dy * dy);
-
-        // Calculate distance change threshold (5% of initial distance)
-        const distanceThreshold = this.initialTouchDistance * 0.05;
-        const distanceChange = Math.abs(
-          currentDistance - this.initialTouchDistance,
+  if (e.touches.length === 2) {
+    // Two fingers - detect zoom OR pan
+    const touch1 = e.touches[0];
+    const touch2 = e.touches[1];
+    
+    // Calculate current distance
+    const dx = touch2.clientX - touch1.clientX;
+    const dy = touch2.clientY - touch1.clientY;
+    const currentDistance = Math.sqrt(dx * dx + dy * dy);
+    
+    // Calculate distance change threshold (5% of initial distance)
+    const distanceThreshold = this.initialTouchDistance * 0.05;
+    const distanceChange = Math.abs(currentDistance - this.initialTouchDistance);
+    
+    if (distanceChange > distanceThreshold) {
+      // ZOOM MODE - distance changed significantly
+      this.twoFingerPanning = false;
+      
+      if (this.lastTouchDistance > 0) {
+        const zoomFactor = currentDistance / this.lastTouchDistance;
+        const newZoom = Math.max(
+          this.minZoom,
+          Math.min(this.maxZoom, this.lastPinchZoom * zoomFactor)
         );
 
-        if (distanceChange > distanceThreshold) {
-          // ZOOM MODE - distance changed significantly
-          this.twoFingerPanning = false;
-
-          if (this.lastTouchDistance > 0) {
-            const zoomFactor = currentDistance / this.lastTouchDistance;
-            const newZoom = Math.max(
-              this.minZoom,
-              Math.min(this.maxZoom, this.lastPinchZoom * zoomFactor),
-            );
-
-            if (newZoom !== this.zoom) {
-              const centerX = (touch1.clientX + touch2.clientX) / 2;
-              const centerY = (touch1.clientY + touch2.clientY) / 2;
-              const rect = this.canvas.getBoundingClientRect();
-              const canvasCenterX = centerX - rect.left;
-              const canvasCenterY = centerY - rect.top;
-
-              const imageX = (canvasCenterX - this.panX) / this.zoom;
-              const imageY = (canvasCenterY - this.panY) / this.zoom;
-
-              this.zoom = newZoom;
-              this.panX = canvasCenterX - imageX * this.zoom;
-              this.panY = canvasCenterY - imageY * this.zoom;
-
-              this.constrainPan();
-              this.render();
-            }
-          }
-        } else {
-          // PAN MODE - distance stayed constant
-          this.twoFingerPanning = true;
-
+        if (newZoom !== this.zoom) {
           const centerX = (touch1.clientX + touch2.clientX) / 2;
           const centerY = (touch1.clientY + touch2.clientY) / 2;
+          const rect = this.canvas.getBoundingClientRect();
+          const canvasCenterX = centerX - rect.left;
+          const canvasCenterY = centerY - rect.top;
 
-          const deltaX = centerX - this.twoFingerPanStartX;
-          const deltaY = centerY - this.twoFingerPanStartY;
+          const imageX = (canvasCenterX - this.panX) / this.zoom;
+          const imageY = (canvasCenterY - this.panY) / this.zoom;
 
-          this.panX = this.dragStartPanX + deltaX;
-          this.panY = this.dragStartPanY + deltaY;
+          this.zoom = newZoom;
+          this.panX = canvasCenterX - imageX * this.zoom;
+          this.panY = canvasCenterY - imageY * this.zoom;
 
           this.constrainPan();
           this.render();
         }
       }
-    },
-    //   handleTouchEnd(e) {
-    //     if (this.isLoading) return;
-    //     if (this.zoom === 1) {
-    //   this.isDragging = false;
-    //   this.lastTouchDistance = 0;
-    //   return; // Allow scroll
-    // }
-    //     e.preventDefault();
+    } else {
+      // PAN MODE - distance stayed constant
+      this.twoFingerPanning = true;
+      
+      const centerX = (touch1.clientX + touch2.clientX) / 2;
+      const centerY = (touch1.clientY + touch2.clientY) / 2;
+      
+      const deltaX = centerX - this.twoFingerPanStartX;
+      const deltaY = centerY - this.twoFingerPanStartY;
+      
+      this.panX = this.dragStartPanX + deltaX;
+      this.panY = this.dragStartPanY + deltaY;
+      
+      this.constrainPan();
+      this.render();
+    }
+  }
+},
+  //   handleTouchEnd(e) {
+  //     if (this.isLoading) return;
+  //     if (this.zoom === 1) {
+  //   this.isDragging = false;
+  //   this.lastTouchDistance = 0;
+  //   return; // Allow scroll
+  // }
+  //     e.preventDefault();
 
-    //     this.isDragging = false;
-    //     this.lastTouchDistance = 0;
-    //     this.removeObjectHighlight();
-    //   },
+  //     this.isDragging = false;
+  //     this.lastTouchDistance = 0;
+  //     this.removeObjectHighlight();
+  //   },
 
     // =================== ZOOM & PAN CONTROLS ===================
-    handleTouchEnd(e) {
-      if (this.isLoading) return;
+handleTouchEnd(e) {
+  if (this.isLoading) return;
 
-      // ALWAYS allow scroll with single touch
-      if (e.touches.length <= 1) {
-        this.isDragging = false;
-        this.lastTouchDistance = 0;
-        this.twoFingerPanning = false;
-        this.initialTouchDistance = 0;
-        return; // Don't prevent default
-      }
+  // ALWAYS allow scroll with single touch
+  if (e.touches.length <= 1) {
+    this.isDragging = false;
+    this.lastTouchDistance = 0;
+    this.twoFingerPanning = false;
+    this.initialTouchDistance = 0;
+    return; // Don't prevent default
+  }
 
-      e.preventDefault(); // Prevent ONLY when still using two fingers
+  e.preventDefault(); // Prevent ONLY when still using two fingers
 
-      if (e.touches.length === 0) {
-        this.isDragging = false;
-        this.lastTouchDistance = 0;
-        this.twoFingerPanning = false;
-        this.initialTouchDistance = 0;
-        this.removeObjectHighlight();
-      }
-    },
+  if (e.touches.length === 0) {
+    this.isDragging = false;
+    this.lastTouchDistance = 0;
+    this.twoFingerPanning = false;
+    this.initialTouchDistance = 0;
+    this.removeObjectHighlight();
+  }
+},
     constrainPan() {
       if (!this.baseImg) return;
 
@@ -3950,56 +3143,32 @@ tourRefs() {
     //     this.showErrorState();
     //   }
     // },
-    // async loadImage() {
-    //   if (!this.baseImage) {
-    //     console.warn("No base image provided");
-    //     return;
-    //   }
-
-    //   try {
-    //     this.baseImg = await this.createImageFromSrc(this.baseImage);
-
-    //     // ===== ADD THIS =====
-    //     // Don't downscale the image quality
-    //     // Let the canvas handle scaling instead
-    //     if (
-    //       this.baseImg.naturalWidth > 4000 ||
-    //       this.baseImg.naturalHeight > 4000
-    //     ) {
-    //       console.log("Large image detected, maintaining quality");
-    //     }
-    //     // ===== END =====
-
-    //     this.calculateImageDimensions();
-    //     this.render();
-    //     await this.processInitialObjectMasks();
-    //   } catch (error) {
-    //     console.error("Error loading image:", error);
-    //     this.showErrorState();
-    //   }
-    // },
-
     async loadImage() {
-      if (!this.baseImage) return;
+  if (!this.baseImage) {
+    console.warn("No base image provided");
+    return;
+  }
 
-      try {
-        this.baseImg = await this.createImageFromSrc(this.baseImage);
-        this.calculateImageDimensions();
-        this.render(); // always render base image on fresh canvas
+  try {
+    this.baseImg = await this.createImageFromSrc(this.baseImage);
+    
+    // ===== ADD THIS =====
+    // Don't downscale the image quality
+    // Let the canvas handle scaling instead
+    if (this.baseImg.naturalWidth > 4000 || this.baseImg.naturalHeight > 4000) {
+      console.log("Large image detected, maintaining quality");
+    }
+    // ===== END =====
+    
+    this.calculateImageDimensions();
+    this.render();
+    await this.processInitialObjectMasks();
+  } catch (error) {
+    console.error("Error loading image:", error);
+    this.showErrorState();
+  }
+},
 
-        if (this.objectMaskRegions.length === 0) {
-          await this.processInitialObjectMasks();
-        } else {
-          // Canvas is fresh but masks exist — redraw highlights if needed
-          if (this.selectedObjects.length > 0) {
-            this.$nextTick(() => this.drawPersistentSelectionHighlight());
-          }
-        }
-      } catch (error) {
-        console.error("Error loading image:", error);
-        this.showErrorState();
-      }
-    },
     async processInitialObjectMasks() {
       this.currentObjectMasksHash = this.objectMasksHash;
 
@@ -4032,36 +3201,36 @@ tourRefs() {
     },
 
     calculateImageDimensions() {
-      if (!this.baseImg) return;
+  if (!this.baseImg) return;
 
-      const maxWidth = this.canvasWidth;
-      const maxHeight = this.canvasHeight;
+  const maxWidth = this.canvasWidth;
+  const maxHeight = this.canvasHeight;
 
-      const imgAspectRatio = this.baseImg.width / this.baseImg.height;
-      const canvasAspectRatio = maxWidth / maxHeight;
+  const imgAspectRatio = this.baseImg.width / this.baseImg.height;
+  const canvasAspectRatio = maxWidth / maxHeight;
 
-      // Always fit to width first (100% width)
-      this.renderWidth = maxWidth;
-      this.renderHeight = Math.round(maxWidth / imgAspectRatio);
-      this.renderOffsetX = 0;
+  // Always fit to width first (100% width)
+  this.renderWidth = maxWidth;
+  this.renderHeight = Math.round(maxWidth / imgAspectRatio);
+  this.renderOffsetX = 0;
 
-      // If calculated height exceeds available height, fit to height instead
-      if (this.renderHeight > maxHeight) {
-        this.renderHeight = maxHeight;
-        this.renderWidth = Math.round(maxHeight * imgAspectRatio);
-        this.renderOffsetX = Math.round((maxWidth - this.renderWidth) / 2);
-        this.renderOffsetY = 0;
-      } else {
-        // Center vertically if height is less than container
-        this.renderOffsetY = Math.round((maxHeight - this.renderHeight) / 2);
-      }
+  // If calculated height exceeds available height, fit to height instead
+  if (this.renderHeight > maxHeight) {
+    this.renderHeight = maxHeight;
+    this.renderWidth = Math.round(maxHeight * imgAspectRatio);
+    this.renderOffsetX = Math.round((maxWidth - this.renderWidth) / 2);
+    this.renderOffsetY = 0;
+  } else {
+    // Center vertically if height is less than container
+    this.renderOffsetY = Math.round((maxHeight - this.renderHeight) / 2);
+  }
 
-      // ===== ADD THIS FOR BETTER QUALITY =====
-      // Use natural dimensions to avoid quality loss
-      this.scaleX = this.renderWidth / this.baseImg.naturalWidth;
-      this.scaleY = this.renderHeight / this.baseImg.naturalHeight;
-      // ===== END =====
-    },
+  // ===== ADD THIS FOR BETTER QUALITY =====
+  // Use natural dimensions to avoid quality loss
+  this.scaleX = this.renderWidth / this.baseImg.naturalWidth;
+  this.scaleY = this.renderHeight / this.baseImg.naturalHeight;
+  // ===== END =====
+},
 
     // =================== OBJECT MASK CACHING ===================
 
@@ -5067,45 +4236,21 @@ tourRefs() {
   },
 };
 </script>
+
 <style scoped>
-:deep(.ant-input-group-addon) {
-  width: 10% !important;
-  padding: 0px;
-}
-:deep(.ant-select-selector) {
-  width: 70% !important;
-}
-
-/* =================== CANVAS CONTAINER =================== */
-.canvas-container {
-  position: relative;
-  width: 100%;
-  height: calc(100vh - 16vh);
-  overflow: hidden;
-  background: #f5f5f5;
-}
-
-@media screen and (max-width: 768px) {
-  .canvas-container {
-    height: calc(100vh - 205px);
-  }
-}
-@media screen and (min-width: 400px) and (max-width: 770px) {
-  .canvas-container {
-    height: calc(100vh - 185px);
-  }
-}
-@media screen and (min-width: 200px) and (max-width: 400px) {
-  .canvas-container {
-    height: calc(100vh - 195px);
-  }
-}
-
-/* =================== MAIN CANVAS SECTION =================== */
 .main-canvas-sec {
   position: relative;
   width: 100%;
   height: 100%;
+}
+.canvas-container {
+  position: relative;
+  width: 100%;
+  height: calc(
+    100vh - 16vh
+  ); /* Adjust 140px based on your header/footer height */
+  overflow: hidden;
+  background: #f5f5f5;
 }
 
 .main-canvas {
@@ -5115,17 +4260,30 @@ tourRefs() {
   position: absolute;
   top: 0;
   left: 0;
+  /* ===== ADD THESE LINES ===== */
   image-rendering: crisp-edges;
   image-rendering: -webkit-optimize-contrast;
+  /* ===== END ===== */
 }
+
 .main-canvas.disabled {
   opacity: 0.5;
   pointer-events: none;
 }
+
 .main-canvas.furniture-mode {
   cursor: crosshair;
 }
 
+/* .overlay-canvas {
+  border-radius: 10px;
+  transition: opacity 0.3s ease;
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 2;
+} */
 .overlay-canvas {
   border-radius: 10px;
   transition: opacity 0.3s ease;
@@ -5134,309 +4292,15 @@ tourRefs() {
   left: 0;
   pointer-events: none;
   z-index: 2;
+  /* ===== ADD THESE LINES ===== */
   image-rendering: crisp-edges;
   image-rendering: -webkit-optimize-contrast;
+  /* ===== END ===== */
 }
 .overlay-canvas.disabled {
   opacity: 0.5;
 }
 
-/* =================== DETECT TOOLBAR =================== */
-.detect-toolbar {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  width: max-content;
-  max-width: calc(100vw - 16px);
-  /* Keep it centered & above the canvas */
-  position: absolute;
-  top: 10px;
-  left: 50%;
-  /* transform: translateX(-50%); */
-  z-index: 20;
-}
-
-/* ── Mode Pills Row ── */
-.mode-pills {
-  display: flex;
-  gap: 3px;
-  background: rgba(0, 0, 0, 0.80);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 100px;
-  padding: 4px;
-  /* Allow shrinking on very small screens */
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  max-width: 100%;
-  scrollbar-width: none;
-}
-.mode-pills::-webkit-scrollbar { display: none; }
-
-.mode-pill {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 6px 11px;
-  border-radius: 100px;
-  border: none;
-  background: transparent;
-  color: rgba(255,255,255,0.50);
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  letter-spacing: 0.02em;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-.mode-pill .pill-icon {
-  font-size: 13px;
-  line-height: 1;
-}
-.mode-pill:hover {
-  color: rgba(255,255,255,0.85);
-  background: rgba(255,255,255,0.07);
-}
-.mode-pill.active {
-  background: rgba(255,255,255,0.14);
-  color: #fff;
-  box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,0.15),
-    0 0 12px rgba(99,179,237,0.2);
-}
-
-@media (max-width: 480px) {
-  .mode-pill {
-    padding: 5px 9px;
-    font-size: 11px;
-  }
-  .mode-pill .pill-icon {
-    font-size: 12px;
-  }
-}
-@media (max-width: 360px) {
-  /* Hide labels on very small phones, show icon only */
-  .mode-pill .pill-label {
-    display: none;
-  }
-  .mode-pill {
-    padding: 7px 10px;
-  }
-}
-
-/* ── Context Bar ── */
-.context-bar {
-  width: 100%;
-  min-width: 0;
-  background: rgba(5, 5, 10, 0.88);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-radius: 12px;
-  padding: 8px 12px;
-  border: 1px solid rgba(255,255,255,0.07);
-  transition: all 0.3s ease;
-  box-sizing: border-box;
-}
-
-.context-bar.mode-sam2 {
-  border-color: transparent;
-  background:
-    linear-gradient(rgba(5,5,10,0.92), rgba(5,5,10,0.92)) padding-box,
-    linear-gradient(135deg, #00d4ff, #7c3aed, #00d4ff) border-box;
-  border: 1.5px solid transparent;
-  box-shadow: 0 0 20px rgba(0,212,255,0.12), 0 0 40px rgba(124,58,237,0.08);
-}
-.context-bar.mode-sam3 {
-  border-color: transparent;
-  background:
-    linear-gradient(rgba(5,5,10,0.92), rgba(5,5,10,0.92)) padding-box,
-    linear-gradient(135deg, #f59e0b, #ec4899, #8b5cf6) border-box;
-  border: 1.5px solid transparent;
-  box-shadow: 0 0 20px rgba(245,158,11,0.12), 0 0 40px rgba(139,92,246,0.08);
-}
-
-/* ── SAM 2 / shared bar ── */
-.sam2-bar {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: nowrap;
-  width: 100%;
-}
-
-.how-btn {
-  width: 26px;
-  height: 26px;
-  min-width: 26px;
-  border-radius: 50%;
-  border: 1px solid rgba(0,212,255,0.35);
-  background: rgba(0,212,255,0.08);
-  color: #00d4ff;
-  font-size: 12px;
-  font-weight: bold;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: all 0.2s;
-}
-.how-btn:hover {
-  background: rgba(0,212,255,0.18);
-  box-shadow: 0 0 10px rgba(0,212,255,0.3);
-}
-
-.info-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #63b3ed;
-  flex-shrink: 0;
-}
-.info-dot.pulse {
-  background: #00d4ff;
-  box-shadow: 0 0 0 0 rgba(0,212,255,0.6);
-  animation: dotPulse 2s infinite;
-}
-@keyframes dotPulse {
-  0%   { box-shadow: 0 0 0 0 rgba(0,212,255,0.6); }
-  70%  { box-shadow: 0 0 0 6px rgba(0,212,255,0); }
-  100% { box-shadow: 0 0 0 0 rgba(0,212,255,0); }
-}
-
-.info-text {
-  font-size: 12px;
-  color: rgba(255,255,255,0.55);
-  letter-spacing: 0.01em;
-  flex: 1;
-  min-width: 0;
-}
-
-/* ── Detect Button ── */
-.detect-btn {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 6px 12px;
-  border-radius: 8px;
-  border: none;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  white-space: nowrap;
-  flex-shrink: 0;
-  transition: all 0.2s ease;
-  background: linear-gradient(135deg, #0ea5e9, #7c3aed);
-  color: #fff;
-  box-shadow: 0 0 16px rgba(14,165,233,0.3);
-  letter-spacing: 0.03em;
-}
-.detect-btn:hover {
-  box-shadow: 0 0 24px rgba(14,165,233,0.5), 0 0 40px rgba(124,58,237,0.2);
-  transform: translateY(-1px);
-}
-.detect-btn:active { transform: translateY(0); }
-.detect-btn.sam3-detect {
-  background: linear-gradient(135deg, #f59e0b, #ec4899);
-  box-shadow: 0 0 16px rgba(245,158,11,0.25);
-}
-.detect-btn.sam3-detect:hover {
-  box-shadow: 0 0 24px rgba(245,158,11,0.4), 0 0 40px rgba(236,72,153,0.2);
-}
-
-/* ── SAM 3 Bar ── */
-.sam3-bar {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-  flex-wrap: nowrap;
-}
-
-.sam3-input-wrap {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 8px;
-  padding: 6px 10px;
-  transition: border-color 0.2s;
-}
-.sam3-input-wrap:focus-within {
-  border-color: rgba(245,158,11,0.5);
-  box-shadow: 0 0 12px rgba(245,158,11,0.12);
-}
-.sam3-icon { color: rgba(245,158,11,0.7); flex-shrink: 0; }
-
-.sam3-input {
-  flex: 1;
-  min-width: 0;
-  background: transparent;
-  border: none;
-  outline: none;
-  color: #fff;
-  font-size: 13px;
-  letter-spacing: 0.01em;
-}
-.sam3-input::placeholder { color: rgba(255,255,255,0.25); }
-
-/* =================== SELECTION CONTROLS =================== */
-.selection-controls {
-  position: absolute;
-  bottom: 12px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  gap: 6px;
-  z-index: 11;
-  background-color: rgba(255,255,255,0.15);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  max-width: calc(100vw - 16px);
-  padding: 8px 10px;
-  border-radius: 10px;
-  flex-wrap: wrap;
-}
-
-@media (max-width: 480px) {
-  .selection-controls {
-    bottom: 8px;
-    padding: 6px 8px;
-    gap: 5px;
-  }
-}
-
-.remove-object-api-btn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 14px;
-  border-radius: 8px;
-  border: none;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  background: linear-gradient(135deg, #ef4444, #dc2626);
-  color: white;
-  box-shadow: 0 0 16px rgba(239,68,68,0.3);
-  transition: all 0.2s;
-  white-space: nowrap;
-}
-.remove-object-api-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* =================== OBJECT INDICATORS =================== */
 .object-indicators {
   position: absolute;
   top: 40px;
@@ -5444,18 +4308,20 @@ tourRefs() {
   pointer-events: none;
   z-index: 5;
 }
+
 .object-indicator {
   position: absolute;
-  background: rgba(0,0,0,0.8);
+  background: rgba(0, 0, 0, 0.8);
   color: white;
-  padding: 5px 10px;
+  padding: 6px 12px;
   border-radius: 15px;
-  font-size: 11px;
+  font-size: 12px;
   display: flex;
   align-items: center;
-  gap: 6px;
-  max-width: 140px;
+  gap: 8px;
+  max-width: 150px;
 }
+
 .object-name {
   flex: 1;
   white-space: nowrap;
@@ -5463,8 +4329,9 @@ tourRefs() {
   text-overflow: ellipsis;
   font-weight: 500;
 }
+
 .remove-object-btn {
-  background: rgba(255,0,0,0.8);
+  background: rgba(255, 0, 0, 0.8);
   border: none;
   color: white;
   width: 18px;
@@ -5478,27 +4345,90 @@ tourRefs() {
   transition: background-color 0.2s;
   pointer-events: all;
 }
+
 .remove-object-btn:hover {
-  background: rgba(255,0,0,1);
+  background: rgba(255, 0, 0, 1);
 }
 
-/* =================== ZOOM CONTROLS =================== */
+.selection-controls {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  z-index: 6;
+  background-color: rgba(255, 255, 255, 0.136);
+  backdrop-filter: blur(5px);
+  max-width: 700px;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.control-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 120px;
+}
+
+.control-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.control-btn.select-all {
+  background: #52c41a;
+  color: white;
+}
+
+.control-btn.select-all:hover:not(:disabled) {
+  background: #389e0d;
+}
+
+.control-btn.clear {
+  background: #faad14;
+  color: white;
+}
+
+.control-btn.clear:hover:not(:disabled) {
+  background: #d48806;
+}
+
+.control-btn.remove {
+  background: #ff4d4f;
+  color: white;
+}
+
+.control-btn.remove:hover:not(:disabled) {
+  background: #cf1322;
+}
+
 .zoom-controls {
   position: absolute;
-  top: 58px;
-  right: 12px;
+  top: 60px;
+
+  right: 16px;
   display: flex;
   align-items: center;
-  gap: 6px;
-  background: rgba(255,255,255,0.95);
-  padding: 6px 10px;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 8px 12px;
   border-radius: 20px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   z-index: 5;
 }
+
 .zoom-btn {
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   border: none;
   border-radius: 50%;
   background: #1890ff;
@@ -5511,54 +4441,222 @@ tourRefs() {
   font-weight: bold;
   transition: all 0.2s ease;
 }
-.zoom-btn:hover { background: #40a9ff; transform: scale(1.05); }
-.zoom-btn:active { transform: scale(0.95); }
-.zoom-btn.reset-btn { font-size: 12px; }
+
+.zoom-btn:hover {
+  background: #40a9ff;
+  transform: scale(1.05);
+}
+
+.zoom-btn:active {
+  transform: scale(0.95);
+}
+
+.zoom-btn.reset-btn {
+  font-size: 12px;
+}
+
 .zoom-level {
   font-size: 12px;
   font-weight: 500;
   color: #666;
-  min-width: 34px;
+  min-width: 36px;
   text-align: center;
 }
 
-@media screen and (max-width: 500px) {
-  .zoom-controls { display: none; }
+.instructions {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 12px;
+  z-index: 6;
 }
 
-/* =================== DRAWING MODE CONTROLS =================== */
+.debug-info {
+  position: absolute;
+  bottom: 80px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  z-index: 6;
+  font-family: monospace;
+}
+
+.debug-info div {
+  margin-bottom: 2px;
+}
+
+/* Loading overlay styles */
+.scanning-loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  /* border-radius: 10px; */
+  overflow: hidden;
+}
+
+.loading-screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  /* border-radius: 10px; */
+}
+
+.loading-screen::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  background: rgba(20, 20, 20, 0.55);
+  backdrop-filter: blur(0.1px);
+}
+
+.wave-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to left,
+    rgba(0, 102, 255, 1) 0%,
+    rgba(0, 102, 255, 0.4) 20%,
+    rgba(0, 102, 255, 0.3) 30%,
+    rgba(0, 102, 255, 0.2) 35%,
+    rgba(0, 102, 255, 0.15) 40%,
+    rgba(0, 102, 255, 0.1) 50%,
+    rgba(0, 102, 255, 0) 100%
+  );
+  animation:
+    moveWaveLeftToRight 3s linear infinite,
+    waveFade 3s ease-in-out infinite;
+  z-index: 2;
+}
+
+@keyframes moveWaveLeftToRight {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(50%);
+  }
+}
+
+@keyframes waveFade {
+  0% {
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.loading-text {
+  position: relative;
+  color: #fff;
+  text-align: center;
+  z-index: 3;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+  /* background: rgba(0, 0, 0, 0.3); */
+  padding: 20px 30px;
+  border-radius: 10px;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.lottieFile-sec {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.process-text {
+  font-size: 18px;
+  opacity: 0.9;
+  color: black;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* Drawing Mode Styles - Vertical Right Panel */
 .drawing-mode-controls {
   position: fixed;
   top: 50%;
-  right: 12px;
+  right: 20px;
   transform: translateY(-50%);
-  background: rgba(255,255,255,0.98);
+  background: rgba(255, 255, 255, 0.98);
   border-radius: 12px;
   padding: 0;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
   z-index: 100;
-  width: 96px;
+  width: 100px;
   max-height: 90vh;
   backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(0,0,0,0.1);
+  border: 1px solid rgba(0, 0, 0, 0.1);
   overflow: hidden;
   transition: all 0.3s ease;
 }
+
+.drawing-mode-controls.minimized {
+  width: 100px;
+}
+
 .drawing-header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 10px;
-  border-bottom: 1px solid rgba(0,0,0,0.1);
+  padding: 12px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  position: relative;
 }
+
 .header-top {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
 }
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-slideUp {
+  animation: slideUp 0.4s ease-out;
+}
+
 .drawing-header h3 {
   margin: 0;
-  font-size: 12px;
+  font-size: 13px;
   color: white;
   font-weight: 600;
   writing-mode: vertical-rl;
@@ -5566,90 +4664,66 @@ tourRefs() {
   white-space: nowrap;
   flex: 1;
 }
+
 .minimize-btn {
-  background: rgba(255,255,255,0.2);
+  background: rgba(255, 255, 255, 0.2);
   border: none;
   color: white;
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   border-radius: 6px;
   cursor: pointer;
-  font-size: 15px;
+  font-size: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.2s;
   flex-shrink: 0;
 }
+
 .minimize-btn:hover {
-  background: rgba(255,255,255,0.3);
+  background: rgba(255, 255, 255, 0.3);
   transform: scale(1.05);
 }
+
 .drawing-content {
-  padding: 10px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
   overflow-y: auto;
-  max-height: calc(90vh - 48px);
-}
-.drawing-content::-webkit-scrollbar { width: 3px; }
-.drawing-content::-webkit-scrollbar-track { background: transparent; }
-.drawing-content::-webkit-scrollbar-thumb { background: #ccc; border-radius: 2px; }
-
-/* Mode Buttons */
-.mode-btn {
-  width: 100%;
-  padding: 7px 5px;
-  border: 1px solid #ddd;
-  background: #f5f5f5;
-  border-radius: 6px;
-  font-size: 11px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  color: #333;
-  white-space: nowrap;
-}
-.mode-btn:hover { background: #e0e0e0; border-color: #999; }
-.mode-btn.active {
-  background: #1890ff;
-  color: white;
-  border-color: #1890ff;
-  box-shadow: 0 2px 8px rgba(24,144,255,0.3);
+  max-height: calc(90vh - 52px);
 }
 
-.divider {
-  width: 100%;
-  height: 1px;
-  background: linear-gradient(to right, transparent, #ddd, transparent);
-}
-
+/* Brush Control - Vertical */
 .brush-control {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
+
 .brush-control label {
   font-size: 11px;
   font-weight: 600;
   color: #333;
   text-align: center;
 }
+
 .size-display {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: bold;
   color: #1890ff;
   background: #e6f7ff;
-  padding: 3px 6px;
+  padding: 4px 8px;
   border-radius: 4px;
-  min-width: 36px;
+  min-width: 40px;
   text-align: center;
 }
+
 .brush-slider {
   width: 5px;
-  height: 90px;
+  height: 100px;
   border-radius: 5px;
   background: #ddd;
   outline: none;
@@ -5657,30 +4731,37 @@ tourRefs() {
   appearance: slider-vertical;
   cursor: pointer;
 }
+
 .brush-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 15px;
-  height: 15px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   background: #1890ff;
   cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
   border: 2px solid white;
 }
+
 .brush-slider::-moz-range-thumb {
-  width: 15px;
-  height: 15px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   background: #1890ff;
   cursor: pointer;
   border: 2px solid white;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
-.size-buttons { display: flex; gap: 4px; }
+
+.size-buttons {
+  display: flex;
+  gap: 4px;
+}
+
 .size-btn {
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   border: 1px solid #ddd;
   background: #f5f5f5;
   border-radius: 4px;
@@ -5690,21 +4771,38 @@ tourRefs() {
   color: #333;
   transition: all 0.2s;
 }
+
 .size-btn:hover {
   background: #1890ff;
   color: white;
   border-color: #1890ff;
 }
 
-.drawing-actions,
+/* Divider */
+.divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(to right, transparent, #ddd, transparent);
+}
+
+/* Drawing Actions - Vertical */
+.drawing-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Submit Actions - Vertical */
 .submit-actions {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 6px;
 }
+
+/* Drawing Buttons - Full Width */
 .drawing-btn {
   width: 100%;
-  padding: 7px 5px;
+  padding: 8px 6px;
   border: none;
   border-radius: 6px;
   font-size: 11px;
@@ -5717,240 +4815,167 @@ tourRefs() {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 3px;
+  gap: 4px;
 }
+
 .drawing-btn:hover:not(:disabled) {
   background: #e0e0e0;
-  transform: translateY(-1px);
-  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
-.drawing-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-.drawing-btn:active:not(:disabled) { transform: translateY(0); }
-.drawing-btn.submit-btn { background: #52c41a; color: white; }
-.drawing-btn.submit-btn:hover:not(:disabled) { background: #389e0d; }
-.drawing-btn.cancel-btn { background: #ff4d4f; color: white; }
-.drawing-btn.cancel-btn:hover:not(:disabled) { background: #cf1322; }
-.drawing-btn.reset-btn { background: #faad14; color: white; }
-.drawing-btn.reset-btn:hover:not(:disabled) { background: #d48806; }
 
-/* =================== LOADING OVERLAY =================== */
-.scanning-loading-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 10;
-  overflow: hidden;
+.drawing-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
-.loading-screen {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
+
+.drawing-btn:active:not(:disabled) {
+  transform: translateY(0);
 }
-.loading-screen::before {
-  content: "";
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  z-index: 1;
-  background: rgba(20,20,20,0.55);
-  backdrop-filter: blur(0.1px);
+
+.drawing-btn.submit-btn {
+  background: #52c41a;
+  color: white;
 }
-.wave-overlay {
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: linear-gradient(
-    to left,
-    rgba(0,102,255,1) 0%,
-    rgba(0,102,255,0.4) 20%,
-    rgba(0,102,255,0.3) 30%,
-    rgba(0,102,255,0.2) 35%,
-    rgba(0,102,255,0.15) 40%,
-    rgba(0,102,255,0.1) 50%,
-    rgba(0,102,255,0) 100%
-  );
-  animation: moveWaveLeftToRight 3s linear infinite, waveFade 3s ease-in-out infinite;
-  z-index: 2;
+
+.drawing-btn.submit-btn:hover:not(:disabled) {
+  background: #389e0d;
 }
-@keyframes moveWaveLeftToRight {
-  from { transform: translateX(-100%); }
-  to   { transform: translateX(50%); }
+
+.drawing-btn.cancel-btn {
+  background: #ff4d4f;
+  color: white;
 }
-@keyframes waveFade {
-  0%   { opacity: 0; }
-  10%  { opacity: 1; }
-  90%  { opacity: 1; }
-  100% { opacity: 0; }
+
+.drawing-btn.cancel-btn:hover:not(:disabled) {
+  background: #cf1322;
 }
-.loading-text {
-  position: relative;
-  color: #fff;
+
+.drawing-btn.reset-btn {
+  background: #faad14;
+  color: white;
+}
+
+.drawing-btn.reset-btn:hover:not(:disabled) {
+  background: #d48806;
+}
+
+/* Instructions */
+.drawing-instructions {
+  font-size: 10px;
+  color: #999;
   text-align: center;
-  z-index: 3;
-  text-shadow: 0 2px 6px rgba(0,0,0,0.6);
-  padding: 16px 24px;
-  border-radius: 10px;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255,255,255,0.1);
-}
-.lottieFile-sec {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.process-text {
-  font-size: 16px;
-  opacity: 0.9;
-  color: black;
-  letter-spacing: 1px;
-  text-transform: uppercase;
+  line-height: 1.3;
+  padding: 8px 4px;
+  background: #f9f9f9;
+  border-radius: 4px;
 }
 
-/* =================== INSTRUCTION MODAL =================== */
+/* Scrollbar styling */
+.drawing-content::-webkit-scrollbar {
+  width: 4px;
+}
+
+.drawing-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.drawing-content::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 2px;
+}
+
+.drawing-content::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+/* Mode Toggle Buttons */
+.mode-toggle {
+  display: flex;
+  gap: 4px;
+  width: 100%;
+}
+
+.mode-btn {
+  flex: 1;
+  padding: 8px 6px;
+  border: 1px solid #ddd;
+  background: #f5f5f5;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #333;
+  white-space: nowrap;
+}
+
+.mode-btn:hover {
+  background: #e0e0e0;
+  border-color: #999;
+}
+
+.mode-btn.active {
+  background: #1890ff;
+  color: white;
+  border-color: #1890ff;
+  box-shadow: 0 2px 8px rgba(24, 144, 255, 0.3);
+}
+
+.mode-btn.active:hover {
+  background: #40a9ff;
+  border-color: #40a9ff;
+}
+
+/* For mobile */
+@media screen and (max-width: 768px) {
+  .canvas-container {
+    height: calc(100vh - 200px); /* Adjust based on mobile toolbar height */
+  }
+}
+
+@media screen and (min-width: 400px) and (max-width: 770px) {
+  .canvas-container {
+    height: calc(100vh - 180px);
+  }
+}
+
+@media screen and (min-width: 200px) and (max-width: 400px) {
+  .canvas-container {
+    height: calc(100vh - 190px);
+  }
+}
+@media screen and (max-width: 500px) {
+  .zoom-controls {
+    display:none;
+    top: 16px;
+    right: 5px;
+  }
+}
+
+
+
+
+/* modal */
 .instruction-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
+
+.instruction-item:last-child {
+  border-bottom: none;
+}
+
 .instruction {
   font-weight: 500;
   color: #333;
   flex: 1;
 }
+
 .gesture-icon {
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
   object-fit: contain;
-  margin-left: 16px;
-}
-
-/* =================== DEBUG INFO =================== */
-.debug-info {
-  position: absolute;
-  bottom: 80px;
-  right: 16px;
-  background: rgba(0,0,0,0.9);
-  color: white;
-  padding: 8px;
-  border-radius: 6px;
-  font-size: 11px;
-  z-index: 6;
-  font-family: monospace;
-}
-.debug-info div { margin-bottom: 2px; }
-
-/* =================== ANIMATE SLIDE UP (upgrade modal) =================== */
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(30px) scale(0.95); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
-}
-.animate-slideUp { animation: slideUp 0.4s ease-out; }
-
-/* =================== SAM 2 MODAL =================== */
-:global(.sam2-modal .ant-modal-content) {
-  background: #0a0a0f !important;
-  border: 1px solid rgba(0,212,255,0.15) !important;
-  border-radius: 16px !important;
-  box-shadow: 0 0 60px rgba(0,212,255,0.08), 0 0 100px rgba(124,58,237,0.05) !important;
-  overflow: hidden;
-}
-:global(.sam2-modal .ant-modal-close) {
-  color: rgba(255,255,255,0.4) !important;
-}
-.sam2-modal-body { padding: 24px; }
-.modal-header { margin-bottom: 20px; text-align: center; }
-.modal-badge {
-  display: inline-block;
-  background: linear-gradient(135deg, #00d4ff22, #7c3aed22);
-  border: 1px solid rgba(0,212,255,0.3);
-  color: #00d4ff;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  padding: 3px 10px;
-  border-radius: 100px;
-  margin-bottom: 10px;
-}
-.modal-header h3 {
-  color: #fff;
-  font-size: 18px;
-  font-weight: 700;
-  margin: 0 0 5px;
-}
-.modal-header p {
-  color: rgba(255,255,255,0.4);
-  font-size: 13px;
-  margin: 0;
-}
-.modal-steps { display: flex; flex-direction: column; gap: 14px; margin-bottom: 20px; }
-.step { display: flex; gap: 12px; align-items: flex-start; }
-.step-num {
-  width: 26px; height: 26px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #00d4ff33, #7c3aed33);
-  border: 1px solid rgba(0,212,255,0.25);
-  color: #00d4ff;
-  font-size: 11px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-.step-content { display: flex; flex-direction: column; gap: 2px; }
-.step-content strong { color: rgba(255,255,255,0.9); font-size: 13px; font-weight: 600; }
-.step-content span   { color: rgba(255,255,255,0.45); font-size: 12px; line-height: 1.5; }
-.modal-close-btn {
-  width: 100%;
-  padding: 11px;
-  border-radius: 10px;
-  border: none;
-  background: linear-gradient(135deg, #0ea5e9, #7c3aed);
-  color: #fff;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  letter-spacing: 0.03em;
-  transition: all 0.2s;
-  box-shadow: 0 0 20px rgba(14,165,233,0.25);
-}
-.modal-close-btn:hover {
-  box-shadow: 0 0 32px rgba(14,165,233,0.4);
-  transform: translateY(-1px);
-}
-
-/* =================== INFO FADE TRANSITION =================== */
-.info-fade-enter-active,
-.info-fade-leave-active {
-  transition: opacity 0.2s ease, transform 0.2s ease;
-}
-.info-fade-enter-from,
-.info-fade-leave-to {
-  opacity: 0;
-  transform: translateX(-6px);
-}
-
-/* =================== BOTTOM TOOLBAR =================== */
-/* desktop bottom bar uses Tailwind — nothing extra needed */
-/* mobile bottom bar */
-@media (max-width: 768px) {
-  /* Give the SAM3 inline bar enough room on mobile */
-  .sam3-bar {
-    flex-wrap: nowrap;
-    overflow: hidden;
-  }
-  .sam3-input-wrap {
-    min-width: 0;
-  }
+  margin-left: 20px;
 }
 </style>

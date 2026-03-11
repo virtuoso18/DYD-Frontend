@@ -4302,7 +4302,9 @@ export default {
               this.$store.state.root_media_api +
                 responseData.data.floor_3d_model_grid,
             );
-
+this.$nextTick(() => {
+              this.forceCanvasUpdate();
+            });
             if (this.roomPollingInterval) {
               clearInterval(this.roomPollingInterval);
               this.roomPollingInterval = null;

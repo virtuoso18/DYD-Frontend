@@ -378,7 +378,7 @@
                 
                       <!-- Description Field -->
                       <div style="margin-bottom: 16px;">
-                        <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Description</label>
+                        <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Description<span style="color: red;">*</span></label>
                         <a-textarea 
                           v-model:value="form.description"
                           :rows="3"
@@ -386,7 +386,24 @@
                           style="border-radius: 6px; background: #f3f4f6; border: 1px solid #e5e7eb; resize: none;"
                         />
                       </div>
-                
+                <div style="margin-bottom: 16px;">
+  <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">
+    Room Type <span style="color: red;">*</span>
+  </label>
+  <a-select
+    v-model:value="selectedRoomType"
+    placeholder="Select room type"
+    style="width: 100%;"
+    :style="{ background: '#f3f4f6' }"
+    :loading="loadingRoomTypes"
+    :allow-clear="true"
+    @change="handleRoomTypeChange"
+  >
+    <a-select-option v-for="rt in roomTypes" :key="rt.id" :value="rt.id">
+      {{ rt.name }}
+    </a-select-option>
+  </a-select>
+</div>
                       <!-- Texture Style, Brand, Model Number Row -->
                       <a-row :gutter="12" style="margin-bottom: 16px;">
                         <a-col :span="12">
@@ -402,7 +419,7 @@
                         </a-col>
                 
                           <a-col :span="12">
-                            <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Sale Price per SQM</label>
+                            <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Sale Price per SQM <span style="color: red;">*</span></label>
                             <a-input-number 
                               v-model:value="form.sale_price_per_sqm" 
                               :min="0"
@@ -487,7 +504,7 @@
                           </a-col> -->
                           
                           <a-col :span="12">
-                            <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Size Width (cm)</label>
+                            <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Size Width (cm) <span style="color: red;">*</span></label>
                             <a-input-number 
                               v-model:value="form.size_width" 
                               :min="0.01"
@@ -497,7 +514,7 @@
                             />
                           </a-col>
                           <a-col :span="12">
-                            <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Size Height (cm)</label>
+                            <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Size Height (cm) <span style="color: red;">*</span></label>
                             <a-input-number 
                               v-model:value="form.size_height" 
                               :min="0.01"
@@ -594,7 +611,10 @@ export default defineComponent({
 
     const selectedImages = ref([]);
     const imageInput = ref(null);
-
+const selectedRoomType = ref(null);
+const roomTypes = ref([]);
+const loadingRoomTypes = ref(false);
+const selectedRoomTypeName = ref(null);
     // Computed property for primary image
     const primaryImage = computed(() => {
       return selectedImages.value.find(img => img.isPrimary) || selectedImages.value[0] || null;
@@ -634,6 +654,8 @@ export default defineComponent({
       
       selectedImages.value = [];
       tempColor.value = '#000000';
+      selectedRoomType.value = null;
+selectedRoomTypeName.value = null;
     };
 
     // Image handling functions
@@ -666,7 +688,32 @@ export default defineComponent({
 
       event.target.value = '';
     };
+const loadRoomTypes = async () => {
+  try {
+    loadingRoomTypes.value = true;
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${store.state.root_api}product/api/room-types/`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Token ${token}`
+      }
+    });
+    const result = await response.json();
+    roomTypes.value = result || [];
+  } catch (error) {
+    console.error('Error loading room types:', error);
+    roomTypes.value = [];
+  } finally {
+    loadingRoomTypes.value = false;
+  }
+};
 
+const handleRoomTypeChange = (value) => {
+  const found = roomTypes.value.find(rt => rt.id === value);
+  selectedRoomType.value = value;
+  selectedRoomTypeName.value = found ? found.name : null;
+};
     const setPrimaryImage = (image) => {
       selectedImages.value.forEach(img => img.isPrimary = false);
       image.isPrimary = true;
@@ -710,6 +757,22 @@ export default defineComponent({
       if (!form.texture_style) {
         errors.push('Texture Style is required');
       }
+
+       // NEW: sale price per sqm
+  if (form.sale_price_per_sqm === null || form.sale_price_per_sqm === undefined || form.sale_price_per_sqm <= 0) {
+    errors.push('Sale Price per SQM is required and must be greater than 0');
+  }
+
+  // NEW: tile width
+  if (form.size_width === null || form.size_width === undefined || form.size_width <= 0) {
+    errors.push('Tile Width is required and must be greater than 0');
+  }
+
+  // NEW: tile height
+  if (form.size_height === null || form.size_height === undefined || form.size_height <= 0) {
+    errors.push('Tile Height is required and must be greater than 0');
+  }
+ 
       
       if (form.available_colors.length === 0) {
         errors.push('At least one available color is required');
@@ -762,7 +825,9 @@ export default defineComponent({
             formData.append('primary_image_index', index);
           }
         });
-        
+        if (selectedRoomTypeName.value) {
+  formData.append('room_type_name', selectedRoomTypeName.value);
+}
         // API call
         const response = await fetch(`${store.state.root_api}access-engine/api/business-products/add-product-floor-tile/?access-id=`+route.query.access_id, {
           method: 'POST',
@@ -811,10 +876,12 @@ export default defineComponent({
 
     // Watch for modal visibility changes
     watch(() => props.visible, (newValue) => {
-      if (!newValue) {
-        resetForm();
-      }
-    });
+  if (!newValue) {
+    resetForm();
+  } else {
+    loadRoomTypes(); // ← ADD THIS
+  }
+});
 
     return {
       form,
@@ -825,6 +892,11 @@ export default defineComponent({
       tempColor,
       textureStyles,
       presetColors,
+
+      selectedRoomType,
+roomTypes,
+loadingRoomTypes,
+handleRoomTypeChange,
       handleSave,
       handleCancel,
       uploadImages,

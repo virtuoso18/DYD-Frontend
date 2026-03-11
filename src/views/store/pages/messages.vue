@@ -36,13 +36,14 @@
           </div>
 
           <!-- Conversations List -->
-          <div class="flex-1 overflow-y-auto py-2">
+        <div class="flex-1 overflow-y-auto py-2">
             <div
               v-for="room in filteredRooms"
               :key="room.id"
               class="flex items-center px-6 py-3 cursor-pointer gap-4 transition-all border-l-4 border-transparent hover:bg-gray-50"
               :class="{
                 'bg-blue-50 !border-blue-500': currentRoomId === room.id,
+                '!bg-blue-100': room.show_live_support_icon && currentRoomId !== room.id,
               }"
               @click="
                 selectRoom(
@@ -58,7 +59,7 @@
             >
               <!-- {{ get_proper_user_avatar(room.userProfilsAvatar) }} -->
               <!-- Avatar -->
-              <div class="mr-4 flex-shrink-0">
+              <div v-if="!room.show_live_support_icon" class="mr-4 flex-shrink-0">
                 <a-avatar
                   v-if="!room.userProfilsAvatar?.user_3"
                   size="large"
@@ -96,6 +97,18 @@
                     "
                   />
                 </a-avatar-group>
+              </div>
+              <div v-else
+    
+                  class="w-10 h-10 rounded-full bg-gray-100 border border-gray-300 flex items-center justify-center"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 64 64" stroke-width="3" stroke="#6b7280" fill="none">
+                    <path d="M12.91,31.8V26.1a19.09,19.09,0,0,1,38.18,0v5.7" stroke-linecap="round"/>
+                    <path d="M12.06,31.8h4.7a0,0,0,0,1,0,0V45.18a0,0,0,0,1,0,0h-4.7a3,3,0,0,1-3-3V34.8A3,3,0,0,1,12.06,31.8Z" stroke-linecap="round"/>
+                    <path d="M50.24,31.8h4.7a0,0,0,0,1,0,0V45.18a0,0,0,0,1,0,0h-4.7a3,3,0,0,1-3-3V34.8A3,3,0,0,1,50.24,31.8Z" transform="translate(102.18 76.98) rotate(180)" stroke-linecap="round"/>
+                    <path d="M51.7,45.56v5a4,4,0,0,1-4,4H36.56" stroke-linecap="round"/>
+                    <rect x="28.45" y="51.92" width="8.1" height="5.07" rx="2" stroke-linecap="round"/>
+                  </svg>
               </div>
 
               <!-- Conversation Info -->
