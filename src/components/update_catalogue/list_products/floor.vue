@@ -239,7 +239,7 @@ padding:5px;
         <div class="filter-drawer-body">
 
           <!-- Price Range (Slider) -->
-          <!-- <div class="filter-group">
+          <div class="filter-group">
             <div class="filter-group-label">Price Range (per sqm)</div>
             <a-slider
               :min="0"
@@ -251,7 +251,7 @@ padding:5px;
             <p class="price-range-label">
               ${{ draftFilters.priceRange[0].toLocaleString('en-IN') }} – ${{ draftFilters.priceRange[1].toLocaleString('en-IN') }}
             </p>
-          </div> -->
+          </div>
 
                     
           <div class="filter-group" v-if="availableRoomTypes.length > 0">
@@ -269,7 +269,7 @@ padding:5px;
               </button>
             </div>
           </div>
-
+          
           <!-- Style Filter -->
           <div class="filter-group">
             <div class="filter-group-label">Style</div>

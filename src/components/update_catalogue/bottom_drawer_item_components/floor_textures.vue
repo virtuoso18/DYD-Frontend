@@ -2,10 +2,6 @@
   <div class="main">
     <a-row class="see-all-section">
       <a-col :sm="24" :md="24" :lg="4">
-        <!-- Clear Button -->
-        <!-- <a-button block type="primary" @click="clearFilters"
-          >
-        </a-button> -->
 
         <!-- Price Filter -->
         <div
@@ -57,108 +53,82 @@
               <div
                 style="max-height: 200px; overflow-y: auto; padding-right: 8px"
               >
-                <a-checkbox
-                  v-model:checked="filters.styles.modern"
-                  @change="applyFilters"
-                  style="display: flex; margin-bottom: 8px"
-                  >Modern</a-checkbox
-                >
-                <a-checkbox
-                  v-model:checked="filters.styles.scandinavian"
-                  @change="applyFilters"
-                  style="display: flex; margin-bottom: 8px"
-                  >Scandinavian</a-checkbox
-                >
-                <a-checkbox
-                  v-model:checked="filters.styles.classic"
-                  @change="applyFilters"
-                  style="display: flex; margin-bottom: 8px"
-                  >Classic</a-checkbox
-                >
-                <a-checkbox
-                  v-model:checked="filters.styles.minimalist"
-                  @change="applyFilters"
-                  style="display: flex; margin-bottom: 8px"
-                  >Minimalist</a-checkbox
-                >
-                <a-checkbox
-                  v-model:checked="filters.styles.industrial"
-                  @change="applyFilters"
-                  style="display: flex; margin-bottom: 8px"
-                  >Industrial</a-checkbox
-                >
-                <a-checkbox
-                  v-model:checked="filters.styles.rustic"
-                  @change="applyFilters"
-                  style="display: flex; margin-bottom: 8px"
-                  >Rustic</a-checkbox
-                >
-                <a-checkbox
-                  v-model:checked="filters.styles.boho"
-                  @change="applyFilters"
-                  style="display: flex; margin-bottom: 8px"
-                  >Boho</a-checkbox
-                >
-                <a-checkbox
-                  v-model:checked="filters.styles.other"
-                  @change="applyFilters"
-                  style="display: flex; margin-bottom: 8px"
-                  >Other</a-checkbox
-                >
+                <a-checkbox v-model:checked="filters.styles.modern" @change="applyFilters" style="display: flex; margin-bottom: 8px">Modern</a-checkbox>
+                <a-checkbox v-model:checked="filters.styles.scandinavian" @change="applyFilters" style="display: flex; margin-bottom: 8px">Scandinavian</a-checkbox>
+                <a-checkbox v-model:checked="filters.styles.classic" @change="applyFilters" style="display: flex; margin-bottom: 8px">Classic</a-checkbox>
+                <a-checkbox v-model:checked="filters.styles.minimalist" @change="applyFilters" style="display: flex; margin-bottom: 8px">Minimalist</a-checkbox>
+                <a-checkbox v-model:checked="filters.styles.industrial" @change="applyFilters" style="display: flex; margin-bottom: 8px">Industrial</a-checkbox>
+                <a-checkbox v-model:checked="filters.styles.rustic" @change="applyFilters" style="display: flex; margin-bottom: 8px">Rustic</a-checkbox>
+                <a-checkbox v-model:checked="filters.styles.boho" @change="applyFilters" style="display: flex; margin-bottom: 8px">Boho</a-checkbox>
+                <a-checkbox v-model:checked="filters.styles.other" @change="applyFilters" style="display: flex; margin-bottom: 8px">Other</a-checkbox>
               </div>
             </a-col>
             <a-col :xs="24" :sm="24" :md="24" :lg="0">
               <a-collapse v-model:activeKey="styleActiveKey">
                 <a-collapse-panel key="1" header="Style">
                   <div style="padding-right: 8px">
+                    <a-checkbox v-model:checked="filters.styles.modern" @change="applyFilters" style="display: flex; margin-bottom: 8px">Modern</a-checkbox>
+                    <a-checkbox v-model:checked="filters.styles.scandinavian" @change="applyFilters" style="display: flex; margin-bottom: 8px">Scandinavian</a-checkbox>
+                    <a-checkbox v-model:checked="filters.styles.classic" @change="applyFilters" style="display: flex; margin-bottom: 8px">Classic</a-checkbox>
+                    <a-checkbox v-model:checked="filters.styles.minimalist" @change="applyFilters" style="display: flex; margin-bottom: 8px">Minimalist</a-checkbox>
+                    <a-checkbox v-model:checked="filters.styles.industrial" @change="applyFilters" style="display: flex; margin-bottom: 8px">Industrial</a-checkbox>
+                    <a-checkbox v-model:checked="filters.styles.rustic" @change="applyFilters" style="display: flex; margin-bottom: 8px">Rustic</a-checkbox>
+                    <a-checkbox v-model:checked="filters.styles.boho" @change="applyFilters" style="display: flex; margin-bottom: 8px">Boho</a-checkbox>
+                    <a-checkbox v-model:checked="filters.styles.other" @change="applyFilters" style="display: flex; margin-bottom: 8px">Other</a-checkbox>
+                  </div>
+                </a-collapse-panel>
+              </a-collapse>
+            </a-col>
+          </a-row>
+        </div>
+
+        <!-- ✅ Room Type Filter (only shown when room types are available from API) -->
+        <div
+          v-if="availableRoomTypes.length > 0"
+          style="
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f0f0f0;
+          "
+        >
+          <a-row>
+            <!-- Desktop: always visible -->
+            <a-col :xs="0" :sm="0" :md="0" :lg="24">
+              <h4 style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600">
+                Room Type
+              </h4>
+              <div style="max-height: 200px; overflow-y: auto; padding-right: 8px">
+                <a-checkbox
+                  v-for="room in availableRoomTypes"
+                  :key="room.id"
+                  :checked="filters.selectedRoomTypes.includes(room.id)"
+                  @change="toggleRoomType(room.id)"
+                  style="display: flex; margin-bottom: 8px"
+                >
+                  {{ room.name }}
+                  <span style="opacity: 0.5; font-size: 11px; margin-left: 4px">
+                    ({{ room.product_count }})
+                  </span>
+                </a-checkbox>
+              </div>
+            </a-col>
+            <!-- Mobile: collapsible -->
+            <a-col :xs="24" :sm="24" :md="24" :lg="0">
+              <a-collapse v-model:activeKey="roomTypeActiveKey">
+                <a-collapse-panel key="1" header="Room Type">
+                  <div style="padding-right: 8px">
                     <a-checkbox
-                      v-model:checked="filters.styles.modern"
-                      @change="applyFilters"
+                      v-for="room in availableRoomTypes"
+                      :key="room.id"
+                      :checked="filters.selectedRoomTypes.includes(room.id)"
+                      @change="toggleRoomType(room.id)"
                       style="display: flex; margin-bottom: 8px"
-                      >Modern</a-checkbox
                     >
-                    <a-checkbox
-                      v-model:checked="filters.styles.scandinavian"
-                      @change="applyFilters"
-                      style="display: flex; margin-bottom: 8px"
-                      >Scandinavian</a-checkbox
-                    >
-                    <a-checkbox
-                      v-model:checked="filters.styles.classic"
-                      @change="applyFilters"
-                      style="display: flex; margin-bottom: 8px"
-                      >Classic</a-checkbox
-                    >
-                    <a-checkbox
-                      v-model:checked="filters.styles.minimalist"
-                      @change="applyFilters"
-                      style="display: flex; margin-bottom: 8px"
-                      >Minimalist</a-checkbox
-                    >
-                    <a-checkbox
-                      v-model:checked="filters.styles.industrial"
-                      @change="applyFilters"
-                      style="display: flex; margin-bottom: 8px"
-                      >Industrial</a-checkbox
-                    >
-                    <a-checkbox
-                      v-model:checked="filters.styles.rustic"
-                      @change="applyFilters"
-                      style="display: flex; margin-bottom: 8px"
-                      >Rustic</a-checkbox
-                    >
-                    <a-checkbox
-                      v-model:checked="filters.styles.boho"
-                      @change="applyFilters"
-                      style="display: flex; margin-bottom: 8px"
-                      >Boho</a-checkbox
-                    >
-                    <a-checkbox
-                      v-model:checked="filters.styles.other"
-                      @change="applyFilters"
-                      style="display: flex; margin-bottom: 8px"
-                      >Other</a-checkbox
-                    >
+                      {{ room.name }}
+                      <span style="opacity: 0.5; font-size: 11px; margin-left: 4px">
+                        ({{ room.product_count }})
+                      </span>
+                    </a-checkbox>
                   </div>
                 </a-collapse-panel>
               </a-collapse>
@@ -283,7 +253,7 @@
                   class="product-image-container"
                   style="position: relative; overflow: hidden"
                 >
-                  <!-- Skeleton (YOUR EXACT CSS) -->
+                  <!-- Skeleton -->
                   <div
                     v-if="!imageLoadedMap[product.id]"
                     class="product-skeleton"
@@ -360,14 +330,12 @@
 
                   <a-col span="1"></a-col>
                   <a-col span="4">
-                    <a-button
-                      :type="isWishlisted(product.id) ? 'primary' : 'default'"
-                      @click="toggleWishlist(product)"
-                      class="product-detail-btn"
-                    >
-                      <HeartOutlined />
-                    </a-button>
-                  </a-col>
+                  <a-button block type="default" style="padding:0;display: flex;justify-content: center;align-items: center; border: none;" 
+                    @click.stop="toggleLike(product.id, products.indexOf(product))">
+                    <HeartFilled v-if="product.is_liked" style="color: red; font-size: 18px;" />
+                    <HeartOutlined v-else style="font-size: 18px;" />
+                  </a-button>
+                </a-col>
                 </a-row>
               </div>
             </a-col>
@@ -404,23 +372,25 @@
 </template>
 
 <script>
-import { HeartOutlined } from "@ant-design/icons-vue";
+import { HeartOutlined,HeartFilled } from "@ant-design/icons-vue";
 
 export default {
   name: "FloorTextures",
   components: {
-    HeartOutlined,
+    HeartOutlined,HeartFilled
   },
   data() {
     return {
       styleActiveKey: ["1"],
       colourAcitveKey: ["1"],
+      roomTypeActiveKey: [], // collapsed by default on mobile
       products: [],
       wishlisted: new Set(),
       loading: false,
       imageLoadedMap: {},
       loadingColors: false,
       availableColors: [],
+      availableRoomTypes: [], // ✅ NEW
       pagination: {
         current_page: 1,
         page_size: 20,
@@ -430,6 +400,7 @@ export default {
       filters: {
         priceRange: [0, 500000],
         selectedColors: [],
+        selectedRoomTypes: [], // ✅ NEW
         styles: {
           modern: false,
           scandinavian: false,
@@ -449,6 +420,23 @@ export default {
     this.loadProducts();
   },
   methods: {
+    async toggleLike(itemId, itemIndex) {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) { this.$message.warning('Please login to add favorites'); return; }
+    const response = await fetch(`${this.$store.state.root_api}likes/favorites/toggle/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": `Token ${token}` },
+      body: JSON.stringify({ id: itemId, type: 'floor_texture' }),  // changed to floor_texture
+    });
+    const data = await response.json();
+    this.products[itemIndex].is_liked = data.favorited;  // changed catalogItems → products
+    this.$message.success(data.favorited ? 'Added to favorites' : 'Removed from favorites');
+  } catch (error) {
+    console.error("Like toggle failed", error);
+    this.$message.error('Failed to update favorite');
+  }
+},
     async toggleFavorite(product, product_type) {
       try {
         const token = localStorage.getItem("token");
@@ -468,24 +456,33 @@ export default {
         );
 
         const data = await response.json();
-        if (this.selectedProduct.is_favorited) {
-        }
         this.selectedProduct.is_favorited = data.favorited;
       } catch (error) {
         console.error("Favorite toggle failed", error);
       }
     },
+
     /**
-     * Load available colors from all products
+     * Load available colors and room types.
+     *
+     * Strategy:
+     *  1. Try the dedicated GET /room/api/floors/colors/ endpoint first.
+     *     - On success use data.data for colors and data.room_types for room types.
+     *  2. If the dedicated endpoint returns no colors (empty array or missing),
+     *     fall back to fetching the full product list and extracting unique
+     *     colors client-side.
      */
     async loadAvailableColors() {
       try {
         this.loadingColors = true;
+        const brand = this.$route.query.brand;
 
-        // Fetch all floors to get colors (paginate to get all)
-        const url = `${this.$store.state.root_api}room/api/floors/?page=1&page_size=1000`;
+        // ── Step 1: dedicated colors endpoint ─────────────────────────────
+        const colorsUrl = brand
+          ? `${this.$store.state.root_api}room/api/floors/colors/?brand=${brand}`
+          : `${this.$store.state.root_api}room/api/floors/colors/`;
 
-        const response = await fetch(url, {
+        const colorsResponse = await fetch(colorsUrl, {
           method: "GET",
           headers: {
             Authorization: `Token ${localStorage.getItem("token")}`,
@@ -493,34 +490,85 @@ export default {
           },
         });
 
-        const data = await response.json();
+        const colorsData = await colorsResponse.json();
 
-        if (data.success && data.data) {
-          // Extract unique colors from all products using hex codes
-          const colorMap = new Map();
+        if (
+          colorsData.success &&
+          Array.isArray(colorsData.data) &&
+          colorsData.data.length > 0
+        ) {
+          // Dedicated endpoint returned colors — use them directly
+          this.availableColors = colorsData.data.map((color) => ({
+            id: color.color_hex,
+            title: color.title || "Color",
+            color_hex: color.color_hex,
+          }));
 
-          data.data.forEach((product) => {
-            if (
-              product.colors_available &&
-              Array.isArray(product.colors_available)
-            ) {
-              product.colors_available.forEach((color) => {
-                if (color.color_hex && !colorMap.has(color.color_hex)) {
-                  colorMap.set(color.color_hex, {
-                    id: color.id || color.color_hex,
-                    title: color.title || "Color",
-                    color_hex: color.color_hex,
-                  });
-                }
-              });
-            }
+          // Room types live on the same response
+          this.availableRoomTypes = Array.isArray(colorsData.room_types)
+            ? colorsData.room_types
+            : [];
+
+          console.log(
+            "Colors loaded from dedicated endpoint:",
+            this.availableColors.length,
+            "| Room types:",
+            this.availableRoomTypes.length,
+          );
+        } else {
+          // ── Step 2: fallback — extract colors from full product list ─────
+          console.warn(
+            "Dedicated colors endpoint returned no data, falling back to product list extraction.",
+          );
+
+          const fallbackUrl = brand
+            ? `${this.$store.state.root_api}room/api/load-brand-products/floors/${brand}/?page=1&page_size=1000`
+            : `${this.$store.state.root_api}room/api/floors/?page=1&page_size=1000`;
+
+          const fallbackResponse = await fetch(fallbackUrl, {
+            method: "GET",
+            headers: {
+              Authorization: `Token ${localStorage.getItem("token")}`,
+              "Content-Type": "application/json",
+            },
           });
 
-          this.availableColors = Array.from(colorMap.values());
-          console.log("Colors loaded:", this.availableColors.length);
+          const fallbackData = await fallbackResponse.json();
+
+          if (fallbackData.success && Array.isArray(fallbackData.data)) {
+            const colorMap = new Map();
+
+            fallbackData.data.forEach((product) => {
+              if (
+                product.colors_available &&
+                Array.isArray(product.colors_available)
+              ) {
+                product.colors_available.forEach((color) => {
+                  if (color.color_hex && !colorMap.has(color.color_hex)) {
+                    colorMap.set(color.color_hex, {
+                      id: color.id || color.color_hex,
+                      title: color.title || "Color",
+                      color_hex: color.color_hex,
+                    });
+                  }
+                });
+              }
+            });
+
+            this.availableColors = Array.from(colorMap.values());
+            console.log(
+              "Colors extracted from product list (fallback):",
+              this.availableColors.length,
+            );
+          }
+
+          // Room types are not available via the fallback
+          this.availableRoomTypes = [];
         }
       } catch (error) {
         console.error("Failed to load colors:", error);
+        this.availableColors = [];
+        this.availableRoomTypes = [];
       } finally {
         this.loadingColors = false;
       }
@@ -547,6 +595,19 @@ export default {
     },
 
     /**
+     * ✅ NEW: Toggle room type filter selection
+     */
+    toggleRoomType(roomTypeId) {
+      const index = this.filters.selectedRoomTypes.indexOf(roomTypeId);
+      if (index > -1) {
+        this.filters.selectedRoomTypes.splice(index, 1);
+      } else {
+        this.filters.selectedRoomTypes.push(roomTypeId);
+      }
+      this.applyFilters();
+    },
+
+    /**
      * Load products with filters and pagination
      */
     async loadProducts() {
@@ -555,19 +616,18 @@ export default {
 
         const params = new URLSearchParams();
 
-        // Add pagination parameters
+        // Pagination
         params.append("page", this.pagination.current_page);
         params.append("page_size", this.pagination.page_size);
 
-        // Add price range
+        // Price range
         params.append("price_per_sqm_min", this.filters.priceRange[0]);
         params.append("price_per_sqm_max", this.filters.priceRange[1]);
 
-        // Add texture styles
+        // Texture styles
         const selectedStyles = [];
         if (this.filters.styles.modern) selectedStyles.push("Modern");
-        if (this.filters.styles.scandinavian)
-          selectedStyles.push("Scandinavian");
+        if (this.filters.styles.scandinavian) selectedStyles.push("Scandinavian");
         if (this.filters.styles.classic) selectedStyles.push("Classic");
         if (this.filters.styles.minimalist) selectedStyles.push("Minimalist");
         if (this.filters.styles.industrial) selectedStyles.push("Industrial");
@@ -579,23 +639,21 @@ export default {
           params.append("texture_style", selectedStyles.join(","));
         }
 
-        // Add selected colors
+        // Colors
         if (this.filters.selectedColors.length > 0) {
-          const hexCodes = this.filters.selectedColors.join(",");
-          params.append("color_hex", hexCodes);
+          params.append("color_hex", this.filters.selectedColors.join(","));
+        }
+
+        // ✅ NEW: Room types
+        if (this.filters.selectedRoomTypes.length > 0) {
+          params.append("room_type", this.filters.selectedRoomTypes.join(","));
         }
 
         let url = "";
         if (this.$route.query.brand) {
-          url = `${
-            this.$store.state.root_api
-          }room/api/load-brand-products/floors/${
-            this.$route.query.brand
-          }/?${params.toString()}`;
+          url = `${this.$store.state.root_api}room/api/load-brand-products/floors/${this.$route.query.brand}/?${params.toString()}`;
         } else {
-          url = `${
-            this.$store.state.root_api
-          }room/api/floors/?${params.toString()}`;
+          url = `${this.$store.state.root_api}room/api/floors/?${params.toString()}`;
         }
 
         const response = await fetch(url, {
@@ -608,16 +666,15 @@ export default {
 
         const data = await response.json();
 
-        if (data.success) {
-          this.products = data.data || [];
+       if (data.success) {
+          this.products = data.data;
+          const pag = data.pagination || {};
+          this.pagination.current_page = pag.page || data.page || 1;
+          this.pagination.page_size = pag.page_size || data.page_size || 20;
+          this.pagination.total_count = pag.total_count || data.total_count || 0;
+          this.pagination.total_pages = pag.total_pages || data.total_pages || 1;
 
-          // Update pagination info from response
-          this.pagination.current_page = data.page || 1;
-          this.pagination.page_size = data.page_size || 20;
-          this.pagination.total_count = data.total_count || 0;
-          this.pagination.total_pages = data.total_pages || 1;
           this.addInitWishListed();
-
           window.scrollTo({ top: 0, behavior: "smooth" });
         } else {
           this.$message.error(data.message || "Failed to load products");
@@ -630,26 +687,17 @@ export default {
       }
     },
 
-    /**
-     * Handle page change
-     */
     handlePageChange(page) {
       this.pagination.current_page = page;
       this.loadProducts();
     },
 
-    /**
-     * Handle page size change
-     */
     handlePageSizeChange(pageSize) {
       this.pagination.page_size = pageSize;
       this.pagination.current_page = 1;
       this.loadProducts();
     },
 
-    /**
-     * Handle price range change with debounce
-     */
     handlePriceChange() {
       clearTimeout(this.filterTimeout);
       this.filterTimeout = setTimeout(() => {
@@ -657,21 +705,16 @@ export default {
       }, 500);
     },
 
-    /**
-     * Apply all filters (reset to page 1)
-     */
     applyFilters() {
       this.pagination.current_page = 1;
       this.loadProducts();
     },
 
-    /**
-     * Clear all filters
-     */
     clearFilters() {
       this.filters = {
         priceRange: [0, 500000],
         selectedColors: [],
+        selectedRoomTypes: [], // ✅ also reset room types
         styles: {
           modern: false,
           scandinavian: false,
@@ -687,9 +730,6 @@ export default {
       this.loadProducts();
     },
 
-    /**
-     * Get the proper image URL from product
-     */
     getProductImage(product) {
       if (product.texture_image) {
         if (product.texture_image.startsWith("/")) {
@@ -700,24 +740,15 @@ export default {
       return "https://via.placeholder.com/300x300?text=No+Image";
     },
 
-    /**
-     * Format price
-     */
     formatPrice(price) {
       if (!price) return "0";
       return parseInt(price).toLocaleString("en-IN");
     },
 
-    /**
-     * Check if product is wishlisted
-     */
     isWishlisted(productId) {
       return this.wishlisted.has(productId);
     },
 
-    /**
-     * Toggle wishlist status
-     */
     toggleWishlist(product) {
       if (this.wishlisted.has(product.id)) {
         this.wishlisted.delete(product.id);
@@ -728,7 +759,8 @@ export default {
       }
       this.toggleFavorite(product, "floor_texture");
     },
-     addInitWishListed(){
+
+    addInitWishListed() {
       this.products.forEach((product) => {
         if (product.is_favorited) {
           this.wishlisted.add(product.id);
@@ -736,9 +768,6 @@ export default {
       });
     },
 
-    /**
-     * Handle product detail click
-     */
     handleProductDetail(product) {
       this.$router.push({
         name: "buisness_product",
@@ -835,7 +864,7 @@ export default {
   background: transparent;
   transition: color 0.2s ease;
   font-size: 12px;
-  height: auto; /* override antd */
+  height: auto;
 }
 
 .product-detail-btn:hover {
@@ -843,7 +872,6 @@ export default {
   border-color: #1d4ed8;
 }
 
-/* sm and above */
 @media (min-width: 640px) {
   .product-detail-btn {
     font-size: 14px;
