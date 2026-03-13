@@ -128,31 +128,37 @@
           <!-- Texture Style, Brand, Model Number -->
           <a-row :gutter="16" style="margin-bottom: 20px;">
             <a-col :span="6">
+              <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151;">Room Type</label>
+              <a-select
+                v-model:value="selectedRoomTypeName"
+                style="width: 100%;"
+                size="large"
+                :loading="loadingRoomTypes"
+                :allow-clear="true"
+                placeholder="Select Room Type"
+                @change="handleRoomTypeChange"
+              >
+                <a-select-option v-for="rt in roomTypes" :key="rt.id" :value="rt.id">{{ rt.name }}</a-select-option>
+              </a-select>
+            </a-col>
+            <a-col :span="6">
               <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151;">Texture Style</label>
               <a-select v-model:value="textureForm.texture_style" style="width: 100%;" size="large">
                 <a-select-option v-for="style in textureStyles" :key="style" :value="style">{{ style }}</a-select-option>
               </a-select>
             </a-col>
-             <a-col :span="6">
+            <a-col :span="6">
               <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151;">Sale Price per SQM</label>
               <a-input-number v-model:value="textureForm.sale_price_per_sqm" :min="0" :step="0.01" placeholder="20.00" suffix="$" style="width: 100%; border-radius: 8px;" size="large" />
             </a-col>
-              <a-col :span="6">
-                <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 13px; color: #6b7280;">Tile Width (cm)</label>
-                <a-input-number v-model:value="textureForm.tile_width" :min="0.01" :step="0.01" placeholder="100.00" style="width: 100%; border-radius: 6px;" />
-              </a-col>
-              <a-col :span="6">
-                <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 13px; color: #6b7280;">Tile Height (cm)</label>
-                <a-input-number v-model:value="textureForm.tile_height" :min="0.01" :step="0.01" placeholder="100.00" style="width: 100%; border-radius: 6px;" />
-              </a-col>
-            <!-- <a-col :span="8">
-              <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151;">Brand</label>
-              <a-input v-model:value="textureForm.brand" placeholder="Brand Name" style="border-radius: 8px;" size="large" />
+            <a-col :span="6">
+              <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 13px; color: #6b7280;">Tile Width (cm)</label>
+              <a-input-number v-model:value="textureForm.tile_width" :min="0.01" :step="0.01" placeholder="100.00" style="width: 100%; border-radius: 6px;" />
             </a-col>
-            <a-col :span="8">
-              <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151;">Model Number</label>
-              <a-input v-model:value="textureForm.model_number" placeholder="Model Number" style="border-radius: 8px;" size="large" />
-            </a-col> -->
+            <a-col :span="6">
+              <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 13px; color: #6b7280;">Tile Height (cm)</label>
+              <a-input-number v-model:value="textureForm.tile_height" :min="0.01" :step="0.01" placeholder="100.00" style="width: 100%; border-radius: 6px;" />
+            </a-col>
           </a-row>
 
           <!-- Material, Thickness, Weight -->
@@ -538,6 +544,10 @@ export default {
         stock_quantity: null,
       },
       tempColor: '#000000',
+      roomTypes: [],
+      loadingRoomTypes: false,
+      selectedRoomTypeId: null,
+      selectedRoomTypeName: null,
 
        presetColors : [
       '#000000', '#FFFFFF', '#FF0000', '#00FF00', '#0000FF', '#FFFF00',
@@ -571,9 +581,10 @@ export default {
     }
   },
   mounted() {
-    this.initializeForm();
-    window.addEventListener('beforeunload', this.handleBeforeUnload);
-  },
+  this.initializeForm();
+  this.loadRoomTypes();  
+  window.addEventListener('beforeunload', this.handleBeforeUnload);
+},
   beforeUnmount() {
     window.removeEventListener('beforeunload', this.handleBeforeUnload);
     this.cleanupPreviews();
@@ -589,6 +600,33 @@ export default {
     }
   },
   methods: {
+    async loadRoomTypes() {
+      try {
+        this.loadingRoomTypes = true;
+        const token = localStorage.getItem('token');
+        const response = await fetch(
+          `${this.$store.state.root_api}product/api/room-types/`,
+          {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Token ${token}` }
+          }
+        );
+        const result = await response.json();
+        this.roomTypes = result || [];
+      } catch (error) {
+        console.error('Error loading room types:', error);
+        this.roomTypes = [];
+      } finally {
+        this.loadingRoomTypes = false;
+      }
+    },
+
+    handleRoomTypeChange(value) {
+      const selectedRoom = this.roomTypes.find(rt => rt.id === value);
+      this.selectedRoomTypeId = value;
+      this.selectedRoomTypeName = selectedRoom ? selectedRoom.name : null;
+      this.hasUnsavedChanges = true;
+    },
     initializeForm() {
       if (this.selectedTexture) {
         this.textureForm = {
@@ -614,6 +652,13 @@ export default {
           stock_quantity: this.selectedTexture.stock_quantity || null
         };
         this.hasUnsavedChanges = false;
+        if (this.selectedTexture.room_type) {
+          this.selectedRoomTypeId = this.selectedTexture.room_type.id;
+          this.selectedRoomTypeName = this.selectedTexture.room_type.name;
+        } else {
+          this.selectedRoomTypeId = null;
+          this.selectedRoomTypeName = null;
+        }
         this.imagePreviewsState = [];
       }
     },
@@ -919,6 +964,9 @@ export default {
             textureData.append(key, this.textureForm[key]);
           }
         });
+        if (this.selectedRoomTypeName) {
+            textureData.append('room_type_name', this.selectedRoomTypeName);
+          }
         const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/walls/${this.selectedTexture.id}/?access-id=`+this.$route.query.access_id, {
 
         // const response = await fetch(`${this.$store.state.root_api}room/api-owner/walls/${this.selectedTexture.id}/`, {

@@ -1,6 +1,5 @@
 <template>
   <div>
-    <!-- {{ selectedProduct }} -->
     <!-- Header -->
     <div
       style="
@@ -81,41 +80,6 @@
                   border-radius: 10px;
                 "
               />
-              <!-- <a-button 
-  type="text" 
-  danger 
-  @click="remove3DModel"
-  style="
-    position: absolute; 
-    top: 12px; 
-    right: 12px;
-    background: rgba(255,255,255,0.9); 
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    border-radius: 6px; 
-    width: 30px; 
-    height: 30px; 
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 1;
-  "
->
-  <template #icon>
-    <svg 
-      width="14" 
-      height="14" 
-      viewBox="0 0 24 24" 
-      fill="none" 
-      stroke="currentColor" 
-      stroke-width="2"
-      style="display: block;"
-    >
-      <line x1="18" y1="6" x2="6" y2="18"></line>
-      <line x1="6" y1="6" x2="18" y2="18"></line>
-    </svg>
-  </template>
-</a-button> -->
             </div>
 
             <!-- Upload 3D Model Area -->
@@ -424,7 +388,7 @@
             </svg>
           </div>
         </div>
-        <!-- <h4 style="margin-bottom: 8px; font-weight: 500; font-size: 16px; color: #1f2937;">3d  Images</h4> -->
+
         <p style="color: #6b7280; font-size: 13px; margin-bottom: 16px">
           Images used to create 3d model
         </p>
@@ -433,8 +397,6 @@
         <div
           style="display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 24px"
         >
-          <!-- Existing Images -->
-
           <img
             :src="$store.state.root_media_api + selectedProduct.image_0"
             v-if="selectedProduct.image_0"
@@ -458,7 +420,8 @@
               cursor: pointer;
             "
             :style="{ border: '2px solid #e5e7eb' }"
-          /><img
+          />
+          <img
             :src="$store.state.root_media_api + selectedProduct.image_2"
             v-if="selectedProduct.image_2"
             style="
@@ -469,7 +432,8 @@
               cursor: pointer;
             "
             :style="{ border: '2px solid #e5e7eb' }"
-          /><img
+          />
+          <img
             :src="$store.state.root_media_api + selectedProduct.image_3"
             v-if="selectedProduct.image_3"
             style="
@@ -481,86 +445,6 @@
             "
             :style="{ border: '2px solid #e5e7eb' }"
           />
-
-          <!-- Preview Images (Not yet saved) -->
-          <div
-            v-for="(preview, index) in imagePreviewsState"
-            :key="'preview-' + index"
-            style="position: relative"
-          >
-            <img
-              :src="preview.url"
-              style="
-                width: 72px;
-                height: 72px;
-                border-radius: 8px;
-                object-fit: cover;
-                border: 2px solid #3b82f6;
-                opacity: 0.8;
-              "
-            />
-            <!-- Loading Overlay -->
-            <div
-              v-if="preview.uploading"
-              style="
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: rgba(0, 0, 0, 0.5);
-                border-radius: 8px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-              "
-            >
-              <div
-                style="
-                  width: 16px;
-                  height: 16px;
-                  border: 2px solid #ffffff;
-                  border-top: 2px solid transparent;
-                  border-radius: 50%;
-                  animation: spin 1s linear infinite;
-                "
-              ></div>
-            </div>
-            <!-- Remove Preview -->
-            <a-button
-              v-if="!preview.uploading"
-              type="text"
-              danger
-              size="small"
-              @click="removePreview(index)"
-              style="
-                position: absolute;
-                top: -6px;
-                right: -6px;
-                background: #ef4444;
-                color: white;
-                border-radius: 50%;
-                width: 20px;
-                height: 20px;
-                padding: 0;
-                min-width: 20px;
-              "
-            >
-              <template #icon>
-                <svg
-                  width="10"
-                  height="10"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-              </template>
-            </a-button>
-          </div>
         </div>
       </a-col>
 
@@ -588,10 +472,12 @@
                 font-size: 14px;
                 color: #374151;
               "
-              >Name</label
+              >Name<span style="color: red">*</span></label
             >
             <a-input
               v-model:value="productForm.name"
+              :maxlength="50"
+              show-count
               placeholder="Product Name"
               style="border-radius: 8px"
               size="large"
@@ -607,19 +493,22 @@
                 font-size: 14px;
                 color: #374151;
               "
-              >Description</label
+              >Description<span style="color: red">*</span></label
             >
             <a-textarea
               v-model:value="productForm.description"
               :rows="4"
               placeholder="Product Description"
+              :maxlength="100"
+              show-count
               style="border-radius: 8px; resize: none"
             />
           </div>
 
-          <!-- Category, Type, Price -->
+          <!-- Room Type, Category, Type, Price -->
           <a-row :gutter="16" style="margin-bottom: 20px">
-            <a-col :span="8">
+            <!-- Room Type -->
+            <a-col :span="6">
               <label
                 style="
                   display: block;
@@ -628,22 +517,59 @@
                   font-size: 14px;
                   color: #374151;
                 "
-                >Category</label
               >
+                Room Type<span style="color: red">*</span>
+              </label>
+              <a-select
+                v-model:value="selectedRoomTypeName"
+                style="width: 100%"
+                size="large"
+                :loading="loadingRoomTypes"
+                :allow-clear="true"
+                @change="handleRoomTypeChange"
+              >
+                <a-select-option
+                  v-for="rt in roomTypes"
+                  :key="rt.id"
+                  :value="rt.id"
+                >
+                  {{ rt.name }}
+                </a-select-option>
+              </a-select>
+            </a-col>
+
+            <!-- Category -->
+            <a-col :span="6">
+              <label
+                style="
+                  display: block;
+                  margin-bottom: 6px;
+                  font-weight: 500;
+                  font-size: 14px;
+                  color: #374151;
+                "
+              >
+                Category<span style="color: red">*</span>
+              </label>
               <a-select
                 v-model:value="productForm.category_name"
                 style="width: 100%"
                 size="large"
-              >
-                <a-select-option
-                  v-for="cat in categories_available"
-                  :key="cat"
-                  :value="cat"
-                  >{{ cat }}</a-select-option
-                >
-              </a-select>
+                mode="tags"
+                :options="categoryOptions"
+                :loading="loadingCategories"
+                :filter-option="false"
+                :allow-clear="true"
+                show-search
+                :disabled="!selectedRoomType"
+                @search="handleCategorySearch"
+                @change="handleCategoryChange"
+                @focus="handleSelectFocus"
+              />
             </a-col>
-            <a-col :span="8">
+
+            <!-- Type -->
+            <a-col :span="6">
               <label
                 style="
                   display: block;
@@ -652,7 +578,7 @@
                   font-size: 14px;
                   color: #374151;
                 "
-                >Type</label
+                >Type<span style="color: red">*</span></label
               >
               <a-select
                 v-model:value="productForm.furniture_type"
@@ -667,7 +593,9 @@
                 >
               </a-select>
             </a-col>
-            <a-col :span="8">
+
+            <!-- Price -->
+            <a-col :span="6">
               <label
                 style="
                   display: block;
@@ -676,7 +604,7 @@
                   font-size: 14px;
                   color: #374151;
                 "
-                >Price</label
+                >Price<span style="color: red">*</span></label
               >
               <a-input
                 v-model:value="productForm.pricing.price"
@@ -687,13 +615,6 @@
               />
             </a-col>
           </a-row>
-
-          <!-- <a-row :gutter="16" style="margin-bottom: 24px;">
-            <a-col :span="8">
-              <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151;">Sale Price</label>
-              <a-input v-model:value="productForm.pricing.sale_price" placeholder="600" suffix="$" style="border-radius: 8px;" size="large" />
-            </a-col>
-          </a-row> -->
 
           <!-- Dimensions -->
           <div style="margin-bottom: 24px">
@@ -724,7 +645,7 @@
                     text-transform: capitalize;
                   "
                 >
-                  {{ dim }}
+                  {{ dim }}<span style="color: red">*</span>
                   <span
                     style="
                       margin-left: 8px;
@@ -757,7 +678,7 @@
 
           <!-- Colors & Textures -->
           <a-row :gutter="24">
-            <!-- Colors Section - Updated -->
+            <!-- Colors Section -->
             <a-col :span="12">
               <h4
                 style="
@@ -767,7 +688,7 @@
                   color: #1f2937;
                 "
               >
-                Colors
+                Colors<span style="color: red">*</span>
               </h4>
               <div
                 style="
@@ -906,7 +827,6 @@
                       align-items: center;
                       font-size: 14px;
                       font-weight: bold;
-                      line-height: 1;
                       cursor: pointer;
                       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
                       z-index: 2;
@@ -918,71 +838,122 @@
                     @mouseleave="(e) => (e.target.style.transform = 'scale(1)')"
                     title="Delete color"
                   >
-                    <span>x</span>
+                    ×
                   </div>
                 </div>
 
-                <!-- Add Color Button -->
+                <!-- Add Color Button with Popover -->
                 <div style="position: relative">
-                  <input
-                    type="color"
-                    v-model="customColor"
-                    @change="addColor(customColor)"
-                    style="
-                      opacity: 0;
-                      position: absolute;
-                      width: 36px;
-                      height: 36px;
-                      cursor: pointer;
-                    "
-                  />
-                  <div
-                    style="
-                      margin-top: -5px;
-                      width: 58px;
-                      height: 58px;
-                      border-radius: 8px;
-                      border: 2px dashed #d1d5db;
-                      display: flex;
-                      align-items: center;
-                      justify-content: center;
-                      cursor: pointer;
-                      background: #f9fafb;
-                    "
-                  >
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="#9ca3af"
-                      stroke-width="2"
-                    >
-                      <line x1="12" y1="5" x2="12" y2="19"></line>
-                      <line x1="5" y1="12" x2="19" y2="12"></line>
-                    </svg>
+                  <div style="margin-bottom: 20px">
+                    <a-popover trigger="click" placement="bottom">
+                      <template #title>
+                        <div
+                          style="display: flex; align-items: center; gap: 8px"
+                        >
+                          <span>Add Available Colors</span>
+                          <input
+                            type="color"
+                            :value="tempColor"
+                            @input="tempColor = $event.target.value"
+                            @change="addColor(tempColor)"
+                            style="
+                              width: 30px;
+                              height: 25px;
+                              border: none;
+                              border-radius: 4px;
+                              cursor: pointer;
+                            "
+                          />
+                          <a-button
+                            type="primary"
+                            size="small"
+                            @click="addAvailableColor"
+                            style="margin-left: 8px"
+                          >
+                            Add
+                          </a-button>
+                        </div>
+                      </template>
+                      <template #content>
+                        <div
+                          style="
+                            display: grid;
+                            grid-template-columns: repeat(6, 32px);
+                            gap: 8px;
+                            padding: 8px;
+                          "
+                        >
+                          <div
+                            v-for="(color, index) in presetColors"
+                            :key="index"
+                            @click="addColor(color)"
+                            :style="{
+                              width: '32px',
+                              height: '32px',
+                              borderRadius: '6px',
+                              backgroundColor: color,
+                              cursor: 'pointer',
+                              border: '1px solid #e5e7eb',
+                            }"
+                          ></div>
+                        </div>
+                      </template>
+                      <a-button
+                        style="
+                          border-radius: 6px;
+                          border: 2px dashed #d1d5db;
+                          display: flex;
+                          justify-content: center;
+                          align-items: center;
+                          gap: 10px;
+                        "
+                      >
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                        >
+                          <line x1="12" y1="5" x2="12" y2="19"></line>
+                          <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        Add Colors
+                      </a-button>
+                    </a-popover>
                   </div>
                 </div>
               </div>
             </a-col>
 
+            <!-- Textures Section -->
             <a-col :span="12">
-              <h4
+              <div
                 style="
-                  margin-bottom: 16px;
-                  font-weight: 500;
-                  font-size: 14px;
-                  color: #1f2937;
+                  display: flex;
+                  align-items: center;
+                  gap: 12px;
                 "
               >
-                Textures
-              </h4>
+                <h4
+                  style="
+                    margin-bottom: 16px;
+                    font-weight: 500;
+                    font-size: 14px;
+                    color: #1f2937;
+                  "
+                >
+                  Textures<span style="color: red">*</span>
+                </h4>
+              </div>
               <div
                 style="
                   display: flex;
                   gap: 12px;
                   align-items: center;
                   flex-wrap: wrap;
+                  margin-bottom: 16px;
                 "
               >
                 <!-- Existing Textures -->
@@ -1014,8 +985,8 @@
                     }"
                   ></div>
 
-                  <!-- Perfect Center X -->
-                  <!-- <div
+                  <!-- Delete Button -->
+                  <div
                     @click.stop="deleteTexture(texture.id)"
                     style="
                       position: absolute;
@@ -1029,87 +1000,188 @@
                       display: flex;
                       justify-content: center;
                       align-items: center;
-                      font-size: 16px; /* Slightly larger for the symbol */
-                      font-weight: 400;
-                      line-height: 0;
+                      font-size: 14px;
+                      font-weight: bold;
+                      line-height: 1;
                       cursor: pointer;
                       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-                      user-select: none;
-                      transform: translateY(
-                        -1px
-                      ); /* This handles the optical illusion of it being too low */
                     "
                   >
-                    &times;
-                  </div> -->
-                  <a-button
-                    v-if="!img.is_primary"
-                    type="text"
-                    danger
-                    size="small"
-                    @click.stop="deleteTexture(texture.id)"
-                    style="
-                      position: absolute;
-                      top: -6px;
-                      right: -6px;
-                      background: #ef4444;
-                      color: white;
-                      border-radius: 50%;
-                      width: 20px;
-                      height: 20px;
-                      padding: 0;
-                      min-width: 20px;
-                      display: flex;
-                      align-items: center;
-                      justify-content: center;
-                      line-height: 1;
-                    "
-                  >
-                    <template #icon>
-                      <svg
-                        width="10"
-                        height="10"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        style="display: block"
-                      >
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                      </svg>
-                    </template>
-                  </a-button>
+                    ×
+                  </div>
                 </div>
+              </div>
 
-                <!-- Add Texture -->
-                <div
+              <div style="display: flex; gap: 8px;">
+                <!-- Add Texture from Library -->
+                <a-popover trigger="click" placement="bottom">
+                  <template #title>
+                    <div
+                      style="
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                      "
+                    >
+                      <span>Select Texture from Library</span>
+                      <a-spin
+                        v-if="loadingAvailableTextures || loadingMoreTextures"
+                        size="small"
+                        style="margin-left: 8px"
+                      />
+                    </div>
+                  </template>
+                  <template #content>
+                    <div
+                      v-if="loadingAvailableTextures"
+                      style="text-align: center; padding: 20px"
+                    >
+                      <a-spin />
+                    </div>
+                    <div
+                      v-else-if="availableTexturesLibrary.length === 0"
+                      style="text-align: center; padding: 20px; color: #6b7280"
+                    >
+                      <p style="font-size: 12px; margin: 0">
+                        No textures available in library
+                      </p>
+                    </div>
+                    <div
+                      v-else
+                      style="
+                        display: flex;
+                        flex-direction: column;
+                        height: 100%;
+                      "
+                    >
+                      <div
+                        style="
+                          display: grid;
+                          grid-template-columns: repeat(4, 60px);
+                          gap: 8px;
+                          max-height: 300px;
+                          overflow-y: auto;
+                          padding: 8px;
+                        "
+                      >
+                        <div
+                          v-for="(texture, index) in availableTexturesLibrary"
+                          :key="index"
+                          @click="addTextureFromLibrary(texture)"
+                          :style="{
+                            width: '60px',
+                            height: '60px',
+                            borderRadius: '8px',
+                            backgroundImage: `url('${getTextureUrl(texture.url)}')`,
+                            backgroundSize: 'cover',
+                            backgroundPosition: 'center',
+                            cursor: 'pointer',
+                            border: '2px solid #e5e7eb',
+                            opacity: isTextureSelected(texture.id) ? 0.5 : 1,
+                            transition: 'all 0.2s ease',
+                          }"
+                          :title="texture.name || 'Texture'"
+                        >
+                          <div
+                            v-if="isTextureSelected(texture.id)"
+                            style="
+                              width: 100%;
+                              height: 100%;
+                              display: flex;
+                              align-items: center;
+                              justify-content: center;
+                              background: rgba(0, 0, 0, 0.3);
+                              border-radius: 6px;
+                            "
+                          >
+                            <svg
+                              width="20"
+                              height="20"
+                              viewBox="0 0 24 24"
+                              fill="white"
+                              stroke="white"
+                              stroke-width="2"
+                            >
+                              <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                          </div>
+                        </div>
+                      </div>
+                      <div
+                        v-if="hasMoreTextures"
+                        style="
+                          display: flex;
+                          justify-content: center;
+                          padding: 12px;
+                          border-top: 1px solid #f0f0f0;
+                        "
+                      >
+                        <a-button
+                          @click="loadMoreTextures"
+                          :loading="loadingMoreTextures"
+                          style="width: 100%"
+                          size="small"
+                        >
+                          {{ loadingMoreTextures ? "Loading..." : "Load More" }}
+                        </a-button>
+                      </div>
+                    </div>
+                  </template>
+                  <a-button
+                    style="
+                      display: flex;
+                      justify-content: center;
+                      align-items: center;
+                      gap: 5px;
+                      border-radius: 6px;
+                      border: 2px dashed #d1d5db;
+                      margin-top: 25px;
+                    "
+                  >
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <line x1="12" y1="8" x2="12" y2="16"></line>
+                      <line x1="8" y1="12" x2="16" y2="12"></line>
+                    </svg>
+                    Select Texture
+                  </a-button>
+                </a-popover>
+
+                <!-- Upload Custom Texture -->
+                <a-button
                   @click="uploadTexture"
                   style="
-                    margin-top: 25px;
-                    width: 58px;
-                    height: 58px;
-                    border-radius: 8px;
-                    border: 2px dashed #d1d5db;
                     display: flex;
-                    align-items: center;
                     justify-content: center;
-                    cursor: pointer;
-                    background: #f9fafb;
+                    align-items: center;
+                    gap: 5px;
+                    border-radius: 6px;
+                    border: 2px dashed #d1d5db;
+                    margin-top: 25px;
                   "
                 >
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="#9ca3af"
-                    stroke-width="2"
-                  >
-                    <line x1="12" y1="5" x2="12" y2="19"></line>
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                  </svg>
-                </div>
+                  <template #icon>
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <line x1="12" y1="5" x2="12" y2="19"></line>
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                  </template>
+                  Upload Custom
+                </a-button>
               </div>
             </a-col>
           </a-row>
@@ -1134,29 +1206,15 @@
       @change="handleTextureUpload"
     />
   </div>
-  <!-- Color Edit Popup -->
+
   <!-- Color Edit Popup -->
   <a-modal
     v-model:visible="colorEditPopupVisible"
     centered
     style="width: 900px; min-height: 500px"
   >
-    <template #title>
-      <!-- <div style="display:flex;gap:10px;flex-direction: row;font-weight:bold">
-      <div 
-      :style="{
-        width: '20px',
-        height: '20px',
-        borderRadius: '12px',
-        backgroundColor: editingColor?.color,
-        border: '2px solid #e5e7eb'
-      }"
-    ></div> <h3 style="margin-top:-3px;">Add 3D model with color</h3>
-  </div> -->
-    </template>
     <template #footer>
       <a-button @click="closeColorEditPopup">Cancel</a-button>
-
       <a-button
         type="primary"
         @click="updateColor"
@@ -1165,9 +1223,8 @@
       >
     </template>
     <div style="text-align: center">
-      <!-- {{editingColor}} -->
       <a-row>
-        <!-- 3D Model Section -->
+        <!-- 3D Model Section Header -->
         <a-col :xs="24" :sm="12" :md="12" :lg="12">
           <div style="display: flex; gap: 10px">
             <div
@@ -1176,7 +1233,6 @@
                 height: '40px',
                 borderRadius: '12px',
                 backgroundColor: editingColor?.color,
-
                 border: '2px solid #e5e7eb',
               }"
             ></div>
@@ -1199,159 +1255,108 @@
             </div>
           </div>
         </a-col>
-        <a-col :xs="24" :sm="12" :md="12" :lg="12">
-          <div style="display: flex; justify-content: center">
-            <div>
-              <a-radio-group v-model:value="upload3dModelFrom">
-                <a-radio-button value="LocalDevice"
-                  >Local System</a-radio-button
-                >
-                <a-radio-button value="Generated3d_Models_History"
-                  >DYD AI Generated</a-radio-button
-                >
-              </a-radio-group>
-            </div>
-          </div>
+        <a-col :xs="24" :sm="12" :md="12" :lg="12"></a-col>
 
-          <!-- Selected Color Display -->
-        </a-col>
+        <!-- 3D Model Upload/Display -->
         <a-col
           :span="24"
           v-if="upload3dModelFrom !== 'Generated3d_Models_History'"
           style="min-height: 400px"
         >
-          <div style="">
-            <div style="">
-              <!-- 3D Model Display (when model exists) -->
-              <div
-                v-if="hasColorModel"
-                style="position: relative; padding: 10px"
-              >
-                <canvas_3d_model_renderer
-                  :glbModelUrl="
-                    get3DColorModelUrl(editingColor.model_file_colored_product)
-                  "
-                  :Model_instance_id="selectedProduct.id"
-                  style="
-                    width: 100%;
-                    max-height: 300px;
-                    height: 100%;
-                    border-radius: 10px;
-                  "
-                />
-
-                <!-- Change Model Button -->
-                <a-button
-                  @click="triggerFileInput"
-                  style="
-                    position: absolute;
-                    top: 10px;
-                    right: 10px;
-                    background: white;
-                    border-radius: 6px;
-                    font-size: 11px;
-                  "
-                  size="small"
-                >
-                  Change Model
-                </a-button>
-
-                <!-- Delete Button -->
-                <!-- <a-button 
-              type="text" 
-              danger 
-              @click="removeColorModel"
-              style="
-                position: absolute; 
-                top: 12px; 
-                right: 80px;
-                background: rgba(255,255,255,0.9); 
-                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-                border-radius: 6px; 
-                width: 30px; 
-                height: 30px; 
-                padding: 0;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                line-height: 1;
-              "
+          <div>
+            <!-- 3D Model Display (when model exists) -->
+            <div
+              v-if="hasColorModel"
+              style="position: relative; padding: 10px"
             >
-              <template #icon>
-                <svg 
-                  width="14" 
-                  height="14" 
-                  viewBox="0 0 24 24" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  stroke-width="2"
-                  style="display: block;"
-                >
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-              </template>
-            </a-button> -->
-              </div>
-
-              <!-- Upload 3D Model Area (when no model exists) -->
-              <div
-                v-else
-                @click="triggerFileInput"
-                @dragover.prevent="dragOver"
-                @dragleave.prevent="dragLeave"
-                @drop.prevent="dropColorModel"
+              <canvas_3d_model_renderer
+                :glbModelUrl="
+                  get3DColorModelUrl(editingColor.model_file_colored_product)
+                "
+                :Model_instance_id="selectedProduct.id"
                 style="
                   width: 100%;
-                  height: 300px;
-                  border-radius: 12px;
-                  background: #f9fafb;
-                  border: 2px dashed #d1d5db;
-                  display: flex;
-                  flex-direction: column;
-                  align-items: center;
-                  justify-content: center;
-                  cursor: pointer;
+                  max-height: 300px;
+                  height: 100%;
+                  border-radius: 10px;
                 "
-                :style="{
-                  borderColor: isDragOver ? '#3b82f6' : '#d1d5db',
-                  background: isDragOver ? '#eff6ff' : '#f9fafb',
-                }"
+              />
+              <!-- Change Model Button -->
+              <a-button
+                @click="triggerFileInput"
+                style="
+                  position: absolute;
+                  top: 10px;
+                  right: 10px;
+                  background: white;
+                  border-radius: 6px;
+                  font-size: 11px;
+                "
+                size="small"
               >
-                <svg
-                  width="48"
-                  height="48"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#9ca3af"
-                  stroke-width="1"
-                  style="margin-bottom: 16px"
-                >
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                  <polyline points="7,10 12,15 17,10"></polyline>
-                  <line x1="12" y1="15" x2="12" y2="3"></line>
-                </svg>
-                <p
-                  style="
-                    color: #6b7280;
-                    font-size: 14px;
-                    margin: 0 0 4px 0;
-                    font-weight: 500;
-                  "
-                >
-                  {{
-                    isDragOver
-                      ? "Drop 3D model here"
-                      : "Drag and drop 3D model here, or click to upload"
-                  }}
-                </p>
-                <p style="color: #9ca3af; font-size: 12px; margin: 0">
-                  Supported: .glb, .gltf (50MB max)
-                </p>
-              </div>
+                Change Model
+              </a-button>
+            </div>
+
+            <!-- Upload 3D Model Area (when no model exists) -->
+            <div
+              v-else
+              @click="triggerFileInput"
+              @dragover.prevent="dragOver"
+              @dragleave.prevent="dragLeave"
+              @drop.prevent="dropColorModel"
+              style="
+                width: 100%;
+                height: 300px;
+                border-radius: 12px;
+                background: #f9fafb;
+                border: 2px dashed #d1d5db;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+              "
+              :style="{
+                borderColor: isDragOver ? '#3b82f6' : '#d1d5db',
+                background: isDragOver ? '#eff6ff' : '#f9fafb',
+              }"
+            >
+              <svg
+                width="48"
+                height="48"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#9ca3af"
+                stroke-width="1"
+                style="margin-bottom: 16px"
+              >
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7,10 12,15 17,10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              <p
+                style="
+                  color: #6b7280;
+                  font-size: 14px;
+                  margin: 0 0 4px 0;
+                  font-weight: 500;
+                "
+              >
+                {{
+                  isDragOver
+                    ? "Drop 3D model here"
+                    : "Drag and drop 3D model here, or click to upload"
+                }}
+              </p>
+              <p style="color: #9ca3af; font-size: 12px; margin: 0">
+                Supported: .glb, .gltf (50MB max)
+              </p>
             </div>
           </div>
         </a-col>
+
+        <!-- Generated Models History -->
         <a-col
           :span="24"
           v-if="upload3dModelFrom === 'Generated3d_Models_History'"
@@ -1382,12 +1387,9 @@
               />
             </a-col>
           </a-row>
-
-          <!-- {{list_history_generated_3d_models }} -->
-
-          <div></div>
         </a-col>
-        <!-- Add this inside the Color Edit Popup modal, after the 3D Model section -->
+
+        <!-- Associated Texture -->
         <a-col
           :span="24"
           style="
@@ -1416,7 +1418,6 @@
               Select a texture to associate with this color
             </p>
 
-            <!-- Texture Grid -->
             <div
               style="
                 display: flex;
@@ -1443,7 +1444,6 @@
                   cursor: 'pointer',
                   transition: 'all 0.2s',
                 }"
-                style="cursor: pointer"
                 title="No texture"
               >
                 <svg
@@ -1501,8 +1501,6 @@
           </div>
         </a-col>
       </a-row>
-
-      <!-- Buttons -->
     </div>
 
     <!-- Hidden File Input for Color Model -->
@@ -1520,6 +1518,7 @@
 import canvas_3d_model_renderer from "@/components/store/canvas_3d_model_renderer.vue";
 import history_model_preview_3d from "@/components/dashboard/business/my_products/add_color_3d_model/history_model_preview_3d.vue";
 import select3d_model_for_color from "@/components/dashboard/business/my_products/add_color_3d_model/dyd_generated.vue";
+
 export default {
   name: "edit_product_details_store_page_business_user",
   components: {
@@ -1534,12 +1533,20 @@ export default {
   },
   data() {
     return {
+      presetColors: [
+        "#000000", "#FFFFFF", "#FF0000", "#00FF00", "#0000FF", "#FFFF00",
+        "#FF00FF", "#00FFFF", "#C0C0C0", "#808080", "#800000", "#808000",
+        "#008000", "#800080", "#008080", "#000080", "#FFA500", "#FFC0CB",
+        "#A52A2A", "#DDA0DD", "#98FB98", "#F0E68C", "#DEB887", "#D2691E",
+        "#FF6347", "#40E0D0", "#EE82EE", "#90EE90", "#FFB6C1", "#87CEEB",
+      ],
+      tempColor: "#000000",
+      selected_model_uuid_primary_key: "",
       loading_generated_models_history: true,
       list_history_generated_3d_models: [],
       selected_color_model_url: "",
       model_instance_id_generated_history: "",
-
-      upload3dModelFrom: "LocalDevice",
+      upload3dModelFrom: "Generated3d_Models_History",
       editingColor: null,
       uploaded3dModelFile: null,
       colorModelDragOver: false,
@@ -1547,7 +1554,7 @@ export default {
       productForm: {
         name: "",
         description: "",
-        category_name: "",
+        category_name: [],
         furniture_type: "",
         pricing: { price: "", sale_price: "" },
         dimensions: { height: "", length: "", width: "", depth: "" },
@@ -1562,6 +1569,23 @@ export default {
       hasUnsavedChanges: false,
       local3dModelUrl: null,
       is_resizable: false,
+      // Texture library
+      availableTexturesLibrary: [],
+      loadingAvailableTextures: false,
+      pendingTextureAdditions: [],
+      texturesPaginationOffset: 0,
+      texturesPaginationLimit: 10,
+      hasMoreTextures: false,
+      loadingMoreTextures: false,
+      // Room type & category
+      selectedRoomType: null,
+      selectedRoomTypeName: null,
+      roomTypes: [],
+      loadingRoomTypes: false,
+      categoryOptions: [],
+      allCategories: [],
+      loadingCategories: false,
+      categorySearchTimeout: null,
     };
   },
   computed: {
@@ -1575,10 +1599,11 @@ export default {
       );
     },
   },
-  mounted() {
+  async mounted() {
+    await this.loadRoomTypes();
     this.initializeForm();
     this.fetch3d_models_generated_by_user();
-
+    this.loadAvailableTexturesLibrary();
     window.addEventListener("beforeunload", this.handleBeforeUnload);
   },
   beforeUnmount() {
@@ -1587,10 +1612,15 @@ export default {
   },
   watch: {
     selectedProduct: {
-      handler() {
+      async handler() {
+        if (this.roomTypes.length === 0) {
+          await this.loadRoomTypes();
+        }
         this.initializeForm();
+        this.loadAvailableTexturesLibrary();
       },
       deep: true,
+      immediate: false,
     },
     productForm: {
       handler() {
@@ -1600,46 +1630,316 @@ export default {
     },
   },
   methods: {
+    // ─── Room Types & Categories ───────────────────────────────────────────────
+
+    async loadRoomTypes() {
+      try {
+        this.loadingRoomTypes = true;
+        const token = localStorage.getItem("token");
+        const response = await fetch(
+          `${this.$store.state.root_api}product/api/room-types/`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Token ${token}`,
+            },
+          },
+        );
+        const result = await response.json();
+        this.roomTypes = result || [];
+      } catch (error) {
+        console.error("Error loading room types:", error);
+        this.roomTypes = [];
+      } finally {
+        this.loadingRoomTypes = false;
+      }
+    },
+
+    handleRoomTypeChange(value) {
+      const selectedRoom = this.roomTypes.find((rt) => rt.id === value);
+      this.selectedRoomType = value;
+      this.selectedRoomTypeName = selectedRoom ? selectedRoom.name : null;
+      this.productForm.category_name = [];
+      this.categoryOptions = [];
+      this.allCategories = [];
+      if (value) {
+        this.loadInitialCategories();
+      }
+    },
+
+    async loadInitialCategories() {
+      try {
+        this.loadingCategories = true;
+        const token = localStorage.getItem("token");
+        const roomTypeParam = this.selectedRoomType
+          ? `?room_type=${encodeURIComponent(this.selectedRoomType)}`
+          : "";
+        const response = await fetch(
+          `${this.$store.state.root_api}product/api/categories/${roomTypeParam}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Token ${token}`,
+            },
+          },
+        );
+        const result = await response.json();
+        if (result.success) {
+          this.allCategories = result.data || [];
+          this.categoryOptions = this.allCategories.map((cat) => ({
+            label: cat.name,
+            value: cat.name,
+            data: cat,
+          }));
+        }
+      } catch (error) {
+        console.error("Error loading categories:", error);
+      } finally {
+        this.loadingCategories = false;
+      }
+    },
+
+    async handleCategorySearch(searchValue) {
+      if (this.categorySearchTimeout)
+        clearTimeout(this.categorySearchTimeout);
+      if (!searchValue?.trim()) {
+        this.categoryOptions = this.allCategories.map((cat) => ({
+          label: cat.name,
+          value: cat.name,
+        }));
+        return;
+      }
+      this.loadingCategories = true;
+      this.categorySearchTimeout = setTimeout(async () => {
+        try {
+          const token = localStorage.getItem("token");
+          const response = await fetch(
+            `${this.$store.state.root_api}product/api/categories/?q=${encodeURIComponent(searchValue)}`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Token ${token}`,
+              },
+            },
+          );
+          const result = await response.json();
+          this.categoryOptions = result.success
+            ? result.data.map((cat) => ({ label: cat.name, value: cat.name }))
+            : [];
+        } catch (error) {
+          this.categoryOptions = [];
+        } finally {
+          this.loadingCategories = false;
+        }
+      }, 300);
+    },
+
+    handleSelectFocus() {
+      if (this.categoryOptions.length === 0) {
+        this.categoryOptions = this.allCategories.map((cat) => ({
+          label: cat.name,
+          value: cat.name,
+        }));
+      }
+    },
+
+    handleCategoryChange(value) {
+      if (Array.isArray(value)) {
+        if (value.length > 1) {
+          this.productForm.category_name = [value[value.length - 1]];
+        } else if (value.length === 1) {
+          this.productForm.category_name = value;
+        } else {
+          this.productForm.category_name = [];
+        }
+      } else {
+        this.productForm.category_name = value ? [value] : [];
+      }
+    },
+
+    // ─── Texture Library ───────────────────────────────────────────────────────
+
+    async loadAvailableTexturesLibrary() {
+      try {
+        this.loadingAvailableTextures = true;
+        this.texturesPaginationOffset = 0;
+        const token = localStorage.getItem("token");
+        if (!token) throw new Error("No authentication token found");
+
+        const response = await fetch(
+          `${this.$store.state.root_api}product/api/products/user-textures/?limit=${this.texturesPaginationLimit}&offset=${this.texturesPaginationOffset}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Token ${token}`,
+            },
+          },
+        );
+        if (!response.ok)
+          throw new Error(`HTTP error! status: ${response.status}`);
+
+        const result = await response.json();
+        if (result) {
+          this.availableTexturesLibrary = (result.results.data || []).map(
+            (texture) => ({
+              id: texture?.id,
+              name: texture?.name || "Texture",
+              url: texture?.image_url || texture?.url,
+            }),
+          );
+          this.hasMoreTextures = result.next !== null;
+          this.texturesPaginationOffset += this.texturesPaginationLimit;
+        } else {
+          this.availableTexturesLibrary = [];
+          this.hasMoreTextures = false;
+        }
+      } catch (error) {
+        console.error("Error loading available textures:", error);
+        this.$message.error("Failed to load texture library");
+        this.availableTexturesLibrary = [];
+        this.hasMoreTextures = false;
+      } finally {
+        this.loadingAvailableTextures = false;
+      }
+    },
+
+    getTextureUrl(texturePath) {
+      if (!texturePath) return "";
+      if (texturePath.startsWith("http") || texturePath.startsWith("data:"))
+        return texturePath;
+      return `${this.$store.state.root_media_api}${texturePath}`;
+    },
+
+    isTextureSelected(textureId) {
+      return (
+        this.selectedProduct.textures.some((t) => t.id === textureId) ||
+        this.pendingTextureAdditions.some((t) => t.id === textureId)
+      );
+    },
+
+    async addTextureFromLibrary(texture) {
+      try {
+        if (this.isTextureSelected(texture.id)) {
+          this.$message.warning("This texture is already added to the product");
+          return;
+        }
+        const token = localStorage.getItem("token");
+        if (!token) throw new Error("No authentication token found");
+
+        const formData = new FormData();
+        formData.append("texture_ids", JSON.stringify([texture.id]));
+
+        const response = await fetch(
+          `${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/textures/?access-id=` +
+            this.$route.query.access_id,
+          {
+            method: "POST",
+            headers: { Authorization: `Token ${token}` },
+            body: formData,
+          },
+        );
+        const result = await response.json();
+        if (result.success) {
+          if (result.data && result.data.length > 0) {
+            result.data.forEach((textureData) => {
+              this.selectedProduct.textures.push({
+                id: textureData.id,
+                texture: textureData.texture,
+              });
+            });
+            this.$message.success("Texture added successfully");
+            this.hasUnsavedChanges = true;
+          }
+        } else {
+          this.$message.error(result.message || "Failed to add texture");
+        }
+      } catch (error) {
+        console.error("Error adding texture from library:", error);
+        this.$message.error("Error adding texture. Please try again.");
+      }
+    },
+
+    async loadMoreTextures() {
+      try {
+        this.loadingMoreTextures = true;
+        const token = localStorage.getItem("token");
+        if (!token) throw new Error("No authentication token found");
+
+        const response = await fetch(
+          `${this.$store.state.root_api}product/api/products/user-textures/?limit=${this.texturesPaginationLimit}&offset=${this.texturesPaginationOffset}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Token ${token}`,
+            },
+          },
+        );
+        if (!response.ok)
+          throw new Error(`HTTP error! status: ${response.status}`);
+
+        const result = await response.json();
+        if (result) {
+          const newTextures = (result.results.data || []).map((texture) => ({
+            id: texture?.id,
+            name: texture?.name || "Texture",
+            url: texture?.image_url || texture?.url,
+          }));
+          this.availableTexturesLibrary.push(...newTextures);
+          this.hasMoreTextures = result.next !== null;
+          this.texturesPaginationOffset += this.texturesPaginationLimit;
+        } else {
+          this.hasMoreTextures = false;
+        }
+      } catch (error) {
+        console.error("Error loading more textures:", error);
+        this.$message.error("Failed to load more textures");
+      } finally {
+        this.loadingMoreTextures = false;
+      }
+    },
+
+    // ─── General Helpers ───────────────────────────────────────────────────────
+
     handleResizableChange(value) {
       this.is_resizable = value;
     },
+
+    addAvailableColor() {
+      if (this.tempColor) {
+        this.addColor(this.tempColor);
+        this.tempColor = "#000000";
+      }
+    },
+
     clickedModel(e) {
+      this.selected_model_uuid_primary_key = e["new3d_model_instance"];
       const fixedUrl = e["media_url"].replace(/\\/g, "/");
       this.selected_color_model_url =
         this.$store.state.root_media_api + fixedUrl;
-
       this.uploaded3dModelFile = {
         file: null,
         isGenerated: true,
         generatedUrl: fixedUrl,
       };
     },
+
     async urlToFile(url, filename) {
-      // Fetch from URL
       const response = await fetch(this.$store.state.root_media_api + url);
-
-      // Convert to Blob
       const blob = await response.blob();
-
-      const file = new File([blob], filename, {
-        type: blob.type,
-      });
-
-      return file;
+      return new File([blob], filename, { type: blob.type });
     },
 
-    // 3. Enhanced fetch3d Models History  method with immediate update the History
     async fetch3d_models_generated_by_user() {
       this.loading_generated_models_history = true;
-
       try {
-        // access-engine/api/business-products/add-product-floor-tile/?access-id=`+route.query.access_id
         const url =
           `${this.$store.state.root_api}access-engine/api/business-products/generated-3d-models-user-history/?access-id=` +
           this.$route.query.access_id;
-
-        console.log("📡 Fetching generated 3D models history...");
-
         const response = await fetch(url, {
           method: "GET",
           headers: {
@@ -1647,188 +1947,27 @@ export default {
             Accept: "application/json",
           },
         });
-
-        // 🔴 Handle HTTP errors
-        if (!response.ok) {
+        if (!response.ok)
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
-
-        // ✅ Parse JSON
         const responseData = await response.json();
-
-        // ✅ Safely extract data
         this.list_history_generated_3d_models = responseData.models ?? [];
       } catch (error) {
-        console.error("❌ Failed to fetch history generated 3D Models:", error);
-
-        this.error.general = error.message;
-
-        this.showError(
-          "Failed to fetch history generated 3D Models",
-          error.message,
-          () => this.fetch3d_models_generated_by_user(),
-        );
+        console.error("Failed to fetch history generated 3D Models:", error);
       } finally {
         this.loading_generated_models_history = false;
       }
     },
-    async setPrimaryColor(colorId, colorHex) {
-      try {
-        const token = localStorage.getItem("token");
 
-        // Call API to set primary color
-        const response = await fetch(
-          // access-engine/api/business-products/add-product-floor-tile/?access-id=`+this.$route.query.access_id
-          `${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/colors/${colorId}/set-primary/?access-id=` +
-            this.$route.query.access_id,
-          {
-            method: "PATCH",
-            headers: {
-              Authorization: `Token ${token}`,
-            },
-          },
-        );
+    // ─── Form Initialization ───────────────────────────────────────────────────
 
-        const result = await response.json();
-
-        if (result.success) {
-          // Update all colors to remove primary status
-          this.selectedProduct.colors.available_colors.forEach((color) => {
-            color.is_primary = false;
-          });
-
-          // Set the selected color as primary
-          const selectedColor =
-            this.selectedProduct.colors.available_colors.find(
-              (c) => c.id === colorId,
-            );
-          if (selectedColor) {
-            selectedColor.is_primary = true;
-            this.productForm.colors.primary_color = colorHex;
-          }
-
-          this.$message.success("Primary color updated successfully");
-        } else {
-          this.$message.error(result.message || "Failed to set primary color");
-        }
-      } catch (error) {
-        console.error("Error setting primary color:", error);
-        this.$message.error("Error setting primary color");
-      }
-    },
-
-    openColorEditPopup(color) {
-      this.editingColor = {
-        ...color,
-        selected_texture_id: color.selected_texture_id || null,
-      };
-      this.uploaded3dModelFile = null;
-      this.local3dModelUrl = null;
-      this.colorEditPopupVisible = true;
-    },
-
-    async updateColor() {
-      if (
-        !this.uploaded3dModelFile &&
-        !this.editingColor?.model_file_colored_product
-      ) {
-        this.$message.warning("Please upload a 3D model file");
-        return;
-      }
-
-      if (!this.editingColor) {
-        this.$message.error("No color selected");
-        return;
-      }
-
-      try {
-        const token = localStorage.getItem("token");
-        const formData = new FormData();
-
-        let fileToUpload = this.uploaded3dModelFile.file;
-
-        if (this.uploaded3dModelFile.isGenerated && !fileToUpload) {
-          const originalFileName = this.uploaded3dModelFile.generatedUrl
-            .split("/")
-            .pop();
-
-          fileToUpload = await this.urlToFile(
-            this.uploaded3dModelFile.generatedUrl,
-            originalFileName,
-          );
-        }
-
-        formData.append("model_file_colored_product", fileToUpload);
-        // 
-        // Add texture association
-        if (
-          this.editingColor.selected_texture_id !== null &&
-          this.editingColor.selected_texture_id !== undefined
-        ) {
-          formData.append("texture_id", this.editingColor.selected_texture_id);
-        } else {
-          formData.append("texture_id", ""); // Empty to remove texture association
-        }
-
-        const response = await fetch(
-          // access-engine/api/business-products/add-product-floor-tile/?access-id=`+this.$route.query.access_id
-          `${this.$store.state.root_api}access-engine/api/business-products/products/colors/${this.editingColor.id}/update-model/?access-id=` +
-            this.$route.query.access_id,
-          {
-            method: "PATCH",
-            headers: {
-              Authorization: `Token ${token}`,
-            },
-            body: formData,
-          },
-        );
-
-        const result = await response.json();
-
-        if (result.success) {
-          if (this.uploaded3dModelFile) {
-            this.editingColor.model_file_colored_product =
-              result.data.model_file_colored_product;
-          }
-
-          this.editingColor.selected_texture_id =
-            result.data.selected_texture_id || null;
-
-          const colorIndex =
-            this.selectedProduct.colors.available_colors.findIndex(
-              (c) => c.id === this.editingColor.id,
-            );
-          if (colorIndex !== -1) {
-            if (this.uploaded3dModelFile) {
-              this.selectedProduct.colors.available_colors[
-                colorIndex
-              ].model_file_colored_product =
-                result.data.model_file_colored_product;
-            }
-            this.selectedProduct.colors.available_colors[
-              colorIndex
-            ].selected_texture_id = result.data.selected_texture_id || null;
-          }
-
-          this.$message.success("Color model and texture updated successfully");
-
-          this.uploaded3dModelFile = null;
-          this.local3dModelUrl = null;
-          this.colorEditPopupVisible = false;
-        } else {
-          this.$message.error(result.message || "Failed to update color model");
-        }
-      } catch (error) {
-        console.error("Error updating color model:", error);
-        this.$message.error("Error updating color model. Please try again.");
-      }
-    },
     initializeForm() {
       if (this.selectedProduct) {
         this.productForm = {
           name: this.selectedProduct.name || "",
           description: this.selectedProduct.description || "",
-          category_name: this.selectedProduct.category?.name || "",
+          category_name: this.selectedProduct.category?.name
+            ? [this.selectedProduct.category.name]
+            : [],
           furniture_type: this.selectedProduct.furniture_type || "",
           pricing: {
             price: this.selectedProduct.pricing?.price?.toString() || "",
@@ -1849,6 +1988,20 @@ export default {
         this.imagePreviewsState = [];
         this.pending3DModel = null;
         this.is_resizable = this.selectedProduct?.is_resizable || false;
+
+        // Set room type from product data
+        if (this.selectedProduct?.room_type) {
+          this.selectedRoomType =
+            this.selectedProduct.room_type.id || null;
+          this.selectedRoomTypeName =
+            this.selectedProduct.room_type.name || null;
+          if (this.selectedRoomType) {
+            this.loadInitialCategories();
+          }
+        } else {
+          this.selectedRoomType = null;
+          this.selectedRoomTypeName = null;
+        }
       }
     },
 
@@ -1859,18 +2012,13 @@ export default {
     },
 
     get3DColorModelUrl(url) {
-      if (this.local3dModelUrl) {
-        return this.local3dModelUrl;
-      }
-
+      if (this.local3dModelUrl) return this.local3dModelUrl;
       if (!url) {
         console.warn("URL is empty or undefined");
         return "";
       }
-
       const baseUrl = this.$store.state.root_media_api;
       const cleanUrl = url.startsWith("/") ? url : `/${url}`;
-
       return `${baseUrl}${cleanUrl}`;
     },
 
@@ -1902,6 +2050,7 @@ export default {
         this.$emit("cancel_edit_back_product_list", this.selectedProduct.id);
       }
     },
+
     selectColorTexture(textureId) {
       if (this.editingColor) {
         this.editingColor.selected_texture_id = textureId;
@@ -1911,7 +2060,8 @@ export default {
       }
     },
 
-    // File Upload Methods
+    // ─── File Upload Methods ───────────────────────────────────────────────────
+
     upload3DModel() {
       this.$refs.fileInput.click();
     },
@@ -1922,55 +2072,75 @@ export default {
       this.$refs.textureInput.click();
     },
 
-    // handle3DModelUpload(event) {
-    //   const file = event.target.files[0];
-    //   if (file && this.validate3DModelFile(file)) {
-    //     this.pending3DModel = file;
-    //     this.hasUnsavedChanges = true;
-    //     this.$message.success(`3D Model "${file.name}" ready for upload.`);
-    //   }
-    //   event.target.value = '';
-    // },
-
     process3dModelFile(file) {
-      if (this.local3dModelUrl) {
-        URL.revokeObjectURL(this.local3dModelUrl);
-      }
-
-      // Create new URL
+      if (this.local3dModelUrl) URL.revokeObjectURL(this.local3dModelUrl);
       const url = URL.createObjectURL(file);
-      this.local3dModelUrl = url; // Vue reactivity automatically detects this change
-
+      this.local3dModelUrl = url;
       this.uploaded3dModelFile = {
         file: file,
         name: file.name,
         size: (file.size / 1024 / 1024).toFixed(2) + " MB",
       };
-
-      console.log(" 3D Model loaded locally:", file.name);
     },
 
     handleImageUpload(event) {
       const files = Array.from(event.target.files);
       files.forEach((file) => {
         if (this.validateImageFile(file)) {
-          const preview = {
+          this.imagePreviewsState.push({
             file,
             url: URL.createObjectURL(file),
             uploading: false,
-          };
-          this.imagePreviewsState.push(preview);
+          });
         }
       });
       event.target.value = "";
     },
 
-    handleTextureUpload(event) {
+    async handleTextureUpload(event) {
       const file = event.target.files[0];
-      if (file && this.validateTextureFile(file)) {
-        this.addTextureToProduct(file);
+      if (!file) return;
+      if (!this.validateTextureFile(file)) {
+        event.target.value = "";
+        return;
       }
-      event.target.value = "";
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) throw new Error("No authentication token found");
+
+        const formData = new FormData();
+        formData.append("texture", file);
+
+        const response = await fetch(
+          `${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/textures/?access-id=` +
+            this.$route.query.access_id,
+          {
+            method: "POST",
+            headers: { Authorization: `Token ${token}` },
+            body: formData,
+          },
+        );
+        const result = await response.json();
+        if (result.success) {
+          if (result.data && result.data.length > 0) {
+            result.data.forEach((textureData) => {
+              this.selectedProduct.textures.push({
+                id: textureData.id,
+                texture: textureData.texture,
+              });
+            });
+            this.$message.success("Custom texture uploaded successfully");
+            this.hasUnsavedChanges = true;
+          }
+        } else {
+          this.$message.error(result.message || "Failed to upload texture");
+        }
+      } catch (error) {
+        console.error("Error uploading texture:", error);
+        this.$message.error("Error uploading texture. Please try again.");
+      } finally {
+        event.target.value = "";
+      }
     },
 
     removePreview(index) {
@@ -1986,7 +2156,8 @@ export default {
       this.imagePreviewsState = [];
     },
 
-    // Validation Methods
+    // ─── Validation ────────────────────────────────────────────────────────────
+
     validate3DModelFile(file) {
       const validExtensions = [".glb", ".gltf"];
       const extension = file.name
@@ -2049,7 +2220,8 @@ export default {
       return true;
     },
 
-    // Drag and Drop
+    // ─── Drag and Drop ─────────────────────────────────────────────────────────
+
     dragOver(event) {
       event.preventDefault();
       this.isDragOver = true;
@@ -2069,7 +2241,8 @@ export default {
       }
     },
 
-    // UI Actions
+    // ─── UI Actions ────────────────────────────────────────────────────────────
+
     remove3DModel() {
       this.$confirm({
         title: "Remove 3D Model",
@@ -2094,13 +2267,11 @@ export default {
       this.selectedTexture = textureId;
     },
 
-    // Primary Image Toggle
+    // ─── Primary Image Toggle ──────────────────────────────────────────────────
+
     async togglePrimaryImage(imageId) {
       try {
         const token = localStorage.getItem("token");
-
-        // access-engine/api/business-products/add-product-floor-tile/?access-id=`+this.$route.query.access_id
-
         const response = await fetch(
           `${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/images/${imageId}/set-primary/?access-id=` +
             this.$route.query.access_id,
@@ -2109,13 +2280,9 @@ export default {
             headers: { Authorization: `Token ${token}` },
           },
         );
-
         const result = await response.json();
         if (result.success) {
-          // Update local data - remove primary from all, set on selected
-          this.selectedProduct.images.forEach(
-            (img) => (img.is_primary = false),
-          );
+          this.selectedProduct.images.forEach((img) => (img.is_primary = false));
           const targetImage = this.selectedProduct.images.find(
             (img) => img.id === imageId,
           );
@@ -2132,7 +2299,154 @@ export default {
       }
     },
 
-    // API Methods
+    // ─── Color Methods ─────────────────────────────────────────────────────────
+
+    async setPrimaryColor(colorId, colorHex) {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch(
+          `${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/colors/${colorId}/set-primary/?access-id=` +
+            this.$route.query.access_id,
+          {
+            method: "PATCH",
+            headers: { Authorization: `Token ${token}` },
+          },
+        );
+        const result = await response.json();
+        if (result.success) {
+          this.selectedProduct.colors.available_colors.forEach((color) => {
+            color.is_primary = false;
+          });
+          const selectedColor =
+            this.selectedProduct.colors.available_colors.find(
+              (c) => c.id === colorId,
+            );
+          if (selectedColor) {
+            selectedColor.is_primary = true;
+            this.productForm.colors.primary_color = colorHex;
+          }
+          this.$message.success("Primary color updated successfully");
+        } else {
+          this.$message.error(result.message || "Failed to set primary color");
+        }
+      } catch (error) {
+        console.error("Error setting primary color:", error);
+        this.$message.error("Error setting primary color");
+      }
+    },
+
+    openColorEditPopup(color) {
+      this.editingColor = {
+        ...color,
+        selected_texture_id: color.selected_texture_id || null,
+      };
+      this.uploaded3dModelFile = null;
+      this.local3dModelUrl = null;
+      this.colorEditPopupVisible = true;
+    },
+
+    async updateColor() {
+      if (
+        !this.uploaded3dModelFile &&
+        !this.editingColor?.model_file_colored_product
+      ) {
+        this.$message.warning("Please upload a 3D model file");
+        return;
+      }
+      if (!this.editingColor) {
+        this.$message.error("No color selected");
+        return;
+      }
+
+      try {
+        const token = localStorage.getItem("token");
+        const formData = new FormData();
+
+        // Use generated model UUID if available, otherwise upload file
+        if (
+          this.uploaded3dModelFile?.isGenerated &&
+          this.selected_model_uuid_primary_key
+        ) {
+          formData.append(
+            "selected_file_id_model_file_colored_product",
+            this.selected_model_uuid_primary_key,
+          );
+        } else if (this.uploaded3dModelFile?.file) {
+          formData.append(
+            "model_file_colored_product",
+            this.uploaded3dModelFile.file,
+          );
+        } else if (
+          this.uploaded3dModelFile?.isGenerated &&
+          !this.selected_model_uuid_primary_key
+        ) {
+          const originalFileName = this.uploaded3dModelFile.generatedUrl
+            .split("/")
+            .pop();
+          const fileToUpload = await this.urlToFile(
+            this.uploaded3dModelFile.generatedUrl,
+            originalFileName,
+          );
+          formData.append("model_file_colored_product", fileToUpload);
+        }
+
+        // Add texture association
+        if (
+          this.editingColor.selected_texture_id !== null &&
+          this.editingColor.selected_texture_id !== undefined
+        ) {
+          formData.append("texture_id", this.editingColor.selected_texture_id);
+        } else {
+          formData.append("texture_id", "");
+        }
+
+        const response = await fetch(
+          `${this.$store.state.root_api}access-engine/api/business-products/products/colors/${this.editingColor.id}/update-model/?access-id=` +
+            this.$route.query.access_id,
+          {
+            method: "PATCH",
+            headers: { Authorization: `Token ${token}` },
+            body: formData,
+          },
+        );
+        const result = await response.json();
+        if (result.success) {
+          if (this.uploaded3dModelFile) {
+            this.editingColor.model_file_colored_product =
+              result.data.model_file_colored_product;
+          }
+          this.editingColor.selected_texture_id =
+            result.data.selected_texture_id || null;
+
+          const colorIndex =
+            this.selectedProduct.colors.available_colors.findIndex(
+              (c) => c.id === this.editingColor.id,
+            );
+          if (colorIndex !== -1) {
+            if (this.uploaded3dModelFile) {
+              this.selectedProduct.colors.available_colors[
+                colorIndex
+              ].model_file_colored_product =
+                result.data.model_file_colored_product;
+            }
+            this.selectedProduct.colors.available_colors[
+              colorIndex
+            ].selected_texture_id = result.data.selected_texture_id || null;
+          }
+
+          this.$message.success("Color model and texture updated successfully");
+          this.uploaded3dModelFile = null;
+          this.local3dModelUrl = null;
+          this.colorEditPopupVisible = false;
+        } else {
+          this.$message.error(result.message || "Failed to update color model");
+        }
+      } catch (error) {
+        console.error("Error updating color model:", error);
+        this.$message.error("Error updating color model. Please try again.");
+      }
+    },
+
     async addColor(colorHex) {
       if (
         this.selectedProduct.colors.available_colors.some(
@@ -2142,11 +2456,9 @@ export default {
         this.$message.warning("Color already exists");
         return;
       }
-
       try {
         const token = localStorage.getItem("token");
         const response = await fetch(
-          // access-engine/api/business-products/add-product-floor-tile/?access-id=`+this.$route.query.access_id
           `${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/colors/?access-id=` +
             this.$route.query.access_id,
           {
@@ -2158,7 +2470,6 @@ export default {
             body: JSON.stringify({ color: colorHex }),
           },
         );
-
         const result = await response.json();
         if (result.success) {
           this.selectedProduct.colors.available_colors.push({
@@ -2166,12 +2477,9 @@ export default {
             color: result.data.color,
             is_primary: result.data.is_primary || false,
           });
-
-          // If this is the first color, set it as primary automatically
           if (this.selectedProduct.colors.available_colors.length === 1) {
             await this.setPrimaryColor(result.data.id, colorHex);
           }
-
           this.$message.success("Color added successfully");
         } else {
           this.$message.error(result.message || "Failed to add color");
@@ -2196,7 +2504,6 @@ export default {
             body: formData,
           },
         );
-
         const result = await response.json();
         if (result.success) {
           this.selectedProduct.textures.push({
@@ -2213,7 +2520,8 @@ export default {
       }
     },
 
-    // Delete Methods
+    // ─── Delete Methods ────────────────────────────────────────────────────────
+
     async deleteImage(imageId) {
       this.$confirm({
         title: "Delete Image",
@@ -2228,12 +2536,10 @@ export default {
               `${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/images/${imageId}/?access-id=` +
                 this.$route.query.access_id,
               {
-                // const response = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/images/${imageId}/`, {
                 method: "DELETE",
                 headers: { Authorization: `Token ${token}` },
               },
             );
-
             const result = await response.json();
             if (result.success) {
               const index = this.selectedProduct.images.findIndex(
@@ -2256,14 +2562,12 @@ export default {
       const colorToDelete = this.selectedProduct.colors.available_colors.find(
         (c) => c.id === colorId,
       );
-
       if (colorToDelete && colorToDelete.is_primary) {
         this.$message.error(
           "Cannot delete primary color. Set another color as primary first.",
         );
         return;
       }
-
       this.$confirm({
         title: "Delete Color",
         content: "Are you sure you want to delete this color?",
@@ -2274,7 +2578,6 @@ export default {
           try {
             const token = localStorage.getItem("token");
             const response = await fetch(
-              // `${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/colors/${colorId}/`,
               `${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/colors/${colorId}/?access-id=` +
                 this.$route.query.access_id,
               {
@@ -2282,7 +2585,6 @@ export default {
                 headers: { Authorization: `Token ${token}` },
               },
             );
-
             const result = await response.json();
             if (result.success) {
               const index =
@@ -2317,19 +2619,20 @@ export default {
               `${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/textures/${textureId}/?access-id=` +
                 this.$route.query.access_id,
               {
-                // const response = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/textures/${textureId}/`, {
                 method: "DELETE",
                 headers: { Authorization: `Token ${token}` },
               },
             );
-
             const result = await response.json();
             if (result.success) {
               const index = this.selectedProduct.textures.findIndex(
                 (texture) => texture.id === textureId,
               );
-              if (index !== -1) this.selectedProduct.textures.splice(index, 1);
+              if (index !== -1) {
+                this.selectedProduct.textures.splice(index, 1);
+              }
               this.$message.success("Texture deleted successfully");
+              this.hasUnsavedChanges = true;
             } else {
               this.$message.error(result.message || "Failed to delete texture");
             }
@@ -2341,7 +2644,8 @@ export default {
       });
     },
 
-    // Form Validation & Save
+    // ─── Form Validation & Save ────────────────────────────────────────────────
+
     validateForm() {
       if (!this.productForm.name.trim()) {
         this.$message.error("Product name is required");
@@ -2351,8 +2655,15 @@ export default {
         this.$message.error("Product description is required");
         return false;
       }
-      if (!this.productForm.category_name) {
+      if (
+        !this.productForm.category_name ||
+        this.productForm.category_name.length === 0
+      ) {
         this.$message.error("Category is required");
+        return false;
+      }
+      if (!this.productForm.furniture_type) {
+        this.$message.error("Type is required");
         return false;
       }
       if (
@@ -2369,16 +2680,31 @@ export default {
         this.$message.error("Sale price must be greater than 0 if provided");
         return false;
       }
-
-      const dimensions = ["height", "length", "width", "depth"];
+      const dimensions = ["height", "length", "width"];
       for (let dim of dimensions) {
         if (
-          this.productForm.dimensions[dim] &&
+          !this.productForm.dimensions[dim] ||
           parseFloat(this.productForm.dimensions[dim]) <= 0
         ) {
-          this.$message.error(`${dim} must be greater than 0 if provided`);
+          this.$message.error(
+            `${dim.charAt(0).toUpperCase() + dim.slice(1)} is required and must be greater than 0`,
+          );
           return false;
         }
+      }
+      if (
+        !this.selectedProduct.colors.available_colors ||
+        this.selectedProduct.colors.available_colors.length === 0
+      ) {
+        this.$message.error("At least one color is required");
+        return false;
+      }
+      if (
+        !this.selectedProduct.textures ||
+        this.selectedProduct.textures.length === 0
+      ) {
+        this.$message.error("At least one texture is required");
+        return false;
       }
       return true;
     },
@@ -2392,11 +2718,9 @@ export default {
         this.$message.info("No changes to save");
         return;
       }
-
       if (!this.validateForm()) return;
 
       this.isSaving = true;
-
       try {
         const token = localStorage.getItem("token");
 
@@ -2411,7 +2735,6 @@ export default {
             `${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/images/?access-id=` +
               this.$route.query.access_id,
             {
-              // const imageResponse = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/images/`, {
               method: "POST",
               headers: { Authorization: `Token ${token}` },
               body: formData,
@@ -2419,8 +2742,6 @@ export default {
           );
           const imageResult = await imageResponse.json();
 
-          // console.log("+===============================")
-          // console.log(imageResult)
           if (imageResponse.status === 403) {
             this.$notification.error({
               message: "Request Refused",
@@ -2431,18 +2752,23 @@ export default {
             });
             return;
           }
-
           if (imageResult.success) {
             this.selectedProduct.images.push(...imageResult.data);
-            this.cleanupPreviews(); // Clean up previews after successful upload
+            this.cleanupPreviews();
           }
         }
 
-        // Update product details
+        // Build product update payload
         const productData = new FormData();
         productData.append("name", this.productForm.name);
         productData.append("description", this.productForm.description);
-        productData.append("category_name", this.productForm.category_name);
+
+        // Send category_name as string (first element of array)
+        const categoryName = Array.isArray(this.productForm.category_name)
+          ? this.productForm.category_name[0]
+          : this.productForm.category_name;
+        productData.append("category_name", categoryName || "");
+
         productData.append("furniture_type", this.productForm.furniture_type);
         productData.append("price", this.productForm.pricing.price);
 
@@ -2450,7 +2776,6 @@ export default {
           productData.append("sale_price", this.productForm.pricing.sale_price);
         }
 
-        // Add dimensions
         ["height", "length", "width", "depth"].forEach((dim) => {
           if (this.productForm.dimensions[dim]) {
             productData.append(dim, this.productForm.dimensions[dim]);
@@ -2473,17 +2798,19 @@ export default {
           this.is_resizable ? "True" : "False",
         );
 
+        if (this.selectedRoomTypeName) {
+          productData.append("room_type_name", this.selectedRoomTypeName);
+        }
+
         const response = await fetch(
           `${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/?access-id=` +
             this.$route.query.access_id,
           {
-            // const response = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/`, {
             method: "PUT",
             headers: { Authorization: `Token ${token}` },
             body: productData,
           },
         );
-
         const result = await response.json();
 
         if (result.success) {
@@ -2501,6 +2828,9 @@ export default {
         this.isSaving = false;
       }
     },
+
+    // ─── Color Model Popup Helpers ─────────────────────────────────────────────
+
     triggerFileInput() {
       this.$refs.colorFileInput.click();
     },
@@ -2521,20 +2851,14 @@ export default {
     },
 
     processColorModelFile(file) {
-      if (this.local3dModelUrl) {
-        URL.revokeObjectURL(this.local3dModelUrl);
-      }
-
+      if (this.local3dModelUrl) URL.revokeObjectURL(this.local3dModelUrl);
       const url = URL.createObjectURL(file);
       this.local3dModelUrl = url;
-
       this.uploaded3dModelFile = {
         file: file,
         name: file.name,
         size: (file.size / 1024 / 1024).toFixed(2) + " MB",
       };
-
-      console.log("✅ Color 3D Model loaded locally:", file.name);
     },
 
     dropColorModel(event) {
@@ -2549,7 +2873,8 @@ export default {
     removeColorModel() {
       this.$confirm({
         title: "Remove 3D Model",
-        content: "Are you sure you want to remove the 3D model for this color?",
+        content:
+          "Are you sure you want to remove the 3D model for this color?",
         okText: "Remove",
         okType: "danger",
         cancelText: "Cancel",
@@ -2562,4 +2887,4 @@ export default {
     },
   },
 };
-</script>
+</script> 

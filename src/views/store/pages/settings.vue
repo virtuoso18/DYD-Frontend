@@ -1,4 +1,14 @@
 <template>
+     <a-modal v-model:open="show_info_disable_floor_wall_furniture_light_products" title="what is this ? "  centered>
+        <template #footer></template>
+      <p>
+Toggling the <strong>Product Contains</strong> option on or off will affect the simulation screen. 
+When enabled, the simulation screen will display the tab menu for the corresponding product type; 
+when disabled, the tab menu will be hidden. Please disable this option for products that you do not 
+officially sell on DYD.
+</p>
+      
+    </a-modal>
     <!-- Change Password Modal -->
     <a-modal 
         :open="change_password_modal" 
@@ -87,6 +97,56 @@ Settings</h2>
                 </a-col>
             </a-row>
         </div>
+
+<br>
+        <!-- Scene Elements Control -->
+<div style="border: 1px solid rgba(0,0,0,0.2); padding: 15px; border-radius: 7px; margin-bottom: 20px;">
+  <div style="display: flex;justify-content: space-between;">
+    <h4 class="!text-gray-700">Products Saling</h4>
+    <a-button type="default" shape="circle" size="small" @click="show_info_disable_floor_wall_furniture_light_products=true">i</a-button>
+  </div>
+
+  <!-- Floor -->
+  <a-row style="margin-bottom:10px;">
+    <a-col :span="20">
+      <p>Floor Products</p>
+    </a-col>
+    <a-col :span="4" style="display:flex;justify-content:center;align-items:center;">
+      <a-switch v-model:checked="scene.floor" @change="updateBusinessSailingProducts"/>
+    </a-col>
+  </a-row>
+
+  <!-- Furniture -->
+  <a-row style="margin-bottom:10px;">
+    <a-col :span="20">
+      <p>Furniture Products</p>
+    </a-col>
+    <a-col :span="4" style="display:flex;justify-content:center;align-items:center;">
+      <a-switch v-model:checked="scene.furniture" @change="updateBusinessSailingProducts"/>
+    </a-col>
+  </a-row>
+
+  <!-- Walls -->
+  <a-row style="margin-bottom:10px;">
+    <a-col :span="20">
+      <p>Walls Products</p>
+    </a-col>
+    <a-col :span="4" style="display:flex;justify-content:center;align-items:center;">
+      <a-switch v-model:checked="scene.walls" @change="updateBusinessSailingProducts"/>
+    </a-col>
+  </a-row>
+
+  <!-- Lights -->
+  <a-row>
+    <a-col :span="20">
+      <p>Lights Products</p>
+    </a-col>
+    <a-col :span="4" style="display:flex;justify-content:center;align-items:center;">
+      <a-switch v-model:checked="scene.lights" @change="updateBusinessSailingProducts"/>
+    </a-col>
+  </a-row>
+
+</div>
     </div>
 </template>
 
@@ -100,15 +160,37 @@ export default {
         return {
             watermark: false,
             watermarkLoading: false,
+            show_info_disable_floor_wall_furniture_light_products:false,
 
             change_password_modal: false,
             passwordLoading: false,
             currentPassword: '',
             newPassword: '',
             confirmPassword: '',
+            BusinessProfile:JSON.parse(localStorage.getItem('business_profile')),
+            scene: {
+                floor: true,
+                furniture: true,
+                walls: true,
+                lights: true
+            }
         };
     },
+    // watch: {
+    //     scene: {
+    //         deep: true,
+    //         handler() {
+    //             this.updateBusinessSailingProducts();
+    //         }
+    //     }
+    // },
     mounted() {
+        this.scene = {
+                floor: this.BusinessProfile.is_saling_floor,
+                furniture: this.BusinessProfile.is_saling_furniture,
+                walls: this.BusinessProfile.is_saling_wall,
+                lights: this.BusinessProfile.is_saling_light
+            }
         this.fetchWatermarkStatus();
     },
     methods: {
@@ -120,7 +202,57 @@ export default {
             }
             return token;
         },
+async updateBusinessSailingProducts() {
+    try {
+        const token = this.getAuthToken();
 
+        const response = await fetch(
+            this.$store.state.root_api + 'Auth/api/update-business-sailings-products/',
+            {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Token ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    scene: this.scene
+                })
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error("Failed request");
+        }
+
+        const result = await response.json();
+
+        if (result.success) {
+            
+            // update scene state
+            this.scene = result.scene;
+
+            // update BusinessProfile values
+            this.BusinessProfile.is_saling_floor = result.scene.floor
+            this.BusinessProfile.is_saling_furniture = result.scene.furniture
+            this.BusinessProfile.is_saling_wall = result.scene.walls
+            this.BusinessProfile.is_saling_light = result.scene.lights
+
+            // store updated profile
+            localStorage.setItem(
+                'business_profile',
+                JSON.stringify(this.BusinessProfile)
+            )
+
+            message.success(result.message)
+        } else {
+            message.error("Failed to update settings");
+        }
+
+    } catch (error) {
+        console.error(error);
+        message.error("Server error updating scene settings");
+    }
+},
         // Fetch current watermark status
         async fetchWatermarkStatus() {
             try {
