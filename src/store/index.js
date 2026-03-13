@@ -12,7 +12,7 @@ export default createStore({
 
     isLoading: false,
     primary_color: '',
-    websockets_address:'ws://localhost:8000',
+   websockets_address:'ws://localhost:8000',
     root_api: 'http://127.0.0.1:8000/',
     root_media_api: 'http://127.0.0.1:8000',
   //  websockets_address:'wss://x84jzbcq98izuo-8000.proxy.runpod.net',

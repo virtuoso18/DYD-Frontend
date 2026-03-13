@@ -1,14 +1,10 @@
 <template>
   <div class="canvas-wrapper-desktop" ref="canvasWrapper">
-    <div
-      v-if="isLoading"
-      class="scanning-loading-overlay"
-    >
-      <div
-        class="loading-screen"
-      >
+    <div v-if="isLoading" class="scanning-loading-overlay">
+      <div class="loading-screen">
         <div class="wave-overlay"></div>
         <div class="loading-text">
+          {{ currentMessage }}
           <!-- <div class="lottieFile-sec">
             <DotLottieVue
               style="height: auto; width: 250px;"
@@ -30,7 +26,6 @@
         @mouseleave="handleCanvasMouseLeave"
         @click="handleCanvasClick"
         @touchstart="handleCanvasTouchStartSAM2"
-
         @touchstart.prevent="handleCanvasTouchStart"
         @touchmove.prevent="handleCanvasTouchMove"
         @touchend.prevent="handleCanvasTouchEnd"
@@ -86,7 +81,6 @@ export default {
 
   data() {
     return {
-      
       removalMode: "draw",
       canvas: null,
       ctx: null,
@@ -126,7 +120,19 @@ export default {
 
       _resizeHandler: null,
 
-      isLoading:false,
+      isLoading: false,
+      loadingMessages: [
+        "Preparing image...",
+        "Analyzing mask...",
+        "Analyzing selection...",
+        "Removing object...",
+        "Rebuilding background...",
+        "Refining details...",
+        "Generating image...",
+      ],
+      currentMessage: "",
+      messageIndex: 0,
+      messageTimer: null,
     };
   },
 
@@ -171,33 +177,97 @@ export default {
   },
 
   methods: {
+    findNearestSAMPoint(displayX, displayY) {
+  // SAM point indicator is 24px wide (radius = 12px in display space)
+  const HIT_RADIUS = 16; // slightly generous for touch
+  for (let i = this.samPoints.length - 1; i >= 0; i--) {
+    const pt = this.samPoints[i];
+    const dx = displayX - pt.displayX;
+    const dy = displayY - pt.displayY;
+    if (Math.sqrt(dx * dx + dy * dy) <= HIT_RADIUS) {
+      return i;
+    }
+  }
+  return -1;
+},
+    startLoadingMessages() {
+      this.messageIndex = 0;
+      this.currentMessage = this.loadingMessages[this.messageIndex];
+
+      this.messageTimer = setInterval(() => {
+        this.messageIndex =
+          (this.messageIndex + 1) % this.loadingMessages.length;
+
+        this.currentMessage = this.loadingMessages[this.messageIndex];
+      }, 3000);
+    },
+    stopLoadingMessages() {
+      clearInterval(this.messageTimer);
+    },
+
+    // handleCanvasTouchStartSAM2(e) {
+    //   if (this.removalMode !== "sam2") return;
+    //   e.preventDefault();
+
+    //   if (this.isProcessing || this.isFetchingSAMMask) {
+    //     this.$message.warning("Processing...");
+    //     return;
+    //   }
+
+    //   const touch = e.touches[0];
+    //   const { canvasX, canvasY, displayX, displayY } =
+    //     this.getCanvasCoordinates(touch);
+
+    //   if (this.isOutOfBounds(canvasX, canvasY)) return;
+    //   if (this.samPoints.length >= 10) return;
+
+    //   this.samPoints.push({ x: canvasX, y: canvasY, displayX, displayY });
+    //   this.samMask = null;
+    //   this.redrawCanvas();
+
+    //   if (navigator.vibrate) navigator.vibrate(100);
+    //   this.$message.success(`Point ${this.samPoints.length} added`);
+    // },
     handleCanvasTouchStartSAM2(e) {
   if (this.removalMode !== "sam2") return;
   e.preventDefault();
-  
+
   if (this.isProcessing || this.isFetchingSAMMask) {
     this.$message.warning("Processing...");
     return;
   }
-  
+
   const touch = e.touches[0];
-  const { canvasX, canvasY, displayX, displayY } = 
+  const { canvasX, canvasY, displayX, displayY } =
     this.getCanvasCoordinates(touch);
-  
+
   if (this.isOutOfBounds(canvasX, canvasY)) return;
+
+  // Check if tap lands on an existing point — if so, remove it
+  const hitIndex = this.findNearestSAMPoint(displayX, displayY);
+  if (hitIndex !== -1) {
+    this.samPoints.splice(hitIndex, 1);
+    this.samMaskGenerated = false;
+    this.samMask = null;
+    this.redrawCanvas();
+    if (navigator.vibrate) navigator.vibrate(50);
+    this.$message.info(`Point ${hitIndex + 1} removed`);
+    return;
+  }
+
+  // Otherwise add a new point (max 10)
   if (this.samPoints.length >= 10) return;
-  
   this.samPoints.push({ x: canvasX, y: canvasY, displayX, displayY });
   this.samMask = null;
   this.redrawCanvas();
-  
+
   if (navigator.vibrate) navigator.vibrate(100);
   this.$message.success(`Point ${this.samPoints.length} added`);
 },
     // ==================== INIT ====================
- async triggerRemoval() {
-  await this.handleSubmit();
-},
+    async triggerRemoval() {
+      await this.handleSubmit();
+    },
     async initializeCanvas() {
       await this.$nextTick();
       const canvas = this.$refs.drawCanvas;
@@ -584,20 +654,44 @@ export default {
 
     // ==================== SAM-2 MODE ====================
 
+    // addSAMPoint(e) {
+    //   if (this.isProcessing || this.isFetchingSAMMask) return;
+    //   const { canvasX, canvasY, displayX, displayY } =
+    //     this.getCanvasCoordinates(e);
+    //   if (this.isOutOfBounds(canvasX, canvasY)) return;
+
+    //   // displayX/Y are relative to canvas element — correct for dot positioning
+    //   this.samPoints.push({ x: canvasX, y: canvasY, displayX, displayY });
+
+    //   if (!this.samMaskGenerated) this.samMask = null;
+
+    //   this.redrawCanvas();
+    //   // this.$message.info(`Point ${this.samPoints.length} added`);
+    // },
+
     addSAMPoint(e) {
-      if (this.isProcessing || this.isFetchingSAMMask) return;
-      const { canvasX, canvasY, displayX, displayY } =
-        this.getCanvasCoordinates(e);
-      if (this.isOutOfBounds(canvasX, canvasY)) return;
+  if (this.isProcessing || this.isFetchingSAMMask) return;
+  const { canvasX, canvasY, displayX, displayY } =
+    this.getCanvasCoordinates(e);
+  if (this.isOutOfBounds(canvasX, canvasY)) return;
 
-      // displayX/Y are relative to canvas element — correct for dot positioning
-      this.samPoints.push({ x: canvasX, y: canvasY, displayX, displayY });
+  // Check if click lands on an existing point — if so, remove it
+  const hitIndex = this.findNearestSAMPoint(displayX, displayY);
+  if (hitIndex !== -1) {
+    this.samPoints.splice(hitIndex, 1);
+    this.samMaskGenerated = false;
+    this.samMask = null;
+    this.redrawCanvas();
+    this.$message.info(`Point ${hitIndex + 1} removed`);
+    return;
+  }
 
-      if (!this.samMaskGenerated) this.samMask = null;
-
-      this.redrawCanvas();
-      // this.$message.info(`Point ${this.samPoints.length} added`);
-    },
+  // Otherwise add a new point (max 10)
+  if (this.samPoints.length >= 10) return;
+  this.samPoints.push({ x: canvasX, y: canvasY, displayX, displayY });
+  if (!this.samMaskGenerated) this.samMask = null;
+  this.redrawCanvas();
+},
 
     clearSAMPoints() {
       this.samPoints = [];
@@ -617,11 +711,12 @@ export default {
 
     async fetchSAMMask() {
       if (!this.samPoints.length || this.isFetchingSAMMask) return;
-      this.$emit('sam_rendering_results',true);  
-      
+      this.$emit("sam_rendering_results", true);
+
       this.isFetchingSAMMask = true;
       try {
-        this.isLoading=true;
+        this.isLoading = true;
+        this.startLoadingMessages();
         const imageCanvas = document.createElement("canvas");
         imageCanvas.width = this.baseImg.width;
         imageCanvas.height = this.baseImg.height;
@@ -650,8 +745,9 @@ export default {
         if (result.success && result.mask_base64) {
           this.samMask = result.mask_base64;
           this.samMaskGenerated = true;
-          await this.redrawCanvas();
-            this.$emit('mask-ready',true);  
+          await this.redrawCanvas(); 
+          this.samPoints=[];
+          this.$emit("mask-ready", true);
           this.$message.success("Mask generated successfully!");
         } else {
           throw new Error(result.message || "Failed to generate mask");
@@ -661,22 +757,50 @@ export default {
           console.error("SAM-2 segmentation failed:", error);
           this.$message.error("Failed to generate mask");
         }
-       } finally {
-          if (!this.isDestroyed) this.isFetchingSAMMask = false;
-            this.isLoading = false;
-            this.$emit('sam_rendering_results',false);  
-            // this.$emit('mask-ready',false);  // ← ADD THIS, remove the this.hasMaskReady = true line
-          }
+      } finally {
+        if (!this.isDestroyed) this.isFetchingSAMMask = false;
+        this.isLoading = false;
+        this.stopLoadingMessages();
+        this.$emit("sam_rendering_results", false);
+        // this.$emit('mask-ready',false);  // ← ADD THIS, remove the this.hasMaskReady = true line
+      }
     },
 
     // ==================== SAM-3 MODE ====================
-
+async detectObjectFromMask(imageSrc) {
+  return new Promise((resolve) => {
+    const img = new Image()
+    img.crossOrigin = "anonymous"
+    img.onload = () => {
+      const canvas = document.createElement("canvas")
+      const ctx = canvas.getContext("2d")
+      canvas.width = img.width
+      canvas.height = img.height
+      ctx.drawImage(img, 0, 0)
+      const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height)
+      const threshold = 10
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i]
+        const g = data[i + 1]
+        const b = data[i + 2]
+        const brightness = (r + g + b) / 3
+        if (brightness > threshold) { 
+          resolve(true)
+          return
+        }
+      }
+      resolve(false)
+    }
+    img.onerror = () => resolve(false)
+    img.src = imageSrc
+  })
+},
     async fetchSAM3Mask(prompttext) {
-      this.$emit('sam_rendering_results',true);  
+      this.$emit("sam_rendering_results", true);
 
       this.isFetchingSAMMask = true;
       try {
-        this.isLoading=true;
+        this.isLoading = true;
         const apiEndpoint = this.$store?.state?.root_api || "";
         const response = await fetch(`${apiEndpoint}engine/sam3-segment/`, {
           method: "POST",
@@ -691,7 +815,14 @@ export default {
         if (!response.ok) throw new Error(`Server error: ${response.status}`);
         const result = await response.json();
         if (this.isDestroyed) return;
-
+        const maskUrl=this.$store?.state?.root_api + result.binary_masks_list[0];
+         const isAnyObject = await this.detectObjectFromMask(maskUrl)
+         if(!isAnyObject){
+            this.$message.error(
+            `${result.binary_masks_list.length} masks detected!`,
+          );
+          return;
+         }
         if (result.success && result.binary_masks_list?.length) {
           this.sam3MasksList = result.binary_masks_list;
           this.samMask = await this.loadAndCombineAllMasks(
@@ -700,7 +831,7 @@ export default {
           );
           this.samMaskGenerated = true;
           await this.redrawCanvas();
-            this.$emit('mask-ready',true);  
+          this.$emit("mask-ready", true);
 
           this.$message.success(
             `${result.binary_masks_list.length} masks detected!`,
@@ -713,12 +844,12 @@ export default {
           console.error("SAM-3 segmentation failed:", error);
           this.$message.error("Failed to generate mask");
         }
-      }  finally {
-          if (!this.isDestroyed) this.isFetchingSAMMask = false;
-            this.isLoading = false;
-            this.$emit('sam_rendering_results',false);  
-            // this.$emit('mask-ready',false);  // ← ADD THIS, remove the this.hasMaskReady = true line
-        }
+      } finally {
+        if (!this.isDestroyed) this.isFetchingSAMMask = false;
+        this.isLoading = false;
+        this.$emit("sam_rendering_results", false);
+        // this.$emit('mask-ready',false);  // ← ADD THIS, remove the this.hasMaskReady = true line
+      }
     },
 
     async loadAndCombineAllMasks(apiEndpoint, maskPaths) {
@@ -878,6 +1009,8 @@ export default {
     async handleSubmit() {
       if (!this.hasValidMask || this.isProcessing) return;
       this.isProcessing = true;
+      this.isLoading = true;
+      this.startLoadingMessages();
       try {
         const maskBase64 =
           this.removalMode === "draw"
@@ -906,111 +1039,125 @@ export default {
         console.error("Error submitting removal request:", error);
         this.$message.error("Failed to submit removal request");
         this.isProcessing = false;
+      } finally {
+        this.isLoading = false;
+        this.stopLoadingMessages();
+        this.$emit("update-processing", false);
       }
     },
 
-   // For draw mode — convert canvas brush strokes to binary mask base64
-async createDrawingMask() {
-  const maskCanvas = document.createElement('canvas');
-  maskCanvas.width = this.baseImg.width;
-  maskCanvas.height = this.baseImg.height;
-  const maskCtx = maskCanvas.getContext('2d');
+    // For draw mode — convert canvas brush strokes to binary mask base64
+    async createDrawingMask() {
+      const maskCanvas = document.createElement("canvas");
+      maskCanvas.width = this.baseImg.width;
+      maskCanvas.height = this.baseImg.height;
+      const maskCtx = maskCanvas.getContext("2d");
 
-  // Black background = keep
-  maskCtx.fillStyle = '#000000';
-  maskCtx.fillRect(0, 0, maskCanvas.width, maskCanvas.height);
+      // Black background = keep
+      maskCtx.fillStyle = "#000000";
+      maskCtx.fillRect(0, 0, maskCanvas.width, maskCanvas.height);
 
-  // Scale from canvas-internal px to original image px
-  // canvas internal resolution = this.baseImg dimensions (set in setupCanvas)
-  // so scaleX/scaleY = 1.0 — but we keep it explicit for safety
-  const scaleX = this.baseImg.width / this.canvas.width;
-  const scaleY = this.baseImg.height / this.canvas.height;
+      // Scale from canvas-internal px to original image px
+      // canvas internal resolution = this.baseImg dimensions (set in setupCanvas)
+      // so scaleX/scaleY = 1.0 — but we keep it explicit for safety
+      const scaleX = this.baseImg.width / this.canvas.width;
+      const scaleY = this.baseImg.height / this.canvas.height;
 
-  // Replay all non-eraser strokes as WHITE on the mask
-  maskCtx.lineCap = 'round';
-  maskCtx.lineJoin = 'round';
+      // Replay all non-eraser strokes as WHITE on the mask
+      maskCtx.lineCap = "round";
+      maskCtx.lineJoin = "round";
 
-  this.drawingHistory.forEach((stroke) => {
-    if (!stroke.points.length) return;
+      this.drawingHistory.forEach((stroke) => {
+        if (!stroke.points.length) return;
 
-    if (stroke.isEraser) {
-      // Eraser = paint BLACK (erase the mask area)
-      maskCtx.globalCompositeOperation = 'source-over';
-      maskCtx.strokeStyle = '#000000';
-      maskCtx.lineWidth = stroke.brushSize * scaleX;
-      maskCtx.beginPath();
-      maskCtx.moveTo(stroke.points[0].x * scaleX, stroke.points[0].y * scaleY);
-      stroke.points.forEach((p) => maskCtx.lineTo(p.x * scaleX, p.y * scaleY));
-      maskCtx.stroke();
-    } else {
-      // Brush = paint WHITE (mark area to remove)
-      maskCtx.globalCompositeOperation = 'source-over';
-      maskCtx.strokeStyle = '#ffffff';
-      maskCtx.lineWidth = stroke.brushSize * scaleX;
-      maskCtx.beginPath();
-      maskCtx.moveTo(stroke.points[0].x * scaleX, stroke.points[0].y * scaleY);
-      stroke.points.forEach((p) => maskCtx.lineTo(p.x * scaleX, p.y * scaleY));
-      maskCtx.stroke();
-    }
-  });
+        if (stroke.isEraser) {
+          // Eraser = paint BLACK (erase the mask area)
+          maskCtx.globalCompositeOperation = "source-over";
+          maskCtx.strokeStyle = "#000000";
+          maskCtx.lineWidth = stroke.brushSize * scaleX;
+          maskCtx.beginPath();
+          maskCtx.moveTo(
+            stroke.points[0].x * scaleX,
+            stroke.points[0].y * scaleY,
+          );
+          stroke.points.forEach((p) =>
+            maskCtx.lineTo(p.x * scaleX, p.y * scaleY),
+          );
+          maskCtx.stroke();
+        } else {
+          // Brush = paint WHITE (mark area to remove)
+          maskCtx.globalCompositeOperation = "source-over";
+          maskCtx.strokeStyle = "#ffffff";
+          maskCtx.lineWidth = stroke.brushSize * scaleX;
+          maskCtx.beginPath();
+          maskCtx.moveTo(
+            stroke.points[0].x * scaleX,
+            stroke.points[0].y * scaleY,
+          );
+          stroke.points.forEach((p) =>
+            maskCtx.lineTo(p.x * scaleX, p.y * scaleY),
+          );
+          maskCtx.stroke();
+        }
+      });
 
-  return maskCanvas.toDataURL('image/png');
-},
-clearAll() {
-  // Clear all drawing/mask state
-  this.drawingHistory = [];
-  this.currentStroke = [];
-  this.samPoints = [];
-  this.samMask = null;
-  this.samMaskGenerated = false;
-  this.sam3MasksList = [];
-  this.sam3CurrentMaskIndex = 0;
-  this.sam3TextPrompt = '';
-  this.hasMaskReady = false;
-  this.isProcessing = false;
-  this.isFetchingSAMMask = false;
-  
-  // Redraw canvas with just the base image (no overlays)
-  this.redrawCanvas();
-  
-  // Emit that mask is no longer ready
-  this.$emit('mask-ready', false);
-},
-   async sendRemovalRequest(requestData) {
-  try {
-    const apiEndpoint = this.$store?.state?.root_api || "";
-    const response = await fetch(`${apiEndpoint}engine/remove-object/`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Token " + localStorage.getItem("token"),
-      },
-      body: JSON.stringify(requestData),
-    });
+      return maskCanvas.toDataURL("image/png");
+    },
+    clearAll() {
+      // Clear all drawing/mask state
+      this.drawingHistory = [];
+      this.currentStroke = [];
+      this.samPoints = [];
+      this.samMask = null;
+      this.samMaskGenerated = false;
+      this.sam3MasksList = [];
+      this.sam3CurrentMaskIndex = 0;
+      this.sam3TextPrompt = "";
+      this.hasMaskReady = false;
+      this.isProcessing = false;
+      this.isFetchingSAMMask = false;
 
-    const result = await response.json();
+      // Redraw canvas with just the base image (no overlays)
+      this.redrawCanvas();
 
-    if (response.status === 402) {
-      this.$emit("insufficient-credits", result.msg, result.buid);
-      return;
-    }
-    if (!response.ok) throw new Error(`Server error: ${response.status}`);
+      // Emit that mask is no longer ready
+      this.$emit("mask-ready", false);
+    },
+    async sendRemovalRequest(requestData) {
+      try {
+        const apiEndpoint = this.$store?.state?.root_api || "";
+        const response = await fetch(`${apiEndpoint}engine/remove-object/`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Token " + localStorage.getItem("token"),
+          },
+          body: JSON.stringify(requestData),
+        });
 
-    this.$message.success("Object removed successfully!");
-    
-    // ← CLEAR CANVAS BEFORE EMITTING SUCCESS
-    this.clearAll();
-    console.log(result);
-    debugger
+        const result = await response.json();
 
-    this.$emit("removal-success", result);
-  } catch (error) {
-    console.error("API request failed:", error);
-    throw error;
-  } finally {
-    if (!this.isDestroyed) this.isProcessing = false;
-  }
-},
+        if (response.status === 402) {
+          this.$emit("insufficient-credits", result.msg, result.buid);
+          return;
+        }
+        if (!response.ok) throw new Error(`Server error: ${response.status}`);
+
+        this.$message.success("Object removed successfully!");
+
+        // ← CLEAR CANVAS BEFORE EMITTING SUCCESS
+        this.clearAll();
+        console.log(result);
+        debugger;
+
+        this.$emit("removal-success", result);
+      } catch (error) {
+        console.error("API request failed:", error);
+        throw error;
+      } finally {
+        if (!this.isDestroyed) this.isProcessing = false;
+      }
+    },
   },
 };
 </script>

@@ -465,7 +465,7 @@
   @removal-success="handleRemovalSuccess"
   @mask-ready="markMaskIsReady"  
   @cancel-selection="handleCancelSelection"
-
+  @sam2-removing-object="updateSAM2Removing"
   @sam_rendering_results="sam_rendering_results"
 />
       </div>
@@ -791,6 +791,7 @@
       {{  hasMaskReady }} -->
       <a-space v-if="(selectedOption === 'draw' || hasMaskReady)">
       <button
+        v-if="!isSAM2Removing"
         class="remove-object-api-btn"
         @click="cancelSelection()"
         >
@@ -1338,7 +1339,7 @@ export default {
 showContextBar: false,
     hasMaskReady: false,
     isSAMProcessing: false,
-      
+      isSAM2Removing:false,
       isShowInstructionModal: false,
       currentPlanName: undefined,
       business_available_actions: undefined,
@@ -1673,6 +1674,10 @@ tourRefs() {
   },
 
   methods: {
+     updateSAM2Removing(value) {
+      this.isSAM2Removing = value;
+      console.log("IIIIIIIIIIIIIIIIIIIIIIIIII",this.isSAM2Removing);
+    },
     sam_rendering_results(e){
       this.sam_rendering_results_loading = e
     },
@@ -1765,6 +1770,7 @@ tourRefs() {
     async triggerChildRemoval() {
       if (!this.$refs.canvasRefForSAMAndDrawMask) return;
       this.isSAMProcessing = true;
+      this.updateSAM2Removing(true);
       try {
         await this.$refs.canvasRefForSAMAndDrawMask.triggerRemoval();
       } finally {
