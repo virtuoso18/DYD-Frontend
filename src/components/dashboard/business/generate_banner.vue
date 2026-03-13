@@ -109,12 +109,12 @@
 
         <div style="width: 1px; height: 32px; background: #e5e7eb;"></div>
 
-        <a-button @click="this.$router.push('/admin-generate-banner')" size="medium" style="border: 2px solid #e5e7eb;">
+        <!-- <a-button @click="this.$router.push('/admin-generate-banner')" size="medium" style="border: 2px solid #e5e7eb;">
           <template #icon>
             <SettingOutlined />
           </template>
           Admin Panel
-        </a-button>
+        </a-button> -->
 
         <a-button @click="showCreateModal = true" type="primary" size="medium" style="display: flex; gap: 8px; align-items: center; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);">
           <template #icon>

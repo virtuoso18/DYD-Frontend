@@ -685,7 +685,7 @@ Switch Furniture</a-button> -->
     @cancel="onCancel"
     :rendered_modal_3D_id="model_instance_id"
   />
-  <a-row>
+  <a-row class="no-select">
     <a-col :sm="24" :xs="24" :md="0" :lg="0">
       <div class="controls-container">
         <!-- Top Action Buttons -->
@@ -832,14 +832,51 @@ Switch Furniture</a-button> -->
               </svg>
               All
             </div>
+           
             <div
+              :class="
+                select_replace === 'Furniture'
+                  ? 'category-tab active'
+                  : 'category-tab'
+              "
+              @click="selectCategory('Furniture')"
+              v-if="brand_furniture_products.length > 0 && brand_is_saling_furniture"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="none"
+              >
+                <path
+                  d="M4.59 13.83V16.13M13.79 13.83V16.13"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                />
+                <path
+                  d="M15.32 7.70C15.32 6.27 15.32 5.55 15.01 5.02C14.81 4.67 14.52 4.38 14.17 4.18C13.64 3.87 12.92 3.87 11.49 3.87H6.89C5.46 3.87 4.74 3.87 4.21 4.18C3.86 4.38 3.57 4.67 3.37 5.02C3.06 5.55 3.06 6.27 3.06 7.70"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                />
+                <path
+                  d="M15.32 7.70C14.48 7.70 13.79 8.39 13.79 9.23V10.77C13.79 11.40 13.66 11.53 13.03 11.53H5.36C4.73 11.53 4.59 11.40 4.59 10.77V9.23C4.59 8.39 3.91 7.70 3.06 7.70C2.21 7.70 1.53 8.39 1.53 9.23C1.53 9.80 1.84 10.30 2.29 10.56V10.77C2.29 12.21 2.29 12.93 2.74 13.38C3.19 13.83 3.92 13.83 5.36 13.83H13.03C14.47 13.83 15.19 13.83 15.64 13.38C16.09 12.93 16.09 12.21 16.09 10.77V10.56C16.55 10.30 16.86 9.80 16.86 9.23C16.86 8.39 16.17 7.70 15.32 7.70Z"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                />
+              </svg>
+              Furniture
+            </div>
+             <div
               :class="
                 select_replace === 'Floor'
                   ? 'category-tab active'
                   : 'category-tab'
               "
               @click="selectCategory('Floor')"
-              v-if="brand_floors.length > 0"
+              v-if="brand_floors.length > 0 && brand_is_saling_floor"
             >
               <svg
                 width="1.875em"
@@ -877,48 +914,12 @@ Switch Furniture</a-button> -->
             </div>
             <div
               :class="
-                select_replace === 'Furniture'
-                  ? 'category-tab active'
-                  : 'category-tab'
-              "
-              @click="selectCategory('Furniture')"
-              v-if="brand_furniture_products.length > 0"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 16 16"
-                fill="none"
-              >
-                <path
-                  d="M4.59 13.83V16.13M13.79 13.83V16.13"
-                  stroke="currentColor"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                />
-                <path
-                  d="M15.32 7.70C15.32 6.27 15.32 5.55 15.01 5.02C14.81 4.67 14.52 4.38 14.17 4.18C13.64 3.87 12.92 3.87 11.49 3.87H6.89C5.46 3.87 4.74 3.87 4.21 4.18C3.86 4.38 3.57 4.67 3.37 5.02C3.06 5.55 3.06 6.27 3.06 7.70"
-                  stroke="currentColor"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                />
-                <path
-                  d="M15.32 7.70C14.48 7.70 13.79 8.39 13.79 9.23V10.77C13.79 11.40 13.66 11.53 13.03 11.53H5.36C4.73 11.53 4.59 11.40 4.59 10.77V9.23C4.59 8.39 3.91 7.70 3.06 7.70C2.21 7.70 1.53 8.39 1.53 9.23C1.53 9.80 1.84 10.30 2.29 10.56V10.77C2.29 12.21 2.29 12.93 2.74 13.38C3.19 13.83 3.92 13.83 5.36 13.83H13.03C14.47 13.83 15.19 13.83 15.64 13.38C16.09 12.93 16.09 12.21 16.09 10.77V10.56C16.55 10.30 16.86 9.80 16.86 9.23C16.86 8.39 16.17 7.70 15.32 7.70Z"
-                  stroke="currentColor"
-                  stroke-width="1.5"
-                />
-              </svg>
-              Furniture
-            </div>
-            <div
-              :class="
                 select_replace === 'Wall'
                   ? 'category-tab active'
                   : 'category-tab'
               "
               @click="selectCategory('Wall')"
-              v-if="brand_walls.length > 0"
+              v-if="brand_walls.length > 0 && brand_is_saling_wall"
             >
               <svg
                 width="1.875em"
@@ -986,14 +987,15 @@ Switch Furniture</a-button> -->
                   : 'category-tab'
               "
               @click="selectCategory('Lights')"
-              v-if="brand_lights.length > 0"
+              v-if="brand_lights.length > 0 && brand_is_saling_light"
             >
               <BulbOutlined style="font-size: 14px" /> Lights
             </div>
 
             <div
               :class="'category-tab deactive'"
-              v-if="brand_floors.length === 0"
+              v-if="brand_floors.length === 0 && brand_is_saling_floor
+"
             >
               <svg
                 width="1.875em"
@@ -1031,7 +1033,7 @@ Switch Furniture</a-button> -->
             </div>
             <div
               :class="'category-tab deactive'"
-              v-if="brand_furniture_products.length === 0"
+              v-if="brand_furniture_products.length === 0 && brand_is_saling_furniture"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -1062,7 +1064,7 @@ Switch Furniture</a-button> -->
             </div>
             <div
               :class="'category-tab deactive'"
-              v-if="brand_walls.length === 0"
+              v-if="brand_walls.length === 0 && brand_is_saling_wall"
             >
               <svg
                 width="1.875em"
@@ -1125,7 +1127,7 @@ Switch Furniture</a-button> -->
             </div>
             <div
               :class="'category-tab deactive'"
-              v-if="brand_lights.length === 0"
+              v-if="brand_lights.length === 0 && brand_is_saling_light"
             >
               <BulbOutlined style="font-size: 14px" /> Lights
             </div>
@@ -1992,14 +1994,51 @@ Switch Furniture</a-button> -->
                       </svg>
                       All
                     </div>
+                  
                     <div
+                      :class="
+                        select_replace === 'Furniture'
+                          ? 'category-tab active'
+                          : 'category-tab'
+                      "
+                      @click="selectCategory('Furniture')"
+                      v-if="brand_furniture_products.length > 0 && brand_is_saling_furniture"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 16 16"
+                        fill="none"
+                      >
+                        <path
+                          d="M4.59 13.83V16.13M13.79 13.83V16.13"
+                          stroke="currentColor"
+                          stroke-width="1.5"
+                          stroke-linecap="round"
+                        />
+                        <path
+                          d="M15.32 7.70C15.32 6.27 15.32 5.55 15.01 5.02C14.81 4.67 14.52 4.38 14.17 4.18C13.64 3.87 12.92 3.87 11.49 3.87H6.89C5.46 3.87 4.74 3.87 4.21 4.18C3.86 4.38 3.57 4.67 3.37 5.02C3.06 5.55 3.06 6.27 3.06 7.70"
+                          stroke="currentColor"
+                          stroke-width="1.5"
+                          stroke-linecap="round"
+                        />
+                        <path
+                          d="M15.32 7.70C14.48 7.70 13.79 8.39 13.79 9.23V10.77C13.79 11.40 13.66 11.53 13.03 11.53H5.36C4.73 11.53 4.59 11.40 4.59 10.77V9.23C4.59 8.39 3.91 7.70 3.06 7.70C2.21 7.70 1.53 8.39 1.53 9.23C1.53 9.80 1.84 10.30 2.29 10.56V10.77C2.29 12.21 2.29 12.93 2.74 13.38C3.19 13.83 3.92 13.83 5.36 13.83H13.03C14.47 13.83 15.19 13.83 15.64 13.38C16.09 12.93 16.09 12.21 16.09 10.77V10.56C16.55 10.30 16.86 9.80 16.86 9.23C16.86 8.39 16.17 7.70 15.32 7.70Z"
+                          stroke="currentColor"
+                          stroke-width="1.5"
+                        />
+                      </svg>
+                      Furniture
+                    </div>
+                      <div
                       :class="
                         select_replace === 'Floor'
                           ? 'category-tab active'
                           : 'category-tab'
                       "
                       @click="selectCategory('Floor')"
-                      v-if="brand_floors.length > 0"
+                      v-if="brand_floors.length > 0 && brand_is_saling_floor"
                     >
                       <svg
                         width="1.875em"
@@ -2040,48 +2079,12 @@ Switch Furniture</a-button> -->
                     </div>
                     <div
                       :class="
-                        select_replace === 'Furniture'
-                          ? 'category-tab active'
-                          : 'category-tab'
-                      "
-                      @click="selectCategory('Furniture')"
-                      v-if="brand_furniture_products.length > 0"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        viewBox="0 0 16 16"
-                        fill="none"
-                      >
-                        <path
-                          d="M4.59 13.83V16.13M13.79 13.83V16.13"
-                          stroke="currentColor"
-                          stroke-width="1.5"
-                          stroke-linecap="round"
-                        />
-                        <path
-                          d="M15.32 7.70C15.32 6.27 15.32 5.55 15.01 5.02C14.81 4.67 14.52 4.38 14.17 4.18C13.64 3.87 12.92 3.87 11.49 3.87H6.89C5.46 3.87 4.74 3.87 4.21 4.18C3.86 4.38 3.57 4.67 3.37 5.02C3.06 5.55 3.06 6.27 3.06 7.70"
-                          stroke="currentColor"
-                          stroke-width="1.5"
-                          stroke-linecap="round"
-                        />
-                        <path
-                          d="M15.32 7.70C14.48 7.70 13.79 8.39 13.79 9.23V10.77C13.79 11.40 13.66 11.53 13.03 11.53H5.36C4.73 11.53 4.59 11.40 4.59 10.77V9.23C4.59 8.39 3.91 7.70 3.06 7.70C2.21 7.70 1.53 8.39 1.53 9.23C1.53 9.80 1.84 10.30 2.29 10.56V10.77C2.29 12.21 2.29 12.93 2.74 13.38C3.19 13.83 3.92 13.83 5.36 13.83H13.03C14.47 13.83 15.19 13.83 15.64 13.38C16.09 12.93 16.09 12.21 16.09 10.77V10.56C16.55 10.30 16.86 9.80 16.86 9.23C16.86 8.39 16.17 7.70 15.32 7.70Z"
-                          stroke="currentColor"
-                          stroke-width="1.5"
-                        />
-                      </svg>
-                      Furniture
-                    </div>
-                    <div
-                      :class="
                         select_replace === 'Wall'
                           ? 'category-tab active'
                           : 'category-tab'
                       "
                       @click="selectCategory('Wall')"
-                      v-if="brand_walls.length > 0"
+                      v-if="brand_walls.length > 0 && brand_is_saling_wall"
                     >
                       <svg
                         width="1.875em"
@@ -2149,14 +2152,14 @@ Switch Furniture</a-button> -->
                           : 'category-tab'
                       "
                       @click="selectCategory('Lights')"
-                      v-if="brand_lights.length > 0"
+                      v-if="brand_lights.length > 0 && brand_is_saling_light"
                     >
                       <BulbOutlined style="font-size: 14px" /> Lights
                     </div>
 
                     <div
                       :class="'category-tab deactive'"
-                      v-if="brand_floors.length === 0"
+                      v-if="brand_floors.length === 0 && brand_is_saling_floor"
                     >
                       <svg
                         width="1.875em"
@@ -2197,7 +2200,7 @@ Switch Furniture</a-button> -->
                     </div>
                     <div
                       :class="'category-tab deactive'"
-                      v-if="brand_furniture_products.length === 0"
+                      v-if="brand_furniture_products.length === 0 && brand_is_saling_furniture"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -2228,7 +2231,7 @@ Switch Furniture</a-button> -->
                     </div>
                     <div
                       :class="'category-tab deactive'"
-                      v-if="brand_walls.length === 0"
+                      v-if="brand_walls.length === 0 && brand_is_saling_wall"
                     >
                       <svg
                         width="1.875em"
@@ -2291,7 +2294,7 @@ Switch Furniture</a-button> -->
                     </div>
                     <div
                       :class="'category-tab deactive'"
-                      v-if="brand_lights.length === 0"
+                      v-if="brand_lights.length === 0 && brand_is_saling_light"
                     >
                       <BulbOutlined style="font-size: 14px" /> Lights
                     </div>
@@ -3442,6 +3445,11 @@ export default {
 
   data() {
     return {
+      brand_is_saling_floor:false,
+      brand_is_saling_furniture:false,
+      brand_is_saling_wall:false,
+      brand_is_saling_light:false,
+
       history_total_count: 0,
       history_current_offset: 0,
       history_limit: 12,
@@ -4254,13 +4262,27 @@ export default {
             responseData.data.is_rendered_walls_mask;
           this.is_rendered_objects_mask =
             responseData.data.is_rendered_objects_mask;
+            
+            this.brand_is_saling_floor=responseData.data.brand_is_saling_floor
+            this.brand_is_saling_furniture=responseData.data.brand_is_saling_furniture
+            this.brand_is_saling_wall=responseData.data.brand_is_saling_wall
+            this.brand_is_saling_light=responseData.data.brand_is_saling_light
+
           if (responseData?.data?.brand) {
             this.brand = responseData.data.brand;
             this.brand_data = {
               name: responseData.data.brand_name,
               business_picture: responseData.data.brand_banner_logo,
               banner_picture: responseData.data.brand_avatar_logo,
+              
+              // what products is sailing by brand 
+              brand_is_saling_floor:responseData.data.brand_is_saling_floor,
+              brand_is_saling_furniture:responseData.data.brand_is_saling_furniture,
+              brand_is_saling_wall:responseData.data.brand_is_saling_wall,
+              brand_is_saling_light:responseData.data.brand_is_saling_light,
             };
+
+
             // console.log("+-----------------------------=================-------------------=================")
             // console.log(this.brand_data)
             this.syncBrandAndReload(this.brand);
@@ -6456,7 +6478,7 @@ this.$nextTick(() => {
 
 .category-tabs {
   display: flex;
-  justify-content: space-around;
+  /* justify-content: space-around; */
   flex-wrap: wrap;
   padding: 5px 5px 0;
   gap: 3px;
@@ -6754,4 +6776,11 @@ this.$nextTick(() => {
     height: 100%;
   }
 }
+.no-select{
+  user-select:none;
+  -webkit-user-select:none;
+  -ms-user-select:none;
+  pointer-events:auto;
+}
+
 </style>

@@ -1,4 +1,5 @@
 <template>
+  <!-- {{ brand_data }} -->
   <div className="pt-3 sm:pt-2">
     <!-- Header -->
     <div class="ai-catalog-header pt-2 !mx-1 ">
@@ -50,7 +51,7 @@
     <div class="overflow-y-auto p-[5px] bg-[#fafafa] md:h-[calc(76vh-80px)]">
       
       <!-- Furniture -->
-      <a-collapse v-model:activeKey="productsActiveKey" style="margin-bottom: 12px;" v-if="furniture_products.length > 0 || initialLoadingFurniture">
+      <a-collapse v-model:activeKey="productsActiveKey" style="margin-bottom: 12px;" v-if="(furniture_products.length > 0 || initialLoadingFurniture) && brand_data?.brand_is_saling_furniture">
         <a-collapse-panel key="products">
           <template #header>
             <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
@@ -108,7 +109,7 @@
       </a-collapse>
 
       <!-- Lights -->
-      <a-collapse v-model:activeKey="lightsActiveKey" v-if="lights.length > 0 || initialLoadingLights" style="margin-bottom: 12px;">
+      <a-collapse v-model:activeKey="lightsActiveKey" v-if="(lights.length > 0 || initialLoadingLights) && brand_data?.brand_is_saling_light" style="margin-bottom: 12px;">
         <a-collapse-panel key="lights">
           <template #header>
             <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
@@ -162,7 +163,7 @@
       </a-collapse>
       
       <!-- Floors -->
-      <a-collapse v-model:activeKey="floorsActiveKey" style="margin-bottom: 12px;" v-if="floors.length > 0 || initialLoadingFloors">
+      <a-collapse v-model:activeKey="floorsActiveKey" style="margin-bottom: 12px;" v-if="(floors.length > 0 || initialLoadingFloors) && brand_data?.brand_is_saling_floor">
         <a-collapse-panel key="floors">
           <template #header>
             <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
@@ -216,7 +217,7 @@
       </a-collapse>
 
       <!-- Walls -->
-      <a-collapse v-model:activeKey="wallsActiveKey" style="margin-bottom: 12px;" v-if="walls.length > 0 || initialLoadingWalls">
+      <a-collapse v-model:activeKey="wallsActiveKey" style="margin-bottom: 12px;" v-if="(walls.length > 0 || initialLoadingWalls ) && brand_data?.brand_is_saling_wall">
         <a-collapse-panel key="walls">
           <template #header>
             <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">

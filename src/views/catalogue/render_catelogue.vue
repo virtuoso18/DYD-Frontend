@@ -1984,14 +1984,15 @@
               "
             />
           </div>
-          <div style="display: flex; gap: 10px; align-self: end">
+          <div v-if="loading" style="display: flex; gap: 10px; align-self: end; margin-top: 8px;">
             <a-switch
               style="margin-top: 5px"
               size="small"
               v-model:checked="notify_me_when_ready"
+              @change="handleNotifyToggle"
             />
-            <p>Notify Me When Ready</p>
-          </div>
+            <p style="margin: 0; line-height: 32px;">Notify Me When Ready</p>
+        </div>
         </div>
       </a-col>
 
@@ -2857,6 +2858,7 @@ export default {
         "#a0d911",
         "#2f54eb",
       ],
+      current_renderer_id:''
     };
   },
 
@@ -2875,7 +2877,43 @@ export default {
   },
 
   methods: {
-     async downloadImage(image_url) {
+  async handleNotifyToggle(checked) {
+        // Cancel previous pending call
+        if (this.notifyDebounceTimer) {
+          clearTimeout(this.notifyDebounceTimer);
+        }
+
+        this.notifyDebounceTimer = setTimeout(async () => {
+          try {
+            const response = await fetch(
+              `${this.$store.state.root_api}room/api/notify-me-when-results-is-ready/${this.jobId}/`,
+              {
+                method: "GET",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Token ${localStorage.getItem("token")}`,
+                },
+              }
+            );
+
+            const data = await response.json();
+            // Sync toggle with actual server state
+            this.notify_me_when_ready = data.renderer_toggle_status;
+
+            this.$message.success(
+              this.notify_me_when_ready
+                ? "You'll be notified when rendering is ready!"
+                : "Notifications turned off"
+            );
+          } catch (error) {
+            console.error("Notify toggle failed:", error);
+            this.notify_me_when_ready = !checked; // revert on failure
+            this.$message.error("Failed to update notification preference");
+          }
+        }, 600); // wait 600ms before actually firing
+      },
+
+      async downloadImage(image_url) {
     if (!image_url) return;
 
     try {
@@ -3444,6 +3482,7 @@ export default {
 
         if (responseData.renderer_id) {
           // ⏳ WAIT until polling completes
+          this.current_renderer_id=responseData.renderer_id
           const finalImage = await this.startPolling(responseData.renderer_id);
 
           // ✅ ONLY NOW update canvas

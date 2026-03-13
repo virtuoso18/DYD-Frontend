@@ -294,6 +294,22 @@
         @click="showInstructionModal"
         title="see instruction"
       />
+     <LeftOutlined 
+  v-if="!isToolbarCollapsed"
+  class="absolute text-[17px] z-[9] bg-black/25 w-[25px] h-[25px] !flex justify-center items-center rounded-[5px] left-[4px] top-[60px] cursor-pointer" 
+  @click="isToolbarCollapsed = true"
+/>
+
+<svg v-else  class="absolute text-[17px] z-[9] p-1 bg-black/25  !flex justify-center items-center rounded-[5px] left-[4px] top-[60px] cursor-pointer" 
+  @click="isToolbarCollapsed = false" fill="#000000" width="25px" height="25px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg"><title>brush</title><path d="M27.555 8.42c-1.355 1.647-5.070 6.195-8.021 9.81l-3.747-3.804c3.389-3.016 7.584-6.744 9.1-8.079 2.697-2.377 5.062-3.791 5.576-3.213 0.322 0.32-0.533 2.396-2.908 5.286zM18.879 19.030c-1.143 1.399-2.127 2.604-2.729 3.343l-4.436-4.323c0.719-0.64 1.916-1.705 3.304-2.939l3.861 3.919zM15.489 23.183v-0.012c-2.575 9.88-14.018 4.2-14.018 4.2s4.801 0.605 4.801-3.873c0-4.341 4.412-4.733 4.683-4.753l4.543 4.427c0 0.001-0.009 0.011-0.009 0.011z"></path></svg>
+
+<!-- 
+<RightOutlined 
+  v-else
+  class="absolute text-[17px] z-[9] bg-black/25 w-[25px] h-[25px] !flex justify-center items-center rounded-[5px] left-[4px] top-[60px] cursor-pointer" 
+  @click="isToolbarCollapsed = false"
+/> -->
+
       <div
         class="detect-object-sec absolute top-10  z-[20] bg-white w-[100%]"
       >
@@ -301,7 +317,12 @@
   <div class="detect-toolbar absolute top-3 left-1/2 -translate-x-1/2 z-[a0]">
     
     <!-- Mode Pills -->
-    <div style="display:flex;gap:10px;justify-content: space-between;align-items: center;">
+    <div style="display:flex;gap:10px;justify-content: space-between;align-items: center;"
+  :style="{
+    transform: isToolbarCollapsed ? 'translateX(-180%)' : 'translateX(0)',
+    transition: 'transform 0.3s ease',
+    pointerEvents: isToolbarCollapsed ? 'none' : 'auto'
+  }">
     <div class="mode-pills">
       <button
         v-for="mode in modes"
@@ -319,7 +340,6 @@
     <div style="background-color: rgba(0,0,0,0.6);padding:5px;border-radius: 100%;">
   <button class="how-btn" @click="$refs.toolbarTour.openTour()">?</button>
 </div>
-
     </div>
     <!-- Context Bar — changes per mode -->
     <!-- Context Bar — changes per mode -->
@@ -467,7 +487,7 @@
           ref="overlayCanvas"
           :width="canvasWidth"
           :height="canvasHeight"
-          class="overlay-canvas"
+          class="overlay-canvas"  
           :class="{ disabled: isLoading }"
           style="
             position: absolute;
@@ -1251,7 +1271,7 @@ import { notification } from "ant-design-vue";
 import DrawRemovalModal from "@/components/update_catalogue/canvas_renderer/draw_removal_area_room.vue";
 import switch_furniture from "@/components/update_catalogue/bottom_drawer_item_components/switch_furniture.vue";
 import { DotLottieVue } from "@lottiefiles/dotlottie-vue";
-import { DeleteOutlined, RedoOutlined } from "@ant-design/icons-vue";
+import { DeleteOutlined, RedoOutlined, LeftOutlined, RightOutlined } from "@ant-design/icons-vue";
 import SwitchFurnitureModal from "@/components/update_catalogue/canvas_renderer/switch_furniture.vue";
 import SwitchFurnitureDrawerForMobile from "@/components/update_catalogue/canvas_renderer/SwitchFurnitureDrawerForMobile.vue";
 import canvasForSAMAndDrawMask from "./canvasForSAMAndDrawMask/canvasForSAMAndDrawMask.vue";
@@ -1299,7 +1319,6 @@ export default {
   },
   components: {
       ToolbarTour,
-
     DrawRemovalModal,
     switch_furniture,
     DotLottieVue,
@@ -1308,6 +1327,8 @@ export default {
     SwitchFurnitureModal,
     SwitchFurnitureDrawerForMobile,
     canvasForSAMAndDrawMask,
+    LeftOutlined,
+    RightOutlined
   },
   data() {
     return {
@@ -1476,6 +1497,7 @@ showContextBar: false,
         { title: 'Hit Detect', desc: 'Press Detect to run the AI segmentation. The mask will appear highlighted in red.' },
         { title: 'Remove or Switch', desc: 'Once masked, use the toolbar below to remove the object or switch furniture.' },
       ],
+      isToolbarCollapsed: true,
     };
   },
   setup() {

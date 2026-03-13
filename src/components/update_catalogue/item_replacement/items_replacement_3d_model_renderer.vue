@@ -106,8 +106,8 @@
         title="see instruction"
       />
         <!-- ✅ LOADING OVERLAY -->
-        <div v-if="internalLoading" class="scanning-loading-overlay">
-          <div
+          <div v-if="internalLoading" class="scanning-loading-overlay" style="pointer-events: all; z-index: 10;">
+            <div
             class="loading-screen"
             :style="{ backgroundImage: BASE_ROOT_MAIN_IMAGE ? `url(${BASE_ROOT_MAIN_IMAGE})` : 'none' }"
           >
@@ -298,7 +298,7 @@
       </div>
 
       <div  class="block sm:hidden">
-        <div style="display: flex;gap:10px;">
+        <div style="display: flex;gap:10px;margin-top:10px;">
 
           <div :key="color.id" v-for="color in colors_available_for_3d_model" >
             <!-- {{ color.is_primary }} -->
@@ -863,6 +863,8 @@ rescaleChair() {
     },
 
     onPointerDown(event) {
+        if (this.internalLoading || this._renderLock) return
+
       if (!this.chair || !this.floorPlaneTHREE) return
 
       if (event.pointerType === 'touch') {
@@ -1771,6 +1773,7 @@ rescaleChair() {
 
       const fit = this.fitFloorPlane(floorPts)
       if (!fit) { console.error('❌ Plane fit failed'); return }
+      // console.log('🟩 Floor points under mask:', floorPts.length, floorPts)
 
       this.floorNormal3.copy(fit.normal)
       if (this.floorNormal3.y < 0) this.floorNormal3.negate()
@@ -1888,6 +1891,10 @@ rescaleChair() {
         return
       }
       this.$emit('update:isLoading', true)
+      // ✅ Block all pointer events on the canvas immediately
+        if (this.renderer?.domElement) {
+          this.renderer.domElement.style.pointerEvents = 'none'
+        }
 
       try {
         this.chair.updateMatrixWorld(true)
@@ -1994,9 +2001,13 @@ rescaleChair() {
         if (this.rotationRing) this.rotationRing.visible = true
         throw error
       }
-      // finally{
-      //   this.$emit('unselect-object', true)
-      // }
+      finally{
+        // this.$emit('unselect-object', true)
+         // ✅ Always restore pointer events when done (success OR error)
+      if (this.renderer?.domElement) {
+        this.renderer.domElement.style.pointerEvents = 'auto'
+      }
+      }
     },
 
     async createCompositeImageBlob(bgWidth, bgHeight, snapPos, snapQuat, snapScale) {
@@ -2342,7 +2353,7 @@ rescaleChair() {
   max-height: 100%;
 }
 /* Loading overlay */
-.scanning-loading-overlay { position:absolute;top:0;left:0;width:100%;height:100%;z-index:0;overflow:hidden; }
+.scanning-loading-overlay { position:absolute;top:0;left:0;width:100%;height:100%;z-index:10;overflow:hidden; }
 .loading-screen {
   position:relative;width:100%;height:100%;background-size:cover;background-position:center;background-repeat:no-repeat;
   display:flex;align-items:center;justify-content:center;overflow:hidden;
