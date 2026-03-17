@@ -1770,7 +1770,7 @@ export default {
         if (!token) throw new Error("No authentication token found");
 
         const response = await fetch(
-          `${this.$store.state.root_api}product/api/products/user-textures/?limit=${this.texturesPaginationLimit}&offset=${this.texturesPaginationOffset}`,
+          `${this.$store.state.root_api}product/api/products/user-textures/?limit=${this.texturesPaginationLimit}&offset=${this.texturesPaginationOffset}&access-id=${this.$route.query.access_id}`,
           {
             method: "GET",
             headers: {
@@ -2401,8 +2401,7 @@ export default {
         }
 
         const response = await fetch(
-          `${this.$store.state.root_api}access-engine/api/business-products/products/colors/${this.editingColor.id}/update-model/?access-id=` +
-            this.$route.query.access_id,
+          `${this.$store.state.root_api}access-engine/api/business-products/products/colors/${this.editingColor.id}/update-model/?access-id=${this.$route.query.access_id}`,
           {
             method: "PATCH",
             headers: { Authorization: `Token ${token}` },

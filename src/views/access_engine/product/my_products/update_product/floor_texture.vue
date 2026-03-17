@@ -87,14 +87,14 @@
               <div style="width: 16px; height: 16px; border: 2px solid #ffffff; border-top: 2px solid transparent; border-radius: 50%; animation: spin 1s linear infinite;"></div>
             </div>
             <!-- Remove Preview -->
-            <a-button v-if="!preview.uploading" type="text" danger size="small" @click="removePreview(index)"
-              style="position: absolute; top: -6px; right: -6px; background: #ef4444; color: white; border-radius: 50%; width: 20px; height: 20px; padding: 0; min-width: 20px;">
-              <template #icon>
+            <a-button v-if="!preview.uploading" type="text" danger size="small" @click="removePreview(index)" 
+              style="position: absolute; top: -6px; right: -6px; background: #ef4444; color: white; border-radius: 50%; width: 20px; height: 20px; padding: 0; min-width: 20px;display: flex; align-items: center; justify-content: center;">
+              
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <line x1="18" y1="6" x2="6" y2="18"></line>
                   <line x1="6" y1="6" x2="18" y2="18"></line>
                 </svg>
-              </template>
+              
             </a-button>
           </div>
           

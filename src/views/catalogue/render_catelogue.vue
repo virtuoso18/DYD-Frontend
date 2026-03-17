@@ -17,7 +17,7 @@
     <template #extra> <div class="head-section"></div> </template>
     <!-- {{ products_used }} -->
     <!-- <floor_textures_bottom_drawer_menu :products="seeAll_Floor"/> -->
-    <a-row>
+    <a-row style="color:black">
       <a-col
         span="24"
         style="
@@ -40,7 +40,7 @@
         v-for="product in products_used"
         :key="product.id"
         class="product-responsive"
-        style="padding: 5px"
+        style="padding: 5px;color:black"
       >
         <!-- {{product.product_colors}} -->
         <div class="product">
@@ -58,11 +58,11 @@
           <!-- {{ truncateText(product.description || 'No description available', 8) }} -->
 
           <a-row>
-            <a-col span="24">
-              <b>{{ product.product_title }}</b>
+            <a-col span="24" >
+              <b style="color:black" >{{ product.product_title }}</b>
             </a-col>
 
-            <a-col span="18"> Color </a-col>
+            <a-col span="18" style="color:black"  > Color </a-col>
 
             <a-col span="6" style="display: flex; justify-content: end">
               <div
@@ -1280,7 +1280,7 @@
     </div>
   </div>
 
-  <div className="block lg:hidden" v-if="!rendering_started">
+  <div className="block lg:hidden" v-if="!rendering_started ">
     <a-row style="padding: 20px; padding-top: 30px" :gutter="[16, 16]">
       <!-- Back to edit button - Left -->
       <a-col
@@ -2871,9 +2871,13 @@ export default {
   },
 
   mounted() {
+    
     this.fetchRoom();
     this.FetchFinalResults();
     this.loadAvailableTags();
+    if (this.$route.query.renderer_id){
+      this.startRendering()
+    }
   },
 
   methods: {
@@ -3141,7 +3145,11 @@ export default {
     startRendering() {
       this.open_RenderNowModal = false;
       this.rendering_started = true;
-      this.startRendering_API_CALL();
+      if (this.$route.query.renderer_id){
+        this.get_previous_rendered_results();
+      }else{
+        this.startRendering_API_CALL();
+      }
     },
 
     openRenderNowModal() {
@@ -3441,6 +3449,53 @@ export default {
         duration: 5,
       });
     },
+    
+     async get_previous_rendered_results() {
+      console.log("📡 Starting rendering...");
+      this.loading = true;
+      this.imageLoading = true;
+      this.error.room = null;
+
+      try {
+        const roomId = this.$route.params.id;
+        const url = `${this.$store.state.root_api}engine/render-final-result/${roomId}`;
+
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Token ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({
+            request: "renderer_results_previously_generated",
+            renderer_id: this.$route.query.renderer_id
+          }),
+        });
+
+
+        if (!response.ok  ) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const responseData = await response.json();
+
+        if (responseData.success) {
+          // ✅ ONLY NOW update canvas
+          this.base_image_url = this.$store.state.root_media_api + responseData.renderer_results + "?t=" + Date.now();
+          this.$message.success("texture applied!");
+        }
+
+      } catch (error) {
+          console.error("❌ Failed to start rendering:", error);
+          this.error.room = error.message;
+          this.imageLoading = false;
+          this.showError("Failed to Start Rendering", error.message);
+
+      } finally {
+        this.loading = false;
+      }
+    },
+
 
     async startRendering_API_CALL() {
       console.log("📡 Starting rendering...");
@@ -3467,7 +3522,7 @@ export default {
             this.showCreditModal=true
             const responseData = await response.json();
             this.creditErrorMessage=responseData.msg
-              this.buid=responseData.buid
+            this.buid=responseData.buid
             this.out_of_credits=true
             return 
         }
@@ -3483,6 +3538,14 @@ export default {
         if (responseData.renderer_id) {
           // ⏳ WAIT until polling completes
           this.current_renderer_id=responseData.renderer_id
+          
+          this.$router.replace({
+              query: {
+                ...this.$route.query,
+                renderer_id: responseData.renderer_id
+              }
+          })
+          
           const finalImage = await this.startPolling(responseData.renderer_id);
 
           // ✅ ONLY NOW update canvas
@@ -3564,19 +3627,30 @@ export default {
       try {
         const roomId = this.$route.params.id;
         const url = `${this.$store.state.root_api}engine/render-final-result/${roomId}`;
+        let body_data={
+            request: "save_to_my_designes",
+            description_room: this.description_room,
+            room_design_type_select: this.room_design_type_select,
+            room_type_select: this.room_type_select,  
+        }
 
+        //  if the renderer_id is there in the url 
+        if(this.$route.query.renderer_id){
+          body_data={
+              request: "save_to_my_designes",
+              description_room: this.description_room,
+              room_design_type_select: this.room_design_type_select,
+              room_type_select: this.room_type_select,  
+              renderer_id:this.$route.query.renderer_id
+          }   
+        }
         const response = await fetch(url, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Token ${localStorage.getItem("token")}`,
           },
-          body: JSON.stringify({
-            request: "save_to_my_designes",
-            description_room: this.description_room,
-            room_design_type_select: this.room_design_type_select,
-            room_type_select: this.room_type_select,
-          }),
+          body: JSON.stringify(body_data),
         });
 
         if (!response.ok) {
@@ -4043,7 +4117,7 @@ export default {
   top: 12px;
   right: 12px;
   background: #e5e7eb;
-  color: #374151;
+  color: #0040a7;
   padding: 4px 8px;
   border-radius: 6px;
   font-size: 10px;

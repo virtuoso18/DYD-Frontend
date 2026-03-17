@@ -1725,7 +1725,7 @@ Switch Furniture</a-button> -->
 
           <side_panel_home_design
             :base_image_url="sideFinalImage || base_image_url"
-            :home_design_access="planDetails?.homedesign || false"
+            :home_design_access="planDetails?.home_design || false"
             :plan_details="planDetails"
             @home-design-generation-complete="newhome_designes_generated"
             @insufficient-credits="throw_Insufficient_credits"
@@ -2379,7 +2379,7 @@ Switch Furniture</a-button> -->
                 >
                   <side_panel_home_design
                     :base_image_url="sideFinalImage || base_image_url"
-                    :home_design_access="planDetails?.homedesign || false"
+                    :home_design_access="planDetails?.home_design || false"
                     :plan_details="planDetails"
                     @home-design-generation-complete="
                       newhome_designes_generated

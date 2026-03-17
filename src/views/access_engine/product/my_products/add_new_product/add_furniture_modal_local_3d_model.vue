@@ -419,7 +419,7 @@
             </div>
 
             <!-- PBR Files Section -->
-            <div style="margin-bottom: 20px;">
+            <!-- <div style="margin-bottom: 20px;">
               <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #374151;">PBR Files</label>
               <div style="cursor: pointer;" @click="uploadPbr">
                 <div style="width: 100%; height: 48px; background: #f3f4f6; border: 2px dashed #d1d5db; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 8px;">
@@ -452,7 +452,7 @@
                   </a-button>
                 </div>
               </div>
-            </div>
+            </div> -->
 
           </div>
         </a-col>
@@ -473,7 +473,7 @@ import { computed } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import canvas_3d_model_renderer from "@/components/store/canvas_3d_model_renderer.vue"
-import select3d_model_for_color from '@/components/dashboard/business/my_products/add_color_3d_model/dyd_generated.vue'
+import select3d_model_for_color from '../add_color_3d_model/dyd_generated.vue'
 
 export default {
   name: "AddNewProduct_modal",

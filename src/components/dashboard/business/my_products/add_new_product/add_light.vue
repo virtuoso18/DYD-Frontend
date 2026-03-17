@@ -4,6 +4,7 @@
     :visible="sunk_unsunk_light_modal"
     @update:visible="cancelClicked"
     @product-created="product_created_sunk_unsunk_light"
+    @api-error="apiError"
   />
   <a-modal
     :open="visible"
@@ -195,7 +196,7 @@ export default {
     categories_available: { type: Array, default: () => [] },
     types: { type: Array, default: () => [] }
   },
-  emits: ['update:visible', 'product-created', 'cancel','add-3d-light'],
+  emits: ['update:visible', 'product-created', 'cancel','add-3d-light','api-error'],
   data() {
     return {
       isSaving: false,
@@ -222,6 +223,9 @@ export default {
     add3DLightProductClicked(){
       this.$emit('add-3d-light',true);      
     },
+    apiError(errorMsg) {
+    this.$emit('api-error', errorMsg);
+  },
     showModalSunkUnsunk(LightType){
       this.light_type=LightType
       this.sunk_unsunk_light_modal= !this.sunk_unsunk_light_modal

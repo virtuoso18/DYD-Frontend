@@ -3121,6 +3121,7 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  overflow-y: scroll ;
   height: 100%;
   margin: 0 auto;
 }

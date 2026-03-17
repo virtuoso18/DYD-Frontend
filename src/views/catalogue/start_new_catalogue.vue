@@ -1777,6 +1777,18 @@ export default {
 
         clearTimeout(timeoutId);
         const responseData = await response.json();
+        
+        if (responseData.error) {
+          if (responseData.type === "out_of_monthly_virtulisation_limits") {  
+            this.showInstructionsModal = false;
+            this.btnText = responseData?.btn_text;
+            this.errorTitle = "Out of monthly virtulisation.";
+            this.creditErrorMessage = "Out of monthly visualizations limit quota. please connect the business User ";
+            this.showCreditModal = true;
+            this.buid = responseData.buid;  
+            return;
+          }
+        }
 
         if (responseData.error) {
           this.showInstructionsModal = false;
@@ -2124,6 +2136,16 @@ export default {
 
         clearTimeout(timeoutId);
         const responseData = await response.json();
+
+        if (responseData.error) {
+          if (responseData.type === "out_of_monthly_virtulisation_limits") {  
+            this.creditErrorMessage = "Out of monthly visualizations limit quota. please connect the business User ";
+            this.errorTitle = "Out of monthly virtulisation.";
+            this.showCreditModal = true;
+            this.buid = responseData.buid;  
+            return;
+          }
+        }
 
         if (responseData.error) {
           this.creditErrorMessage = responseData.msg;

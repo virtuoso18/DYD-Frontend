@@ -252,26 +252,47 @@
               </div>
   
               <!-- Category, Type, Price Row -->
+              <!-- Room Type, Category, Type, Price Row -->
               <a-row :gutter="12" style="margin-bottom: 16px;">
-                <a-col :span="8">
-                  <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Category <span style="color: red;">*</span></label>
-                  
-                     <a-select 
-    v-model:value="productForm.category_name" 
-    placeholder="Search and select category"
-    style="width: 100%;"
-    mode="tags"
-    :options="categoryOptions"
-    :loading="loadingCategories"
-    :filter-option="false"
-    :allow-clear="true"
-    show-search
-    @search="handleCategorySearch"
-    @change="handleCategoryChange"
-    @focus="handleSelectFocus"
-  />
+                <a-col :span="6">
+                  <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Room Type <span style="color: red;">*</span></label>
+                  <a-select
+                    v-model:value="selectedRoomType"
+                    placeholder="Select room type"
+                    style="width: 100%;"
+                    :style="{ background: '#f3f4f6' }"
+                    :loading="loadingRoomTypes"
+                    :allow-clear="true"
+                    @change="handleRoomTypeChange"
+                  >
+                    <a-select-option
+                      v-for="rt in roomTypes"
+                      :key="rt.id"
+                      :value="rt.id"
+                    >
+                      {{ rt.name }}
+                    </a-select-option>
+                  </a-select>
                 </a-col>
-                <a-col :span="8">
+                <a-col :span="6">
+                  <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Category <span style="color: red;">*</span></label>
+                  <a-select 
+                    v-model:value="productForm.category_name" 
+                    placeholder="Search and select category"
+                    style="width: 100%;"
+                    mode="tags"
+                    :options="categoryOptions"
+                    :loading="loadingCategories"
+                    :filter-option="false"
+                    :allow-clear="true"
+                    :disabled="!selectedRoomType"
+                    show-search
+                    @search="handleCategorySearch"
+                    @change="handleCategoryChange"
+                    @focus="handleSelectFocus"
+                  />
+                </a-col>
+                <a-col :span="6">
                   <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Type</label>
                   <a-select 
                     v-model:value="productForm.furniture_type" 
@@ -282,7 +303,7 @@
                     <a-select-option v-for="type in types" :key="type" :value="type">{{ type }}</a-select-option>
                   </a-select>
                 </a-col>
-                <a-col :span="8">
+                <a-col :span="6">
                   <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Price <span style="color: red;">*</span></label>
                   <a-input-number
                     v-model:value="productForm.pricing.price" 
@@ -432,96 +453,7 @@
                 </div>
               </div>
   
-              <!-- Textures Section -->
-              <div style="margin-bottom: 20px;">
-                <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #374151;">Texture Images</label>
-                <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-                  <!-- Add Texture Button -->
-                  <div style="cursor: pointer;" @click="uploadTexture">
-                    <div style="width: 48px; height: 40px; background: #f3f4f6; border: 2px dashed #d1d5db; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2">
-                        <line x1="12" y1="5" x2="12" y2="19"></line>
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                      </svg>
-                    </div>
-                  </div>
-  
-                  <!-- Selected Textures -->
-                  <div v-for="(texture, index) in selectedTextures" :key="index" style="position: relative;">
-                    <div 
-                      :style="{ 
-                        width: '48px', 
-                        height: '40px', 
-                        backgroundImage: `url(${texture.url})`, 
-                        backgroundSize: 'cover', 
-                        backgroundPosition: 'center', 
-                        borderRadius: '8px', 
-                        border: '2px solid #e5e7eb', 
-                        cursor: 'pointer' 
-                      }"
-                    ></div>
-                    <a-button 
-                      type="text" 
-                      size="small" 
-                      @click="removeTexture(index)"
-                      style="position: absolute; top: -6px; right: -6px; background: #ef4444; color: white; border-radius: 50%; width: 18px; height: 18px; padding: 0; min-width: 18px;"
-                    >
-                      <template #icon>
-                        <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                          <line x1="18" y1="6" x2="6" y2="18"></line>
-                          <line x1="6" y1="6" x2="18" y2="18"></line>
-                        </svg>
-                      </template>
-                    </a-button>
-                  </div>
-                </div>
-              </div>
-  
-              <!-- PBR Files Section -->
-              <div style="margin-bottom: 20px;">
-                <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #374151;">PBR Files</label>
-                
-                <!-- Upload PBR Button -->
-                <div style="cursor: pointer;" @click="uploadPbr">
-                  <div style="width: 100%; height: 48px; background: #f3f4f6; border: 2px dashed #d1d5db; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2">
-                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                      <polyline points="17,8 12,3 7,8"></polyline>
-                      <line x1="12" y1="3" x2="12" y2="15"></line>
-                    </svg>
-                    <span style="font-size: 12px; color: #6b7280;">Upload PBR files (.pbr, .zip, .rar, etc.)</span>
-                  </div>
-                </div>
-  
-                <!-- Selected PBR Files List -->
-                <div v-if="selectedPbrFiles.length > 0" style="margin-top: 12px;">
-                  <div v-for="(pbrFile, index) in selectedPbrFiles" :key="index" 
-                      style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: #f8faff; border: 1px solid #e5e7eb; border-radius: 6px; margin-bottom: 6px;">
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2">
-                        <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"></path>
-                      </svg>
-                      <div>
-                        <div style="font-size: 13px; font-weight: 500; color: #1f2937;">{{ pbrFile.name }}</div>
-                        <div style="font-size: 11px; color: #6b7280;">{{ pbrFile.size }}</div>
-                      </div>
-                    </div>
-                    <a-button 
-                      type="text" 
-                      size="small" 
-                      @click="removePbrFile(index)"
-                      style="color: #ef4444; padding: 4px;"
-                    >
-                      <template #icon>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <line x1="18" y1="6" x2="6" y2="18"></line>
-                          <line x1="6" y1="6" x2="18" y2="18"></line>
-                        </svg>
-                      </template>
-                    </a-button>
-                  </div>
-                </div>
-              </div>
+            
             </div>
           </a-col>
                  
@@ -554,6 +486,10 @@ export default {
   
   data() {
     return {
+      selectedRoomType: null,
+      roomTypes: [],
+      loadingRoomTypes: false,
+      selectedRoomTypeName: null,
       isSaving: false,
       tempColor: '#000000',
       
@@ -604,7 +540,9 @@ export default {
 
   watch: {
     visible(newValue) {
-      if (!newValue) {
+      if (newValue) {
+        this.loadRoomTypes();
+      } else {
         this.resetForm();
       }
     },
@@ -628,14 +566,47 @@ export default {
   },
 
   methods: {
+          async loadRoomTypes() {
+        try {
+          this.loadingRoomTypes = true;
+          const token = localStorage.getItem('token');
+          const response = await fetch(`${this.$store.state.root_api}product/api/room-types/`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Token ${token}`
+            }
+          });
+          const result = await response.json();
+          this.roomTypes = result || [];
+        } catch (error) {
+          console.error('Error loading room types:', error);
+          this.roomTypes = [];
+        } finally {
+          this.loadingRoomTypes = false;
+        }
+      },
+
+      handleRoomTypeChange(value) {
+        const selectedRoom = this.roomTypes.find(rt => rt.id === value);
+        this.selectedRoomType = value;
+        this.selectedRoomTypeName = selectedRoom ? selectedRoom.name : null;
+        // Reset category when room type changes
+        this.productForm.category_name = [];
+        this.categoryOptions = [];
+        this.allCategories = [];
+        if (value) {
+          this.loadInitialCategories();
+        }
+      },
     // Load all categories on component mount
     async loadInitialCategories() {
       try {
         this.loadingCategories = true;
         const store = this.$store;
         const token = localStorage.getItem('token');
-        
-        const response = await fetch(`${store.state.root_api}product/api/categories/`, {
+        const roomTypeParam = this.selectedRoomType ? `?room_type=${encodeURIComponent(this.selectedRoomType)}` : '';
+        const response = await fetch(`${store.state.root_api}product/api/categories/${roomTypeParam}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -858,6 +829,10 @@ export default {
     },
 
     resetForm() {
+      this.selectedRoomType = null;
+      this.selectedRoomTypeName = null;
+      this.categoryOptions = [];
+      this.allCategories = [];
       this.productForm = {
         name: '',
         description: '',
@@ -1058,6 +1033,7 @@ export default {
         formData.append('description', this.productForm.description || '');
         formData.append('category_name', Array.isArray(this.productForm.category_name) ? this.productForm.category_name[0] : this.productForm.category_name);
         formData.append('light_type', 'hanging');
+        formData.append('room_type_name', this.selectedRoomTypeName);
         if (this.productForm.furniture_type) {
           formData.append('furniture_type', this.productForm.furniture_type);
         }

@@ -166,7 +166,8 @@
                       </div>
                         <select3d_model_for_color 
                  :list_history_generated_3d_models="list_history_generated_3d_models"
-                 :loading_generated_models_history="loading_generated_models_history" 
+                 :loading_generated_models_history="loading_generated_models_history"
+                 :is_light_create="true" 
                  @clicked-model="clickedModel"
                />
                <div v-if="list_history_generated_3d_models.length > 0" style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #e5e7eb;">
@@ -543,7 +544,7 @@ import { useRouter } from 'vue-router';
 import { message } from 'ant-design-vue';
 import canvas_3d_model_renderer from "@/components/dashboard/business/my_products/canvas_3d_model_renderer_light.vue"
 import select3d_model_for_color from '@/components/dashboard/business/my_products/add_color_3d_model/dyd_generated.vue'
-
+import ApiErrorModal from '@/components/Includes/modal/errorModal.vue'
 export default {
   name: "AddNewProduct_modal",
  props: {
@@ -575,7 +576,7 @@ export default {
     canvas_3d_model_renderer,
     select3d_model_for_color
   },
-  emits: ['update:visible', 'product-created', 'cancel'],
+  emits: ['update:visible', 'product-created', 'cancel','api-error'],
   
  data() {
   return {
@@ -1581,8 +1582,10 @@ watch: {
           this.$emit('update:visible', false);
           this.resetForm();
         } else {
-          console.error('❌ API Error:', result.message || 'Failed to create product');
-          throw new Error(result.message || 'Failed to create product');
+          debugger
+          const errorMsg = result.message || 'Failed to create product';
+          this.handleCancel(); // close the modal first
+          this.$emit('api-error', errorMsg); // then bubble error up to parent
         }
 
       } catch (error) {

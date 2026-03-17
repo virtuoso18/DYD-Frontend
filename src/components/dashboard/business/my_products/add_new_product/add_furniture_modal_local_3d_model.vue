@@ -800,7 +800,7 @@ export default {
     canvas_3d_model_renderer,
     select3d_model_for_color
   },
-  emits: ['update:visible', 'product-created', 'cancel'],
+  emits: ['update:visible', 'product-created', 'cancel','api-error'],
   
  data() {
   return {
@@ -2016,8 +2016,9 @@ removeColor(index) {
           this.resetForm();
           
         } else {
-          console.error('❌ API Error:', result.message || 'Failed to create product');
-          throw new Error(result.message || 'Failed to create product');
+          const errorMsg = result.message || 'Failed to create product';
+          this.handleCancel(); 
+          this.$emit('api-error', errorMsg); 
         }
 
       } catch (error) {

@@ -370,8 +370,7 @@ export default {
     LightType: { type: String, default: "sunk" },
     visible: { type: Boolean, default: false },
   },
-  emits: ['update:visible', 'product-created', 'cancel'],
-
+  emits: ['update:visible', 'product-created', 'cancel', 'api-error'],
   data() {
     return {
       isSaving: false,
@@ -418,6 +417,7 @@ export default {
         '#A52A2A', '#DDA0DD', '#98FB98', '#F0E68C', '#DEB887', '#D2691E',
         '#FF6347', '#40E0D0', '#EE82EE', '#90EE90', '#FFB6C1', '#87CEEB'
       ],
+      errorModal: { visible: false, message: '' },
     };
   },
 
@@ -685,15 +685,17 @@ export default {
           body: formData
         });
 
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        // if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const result = await response.json();
 
-        if (result.success) {
+       if (result.success) {
           message.success('Light product created successfully!');
           this.$emit('product-created', result.data);
           this.handleCancel();
         } else {
-          message.error(result.message || 'Failed to create product. Please try again.');
+          const errorMsg = result.message || 'Failed to create product';
+          this.handleCancel(); // close the modal first
+          this.$emit('api-error', errorMsg); // then bubble error up to parent
         }
       } catch (error) {
         console.error('Error saving light product:', error);

@@ -47,7 +47,7 @@ officially sell on DYD.
             </div>
         </div>
     </a-modal>
-
+    
     <!-- Main Settings Container -->
     <div style="background-color: white; border-radius: 15px; border: 1px solid rgba(0,0,0,0.1); margin-top: 15px; min-height: 90vh; padding: 20px;">
         <h2
@@ -97,8 +97,36 @@ Settings</h2>
                 </a-col>
             </a-row>
         </div>
-
 <br>
+       <!-- <div style="border: 1px solid rgba(0,0,0,0.2); padding: 15px; border-radius: 7px;">
+  <a-row>
+    <a-col :span="18">
+      <h4 class="!text-gray-700">Daily Visualization Limit</h4>
+      
+      <p>
+        Set the maximum number of visualizations a general user can perform per day 
+        after accessing your AI catalog via the shared link. This helps you control 
+        usage and manage system resources efficiently.
+      </p>
+    </a-col>
+
+    <a-col 
+      :xs="24" 
+      :sm="6" 
+      style="display: flex; justify-content: center; align-items: center; gap:10px"
+    >
+      <a-input placeholder="Enter limit"></a-input>
+      
+      <a-button 
+        type="primary" 
+        @click="openPasswordModal"
+      >
+        Save
+      </a-button>
+    </a-col>
+  </a-row>
+</div>
+<br> -->
         <!-- Scene Elements Control -->
 <div style="border: 1px solid rgba(0,0,0,0.2); padding: 15px; border-radius: 7px; margin-bottom: 20px;">
   <div style="display: flex;justify-content: space-between;">

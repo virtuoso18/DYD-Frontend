@@ -34,505 +34,244 @@
     <div style="padding: 0;">
       <a-row :gutter="24">
 
-                <!-- <div className="flex flex-col lg:flex-row"> -->
-                  <!-- <div> -->
-
-                    <!-- Left Column - 3D Model Preview -->
-                    <a-col
+                <!-- Left Column - 3D Model Preview -->
+                <a-col
     :xs="24"
     :sm="24"
     :md="10"
     :lg="10"
   > 
-                      <div style="position: relative; padding:10px;">
-            
-                        <!-- 3D Model Upload Area (shown when no model is uploaded) -->
-                        <div 
-                          v-if="!local3dModelUrl"
-                          @drop.prevent="handleModelDrop"
-                          @dragover.prevent="isDragging = true"
-                          @dragleave.prevent="isDragging = false"
-                          @click="upload3dModel"
-                          :style="{
-                            border: isDragging ? '2px solid #3b82f6' : '2px dashed #d1d5db',
-                            borderRadius: '12px',
-                            padding: '40px 16px',
-                            background: isDragging ? '#f8faff' : '#f9fafb',
-                            minHeight: '250px',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            cursor: 'pointer',
-                            transition: 'all 0.3s ease'
-                          }"
-                        >
-                          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" style="margin-bottom: 16px;">
-                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-                            <polyline points="3.27,6.96 12,12.01 20.73,6.96"></polyline>
-                            <line x1="12" y1="22.08" x2="12" y2="12"></line>
-                          </svg>
-                          <p style="font-size: 14px; color: #374151; font-weight: 500; margin-bottom: 8px;">Drag and drop 3D model here or click to upload</p>
-                          <p style="font-size: 12px; color: #6b7280; margin: 0;">Supported file format: .gltf / .glb</p>
-                          <p style="font-size: 12px; color: #6b7280; margin: 4px 0 0 0;">File size: 50MB</p>
-                        </div>
-            
-                        <!-- 3D Model Renderer (shown when model is uploaded) -->
-                        <div v-else style="position: relative;">
-                          <canvas_3d_model_renderer 
-                            :glbModelUrl="local3dModelUrl"
-                            :Model_instance_id="'local-preview-' + Date.now()"
-                            :isLoading="false"
-                            style="width: 100%; max-height:250px; height: 100%;border-radius: 10px"
-                          />
-                          <div
-                            style="position: absolute; bottom: 75px; right: 15px; background: white; padding: 8px 12px; border-radius: 6px; border: 1px solid #e9ecef; font-size: 12px; font-weight: 600; cursor: pointer;">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                              stroke-width="2" style="margin-right: 5px; vertical-align: middle;">
-                              <path
-                                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
-                              </path>
-                              <polyline points="3.27,6.96 12,12.01 20.73,6.96"></polyline>
-                              <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                  <div style="position: relative; padding:10px;">
+        
+                    <!-- 3D Model Upload Area (shown when no model is uploaded) -->
+                    <router-link 
+        v-if="!local3dModelUrl"
+        :to="`/access-business/create-furniture-product-3d-model-add-product?access_id=${this.$route.query.access_id}&brand=${this.$route.query.brand}`"
+        class="block w-full border-2 border-dashed rounded-xl p-6 md:p-10 bg-gray-50 hover:bg-blue-50 hover:border-blue-500 transition-all duration-300 min-h-[200px] md:min-h-[250px] flex flex-col items-center justify-center text-center group"
+        :class="isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-300'"
+      >
+        <svg 
+          width="40" 
+          height="40" 
+          viewBox="0 0 24 24" 
+          fill="none" 
+          stroke="currentColor" 
+          stroke-width="2" 
+          class="mb-3 md:mb-4 group-hover:scale-110 transition-transform md:w-12 md:h-12"
+          :stroke="isDragging ? '#3b82f6' : '#9ca3af'"
+        >
+          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+          <polyline points="3.27,6.96 12,12.01 20.73,6.96"></polyline>
+          <line x1="12" y1="22.08" x2="12" y2="12"></line>
+        </svg>
+        <p class="text-xs md:text-sm font-medium text-gray-700 mb-1 md:mb-2 leading-relaxed px-2">
+          Please pick your already generated 3D models or click to upload
+        </p>
+        <p class="text-[10px] md:text-xs text-gray-500">
+          or create new one
+        </p>
+      </router-link>
+        
+                    <!-- 3D Model Renderer (shown when model is uploaded) -->
+                    <div v-else style="position: relative;">
+                      <canvas_3d_model_renderer 
+                        :glbModelUrl="local3dModelUrl"
+                        :Model_instance_id="'local-preview-' + Date.now()"
+                        :isLoading="false"
+                        style="width: 100%; max-height:250px; height: 100%;border-radius: 10px"
+                      />
+                      <div
+                        style="position: absolute; bottom: 75px; right: 15px; background: white; padding: 8px 12px; border-radius: 6px; border: 1px solid #e9ecef; font-size: 12px; font-weight: 600; cursor: pointer;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2" style="margin-right: 5px; vertical-align: middle;">
+                          <path
+                            d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+                          </path>
+                          <polyline points="3.27,6.96 12,12.01 20.73,6.96"></polyline>
+                          <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                        </svg>
+                        3D View
+                      </div>
+                      
+                      <!-- Display uploaded model info -->
+                      <div style="margin-top: 12px; background: #f8faff; border: 1px solid #e5e7eb; border-radius: 6px;">
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
+                          <div style="display: flex; align-items: center; gap: 8px;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2">
+                              <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"></path>
                             </svg>
-                            3D View
-                          </div>
-                          
-                          <!-- Change Model Button -->
-                          <a-button 
-                            @click="upload3dModel"
-                            style="position: absolute; top: 10px; right: 10px; background: white; border-radius: 6px; font-size: 11px;"
-                            size="small"
-                          >
-                            Change Model
-                          </a-button>
-            
-                          <!-- Display uploaded model info -->
-                          <div style="margin-top: 12px; padding: 8px 12px; background: #f8faff; border: 1px solid #e5e7eb; border-radius: 6px;">
-                            <div style="display: flex; align-items: center; justify-content: space-between;">
-                              <div style="display: flex; align-items: center; gap: 8px;">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2">
-                                  <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"></path>
-                                </svg>
-                                <div>
-                                  <div style="font-size: 12px; font-weight: 500; color: #1f2937;">{{ uploaded3dModelFile?.name }}</div>
-                                  <div style="font-size: 11px; color: #6b7280;">{{ uploaded3dModelFile?.size }}</div>
-                                </div>
-                              </div>
-                              <a-button 
-                                type="text" 
-                                size="small" 
-                                @click="remove3dModel"
-                                style="color: #ef4444; padding: 4px;"
-                              >
-                                <template #icon>
-                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                                  </svg>
-                                </template>
-                              </a-button>
+                            <div>
+                              <div style="font-size: 12px; font-weight: 500; color: #1f2937;">{{ uploaded3dModelFile?.name }}</div>
+                              <div style="font-size: 11px; color: #6b7280;">{{ uploaded3dModelFile?.size }}</div>
                             </div>
                           </div>
+                          <a-button 
+                            type="text" 
+                            size="small" 
+                            @click="remove3dModel"
+                            style="color: #ef4444; padding: 4px;"
+                          >
+                            <template #icon>
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                              </svg>
+                            </template>
+                          </a-button>
                         </div>
-            
-                       <label style="display: block; margin-top: 16px; margin-bottom: 8px; font-size: 13px; color: #374151;">
-              Images used to create 3d model (<b>{{modelDetails?.model_mode || 'N/A'}}</b>) 
-            </label>
-            
-                        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-              <img 
-                v-if="modelDetails?.image_0"
-                :src="this.$store.state.root_media_api + modelDetails.image_0" 
-                :style="{
-                  width: '60px',
-                  height: '60px',
-                  objectFit: 'contain',
-                  borderRadius: '8px',
-                  border: '2px solid #e5e7eb'
-                }"
-              />
-              <img 
-                v-if="modelDetails?.image_1"
-                :src="this.$store.state.root_media_api + modelDetails.image_1" 
-                :style="{
-                  width: '60px',
-                  height: '60px',
-                  objectFit: 'contain',
-                  borderRadius: '8px',
-                  border: '2px solid #e5e7eb'
-                }"
-              />
-              <img 
-                v-if="modelDetails?.image_2"
-                :src="this.$store.state.root_media_api + modelDetails.image_2" 
-                :style="{
-                  width: '60px',
-                  height: '60px',
-                  objectFit: 'contain',
-                  borderRadius: '8px',
-                  border: '2px solid #e5e7eb'
-                }"
-              />
-              <img 
-                v-if="modelDetails?.image_3"
-                :src="this.$store.state.root_media_api + modelDetails.image_3" 
-                :style="{
-                  width: '60px',
-                  height: '60px',
-                  objectFit: 'contain',
-                  borderRadius: '8px',
-                  border: '2px solid #e5e7eb'
-                }"
-              />
-            </div>
                       </div>
-                    </a-col>
-                  <!-- </div> -->
+                    </div>
+        
+                   <label style="display: block; margin-top: 16px; margin-bottom: 8px; font-size: 13px; color: #374151;">
+          Images used to create 3d model (<b>{{modelDetails?.model_mode || 'N/A'}}</b>) 
+        </label>
+        
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+          <img 
+            v-if="modelDetails?.image_0"
+            :src="this.$store.state.root_media_api + modelDetails.image_0" 
+            :style="{
+              width: '60px',
+              height: '60px',
+              objectFit: 'contain',
+              borderRadius: '8px',
+              border: '2px solid #e5e7eb'
+            }"
+          />
+          <img 
+            v-if="modelDetails?.image_1"
+            :src="this.$store.state.root_media_api + modelDetails.image_1" 
+            :style="{
+              width: '60px',
+              height: '60px',
+              objectFit: 'contain',
+              borderRadius: '8px',
+              border: '2px solid #e5e7eb'
+            }"
+          />
+          <img 
+            v-if="modelDetails?.image_2"
+            :src="this.$store.state.root_media_api + modelDetails.image_2" 
+            :style="{
+              width: '60px',
+              height: '60px',
+              objectFit: 'contain',
+              borderRadius: '8px',
+              border: '2px solid #e5e7eb'
+            }"
+          />
+          <img 
+            v-if="modelDetails?.image_3"
+            :src="this.$store.state.root_media_api + modelDetails.image_3" 
+            :style="{
+              width: '60px',
+              height: '60px',
+              objectFit: 'contain',
+              borderRadius: '8px',
+              border: '2px solid #e5e7eb'
+            }"
+          />
+        </div>
+                  </div>
 
-                  <!-- <div> -->
+                  <!-- select3d_model_for_color component (same as second file) -->
+                  <select3d_model_for_color 
+                    :list_history_generated_3d_models="list_history_generated_3d_models"
+                    :loading_generated_models_history="loading_generated_models_history" 
+                    :is_light_create="true"
+                    @clicked-model="clickedModel"
+                  />
 
-                    <!-- Right Column - Product Details (keeping existing code) -->
-                   <a-col
+                  <!-- Load More / Pagination (same as second file) -->
+                  <div v-if="list_history_generated_3d_models.length > 0" style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #e5e7eb;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+                      <p style="font-size: 12px; color: #6b7280; margin: 0;">
+                        Showing {{ list_history_generated_3d_models.length }} of {{ pagination.totalCount }} models
+                      </p>
+                      
+                      <a-button 
+                        v-if="pagination.hasMoreModels"
+                        @click="loadMoreModels"
+                        :loading="loadingMoreModels"
+                        style="border-radius: 6px;"
+                      >
+                        <template #icon>
+                          <svg 
+                            v-if="!loadingMoreModels"
+                            width="16" 
+                            height="16" 
+                            viewBox="0 0 24 24" 
+                            fill="none" 
+                            stroke="currentColor" 
+                            stroke-width="2"
+                          >
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                          </svg>
+                        </template>
+                        {{ loadingMoreModels ? 'Loading...' : 'Load More Models' }}
+                      </a-button>
+                      
+                      <p v-else style="font-size: 12px; color: #10b981; margin: 0;">
+                        All models loaded
+                      </p>
+                    </div>
+                  </div>
+                </a-col>
+
+                <!-- Right Column - Product Details (keeping existing code) -->
+               <a-col
     :xs="24"
     :sm="24"
     :md="14"
     :lg="14"
   > 
-                      <div style="padding-left: 12px;">
-                        <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px; color: #1f2937;">Product Details</h3>
-            
-                        <!-- Upload Multiple Images Section -->
-                        <div style="margin-bottom: 20px;">
-                          <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #374151;">Product Images <span style="color: red;">*</span><span style="font-size: 12px; color: #6b7280;">&nbsp;(Click to upload multiple images Max 5)</span></label>
-                          <div style="display: flex; gap: 8px; align-items: center;">
-                            <div style="width: 60px; height: 60px; background: #f3f4f6; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer;margin-top:14px;" @click="uploadImages">
-                              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2">
-                                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
-                                <circle cx="12" cy="13" r="4"></circle>
-                              </svg>
-                            </div>
-            
-                            <div v-if="selectedImages.length > 0" style="margin-top: 16px;">
-                              <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-                                <div 
-                                  v-for="(image, index) in selectedImages" 
-                                  :key="index"
-                                  style="position: relative; cursor: pointer;"
-                                  @click="setPrimaryImage(image)"
-                                >
-                                  <img 
-                                    :src="image.url" 
-                                    :style="{
-                                      width: '60px',
-                                      height: '60px',
-                                      objectFit: 'cover',
-                                      borderRadius: '8px',
-                                      border: image.isPrimary ? '2px solid #22c55e' : '2px solid #e5e7eb'
-                                    }"
-                                  />
-                                  <div 
-                                    v-if="image.isPrimary"
-                                    style="position: absolute; left: -5px; bottom: -5px; background: #22c55e; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 12px;"
-                                  >
-                                    ★
-                                  </div>
-                                  <a-button 
-                                    type="text" 
-                                    size="small" 
-                                    @click.stop="removeImage(index)"
-                                    style="position: absolute; top: -8px; right: -8px; background: #ef4444; color: white; border-radius: 50%; width: 20px; height: 20px; padding: 0; min-width: 20px;"
-                                  >
-                                    <template #icon>
-                                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                                      </svg>
-                                    </template>
-                                  </a-button>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
+                  <div style="padding-left: 12px;">
+                    <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px; color: #1f2937;">Product Details</h3>
+        
+                    <!-- Upload Multiple Images Section -->
+                    <div style="margin-bottom: 20px;">
+                      <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #374151;">Product Images <span style="color: red;">*</span><span style="font-size: 12px; color: #6b7280;">&nbsp;(Click to upload multiple images Max 5)</span></label>
+                      <div style="display: flex; gap: 8px; align-items: center;">
+                        <div style="width: 60px; height: 60px; background: #f3f4f6; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer;margin-top:14px;" @click="uploadImages">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2">
+                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                            <circle cx="12" cy="13" r="4"></circle>
+                          </svg>
                         </div>
-            
-                        <!-- Name Field -->
-                        <div style="margin-bottom: 16px;">
-                          <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Name <span style="color: red;">*</span></label>
-                          <a-input 
-                            v-model:value="productForm.name" 
-                            placeholder="Decaly Coral"
-                            style="border-radius: 6px; background: #f3f4f6; border: 1px solid #e5e7eb;"
-                          />
-                        </div>
-            
-                        <!-- Description Field -->
-                        <div style="margin-bottom: 16px;">
-                          <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Description</label>
-                          <a-textarea 
-                            v-model:value="productForm.description"
-                            :rows="3"
-                            placeholder="Living room lighting, interior lighting, pendant lighting,
-            Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas."
-                            style="border-radius: 6px; background: #f3f4f6; border: 1px solid #e5e7eb; resize: none;"
-                          />
-                        </div>
-            
-                        <!-- Category, Type, Price Row -->
-                        <a-row :gutter="12" style="margin-bottom: 16px;">
-                          <a-col :span="8">
-                            <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Category <span style="color: red;">*</span></label>
-                            <a-select 
-              v-model:value="productForm.category_name" 
-              placeholder="Search and select category"
-              style="width: 100%;"
-              mode="tags"
-              :options="categoryOptions"
-              :loading="loadingCategories"
-              :filter-option="false"
-              :allow-clear="true"
-              show-search
-              @search="handleCategorySearch"
-              @change="handleCategoryChange"
-              @focus="handleSelectFocus"
-            />
-                          </a-col>
-                          <a-col :span="8">
-                            <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Type</label>
-                            <a-select 
-                              v-model:value="productForm.furniture_type" 
-                              placeholder="Modern"
-                              style="width: 100%;"
-                              :style="{ background: '#f3f4f6' }"
+        
+                        <div v-if="selectedImages.length > 0" style="margin-top: 16px;">
+                          <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                            <div 
+                              v-for="(image, index) in selectedImages" 
+                              :key="index"
+                              style="position: relative; cursor: pointer;"
+                              @click="setPrimaryImage(image)"
                             >
-                              <a-select-option v-for="type in types" :key="type" :value="type">{{ type }}</a-select-option>
-                            </a-select>
-                          </a-col>
-                          <a-col :span="8">
-                            <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Price <span style="color: red;">*</span></label>
-                            <a-input-number
-                              v-model:value="productForm.pricing.price" 
-                              :min="0"
-                              :step="0.01"
-                              placeholder="680"
-                              style="width: 100%; border-radius: 6px; background: #f3f4f6; border: 1px solid #e5e7eb;"
-                            />
-                          </a-col>
-                        </a-row>
-            
-                        <!-- Dimensions Section -->
-                        <div style="margin-bottom: 20px;">
-                          <h4 style="margin-bottom: 12px; font-size: 14px; font-weight: 500; color: #1f2937;">Dimensions</h4>
-                          <a-row :gutter="8">
-                            <a-col :span="8">
-                              <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Height</label>
-                              <div style="display: flex; align-items: center;">
-                                <a-input-number
-                                  v-model:value="productForm.dimensions.height" 
-                                  :min="0"
-                                  :step="0.01"
-                                  placeholder="0.8"
-                                  style="width: 100%; border-radius: 4px; background: #f3f4f6; border: 1px solid #e5e7eb; font-size: 13px;"
-                                />
-                                <span style="margin-left: 6px; color: #9ca3af; font-size: 12px;">meter</span>
-                              </div>
-                            </a-col>
-                            <a-col :span="8">
-                              <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Length/Depth</label>
-                              <div style="display: flex; align-items: center;">
-                                <a-input-number
-                                  v-model:value="productForm.dimensions.length" 
-                                  :min="0"
-                                  :step="0.01"
-                                  placeholder="0.5"
-                                  style="width: 100%; border-radius: 4px; background: #f3f4f6; border: 1px solid #e5e7eb; font-size: 13px;"
-                                />
-                                <span style="margin-left: 6px; color: #9ca3af; font-size: 12px;">meter</span>
-                              </div>
-                            </a-col>
-                            <a-col :span="8">
-                              <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Width</label>
-                              <div style="display: flex; align-items: center;">
-                                <a-input-number
-                                  v-model:value="productForm.dimensions.width" 
-                                  :min="0"
-                                  :step="0.01"
-                                  placeholder="1.8"
-                                  style="width: 100%; border-radius: 4px; background: #f3f4f6; border: 1px solid #e5e7eb; font-size: 13px;"
-                                />
-                                <span style="margin-left: 6px; color: #9ca3af; font-size: 12px;">meter</span>
-                              </div>
-                            </a-col>
-                          </a-row>
-                        </div>
-            
-                        <!-- Available Colors Section -->
-                        <div style="margin-bottom: 20px;">
-                          <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #374151;">Available Colors</label>
-                          
-                          <a-popover trigger="click" placement="bottom">
-                            <template #title>
-                              <div style="display: flex; align-items: center; gap: 8px;">
-                                <span>Add Available Colors</span>
-                                <input 
-                                  type="color" 
-                                  :value="tempColor"
-                                  @input="tempColor = $event.target.value"
-                                  style="width: 30px; height: 25px; border: none; border-radius: 4px; cursor: pointer;"
-                                />
-                                <a-button 
-                                  type="primary" 
-                                  size="small" 
-                                  @click="addAvailableColor"
-                                  style="margin-left: 8px;"
-                                >
-                                  Add
-                                </a-button>
-                              </div>
-                            </template>
-                            <template #content>
-                              <div style="display: grid; grid-template-columns: repeat(6, 32px); gap: 8px; padding: 8px;">
-                                <div
-                                  v-for="(color, index) in presetColors"
-                                  :key="index"
-                                  @click="addPresetColor(color)"
-                                  :style="{
-                                    width: '32px',
-                                    height: '32px',
-                                    borderRadius: '6px',
-                                    backgroundColor: color,
-                                    cursor: 'pointer',
-                                    border: '1px solid #e5e7eb',
-                                    opacity: selectedColors.includes(color) ? 0.5 : 1
-                                  }"
-                                ></div>
-                              </div>
-                            </template>
-                            <a-button style="border-radius: 6px; border: 2px dashed #d1d5db;">
-                              <template #icon>
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                  <line x1="12" y1="5" x2="12" y2="19"></line>
-                                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                                </svg>
-                              </template>
-                              Add Colors
-                            </a-button>
-                          </a-popover>
-            
-                          <div v-if="selectedColors.length > 0" style="margin-top: 12px;">
-                            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-                              <div 
-                                v-for="(color, index) in selectedColors" 
-                                :key="index"
-                                style="position: relative;"
-                              >
-                                <div
-                                  :style="{
-                                    width: '40px',
-                                    height: '40px',
-                                    borderRadius: '50%',
-                                    backgroundColor: color,
-                                    border: '2px solid #e5e7eb',
-                                    cursor: 'pointer',
-                                    position: 'relative'
-                                  }"
-                                ></div>
-                                <a-button 
-                                  type="text" 
-                                  size="small" 
-                                  @click="removeColor(index)"
-                                  style="position: absolute; top: -8px; right: -8px; background: #ef4444; color: white; border-radius: 50%; width: 20px; height: 20px; padding: 0; min-width: 20px;"
-                                >
-                                  <template #icon>
-                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                                      <line x1="18" y1="6" x2="6" y2="18"></line>
-                                      <line x1="6" y1="6" x2="18" y2="18"></line>
-                                    </svg>
-                                  </template>
-                                </a-button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-            
-                        <!-- Textures Section -->
-                        <div style="margin-bottom: 20px;">
-                          <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #374151;">Texture Images</label>
-                          <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-                            <div style="cursor: pointer;" @click="uploadTexture">
-                              <div style="width: 48px; height: 40px; background: #f3f4f6; border: 2px dashed #d1d5db; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2">
-                                  <line x1="12" y1="5" x2="12" y2="19"></line>
-                                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                                </svg>
-                              </div>
-                            </div>
-            
-                            <div v-for="(texture, index) in selectedTextures" :key="index" style="position: relative;">
-                              <div 
-                                :style="{ 
-                                  width: '48px', 
-                                  height: '40px', 
-                                  backgroundImage: `url(${texture.url})`, 
-                                  backgroundSize: 'cover', 
-                                  backgroundPosition: 'center', 
-                                  borderRadius: '8px', 
-                                  border: '2px solid #e5e7eb', 
-                                  cursor: 'pointer' 
+                              <img 
+                                :src="image.url" 
+                                :style="{
+                                  width: '60px',
+                                  height: '60px',
+                                  objectFit: 'cover',
+                                  borderRadius: '8px',
+                                  border: image.isPrimary ? '2px solid #22c55e' : '2px solid #e5e7eb'
                                 }"
-                              ></div>
-                              <a-button 
-                                type="text" 
-                                size="small" 
-                                @click="removeTexture(index)"
-                                style="position: absolute; top: -6px; right: -6px; background: #ef4444; color: white; border-radius: 50%; width: 18px; height: 18px; padding: 0; min-width: 18px;"
+                              />
+                              <div 
+                                v-if="image.isPrimary"
+                                style="position: absolute; left: -5px; bottom: -5px; background: #22c55e; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 12px;"
                               >
-                                <template #icon>
-                                  <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                                  </svg>
-                                </template>
-                              </a-button>
-                            </div>
-                          </div>
-                        </div>
-            
-                        <!-- PBR Files Section -->
-                        <div style="margin-bottom: 20px;">
-                          <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #374151;">PBR Files</label>
-                          
-                          <div style="cursor: pointer;" @click="uploadPbr">
-                            <div style="width: 100%; height: 48px; background: #f3f4f6; border: 2px dashed #d1d5db; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                <polyline points="17,8 12,3 7,8"></polyline>
-                                <line x1="12" y1="3" x2="12" y2="15"></line>
-                              </svg>
-                              <span style="font-size: 12px; color: #6b7280;">Upload PBR files (.pbr, .zip, .rar, etc.)</span>
-                            </div>
-                          </div>
-            
-                          <div v-if="selectedPbrFiles.length > 0" style="margin-top: 12px;">
-                            <div v-for="(pbrFile, index) in selectedPbrFiles" :key="index" 
-                                style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: #f8faff; border: 1px solid #e5e7eb; border-radius: 6px; margin-bottom: 6px;">
-                              <div style="display: flex; align-items: center; gap: 8px;">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2">
-                                  <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"></path>
-                                </svg>
-                                <div>
-                                  <div style="font-size: 13px; font-weight: 500; color: #1f2937;">{{ pbrFile.name }}</div>
-                                  <div style="font-size: 11px; color: #6b7280;">{{ pbrFile.size }}</div>
-                                </div>
+                                ★
                               </div>
                               <a-button 
                                 type="text" 
                                 size="small" 
-                                @click="removePbrFile(index)"
-                                style="color: #ef4444; padding: 4px;"
+                                @click.stop="removeImage(index)"
+                                style="position: absolute; top: -8px; right: -8px; background: #ef4444; color: white; border-radius: 50%; width: 20px; height: 20px; padding: 0; min-width: 20px;"
                               >
                                 <template #icon>
-                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
                                     <line x1="18" y1="6" x2="6" y2="18"></line>
                                     <line x1="6" y1="6" x2="18" y2="18"></line>
                                   </svg>
@@ -542,10 +281,333 @@
                           </div>
                         </div>
                       </div>
-                    </a-col>
-                  <!-- </div> -->
-          
-                  <!-- </div> -->
+                    </div>
+        
+                    <!-- Name Field -->
+                    <div style="margin-bottom: 16px;">
+                      <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Name <span style="color: red;">*</span></label>
+                      <a-input 
+                        v-model:value="productForm.name" 
+                        placeholder="Decaly Coral"
+                        style="border-radius: 6px; background: #f3f4f6; border: 1px solid #e5e7eb;"
+                      />
+                    </div>
+        
+                    <!-- Description Field -->
+                    <div style="margin-bottom: 16px;">
+                      <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Description</label>
+                      <a-textarea 
+                        v-model:value="productForm.description"
+                        :rows="3"
+                        placeholder="Living room lighting, interior lighting, pendant lighting,
+        Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas."
+                        style="border-radius: 6px; background: #f3f4f6; border: 1px solid #e5e7eb; resize: none;"
+                      />
+                    </div>
+        
+                    <!-- NEW: Room Type, Category, Type, Price Row -->
+               <a-row :gutter="12" style="margin-bottom: 16px;">
+                <!-- Room Type -->
+                <a-col :span="6">
+                  <div style="margin-bottom: 16px;">
+                    <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">
+                      Room Type <span style="color: red;">*</span>
+                    </label>
+                    <a-select
+                      v-model:value="selectedRoomType"
+                      placeholder="Select room type"
+                      style="width: 100%;"
+                      :style="{ background: '#f3f4f6' }"
+                      :loading="loadingRoomTypes"
+                      :allow-clear="true"
+                      @change="handleRoomTypeChange"
+                    >
+                      <a-select-option
+                        v-for="rt in roomTypes"
+                        :key="rt.id"
+                        :value="rt.id"
+                      >
+                        {{ rt.name }}
+                      </a-select-option>
+                    </a-select>
+                  </div>
+                </a-col>
+
+                <!-- Category -->
+                <a-col :span="6">
+                  <div style="margin-bottom: 16px;">
+                    <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">
+                      Category <span style="color: red;">*</span>
+                    </label>
+                    <a-select
+                      v-model:value="productForm.category_name"
+                      placeholder="Search and select category"
+                      style="width: 100%;"
+                      mode="tags"
+                      :style="{ background: '#f3f4f6' }"
+                      :options="categoryOptions"
+                      :loading="loadingCategories"
+                      :filter-option="false"
+                      :allow-clear="true"
+                      show-search
+                      :disabled="!selectedRoomType"
+                      @search="handleCategorySearch"
+                      @change="handleCategoryChange"
+                      @focus="handleSelectFocus"
+                    >
+                    </a-select>
+                  </div>
+                </a-col>
+
+                <!-- Type -->
+                <a-col :span="6">
+                  <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Type</label>
+                  <a-select 
+                    v-model:value="productForm.furniture_type" 
+                    placeholder="Modern"
+                    style="width: 100%;"  
+                    :style="{ background: '#f3f4f6' }"
+                  >
+                    <a-select-option v-for="type in types" :key="type" :value="type">{{ type }}</a-select-option>
+                  </a-select>
+                </a-col>
+
+                <!-- Price -->
+                <a-col :span="6">
+                  <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">Price <span style="color: red;">*</span></label>
+                  <a-input-number
+                    v-model:value="productForm.pricing.price" 
+                    :min="0"
+                    :step="0.01"
+                    placeholder="680"
+                    style="width: 100%; border-radius: 6px; background: #f3f4f6; border: 1px solid #e5e7eb;"
+                  />
+                </a-col>
+              </a-row>
+        
+                    <!-- Dimensions Section -->
+                    <div style="margin-bottom: 20px;">
+                      <h4 style="margin-bottom: 12px; font-size: 14px; font-weight: 500; color: #1f2937;">Dimensions</h4>
+                      <a-row :gutter="8">
+                        <a-col :span="8">
+                          <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Height</label>
+                          <div style="display: flex; align-items: center;">
+                            <a-input-number
+                              v-model:value="productForm.dimensions.height" 
+                              :min="0"
+                              :step="0.01"
+                              placeholder="0.8"
+                              style="width: 100%; border-radius: 4px; background: #f3f4f6; border: 1px solid #e5e7eb; font-size: 13px;"
+                            />
+                            <span style="margin-left: 6px; color: #9ca3af; font-size: 12px;">meter</span>
+                          </div>
+                        </a-col>
+                        <a-col :span="8">
+                          <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Length/Depth</label>
+                          <div style="display: flex; align-items: center;">
+                            <a-input-number
+                              v-model:value="productForm.dimensions.length" 
+                              :min="0"
+                              :step="0.01"
+                              placeholder="0.5"
+                              style="width: 100%; border-radius: 4px; background: #f3f4f6; border: 1px solid #e5e7eb; font-size: 13px;"
+                            />
+                            <span style="margin-left: 6px; color: #9ca3af; font-size: 12px;">meter</span>
+                          </div>
+                        </a-col>
+                        <a-col :span="8">
+                          <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #6b7280;">Width</label>
+                          <div style="display: flex; align-items: center;">
+                            <a-input-number
+                              v-model:value="productForm.dimensions.width" 
+                              :min="0"
+                              :step="0.01"
+                              placeholder="1.8"
+                              style="width: 100%; border-radius: 4px; background: #f3f4f6; border: 1px solid #e5e7eb; font-size: 13px;"
+                            />
+                            <span style="margin-left: 6px; color: #9ca3af; font-size: 12px;">meter</span>
+                          </div>
+                        </a-col>
+                      </a-row>
+                    </div>
+        
+                    <!-- Available Colors Section -->
+                    <div style="margin-bottom: 20px;">
+                      <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #374151;">Available Colors</label>
+                      
+                      <a-popover trigger="click" placement="bottom">
+                        <template #title>
+                          <div style="display: flex; align-items: center; gap: 8px;">
+                            <span>Add Available Colors</span>
+                            <input 
+                              type="color" 
+                              :value="tempColor"
+                              @input="tempColor = $event.target.value"
+                              style="width: 30px; height: 25px; border: none; border-radius: 4px; cursor: pointer;"
+                            />
+                            <a-button 
+                              type="primary" 
+                              size="small" 
+                              @click="addAvailableColor"
+                              style="margin-left: 8px;"
+                            >
+                              Add
+                            </a-button>
+                          </div>
+                        </template>
+                        <template #content>
+                          <div style="display: grid; grid-template-columns: repeat(6, 32px); gap: 8px; padding: 8px;">
+                            <div
+                              v-for="(color, index) in presetColors"
+                              :key="index"
+                              @click="addPresetColor(color)"
+                              :style="{
+                                width: '32px',
+                                height: '32px',
+                                borderRadius: '6px',
+                                backgroundColor: color,
+                                cursor: 'pointer',
+                                border: '1px solid #e5e7eb',
+                                opacity: selectedColors.includes(color) ? 0.5 : 1
+                              }"
+                            ></div>
+                          </div>
+                        </template>
+                        <a-button style="border-radius: 6px; border: 2px dashed #d1d5db;">
+                          <template #icon>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                              <line x1="12" y1="5" x2="12" y2="19"></line>
+                              <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                          </template>
+                          Add Colors
+                        </a-button>
+                      </a-popover>
+        
+                      <div v-if="selectedColors.length > 0" style="margin-top: 12px;">
+                        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                          <div 
+                            v-for="(color, index) in selectedColors" 
+                            :key="index"
+                            style="position: relative;"
+                          >
+                            <div
+                              :style="{
+                                width: '40px',
+                                height: '40px',
+                                borderRadius: '50%',
+                                backgroundColor: color,
+                                border: '2px solid #e5e7eb',
+                                cursor: 'pointer',
+                                position: 'relative'
+                              }"
+                            ></div>
+                            <a-button 
+                              type="text" 
+                              size="small" 
+                              @click="removeColor(index)"
+                              style="position: absolute; top: -8px; right: -8px; background: #ef4444; color: white; border-radius: 50%; width: 20px; height: 20px; padding: 0; min-width: 20px;"
+                            >
+                              <template #icon>
+                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                              </template>
+                            </a-button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+        
+                    <!-- Textures Section -->
+                    <div style="margin-bottom: 20px;">
+                      <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #374151;">Texture Images</label>
+                      <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                        <div style="cursor: pointer;" @click="uploadTexture">
+                          <div style="width: 48px; height: 40px; background: #f3f4f6; border: 2px dashed #d1d5db; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2">
+                              <line x1="12" y1="5" x2="12" y2="19"></line>
+                              <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                          </div>
+                        </div>
+        
+                        <div v-for="(texture, index) in selectedTextures" :key="index" style="position: relative;">
+                          <div 
+                            :style="{ 
+                              width: '48px', 
+                              height: '40px', 
+                              backgroundImage: `url(${texture.url})`, 
+                              backgroundSize: 'cover', 
+                              backgroundPosition: 'center', 
+                              borderRadius: '8px', 
+                              border: '2px solid #e5e7eb', 
+                              cursor: 'pointer' 
+                            }"
+                          ></div>
+                          <a-button 
+                            type="text" 
+                            size="small" 
+                            @click="removeTexture(index)"
+                            style="position: absolute; top: -6px; right: -6px; background: #ef4444; color: white; border-radius: 50%; width: 18px; height: 18px; padding: 0; min-width: 18px;"
+                          >
+                            <template #icon>
+                              <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                              </svg>
+                            </template>
+                          </a-button>
+                        </div>
+                      </div>
+                    </div>
+        
+                    <!-- PBR Files Section -->
+                    <div style="margin-bottom: 20px;">
+                      <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #374151;">PBR Files</label>
+                      
+                      <div style="cursor: pointer;" @click="uploadPbr">
+                        <div style="width: 100%; height: 48px; background: #f3f4f6; border: 2px dashed #d1d5db; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17,8 12,3 7,8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                          </svg>
+                          <span style="font-size: 12px; color: #6b7280;">Upload PBR files (.pbr, .zip, .rar, etc.)</span>
+                        </div>
+                      </div>
+        
+                      <div v-if="selectedPbrFiles.length > 0" style="margin-top: 12px;">
+                        <div v-for="(pbrFile, index) in selectedPbrFiles" :key="index" 
+                            style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: #f8faff; border: 1px solid #e5e7eb; border-radius: 6px; margin-bottom: 6px;">
+                          <div style="display: flex; align-items: center; gap: 8px;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2">
+                              <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"></path>
+                            </svg>
+                            <div>
+                              <div style="font-size: 13px; font-weight: 500; color: #1f2937;">{{ pbrFile.name }}</div>
+                              <div style="font-size: 11px; color: #6b7280;">{{ pbrFile.size }}</div>
+                            </div>
+                          </div>
+                          <a-button 
+                            type="text" 
+                            size="small" 
+                            @click="removePbrFile(index)"
+                            style="color: #ef4444; padding: 4px;"
+                          >
+                            <template #icon>
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                              </svg>
+                            </template>
+                          </a-button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </a-col>
 
       </a-row>
     </div>
@@ -562,6 +624,7 @@
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import canvas_3d_model_renderer from "@/components/store/canvas_3d_model_renderer.vue"
+import select3d_model_for_color from '../add_color_3d_model/dyd_generated.vue'
 
 export default {
   name: "AddNewProduct_modal",
@@ -572,12 +635,17 @@ export default {
   },
   components: {
     canvas_3d_model_renderer,
+    select3d_model_for_color,
   },
   emits: ['update:visible', 'product-created', 'cancel'],
   
   data() {
     return {
       isSaving: false,
+      selectedRoomType: null,
+      roomTypes: [],
+      loadingRoomTypes: false,
+      selectedRoomTypeName: null,
       tempColor: '#000000',
       isDragging: false,
       
@@ -587,6 +655,17 @@ export default {
       loading3dModelDetails: false,
       modelDetails: null,
       error: { general: null },
+
+      // Generated models history (same as second file)
+      loading_generated_models_history: true,
+      list_history_generated_3d_models: [],
+      pagination: {
+        currentOffset: 0,
+        pageSize: 8,
+        totalCount: 0,
+        hasMoreModels: false
+      },
+      loadingMoreModels: false,
       
       // Form data
       productForm: {
@@ -626,19 +705,24 @@ export default {
     primaryImage() {
       return this.selectedImages.find(img => img.isPrimary) || this.selectedImages[0] || null;
     },
-    // Display the selected category as string (not array)
-  categoryNameDisplay() {
-    if (Array.isArray(this.productForm.category_name)) {
-      return this.productForm.category_name[0] || '';
+    categoryNameDisplay() {
+      if (Array.isArray(this.productForm.category_name)) {
+        return this.productForm.category_name[0] || '';
+      }
+      return this.productForm.category_name || '';
     }
-    return this.productForm.category_name || '';
-  }
   },
 
   watch: {
     visible(newValue) {
       if (!newValue) {
         this.resetForm();
+      } else {
+        this.pagination.currentOffset = 0;
+        this.pagination.totalCount = 0;
+        this.pagination.hasMoreModels = false;
+        this.list_history_generated_3d_models = [];
+        this.fetch3d_models_generated_by_user();
       }
     },
     rendered_modal_3D_id(newId, oldId) {
@@ -651,6 +735,7 @@ export default {
   },
 
   mounted() {
+    this.loadRoomTypes();
     if (this.rendered_modal_3D_id) {
       console.log('🚀 Component mounted, fetching 3D model details...');
       this.get3dRenderedModelDetails(this.rendered_modal_3D_id);
@@ -658,10 +743,188 @@ export default {
       console.warn('⚠️ No rendered_modal_3D_id provided on mount');
     }
     this.loadInitialCategories();
+    this.fetch3d_models_generated_by_user();
   },
 
   methods: {
-    // 3D Model Upload Methods
+    async loadRoomTypes() {
+      try {
+        this.loadingRoomTypes = true;
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${this.$store.state.root_api}product/api/room-types/`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${token}`
+          }
+        });
+        const result = await response.json();
+        this.roomTypes = result || [];
+      } catch (error) {
+        console.error(' Error loading room types:', error);
+        this.roomTypes = [];
+      } finally {
+        this.loadingRoomTypes = false;
+      }
+    },
+
+    handleRoomTypeChange(value) {
+      const selectedRoom = this.roomTypes.find(rt => rt.id === value);
+      this.selectedRoomType = value;
+      this.selectedRoomTypeName = selectedRoom ? selectedRoom.name : null;
+      this.productForm.category_name = [];
+      this.categoryOptions = [];
+      this.allCategories = [];
+      if (value) {
+        this.loadInitialCategories();
+      }
+    },
+
+    // Generated 3D models list methods (same as second file)
+    async fetch3d_models_generated_by_user() {
+      this.loading_generated_models_history = true;
+
+      try {
+        const limit = this.pagination.pageSize;
+        const offset = this.pagination.currentOffset;
+
+        const url = `${this.$store.state.root_api}engine/generated-3d-models-list/?limit=${limit}&offset=${offset}&is_light_type=true&access-id=${this.$route.query.access_id}`;
+
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Token ${localStorage.getItem('token')}`,
+            'Accept': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const responseData = await response.json();
+
+        if (!responseData.results?.error) {
+          if (this.pagination.currentOffset === 0) {
+            this.list_history_generated_3d_models = responseData.results.models || [];
+          } else {
+            this.list_history_generated_3d_models.push(...(responseData.results.models || []));
+          }
+
+          this.pagination.totalCount = responseData.count || 0;
+          this.pagination.hasMoreModels = this.list_history_generated_3d_models.length < this.pagination.totalCount;
+          this.pagination.currentOffset = this.pagination.currentOffset + this.pagination.pageSize;
+
+        } else {
+          throw new Error(responseData.results?.message || 'Failed to fetch models');
+        }
+
+      } catch (error) {
+        console.error('❌ Failed to fetch 3D models:', error);
+        this.error.general = error.message;
+      } finally {
+        this.loading_generated_models_history = false;
+      }
+    },
+
+    async loadMoreModels() {
+      if (this.loadingMoreModels || !this.pagination.hasMoreModels) {
+        console.warn('⚠️ Cannot load more: already loading or no more models');
+        return;
+      }
+
+      this.loadingMoreModels = true;
+
+      try {
+        const limit = this.pagination.pageSize;
+        const offset = this.pagination.currentOffset;
+
+        const url = `${this.$store.state.root_api}engine/generated-3d-models-list/?limit=${limit}&offset=${offset}&is_light_type=true`;
+
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Token ${localStorage.getItem('token')}`,
+            'Accept': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const responseData = await response.json();
+
+        if (!responseData.results?.error && responseData.results?.models) {
+          const newModels = responseData.results.models;
+          this.list_history_generated_3d_models.push(...newModels);
+          this.pagination.currentOffset += this.pagination.pageSize;
+          this.pagination.hasMoreModels = this.list_history_generated_3d_models.length < this.pagination.totalCount;
+
+          this.$message.success(`Loaded ${newModels.length} more models`);
+
+        } else {
+          throw new Error(responseData.results?.message || 'Failed to parse response');
+        }
+
+      } catch (error) {
+        console.error('❌ Error loading more models:', error);
+        this.$message.error('Failed to load more models: ' + error.message);
+
+      } finally {
+        this.loadingMoreModels = false;
+      }
+    },
+
+    async clickedModel(modelData) {
+      console.log('🎯 Model clicked:', modelData);
+
+      if (!modelData) {
+        console.warn('⚠️ No model data provided');
+        return;
+      }
+
+      this.model_data_instance_id = modelData.new3d_model_instance;
+      const mediaUrl = modelData.media_url || modelData.url;
+
+      if (!mediaUrl) {
+        console.error('❌ No media URL in model data');
+        return;
+      }
+
+      const fixedUrl = mediaUrl.replace(/\\/g, '/');
+      const fullUrl = this.$store.state.root_media_api + fixedUrl;
+
+      try {
+        const response = await fetch(fullUrl);
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch model: HTTP ${response.status}`);
+        }
+
+        const blob = await response.blob();
+        const fileName = modelData.name || 'model.glb';
+        const file = new File([blob], fileName, { type: blob.type });
+
+        this.local3dModelUrl = fullUrl;
+        this.uploaded3dModelFile = {
+          file: file,
+          name: modelData.name || 'Generated Model',
+          size: (blob.size / 1024 / 1024).toFixed(2) + ' MB',
+          isGenerated: true,
+          generatedUrl: fixedUrl,
+          modelId: modelData.id
+        };
+
+        console.log('✅ 3D Model loaded successfully');
+
+      } catch (error) {
+        console.error('❌ Error fetching model file:', error);
+        this.$message.error('Failed to load model file: ' + error.message);
+      }
+    },
+
+    // 3D Model Methods
     upload3dModel() {
       this.$refs.modelInput?.click();
     },
@@ -726,8 +989,8 @@ export default {
         this.loadingCategories = true;
         const store = this.$store;
         const token = localStorage.getItem('token');
-        
-        const response = await fetch(`${store.state.root_api}product/api/categories/`, {
+        const roomTypeParam = this.selectedRoomType ? `?room_type=${encodeURIComponent(this.selectedRoomType)}` : '';
+        const response = await fetch(`${store.state.root_api}product/api/categories/${roomTypeParam}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -749,7 +1012,6 @@ export default {
             data: cat
           }));
           
-          console.log('✅ Category options for dropdown:', this.categoryOptions);
           console.log('✅ Total categories loaded:', this.allCategories.length);
           
         } else {
@@ -838,9 +1100,7 @@ export default {
       console.log('📌 Category changed:', value);
       this.categorySearchError = null;
       
-      // mode="tags" returns an array, but we want only one
       if (Array.isArray(value)) {
-        // Keep only the last selected item (single select)
         if (value.length > 1) {
           console.log('⚠️ Only one category allowed, keeping last selected');
           this.productForm.category_name = [value[value.length - 1]];
@@ -852,7 +1112,6 @@ export default {
           this.productForm.category_name = [];
         }
       } else {
-        // If somehow it's a string, convert to array
         this.productForm.category_name = value ? [value] : [];
       }
       
@@ -947,11 +1206,19 @@ export default {
         }
         
       } catch (error) {
-        console.error("❌ Failed to fetch categories:", error);
+        console.error(" Failed to fetch categories:", error);
       } 
     },
 
     resetForm() {
+      this.selectedRoomType = null;      
+      this.selectedRoomTypeName = null;   
+      this.categoryOptions = [];          
+      this.allCategories = [];
+      this.pagination.currentOffset = 0;
+      this.pagination.totalCount = 0;
+      this.pagination.hasMoreModels = false;
+      this.list_history_generated_3d_models = [];
       this.productForm = {
         name: '',
         description: '',
@@ -1115,25 +1382,29 @@ export default {
     },
 
     // Form Validation & Save
-      validateForm() {
+    validateForm() {
       if (!this.productForm.name?.trim()) {
-        console.error('Product name is required');
+        this.$message.error('Product name is required');
         return false;
       }
       if (!this.productForm.category_name || this.productForm.category_name.length === 0) {
-        console.error('Category is required');
+        this.$message.error('Category is required');
         return false;
       }
       if (!this.productForm.pricing.price || parseFloat(this.productForm.pricing.price) <= 0) {
-        console.error('Valid price is required');
+        this.$message.error('Valid price is required');
         return false;
       }
       if (this.selectedImages.length === 0) {
-        console.error('At least one product image is required');
+        this.$message.error('At least one product image is required');
         return false;
       }
       if (!this.local3dModelUrl && !this.rendered_modal_3D_id) {
-        console.error('3D model is required (either upload a new one or use existing)');
+        this.$message.error('3D model is required (either upload a new one or use existing)');
+        return false;
+      }
+      if (!this.selectedRoomType) {
+        this.$message.error('Please select a Room Type');
         return false;
       }
       return true;
@@ -1194,6 +1465,8 @@ export default {
           formData.append('textures', texture.file);
         });
 
+        formData.append('room_type_name', this.selectedRoomTypeName);
+
         console.log('📤 Sending product data:', {
           name: this.productForm.name,
           category_name: this.productForm.category_name,
@@ -1205,9 +1478,7 @@ export default {
           pbr_files_count: this.selectedPbrFiles.length
         });
 
-        // const response = await fetch(`${store.state.root_api}product/api-product-owner/lights/`, {
-        const response = await fetch(`${store.state.root_api}access-engine/api/business-products/add-product-light/?access-id=`+this.$route.query.access_id, {
-
+        const response = await fetch(`${store.state.root_api}access-engine/api/business-products/add-product-light/?access-id=` + this.$route.query.access_id, {
           method: 'POST',
           headers: { 
             'Authorization': `Token ${token}` 

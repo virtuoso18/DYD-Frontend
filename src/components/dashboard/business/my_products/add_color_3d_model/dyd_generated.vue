@@ -8,7 +8,12 @@
           <a-col :span="20"><h4 class="whitespace-nowrap !font-poppins" >Generate History</h4></a-col>
         </a-row>
         
-        <router-link to="/my-products/add-new-furniture"> <a-button size="small" type="primary" >+ Create New </a-button></router-link>
+        <!-- <router-link to="/my-products/add-new-furniture"> <a-button size="small" type="primary" >+ Create New </a-button></router-link> -->
+        <router-link :to="is_light_create 
+        ? `/my-products/add-new-light` 
+        : `/my-products/add-new-furniture`">
+        <a-button size="small" type="primary">+ Create New</a-button>
+      </router-link>
     </div>
     
     <div v-if="loading_generated_models_history" style="text-align:center;padding:50px;">
@@ -52,9 +57,10 @@ export default {
     HistoryOutlined
   },
 
-  props: {
+ props: {
     list_history_generated_3d_models: Array,
-    loading_generated_models_history: Boolean
+    loading_generated_models_history: Boolean,
+    is_light_create: {type: Boolean,default: false}
   },
   methods: {
     getMainImage(model) {

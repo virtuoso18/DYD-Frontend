@@ -28,8 +28,8 @@
             <div class="mb-4">
               <img 
                 :src="post.image" 
-                alt="Post" 
-                class="w-[full] max-w-[250px] h-auto rounded-lg "
+                alt="Post"
+                class="w-[full] max-w-[100%] h-auto  max-h-[450px] rounded-lg "
                 style="margin:auto"
               />
             </div>

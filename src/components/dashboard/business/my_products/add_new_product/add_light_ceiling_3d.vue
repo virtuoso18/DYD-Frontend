@@ -76,11 +76,13 @@
 
   </div>
 </a-modal>
+ <errorModal v-model:visible="errorModal.visible" :message="errorModal.message" ></errorModal>
    <add_new_furniture 
         v-model:visible="showAddProduct"
         :types="['Modern','Scandinavian','Classic','Minimalist','Industrial','Rustic','Boho','other',]"
         @product-created="onProductCreated"
         @cancel="onCancel"
+         @api-error="handleApiError"
         :rendered_modal_3D_id="model_instance_id"
     />
   <div class="flex flex-col md:flex-row w-full">
@@ -124,6 +126,7 @@ import sidepanel_3d_tab from '@/components/dashboard/business/my_products/add_ne
 import object_viewer_3d_tab from '@/components/dashboard/business/my_products/add_new_product/add_light_3d_model_gen/canvas_renderer.vue'
 import models_3d_generate_history from '@/components/dashboard/business/my_products/add_new_product/add_light_3d_model_gen/generate_history.vue'
 import add_new_furniture from '@/components/dashboard/business/my_products/add_new_product/add_light_modal.vue'
+import errorModal from "@/components/Includes/modal/errorModal.vue";
 
 export default {
   name:"add_Furniture"
@@ -148,6 +151,12 @@ data(){
       showAddProduct:false,
       imageTempUrl: "",
       input_image: "",
+
+      //error
+      errorModal: {
+        visible: false,
+        message: ''
+      }
       
 }
 },
@@ -155,12 +164,17 @@ components:{
   sidepanel_3d_tab,
   object_viewer_3d_tab,
   models_3d_generate_history,
-  add_new_furniture
+  add_new_furniture,
+  errorModal
 },
 mounted(){
   this.fetch3d_models_generated_by_user()
 },
 methods:{
+    handleApiError(message) {
+    this.errorModal.message = message;
+    this.errorModal.visible = true;
+  },
   updateInputImage() {
       this.input_image =this.imageTempUrl;
     },
@@ -284,7 +298,7 @@ async get_3d_rendered_model_details(generated_3d_model_id) {
     }
   } catch (error) {
     console.error("❌ Failed to fetch history generated 3d Models :", error);
-    this.error.general = error.message;
+  
     this.showError('Failed to fetch history generated 3d Models', error.message, () => this.fetch3d_models_generated_by_room());
   } finally {
     this.loading_generated_models_history = false;
@@ -318,7 +332,7 @@ async fetch3d_models_generated_by_user() {
     }
   } catch (error) {
     console.error("❌ Failed to fetch history generated 3d Models :", error);
-    this.error.general = error.message;
+  
     this.showError('Failed to fetch history generated 3d Models', error.message, () => this.fetch3d_models_generated_by_room());
   } finally {
     this.loading_generated_models_history = false;

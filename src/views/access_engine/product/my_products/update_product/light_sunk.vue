@@ -69,7 +69,7 @@
             <div v-if="img.is_primary" style="position: absolute; top: -6px; left: -6px; background: #10b981; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 10px;">★</div>
             <!-- Delete Button -->
             <a-button type="text" danger size="small" @click.stop="deleteImage(img.id)"
-              style="position: absolute; top: -6px; right: -6px; background: #ef4444; color: white; border-radius: 50%; width: 20px; height: 20px; padding: 0; min-width: 20px;display: flex;justify-content: center;align-items: center;">
+              style="position: absolute; top: -6px; right: -6px; background: #ef4444; color: white; border-radius: 50%; width: 20px; height: 20px; padding: 0; min-width: 20px; display: flex; justify-content: center; align-items: center;">
               <template #icon>
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -125,26 +125,70 @@
             <a-textarea v-model:value="productForm.description" :rows="4" placeholder="Product Description" style="border-radius: 8px; resize: none;" />
           </div>
 
-          <!-- Basic Info -->
-          <a-row  style="margin-bottom: 20px;">
-            <a-col :span="12">
+          <!-- Room Type, Category, Furniture Type, Price -->
+          <a-row :gutter="16" style="margin-bottom: 20px;">
+
+            <!-- Room Type -->
+            <a-col :span="6">
+              <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151;">
+                Room Type <span style="color: red;">*</span>
+              </label>
+              <a-select
+                v-model:value="selectedRoomTypeName"
+                style="width: 100%;"
+                size="large"
+                :loading="loadingRoomTypes"
+                :allow-clear="true"
+                @change="handleRoomTypeChange"
+              >
+                <a-select-option v-for="rt in roomTypes" :key="rt.id" :value="rt.id">
+                  {{ rt.name }}
+                </a-select-option>
+              </a-select>
+            </a-col>
+
+            <!-- Category -->
+            <a-col :span="6">
+              <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151;">
+                Category <span style="color: red;">*</span>
+              </label>
+              <a-select
+                v-model:value="productForm.category_name"
+                style="width: 100%;"
+                size="large"
+                mode="tags"
+                :options="categoryOptions"
+                :loading="loadingCategories"
+                :filter-option="false"
+                :allow-clear="true"
+                :disabled="!selectedRoomType"
+                show-search
+                @search="handleCategorySearch"
+                @change="handleCategoryChange"
+                @focus="handleSelectFocus"
+              />
+            </a-col>
+
+            <!-- Furniture Type -->
+            <a-col :span="6">
               <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151;">Furniture Type</label>
               <a-select v-model:value="productForm.furniture_type" style="width: 100%;" size="large" placeholder="Select Type">
                 <a-select-option v-for="type in furnitureTypes" :key="type" :value="type">{{ type }}</a-select-option>
               </a-select>
             </a-col>
-            <a-col :span="12">
-                <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151;">Price</label>
-                <a-input-number v-model:value="productForm.pricing.price" :min="0" :step="0.01" placeholder="0.00" suffix="$" style="width: 100%; border-radius: 8px;" size="large" />
-            
-          </a-col>
-           
+
+            <!-- Price -->
+            <a-col :span="6">
+              <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151;">Price</label>
+              <a-input-number v-model:value="productForm.pricing.price" :min="0" :step="0.01" placeholder="0.00" suffix="$" style="width: 100%; border-radius: 8px;" size="large" />
+            </a-col>
+
           </a-row>
 
           <!-- Dimensions -->
           <div style="margin-bottom: 24px;">
             <h4 style="margin-bottom: 16px; font-weight: 500; font-size: 14px; color: #1f2937;">Dimensions</h4>
-            <a-row >
+            <a-row>
               <a-col :span="8">
                 <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 13px; color: #6b7280;">Width (cm)</label>
                 <a-input-number v-model:value="productForm.dimensions.width" :min="0.01" :step="0.01" placeholder="0.00" style="width: 100%; border-radius: 6px;" />
@@ -157,11 +201,9 @@
                 <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 13px; color: #6b7280;">Length (cm)</label>
                 <a-input-number v-model:value="productForm.dimensions.length" :min="0.01" :step="0.01" placeholder="0.00" style="width: 100%; border-radius: 6px;" />
               </a-col>
-           
             </a-row>
           </div>
  
-          
           <!-- Available Colors -->
           <a-col :span="24">
             <h4 style="margin-bottom: 16px; font-weight: 500; font-size: 14px; color: #1f2937;">Available Colors</h4>
@@ -177,14 +219,7 @@
                       @input="tempColor = $event.target.value"
                       style="width: 30px; height: 25px; border: none; border-radius: 4px; cursor: pointer;"
                     />
-                    <a-button 
-                      type="primary" 
-                      size="small" 
-                      @click="addColorFromTemp"
-                      style="margin-left: 8px;"
-                    >
-                      Add
-                    </a-button>
+                    <a-button type="primary" size="small" @click="addColorFromTemp" style="margin-left: 8px;">Add</a-button>
                   </div>
                 </template>
                 <template #content>
@@ -194,48 +229,37 @@
                       :key="index"
                       @click="addPresetColor(color)"
                       :style="{
-                        width: '32px',
-                        height: '32px',
-                        borderRadius: '6px',
-                        backgroundColor: color,
-                        cursor: 'pointer',
+                        width: '32px', height: '32px', borderRadius: '6px',
+                        backgroundColor: color, cursor: 'pointer',
                         border: '1px solid #e5e7eb',
                         opacity: isColorAlreadyAdded(color) ? 0.5 : 1
                       }"
                     ></div>
                   </div>
                 </template>
-                <a-button style="border-radius: 6px; border: 2px dashed #d1d5db; display: flex;justify-content: space-between;gap:10px;align-items: center;">
-                  <!-- <template #icon> -->
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <line x1="12" y1="5" x2="12" y2="19"></line>
-                      <line x1="5" y1="12" x2="19" y2="12"></line>
-                    </svg>
-                  <!-- </template> -->
+                <a-button style="border-radius: 6px; border: 2px dashed #d1d5db; display: flex; justify-content: space-between; gap: 10px; align-items: center;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
                   Add Colors
                 </a-button>
               </a-popover>
 
               <!-- Display Selected Available Colors -->
               <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 12px;">
-                <!-- Existing Colors -->
                 <div v-for="color in (selectedProduct?.colors?.available_colors || [])" :key="color.id" style="position: relative;">
                   <div 
                     :style="{ 
-                      width: '40px', 
-                      height: '40px', 
-                      borderRadius: '50%', 
-                      backgroundColor: color.color, 
-                      cursor: 'pointer', 
+                      width: '40px', height: '40px', borderRadius: '50%', 
+                      backgroundColor: color.color, cursor: 'pointer', 
                       border: '2px solid #e5e7eb'
                     }"
                   ></div>
                   <!-- Remove color button -->
                   <a-button 
-                    type="text" 
-                    size="small" 
-                    @click="deleteColor(color.id)"
-                    style="position: absolute; top: -8px; right: -8px; background: #ef4444; color: white; border-radius: 50%; width: 20px; height: 20px; padding: 0; min-width: 20px; display: flex;justify-content: center;align-items: center;"
+                    type="text" size="small" @click="deleteColor(color.id)"
+                    style="position: absolute; top: -8px; right: -8px; background: #ef4444; color: white; border-radius: 50%; width: 20px; height: 20px; padding: 0; min-width: 20px; display: flex; justify-content: center; align-items: center;"
                   >
                     <template #icon>
                       <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
@@ -248,6 +272,7 @@
               </div>
             </div>
           </a-col>
+
         </div>
       </a-col>
     </a-row>
@@ -274,6 +299,7 @@ export default {
         brand: '',
         model_number: '',
         material: '',
+        category_name: [],
         dimensions: {
           width: null,
           height: null,
@@ -307,12 +333,23 @@ export default {
         '#FF6347', '#40E0D0', '#EE82EE', '#90EE90', '#FFB6C1', '#87CEEB'
       ],
       furnitureTypes: [
-        'Modern', 'Traditional', 'Contemporary', 'Industrial', 
+        'Modern', 'Traditional', 'Contemporary', 'Industrial',
         'Rustic', 'Minimalist', 'Classic', 'Vintage'
       ],
       lightTypes: [
         'sunk', 'pendant', 'ceiling', 'wall', 'floor', 'table', 'accent', 'outdoor'
       ],
+
+      // Room Type & Category
+      selectedRoomType: null,
+      selectedRoomTypeName: null,
+      roomTypes: [],
+      loadingRoomTypes: false,
+      categoryOptions: [],
+      allCategories: [],
+      loadingCategories: false,
+      categorySearchTimeout: null,
+
       isSaving: false,
       imagePreviewsState: [],
       hasUnsavedChanges: false
@@ -320,19 +357,18 @@ export default {
   },
   computed: {
     primaryImage() {
-      // Find primary image from existing images
       const primaryImg = this.selectedProduct.images?.find(img => img.is_primary);
       if (primaryImg) {
         return { url: this.$store.state.root_media_api + primaryImg.image };
       }
-      // Fallback to primary_image if available
       if (this.selectedProduct.primary_image) {
         return { url: this.$store.state.root_media_api + this.selectedProduct.primary_image };
       }
       return null;
     }
   },
-  mounted() {
+  async mounted() {
+    await this.loadRoomTypes();
     this.initializeForm();
     window.addEventListener('beforeunload', this.handleBeforeUnload);
   },
@@ -341,16 +377,152 @@ export default {
     this.cleanupPreviews();
   },
   watch: {
-    selectedProduct: { 
-      handler() { this.initializeForm(); }, 
-      deep: true 
+    selectedProduct: {
+      async handler() {
+        if (this.roomTypes.length === 0) {
+          await this.loadRoomTypes();
+        }
+        this.initializeForm();
+      },
+      deep: true
     },
-    productForm: { 
-      handler() { this.hasUnsavedChanges = true; }, 
-      deep: true 
+    productForm: {
+      handler() { this.hasUnsavedChanges = true; },
+      deep: true
     }
   },
   methods: {
+
+    // ── Room Type & Category ───────────────────────────────────────────────
+
+    async loadRoomTypes() {
+      try {
+        this.loadingRoomTypes = true;
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${this.$store.state.root_api}product/api/room-types/`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${token}`
+          }
+        });
+        const result = await response.json();
+        this.roomTypes = result || [];
+      } catch (error) {
+        console.error('Error loading room types:', error);
+        this.roomTypes = [];
+      } finally {
+        this.loadingRoomTypes = false;
+      }
+    },
+
+    handleRoomTypeChange(value) {
+      const selectedRoom = this.roomTypes.find(rt => rt.id === value);
+      this.selectedRoomType = value;
+      this.selectedRoomTypeName = selectedRoom ? selectedRoom.name : null;
+      // Reset category when room type changes
+      this.productForm.category_name = [];
+      this.categoryOptions = [];
+      this.allCategories = [];
+      if (value) {
+        this.loadInitialCategories();
+      }
+    },
+
+    async loadInitialCategories() {
+      try {
+        this.loadingCategories = true;
+        const token = localStorage.getItem('token');
+        const roomTypeParam = this.selectedRoomType
+          ? `?room_type=${encodeURIComponent(this.selectedRoomType)}`
+          : '';
+        const response = await fetch(
+          `${this.$store.state.root_api}product/api/categories/${roomTypeParam}`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Token ${token}`
+            }
+          }
+        );
+        const result = await response.json();
+        if (result.success) {
+          this.allCategories = result.data || [];
+          this.categoryOptions = this.allCategories.map(cat => ({
+            label: cat.name,
+            value: cat.name,
+            data: cat
+          }));
+        }
+      } catch (error) {
+        console.error('Error loading categories:', error);
+      } finally {
+        this.loadingCategories = false;
+      }
+    },
+
+    async handleCategorySearch(searchValue) {
+      if (this.categorySearchTimeout) clearTimeout(this.categorySearchTimeout);
+      if (!searchValue?.trim()) {
+        this.categoryOptions = this.allCategories.map(cat => ({
+          label: cat.name,
+          value: cat.name
+        }));
+        return;
+      }
+      this.loadingCategories = true;
+      this.categorySearchTimeout = setTimeout(async () => {
+        try {
+          const token = localStorage.getItem('token');
+          const response = await fetch(
+            `${this.$store.state.root_api}product/api/categories/search/?q=${encodeURIComponent(searchValue)}`,
+            {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Token ${token}`
+              }
+            }
+          );
+          const result = await response.json();
+          this.categoryOptions = result.success
+            ? result.data.map(cat => ({ label: cat.name, value: cat.name }))
+            : [];
+        } catch (error) {
+          this.categoryOptions = [];
+        } finally {
+          this.loadingCategories = false;
+        }
+      }, 300);
+    },
+
+    handleSelectFocus() {
+      if (this.categoryOptions.length === 0) {
+        this.categoryOptions = this.allCategories.map(cat => ({
+          label: cat.name,
+          value: cat.name
+        }));
+      }
+    },
+
+    handleCategoryChange(value) {
+      if (Array.isArray(value)) {
+        if (value.length > 1) {
+          // Only one category allowed — keep last selected
+          this.productForm.category_name = [value[value.length - 1]];
+        } else if (value.length === 1) {
+          this.productForm.category_name = value;
+        } else {
+          this.productForm.category_name = [];
+        }
+      } else {
+        this.productForm.category_name = value ? [value] : [];
+      }
+    },
+
+    // ── Form Init ──────────────────────────────────────────────────────────
+
     initializeForm() {
       if (this.selectedProduct) {
         this.productForm = {
@@ -362,6 +534,9 @@ export default {
           brand: this.selectedProduct.brand || '',
           model_number: this.selectedProduct.model_number || '',
           material: this.selectedProduct.material || '',
+          category_name: this.selectedProduct.category?.name
+            ? [this.selectedProduct.category.name]
+            : [],
           dimensions: {
             width: this.selectedProduct.dimensions?.width || null,
             height: this.selectedProduct.dimensions?.height || null,
@@ -388,6 +563,18 @@ export default {
         };
         this.hasUnsavedChanges = false;
         this.imagePreviewsState = [];
+
+        // Hydrate room type from the product's room_type object
+        if (this.selectedProduct?.room_type) {
+          this.selectedRoomType = this.selectedProduct.room_type.id || null;
+          this.selectedRoomTypeName = this.selectedProduct.room_type.name || null;
+          if (this.selectedRoomType) {
+            this.loadInitialCategories();
+          }
+        } else {
+          this.selectedRoomType = null;
+          this.selectedRoomTypeName = null;
+        }
       }
     },
 
@@ -414,9 +601,10 @@ export default {
       }
     },
 
-    // File Upload Methods
-    uploadMoreImages() { 
-      this.$refs.imageInput.click(); 
+    // ── File Upload ────────────────────────────────────────────────────────
+
+    uploadMoreImages() {
+      this.$refs.imageInput.click();
     },
 
     handleImageUpload(event) {
@@ -456,10 +644,12 @@ export default {
       return true;
     },
 
+    // ── Colors ─────────────────────────────────────────────────────────────
+
     addColorFromTemp() {
       if (this.tempColor && !this.isColorAlreadyAdded(this.tempColor)) {
         this.addColor(this.tempColor);
-        this.tempColor = '#000000'; // Reset temp color
+        this.tempColor = '#000000';
       } else if (this.isColorAlreadyAdded(this.tempColor)) {
         this.$message.warning('Color already exists');
       }
@@ -477,20 +667,20 @@ export default {
       return this.selectedProduct?.colors?.available_colors?.some(color => color.color === colorHex) || false;
     },
 
-    // Primary Image Toggle - Updated API endpoint
+    // ── API Calls (access-engine endpoints preserved) ──────────────────────
+
     async togglePrimaryImage(imageId) {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/images/${imageId}/set-primary/?access-id=`+this.$route.query.access_id, {
-
-        // const response = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/images/${imageId}/set-primary/`, {
-          method: 'PATCH',
-          headers: { 'Authorization': `Token ${token}` }
-        });
-
+        const response = await fetch(
+          `${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/images/${imageId}/set-primary/?access-id=${this.$route.query.access_id}`,
+          {
+            method: 'PATCH',
+            headers: { 'Authorization': `Token ${token}` }
+          }
+        );
         const result = await response.json();
         if (result.success) {
-          // Update local data
           this.selectedProduct.images.forEach(img => img.is_primary = false);
           const targetImage = this.selectedProduct.images.find(img => img.id === imageId);
           if (targetImage) targetImage.is_primary = true;
@@ -504,38 +694,34 @@ export default {
       }
     },
 
-    // Color Management - Updated API endpoint
     async addColor(colorHex) {
       if (this.isColorAlreadyAdded(colorHex)) {
         this.$message.warning('Color already exists');
         return;
       }
-      
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/colors/?access-id=`+this.$route.query.access_id, {
-
-        // const response = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/colors/`, {
-          method: 'POST',
-          headers: { 
-            'Authorization': `Token ${token}`, 
-            'Content-Type': 'application/json' 
-          },
-          body: JSON.stringify({ color: colorHex })
-        });
-
+        const response = await fetch(
+          `${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/colors/?access-id=${this.$route.query.access_id}`,
+          {
+            method: 'POST',
+            headers: {
+              'Authorization': `Token ${token}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ color: colorHex })
+          }
+        );
         const result = await response.json();
         if (result.success) {
-          // Ensure colors object exists
           if (!this.selectedProduct.colors) {
             this.selectedProduct.colors = { available_colors: [] };
           }
           if (!this.selectedProduct.colors.available_colors) {
             this.selectedProduct.colors.available_colors = [];
           }
-          
-          this.selectedProduct.colors.available_colors.push({ 
-            id: result.data.id, 
+          this.selectedProduct.colors.available_colors.push({
+            id: result.data.id,
             color: result.data.color
           });
           this.$message.success('Color added successfully');
@@ -558,13 +744,13 @@ export default {
         onOk: async () => {
           try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/colors/${colorId}/?access-id=`+this.$route.query.access_id, {
-
-            // const response = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/colors/${colorId}/`, {
-              method: 'DELETE',
-              headers: { 'Authorization': `Token ${token}` }
-            });
-
+            const response = await fetch(
+              `${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/colors/${colorId}/?access-id=${this.$route.query.access_id}`,
+              {
+                method: 'DELETE',
+                headers: { 'Authorization': `Token ${token}` }
+              }
+            );
             const result = await response.json();
             if (result.success) {
               const index = this.selectedProduct.colors.available_colors.findIndex(color => color.id === colorId);
@@ -593,13 +779,13 @@ export default {
         onOk: async () => {
           try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/images/${imageId}/?access-id=`+this.$route.query.access_id, {
-
-            // const response = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/images/${imageId}/`, {
-              method: 'DELETE',
-              headers: { 'Authorization': `Token ${token}` }
-            });
-
+            const response = await fetch(
+              `${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/images/${imageId}/?access-id=${this.$route.query.access_id}`,
+              {
+                method: 'DELETE',
+                headers: { 'Authorization': `Token ${token}` }
+              }
+            );
             const result = await response.json();
             if (result.success) {
               const index = this.selectedProduct.images.findIndex(img => img.id === imageId);
@@ -639,8 +825,6 @@ export default {
         this.$message.error('Stock quantity must be 0 or greater');
         return false;
       }
-
-      // Validate dimensions if provided
       const dimensionFields = ['width', 'height', 'length', 'depth', 'weight'];
       for (let field of dimensionFields) {
         if (this.productForm.dimensions[field] !== null && parseFloat(this.productForm.dimensions[field]) <= 0) {
@@ -664,64 +848,75 @@ export default {
       try {
         const token = localStorage.getItem('token');
 
-        // Upload pending images first if any - Updated API endpoint
+        // Upload pending images first if any
         if (this.imagePreviewsState.length > 0) {
           const formData = new FormData();
           this.imagePreviewsState.forEach(preview => {
             formData.append('images', preview.file);
             preview.uploading = true;
           });
-          const imageResponse = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/images/?access-id=`+this.$route.query.access_id, {
-
-          // const imageResponse = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/images/`, {
-            method: 'POST',
-            headers: { 'Authorization': `Token ${token}` },
-            body: formData
-          });
-
+          const imageResponse = await fetch(
+            `${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/images/?access-id=${this.$route.query.access_id}`,
+            {
+              method: 'POST',
+              headers: { 'Authorization': `Token ${token}` },
+              body: formData
+            }
+          );
           const imageResult = await imageResponse.json();
           if (imageResult.success) {
-            // Add new images to the existing array
             this.selectedProduct.images.push(...imageResult.data);
             this.cleanupPreviews();
           }
         }
 
-        // Update product details - Updated API endpoint and structure
+        // Update product details
         const productData = new FormData();
         productData.append('name', this.productForm.name);
         productData.append('description', this.productForm.description);
         productData.append('furniture_type', this.productForm.furniture_type);
-        
+
         if (this.productForm.light_type) {
           productData.append('light_type', this.productForm.light_type);
         }
 
-        // Add pricing
+        // Send category name
+        const categoryValue = Array.isArray(this.productForm.category_name)
+          ? this.productForm.category_name[0] || ''
+          : this.productForm.category_name || '';
+        if (categoryValue) {
+          productData.append('category_name', categoryValue);
+        }
+
+        // Send room_type_name
+        if (this.selectedRoomTypeName) {
+          productData.append('room_type_name', this.selectedRoomTypeName);
+        }
+
         if (this.productForm.pricing.price) {
           productData.append('price', this.productForm.pricing.price);
         }
 
-        // Add dimensions
         ['height', 'length', 'width'].forEach(dim => {
           if (this.productForm.dimensions[dim]) {
             productData.append(dim, this.productForm.dimensions[dim]);
           }
         });
-        const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/?access-id=`+this.$route.query.access_id, {
 
-        // const response = await fetch(`${this.$store.state.root_api}product/api-product-owner/products/${this.selectedProduct.id}/`, {
-          method: 'PUT',
-          headers: { 'Authorization': `Token ${token}` },
-          body: productData
-        });
+        const response = await fetch(
+          `${this.$store.state.root_api}access-engine/api/business-products/products/${this.selectedProduct.id}/?access-id=${this.$route.query.access_id}`,
+          {
+            method: 'PUT',
+            headers: { 'Authorization': `Token ${token}` },
+            body: productData
+          }
+        );
 
         const result = await response.json();
 
         if (result.success) {
           this.$message.success('Product updated successfully');
           this.hasUnsavedChanges = false;
-          // Update parent component with new data
           this.$emit('product-updated', result.data);
         } else {
           this.$message.error(result.message || 'Failed to update product');
@@ -737,7 +932,6 @@ export default {
   }
 }
 </script>
-
 
 <style scoped>
 @keyframes spin {
