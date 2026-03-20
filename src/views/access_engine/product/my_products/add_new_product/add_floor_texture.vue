@@ -586,7 +586,7 @@ export default defineComponent({
   props: {
     visible: { type: Boolean, default: false },
   },
-  emits: ['update:visible', 'product-created', 'cancel'],
+  emits: ['update:visible', 'product-created', 'cancel','api-error'],
   setup(props, { emit }) {
     const isSaving = ref(false);
     const tempColor = ref('#000000');
@@ -847,9 +847,10 @@ const handleRoomTypeChange = (value) => {
           message.success('Floor texture product created successfully!');
           emit('product-created', result.data);
           handleCancel();
-        } else {
-          console.error('API Error:', result.message);
-          message.error(result.message || 'Failed to create product. Please try again.');
+        }else {
+          const errorMsg = result.message || 'Failed to create product';
+          this.handleCancel(); 
+          this.$emit('api-error', errorMsg); 
         }
         
       } catch (error) {

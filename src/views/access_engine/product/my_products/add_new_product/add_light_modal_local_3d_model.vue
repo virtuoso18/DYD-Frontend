@@ -44,33 +44,30 @@
                   <div style="position: relative; padding:10px;">
         
                     <!-- 3D Model Upload Area (shown when no model is uploaded) -->
-                    <router-link 
-        v-if="!local3dModelUrl"
-        :to="`/access-business/create-furniture-product-3d-model-add-product?access_id=${this.$route.query.access_id}&brand=${this.$route.query.brand}`"
-        class="block w-full border-2 border-dashed rounded-xl p-6 md:p-10 bg-gray-50 hover:bg-blue-50 hover:border-blue-500 transition-all duration-300 min-h-[200px] md:min-h-[250px] flex flex-col items-center justify-center text-center group"
-        :class="isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-300'"
-      >
-        <svg 
-          width="40" 
-          height="40" 
-          viewBox="0 0 24 24" 
-          fill="none" 
-          stroke="currentColor" 
-          stroke-width="2" 
-          class="mb-3 md:mb-4 group-hover:scale-110 transition-transform md:w-12 md:h-12"
-          :stroke="isDragging ? '#3b82f6' : '#9ca3af'"
-        >
-          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-          <polyline points="3.27,6.96 12,12.01 20.73,6.96"></polyline>
-          <line x1="12" y1="22.08" x2="12" y2="12"></line>
-        </svg>
-        <p class="text-xs md:text-sm font-medium text-gray-700 mb-1 md:mb-2 leading-relaxed px-2">
-          Please pick your already generated 3D models or click to upload
-        </p>
-        <p class="text-[10px] md:text-xs text-gray-500">
-          or create new one
-        </p>
-      </router-link>
+                    <div 
+                      v-if="!local3dModelUrl"
+                      :style="{
+                        border: isDragging ? '2px solid #3b82f6' : '2px dashed #d1d5db',
+                        borderRadius: '12px',
+                        padding: '40px 16px',
+                        background: isDragging ? '#f8faff' : '#f9fafb',
+                        minHeight: '250px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease'
+                      }"
+                    >
+                      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" style="margin-bottom: 16px;">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                        <polyline points="3.27,6.96 12,12.01 20.73,6.96"></polyline>
+                        <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                      </svg>
+                      <p style="font-size: 14px; color: #374151; font-weight: 500; margin-bottom: 8px;">please pick your already generated 3d models or click to upload</p>
+                      <p style="font-size: 12px; color: #6b7280; margin: 4px 0 0 0;">or create new one</p>
+                    </div>
         
                     <!-- 3D Model Renderer (shown when model is uploaded) -->
                     <div v-else style="position: relative;">
@@ -177,8 +174,8 @@
                   <!-- select3d_model_for_color component (same as second file) -->
                   <select3d_model_for_color 
                     :list_history_generated_3d_models="list_history_generated_3d_models"
-                    :loading_generated_models_history="loading_generated_models_history" 
-                    :is_light_create="true"
+                    :loading_generated_models_history="loading_generated_models_history"
+                    :is_light_create="true" 
                     @clicked-model="clickedModel"
                   />
 
@@ -637,7 +634,8 @@ export default {
     canvas_3d_model_renderer,
     select3d_model_for_color,
   },
-  emits: ['update:visible', 'product-created', 'cancel'],
+  
+  emits: ['update:visible', 'product-created', 'cancel','api-error'],
   
   data() {
     return {
@@ -1497,8 +1495,10 @@ export default {
           this.resetForm();
           
         } else {
-          console.error('❌ API Error:', result.message || 'Failed to create product');
-          throw new Error(result.message || 'Failed to create product');
+          
+          const errorMsg = result.message || 'Failed to create product';
+          this.handleCancel(); // close the modal first
+          this.$emit('api-error', errorMsg); // then bubble error up to parent
         }
 
       } catch (error) {

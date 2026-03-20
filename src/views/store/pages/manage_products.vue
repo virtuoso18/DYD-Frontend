@@ -703,6 +703,7 @@
       ]"
       @product-created="onProductCreated"
       @cancel="onCancel"
+      @api-error="handleApiError"
       :rendered_modal_3D_id="model_instance_id"
     />
 
@@ -720,6 +721,7 @@
       ]"
       @product-created="onProductCreated"
       @cancel="onCancel"
+      @api-error="handleApiError"
       :rendered_modal_3D_id="model_instance_id"
       :prepopulatedData="prepopulatedProductData"
       :isEditing="false"
@@ -742,6 +744,7 @@
       ]"
       @product-created="onLightProductCreated"
       @cancel="onCancel"
+      @api-error="handleApiError"
       :rendered_modal_3D_id="model_instance_id"
     />
 
@@ -757,6 +760,7 @@
     <add_new_floorTexture
       v-model:visible="show_add_new_floor_texture"
       @product-created="this.fetchMyFloorTextureProducts()"
+      @api-error="handleApiError"
     />
 
     <add_new_wallTexture
@@ -766,6 +770,7 @@
     <add_new_Light
       v-model:visible="show_add_new_light"
       @cancel="clicked_cancel_add_new_light"
+      @api-error="handleApiError"
       @add-3d-light="addLightProduct()"
       @product-created="this.fetchMyLights()"
     />
@@ -2607,13 +2612,13 @@
         <!-- <edit_Light :selectedProduct="selectedProduct" v-if="active_tab===  'Lights' && selectedProduct" :categories_available="categories_available" :types="types" @cancel_edit_back_product_list="backToList" /> -->
 
         <edit_Light_hanging_3d
-          :selectedProduct="selectedProduct"
-          v-if="
+        v-if="
             active_tab === 'Lights' &&
             selectedProduct &&
             selectedProduct.is_ceiling_light_product &&
             selectedProduct.light_type == 'hanging'
-          "
+            "
+        :selectedProduct="selectedProduct"
           :categories_available="categories_available"
           :types="types"
           @cancel_edit_back_product_list="backToList"
@@ -2661,6 +2666,7 @@
         @change="handleGalleryImageChange"
       />
     </div>
+    <errorModal v-model:visible="errorModal.visible" :message="errorModal.message" ></errorModal>
     <br />
   </div>
 </template>
@@ -2672,6 +2678,7 @@ import {
   ExclamationCircleOutlined,
 } from "@ant-design/icons-vue";
 import product_details from "@/components/store/product_details.vue";
+import errorModal from "@/components/Includes/modal/errorModal.vue";
 // import edit_product from '@/components/store/edit_product.vue'
 // import add_new_product from '@/components/store/add_new_product.vue'
 
@@ -2747,11 +2754,11 @@ export default {
     edit_Light_hanging_3d,
     edit_Light_sunk,
     edit_Light_unsunk,
+    errorModal
   },
   data() {
     return {
-      prepopulatedProductData: null,
-      isCreatingVariation: false,
+      
       currentView: "list", // 'list', 'details', 'edit'
       viewMode: "grid", // 'grid', 'table'
       active_tab: "Furniture",
@@ -2861,6 +2868,10 @@ export default {
         totalCount: 0,
         totalPages: 0,
       },
+       errorModal: {
+        visible: false,
+        message: ''
+      }
     };
   },
   computed: {
@@ -2885,6 +2896,10 @@ export default {
     this.fetchMyFloorTextureProducts();
   },
   methods: {
+    handleApiError(message) {
+    this.errorModal.message = message;
+    this.errorModal.visible = true;
+  },
     createVariation() {
       console.log("Creating variation for:", this.selectedProduct);
 
@@ -3503,6 +3518,7 @@ export default {
       this.fetchProductDetails(newProduct.id);
     },
     onLightProductCreated(newLightProduct) {
+      debugger
       // this.myLights.push(newLightProduct);
       this.open_add_newLightModal = false;
       this.show_add_new_light_product_locally_3d_model = false;

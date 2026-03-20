@@ -59,7 +59,8 @@
 
           <a-row>
             <a-col span="24" >
-              <b style="color:black" >{{ product.product_title }}</b>
+              <b style="font-size: 13px;">{{ truncateText(product.product_title || 'No Name available', 2) }}</b>
+
             </a-col>
 
             <a-col span="18" style="color:black"  > Color </a-col>
@@ -219,13 +220,64 @@
         When the final results are ready, you’ll be notified via<br />
         email and on the My Design page.
       </p>
+      
+     <div style="text-align:center" v-if="visibleRenderings.length!==0">
+  <h1>Previous rendering results</h1>
+  <div class="render-list">
+    <router-link 
+      v-for="(item, index) in visibleRenderings" 
+      :key="index"
+      :to="get_to_rendered_results(item)"
+      class="render-item"
+    >
+      <img 
+        :src="$store.state.root_media_api + item.renderer_file_url"
+        alt="render preview"
+        class="render-image"
+      />
+    </router-link>
+
+    <!-- Load More tile -->
+    <div 
+      v-if="!showAllRenderings && previous_renderings_results.length > 4"
+      class="render-item render-load-more"
+      @click="showAllRenderings = true"
+    >
+      <div class="render-load-more-inner">
+        <span class="render-load-more-count">+{{ previous_renderings_results.length - 4 }}</span>
+        <span class="render-load-more-label">Show more</span>
+      </div>
+    </div>
+
+    <!-- Collapse tile -->
+    <div 
+      v-if="showAllRenderings && previous_renderings_results.length > 4"
+      class="render-item render-load-more"
+      @click="showAllRenderings = false"
+    >
+      <div class="render-load-more-inner">
+        <span class="render-load-more-label">Show less</span>
+      </div>
+    </div>
+  </div>
+</div>
+      <br>
       <div
-        :style="'padding:10px;font-size: 18px;color:blue;font-weight:bold;background-color:#f3f2f3;'"
+        :style="'padding:10px;font-size: 18px;color:blue;font-weight:bold;background-color:#f3f2f3;border-radius:10px'"
       >
-        <p>
+      <div v-if="visibleRenderings.length === 0">
+            <p>
           Estimated rendering time: 2-5 minutes <br />(larger images may take
           longer)
         </p>
+          </div>
+          <div v-else>
+            <p>
+          <b>Render Newly</b> <br> Estimated rendering time: 2-5 minutes <br />(larger images may take
+          longer)
+        </p>
+          </div>
+        
       </div>
       <br />
       <div style="align-self: center">
@@ -261,7 +313,13 @@
               stroke-linejoin="round"
             />
           </svg>
-          Render Now</a-button
+          <div v-if="visibleRenderings.length === 0">
+            Render Now
+          </div>
+          <div v-else>
+            Render Newly
+          </div>
+          </a-button
         >
       </div>
     </div>
@@ -2030,9 +2088,9 @@
         >
           <a-row style="margin-bottom: 10px">
             <a-col :span="6">
-              <img :src="base_image_url" style="width: 100%" alt="" />
+              <img :src="base_image_url" style="width: 100%;max-height:80px;object-fit:cover;border-radius:10px" alt="" />
             </a-col>
-            <a-col :span="18" style="padding-left: 10px">
+            <a-col :span="18" style="padding-left: 10px;">
               <h2 style="margin: 0; font-size: 14px; color: #000">
                 Share your project
               </h2>
@@ -2786,11 +2844,16 @@ export default {
   },
   data() {
     return {
+          showAllRenderings: false,
+    _renderingInProgress: false,
+
+
       showCreditModal:false,
       creditErrorMessage:'',
       LoadingMessageButton:false,
       buid:'',
       out_of_credits:false,
+      previous_renderings_results:[],
 
       user: JSON.parse(localStorage.getItem("user")),
       imageLoading: true, // ADD THIS
@@ -2868,6 +2931,10 @@ export default {
         ? this.main_image
         : this.base_image_url;
     },
+    visibleRenderings() {
+    if (this.showAllRenderings) return this.previous_renderings_results;
+    return this.previous_renderings_results.slice(0, 4);
+  }
   },
 
   mounted() {
@@ -2875,12 +2942,34 @@ export default {
     this.fetchRoom();
     this.FetchFinalResults();
     this.loadAvailableTags();
+    this.check_previous_renderings_results() 
     if (this.$route.query.renderer_id){
       this.startRendering()
     }
   },
-
+watch: {
+  '$route.query.renderer_id'(newVal) {
+    if (newVal && !this._renderingInProgress) {
+      this.startRendering();
+    }
+  }
+},
   methods: {
+    truncateText(text, wordLimit) {
+      if (!text) return '';
+      const words = text.split(' ');
+      if (words.length <= wordLimit) return text;
+      return words.slice(0, wordLimit).join(' ') + '...';
+    },
+    get_to_rendered_results(item) {
+      
+  return {
+    path: this.$route.path,
+    query: {
+      ...this.$route.query,
+      renderer_id: item.id
+    }
+  }},
   async handleNotifyToggle(checked) {
         // Cancel previous pending call
         if (this.notifyDebounceTimer) {
@@ -3147,12 +3236,49 @@ export default {
       this.rendering_started = true;
       if (this.$route.query.renderer_id){
         this.get_previous_rendered_results();
-      }else{
+      }
+      else {
         this.startRendering_API_CALL();
       }
     },
+    async check_previous_renderings_results(){
+      
+      try {
+        const roomId = this.$route.params.id;
+        const url = `${this.$store.state.root_api}engine/render-final-result-previous-final-renderings/${roomId}`;
 
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Token ${localStorage.getItem("token")}`,
+          }
+        });
+
+
+        if (!response.ok  ) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const responseData = await response.json();
+
+        if (responseData.success) {
+          // ✅ ONLY NOW update canvas
+          this.previous_renderings_results=responseData.previous_renderings;
+        }
+
+      } catch (error) {
+          console.error("❌ Failed to start rendering:", error);
+          this.error.room = error.message;
+          this.imageLoading = false;
+          this.showError("Failed to Start Rendering", error.message);
+
+      } finally {
+        this.loading = false;
+      }
+    },
     openRenderNowModal() {
+      
       this.open_RenderNowModal = true;
     },
 
@@ -3539,15 +3665,21 @@ export default {
           // ⏳ WAIT until polling completes
           this.current_renderer_id=responseData.renderer_id
           
-          this.$router.replace({
-              query: {
-                ...this.$route.query,
-                renderer_id: responseData.renderer_id
-              }
-          })
+this._renderingInProgress = true;
+          
           
           const finalImage = await this.startPolling(responseData.renderer_id);
-
+              this.$router.replace({
+                                query: {
+                                  ...this.$route.query,
+                                  renderer_id: responseData.renderer_id
+                                }
+                            })
+                            
+            // Reset after a tick so the watcher fires and sees the flag
+            this.$nextTick(() => {
+              this._renderingInProgress = false;
+            });
           // ✅ ONLY NOW update canvas
           this.base_image_url =
             this.$store.state.root_media_api + finalImage + "?t=" + Date.now();
@@ -4161,5 +4293,59 @@ export default {
   100% {
     background-position: -200% 0;
   }
+}
+.render-list {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap; /* fixed */
+}
+
+.render-item {
+  display: flex;
+}
+
+.render-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+
+.render-load-more {
+  cursor: pointer;
+  width: 80px;
+  height: 80px;
+}
+
+.render-load-more-inner {
+  width: 80px;
+  height: 80px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.08);
+  border: 2px dashed #bbb;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  transition: background 0.2s;
+}
+
+.render-load-more:hover .render-load-more-inner {
+  background: rgba(0, 102, 255, 0.1);
+  border-color: #3B63FB;
+}
+
+.render-load-more-count {
+  font-size: 16px;
+  font-weight: 700;
+  color: #333;
+}
+
+.render-load-more-label {
+  font-size: 10px;
+  color: #666;
+  text-align: center;
 }
 </style>

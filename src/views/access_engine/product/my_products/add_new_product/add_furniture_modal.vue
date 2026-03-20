@@ -362,7 +362,7 @@
             </div>
 
             <!-- PBR Files Section -->
-            <!-- <div style="margin-bottom: 20px;">
+            <div style="margin-bottom: 20px;">
               <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #374151;">PBR Files</label>
               <div style="cursor: pointer;" @click="uploadPbr">
                 <div style="width: 100%; height: 48px; background: #f3f4f6; border: 2px dashed #d1d5db; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 8px;">
@@ -390,7 +390,7 @@
                   </a-button>
                 </div>
               </div>
-            </div> -->
+            </div>
 
           </div>
         </a-col>
@@ -416,7 +416,7 @@ export default {
     types: { type: Array, default: () => ['Modern','Scandinavian','Classic','Minimalist','Industrial','Rustic','Boho','other'] }
   },
   components: { canvas_3d_model_renderer },
-  emits: ['update:visible', 'product-created', 'cancel'],
+  emits: ['update:visible', 'product-created', 'cancel','api-error'],
 
   data() {
     return {
@@ -953,11 +953,10 @@ export default {
           this.$emit('update:visible', false);
           this.resetForm();
         } else {
-          console.error('❌ API Error:', result.message || 'Failed to create product');
-          this.$message.error(result.message || 'Failed to create product');
-          throw new Error(result.message || 'Failed to create product');
+          const errorMsg = result.message || 'Failed to create product';
+          this.handleCancel(); 
+          this.$emit('api-error', errorMsg); 
         }
-
       } catch (error) {
         console.error('❌ Error creating product:', error);
         this.$message.error('Error creating product. Please try again.');

@@ -102,11 +102,11 @@
               </div>
             </div>
 
-            <p
+            <!-- <p
               class="!font-[Poppins] !font-normal text-[8px] sm:text-[12px] !leading-[13px] !tracking-[0] text-gray-600 py-4"
             >
               {{ post.description }}
-            </p>
+            </p> -->
 
             <div class="flex gap-2">
               <span 
@@ -172,6 +172,7 @@
         {{ comment.time }}
       </span>
     </div>
+   
 
    <!-- Desktop comment -->
 <p class="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap break-words">

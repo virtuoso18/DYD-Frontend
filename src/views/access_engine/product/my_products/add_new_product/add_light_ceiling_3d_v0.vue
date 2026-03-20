@@ -1,5 +1,5 @@
 <template>
-   <a-modal
+  <a-modal
   v-model:open="showCreditModal"
   title=""
   centered
@@ -76,65 +76,67 @@
 
   </div>
 </a-modal>
+
    <add_new_furniture 
         v-model:visible="showAddProduct"
         :types="['Modern','Scandinavian','Classic','Minimalist','Industrial','Rustic','Boho','other',]"
         @product-created="onProductCreated"
         @cancel="onCancel"
+        @api-error="apiError"
         :rendered_modal_3D_id="model_instance_id"
     />
-  <a-row>
-    <a-col :span="6">
-      <!-- @processing-generate="processinggenerate_loading" -->
-<sidepanel_3d_tab
-          @insufficient-credits="throw_Insufficient_credits"
+ <div class="flex flex-col md:flex-row w-full">
+  <!-- Center Panel (First on Mobile, Middle on Desktop) - 12/24 = 50% width -->
+  <div class="w-full md:order-2 md:w-6/12">
+    <object_viewer_3d_tab 
+      :glbModelUrl="generated3dModel_url"
+      :isLoading="processing_generate_is_Loading"
+      :Model_instance_id="model_instance_id"
+      @clicked-add-product="add_new_product"
+    />
+  </div>
+  
+  <!-- Left Panel (Second on Mobile, First on Desktop) - 6/24 = 25% width -->
+  <div class="w-full md:order-1 md:w-3/12 bg-white text-black">
+    <sidepanel_3d_tab 
+      @generated="new3DModelGenerated"
+      @queue-updated="get_3d_rendered_model_details"
+      @insufficient-credits="throw_Insufficient_credits"
+    />
+  </div>
+  
+  <!-- Right Panel (Third on Mobile, Third on Desktop) - 6/24 = 25% width -->
+  <div class="w-full md:order-3 md:w-3/12 pt-4 md:pt-0">
+    <models_3d_generate_history 
+      :list_history_generated_3d_models="list_history_generated_3d_models"
+      :loading_generated_models_history="loading_generated_models_history"
+      @clicked-model="clicked_history_model"
+    />
+  </div>
+</div>
 
-          @generated="new3DModelGenerated"
-          @queue-updated="get_3d_rendered_model_details"
-          />
-          
 
-    </a-col>
-    
-    <a-col :span="12">
-      
-  <object_viewer_3d_tab 
-  :glbModelUrl="generated3dModel_url"
-  :isLoading="processing_generate_is_Loading"
-  :Model_instance_id="model_instance_id"
-  @clicked-add-product="add_new_product"
-  />
-    </a-col>
-    <a-col :span="6">
-
-      
-<models_3d_generate_history 
-  :list_history_generated_3d_models="list_history_generated_3d_models"
-  :loading_generated_models_history="loading_generated_models_history"
-  @clicked-model="clicked_history_model"
-  />
-    </a-col>
-  </a-row>
   
   </template>
 <script>
 
 // 3d Panel Tab 
-import sidepanel_3d_tab from '@/components/dashboard/business/my_products/add_new_product/add_light_3d_model_gen/side_panel_3d.vue'
-import object_viewer_3d_tab from '@/components/dashboard/business/my_products/add_new_product/add_light_3d_model_gen/canvas_renderer.vue'
-import models_3d_generate_history from '@/components/dashboard/business/my_products/add_new_product/add_light_3d_model_gen/generate_history.vue'
-import add_new_furniture from '@/components/dashboard/business/my_products/add_new_product/add_light_modal.vue'
+import sidepanel_3d_tab from '@/views/access_engine/product/my_products/add_new_product/add_furniture_3d_model_gen/side_panel_3d.vue'
+import object_viewer_3d_tab from '@/views/access_engine/product/my_products/add_new_product/add_furniture_3d_model_gen/canvas_renderer.vue'
+import models_3d_generate_history from '@/views/access_engine/product/my_products/add_new_product/add_furniture_3d_model_gen/generate_history.vue'
+import add_new_furniture from '@/views/access_engine/product/my_products/add_new_product/add_furniture_modal.vue'
+
 
 export default {
   name:"add_Furniture"
 ,
+emits:['api-error'],
 data(){
-  return { 
-      
+  return { //  3dTab 
+    
        showCreditModal: false,
       creditErrorMessage: "",
 
-      //  3dTab 
       generated3dModel_url: '',
       model_instance_id:'',
       processing_generate_is_Loading:false,
@@ -157,8 +159,63 @@ components:{
 },
 mounted(){
   this.fetch3d_models_generated_by_user()
+  if( this.$route.query['product-3d-model']){
+    this.loadHistoryModel()
+  }
 },
 methods:{
+  apiError(errorMsg) {
+    this.$emit('api-error', errorMsg);
+  },
+  async loadHistoryModel(){
+    // console.log("======================================================")
+    // console.log("=======================   Need To Load 3d Model Here ===============================")
+    // console.log("======================================================")
+    
+    
+  this.loading_generated_models_history= true;
+
+  try {
+    const url = `${this.$store.state.root_api}engine/generated-3d-models-user-history/${this.$route.query['product-3d-model']}`;
+    // const payload = {
+    //       'model_3d_id': this.$route.query['product-3d-model'],
+    //     }
+    console.log('📡 Fetching generated 3d models hisrtory ...');
+    const responseData = await this.makeApiRequest(url, { 
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Token ${localStorage.getItem('token')}`
+      },
+    // body: JSON.stringify(payload)
+    }, 'fetch_generated_3d_model');
+    
+    if (responseData) {
+      
+      this.generated3dModel_url=this.$store.state.root_media_api+ responseData.data.model_file_url
+      this.model_instance_id=responseData.data.id
+        generated_3d_model_id 
+        let e={        
+          processing_generate_is_Loading:false,
+          generated3dModel_url:this.generated3dModel_url,
+          model_instance_id:this.model_instance_id,
+        }
+        this.clicked_history_model(e)
+}
+  } catch (error) {
+    console.error("❌ Failed to fetch history generated 3d Models :", error);
+    this.error.general = error.message;
+    this.showError('Failed to fetch history generated 3d Models', error.message, () => this.fetch3d_models_generated_by_room());
+  } finally {
+    this.loading_generated_models_history = false;
+  }
+    
+// let e={        processing_generate_is_Loading
+//     generated3dModel_url
+//     model_instance_id
+// }
+// this.clicked_history_model(e)
+  },
   throw_Insufficient_credits(message){
       // @insufficient-credits="throw_Insufficient_credits"
       // if(response.status==402){
@@ -171,7 +228,7 @@ methods:{
     },
 
   onProductCreated(e){
-this.$router.push('/business-dashboard/my-products')
+this.$router.push("/access-business/manage-products?access_id="+this.$route.query.access_id+"&brand="+this.$route.query.brand)
   },
   add_new_product(e){
     console.log(e)
@@ -186,6 +243,11 @@ clicked_history_model(e){
   this.processing_generate_is_Loading=false
   this.generated3dModel_url=this.$store.state.root_media_api+ e.media_url
   this.model_instance_id=e.new3d_model_instance
+
+   window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      })
 
 },
 async new3DModelGenerated(e){
@@ -249,7 +311,8 @@ async get_3d_rendered_model_details(generated_3d_model_id) {
   this.loading_generated_models_history= true;
 
   try {
-    const url = `${this.$store.state.root_api}engine/generated-3d-models-user-history/`;
+    
+    const url = `${this.$store.state.root_api}access-engine/api/business-products/business-access-generated-3d-models-business-history/?access-id=`+this.$route.query.access_id;
     const payload = {
           'model_3d_id': generated_3d_model_id,
 
@@ -292,7 +355,7 @@ async fetch3d_models_generated_by_user() {
   this.loading_generated_models_history= true;
 
   try {
-    const url = `${this.$store.state.root_api}engine/generated-3d-models-user-history/`;
+    const url = `${this.$store.state.root_api}access-engine/api/business-products/business-access-generated-3d-models-business-history/?access-id=`+this.$route.query.access_id;
     
     console.log('📡 Fetching generated 3d models hisrtory ...');
     const responseData = await this.makeApiRequest(url, { 

@@ -34,321 +34,236 @@
 
         </a-col>
         <a-col :sm="24" :xs="24" :md="8" :lg="12">
-            <div style="display:flex;flex-direction: column;justify-content: center;align-items:center;height:100%;">
-            <p :style="{
-                fontSize: '20px',
-                lineHeight: '1.6',
-                margin: '0',
-                fontWeight: '400'
-            }">Revolutionizing Interior Design<br/>with Virtual Technology & AI</p>
-            </div>
-        </a-col>
-        <a-col :sm="24" :xs="24" :md="8" :lg="9">
-                    <div>
-          <h4 :style="{
-            fontSize: '18px',
-            fontWeight: 'bold',
-            marginBottom: '20px',
-            marginTop: '0'
-          }">Contacts</h4>
-          
-          <div :style="{ display: 'flex', alignItems: 'center', marginBottom: '15px' }">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" :style="{ marginRight: '12px', flexShrink: '0' }">
-              <rect x="2" y="4" width="16" height="12" stroke="white" stroke-width="1.5" fill="none"/>
-              <path d="M2 4 L10 10 L18 4" stroke="white" stroke-width="1.5"/>
-            </svg>
-            <span :style="{ fontSize: '15px' }">info@dyd.com</span>
-          </div>
-          
-          <div :style="{ display: 'flex', alignItems: 'center', marginBottom: '15px' }">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" :style="{ marginRight: '12px', flexShrink: '0' }">
-              <path d="M3 3 C3 3 5 2 7 4 C9 6 9 8 7 9 C6 9.5 6 10 8 12 C10 14 10.5 14 11 13 C12 11 14 11 16 13 C18 15 17 17 17 17 C17 17 15 19 11 17 C7 15 5 13 3 9 C1 5 3 3 3 3" stroke="white" stroke-width="1.5" fill="none"/>
-            </svg>
-            <span :style="{ fontSize: '15px' }">+972 000 123 123</span>
-          </div>
-          
-          <div :style="{ display: 'flex', alignItems: 'center' }">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" :style="{ marginRight: '12px', flexShrink: '0' }">
-              <path d="M10 2 L15 7 L15 17 L5 17 L5 7 Z" stroke="white" stroke-width="1.5" fill="none"/>
-              <rect x="8" y="12" width="4" height="5" fill="white"/>
-            </svg>
-            <span :style="{ fontSize: '15px' }">Weizmann St 6, Tel Aviv-Yafo, Israel</span>
-          </div>
-        </div>
-        </a-col>
+  <div style="display:flex;flex-direction: column;justify-content: center;align-items:center;height:100%;">
+    <p :style="{
+      fontSize: '20px',
+      lineHeight: '1.6',
+      margin: '0',
+      fontWeight: '400'
+    }">
+      {{ t('footer.tagline1') }}<br/>{{ t('footer.tagline2') }}
+    </p>
+  </div>
+</a-col>
+
+<a-col :sm="24" :xs="24" :md="8" :lg="9">
+  <div>
+    <h4 :style="{
+      fontSize: '18px',
+      fontWeight: 'bold',
+      marginBottom: '20px',
+      marginTop: '0'
+    }">{{ t('footer.contacts') }}</h4>
+
+    <div :style="{ display: 'flex', alignItems: 'center', marginBottom: '15px' }">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" :style="{ marginRight: '12px', flexShrink: '0' }">
+        <rect x="2" y="4" width="16" height="12" stroke="white" stroke-width="1.5" fill="none"/>
+        <path d="M2 4 L10 10 L18 4" stroke="white" stroke-width="1.5"/>
+      </svg>
+      <span :style="{ fontSize: '15px' }">{{ t('footer.email') }}</span>
+    </div>
+
+    <div :style="{ display: 'flex', alignItems: 'center', marginBottom: '15px' }">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" :style="{ marginRight: '12px', flexShrink: '0' }">
+        <path d="M3 3 C3 3 5 2 7 4 C9 6 9 8 7 9 C6 9.5 6 10 8 12 C10 14 10.5 14 11 13 C12 11 14 11 16 13 C18 15 17 17 17 17 C17 17 15 19 11 17 C7 15 5 13 3 9 C1 5 3 3 3 3" stroke="white" stroke-width="1.5" fill="none"/>
+      </svg>
+      <span :style="{ fontSize: '15px' }">{{ t('footer.phone') }}</span>
+    </div>
+
+    <div :style="{ display: 'flex', alignItems: 'center' }">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" :style="{ marginRight: '12px', flexShrink: '0' }">
+        <path d="M10 2 L15 7 L15 17 L5 17 L5 7 Z" stroke="white" stroke-width="1.5" fill="none"/>
+        <rect x="8" y="12" width="4" height="5" fill="white"/>
+      </svg>
+      <span :style="{ fontSize: '15px' }">{{ t('footer.address') }}</span>
+    </div>
+  </div>
+</a-col>
      </a-row>
      </div>
 </div>
    
-<div style="max-width:1300px;margin:auto">
+<div style="max-width:1300px; margin:auto">
 
-    <!-- White Section with Links -->
+  <!-- White Section with Links -->
+  <div :style="{ backgroundColor: 'white', padding: '20px 20px', color: '#333' }">
     <div :style="{
-      backgroundColor: 'white',
-      padding: '20px 20px',
-      color: '#333'
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+      gap: '40px',
+      maxWidth: '1400px',
+      margin: '0 auto'
     }">
-      <div :style="{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-        gap: '40px',
-        maxWidth: '1400px',
-        margin: '0 auto'
-      }">
-        <!-- Quick Links -->
-        <div>
-          <h4 :style="{
-            fontSize: '16px',
-            fontWeight: 'bold',
-            marginBottom: '20px',
-            marginTop: '0',
-            color: '#000'
-          }">Quick Links</h4>
-          <ul :style="{
-            listStyle: 'none',
-            padding: '0',
-            margin: '0'
-          }">
-            <li :style="{ marginBottom: '12px' }">
-              <router-link to="/start-new-catalogue" :style="{
-                color: '#666',
-                textDecoration: 'none',
-                fontSize: '15px'
-              }">Start New Catalogue</router-link>
-            </li>
-            <li :style="{ marginBottom: '12px' }">
-              <router-link to="/earnphoto" :style="{
-                color: '#666',
-                textDecoration: 'none',
-                fontSize: '15px'
-              }">Earn Photo</router-link>
-            </li>
-            <li :style="{ marginBottom: '12px' }">
-              <router-link to="/api" :style="{
-                color: '#666',
-                textDecoration: 'none',
-                fontSize: '15px'
-              }">API</router-link>
-            </li>
-            <li :style="{ marginBottom: '12px' }">
-              <router-link to="/tutorial" :style="{
-                color: '#666',
-                textDecoration: 'none',
-                fontSize: '15px'
-              }">Tutorial</router-link>
-            </li>
-            <div>
-              <li :style="{ marginBottom: '12px' }">
-              <router-link to="/partner" :style="{
-                color: '#666',
-                textDecoration: 'none',
-                fontSize: '15px'
-              }">Partner</router-link>
-            </li>
-            <li :style="{ marginBottom: '12px' }">
-              <router-link to="/affiliateprogram" :style="{
-                color: '#666',
-                textDecoration: 'none',
-                fontSize: '15px'
-              }">Affiliateprogram</router-link>
-            </li>
-            <li :style="{ marginBottom: '12px' }">
-              <router-link to="/sechdulemeeting" :style="{
-                color: '#666',
-                textDecoration: 'none',
-                fontSize: '15px'
-              }">Sechdulemeeting</router-link>
-            </li>
-            </div>
-            <li :style="{ marginBottom: '12px' }">
-              <router-link to="/blogs" :style="{
-                color: '#666',
-                textDecoration: 'none',
-                fontSize: '15px'
-              }">Blogs</router-link>
-            </li>
-            <li :style="{ marginBottom: '12px' }">
-              <router-link to="/comunity" :style="{
-                color: '#666',
-                textDecoration: 'none',
-                fontSize: '15px'
-              }">Comunity</router-link>
-            </li>
-             <li :style="{ marginBottom: '12px' }">
-              <router-link to="/mlspartnership" :style="{
-                color: '#666',
-                textDecoration: 'none',
-                fontSize: '15px'
-              }">Mlspartnership</router-link>
-            </li>
-          </ul>
-        </div>
 
-        <!-- Terms & Conditions -->
-        <div>
-          <h4 :style="{
-            fontSize: '16px',
-            fontWeight: 'bold',
-            marginBottom: '20px',
-            marginTop: '0',
-            color: '#000'
-          }">Terms & Conditions</h4>
-          <ul :style="{
-            listStyle: 'none',
-            padding: '0',
-            margin: '0'
-          }">
-            <li :style="{ marginBottom: '12px' }">
-              <router-link to="/terms-and-conditions" :style="{
-                color: '#666',
-                textDecoration: 'none',
-                fontSize: '15px'
-              }">Terms of Service</router-link>
-            </li>
-            <li :style="{ marginBottom: '12px' }">
-              <router-link to="/privacy-policy" :style="{
-                color: '#666',
-                textDecoration: 'none',
-                fontSize: '15px'
-              }">Privacy Policy</router-link>
-            </li>
-            <li :style="{ marginBottom: '12px' }">
-              <router-link to="/accessibility-statement" :style="{
-                color: '#666',
-                textDecoration: 'none',
-                fontSize: '15px'
-              }">Accessibility Statement</router-link>
-            </li>
-            <li :style="{ marginBottom: '12px' }">
-              <router-link to="/service-charter" :style="{
-                color: '#666',
-                textDecoration: 'none',
-                fontSize: '15px'
-              }">Service Charter</router-link>
-            </li>
-            <li :style="{ marginBottom: '12px' }">
-              <router-link to="/software-license-agreement" :style="{
-                color: '#666',
-                textDecoration: 'none',
-                fontSize: '15px'
-              }">Software License Agreement</router-link>
-            </li>
-             
+      <!-- Quick Links -->
+      <div>
+        <h4 :style="{ fontSize: '16px', fontWeight: 'bold', marginBottom: '20px', marginTop: '0', color: '#000' }">
+          {{ t('footer.quickLinks') }}
+        </h4>
+        <ul :style="{ listStyle: 'none', padding: '0', margin: '0' }">
+          <li :style="{ marginBottom: '12px' }">
+            <router-link to="/start-new-catalogue" :style="{ color: '#666', textDecoration: 'none', fontSize: '15px' }">
+              {{ t('footer.startNewCatalogue') }}
+            </router-link>
+          </li>
+          <li :style="{ marginBottom: '12px' }">
+            <router-link to="/earnphoto" :style="{ color: '#666', textDecoration: 'none', fontSize: '15px' }">
+              {{ t('footer.earnPhoto') }}
+            </router-link>
+          </li>
+          <li :style="{ marginBottom: '12px' }">
+            <router-link to="/api" :style="{ color: '#666', textDecoration: 'none', fontSize: '15px' }">
+              {{ t('footer.api') }}
+            </router-link>
+          </li>
+          <li :style="{ marginBottom: '12px' }">
+            <router-link to="/tutorial" :style="{ color: '#666', textDecoration: 'none', fontSize: '15px' }">
+              {{ t('footer.tutorial') }}
+            </router-link>
+          </li>
+          <li :style="{ marginBottom: '12px' }">
+            <router-link to="/partner" :style="{ color: '#666', textDecoration: 'none', fontSize: '15px' }">
+              {{ t('footer.partner') }}
+            </router-link>
+          </li>
+          <li :style="{ marginBottom: '12px' }">
+            <router-link to="/affiliateprogram" :style="{ color: '#666', textDecoration: 'none', fontSize: '15px' }">
+              {{ t('footer.affiliateProgram') }}
+            </router-link>
+          </li>
+          <li :style="{ marginBottom: '12px' }">
+            <router-link to="/sechdulemeeting" :style="{ color: '#666', textDecoration: 'none', fontSize: '15px' }">
+              {{ t('footer.scheduleMapping') }}
+            </router-link>
+          </li>
+          <li :style="{ marginBottom: '12px' }">
+            <router-link to="/blogs" :style="{ color: '#666', textDecoration: 'none', fontSize: '15px' }">
+              {{ t('footer.blogs') }}
+            </router-link>
+          </li>
+          <li :style="{ marginBottom: '12px' }">
+            <router-link to="/comunity" :style="{ color: '#666', textDecoration: 'none', fontSize: '15px' }">
+              {{ t('footer.community') }}
+            </router-link>
+          </li>
+          <li :style="{ marginBottom: '12px' }">
+            <router-link to="/mlspartnership" :style="{ color: '#666', textDecoration: 'none', fontSize: '15px' }">
+              {{ t('footer.mlsPartnership') }}
+            </router-link>
+          </li>
+        </ul>
+      </div>
 
-          </ul>
-        </div>
+      <!-- Terms & Conditions -->
+      <div>
+        <h4 :style="{ fontSize: '16px', fontWeight: 'bold', marginBottom: '20px', marginTop: '0', color: '#000' }">
+          {{ t('footer.termsConditions') }}
+        </h4>
+        <ul :style="{ listStyle: 'none', padding: '0', margin: '0' }">
+          <li :style="{ marginBottom: '12px' }">
+            <router-link to="/terms-and-conditions" :style="{ color: '#666', textDecoration: 'none', fontSize: '15px' }">
+              {{ t('footer.termsOfService') }}
+            </router-link>
+          </li>
+          <li :style="{ marginBottom: '12px' }">
+            <router-link to="/privacy-policy" :style="{ color: '#666', textDecoration: 'none', fontSize: '15px' }">
+              {{ t('footer.privacyPolicy') }}
+            </router-link>
+          </li>
+          <li :style="{ marginBottom: '12px' }">
+            <router-link to="/accessibility-statement" :style="{ color: '#666', textDecoration: 'none', fontSize: '15px' }">
+              {{ t('footer.accessibilityStatement') }}
+            </router-link>
+          </li>
+          <li :style="{ marginBottom: '12px' }">
+            <router-link to="/service-charter" :style="{ color: '#666', textDecoration: 'none', fontSize: '15px' }">
+              {{ t('footer.serviceCharter') }}
+            </router-link>
+          </li>
+          <li :style="{ marginBottom: '12px' }">
+            <router-link to="/software-license-agreement" :style="{ color: '#666', textDecoration: 'none', fontSize: '15px' }">
+              {{ t('footer.softwareLicenseAgreement') }}
+            </router-link>
+          </li>
+        </ul>
+      </div>
 
-        <!-- Work with Us -->
-        <div>
-          <h4 :style="{
-            fontSize: '16px',
-            fontWeight: 'bold',
-            marginBottom: '20px',
-            marginTop: '0',
-            color: '#000'
-          }">Work with Us</h4>
-          <ul :style="{
-            listStyle: 'none',
-            padding: '0',
-            margin: '0'
-          }">
-            <li :style="{ marginBottom: '12px' }">
-              <router-link to="#/" :style="{
-                color: '#666',
-                textDecoration: 'none',
-                fontSize: '15px'
-              }">Careers</router-link>
-            </li>
-            <li :style="{ marginBottom: '12px' }">
-              <router-link to="/contact-us" :style="{
-                color: '#666',
-                textDecoration: 'none',
-                fontSize: '15px'
-              }">Contact Us</router-link>
-            </li>
-          </ul>
-        </div>
+      <!-- Work with Us -->
+      <div>
+        <h4 :style="{ fontSize: '16px', fontWeight: 'bold', marginBottom: '20px', marginTop: '0', color: '#000' }">
+          {{ t('footer.workWithUs') }}
+        </h4>
+        <ul :style="{ listStyle: 'none', padding: '0', margin: '0' }">
+          <li :style="{ marginBottom: '12px' }">
+            <router-link to="#/" :style="{ color: '#666', textDecoration: 'none', fontSize: '15px' }">
+              {{ t('footer.careers') }}
+            </router-link>
+          </li>
+          <li :style="{ marginBottom: '12px' }">
+            <router-link to="/contact-us" :style="{ color: '#666', textDecoration: 'none', fontSize: '15px' }">
+              {{ t('footer.contactUs') }}
+            </router-link>
+          </li>
+        </ul>
+      </div>
 
-        <!-- Follow us on -->
-        <div>
-          <h4 :style="{
-            fontSize: '16px',
-            fontWeight: 'bold',
-            marginBottom: '20px',
-            marginTop: '0',
-            color: '#000'
-          }">Follow us on</h4>
-          <div :style="{
-            display: 'flex',
-            gap: '15px'
-          }">
-            <router-link to="#/" :style="{
-              color: '#3B63FB',
-              textDecoration: 'none',
-              transition: 'opacity 0.3s'
-            }">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-              </svg>
-            </router-link>
-            <router-link to="#/" :style="{
-              color: '#3B63FB',
-              textDecoration: 'none',
-              transition: 'opacity 0.3s'
-            }">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.266.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zM5.838 12c0-3.403 2.759-6.162 6.162-6.162 3.403 0 6.162 2.759 6.162 6.162 0 3.403-2.759 6.162-6.162 6.162-3.403 0-6.162-2.759-6.162-6.162zm2.162 0c0 2.209 1.791 4 4 4s4-1.791 4-4-1.791-4-4-4-4 1.791-4 4zm7.406-6.406c0 .796.645 1.44 1.44 1.44.795 0 1.44-.644 1.44-1.44 0-.795-.645-1.44-1.44-1.44-.795 0-1.44.645-1.44 1.44z"/>
-              </svg>
-            </router-link>
-            <router-link to="#/" :style="{
-              color: '#3B63FB',
-              textDecoration: 'none',
-              transition: 'opacity 0.3s'
-            }">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12.53.02C13.84 0 15.14.01 16.44 0c.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/>
-              </svg>
-            </router-link>
-            <router-link to="#/" :style="{
-              color: '#3B63FB',
-              textDecoration: 'none',
-              transition: 'opacity 0.3s'
-            }">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-              </svg>
-            </router-link>
-          </div>
+      <!-- Follow us on -->
+      <div>
+        <h4 :style="{ fontSize: '16px', fontWeight: 'bold', marginBottom: '20px', marginTop: '0', color: '#000' }">
+          {{ t('footer.followUs') }}
+        </h4>
+        <div :style="{ display: 'flex', gap: '15px' }">
+          <router-link to="#/" :style="{ color: '#3B63FB', textDecoration: 'none', transition: 'opacity 0.3s' }">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+            </svg>
+          </router-link>
+          <router-link to="#/" :style="{ color: '#3B63FB', textDecoration: 'none', transition: 'opacity 0.3s' }">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.266.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zM5.838 12c0-3.403 2.759-6.162 6.162-6.162 3.403 0 6.162 2.759 6.162 6.162 0 3.403-2.759 6.162-6.162 6.162-3.403 0-6.162-2.759-6.162-6.162zm2.162 0c0 2.209 1.791 4 4 4s4-1.791 4-4-1.791-4-4-4-4 1.791-4 4zm7.406-6.406c0 .796.645 1.44 1.44 1.44.795 0 1.44-.644 1.44-1.44 0-.795-.645-1.44-1.44-1.44-.795 0-1.44.645-1.44 1.44z"/>
+            </svg>
+          </router-link>
+          <router-link to="#/" :style="{ color: '#3B63FB', textDecoration: 'none', transition: 'opacity 0.3s' }">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12.53.02C13.84 0 15.14.01 16.44 0c.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/>
+            </svg>
+          </router-link>
+          <router-link to="#/" :style="{ color: '#3B63FB', textDecoration: 'none', transition: 'opacity 0.3s' }">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+            </svg>
+          </router-link>
         </div>
       </div>
+
     </div>
   </div>
+</div>
 
-    <!-- Gray Section with Copyright -->
-    <div :style="{
-      backgroundColor: '#f5f5f5',
-      padding: '15px 20px',
-      textAlign: 'center'
-    }">
-      <p :style="{
-        margin: '0',
-        fontSize: '14px',
-        color: '#666'
-      }">© 2025 DYD Design Your Dream Inc.</p>
-    </div>
+<!-- Gray Section with Copyright -->
+<div :style="{ backgroundColor: '#f5f5f5', padding: '15px 20px', textAlign: 'center' }">
+  <p :style="{ margin: '0', fontSize: '14px', color: '#666' }">
+    {{ t('footer.copyright') }}
+  </p>
+</div>
+
+    
   </div>
 </template>
 
 <script>
-import router from '@/router';
+import { useI18n } from 'vue-i18n'
 
 export default {
   name: "Footer",
+  setup() {
+    const { t, locale } = useI18n()
+    return { t, locale }
+  },
   data() {
     return {}
   }
 }
 </script>
-
 <style scoped>
 </style>

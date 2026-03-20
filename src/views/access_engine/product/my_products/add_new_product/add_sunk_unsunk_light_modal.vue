@@ -370,7 +370,7 @@ export default {
     LightType: { type: String, default: "sunk" },
     visible: { type: Boolean, default: false },
   },
-  emits: ['update:visible', 'product-created', 'cancel'],
+  emits: ['update:visible', 'product-created', 'cancel','api-error' ],
 
   data() {
     return {
@@ -680,14 +680,13 @@ export default {
         });
 
         // const response = await fetch(`${this.$store.state.root_api}product/api-product-owner/lights/`, {
-        const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/add-product-sunk-unsunk-light/?access-id=`+this.$route.query.access_id, {
-
+       const response = await fetch(`${this.$store.state.root_api}access-engine/api/business-products/add-product-light/?access-id=`+this.$route.query.access_id, {
           method: 'POST',
           headers: { 'Authorization': `Token ${token}` },
           body: formData
         });
 
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        
         const result = await response.json();
 
         if (result.success) {
@@ -695,7 +694,9 @@ export default {
           this.$emit('product-created', result.data);
           this.handleCancel();
         } else {
-          message.error(result.message || 'Failed to create product. Please try again.');
+          const errorMsg = result.message || 'Failed to create product';
+          this.handleCancel(); // close the modal first
+          this.$emit('api-error', errorMsg); // then bubble error up to parent
         }
       } catch (error) {
         console.error('Error saving light product:', error);

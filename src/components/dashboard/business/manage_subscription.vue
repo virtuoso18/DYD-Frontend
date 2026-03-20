@@ -230,7 +230,7 @@
           </div>
         </div>
 
-        <div class="bg-white !my-2 rounded-xl p-4 border-2 border-[rgba(79,124,255,0.1)]">
+        <!-- <div class="bg-white !my-2 rounded-xl p-4 border-2 border-[rgba(79,124,255,0.1)]">
           <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
             <div class="flex items-start gap-3 flex-row">
               <div class="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0">
@@ -259,7 +259,7 @@
               </button>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
 
       

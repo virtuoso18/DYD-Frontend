@@ -294,16 +294,32 @@
         @click="showInstructionModal"
         title="see instruction"
       />
-      <a-button @click="isToolbarCollapsed = !(isToolbarCollapsed)" class="absolute text-[17px] z-[9]  w-[25px] h-[25px] !flex justify-center items-center rounded-[5px] left-[4px] top-[60px] cursor-pointer" >
+      <a-row class="absolute">
 
+        <a-col :sm="0" :xs="0" :md="24" :lg="24">
+           <a-button @click.stop="isToolbarCollapsed = !(isToolbarCollapsed)" shape="circle" size="medium" type="primary" class="absolute text-[17px] z-[99]  w-[25px] h-[25px] !flex justify-center items-center rounded-[5px] left-[4px] top-[60px] cursor-pointer" >
         <LeftOutlined 
-     v-if="!isToolbarCollapsed"     
-     class="bg-black/25 cursor-pointer" 
-   />
-   <svg v-else  fill="#000000" width="40px" height="40px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg"><title>brush</title><path d="M27.555 8.42c-1.355 1.647-5.070 6.195-8.021 9.81l-3.747-3.804c3.389-3.016 7.584-6.744 9.1-8.079 2.697-2.377 5.062-3.791 5.576-3.213 0.322 0.32-0.533 2.396-2.908 5.286zM18.879 19.030c-1.143 1.399-2.127 2.604-2.729 3.343l-4.436-4.323c0.719-0.64 1.916-1.705 3.304-2.939l3.861 3.919zM15.489 23.183v-0.012c-2.575 9.88-14.018 4.2-14.018 4.2s4.801 0.605 4.801-3.873c0-4.341 4.412-4.733 4.683-4.753l4.543 4.427c0 0.001-0.009 0.011-0.009 0.011z"></path></svg>
-   
-
+          v-if="!isToolbarCollapsed"     
+          class=" cursor-pointer" 
+        />
+        <HighlightOutlined v-else 
+          class=" cursor-pointer" 
+        />
       </a-button>
+        </a-col>
+        <a-col :sm="24" :xs="24" :md="0" :lg="0" >
+          <a-button @click.stop="isToolbarCollapsed = !(isToolbarCollapsed)" style="display:flex;justify-content:center;align-items:center" shape="circle" size="medium" type="primary" class="absolute top-[5px] left-[10px] cursor-pointer z-[99] w-[25px] md:hidden">
+        <LeftOutlined 
+          v-if="!isToolbarCollapsed"     
+          class=" cursor-pointer" 
+        />
+        <HighlightOutlined v-else 
+          class=" cursor-pointer" 
+        />
+      </a-button>
+        </a-col>
+      </a-row>
+     
 
 
 <!-- 
@@ -1275,7 +1291,7 @@ import { notification } from "ant-design-vue";
 import DrawRemovalModal from "@/components/update_catalogue/canvas_renderer/draw_removal_area_room.vue";
 import switch_furniture from "@/components/update_catalogue/bottom_drawer_item_components/switch_furniture.vue";
 import { DotLottieVue } from "@lottiefiles/dotlottie-vue";
-import { DeleteOutlined, RedoOutlined, LeftOutlined, RightOutlined } from "@ant-design/icons-vue";
+import { DeleteOutlined, RedoOutlined, LeftOutlined, RightOutlined,HighlightOutlined } from "@ant-design/icons-vue";
 import SwitchFurnitureModal from "@/components/update_catalogue/canvas_renderer/switch_furniture.vue";
 import SwitchFurnitureDrawerForMobile from "@/components/update_catalogue/canvas_renderer/SwitchFurnitureDrawerForMobile.vue";
 import canvasForSAMAndDrawMask from "./canvasForSAMAndDrawMask/canvasForSAMAndDrawMask.vue";
@@ -1332,7 +1348,8 @@ export default {
     SwitchFurnitureDrawerForMobile,
     canvasForSAMAndDrawMask,
     LeftOutlined,
-    RightOutlined
+    RightOutlined,
+    HighlightOutlined
   },
   data() {
     return {

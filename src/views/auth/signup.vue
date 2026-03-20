@@ -1041,6 +1041,7 @@ export default {
 
   try {
     const formData = new FormData();
+        const requestData = this.prepareRegistrationData();
 
     // Base fields
     formData.append("firstName", this.personalInfo.firstName.trim());
@@ -1065,6 +1066,16 @@ export default {
         formData.append("banner_picture", this.businessInfo.logo); 
         // must match Django field name
       }
+    } else if (this.selectedType === "professional") {
+      formData.append("businessName", this.businessInfo.businessName.trim())
+      formData.append("businessEmail", this.businessInfo.email.trim())
+      formData.append("phoneNumber", this.businessInfo.phone.trim())
+      formData.append("businessDescription", "")
+      formData.append("businessCategory", this.businessInfo.categories.join(", "))
+      formData.append("servicesOffered", "",),          
+      formData.append("termsAgreed",this.finalApproval.contactApproval && this.finalApproval.accountApproval)
+      formData.append("professionalDescription","")
+      
     }
 
     const response = await fetch(

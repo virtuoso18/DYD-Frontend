@@ -4,6 +4,7 @@
     :visible="sunk_unsunk_light_modal"
     @update:visible="cancelClicked"
     @product-created="product_created_sunk_unsunk_light"
+    @api-error="apiError"
   />
   <a-modal
     :open="visible"
@@ -39,7 +40,7 @@
     </template>
 
     <div class="light-selection-container">
-      <div class="header-section">
+      <div class="header-section !mt-12">
         <h2 class="selection-title">Choose Your Light Type</h2>
         <p class="selection-subtitle">Select the type of light fixture you want to add to your collection</p>
       </div>
@@ -184,7 +185,7 @@
 </template>
 
 <script>
-import add_sunk_unsunk_light from '@/views/access_engine/product/my_products/add_new_product/add_sunk_unsunk_light_modal.vue'
+import add_sunk_unsunk_light from '@/components/dashboard/business/my_products/add_new_product/add_sunk_unsunk_light_modal.vue'
 export default {
   name: "AddNewLight",
   components:{
@@ -195,7 +196,7 @@ export default {
     categories_available: { type: Array, default: () => [] },
     types: { type: Array, default: () => [] }
   },
-  emits: ['update:visible', 'product-created', 'cancel','add-3d-light'],
+  emits: ['update:visible', 'product-created', 'cancel','add-3d-light','api-error'],
   data() {
     return {
       isSaving: false,
@@ -222,6 +223,9 @@ export default {
     add3DLightProductClicked(){
       this.$emit('add-3d-light',true);      
     },
+    apiError(errorMsg) {
+    this.$emit('api-error', errorMsg);
+  },
     showModalSunkUnsunk(LightType){
       this.light_type=LightType
       this.sunk_unsunk_light_modal= !this.sunk_unsunk_light_modal

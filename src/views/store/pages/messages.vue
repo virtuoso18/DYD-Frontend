@@ -113,7 +113,7 @@
 
               <!-- Conversation Info -->
               <div class="flex-1 min-w-0">
-                <div class="flex justify-between items-center mb-1">
+                <div class="flex justify-between items-center mb-1" v-if="!room.show_live_support_icon">
                   <h4 class="text-base font-medium text-gray-900 truncate">
                     {{
                       get_proper_user_avatar(room.userProfilsAvatar)?.first_name
@@ -121,6 +121,14 @@
                     {{
                       get_proper_user_avatar(room.userProfilsAvatar)?.last_name
                     }}
+                  </h4>
+                  <span class="text-xs text-gray-500 flex-shrink-0 ml-2">
+                    {{ room.lastMessageTime || "1 day ago" }}
+                  </span>
+                </div>
+                <div class="flex justify-between items-center mb-1" v-else>
+                  <h4 class="text-base font-medium text-gray-900 truncate">
+                    DYD Customer Support Line
                   </h4>
                   <span class="text-xs text-gray-500 flex-shrink-0 ml-2">
                     {{ room.lastMessageTime || "1 day ago" }}

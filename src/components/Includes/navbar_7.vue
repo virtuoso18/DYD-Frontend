@@ -279,8 +279,8 @@
               @focus="focus"
               @change="handleChange"
             >
-              <a-select-option value="jack">EN</a-select-option>
-              <a-select-option value="lucy">HB</a-select-option>
+              <a-select-option value="En">EN</a-select-option>
+              <a-select-option value="Hb">HB</a-select-option>
             </a-select>
           </div>
         </template>

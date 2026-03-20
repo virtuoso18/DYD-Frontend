@@ -695,6 +695,7 @@
       @product-created="onProductCreated"
       @cancel="onCancel"
       :rendered_modal_3D_id="model_instance_id"
+       @api-error="handleApiError"
     />
 
     <add_furniture_modal_local_3d_model_create_variation
@@ -711,6 +712,7 @@
       ]"
       @product-created="onProductCreated"
       @cancel="onCancel"
+       @api-error="handleApiError"
       :rendered_modal_3D_id="model_instance_id"
       :prepopulatedData="prepopulatedProductData"
       :isEditing="false"
@@ -734,6 +736,7 @@
       @product-created="onLightProductCreated"
       @cancel="onCancel"
       :rendered_modal_3D_id="model_instance_id"
+       @api-error="handleApiError"
     />
 
     <!-- <add_furniture_modal_local_3d_model v-model:visible="show_add_new_product_locally_3d_model" 
@@ -748,17 +751,20 @@
     <add_new_floorTexture
       v-model:visible="show_add_new_floor_texture"
       @product-created="this.fetchMyFloorTextureProducts()"
+       @api-error="handleApiError"
     />
 
     <add_new_wallTexture
       v-model:visible="show_add_new_wall_texture"
       @product-created="this.fetchMyWallTextureProducts()"
+       @api-error="handleApiError"
     />
     <add_new_Light
       v-model:visible="show_add_new_light"
       @cancel="clicked_cancel_add_new_light"
       @add-3d-light="addLightProduct()"
       @product-created="this.fetchMyLights()"
+       @api-error="handleApiError"
     />
 
     <div
@@ -3141,6 +3147,7 @@
       />
     </div>
     <br />
+     <errorModal v-model:visible="errorModal.visible" :message="errorModal.message" ></errorModal>
   </div>
 </template>
 
@@ -3186,6 +3193,8 @@ import show_Light_product_3D from '@/views/access_engine/product/my_products/pro
 import add_furniture_modal_local_3d_model from '@/views/access_engine/product/my_products/add_new_product/add_furniture_modal_local_3d_model.vue'
 import add_light_modal_local_3d_model from '@/views/access_engine/product/my_products/add_new_product/add_light_modal_local_3d_model.vue'
 
+import errorModal from "@/components/Includes/modal/errorModal.vue";
+
 export default {
     name: 'UnifiedProducts',
     components:{
@@ -3225,6 +3234,7 @@ export default {
         edit_Light_hanging_3d,
         edit_Light_sunk,
         edit_Light_unsunk,
+        errorModal
     },
      props:{
         access_recieved:Object
@@ -3340,6 +3350,10 @@ export default {
             pageSize: 20,
             totalCount: 0,
             totalPages: 0
+        },
+          errorModal: {
+          visible: false,
+          message: ''
         }
         }
     },
@@ -3360,6 +3374,10 @@ export default {
         this.fetchMyFloorTextureProducts()
     },
     methods: {
+    handleApiError(message) {
+    this.errorModal.message = message;
+    this.errorModal.visible = true;
+  },
          createVariation() {
       console.log("Creating variation for:", this.selectedProduct);
 
