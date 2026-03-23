@@ -456,7 +456,7 @@
                   font-size: 13px;
                   color: #6b7280;
                 "
-                >Pattern Width (m) <span style="color: red">*</span></label
+                >Pattern Width (cm) <span style="color: red">*</span></label
               >
               <a-input-number
                 v-model:value="textureForm.size_width"
@@ -475,7 +475,7 @@
                   font-size: 13px;
                   color: #6b7280;
                 "
-                >Pattern Height (m) <span style="color: red">*</span></label
+                >Pattern Height (cm) <span style="color: red">*</span></label
               >
               <a-input-number
                 v-model:value="textureForm.size_height"

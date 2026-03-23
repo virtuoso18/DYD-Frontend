@@ -1885,233 +1885,265 @@ rescaleChair() {
       URL.revokeObjectURL(maskUrl)
     },
 
+
     async renderItem() {
-      if (!this.chair || !this.renderer || !this.scene || !this.camera) {
-        console.warn('renderItem: not ready')
-        return
+  if (!this.chair || !this.renderer || !this.scene || !this.camera) {
+    console.warn('renderItem: not ready')
+    return
+  }
+  this.$emit('update:isLoading', true)
+  if (this.renderer?.domElement) {
+    this.renderer.domElement.style.pointerEvents = 'none'
+  }
+
+  try {
+    this.chair.updateMatrixWorld(true)
+
+    const snapPos = {
+      x: this.chair.position.x,
+      y: this.chair.position.y,
+      z: this.chair.position.z,
+    }
+    const snapQuat = {
+      x: this.chair.quaternion.x,
+      y: this.chair.quaternion.y,
+      z: this.chair.quaternion.z,
+      w: this.chair.quaternion.w,
+    }
+    const snapScale = {
+      x: this.chair.scale.x,
+      y: this.chair.scale.y,
+      z: this.chair.scale.z,
+    }
+
+    this._renderLock = true
+    if (this.rotationRing) this.rotationRing.visible = false
+    this.renderer.render(this.scene, this.camera)
+
+    this.chair.position.set(snapPos.x, snapPos.y, snapPos.z)
+    this.chair.quaternion.set(snapQuat.x, snapQuat.y, snapQuat.z, snapQuat.w)
+    this.chair.scale.set(snapScale.x, snapScale.y, snapScale.z)
+    this.chair.updateMatrixWorld(true)
+
+    // ✅ FIX: declare roomImg before using it
+    const roomImg = this.$refs.roomImage
+    const exportW = (roomImg && roomImg.naturalWidth)  ? roomImg.naturalWidth  : (this.CAM_IMG_W || 800)
+    const exportH = (roomImg && roomImg.naturalHeight) ? roomImg.naturalHeight : (this.CAM_IMG_H || 600)
+
+    // ✅ Clone ONCE — frozen before any async work
+    const frozenChairClone = this.chair.clone(true)
+    frozenChairClone.position.set(snapPos.x, snapPos.y, snapPos.z)
+    frozenChairClone.quaternion.set(snapQuat.x, snapQuat.y, snapQuat.z, snapQuat.w)
+    frozenChairClone.scale.set(snapScale.x, snapScale.y, snapScale.z)
+    frozenChairClone.updateMatrixWorld(true)
+
+    this.internalLoadingText = 'Creating composite image...'
+    const compositeBlob = await this.createCompositeImageBlob(exportW, exportH, snapPos, snapQuat, snapScale, frozenChairClone)
+    if (!compositeBlob || compositeBlob.size === 0) throw new Error('Composite blob empty')
+
+    this.internalLoadingText = 'Creating binary mask...'
+    const maskBlob = await this.createBinaryMaskBlob(exportW, exportH, snapPos, snapQuat, snapScale, frozenChairClone)
+    if (!maskBlob || maskBlob.size === 0) throw new Error('Mask blob empty')
+    
+    // this.downloadImages(compositeBlob, maskBlob)
+    // return 
+    
+    // ── release lock BEFORE reactive state changes ────────
+    this._renderLock         = false
+    this.internalLoading     = true
+    this.internalLoadingText = 'Rendering Item...'
+    this.isDraggingRef       = false
+    this.loadingProxy        = true
+
+    if (this.chair) this.chair.visible = false
+    if (this.rotationRing) this.rotationRing.visible = false
+    await this.$nextTick()
+
+    const formData = new FormData()
+    formData.append('composite_image', compositeBlob, 'composite_image.png')
+    formData.append('binary_mask',     maskBlob,      'binary_mask.png')
+    formData.append('room_id',  this.$route.params.id)
+
+    if (this.switched_color) {
+      formData.append('switch_model_color_id', this.switched_color?.product_color_id)
+    }
+
+    formData.append('prod_id', this.$route.query.product_id)
+
+    this.internalLoadingText = 'Adding Product to Your Room...'
+    const response = await fetch(
+      `${this.$store.state.root_api}engine/inpaint-item-ref/`,
+      {
+        method:  'POST',
+        headers: { Authorization: `Token ${localStorage.getItem('token')}` },
+        body:    formData,
       }
-      this.$emit('update:isLoading', true)
-      // ✅ Block all pointer events on the canvas immediately
-        if (this.renderer?.domElement) {
-          this.renderer.domElement.style.pointerEvents = 'none'
-        }
+    )
 
-      try {
-        this.chair.updateMatrixWorld(true)
+    if (response.status === 402) {
+      const r = await response.json()
+      this.$emit('insufficient-credits', r.msg, r.buid)
+      return
+    }
+    if (!response.ok) throw new Error(`HTTP ${response.status}`)
 
-        // ── Snapshot BEFORE any reactive changes ─────────────
-        const snapPos = {
-          x: this.chair.position.x,
-          y: this.chair.position.y,
-          z: this.chair.position.z,
-        }
-        const snapQuat = {
-          x: this.chair.quaternion.x,
-          y: this.chair.quaternion.y,
-          z: this.chair.quaternion.z,
-          w: this.chair.quaternion.w,
-        }
-        const snapScale = {
-          x: this.chair.scale.x,
-          y: this.chair.scale.y,
-          z: this.chair.scale.z,
-        }
-        // ✅ FIX 4 OF 4: lock watcher so chairRotation changes during
-        // blob creation don't call alignChairToFloor and drift the angle
-        this._renderLock = true
+    const result = await response.json()
+    if (result.renderer_id) {
+      if (this.chair) this.chair.visible = false
+      this.$emit('add-3d-furniture-to-room-start-polling', result.renderer_id)
+    }
 
-        if (this.rotationRing) this.rotationRing.visible = false
-        this.renderer.render(this.scene, this.camera)
+    this.$emit('update:isLoading', false)
+    this.loadingProxy = false
+    return result
 
-        // Re-apply snapshot — guards against any Vue reactive flush
-        this.chair.position.set(snapPos.x, snapPos.y, snapPos.z)
-        this.chair.quaternion.set(snapQuat.x, snapQuat.y, snapQuat.z, snapQuat.w)
-        this.chair.scale.set(snapScale.x, snapScale.y, snapScale.z)
-        this.chair.updateMatrixWorld(true)
+  } catch (error) {
+    console.error('renderItem error:', error)
+    this._renderLock     = false
+    this.internalLoading = false
+    this.loadingProxy    = false
+    if (this.rotationRing) this.rotationRing.visible = true
+    throw error
+  } finally {
+    if (this.renderer?.domElement) {
+      this.renderer.domElement.style.pointerEvents = 'auto'
+    }
+  }
+},
 
-        const roomImg = this.$refs.roomImage
-        const exportW = (roomImg && roomImg.naturalWidth)  ? roomImg.naturalWidth  : (this.CAM_IMG_W || 800)
-        const exportH = (roomImg && roomImg.naturalHeight) ? roomImg.naturalHeight : (this.CAM_IMG_H || 600)
+    async createCompositeImageBlob(bgWidth, bgHeight, snapPos, snapQuat, snapScale, frozenChairClone) {
+  const offCanvas = document.createElement('canvas')
+  offCanvas.width  = bgWidth
+  offCanvas.height = bgHeight
 
-        this.internalLoadingText = 'Creating composite image...'
-        const compositeBlob = await this.createCompositeImageBlob(exportW, exportH, snapPos, snapQuat, snapScale)
-        if (!compositeBlob || compositeBlob.size === 0) throw new Error('Composite blob empty')
+  const offRenderer = new THREE.WebGLRenderer({
+    canvas: offCanvas, antialias: true,
+    preserveDrawingBuffer: true, alpha: true, precision: 'highp',
+  })
+  offRenderer.setSize(bgWidth, bgHeight, false)
+  offRenderer.setPixelRatio(1)
+  offRenderer.outputColorSpace  = THREE.SRGBColorSpace
+  offRenderer.setClearColor(0x000000, 0)
+  offRenderer.shadowMap.enabled = true
+  offRenderer.shadowMap.type    = THREE.PCFSoftShadowMap
 
-        this.internalLoadingText = 'Creating binary mask...'
-        const maskBlob = await this.createBinaryMaskBlob(exportW, exportH, snapPos, snapQuat, snapScale)
-        if (!maskBlob || maskBlob.size === 0) throw new Error('Mask blob empty')
-      //   this.downloadImages(compositeBlob, maskBlob) 
-      // return 
-        // ── release lock BEFORE reactive state changes ────────
-        this._renderLock         = false
-        this.internalLoading     = true
-        this.internalLoadingText = 'Rendering Item...'
-        this.isDraggingRef       = false
-        this.loadingProxy        = true
+  const offScene = new THREE.Scene()
 
-        if (this.chair) this.chair.visible = false
-        if (this.rotationRing) this.rotationRing.visible = false
-        await this.$nextTick()
+  // ✅ Use the pre-frozen clone — no re-clone, no mutation risk
+  offScene.add(frozenChairClone)
 
-        const formData = new FormData()
-        formData.append('composite_image', compositeBlob, 'composite_image.png')
-        formData.append('binary_mask',     maskBlob,      'binary_mask.png')
-        formData.append('room_id',  this.$route.params.id)
-        
-        if(this.switched_color){
-          formData.append('switch_model_color_id',  this.switched_color?.product_color_id )
-        }
-        console.log(this.switched_color);
-        debugger
-        
-        formData.append('prod_id',  this.$route.query.product_id)
+  // shadow plane, lights... (unchanged)
+  const shadowGeo   = new THREE.PlaneGeometry(12, 12)
+  const shadowMat   = new THREE.ShadowMaterial({ opacity: 0.08, transparent: true, depthWrite: false })
+  const shadowPlane = new THREE.Mesh(shadowGeo, shadowMat)
+  shadowPlane.receiveShadow = true
+  const q = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), this.floorNormal3)
+  shadowPlane.applyQuaternion(q)
+  shadowPlane.position.copy(this.floorCentroid3)
+  shadowPlane.position.addScaledVector(this.floorNormal3, 0.005)
+  offScene.add(shadowPlane)
 
-        this.internalLoadingText = 'Adding Product to Your Room...'
-        const response = await fetch(
-          `${this.$store.state.root_api}engine/inpaint-item-ref/`,
-          {
-            method:  'POST',
-            headers: { Authorization: `Token ${localStorage.getItem('token')}` },
-            body:    formData,
-          }
-        )
+  offScene.add(new THREE.AmbientLight(0xfff4e0, 1.2))
+  const sun = new THREE.DirectionalLight(0xfff5e8, 2.0)
+  sun.position.set(1.5, 5, -3)
+  sun.castShadow = true
+  sun.shadow.mapSize.set(2048, 2048)
+  sun.shadow.camera.near = 0.1; sun.shadow.camera.far = 20
+  sun.shadow.camera.left = -6;  sun.shadow.camera.right = 6
+  sun.shadow.camera.bottom = -6; sun.shadow.camera.top = 6
+  sun.shadow.bias = -0.001; sun.shadow.normalBias = 0.02
+  offScene.add(sun)
+  const f1 = new THREE.DirectionalLight(0xd0e8ff, 2.8); f1.position.set(-2, 3, 2); offScene.add(f1)
+  const f2 = new THREE.DirectionalLight(0xe8f0ff, 0.6); f2.position.set( 3, 2, 1); offScene.add(f2)
+  const bk = new THREE.DirectionalLight(0xfff8e8, 0.5); bk.position.set( 0, 2, 4); offScene.add(bk)
 
-        if (response.status === 402) {
-          const r = await response.json()
-          this.$emit('insufficient-credits', r.msg, r.buid)
-          return
-        }
-        if (!response.ok) throw new Error(`HTTP ${response.status}`)
+  const offCamera = this.camera.clone()
+  offCamera.aspect = bgWidth / bgHeight
+  offCamera.updateProjectionMatrix()
+  offCamera.updateMatrixWorld(true)
 
-        const result = await response.json()
-        if (result.renderer_id) {
-          if (this.chair) this.chair.visible = false
-          this.$emit('add-3d-furniture-to-room-start-polling', result.renderer_id)
-        }
-        
-        this.$emit('update:isLoading', false)
-        this.loadingProxy = false
-        return result
+  offRenderer.render(offScene, offCamera)
+  const blob = await new Promise(resolve => offCanvas.toBlob(resolve, 'image/png'))
+  
+  // ✅ Remove clone from scene before mask render reuses it
+  offScene.remove(frozenChairClone)
+  offRenderer.dispose()
+  return blob
+},
 
-      } catch (error) {
-        console.error('renderItem error:', error)
-        this._renderLock     = false  // always release on error
-        this.internalLoading = false
-        this.loadingProxy    = false
-        if (this.rotationRing) this.rotationRing.visible = true
-        throw error
-      }
-      finally{
-        // this.$emit('unselect-object', true)
-         // ✅ Always restore pointer events when done (success OR error)
-      if (this.renderer?.domElement) {
-        this.renderer.domElement.style.pointerEvents = 'auto'
-      }
-      }
-    },
+async createBinaryMaskBlob(bgWidth, bgHeight, snapPos, snapQuat, snapScale, frozenChairClone) {
+  const offCanvas = document.createElement('canvas')
+  offCanvas.width  = bgWidth
+  offCanvas.height = bgHeight
 
-    async createCompositeImageBlob(bgWidth, bgHeight, snapPos, snapQuat, snapScale) {
-      const offCanvas = document.createElement('canvas')
-      offCanvas.width  = bgWidth
-      offCanvas.height = bgHeight
+  const offRenderer = new THREE.WebGLRenderer({
+    canvas: offCanvas, antialias: false,
+    preserveDrawingBuffer: true, alpha: false,
+  })
+  offRenderer.setSize(bgWidth, bgHeight, false)
+  offRenderer.setPixelRatio(1)
+  offRenderer.setClearColor(0x000000, 1)
 
-      const offRenderer = new THREE.WebGLRenderer({
-        canvas: offCanvas, antialias: true,
-        preserveDrawingBuffer: true, alpha: true, precision: 'highp',
+  const offScene = new THREE.Scene()
+
+  // ✅ Reuse same frozen clone — swap materials to white only
+  frozenChairClone.traverse(child => {
+    if (child.isMesh) {
+      child.material = new THREE.MeshBasicMaterial({
+        color: 0xffffff,
+        side: THREE.DoubleSide,
+        transparent: false,
+        depthWrite: true,
       })
-      offRenderer.setSize(bgWidth, bgHeight, false)
-      offRenderer.setPixelRatio(1)
-      offRenderer.outputColorSpace  = THREE.SRGBColorSpace
-      offRenderer.setClearColor(0x000000, 0)
-      offRenderer.shadowMap.enabled = true
-      offRenderer.shadowMap.type    = THREE.PCFSoftShadowMap
+      child.castShadow    = false
+      child.receiveShadow = false
+    }
+  })
+  offScene.add(frozenChairClone)
+  offScene.add(new THREE.AmbientLight(0xffffff, 1))
 
-      const offScene = new THREE.Scene()
+  // ✅ Identical camera to composite
+  const offCamera = this.camera.clone()
+  offCamera.aspect = bgWidth / bgHeight
+  offCamera.updateProjectionMatrix()
+  offCamera.updateMatrixWorld(true)
 
-      // ✅ Use passed-in snapshot values — not this.chair (Vue proxy may mutate)
-      const chairClone = this.chair.clone(true)
-      chairClone.position.set(snapPos.x, snapPos.y, snapPos.z)
-      chairClone.quaternion.set(snapQuat.x, snapQuat.y, snapQuat.z, snapQuat.w)
-      chairClone.scale.set(snapScale.x, snapScale.y, snapScale.z)
-      chairClone.updateMatrixWorld(true)
-      offScene.add(chairClone)
+  offRenderer.render(offScene, offCamera)
 
-      const shadowGeo   = new THREE.PlaneGeometry(12, 12)
-      const shadowMat   = new THREE.ShadowMaterial({ opacity: 0.08, transparent: true, depthWrite: false })
-      const shadowPlane = new THREE.Mesh(shadowGeo, shadowMat)
-      shadowPlane.receiveShadow = true
-      const q = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), this.floorNormal3)
-      shadowPlane.applyQuaternion(q)
-      shadowPlane.position.copy(this.floorCentroid3)
-      shadowPlane.position.addScaledVector(this.floorNormal3, 0.005)
-      offScene.add(shadowPlane)
+  const gl = offRenderer.getContext()
+  const pixels = new Uint8Array(bgWidth * bgHeight * 4)
+  gl.readPixels(0, 0, bgWidth, bgHeight, gl.RGBA, gl.UNSIGNED_BYTE, pixels)
 
-      offScene.add(new THREE.AmbientLight(0xfff4e0, 1.2))
-      const sun = new THREE.DirectionalLight(0xfff5e8, 2.0)
-      sun.position.set(1.5, 5, -3)
-      sun.castShadow = true
-      sun.shadow.mapSize.set(2048, 2048)
-      sun.shadow.camera.near = 0.1; sun.shadow.camera.far   = 20
-      sun.shadow.camera.left = -6;  sun.shadow.camera.right  = 6
-      sun.shadow.camera.bottom = -6; sun.shadow.camera.top   = 6
-      sun.shadow.bias = -0.001; sun.shadow.normalBias = 0.02
-      offScene.add(sun)
-      const f1 = new THREE.DirectionalLight(0xd0e8ff, 2.8); f1.position.set(-2, 3, 2); offScene.add(f1)
-      const f2 = new THREE.DirectionalLight(0xe8f0ff, 0.6); f2.position.set( 3, 2, 1); offScene.add(f2)
-      const bk = new THREE.DirectionalLight(0xfff8e8, 0.5); bk.position.set( 0, 2, 4); offScene.add(bk)
+  offRenderer.dispose()
 
-      // ✅ clone live camera for pixel-perfect projection matrix match
-      const offCamera = this.camera.clone()
-      offCamera.aspect = bgWidth / bgHeight
-      offCamera.updateProjectionMatrix()
-      offCamera.updateMatrixWorld(true)
+  // Flip vertically
+  const flipped = new Uint8Array(bgWidth * bgHeight * 4)
+  for (let y = 0; y < bgHeight; y++) {
+    const srcRow = (bgHeight - 1 - y) * bgWidth * 4
+    const dstRow = y * bgWidth * 4
+    flipped.set(pixels.subarray(srcRow, srcRow + bgWidth * 4), dstRow)
+  }
 
-      offRenderer.render(offScene, offCamera)
-      const blob = await new Promise(resolve => offCanvas.toBlob(resolve, 'image/png'))
-      offRenderer.dispose()
-      return blob
-    },
+  // Threshold
+  for (let i = 0; i < flipped.length; i += 4) {
+    const isObject = flipped[i] > 10 || flipped[i + 1] > 10 || flipped[i + 2] > 10
+    flipped[i]     = isObject ? 255 : 0
+    flipped[i + 1] = isObject ? 255 : 0
+    flipped[i + 2] = isObject ? 255 : 0
+    flipped[i + 3] = 255
+  }
 
-    async createBinaryMaskBlob(bgWidth, bgHeight, snapPos, snapQuat, snapScale) {
-      const offCanvas = document.createElement('canvas')
-      offCanvas.width  = bgWidth
-      offCanvas.height = bgHeight
+  const maskCanvas = document.createElement('canvas')
+  maskCanvas.width  = bgWidth
+  maskCanvas.height = bgHeight
+  const ctx = maskCanvas.getContext('2d')
+  const imageData = ctx.createImageData(bgWidth, bgHeight)
+  imageData.data.set(flipped)
+  ctx.putImageData(imageData, 0, 0)
 
-      const offRenderer = new THREE.WebGLRenderer({
-        canvas: offCanvas, antialias: false,
-        preserveDrawingBuffer: true, alpha: false,
-      })
-      offRenderer.setSize(bgWidth, bgHeight)
-      offRenderer.setPixelRatio(1)
-      offRenderer.setClearColor(0x000000, 1)
-
-      const offScene = new THREE.Scene()
-
-      const chairClone = this.chair.clone(true)
-      chairClone.position.set(snapPos.x, snapPos.y, snapPos.z)
-      chairClone.quaternion.set(snapQuat.x, snapQuat.y, snapQuat.z, snapQuat.w)
-      chairClone.scale.set(snapScale.x, snapScale.y, snapScale.z)
-      chairClone.updateMatrixWorld(true)
-      chairClone.traverse(child => {
-        if (child.isMesh) {
-          child.material = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.FrontSide })
-          child.castShadow = false; child.receiveShadow = false
-        }
-      })
-      offScene.add(chairClone)
-      offScene.add(new THREE.AmbientLight(0xffffff, 1))
-
-      // ✅ clone live camera
-      const offCamera = this.camera.clone()
-      offCamera.aspect = bgWidth / bgHeight
-      offCamera.updateProjectionMatrix()
-      offCamera.updateMatrixWorld(true)
-
-      offRenderer.render(offScene, offCamera)
-      const blob = await new Promise(resolve => offCanvas.toBlob(resolve, 'image/png'))
-      offRenderer.dispose()
-      return blob
-    },
+  return await new Promise(resolve => maskCanvas.toBlob(resolve, 'image/png'))
+},
+    
 
     async switchFurniture() {
       if (!this.chair) { console.warn('No chair loaded'); return }

@@ -65,8 +65,13 @@
             >Get Started</button>
             <div class="features-list">
               <div v-for="(feature, index) in data.basic.description_list" :key="index" class="feature-item">
-                <span class="checkmark">✓</span>
-                <span>{{ feature }}</span>
+                <svg v-if="feature.enabled" width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-right: 8px; flex-shrink: 0;">
+                  <path d="M2.66797 6.66667L6.66797 10.6667L13.3346 4" stroke="#22c55e" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <svg v-else width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-right: 8px; flex-shrink: 0;">
+                  <path d="M4 4L12 12M12 4L4 12" stroke="#ff4d4f" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span :style="{ color: feature.enabled ? '#262626' : '#8c8c8c' }">{{ feature.text }}</span>
               </div>
             </div>
           </div>
@@ -111,8 +116,13 @@
             >Get Started</button>
             <div class="features-list">
               <div v-for="(feature, index) in data.standard.description_list" :key="index" class="feature-item">
-                <span class="checkmark">✓</span>
-                <span>{{ feature }}</span>
+                <svg v-if="feature.enabled" width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-right: 8px; flex-shrink: 0;">
+                  <path d="M2.66797 6.66667L6.66797 10.6667L13.3346 4" stroke="#22c55e" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <svg v-else width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-right: 8px; flex-shrink: 0;">
+                  <path d="M4 4L12 12M12 4L4 12" stroke="#ff4d4f" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span :style="{ color: feature.enabled ? '#ffffff' : 'rgba(255,255,255,0.45)' }">{{ feature.text }}</span>
               </div>
             </div>
           </div>
@@ -151,8 +161,13 @@
             >Get Started</button>
             <div class="features-list">
               <div v-for="(feature, index) in data.premium.description_list" :key="index" class="feature-item">
-                <span class="checkmark">✓</span>
-                <span>{{ feature }}</span>
+                <svg v-if="feature.enabled" width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-right: 8px; flex-shrink: 0;">
+                  <path d="M2.66797 6.66667L6.66797 10.6667L13.3346 4" stroke="#22c55e" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <svg v-else width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-right: 8px; flex-shrink: 0;">
+                  <path d="M4 4L12 12M12 4L4 12" stroke="#ff4d4f" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span :style="{ color: feature.enabled ? '#262626' : '#8c8c8c' }">{{ feature.text }}</span>
               </div>
             </div>
           </div>
@@ -174,7 +189,6 @@
               <p class="plan-subtitle">Basic Plan</p>
             </div>
             <div class="price-section">
-
               <span class="currency">$</span>
               <span class="price">{{ data.business_plan_list.basic.monthly_charges }}</span>
               <p class="billing-period">{{data.business_plan_list.basic.plan_credits}} credits / month</p>
@@ -182,8 +196,13 @@
             <button class="get-started-btn basic-btn" @click="this.$router.push('/login')">Start 7-days Free Trial</button>
             <div class="features-list">
               <div v-for="(feature, index) in data.business_plan_list.basic.description_list" :key="index" class="feature-item">
-                <span class="checkmark">✓</span>
-                <span>{{ feature }}</span>
+                <svg v-if="feature.enabled" width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-right: 8px; flex-shrink: 0;">
+                  <path d="M2.66797 6.66667L6.66797 10.6667L13.3346 4" stroke="#22c55e" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <svg v-else width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-right: 8px; flex-shrink: 0;">
+                  <path d="M4 4L12 12M12 4L4 12" stroke="#ff4d4f" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span :style="{ color: feature.enabled ? '#262626' : '#8c8c8c' }">{{ feature.text }}</span>
               </div>
             </div>
           </div>
@@ -195,7 +214,6 @@
               <p class="plan-subtitle">MOST POPULAR</p>
             </div>
             <div class="price-section">
-              <!-- <span class="original-price">${{ calculateOriginalPrice(data.business_plan_list.standard.monthly_charges) }}</span> -->
               <span class="currency">$</span>
               <span class="price">{{ data.business_plan_list.standard.monthly_charges }}</span>
               <p class="billing-period">{{data.business_plan_list.standard.plan_credits}} credits / month</p>
@@ -203,8 +221,13 @@
             <button class="get-started-btn standard-btn" @click="this.$router.push('/login')">Start 7-days Free Trial</button>
             <div class="features-list">
               <div v-for="(feature, index) in data.business_plan_list.standard.description_list" :key="index" class="feature-item">
-                <span class="checkmark">✓</span>
-                <span>{{ feature }}</span>
+                <svg v-if="feature.enabled" width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-right: 8px; flex-shrink: 0;">
+                  <path d="M2.66797 6.66667L6.66797 10.6667L13.3346 4" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <svg v-else width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-right: 8px; flex-shrink: 0;">
+                  <path d="M4 4L12 12M12 4L4 12" stroke="rgba(255,255,255,0.45)" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span :style="{ color: feature.enabled ? '#ffffff' : 'rgba(255,255,255,0.45)' }">{{ feature.text }}</span>
               </div>
             </div>
           </div>
@@ -222,8 +245,13 @@
             <button class="get-started-btn premium-btn" @click="this.$router.push('/login')">Start 7-days Free Trial</button>
             <div class="features-list">
               <div v-for="(feature, index) in data.business_plan_list.premium.description_list" :key="index" class="feature-item">
-                <span class="checkmark">✓</span>
-                <span>{{ feature }}</span>
+                <svg v-if="feature.enabled" width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-right: 8px; flex-shrink: 0;">
+                  <path d="M2.66797 6.66667L6.66797 10.6667L13.3346 4" stroke="#22c55e" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <svg v-else width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-right: 8px; flex-shrink: 0;">
+                  <path d="M4 4L12 12M12 4L4 12" stroke="#ff4d4f" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span :style="{ color: feature.enabled ? '#262626' : '#8c8c8c' }">{{ feature.text }}</span>
               </div>
             </div>
           </div>
@@ -243,8 +271,13 @@
             <button class="get-started-btn basic-btn" @click="this.$router.push('/login')">Start 7-days Free Trial</button>
             <div class="features-list">
               <div v-for="(feature, index) in data.professional_plan_list.basic.description_list" :key="index" class="feature-item">
-                <span class="checkmark">✓</span>
-                <span>{{ feature }}</span>
+                <svg v-if="feature.enabled" width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-right: 8px; flex-shrink: 0;">
+                  <path d="M2.66797 6.66667L6.66797 10.6667L13.3346 4" stroke="#22c55e" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <svg v-else width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-right: 8px; flex-shrink: 0;">
+                  <path d="M4 4L12 12M12 4L4 12" stroke="#ff4d4f" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span :style="{ color: feature.enabled ? '#262626' : '#8c8c8c' }">{{ feature.text }}</span>
               </div>
             </div>
           </div>
@@ -256,7 +289,6 @@
               <p class="plan-subtitle">MOST POPULAR</p>
             </div>
             <div class="price-section">
-              <!-- <span class="original-price">${{ calculateOriginalPrice(data.professional_plan_list.standard.monthly_charges) }}</span> -->
               <span class="currency">$</span>
               <span class="price">{{ data.professional_plan_list.standard.monthly_charges }}</span>
               <p class="billing-period">{{data.professional_plan_list.standard.plan_credits}} credits / month</p>
@@ -264,8 +296,13 @@
             <button class="get-started-btn standard-btn" @click="this.$router.push('/login')">Start 7-days Free Trial</button>
             <div class="features-list">
               <div v-for="(feature, index) in data.professional_plan_list.standard.description_list" :key="index" class="feature-item">
-                <span class="checkmark">✓</span>
-                <span>{{ feature }}</span>
+                <svg v-if="feature.enabled" width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-right: 8px; flex-shrink: 0;">
+                  <path d="M2.66797 6.66667L6.66797 10.6667L13.3346 4" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <svg v-else width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-right: 8px; flex-shrink: 0;">
+                  <path d="M4 4L12 12M12 4L4 12" stroke="rgba(255,255,255,0.45)" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span :style="{ color: feature.enabled ? '#ffffff' : 'rgba(255,255,255,0.45)' }">{{ feature.text }}</span>
               </div>
             </div>
           </div>
@@ -283,8 +320,13 @@
             <button class="get-started-btn premium-btn" @click="this.$router.push('/login')">Start 7-days Free Trial</button>
             <div class="features-list">
               <div v-for="(feature, index) in data.professional_plan_list.premium.description_list" :key="index" class="feature-item">
-                <span class="checkmark">✓</span>
-                <span>{{ feature }}</span>
+                <svg v-if="feature.enabled" width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-right: 8px; flex-shrink: 0;">
+                  <path d="M2.66797 6.66667L6.66797 10.6667L13.3346 4" stroke="#22c55e" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <svg v-else width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-right: 8px; flex-shrink: 0;">
+                  <path d="M4 4L12 12M12 4L4 12" stroke="#ff4d4f" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span :style="{ color: feature.enabled ? '#262626' : '#8c8c8c' }">{{ feature.text }}</span>
               </div>
             </div>
           </div>
@@ -385,11 +427,6 @@ export default {
     }
   },
   methods: {
-    /**
-     * Returns a numeric rank for plan comparison.
-     * null / undefined / unknown = 0 (no active plan)
-     * basic = 1, standard = 2, premium = 3
-     */
     planRank(planName) {
       const ranks = { basic: 1, standard: 2, premium: 3 }
       return ranks[planName] || 0
@@ -402,8 +439,6 @@ export default {
           headers: { Authorization: `Token ${this.token}` }
         })
         const result = await response.json()
-        // Adjust the key below to match your actual API response shape
-        // e.g. result.data.plan_type  OR  result.plan  etc.
         if (result) {
           this.currentPlan = result.subscription.plan_name
         }
@@ -610,9 +645,9 @@ export default {
 }
 
 .toggle-btn.active {
-  background: linear-gradient(135deg, #201b85 0%, #0d00ff 100%);;
+  background: linear-gradient(135deg, #201b85 0%, #0d00ff 100%);
   color: white;
-  border-color: linear-gradient(135deg, #201b85 0%, #0d00ff 100%);;
+  border-color: linear-gradient(135deg, #201b85 0%, #0d00ff 100%);
 }
 
 .pricing-cards {
@@ -632,7 +667,6 @@ export default {
 }
 
 .pricing-card:hover {
-  /* transform: translateY(-2px); */
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
 }
 
@@ -641,7 +675,7 @@ export default {
 }
 
 .standard-card {
-  background: linear-gradient(135deg, #201b85 0%, #0d00ff 100%);;
+  background: linear-gradient(135deg, #201b85 0%, #0d00ff 100%);
   color: white;
   transform: scale(1.05);
   box-shadow: 0 8px 30px rgba(45, 45, 45, 0.3);
@@ -651,7 +685,6 @@ export default {
   background: linear-gradient(135deg, #201b85 0%, #0d00ff 100%);
 }
 
-/* ── Plan status badges ── */
 .plan-status-badge {
   position: absolute;
   top: 16px;
@@ -669,7 +702,6 @@ export default {
   color: white;
 }
 
-/* Badge on the dark standard card */
 .current-badge-standard {
   position: absolute;
   top: 16px;
@@ -685,7 +717,6 @@ export default {
   border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
-/* ── Disabled button state ── */
 .btn-disabled {
   opacity: 0.5 !important;
   cursor: not-allowed !important;
@@ -830,39 +861,6 @@ export default {
   display: flex;
   align-items: center;
   font-size: 14px;
-  color: #374151;
-}
-
-.standard-card .feature-item {
-  color: rgba(255, 255, 255, 0.9);
-}
-
-.feature-item.disabled {
-  opacity: 0.6;
-  color: #9ca3af;
-}
-
-.standard-card .feature-item.disabled {
-  opacity: 0.5;
-  color: rgba(255, 255, 255, 0.5);
-}
-
-.checkmark {
-  color: #10b981;
-  margin-right: 12px;
-  font-weight: 600;
-  flex-shrink: 0;
-}
-
-.standard-card .checkmark {
-  color: #34d399;
-}
-
-.crossmark {
-  color: #ef4444;
-  margin-right: 12px;
-  font-weight: 600;
-  flex-shrink: 0;
 }
 
 .credit-topup-section {
