@@ -402,7 +402,8 @@ export default {
     return {
       _isReloading: false,
       _pendingReload: false,
-      
+          _isRendering: false,   // ← add this
+
 
       show_inline_dims_editor: false,
 update_dimensions: {
@@ -1357,6 +1358,7 @@ rescaleChair() {
 
     reloadChair() {
   if (!this.scene) { console.warn('⚠️ reloadChair: scene not ready'); return }
+  if (this._isReloading) { this._pendingReload = true; return }
 
   // ✅ Prevent concurrent reloads (color spam clicking)
   if (this._isReloading) {
@@ -1365,6 +1367,8 @@ rescaleChair() {
     return
   }
   this._isReloading = true
+    this._isRendering  = true   // ← pause animate() NOW, before any disposal
+
   this._pendingReload = false
 
   // ✅ Step 1: Immediately dispose OLD chair completely
@@ -1388,7 +1392,7 @@ rescaleChair() {
   if (this.renderer && this.scene && this.camera) {
     this.renderer.setClearColor(0x000000, 0)
     this.renderer.clear(true, true, true)
-    this.renderer.render(this.scene, this.camera)
+    // this.renderer.render(this.scene, this.camera)
   }
 
   this.isDragging          = false
@@ -1414,6 +1418,8 @@ rescaleChair() {
       if (this._pendingReload) {
         console.warn('⚠️ Newer reload queued, discarding this result')
         this._isReloading = false
+          this._isRendering = false   // ← release before recursing
+
         this.reloadChair()
         return
       }
@@ -1471,6 +1477,8 @@ rescaleChair() {
       this.chairLoaded       = true
       this.modelLoadProgress = 100
       this.modelLoading      = false
+        this._isRendering = false   // ← release AFTER chair is set up
+
       this._isReloading      = false  // ✅ release lock
 
       if (this.planeReady) {
@@ -1488,7 +1496,9 @@ rescaleChair() {
     err => {
       console.error('❌ Chair reload failed:', err)
       this.modelLoading  = false
-      this._isReloading  = false  // ✅ release lock on error too
+      this._isReloading  = false  
+      this._isRendering = false   
+
       this._checkAllReady()
     },
   )
@@ -2227,11 +2237,13 @@ async createBinaryMaskBlob(bgWidth, bgHeight, snapPos, snapQuat, snapScale, froz
       this.floorCentroid3 = markRaw(new THREE.Vector3())
     },
 
-    animate() {
-      this.animationFrameId = requestAnimationFrame(this.animate)
-      if (this.renderer && this.scene && this.camera) this.renderer.render(this.scene, this.camera)
-    },
-
+   animate() {
+  this.animationFrameId = requestAnimationFrame(this.animate)
+  if (this._isRendering) return              // ← add this guard
+  if (this.renderer && this.scene && this.camera) {
+    this.renderer.render(this.scene, this.camera)
+  }
+},
     toggleMaskOverlay()  { this.debugMask      ? (this.maskReady && this.drawMaskOverlay()) : this.clearMaskOverlay() },
     togglePointCloud()   { if (this.pointCloudObj) this.pointCloudObj.visible = this.debugPointCloud },
     toggleFloorMesh()    { if (this.floorMesh3D)   this.floorMesh3D.visible   = this.debugFloorMesh  },

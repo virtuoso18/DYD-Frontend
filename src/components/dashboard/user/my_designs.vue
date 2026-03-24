@@ -532,12 +532,10 @@
             }}</span>
           </router-link>
 
-          <div
+          <!-- <div
             class="w-full max-w-xl mx-auto bg-gray-100 rounded-2xl border border-gray-200 !mt-4 p-6"
           >
-            <!-- Header -->
             <div class="flex items-start gap-4 mb-6">
-              <!-- Image -->
               <div class="flex-shrink-0">
                 <img
                   :src="
@@ -549,7 +547,6 @@
                 />
               </div>
 
-              <!-- Text Content -->
               <div class="flex-1">
                 <h2
                   class="text-xl font-bold text-gray-900 mb-2"
@@ -566,7 +563,6 @@
               </div>
             </div>
 
-            <!-- Share Button -->
             <a-button
               type="primary"
               @click="shareOnCommunity"
@@ -599,7 +595,7 @@
                 >Share on community</span
               >
             </a-button>
-          </div>
+          </div> -->
         </a-col>
         <a-col :xs="24" :sm="24" :md="12" :lg="12" style="padding: 10px" v-else>
           <div style="margin-bottom: 20px">
@@ -1275,27 +1271,29 @@ export default {
       }
     },
 
-    goto_product_Route_home_design(product) {
-    console.log(product);
-      let product_type = "product";
-      if (product.type == "light") {
-        product_type = "product";
-      } else if (product.type == "floor_texture") {
-        product_type = "floor";
-      } else if (product.type == "wall_texture") {
-        product_type = "wall";
-      } else {
-        product_type = product.type;
-      }
-      this.$router.push({
-        name: "buisness_product",
-        params: {
-          buisness_name: product.business_slug,
-          product_type: product.type,
-          product_id: product.product_id,
-        },
-      });
-    },
+    // goto_product_Route_home_design(product) {
+    // console.log(product);
+    // console.log(product.type);
+    // debugger
+    //   let product_type = "product";
+    //   if (product.type === "light") {
+    //     product_type = "product";
+    //   } else if (product.type === "floor_texture") {
+    //     product_type = "floor";
+    //   } else if (product.type === "wall_texture") {
+    //     product_type = "wall";
+    //   } else {
+    //     product_type = product.type;
+    //   }
+    //   this.$router.push({
+    //     name: "buisness_product",
+    //     params: {
+    //       buisness_name: product.business_slug,
+    //       product_type: product.type,
+    //       product_id: product.product_id,
+    //     },
+    //   });
+    // },
 
     async loadHomeDesigns() {
       try {
@@ -1588,13 +1586,16 @@ export default {
       });
     },
 goto_product_Route_home_design(product) {
-    console.log(product);
+    // console.log(product);
+    // console.log(product);
+    // console.log(product.type);
+    // debugger
       let product_type = "product";
-      if (product.type == "light") {
+      if (product.type === "light") {
         product_type = "product";
-      } else if (product.type == "floor_texture") {
+      } else if (product.type === "floor_texture") {
         product_type = "floor";
-      } else if (product.type == "wall_texture") {
+      } else if (product.type === "wall_texture") {
         product_type = "wall";
       } else {
         product_type = product.type;
@@ -1603,7 +1604,7 @@ goto_product_Route_home_design(product) {
         name: "buisness_product",
         params: {
           buisness_name: product.business_slug,
-          product_type: product.type,
+          product_type: product_type,
           product_id: product.product_id,
         },
       });

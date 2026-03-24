@@ -1,4 +1,129 @@
 <template>
+    <!-- Purchase Credits Modal -->
+<a-modal
+  v-model:open="showMonthlySubscription_activaFound_Modal"
+  centered
+  width="420px"
+  :footer="null"
+>
+  <div style="text-align:center; padding:10px;">
+
+    <!-- Icon -->
+    <!-- <div
+      style="
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        width:70px;
+        height:70px;
+        margin:0 auto 18px auto;
+        border-radius:50%;
+        background:rgba(255,77,79,0.12);
+      "
+    >
+      <svg width="34" height="34" viewBox="0 0 20 20" fill="none">
+        <circle cx="10" cy="10" r="10" fill="#ff4d4f"/>
+      </svg>
+    </div> -->
+
+    <!-- Title -->
+    <h2 style="font-size:20px; font-weight:600; margin-bottom:8px;">
+      Subscription Expired
+    </h2>
+
+    <!-- Message -->
+    <p style="font-size:14px; color:#666; margin-bottom:18px;" v-if="currentUser.user_type!=='User'">
+      Hi {{ buid?.first_name || "User" }}, your monthly subscription has expired.
+      Please renew to continue using the service.
+    </p>
+
+    
+    <p style="font-size:14px; color:#666; margin-bottom:18px;" v-else>
+      Hi {{ currentUser.full_name }}, the Business does have expired their sucscription you can message the business for the resubscribe DYD.
+    </p>
+    <!-- Previous Subscription Info -->
+    <div
+      v-if="prev_subscription && (currentUser.user_type!=='User')"
+      style="
+        background:#fafafa;
+        border-radius:10px;
+        padding:12px;
+        margin-bottom:20px;
+        text-align:left;
+      "
+    >
+      <!-- Plan -->
+      <div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:6px;">
+        <span>Plan</span>
+        <strong>$ {{ prev_subscription?.subscription_plan_monthly_charges }}</strong>
+      </div>
+
+      <!-- Period -->
+      <div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:6px;">
+        <span>Period</span>
+        <strong>
+          {{ formatDate(prev_subscription?.period_start) }}
+          →
+          {{ formatDate(prev_subscription?.period_end) }}
+        </strong>
+      </div>
+
+      <!-- Status -->
+      <div style="display:flex; justify-content:space-between; font-size:14px; color:#ff4d4f; font-weight:500;">
+        <span>Status</span>
+        <strong>Expired</strong>
+      </div>
+    </div>
+
+    <!-- CTA -->
+     <router-link :to="'/make-payment-upgrade/'+prev_subscription?.subscription_plan_name" v-if="currentUser.user_type=='Business'">
+       <a-button
+       v-if="currentUser.user_type !== 'User'"
+       type="primary"
+       block
+       size="large"
+       style="height:46px; font-size:15px; border-radius:8px;margin-bottom:10px"
+       @click="goToPurchaseCredits"
+       >
+       Renew Subscription
+      </a-button>
+    </router-link>
+
+    <a-button
+      v-if="currentUser.user_type !== 'User'"
+      type="primary"
+      block
+      size="large"
+      style="height:46px; font-size:15px; border-radius:8px;"
+      @click="goToPurchaseCredits"
+    >
+      Explore Plans
+    </a-button>
+
+    <a-button
+      v-else
+      type="primary"
+      block
+      size="large"
+      :loading="LoadingMessageButton"
+      style="
+        height:46px;
+        font-size:15px;
+        border-radius:8px;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        gap:6px;
+      "
+      @click="startchat_with_buisness_user"
+    >
+      <MessageOutlined />
+      Contact Business
+    </a-button>
+
+  </div>
+</a-modal>
+
   <!-- Purchase Credits Modal -->
   <a-modal
     v-model:open="showCreditModal"
@@ -1373,12 +1498,16 @@ export default {
       LoadingMessageButton: false,
       buid: null,
       showCreditModal: false,
+      showMonthlySubscription_activaFound_Modal:false,
+      prev_subscription:null,
       errorTitle: "",
       btnText: "",
       creditErrorMessage: "",
 
       showLoadingModal: false,
       showInstructionsModal: false,
+
+
       showImageDrawer: false,
       showObjectManagement: false,
       selectedImage: null,
@@ -1787,7 +1916,17 @@ export default {
             this.showCreditModal = true;
             this.buid = responseData.buid;  
             return;
-          }
+            }
+            if (responseData.type === "no_monthly_active_subscription_found") { 
+              this.showInstructionsModal = false;
+              this.showMonthlySubscription_activaFound_Modal = true;
+              this.btnText = responseData?.btn_text;
+              this.errorTitle = "Your Monthly Subscription Got Expired.";
+              this.creditErrorMessage = "No active monthly subscription found. As your previous subscription got expired, You need to purchase new monthly subscription to continue further.";
+              this.prev_subscription= responseData?.prev_subscription;
+              this.buid = responseData.buid;
+              return;
+            }
         }
 
         if (responseData.error) {

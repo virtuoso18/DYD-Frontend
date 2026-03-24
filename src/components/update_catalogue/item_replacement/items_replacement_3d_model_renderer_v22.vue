@@ -1942,7 +1942,7 @@ rescaleChair() {
           formData.append('switch_model_color_id',  this.switched_color?.product_color_id )
         }
         console.log(this.switched_color);
-        debugger
+        
         
         formData.append('prod_id',  this.$route.query.product_id)
 

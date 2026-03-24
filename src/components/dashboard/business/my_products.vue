@@ -766,6 +766,8 @@
     <add_new_wallTexture
       v-model:visible="show_add_new_wall_texture"
       @product-created="this.fetchMyWallTextureProducts()"
+      @api-error="handleApiError"
+
     />
     <add_new_Light
       v-model:visible="show_add_new_light"
@@ -3518,7 +3520,7 @@ export default {
       this.fetchProductDetails(newProduct.id);
     },
     onLightProductCreated(newLightProduct) {
-      debugger
+      
       // this.myLights.push(newLightProduct);
       this.open_add_newLightModal = false;
       this.show_add_new_light_product_locally_3d_model = false;

@@ -5603,7 +5603,7 @@ this.$nextTick(() => {
         this.selected_3d_product_model = e.id;
         this.colors_available_for_3d_model=e.colors_available
         console.log(this.colors_available_for_3d_model);
-        debugger
+        // debugger
         console.log(e);
         console.log(
           " >>------------------------------------------> selected_model_width ",

@@ -1057,7 +1057,7 @@ watch: {
       this.loading_generated_models_history = true;
 
       try {
-        debugger
+        
         const limit = this.pagination.pageSize;
         const offset = this.pagination.currentOffset;
         

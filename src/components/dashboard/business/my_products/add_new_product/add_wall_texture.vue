@@ -363,7 +363,7 @@ export default defineComponent({
   props: {
     visible: { type: Boolean, default: false },
   },
-  emits: ['update:visible', 'product-created', 'cancel'],
+  emits: ['update:visible', 'product-created', 'cancel','api-error'],
   setup(props, { emit }) {
     const isSaving = ref(false);
     const tempColor = ref('#000000');
@@ -626,6 +626,8 @@ const handleRoomTypeChange = (value) => {
         } else {
           console.error('API Error:', result.message);
           message.error(result.message || 'Failed to create product. Please try again.');
+          const errorMsg = result.message || 'Failed to create product';
+          this.$emit('api-error', errorMsg); 
         }
         
       } catch (error) {

@@ -907,6 +907,7 @@ import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import DesignCard from "@/components/Includes/DesignCard.vue";
 import CommentsModal from "./CommentsModal.vue";
+import router from "@/router";
 
 export default {
   name: "InteriorDesignCommunityPage",
@@ -2027,6 +2028,17 @@ export default {
   },
 
   async mounted() {
+    // escape the end user if the general user is comming to the community 
+    if( ! localStorage.getItem('token')){
+      this.$router.push('/')  
+    }
+    if (localStorage.getItem('token') && JSON.parse(localStorage.getItem("user")).user_type==="User"){
+      this.$router.push('/')
+    }
+    
+
+
+
     await this.fetchPosts();
     await this.fetchCommunityStats();
     // await this.fetchTags();

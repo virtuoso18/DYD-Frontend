@@ -1582,7 +1582,7 @@ watch: {
           this.$emit('update:visible', false);
           this.resetForm();
         } else {
-          debugger
+          
           const errorMsg = result.message || 'Failed to create product';
           this.handleCancel(); // close the modal first
           this.$emit('api-error', errorMsg); // then bubble error up to parent

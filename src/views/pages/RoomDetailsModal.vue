@@ -42,6 +42,7 @@
                 <div class="tags-section">
                   <span class="tag tag-category">{{ room.category || 'Room' }}</span>
                   <span class="tag tag-type">{{ room.type || 'N/A' }}</span>
+                  <!-- cspell:disable-next-line -->
                   <span v-if="room.is_favorited" class="tag tag-favorite">⭐ Favorited</span>
                 </div>
 

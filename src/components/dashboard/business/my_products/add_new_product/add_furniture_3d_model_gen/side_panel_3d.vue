@@ -1595,7 +1595,7 @@ export default {
       return `${this.$store.state.root_media_api}${imagePath}`;
     },
     handleModalOpen() {
-      debugger;
+      
       // Load textures when modal opens
       if (this.availableTexturesLibrary.length === 0) {
         this.loadAvailableTexturesLibrary();
@@ -3363,7 +3363,7 @@ export default {
       return null;
     },
     async getSelectedTexturePreview() {
-      debugger;
+      
       if (this.textureImage) {
         return this.textureImage; // Local upload - already base64
       } else if (this.selectedLibraryTexture?.url) {

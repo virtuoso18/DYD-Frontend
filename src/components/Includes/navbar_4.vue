@@ -42,7 +42,7 @@
         <router-link to="/contact-us" class="text-gray-600 text-sm font-medium hover:text-blue-600 transition-colors whitespace-nowrap">
           Contact Us
         </router-link>
-         <router-link to="/comunity" class="nav-link">Community</router-link>
+         <!-- <router-link to="/comunity" class="nav-link">Community</router-link> -->
         <router-link to="/pricing" class="nav-link">Pricing</router-link>
       </div>
 

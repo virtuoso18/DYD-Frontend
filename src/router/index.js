@@ -456,13 +456,13 @@ const router = createRouter({
       path: '/:buisness_name',
       name: 'buisness_name',
       component: buisness_page,
-       meta: { requiresAuth: true }
+      //  meta: { requiresAuth: true }
     },
      {
       path: '/:buisness_name/:product_type/:product_id',
       name: 'buisness_product',
       component: buisness_product,
-       meta: { requiresAuth: true }
+      //  meta: { requiresAuth: true }
     },
     
     {

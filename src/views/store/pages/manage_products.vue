@@ -3518,7 +3518,7 @@ export default {
       this.fetchProductDetails(newProduct.id);
     },
     onLightProductCreated(newLightProduct) {
-      debugger
+      
       // this.myLights.push(newLightProduct);
       this.open_add_newLightModal = false;
       this.show_add_new_light_product_locally_3d_model = false;

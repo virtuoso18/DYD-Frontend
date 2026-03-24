@@ -134,9 +134,7 @@ export default {
       loading: false,
       sortField: 'date',
       sortOrder: 'desc',
-      tableData: [
-       
-      ],
+      tableData: [],
     }
   },
   computed: {

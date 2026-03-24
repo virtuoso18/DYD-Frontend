@@ -3,20 +3,20 @@
         <div style="max-width:900px;background:white;border-radius:12px;overflow:hidden">
             <a-row>
                 <a-col :sm="24" :xs="24" :md="12" :lg="12" style="padding:40px;border-right:1px solid #f0f0f0">
-                    <p style="color:#666;margin-bottom:8px;font-size:16px">Subscribe to Pro Yearly</p>
-                    <h1 style="font-size:32px;font-weight:600;margin:0;color:#333">${{plan_details.yearly_charges}} <span style="font-size:18px;font-weight:400;color:#666">/year</span></h1>
-                    <p style="color:#999;margin-top:8px;font-size:14px">${{plan_details.monthly_charges}} / month billed annually</p>
+                    <p style="color:#666;margin-bottom:8px;font-size:16px">Subscribe to Pro Monthly</p>
+                    <h1 style="font-size:32px;font-weight:600;margin:0;color:#333">${{plan_details.monthly_charges}} <span style="font-size:18px;font-weight:400;color:#666">/month</span></h1>
+                    <p style="color:#999;margin-top:8px;font-size:14px">${{plan_details.monthly_charges}} / month billed monthly</p>
                     
                     <div style="margin-top:40px;padding-top:30px;border-top:1px solid #f0f0f0">
                         <div style="display:flex;justify-content:space-between;margin-bottom:15px">
                             <span style="color:#666">Pro</span>
-                            <span style="color:#333;font-weight:500">${{plan_details.yearly_charges}}</span>
+                            <span style="color:#333;font-weight:500">${{plan_details.monthly_charges}}</span>
                         </div>
-                        <p style="color:#999;font-size:12px;margin:0">Billed annually</p>
+                        <p style="color:#999;font-size:12px;margin:0">Billed monthly</p>
                         
                         <div style="display:flex;justify-content:space-between;margin:20px 0 8px 0;padding-top:15px;border-top:1px solid #f0f0f0">
                             <span style="color:#666">Subtotal</span>
-                            <span style="color:#333;font-weight:500">${{plan_details.yearly_charges}}</span>
+                            <span style="color:#333;font-weight:500">${{plan_details.monthly_charges}}</span>
                         </div>
                         
                         <div style="display:flex;justify-content:space-between;margin-bottom:20px">
@@ -26,7 +26,7 @@
                         
                         <div style="display:flex;justify-content:space-between;padding-top:15px;border-top:1px solid #f0f0f0">
                             <span style="color:#333;font-weight:600;font-size:16px">Total due today</span>
-                            <span style="color:#333;font-weight:600;font-size:16px">${{plan_details.yearly_charges}}</span>
+                            <span style="color:#333;font-weight:600;font-size:16px">${{plan_details.monthly_charges}}</span>
                         </div>
                     </div>
                 </a-col>
@@ -84,7 +84,7 @@
                             <span style="color:#333;font-weight:500;font-size:16px">Total</span>
                             <div style="text-align:right">
                                 <div style="color:#666;font-size:14px;margin-bottom:2px">Amount to pay</div>
-                                <div style="color:#333;font-weight:600;font-size:18px">${{plan_details.yearly_charges}}</div>
+                                <div style="color:#333;font-weight:600;font-size:18px">${{plan_details.monthly_charges}}</div>
                             </div>
                         </div>
                     </div>
@@ -132,11 +132,11 @@
                 <div v-if="purchase_successfull" style="background:#f8f9fa;padding:20px;border-radius:8px;margin-bottom:30px;text-align:left">
                     <div style="display:flex;justify-content:space-between;margin-bottom:10px">
                         <span style="color:#666">Plan:</span>
-                        <span style="color:#333;font-weight:500">Pro Yearly</span>
+                        <span style="color:#333;font-weight:500">Pro Monthly</span>
                     </div>
                     <div style="display:flex;justify-content:space-between;margin-bottom:10px">
                         <span style="color:#666">Amount:</span>
-                        <span style="color:#333;font-weight:500">${{plan_details.yearly_charges}}</span>
+                        <span style="color:#333;font-weight:500">${{plan_details.monthly_charges}}</span>
                     </div>
                     <div style="display:flex;justify-content:space-between">
                         <span style="color:#666">Email:</span>

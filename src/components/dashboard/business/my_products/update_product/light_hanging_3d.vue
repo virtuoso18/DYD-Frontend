@@ -1284,7 +1284,7 @@ export default {
         this.hasUnsavedChanges = false;
         this.imagePreviewsState = [];
         this.pending3DModel = null;
-        debugger
+        
         console.log(this.selectedProduct)
         // Hydrate room type from the product's room_type object
         if (this.selectedProduct?.room_type) {

@@ -1148,7 +1148,7 @@ async detectObjectFromMask(imageSrc) {
         // ← CLEAR CANVAS BEFORE EMITTING SUCCESS
         this.clearAll();
         console.log(result);
-        debugger;
+        
 
         this.$emit("removal-success", result);
       } catch (error) {
