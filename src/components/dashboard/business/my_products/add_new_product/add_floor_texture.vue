@@ -656,7 +656,7 @@ const handleRoomTypeChange = (value) => {
     };
     
     // Improved save handler
-    const handleSave = async () => {
+   const handleSave = async () => {
       if (!validateForm()) return;
 
       isSaving.value = true;
@@ -671,7 +671,6 @@ const handleRoomTypeChange = (value) => {
 
         const formData = new FormData();
         
-        // Add only the active form fields
         Object.keys(form).forEach(key => {
           const value = form[key];
           if (value !== null && value !== '' && value !== undefined) {
@@ -683,17 +682,17 @@ const handleRoomTypeChange = (value) => {
           }
         });
 
-        // Add images with primary image index
         selectedImages.value.forEach((image, index) => {
           formData.append('images', image.file);
           if (image.isPrimary) {
             formData.append('primary_image_index', index);
           }
         });
+
         if (selectedRoomTypeName.value) {
-  formData.append('room_type_name', selectedRoomTypeName.value);
-}
-        // API call
+          formData.append('room_type_name', selectedRoomTypeName.value);
+        }
+
         const response = await fetch(`${store.state.root_api}room/api-owner/floor/`, {
           method: 'POST',
           headers: {
@@ -702,34 +701,39 @@ const handleRoomTypeChange = (value) => {
           body: formData
         });
 
+        // ✅ Parse JSON before checking response.ok so result is always in scope
+        const result = await response.json();
+
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+          const errorMsg = result.message || `Server error: ${response.status}`;
+          emit('api-error', errorMsg);
+          message.error(errorMsg);
+          return;
         }
 
-        const result = await response.json();
-        
         if (result.success) {
           message.success('Floor texture product created successfully!');
           emit('product-created', result.data);
           handleCancel();
         } else {
-          const errorMsg = result.message || 'Failed to create product';
-          this.handleCancel(); 
-          this.$emit('api-error', errorMsg); 
+          const errorMsg = result.message || 'Failed to create product. Please try again.';
+          emit('api-error', errorMsg);  // ✅ no more this.errorModal
+          handleCancel();
+          message.error(errorMsg);
         }
-        
+
       } catch (error) {
         console.error('Error saving floor texture:', error);
-        this.errorModal.message = result.message || 'Failed to create product';
-        this.errorModal.visible = true;
-        
+
+        let errorMsg = 'Failed to create product. Please try again.';
         if (error.name === 'TypeError' && error.message.includes('fetch')) {
-          message.error('Network error. Please check your internet connection.');
-        } else if (error.message.includes('HTTP error')) {
-          message.error('Server error. Please try again later.');
-        } else {
-          message.error('Failed to create product. Please try again.');
+          errorMsg = 'Network error. Please check your internet connection.';
         }
+
+        // ✅ result not in scope here, use errorMsg instead
+        emit('api-error', errorMsg);
+        message.error(errorMsg);
+
       } finally {
         isSaving.value = false;
       }

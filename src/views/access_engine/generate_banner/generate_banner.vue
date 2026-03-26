@@ -1,6 +1,6 @@
 <template>
   <div
-    class="bg-white sm:rounded-[15px] min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh] sm:border border-black/10 !my-[10px] !mr-[10px] p-[20px]"
+    class="bg-white sm:rounded-[15px] min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh] !my-[10px] !mr-[10px] "
   >
     <!-- Header Section -->
     <div
@@ -17,6 +17,7 @@
         <h3
           className="text-[18px]"
           style="font-family: var(--font-family-main); color: var(--text-color)"
+          class="m-0 text-lg whitespace-nowrap px-2 lg:text-2xl font-semibold"
         >
           My Banners
         </h3>

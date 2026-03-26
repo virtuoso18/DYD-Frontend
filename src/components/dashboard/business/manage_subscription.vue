@@ -75,11 +75,11 @@
         <!-- Desktop Subscription Card -->
         <div v-if="currentPlan !== null" class="bg-[#3B63FB] hidden md:flex rounded-[20px] w-full min-h-[160px] p-2 items-center shadow-[0_4px_16px_rgba(79,124,255,0.3)]">
           <div class="relative w-full h-full flex items-stretch">
-            <div class="bg-white w-[60%] rounded-[15px] p-5 flex flex-col justify-center min-h-[114px]">
+            <div class="bg-white w-[75%] rounded-[15px] p-5 flex flex-col justify-center min-h-[114px]">
               <h3 class="text-[clamp(24px,3vw,32px)] font-semibold text-[#262626] font-[Poppins] uppercase ">
                 {{ currentSubscription?.plan_name }}
               </h3>
-              <p class="m-0 text-[#8c8c8c] text-xs uppercase font-[Poppins]">BILLED YEARLY</p>
+              <p class="m-0 text-[#8c8c8c] text-xs uppercase font-[Poppins]">BILLED MONTHLY</p>
               <a-button
   type="link"
   class="!p-0 !text-[#3B63FB] !font-[Poppins] font-medium translate-x-[-40%] flex items-center gap-1"
@@ -94,12 +94,12 @@
 </a-button>
 
             </div>
-            <div class="absolute right-0 top-0 bottom-0 bg-[#3B63FB] rounded-r-[15px] px-4 py-5 flex flex-col justify-center items-center text-center w-[40%]">
+            <div class="absolute right-0 top-0 bottom-0 bg-[#3B63FB] rounded-r-[15px] px-4 py-5 flex flex-col justify-center items-center text-center w-[25%]">
               <h1 class="text-[clamp(32px,4vw,45px)] text-white m-0 mb-2 font-bold font-[Poppins] leading-[36px]">
                 ${{ currentSubscription?.monthly_charges }}
               </h1>
               <p class="text-white/90 m-0 mb-4 text-[clamp(12px,2.5vw,14px)] font-[Poppins] leading-[20px]">
-                {{ currentSubscription?.plan_credits / 12 }} credits / month
+                {{ currentSubscription?.plan_credits  }} credits / month
               </p>
               <template v-if="currentPlan === 'basic'">
                 <div class="flex flex-row gap-2 w-full">
@@ -299,7 +299,7 @@
                           <th class="text-left py-3 px-4 font-medium text-[#8c8c8c] text-xs">Date</th>
                           <th class="text-left py-3 px-4 font-medium text-[#8c8c8c] text-xs">Expire Date</th>
                           <th class="text-left py-3 px-4 font-medium text-[#8c8c8c] text-xs">Payment method</th>
-                          <th class="text-left py-3 px-4 font-medium text-[#8c8c8c] text-xs">Billed</th>
+                          <!-- <th class="text-left py-3 px-4 font-medium text-[#8c8c8c] text-xs">Billed</th> -->
                           <th class="text-left py-3 px-4 font-medium text-[#8c8c8c] text-xs">Price</th>
                           <th class="text-left py-3 px-4 font-medium text-[#8c8c8c] text-xs">Action</th>
                           <th class="text-left py-3 px-4 font-medium text-[#8c8c8c] text-xs">Status</th>
@@ -316,7 +316,7 @@
                               <span class="text-[#8c8c8c] text-sm">Debit Card</span>
                             </div>
                           </td>
-                          <td class="py-4 px-4 text-[#262626]">{{ record.billed }}</td>
+                          <!-- <td class="py-4 px-4 text-[#262626]">{{ record.billed }}</td> -->
                           <td class="py-4 px-4 text-[#1890ff] font-semibold">${{ record.price }}</td>
                           <td class="py-4 px-4">
                             <button @click="downloadInvoice(record.innovice)" class="text-[#1890ff] text-sm hover:underline">Download invoice</button>

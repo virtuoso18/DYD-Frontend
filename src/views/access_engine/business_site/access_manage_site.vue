@@ -15,15 +15,8 @@
     <a-col :span="20">
       
 <h2
-  className="!text-gray-700 p-2"
-  :style="{
-    fontFamily: 'Poppins',
-    fontWeight: 500,
-    fontStyle: 'normal',
-    fontSize: '16px',
-    lineHeight: '24px',
-    letterSpacing: '0%'
-  }"
+              class="m-0 text-lg whitespace-nowrap px-2 lg:text-2xl font-semibold"
+
 >
   {{ isEditing ? 'Edit Site' : 'Manage Store' }}
 </h2>

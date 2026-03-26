@@ -76,12 +76,14 @@
 
   </div>
 </a-modal>
+  <errorModal v-model:visible="errorModal.visible" :message="errorModal.message" ></errorModal>
    <add_new_furniture 
         v-model:visible="showAddProduct"
         :types="['Modern','Scandinavian','Classic','Minimalist','Industrial','Rustic','Boho','other',]"
         @product-created="onProductCreated"
         @cancel="onCancel"
         :rendered_modal_3D_id="model_instance_id"
+         @api-error="handleApiError"
     />
   <div class="flex flex-col md:flex-row w-full">
   <!-- Center Panel (First on Mobile, Middle on Desktop) - 12/24 = 50% width -->
@@ -122,7 +124,7 @@ import sidepanel_3d_tab from '@/views/access_engine/product/my_products/add_new_
 import object_viewer_3d_tab from '@/views/access_engine/product/my_products/add_new_product/add_light_3d_model_gen/canvas_renderer.vue'
 import models_3d_generate_history from '@/views/access_engine/product/my_products/add_new_product/add_light_3d_model_gen/generate_history.vue'
 import add_new_furniture from '@/views/access_engine/product/my_products/add_new_product/add_light_modal.vue'
-
+import errorModal from "@/components/Includes/modal/errorModal.vue";
 export default { 
   name:"add_Furniture"
 ,
@@ -143,7 +145,12 @@ data(){
       abortControllers: new Map(),
 
       // modal
-      showAddProduct:false
+      showAddProduct:false,
+      
+       errorModal: {
+          visible: false,
+          message: ''
+        }
       
 }
 },
@@ -151,12 +158,17 @@ components:{
   sidepanel_3d_tab,
   object_viewer_3d_tab,
   models_3d_generate_history,
-  add_new_furniture
+  add_new_furniture,
+  errorModal
 },
 mounted(){
   this.fetch3d_models_generated_by_user()
 },
 methods:{
+   handleApiError(message) {
+    this.errorModal.message = message;
+    this.errorModal.visible = true;
+  },
   throw_Insufficient_credits(message){
       // @insufficient-credits="throw_Insufficient_credits"
       // if(response.status==402){

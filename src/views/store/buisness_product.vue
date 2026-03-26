@@ -1,5 +1,40 @@
 <template>
-  <div>
+  <div v-if="Business_User_Looking_Another_business_user_mini_site">
+      <!-- Blur Overlay when modal is active -->
+    <div 
+      
+      class="plan-block-overlay"
+    >
+      <!-- Modal -->
+      <div class="plan-block-modal">
+        <div class="modal-content">
+         <div class="mb-5 flex justify-center">
+  <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#ff4d4f" stroke-width="2">
+    <g>
+      <circle cx="6" cy="12" r="3" fill="none" class="animate-pulse" style="animation-delay: 0s;"/>
+      <circle cx="12" cy="12" r="3" fill="none" class="animate-pulse" style="animation-delay: 0.5s;"/>
+      <circle cx="18" cy="12" r="3" fill="none" class="animate-pulse" style="animation-delay: 1s;"/>
+      <line x1="3" y1="12" x2="21" y2="12" stroke-dasharray="4 4" class="opacity-50"/>
+    </g>
+  </svg>
+</div>
+          <h2>Another Business Product</h2>
+          <p>The business users is not allowed to explore the another business products.</p>
+          <!-- <p>Please upgrade to a premium plan to view this content.</p> -->
+          
+          <div class="modal-actions" >
+            <!-- <a-button type="primary" size="large" @click="goToPricing">
+              Upgrade Plan
+            </a-button> -->
+            <a-button  type="primary" size="large" @click="goBack">
+              Go Back
+            </a-button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+    <div v-else>
     <!-- ✅ Loading state — while plan is being fetched -->
     <div
       v-if="!planLoaded"
@@ -59,6 +94,13 @@
         </svg>
       </div>
 
+      <div v-if="is_expired_or_un_active_business_plan">
+          <h2>Non Active Business</h2>
+          <p>This business is not belongs to any purchase plan, so this does not have any AR feature for this product available.</p>
+            
+          </div>
+          <div v-else>
+              
       <!-- Title -->
       <h2
         style="
@@ -80,8 +122,7 @@
           line-height: 1.6;
         "
       >
-        Bussiness User Owning The Product Is On Basic Plan 
-        
+        Business User Owning The Product Is On Basic Plan 
         That doesn't include access to
         <span style="font-weight: 600; color: #111827">Product Details</span>.
       </p>
@@ -90,8 +131,7 @@
         Upgrade to Standard or Premium to unlock full product details and more!
       </p>
 
-      <!-- Actions -->
-      <div style="display: flex; flex-direction: column; gap: 12px">
+     <div style="display: flex; flex-direction: column; gap: 12px">
         <button
   v-if="user && user.user_type === 'Business'"
   @click="$router.push('/pricing')"
@@ -135,6 +175,12 @@
           Go Back
         </button>
       </div>
+    
+    </div>
+
+
+      <!-- Actions -->
+     
 
       <!-- Feature list -->
       <div
@@ -205,7 +251,7 @@
         v-if="
           selectedProduct !== null &&
           product_type === 'product' &&
-          selectedProduct.category.name !== 'Light'
+          selectedProduct.is_ceiling_light_product === false
         "
       />
       <show_Light_product_3D
@@ -213,7 +259,7 @@
         v-if="
           selectedProduct &&
           product_type === 'product' &&
-          selectedProduct.category.name === 'Light' &&
+          selectedProduct.is_ceiling_light_product === true &&
           selectedProduct.light_type == 'hanging'
         "
         @back_product_list="backToList"
@@ -223,7 +269,7 @@
         v-if="
           selectedProduct &&
           product_type === 'product' &&
-          selectedProduct.category.name === 'Light' &&
+          selectedProduct.is_ceiling_light_product === true &&
           selectedProduct.light_type == 'sunk'
         "
         @back_product_list="backToList"
@@ -233,7 +279,7 @@
         v-if="
           selectedProduct &&
           product_type === 'product' &&
-          selectedProduct.category.name === 'Light' &&
+          selectedProduct.is_ceiling_light_product === true &&
           selectedProduct.light_type == 'unsunk'
         "
         @back_product_list="backToList"
@@ -311,10 +357,15 @@ export default {
     return {
         selectedProduct: null,
        user: JSON.parse(localStorage.getItem('user')),
+       anonyomusUser:localStorage.getItem('token'),
       product_id: this.$route.params.product_id,
       product_type: this.$route.params.product_type,
       buisness_name: this.$route.params.buisness_name,
       our_products: [],
+
+      showPlanBlockModal: false,
+      is_expired_or_un_active_business_plan:false,
+      Business_User_Looking_Another_business_user_mini_site:false,
 
       // Pagination
       currentPage: 1,
@@ -340,13 +391,19 @@ export default {
   },
 
   async mounted() {
-    // ✅ Step 1 — load plan FIRST before anything renders
-    await this.loadBrandPurchasedPlanDetails();
+    if (localStorage.getItem('token') && ((JSON.parse(localStorage.getItem("user")).user_type ==="Business") && (JSON.parse(localStorage.getItem("business_profile")).slug !== this.$route.params.buisness_name))){
+      this.Business_User_Looking_Another_business_user_mini_site=true
+    }
+    else{
 
-    // ✅ Step 2 — only load product data if not basic
-    if (!this.isBasicPlan) {
-      this.fetchProductDetails();
-      this.loadBusinessProducts();
+      // ✅ Step 1 — load plan FIRST before anything renders
+      await this.loadBrandPurchasedPlanDetails();
+      
+      // ✅ Step 2 — only load product data if not basic
+      if (!this.isBasicPlan) {
+        this.fetchProductDetails();
+        this.loadBusinessProducts();
+      }
     }
   },
 
@@ -373,6 +430,8 @@ export default {
         if (result.success && result.data) {
           this.currentPlanName = result.data.plan_name;
           this.business_available_actions = result.data;
+                  this.is_expired_or_un_active_business_plan=result.is_expired
+          
           console.log("✅ Plan loaded:", this.currentPlanName);
         } else {
           this.currentPlanName = null;
@@ -501,5 +560,225 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+
+
+
+.post-card {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 0px;
+  border-radius: 12px;
+  background: white;
+  /* transition: all 0.3s ease; */
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.post-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  /* transform: translateY(-2px); */
+}
+
+/* Fixed tags overlay positioning */
+.tags-overlay {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  max-width: 70%;
+  z-index: 2;
+}
+
+.view-count-overlay {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  z-index: 2;
+}
+
+/* ✅ ADD THESE STYLES */
+.plan-block-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(252, 250, 250, 0.436);
+  backdrop-filter: blur(10px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.plan-block-modal {
+  background: white;
+  border-radius: 16px;
+  padding: 40px;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.rotate-prohibited {
+  animation: slowSpin 4s linear infinite;
+}
+
+@keyframes slowSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.plan-block-modal h2 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #262626;
+  margin-bottom: 16px;
+}
+
+.plan-block-modal p {
+  font-size: 16px;
+  color: #595959;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.plan-block-modal p strong {
+  color: #ff4d4f;
+  font-weight: 600;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 30px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.modal-actions .ant-btn {
+  min-width: 140px;
+  height: 44px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+}
+
+.content-blurred {
+  filter: blur(8px);
+  pointer-events: none;
+  user-select: none;
+}
+
+@media (max-width: 768px) {
+  .plan-block-modal {
+    padding: 30px 20px;
+  }
+  
+  .plan-block-modal h2 {
+    font-size: 22px;
+  }
+  
+  .plan-block-modal p {
+    font-size: 14px;
+  }
+  
+  .modal-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .modal-actions .ant-btn {
+    width: 100%;
+  }
+}
+
+
+.pinned-badge {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  background: #1890ff;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  z-index: 2;
+}
+
+.post-stats {
+  display: flex;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 16px;
+  transition: background-color 0.2s ease;
+  font-size: 14px;
+  color: #666;
+}
+
+.stat-item:hover {
+  background-color: #f5f5f5;
+}
+
+.stat-item.large {
+  padding: 8px 16px;
+  font-size: 16px;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 20px;
+  margin: 0 8px 8px 0;
+}
+
+.stat-item.large:hover {
+  background-color: #e9ecef;
+}
+
+.stat-item span {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.stat-item.large span {
+  font-size: 14px;
+  font-weight: 600;
 }
 </style>

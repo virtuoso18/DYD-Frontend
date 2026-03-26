@@ -32,7 +32,8 @@
         <a-avatar style="background-color: #dc2626;">A</a-avatar>
       </template> -->
     </a-page-header>
-
+    <!-- {{ anonyomusUser===null }} -->
+<a-alert type="info" description="not loggedin user " v-if="anonyomusUser===null"> </a-alert>
     <!-- Main Content -->
     <a-row :gutter="[24, 24]">
       <!-- Left Column - 3D Model and Images -->
@@ -559,7 +560,7 @@ export default {
       activeView: "3d",
       activeImageIndex: null,
       windowLocation: window.location.origin,
-
+anonyomusUser:localStorage.getItem('token'),
       cartLoading: false,
       showConsentModal: false,
       clearingCart: false,

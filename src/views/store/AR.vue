@@ -1,5 +1,80 @@
 <template>
-  <div class="ar-app" ref="containerRef">
+<!-- Blur Overlay when modal is active -->
+  <div 
+      v-if="showProfessional_user_basic_plan" 
+      class="plan-block-overlay"
+    >
+      <!-- Modal -->
+      <div class="plan-block-modal">
+        <div class="modal-content">
+         <div class="mb-5 flex justify-center">
+  <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#ff4d4f" stroke-width="2">
+    <g>
+      <circle cx="6" cy="12" r="3" fill="none" class="animate-pulse" style="animation-delay: 0s;"/>
+      <circle cx="12" cy="12" r="3" fill="none" class="animate-pulse" style="animation-delay: 0.5s;"/>
+      <circle cx="18" cy="12" r="3" fill="none" class="animate-pulse" style="animation-delay: 1s;"/>
+      <line x1="3" y1="12" x2="21" y2="12" stroke-dasharray="4 4" class="opacity-50"/>
+    </g>
+  </svg>
+</div>    
+          <div>
+          <h2>Basic Plan Professional User</h2>
+          <p>As you have subscribed the basic plan as a professional User you cannot access the AR of any available product.</p>
+          <!-- <p>Please upgrade to a premium plan to view this content.</p> -->
+          </div>
+          <div class="modal-actions" >
+            <!-- <a-button type="primary" size="large" @click="goToPricing">
+              Upgrade Plan
+            </a-button> -->
+            <a-button  type="primary" size="large" @click="goBack">
+              Go Back
+            </a-button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+<div 
+      v-if="showPlanBlockModal" 
+      class="plan-block-overlay"
+    >
+      <!-- Modal -->
+      <div class="plan-block-modal">
+        <div class="modal-content">
+         <div class="mb-5 flex justify-center">
+  <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#ff4d4f" stroke-width="2">
+    <g>
+      <circle cx="6" cy="12" r="3" fill="none" class="animate-pulse" style="animation-delay: 0s;"/>
+      <circle cx="12" cy="12" r="3" fill="none" class="animate-pulse" style="animation-delay: 0.5s;"/>
+      <circle cx="18" cy="12" r="3" fill="none" class="animate-pulse" style="animation-delay: 1s;"/>
+      <line x1="3" y1="12" x2="21" y2="12" stroke-dasharray="4 4" class="opacity-50"/>
+    </g>
+  </svg>
+</div>    
+          <div v-if="is_expired_or_un_active_business_plan">
+          <h2>Non Active Business</h2>
+          <p>This business is not belongs to any purchase plan, so this dosnt have any AR feature for this product available.</p>
+            
+          </div>
+          <div v-else>
+          <h2>Basic Plan Business</h2>
+          <p>This business is belongs to basic plan, that doesn't have access to AR Feature , mini site store page.</p>
+          <!-- <p>Please upgrade to a premium plan to view this content.</p> -->
+          </div>
+          <div class="modal-actions" >
+            <!-- <a-button type="primary" size="large" @click="goToPricing">
+              Upgrade Plan
+            </a-button> -->
+            <a-button  type="primary" size="large" @click="goBack">
+              Go Back
+            </a-button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+<div v-if="(showPlanBlockModal===false) && (showProfessional_user_basic_plan===false)" class="ar-app" ref="containerRef">
     <!-- Top Navigation Bar -->
     <div v-if="showNavbar" class="ar-navbar">
       <span class="back-button" @click="goBack">
@@ -694,7 +769,9 @@ export default {
       step: 0,
       productName: "Modern Accent Chair",
       hasToken: "",
-
+      showPlanBlockModal: false,
+      showProfessional_user_basic_plan:false,
+      is_expired_or_un_active_business_plan:false,
       // UI State
       showNavbar: false,
       statusMessage: "Ready",
@@ -788,16 +865,155 @@ export default {
     },
   },
 
-  mounted() {
+  async mounted() {
+    await this.fetchProductDetails();
+
+    if (JSON.parse(localStorage.getItem("user")).user_type === "Business"){
+      await this.loadBrandPurchasedPlanDetails_Business(); 
+    } 
+    else if (JSON.parse(localStorage.getItem("user")).user_type === "Professional" ){
+      await this.loadBrandPurchasedPlanDetails_Professional();
+    }
+
     this.hasToken = localStorage.getItem("token");
-    this.detectDevice();
-    this.loadModelViewer();
-    this.checkOcclusionSupport();
-    this.fetchProductDetails();
-    this.updateARButton();
+    if (this.showPlanBlockModal===false){
+        this.detectDevice();
+        this.loadModelViewer();
+        this.checkOcclusionSupport();
+        this.updateARButton();
+    }
   },
 
   methods: {
+
+        async loadBrandPurchasedPlanDetails_Business() {
+          try {
+            // ✅ This file correctly uses route params — keep this
+            const brandSlug = this.ProductDetails.business_slug;
+            
+            if (!brandSlug) {
+              console.warn('⚠️ No brand slug found in route params');
+              return;
+            }
+
+            const url = `${this.$store.state.root_api}subscription/api/get-business-plan-details/${brandSlug}/`;
+            // const token = localStorage.getItem('token');
+
+            const response = await fetch(url, {
+              method: 'GET',
+              headers: {
+                // Authorization: `Token ${token}`,
+                'Content-Type': 'application/json',
+              },
+            });
+
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+            const result = await response.json();
+
+            console.log('📦 Plan Details Result:', result);
+            console.log('🏷️ plan_name:', result.data?.plan_name);  // ✅ result.data
+
+            // ✅ result.data.plan_name — NOT result.plan_name
+            if (result.success && result.data) {
+              const currentPlanName = result.data?.plan_name || 'unknown';
+              this.business_available_actions = result.data; // ✅ result.data — NOT result.business_available_actions
+
+              const planName = currentPlanName.toLowerCase();
+              console.log("=========================");
+              console.log(planName);
+                
+                if (planName==='basic') {
+                  console.log('✅ ACCESS GRANTED - Plan:', currentPlanName);
+                  this.showPlanBlockModal = true;
+                  this.is_expired_or_un_active_business_plan=result.is_expired
+                  
+                } else {
+                  console.log('❌ BLOCKING ACCESS - Basic plan detected');
+                  this.showPlanBlockModal = false;
+                }
+                
+            } else {
+              // API returned but no data — don't block, allow access
+              console.warn('⚠️ No plan data returned');
+              this.showPlanBlockModal = false;
+            }
+
+          } catch (error) {
+            console.error('❌ Error loading plan details:', error);
+            // ✅ On error — do NOT block the whole page
+            // Fail open — let user see the store
+            this.showPlanBlockModal = false;
+          }
+        },
+
+            async loadBrandPurchasedPlanDetails_Professional() {
+          try {
+            // ✅ This file correctly uses route params — keep this
+            const brandSlug = this.ProductDetails.business_slug;
+            
+            if (!brandSlug) {
+              console.warn('⚠️ No brand slug found in route params');
+              return;
+            }
+
+            const url = `${this.$store.state.root_api}subscription/api/get-professional-plan-details/`;
+            const token = localStorage.getItem('token');
+            let headers={
+                // Authorization: `Token ${token}`,
+                'Content-Type': 'application/json',
+              }
+            if(token){
+              headers={
+                  Authorization: `Token ${token}`,
+                'Content-Type': 'application/json',
+              }
+            }
+            const response = await fetch(url, {
+              method: 'GET',
+              headers: headers
+            });
+
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+            const result = await response.json();
+             
+            console.log('📦 Plan Details Result:', result);
+            console.log('🏷️ plan_name:', result.data?.plan_name);
+              
+            // ✅ result.data.plan_name — NOT result.plan_name
+            if (result.success && result.data) {
+              const currentPlanName = result.data?.plan_name || 'unknown';
+              this.business_available_actions = result.data; // ✅ result.data — NOT result.business_available_actions
+
+              const planName = currentPlanName.toLowerCase();
+              console.log("=========================");
+              console.log(planName);
+                
+                if (planName==='basic') {
+                  console.log('✅ ACCESS GRANTED - Plan:', currentPlanName);
+                  this.showProfessional_user_basic_plan = !(result.see_AR);
+                  this.is_expired_or_un_active_business_plan=result.is_expired
+                  
+                } else {
+                  console.log('❌ BLOCKING ACCESS - Basic plan detected');
+                  this.showPlanBlockModal = false;
+                }
+                
+            } else {
+              // API returned but no data — don't block, allow access
+              console.warn('⚠️ No plan data returned');
+              this.showPlanBlockModal = false;
+            }
+
+          } catch (error) {
+            console.error('❌ Error loading plan details:', error);
+            // ✅ On error — do NOT block the whole page
+            // Fail open — let user see the store
+            this.showPlanBlockModal = false;
+          }
+        },
+
       async toggleFavorite(product, product_type) {
       try {
         const token = localStorage.getItem("token");
@@ -1454,6 +1670,169 @@ export default {
 </script>
 
 <style scoped>
+
+.post-card {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 0px;
+  border-radius: 12px;
+  background: white;
+  /* transition: all 0.3s ease; */
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.post-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  /* transform: translateY(-2px); */
+}
+
+/* Fixed tags overlay positioning */
+.tags-overlay {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  max-width: 70%;
+  z-index: 2;
+}
+
+.view-count-overlay {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  z-index: 2;
+}
+
+/* ✅ ADD THESE STYLES */
+.plan-block-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(252, 250, 250, 0.436);
+  backdrop-filter: blur(10px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.plan-block-modal {
+  background: white;
+  border-radius: 16px;
+  padding: 40px;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.rotate-prohibited {
+  animation: slowSpin 4s linear infinite;
+}
+
+@keyframes slowSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.plan-block-modal h2 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #262626;
+  margin-bottom: 16px;
+}
+
+.plan-block-modal p {
+  font-size: 16px;
+  color: #595959;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.plan-block-modal p strong {
+  color: #ff4d4f;
+  font-weight: 600;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 30px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.modal-actions .ant-btn {
+  min-width: 140px;
+  height: 44px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+}
+
+.content-blurred {
+  filter: blur(8px);
+  pointer-events: none;
+  user-select: none;
+}
+
+@media (max-width: 768px) {
+  .plan-block-modal {
+    padding: 30px 20px;
+  }
+  
+  .plan-block-modal h2 {
+    font-size: 22px;
+  }
+  
+  .plan-block-modal p {
+    font-size: 14px;
+  }
+  
+  .modal-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .modal-actions .ant-btn {
+    width: 100%;
+  }
+}
+
+
+
+
+
 .ar-app {
   position: relative;
   width: 100%;

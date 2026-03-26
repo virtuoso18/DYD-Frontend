@@ -249,7 +249,8 @@
             </a-descriptions-item>
           </a-descriptions>
 </a-col>
-  <a-col :span="12">
+  <a-col :span="12" v-if="business_available_actions !== null && business_available_actions?.ar_available_for_products ">
+    
           <h4>AR Product</h4>
           <!-- icon='@/assets/apply_changes_img.png' -->
           <a-qrcode
@@ -412,6 +413,11 @@ export default {
 
   data() {
     return {
+      // subscription the business holds with respect to the pricing plan 
+      currentPlanName:'',
+      business_available_actions:null,
+      is_expired_or_un_active_business_plan:true,
+
       windowLocation : window.location.origin,
       activeImageIndex: null,
       activeTextureView: null,
@@ -455,9 +461,51 @@ export default {
       }));
     }
   },
+  async mounted() {
+      await this.loadBrandPurchasedPlanDetails();
 
+  },
  methods: {
-    handleImageClick(index) {
+// ✅ Plan loader
+    async loadBrandPurchasedPlanDetails() {
+      if (this.planLoading || this.planLoaded) return;
+      this.planLoading = true;
+      
+      try {
+        const brandSlug =JSON.parse(localStorage.getItem("business_profile")).slug
+        if (!brandSlug) {
+          this.currentPlanName = null;
+          return;
+        }
+        const url = `${this.$store.state.root_api}subscription/api/get-business-plan-details/${brandSlug}/`;
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            Authorization: `Token ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+        });
+        const result = await response.json();
+        if (result.success && result.data) {
+          this.currentPlanName = result.data.plan_name;
+          
+          this.business_available_actions = result.data;
+          this.is_expired_or_un_active_business_plan=result.is_expired
+          
+          console.log("✅ Plan loaded:", this.currentPlanName);
+        } else {
+          this.currentPlanName = null;
+        }
+      } catch (error) {
+        console.error("Plan load failed:", error);
+        this.currentPlanName = null;
+      } finally {
+        this.planLoading = false;
+        this.planLoaded = true;
+      }
+    },
+
+  handleImageClick(index) {
       this.activeView = 'image';
       this.activeImageIndex = index;
       this.activeTextureView = null;

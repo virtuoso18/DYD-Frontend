@@ -1,5 +1,5 @@
 <template>
-  <div class="p-3">
+  <div class="pt-3">
    <a-modal
       v-model:open="open_add_newProductModal"
       title="Select how you wanted to add product"
@@ -3153,7 +3153,7 @@
 
 <script>
 
-import {HeartOutlined,ExclamationCircleOutlined} from '@ant-design/icons-vue'
+import {HeartOutlined,HeartFilled,ExclamationCircleOutlined} from '@ant-design/icons-vue'
 
 import { Modal } from 'ant-design-vue';
 
@@ -3199,6 +3199,7 @@ export default {
     name: 'UnifiedProducts',
     components:{
         HeartOutlined,
+        HeartFilled,
         product_details,
         // edit_product,
         // add_new_product,

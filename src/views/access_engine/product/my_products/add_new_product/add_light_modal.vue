@@ -482,7 +482,7 @@ export default {
   components: {
     canvas_3d_model_renderer,
   },
-  emits: ['update:visible', 'product-created', 'cancel'],
+  emits: ['update:visible', 'product-created', 'cancel','api-error'],
   
   data() {
     return {
@@ -1104,6 +1104,7 @@ export default {
           
         } else {
           console.error('❌ API Error:', result.message || 'Failed to create product');
+          this.$emit('api-error',result.message); 
           throw new Error(result.message || 'Failed to create product');
         }
 

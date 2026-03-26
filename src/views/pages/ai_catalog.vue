@@ -415,7 +415,7 @@ h2 {
   background-size: 200% 100%;
   border-radius: 10px;
   animation: shimmer 1.6s infinite linear;
-  z-index: 2;
+  z-index: 1;
 }
 
 @keyframes shimmer {

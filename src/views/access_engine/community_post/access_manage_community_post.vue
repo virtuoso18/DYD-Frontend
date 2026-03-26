@@ -1,7 +1,7 @@
 <template>
-  {{ access_recieved.community }}
+  <!-- {{ access_recieved.community }} -->
   <div>
-    <h1>Manage Community Post Requests</h1>
+    <h1 class="m-0 text-lg whitespace-nowrap px-2 lg:text-2xl font-semibold">Manage Community Post Requests</h1>
 
     <!-- Main Grid View -->
     <div v-if="!selectedPostDetail && !selectedDesignDetail">
@@ -193,7 +193,7 @@
         </a-col>
 
         <!-- Left Side - Post Image and Engagement Stats -->
-        <a-col :lg="16" :md="24" :xs="24">
+        <a-col :lg="16" :md="24" :sm="24" :xs="24">
           <!-- Post Image -->
           <div style="margin-bottom: 20px; position: relative">
             <img
@@ -274,7 +274,7 @@
               <p style="font-size: 12px; color: #666; margin: 0">Comments</p>
             </div>
 
-            <div
+            <!-- <div
               class="engagement-stat"
               @click="sharePost(selectedPostDetail)"
               style="cursor: pointer"
@@ -284,7 +284,7 @@
                 {{ formatNumber(selectedPostDetail.share_count) }}
               </p>
               <p style="font-size: 12px; color: #666; margin: 0">Shares</p>
-            </div>
+            </div> -->
 
             <div class="engagement-stat">
               <EyeOutlined style="font-size: 24px; color: #1890ff; display: block; margin-bottom: 8px" />
@@ -300,11 +300,12 @@
             <h3 style="margin-bottom: 16px; font-size: 20px; font-weight: 600">Products Used to Create Room</h3>
             <a-empty v-if="!postsProducts || postsProducts.length === 0" description="No products available" style="padding: 40px 0" />
             <a-row v-else :gutter="[16, 16]">
+              <!-- {{ postsProducts }} -->
              <a-col
               v-for="product in postsProducts"
               :key="product.id"
-              class="product-responsive"
               style="padding: 5px"
+              class="product-responsive"
             >
               <!-- {{product.product_colors}} -->
               <div class="product">
@@ -386,7 +387,7 @@
         </a-col>
 
         <!-- Right Side - Comments -->
-        <a-col :lg="8" :md="24" :xs="24">
+        <a-col :lg="8" :md="24" :sm="24" :xs="24">
           <div class="comments-section" ref="commentsSection">
             <h4 style="margin: 0 0 16px 0; font-size: 16px; font-weight: 600">
               Comments ({{ selectedPostDetail.comment_count }})
@@ -622,7 +623,8 @@
 
                 <a-row>
                   <a-col span="24">
-                    <b>{{ product.product_title }}</b>
+                    <b  class="block w-full truncate" :title="product.name">
+                  {{ product.product_title }}</b>
                   </a-col>
 
                   <a-col span="18"> Color </a-col>

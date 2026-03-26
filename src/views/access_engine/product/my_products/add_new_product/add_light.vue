@@ -185,7 +185,7 @@
 </template>
 
 <script>
-import add_sunk_unsunk_light from '@/components/dashboard/business/my_products/add_new_product/add_sunk_unsunk_light_modal.vue'
+import add_sunk_unsunk_light from '@/views/access_engine/product/my_products/add_new_product/add_sunk_unsunk_light_modal.vue'
 export default {
   name: "AddNewLight",
   components:{
@@ -228,7 +228,7 @@ export default {
   },
     showModalSunkUnsunk(LightType){
       this.light_type=LightType
-      this.sunk_unsunk_light_modal= !this.sunk_unsunk_light_modal
+      this.sunk_unsunk_light_modal = !this.sunk_unsunk_light_modal
       this.$emit('cancel');
       // this.visible=false
     },

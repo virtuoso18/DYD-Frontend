@@ -728,7 +728,7 @@
           <!-- ✅ NEW CODE -->
 <div @click="handleGenerateBannerClick" 
   class="nav-item flex items-center justify-between" 
-  :class="{ active: $route.name === 'business:generate-banner' }">
+  :class="{ active: $route.name === 'business_generate_banner' }">
   <!-- LEFT Icon + Text -->
   <div class="flex items-center gap-2">
     <div class="nav-icon-wrapper">

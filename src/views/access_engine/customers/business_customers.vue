@@ -3,7 +3,8 @@
 <!-- {{ access_recieved }} -->
     <div class="main">
         <div v-if="view === 'list'" class="customers-page">
-             <h3>Business Customers</h3>
+              
+             <h3 class="m-0 text-lg whitespace-nowrap px-2 lg:text-2xl font-semibold" >Business Customers</h3>
 
             <!-- Loading State -->
             <a-spin v-if="loading" size="large" class="loading-spinner" />

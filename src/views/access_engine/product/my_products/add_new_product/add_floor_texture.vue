@@ -806,7 +806,6 @@ const handleRoomTypeChange = (value) => {
 
         const formData = new FormData();
         
-        // Add only the active form fields
         Object.keys(form).forEach(key => {
           const value = form[key];
           if (value !== null && value !== '' && value !== undefined) {
@@ -818,18 +817,18 @@ const handleRoomTypeChange = (value) => {
           }
         });
 
-        // Add images with primary image index
         selectedImages.value.forEach((image, index) => {
           formData.append('images', image.file);
           if (image.isPrimary) {
             formData.append('primary_image_index', index);
           }
         });
+
         if (selectedRoomTypeName.value) {
-  formData.append('room_type_name', selectedRoomTypeName.value);
-}
-        // API call
-        const response = await fetch(`${store.state.root_api}access-engine/api/business-products/add-product-floor-tile/?access-id=`+route.query.access_id, {
+          formData.append('room_type_name', selectedRoomTypeName.value);
+        }
+
+        const response = await fetch(`${store.state.root_api}access-engine/api/business-products/add-product-floor-tile/?access-id=` + route.query.access_id, {
           method: 'POST',
           headers: {
             'Authorization': `Token ${token}`,
@@ -837,32 +836,40 @@ const handleRoomTypeChange = (value) => {
           body: formData
         });
 
+        // ✅ Parse JSON before checking response.ok so result is always in scope
+        const result = await response.json();
+
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+          const errorMsg = result.message || `Server error: ${response.status}`;
+          emit('api-error', errorMsg);
+          message.error(errorMsg);
+          handleCancel();
+          return;
         }
 
-        const result = await response.json();
-        
         if (result.success) {
           message.success('Floor texture product created successfully!');
           emit('product-created', result.data);
           handleCancel();
-        }else {
-          const errorMsg = result.message || 'Failed to create product';
-          this.handleCancel(); 
-          this.$emit('api-error', errorMsg); 
+        } else {
+          const errorMsg = result.message || 'Failed to create product. Please try again.';
+          emit('api-error', errorMsg);  // 
+          message.error(errorMsg);
+          handleCancel();               // 
         }
-        
+
       } catch (error) {
         console.error('Error saving floor texture:', error);
-        
+
+        let errorMsg = 'Failed to create product. Please try again.';
         if (error.name === 'TypeError' && error.message.includes('fetch')) {
-          message.error('Network error. Please check your internet connection.');
-        } else if (error.message.includes('HTTP error')) {
-          message.error('Server error. Please try again later.');
-        } else {
-          message.error('Failed to create product. Please try again.');
+          errorMsg = 'Network error. Please check your internet connection.';
         }
+
+        // ✅ result not in scope here, use errorMsg instead
+        emit('api-error', errorMsg);
+        message.error(errorMsg);
+
       } finally {
         isSaving.value = false;
       }
@@ -912,303 +919,6 @@ handleRoomTypeChange,
 });
 
 
-
-
-
-
-
-
-
-// import { defineComponent, ref, watch, reactive, computed } from 'vue';
-// import { message } from 'ant-design-vue';
-
-// import { useStore } from 'vuex';        // For Vuex store access
-// import { useRouter } from 'vue-router'; // For Vue Router navigation
-
-// export default defineComponent({
-//   name: "AddNewFloorTexture",
-//   props: {
-//     visible: { type: Boolean, default: false },
-//   },
-//   emits: ['update:visible', 'product-created', 'cancel'],
-//   setup(props, { emit }) {
-//     const isSaving = ref(false);
-//     const tempColor = ref('#000000');
-    
-//     const store = useStore() 
-//     const router = useRouter() 
-    
-//     // Initial form state with all Floor Texture fields and default values
-//     const form = reactive({
-//         title: 'DYD Floor Texture',
-//         description: '',
-//         texture_style: 'Modern',
-//         brand: '',
-//         model_number: '',
-//         material_composition: '',
-//         thickness: null,
-//         weight_per_sqm: null,
-//         size_width: 10.00,
-//         size_height: 10.00,
-//         tile_width: 100.00,
-//         tile_height: 100.00,
-//         coverage_per_unit: null,
-//         is_seamless: true,
-//         price_per_sqm: 0,
-//         sale_price_per_sqm: null,
-//         installation_cost_per_sqm: null,
-//         primary_color: '',
-//         secondary_color: '',
-//         available_colors: [], // Array to store multiple available colors
-//         stock_quantity: 0,
-//         is_active: true,
-//         _featured: false,
-//         plunk_height: null,
-//         plunk_width: null,
-//     });
-
-//     const selectedImages = ref([]);
-//     const imageInput = ref(null);
-
-//     // Computed property for primary image
-//     const primaryImage = computed(() => {
-//       return selectedImages.value.find(img => img.isPrimary) || selectedImages.value[0] || null;
-//     });
-
-//     // Texture styles options
-//     const textureStyles = [
-//       'Modern', 
-//       'Traditional', 
-//       'Contemporary', 
-//       'Industrial', 
-//       'Rustic', 
-//       'Minimalist', 
-//       'Classic', 
-//       'Vintage'
-//     ];
-
-//     // Preset colors for color picker
-//     const presetColors = [
-//       '#000000', '#FFFFFF', '#FF0000', '#00FF00', '#0000FF', '#FFFF00',
-//       '#FF00FF', '#00FFFF', '#C0C0C0', '#808080', '#800000', '#808000',
-//       '#008000', '#800080', '#008080', '#000080', '#FFA500', '#FFC0CB',
-//       '#A52A2A', '#DDA0DD', '#98FB98', '#F0E68C', '#DEB887', '#D2691E',
-//       '#FF6347', '#40E0D0', '#EE82EE', '#90EE90', '#FFB6C1', '#87CEEB'
-//     ];
-
-//     // Reset form function
-//     const resetForm = () => {
-//       Object.keys(form).forEach(key => {
-//         if (key === 'available_colors') {
-//           form[key] = [];
-//         } else if (key === 'is_seamless' || key === 'is_active' || key === 'is_featured') {
-//           form[key] = key === 'is_seamless' || key === 'is_active';
-//         } else if (key === 'texture_style') {
-//           form[key] = 'Modern';
-//         } else if (key === 'title') {
-//           form[key] = 'DYD Floor Texture';
-//         } else if (['size_width', 'size_height'].includes(key)) {
-//           form[key] = 10.00;
-//         } else if (['tile_width', 'tile_height'].includes(key)) {
-//           form[key] = 100.00;
-//         } else if (['price_per_sqm', 'stock_quantity'].includes(key)) {
-//           form[key] = 0;
-//         } else {
-//           form[key] = typeof form[key] === 'number' ? null : '';
-//         }
-//       });
-//       selectedImages.value = [];
-//       tempColor.value = '#000000';
-//     };
-
-//     // Image handling functions
-//     const uploadImages = () => {
-//       imageInput.value?.click();
-//     };
-
-//     const handleImageUpload = (event) => {
-//       const files = Array.from(event.target.files);
-      
-//       if (selectedImages.value.length + files.length > 5) {
-//         message.warning('Maximum 5 images allowed');
-//         return;
-//       }
-
-//       files.forEach(file => {
-//         if (file && file.type.startsWith('image/')) {
-//           const reader = new FileReader();
-//           reader.onload = (e) => {
-//             const imageObj = {
-//               file,
-//               url: e.target.result,
-//               isPrimary: selectedImages.value.length === 0 // First image is primary by default
-//             };
-//             selectedImages.value.push(imageObj);
-//           };
-//           reader.readAsDataURL(file);
-//         }
-//       });
-
-//       // Clear input
-//       event.target.value = '';
-//     };
-
-//     const setPrimaryImage = (image) => {
-//       selectedImages.value.forEach(img => img.isPrimary = false);
-//       image.isPrimary = true;
-//     };
-
-//     const removeImage = (index) => {
-//       const removedImage = selectedImages.value[index];
-//       selectedImages.value.splice(index, 1);
-      
-//       // If removed image was primary and there are still images, set first one as primary
-//       if (removedImage.isPrimary && selectedImages.value.length > 0) {
-//         selectedImages.value[0].isPrimary = true;
-//       }
-//     };
-
-//     // Color handling functions
-//     const addAvailableColor = () => {
-//       if (tempColor.value && !form.available_colors.includes(tempColor.value)) {
-//         form.available_colors.push(tempColor.value);
-//         tempColor.value = '#000000';
-//       }
-//     };
-
-//     const addPresetColor = (color) => {
-//       if (!form.available_colors.includes(color)) {
-//         form.available_colors.push(color);
-//       }
-//     };
-
-//     const removeAvailableColor = (index) => {
-//       form.available_colors.splice(index, 1);
-//     };
-
-//     // Form validation
-//     const validateForm = () => {
-//       const errors = [];
-
-//       if (!form.title?.trim()) errors.push('Title is required');
-//       if (!form.texture_style) errors.push('Texture Style is required');
-//       if (!form.price_per_sqm || form.price_per_sqm <= 0) errors.push('Price per SQM must be greater than 0');
-//       if (!form.stock_quantity || form.stock_quantity < 0) errors.push('Stock Quantity is required');
-//       if (form.available_colors.length === 0) errors.push('At least one available color is required');
-//       if (selectedImages.value.length === 0) errors.push('At least one product image is required');
-
-//       if (errors.length > 0) {
-//         message.error(errors[0]);
-//         return false;
-//       }
-//       return true;
-//     };
-    
-    
-//     // Save handler
-//     const handleSave = async () => {
-//       if (!validateForm()) return;
-
-//       isSaving.value = true;
-//       try {
-//         const token = localStorage.getItem('token');
-        
-//         if (!token) {
-//           message.error('Authentication token not found. Please login again.');
-//           return;
-//         }
-
-//         // Create FormData for file upload
-//         const formData = new FormData();
-        
-//         // Add form fields
-//         Object.keys(form).forEach(key => {
-//           if (form[key] !== null && form[key] !== '') {
-//             if (key === 'available_colors') {
-//               formData.append(key, JSON.stringify(form[key]));
-//             } else {
-//               formData.append(key, form[key]);
-//             }
-//           }
-//         });
-
-//         // Add images
-//         selectedImages.value.forEach((image, index) => {
-//           formData.append('images', image.file);
-//           if (image.isPrimary) {
-//             formData.append('primary_image_index', index);
-//           }
-//         });
-        
-//         // Make API call to save floor texture
-//         const response = await fetch(`${store.state.root_api}room/api-owner/floor/`, {
-//           method: 'POST',
-//           headers: {
-//             'Authorization': `Token ${token}`,
-//             // Note: Don't set Content-Type for FormData, let browser set it automatically with boundary
-//           },
-//           body: formData
-//         });
-
-//         const result = await response.json();
-        
-//         if (result.success) {
-//           message.success('Floor texture product created successfully!');
-//           emit('product-created', result.data);
-//           handleCancel();
-//         } else {
-//           console.error('Failed to create floor texture:', result.message);
-//           message.error(result.message || 'Failed to create product. Please try again.');
-//         }
-        
-//       } catch (error) {
-//         console.error('Error saving floor texture:', error);
-//         if (error.message.includes('fetch')) {
-//           message.error('Network error while saving product. Please check your connection.');
-//         } else {
-//           message.error('Failed to create product. Please try again.');
-//         }
-//       } finally {
-//         isSaving.value = false;
-//       }
-//     };
-
-
-//     // Cancel handler
-//     const handleCancel = () => {
-//       resetForm();
-//       emit('update:visible', false);
-//       emit('cancel');
-//     };
-
-//     // Watch for modal visibility changes
-//     watch(() => props.visible, (newValue) => {
-//       if (!newValue) {
-//         resetForm();
-//       }
-//     });
-
-//     return {
-//       form,
-//       selectedImages,
-//       primaryImage,
-//       imageInput,
-//       isSaving,
-//       tempColor,
-//       textureStyles,
-//       presetColors,
-//       handleSave,
-//       handleCancel,
-//       uploadImages,
-//       handleImageUpload,
-//       setPrimaryImage,
-//       removeImage,
-//       addAvailableColor,
-//       addPresetColor,
-//       removeAvailableColor,
-//     };
-//   }
-// });
 </script>
 
 <style scoped>

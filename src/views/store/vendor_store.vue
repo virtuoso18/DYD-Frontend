@@ -1,6 +1,41 @@
 <template>
 
-  
+  <div v-if="Business_User_Looking_Another_business_user_mini_site">
+      <!-- Blur Overlay when modal is active -->
+    <div 
+      class="plan-block-overlay"
+    >
+      <!-- Modal -->
+      <div class="plan-block-modal">
+        <div class="modal-content">
+         <div class="mb-5 flex justify-center">
+  <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#ff4d4f" stroke-width="2">
+    <g>
+      <circle cx="6" cy="12" r="3" fill="none" class="animate-pulse" style="animation-delay: 0s;"/>
+      <circle cx="12" cy="12" r="3" fill="none" class="animate-pulse" style="animation-delay: 0.5s;"/>
+      <circle cx="18" cy="12" r="3" fill="none" class="animate-pulse" style="animation-delay: 1s;"/>
+      <line x1="3" y1="12" x2="21" y2="12" stroke-dasharray="4 4" class="opacity-50"/>
+    </g>
+  </svg>
+</div>
+          <h2>Another Business Mini Site</h2>
+          <p>The business users is not allowed to inspect or see the another business Site or products from the another business site.</p>
+          <!-- <p>Please upgrade to a premium plan to view this content.</p> -->
+          
+          <div class="modal-actions" >
+            <!-- <a-button type="primary" size="large" @click="goToPricing">
+              Upgrade Plan
+            </a-button> -->
+            <a-button  type="primary" size="large" @click="goBack">
+              Go Back
+            </a-button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+    <div v-else>
+
     <!-- Blur Overlay when modal is active -->
     <div 
       v-if="showPlanBlockModal" 
@@ -19,15 +54,15 @@
     </g>
   </svg>
 </div>
-          <h2>Upgrade Required</h2>
-          <p>Your current plan <strong>({{ currentPlanName }})</strong> doesn't have access to this store page.</p>
-          <p>Please upgrade to a premium plan to view this content.</p>
+          <h2>Basic Plan Business</h2>
+          <p>This business is belongs to basic plan, that doesn't have access to this mini site store page.</p>
+          <!-- <p>Please upgrade to a premium plan to view this content.</p> -->
           
-          <div class="modal-actions">
-            <a-button type="primary" size="large" @click="goToPricing">
+          <div class="modal-actions" >
+            <!-- <a-button type="primary" size="large" @click="goToPricing">
               Upgrade Plan
-            </a-button>
-            <a-button size="large" @click="goBack">
+            </a-button> -->
+            <a-button  type="primary" size="large" @click="goBack">
               Go Back
             </a-button>
           </div>
@@ -62,118 +97,118 @@
    </div> 
 
 
-   <!-- Skeleton Loading State for Business Page -->
-<div v-if=showPlanBlockModal  class="!p-0 md:!p-2 animate-pulse">
-  <!-- Hero Section Skeleton -->
-  <div class="business-hero relative overflow-hidden h-[250px] bg-gray-200">
-    <div class="absolute inset-0 flex flex-col items-center justify-center">
-      <div class="w-[70px] h-[70px] rounded-full bg-gray-300 mb-4"></div>
-      <div class="h-6 w-48 bg-gray-300 rounded mb-2"></div>
-      <div class="h-4 w-32 bg-gray-300 rounded"></div>
-    </div>
-  </div>
-
-  <br>
-
-  <!-- Business Info Section Skeleton -->
-  <div class="max-w-1200px mx-auto">
-    <div class="p-10">
-      <div class="bg-gray-100 rounded-lg p-10">
-        <div class="h-5 w-32 bg-gray-300 rounded mb-3"></div>
-        <div class="h-4 w-full bg-gray-300 rounded mb-2"></div>
-        <div class="h-4 w-3/4 bg-gray-300 rounded"></div>
+    <!-- Skeleton Loading State for Business Page -->
+  <div v-if=showPlanBlockModal  class="!p-0 md:!p-2 animate-pulse">
+    <!-- Hero Section Skeleton -->
+    <div class="business-hero relative overflow-hidden h-[250px] bg-gray-200">
+      <div class="absolute inset-0 flex flex-col items-center justify-center">
+        <div class="w-[70px] h-[70px] rounded-full bg-gray-300 mb-4"></div>
+        <div class="h-6 w-48 bg-gray-300 rounded mb-2"></div>
+        <div class="h-4 w-32 bg-gray-300 rounded"></div>
       </div>
     </div>
 
     <br>
 
-    <!-- Services Section Skeleton -->
-    <div class="p-10">
-      <div class="bg-gray-100 rounded-lg p-10">
-        <div class="h-4 w-28 bg-gray-300 rounded mb-3"></div>
-        <div class="space-y-2">
-          <div class="h-3 w-40 bg-gray-300 rounded"></div>
-          <div class="h-3 w-36 bg-gray-300 rounded"></div>
-          <div class="h-3 w-32 bg-gray-300 rounded"></div>
+    <!-- Business Info Section Skeleton -->
+    <div class="max-w-1200px mx-auto">
+      <div class="p-10">
+        <div class="bg-gray-100 rounded-lg p-10">
+          <div class="h-5 w-32 bg-gray-300 rounded mb-3"></div>
+          <div class="h-4 w-full bg-gray-300 rounded mb-2"></div>
+          <div class="h-4 w-3/4 bg-gray-300 rounded"></div>
         </div>
       </div>
-    </div>
 
-    <br>
+      <br>
 
-    <!-- Contact Section Skeleton -->
-    <div class="p-10">
-      <div class="bg-gray-100 rounded-lg p-10">
-        <div class="h-4 w-32 bg-gray-300 rounded mb-4"></div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <div class="h-3 w-40 bg-gray-300 rounded mb-2"></div>
-            <div class="h-3 w-36 bg-gray-300 rounded mb-2"></div>
+      <!-- Services Section Skeleton -->
+      <div class="p-10">
+        <div class="bg-gray-100 rounded-lg p-10">
+          <div class="h-4 w-28 bg-gray-300 rounded mb-3"></div>
+          <div class="space-y-2">
+            <div class="h-3 w-40 bg-gray-300 rounded"></div>
+            <div class="h-3 w-36 bg-gray-300 rounded"></div>
             <div class="h-3 w-32 bg-gray-300 rounded"></div>
           </div>
+        </div>
+      </div>
+
+      <br>
+
+      <!-- Contact Section Skeleton -->
+      <div class="p-10">
+        <div class="bg-gray-100 rounded-lg p-10">
+          <div class="h-4 w-32 bg-gray-300 rounded mb-4"></div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <div class="h-3 w-40 bg-gray-300 rounded mb-2"></div>
+              <div class="h-3 w-36 bg-gray-300 rounded mb-2"></div>
+              <div class="h-3 w-32 bg-gray-300 rounded"></div>
+            </div>
+            <div>
+              <div class="flex gap-2">
+                <div class="h-8 w-16 bg-gray-300 rounded"></div>
+                <div class="h-8 w-16 bg-gray-300 rounded"></div>
+                <div class="h-8 w-16 bg-gray-300 rounded"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <br>
+
+      <!-- Reviews & Map Section Skeleton -->
+      <div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-10">
+          <!-- Ratings Skeleton -->
           <div>
-            <div class="flex gap-2">
-              <div class="h-8 w-16 bg-gray-300 rounded"></div>
-              <div class="h-8 w-16 bg-gray-300 rounded"></div>
-              <div class="h-8 w-16 bg-gray-300 rounded"></div>
+            <div class="flex flex-col items-center">
+              <div class="h-8 w-16 bg-gray-300 rounded mb-2"></div>
+              <div class="h-4 w-32 bg-gray-300 rounded mb-2"></div>
+              <div class="h-3 w-24 bg-gray-300 rounded"></div>
+            </div>
+          </div>
+          
+          <!-- Map Skeleton -->
+          <div>
+            <div class="bg-gray-200 rounded-lg w-full h-[200px]"></div>
+          </div>
+        </div>
+      </div>
+
+      <br>
+
+      <!-- Products Section Skeleton -->
+      <div class="p-10">
+        <div class="h-6 w-32 bg-gray-300 rounded mb-4"></div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div v-for="n in 4" :key="n" class="bg-gray-100 rounded-lg p-3">
+            <div class="h-32 bg-gray-300 rounded mb-2"></div>
+            <div class="h-4 w-3/4 bg-gray-300 rounded mb-2"></div>
+            <div class="h-3 w-1/2 bg-gray-300 rounded"></div>
+          </div>
+        </div>
+      </div>
+
+      <br>
+
+      <!-- Community Posts Skeleton -->
+      <div class="p-10">
+        <div class="h-6 w-48 bg-gray-300 rounded mb-4"></div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div v-for="n in 3" :key="n" class="border border-gray-200 rounded-lg p-2">
+            <div class="h-[200px] bg-gray-300 rounded mb-2"></div>
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full bg-gray-300"></div>
+              <div class="h-4 w-24 bg-gray-300 rounded"></div>
             </div>
           </div>
         </div>
       </div>
     </div>
-
-    <br>
-
-    <!-- Reviews & Map Section Skeleton -->
-    <div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-10">
-        <!-- Ratings Skeleton -->
-        <div>
-          <div class="flex flex-col items-center">
-            <div class="h-8 w-16 bg-gray-300 rounded mb-2"></div>
-            <div class="h-4 w-32 bg-gray-300 rounded mb-2"></div>
-            <div class="h-3 w-24 bg-gray-300 rounded"></div>
-          </div>
-        </div>
-        
-        <!-- Map Skeleton -->
-        <div>
-          <div class="bg-gray-200 rounded-lg w-full h-[200px]"></div>
-        </div>
-      </div>
-    </div>
-
-    <br>
-
-    <!-- Products Section Skeleton -->
-    <div class="p-10">
-      <div class="h-6 w-32 bg-gray-300 rounded mb-4"></div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        <div v-for="n in 4" :key="n" class="bg-gray-100 rounded-lg p-3">
-          <div class="h-32 bg-gray-300 rounded mb-2"></div>
-          <div class="h-4 w-3/4 bg-gray-300 rounded mb-2"></div>
-          <div class="h-3 w-1/2 bg-gray-300 rounded"></div>
-        </div>
-      </div>
-    </div>
-
-    <br>
-
-    <!-- Community Posts Skeleton -->
-    <div class="p-10">
-      <div class="h-6 w-48 bg-gray-300 rounded mb-4"></div>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div v-for="n in 3" :key="n" class="border border-gray-200 rounded-lg p-2">
-          <div class="h-[200px] bg-gray-300 rounded mb-2"></div>
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-full bg-gray-300"></div>
-            <div class="h-4 w-24 bg-gray-300 rounded"></div>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
-</div>
 
     <div v-else class="!p-0  ">
         <!-- Loading State -->
@@ -217,10 +252,9 @@
             </a-row> -->
 
 
-            <div
+<div
   class="business-hero"
-  style="position: relative; overflow: hidden; height: 250px;"
->
+  style="position: relative; overflow: hidden; height: 250px;">
             
             <!-- Banner Section -->
   <div
@@ -266,20 +300,20 @@
                     <div style="font-size:16px;font-weight:400;color:white">
                         {{ business_info.description }}
                     </div>
-<div v-if="this.userProfile?.id === this.currentUser?.id">
-  <div
-    class="
-      inline-flex items-center justify-center
-      !h-[38px] min-w-[80px] px-1.5
-      text-[14px] font-semibold leading-none
-      rounded-md
-      bg-sky-100 text-sky-700
-      whitespace-nowrap
-    "
-  >
-    Your bussiness Public Page
-  </div>
-</div>
+              <div v-if="this.userProfile?.id === this.currentUser?.id">
+                <div
+                  class="
+                    inline-flex items-center justify-center
+                    !h-[38px] min-w-[80px] px-1.5
+                    text-[14px] font-semibold leading-none
+                    rounded-md
+                    bg-sky-100 text-sky-700
+                    whitespace-nowrap
+                  "
+                >
+                  Your business public page
+                </div>
+              </div>
 
 <div v-else style="display: flex;justify-content: center;align-items: center;">
 
@@ -561,9 +595,10 @@
 
             <br>
               <div class="!p-2">
-
+<!-- {{ (anonyomousUser===null) }} -->
                 <!-- User Generated Content -->
-            <div class="!p-2" style="background-color: white;border-radius:10px;border:2px solid rgba(128, 128, 128, 0.16);"  v-if="currentUser.user_type !='User'">
+            <!-- {{ anonyomousUser==null }} -->
+            <div class="!p-2" style="background-color: white;border-radius:10px;border:2px solid rgba(128, 128, 128, 0.16);"  v-if="(anonyomousUser!==null) && currentUser.user_type !='User'">
                 <!-- <div style="padding:10px;background: #f2f2f3;border-radius:10px">
                     <h3>Gallery</h3>
                     <p>Business showcase and user content</p>
@@ -758,6 +793,7 @@
         </div>
         </div>
     </div>
+  </div>
 </template>
 <script>
 import CommentsModal from '@/views/pages/CommentsModal.vue';
@@ -810,11 +846,11 @@ export default {
     },
     data() {
       return {
-
-        showPlanBlockModal: false,
-    currentPlanName: '',
-    business_available_actions: null,
-            
+            Business_User_Looking_Another_business_user_mini_site:false,
+            showPlanBlockModal: false,
+            currentPlanName: '',
+            business_available_actions: null,
+            anonyomousUser : localStorage.getItem('token') ,
             imageLoadedMap: {},
            businessRatings: {
              average: 0,
@@ -864,13 +900,25 @@ export default {
     },
     async mounted() {
   try {
-    // ✅ CALL API FIRST
-    await this.loadBrandPurchasedPlanDetails();
-    
-    // Then load other data
     await this.loadBusinessData();
-    this.loadBusinessRatings();
-    this.fetchCommunityPosts();
+    
+    // console.log(JSON.parse(localStorage.getItem("user")).user_type ==="Business")
+    // console.log((this.userProfile?.id !== this.currentUser?.id))
+    // console.log( this.currentUser?.id);
+     
+    if ((JSON.parse(localStorage.getItem("user"))?.user_type ==="Business") && (this.userProfile?.id !== this.currentUser?.id)){
+      this.Business_User_Looking_Another_business_user_mini_site=true
+    }
+    else{
+
+      // ✅ CALL API FIRST
+      await this.loadBrandPurchasedPlanDetails();
+      if(this.showPlanBlockModal===false){
+        // Then load other data
+        this.loadBusinessRatings();
+        this.fetchCommunityPosts();
+      }
+    }
   } catch (error) {
     console.error('Error in mounted:', error);
     this.error = 'Failed to load page data';
@@ -899,12 +947,12 @@ async loadBrandPurchasedPlanDetails() {
     }
 
     const url = `${this.$store.state.root_api}subscription/api/get-business-plan-details/${brandSlug}/`;
-    const token = localStorage.getItem('token');
+    // const token = localStorage.getItem('token');
 
     const response = await fetch(url, {
       method: 'GET',
       headers: {
-        Authorization: `Token ${token}`,
+        // Authorization: `Token ${token}`,
         'Content-Type': 'application/json',
       },
     });

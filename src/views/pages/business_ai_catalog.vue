@@ -1,5 +1,42 @@
 <template>
-  <div>
+  
+  
+    <!-- Blur Overlay when modal is active -->
+    <div 
+      v-if="showPlanBlockModal" 
+      class="plan-block-overlay"
+    >
+      <!-- Modal -->
+      <div class="plan-block-modal">
+        <div class="modal-content">
+         <div class="mb-5 flex justify-center">
+  <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#ff4d4f" stroke-width="2">
+    <g>
+      <circle cx="6" cy="12" r="3" fill="none" class="animate-pulse" style="animation-delay: 0s;"/>
+      <circle cx="12" cy="12" r="3" fill="none" class="animate-pulse" style="animation-delay: 0.5s;"/>
+      <circle cx="18" cy="12" r="3" fill="none" class="animate-pulse" style="animation-delay: 1s;"/>
+      <line x1="3" y1="12" x2="21" y2="12" stroke-dasharray="4 4" class="opacity-50"/>
+    </g>
+  </svg>
+</div>
+          <h2>Basic Plan Business</h2>
+          <p>This business is belongs to basic plan, that doesn't have access to this mini site store page.</p>
+          <!-- <p>Please upgrade to a premium plan to view this content.</p> -->
+          
+          <div class="modal-actions" >
+            <!-- <a-button type="primary" size="large" @click="goToPricing">
+              Upgrade Plan
+            </a-button> -->
+            <a-button  type="primary" size="large" @click="goBack">
+              Go Back
+            </a-button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+   <div v-else class="!p-0  ">
     <a-drawer
       title="Filters"
       placement="bottom"
@@ -441,6 +478,7 @@ export default {
   },
   data() {
     return {
+      showPlanBlockModal: false,
       isFilterDrawerOpen: false,
       heroBgImage,
       imageLoadedMap: {},
@@ -489,11 +527,76 @@ export default {
     }
   },
   async mounted() {
-    await this.loadBusinessProfile();
-    await this.loadCategories();
-    await this.loadProducts();
+    await this.loadBrandPurchasedPlanDetails();
+      if (this.showPlanBlockModal===false){
+        await this.loadBusinessProfile();
+        await this.loadCategories();
+        await this.loadProducts();
+      }
   },
   methods: {
+    
+  goBack() {
+    this.$router.go(-1);
+  },
+
+async loadBrandPurchasedPlanDetails() {
+  try {
+    // ✅ This file correctly uses route params — keep this
+    const brandSlug = this.$route.params.business_slug;
+
+    if (!brandSlug) {
+      console.warn('⚠️ No brand slug found in route params');
+      return;
+    }
+
+    const url = `${this.$store.state.root_api}subscription/api/get-business-plan-details/${brandSlug}/`;
+    // const token = localStorage.getItem('token');
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        // Authorization: `Token ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+    const result = await response.json();
+
+    console.log('📦 Plan Details Result:', result);
+    console.log('🏷️ plan_name:', result.data?.plan_name);  // ✅ result.data
+
+    // ✅ result.data.plan_name — NOT result.plan_name
+    if (result.success && result.data) {
+      const currentPlanName = result.data?.plan_name || 'unknown';
+      this.business_available_actions = result.data; // ✅ result.data — NOT result.business_available_actions
+
+      const planName = currentPlanName.toLowerCase();
+      console.log("=========================");
+      console.log(planName);
+      if (planName==='basic') {
+        console.log('✅ ACCESS GRANTED - Plan:', currentPlanName);
+        this.showPlanBlockModal = true;
+      } else {
+        console.log('❌ BLOCKING ACCESS - Basic plan detected');
+        this.showPlanBlockModal = false;
+      }
+    } else {
+      // API returned but no data — don't block, allow access
+      console.warn('⚠️ No plan data returned');
+      this.showPlanBlockModal = false;
+    }
+
+  } catch (error) {
+    console.error('❌ Error loading plan details:', error);
+    // ✅ On error — do NOT block the whole page
+    // Fail open — let user see the store
+    this.showPlanBlockModal = false;
+  }
+},
+
    openFilterDrawer() {
       this.isFilterDrawerOpen = true
     },
@@ -712,6 +815,166 @@ export default {
 </script>
 
 <style scoped>
+
+.post-card {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 0px;
+  border-radius: 12px;
+  background: white;
+  /* transition: all 0.3s ease; */
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.post-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  /* transform: translateY(-2px); */
+}
+
+/* Fixed tags overlay positioning */
+.tags-overlay {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  max-width: 70%;
+  z-index: 2;
+}
+
+.view-count-overlay {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  z-index: 2;
+}
+
+/* ✅ ADD THESE STYLES */
+.plan-block-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(252, 250, 250, 0.436);
+  backdrop-filter: blur(10px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.plan-block-modal {
+  background: white;
+  border-radius: 16px;
+  padding: 40px;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.rotate-prohibited {
+  animation: slowSpin 4s linear infinite;
+}
+
+@keyframes slowSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.plan-block-modal h2 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #262626;
+  margin-bottom: 16px;
+}
+
+.plan-block-modal p {
+  font-size: 16px;
+  color: #595959;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.plan-block-modal p strong {
+  color: #ff4d4f;
+  font-weight: 600;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 30px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.modal-actions .ant-btn {
+  min-width: 140px;
+  height: 44px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+}
+
+.content-blurred {
+  filter: blur(8px);
+  pointer-events: none;
+  user-select: none;
+}
+
+@media (max-width: 768px) {
+  .plan-block-modal {
+    padding: 30px 20px;
+  }
+  
+  .plan-block-modal h2 {
+    font-size: 22px;
+  }
+  
+  .plan-block-modal p {
+    font-size: 14px;
+  }
+  
+  .modal-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .modal-actions .ant-btn {
+    width: 100%;
+  }
+}
+
+
 .ai-catalog-container {
   box-sizing: border-box;
 }

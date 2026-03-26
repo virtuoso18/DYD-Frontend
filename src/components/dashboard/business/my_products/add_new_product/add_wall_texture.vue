@@ -363,7 +363,7 @@ export default defineComponent({
   props: {
     visible: { type: Boolean, default: false },
   },
-  emits: ['update:visible', 'product-created', 'cancel','api-error'],
+  emits: ['update:visible', 'product-created', 'cancel','add-3d-light','api-error'],
   setup(props, { emit }) {
     const isSaving = ref(false);
     const tempColor = ref('#000000');
@@ -582,7 +582,6 @@ const handleRoomTypeChange = (value) => {
 
         const formData = new FormData();
         
-        // Add only the active form fields
         Object.keys(form).forEach(key => {
           const value = form[key];
           if (value !== null && value !== '' && value !== undefined) {
@@ -594,17 +593,17 @@ const handleRoomTypeChange = (value) => {
           }
         });
 
-        // Add images with primary image index
         selectedImages.value.forEach((image, index) => {
           formData.append('images', image.file);
           if (image.isPrimary) {
             formData.append('primary_image_index', index);
           }
         });
+
         if (selectedRoomTypeName.value) {
-  formData.append('room_type_name', selectedRoomTypeName.value);
-}
-        // API call for wall texture
+          formData.append('room_type_name', selectedRoomTypeName.value);
+        }
+
         const response = await fetch(`${store.state.root_api}room/api-owner/wall/`, {
           method: 'POST',
           headers: {
@@ -613,33 +612,37 @@ const handleRoomTypeChange = (value) => {
           body: formData
         });
 
+        // ✅ Parse JSON before checking response.ok so result is always in scope
+        const result = await response.json();
+
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+          const errorMsg = result.message || `Server error: ${response.status}`;
+          emit('api-error', errorMsg);
+          message.error(errorMsg);
+          return;
         }
 
-        const result = await response.json();
-        
         if (result.success) {
           message.success('Wall texture product created successfully!');
           emit('product-created', result.data);
           handleCancel();
         } else {
-          console.error('API Error:', result.message);
+          emit('api-error', result.message);
           message.error(result.message || 'Failed to create product. Please try again.');
-          const errorMsg = result.message || 'Failed to create product';
-          this.$emit('api-error', errorMsg); 
         }
-        
+
       } catch (error) {
         console.error('Error saving wall texture:', error);
-        
+
+        let errorMsg = 'Failed to create product. Please try again.';
         if (error.name === 'TypeError' && error.message.includes('fetch')) {
-          message.error('Network error. Please check your internet connection.');
-        } else if (error.message.includes('HTTP error')) {
-          message.error('Server error. Please try again later.');
-        } else {
-          message.error('Failed to create product. Please try again.');
+          errorMsg = 'Network error. Please check your internet connection.';
         }
+
+        // ✅ result is not accessible here, so we use errorMsg
+        emit('api-error', errorMsg);
+        message.error(errorMsg);
+
       } finally {
         isSaving.value = false;
       }
@@ -651,6 +654,10 @@ const handleRoomTypeChange = (value) => {
       emit('update:visible', false);
       emit('cancel');
     };
+
+    const apiError=(errorMsg)=> {
+    emit('api-error', errorMsg);
+  };
 
     // Watch for modal visibility changes
     watch(() => props.visible, (newValue) => {

@@ -282,7 +282,6 @@ const router = createRouter({
       path: '/terms-and-conditions',
       name: 'terms_and_conditions',
       component: terms_and_conditions,
-       
     },
 
      {
@@ -315,14 +314,14 @@ const router = createRouter({
       path: '/ai-catalog',
       name: 'ai_catalog',
       component: ai_catalog,
-       meta: { requiresAuth: true }
+      meta: { requiresAuth: true }
     },
 
     {
       path: '/make-payment/:plan_type',
       name: 'make_payment',
       component: make_payment,
-       meta: { requiresAuth: true }
+      meta: { requiresAuth: true }
     },
     {
       path: '/make-payment-credit-topup/:uuid',
