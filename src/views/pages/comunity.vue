@@ -1821,6 +1821,7 @@ export default {
         tags: this.getPostTags(post),
         created_at: post.created_at,
         is_liked: post.is_liked,
+        room:post.room
       };
       // await this.fetchPostComments(post.id);
       this.showCommentsModal = true;

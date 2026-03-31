@@ -182,6 +182,7 @@
                 block
                 @click="addToCart"
                 :loading="cartLoading"
+                :disabled="anonyomusUser === null"
                 style="
                   display: flex;
                   gap: 10px;
@@ -225,6 +226,7 @@
                 size="large"
                 @click="toggleFavorite(selectedProduct, 'product')"
                 type="default"
+                :disabled="anonyomusUser === null"
                 block
                 style="
                   display: flex;
@@ -478,7 +480,7 @@ export default {
     return {
       activeView: "3d", // Track current view: '3d' or 'image'
       activeImageIndex: null, // Track which image is selected
-
+      anonyomusUser:localStorage.getItem('token'),
       cartLoading: false,
       showConsentModal: false,
       clearingCart: false,

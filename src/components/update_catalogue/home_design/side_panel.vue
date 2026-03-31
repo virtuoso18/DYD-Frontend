@@ -1,5 +1,5 @@
 <template>
-  <!-- show Rendering Failed Model  -->
+<!-- show Rendering Failed Model  -->
   <a-modal
     v-model:open="showFailedRenderingModel"
     title=""
@@ -86,14 +86,27 @@
       </a-button> -->
     </div>
   </a-modal>
-  <div class="side-panel">
+  <div class="side-panel" >
+<!-- {{ brand_data }} -->
+
     <!-- ✅ ADD PLAN UPGRADE MODAL AT THE TOP -->
-    <PlanUpgradeModal
+    <!-- <PlanUpgradeModal
       :visible="showPlanUpgradeModal"
       @update:visible="showPlanUpgradeModal = $event"
       @upgrade="handlePlanUpgrade"
+    /> -->
+    
+    <!-- 
+      {{ plan_details}}
+      <hr>
+      {{ planIsExpired }}
+      <br> 
+    -->
+    <PlanBlockedOverlay
+      :planDetails="plan_details"
+      :planIsExpired="planIsExpired"
+      :brand="brand_data"
     />
-
     <!-- Image Upload Area -->
     <div class="upload-area">
       <a-upload-dragger
@@ -191,15 +204,17 @@
 </template>
 
 <script>
-import PlanUpgradeModal from "@/views/catalogue/PlanUpgradeModal.vue";
+// import PlanUpgradeModal from "@/views/catalogue/PlanUpgradeModal.vue";
 import { DeleteOutlined, CloudUploadOutlined } from "@ant-design/icons-vue";
+import PlanBlockedOverlay from '../../update_catalogue/planExpired.vue';
 
 export default {
   name: "SidePanel",
   components: {
     DeleteOutlined,
     CloudUploadOutlined,
-    PlanUpgradeModal,
+    // PlanUpgradeModal,
+    PlanBlockedOverlay
   },
   props: {
     base_image_url: {
@@ -214,6 +229,12 @@ export default {
       type: Object,
       default: null,
     },
+    planIsExpired: {
+      type: Object,
+      default: false,
+    },
+        brand_data: Object,
+
   },
   watch: {
     base_image_url: {
@@ -479,7 +500,6 @@ export default {
 <style scoped>
 .side-panel {
   width: 100%;
-  /* padding: 20px; */
   padding-left: 20px;
   padding-top: 20px;
   padding-bottom: 20px;
@@ -488,6 +508,7 @@ export default {
   display: flex;
   flex-direction: column;
   min-height: 80vh;
+  position: absolute;
 }
 
 .upload-area {

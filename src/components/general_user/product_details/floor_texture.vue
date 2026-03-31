@@ -146,6 +146,7 @@
                 shape="circle"
                 size="large"
                 title="Add to Cart"
+                :disabled="anonyomusUser === null"
                 block
                 @click="addToCart"
                 :loading="cartLoading"
@@ -190,7 +191,8 @@
               </a-button>
               <a-button
                 shape="circle"
-                @click="toggleFavorite(selectedProduct, 'product')"
+                @click="toggleFavorite(selectedProduct, 'floor_texture')"
+                :disabled="anonyomusUser === null"
                 type="default"
                 block
                 size="large"
@@ -463,6 +465,7 @@ export default {
     return {
       cartLoading: false,
       showConsentModal: false,
+      anonyomusUser:localStorage.getItem('token'),
 
       cartLoading: false,
       showConsentModal: false,
@@ -573,31 +576,31 @@ export default {
       window.open(url, '_blank');
     },
     async toggleFavorite(product, product_type) {
-      try {
-        const token = localStorage.getItem("token");
-        console.log(product);
-        const response = await fetch(
-          `${this.$store.state.root_api}likes/favorites/toggle/`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Token ${token}`,
-            },
-            body: JSON.stringify({
-              id: product.id,
-              type: product_type,
-            }),
-          }
-        );
+      try {
+        const token = localStorage.getItem("token");
+        console.log(product);
+        const response = await fetch(
+          `${this.$store.state.root_api}likes/favorites/toggle/`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Token ${token}`,
+            },
+            body: JSON.stringify({
+              id: product.id,
+              type: product_type,
+            }),
+          }
+        );
 
-        const data = await response.json();
+        const data = await response.json();
 
-        product.is_favorited = data.favorited;
-      } catch (error) {
-        console.error("Favorite toggle failed", error);
-      }
-    },
+        product.is_favorited = data.favorited;
+      } catch (error) {
+        console.error("Favorite toggle failed", error);
+      }
+    },
     handleSeeInRoom() {
       const businessName = this.$route.params.buisness_name;
       const window_name = this.$route.params.window_name;

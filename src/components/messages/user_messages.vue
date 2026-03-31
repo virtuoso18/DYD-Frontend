@@ -384,6 +384,15 @@ export default {
                 timestamp: new Date().toISOString()
             }));
             this.newMessage = '';
+            if(this.$route.query.message){
+             const query = { ...this.$route.query }; // copy existing query
+                delete query.message; // remove only 'message'
+
+                this.$router.replace({
+                    path: this.$route.path,
+                    query
+                });
+        }
         },
         
      setupWebSocket() {
@@ -600,6 +609,10 @@ export default {
         this.openRoomFromQuery()
         if (this.currentUser?.id) {
             this.initializeChat();
+        }
+        if(this.$route.query.message){
+            this.newMessage=this.$route.query.message
+            // this.sendMessage()
         }
     },
     

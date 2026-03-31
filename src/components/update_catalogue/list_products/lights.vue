@@ -1,4 +1,7 @@
 <template>
+<!-- {{planDetails}}
+{{planIsExpired}} -->
+<!-- {{ brand_data }} -->
   <div >
 
     <div class="ai-catalog-section p-1 ">
@@ -98,6 +101,11 @@
       </div>
   
       <!-- Scrollable Content Area -->
+       <PlanBlockedOverlay
+        :planDetails="planDetails"
+        :planIsExpired="planIsExpired"
+        :brand="brand_data"
+      />
       <div class="scrollable-content">
         <!-- Loading initial -->
         <div v-if="loading && catalogItems.length === 0" class="loading">
@@ -342,6 +350,9 @@ padding:5px;"
 
 <script>
 import { HeartFilled, HeartOutlined } from '@ant-design/icons-vue';
+import PlanBlockedOverlay from '../../update_catalogue/planExpired.vue';
+
+    
 
 export default {
   name: 'AiCatalog',
@@ -393,11 +404,14 @@ export default {
   },
   
   props:{
-    brand_data:Object
+    brand_data:Object,
+    planDetails:Object,
+    planIsExpired:Object,
   },
   components: {
     HeartFilled,
-    HeartOutlined
+    HeartOutlined,
+    PlanBlockedOverlay
   },
 
   computed: {

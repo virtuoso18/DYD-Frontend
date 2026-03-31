@@ -1,4 +1,7 @@
 <template>
+  <!-- {{planDetails}}
+  {{planIsExpired}} -->
+  <!-- {{ brand_data }} -->
   <!-- Upgrade Modal -->
   <a-modal 
     v-model:open="showUpgradeModal" 
@@ -160,6 +163,11 @@
       </div>
 
       <!-- Scrollable Content Area -->
+       <PlanBlockedOverlay
+          :planDetails="planDetails"
+          :planIsExpired="planIsExpired"
+          :brand="brand_data"
+        />
       <div class="scrollable-content">
         <div v-if="loading && catalogItems.length === 0" class="loading">
           <a-spin />
@@ -380,12 +388,15 @@ max-height: 250px;
 
 <script>
 import { HeartFilled, HeartOutlined } from '@ant-design/icons-vue';
+import PlanBlockedOverlay from '../../update_catalogue/planExpired.vue';
 
 export default {
   name: 'AiCatalog',
 
   props: {
     brand_data: Object,
+    planDetails:Object,
+    planIsExpired:Object,
   },
 
   data() {
@@ -447,7 +458,9 @@ export default {
 
   components: {
     HeartFilled,
-    HeartOutlined,
+    HeartOutlined,    
+    PlanBlockedOverlay
+
   },
 
   computed: {

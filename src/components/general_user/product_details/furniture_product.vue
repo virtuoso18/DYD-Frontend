@@ -185,6 +185,7 @@
                 title="Add to Cart"
                 block
                 @click="addToCart"
+                :disabled="anonyomusUser === null"
                 :loading="cartLoading"
                 style="
                   display: flex;
@@ -227,6 +228,7 @@
               <a-button
                 shape="circle"
                 @click="toggleFavorite(selectedProduct, 'product')"
+                :disabled="anonyomusUser === null"
                 type="default"
                 block
                 size="large"
@@ -560,7 +562,7 @@ export default {
       activeView: "3d",
       activeImageIndex: null,
       windowLocation: window.location.origin,
-anonyomusUser:localStorage.getItem('token'),
+      anonyomusUser:localStorage.getItem('token'),
       cartLoading: false,
       showConsentModal: false,
       clearingCart: false,

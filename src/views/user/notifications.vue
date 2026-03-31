@@ -19,6 +19,13 @@
             <div style="display: flex; justify-content: space-between; align-items: start; gap: 12px;">
               <div style="flex: 1;">
                 <h4 style="margin: 0 0 8px 0; font-size: 15px; font-weight: 600; color: #222;">{{ notif.title }}</h4>
+                <div v-if="notif.image" style="margin-top: 10px;">
+                    <img 
+                      :src="`${$store.state.root_media_api}${notif.image}`"
+                      :alt="notif.title"
+                      style="max-width: 200px; max-height: 120px; border-radius: 6px; object-fit: cover; border: 1px solid #e8e8e8;"
+                    />
+                  </div>
                 <p style="margin: 0 0 8px 0; font-size: 14px; color: #666; line-height: 1.5;">{{ notif.description }}</p>
                 <div style="display: flex; gap: 12px; align-items: center; font-size: 12px; color: #999;">
                   <span style="background: #e6f7ff; color: #1890ff; padding: 2px 8px; border-radius: 3px;">{{ notif.priority }}</span>
@@ -60,6 +67,13 @@
             <div style="display: flex; justify-content: space-between; align-items: start; gap: 12px;">
               <div style="flex: 1;">
                 <h4 style="margin: 0 0 8px 0; font-size: 15px; font-weight: 600; color: #222;">{{ notif.title }}</h4>
+                <div v-if="notif.image" style="margin-top: 10px;">
+                    <img 
+                      :src="`${$store.state.root_media_api}${notif.image}`"
+                      :alt="notif.title"
+                      style="max-width: 200px; max-height: 120px; border-radius: 6px; object-fit: cover; border: 1px solid #e8e8e8;"
+                    />
+                  </div>
                 <p style="margin: 0 0 8px 0; font-size: 14px; color: #666; line-height: 1.5;">{{ notif.description }}</p>
                 <div style="display: flex; gap: 12px; align-items: center; font-size: 12px; color: #999;">
                   <span style="background: #e6f7ff; color: #1890ff; padding: 2px 8px; border-radius: 3px;">{{ notif.priority }}</span>
@@ -111,6 +125,13 @@
             <div style="display: flex; justify-content: space-between; align-items: start; gap: 12px;">
               <div style="flex: 1;">
                 <h4 style="margin: 0 0 4px 0; font-size: 14px; font-weight: 600;">{{ notif.title }}</h4>
+                <div v-if="notif.image" style="margin-top: 10px;">
+                    <img 
+                      :src="`${$store.state.root_media_api}${notif.image}`"
+                      :alt="notif.title"
+                      style="max-width: 200px; max-height: 120px; border-radius: 6px; object-fit: cover; border: 1px solid #e8e8e8;"
+                    />
+                  </div>
                 <p style="margin: 0 0 4px 0; font-size: 13px; color: #666;">{{ notif.description }}</p>
                 <p style="margin: 0; font-size: 12px; color: #999;">{{ formatDate(notif.created_at) }}</p>
               </div>
@@ -159,6 +180,13 @@
             <div style="display: flex; justify-content: space-between; align-items: start; gap: 12px;">
               <div style="flex: 1;">
                 <h4 style="margin: 0 0 4px 0; font-size: 14px; font-weight: 600;">{{ notif.title }}</h4>
+                <div v-if="notif.image" style="margin-top: 10px;">
+                    <img 
+                      :src="`${$store.state.root_media_api}${notif.image}`"
+                      :alt="notif.title"
+                      style="max-width: 200px; max-height: 120px; border-radius: 6px; object-fit: cover; border: 1px solid #e8e8e8;"
+                    />
+                  </div>
                 <p style="margin: 0 0 4px 0; font-size: 13px; color: #666;">{{ notif.description }}</p>
                 <p style="margin: 0; font-size: 12px; color: #999;">From: {{ notif.from_user || 'System' }} • {{ formatDate(notif.created_at) }}</p>
               </div>
@@ -233,6 +261,7 @@ export default {
     
     async fetchNotificationsPage(pageNum) {
       try {
+      debugger
         const token = localStorage.getItem('token');
         const apiUrl = `${this.$store.state.root_api}notifications/api/user-notifications/?page=${pageNum}&page_size=20`;
         

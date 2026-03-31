@@ -223,7 +223,6 @@
         <button @click="adjustDim('depth', +0.1)" style="width:20px;height:20px;border:1px solid #ddd;border-radius:4px;background:#f5f5f5;cursor:pointer;font-size:14px;line-height:1;display:flex;align-items:center;justify-content:center;padding:0;">+</button>
       </div>
     </div>
-
   </div>
 </span>
 
@@ -1955,7 +1954,7 @@ rescaleChair() {
     const maskBlob = await this.createBinaryMaskBlob(exportW, exportH, snapPos, snapQuat, snapScale, frozenChairClone)
     if (!maskBlob || maskBlob.size === 0) throw new Error('Mask blob empty')
     
-    // this.downloadImages(compositeBlob, maskBlob)
+    this.downloadImages(compositeBlob, maskBlob)
     // return 
     
     // ── release lock BEFORE reactive state changes ────────

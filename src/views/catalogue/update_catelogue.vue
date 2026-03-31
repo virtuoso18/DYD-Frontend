@@ -1,4 +1,8 @@
 <template>
+    <!-- <hr> {{ planDetails?.plan_name  }}
+    <hr> {{ planDetails }}
+    <hr> {{ planIsExpired }} 
+    <hr> -->
   <!-- show Rendering Failed Model  -->
   <a-modal
     v-model:open="showFailedRenderingModel"
@@ -1650,6 +1654,8 @@ Switch Furniture</a-button> -->
                 active_tab_image === 'item_replacement' &&
                 select_replace === 'Furniture'
               "
+              :planDetails="planDetails"
+              :planIsExpired="planIsExpired"
               :brand_data="brand_data"
               @products-see-all="furnituresSeeAll"
               @trigger-render-3d-object="execute3DRederer"
@@ -1666,6 +1672,8 @@ Switch Furniture</a-button> -->
                 active_tab_image === 'item_replacement' &&
                 select_replace === 'Floor'
               "
+              :planDetails="planDetails"
+              :planIsExpired="planIsExpired"
               @texture-selected="floorTextureSelected"
               @texture-floor-product-selected="texture_floor_selected"
               ref="floor_products_list_mobile"
@@ -1678,6 +1686,8 @@ Switch Furniture</a-button> -->
                 active_tab_image === 'item_replacement' &&
                 select_replace === 'Wall'
               "
+              :planDetails="planDetails"
+              :planIsExpired="planIsExpired"
               @texture-selected="wallTextureSelected"
               ref="wall_products_list_mobile"
               @texture-wall-product-selected="texture_wall_selected"
@@ -1690,6 +1700,8 @@ Switch Furniture</a-button> -->
                 active_tab_image === 'item_replacement' &&
                 select_replace === 'All'
               "
+              :planDetails="planDetails"
+              :planIsExpired="planIsExpired"
               @product-selected="product_selected_all_tabs_section"
               :brand_data="brand_data"
               @see-all-products="SeeAllProducts"
@@ -1702,6 +1714,8 @@ Switch Furniture</a-button> -->
                 active_tab_image === 'item_replacement' &&
                 select_replace === 'Lights'
               "
+              :planDetails="planDetails"
+              :planIsExpired="planIsExpired"
               @light-selected="lightSelected"
               ref="lights_list_mobile"
               :brand_data="brand_data"
@@ -1727,6 +1741,8 @@ Switch Furniture</a-button> -->
             :base_image_url="sideFinalImage || base_image_url"
             :home_design_access="planDetails?.home_design || false"
             :plan_details="planDetails"
+            :planIsExpired="planIsExpired"
+            :brand_data="brand_data"
             @home-design-generation-complete="newhome_designes_generated"
             @insufficient-credits="throw_Insufficient_credits"
             @show-upgrade-modal="showPlanUpgradeModal = true"
@@ -2308,6 +2324,8 @@ Switch Furniture</a-button> -->
                         active_tab_image === 'item_replacement' &&
                         select_replace === 'Furniture'
                       "
+                      :planDetails="planDetails"
+                      :planIsExpired="planIsExpired"
                       :brand_data="brand_data"
                       @products-see-all="furnituresSeeAll"
                       @trigger-render-3d-object="execute3DRederer"
@@ -2325,6 +2343,8 @@ Switch Furniture</a-button> -->
                         active_tab_image === 'item_replacement' &&
                         select_replace === 'Floor'
                       "
+                      :planDetails="planDetails"
+                      :planIsExpired="planIsExpired"
                       @texture-selected="floorTextureSelected"
                       ref="floor_products_list"
                       @texture-floor-product-selected="texture_floor_selected"
@@ -2338,6 +2358,8 @@ Switch Furniture</a-button> -->
                         active_tab_image === 'item_replacement' &&
                         select_replace === 'Wall'
                       "
+                      :planDetails="planDetails"
+                      :planIsExpired="planIsExpired"
                       @texture-selected="wallTextureSelected"
                       ref="wall_products_list"
                       :brand_data="brand_data"
@@ -2350,6 +2372,8 @@ Switch Furniture</a-button> -->
                         active_tab_image === 'item_replacement' &&
                         select_replace === 'All'
                       "
+                      :planDetails="planDetails"
+                      :planIsExpired="planIsExpired"
                       @product-selected="product_selected_all_tabs_section"
                       @brand-products="get_all_products_tabs_available"
                       @see-all-products="SeeAllProducts"
@@ -2362,6 +2386,8 @@ Switch Furniture</a-button> -->
                         active_tab_image === 'item_replacement' &&
                         select_replace === 'Lights'
                       "
+                      :planDetails="planDetails"
+                      :planIsExpired="planIsExpired"
                       @light-selected="lightSelected"
                       @products-see-all="lightsSeeAll"
                       ref="lights_list"
@@ -2374,13 +2400,15 @@ Switch Furniture</a-button> -->
                   </div>
                 </div>
                 <div
-                  class="category-section"
-                  v-if="active_tab_image === 'home_design'"
+                class="category-section"
+                v-if="active_tab_image === 'home_design'"
                 >
                   <side_panel_home_design
                     :base_image_url="sideFinalImage || base_image_url"
                     :home_design_access="planDetails?.home_design || false"
                     :plan_details="planDetails"
+                    :planIsExpired="planIsExpired"
+                    :brand_data="brand_data"
                     @home-design-generation-complete="
                       newhome_designes_generated
                     "
@@ -3467,7 +3495,7 @@ export default {
       showPlanUpgradeModal: false,
       preserved3DModelTransform: null,
       planDetails: null,
-
+      planIsExpired:false,
       LockCanvasOperation: false,
       brand: "",
       brand_data: {
@@ -3903,6 +3931,18 @@ export default {
 
         if (result.success && result.data) {
           this.planDetails = result.data;
+          this.planIsExpired = result.is_expired;
+          
+          // ==================================================================
+          // Plan is not purchased 
+          // ==================================================================
+          if (result.planDetails.plan_name ===null){
+            this.planIsExpired = true;
+          }
+          // ==================================================================
+          // Plan is not purchased 
+          // ==================================================================
+          
           console.log("✅ Plan details loaded:", this.planDetails);
         }
 
@@ -4274,7 +4314,8 @@ export default {
               name: responseData.data.brand_name,
               business_picture: responseData.data.brand_banner_logo,
               banner_picture: responseData.data.brand_avatar_logo,
-              
+              brand_email:responseData.data.brand_email,
+              brand_id:responseData.data.brand_id,
               // what products is sailing by brand 
               brand_is_saling_floor:responseData.data.brand_is_saling_floor,
               brand_is_saling_furniture:responseData.data.brand_is_saling_furniture,
@@ -5001,7 +5042,11 @@ this.$nextTick(() => {
             if (data.status === "Failed") {
               this.canvasLoading = false;
               //  hadller model failed Rendering
-
+              try{
+                this.unselect_currrent_selected_object()
+              }catch{
+                console.log("no 3d item found");
+              }
               this.throw_failed_rendering(
                 data.failure_reason_if_rendering_failed,
               );
@@ -5244,12 +5289,11 @@ this.$nextTick(() => {
       this.select_replace = "All";
 
       // Then check access and show modal if needed
-      if (tab === "home_design") {
-        if (!this.checkHomeDesignAccess()) {
-          // Show modal but DON'T block tab switch
-          this.showPlanUpgradeModal = true;
-        }
-      }
+      // if (tab === "home_design") {
+      //   if (!this.checkHomeDesignAccess()) {
+      //     this.showPlanUpgradeModal = true;
+      //   }
+      // }
     },
 
     handlePlanUpgradeModalClose(visible) {

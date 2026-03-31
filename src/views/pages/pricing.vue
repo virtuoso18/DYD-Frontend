@@ -36,6 +36,9 @@
             <div class="plan-status-badge current-badge" v-if="currentPlan === 'basic'">
               ✦ Current Plan
             </div>
+            <div class="plan-status-badge inactive-badge" v-if="data.basic.is_active === false">
+              ✦ Inactive
+            </div>
             <div class="card-header">
               <h3 class="plan-name">Basic</h3>
               <p class="plan-subtitle">Basic Plan</p>
@@ -61,6 +64,7 @@
             <button
               v-else
               class="get-started-btn basic-btn"
+              :disabled="data.basic.is_active === false"
               @click="this.$router.push('/make-payment/basic')"
             >Get Started</button>
             <div class="features-list">
@@ -81,6 +85,9 @@
             <div class="plan-status-badge current-badge-standard" v-if="currentPlan === 'standard'">
               ✦ Current Plan
             </div>
+            <div class="plan-status-badge inactive-badge" v-if="data.standard.is_active === false">
+              ✦ Inactive
+            </div>
             <div class="card-header">
               <h3 class="plan-name">Standard</h3>
               <p class="plan-subtitle">MOST POPULAR</p>
@@ -100,18 +107,21 @@
             <button
               v-else-if="planRank(currentPlan) > planRank('standard')"
               class="get-started-btn standard-btn btn-disabled"
+              :disabled="data.standard.is_active === false"
               disabled
             >Not Available</button>
             <!-- Lower plan: Upgrade -->
             <button
               v-else-if="planRank(currentPlan) > 0 && planRank(currentPlan) < planRank('standard')"
               class="get-started-btn standard-btn"
+              :disabled="data.standard.is_active === false"
               @click="this.$router.push('/make-payment-upgrade/standard')"
             >Upgrade to Standard</button>
             <!-- No plan -->
             <button
               v-else
               class="get-started-btn standard-btn"
+              :disabled="data.standard.is_active === false"
               @click="this.$router.push('/make-payment/standard')"
             >Get Started</button>
             <div class="features-list">
@@ -132,6 +142,9 @@
             <div class="plan-status-badge current-badge" v-if="currentPlan === 'premium'">
               ✦ Current Plan
             </div>
+            <div class="plan-status-badge inactive-badge" v-if="data.premium.is_active === false">
+              ✦ Inactive
+            </div>
             <div class="card-header">
               <h3 class="plan-name">Premium</h3>
               <p class="plan-subtitle">For Organization</p>
@@ -151,12 +164,14 @@
             <button
               v-else-if="planRank(currentPlan) > 0 && planRank(currentPlan) < planRank('premium')"
               class="get-started-btn premium-btn"
+              :disabled="data.premium.is_active === false"
               @click="this.$router.push('/make-payment-upgrade/premium')"
             >Upgrade to Premium</button>
             <!-- No plan -->
             <button
               v-else
               class="get-started-btn premium-btn"
+              :disabled="data.standard.is_active === false"
               @click="this.$router.push('/make-payment/premium')"
             >Get Started</button>
             <div class="features-list">
@@ -946,7 +961,26 @@ export default {
     font-size: 36px;
   }
 }
+ .inactive-badge {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  top:50px;
+  color: white;
+}
 
+.inactive-badge-standard {
+  position: absolute;
+  top: 50px;
+  left: 16px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  background: rgba(239, 68, 68, 0.35);
+  color: white;
+  border: 1px solid rgba(239, 68, 68, 0.6);
+}
 @media (max-width: 480px) {
   .header-section {
     padding: 60px 20px 100px;
@@ -967,5 +1001,6 @@ export default {
   .plan-toggle-container {
     margin-bottom: 30px;
   }
+ 
 }
 </style>

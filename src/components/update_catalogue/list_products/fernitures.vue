@@ -1,6 +1,9 @@
 <template>
-  <!-- {{ brand_data }} -->
-  <div className="pt-3 sm:pt-2">
+<!-- {{ planDetails  }}
+{{ planIsExpired }} -->
+<!-- {{ brand_data }} -->
+  <!-- <div className="pt-3 sm:pt-2"> -->
+  <div class="catalog-root">  
     <!-- Header -->
     <div class="ai-catalog-header pt-2 !mx-1 ">
       <div class=" flex gap-2">
@@ -49,6 +52,11 @@
 
     <!-- Scrollable Content -->
     <div class="overflow-y-auto p-[5px] bg-[#fafafa] md:h-[calc(76vh-80px)]">
+      <PlanBlockedOverlay
+          :planDetails="planDetails"
+          :planIsExpired="planIsExpired"
+          :brand="brand_data"
+        />
       
       <!-- Furniture -->
       <a-collapse v-model:activeKey="productsActiveKey" style="margin-bottom: 12px;" v-if="(furniture_products.length > 0 || initialLoadingFurniture) && brand_data?.brand_is_saling_furniture">
@@ -276,6 +284,7 @@
 
 <script>
 import { Empty } from 'ant-design-vue';
+import PlanBlockedOverlay from '../../update_catalogue/planExpired.vue';
 
 export default {
   name:"AllFurnituresScreen",
@@ -339,9 +348,12 @@ export default {
       searchTimeout: null,
     };
   },
-  
+  components: { PlanBlockedOverlay },
+
   props: {
-    brand_data: Object
+    brand_data: Object,
+    planDetails:Object,
+    planIsExpired:Object,
   },
   
   mounted() {
@@ -630,4 +642,17 @@ selectfurnitureProduct(type, id, model_url, dimensions = null,is_resizable=false
   color: #1890ff;
   text-decoration: none;
 }
-</style>
+
+
+
+
+.catalog-root {
+  position: relative;
+  padding-top: 0.75rem; /* replaces the lost pt-3 */
+}
+
+@media (min-width: 640px) {
+  .catalog-root {
+    padding-top: 0.5rem; /* sm:pt-2 */
+  }
+}</style>

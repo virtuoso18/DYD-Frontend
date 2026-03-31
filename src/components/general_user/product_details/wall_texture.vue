@@ -152,10 +152,11 @@
                 type="primary"
                 size="large"
                 shape="circle"
-                titile="Add to Cart"
+                title="Add to Cart"
                 block
                 @click="addToCart"
                 :loading="cartLoading"
+                :disabled="anonyomusUser === null"
                 style="
                   display: flex;
                   gap: 10px;
@@ -199,6 +200,7 @@
                 shape="circle"
                 @click="toggleFavorite(selectedTexture, 'wall_texture')"
                 type="default"
+                :disabled="anonyomusUser === null"
                 block
               >
                 <div
@@ -441,6 +443,7 @@ export default {
       showConsentModal: false,
       clearingCart: false,
       pendingCartItem: null,
+      anonyomusUser:localStorage.getItem('token'),
     };
   },
   props: {

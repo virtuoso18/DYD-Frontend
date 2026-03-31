@@ -221,148 +221,149 @@
    
 
     <a-drawer
-  v-model:open="drawerVisible"
-  :placement="'bottom'"
-  :closable="true"
-  :height="'85vh'"
-  :body-style="{ padding: '24px' }"
->
-<template #title>
-  <div style="display: flex;justify-content: space-between;font-size:16px;font-weight:600;align-items: center;">
-
-    {{ `Credit Transactions - ${selectedUserEmail}` }}
-    
-    <a-button v-if="current_user.id!=selectedUserForDetails"
-    type="primary"
-    style="display:flex;justify-content:center;align-items:center;"
-    @click="startChatWithCustomer(selectedUserForDetails)"
+      v-model:open="drawerVisible"
+      :placement="'bottom'"
+      :closable="true"
+      :height="'85vh'"
+      :body-style="{ padding: '24px' }"
     >
-    Chat
-   <MessageOutlined /> 
-  </a-button>
-</div>
-</template>
-  <!-- Date Range Filter for User Transactions -->
-   <div style="margin-bottom: 16px; display: flex; gap: 16px; flex-wrap: wrap;">
-            <a-date-picker
-              v-model:value="transactionDateRange[0]"
-              placeholder="Start Date"
-              style="width: 200px"
-              @change="fetchUserTransactionDetails"
-            />
-            <a-date-picker
-              v-model:value="transactionDateRange[1]"
-              placeholder="End Date"
-              style="width: 200px"
-              @change="fetchUserTransactionDetails"
-            />
-            <a-select
-              v-model:value="transactionFilterStatus"
-              placeholder="Filter by Status"
-              @change="fetchUserTransactionDetails"
-              style="width: 200px"
-              allow-clear
-            >
-              <a-select-option value="">All Status</a-select-option>
-              <a-select-option value="pending">Pending</a-select-option>
-              <a-select-option value="success">Success</a-select-option>
-              <a-select-option value="failed">Failed</a-select-option>
-            </a-select>
+    <template #title>
+      <div style="display: flex;justify-content: space-between;font-size:16px;font-weight:600;align-items: center;">
 
-            <a-select
-              v-model:value="transactionFilterType"
-              placeholder="Filter by Status"
-              @change="fetchUserTransactionDetails"
-              style="width: 200px"
-              allow-clear
-            >
-              <a-select-option value="">All </a-select-option>
-              <a-select-option value="deposit">deposit</a-select-option>
-              <a-select-option value="consume">consume</a-select-option>
+        {{ `Credit Transactions - ${selectedUserEmail}` }}
+        
+        <a-button v-if="current_user.id!=selectedUserForDetails"
+        type="primary"
+        style="display:flex;justify-content:center;align-items:center;"
+        @click="startChatWithCustomer(selectedUserForDetails)"
+        >
+        Chat
+      <MessageOutlined /> 
+      </a-button>
+    </div>
+    </template>
+   <!-- Date Range Filter for User Transactions -->
+    <div style="margin-bottom: 16px; display: flex; gap: 16px; flex-wrap: wrap;">
+              <a-date-picker
+                v-model:value="transactionDateRange[0]"
+                placeholder="Start Date"
+                style="width: 200px"
+                @change="fetchUserTransactionDetails"
+              />
+              <a-date-picker
+                v-model:value="transactionDateRange[1]"
+                placeholder="End Date"
+                style="width: 200px"
+                @change="fetchUserTransactionDetails"
+              />
+              <a-select
+                v-model:value="transactionFilterStatus"
+                placeholder="Filter by Status"
+                @change="fetchUserTransactionDetails"
+                style="width: 200px"
+                allow-clear
+              >
+                <a-select-option value="">All Status</a-select-option>
+                <a-select-option value="pending">Pending</a-select-option>
+                <a-select-option value="success">Success</a-select-option>
+                <a-select-option value="failed">Failed</a-select-option>
+              </a-select>
+
+              <a-select
+                v-model:value="transactionFilterType"
+                placeholder="Filter by Status"
+                @change="fetchUserTransactionDetails"
+                style="width: 200px"
+                allow-clear
+              >
+                <a-select-option value="">All </a-select-option>
+                <a-select-option value="deposit">deposit</a-select-option>
+                <a-select-option value="consume">consume</a-select-option>
+                
+              </a-select>
               
-            </a-select>
-            
-             
-          </div>
+              
+            </div>
 
   <!-- User Summary Stats -->
-  <div v-if="userTransactionsSummary" class="user-transaction-summary">
-            <div class="summary-item">
-              <span class="summary-label">Total Credits Consumed:</span>
-              <span class="summary-value">{{ userTransactionsSummary.total_credits_consumed }}</span>
-            </div>
-            <div class="summary-item">
-              <span class="summary-label">Total Transactions:</span>
-              <span class="summary-value">{{ userTransactionsSummary.total_transactions }}</span>
-            </div>
-          </div>
+      <div v-if="userTransactionsSummary" class="user-transaction-summary">
+                <div class="summary-item">
+                  <span class="summary-label">Total Credits Consumed:</span>
+                  <span class="summary-value">{{ userTransactionsSummary.total_credits_consumed }}</span>
+                </div>
+                <div class="summary-item">
+                  <span class="summary-label">Total Transactions:</span>
+                  <span class="summary-value">{{ userTransactionsSummary.total_transactions }}</span>
+                </div>
+              </div>
 
   <!-- Transaction Table -->
-  <a-table 
-            :columns="creditTableColumns" 
-            :data-source="userTransactionsList" 
-            row-key="id" 
-            :pagination="transactionPagination"
-            :scroll="{ x: 1200 }"
-            :loading="transactionDetailsLoading"
-            @change="onTransactionTableChange"
-            style="background: white; border-radius: 8px; overflow: hidden;"
-          >
-            <template #bodyCell="{ column, record, index }">
-              <template v-if="column.key === 'serial'">
-                <span style="font-weight: 600; color: #666;">{{ (transactionPagination.current - 1) * transactionPagination.pageSize + index + 1 }}</span>
-              </template>
+    <a-table 
+              :columns="creditTableColumns" 
+              :data-source="userTransactionsList" 
+              row-key="id" 
+              :pagination="transactionPagination"
+              :scroll="{ x: 1200 }"
+              :loading="transactionDetailsLoading"
+              @change="onTransactionTableChange"
+              style="background: white; border-radius: 8px; overflow: hidden;"
+            >
+              <template #bodyCell="{ column, record, index }">
+                <template v-if="column.key === 'serial'">
+                  <span style="font-weight: 600; color: #666;">{{ (transactionPagination.current - 1) * transactionPagination.pageSize + index + 1 }}</span>
+                </template>
 
-              <template v-if="column.key === 'user_email'">
-                <span>{{ record.user_email }}</span>
-              </template>
+                <template v-if="column.key === 'user_email'">
+                  <span>{{ record.user_email }}</span>
+                </template>
 
-              <template v-if="column.key === 'credits_changed'">
-                <span :style="{ color: record.credits_changed > 0 ? '#10b981' : '#ef4444', fontWeight: '600' }">
-                  {{ record.credits_changed > 0 ? '+' : '' }}{{ record.credits_changed }}
-                </span>
-              </template>
+                <template v-if="column.key === 'credits_changed'">
+                  <span :style="{ color: record.credits_changed > 0 ? '#10b981' : '#ef4444', fontWeight: '600' }">
+                    {{ record.credits_changed > 0 ? '+' : '' }}{{ record.credits_changed }}
+                  </span>
+                </template>
 
-              <template v-if="column.key === 'type'">
-                <a-tag :color="record.type === 'deposit' ? 'blue' : 'orange'">
-                  {{ record.type }}
-                </a-tag>
-              </template>
+                <template v-if="column.key === 'type'">
+                  <a-tag :color="record.type === 'deposit' ? 'blue' : 'orange'">
+                    {{ record.type }}
+                  </a-tag>
+                </template>
 
-              <template v-if="column.key === 'status'">
-                <a-tag 
-                  :color="record.status === 'success' ? 'green' : record.status === 'pending' ? 'orange' : 'red'"
-                >
-                  {{ record.status }}
-                </a-tag>
-              </template>
+                <template v-if="column.key === 'status'">
+                  <a-tag 
+                    :color="record.status === 'success' ? 'green' : record.status === 'pending' ? 'orange' : 'red'"
+                  >
+                    {{ record.status }}
+                  </a-tag>
+                </template>
 
-              <template v-if="column.key === 'business_name'">
-                <span>{{ record.business_name || '-' }}</span>
-              </template>
+                <template v-if="column.key === 'business_name'">
+                  <span>{{ record.business_name || '-' }}</span>
+                </template>
 
-              <template v-if="column.key === 'created_at'">
-                <span>{{ formatDate(record.created_at) }}</span>
-              </template>
+                <template v-if="column.key === 'created_at'">
+                  <span>{{ formatDate(record.created_at) }}</span>
+                </template>
 
-              <template v-if="column.key === 'description'">
-                <span style="font-size: 12px;">{{ record.description || '-' }}</span>
-              </template>
+                <template v-if="column.key === 'description'">
+                  <span style="font-size: 12px;">{{ record.description || '-' }}</span>
+                </template>
 
-              <!-- <template v-if="column.key === 'chat_with_customer'">
-                <button
-                  style="background: #4f46e5; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; cursor: pointer;"
-                  @click="startChatWithCustomer(record)"
-                >
-                  Chat
-                </button>
-              </template> -->
-            </template>
-          </a-table>
+                <!-- <template v-if="column.key === 'chat_with_customer'">
+                  <button
+                    style="background: #4f46e5; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; cursor: pointer;"
+                    @click="startChatWithCustomer(record)"
+                  >
+                    Chat
+                  </button>
+                </template> -->
+              </template>
+            </a-table>
 </a-drawer>
 
+<leadsDetails></leadsDetails>
 
-
+<br>
     <!-- Products Table -->
     <a-row :gutter="[16, 16]">
       <a-col :xs="0" :sm="0" :md="0" :lg="24">
@@ -502,13 +503,15 @@ import { Chart, registerables } from 'chart.js'
 import AnalyticsProductCard from '@/components/store/AnalyticsProductCard.vue'
 import dayjs from 'dayjs'
 import {MessageOutlined,OrderedListOutlined} from '@ant-design/icons-vue'
+import leadsDetails from './leadsDetails.vue'
 Chart.register(...registerables)
 
 export default {
   name: 'Analytics',
   components:{
     AnalyticsProductCard,
-    MessageOutlined,OrderedListOutlined
+    MessageOutlined,OrderedListOutlined,
+    leadsDetails
   },
   data() {
     return {

@@ -1,4 +1,7 @@
 <template>
+  <!-- {{planDetails}}
+  {{planIsExpired}} -->
+  <!-- {{ brand_data }} -->
   <div class="ai-catalog-section !pt-8 sm:!pt-0">
     <div class="apply-section md:hidden">
       <a-button type="primary" size="large" block class="apply-button" @click="updateItemRendering()">
@@ -103,7 +106,11 @@
 
     <!-- Scrollable Content Area -->
 
-
+<PlanBlockedOverlay
+    :planDetails="planDetails"
+    :planIsExpired="planIsExpired"
+    :brand="brand_data"
+  />
     
     <div class="scrollable-content">
       <!-- Loading initial -->
@@ -353,6 +360,9 @@ padding:5px;" @click="selectTexture(item.id)"
 
 <script>
 import { HeartFilled, HeartOutlined } from '@ant-design/icons-vue';
+import PlanBlockedOverlay from '../../update_catalogue/planExpired.vue';
+
+    
 
 export default {
   name: 'AiCatalog',
@@ -442,11 +452,14 @@ export default {
     };
   },
   props: {
-    brand_data: Object
+    brand_data: Object,
+    planDetails:Object,
+    planIsExpired:Object,
   },
   components: {
     HeartFilled,
-    HeartOutlined
+    HeartOutlined,
+    PlanBlockedOverlay
   },
   computed: {
     hasActiveFilters() {
