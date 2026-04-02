@@ -23,7 +23,7 @@
 
           <!-- Navigation Links -->
           <div class="navbar-nav">
-            <router-link to="/" class="nav-link">DYD Business</router-link>
+            <router-link to="/" class="nav-link">{{ t("navbar.dydBusiness") }}</router-link>
 
             <router-link
               to="/comunity"
@@ -32,7 +32,7 @@
                 user.user_type === 'Business'
               "
               class="nav-link"
-              >Community</router-link
+              >{{ t('navbar.community') }}</router-link
             >
             <router-link
               to="/pricing"
@@ -41,16 +41,16 @@
                 user.user_type === 'Business'
               "
               class="nav-link"
-              >Pricing</router-link
+              >{{ t('navbar.pricing') }}</router-link
             >
             <router-link to="/contact-us" class="nav-link"
-              >Contact us</router-link
+              >{{ t('navbar.contactUs') }}</router-link
             >
             <router-link
               to="/ai-catalog"
               v-if="user.user_type === 'Professional'"
               class="nav-link"
-              >AI Catalog</router-link
+              >{{ t('navbar.aiCatalog') }}</router-link
             >
           </div>
 
@@ -61,8 +61,8 @@
               @change="handleChange"
               style="width: 80px"
             >
-              <a-select-option value="en">EN</a-select-option>
-              <a-select-option value="he">HB</a-select-option>
+              <a-select-option value="en">{{t('navbar.en')}}</a-select-option>
+              <a-select-option value="he">{{t('navbar.hb')}}</a-select-option>
             </a-select>
 
             <div
@@ -91,7 +91,7 @@
               </div>
               <router-link :to="'/pricing'"
                 ><a-button type="primary" size="small"
-                  >Buy</a-button
+                  >{{t('navbar.buy')}}</a-button
                 ></router-link
               >
             </div>
@@ -122,7 +122,7 @@
                       stroke-linejoin="round"
                     />
                   </svg>
-                  <span>My Store</span>
+                  <span>{{t('navbar.myStore')}}</span>
                 </div>
               </a-button></router-link
             >
@@ -276,11 +276,10 @@
             <a-select
               ref="select"
               v-model:value="language_selected"
-              @focus="focus"
               @change="handleChange"
             >
-              <a-select-option value="En">EN</a-select-option>
-              <a-select-option value="Hb">HB</a-select-option>
+              <a-select-option value="en">{{t('navbar.en')}}</a-select-option>
+              <a-select-option value="he">{{t('navbar.hb')}}</a-select-option>
             </a-select>
           </div>
         </template>
@@ -344,7 +343,7 @@
               </div>
               <router-link :to="'/pricing'">
                 <a-button type="primary" size="small"
-                  >Buy</a-button
+                  >{{t('navbar.buy')}}</a-button
                 ></router-link
               >
             </div>
@@ -480,7 +479,7 @@ export default {
   },
   data() {
     return {
-      language_selected: "EN",
+      language_selected: "en",
       user: JSON.parse(localStorage.getItem("user")),
       profile: JSON.parse(localStorage.getItem("profile")),
       business_info: JSON.parse(
@@ -940,8 +939,8 @@ export default {
   display: flex;
   align-items: center;
   gap: 32px;
-  margin-left: 20px;
-  margin-right: auto;
+  margin-inline-start: 20px; 
+  margin-inline-end: auto;
 }
 
 .nav-link {

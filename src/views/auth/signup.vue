@@ -20,8 +20,8 @@
     <!-- Step 1: Personalization Selection -->
     <div v-if="currentStep === 1" class="step-content">
       <div class="step-header">
-        <h2>Your Personalization</h2>
-        <p>Select what your personalization</p>
+        <h2>{{t('signup.yourPersonalization')}}</h2>
+        <p>{{t('signup.selectPersonalization')}}</p>
       </div>
 
       <div class="personalization-options">
@@ -30,8 +30,8 @@
           :class="{ active: selectedType === 'business' }"
           @click="selectPersonalization('business')"
         >
-          <h3>Business</h3>
-          <p>Design your Office</p>
+          <h3>{{t('signup.business')}}</h3>
+          <p>{{t('signup.designYourOffice')}}</p>
         </div>
 
         <div
@@ -42,8 +42,8 @@
           }"
           @click="selectPersonalization('professional')"
         >
-          <h3>Professional</h3>
-          <p>Interior Designer or Architecture</p>
+          <h3>{{t('signup.professional')}}</h3>
+          <p>{{t('signup.interiorDesignerOrArchitecture')}}</p>
         </div>
 
         <div
@@ -54,8 +54,8 @@
           }"
           @click="selectPersonalization('user')"
         >
-          <h3>User</h3>
-          <p>Create your own profile</p>
+          <h3>{{t('signup.user')}}</h3>
+          <p>{{ t('signup.createYourOwnProfile') }}</p>
         </div>
       </div>
 
@@ -67,12 +67,12 @@
         :disabled="!selectedType"
         @click="nextStep"
       >
-        Continue
+        {{t('signup.continue')}}
       </a-button>
       <div style="text-align: center">
         <h3>
-          Already have a account,
-          <router-link :to="'/login'"> Login</router-link>
+          {{t('signup.alreadyHaveAccount')}}
+          <router-link :to="'/login'"> {{t('signup.login')}}</router-link>
         </h3>
       </div>
     </div>
@@ -80,16 +80,16 @@
     <!-- Step 2: Personal Info -->
     <div v-if="currentStep === 2" class="step-content">
       <div class="step-header">
-        <h2>Personal Info</h2>
+        <h2>{{t('signup.personalInfo')}}</h2>
       </div>
 
       <div class="form-container">
         <div class="input-row">
           <div class="input-group">
-            <label>Name</label>
+            <label>{{t('signup.firstName')}}</label>
             <a-input
               v-model:value="personalInfo.firstName"
-              placeholder="First Name"
+              :placeholder="t('signup.firstName')"
               size="large"
               class="custom-input"
               :class="{ 'input-error': errors.firstName }"
@@ -100,10 +100,10 @@
             }}</span>
           </div>
           <div class="input-group">
-            <label>Last Name</label>
+            <label>{{t('signup.lastName')}}</label>
             <a-input
               v-model:value="personalInfo.lastName"
-              placeholder="Last Name"
+              :placeholder="t('signup.lastName')"
               size="large"
               class="custom-input"
               :class="{ 'input-error': errors.lastName }"
@@ -116,10 +116,10 @@
         </div>
 
         <div class="input-group">
-          <label>Email</label>
+          <label>{{t('signup.email')}}</label>
           <a-input
             v-model:value="personalInfo.email"
-            placeholder="Email"
+            :placeholder="t('signup.email')"
             size="large"
             class="custom-input"
             :class="{ 'input-error': errors.email }"
@@ -131,10 +131,10 @@
         </div>
 
         <div class="input-group">
-          <label>Password</label>
+          <label>{{t('signup.password')}}</label>
           <a-input-password
             v-model:value="personalInfo.password"
-            placeholder="Password"
+            :placeholder="t('signup.password')"
             size="large"
             class="custom-input"
             :class="{ 'input-error': errors.password }"
@@ -152,10 +152,10 @@
         </div>
 
         <div class="input-group">
-          <label>Confirm Password</label>
+          <label>{{t('signup.confirmPassword')}}</label>
           <a-input-password
             v-model:value="personalInfo.confirmPassword"
-            placeholder="Confirm Password"
+            :placeholder="t('signup.confirmPassword')"
             size="large"
             class="custom-input"
             :class="{ 'input-error': errors.confirmPassword }"
@@ -178,8 +178,7 @@
 
         <div class="checkbox-group">
           <a-checkbox v-model:checked="agreedToTerms">
-            I agree with design.com Terms and Privacy Policy and allow
-            design.com to contact me by email
+            {{t('signup.agreeTerms')}}
           </a-checkbox>
         </div>
 
@@ -192,7 +191,7 @@
           :disabled="!isPersonalInfoValid || loading"
           @click="nextStep"
         >
-          {{ loading ? "Processing..." : "Continue" }}
+          {{ loading ? t('signup.processing') : t('signup.continue') }}
         </a-button>
       </div>
     </div>
@@ -203,7 +202,7 @@
       class="step-content"
     >
       <div class="step-header">
-        <h2>Complete Business Profile</h2>
+        <h2>{{t('signup.completeBusinessProfile')}}</h2>
       </div>
 
       <div class="form-container">
@@ -266,12 +265,12 @@
 
     <!-- Status text below circle -->
     <template v-if="businessInfo.logoPreview">
-      <p class="!text-sm !font-semibold !text-green-600 !mt-4">Logo uploaded ✓</p>
-      <p class="!text-xs !text-gray-500 !mt-1">Click to change</p>
+      <p class="!text-sm !font-semibold !text-green-600 !mt-4">{{t('signup.uploadBusinessLogo')}}</p>
+      <p class="!text-xs !text-gray-500 !mt-1">{{t('signup.clickToChange')}}</p>
     </template>
     <template v-else>
-      <p class="!text-sm !font-semibold !text-gray-700 !mt-4">Upload your business logo</p>
-      <p class="!text-xs !text-gray-500 !mt-1">PNG, JPG or SVG (max 2MB)</p>
+      <p class="!text-sm !font-semibold !text-gray-700 !mt-4">{{t('signup.completeBusinessProfile')}}</p>
+      <p class="!text-xs !text-gray-500 !mt-1">{{t('signup.logoFormats')}}</p>
     </template>
   </div>
 
@@ -283,10 +282,10 @@
 
 
         <div class="input-group">
-          <label>Business Name</label>
+          <label>{{t('signup.businessName')}}</label>
           <a-input
             v-model:value="businessInfo.businessName"
-            placeholder="Business Name"
+            :placeholder="t('signup.businessName')"
             size="large"
             class="custom-input"
             :class="{ 'input-error': errors.businessName }"
@@ -298,10 +297,10 @@
         </div>
 
         <div class="input-group">
-          <label>Business Email</label>
+          <label>{{t('signup.businessEmail')}}</label>
           <a-input
             v-model:value="businessInfo.email"
-            placeholder="Business Email"
+            :placeholder="t('signup.businessEmail')"
             size="large"
             class="custom-input"
             :class="{ 'input-error': errors.businessEmail }"
@@ -323,7 +322,7 @@
         </div>
 
      <div class="input-group">
-  <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+  <label class="block text-sm font-medium text-gray-700 mb-2">{{t('signup.phoneNumber')}}</label>
   <input
     v-model="businessInfo.phone"
     placeholder="Enter Valid phone number"
@@ -332,7 +331,7 @@
     class="flex-1 custom-input border border-gray-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full"
     :class="{ 'border-red-500 bg-red-50': phoneError }"
     @input="businessInfo.phone = $event.target.value.replace(/\D/g, '').slice(0, 10)"
-    @blur="phoneError = businessInfo.phone.length !== 10 ? 'Please enter a valid 10-digit phone number' : ''"
+      @blur="phoneError = businessInfo.phone.length !== 10 ? t('signup.errors.validPhone') : ''"
   />
   <span v-if="phoneError" class="error-message text-red-500 text-xs mt-1 block">
     {{ phoneError }}
@@ -341,38 +340,38 @@
 
 
         <div class="input-group">
-          <label>License</label>
+          <label>{{t('signup.license')}}</label>
           <a-input
             v-model:value="businessInfo.license"
-            placeholder="License (Optional)"
+            :placeholder="t('signup.licenseOptional')"
             size="large"
             class="custom-input"
           />
         </div>
 
         <div class="input-group">
-          <label>Category</label>
+          <label>{{t('signup.category')}}</label>
          <div class="category-tags">
   <span
     class="tag"
     :class="{ active: businessInfo.categories.includes('Furniture') }"
     @click="toggleCategory('Furniture')"
-  >Furniture</span>
+  >{{t('signup.furniture')}}</span>
   <span
     class="tag"
     :class="{ active: businessInfo.categories.includes('Lights') }"
     @click="toggleCategory('Lights')"
-  >Lights</span>
+  >{{t('signup.lights')}}</span>
   <span
     class="tag"
     :class="{ active: businessInfo.categories.includes('Floors') }"
     @click="toggleCategory('Floors')"
-  >Floors</span>
+  >{{t('signup.floors')}}</span>
   <span
     class="tag"
     :class="{ active: businessInfo.categories.includes('Walls') }"
     @click="toggleCategory('Walls')"
-  >Walls</span>
+  >{{t('signup.walls')}}</span>
 </div>
 
         </div>
@@ -386,7 +385,7 @@
           :disabled="!isBusinessInfoValid || loading"
           @click="submitRegistration"
         >
-          {{ loading ? "Creating Account..." : "Submit" }}
+          {{ loading ? t('signup.creatingAccount') : t('signup.submit') }}
         </a-button>
       </div>
     </div>
@@ -401,7 +400,7 @@
       </div> -->
 
       <div class="step-header">
-        <h2 style="margin-bottom: 0">Complete Business Details</h2>
+        <h2 style="margin-bottom: 0">{{t('signup.completeBusinessDetails')}}</h2>
       </div>
 
       <div class="form-container">
@@ -414,10 +413,10 @@
         </div> -->
 
         <div class="input-group">
-          <label>Business Name</label>
+          <label>{{t('signup.businessName')}}</label>
           <a-input
             v-model:value="businessInfo.businessName"
-            placeholder="Business Name"
+            :placeholder="t('signup.businessName')"
             size="large"
             class="custom-input"
             :class="{ 'input-error': errors.businessName }"
@@ -429,10 +428,10 @@
         </div>
 
         <div class="input-group">
-          <label>Business Email</label>
+          <label>{{t('signup.businessEmail')}}</label>
           <a-input
             v-model:value="businessInfo.email"
-            placeholder="Business Email"
+            :placeholder="t('signup.businessEmail')"
             size="large"
             class="custom-input"
             :class="{ 'input-error': errors.businessEmail }"
@@ -454,7 +453,7 @@
         </div>
 
         <div class="input-group">
-          <label>Phone Number</label>
+          <label>{{t('signup.phoneNumber')}}</label>
           <a-input
             v-model:value="businessInfo.phone"
             placeholder="+91 Enter phone number"
@@ -479,17 +478,17 @@
         </div>
 
         <div class="input-group">
-          <label>License</label>
+          <label>{{t('signup.license')}}</label>
           <a-input
             v-model:value="businessInfo.license"
-            placeholder="License (Optional)"
+            :placeholder="t('signup.licenseOptional')"
             size="large"
             class="custom-input"
           />
         </div>
 
-        <div class="input-group">
-          <label>Category</label>
+        <!-- <div class="input-group">
+          <label>{{t('signup.category')}}</label>
           <div class="category-tags">
             <span
               class="tag"
@@ -516,22 +515,20 @@
               >Kitchen Design</span
             >
           </div>
-        </div>
+        </div> -->
       </div>
       <br />
       <div class="form-container">
         <div class="approval-options">
           <div class="checkbox-group">
             <a-checkbox v-model:checked="finalApproval.contactApproval">
-              I declare that I can be contacted through design or anywhere, I am
-              very aware with design policies and policies.
+              {{t('signup.contactApproval')}}
             </a-checkbox>
           </div>
 
           <div class="checkbox-group">
             <a-checkbox v-model:checked="finalApproval.accountApproval">
-              I am aware that I am providing a new account or you want it to be
-              shared (sharing is optional at anyplace to my portfolio).
+             {{t('signup.accountApproval')}}
             </a-checkbox>
           </div>
         </div>
@@ -545,7 +542,7 @@
           :disabled="!isFinalApprovalValid || loading"
           @click="submitRegistration"
         >
-          {{ loading ? "Creating Account..." : "Continue" }}
+          {{ loading ? t('signup.creatingAccount') : t('signup.continue') }}
         </a-button>
 
         <!-- <a-button 
@@ -565,8 +562,8 @@
     <!-- Step 4: OTP Verification -->
     <div v-if="currentStep === 4" class="step-content">
       <div class="step-header">
-        <h2>Verify Your Email</h2>
-        <p>We've sent a 6-digit code to {{ personalInfo.email }}</p>
+        <h2>{{t('signup.verifyYourEmail')}}</h2>
+        <p>{{t('signup.sentCodeTo')}} {{ personalInfo.email }}</p>
       </div>
 
       <div class="form-container">
@@ -595,18 +592,18 @@
           }}</span>
 
           <div class="otp-timer" v-if="otpTimer > 0">
-            <p>Code expires in {{ formatTime(otpTimer) }}</p>
+            <p>{{t('signup.codeExpiresIn')}} {{ formatTime(otpTimer) }}</p>
           </div>
 
           <div class="resend-section" v-if="canResendOtp">
-            <p>Didn't receive the code?</p>
+            <p>{{t('signup.didntReceiveCode')}}</p>
             <a-button
               type="link"
               :loading="resendingOtp"
               @click="resendOtp"
               class="resend-link"
             >
-              {{ resendingOtp ? "Sending..." : "Resend Code" }}
+              {{ resendingOtp ? t('signup.sending') : t('signup.resendCode') }}
             </a-button>
           </div>
         </div>
@@ -620,7 +617,7 @@
           :disabled="!isOtpComplete || verifyingOtp"
           @click="verifyOtp"
         >
-          {{ verifyingOtp ? "Verifying..." : "Verify & Continue" }}
+          {{ verifyingOtp ? t('signup.verifying') : t('signup.verifyAndContinue') }}
         </a-button>
       </div>
     </div>
@@ -634,9 +631,9 @@
           />
         </svg>
       </div>
-      <h2>Account Created Successfully!</h2>
-      <p>Welcome to DYD! Your account has been verified and activated.</p>
-      <p>You can now login and start exploring the platform.</p>
+      <h2>{{t('signup.accountCreated')}}</h2>
+      <p>{{t('signup.welcomeToDYD')}}</p>
+      <p>{{t('signup.canNowLogin')}}</p>
 
       <a-button
         type="primary"
@@ -645,14 +642,20 @@
         block
         @click="goToLogin"
       >
-        Go to Login
+        {{t('signup.goToLogin')}}
       </a-button>
     </div>
   </div>
 </template>
 
 <script>
+import { useI18n } from 'vue-i18n'
 export default {
+  setup() {
+    const { t, locale } = useI18n();
+    return { t, locale };
+  },
+
   name: "signup",
   data() {
     return {
@@ -742,17 +745,17 @@ export default {
       this.selectedType = type;
     },
 
-    handleLogoUpload(event) {
+   handleLogoUpload(event) {
   const file = event.target.files[0];
   if (!file) return;
 
   const allowedTypes = ['image/png', 'image/jpeg', 'image/svg+xml'];
   if (!allowedTypes.includes(file.type)) {
-    this.errors.businessLogo = 'Only PNG, JPG, or SVG files are allowed';
+    this.errors.businessLogo = this.t('signup.errors.logoType');
     return;
   }
   if (file.size > 2 * 1024 * 1024) {
-    this.errors.businessLogo = 'File size must be under 2MB';
+    this.errors.businessLogo = this.t('signup.errors.logoSize');
     return;
   }
 
@@ -827,134 +830,114 @@ export default {
     },
 
     validateField(field) {
-      this.errors = { ...this.errors };
+  this.errors = { ...this.errors };
 
-      switch (field) {
-        case "firstName":
-          if (!this.personalInfo.firstName.trim()) {
-            this.errors.firstName = "First name is required";
-          } else {
-            delete this.errors.firstName;
-          }
-          break;
-        case "lastName":
-          if (!this.personalInfo.lastName.trim()) {
-            this.errors.lastName = "Last name is required";
-          } else {
-            delete this.errors.lastName;
-          }
-          break;
-        case "email":
-          if (!this.personalInfo.email.trim()) {
-            this.errors.email = "Email is required";
-          } else if (!this.validateEmail(this.personalInfo.email)) {
-            this.errors.email = "Please enter a valid email address";
-          } else {
-            delete this.errors.email;
-          }
-          break;
-        case "password":
-          if (!this.personalInfo.password) {
-            this.errors.password = "Password is required";
-          } else {
-            delete this.errors.password;
-          }
-          break;
-        case "confirmPassword":
-          if (!this.personalInfo.confirmPassword) {
-            this.errors.confirmPassword = "Please confirm your password";
-          } else if (
-            this.personalInfo.password !== this.personalInfo.confirmPassword
-          ) {
-            this.errors.confirmPassword = "Passwords do not match";
-          } else {
-            delete this.errors.confirmPassword;
-          }
-          break;
-        case "businessName":
-          if (!this.businessInfo.businessName.trim()) {
-            this.errors.businessName = "Business name is required";
-          } else {
-            delete this.errors.businessName;
-          }
-          break;
-        case "businessEmail":
-          if (!this.businessInfo.email.trim()) {
-            this.errors.businessEmail = "Business email is required";
-          } else if (!this.validateEmail(this.businessInfo.email)) {
-            this.errors.businessEmail = "Please enter a valid business email";
-          } else {
-            delete this.errors.businessEmail;
-          }
-          break;
-        case "businessPhone":
-          if (!this.businessInfo.phone.trim()) {
-            this.errors.businessPhone = "Phone number is required";
-          } else {
-            delete this.errors.businessPhone;
-          }
-          break;
-      }
-    },
+  switch (field) {
+    case "firstName":
+      if (!this.personalInfo.firstName.trim()) {
+        this.errors.firstName = this.t('signup.errors.firstNameRequired');
+      } else { delete this.errors.firstName; }
+      break;
+    case "lastName":
+      if (!this.personalInfo.lastName.trim()) {
+        this.errors.lastName = this.t('signup.errors.lastNameRequired');
+      } else { delete this.errors.lastName; }
+      break;
+    case "email":
+      if (!this.personalInfo.email.trim()) {
+        this.errors.email = this.t('signup.errors.emailRequired');
+      } else if (!this.validateEmail(this.personalInfo.email)) {
+        this.errors.email = this.t('signup.errors.validEmail');
+      } else { delete this.errors.email; }
+      break;
+    case "password":
+      if (!this.personalInfo.password) {
+        this.errors.password = this.t('signup.errors.passwordRequired');
+      } else { delete this.errors.password; }
+      break;
+    case "confirmPassword":
+      if (!this.personalInfo.confirmPassword) {
+        this.errors.confirmPassword = this.t('signup.errors.confirmPasswordRequired');
+      } else if (this.personalInfo.password !== this.personalInfo.confirmPassword) {
+        this.errors.confirmPassword = this.t('signup.errors.passwordsDoNotMatch');
+      } else { delete this.errors.confirmPassword; }
+      break;
+    case "businessName":
+      if (!this.businessInfo.businessName.trim()) {
+        this.errors.businessName = this.t('signup.errors.businessNameRequired');
+      } else { delete this.errors.businessName; }
+      break;
+    case "businessEmail":
+      if (!this.businessInfo.email.trim()) {
+        this.errors.businessEmail = this.t('signup.errors.businessEmailRequired');
+      } else if (!this.validateEmail(this.businessInfo.email)) {
+        this.errors.businessEmail = this.t('signup.errors.validBusinessEmail');
+      } else { delete this.errors.businessEmail; }
+      break;
+    case "businessPhone":
+      if (!this.businessInfo.phone.trim()) {
+        this.errors.businessPhone = this.t('signup.errors.phoneRequired');
+      } else { delete this.errors.businessPhone; }
+      break;
+  }
+},
 
     validatePersonalInfo() {
-      let isValid = true;
-      this.errors = {};
+  let isValid = true;
+  this.errors = {};
 
-      if (!this.personalInfo.firstName.trim()) {
-        this.errors.firstName = "First name is required";
-        isValid = false;
-      }
-      if (!this.personalInfo.lastName.trim()) {
-        this.errors.lastName = "Last name is required";
-        isValid = false;
-      }
-      if (!this.personalInfo.email.trim()) {
-        this.errors.email = "Email is required";
-        isValid = false;
-      } else if (!this.validateEmail(this.personalInfo.email)) {
-        this.errors.email = "Please enter a valid email";
-        isValid = false;
-      }
-      if (!this.personalInfo.password) {
-        this.errors.password = "Password is required";
-        isValid = false;
-      }
-      if (!this.personalInfo.confirmPassword) {
-        this.errors.confirmPassword = "Please confirm your password";
-        isValid = false;
-      } else if (
-        this.personalInfo.password !== this.personalInfo.confirmPassword
-      ) {
-        this.errors.confirmPassword = "Passwords do not match";
-        isValid = false;
-      }
+  if (!this.personalInfo.firstName.trim()) {
+    this.errors.firstName = this.t('signup.errors.firstNameRequired');
+    isValid = false;
+  }
+  if (!this.personalInfo.lastName.trim()) {
+    this.errors.lastName = this.t('signup.errors.lastNameRequired');
+    isValid = false;
+  }
+  if (!this.personalInfo.email.trim()) {
+    this.errors.email = this.t('signup.errors.emailRequired');
+    isValid = false;
+  } else if (!this.validateEmail(this.personalInfo.email)) {
+    this.errors.email = this.t('signup.errors.validEmail');
+    isValid = false;
+  }
+  if (!this.personalInfo.password) {
+    this.errors.password = this.t('signup.errors.passwordRequired');
+    isValid = false;
+  }
+  if (!this.personalInfo.confirmPassword) {
+    this.errors.confirmPassword = this.t('signup.errors.confirmPasswordRequired');
+    isValid = false;
+  } else if (this.personalInfo.password !== this.personalInfo.confirmPassword) {
+    this.errors.confirmPassword = this.t('signup.errors.passwordsDoNotMatch');
+    isValid = false;
+  }
 
-      return isValid;
-    },
+  return isValid;
+},
 
     validateBusinessInfo() {
-      let isValid = true;
-      this.errors = {};
+  let isValid = true;
+  this.errors = {};
 
-      if (!this.businessInfo.businessName.trim()) {
-        this.errors.businessName = "Business name is required";
-        isValid = false;
-      }
-      if (!this.businessInfo.email.trim()) {
-        this.errors.businessEmail = "Business email is required";
-        isValid = false;
-      } else if (!this.validateEmail(this.businessInfo.email)) {
-        this.errors.businessEmail = "Please enter a valid business email";
-        isValid = false;
-      }
-      if (!this.businessInfo.phone.trim()) {
-        this.errors.businessPhone = "Phone number is required";
-        isValid = false;
-      }
+  if (!this.businessInfo.businessName.trim()) {
+    this.errors.businessName = this.t('signup.errors.businessNameRequired');
+    isValid = false;
+  }
+  if (!this.businessInfo.email.trim()) {
+    this.errors.businessEmail = this.t('signup.errors.businessEmailRequired');
+    isValid = false;
+  } else if (!this.validateEmail(this.businessInfo.email)) {
+    this.errors.businessEmail = this.t('signup.errors.validBusinessEmail');
+    isValid = false;
+  }
+  if (!this.businessInfo.phone.trim()) {
+    this.errors.businessPhone = this.t('signup.errors.phoneRequired');
+    isValid = false;
+  }
 
-      return isValid;
-    },
+  return isValid;
+},
 
     toggleCategory(category) {
       const index = this.businessInfo.categories.indexOf(category);
@@ -1089,18 +1072,18 @@ export default {
     const data = await response.json();
 
     if (!response.ok) {
-      this.$notification.error({
-        message: "Registration Failed",
-        description: data.message || "Registration failed.",
-        placement: "bottomLeft",
-      });
-      return;
-    }
+  this.$notification.error({
+    message: this.t('signup.notifications.registrationFailed'),
+    description: data.message || this.t('signup.notifications.registrationFailedDesc'),
+    placement: "bottomLeft",
+  });
+  return;
+}
 
-    this.$notification.success({
-      message: "OTP Sent Successfully",
-      placement: "bottomLeft",
-    });
+this.$notification.success({
+  message: this.t('signup.notifications.otpSent'),
+  placement: "bottomLeft",
+});
 
     this.currentStep = 4;
     this.startOtpTimer();
@@ -1186,23 +1169,20 @@ export default {
     },
 
     handleOtpPaste(event) {
-      event.preventDefault();
-      const pastedData = event.clipboardData.getData("text").trim();
+  event.preventDefault();
+  const pastedData = event.clipboardData.getData("text").trim();
 
-      if (!/^\d{6}$/.test(pastedData)) {
-        this.otpError = "Please paste a valid 6-digit OTP";
-        return;
-      }
+  if (!/^\d{6}$/.test(pastedData)) {
+    this.otpError = this.t('signup.errors.validOtp');
+    return;
+  }
 
-      // Fill all inputs with pasted digits
-      for (let i = 0; i < 6; i++) {
-        this.otp[i] = pastedData[i];
-      }
-
-      // Focus last input
-      this.otpInputs[5].focus();
-      this.otpError = "";
-    },
+  for (let i = 0; i < 6; i++) {
+    this.otp[i] = pastedData[i];
+  }
+  this.otpInputs[5].focus();
+  this.otpError = "";
+},
 
     async verifyOtp() {
       this.verifyingOtp = true;
@@ -1228,12 +1208,13 @@ export default {
         const data = await response.json();
 
         if (!response.ok) {
-          this.otpError = data.message || "Invalid OTP. Please try again.";
-          this.$notification.error({
-            message: "Verification Failed",
-            description: data.message || "Invalid OTP. Please try again.",
-            placement: "bottomLeft",
-          });
+         this.otpError = data.message || this.t('signup.notifications.invalidOtp');
+this.$notification.error({
+  message: this.t('signup.notifications.verificationFailed'),
+  description: data.message || this.t('signup.notifications.invalidOtp'),
+  placement: "bottomLeft",
+});
+
 
           // Clear OTP inputs on error
           this.otp = ["", "", "", "", "", ""];
@@ -1244,25 +1225,26 @@ export default {
         if (!data.error) {
           this.stopOtpTimer();
 
-          this.$notification.success({
-            message: "Account Verified Successfully",
-            description:
-              data.message || "Your account has been created and verified!",
-            placement: "bottomLeft",
-            duration: 4,
-          });
+          
+this.$notification.success({
+  message: this.t('signup.notifications.accountVerified'),
+  description: data.message || this.t('signup.notifications.accountVerifiedDesc'),
+  placement: "bottomLeft",
+  duration: 4,
+});
+
 
           // Move to success step
           this.currentStep = 5;
         } else {
-          this.otpError =
-            data.message || "Verification failed. Please try again.";
-          this.$notification.error({
-            message: "Verification Failed",
-            description:
-              data.message || "Verification failed. Please try again.",
-            placement: "bottomLeft",
-          });
+          
+this.otpError = data.message || this.t('signup.notifications.verificationFailed');
+this.$notification.error({
+  message: this.t('signup.notifications.verificationFailed'),
+  description: data.message || this.t('signup.notifications.verificationFailed'),
+  placement: "bottomLeft",
+});
+
 
           // Clear OTP inputs
           this.otp = ["", "", "", "", "", ""];
@@ -1270,12 +1252,12 @@ export default {
         }
       } catch (error) {
         console.error("OTP verification error:", error);
-        this.otpError = "Something went wrong. Please try again.";
-        this.$notification.error({
-          message: "Server Error",
-          description: "Something went wrong. Please try again.",
-          placement: "bottomLeft",
-        });
+        this.otpError = this.t('signup.notifications.somethingWentWrong');
+this.$notification.error({
+  message: this.t('signup.notifications.serverError'),
+  description: this.t('signup.notifications.somethingWentWrong'),
+  placement: "bottomLeft",
+});
       } finally {
         this.verifyingOtp = false;
       }
@@ -1302,22 +1284,22 @@ export default {
 
         if (!response.ok) {
           this.$notification.error({
-            message: "Resend Failed",
-            description:
-              data.message || "Failed to resend OTP. Please try again.",
-            placement: "bottomLeft",
-          });
+  message: this.t('signup.notifications.resendFailed'),
+  description: data.message || this.t('signup.notifications.resendFailedDesc'),
+  placement: "bottomLeft",
+});
           return;
         }
 
         if (!data.error) {
-          this.$notification.success({
-            message: "OTP Sent",
-            description:
-              data.message || "A new OTP has been sent to your email.",
-            placement: "bottomLeft",
-            duration: 4,
-          });
+          
+this.$notification.success({
+  message: this.t('signup.notifications.otpResent'),
+  description: data.message || this.t('signup.notifications.otpResentDesc'),
+  placement: "bottomLeft",
+  duration: 4,
+});
+
 
           // Reset OTP inputs and timer
           this.otp = ["", "", "", "", "", ""];
@@ -1328,20 +1310,20 @@ export default {
           this.canResendOtp = false;
           this.startOtpTimer();
         } else {
-          this.$notification.error({
-            message: "Resend Failed",
-            description:
-              data.message || "Failed to resend OTP. Please try again.",
-            placement: "bottomLeft",
-          });
+          tthis.$notification.error({
+  message: this.t('signup.notifications.resendFailed'),
+  description: data.message || this.t('signup.notifications.resendFailedDesc'),
+  placement: "bottomLeft",
+});
+
         }
       } catch (error) {
         console.error("Resend OTP error:", error);
         this.$notification.error({
-          message: "Server Error",
-          description: "Something went wrong. Please try again.",
-          placement: "bottomLeft",
-        });
+  message: this.t('signup.notifications.serverError'),
+  description: this.t('signup.notifications.somethingWentWrong'),
+  placement: "bottomLeft",
+});
       } finally {
         this.resendingOtp = false;
       }
@@ -1361,11 +1343,11 @@ export default {
           this.stopOtpTimer();
           this.canResendOtp = true;
           this.$notification.warning({
-            message: "OTP Expired",
-            description: "Your OTP has expired. Please request a new one.",
-            placement: "bottomLeft",
-            duration: 5,
-          });
+  message: this.t('signup.notifications.otpExpired'),
+  description: this.t('signup.notifications.otpExpiredDesc'),
+  placement: "bottomLeft",
+  duration: 5,
+});
         }
       }, 1000);
     },

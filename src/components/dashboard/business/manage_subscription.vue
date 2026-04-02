@@ -204,32 +204,13 @@
 
       <!-- Credits Section -->
       <div class="pt-8">
-        <div class="bg-white rounded-xl p-4 border-2 border-[rgba(79,124,255,0.1)]">
-          <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
-            <div class="flex items-start gap-3 flex-row">
-              <div class="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0">
-                <svg width="33" height="33" viewBox="0 0 33 33" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path fill-rule="evenodd" clip-rule="evenodd" d="M16.5 0C7.38705 0 0 7.38705 0 16.5C0 25.6129 7.38705 33 16.5 33C25.6129 33 33 25.6129 33 16.5C33 7.38705 25.6129 0 16.5 0ZM16.5 1.65C16.5 5.58846 14.9355 9.36562 12.1505 12.1505C9.36562 14.9355 5.58846 16.5 1.65 16.5C5.58846 16.5 9.36562 18.0645 12.1505 20.8495C14.9355 23.6344 16.5 27.4115 16.5 31.35C16.5 27.4115 18.0645 23.6344 20.8495 20.8495C23.6344 18.0645 27.4115 16.5 31.35 16.5C27.4115 16.5 23.6344 14.9355 20.8495 12.1505C18.0645 9.36562 16.5 5.58846 16.5 1.65Z" fill="#3B63FB" />
-                </svg>
-              </div>
-              <div class="flex-1 min-w-0">
-                <h4 class="m-0 mb-2 !font-[Poppins] !font-medium !text-[16px] !leading-[24px] !tracking-[0] text-[#262626]">Your remaining credits</h4>
-                <p class="m-0 !font-[Poppins] !font-normal !text-[10px] md:w-80 !leading-[16px] !tracking-[0] text-[#8c8c8c]">
-                  This will not affect your monthly subscription plan and will only be used after your monthly quota is exhausted.
-                </p>
-              </div>
-            </div>
-            <div class="flex items-center px-4 justify-between text-center md:text-right">
-              <div>
-                <span class="!font-[Poppins] md:pr-6 !font-bold !text-[28px] !leading-[36px] !tracking-[-0.02em] text-[#1890ff]">1,000</span>
-              </div>
-              <button @click="handleBuyCredits" class="!font-[Poppins] !font-normal bg-[#3B63FB] !text-white rounded-lg px-6 py-2.5 transition-all duration-[800ms] ease-out hover:bg-[#3b63fb] active:scale-95">
-                Buy more Credits
-              </button>
-            </div>
-          </div>
-        </div>
+        <CreditTopupModal
+          :root-api="$store.state.root_api"
+          :remaining-credits="liveCredits"
+          @purchased="handleCreditsPurchased"
+        />
 
+        <!-- Free Credits Section -->
         <!-- <div class="bg-white !my-2 rounded-xl p-4 border-2 border-[rgba(79,124,255,0.1)]">
           <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
             <div class="flex items-start gap-3 flex-row">
@@ -261,7 +242,6 @@
           </div>
         </div> -->
       </div>
-
       
      
       <!-- ═══════════════════ END PRICING CARDS ═══════════════════ -->
@@ -430,10 +410,11 @@
 
 <script>
 import { notification } from "ant-design-vue";
+import CreditTopupModal from './CreditTopUpModal.vue';
 
 export default {
   name: "ManageSubscription",
-
+  components: { CreditTopupModal },
   data() {
     return {
       currentPlan: null,
@@ -448,12 +429,14 @@ export default {
       errorMessage: "",
       tableData_subscriptions: [],
       tableData_credits: [],
+      liveCredits: 0,  // Add this to store current credits count
     };
   },
 
   mounted() {
     this.fetch_my_subscriptions();
     this.fetch_my_credits();
+    this.fetch_current_credits_of_user();  // Added this call
     this.checkFreeCreditsEligibility();
     this.fetchCurrentSubscription();
     this.fetchPricingPlans();         // ← fetch plans for the cards
@@ -506,6 +489,43 @@ export default {
         console.error("Error fetching current subscription:", error);
         this.currentPlan = null;
       }
+    },
+
+    // ── Fetch current credits count ────────────────────────────────────
+    async fetch_current_credits_of_user() {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch(
+          `${this.$store.state.root_api}subscription/api/get-my-credits-count/`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Token ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        const result = await response.json();
+        if (result.success) {
+          this.liveCredits = result.credits_count;
+        }
+      } catch (error) {
+        console.error("Error loading credits:", error);
+      }
+    },
+
+    // ── Handle credits purchased (refresh credits count) ───────────────
+    async handleCreditsPurchased() {
+      // Refresh credits count after purchase
+      await this.fetch_current_credits_of_user();
+      // Also refresh credits history if needed
+      await this.fetch_my_credits();
+      notification.success({
+        message: "Success",
+        description: "Credits purchased successfully!",
+        placement: "bottomRight",
+        duration: 3
+      });
     },
 
     handleUpgrade(plan) {
@@ -579,7 +599,9 @@ export default {
         const result = await response.json();
         if (response.ok) {
           notification.success({ message: "Free Credits Claimed 🎉", description: result.message || "Free credits claimed successfully!", placement: "bottomRight", duration: 3 });
-          this.fetch_my_credits();
+          // Refresh credits count and history after claiming free credits
+          await this.fetch_current_credits_of_user();
+          await this.fetch_my_credits();
         } else {
           notification.error({ message: "ERROR", description: result.message || "Free credits cannot be claimed", placement: "bottomRight", duration: 3 });
         }

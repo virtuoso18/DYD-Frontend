@@ -1,7 +1,7 @@
 <template>
   <div className="!pt-14 sm:!pt-3 -translate-y-18 sm:translate-y-0">
 
-    <div class="p-1 bg-white rounded-2xl    border border-gray-200">
+    <div class="p-1 bg-white rounded-[18px]    border border-gray-200">
       <div class="flex h-screen overflow-auto bg-gray-50">
         <!-- Sidebar -->
         <div 
@@ -11,7 +11,7 @@
           ]"
         >
           <!-- Sidebar Header -->
-          <div class="p-5 border-b border-gray-200">
+          <div class="p-4 border-b border-gray-200">
             <!-- Back button for mobile -->
             <div v-if="isMobile" class="flex items-center gap-3 mb-4">
               <!-- <button @click="goBack" class="p-2 hover:bg-gray-100 rounded-full">
@@ -19,9 +19,22 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                 </svg>
               </button> -->
-              <h2 class="text-2xl font-medium text-gray-900">Messages</h2>
+              <h2 class="text-2xl font-medium text-gray-900"  style="
+            font-family: Poppins, sans-serif;
+            font-weight: 500;
+            font-size: 16px;
+            line-height: 24px;
+            letter-spacing: 0;
+          "
+        >Messages</h2>
             </div>
-            <h2 v-else class="text-2xl font-medium text-gray-900 mb-4">Messages</h2>
+            <h2 v-else class="text-2xl font-medium text-gray-900 mb-4"  style="
+            font-family: Poppins, sans-serif;
+            font-weight: 500;
+            font-size: 16px;
+            line-height: 24px;
+            letter-spacing: 0;
+          ">Messages</h2>
             
             <!-- Search -->
             <div class="relative">

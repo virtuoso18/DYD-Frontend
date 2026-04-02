@@ -14,120 +14,13 @@
     style="border-top-left-radius: 20px; border-top-right-radius: 20px"
     @close="openSeeAll_used_products = false"
   >
-    <template #extra> <div class="head-section"></div> </template>
-    <!-- {{ products_used }} -->
-    <!-- <floor_textures_bottom_drawer_menu :products="seeAll_Floor"/> -->
-    <a-row style="color:black">
-      <a-col
-        span="24"
-        style="
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          height: 70vh;
-        "
-        v-if="!products_used.length"
-      >
-        <a-empty
-          description="You have not used any product in this room here."
-        ></a-empty>
-      </a-col>
-      <a-col
-        :lg="4"
-        :md="6"
-        :sm="12"
-        :xs="12"
-        v-for="product in products_used"
-        :key="product.id"
-        class="product-responsive"
-        style="padding: 5px;color:black"
-      >
-        <!-- {{product.product_colors}} -->
-        <div class="product">
-          <div class="product-image-container" @click="viewProduct(product)">
-            <img
-              :src="$store.state.root_media_api + product.product_image"
-              :alt="product.product_title"
-              class="product-image"
-            />
-            <!-- Category Badge -->
-            <div class="category-badge">{{ product.category_name }}</div>
-            <!-- AR Badge -->
-            <div class="ar-badge">AR</div>
-          </div>
-          <!-- {{ truncateText(product.description || 'No description available', 8) }} -->
-
-          <a-row>
-            <a-col span="24" >
-              <b style="font-size: 13px;">{{ truncateText(product.product_title || 'No Name available', 2) }}</b>
-
-            </a-col>
-
-            <a-col span="18" style="color:black"  > Color </a-col>
-
-            <a-col span="6" style="display: flex; justify-content: end">
-              <div
-                v-for="(color, index) in product.product_colors.slice(0, 2)"
-                :key="index"
-                style="width: 20px;height: 20px;border-radius: 20px;margin-left: 2px;"
-                :style=" 'background:' + (color.color_hex ? color.color_hex : color.color)"
-              >
-                <!-- {{ color }} -->
-              </div>
-            </a-col>
-
-            <a-col span="12"> Price </a-col>
-
-            <a-col
-              span="12"
-              style="display: flex; justify-content: end; font-weight: 700"
-            >
-              <!-- <del style="font-size: 10px;">${{ product.pricing.price }}</del> -->
-              ${{ product.product_price }}
-            </a-col>
-
-            <a-col span="17">
-              <a-button
-                block
-                @click="
-                  this.$router.push(
-                    '/' +
-                      product.business_slug +
-                      '/' +
-                      product.type +
-                      '/' +
-                      product.product_id,
-                  )
-                "
-                >Product Details</a-button
-              >
-            </a-col>
-
-            <a-col span="1"></a-col>
-            <a-col span="4">
-              <a-button
-                block
-                type="default"
-                style="
-                  padding: 0;
-                  display: flex;
-                  justify-content: center;
-                  align-items: center;
-                  border: none;
-                "
-                @click="toggleFavorite(product,  'product')"
-              >
-                <HeartFilled
-                  v-if="product.is_favorited"
-                  style="color: red; font-size: 18px"
-                />
-                <HeartOutlined v-else style="font-size: 18px" />
-              </a-button>
-            </a-col>
-          </a-row>
-        </div>
-      </a-col>
-    </a-row>
+   <ProductsUsedList
+    :products="products_used"
+    :rootMediaApi="$store.state.root_media_api"
+    @view-product="viewProduct"
+    @go-to-product="(p) => $router.push('/' + p.business_slug + '/' + p.type + '/' + p.product_id)"
+    @toggle-favorite="(p, type) => toggleFavorite(p, type)"
+  />
   </a-drawer>
   <!-- Purchase Credits Modal -->
   <a-modal
@@ -2823,12 +2716,14 @@ import {
   ReloadOutlined,
 } from "@ant-design/icons-vue";
 import BusinessRatingModal from "@/components/store/ratings.vue";
+import ProductsUsedList from "./ProductsUsedList.vue";
 import { h } from "vue";
 
 export default {
   name: "render_catalogue",
   components: {
     BusinessRatingModal,
+    ProductsUsedList,
     LeftOutlined,
     QuestionCircleOutlined,
     HomeOutlined,
@@ -2844,26 +2739,21 @@ export default {
   },
   data() {
     return {
-          showAllRenderings: false,
-    _renderingInProgress: false,
-
-
+      showAllRenderings: false,
+      _renderingInProgress: false,
       showCreditModal:false,
       creditErrorMessage:'',
       LoadingMessageButton:false,
       buid:'',
       out_of_credits:false,
       previous_renderings_results:[],
-
       user: JSON.parse(localStorage.getItem("user")),
-      imageLoading: true, // ADD THIS
+      imageLoading: true, 
       SavedToMyDesignes: false,
-
       brand_name: "",
       brand_avatar_logo: "",
       brand_banner_logo: "",
       imageLoadedMap: {},
-
       showRatingModal: false,
       openSeeAll_used_products: false,
       is_Posted_On_Community: false,
@@ -3032,31 +2922,46 @@ watch: {
       console.error("Download failed:", error);
     }
   },
-  async toggleFavorite(product, product_type) {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await fetch(
-          `${this.$store.state.root_api}likes/favorites/toggle/`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Token ${token}`,
-            },
-            body: JSON.stringify({
-              id: product.product_id,
-              type: product_type,
-            }),
-          },
-        );
+ async toggleFavorite(product, product_type) {
+ 
+  const target = this.products_used.find(
+    (p) => p.product_id === product.product_id
+  );
+  if (target) {
+    target.is_favorited = !target.is_favorited;
+  }
 
-        // const data = await response.json();
-       
-        this.FetchFinalResults();
-      } catch (error) {
-        console.error("Favorite toggle failed", error);
-      }
-    },
+  try {
+    const token = localStorage.getItem("token");
+    const response = await fetch(
+      `${this.$store.state.root_api}likes/favorites/toggle/`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Token ${token}`,
+        },
+        body: JSON.stringify({
+          id: product.product_id,
+          type: product.type, // ✅ 'product' | 'floor' | 'wall' — from the API response
+        }),
+      },
+    );
+
+    const data = await response.json();
+
+    
+    if (target && data.favorited !== undefined) {
+      target.is_favorited = data.favorited;
+    }
+  } catch (error) {
+    
+    if (target) {
+      target.is_favorited = !target.is_favorited;
+    }
+    console.error("Favorite toggle failed", error);
+  }
+},
      goToPurchaseCredits() {
       this.showCreditModal = false;
       this.$router.push("/pricing"); // or your actual route

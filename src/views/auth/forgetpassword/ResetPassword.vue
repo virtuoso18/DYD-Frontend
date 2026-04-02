@@ -1,20 +1,19 @@
-<!-- ResetPassword.vue - Step 1: Email Verification - FIXED v2 -->
 <template>
   <div class="reset-password-header-section">
     <div style="display: flex; align-items: baseline;">
-      <h1 style="margin: 0; padding: 0;">Forgot Password?</h1>
+      <h1 style="margin: 0; padding: 0;">{{ t('resetPassword.forgotPassword') }}</h1>
     </div>
 
     <p class="section_desc">
-      Enter your email address and we'll send you a verification code to reset your password.
+      {{ t('resetPassword.description') }}
     </p>
 
     <div class="form-container">
       <div class="input-group">
-        <label>Email Address</label>
+        <label>{{ t('resetPassword.emailAddress') }}</label>
         <a-input
           v-model:value="email"
-          placeholder="Enter your email"
+          :placeholder="t('resetPassword.emailPlaceholder')"
           type="email"
           size="large"
           class="custom-input"
@@ -32,13 +31,13 @@
         :loading="loading"
         :disabled="!email || loading"
       >
-        Send OTP
+        {{ t('resetPassword.sendOtp') }}
       </a-button>
 
       <p style="text-align: center; font-size: 14px; color: #666; margin-top: 16px;">
-        Remember your password?
+        {{ t('resetPassword.rememberPassword') }}
         <router-link to="/login" style="color: #3b63fb; text-decoration: none;">
-          Login
+          {{ t('resetPassword.login') }}
         </router-link>
       </p>
     </div>
@@ -47,9 +46,14 @@
 
 <script>
 import { notification } from 'ant-design-vue';
+import { useI18n } from 'vue-i18n';
 
 export default {
   name: 'ResetPassword',
+  setup() {
+    const { t } = useI18n();
+    return { t };
+  },
   props: {
     onStepChange: {
       type: Function,
@@ -73,20 +77,20 @@ export default {
       this.emailError = '';
 
       if (!this.email) {
-        this.emailError = 'Email is required';
+        this.emailError = this.t('resetPassword.errors.emailRequired');
         notification.error({
-          message: 'Validation Error',
-          description: 'Please enter your email address.',
+          message: this.t('resetPassword.notifications.validationError'),
+          description: this.t('resetPassword.notifications.pleaseEnterEmail'),
           placement: 'bottomRight',
         });
         return;
       }
 
       if (!this.validateEmail(this.email)) {
-        this.emailError = 'Please enter a valid email address';
+        this.emailError = this.t('resetPassword.errors.validEmail');
         notification.error({
-          message: 'Invalid Email',
-          description: 'Please enter a valid email address.',
+          message: this.t('resetPassword.notifications.invalidEmail'),
+          description: this.t('resetPassword.notifications.pleaseEnterValidEmail'),
           placement: 'bottomRight',
         });
         return;
@@ -99,50 +103,41 @@ export default {
           this.$store.state.root_api + 'Auth/api/forgot-password-request/',
           {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              email: this.email,
-            }),
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: this.email }),
           }
         );
 
         const data = await response.json();
 
         if (!response.ok) {
-          this.emailError = data.message || 'Failed to send OTP';
+          this.emailError = data.message || this.t('resetPassword.errors.failedToSendOtp');
           notification.error({
-            message: 'Error',
-            description: data.message || 'Failed to send OTP',
+            message: this.t('resetPassword.notifications.error'),
+            description: data.message || this.t('resetPassword.errors.failedToSendOtp'),
             placement: 'bottomRight',
           });
           return;
         }
 
         notification.success({
-          message: 'Success',
-          description: 'OTP sent to your email address!',
+          message: this.t('resetPassword.notifications.success'),
+          description: this.t('resetPassword.notifications.otpSent'),
           placement: 'bottomRight',
         });
 
-        // ✅ FIXED: Store email in sessionStorage before step change
         sessionStorage.setItem('passwordResetEmail', this.email);
-        
-        // Emit event as backup
         window.dispatchEvent(
-          new CustomEvent('passwordReset:emailVerified', {
-            detail: this.email,
-          })
+          new CustomEvent('passwordReset:emailVerified', { detail: this.email })
         );
 
         this.onStepChange(2);
       } catch (error) {
         console.error('Password reset request error:', error);
-        this.emailError = 'Something went wrong. Please try again.';
+        this.emailError = this.t('resetPassword.errors.somethingWentWrong');
         notification.error({
-          message: 'Server Error',
-          description: 'Something went wrong. Please try again.',
+          message: this.t('resetPassword.notifications.serverError'),
+          description: this.t('resetPassword.notifications.somethingWentWrong'),
           placement: 'bottomRight',
         });
       } finally {

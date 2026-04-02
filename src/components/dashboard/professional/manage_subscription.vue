@@ -25,7 +25,7 @@
 
       </div>
   </div>
-  <div class="p-4 bg-white min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh] !my-3 !mr-2 shadow-sm   rounded-[20px] ">
+  <div class="p-4 bg-white min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh] !my-3 !mr-2 shadow-sm   rounded-[15px] ">
     
     <div class="max-w-[1200px]  mx-auto">
 
@@ -34,7 +34,13 @@
 
       
       <div class="hidden md:flex flex-col md:flex-row md:justify-between md:items-center  mb-6 gap-3">
-        <h2 class="m-0 text-[#262626] text-[clamp(18px,4vw,24px)] font-semibold">
+        <h2 class="m-0 text-[#262626] text-[clamp(18px,4vw,24px)] font-semibold"  style="
+            font-family: Poppins, sans-serif;
+            font-weight: 500;
+            font-size: 16px;
+            line-height: 24px;
+            letter-spacing: 0;
+          ">
           Manage Subscription
         </h2>
         <a-button 
@@ -120,7 +126,7 @@
 </div>
 
 <!-- Cancel Subscription (Mobile Only - Below Card) -->
-<div class="md:hidden text-center py-2 mt-4">
+<!-- <div class="md:hidden text-center py-2 mt-4">
   <a-button
   type="link"
   @click="handleCancelSubscription"
@@ -130,7 +136,7 @@
   <span>Cancel Subscription</span>
 </a-button>
 
-</div>
+</div> -->
 
 
         <div class="bg-[#3B63FB] hidden md:flex rounded-[20px] w-full min-h-[160px] p-2 flex items-center shadow-[0_4px_16px_rgba(79,124,255,0.3)]">

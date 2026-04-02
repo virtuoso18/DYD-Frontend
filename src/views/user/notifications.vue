@@ -1,5 +1,5 @@
 <template>
-  <div style="padding: 24px; background: #fafafa; min-height: 100vh;">
+  <div style="padding: 4px; background: #fafafa; min-height: 100vh;">
     <h1 style="margin-bottom: 24px; font-size: 28px; font-weight: 600;">Notifications</h1>
     
     <a-tabs v-model:activeKey="activeTab" style="background: white; padding: 20px; border-radius: 8px;">

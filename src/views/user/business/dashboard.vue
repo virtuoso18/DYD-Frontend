@@ -28,7 +28,7 @@
         </svg>
       </button>
       <h2 class="mobile-header-title">
-        {{ menu_view_mobile ? currentPageTitle : "Menu" }}
+        {{ menu_view_mobile ? currentPageTitle : t("business_dashboard.menu") }}
       </h2>
       <button
         class="menu-button"
@@ -132,7 +132,7 @@
                   stroke-linejoin="round"
                 />
               </svg>
-              <span>Profile</span>
+              <span>{{t("business_dashboard.profile")}}</span>
             </router-link>
 
             <router-link
@@ -177,7 +177,7 @@
                   stroke-linejoin="round"
                 />
               </svg>
-              <span>Business Detail</span>
+              <span>{{t("business_dashboard.businessDetail")}}</span>
             </router-link>
 
             <router-link
@@ -207,7 +207,7 @@
                 />
               </svg>
 
-              <span>My Designs</span>
+              <span>{{t("business_dashboard.myDesigns")}}</span>
             </router-link>
 
             <router-link
@@ -236,7 +236,7 @@
                 />
               </svg>
 
-              <span>My Products</span>
+              <span>{{t("business_dashboard.myProducts")}}</span>
             </router-link>
 
             <router-link
@@ -260,7 +260,7 @@
                 />
               </svg>
 
-              <span>Community</span>
+              <span>{{t("business_dashboard.community")}}</span>
             </router-link>
 
           
@@ -272,7 +272,7 @@
     <path d="M12.2686 5.73257C12.9908 5.73257 13.5763 5.1471 13.5763 4.42488C13.5763 3.70266 12.9908 3.11719 12.2686 3.11719C11.5464 3.11719 10.9609 3.70266 10.9609 4.42488C10.9609 5.1471 11.5464 5.73257 12.2686 5.73257Z" stroke="currentColor" stroke-miterlimit="10"/>
     <path d="M10.9615 10.9519L7.25668 7.254C7.02093 7.01831 6.70406 6.88154 6.37084 6.87167C6.03762 6.86179 5.71321 6.97955 5.46392 7.20088L0.5 11.6143M7.69231 14.8836L12.7326 9.84324C12.9632 9.61227 13.2717 9.47582 13.5976 9.4607C13.9236 9.44558 14.2434 9.55287 14.4944 9.7615L17.5 12.2682" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
   </svg>
-  <span>Generate a Banner</span>
+  <span>{{ t('business_dashboard.generateBanner')}}</span>
 </div>
 
 
@@ -299,7 +299,7 @@
                 />
               </svg>
 
-              <span>Manage Subscription</span>
+              <span>{{t("business_dashboard.manageSubscription")}}</span>
             </router-link>
 
             <router-link
@@ -323,7 +323,7 @@
                 />
               </svg>
 
-              <span>Transactions</span>
+              <span>{{t("business_dashboard.transactions")}}</span>
             </router-link>
 
             <div class="divider"></div>
@@ -342,7 +342,7 @@
                 />
               </svg>
 
-              <span>Logout</span>
+              <span>{{t("business_dashboard.logout")}}</span>
             </div>
           </nav>
         </div>
@@ -415,7 +415,7 @@
                         fill="currentcolor"
                       />
                     </svg>
-                    &nbsp;{{ completionPercentage }}% completed
+                    &nbsp;{{ completionPercentage }}% {{t('professional_dashboard.completed')}}
                   </span>
                 </div>
               </div>
@@ -434,17 +434,17 @@
                 <span
                   class="package-label font-[Poppins] font-medium text-[16px] leading-[24px] tracking-[0] text-[#262626]"
                 >
-                  Your package
+                  {{ t('business_dashboard.yourPackage') }}
                 </span>
                 <router-link to="/pricing" class="upgrade-link"
-                  >Upgrade</router-link
+                  >{{ t('business_dashboard.upgrade') }}</router-link
                 >
               </div>
               <div class="package-card">
                 <span
                   class="package-type font-[Poppins] font-semibold text-[16px] leading-[24px] tracking-[0] text-[#3B63FB]"
                 >
-                  Business
+                   {{ t('business_dashboard.business') }}
                 </span>
                 <div class="package-icon">
                   <img
@@ -487,7 +487,7 @@
                   </svg>
                 </div>
 
-                <span class="nav-text">Profile</span>
+                <span class="nav-text">{{t("business_dashboard.profile")}}</span>
               </div>
 
               <!-- RIGHT SIDE ARROW -->
@@ -545,7 +545,7 @@
                   </svg>
                 </div>
 
-                <span class="nav-text">Business Detail</span>
+                <span class="nav-text">{{t("business_dashboard.businessDetail")}}</span>
               </div>
 
               <!-- RIGHT SIDE ARROW -->
@@ -587,7 +587,7 @@
                   </svg>
                 </div>
 
-                <span class="nav-text">My Designs</span>
+                <span class="nav-text">{{t("business_dashboard.myDesigns")}}</span>
               </div>
 
               <!-- RIGHT SIDE: ARROW -->
@@ -624,7 +624,7 @@
                   </svg>
                 </div>
 
-                <span class="nav-text">My Likes</span>
+                <span class="nav-text">{{t("business_dashboard.myLikes")}}</span>
               </div>
 
               <!-- RIGHT SIDE: ARROW -->
@@ -678,7 +678,7 @@
                   </svg>
                 </div>
 
-                <span class="nav-text">My Products</span>
+                <span class="nav-text">{{t("business_dashboard.myProducts")}}</span>
               </div>
 
               <!-- RIGHT SIDE ARROW -->
@@ -714,7 +714,7 @@
                   </svg>
                 </div>
 
-                <span class="nav-text">Community</span>
+                <span class="nav-text">{{t("business_dashboard.community")}}</span>
               </div>
 
               <!-- RIGHT: openfile.svg -->
@@ -738,7 +738,7 @@
         <path d="M10.9615 10.9519L7.25668 7.254C7.02093 7.01831 6.70406 6.88154 6.37084 6.87167C6.03762 6.86179 5.71321 6.97955 5.46392 7.20088L0.5 11.6143M7.69231 14.8836L12.7326 9.84324C12.9632 9.61227 13.2717 9.47582 13.5976 9.4607C13.9236 9.44558 14.2434 9.55287 14.4944 9.7615L17.5 12.2682" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </div>
-    <span class="nav-text">Generate a Banner</span>
+    <span class="nav-text">{{ t('business_dashboard.generateBanner')}}</span>
   </div>
   <!-- RIGHT openfile.svg -->
   <img src="/openfile.svg" alt="Open File" class="w-4 h-4 md:hidden block" />
@@ -774,7 +774,7 @@
                     </svg>
                   </div>
 
-                  <span class="nav-text">Manage Subscription</span>
+                  <span class="nav-text">{{t("business_dashboard.manageSubscription")}}</span>
                 </div>
 
                 <!-- Right: openfile.svg -->
@@ -808,7 +808,7 @@
                     stroke-linejoin="round"
                   />
                 </svg>
-                <span class="nav-text">Transactions</span>
+                <span class="nav-text">{{t("business_dashboard.transactions")}}</span>
               </div>
 
               <!-- RIGHT : openfile.svg -->
@@ -838,7 +838,7 @@
                 <span
                   class="text-[16px] font-[600] text-[orangered] font-[Poppins]"
                 >
-                  Logout
+                  {{ t("business_dashboard.logout") }}
                 </span>
               </div>
             </div>
@@ -899,10 +899,15 @@
 import { notification } from "ant-design-vue";
 import ProfileCompletionModal from "./ProfileCompletionModal.vue";
 import PlanUpgradeModal from "@/views/catalogue/PlanUpgradeModal.vue";
+import { useI18n } from "vue-i18n"; 
 
 export default {
   name: "DashboardManager_business_user",
-
+ 
+  setup() {
+    const { t, locale } = useI18n();
+    return { t, locale };
+  },
   components: {
     ProfileCompletionModal,
     PlanUpgradeModal,
@@ -979,13 +984,13 @@ planLoading: false,
     currentPageTitle() {
       const titles = {
         'business:my-profile': 'Profile',
-        'business:business-details': 'Business Detail',
-        'business:my-designs': 'My Designs',
-        'business:my-products': 'My Products',
-        'business:dashboard:community': 'Community',
-        'business:generate-banner': 'Generate Banner',
-        'business:manage-subscription': 'Manage Subscription',
-        'my:transactions': 'Transactions',
+        'business:business-details': this.t("business_dashboard.businessDetail"),
+        'business:my-designs': this.t("business_dashboard.myDesigns"),
+        'business:my-products': this.t("business_dashboard.myProducts"),
+        'business:dashboard:community': this.t("business_dashboard.community"),
+        'business:generate-banner': this.t("business_dashboard.generateBanner"),
+        'business:manage-subscription': this.t("business_dashboard.manageSubscription"),
+        'my:transactions': this.t("business_dashboard.transactions"),
       };
       return titles[this.$route.name] || 'Dashboard';
     },

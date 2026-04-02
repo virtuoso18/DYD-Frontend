@@ -4,20 +4,25 @@
   -translate-y-14
          sm:main 
          min-h-[100vh] 
-         md:border border-gray-300 
+         md:border border-gray-200 
          sm:translate-y-3 
-         sm:rounded-xl 
          p-4 
          bg-white
          border-gray-200 
-         
+         rounded-[20px]
          "
   v-if="page_view === 'list_all_requests'"
 >
     <div class="header">
-      <h2 className="pr-2 sm:pr-0">Requests</h2>
+      <h2  style="
+            font-family: Poppins, sans-serif;
+            font-weight: 500;
+            font-size: 16px;
+            line-height: 24px;
+            letter-spacing: 0;
+          ">Requests</h2>
       <div class="">
-        <div class="">
+        <!-- <div class="">
       <a-input 
         v-model:value="searchQuery"
         placeholder="Search Product"
@@ -27,7 +32,7 @@
           <search-outlined />
         </template>
       </a-input>
-    </div>&nbsp;
+    </div>&nbsp; -->
         <!-- <a-button 
           :type="viewMode === 'grid' ? 'primary' : 'default'"
           @click="setViewMode('grid')"

@@ -11,7 +11,13 @@
       <a-col :span="24"  >
         <div style="background-color: white;border-radius: 16px;padding:10px;margin-top:15px;border:1px solid rgba(0,0,0,0.1);">
 
-        <h3>My Community</h3>
+        <h3  style="
+            font-family: Poppins, sans-serif;
+            font-weight: 500;
+            font-size: 16px;
+            line-height: 24px;
+            letter-spacing: 0;
+          ">My Community</h3>
         <div> 
               <!-- Empty State -->
               <div

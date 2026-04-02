@@ -16,34 +16,34 @@
       <!-- Navigation Links -->
       <div class="navbar-nav">
  <router-link to="/affiliateprogram" class="text-gray-600 text-sm font-medium hover:text-blue-600 transition-colors whitespace-nowrap">
-          Affiliate Program
+          {{ t('generalNavbar.affiliateProgram') }}
         </router-link>
         <router-link to="/interiorMaterialSupplier" class="text-gray-600 text-sm font-medium hover:text-blue-600 transition-colors whitespace-nowrap">
-          Interior Supplier
+          {{ $t('generalNavbar.interiorSupplier') }}
         </router-link>
         <router-link to="/designcompany" class="text-gray-600 text-sm font-medium hover:text-blue-600 transition-colors whitespace-nowrap">
-          Design
+          {{ $t('generalNavbar.design') }}
         </router-link>
         <router-link to="/furnitureretail" class="text-gray-600 text-sm font-medium hover:text-blue-600 transition-colors whitespace-nowrap">
-          Furniture
+          {{ $t('generalNavbar.furniture') }}
         </router-link>
         <!-- <a to="/interiordesigner" class="text-gray-600 text-sm font-medium hover:text-blue-600 transition-colors whitespace-nowrap">
           Interior Designer
         </a> -->
         <router-link to="/blogs" class="text-gray-600 text-sm font-medium hover:text-blue-600 transition-colors whitespace-nowrap">
-          Blogs
+          {{ $t('generalNavbar.blogs') }}
         </router-link>
         <!-- <a to="/tutorial" class="text-gray-600 text-sm font-medium hover:text-blue-600 transition-colors whitespace-nowrap">
           Tutorial
         </a> -->
         <router-link to="/sechdulemeeting" class="text-gray-600 text-sm font-medium hover:text-blue-600 transition-colors whitespace-nowrap">
-          Schedule Meeting
+          {{ $t('generalNavbar.scheduleMeeting') }}
         </router-link>
         <router-link to="/contact-us" class="text-gray-600 text-sm font-medium hover:text-blue-600 transition-colors whitespace-nowrap">
-          Contact Us
+          {{ $t('generalNavbar.contactUs') }}
         </router-link>
          <!-- <router-link to="/comunity" class="nav-link">Community</router-link> -->
-        <router-link to="/pricing" class="nav-link">Pricing</router-link>
+        <router-link to="/pricing" class="nav-link">{{ $t('generalNavbar.pricing') }}</router-link>
       </div>
 
       <!-- Right Side Actions -->
@@ -59,10 +59,10 @@
         </a-select>
         
         <router-link :to="'/signup'">
-          <button class="btn-primary">Signup for free</button>
+          <button class="btn-primary">{{ $t('generalNavbar.signupForFree') }}</button>
         </router-link>
         <router-link :to="'/login'">
-          <button class="btn-primary">Login</button>
+          <button class="btn-primary">{{ $t('generalNavbar.login') }}</button>
         </router-link>
       </div>
     </div>
@@ -74,9 +74,9 @@ import { useI18n } from 'vue-i18n'
 
 export default {
   name: 'GeneralNavbar',
-  setup() {
-    const { locale } = useI18n()
-    return { locale }
+   setup() {
+    const { t, locale } = useI18n();
+    return { t, locale };
   },
   data() {
     return {

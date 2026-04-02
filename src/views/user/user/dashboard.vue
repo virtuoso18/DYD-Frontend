@@ -26,8 +26,8 @@
     <a-row class="dashboard-content">
       <!-- Sidebar -->
       <a-col
-        :xs="showSidebar ? 30 : 0"
-        :sm="showSidebar ? 30 : 0"
+        :xs="showSidebar ? 24 : 0"
+        :sm="showSidebar ? 24 : 0"
         :md="6"
         :lg="6"
         class="sidebar-col"
@@ -52,7 +52,7 @@
                 stroke-linejoin="round"
               />
             </svg>
-            <span>Back</span>
+            <span>{{t('user_dashboard.back')}}</span>
           </button>
 
           <div class="user-info">
@@ -158,7 +158,7 @@
                     color: #3b63fb;
                   "
                 >
-                  Free User
+                  {{t('user_dashboard.freeUser')}}
                 </span>
                 <div class="package-icon">
                   <img
@@ -219,7 +219,7 @@
                   color: #666666;
                 "
               >
-                Profile
+                {{t('user_dashboard.profile')}}
               </span>
             </router-link>
 
@@ -265,7 +265,7 @@
                   color: #666666;
                 "
               >
-                My Designs
+                {{t('user_dashboard.myDesigns')}}
               </span>
             </router-link>
 
@@ -303,7 +303,7 @@
                 :class="{ '!text-white': $route.name === 'user_requests' }"
                 style="font-family: Poppins; font-weight: 400"
               >
-                Requests
+                {{t('user_dashboard.requests')}}
               </span>
             </router-link>
             <router-link
@@ -345,7 +345,7 @@
                   color: #666666;
                 "
               >
-                My Likes
+                {{t('user_dashboard.myLikes')}}
               </span>
             </router-link>
 
@@ -376,7 +376,7 @@
                 :class="{ '!text-white': $route.name === 'user_messages' }"
                 style="font-family: Poppins; font-weight: 400"
               >
-                Messages
+                {{t('user_dashboard.messages')}}
               </span>
             </router-link>
 
@@ -479,7 +479,7 @@
                 }"
                 style="font-family: Poppins; font-weight: 400"
               >
-                Access Business
+                {{t('user_dashboard.accessBusiness')}}
               </span>
             </div>
 <div
@@ -529,7 +529,7 @@
                 }"
                 style="font-family: Poppins; font-weight: 400"
               >
-                Access Business
+                {{t('user_dashboard.accessBusiness')}}
               </span>
             </div>
 
@@ -566,7 +566,7 @@
                 :class="{ '!text-white': $route.name === 'user_settings' }"
                 style="font-family: Poppins; font-weight: 400"
               >
-                Settings
+                {{t('user_dashboard.settings')}}
               </span>
             </router-link>
 
@@ -597,7 +597,7 @@
                     color: #e33827;
                   "
                 >
-                  Logout
+                  {{t('user_dashboard.logout')}}
                 </span>
               </div>
             </div>
@@ -624,9 +624,14 @@
 </template>
 
 <script>
+import { useI18n } from "vue-i18n"; 
+
 export default {
   name: "DashboardManager_user",
-
+  setup() {
+    const { t, locale } = useI18n();
+    return { t, locale };
+  },
   data() {
     return {
       employee_owner_business_slug: null,
@@ -647,14 +652,14 @@ export default {
     },
      currentPageTitle() {
     const routeNameMap = {
-      user_my_profile: "Profile",
-      user_my_designs: "My Designs",
-      user_my_requests: "Requests",
-      user_my_likes: "My Likes",
-      user_my_messages: "Messages",
-      user_manage_subscription: "Manage Subscription",
-      user_my_transactions: "Transactions",
-      user_settings: "Settings",
+      user_my_profile: this.t('user_dashboard.profile'),
+      user_my_designs: this.t('user_dashboard.myDesigns'),
+      user_my_requests: this.t('user_dashboard.requests'),
+      user_my_likes:  this.t('user_dashboard.myLikes'),
+      user_my_messages: this.t('user_dashboard.messages'),
+      user_manage_subscription: this.t('user_dashboard.manageSubscription'),
+      user_my_transactions: this.t('user_dashboard.transactions'),
+      user_settings: this.t('user_dashboard.settings')
     };
 
     return routeNameMap[this.$route.name] || "Dashboard";

@@ -1,7 +1,7 @@
 <template>
 <a-modal
   v-model:visible="verifyModalVisible"
-  :title="t('businessDetails.modalTitle')"
+  title="Verify Your Email"
   :footer="null"
   width="400px"
   @cancel="closeVerifyModal"
@@ -9,7 +9,7 @@
   <!-- Step 1: Confirmation -->
   <div v-if="verificationStep === 1">
     <p style="text-align: center; font-size: 14px; color: #666; margin-bottom: 10px;">
-      {{ t('businessDetails.step1.codeSentTo') }}
+      A verification code will be sent to
     </p>
     <p style="text-align: center; font-weight: 600; font-size: 14px; color: #000; margin-bottom: 30px;">
       {{ businessInfo.email }}
@@ -17,7 +17,7 @@
 
     <div style="display: flex; gap: 12px;">
       <a-button @click="closeVerifyModal" style="flex: 1;">
-        {{ t('businessDetails.step1.cancel') }}
+        Cancel
       </a-button>
       <a-button 
         type="primary" 
@@ -25,7 +25,7 @@
         :loading="verificationLoading"
         style="flex: 1;"
       >
-        {{ t('businessDetails.step1.sendCode') }}
+        Send Code
       </a-button>
     </div>
   </div>
@@ -33,7 +33,7 @@
   <!-- Step 2: OTP Verification -->
   <div v-else-if="verificationStep === 2">
     <p style="text-align: center; font-size: 14px; color: #666; margin-bottom: 20px;">
-      {{ t('businessDetails.step2.sentCodeTo') }} {{ businessInfo.email }}
+      We sent a 6-digit code to {{ businessInfo.email }}
     </p>
 
     <a-input
@@ -46,7 +46,7 @@
     />
 
     <div style="text-align: center; margin-bottom: 15px;">
-      <span style="color: #666; font-size: 13px;">{{ t('businessDetails.step2.expiresIn') }} </span>
+      <span style="color: #666; font-size: 13px;">Expires in: </span>
       <span style="color: #ef4444; font-weight: 600; font-size: 14px;">{{ otpTimeRemaining }}s</span>
     </div>
 
@@ -63,7 +63,7 @@
         @click="resendOTP"
         style="padding: 0; font-size: 14px;"
       >
-        {{ otpTimeRemaining > 0 ? t('businessDetails.step2.resendIn', { seconds: otpTimeRemaining }) : t('businessDetails.step2.resendCode') }}
+        {{ otpTimeRemaining > 0 ? `Resend in ${otpTimeRemaining}s` : 'Resend Code' }}
       </a-button>
     </div>
 
@@ -78,8 +78,9 @@
     />
 
     <div style="display: flex; gap: 12px;">
-            <a-button @click="goBackToStep1" style="flex: 1;">{{ t('businessDetails.step2.back') }}</a-button>
-
+      <a-button @click="goBackToStep1" style="flex: 1;">
+        Back
+      </a-button>
       <a-button 
         type="primary" 
         @click="verifyOTP"
@@ -87,7 +88,7 @@
         :disabled="otpCode.length !== 6"
         style="flex: 1;"
       >
-        {{ t('businessDetails.step2.verify') }}
+        Verify
       </a-button>
     </div>
   </div>
@@ -95,10 +96,10 @@
   <!-- Step 3: Verification Complete -->
   <div v-else-if="verificationStep === 3">
     <div style="text-align: center; margin-bottom: 20px;">
-      <p style="font-size: 14px; color: #10b981; font-weight: 600;">{{ t('businessDetails.step3.verified') }}</p>
+      <p style="font-size: 14px; color: #10b981; font-weight: 600;">✓ Verified</p>
     </div>
     <p style="text-align: center; font-size: 14px; color: #666; margin-bottom: 25px;">
-      {{ t('businessDetails.step3.successMessage') }}
+      Your email has been successfully verified
     </p>
 
     <a-button 
@@ -106,7 +107,7 @@
       @click="closeVerifyModal"
       style="width: 100%;"
     >
-      {{ t('businessDetails.step3.done') }}
+      Done
     </a-button>
   </div>
 </a-modal>
@@ -139,7 +140,7 @@
                     <path d="m18.5 2.5 a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
                 </template>
-              {{ t('businessDetails.changeBackground') }}
+                Change Background
               </a-button>
             </a-upload>
             <!-- hidden image just to detect load -->
@@ -211,10 +212,10 @@
           <!-- Business card section -->
           <div  style="width:100%;max-width:600px;margin:auto;border:1px solid rgba(0,0,0,0.1);padding:20px;border-radius:10px;margin-top:20px">
             <h2 class="sm:mt-0" style="color:#374151; margin-top:1.5rem;">
-{{ t('businessDetails.uploadRoomPhoto') }}</h2>
-            <p class="!text-gray-700">{{ t('businessDetails.shareLink') }}</p>
+Upload Room Photo</h2>
+            <p class="!text-gray-700">Share the link with your customer for generating there room photo</p>
 
-           <label class="!text-gray-700">{{ t('businessDetails.copyLink') }}</label>
+           <label class="!text-gray-700">Copy Link</label>
 
 <!-- ✅ Show skeleton while plan is loading -->
 <div
@@ -248,12 +249,12 @@
     :style="isBasicPlan ? { background: '#d9d9d9', borderColor: '#d9d9d9', color: '#999' } : {}"
     style="min-width: 100px; display:flex; justify-content:center;"
   >
-    <span v-if="isBasicPlan">{{ t('businessDetails.upgrade') }}</span>
+    <span v-if="isBasicPlan">🔒 Upgrade</span>
     <a-space v-else>
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M3.33203 9.9987H2.66536C2.31174 9.9987 1.9726 9.85822 1.72256 9.60817C1.47251 9.35813 1.33203 9.01899 1.33203 8.66536V2.66536C1.33203 2.31174 1.47251 1.9726 1.72256 1.72256C1.9726 1.47251 2.31174 1.33203 2.66536 1.33203H8.66536C9.01899 1.33203 9.35813 1.47251 9.60817 1.72256C9.85822 1.9726 9.9987 2.31174 9.9987 2.66536V3.33203M7.33203 5.9987H13.332C14.0684 5.9987 14.6654 6.59565 14.6654 7.33203V13.332C14.6654 14.0684 14.0684 14.6654 13.332 14.6654H7.33203C6.59565 14.6654 5.9987 14.0684 5.9987 13.332V7.33203C5.9987 6.59565 6.59565 5.9987 7.33203 5.9987Z" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
-                {{ t('businessDetails.copy') }}
+      Copy
     </a-space>
     <!-- {{ isBasicPlan ? '🔒 Upgrade' : 'Copy' }} -->
   </a-button>
@@ -261,7 +262,7 @@
 
 <br>
 
-<label class="!text-gray-700">{{ t('businessDetails.simulationLink') }}</label>
+<label class="!text-gray-700">Simulation Link</label>
 
 <!-- ✅ Same skeleton for simulation link -->
 <div
@@ -294,19 +295,19 @@
     :style="isBasicPlan ? { background: '#d9d9d9', borderColor: '#d9d9d9', color: '#999' } : {}"
     style="min-width: 100px; display: flex; align-items: center; justify-content: center;"
   >
-    <span v-if="isBasicPlan">{{ t('businessDetails.upgrade') }}</span>
+    <span v-if="isBasicPlan">🔒 Upgrade</span>
     <a-space v-else>
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M3.33203 9.9987H2.66536C2.31174 9.9987 1.9726 9.85822 1.72256 9.60817C1.47251 9.35813 1.33203 9.01899 1.33203 8.66536V2.66536C1.33203 2.31174 1.47251 1.9726 1.72256 1.72256C1.9726 1.47251 2.31174 1.33203 2.66536 1.33203H8.66536C9.01899 1.33203 9.35813 1.47251 9.60817 1.72256C9.85822 1.9726 9.9987 2.31174 9.9987 2.66536V3.33203M7.33203 5.9987H13.332C14.0684 5.9987 14.6654 6.59565 14.6654 7.33203V13.332C14.6654 14.0684 14.0684 14.6654 13.332 14.6654H7.33203C6.59565 14.6654 5.9987 14.0684 5.9987 13.332V7.33203C5.9987 6.59565 6.59565 5.9987 7.33203 5.9987Z" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
-      {{ t('businessDetails.copy') }}
+      Copy
     </a-space>
   </a-button>
 </a-input-group>
 
 
             <br>
-            <h4 class="!text-gray-700">{{ t('businessDetails.shareViaSocial') }}</h4>
+            <h4 class="!text-gray-700">or share via social media</h4>
             
   <a-space>
     <a-button type="text" style="padding:0">
@@ -397,7 +398,7 @@
           <!-- Business Details Form -->
           <div class="business-details-section" style="margin-top:10px;">
            <div class="section-header sm:mt-8">
-  <h3>{{ t('businessDetails.businessInformation') }}</h3>
+  <h3>Business Information</h3>
   <div class="header-buttons">
     <!-- Edit button - shown when NOT in edit mode -->
     <a-button v-if="!isEditMode" type="text" class="edit-button" @click="toggleEditMode">
@@ -405,15 +406,15 @@
         <path d="M11 4H4C3.46957 4 2.96086 4.21071 2.58579 4.58579C2.21071 4.96086 2 5.46957 2 6V20C2 20.5304 2.21071 21.0391 2.58579 21.4142C2.96086 21.7893 3.46957 22 4 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         <path d="M18.5 2.5C18.8978 2.10217 19.4374 1.87868 20 1.87868C20.5626 1.87868 21.1022 2.10217 21.5 2.5C21.8978 2.89783 22.1213 3.43739 22.1213 4C22.1213 4.56261 21.8978 5.10217 21.5 5.5L12 15L8 16L9 12L18.5 2.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
-                {{ t('businessDetails.edit') }}
+      Edit
     </a-button>
     <!-- Save and Cancel buttons - shown when in edit mode -->
     <div v-if="isEditMode" class="edit-mode-buttons">
       <a-button type="primary" @click="saveChanges" class="save-btn" :loading="saving">
-                  {{ t('businessDetails.saveChanges') }}
+        Save Changes
       </a-button>
       <a-button @click="cancelEdit" class="cancel-btn">
-                  {{ t('businessDetails.cancel') }}
+        Cancel
       </a-button>
     </div>
   </div>
@@ -439,7 +440,7 @@
 
             <!-- Name Field -->
                 <a-col :xs="24" :sm="24" :md="24" :lg="24">
-                <a-form-item :label="t('businessDetails.form.name')">
+                  <a-form-item label="Name">
                     <a-input 
                       v-model:value="businessInfo.name"
                       :disabled="!isEditMode"
@@ -463,22 +464,22 @@
             
 
                 <a-col :xs="24" :sm="24" :md="24" :lg="24">
-                <a-form-item :label="t('businessDetails.form.email')">
+                  <a-form-item label="Email">
                     <div style="display: flex; gap: 10px; align-items: center;">
                       <a-input v-model:value="businessInfo.email" :disabled="!isEditMode || businessInfo.isEmailVerified" placeholder="john@example.com" style="flex: 1; padding: 10px 12px; border: 1px solid #d9d9d9; border-radius: 6px; font-size: 14px;" />
-                      <a-button v-if="!businessInfo.isEmailVerified && !isEditMode" type="primary" danger @click="openVerifyModal" style="min-width: 120px; white-space: nowrap;">{{ t('businessDetails.verifyEmail') }}</a-button>
-                      <a-tag v-else-if="businessInfo.isEmailVerified" color="green" style="margin: 0; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: 500;">{{ t('businessDetails.verified') }}</a-tag>
+                      <a-button v-if="!businessInfo.isEmailVerified && !isEditMode" type="primary" danger @click="openVerifyModal" style="min-width: 120px; white-space: nowrap;">Verify Email</a-button>
+                      <a-tag v-else-if="businessInfo.isEmailVerified" color="green" style="margin: 0; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: 500;">✓ Verified</a-tag>
                     </div>
                   </a-form-item>
                   <div v-if="!businessInfo.isEmailVerified && !isEditMode" style="margin-top: 12px; padding: 12px; background: #fffbe6; border-left: 4px solid #faad14; border-radius: 4px; font-size: 13px; color: #8b6914;">
-                    <p style="margin: 0 0 6px 0; font-weight: 600;">{{ t('businessDetails.emailNotVerified') }}</p>
-                    <p style="margin: 0; line-height: 1.5;">{{ t('businessDetails.emailNotVerifiedDesc') }}</p>
+                    <p style="margin: 0 0 6px 0; font-weight: 600;">Email Not Verified</p>
+                    <p style="margin: 0; line-height: 1.5;">Please verify your business email to ensure secure communication with your customers. After verification, your email cannot be modified.</p>
                   </div>
                 </a-col>
 
                 <!-- Phone Number Field -->
                 <a-col :xs="24" :sm="24" :md="24" :lg="24">
-                <a-form-item :label="t('businessDetails.form.phone')">
+                  <a-form-item label="Phone Number">
                     <a-input 
                       v-model:value="businessInfo.phone"
                       :disabled="!isEditMode"
@@ -490,13 +491,14 @@
 
                 <!-- Description Field -->
                 <a-col :xs="24" :sm="24" :md="24" :lg="24">
-                <a-form-item :label="t('businessDetails.form.description')">
+                  <a-form-item label="Description">
                     <a-textarea 
                       v-model:value="businessInfo.description"
                       :disabled="!isEditMode"
                       :rows="4"
                       :maxlength="100"
-                      :placeholder="t('businessDetails.form.descriptionPlaceholder')"
+
+                      placeholder="Tell us about your business..."
                       class="form-textarea"
                     />
                   </a-form-item>
@@ -549,7 +551,7 @@
                         </div>
                         <a-button type="dashed" @click="addService" style="width: 100%;">
                           <template #icon>+</template>
-                      {{ t('businessDetails.form.addService') }}
+                          Add Service
                         </a-button>
                       </div>
                     </div>
@@ -558,7 +560,7 @@
 
                 <!-- Social Handles -->
                 <a-col :xs="24" :sm="24" :md="24" :lg="24">
-                <a-form-item :label="t('businessDetails.form.socialHandles')">
+                  <a-form-item label="Social Handles">
                     <div class="social-handles">
                       <div class="social-input-group">
                         <svg width="29" height="30" viewBox="0 0 29 30" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -622,14 +624,14 @@
 
                 <!-- Website Link -->
                 <a-col :xs="24" :sm="24" :md="12" :lg="12">
-                <a-form-item :label="t('businessDetails.form.websiteLink')">
+                  <a-form-item label="Website Link">
                     <a-input :disabled="!isEditMode" v-model:value="businessInfo.website" addon-before="Http://" addon-after=".com" />
                   </a-form-item>
                 </a-col>
 
                 <!-- Cart Link -->
                 <a-col :xs="24" :sm="24" :md="12" :lg="12">
-                <a-form-item :label="t('businessDetails.form.cartLink')">
+                  <a-form-item label="Cart Link">
                     <a-input :disabled="!isEditMode" v-model:value="businessInfo.cartLink" addon-before="Http://" addon-after=".com" />
                   </a-form-item>
                 </a-col>
@@ -653,14 +655,7 @@
 </template>
 
 <script>
-import { useI18n } from 'vue-i18n';
-
 export default {
-  
-  setup() {
-    const { t } = useI18n();
-    return { t };
-  },
   name: 'BusinessDetails',
   props: {
     user: {
@@ -942,29 +937,36 @@ onHeaderImageLoad() {
 
 
 async startVerification() {
-      try {
-        this.verificationLoading = true;
-        const token = localStorage.getItem('token');
-        const response = await fetch(`${this.$store.state.root_api}Auth/api/send-business-email-otp/`, {
-          method: 'POST',
-          headers: { 'Authorization': `Token ${token}`, 'Content-Type': 'application/json' }
-        });
-        const result = await response.json();
-        if (result.success) {
-          this.verificationStep = 2;
-          this.otpTimeRemaining = 600;
-          this.otpProgress = 100;
-          this.startOTPTimer();
-          this.$message.success(this.t('businessDetails.messages.otpSent'));
-        } else {
-          this.$message.error(result.message || this.t('businessDetails.messages.failedSendOtp'));
-        }
-      } catch (error) {
-        this.$message.error(this.t('businessDetails.messages.failedSendOtp'));
-      } finally {
-        this.verificationLoading = false;
+  try {
+    this.verificationLoading = true;
+    const token = localStorage.getItem('token');
+
+    const response = await fetch(`${this.$store.state.root_api}Auth/api/send-business-email-otp/`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Token ${token}`,
+        'Content-Type': 'application/json'
       }
-    },
+    });
+
+    const result = await response.json();
+    
+    if (result.success) {
+      this.verificationStep = 2;
+      this.otpTimeRemaining = 600;
+      this.otpProgress = 100;
+      this.startOTPTimer();
+      this.$message.success('OTP sent to your email');
+    } else {
+      this.$message.error(result.message || 'Failed to send OTP');
+    }
+  } catch (error) {
+    console.error('Error sending OTP:', error);
+    this.$message.error('Failed to send OTP');
+  } finally {
+    this.verificationLoading = false;
+  }
+},
 
 startOTPTimer() {
   if (this.otpTimer) {
@@ -977,7 +979,7 @@ startOTPTimer() {
 
     if (this.otpTimeRemaining <= 0) {
       clearInterval(this.otpTimer);
-          this.otpError = this.t('businessDetails.messages.otpExpired');
+      this.otpError = 'OTP has expired. Please request a new one.';
       this.goBackToStep1();
     }
   }, 1000);
@@ -985,7 +987,7 @@ startOTPTimer() {
 
 async verifyOTP() {
   if (this.otpCode.length !== 6) {
-        this.$message.error(this.t('businessDetails.messages.enterValid6Digit'));
+    this.$message.error('Please enter a valid 6-digit OTP');
     return;
   }
 
@@ -1020,7 +1022,7 @@ async verifyOTP() {
       if (this.otpTimer) {
         clearInterval(this.otpTimer);
       }
-          this.$message.success(this.t('businessDetails.messages.emailVerified'));
+      this.$message.success('Email verified successfully!');
     } else {
       this.otpError = result.message || 'Invalid OTP';
       this.$message.error(this.otpError);
@@ -1055,13 +1057,13 @@ async resendOTP() {
       this.otpTimeRemaining = 600;
       this.otpProgress = 100;
       this.startOTPTimer();
-          this.$message.success(this.t('businessDetails.messages.otpResent'));
+      this.$message.success('OTP resent to your email');
     } else {
-          this.$message.error(result.message || this.t('businessDetails.messages.failedResendOtp'));
+      this.$message.error(result.message || 'Failed to resend OTP');
     }
   } catch (error) {
     console.error('Error resending OTP:', error);
-        this.$message.error(this.t('businessDetails.messages.failedResendOtp'));
+    this.$message.error('Failed to resend OTP');
   } finally {
     this.verificationLoading = false;
   }
@@ -1113,14 +1115,14 @@ async checkVerificationStatus() {
       // Validate file type
       const isImage = file.type.startsWith('image/');
       if (!isImage) {
-        this.$message.error(this.t('businessDetails.messages.invalidImageFile'));
+        this.$message.error('Please select an image file');
         return false;
       }
 
       // Validate file size (2MB limit)
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isLt2M) {
-        this.$message.error(this.t('businessDetails.messages.avatarTooLarge'));
+        this.$message.error('Avatar image must be smaller than 2MB');
         return false;
       }
 
@@ -1140,14 +1142,14 @@ async checkVerificationStatus() {
       // Validate file type
       const isImage = file.type.startsWith('image/');
       if (!isImage) {
-        this.$message.error(this.t('businessDetails.messages.invalidImageFile'));
+        this.$message.error('Please select an image file');
         return false;
       }
 
       // Validate file size (5MB limit)
       const isLt5M = file.size / 1024 / 1024 < 5;
       if (!isLt5M) {
-        this.$message.error(this.t('businessDetails.messages.backgroundTooLarge'));
+        this.$message.error('Background image must be smaller than 5MB');
         return false;
       }
 
@@ -1183,7 +1185,7 @@ async checkVerificationStatus() {
 
   const link = this.full_url();
   navigator.clipboard.writeText(link).then(() => {
-        this.$message.success(this.t('businessDetails.messages.linkCopied'));
+    this.$message.success('Link copied to clipboard!');
   }).catch(() => {
     this.fallbackCopyTextToClipboard(link);
   });
@@ -1199,7 +1201,7 @@ async checkVerificationStatus() {
 
   const link = this.simulation_full_url();
   navigator.clipboard.writeText(link).then(() => {
-        this.$message.success(this.t('businessDetails.messages.simLinkCopied'));
+    this.$message.success('Simulation link copied!');
   }).catch(() => {
     this.fallbackCopyTextToClipboard(link);
   });
@@ -1217,9 +1219,9 @@ async checkVerificationStatus() {
       textArea.select();
       try {
         document.execCommand('copy');
-        this.$message.success(this.t('businessDetails.messages.linkCopied'));
+        this.$message.success('Link copied to clipboard!');
       } catch (err) {
-        this.$message.error(this.t('businessDetails.messages.failedCopy'));
+        this.$message.error('Failed to copy link');
       }
       document.body.removeChild(textArea);
     },
@@ -1232,7 +1234,7 @@ async checkVerificationStatus() {
       if (this.editData.services.length > 1) {
         this.editData.services.splice(index, 1);
       } else {
-        this.$message.warning(this.t('businessDetails.messages.atLeastOneService'));
+        this.$message.warning('At least one service is required');
       }
     },
 
@@ -1259,7 +1261,7 @@ async checkVerificationStatus() {
       this.backgroundImage = null;
       this.avatarFile = null;
       this.backgroundFile = null;
-      this.$message.info(this.t('businessDetails.messages.changesCancelled'));
+      this.$message.info('Changes cancelled');
     },
     
     async loadBusinessProfile() {
@@ -1297,7 +1299,7 @@ async checkVerificationStatus() {
 
           this.editData = {
             ...this.editData,
-            servicesTitle: this.t('businessDetails.form.servicesTitle'),
+            servicesTitle: 'What do we offer?',
             services: Array.isArray(data.services_offered) ? data.services_offered : []
           };
 
@@ -1305,12 +1307,12 @@ async checkVerificationStatus() {
           
         } else {
           console.error('Failed to load business profile:', result.message);
-          this.$message.error(this.t('businessDetails.messages.failedLoadProfile'));
+          this.$message.error('Failed to load business profile');
         }
         
       } catch (error) {
         console.error('Error loading business profile:', error);
-        this.$message.error(this.t('businessDetails.messages.networkErrorLoading'));
+        this.$message.error('Network error while loading profile');
       }
     },
 
@@ -1357,7 +1359,7 @@ async checkVerificationStatus() {
         const result = await response.json();
 
         if (result.success) {
-          this.$message.success(this.t('businessDetails.messages.savedSuccess'));
+          this.$message.success('Business details updated successfully!');
           this.isEditMode = false;
           this.editServices = false;
           
@@ -1374,11 +1376,11 @@ async checkVerificationStatus() {
           await this.loadBusinessProfile();
           
         } else {
-          this.$message.error(result.message || this.t('businessDetails.messages.saveFailed'));
+          this.$message.error(result.message || 'Failed to save changes');
         }
         
       } catch (error) {
-        this.$message.error(this.t('businessDetails.messages.networkError'));
+        this.$message.error('Network error. Please try again.');
         console.error('Error saving changes:', error);
       } finally {
         this.saving = false;

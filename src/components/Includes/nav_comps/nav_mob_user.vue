@@ -245,7 +245,7 @@ export default {
       </router-link>
 
        <router-link 
-        to="/user-dashboard//my-likes" 
+        to="/user-dashboard/my-likes" 
         class="flex items-center gap-4 px-2 py-2 rounded-xl text-gray-700 font-medium transition-all duration-200 relative overflow-hidden group hover:bg-gray-50 hover:text-blue-600"
         :class="{ 'nav-active': $route.name === 'user_my_transactions' }" 
         @click="closeMobileMenu"

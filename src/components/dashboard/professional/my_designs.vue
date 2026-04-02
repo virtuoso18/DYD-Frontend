@@ -14,14 +14,14 @@
     <a-row v-if="view_type == 'all'">
       <a-col :span="24">
         <h2
-          class="!px-3 !pt-3 sm:translate-y-1 sm:p-0 !font-[Poppins] font-medium text-[16px] leading-[24px] text-gray-700 tracking-[0]"
+          class="!px-4 !pt-3 sm:translate-y-1 sm:p-0 !font-[Poppins] font-medium text-[16px] leading-[24px] text-gray-700 tracking-[0]"
         >
           My Designes
         </h2>
       </a-col>
 
       <!-- TAB SECTION -->
-      <a-col :span="24" style="padding: 10px 16px">
+      <a-col :span="24" style="" class="px-4">
         <a-tabs v-model:activeKey="activeTab">
           <!-- ROOM DESIGNES TAB -->
           <a-tab-pane key="room_designes" tab="Room Designes">

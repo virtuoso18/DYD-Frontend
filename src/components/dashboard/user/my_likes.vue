@@ -3,7 +3,7 @@
     <div
       class="sm:main sm:border border-gray-200 sm:rounded-2xl min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh] bg-white"
     >
-      <div style="padding: 10px; border-radius: 15px; min-height: 100vh">
+      <div style=" border-radius: 15px; min-height: 100vh" class="p-4">
         <h3
           style="
             font-family: Poppins, sans-serif;
@@ -101,7 +101,7 @@
                       <a-col
                         span="16"
                         style="
-                          font-family: &quot;Poppins&quot;, sans-serif;
+                          font-family: Poppins, sans-serif;
                           font-size: 13px;
                           font-weight: 400;
                         "
@@ -133,7 +133,7 @@
                       <a-col
                         span="12"
                         style="
-                          font-family: &quot;Poppins&quot;, sans-serif;
+                          font-family: Poppins, sans-serif;
                           font-size: 13px;
                           font-weight: 400;
                         "

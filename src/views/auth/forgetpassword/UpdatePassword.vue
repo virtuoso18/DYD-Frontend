@@ -11,19 +11,19 @@
           />
         </svg>
       </div>
-      <h1 style="margin: 0; padding: 0;">Create New Password</h1>
+      <h1 style="margin: 0; padding: 0;">{{ t('updatePassword.title') }}</h1>
     </div>
 
     <p class="section_desc">
-      Your new password must be different from the previous one.
+      {{ t('updatePassword.description') }}
     </p>
 
     <div class="form-container">
       <div class="input-group">
-        <label>Type New Password</label>
+        <label>{{ t('updatePassword.newPasswordLabel') }}</label>
         <a-input-password
           v-model:value="newPassword"
-          placeholder="Enter new password (min 8 characters)"
+          :placeholder="t('updatePassword.newPasswordPlaceholder')"
           size="large"
           class="custom-input"
         />
@@ -31,10 +31,10 @@
       </div>
 
       <div class="input-group">
-        <label>Re-type New Password</label>
+        <label>{{ t('updatePassword.confirmPasswordLabel') }}</label>
         <a-input-password
           v-model:value="confirmPassword"
-          placeholder="Confirm new password"
+          :placeholder="t('updatePassword.confirmPasswordPlaceholder')"
           size="large"
           class="custom-input"
           @keyup.enter="updatePassword"
@@ -50,7 +50,7 @@
         :loading="loading"
         :disabled="!newPassword || !confirmPassword || loading"
       >
-        Update Password
+        {{ t('updatePassword.updateButton') }}
       </a-button>
     </div>
   </div>
@@ -58,9 +58,14 @@
 
 <script>
 import { notification } from 'ant-design-vue';
+import { useI18n } from 'vue-i18n';
 
 export default {
   name: 'UpdatePassword',
+  setup() {
+    const { t } = useI18n();
+    return { t };
+  },
   props: {
     onStepChange: {
       type: Function,
@@ -79,21 +84,15 @@ export default {
   computed: {
     passwordStrength() {
       if (!this.newPassword) return '';
-      if (this.newPassword.length < 8)
-        return '❌ Too short (min 8 characters)';
-      if (this.newPassword.length < 12) return '⚠️ Weak';
-      return '✅ Strong';
+      if (this.newPassword.length < 8) return this.t('updatePassword.strength.tooShort');
+      if (this.newPassword.length < 12) return this.t('updatePassword.strength.weak');
+      return this.t('updatePassword.strength.strong');
     },
   },
   mounted() {
-    // ✅ FIXED: Get email and OTP from sessionStorage
     this.email = sessionStorage.getItem('passwordResetEmail') || '';
     this.otp = sessionStorage.getItem('passwordResetOTP') || '';
-    
-    console.log('📧 Email from sessionStorage:', this.email);
-    console.log('🔐 OTP from sessionStorage:', this.otp);
 
-    // Fallback: Listen for event
     const handleOtpVerified = (event) => {
       this.email = event.detail.email;
       this.otp = event.detail.otp;
@@ -106,11 +105,10 @@ export default {
   },
   methods: {
     async updatePassword() {
-      // Validation
       if (!this.newPassword || !this.confirmPassword) {
         notification.error({
-          message: 'Validation Error',
-          description: 'Please fill in both password fields.',
+          message: this.t('updatePassword.notifications.validationError'),
+          description: this.t('updatePassword.notifications.fillBothFields'),
           placement: 'bottomRight',
         });
         return;
@@ -118,8 +116,8 @@ export default {
 
       if (this.newPassword.length < 8) {
         notification.error({
-          message: 'Weak Password',
-          description: 'Password must be at least 8 characters long.',
+          message: this.t('updatePassword.notifications.weakPassword'),
+          description: this.t('updatePassword.notifications.minChars'),
           placement: 'bottomRight',
         });
         return;
@@ -127,18 +125,17 @@ export default {
 
       if (this.newPassword !== this.confirmPassword) {
         notification.error({
-          message: 'Passwords Mismatch',
-          description: 'Passwords do not match!',
+          message: this.t('updatePassword.notifications.passwordsMismatch'),
+          description: this.t('updatePassword.notifications.doNotMatch'),
           placement: 'bottomRight',
         });
         return;
       }
 
-      // ✅ FIXED: Validate email and OTP exist
       if (!this.email || !this.otp) {
         notification.error({
-          message: 'Error',
-          description: 'Session expired. Please restart the process.',
+          message: this.t('updatePassword.notifications.sessionExpired'),
+          description: this.t('updatePassword.notifications.sessionExpiredDesc'),
           placement: 'bottomRight',
         });
         return;
@@ -147,19 +144,11 @@ export default {
       this.loading = true;
 
       try {
-        console.log('📤 Sending password reset with:', {
-          email: this.email,
-          otp: this.otp,
-        });
-
         const response = await fetch(
-          this.$store.state.root_api +
-            'Auth/api/reset-password-with-otp/',
+          this.$store.state.root_api + 'Auth/api/reset-password-with-otp/',
           {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               email: this.email,
               otp: this.otp,
@@ -173,35 +162,28 @@ export default {
 
         if (!response.ok) {
           notification.error({
-            message: 'Reset Failed',
-            description: data.message || 'Failed to reset password',
+            message: this.t('updatePassword.notifications.resetFailed'),
+            description: data.message || this.t('updatePassword.notifications.failedToReset'),
             placement: 'bottomRight',
           });
           return;
         }
 
         notification.success({
-          message: 'Success!',
-          description:
-            'Password reset successfully! Redirecting to login...',
+          message: this.t('updatePassword.notifications.success'),
+          description: this.t('updatePassword.notifications.passwordReset'),
           placement: 'bottomRight',
         });
 
-        // ✅ Clear sessionStorage on success
         sessionStorage.removeItem('passwordResetEmail');
         sessionStorage.removeItem('passwordResetOTP');
-        
-        this.$router.push({ name: 'login' });
 
-        // Redirect to signin after 2 seconds
-        // setTimeout(() => {
-          
-        // }, 2000);
+        this.$router.push({ name: 'login' });
       } catch (error) {
         console.error('Password reset error:', error);
         notification.error({
-          message: 'Server Error',
-          description: 'Something went wrong. Please try again.',
+          message: this.t('updatePassword.notifications.serverError'),
+          description: this.t('updatePassword.notifications.somethingWentWrong'),
           placement: 'bottomRight',
         });
       } finally {

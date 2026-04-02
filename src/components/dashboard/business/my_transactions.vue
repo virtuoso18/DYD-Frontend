@@ -5,7 +5,13 @@
       <div class="max-w-6xl mx-auto">
         <!-- Header Section -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-          <h2 class="text-2xl font-semibold text-gray-900">
+          <h2 class="text-2xl font-semibold text-gray-900"  style="
+            font-family: Poppins, sans-serif;
+            font-weight: 500;
+            font-size: 16px;
+            line-height: 24px;
+            letter-spacing: 0;
+          ">
             Transactions
           </h2>
           <div class="w-full sm:w-72">

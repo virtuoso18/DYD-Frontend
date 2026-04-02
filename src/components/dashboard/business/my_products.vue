@@ -788,7 +788,13 @@
         <div class="hidden md:flex justify-between items-center mb-5">
           <!-- Title -->
           <h2
-            class="m-0 text-lg whitespace-nowrap px-2 lg:text-2xl font-semibold"
+            class="m-0 text-lg whitespace-nowrap px-2 lg:text-2xl font-semibold" style="
+            font-family: Poppins, sans-serif;
+            font-weight: 500;
+            font-size: 16px;
+            line-height: 24px;
+            letter-spacing: 0;
+          "
           >
             My Products
             <span class="text-gray-500 text-base">
@@ -804,7 +810,7 @@
           >
             <div className="flex flex-row gap-6">
               <!-- View Toggle Buttons -->
-              <div
+              <!-- <div
                 style="
                   display: flex;
                   border: 1px solid #ddd;
@@ -836,7 +842,6 @@
                     <rect x="3" y="14" width="7" height="7"></rect>
                     <rect x="14" y="14" width="7" height="7"></rect>
                   </svg>
-                  <!-- Grid -->
                 </a-button>
                 <a-button
                   @click="viewMode = 'table'"
@@ -866,9 +871,8 @@
                     <line x1="3" y1="12" x2="3.01" y2="12"></line>
                     <line x1="3" y1="18" x2="3.01" y2="18"></line>
                   </svg>
-                  <!-- List -->
                 </a-button>
-              </div>
+              </div> -->
 
               <!-- Search -->
               <div class="relative">
@@ -1020,7 +1024,7 @@
     </h2>
 
     <!-- Grid / List Toggle -->
-    <div class="flex border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+    <!-- <div class="flex border border-gray-200 rounded-lg overflow-hidden shadow-sm">
       <button
         @click="viewMode = 'grid'"
         :class="[
@@ -1055,7 +1059,7 @@
         </svg>
         <span class="ml-1">List</span>
       </button>
-    </div>
+    </div> -->
   </div>
 
   <!-- Row 2: Search Bar Full Width -->

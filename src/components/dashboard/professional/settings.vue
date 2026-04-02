@@ -41,7 +41,13 @@
 
     <!-- Main Settings Container -->
     <div style="background-color: white; border-radius: 15px; border: 1px solid rgba(0,0,0,0.1); margin-top: 15px; min-height: 90vh; padding: 20px;">
-        <h2>Settings</h2>
+        <h2  style="
+            font-family: Poppins, sans-serif;
+            font-weight: 500;
+            font-size: 16px;
+            line-height: 24px;
+            letter-spacing: 0;
+          ">Settings</h2>
 
         <!-- Password Management Section -->
         <div style="border: 1px solid rgba(0,0,0,0.2); padding: 15px; border-radius: 7px;">

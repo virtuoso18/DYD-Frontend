@@ -1954,7 +1954,7 @@ rescaleChair() {
     const maskBlob = await this.createBinaryMaskBlob(exportW, exportH, snapPos, snapQuat, snapScale, frozenChairClone)
     if (!maskBlob || maskBlob.size === 0) throw new Error('Mask blob empty')
     
-    this.downloadImages(compositeBlob, maskBlob)
+    // this.downloadImages(compositeBlob, maskBlob)
     // return 
     
     // ── release lock BEFORE reactive state changes ────────

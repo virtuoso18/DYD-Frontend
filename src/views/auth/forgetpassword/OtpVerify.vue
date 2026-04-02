@@ -1,4 +1,3 @@
-<!-- OtpVerify.vue - Step 2: Verify OTP - FIXED v2 -->
 <template>
   <div class="otpverify-header-section">
     <div style="display: flex; align-items: baseline;">
@@ -11,16 +10,16 @@
           />
         </svg>
       </div>
-      <h1 style="margin: 0; padding: 0;">OTP Verification</h1>
+      <h1 style="margin: 0; padding: 0;">{{ t('otpVerify.title') }}</h1>
     </div>
 
     <p class="section_desc">
-      Check your inbox for the OTP and enter it to verify your account.
+      {{ t('otpVerify.description') }}
     </p>
 
     <div class="form-container">
       <div class="otp-container">
-        <h3>Enter 6-digit OTP</h3>
+        <h3>{{ t('otpVerify.enter6Digit') }}</h3>
 
         <div class="otp-inputs">
           <input
@@ -50,18 +49,18 @@
           :loading="loading"
           :disabled="getOtpValue().length !== 6 || loading"
         >
-          Verify OTP
+          {{ t('otpVerify.verifyOtp') }}
         </a-button>
 
         <div style="text-align: center; margin-top: 16px;">
-          <span class="resend-text">Didn't receive OTP? </span>
+          <span class="resend-text">{{ t('otpVerify.didntReceive') }}</span>
           <a-button
             type="link"
             @click="resendOtp"
             :loading="resendLoading"
             :disabled="resendLoading || countdown > 0"
           >
-            {{ countdown > 0 ? `Resend in ${countdown}s` : 'Resend OTP' }}
+            {{ countdown > 0 ? t('otpVerify.resendIn', { seconds: countdown }) : t('otpVerify.resendOtp') }}
           </a-button>
         </div>
       </div>
@@ -71,9 +70,14 @@
 
 <script>
 import { notification } from 'ant-design-vue';
+import { useI18n } from 'vue-i18n';
 
 export default {
   name: 'OtpVerify',
+  setup() {
+    const { t, locale } = useI18n();
+    return { t, locale };
+  },
   props: {
     onStepChange: {
       type: Function,
@@ -92,28 +96,20 @@ export default {
     };
   },
   mounted() {
-    // ✅ FIXED: Get email from sessionStorage first
     this.email = sessionStorage.getItem('passwordResetEmail') || '';
-    console.log('📧 Email from sessionStorage:', this.email);
 
-    // Fallback: Listen for event in case it fires after mount
     const handleEmailVerified = (event) => {
       this.email = event.detail;
-      console.log('📧 Email from event listener:', this.email);
       sessionStorage.setItem('passwordResetEmail', this.email);
     };
 
     window.addEventListener('passwordReset:emailVerified', handleEmailVerified);
-    
-    // Store reference to remove later
     this._emailVerifiedHandler = handleEmailVerified;
 
-    // Focus on first OTP input
     this.$nextTick(() => {
       this.$refs.otpInput0?.[0]?.focus();
     });
   },
-
   methods: {
     getOtpValue() {
       return this.otp.join('');
@@ -152,22 +148,21 @@ export default {
     async verifyOtp() {
       const otpValue = this.getOtpValue();
 
-      // ✅ FIXED: Validate email exists
       if (!this.email || this.email.trim() === '') {
-        this.errorMessage = 'Email is missing. Please go back and try again.';
+        this.errorMessage = this.t('otpVerify.errors.emailMissing');
         notification.error({
-          message: 'Error',
-          description: 'Email is missing. Please restart the process.',
+          message: this.t('otpVerify.notifications.error'),
+          description: this.t('otpVerify.notifications.emailMissing'),
           placement: 'bottomRight',
         });
         return;
       }
 
       if (otpValue.length !== 6) {
-        this.errorMessage = 'Please enter all 6 digits';
+        this.errorMessage = this.t('otpVerify.errors.enter6Digits');
         notification.error({
-          message: 'Invalid OTP',
-          description: 'Please enter all 6 digits.',
+          message: this.t('otpVerify.notifications.invalidOtp'),
+          description: this.t('otpVerify.errors.enter6Digits'),
           placement: 'bottomRight',
         });
         return;
@@ -177,59 +172,47 @@ export default {
       this.errorMessage = '';
 
       try {
-        console.log('📤 Sending OTP verification with email:', this.email);
-
         const response = await fetch(
           this.$store.state.root_api + 'Auth/api/verify-password-reset-otp/',
           {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              email: this.email,
-              otp: otpValue,
-            }),
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: this.email, otp: otpValue }),
           }
         );
 
         const data = await response.json();
 
         if (!response.ok) {
-          this.errorMessage = data.message || 'Invalid or expired OTP';
+          this.errorMessage = data.message || this.t('otpVerify.errors.invalidExpiredOtp');
           notification.error({
-            message: 'OTP Verification Failed',
-            description: data.message || 'Invalid or expired OTP',
+            message: this.t('otpVerify.notifications.invalidOtp'),
+            description: data.message || this.t('otpVerify.errors.invalidExpiredOtp'),
             placement: 'bottomRight',
           });
           return;
         }
 
         notification.success({
-          message: 'Success',
-          description: 'OTP verified successfully!',
+          message: this.t('otpVerify.notifications.success'),
+          description: this.t('otpVerify.notifications.otpVerified'),
           placement: 'bottomRight',
         });
 
-        // ✅ Store OTP for next step
         sessionStorage.setItem('passwordResetOTP', otpValue);
-
         window.dispatchEvent(
           new CustomEvent('passwordReset:otpVerified', {
-            detail: {
-              email: this.email,
-              otp: otpValue,
-            },
+            detail: { email: this.email, otp: otpValue },
           })
         );
 
         this.onStepChange(3);
       } catch (error) {
-        console.error('❌ OTP verification error:', error);
-        this.errorMessage = 'Something went wrong. Please try again.';
+        console.error('OTP verification error:', error);
+        this.errorMessage = this.t('otpVerify.errors.somethingWentWrong');
         notification.error({
-          message: 'Server Error',
-          description: 'Something went wrong. Please try again.',
+          message: this.t('otpVerify.notifications.serverError'),
+          description: this.t('otpVerify.notifications.somethingWentWrong'),
           placement: 'bottomRight',
         });
       } finally {
@@ -240,8 +223,8 @@ export default {
     async resendOtp() {
       if (!this.email) {
         notification.error({
-          message: 'Error',
-          description: 'Email is required',
+          message: this.t('otpVerify.notifications.error'),
+          description: this.t('otpVerify.errors.emailRequired'),
           placement: 'bottomRight',
         });
         return;
@@ -255,12 +238,8 @@ export default {
           this.$store.state.root_api + 'Auth/api/resend-password-reset-otp/',
           {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              email: this.email,
-            }),
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: this.email }),
           }
         );
 
@@ -268,23 +247,20 @@ export default {
 
         if (!response.ok) {
           notification.error({
-            message: 'Error',
-            description: data.message || 'Failed to resend OTP',
+            message: this.t('otpVerify.notifications.error'),
+            description: data.message || this.t('otpVerify.notifications.failedResend'),
             placement: 'bottomRight',
           });
           return;
         }
 
         this.otp = ['', '', '', '', '', ''];
-
         this.$nextTick(() => {
           this.$refs.otpInput0?.[0]?.focus();
         });
 
         this.countdown = 60;
-        if (this.resendInterval) {
-          clearInterval(this.resendInterval);
-        }
+        if (this.resendInterval) clearInterval(this.resendInterval);
 
         this.resendInterval = setInterval(() => {
           this.countdown--;
@@ -295,15 +271,15 @@ export default {
         }, 1000);
 
         notification.success({
-          message: 'Success',
-          description: 'New OTP sent to your email',
+          message: this.t('otpVerify.notifications.success'),
+          description: this.t('otpVerify.notifications.otpResent'),
           placement: 'bottomRight',
         });
       } catch (error) {
-        console.error('❌ Resend OTP error:', error);
+        console.error('Resend OTP error:', error);
         notification.error({
-          message: 'Server Error',
-          description: 'Something went wrong. Please try again.',
+          message: this.t('otpVerify.notifications.serverError'),
+          description: this.t('otpVerify.notifications.somethingWentWrong'),
           placement: 'bottomRight',
         });
       } finally {
@@ -315,18 +291,12 @@ export default {
       this.onStepChange(1);
       this.otp = ['', '', '', '', '', ''];
       this.errorMessage = '';
-
-      if (this.resendInterval) {
-        clearInterval(this.resendInterval);
-      }
+      if (this.resendInterval) clearInterval(this.resendInterval);
     },
   },
   beforeUnmount() {
     window.removeEventListener('passwordReset:emailVerified', this._emailVerifiedHandler);
-
-    if (this.resendInterval) {
-      clearInterval(this.resendInterval);
-    }
+    if (this.resendInterval) clearInterval(this.resendInterval);
   },
 };
 </script>

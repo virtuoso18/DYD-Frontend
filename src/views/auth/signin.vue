@@ -3,27 +3,27 @@
   <div class="signin-container">
     <div class="form-section">
       <div class="welcome-text">
-        <h3>Hello,</h3>
-        <h1>Welcome to DYD</h1>
-        <h3>Login to your account</h3>
+        <h3>{{t('signin.hello')}},</h3>
+        <h1>{{t('signin.welcomeTo')}}</h1>
+        <h3>{{t('signin.loginToAccount')}}</h3>
       </div>
 
       <div class="form-container">
         <div class="input-group">
-          <label>Email</label>
+          <label>{{t('signin.emailLabel')}}</label>
           <a-input
             v-model:value="email"
-            placeholder="Input Email address"
+            :placeholder="t('emailPlaceholder')"
             size="large"
             class="custom-input"
           />
         </div>
         <br />
         <div class="input-group">
-          <label>Password</label>
+          <label>{{t('signin.passwordLabel')}}</label>
           <a-input-password
             v-model:value="password"
-            placeholder="Password Here"
+            :placeholder="t('signin.passwordPlaceholder')"
             size="large"
             class="custom-input"
             type="password"
@@ -32,7 +32,7 @@
         <router-link
           to="/forgot-password"
           style="display: flex; justify-content: end" 
-          ><a-button type="text">Forgot Password</a-button></router-link
+          ><a-button type="text">{{t('signin.forgotPassword')}}</a-button></router-link
         >
         <!-- <div class="input-group">
           <label>Referral Code</label>
@@ -64,13 +64,13 @@
           class="mx-2"
           />
           <span class="text-white" style="margin-top:5px">
-            {{ loading ? "Logging in..." : "Continue" }}
+            {{ loading ? t('signin.loggingIn') : t('signin.continue') }}
           </span>
         </a-space>
         </a-button>
 
         <div class="divider">
-          <span>OR</span>
+          <span>{{t('signin.or')}}</span>
         </div>
 
         <a-button size="large" class="google-btn" block>
@@ -79,13 +79,13 @@
             alt="Google"
             style="width: 20px; height: 20px; margin-right: 8px"
           />
-          Login With Google
+          {{t('signin.loginWithGoogle')}}
         </a-button>
       </div>
       <div style="text-align: center">
         <h3>
-          Don't have account yet,
-          <router-link :to="'/signup'"> Sign-Up</router-link>
+          {{t('signin.noAccount')}}
+          <router-link :to="'/signup'"> {{t('signin.signUp')}}</router-link>
         </h3>
       </div>
     </div>
@@ -97,8 +97,14 @@ import { h } from "vue";
 import { LoadingOutlined } from "@ant-design/icons-vue";
 import { notification } from "ant-design-vue";
 
+import { useI18n } from "vue-i18n"; 
+
 export default {
   name: "signin",
+  setup() {
+    const { t, locale } = useI18n();
+    return { t, locale };
+  },
   data() {
     return {
       email: "",
@@ -138,8 +144,8 @@ export default {
         console.log(data);
         if (!response.ok) {
           notification.error({
-            message: "Login Failed",
-            description: data.message || "Invalid email or password.",
+            message: this.t('signin.loginFailed'),
+            description: data.message || this.t('signin.invalidCredentials'),
           });
           return;
         }
@@ -157,9 +163,9 @@ export default {
           }
 
           notification.success({
-            message: "Login Successful",
+            message: this.t('signin.loginSuccess'),
             description:
-              "Welcome back, " +
+              this.t('signin.welcomeBack')+" " +
               (data.user?.full_name || data.user?.email) +
               "!",
             placement: "bottomRight",
@@ -173,8 +179,8 @@ export default {
       } catch (error) {
         console.error("Login error:", error);
         notification.error({
-          message: "Server Error",
-          description: "Something went wrong. Please try again.",
+          message: this.t('signin.serverError'),
+          description: this.t('signin.somethingWentWrong'),
         });
       } finally {
         this.loading = false;
