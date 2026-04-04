@@ -13,7 +13,7 @@
             letter-spacing: 0;
           "
         >
-          Liked Products & Rooms
+          {{ t('professional_dashboard.myLikes') }}
         </h3>
         <a-tabs
           ref="tabsRef"
@@ -21,7 +21,7 @@
           :key="tabRefreshKey"
           @tabClick="handleTabClick"
         >
-          <a-tab-pane key="Furniture" tab="Furniture">
+          <a-tab-pane key="Furniture" :tab="t('likes.furniture')">
             <div
               v-if="isLoading"
               class="spinner-sec w-full h-[80vh] flex justify-center items-center"
@@ -43,7 +43,7 @@
               <!-- <a-empty :description="'No Furniture Available'"></a-empty> -->
 
               <a-empty
-                :description="'You have not added anything in your likes till yet '"
+                :description="t('likes.emptyProducts')"
               >
               </a-empty>
             </div>
@@ -105,7 +105,7 @@
                               font-weight: 400;
                             "
                           >
-                            Color
+                          {{ t('likes.color') }}
                           </a-col>
 
                           <a-col
@@ -137,7 +137,7 @@
                               font-weight: 400;
                             "
                           >
-                            Price
+                          {{ t('likes.price') }}
                           </a-col>
 
                           <a-col
@@ -161,7 +161,7 @@
       @click="goto_product_Route(product)"
       class="!px-2 !py-1 !text-[12px] h-7 flex items-center whitespace-nowrap"
     >
-      Product Details
+     {{ t('likes.productDetails') }}
     </a-button>
   </a-col>
 
@@ -209,7 +209,7 @@
             </div>
             </div>
           </a-tab-pane>
-          <a-tab-pane key="rooms" tab="rooms">
+          <a-tab-pane key="rooms" :tab="t('likes.rooms')">
             <div
               v-if="isLoading"
               class="spinner-sec w-full h-[80vh] flex justify-center items-center"
@@ -229,7 +229,7 @@
                 "
               >
                 <a-empty
-                  :description="'You have not added any room in your likes till yet '"
+                  :description="t('likes.emptyRooms')"
                 >
                 </a-empty>
               </div>
@@ -293,7 +293,7 @@
         @click="viewRoom(product)"
         style="display: flex; font-size: 12px; justify-content: center; align-items: center;"
       >
-        Room Details
+       {{ t('likes.roomDetails') }}
       </a-button>
     </a-col>
   </a-row>
@@ -322,7 +322,7 @@
               </div>
             </div>
           </a-tab-pane>
-          <a-tab-pane key="community-posts" tab="Community Posts">
+          <a-tab-pane key="community-posts" :tab="t('likes.communityPosts')">
              <div
               v-if="isLoading"
               class="spinner-sec w-full h-[80vh] flex justify-center items-center"
@@ -342,7 +342,7 @@
                 "
               >
                 <a-empty
-                  :description="'You have not posted anything on comunity yet '"
+                  :description="t('likes.emptyCommunity')"
                 >
                 </a-empty>
               </div>
@@ -485,7 +485,7 @@
                           "
                         >
                           <PushpinOutlined />
-                          Pinned
+                        {{ t('likes.pinned') }}
                         </div>
                       </div>
 
@@ -667,6 +667,7 @@
 <script>
 import CommentsModal from "@/views/pages/CommentsModal.vue";
 import RoomDetailsModal from "@/views/pages/RoomDetailsModal.vue";
+import { useI18n } from "vue-i18n";
 import {
   ExclamationCircleOutlined,
   EyeOutlined,
@@ -684,6 +685,10 @@ import {
 
 export default {
   name: "likes",
+  setup() {
+    const { t, locale } = useI18n();
+    return { t, locale };
+  },
 
   components: {
     ExclamationCircleOutlined,

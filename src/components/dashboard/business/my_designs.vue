@@ -16,7 +16,7 @@
         <h2
           class="!px-3 !pt-3 sm:translate-y-1 sm:p-0 !font-[Poppins] font-medium text-[16px] leading-[24px] text-gray-700 tracking-[0]"
         >
-          My Designes
+         {{ t('myDesigns.title') }}
         </h2>
       </a-col>
 
@@ -24,7 +24,7 @@
       <a-col :span="24" style="padding: 10px 16px">
         <a-tabs v-model:activeKey="activeTab">
           <!-- ROOM DESIGNES TAB -->
-          <a-tab-pane key="room_designes" tab="Room Designes">
+          <a-tab-pane key="room_designes" :tab="t('myDesigns.roomDesigns')">
             <!-- Empty State for Room Designes -->
             <a-col
               :span="24"
@@ -41,10 +41,10 @@
               <a-empty description="No room designs available yet">
                 <template #description>
                   <p style="color: #666; font-size: 16px">
-                    You haven't created any room designs yet.
+                    {{ t('myDesigns.emptyRoomLine1') }}
                   </p>
                   <p style="color: #999; font-size: 14px">
-                    Start creating your first room design!
+                    {{ t('myDesigns.emptyRoomLine2') }}
                   </p>
                 </template>
               </a-empty>
@@ -199,7 +199,7 @@
           </a-tab-pane>
 
           <!-- HOME DESIGNES TAB -->
-          <a-tab-pane key="home_designes" tab="Home Designes" force-render>
+          <a-tab-pane key="home_designes" :tab="t('myDesigns.homeDesigns')" force-render>
             <!-- Empty State for Home Designes -->
             <a-col
               :span="24"
@@ -216,10 +216,10 @@
               <a-empty description="No home designs available yet">
                 <template #description>
                   <p style="color: #666; font-size: 16px">
-                    You haven't created any home designs yet.
+                  {{ t('myDesigns.emptyHomeLine1') }}
                   </p>
                   <p style="color: #999; font-size: 14px">
-                    Start creating your first home design!
+                 {{ t('myDesigns.emptyHomeLine2') }}
                   </p>
                 </template>
               </a-empty>
@@ -502,7 +502,7 @@
               color: #666;
             "
           >
-            Created From
+            {{ t('myDesigns.createdFrom') }}
           </p>
 
           <router-link
@@ -558,10 +558,10 @@
                     color: var(--text-color-secondary);
                   "
                 >
-                  Share your project
+                  {{ t('myDesigns.shareProject') }}
                 </h2>
                 <p class="text-gray-600 text-sm leading-relaxed">
-                  Tell your community about the project you created
+                  {{ t('myDesigns.shareProjectDesc') }}
                 </p>
               </div>
             </div>
@@ -596,7 +596,7 @@
               <span
                 class="text-white"
                 style="font-family: var(--font-family-main)"
-                >Share on community</span
+                >{{ t('myDesigns.shareOnCommunity') }}</span
               >
             </a-button>
           </div>
@@ -704,7 +704,7 @@
 
         <a-col :span="24">
           <h3 class="px-4 my-4 text-[20px] text-[#1A1A1A]">
-            Product used to create room
+            {{ t('myDesigns.productsUsed') }}
           </h3>
           <a-row>
             <a-col
@@ -763,7 +763,7 @@
                     ></div>
                   </a-col>
 
-                  <a-col class="!text-gray-700" span="12"> Price </a-col>
+                  <a-col class="!text-gray-700" span="12">{{ t('myDesigns.price') }} </a-col>
 
                   <a-col
                     class="!text-gray-700"
@@ -788,7 +788,7 @@
                           font-size: 12px;
                         "
                       >
-                        Product Details
+                       {{ t('myDesigns.productDetails') }}
                       </button>
                     </div>
 
@@ -870,7 +870,7 @@
                 stroke-linejoin="round"
               />
             </svg>
-            Regenerate
+          {{ t('myDesigns.regenerate') }}
           </button>
         </div>
       </a-col>
@@ -1075,7 +1075,7 @@
                   </a-col>
 
                   <a-col span="18" class="font-light !text-gray-700">
-                    Color
+                    {{ t('myDesigns.color') }}
                   </a-col>
                   <a-col span="6" style="display: flex; justify-content: end">
                     <div
@@ -1097,7 +1097,7 @@
                     ></div>
                   </a-col>
 
-                  <a-col class="!text-gray-700" span="12"> Price </a-col>
+                  <a-col class="!text-gray-700" span="12"> {{ t('myDesigns.price') }} </a-col>
 
                   <a-col
                     class="!text-gray-700"
@@ -1196,9 +1196,14 @@ import {
 } from "@ant-design/icons-vue";
 import ShareOnCommunity from "@/views/catalogue/share_on_community.vue";
 import CommentsModal from "@/views/pages/CommentsModal.vue";
+import { useI18n } from "vue-i18n";
 
 export default {
   name: "my_designes",
+  setup() {
+    const { t, locale } = useI18n();
+    return { t, locale };
+  },
   data() {
     return {
       // Room designes data

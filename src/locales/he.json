@@ -143,6 +143,10 @@
     "manageSubscription": "נהל מנוי",
     "transactions": "עסקאות",
     "logout": "התנתק",
+    "myStore": "החנות שלי",
+  
+    "pricing": "תמחור",
+    "contactUs": "צור קשר",
 
 
     "yourPackage": "החבילה שלך",
@@ -179,6 +183,10 @@
     "transactions": "עסקאות",
     "settings": "הגדרות",
     "logout": "התנתק",
+
+    "pricing": "תמחור",
+    "contactUs": "צור קשר",
+    "aiCatalog": "קטלוג AI",
 
     "yourPackage": "החבילה שלך",
     "upgrade": "שדרג",
@@ -533,6 +541,55 @@
     "avatarTooLarge": "תמונת האווטאר חייבת להיות קטנה מ-2MB",
     "backgroundTooLarge": "תמונת הרקע חייבת להיות קטנה מ-5MB"
   }
+},
+"likes": {
+  "furniture": "ריהוט",
+  "rooms": "חדרים",
+  "communityPosts": "פוסטים בקהילה",
+  "emptyProducts": "עדיין לא הוספת פריטים למועדפים",
+  "emptyRooms": "עדיין לא הוספת חדרים למועדפים",
+  "emptyCommunity": "עדיין לא פרסמת כלום בקהילה",
+  "productDetails": "פרטי מוצר",
+  "roomDetails": "פרטי חדר",
+  "color": "צבע",
+  "price": "מחיר",
+  "pinned": "נעוץ"
+},
+ "myDesigns": {
+  "title": "העיצובים שלי",
+  "roomDesigns": "עיצובי חדר",
+  "homeDesigns": "עיצובי בית",
+  "emptyRoomLine1": "עדיין לא יצרת עיצובי חדר.",
+  "emptyRoomLine2": "התחל ליצור את עיצוד החדר הראשון שלך!",
+  "emptyHomeLine1": "עדיין לא יצרת עיצובי בית.",
+  "emptyHomeLine2": "התחל ליצור את עיצוד הבית הראשון שלך!",
+  "room": "חדר",
+  "style": "סגנון",
+  "type": "סוג",
+  "roomType": "סוג חדר",
+  "designStyle": "סגנון עיצוב",
+  "back": "חזרה",
+  "edit": "עריכה",
+  "delete": "מחיקה",
+  "save": "שמירה",
+  "close": "סגירה",
+  "createdFrom": "נוצר מ",
+  "shareProject": "שתף את הפרויקט שלך",
+  "shareProjectDesc": "ספר לקהילה שלך על הפרויקט שיצרת",
+  "shareOnCommunity": "שתף בקהילה",
+  "describeRoom": "תאר את החדר",
+  "descriptionPlaceholder": "תן לעיצוב שלך תיאור אטרקטיבי...",
+  "products": "מוצרים",
+  "productsUsed": "מוצרים ששימשו ליצירת החדר",
+  "productDetails": "פרטי מוצר",
+  "color": "צבע",
+  "price": "מחיר",
+  "designDetails": "פרטי עיצוב",
+  "createdAt": "נוצר בתאריך",
+  "status": "סטטוס",
+  "saved": "✓ נשמר",
+  "notSaved": "לא נשמר",
+  "before": "לפני",
+  "regenerate": "יצירה מחדש"
 }
- 
 }

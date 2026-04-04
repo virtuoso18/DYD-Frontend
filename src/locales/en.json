@@ -147,6 +147,10 @@
     "yourPackage": "Your package",
     "upgrade": "Upgrade",
     "business": "Business",
+    "myStore": "My Store",
+   
+    "pricing": "Pricing",
+    "contactUs": "Contact Us",
 
     "completed": "completed",
     "verifyNow": "Verify Now",
@@ -179,7 +183,9 @@
     "transactions": "Transactions",
     "settings": "Settings",
     "logout": "Logout",
-
+    "pricing": "Pricing",
+    "contactUs": "Contact Us",
+    "aiCatalog": "AI Catalog",
     "yourPackage": "Your package",
     "upgrade": "Upgrade",
     "professional": "Professional",
@@ -532,6 +538,57 @@
     "avatarTooLarge": "Avatar image must be smaller than 2MB",
     "backgroundTooLarge": "Background image must be smaller than 5MB"
   }
+}
+,
+"likes": {
+  "furniture": "Furniture",
+  "rooms": "Rooms",
+  "communityPosts": "Community Posts",
+  "emptyProducts": "You have not added anything to your likes yet",
+  "emptyRooms": "You have not added any room to your likes yet",
+  "emptyCommunity": "You have not posted anything in the community yet",
+  "productDetails": "Product Details",
+  "roomDetails": "Room Details",
+  "color": "Color",
+  "price": "Price",
+  "pinned": "Pinned"
+},
+"myDesigns": {
+  "title": "My Designs",
+  "roomDesigns": "Room Designs",
+  "homeDesigns": "Home Designs",
+  "emptyRoomLine1": "You haven't created any room designs yet.",
+  "emptyRoomLine2": "Start creating your first room design!",
+  "emptyHomeLine1": "You haven't created any home designs yet.",
+  "emptyHomeLine2": "Start creating your first home design!",
+  "room": "Room",
+  "style": "Style",
+  "type": "Type",
+  "roomType": "Room Type",
+  "designStyle": "Design Style",
+  "back": "Back",
+  "edit": "Edit",
+  "delete": "Delete",
+  "save": "Save",
+  "close": "Close",
+  "createdFrom": "Created From",
+  "shareProject": "Share your project",
+  "shareProjectDesc": "Tell your community about the project you created",
+  "shareOnCommunity": "Share on community",
+  "describeRoom": "Describe Room",
+  "descriptionPlaceholder": "Give your design an attractive description here...",
+  "products": "Products",
+  "productsUsed": "Products used to create room",
+  "productDetails": "Product Details",
+  "color": "Color",
+  "price": "Price",
+  "designDetails": "Design Details",
+  "createdAt": "Created At",
+  "status": "Status",
+  "saved": "✓ Saved",
+  "notSaved": "Not Saved",
+  "before": "Before",
+  "regenerate": "Regenerate"
 }
 
 }

@@ -165,7 +165,7 @@ export default {
             />
           </svg>
         </div>
-        <span class="flex-1 text-sm text-[#333333]  !font-family-poppins">Profile</span>
+        <span class="flex-1 text-sm text-[#333333]  !font-family-poppins">{{ t('professional_dashboard.profile') }}</span>
         <svg
           class="w-5 h-5 opacity-0 transform -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
           fill="none"
@@ -205,7 +205,7 @@ export default {
             />
           </svg>
         </div>
-        <span class="flex-1 text-sm text-[#333333]  !font-family-poppins">My Likes</span>
+        <span class="flex-1 text-sm text-[#333333]  !font-family-poppins">{{ t('professional_dashboard.myLikes') }}</span>
         <svg
           class="w-5 h-5 opacity-0 transform -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
           fill="none"
@@ -253,7 +253,7 @@ export default {
             />
           </svg>
         </div>
-        <span class="flex-1 text-sm text-[#333333]  !font-family-poppins">Requests</span>
+        <span class="flex-1 text-sm text-[#333333]  !font-family-poppins">{{ t('professional_dashboard.requests') }}</span>
         <svg
           class="w-5 h-5 opacity-0 transform -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
           fill="none"
@@ -292,7 +292,7 @@ export default {
             />
           </svg>
         </div>
-        <span class="flex-1 text-sm text-[#333333]  !font-family-poppins">Messages</span>
+        <span class="flex-1 text-sm text-[#333333]  !font-family-poppins">{{ t('professional_dashboard.messages') }}</span>
         <svg
           class="w-5 h-5 opacity-0 transform -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
           fill="none"
@@ -336,7 +336,7 @@ export default {
           </svg>
         </div>
         <span class="flex-1 text-sm text-[#333333]  !font-family-poppins"
-          >Manage Subscription</span
+          >{{ t('professional_dashboard.manageSubscription') }}</span
         >
         <svg
           class="w-5 h-5 opacity-0 transform -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
@@ -383,7 +383,7 @@ export default {
                     />
                   </svg>
         </div>
-        <span class="flex-1 text-sm text-[#333333]  !font-family-poppins">My Designs</span>
+        <span class="flex-1 text-sm text-[#333333]  !font-family-poppins">{{ t('professional_dashboard.myDesigns') }}</span>
         <svg
           class="w-5 h-5 opacity-0 transform -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
           fill="none"
@@ -422,7 +422,7 @@ export default {
                     />
                   </svg>
         </div>
-        <span class="flex-1 text-sm text-[#333333]  !font-family-poppins">Comunity</span>
+        <span class="flex-1 text-sm text-[#333333]  !font-family-poppins">{{ t('professional_dashboard.community') }}</span>
         <svg
           class="w-5 h-5 opacity-0 transform -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
           fill="none"
@@ -465,7 +465,7 @@ export default {
           </svg>
         </div>
         <span class="flex-1 text-sm text-[#333333]  !font-family-poppins"
-          >Business Details</span
+          >{{ t('professional_dashboard.businessDetails') }}</span
         >
         <svg
           class="w-5 h-5 opacity-0 transform -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
@@ -505,7 +505,7 @@ export default {
             />
           </svg>
         </div>
-        <span class="flex-1 text-sm text-[#333333]  !font-family-poppins">Transactions</span>
+        <span class="flex-1 text-sm text-[#333333]  !font-family-poppins">{{ t('professional_dashboard.transactions') }}</span>
         <svg
           class="w-5 h-5 opacity-0 transform -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
           fill="none"
@@ -549,7 +549,7 @@ export default {
             />
           </svg>
         </div>
-        <span class="flex-1 text-sm text-[#333333]  !font-family-poppins">Settings</span>
+        <span class="flex-1 text-sm text-[#333333]  !font-family-poppins">{{ t('professional_dashboard.settings') }}</span>
         <svg
           class="w-5 h-5 opacity-0 transform -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
           fill="none"
@@ -598,7 +598,7 @@ export default {
     </svg>
   </div>
   <span class="flex-1 text-sm text-[#333333] !font-family-poppins">
-    Community
+    {{ t('professional_dashboard.community') }}
   </span>
   <svg
     class="w-5 h-5 opacity-0 transform -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
@@ -644,7 +644,7 @@ export default {
     </svg>
   </div>
   <span class="flex-1 text-sm text-[#333333] !font-family-poppins">
-    Pricing
+    {{ t('professional_dashboard.pricing') }}
   </span>
   <svg
     class="w-5 h-5 opacity-0 transform -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
@@ -685,7 +685,7 @@ export default {
     </svg>
   </div>
   <span class="flex-1 text-sm text-[#333333] !font-family-poppins">
-    Contact Us
+   {{ t('professional_dashboard.contactUs') }}
   </span>
   <svg
     class="w-5 h-5 opacity-0 transform -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
@@ -726,7 +726,7 @@ export default {
     </svg>
   </div>
   <span class="flex-1 text-sm text-[#333333] !font-family-poppins">
-    AI Catalog
+    {{ t('professional_dashboard.aiCatalog') }}
   </span>
   <svg
     class="w-5 h-5 opacity-0 transform -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
@@ -761,7 +761,7 @@ export default {
             />
           </svg>
         </div>
-        <span class="flex-1 text-sm text-[#333333]  !font-family-poppins">Logout</span>
+        <span class="flex-1 text-sm text-[#333333]  !font-family-poppins">{{ t('professional_dashboard.logout') }}</span>
         <svg
           class="w-5 h-5 opacity-0 transform -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
           fill="none"
@@ -781,9 +781,13 @@ export default {
 </template>
 
 <script>
+import { useI18n } from "vue-i18n";
 export default {
   name: "profesional_user_nav_drawar_menu",
-
+  setup() {
+    const { t, locale } = useI18n();
+    return { t, locale };
+  },
   props: {
     isOpen: {
       type: Boolean,

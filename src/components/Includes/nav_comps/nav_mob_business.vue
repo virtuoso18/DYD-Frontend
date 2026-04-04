@@ -36,7 +36,7 @@
           stroke-linejoin="round"
         />
       </svg>
-      <span>My Store</span>
+      <span>{{ t('business_dashboard.myStore') }}</span>
     </button>
   </div>
   <nav class=" pb-6 space-y-1">
@@ -68,7 +68,7 @@
           />
         </svg>
       </div>
-      <span class="flex-1 text-sm text-[#333333] !font-family-poppins">Profile</span>
+      <span class="flex-1 text-sm text-[#333333] !font-family-poppins">{{ t('business_dashboard.profile') }}</span>
       <svg
         class="w-5 h-5 opacity-0 transform -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
         fill="none"
@@ -126,7 +126,7 @@
           />
         </svg>
       </div>
-      <span class="flex-1 text-sm  text-[#333333] !font-family-poppins">Business Detail</span>
+      <span class="flex-1 text-sm  text-[#333333] !font-family-poppins">{{ t('business_dashboard.businessDetail') }}</span>
       <svg
         class="w-5 h-5 opacity-0 transform -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
         fill="none"
@@ -173,7 +173,7 @@
           />
         </svg>
       </div>
-      <span class="flex-1 text-sm text-[#333333] !font-family-poppins">My Designs</span>
+      <span class="flex-1 text-sm text-[#333333] !font-family-poppins">{{ t('business_dashboard.profile') }}</span>
       <svg
         class="w-5 h-5 opacity-0 transform -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
         fill="none"
@@ -220,7 +220,7 @@
           />
         </svg>
       </div>
-      <span class="flex-1 text-sm text-[#333333] !font-family-poppins">My Likes</span>
+      <span class="flex-1 text-sm text-[#333333] !font-family-poppins">{{ t('business_dashboard.myLikes') }}</span>
       <svg
         class="w-5 h-5 opacity-0 transform -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
         fill="none"
@@ -266,7 +266,7 @@
           />
         </svg>
       </div>
-      <span class="flex-1 text-sm text-[#333333] !font-family-poppins">My Products</span>
+      <span class="flex-1 text-sm text-[#333333] !font-family-poppins">{{ t('business_dashboard.myProducts') }}</span>
       <svg
         class="w-5 h-5 opacity-0 transform -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
         fill="none"
@@ -305,7 +305,7 @@
           />
         </svg>
       </div>
-      <span class="flex-1 text-sm text-[#333333] !font-family-poppins">Community</span>
+      <span class="flex-1 text-sm text-[#333333] !font-family-poppins">{{ t('business_dashboard.community') }}</span>
       <svg
         class="w-5 h-5 opacity-0 transform -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
         fill="none"
@@ -355,7 +355,7 @@
           />
         </svg>
       </div>
-      <span class="flex-1 text-sm text-[#333333] !font-family-poppins">Generate Banner</span>
+      <span class="flex-1 text-sm text-[#333333] !font-family-poppins">{{ t('business_dashboard.generateBanner') }}</span>
       <svg
         class="w-5 h-5 opacity-0 transform -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
         fill="none"
@@ -397,7 +397,7 @@
         </svg>
       </div>
       <span class="flex-1 text-sm text-[#333333] !font-family-poppins"
-        >Manage Subscription</span
+        >{{ t('business_dashboard.manageSubscription') }}</span
       >
       <svg
         class="w-5 h-5 opacity-0 transform -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
@@ -437,7 +437,7 @@
           />
         </svg>
       </div>
-      <span class="flex-1 text-sm text-[#333333] !font-family-poppins">Transactions</span>
+      <span class="flex-1 text-sm text-[#333333] !font-family-poppins">{{ t('business_dashboard.transactions') }}</span>
       <svg
         class="w-5 h-5 opacity-0 transform -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
         fill="none"
@@ -484,7 +484,7 @@
     </svg>
   </div>
   <span class="flex-1 text-sm text-[#333333] !font-family-poppins">
-    Community
+    {{ t('business_dashboard.community') }}
   </span>
   <svg
     class="w-5 h-5 opacity-0 transform -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
@@ -530,7 +530,7 @@
     </svg>
   </div>
   <span class="flex-1 text-sm text-[#333333] !font-family-poppins">
-    Pricing
+    {{ t('business_dashboard.pricing') }}
   </span>
   <svg
     class="w-5 h-5 opacity-0 transform -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
@@ -571,7 +571,7 @@
     </svg>
   </div>
   <span class="flex-1 text-sm text-[#333333] !font-family-poppins">
-    Contact Us
+    {{ t('business_dashboard.contactUs') }}
   </span>
   <svg
     class="w-5 h-5 opacity-0 transform -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
@@ -606,7 +606,7 @@
           />
         </svg>
       </div>
-      <span class="flex-1 text-sm text-[#333333] !font-family-poppins">Logout</span>
+      <span class="flex-1 text-sm text-[#333333] !font-family-poppins">{{ t('business_dashboard.logout') }}</span>
       <svg
         class="w-5 h-5 opacity-0 transform -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
         fill="none"
@@ -626,9 +626,14 @@
 <script>
 import { notification } from 'ant-design-vue';
 import PlanUpgradeModal from '@/views/catalogue/PlanUpgradeModal.vue';
+import { useI18n } from "vue-i18n"; 
 
 export default {
   name: "business_user_nav_drawar_menu",
+  setup() {
+    const { t, locale } = useI18n();
+    return { t, locale };
+  },
   
   // ✅ ADD COMPONENTS
   components: {
