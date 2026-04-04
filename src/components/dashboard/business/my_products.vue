@@ -787,14 +787,14 @@
         <!--for desktop-->
         <div class="hidden md:flex justify-between items-center mb-5">
           <!-- Title -->
-          <h2
-            class="m-0 text-lg whitespace-nowrap px-2 lg:text-2xl font-semibold" style="
+          <h2 style="
             font-family: Poppins, sans-serif;
             font-weight: 500;
             font-size: 16px;
             line-height: 24px;
             letter-spacing: 0;
           "
+            class="m-0 text-lg whitespace-nowrap px-2 lg:text-2xl font-semibold"
           >
             My Products
             <span class="text-gray-500 text-base">
@@ -808,7 +808,7 @@
           <div
             class="flex justify-between items-end sm:flex-col sm:w-full xl:flex-row"
           >
-            <div className="flex flex-row gap-6">
+            <div className="flex flex-row gap-6 !justify-center !align-center w-full  ">
               <!-- View Toggle Buttons -->
               <!-- <div
                 style="
@@ -875,7 +875,7 @@
               </div> -->
 
               <!-- Search -->
-              <div class="relative">
+              <!-- <div class="relative">
                 <input
                   type="text"
                   placeholder="Search Product"
@@ -894,15 +894,20 @@
                   <circle cx="11" cy="11" r="8"></circle>
                   <path d="m21 21-4.35-4.35"></path>
                 </svg>
-              </div>
+              </div> -->
+              <ProductSearchPopup
+                
+                :rootMediaApi="$store.state.root_media_api"
+                @select="handleSearchSelect"
+              />
             </div>
 
             <div className="flex flex-row gap-2 ">
               <!-- Wall Button -->
-              <button
+              <a-button
                 type="primary"
                 @click="show_add_new_wall_texture = true"
-                class="flex items-center gap-2 px-3 py-2 !text-white rounded-md bg-[#3B63FB]"
+                class="!flex items-center gap-2 px-3 py-2 !text-white rounded-md bg-[#3B63FB]"
                 style="font-family: var(--font-family-main)"
               >
                 <!-- Paste any SVG here -->
@@ -920,13 +925,13 @@
                   <rect x="13" y="13" width="8" height="8" rx="1" />
                 </svg>
                 Wall
-              </button>
+              </a-button>
 
               <!-- Floor Button -->
-              <button
+              <a-button
                 type="primary"
                 @click="show_add_new_floor_texture = true"
-                class="flex items-center gap-2 px-3 py-2 !text-white rounded-md bg-[#3B63FB]"
+                class="!flex items-center gap-2 px-3 py-2 !text-white rounded-md bg-[#3B63FB]"
                 style="font-family: var(--font-family-main)"
               >
                 <svg
@@ -948,13 +953,13 @@
                   <line x1="15" y1="3" x2="15" y2="21"></line>
                 </svg>
                 Floor
-              </button>
+              </a-button>
 
               <!-- Light Button -->
-              <button
+              <a-button
                 type="primary"
                 @click="show_add_new_light = true"
-                class="flex items-center gap-2 px-3 py-2 !text-white rounded-md bg-[#3B63FB]"
+                class="!flex items-center gap-2 px-3 py-2 !text-white rounded-md bg-[#3B63FB]"
                 style="font-family: var(--font-family-main)"
               >
                 <svg
@@ -977,13 +982,13 @@
                   <path d="M9 19h6v2H9z" />
                 </svg>
                 Light
-              </button>
+              </a-button>
 
               <!-- Add Product Button -->
-              <button
+              <a-button
                 @click="addProduct()"
                 type="primary"
-                class="flex items-center gap-2 px-3 py-2 !text-white whitespace-nowrap rounded-md bg-[#3B63FB]"
+                class="!flex items-center gap-2 px-3 py-2 !text-white whitespace-nowrap rounded-md bg-[#3B63FB]"
                 style="font-family: var(--font-family-main)"
               >
                 <svg
@@ -1007,7 +1012,7 @@
                   <path d="M9 15h6" />
                 </svg>
                 Add Product
-              </button>
+              </a-button>
             </div>
           </div>
         </div>
@@ -1024,7 +1029,7 @@
     </h2>
 
     <!-- Grid / List Toggle -->
-    <!-- <div class="flex border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+    <div class="flex border border-gray-200 rounded-lg overflow-hidden shadow-sm">
       <button
         @click="viewMode = 'grid'"
         :class="[
@@ -1059,12 +1064,16 @@
         </svg>
         <span class="ml-1">List</span>
       </button>
-    </div> -->
+    </div>
   </div>
 
   <!-- Row 2: Search Bar Full Width -->
   <div class="relative w-full">
-    <svg
+    <ProductSearchPopup
+      :rootMediaApi="$store.state.root_media_api"
+      @select="handleSearchSelect"
+    />
+    <!-- <svg
       class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
       width="15" height="15" viewBox="0 0 24 24"
       fill="none" stroke="currentColor" stroke-width="2"
@@ -1077,8 +1086,9 @@
       placeholder="Search products..."
       v-model="searchQuery"
       class="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-xl bg-gray-50 text-sm outline-none focus:border-blue-400 focus:bg-white transition-all duration-200 text-gray-700 placeholder-gray-400"
-    />
+    /> -->
   </div>
+  
 
   <!-- Row 3: 4 Action Buttons in Grid -->
   <div class="grid grid-cols-4 gap-2">
@@ -2685,6 +2695,7 @@ import {
 } from "@ant-design/icons-vue";
 import product_details from "@/components/store/product_details.vue";
 import errorModal from "@/components/Includes/modal/errorModal.vue";
+import ProductSearchPopup from '@/components/dashboard/Productsearchpopup.vue'
 // import edit_product from '@/components/store/edit_product.vue'
 // import add_new_product from '@/components/store/add_new_product.vue'
 
@@ -2727,6 +2738,7 @@ export default {
     HeartOutlined,
     HeartFilled,
     ExclamationCircleOutlined,
+    ProductSearchPopup,
     product_details,
     // edit_product,
     // add_new_product,
@@ -2902,6 +2914,15 @@ export default {
     this.fetchMyFloorTextureProducts();
   },
   methods: {
+   handleSearchSelect(product, tabType) {
+  console.log(tabType)
+  
+  // Transform tabType to capitalized format
+  const formattedTabType = tabType.charAt(0).toUpperCase() + tabType.slice(1)
+  
+  this.active_tab = formattedTabType   
+  this.viewProduct(product) 
+},
     handleApiError(message) {
     this.errorModal.message = message;
     this.errorModal.visible = true;
@@ -3394,7 +3415,6 @@ export default {
     async fetchProductDetails(product_id) {
       try {
         let url_product_details = `${this.$store.state.root_api}product/api-product-owner/products/${product_id}`;
-
         if (this.active_tab === "Wall") {
           url_product_details = `${this.$store.state.root_api}room/api-owner/walls/${product_id}`;
         }

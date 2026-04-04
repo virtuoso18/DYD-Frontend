@@ -865,7 +865,7 @@ import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import DesignCard from "@/components/Includes/DesignCard.vue";
 import CommentsModal from "./CommentsModal.vue";
-import SearchModal from "./CommunitySearchModal.vue";
+import SearchModal from "./SearchModal.vue";
 import router from "@/router";
 
 export default {

@@ -26,51 +26,62 @@
 
       <!-- Subscription Card -->
       <div class="mb-6">
+
         <!-- Mobile Card -->
-        <div class="md:hidden w-full h-full text-white">
-          <div class="bg-[#3B63FB] rounded-t-3xl">
-            <div class="bg-white border border-[#3B63FB] border-4 rounded-[20px] px-6 py-4 flex justify-between items-start">
-              <div class="text-left">
-                <h3 class="m-0 mb-1 font-[Poppins] font-medium text-[24px] leading-[32px] tracking-[-0.02em] text-center text-[#1a1a1a]">
-                  Basic
-                </h3>
-                <p class="!font-[Poppins] !font-normal !text-[10px] !leading-[20px] !tracking-[0] !text-right !text-[#8c8c8c] uppercase m-0">
-                  BILLED YEARLY
-                </p>
-              </div>
-              <a-button type="link" class="!p-0 !text-[#3B63FB] !font-[Poppins] !font-medium !text-[14px] !leading-[20px] !tracking-[0] !no-underline flex items-center gap-[6px] align-middle">
-                <span class="flex items-center">View all plans</span>
-                <span class="px-2 translate-y-1">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M5 12h14M12 5l7 7-7 7" />
-                  </svg>
-                </span>
-              </a-button>
-            </div>
-          </div>
-          <div class="bg-[#3B63FB] rounded-b-[20px] px-6 py-1 flex justify-between items-center">
+      <div v-if="currentPlan !== null" class="md:hidden w-full h-full text-white">
+        <div class="bg-[#3B63FB] rounded-t-3xl">
+          <div class="bg-white border border-[#3B63FB] border-4 rounded-[20px] px-6 py-4 flex justify-between items-start">
             <div class="text-left">
-              <h1 class="text-[clamp(36px,9vw,48px)] text-white m-0 font-bold leading-none">
-                ${{ currentSubscription?.yearly_charges }}
-              </h1>
-              <p class="text-white/90 m-0 text-sm mt-1">{{ currentSubscription?.plan_credits / 12 }} credits / month</p>
+              <h3 class="m-0 mb-1 font-[Poppins] font-medium text-[24px] leading-[32px] tracking-[-0.02em] text-center text-[#1a1a1a] uppercase">
+                {{ currentSubscription?.plan_name }}
+              </h3>
+              <p class="!font-[Poppins] !font-normal !text-[10px] !leading-[20px] !tracking-[0] !text-right !text-[#8c8c8c] uppercase m-0">
+                BILLED MONTHLY
+              </p>
             </div>
-            <div class="flex items-center">
-              <a-button size="large" class="!bg-white !text-black !font-[500] !border-none rounded-lg font-semibold px-6 h-10">
-                Upgrade to Pro
-              </a-button>
-            </div>
+            <a-button type="link" @click="$router.push('/pricing')" class="!p-0 !text-[#3B63FB] !font-[Poppins] !font-medium !text-[14px] !leading-[20px] !tracking-[0] !no-underline flex items-center gap-[6px] align-middle">
+              <span class="flex items-center">View all plans</span>
+              <span class="px-2 translate-y-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </span>
+            </a-button>
           </div>
         </div>
+        <div class="bg-[#3B63FB] rounded-b-[20px] px-6 py-1 flex justify-between items-center">
+          <div class="text-left">
+            <h1 class="text-[clamp(36px,9vw,48px)] text-white m-0 font-bold leading-none">
+              ${{ currentSubscription?.monthly_charges }}
+            </h1>
+            <p class="text-white/90 m-0 text-sm mt-1">{{ currentSubscription?.plan_credits }} credits / month</p>
+          </div>
+          <div class="flex items-center">
+            <template v-if="currentPlan === 'basic'">
+              <a-button size="large" @click="handleUpgrade('standard')" class="!bg-white !text-black !font-[500] !border-none rounded-lg font-semibold px-4 h-10 text-xs">
+                Upgrade to Standard
+              </a-button>
+            </template>
+            <template v-else-if="currentPlan === 'standard'">
+              <a-button size="large" @click="handleUpgrade('premium')" class="!bg-white !text-black !font-[500] !border-none rounded-lg font-semibold px-4 h-10 text-xs">
+                Upgrade to Premium
+              </a-button>
+            </template>
+            <template v-else-if="currentPlan === 'premium'">
+              <span class="bg-white/20 text-white text-xs font-medium px-3 py-1 rounded-full">✓ Top Plan</span>
+            </template>
+          </div>
+        </div>
+      </div>
 
         <!-- Cancel Subscription (Mobile Only) -->
-        <div class="md:hidden text-center py-2 mt-4">
+        <!-- <div class="md:hidden text-center py-2 mt-4">
           <a-button type="link" @click="handleCancelSubscription"
             class="!p-0 !text-[#E33827] !font-[Poppins] !font-medium !text-[12px] !leading-[20px] !tracking-[0] !no-underline flex items-center justify-center gap-[6px] mx-auto">
             <span class="text-[12px] pr-2 leading-none">✕</span>
             <span>Cancel Subscription</span>
           </a-button>
-        </div>
+        </div> -->
 
         <!-- Desktop Subscription Card -->
         <div v-if="currentPlan !== null" class="bg-[#3B63FB] hidden md:flex rounded-[20px] w-full min-h-[160px] p-2 items-center shadow-[0_4px_16px_rgba(79,124,255,0.3)]">
@@ -211,7 +222,7 @@
         />
 
         <!-- Free Credits Section -->
-        <!-- <div class="bg-white !my-2 rounded-xl p-4 border-2 border-[rgba(79,124,255,0.1)]">
+        <div class="bg-white !my-2 rounded-xl p-4 border-2 border-[rgba(79,124,255,0.1)]">
           <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
             <div class="flex items-start gap-3 flex-row">
               <div class="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0">
@@ -240,7 +251,7 @@
               </button>
             </div>
           </div>
-        </div> -->
+        </div>
       </div>
       
      
