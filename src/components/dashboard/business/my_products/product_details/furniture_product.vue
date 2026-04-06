@@ -41,7 +41,7 @@
 <!-- Texture Preview Card -->
 <a-card 
   v-if="activeTextureView !== null && selectedProduct.textures[activeTextureView]" 
-  title="Texture Preview" 
+  :title="t('productDetails.texturePreview')" 
   style="margin-bottom: 24px;"
 >
   <div style="width: 100%; max-height: 300px; display: flex; align-items: center; justify-content: center; background: #f5f5f5; border-radius: 8px;">
@@ -60,7 +60,7 @@
   />
 </div>
         <!-- Images Section -->
-        <a-card title="Product Images" style="margin-top: 16px;">
+        <a-card :title="t('productDetails.productImages')" style="margin-top: 16px;">
           <div style="display: flex; gap: 8px; flex-wrap: wrap;">
 
                    <div 
@@ -190,7 +190,7 @@
       <a-col :xs="24" :md="12">
         <a-card>
           <!-- Product Title and Description -->
-          <a-tag color="blue" style="margin-bottom: 16px;">Product Details</a-tag>
+          <a-tag color="blue" style="margin-bottom: 16px;">{{ t('productDetails.productDetails') }}</a-tag>
           <h1 style="font-size: 28px; margin-bottom: 16px;">{{ selectedProduct.name }}</h1>
           <p style="color: #666; line-height: 1.6; margin-bottom: 24px;">
             {{ selectedProduct.description }}
@@ -200,14 +200,14 @@
           <a-row :gutter="16" style="margin-bottom: 24px;">
             <a-col :span="12">
               <a-statistic 
-                title="Category" 
+                :title="t('productDetails.category')" 
                 :value="selectedProduct.category.name" 
                 :value-style="{ fontSize: '16px', fontWeight: '600' }"
               />
             </a-col>
             <a-col :span="12">
               <a-statistic 
-                title="Type" 
+                :title="t('productDetails.type')" 
                 :value="selectedProduct.furniture_type" 
                 :value-style="{ fontSize: '16px', fontWeight: '600' }"
               />
@@ -216,28 +216,28 @@
 <a-row>
   <a-col :span="12">
           <!-- Dimensions -->
-          <a-descriptions title="Dimensions" :column="1" size="small" style="margin-bottom: 24px;">
+          <a-descriptions :title="t('productDetails.dimensions')" :column="1" size="small" style="margin-bottom: 24px;">
             <a-descriptions-item 
               v-if="selectedProduct.dimensions.width" 
-              label="Width"
+              :label="t('productDetails.width')"
             >
               {{ selectedProduct.dimensions.width }} meter
             </a-descriptions-item>
             <a-descriptions-item 
               v-if="selectedProduct.dimensions.height" 
-              label="Height"
+              :label="t('productDetails.height')"
             >
               {{ selectedProduct.dimensions.height }} meter
             </a-descriptions-item>
             <a-descriptions-item 
               v-if="selectedProduct.dimensions.length" 
-              label="Length"
+              :label="t('productDetails.length')"
             >
               {{ selectedProduct.dimensions.length }} meter
             </a-descriptions-item>
             <a-descriptions-item 
               v-if="selectedProduct.dimensions.depth" 
-              label="Depth"
+              :label="t('productDetails.depth')"
             >
               {{ selectedProduct.dimensions.depth }} meter
             </a-descriptions-item>
@@ -265,11 +265,11 @@
           <!-- Colors and Textures -->
         <a-row :gutter="16" style="margin-bottom: 24px;">
           <a-col :span="12">
-            <div style="margin-bottom: 8px; font-weight: 500;">Colors:</div>
+            <div style="margin-bottom: 8px; font-weight: 500;">{{ t('productDetails.colors') }}:</div>
             <a-alert 
               v-if="showColorAlert"
               type="warning"
-              :message="`No model associated with ${selectedColorHex} color. Hence showing model for primary color.`"
+              :message="`${t('productDetails.colorAlertMsg')} ${selectedColorHex}`"
               closable
               @close="showColorAlert = false"
               style="margin-bottom: 12px;"
@@ -290,7 +290,7 @@
             </div>
           </a-col>
           <a-col :span="12">
-            <div style="margin-bottom: 8px; font-weight: 500;" v-if="selectedProduct.textures.length">Textures:</div>
+            <div style="margin-bottom: 8px; font-weight: 500;" v-if="selectedProduct.textures.length">{{ t('productDetails.textures') }}:</div>
             <div style="display: flex; gap: 6px;flex-wrap: wrap;">
               <img 
                 v-for="(texture, index) in selectedProduct.textures" 
@@ -318,7 +318,7 @@
           <a-card size="small" style="margin-bottom: 24px; background: #fafafa;">
             <div style="display: flex; align-items: center; gap: 12px;">
               <div>
-                <div style="color: #666; font-size: 14px;">Price</div>
+                <div style="color: #666; font-size: 14px;">{{ t('productDetails.price') }}</div>
                 <div style="display: flex; align-items: center; gap: 8px;">
                   <span 
                     v-if="selectedProduct.pricing.price"
@@ -397,8 +397,13 @@ import {DeleteOutlined ,EditOutlined ,ClockCircleOutlined,
   FileSyncOutlined
  } from '@ant-design/icons-vue';
 import TextureModal from "./TextureModal.vue";
+import { useI18n } from "vue-i18n";
 export default {
   name: "product_details_store_page_buisness_user",
+   setup() {
+    const { t, locale } = useI18n();
+    return { t, locale };
+  },
   components: {
     canvas_3d_model_renderer,TextureModal,
     DeleteOutlined ,EditOutlined ,ClockCircleOutlined,

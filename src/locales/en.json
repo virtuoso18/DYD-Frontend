@@ -209,6 +209,7 @@
     "accessBusiness": "Access Business",
     "settings": "Settings",
     "logout": "Logout",
+     "contactUs": "Contact Us",
     "freeUser": "Free User",
     "yourPackage": "Your package",
     "upgrade": "Upgrade",
@@ -589,6 +590,37 @@
   "notSaved": "Not Saved",
   "before": "Before",
   "regenerate": "Regenerate"
+},
+"myProducts":{
+    "titleMyProducts":"My Products",
+    "productDetails": "Product Details",
+    "color": "Color",
+    "price": "Price"
+},
+"productDetails": {
+  "createVariation": "Create Variation",
+  "3dView": "3D View",
+  "texturePreview": "Texture Preview",
+  "productImages": "Product Images",
+  "availableVariants": "Available Variants",
+  "productDetails": "Product Details",
+  "category": "Category",
+  "type": "Type",
+  "dimensions": "Dimensions",
+  "width": "Width",
+  "height": "Height",
+  "length": "Length",
+  "depth": "Depth",
+  "weight": "Weight",
+  "meter": "meter",
+  "arProduct": "AR Product",
+  "colors": "Colors",
+  "colorAlertMsg": "No model associated with color. Showing model for primary color.",
+  "textures": "Textures",
+  "price": "Price",
+  "onSale": "On Sale",
+  "editProduct": "Edit Product",
+  "deleteProduct": "Delete Product"
 }
 
 }

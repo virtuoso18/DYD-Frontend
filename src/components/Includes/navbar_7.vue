@@ -292,6 +292,7 @@
         </div>
 
         <div v-if="user.user_type === 'User'">
+         
           <nav_mob_user @close="closeMobileDrawer" />
         </div>
       </a-drawer>

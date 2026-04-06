@@ -1224,7 +1224,7 @@
                   {{ product.name || "No name available" }}
                 </b>
               </a-col>
-              <a-col span="16" style="font-family:Poppins,sans-serif;font-size:13px;font-weight:400;">Color</a-col>
+              <a-col span="16" style="font-family:Poppins,sans-serif;font-size:13px;font-weight:400;"> {{ t('myProducts.color') }}</a-col>
               <a-col span="8" style="display:flex;justify-content:end;">
                 <div
                   v-for="(color, index) in product.colors.slice(0, 2)"
@@ -1233,13 +1233,13 @@
                   :style="'background:' + color"
                 ></div>
               </a-col>
-              <a-col span="12" style="font-family:Poppins,sans-serif;font-size:13px;font-weight:400;">Price</a-col>
+              <a-col span="12" style="font-family:Poppins,sans-serif;font-size:13px;font-weight:400;">{{ t('myProducts.price') }}</a-col>
               <a-col span="12" style="display:flex;justify-content:end;font-weight:700;">
                 ${{ product.pricing.price }}
               </a-col>
               <a-col span="18">
                 <a-button block @click="viewProduct(product)" style="display:flex;justify-content:center;">
-                  Product Details
+                 {{ t('myProducts.productDetails') }}
                 </a-button>
               </a-col>
               <a-col :span="1"></a-col>
@@ -1310,7 +1310,7 @@
 
             <a-row style="margin-top:10px;">
               <a-col span="24"><b>{{ truncateText(product.title || "No title available", 19) }}</b></a-col>
-              <a-col span="18">Colors</a-col>
+              <a-col span="18">{{ t('myProducts.color') }}</a-col>
               <a-col span="6" style="display:flex;justify-content:end;">
                 <div
                   v-for="(color, index) in product.associated_colors.slice(0, 2)"
@@ -1318,12 +1318,12 @@
                   :style="{ background: color.color_hex, width:'20px', height:'20px', borderRadius:'20px', marginLeft:'2px' }"
                 ></div>
               </a-col>
-              <a-col span="12" style="margin-top:4px;">Price</a-col>
+              <a-col span="12" style="margin-top:4px;">{{ t('myProducts.price') }}</a-col>
               <a-col span="12" style="margin-top:4px;width:100%;display:flex;justify-content:end;">
                 <span style="font-size:14px;font-weight:600;margin-left:4px;">${{ product.sale_price_per_sqm || 0 }}</span>
               </a-col>
               <a-col span="17">
-                <a-button block @click="viewProduct(product)" style="display:flex;justify-content:center;">Product Details</a-button>
+                <a-button block @click="viewProduct(product)" style="display:flex;justify-content:center;">{{ t('myProducts.productDetails') }}</a-button>
               </a-col>
               <a-col :span="1"></a-col>
               <a-col span="6" style="display:flex;align-items:end;justify-content:end;">
@@ -1392,7 +1392,7 @@
 
           <a-row style="margin-top:10px;">
             <a-col span="24"><b>{{ product.title }}</b></a-col>
-            <a-col span="18">Colors</a-col>
+            <a-col span="18">{{ t('myProducts.color') }}</a-col>
             <a-col span="6" style="display:flex;justify-content:end;">
               <div
                 v-for="(color, index) in product.associated_colors.slice(0, 2)"
@@ -1400,7 +1400,7 @@
                 :style="{ background: color.color_hex, width:'20px', height:'20px', borderRadius:'20px', marginLeft:'2px' }"
               ></div>
             </a-col>
-            <a-col span="12" style="margin-top:4px;">Price</a-col>
+            <a-col span="12" style="margin-top:4px;">{{ t('myProducts.price') }}</a-col>
             <a-col span="12" style="margin-top:4px;">
               <span style="font-size:14px;font-weight:600;margin-left:4px;display:flex;justify-content:end;">
                 ${{ product.sale_price_per_sqm || 0 }}
@@ -1408,7 +1408,7 @@
             </a-col>
             <a-col span="17">
               <a-button block @click="viewProduct(product)" style="font-family:Poppins,sans-serif;font-size:12px;display:flex;justify-content:center;align-items:center;">
-                Product Details
+               {{ t('myProducts.productDetails') }}
               </a-button>
             </a-col>
             <a-col :span="1"></a-col>
@@ -1478,7 +1478,7 @@
 
             <a-row>
               <a-col span="24"><b>{{ truncateText(product.name || "No Name available", 19) }}</b></a-col>
-              <a-col span="18">Color</a-col>
+              <a-col span="18">{{ t('myProducts.color') }}</a-col>
               <a-col span="6" style="display:flex;justify-content:end;">
                 <div
                   v-for="(color, index) in product.colors.slice(0, 2)"
@@ -1487,13 +1487,13 @@
                   :style="'background:' + color"
                 ></div>
               </a-col>
-              <a-col span="12">Price</a-col>
+              <a-col span="12">{{ t('myProducts.price') }}</a-col>
               <a-col span="12" style="display:flex;justify-content:end;">
                 <b>${{ product.pricing.price }}</b>
               </a-col>
               <a-col span="18" style="font-family:Poppins,sans-serif;font-size:13px;padding-right:5px;">
                 <a-button block @click="viewProduct(product)" style="display:flex;width:100%;align-items:center;justify-content:center;">
-                  Product Details
+                  {{ t('myProducts.productDetails') }}
                 </a-button>
               </a-col>
               <a-col span="6" style="display:flex;align-items:end;justify-content:end;">
@@ -2702,6 +2702,8 @@ import ProductSearchPopup from '@/components/dashboard/Productsearchpopup.vue'
 import { Modal } from "ant-design-vue";
 
 import { createVNode } from "vue";
+import { useI18n } from "vue-i18n";
+
 
 // add new
 import add_new_floorTexture from "@/components/dashboard/business/my_products/add_new_product/add_floor_texture.vue";
@@ -2734,6 +2736,10 @@ import add_light_modal_local_3d_model from "@/components/dashboard/business/my_p
 
 export default {
   name: "UnifiedProducts",
+   setup() {
+      const { t, locale } = useI18n();
+      return { t, locale };
+    },
   components: {
     HeartOutlined,
     HeartFilled,

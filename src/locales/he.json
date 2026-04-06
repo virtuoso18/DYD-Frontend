@@ -207,6 +207,7 @@
     "myLikes": "הלייקים שלי",
     "messages": "הודעות",
     "manageSubscription": "נהל מנוי",
+    "contactUs": "צור קשר",
     "transactions": "עסקאות",
     "accessBusiness": "גישה לעסק",
     "settings": "הגדרות",
@@ -555,7 +556,7 @@
   "price": "מחיר",
   "pinned": "נעוץ"
 },
- "myDesigns": {
+"myDesigns": {
   "title": "העיצובים שלי",
   "roomDesigns": "עיצובי חדר",
   "homeDesigns": "עיצובי בית",
@@ -591,5 +592,35 @@
   "notSaved": "לא נשמר",
   "before": "לפני",
   "regenerate": "יצירה מחדש"
+},
+"myProducts":{
+   "productDetails": "פרטי מוצר",
+   "color": "צבע",
+   "price": "מחיר"
+},
+"productDetails": {
+  "createVariation": "צור וריאציה",
+  "3dView": "תצוגה תלת-ממדית",
+  "texturePreview": "תצוגה מקדימה של מרקם",
+  "productImages": "תמונות מוצר",
+  "availableVariants": "וריאציות זמינות",
+  "productDetails": "פרטי מוצר",
+  "category": "קטגוריה",
+  "type": "סוג",
+  "dimensions": "מידות",
+  "width": "רוחב",
+  "height": "גובה",
+  "length": "אורך",
+  "depth": "עומק",
+  "weight": "משקל",
+  "meter": "מטר",
+  "arProduct": "מוצר AR",
+  "colors": "צבעים",
+  "colorAlertMsg": "אין מודל משויך לצבע. מציג מודל לצבע הראשי.",
+  "textures": "מרקמים",
+  "price": "מחיר",
+  "onSale": "במבצע",
+  "editProduct": "ערוך מוצר",
+  "deleteProduct": "מחק מוצר"
 }
 }
