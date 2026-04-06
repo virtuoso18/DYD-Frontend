@@ -194,10 +194,10 @@
 <SearchModal
   v-model:visible="showSearchModal"
   @select="(tagName) => $router.push(`/comunity-posts/${encodeURIComponent(tagName)}`)"
-"/>
+/>
 
-
-          <a-button type="primary" @click="showSearchModal = true" style="width:100%;max-width:100px;height:auto;border-radius:10px;" >Search</a-button>
+      
+          <!-- <a-button type="primary" @click="showSearchModal = true" style="width:100%;max-width:100px;height:auto;border-radius:10px;" >Search</a-button> -->
           <!-- <a-button type="primary" style="width:100%;max-width:100px" @click="onSearch">Search</a-button> -->
 
 

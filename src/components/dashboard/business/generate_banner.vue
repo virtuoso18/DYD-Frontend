@@ -1,5 +1,5 @@
 <template>
-<div class="bg-white sm:rounded-[15px]  min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh] sm:border border-black/10 !my-[10px] !mr-[10px] p-[20px]">
+  <div class="bg-white sm:rounded-[15px]  min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh] sm:border border-black/10 !my-[10px] !mr-[10px] p-[20px]">
     
     <!-- Header Section --> 
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
@@ -9,9 +9,9 @@
          color:var(--text-color)
         "
     >
-          My Banners
+          {{ t('banner.myBanners') }}
         </h3>
-        <p style="margin: 4px 0 0 0; color: #6b7280; font-size: 12px;">Create and manage your custom banners</p>
+        <p style="margin: 4px 0 0 0; color: #6b7280; font-size: 12px;">{{ t('banner.subtitle') }}</p>
       </div>
     
       <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
@@ -31,7 +31,7 @@
                 alignItems: 'center',
                 gap: '6px'
               }">
-            <span>All</span>
+            <span>{{ t('banner.all') }}</span>
             <span v-if="selectedAspectRatio === 'all'" style="background: rgba(255,255,255,0.3); padding: 2px 4px; border-radius: 4px; font-size: 11px;">
               {{ myBanners.length }}
             </span>
@@ -109,12 +109,6 @@
 
         <div style="width: 1px; height: 32px; background: #e5e7eb;"></div>
 
-        <!-- <a-button @click="this.$router.push('/admin-generate-banner')" size="medium" style="border: 2px solid #e5e7eb;">
-          <template #icon>
-            <SettingOutlined />
-          </template>
-          Admin Panel
-        </a-button> -->
 
         <a-button @click="showCreateModal = true" type="primary" size="medium" style="display: flex; gap: 8px; align-items: center; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);">
           <template #icon>
@@ -123,14 +117,11 @@
               <path d="M1.66406 8.5013C1.66406 5.51574 1.66406 4.02296 2.59156 3.09546C3.51906 2.16797 5.01184 2.16797 7.9974 2.16797C10.9829 2.16797 12.4757 2.16797 13.4033 3.09546C14.3307 4.02296 14.3307 5.51574 14.3307 8.5013C14.3307 11.4868 14.3307 12.9796 13.4033 13.9072C12.4757 14.8346 10.9829 14.8346 7.9974 14.8346C5.01184 14.8346 3.51906 14.8346 2.59156 13.9072C1.66406 12.9796 1.66406 11.4868 1.66406 8.5013Z" stroke="white" stroke-width="1.5"/>
             </svg>
           </template>
-          Create New Banner
+          {{ t('banner.createNewBanner') }}
         </a-button>
       </div>
     </div>
-     <!-- <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-          </div> -->
 
- 
 
     <!-- Banners Grid -->
     <a-spin :spinning="loadingBanners || loadingMyBanners">
@@ -144,14 +135,8 @@
                
                <img :src="this.$store.state.root_media_api+banner.final_banner" @click="openBannerModal(banner)"
                     style=" width: 100%; height: 200px; object-fit: contain; border-radius: 12px;border: 1px solid #e5e7eb;" 
-                    alt="Generated Banner">
-               
-            <!-- <div style="position: relative; width: 100%; padding-top: 75%; background: #f3f4f6; overflow: hidden;">
-              
-              <div style="position: absolute; top: 8px; right: 8px; background: #10b981; color: white; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);">
-                My Banner
-              </div>
-            </div> -->
+                    :alt="t('banner.generatedBanner')">
+
 
             <div style="padding: 12px;">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
@@ -167,7 +152,7 @@
               <div style="display: flex; gap: 6px; margin-top: 8px;">
                 <a-button type="primary" size="medium" block @click="downloadMyBanner(banner)" style="display: flex;justify-content: center;;" >
                   <template #icon><DownloadOutlined style="font-size:16px;padding-top:5px;"  /></template>
-                  Download
+                  {{ t('banner.download') }}
                 </a-button>
                 <a-button size="medium" @click="shareMyBanner(banner)" style="display: flex;justify-content: center;align-items: center;">
                   <template #icon><LinkOutlined /></template>
@@ -180,51 +165,34 @@
           </div>
         </a-col>
 
-        <!-- Create New Banner Card (+ Button) -->
-        <!-- <a-col :xs="24" :sm="12" :md="8" :lg="6">
-          <div @click="showCreateModal = true"
-               style="height: 100%; min-height: 300px; background: linear-gradient(135deg, #3B63FB22 0%, #764ba222 100%); border: 3px dashed #3B63FB; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s;"
-               @mouseenter="hoveredCreate = true"
-               @mouseleave="hoveredCreate = false">
-            <div :style="{
-              fontSize: '64px',
-              marginBottom: '12px',
-              transition: 'all 0.3s',
-              transform: hoveredCreate ? 'scale(1.2) rotate(90deg)' : 'scale(1)'
-            }">➕</div>
-            <h3 style="margin: 0; color: #3B63FB; font-size: 16px; font-weight: 700;">Create New Banner</h3>
-            <p style="margin: 4px 0 0 0; color: #9ca3af; font-size: 12px;">Click to start</p>
-          </div>
-        </a-col> -->
       </a-row>
 
       <!-- Empty State -->
       <div v-if="filteredMyBanners.length === 0 && !loadingMyBanners" 
            style="text-align: center; padding: 60px 20px; background: #f9fafb; border-radius: 12px; margin-top: 20px;">
         <div style="font-size: 64px; margin-bottom: 16px; opacity: 0.5;">🎨</div>
-        <h3 style="margin: 0 0 8px 0; color: #6b7280; font-size: 18px; font-weight: 600;">No Banners Yet</h3>
-        <p style="margin: 0; color: #9ca3af; font-size: 14px;">Create your first banner to get started!</p>
+        <h3 style="margin: 0 0 8px 0; color: #6b7280; font-size: 18px; font-weight: 600;">{{ t('banner.noBannersYet') }}</h3>
+        <p style="margin: 0; color: #9ca3af; font-size: 14px;">{{ t('banner.noBannersDesc') }}</p>
       </div>
     </a-spin>
 
     <a-modal
   v-model:open="showBannerModal"
   :centered="true"
-  title="Banner"
+  :title="t('banner.banner')"
   :footer="null"
   :destroyOnClose="true"
 >
-  <!-- Image preview -->
+
   <img
     :src="this.$store.state.root_media_api+selectedBanner.final_banner"
     style="width: 100%; height: auto; object-fit: contain; border-radius: 12px; border: 1px solid #e5e7eb;"
-    alt="Generated Banner"
+    :alt="t('banner.generatedBanner')"
   />
 
-  <!-- <hr style="margin: 20px 0; border-color: #f0f0f0;" /> -->
 <br/>
 <br/>
-  <h5>Embed Code:</h5>
+  <h5>{{ t('banner.embedCode') }}:</h5>
 
   <div
     style="display: flex; align-items: center; justify-content: space-between; background: #f9f9f9; border-radius: 8px; padding: 10px 14px; font-family: monospace; border: 1px solid #eee;"
@@ -242,7 +210,7 @@
     <button
       @click="copyEmbedCode"
       style="background: none; border: none; cursor: pointer;"
-      title="Copy code"
+      :title="t('banner.copyCode')"
     >
       <CopyOutlined />
     </button>
@@ -253,22 +221,22 @@
     <!-- Create Banner Modal -->
     <a-modal v-model:open="showCreateModal" 
     :centered="true"
-             title="Create New Banner" 
+             :title="t('banner.createNewBanner')" 
              :width="1200"
              :footer="null"
              :destroyOnClose="true">
       
       <a-steps :current="currentStep" style="margin-bottom: 24px;" size="small">
-        <a-step title="Select Template" />
-        <a-step title="Customize" />
-        <a-step title="Preview & Save" />
+        <a-step :title="t('banner.step.selectTemplate')" />
+        <a-step :title="t('banner.step.customize')" />
+        <a-step :title="t('banner.step.previewSave')" />
       </a-steps>
 
       <!-- Step 1: Select Aspect Ratio & Template -->
       <div v-if="currentStep === 0">
         <a-row>
           <a-col :span="5">
-            <h4 style="margin: 0 0 16px 0;">Choose Aspect Ratio</h4>
+            <h4 style="margin: 0 0 16px 0;">{{ t('banner.chooseAspectRatio') }}</h4>
         
         <div style="display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 24px;">
           
@@ -294,36 +262,20 @@
             </svg>&nbsp;
             &nbsp;2:3
           </a-button>
-          <!-- <div v-for="ratio in availableRatios" 
-               :key="ratio"
-               @click="selectRatioForCreation(ratio)"
-               :style="{
-                 padding: '16px 24px',
-                 background: creationAspectRatio === ratio ? '#3B63FB' : '#f3f4f6',
-                 color: creationAspectRatio === ratio ? 'white' : '#6b7280',
-                 border: creationAspectRatio === ratio ? 'none' : '2px solid #e5e7eb',
-                 borderRadius: '10px',
-                 cursor: 'pointer',
-                 fontSize: '16px',
-                 fontWeight: '600',
-                 transition: 'all 0.2s'
-               }">
-            {{ ratio }}
-          </div> -->
         </div>
           </a-col>
           <a-col :span="19">
 
         <div >
-          <h4 style="margin: 0 0 16px 0;">Select Template</h4>
+          <h4 style="margin: 0 0 16px 0;">{{ t('banner.selectTemplate') }}</h4>
           
           <div v-if="loadingTemplates" style="text-align: center; padding: 40px;">
-            <a-spin tip="Loading templates..." />
+            <a-spin :tip="t('banner.loadingTemplates')" />
           </div>
 
           <a-row :gutter="[16, 16]" v-else style="height:60vh;overflow-y: scroll;" >
             <div v-if="filteredTemplates.length === 0" style="display:flex;justify-content:center;align-items:center;width:100%">
-            <a-empty description="There is no banner available with this aspect ratio."></a-empty>
+            <a-empty :description="t('banner.noTemplatesForRatio')"></a-empty>
           </div>
             <a-col :xs="24" :sm="12" :md="8" :lg="8"   v-for="template in filteredTemplates" :key="template.id" >  
               <div @click="selectTemplate(template)"
@@ -338,7 +290,7 @@
                    
                 <img :src="template.banner_image" 
                      style="width: 100%; height: 150px; object-fit: cover;" 
-                     alt="Template">
+                     :alt="t('banner.template')">
                 <div style="padding: 10px; text-align: center;">
                   <span style="font-size: 12px; font-weight: 600; color: #3B63FB;">
                     {{ template.banner_id }}
@@ -354,7 +306,7 @@
                     @click="nextStep" 
                     :disabled="!selectedTemplate"
                     style="margin-top: 20px; width: 100%;">
-            Next: Customize Banner →
+            {{ t('banner.nextCustomize') }}
           </a-button>
         </div>
           </a-col>
@@ -367,7 +319,7 @@
      
      <!-- Step 2: Customize Banner -->
       <div v-if="currentStep === 1">
-        <a-spin :spinning="!workingBannerImg" tip="Loading banner...">
+        <a-spin :spinning="!workingBannerImg" :tip="t('banner.loadingBanner')">
           <a-row :gutter="16">
             <!-- Right Panel: Properties Editor (moved to right) -->
             <a-col :span="6" :push="18">
@@ -376,25 +328,25 @@
                 <!-- Text Element Properties -->
                 <div v-if="selectedElementType === 'text' && selectedTextIndex !== null" style="margin-bottom: 20px;">
                   <h4 style="margin: 0 0 16px 0; font-size: 14px; font-weight: 700; color: #3B63FB;">
-                    📝 Text Properties
+                    📝 {{ t('banner.textProperties') }}
                   </h4>
                   
                   <div style="padding: 16px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px;">
                     <div style="margin-bottom: 12px;">
                       <label style="display: block; font-size: 11px; font-weight: 600; color: #6b7280; margin-bottom: 6px;">
-                        Content
+                        {{ t('banner.content') }}
                       </label>
                       <a-textarea 
                         v-model:value="workingTextElements[selectedTextIndex].content"
                         @input="updateWorkingCanvas"
                         :auto-size="{ minRows: 2, maxRows: 4 }"
-                        placeholder="Enter text..."
+                        :placeholder="t('banner.enterText')"
                         style="font-size: 13px;" />
                     </div>
                     
                     <div style="margin-bottom: 12px;">
                       <label style="display: block; font-size: 11px; font-weight: 600; color: #6b7280; margin-bottom: 6px;">
-                        Font Size: {{ workingTextElements[selectedTextIndex].fontSize }}px
+                        {{ t('banner.fontSize') }}: {{ workingTextElements[selectedTextIndex].fontSize }}px
                       </label>
                       <a-slider 
                         v-model:value="workingTextElements[selectedTextIndex].fontSize"
@@ -406,7 +358,7 @@
                     
                     <div style="margin-bottom: 12px;">
                       <label style="display: block; font-size: 11px; font-weight: 600; color: #6b7280; margin-bottom: 6px;">
-                        Color
+                        {{ t('banner.color') }}
                       </label>
                       <input 
                         type="color" 
@@ -420,7 +372,7 @@
                       block 
                       size="small"
                       @click="deselectElement">
-                      Close Editor
+                      {{ t('banner.closeEditor') }}
                     </a-button>
                   </div>
                 </div>
@@ -428,7 +380,7 @@
                 <!-- Product Element Properties -->
                 <div v-if="selectedElementType === 'product' && selectedWorkingMaskIndex !== null" style="margin-bottom: 20px;">
                   <h4 style="margin: 0 0 16px 0; font-size: 14px; font-weight: 700; color: #3B63FB;">
-                    🎭 Product Properties
+                    🎭 {{ t('banner.productProperties') }}
                   </h4>
                   
                   <div style="padding: 16px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px;">
@@ -446,7 +398,7 @@
                     
                     <div v-if="workingMaskAreas[selectedWorkingMaskIndex].productImg" style="margin-bottom: 12px;">
                       <label style="display: block; font-size: 11px; font-weight: 600; color: #6b7280; margin-bottom: 6px;">
-                        Zoom: {{ Math.round(workingMaskAreas[selectedWorkingMaskIndex].transform.scale * 100) }}%
+                        {{ t('banner.zoom') }}: {{ Math.round(workingMaskAreas[selectedWorkingMaskIndex].transform.scale * 100) }}%
                       </label>
                       <a-slider 
                         v-model:value="workingMaskAreas[selectedWorkingMaskIndex].transform.scale"
@@ -464,7 +416,7 @@
                       @click="triggerProductUpload(selectedWorkingMaskIndex)"
                       style="margin-bottom: 8px;">
                       <template #icon><UploadOutlined /></template>
-                      {{ workingMaskAreas[selectedWorkingMaskIndex].productImg ? 'Change' : 'Upload' }} Product
+                      {{ workingMaskAreas[selectedWorkingMaskIndex].productImg ? t('banner.changeProduct') : t('banner.uploadProduct') }}
                     </a-button>
                     
                     <a-button 
@@ -474,7 +426,7 @@
                       @click="resetProductPosition"
                       style="margin-bottom: 8px;">
                       <template #icon><ReloadOutlined /></template>
-                      Reset Position
+                      {{ t('banner.resetPosition') }}
                     </a-button>
                     
                     <a-button 
@@ -482,7 +434,7 @@
                       block 
                       size="small"
                       @click="deselectElement">
-                      Close Editor
+                      {{ t('banner.closeEditor') }}
                     </a-button>
                   </div>
                 </div>
@@ -491,14 +443,14 @@
                 <div v-if="!selectedElementType" style="text-align: center; padding: 40px 20px; background: #f9fafb; border-radius: 8px;">
                   <div style="font-size: 48px; margin-bottom: 12px; opacity: 0.5;">👆</div>
                   <p style="margin: 0; color: #9ca3af; font-size: 13px;">
-                    Click on text or product area<br>to edit properties
+                    {{ t('banner.clickToEdit') }}
                   </p>
                 </div>
               </div>
 
               <div style="display: flex; gap: 8px; margin-top: 16px;">
-                <a-button @click="currentStep = 0" style="flex: 1;">← Back</a-button>
-                <a-button type="primary" @click="nextStep" style="flex: 2;">Preview →</a-button>
+                <a-button @click="currentStep = 0" style="flex: 1;">← {{ t('banner.back') }}</a-button>
+                <a-button type="primary" @click="nextStep" style="flex: 2;">{{ t('banner.preview') }} →</a-button>
               </div>
             </a-col>
 
@@ -529,7 +481,7 @@
                     <div v-if="!mask.productImg" 
                         style="display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 14px; background: white; border: 2px solid #3B63FB; border-radius: 8px; cursor: pointer; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); transition: all 0.2s; pointer-events: auto;">
                       <span style="font-size: 24px;">🛍️</span>
-                      <span style="font-size: 11px; font-weight: 600; color: #3B63FB;">Add Product</span>
+                      <span style="font-size: 11px; font-weight: 600; color: #3B63FB;">{{ t('banner.addProduct') }}</span>
                     </div>
                     <div v-else 
                         style="display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: #10b981; color: white; border-radius: 50%; font-size: 14px; font-weight: 700; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3); pointer-events: auto;">
@@ -540,15 +492,15 @@
                 
                 <div v-else style="text-align: center; color: #9ca3af;">
                   <div style="font-size: 48px; margin-bottom: 12px;">⏳</div>
-                  <p style="margin: 0;">Loading banner template...</p>
+                  <p style="margin: 0;">{{ t('banner.loadingBannerTemplate') }}</p>
                 </div>
               </div>
 
               <div v-if="workingBannerImg" style="text-align: center; font-size: 11px; color: #6b7280; margin-top: 12px;">
-                💡 Click text to edit • Click product area to upload/adjust • Drag products to move
+                💡 {{ t('banner.canvasHint') }}
                 <br>
                 <span style="font-weight: 600; color: #3B63FB;">
-                  Canvas: {{ workingCanvasWidth }}×{{ workingCanvasHeight }}px
+                  {{ t('banner.canvas') }}: {{ workingCanvasWidth }}×{{ workingCanvasHeight }}px
                 </span>
               </div>
             </a-col>
@@ -560,22 +512,22 @@
       <!-- Step 3: Preview & Save -->
       <div v-if="currentStep === 2">
         <div style="text-align: center;">
-          <h3 style="margin: 0 0 20px 0;">Preview Your Banner</h3>
+          <h3 style="margin: 0 0 20px 0;">{{ t('banner.previewYourBanner') }}</h3>
           
           <div style="background: #f3f4f6; padding: 20px; border-radius: 8px; margin-bottom: 20px; display: inline-block;">
             <img v-if="previewBanner" 
                  :src="previewBanner" 
-                 alt="Preview" 
+                 :alt="t('banner.preview')" 
                  style="max-width: 100%; height: auto; border-radius: 6px; border: 2px solid #e5e7eb;" />
           </div>
 
           <div style="display: flex; gap: 12px; justify-content: center;">
-            <a-button @click="handlePreviewBack" size="large">← Back to Edit</a-button>
+            <a-button @click="handlePreviewBack" size="large">← {{ t('banner.backToEdit') }}</a-button>
             <a-button type="primary" 
                       size="large"
                       :loading="isSaving"
                       @click="saveGeneratedBanner">
-              {{ isSaving ? 'Saving...' : '💾 Save Banner' }}
+              {{ isSaving ? t('banner.saving') : t('banner.saveBanner') }}
             </a-button>
           </div>
         </div>
@@ -592,10 +544,11 @@
 </template>
 
 <script>
+import { useI18n } from 'vue-i18n';
 import { 
   CopyOutlined, PicRightOutlined, FileDoneOutlined,
   DownloadOutlined, DownOutlined, LinkOutlined, DeleteOutlined,
-  UploadOutlined, ReloadOutlined  // Add these two
+  UploadOutlined, ReloadOutlined
 } from '@ant-design/icons-vue';
 
 export default {
@@ -604,7 +557,12 @@ export default {
   
   components: { 
     CopyOutlined, PicRightOutlined, FileDoneOutlined, DownloadOutlined,
-    LinkOutlined, DownOutlined, DeleteOutlined, UploadOutlined, ReloadOutlined  // Add these two
+    LinkOutlined, DownOutlined, DeleteOutlined, UploadOutlined, ReloadOutlined
+  },
+
+  setup() {
+    const { t, locale } = useI18n();
+    return { t, locale };
   },
   
   data() {
@@ -696,7 +654,7 @@ export default {
     copyEmbedCode() {
       const code = `<a href="${this.base_url()+"start-new-catalogue?brand="+this.selectedBanner.business_slug}"><img src="${this.$store.state.root_media_api+ this.selectedBanner.final_banner}" alt="" srcset=""></a>`;
       navigator.clipboard.writeText(code);
-      this.$message.success('Embed code copied!');
+      this.$message.success(this.t('banner.embedCodeCopied'));
     },
 async downloadMyBanner(banner) {
   try {
@@ -721,10 +679,10 @@ async downloadMyBanner(banner) {
     // Clean up the blob URL
     window.URL.revokeObjectURL(blobUrl);
     
-    this.$message.success('Banner downloaded successfully!');
+    this.$message.success(this.t('banner.downloadSuccess'));
   } catch (error) {
     console.error('Error downloading banner:', error);
-    this.$message.error('Failed to download banner');
+    this.$message.error(this.t('banner.downloadError'));
   }
 },
 openBannerModal(banner){
@@ -982,7 +940,7 @@ this.selectedBanner=banner
         }
       } catch (error) {
         console.error('Error loading template:', error);
-        this.$message.error('Failed to load template');
+        this.$message.error(this.t('banner.loadTemplateError'));
       }
     },
     
@@ -1009,7 +967,7 @@ this.selectedBanner=banner
             const bounds = this.calculateMaskBounds(maskImg);
             return {
               id: idx + 1,
-              name: `Product Area ${idx + 1}`,
+              name: `${this.t('banner.productArea')} ${idx + 1}`,
               maskImg: maskImg,
               maskBounds: bounds,
               productImg: null,
@@ -1247,7 +1205,7 @@ this.selectedBanner=banner
         event.target.value = '';
       } catch (error) {
         console.error('Error loading image:', error);
-        this.$message.error('Failed to load product image');
+        this.$message.error(this.t('banner.loadProductError'));
       }
     },
     
@@ -1342,8 +1300,7 @@ this.selectedBanner=banner
 
       this.updateWorkingCanvas();
     },
-    
-    // ========== Preview & Save ==========
+   
     generatePreview() {
       const canvas = this.$refs.workingCanvas;
       if (!canvas) return;
@@ -1351,74 +1308,7 @@ this.selectedBanner=banner
       this.previewBanner = canvas.toDataURL('image/png');
     },
     
-    // async saveGeneratedBanner() {
-    //   this.isSaving = true;
-      
-    //   try {
-    //     const canvas = this.$refs.workingCanvas;
-    //     const finalBannerDataUrl = canvas.toDataURL('image/png');
-        
-    //     // Convert data URL to blob
-    //     const response = await fetch(finalBannerDataUrl);
-    //     const blob = await response.blob();
-    //     const finalBannerFile = new File([blob], `banner_${Date.now()}.png`, { type: 'image/png' });
-        
-    //     // Prepare form data
-    //     const formData = new FormData();
-    //     formData.append('banner_id', this.selectedTemplate.banner_id);
-    //     formData.append('text_data', JSON.stringify(this.workingTextElements));
-    //     formData.append('final_banner', finalBannerFile);
-        
-    //     // Also save raw banner (banner image without products)
-    //     const rawCanvas = document.createElement('canvas');
-    //     rawCanvas.width = this.workingCanvasWidth;
-    //     rawCanvas.height = this.workingCanvasHeight;
-    //     const rawCtx = rawCanvas.getContext('2d');
-    //     rawCtx.drawImage(this.workingBannerImg, 0, 0);
-        
-    //     // Draw text on raw banner
-    //     this.workingTextElements.forEach(text => {
-    //       rawCtx.save();
-    //       rawCtx.font = `${text.fontStyle || 'normal'} ${text.fontWeight || 'normal'} ${text.fontSize || 16}px ${text.fontFamily || 'Arial'}`;
-    //       rawCtx.fillStyle = text.color || '#000000';
-    //       rawCtx.fillText(text.content || '', text.x || 0, text.y || 0);
-    //       rawCtx.restore();
-    //     });
-        
-    //     const rawBannerDataUrl = rawCanvas.toDataURL('image/png');
-    //     const rawResponse = await fetch(rawBannerDataUrl);
-    //     const rawBlob = await rawResponse.blob();
-    //     const rawBannerFile = new File([rawBlob], `raw_banner_${Date.now()}.png`, { type: 'image/png' });
-        
-    //     formData.append('raw_banner', rawBannerFile);
-        
-    //     // Save to backend
-    //     const saveResponse = await fetch(
-    //       `${this.$store.state.root_api}generate_banner/api/generate-banner/`,
-    //       {
-    //         method: 'POST',
-    //         headers: { 'Authorization': `Token ${localStorage.getItem('token')}` },
-    //         body: formData
-    //       }
-    //     );
-
-    //     const saveData = await saveResponse.json();
-        
-    //     if (saveData.success) {
-    //       this.$message.success('Banner saved successfully!');
-    //       await this.fetchMyBanners();
-    //       this.resetCreationFlow();
-    //       this.showCreateModal = false;
-    //     } else {
-    //       throw new Error(saveData.message || 'Failed to save banner');
-    //     }
-    //   } catch (error) {
-    //     console.error('Error saving banner:', error);
-    //     this.$message.error(error.message || 'Failed to save banner');
-    //   } finally {
-    //     this.isSaving = false;
-    //   }
-    // },
+    
     
 async saveGeneratedBanner() {
   try {
@@ -1426,7 +1316,7 @@ async saveGeneratedBanner() {
 
     // Check if preview exists
     if (!this.previewBanner) {
-      this.$message.error('Preview not found. Please generate the banner first.');
+      this.$message.error(this.t('banner.previewNotFound'));
       this.isSaving = false;
       return;
     }
@@ -1434,7 +1324,6 @@ async saveGeneratedBanner() {
     // Use the existing preview base64 data
     const imageData = this.previewBanner;
 
-    // Example API call — adjust endpoint and payload to match your backend
     const response = await fetch(`${this.$store.state.root_api}generate_banner/api/save-banner/`, {
       method: 'POST',
       headers: {
@@ -1451,15 +1340,15 @@ async saveGeneratedBanner() {
     const data = await response.json();
 
     if (data.success) {
-      this.$message.success('Banner saved successfully!');
+      this.$message.success(this.t('banner.saveSuccess'));
       this.showCreateModal = false;
-      this.fetchMyBanners?.(); // refresh list if exists
+      this.fetchMyBanners?.();
     } else {
-      this.$message.error('Failed to save banner.');
+      this.$message.error(this.t('banner.saveError'));
     }
   } catch (error) {
     console.error('Error saving banner:', error);
-    this.$message.error('An unexpected error occurred.');
+    this.$message.error(this.t('banner.unexpectedError'));
   } finally {
     this.isSaving = false;
   }
@@ -1475,33 +1364,31 @@ async saveGeneratedBanner() {
       this.selectedWorkingMaskIndex = null;
       this.previewBanner = null;
     },
-    
-    // ========== My Banners Actions ==========
-    
+
     shareMyBanner(banner) {
       const shareUrl = banner.final_banner;
       
       if (navigator.share) {
         navigator.share({
-          title: 'My Banner',
-          text: 'Check out my custom banner!',
+          title: this.t('banner.myBanner'),
+          text: this.t('banner.shareText'),
           url: shareUrl
         }).catch(err => console.log('Error sharing:', err));
       } else {
         // Fallback: copy to clipboard
         navigator.clipboard.writeText(shareUrl).then(() => {
-          this.$message.success('Link copied to clipboard!');
+          this.$message.success(this.t('banner.linkCopied'));
         }).catch(() => {
-          this.$message.error('Failed to copy link');
+          this.$message.error(this.t('banner.linkCopyError'));
         });
       }
     },
     
     async deleteMyBanner(bannerId) {
       this.$confirm({
-        title: 'Delete Banner',
-        content: 'Are you sure you want to delete this banner? This action cannot be undone.',
-        okText: 'Delete',
+        title: this.t('banner.deleteBanner'),
+        content: this.t('banner.deleteConfirm'),
+        okText: this.t('banner.delete'),
         okType: 'danger',
         onOk: async () => {
           try {
@@ -1516,23 +1403,22 @@ async saveGeneratedBanner() {
             const data = await response.json();
             
             if (data.success) {
-              this.$message.success('Banner deleted successfully');
+              this.$message.success(this.t('banner.deleteSuccess'));
               await this.fetchMyBanners();
             } else {
-              throw new Error(data.message || 'Failed to delete banner');
+              throw new Error(data.message || this.t('banner.deleteError'));
             }
           } catch (error) {
             console.error('Error deleting banner:', error);
-            this.$message.error('Failed to delete banner');
+            this.$message.error(this.t('banner.deleteError'));
           }
         }
       });
     },
-    
-    // ========== Utility ==========
+
     getBannerRatio(bannerId) {
       const template = this.templateBanners.find(b => b.banner_id === bannerId);
-      return template ? template.ratio : 'Unknown';
+      return template ? template.ratio : this.t('banner.unknown');
     },
     
     formatDate(dateString) {
@@ -1541,11 +1427,11 @@ async saveGeneratedBanner() {
       const diffTime = Math.abs(now - date);
       const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
       
-      if (diffDays === 0) return 'Today';
-      if (diffDays === 1) return 'Yesterday';
-      if (diffDays < 7) return `${diffDays} days ago`;
+      if (diffDays === 0) return this.t('banner.today');
+      if (diffDays === 1) return this.t('banner.yesterday');
+      if (diffDays < 7) return this.t('banner.daysAgo', { days: diffDays });
       
-      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      return date.toLocaleDateString(this.locale === 'he' ? 'he-IL' : 'en-US', { month: 'short', day: 'numeric' });
     }
   }
 };
@@ -1571,16 +1457,6 @@ async saveGeneratedBanner() {
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
-
-
-
-
-
-
-
-
-
-
 
 @media screen and (max-width: 1190px) {
   .banner-image {
