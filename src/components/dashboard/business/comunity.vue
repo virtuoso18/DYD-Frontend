@@ -5,7 +5,7 @@
     <!-- Loading State -->
     <div v-if="loading" style="text-align: center; padding: 40px">
       <a-spin size="large" />
-      <p style="margin-top: 16px; color: #666">Loading community posts...</p>
+      <p style="margin-top: 16px; color: #666">{{ t('community.loadingPosts') }}</p>
     </div>
 
     <!-- Posts Grid View -->
@@ -20,13 +20,13 @@
             border: 1px solid rgba(0, 0, 0, 0.1);
           "
         >
-          <h3  style="
+          <h3 style="
             font-family: Poppins, sans-serif;
             font-weight: 500;
             font-size: 16px;
             line-height: 24px;
             letter-spacing: 0;
-          ">My Community</h3>
+          ">{{ t('community.myCommunity') }}</h3>
           <div>
             <!-- Empty State -->
             <div
@@ -36,17 +36,10 @@
               <div style="font-size: 64px; color: #d9d9d9; margin-bottom: 16px">
                 📝
               </div>
-              <h3 style="color: #666; margin-bottom: 8px">No posts yet</h3>
+              <h3 style="color: #666; margin-bottom: 8px">{{ t('community.noPostsYet') }}</h3>
               <p style="color: #999">
-                Start sharing your amazing designs with the community!
+                {{ t('community.startSharing') }}
               </p>
-              <!-- <a-button
-                  type="primary"
-                  style="margin-top: 16px"
-                  @click="$router.push('/designs')"
-                >
-                  Create Your First Design
-                </a-button> -->
             </div>
             <a-row v-else>
               <a-col
@@ -56,7 +49,8 @@
                 :md="8"
                 :xs="24"
                 :sm="24"
-                ><div style="padding: 4px">
+              >
+                <div style="padding: 4px">
                   <div class="post-card">
                     <!-- Post Image -->
                     <div
@@ -148,7 +142,7 @@
                       <!-- Pinned Badge -->
                       <div v-if="post.is_pinned" class="pinned-badge">
                         <PushpinOutlined />
-                        Pinned
+                        {{ t('community.pinned') }}
                       </div>
                     </div>
 
@@ -202,12 +196,6 @@
                                 formatNumber(post.comment_count)
                               }}</span>
                             </div>
-                            <!-- <div class="stat-item" @click="sharePost(post)">
-                                <ShareAltOutlined />
-                                <span>{{
-                                  formatNumber(post.share_count)
-                                }}</span>
-                              </div> -->
                           </div>
                           <!-- More Actions Dropdown -->
                           <a-dropdown
@@ -227,21 +215,15 @@
                               <a-menu>
                                 <a-menu-item @click="editPost(post)">
                                   <EditOutlined style="margin-right: 8px" />
-                                  Edit Post
+                                  {{ t('community.editPost') }}
                                 </a-menu-item>
-                                <!-- <a-menu-item @click="sharePost(post)">
-                                    <ShareAltOutlined
-                                      style="margin-right: 8px"
-                                    />
-                                    Share
-                                  </a-menu-item> -->
                                 <a-menu-divider />
                                 <a-menu-item
                                   @click="confirmDelete(post)"
                                   style="color: #ff4d4f"
                                 >
                                   <DeleteOutlined style="margin-right: 8px" />
-                                  Delete Post
+                                  {{ t('community.deletePost') }}
                                 </a-menu-item>
                               </a-menu>
                             </template>
@@ -272,7 +254,7 @@
             style="display: flex; justify-content: center; align-items: center"
           >
             <ArrowLeftOutlined style="margin-top: 2px" />
-            <span class="font-bold" style="">Back</span>
+            <span class="font-bold" style="">{{ t('community.back') }}</span>
           </a-button>
           <div class="flex gap-2">
             <a-button
@@ -284,7 +266,7 @@
                 align-items: center;
               "
             >
-              <EditOutlined /> Edit
+              <EditOutlined /> {{ t('community.edit') }}
             </a-button>
             <a-button
               @click="confirmDelete(selectedPost)"
@@ -296,7 +278,7 @@
                 align-items: center;
               "
             >
-              <DeleteOutlined /> Delete
+              <DeleteOutlined /> {{ t('community.delete') }}
             </a-button>
           </div>
         </div>
@@ -324,15 +306,14 @@
                 class="absolute top-3 left-3 bg-black bg-opacity-60 text-white px-3 py-1.5 rounded-lg flex items-center gap-2 text-sm"
               >
                 <PushpinOutlined />
-                <span>Pinned</span>
+                <span>{{ t('community.pinned') }}</span>
               </div>
             </div>
 
-            <!-- Stats Row - Likes, Comments, Shares -->
+            <!-- Stats Row -->
             <div
               class="flex items-center justify-between py-4 px-4 border-b border-gray-200"
             >
-              <!-- Left Side: Views -->
               <div class="flex items-center gap-2 text-gray-600">
                 <svg
                   width="12"
@@ -359,9 +340,7 @@
                 }}</span>
               </div>
 
-              <!-- Right Side: Comments + Likes -->
               <div class="flex items-center gap-6">
-                <!-- Comments - Click to open drawer on mobile -->
                 <div
                   class="flex items-center gap-2 text-gray-600 cursor-pointer hover:text-blue-500 transition-colors"
                   @click="toggleCommentsDrawer"
@@ -383,7 +362,6 @@
                   }}</span>
                 </div>
 
-                <!-- Likes -->
                 <div
                   class="flex items-center gap-2 cursor-pointer transition-colors"
                   @click="toggleLike(selectedPost)"
@@ -426,11 +404,11 @@
 
               <!-- Meta Info -->
               <div class="flex flex-wrap gap-2 text-xs text-gray-400">
-                <span>Created: {{ formatDate(selectedPost.created_at) }}</span>
+                <span>{{ t('community.created') }}: {{ formatDate(selectedPost.created_at) }}</span>
                 <span
                   v-if="selectedPost.updated_at !== selectedPost.created_at"
                 >
-                  • Updated: {{ formatDate(selectedPost.updated_at) }}
+                  • {{ t('community.updated') }}: {{ formatDate(selectedPost.updated_at) }}
                 </span>
               </div>
             </div>
@@ -444,7 +422,6 @@
                   class="product-responsive"
                   style="padding: 5px"
                 >
-                  <!-- {{product.product_colors}} -->
                   <div class="product">
                     <div
                       class="product-image-container"
@@ -457,27 +434,25 @@
                         :alt="product.product_title"
                         class="product-image"
                       />
-                      <!-- Category Badge -->
                       <div class="category-badge">
                         {{ product.category_name }}
                       </div>
-                      <!-- AR Badge -->
                       <div class="ar-badge">AR</div>
                     </div>
-                    <!-- {{ truncateText(product.description || 'No description available', 8) }} -->
 
                     <a-row>
-                      <div
-                        class="overflow-x-auto whitespace-nowrap hide-scrollbar"
+                      <a-col span="24" class="font-light !text-gray-700">
+
+                        <!-- class="overflow-x-auto whitespace-nowrap hide-scrollbar"
                         style="max-width: 200px"
-                      >
-                        <b class="font-light !text-gray-700 inline-block">
+                      > -->
+                        <b class="font-light !text-gray-700 inline-block block w-full truncate">
                           {{ product.product_title }}
                         </b>
-                      </div>
+                      </a-col>
 
                       <a-col span="18" class="font-light !text-gray-700">
-                        Color
+                        {{ t('community.color') }}
                       </a-col>
                       <a-col
                         span="6"
@@ -500,11 +475,10 @@
                             (color.color_hex ? color.color_hex : color.color)
                           "
                         >
-                          <!-- {{ color }} -->
                         </div>
                       </a-col>
 
-                      <a-col class="!text-gray-700" span="12"> Price </a-col>
+                      <a-col class="!text-gray-700" span="12"> {{ t('community.price') }} </a-col>
 
                       <a-col
                         class="!text-gray-700"
@@ -515,29 +489,10 @@
                           font-weight: 700;
                         "
                       >
-                        <!-- <del style="font-size: 10px;">${{ product.pricing.price }}</del> -->
                         ${{ product.product_price }}
                       </a-col>
 
-                      <!-- <a-col span="18">
-                    <a-button block @click="viewProduct(product)"
-                      >Product Details</a-button
-                    >
-                  </a-col>
-
-                  <a-col span="6">
-                      <a-button @click="toggleFavorite(product.product_id,product.product_type,product)">
-                                                                    <template v-if="product.is_favorited">
-                                                                    <HeartFilled style="color: red" />
-                                                                    </template>
-                                                                    <template v-else>
-                                                                    <HeartOutlined />
-                                                                    </template>
-                                                </a-button>
-                  </a-col> -->
                       <div class="flex items-center gap-2 w-full">
-                        <!-- Product Details Button - 75% width (18/24) -->
-                        <!-- {{product}} -->
                         <div class="w-3/4">
                           <button
                             @click="goto_product_Route(product)"
@@ -547,11 +502,10 @@
                               font-size: 11px;
                             "
                           >
-                            Product Details
+                            {{ t('community.productDetails') }}
                           </button>
                         </div>
 
-                        <!-- Like Button - 25% width (6/24) -->
                         <div class="w-1/4 flex items-end justify-end">
                           <button
                             @click="
@@ -580,33 +534,28 @@
             </a-col>
           </div>
 
-          <!-- Desktop Comments - Hidden on mobile (lg:block) -->
-          <!-- Desktop Comments - Hidden on mobile (lg:block) -->
+          <!-- Desktop Comments Section -->
           <div class="hidden lg:block lg:col-span-5">
             <div
               class="flex h-[740px] flex-col bg-gray-50 rounded-2xl p-6 sticky top-6"
             >
-              <!-- Comments Header -->
               <div class="pb-4 border-b border-gray-200">
                 <h4 class="text-xl font-semibold text-gray-900">
-                  Comments ({{ selectedPost.comment_count }})
+                  {{ t('community.comments') }} ({{ selectedPost.comment_count }})
                 </h4>
               </div>
 
-              <!-- Comments List (Scrollable) -->
               <div
                 class="flex-1 overflow-y-auto no-scrollbar py-4 pr-2"
                 ref="commentsSection"
               >
-                <!-- Empty State -->
                 <div
                   v-if="!comments.length"
                   class="flex flex-col items-center justify-center h-full min-h-[300px]"
                 >
-                  <a-empty description="No Comments Available"></a-empty>
+                  <a-empty :description="t('community.noComments')"></a-empty>
                 </div>
 
-                <!-- Comments -->
                 <div v-else class="space-y-6">
                   <div
                     v-for="comment in comments"
@@ -614,7 +563,6 @@
                     class="pb-6 border-b border-gray-200 last:border-0"
                   >
                     <div class="flex gap-3">
-                      <!-- Avatar -->
                       <a-avatar
                         :size="40"
                         class="border border-gray-200 flex-shrink-0"
@@ -624,18 +572,16 @@
                         "
                       />
 
-                      <!-- Comment Content -->
                       <div class="flex-1 min-w-0">
                         <div class="flex items-center justify-between mb-2">
                           <h5 class="font-semibold text-sm text-gray-900">
-                            {{ comment.comment_owner?.username || "Anonymous" }}
+                            {{ comment.comment_owner?.username || t('community.anonymous') }}
                           </h5>
                           <span class="text-xs text-gray-400">
                             {{ formatDate(comment.created_at) }}
                           </span>
                         </div>
 
-                        <!-- Comment text with show more/less -->
                         <div
                           class="text-sm text-gray-600 leading-relaxed break-words overflow-hidden"
                         >
@@ -656,14 +602,13 @@
                             >
                               {{
                                 expandedComments[comment.id]
-                                  ? "Show Less"
-                                  : "Show More"
+                                  ? t('community.showLess')
+                                  : t('community.showMore')
                               }}
                             </button>
                           </div>
                         </div>
 
-                        <!-- Replies -->
                         <div
                           v-if="comment.replies && comment.replies.length > 0"
                           class="mt-4 pl-4 border-l-2 border-gray-200 space-y-4"
@@ -687,7 +632,7 @@
                                   class="font-semibold text-xs text-gray-900"
                                 >
                                   {{
-                                    reply.comment_owner?.username || "Anonymous"
+                                    reply.comment_owner?.username || t('community.anonymous')
                                   }}
                                 </span>
                                 <span class="text-xs text-gray-400">
@@ -695,7 +640,6 @@
                                 </span>
                               </div>
 
-                              <!-- Reply text with show more/less -->
                               <div
                                 class="text-xs text-gray-600 leading-relaxed"
                               >
@@ -717,8 +661,8 @@
                                   >
                                     {{
                                       expandedComments[reply.id]
-                                        ? "Show Less"
-                                        : "Show More"
+                                        ? t('community.showLess')
+                                        : t('community.showMore')
                                     }}
                                   </button>
                                 </div>
@@ -726,7 +670,6 @@
                             </div>
                           </div>
 
-                          <!-- Load More Replies -->
                           <a-button
                             v-if="comment.reply_count > comment.replies.length"
                             type="link"
@@ -734,40 +677,33 @@
                             @click="loadMoreReplies(comment)"
                             class="text-xs"
                           >
-                            View
-                            {{
-                              comment.reply_count - comment.replies.length
-                            }}
-                            more replies
+                            {{ t('community.viewMoreReplies', { count: comment.reply_count - comment.replies.length }) }}
                           </a-button>
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  <!-- Load More Comments -->
                   <div v-if="hasMoreComments" class="text-center pt-4">
                     <a-button
                       type="link"
                       @click="loadMoreComments"
                       :loading="loadingComments"
                     >
-                      Load More Comments
+                      {{ t('community.loadMoreComments') }}
                     </a-button>
                   </div>
                 </div>
               </div>
 
-              <!-- Add Comment Input (Fixed at Bottom) -->
+              <!-- Add Comment Input -->
               <div class="pt-4 border-t border-gray-200 bg-white">
-                <!-- Outer field (single border, rounded) -->
                 <div
                   class="flex items-center w-full rounded-2xl border border-gray-300 px-4 py-2 bg-white"
                 >
-                  <!-- Textarea -->
                   <a-textarea
                     v-model:value="newComment"
-                    placeholder="Type here"
+                    :placeholder="t('community.typeHere')"
                     :rows="1"
                     :maxlength="500"
                     auto-size
@@ -781,7 +717,6 @@
                     "
                   />
 
-                  <!-- Send button with your SVG -->
                   <button
                     @click="addComment"
                     :disabled="!newComment.trim() || newComment.length > 500"
@@ -798,19 +733,10 @@
                         d="M3.721 7.63038L5.2073 8.12581C6.18973 8.45258 6.67989 8.61702 7.03196 8.96909C7.38403 9.32117 7.54847 9.81238 7.87525 10.7927L8.37068 12.279C9.1971 14.7604 9.61031 16 10.3703 16C11.1293 16 11.5435 14.7604 12.37 12.279L15.3615 3.30642C15.9434 1.56082 16.2343 0.688014 15.7737 0.227368C15.313 -0.233277 14.4402 0.0576566 12.6957 0.638471L3.71995 3.63214C1.24174 4.45751 0 4.87072 0 5.63073C0 6.39074 1.24069 6.80395 3.721 7.63038Z"
                         fill="#3B63FB"
                       />
-                      <path
-                        d="M3.721 7.63038L5.2073 8.12581C6.18973 8.45258 6.67989 8.61702 7.03196 8.96909C7.38403 9.32117 7.54847 9.81238 7.87525 10.7927L8.37068 12.279C9.1971 14.7604 9.61031 16 10.3703 16C11.1293 16 11.5435 14.7604 12.37 12.279L15.3615 3.30642C15.9434 1.56082 16.2343 0.688014 15.7737 0.227368C15.313 -0.233277 14.4402 0.0576566 12.6957 0.638471L3.71995 3.63214C1.24174 4.45751 0 4.87072 0 5.63073C0 6.39074 1.24069 6.80395 3.721 7.63038Z"
-                        fill="#3B63FB"
-                      />
-                      <path
-                        d="M5.65441 9.68062L3.48084 8.95644C3.32874 8.90574 3.16709 8.8904 3.00817 8.91159C2.84925 8.93278 2.69726 8.98994 2.56376 9.07872L1.41478 9.844C1.27877 9.93462 1.17202 10.0628 1.10752 10.213C1.04302 10.3631 1.02354 10.5288 1.05146 10.6898C1.07938 10.8509 1.15349 11.0003 1.26477 11.12C1.37606 11.2397 1.51973 11.3245 1.67831 11.364L3.73909 11.8784C3.83183 11.9016 3.91653 11.9495 3.98411 12.0171C4.0517 12.0847 4.09964 12.1694 4.12279 12.2621L4.63719 14.3229C4.67674 14.4815 4.76151 14.6252 4.8812 14.7364C5.00089 14.8477 5.15034 14.9218 5.31137 14.9498C5.47241 14.9777 5.63808 14.9582 5.78825 14.8937C5.93841 14.8292 6.0666 14.7225 6.15722 14.5864L6.9225 13.4375C7.01128 13.304 7.06844 13.152 7.08963 12.9931C7.11082 12.8341 7.09548 12.6725 7.04478 12.5204L6.32061 10.3468C6.26884 10.1917 6.1817 10.0508 6.06608 9.93514C5.95045 9.81952 5.80952 9.73238 5.65441 9.68062Z"
-                        fill="#3B63FB"
-                      />
                     </svg>
                   </button>
                 </div>
 
-                <!-- Character Counter -->
                 <div class="text-right mt-1 px-2">
                   <span
                     class="text-xs"
@@ -828,23 +754,20 @@
           </div>
         </div>
 
-        <!-- Mobile Comments Drawer (slides from bottom) -->
+        <!-- Mobile Comments Drawer -->
         <transition name="drawer">
           <div
             v-if="showCommentsDrawer"
             class="fixed inset-0 z-50 lg:hidden"
             @click.self="showCommentsDrawer = false"
           >
-            <!-- Backdrop -->
             <div class="absolute inset-0 bg-black/10 backdrop-blur-md"></div>
 
-            <!-- Drawer Content -->
             <div
               class="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl flex flex-col transition-all duration-300"
               :class="isDrawerExpanded ? 'h-[95vh]' : 'max-h-[85vh]'"
               :style="{ transform: `translateY(${dragOffset}px)` }"
             >
-              <!-- Drawer Handle - Draggable -->
               <div
                 class="flex justify-center pt-3 pb-2 cursor-grab active:cursor-grabbing"
                 @click="toggleDrawerExpansion"
@@ -855,12 +778,11 @@
                 <div class="w-12 h-1.5 bg-gray-300 rounded-full"></div>
               </div>
 
-              <!-- Drawer Header -->
               <div
                 class="flex items-center justify-between px-6 py-4 border-b border-gray-200"
               >
                 <h4 class="text-lg font-semibold text-gray-900">
-                  Comments ({{ selectedPost.comment_count }})
+                  {{ t('community.comments') }} ({{ selectedPost.comment_count }})
                 </h4>
                 <button
                   @click="showCommentsDrawer = false"
@@ -880,25 +802,22 @@
                 </button>
               </div>
 
-              <!-- Comments List (Scrollable) -->
               <div class="flex-1 overflow-y-auto px-6 py-4">
-                <!-- Empty State -->
                 <div
                   v-if="!comments.length"
                   class="flex flex-col items-center justify-center h-full min-h-[200px]"
                 >
-                  <a-empty description="No Comments Available"></a-empty>
+                  <a-empty :description="t('community.noComments')"></a-empty>
                 </div>
 
-                <!-- Comments -->
                 <div v-else class="space-y-6">
+                  <!-- Same comment structure as desktop -->
                   <div
                     v-for="comment in comments"
                     :key="comment.id"
                     class="pb-6 border-b border-gray-200 last:border-0"
                   >
                     <div class="flex gap-3">
-                      <!-- Avatar -->
                       <a-avatar
                         :size="40"
                         class="border border-gray-200 flex-shrink-0"
@@ -908,18 +827,16 @@
                         "
                       />
 
-                      <!-- Comment Content -->
                       <div class="flex-1 min-w-0">
                         <div class="flex items-center justify-between mb-2">
                           <h5 class="font-semibold text-sm text-gray-900">
-                            {{ comment.comment_owner?.username || "Anonymous" }}
+                            {{ comment.comment_owner?.username || t('community.anonymous') }}
                           </h5>
                           <span class="text-xs text-gray-400">
                             {{ formatDate(comment.created_at) }}
                           </span>
                         </div>
 
-                        <!-- Comment text with show more/less -->
                         <div
                           class="text-sm text-gray-600 leading-relaxed break-words overflow-hidden"
                         >
@@ -940,14 +857,13 @@
                             >
                               {{
                                 expandedComments[comment.id]
-                                  ? "Show Less"
-                                  : "Show More"
+                                  ? t('community.showLess')
+                                  : t('community.showMore')
                               }}
                             </button>
                           </div>
                         </div>
 
-                        <!-- Replies -->
                         <div
                           v-if="comment.replies && comment.replies.length > 0"
                           class="mt-4 pl-4 border-l-2 border-gray-200 space-y-4"
@@ -971,7 +887,7 @@
                                   class="font-semibold text-xs text-gray-900"
                                 >
                                   {{
-                                    reply.comment_owner?.username || "Anonymous"
+                                    reply.comment_owner?.username || t('community.anonymous')
                                   }}
                                 </span>
                                 <span class="text-xs text-gray-400">
@@ -979,7 +895,6 @@
                                 </span>
                               </div>
 
-                              <!-- Reply text with show more/less -->
                               <div
                                 class="text-xs text-gray-600 leading-relaxed"
                               >
@@ -1001,8 +916,8 @@
                                   >
                                     {{
                                       expandedComments[reply.id]
-                                        ? "Show Less"
-                                        : "Show More"
+                                        ? t('community.showLess')
+                                        : t('community.showMore')
                                     }}
                                   </button>
                                 </div>
@@ -1017,38 +932,32 @@
                             @click="loadMoreReplies(comment)"
                             class="text-xs"
                           >
-                            View
-                            {{
-                              comment.reply_count - comment.replies.length
-                            }}
-                            more replies
+                            {{ t('community.viewMoreReplies', { count: comment.reply_count - comment.replies.length }) }}
                           </a-button>
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  <!-- Load More Comments -->
                   <div v-if="hasMoreComments" class="text-center pt-4">
                     <a-button
                       type="link"
                       @click="loadMoreComments"
                       :loading="loadingComments"
                     >
-                      Load More Comments
+                      {{ t('community.loadMoreComments') }}
                     </a-button>
                   </div>
                 </div>
               </div>
 
-              <!-- Add Comment Input (Fixed at Bottom) -->
               <div class="px-6 py-4 border-t border-gray-200 bg-white">
                 <div
                   class="flex items-center gap-2 bg-gray-100 rounded-xl px-3 py-2"
                 >
                   <a-textarea
                     v-model:value="newComment"
-                    placeholder="Add a comment..."
+                    :placeholder="t('community.addComment')"
                     :rows="1"
                     :maxlength="500"
                     auto-size
@@ -1073,7 +982,6 @@
                   </button>
                 </div>
 
-                <!-- Character Counter -->
                 <div class="text-right mt-1 px-2">
                   <span
                     class="text-xs"
@@ -1104,14 +1012,14 @@
         @click="loadMorePosts"
         style="border-radius: 20px; padding: 0 24px"
       >
-        Load More Posts
+        {{ t('community.loadMorePosts') }}
       </a-button>
     </div>
 
     <!-- Edit Post Modal -->
     <a-modal
       v-model:open="editModalVisible"
-      title="Edit Post"
+      :title="t('community.editPost')"
       width="600px"
       @ok="updatePost"
       :confirm-loading="updating"
@@ -1124,23 +1032,23 @@
       <div style="padding: 16px 0">
         <div style="margin-bottom: 16px">
           <label style="display: block; margin-bottom: 8px; font-weight: 500"
-            >Title</label
+            >{{ t('community.title') }}</label
           >
           <a-input
             v-model:value="editForm.title"
-            placeholder="Post title..."
+            :placeholder="t('community.postTitlePlaceholder')"
             :maxlength="200"
             show-count
           />
         </div>
         <div>
           <label style="display: block; margin-bottom: 8px; font-weight: 500"
-            >Tags</label
+            >{{ t('community.tags') }}</label
           >
           <a-select
             v-model:value="editForm.tag_ids"
             mode="tags"
-            placeholder="Select or create tags..."
+            :placeholder="t('community.selectTagsPlaceholder')"
             style="width: 100%"
             :options="availableTags"
           />
@@ -1175,6 +1083,7 @@ import {
   ArrowLeftOutlined,
   CloseOutlined,
 } from "@ant-design/icons-vue";
+import { useI18n } from 'vue-i18n';
 
 export default {
   name: "Community",
@@ -1191,6 +1100,10 @@ export default {
     PushpinOutlined,
     ArrowLeftOutlined,
     CloseOutlined,
+  },
+  setup() {
+    const { t, locale } = useI18n();
+    return { t, locale };
   },
   data() {
     return {
@@ -1209,24 +1122,18 @@ export default {
       isDragging: false,
       expandedComments: {},
 
-      // Post details
       postDetailVisible: false,
       selectedPost: null,
 
-      // active_tab
       active_tab: "My Community",
 
-      // Comments
       comments: [],
-      newComment: "",
       addingComment: false,
       loadingComments: false,
       hasMoreComments: false,
       commentsPage: 1,
-      // products Used
       products_used_in_post: [],
       loadingProductsUsed: false,
-      // Edit modal
       editModalVisible: false,
       editingPost: null,
       editForm: {
@@ -1235,7 +1142,6 @@ export default {
         tag_ids: [],
       },
 
-      // Comments Modal specific
       commentsModalVisible: false,
       selectedPostForComments: null,
       modalComments: [],
@@ -1245,7 +1151,6 @@ export default {
       hasMoreModalComments: false,
       modalCommentsPage: 1,
 
-      // Tags
       availableTags: [],
     };
   },
@@ -1268,7 +1173,7 @@ export default {
       this.postImageLoadedMap[id] = false;
       setTimeout(() => {
         this.postImageLoadedMap[id] = true;
-      }, 1000); // 1s skeleton
+      }, 1000);
     },
 
     toggleDrawerExpansion() {
@@ -1470,7 +1375,6 @@ export default {
         if (data.success) {
           this.posts = data.data.map((post) => ({
             ...post,
-
             tags: post.tags || [],
             like_count: post.like_count || 0,
             comment_count: post.comment_count || 0,
@@ -1680,10 +1584,7 @@ export default {
       }
     },
 
-    // ✅ ADD THESE TWO NEW METHODS HERE
-    // In methods section
     toggleCommentExpansion(commentId) {
-      // Direct assignment works in Vue 3
       this.expandedComments[commentId] = !this.expandedComments[commentId];
     },
 
@@ -1693,7 +1594,6 @@ export default {
         this.$message.warning("Comment cannot exceed 500 characters");
       }
     },
-    // ✅ END OF NEW METHODS
 
     scrollToComments() {
       this.$nextTick(() => {
@@ -1860,12 +1760,11 @@ export default {
 
     confirmDelete(post) {
       this.$confirm({
-        title: "Delete Post",
-        content:
-          "Are you sure you want to delete this post? This action cannot be undone.",
-        okText: "Delete",
+        title: this.t('community.deletePostConfirmTitle'),
+        content: this.t('community.deletePostConfirmContent'),
+        okText: this.t('community.delete'),
         okType: "danger",
-        cancelText: "Cancel",
+        cancelText: this.t('community.cancel'),
         onOk: () => this.deletePost(post),
       });
     },

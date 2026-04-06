@@ -174,26 +174,31 @@
             v-model="searchQuery"
             @keyup.enter="onSearch"
           /> -->
-        <div style="width:100%; position: relative;">
-  <input
-    type="text"
-    class="search-input"
-    style="width:100%; cursor: pointer;"
-    placeholder="What are you looking for?"
-    readonly
-    @click="showSearchModal = true"
-  />
-</div>
+        
+  
+    <div class="search-field" @click="showSearchModal = true">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+      </svg>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="What are you looking for?"
+        readonly
+      />
+    
+  </div>
 
-<!-- Modal — place anywhere inside <div class="design-page"> -->
+
+<!-- Modal -->
 <SearchModal
   v-model:visible="showSearchModal"
   @select="(tagName) => $router.push(`/comunity-posts/${encodeURIComponent(tagName)}`)"
-/>
+"/>
 
 
+          <a-button type="primary" @click="showSearchModal = true" style="width:100%;max-width:100px;height:auto;border-radius:10px;" >Search</a-button>
           <!-- <a-button type="primary" style="width:100%;max-width:100px" @click="onSearch">Search</a-button> -->
-          <a-button type="primary" style="width:100%;max-width:100px" @click="onSearch">Search</a-button>
 
 
           
@@ -2262,7 +2267,7 @@ export default {
   flex: 1;
   padding: 10px 15px;
   border-radius: 12px;
-  border: none;
+  border: 1px solid rgba(0,0,0,0.2);
   font-size: 14px;
   outline: none;
   background: #f8f9fa;
@@ -2676,5 +2681,53 @@ export default {
 .search-dropdown {
   max-height: 280px;
   overflow-y: auto;
+}
+
+.search-section {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  max-width: 1050px;
+  width: 100%;
+  margin-top: -20px;
+  margin-bottom: 30px;
+}
+
+.search-container {
+  display: flex;
+  width: 100%;
+}
+
+.search-field {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.search-icon {
+  position: absolute;
+  left: 15px;
+  width: 20px;
+  height: 20px;
+  color: #9ca3af;
+  pointer-events: none;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 15px 12px 45px;
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,0.2);
+  font-size: 14px;
+  outline: none;
+  background: #f8f9fa;
+  cursor: pointer;
+}
+
+.search-input::placeholder {
+  color: #9ca3af;
 }
 </style>

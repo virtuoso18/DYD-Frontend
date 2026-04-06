@@ -11,7 +11,7 @@
           <template #icon> 
             <ClockCircleOutlined/>
           </template>
-          Create Variation
+          {{ t('texture_details.createVariation') }}
         </a-button> -->
       </template>
     </a-page-header>
@@ -22,7 +22,6 @@
       <a-col :xs="24" :md="12">
         <!-- Main Texture Image -->
         <div style="position: relative; padding: 10px;">
-
           <img 
             :src="$store.state.root_api+mainImageSrc"
             :alt="selectedTexture.title"
@@ -36,12 +35,12 @@
               <circle cx="8.5" cy="8.5" r="1.5"></circle>
               <polyline points="21,15 16,10 5,21"></polyline>
             </svg>
-            Texture View
+            {{ t('texture_details.textureView') }}
           </div>
         </div>
 
         <!-- Additional Images Section -->
-        <a-card title="Product Images" style="margin-top: 16px;" v-if="selectedTexture.product_images && selectedTexture.product_images.length > 0">
+        <a-card :title="t('texture_details.productImages')" style="margin-top: 16px;" v-if="selectedTexture.product_images && selectedTexture.product_images.length > 0">
           <div style="display: flex; gap: 8px; flex-wrap: wrap;">
             <div 
               v-for="img in selectedTexture.product_images" 
@@ -50,7 +49,7 @@
               @click="selectMainImage(img.image)"
             >
               <img 
-                :src="$store.state.root_media_api +img.image"
+                :src="$store.state.root_media_api + img.image"
                 :alt="img.alt_text"
                 style="width: 80px; height: 80px; border-radius: 8px; object-fit: cover; border: 1px solid #d9d9d9;"
               />
@@ -71,7 +70,7 @@
         <a-card>
           <!-- Texture Title and Description -->
           <a-tag color="blue" style="margin-bottom: 16px;">
-            {{ selectedTexture.texture_owner_display ? 'Floor' : 'Floor' }} Texture Details
+            {{ t('texture_details.floorTextureDetails') }}
           </a-tag>
           <h1 style="font-size: 28px; margin-bottom: 16px;">{{ selectedTexture.title }}</h1>
           <p v-if="selectedTexture.description" style="color: #666; line-height: 1.6; margin-bottom: 24px;">
@@ -82,44 +81,39 @@
           <a-row :gutter="16" style="margin-bottom: 24px;">
             <a-col :span="12">
               <a-statistic 
-                title="Style" 
-                :value="selectedTexture.texture_style || 'Not specified'" 
+                :title="t('texture_details.style')" 
+                :value="selectedTexture.texture_style || t('texture_details.notSpecified')" 
                 :value-style="{ fontSize: '16px', fontWeight: '600' }"
               />
             </a-col>
             <a-col :span="12">
               <a-statistic 
-                title="Created By" 
-                :value="selectedTexture.texture_owner_display || 'Unknown'" 
+                :title="t('texture_details.createdBy')" 
+                :value="selectedTexture.texture_owner_display || t('texture_details.unknown')" 
                 :value-style="{ fontSize: '16px', fontWeight: '600' }"
               />
             </a-col>
           </a-row>
+
           <!-- Technical Specifications (Only show if data exists) -->
-          <a-descriptions title="Technical Specifications" :column="1" size="small" style="margin-bottom: 24px;">
-            <a-descriptions-item v-if="selectedTexture.size_width" label="Size Width">
+          <a-descriptions :title="t('texture_details.technicalSpecifications')" :column="1" size="small" style="margin-bottom: 24px;">
+            <a-descriptions-item v-if="selectedTexture.size_width" :label="t('texture_details.sizeWidth')">
               {{ selectedTexture.size_width }} cm
             </a-descriptions-item>
-            <a-descriptions-item v-if="selectedTexture.size_width" label="Size Height">
+            <a-descriptions-item v-if="selectedTexture.size_width" :label="t('texture_details.sizeHeight')">
               {{ selectedTexture.size_width }} cm
             </a-descriptions-item>
-            <!-- <a-descriptions-item v-if="selectedTexture.tile_width" label="Tile Width">
-              {{ selectedTexture.tile_width }} cm
-            </a-descriptions-item>
-            <a-descriptions-item v-if="selectedTexture.tile_height" label="Tile Height">
-              {{ selectedTexture.tile_height }} cm
-            </a-descriptions-item> -->
-            <a-descriptions-item v-if="selectedTexture.created_at" label="Created">
+            <a-descriptions-item v-if="selectedTexture.created_at" :label="t('texture_details.created')">
               {{ formatDate(selectedTexture.created_at) }}
             </a-descriptions-item>
-            <a-descriptions-item v-if="selectedTexture.updated_at" label="Last Updated">
+            <a-descriptions-item v-if="selectedTexture.updated_at" :label="t('texture_details.lastUpdated')">
               {{ formatDate(selectedTexture.updated_at) }}
             </a-descriptions-item>
           </a-descriptions>
 
           <!-- Colors Section -->
           <div style="margin-bottom: 24px;" v-if="selectedTexture.associated_colors && selectedTexture.associated_colors.length > 0">
-            <div style="margin-bottom: 8px; font-weight: 500;">Available Colors:</div>
+            <div style="margin-bottom: 8px; font-weight: 500;">{{ t('texture_details.availableColors') }}</div>
             <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
               <a-tooltip 
                 v-for="color in selectedTexture.associated_colors" 
@@ -140,30 +134,6 @@
             </div>
           </div>
 
-          <!-- Status Information -->
-          <!-- <a-row :gutter="16" style="margin-bottom: 24px;">
-            <a-col :span="8">
-              <div style="margin-bottom: 8px; color: #666; font-size: 14px;">Status</div>
-              <a-tag :color="selectedTexture.is_active ? 'green' : 'red'">
-                {{ selectedTexture.is_active ? 'Active' : 'Inactive' }}
-              </a-tag>
-            </a-col>
-            <a-col :span="8" v-if="selectedTexture.is_in_stock !== undefined">
-              <div style="margin-bottom: 8px; color: #666; font-size: 14px;">Stock Status</div>
-              <a-tag :color="selectedTexture.is_in_stock ? 'green' : 'red'">
-                {{ selectedTexture.is_in_stock ? 'In Stock' : 'Out of Stock' }}
-              </a-tag>
-            </a-col>
-            <a-col :span="8">
-              <div style="margin-bottom: 8px; color: #666; font-size: 14px;">Features</div>
-              <div style="display: flex; flex-direction: column; gap: 4px;">
-                <a-tag v-if="selectedTexture.is_featured" color="gold" size="small">Featured</a-tag>
-                <a-tag v-if="selectedTexture.is_premium" color="purple" size="small">Premium</a-tag>
-                <a-tag v-if="selectedTexture.is_on_sale" color="red" size="small">On Sale</a-tag>
-              </div>
-            </a-col>
-          </a-row> -->
-
           <!-- Price Section (Only show if price data exists) -->
           <a-card 
             v-if="selectedTexture.sale_price_per_sqm || selectedTexture.current_price_per_sqm || selectedTexture.total_cost_per_sqm"
@@ -172,7 +142,7 @@
           >
             <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
               <div>
-                <div style="color: #666; font-size: 14px;">Price per SQM</div>
+                <div style="color: #666; font-size: 14px;">{{ t('texture_details.pricePerSqm') }}</div>
                 <div style="display: flex; align-items: center; gap: 8px;">
                   <span 
                     v-if="selectedTexture.current_price_per_sqm"
@@ -194,18 +164,18 @@
                   color="red"
                   style="font-size: 12px; font-weight: 600;"
                 >
-                  {{ Math.round(selectedTexture.discount_percentage) }}% OFF
+                  {{ Math.round(selectedTexture.discount_percentage) }}% {{ t('texture_details.off') }}
                 </a-tag>
               </div>
             </div>
             
             <a-row :gutter="16" v-if="selectedTexture.total_cost_per_sqm">
               <a-col :span="12">
-                <div style="color: #666; font-size: 12px;">Total Cost per SQM</div>
+                <div style="color: #666; font-size: 12px;">{{ t('texture_details.totalCostPerSqm') }}</div>
                 <div style="font-weight: 600; color: #1890ff;">${{ selectedTexture.total_cost_per_sqm }}</div>
               </a-col>
               <a-col :span="12" v-if="selectedTexture.total_coverage_area">
-                <div style="color: #666; font-size: 12px;">Coverage Area</div>
+                <div style="color: #666; font-size: 12px;">{{ t('texture_details.coverageArea') }}</div>
                 <div style="font-weight: 600;">${{ selectedTexture.total_coverage_area }} m²</div>
               </a-col>
             </a-row>
@@ -214,29 +184,27 @@
           <!-- Action Buttons -->
           <a-row :gutter="12">
             <a-col :span="12">
-             <a-button 
-  type="primary"
-  block
-  @click="editTexture()"
-  class="!flex !items-center !justify-center !gap-2"
->
-  <EditOutlined />
-  <span>Edit Texture</span>
-</a-button>
-
+              <a-button 
+                type="primary"
+                block
+                @click="editTexture()"
+                class="!flex !items-center !justify-center !gap-2"
+              >
+                <EditOutlined />
+                <span>{{ t('texture_details.editTexture') }}</span>
+              </a-button>
             </a-col>
             <a-col :span="12">
-            <a-button 
-  type="default"
-  danger
-  block
-  @click="deleteTexture()"
-  class="!flex !items-center !justify-center !gap-2"
->
-  <DeleteOutlined />
-  <span>Delete Texture</span>
-</a-button>
-
+              <a-button 
+                type="default"
+                danger
+                block
+                @click="deleteTexture()"
+                class="!flex !items-center !justify-center !gap-2"
+              >
+                <DeleteOutlined />
+                <span>{{ t('texture_details.deleteTexture') }}</span>
+              </a-button>
             </a-col>
           </a-row>
         </a-card>
@@ -248,6 +216,7 @@
 <script>
 import { ClockCircleOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons-vue';
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 export default {
   name: 'TextureDetails',
@@ -263,6 +232,8 @@ export default {
     }
   },
   setup(props, { emit }) {
+    const { t, locale } = useI18n();
+
     // Computed property for main image source
     const mainImageSrc = computed(() => {
       if (props.selectedTexture.texture_image) {
@@ -278,26 +249,20 @@ export default {
         return getImageUrl(props.selectedTexture.product_images[0].image);
       }
       
-      return '/placeholder-texture.jpg'; // Fallback placeholder
+      return '/placeholder-texture.jpg';
     });
 
     // Helper function to get full image URL
     const getImageUrl = (imagePath) => {
       if (!imagePath) return '/placeholder-texture.jpg';
-      
-      // If it's already a full URL, return as is
-      if (imagePath.startsWith('http')) {
-        return imagePath;
-      }
-      
-      // If it starts with '/', remove it to avoid double slashes
+      if (imagePath.startsWith('http')) return imagePath;
       const cleanPath = imagePath.startsWith('/') ? imagePath.slice(1) : imagePath;
       return `${cleanPath}`;
     };
 
     // Format date helper
     const formatDate = (dateString) => {
-      if (!dateString) return 'Unknown';
+      if (!dateString) return t('texture_details.unknown');
       try {
         return new Date(dateString).toLocaleDateString('en-US', {
           year: 'numeric',
@@ -307,35 +272,31 @@ export default {
           minute: '2-digit'
         });
       } catch (error) {
-        return 'Invalid Date';
+        return t('texture_details.invalidDate');
       }
     };
 
     // Select main image
     const selectMainImage = (imagePath) => {
-      // You can implement logic to update the main displayed image
-      // This would typically update a reactive ref that controls the main image display
       console.log('Selected image:', imagePath);
     };
 
     // Navigation and actions
     const back_texture_list = () => {
-      // emit('back-to-list');
-      emit('back_product_list', props.selectedTexture.id)
+      emit('back_product_list', props.selectedTexture.id);
     };
 
     const editTexture = () => {
-      // emit('edit-texture', props.selectedTexture);
-      emit('edit_texture', props.selectedTexture.id)
+      emit('edit_texture', props.selectedTexture.id);
     };
 
     const deleteTexture = () => {
-      
-      // emit('delete-texture', props.selectedTexture.id);
-      emit('delete_texture', {"product_id":props.selectedTexture.id,"product_type":"Floor"})
+      emit('delete_texture', { product_id: props.selectedTexture.id, product_type: "Floor" });
     };
 
     return {
+      t,
+      locale,
       mainImageSrc,
       getImageUrl,
       formatDate,

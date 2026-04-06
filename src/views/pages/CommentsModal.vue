@@ -81,8 +81,8 @@
               </span>
             </div>
 
-            <!-- ── Products Used Section (Desktop) ── -->
-              <div v-if="currentUser.is_professional" class="mb-4">
+            <!-- Products Used Section (Desktop) -->
+            <div v-if="currentUser.is_professional" class="mb-4">
               <RoomProductsSection v-if="post.room?.id" :room-id="post.room.id" />
             </div>
           </div>
@@ -90,7 +90,7 @@
           <!-- Right Section - Comments -->
           <div class="w-1/2 bg-white flex flex-col">
             <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-              <h2 class="text-xl font-semibold text-gray-900">Comments</h2>
+              <h2 class="text-xl font-semibold text-gray-900">{{ t('comments_modal.comments') }}</h2>
               <button @click="closeModal" class="text-gray-400 hover:text-gray-600 transition">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -102,10 +102,10 @@
             <div class="flex-1 min-w-0 overflow-y-auto px-4 py-3">
               <div v-if="loadingComments" class="text-center py-8">
                 <div class="loading-spinner mx-auto mb-2"></div>
-                <p class="text-gray-500">Loading comments...</p>
+                <p class="text-gray-500">{{ t('comments_modal.loadingComments') }}</p>
               </div>
               <div v-else-if="apiComments.length === 0" class="text-center py-8">
-                <p class="text-gray-500">No comments yet. Be the first to comment!</p>
+                <p class="text-gray-500">{{ t('comments_modal.noComments') }}</p>
               </div>
               <div 
                 v-else
@@ -126,14 +126,14 @@
                         <span v-if="comment.text.length > 250" 
                               class="text-gray-900 hover:text-blue-700 cursor-pointer font-medium ml-1"
                               @click="toggleComment(comment.id)">
-                          ... Show more
+                          ... {{ t('comments_modal.showMore') }}
                         </span>
                       </span>
                       <span v-else>
                         {{ comment.text }}
                         <span class="text-gray-900 hover:text-blue-700 cursor-pointer font-medium ml-1"
                               @click="toggleComment(comment.id)">
-                          Show less
+                          {{ t('comments_modal.showLess') }}
                         </span>
                       </span>
                     </p>
@@ -146,7 +146,7 @@
                 class="w-full py-3 text-blue-600 hover:bg-blue-50 rounded-lg transition"
                 :disabled="loadingMoreComments"
               >
-                {{ loadingMoreComments ? 'Loading...' : 'Load More Comments' }}
+                {{ loadingMoreComments ? t('comments_modal.loading') : t('comments_modal.loadMoreComments') }}
               </button>
             </div>
 
@@ -157,7 +157,7 @@
                   v-model="newComment"
                   type="text"
                   maxlength="500"
-                  placeholder="Type your comment..."
+                  :placeholder="t('comments_modal.typeComment')"
                   class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   @keyup.enter="addComment"
                   :disabled="addingComment"
@@ -229,7 +229,7 @@
                 </span>
               </div>
 
-              <!-- ── Products Used Section (Mobile) ── -->
+              <!-- Products Used Section (Mobile) -->
               <div v-if="currentUser.is_professional" class="mb-4">
                 <RoomProductsSection v-if="post.room?.id" :room-id="post.room.id" />
               </div>
@@ -237,12 +237,12 @@
 
             <!-- Comments Header + List -->
             <div class="flex-1 min-w-0 px-4 overflow-y-auto no-scrollbar max-h-[50vh]">
-              <h3 class="text-lg font-semibold text-gray-900 mb-4">Comments</h3>
+              <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ t('comments_modal.comments') }}</h3>
               <div v-if="loadingComments" class="text-center py-4">
-                <p class="text-gray-500">Loading comments...</p>
+                <p class="text-gray-500">{{ t('comments_modal.loadingComments') }}</p>
               </div>
               <div v-else-if="apiComments.length === 0" class="text-center py-4">
-                <p class="text-gray-500">No comments yet.</p>
+                <p class="text-gray-500">{{ t('comments_modal.noCommentsMobile') }}</p>
               </div>
               <div v-else>
                 <div v-for="comment in apiComments" :key="comment.id" class="mb-4 pb-4 border-b border-gray-100 last:border-b-0">
@@ -259,14 +259,14 @@
                           <span v-if="comment.text.length > 250" 
                                 class="text-gray-900 hover:text-blue-700 cursor-pointer font-medium ml-1"
                                 @click="toggleComment(comment.id)">
-                            ... Show more
+                            ... {{ t('comments_modal.showMore') }}
                           </span>
                         </span>
                         <span v-else>
                           {{ comment.text }}
                           <span class="text-gray-900 hover:text-blue-700 cursor-pointer font-medium ml-1"
                                 @click="toggleComment(comment.id)">
-                            Show less
+                            {{ t('comments_modal.showLess') }}
                           </span>
                         </span>
                       </p>
@@ -275,7 +275,7 @@
                 </div>
                 <button v-if="hasMoreComments && !loadingComments" @click="loadMoreComments" 
                         class="w-full py-3 text-blue-600 hover:bg-blue-50 rounded-lg transition text-sm">
-                  {{ loadingMoreComments ? 'Loading...' : 'Load More Comments' }}
+                  {{ loadingMoreComments ? t('comments_modal.loading') : t('comments_modal.loadMoreComments') }}
                 </button>
               </div>
             </div>
@@ -289,7 +289,7 @@
                 v-model="newComment" 
                 type="text" 
                 maxlength="500"
-                placeholder="Type your comment..." 
+                :placeholder="t('comments_modal.typeComment')"
                 class="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 @keyup.enter="addComment"
                 :disabled="addingComment"
@@ -313,6 +313,7 @@
 
 <script>
 import RoomProductsSection from './RoomProductsSection.vue';
+import { useI18n } from 'vue-i18n';
 
 export default {
   name: 'CommentsModal',
@@ -322,6 +323,11 @@ export default {
   props: {
     isOpen: { type: Boolean, default: false },
     post:   { type: Object, required: true }
+  },
+
+  setup() {
+    const { t, locale } = useI18n();
+    return { t, locale };
   },
 
   data() {
@@ -340,7 +346,7 @@ export default {
       totalPages: 1,
       localIsLiked: false,
       localLikes: 0,
-      currentUser: JSON.parse(localStorage.getItem('user') )
+      currentUser: JSON.parse(localStorage.getItem('user'))
     }
   },
 
@@ -425,7 +431,7 @@ export default {
     },
 
     async loadComments(page = 1) {
-     if (page === 1) {
+      if (page === 1) {
         this.loadingComments = true;
       } else {
         this.loadingMoreComments = true;
@@ -445,7 +451,7 @@ export default {
         if (data.success) {
           const comments = data.data.map(comment => ({
             id:     comment.id,
-            name:   comment.comment_owner?.username || 'Anonymous',
+            name:   comment.comment_owner?.username || this.t('comments_modal.anonymous'),
             avatar: comment.comment_owner?.user_profile
                       ? `${this.$store.state.root_media_api}${comment.comment_owner.user_profile}`
                       : 'https://via.placeholder.com/40',
@@ -492,11 +498,11 @@ export default {
           this.newComment = '';
           await this.loadComments();
           this.$emit('commentAdded');
-          this.$message?.success('Comment added successfully!');
+          this.$message?.success(this.t('comments_modal.commentAddedSuccess'));
         }
       } catch (error) {
         console.error('Failed to add comment:', error);
-        this.$message?.error('Failed to add comment');
+        this.$message?.error(this.t('comments_modal.commentAddedError'));
       } finally {
         this.addingComment = false;
       }
@@ -511,10 +517,10 @@ export default {
       const date = new Date(timestamp);
       const now  = new Date();
       const diff = Math.floor((now - date) / 1000);
-      if (diff < 60)     return 'Just now';
-      if (diff < 3600)   return `${Math.floor(diff / 60)}m ago`;
-      if (diff < 86400)  return `${Math.floor(diff / 3600)}h ago`;
-      if (diff < 604800) return `${Math.floor(diff / 86400)}d ago`;
+      if (diff < 60)     return this.t('comments_modal.justNow');
+      if (diff < 3600)   return this.t('comments_modal.minutesAgo', { n: Math.floor(diff / 60) });
+      if (diff < 86400)  return this.t('comments_modal.hoursAgo', { n: Math.floor(diff / 3600) });
+      if (diff < 604800) return this.t('comments_modal.daysAgo', { n: Math.floor(diff / 86400) });
       return date.toLocaleDateString();
     },
 
@@ -536,11 +542,11 @@ export default {
           this.localIsLiked = data.data.action === 'liked';
           this.localLikes   = data.data.like_count;
           this.$emit('likeToggled');
-          this.$message.success(`Post ${data.data.action}!`);
+          this.$message.success(this.t('comments_modal.likeToggled', { action: data.data.action }));
         }
       } catch (error) {
         console.error('Failed to toggle like:', error);
-        this.$message.error('Failed to update like');
+        this.$message.error(this.t('comments_modal.likeError'));
       }
     },
   }
@@ -548,7 +554,6 @@ export default {
 </script>
 
 <style scoped>
-/* Modal fade animation */
 .modal-enter-active,
 .modal-leave-active {
   transition: opacity 0.3s ease;
@@ -574,25 +579,11 @@ export default {
   transform: translateY(100%);
 }
 
-/* Scrollbar styling */
-.overflow-y-auto::-webkit-scrollbar {
-  width: 6px;
-}
+.overflow-y-auto::-webkit-scrollbar { width: 6px; }
+.overflow-y-auto::-webkit-scrollbar-track { background: #f1f1f1; }
+.overflow-y-auto::-webkit-scrollbar-thumb { background: #888; border-radius: 3px; }
+.overflow-y-auto::-webkit-scrollbar-thumb:hover { background: #555; }
 
-.overflow-y-auto::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-.overflow-y-auto::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 3px;
-}
-
-.overflow-y-auto::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
-
-/* Loading spinner */
 .loading-spinner {
   width: 24px;
   height: 24px;
@@ -602,17 +593,14 @@ export default {
   animation: spin 1s linear infinite;
 }
 
-/* Mobile scrollbar hide */
 .no-scrollbar::-webkit-scrollbar { width: 0; height: 0; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* iOS safe area */
 @media (max-width: 768px) {
   .md:hidden {
     padding-bottom: env(safe-area-inset-bottom, 20px);
   }
 }
-
 
 @keyframes spin {
   0% { transform: rotate(0deg); }

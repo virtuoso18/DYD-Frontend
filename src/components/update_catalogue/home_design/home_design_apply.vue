@@ -48,7 +48,7 @@
 
           <a-row>
             <a-col span="24">
-              <b>{{ product.product_title }}</b>
+              <b class="block w-full truncate" >{{ product.product_title }}</b>
             </a-col>
 
             <a-col span="18">Color</a-col>
@@ -79,7 +79,7 @@
               ${{ product.product_price }}
             </a-col>
 
-            <a-col span="19">
+            <a-col span="17">
               <a-button
                 size="medium"
                 block
@@ -97,6 +97,7 @@
                 Product Details
               </a-button>
             </a-col>
+            <a-col span="1"></a-col>
 
             <a-col span="4">
               <a-button
@@ -150,14 +151,29 @@
         <!-- Image Preview -->
         <a-col :sm="24" :xs="24" :lg="10" :md="10">
           <div style="position: relative">
+            <!-- Skeleton for modal preview image -->
+            <div
+              v-if="!imageLoaded.modalPreview"
+              class="design-skeleton"
+              style="
+                width: 100%;
+                height: 300px;
+                border-radius: 12px;
+                position: absolute;
+                inset: 0;
+                z-index: 10;
+              "
+            ></div>
             <img
               :src="afterImage"
+              @load="onImageLoad('modalPreview')"
               style="
                 border-radius: 12px;
                 width: 100%;
                 max-height: 400px;
                 object-fit: cover;
                 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                transition: opacity 0.3s ease;
               "
               alt="Room Design"
             />
@@ -192,21 +208,6 @@
           "
         >
           <div style="flex: 1">
-            <!-- Title Input -->
-            <!-- <div style="margin-bottom: 20px">
-              <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #333;">
-                Describe Room <span style="color: red">*</span>
-              </label>
-              <a-input
-                v-model:value="form.description_room"
-                placeholder="Give your design an attractive description here ..."
-                size="large"
-                :maxlength="200"
-                show-count
-                style="border-radius: 8px"
-              />
-            </div> -->
-
             <!-- Room Info Display -->
             <div
               style="
@@ -407,12 +408,24 @@
             </button>
           </div>
 
-          <!-- Main Image -->
-          <div class="!bg-white !rounded-2xl overflow-hidden !shadow-sm">
+          <!-- Main Image with Skeleton -->
+          <div class="!bg-white !rounded-2xl overflow-hidden !shadow-sm relative">
+            <!-- Skeleton Loader -->
+            <div
+              v-if="!imageLoaded.main"
+              class="design-skeleton w-full"
+              style="height: 500px; position: absolute; inset: 0; z-index: 10;"
+            ></div>
+            
             <img
               :src="afterImage"
+              @load="onImageLoad('main')"
               alt="Room Design"
               class="w-full h-auto max-h-[500px] md:max-h-[600px] object-cover"
+              :style="{
+                opacity: imageLoaded.main ? 1 : 0,
+                transition: 'opacity 0.3s ease'
+              }"
             />
           </div>
 
@@ -425,22 +438,33 @@
                 :key="index"
                 @click="selectThumbnail(index)"
                 :class="[
-                  'min-w-[80px] w-[80px] h-[80px] md:min-w-[100px] md:w-[100px] md:h-[100px] !rounded-lg overflow-hidden cursor-pointer !border-2 transition-all',
+                  'min-w-[80px] w-[80px] h-[80px] md:min-w-[100px] md:w-[100px] md:h-[100px] !rounded-lg overflow-hidden cursor-pointer !border-2 transition-all relative',
                   selectedThumb === index
                     ? '!border-blue-600'
                     : '!border-gray-200',
                 ]"
               >
+                <!-- Thumbnail Skeleton -->
+                <div
+                  v-if="!imageLoaded.thumbnails[index]"
+                  class="design-skeleton absolute inset-0 z-10"
+                ></div>
+                
                 <img
                   :src="$store.state.root_media_api + thumb"
+                  @load="onImageLoad('thumbnails', index)"
                   alt="Thumbnail"
                   class="w-full h-full object-cover"
+                  :style="{
+                    opacity: imageLoaded.thumbnails[index] ? 1 : 0,
+                    transition: 'opacity 0.3s ease'
+                  }"
                 />
               </div>
             </div>
 
             <!-- Regenerate Button -->
-            <button
+            <!-- <button
               @click="regenerateImages"
               class="flex items-center justify-center w-full sm:justify-start sm:w-auto !text-center !mt-6 sm:!mt-0 !gap-2 !bg-blue-600 hover:!bg-blue-700 !text-white !px-5 !py-3 !rounded-lg !font-medium !text-sm whitespace-nowrap transition-all"
             >
@@ -460,7 +484,7 @@
                 />
               </svg>
               Regenerate
-            </button>
+            </button> -->
           </div>
         </div>
 
@@ -481,7 +505,13 @@
           <!-- Share Project Card -->
           <div class="!bg-[#F2F2F2] rounded-xl !p-6">
             <div class="flex !gap-4">
+              <!-- Small preview skeleton -->
+              <div
+                v-if="!imageLoaded.main"
+                class="design-skeleton w-20 h-20 !rounded-lg flex-shrink-0"
+              ></div>
               <img
+                v-else
                 :src="afterImage"
                 alt="Project Preview"
                 class="w-20 h-20 !rounded-lg object-cover flex-shrink-0"
@@ -521,13 +551,25 @@
               <h3 class="!font-bold !text-gray-900 !mb-4">Product</h3>
 
               <div class="flex !gap-4 !mb-4" v-if="products_used.length">
-                <img
-                  :src="
-                    $store.state.root_media_api + products_used[0].product_image
-                  "
-                  alt="Product"
-                  class="w-16 h-16 object-cover !rounded-lg flex-shrink-0"
-                />
+                <!-- Product image skeleton -->
+                 <!-- Product image skeleton - absolute positioned overlay -->
+  <div
+    v-if="!imageLoaded.product"
+    class="design-skeleton w-16 h-16 !rounded-lg flex-shrink-0 absolute"
+    style="z-index: 10;"
+  ></div>
+  
+  <!-- Image always rendered, opacity changes based on load state -->
+  <img
+    :src="$store.state.root_media_api + products_used[0].product_image"
+    @load="onImageLoad('product')"
+    alt="Product"
+    class="w-16 h-16 object-cover !rounded-lg flex-shrink-0 relative"
+    :style="{
+      opacity: imageLoaded.product ? 1 : 0,
+      transition: 'opacity 0.3s ease'
+    }"
+  />
                 <div class="flex-1">
                   <h4 class="!font-semibold !text-gray-900 !mb-1">
                     {{ products_used[0].product_title }}
@@ -631,6 +673,14 @@ export default {
       loading: false,
       addingToCart: false,
 
+      // Image loading tracking
+      imageLoaded: {
+        main: false,
+        modalPreview: false,
+        thumbnails: {},
+        product: false,
+      },
+
       // Error handling
       error: {
         room: null,
@@ -651,6 +701,31 @@ export default {
   },
 
   methods: {
+    /**
+     * Handle image load events
+     */
+    onImageLoad(type, index = null) {
+      if (type === 'thumbnails' && index !== null) {
+        this.imageLoaded.thumbnails[index] = true;
+        // Force reactivity update for nested object
+        this.imageLoaded = { ...this.imageLoaded };
+      } else {
+        this.imageLoaded[type] = true;
+      }
+    },
+
+    /**
+     * Reset image loaded state when changing images
+     */
+    resetImageLoaded() {
+      this.imageLoaded = {
+        main: false,
+        modalPreview: false,
+        thumbnails: {},
+        product: false,
+      };
+    },
+
     async toggleFavorite(product, product_type) {
       try {
         const token = localStorage.getItem("token");
@@ -669,8 +744,6 @@ export default {
           },
         );
 
-        // const data = await response.json();
-
         const homeDesignId = this.$route.params.id;
         if (homeDesignId) {
           this.getHomeDesignItem(homeDesignId);
@@ -686,6 +759,9 @@ export default {
     async getHomeDesignItem(home_design_id) {
       this.loading = true;
       this.error.room = null;
+      
+      // Reset image loading states when fetching new data
+      this.resetImageLoaded();
 
       try {
         const response = await fetch(
@@ -713,6 +789,11 @@ export default {
             this.thumbnails[0].replace("w=100&h=100", "w=800&h=600");
           this.products_used = result.products_used || [];
 
+          // Initialize thumbnail loading states
+          this.thumbnails.forEach((_, index) => {
+            this.imageLoaded.thumbnails[index] = false;
+          });
+
           // Set default room type and style from data if available
           if (result.home_design_room_type) {
             this.form.home_design_room_type = result.home_design_room_type;
@@ -738,12 +819,6 @@ export default {
      * Save design to my designs
      */
     async SaveToMyDesignes() {
-      // Validate required fields
-      // if (!this.form.description_room.trim()) {
-      //   this.$message.error('Please provide a room description');
-      //   return;
-      // }
-
       if (!this.form.home_design_room_type) {
         this.$message.error("Please select a room type");
         return;
@@ -786,12 +861,7 @@ export default {
         if (responseData && !responseData.error) {
           this.$message.success("Design saved successfully!");
           this.open_SaveToMyDesignes = false;
-
-          // Reset form after successful save
           this.form.description_room = "";
-
-          // Optional: Navigate to my designs or show success
-          // this.$router.push('/my-designs');
         } else {
           throw new Error(responseData.message || "Failed to save design");
         }
@@ -809,6 +879,8 @@ export default {
      */
     selectThumbnail(index) {
       this.selectedThumb = index;
+      // Reset main image loaded state when changing
+      this.imageLoaded.main = false;
       this.afterImage =
         this.$store.state.root_media_api +
         this.thumbnails[index].replace("w=100&h=100", "w=800&h=600");
@@ -897,6 +969,19 @@ export default {
 .overflow-x-auto {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* Skeleton Animation */
+.design-skeleton {
+  background: linear-gradient(110deg, #f0f0f0 8%, #e0e0e0 18%, #f0f0f0 33%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.6s infinite linear;
+}
+
+@keyframes skeleton-shimmer {
+  to {
+    background-position-x: -200%;
+  }
 }
 
 .product {

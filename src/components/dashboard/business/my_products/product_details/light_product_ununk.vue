@@ -10,7 +10,7 @@
           <template #icon> 
             <ClockCircleOutlined/>
           </template>
-          Create Variation
+          {{ t('productDetails.createVariation') }}
         </a-button>
       </template>
     </a-page-header>
@@ -34,12 +34,12 @@
               <circle cx="8.5" cy="8.5" r="1.5"></circle>
               <polyline points="21,15 16,10 5,21"></polyline>
             </svg>
-            Product View
+            {{ t('productDetails.productView') }}
           </div>
         </div>
 
         <!-- Additional Images Section -->
-        <a-card title="Product Images" style="margin-top: 16px;" v-if="selectedProduct.images && selectedProduct.images.length > 0">
+        <a-card :title="t('productDetails.productImages')" style="margin-top: 16px;" v-if="selectedProduct.images && selectedProduct.images.length > 0">
           <div style="display: flex; gap: 8px; flex-wrap: wrap;">
             <div 
               v-for="img in selectedProduct.images" 
@@ -69,7 +69,7 @@
         <a-card>
           <!-- Product Title and Description -->
           <a-tag color="blue" style="margin-bottom: 16px;">
-            {{ selectedProduct.category?.name || 'Product' }} Details
+            {{ selectedProduct.category?.name || t('productDetails.product') }} {{ t('productDetails.details') }}
           </a-tag>
           <h1 style="font-size: 28px; margin-bottom: 16px;">{{ selectedProduct.name }}</h1>
           <p v-if="selectedProduct.description" style="color: #666; line-height: 1.6; margin-bottom: 24px;">
@@ -83,57 +83,57 @@
           <a-row :gutter="16" style="margin-bottom: 24px;">
             <a-col :span="12">
               <a-statistic 
-                title="Category" 
-                :value="selectedProduct.category?.name || 'Not specified'" 
+                :title="t('productDetails.category')"
+                :value="selectedProduct.category?.name || t('productDetails.notSpecified')" 
                 :value-style="{ fontSize: '16px', fontWeight: '600' }"
               />
             </a-col>
             <a-col :span="12">
               <a-statistic 
-                title="Furniture Type" 
-                :value="selectedProduct.furniture_type || 'Not specified'" 
+                :title="t('productDetails.furnitureType')"
+                :value="selectedProduct.furniture_type || t('productDetails.notSpecified')" 
                 :value-style="{ fontSize: '16px', fontWeight: '600' }"
               />
             </a-col>
           </a-row>
 
           <!-- Technical Specifications -->
-          <a-descriptions title="Technical Specifications" :column="1" size="small" style="margin-bottom: 24px;">
-            <a-descriptions-item v-if="selectedProduct.dimensions?.width" label="Width">
+          <a-descriptions :title="t('productDetails.technicalSpecifications')" :column="1" size="small" style="margin-bottom: 24px;">
+            <a-descriptions-item v-if="selectedProduct.dimensions?.width" :label="t('productDetails.width')">
               {{ selectedProduct.dimensions.width }} cm
             </a-descriptions-item>
-            <a-descriptions-item v-if="selectedProduct.dimensions?.height" label="Height">
+            <a-descriptions-item v-if="selectedProduct.dimensions?.height" :label="t('productDetails.height')">
               {{ selectedProduct.dimensions.height }} cm
             </a-descriptions-item>
-            <a-descriptions-item v-if="selectedProduct.dimensions?.length" label="Length">
+            <a-descriptions-item v-if="selectedProduct.dimensions?.length" :label="t('productDetails.length')">
               {{ selectedProduct.dimensions.length }} cm
             </a-descriptions-item>
-            <a-descriptions-item v-if="selectedProduct.dimensions?.depth" label="Depth">
+            <a-descriptions-item v-if="selectedProduct.dimensions?.depth" :label="t('productDetails.depth')">
               {{ selectedProduct.dimensions.depth }} cm
             </a-descriptions-item>
-            <a-descriptions-item v-if="selectedProduct.dimensions?.weight" label="Weight">
+            <a-descriptions-item v-if="selectedProduct.dimensions?.weight" :label="t('productDetails.weight')">
               {{ selectedProduct.dimensions.weight }} kg
             </a-descriptions-item>
-            <a-descriptions-item v-if="selectedProduct.model_number" label="Model Number">
+            <a-descriptions-item v-if="selectedProduct.model_number" :label="t('productDetails.modelNumber')">
               {{ selectedProduct.model_number }}
             </a-descriptions-item>
-            <a-descriptions-item v-if="selectedProduct.brand" label="Brand">
+            <a-descriptions-item v-if="selectedProduct.brand" :label="t('productDetails.brand')">
               {{ selectedProduct.brand }}
             </a-descriptions-item>
-            <a-descriptions-item v-if="selectedProduct.material" label="Material">
+            <a-descriptions-item v-if="selectedProduct.material" :label="t('productDetails.material')">
               {{ selectedProduct.material }}
             </a-descriptions-item>
-            <a-descriptions-item v-if="selectedProduct.created_at" label="Created">
+            <a-descriptions-item v-if="selectedProduct.created_at" :label="t('productDetails.created')">
               {{ formatDate(selectedProduct.created_at) }}
             </a-descriptions-item>
-            <a-descriptions-item v-if="selectedProduct.updated_at" label="Last Updated">
+            <a-descriptions-item v-if="selectedProduct.updated_at" :label="t('productDetails.lastUpdated')">
               {{ formatDate(selectedProduct.updated_at) }}
             </a-descriptions-item>
           </a-descriptions>
 
           <!-- Colors Section -->
           <div style="margin-bottom: 24px;" v-if="selectedProduct.colors?.available_colors && selectedProduct.colors.available_colors.length > 0">
-            <div style="margin-bottom: 8px; font-weight: 500;">Available Colors:</div>
+            <div style="margin-bottom: 8px; font-weight: 500;">{{ t('productDetails.availableColors') }}</div>
             <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
               <a-tooltip 
                 v-for="color in selectedProduct.colors.available_colors" 
@@ -162,11 +162,9 @@
           >
             <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
               <div>
-                <div style="color: #666; font-size: 14px;">Price</div>
+                <div style="color: #666; font-size: 14px;">{{ t('productDetails.price') }}</div>
                 <div style="display: flex; align-items: center; gap: 8px;">
-                  <span 
-                    style="font-size: 24px; font-weight: 700; color: #1890ff;"
-                  >
+                  <span style="font-size: 24px; font-weight: 700; color: #1890ff;">
                     ${{ selectedProduct.pricing.current_price || selectedProduct.pricing.price }}
                   </span>
                   <span 
@@ -177,12 +175,8 @@
                   </span>
                 </div>
               </div>
-
             </div>
           </a-card>
-
-          <!-- Additional Information -->
-
 
           <!-- Action Buttons -->
           <a-row :gutter="12">
@@ -195,7 +189,7 @@
                 <template #icon> 
                   <EditOutlined/>
                 </template>
-                Edit Product
+                {{ t('productDetails.editProduct') }}
               </a-button>
             </a-col>
             <a-col :span="12">
@@ -208,7 +202,7 @@
                 <template #icon> 
                   <DeleteOutlined/>
                 </template>
-                Delete Product
+                {{ t('productDetails.deleteProduct') }}
               </a-button>
             </a-col>
           </a-row>
@@ -221,37 +215,33 @@
 <script>
 import { ClockCircleOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons-vue';
 import { computed, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 export default {
-    name:"product_details_component",
-    components: {
-        ClockCircleOutlined,
-        EditOutlined,
-        DeleteOutlined,
-    },
-    props: {
-        selectedProduct: {
-        type: Object,
-        required: true
-        }
-    },
+  name: 'product_details_component',
+  components: {
+    ClockCircleOutlined,
+    EditOutlined,
+    DeleteOutlined,
+  },
+  props: {
+    selectedProduct: {
+      type: Object,
+      required: true
+    }
+  },
   setup(props, { emit }) {
-    // Reactive ref for current main image
+    const { t, locale } = useI18n();
+
     const currentMainImage = ref(null);
 
-    // Computed property for main image source
     const mainImageSrc = computed(() => {
-      // If user has selected a different image, use that
       if (currentMainImage.value) {
         return getImageUrl(currentMainImage.value);
       }
-
-      // Use primary_image if available
       if (props.selectedProduct.primary_image) {
         return getImageUrl(props.selectedProduct.primary_image);
       }
-      
-      // Fallback to primary product image from images array
       if (props.selectedProduct.images && props.selectedProduct.images.length > 0) {
         const primaryImage = props.selectedProduct.images.find(img => img.is_primary);
         if (primaryImage) {
@@ -259,27 +249,18 @@ export default {
         }
         return getImageUrl(props.selectedProduct.images[0].image);
       }
-      
-      return '/placeholder-product.jpg'; // Fallback placeholder
+      return '/placeholder-product.jpg';
     });
 
-    // Helper function to get full image URL
     const getImageUrl = (imagePath) => {
       if (!imagePath) return '/placeholder-product.jpg';
-      
-      // If it's already a full URL, return as is
-      if (imagePath.startsWith('http')) {
-        return imagePath;
-      }
-      
-      // If it starts with '/', remove it to avoid double slashes
+      if (imagePath.startsWith('http')) return imagePath;
       const cleanPath = imagePath.startsWith('/') ? imagePath.slice(1) : imagePath;
       return `${cleanPath}`;
     };
 
-    // Format date helper
     const formatDate = (dateString) => {
-      if (!dateString) return 'Unknown';
+      if (!dateString) return t('productDetails.unknown');
       try {
         return new Date(dateString).toLocaleDateString('en-US', {
           year: 'numeric',
@@ -289,31 +270,30 @@ export default {
           minute: '2-digit'
         });
       } catch (error) {
-        return 'Invalid Date';
+        return t('productDetails.invalidDate');
       }
     };
 
-    // Select main image
     const selectMainImage = (imagePath) => {
       currentMainImage.value = imagePath;
       console.log('Selected image:', imagePath);
     };
 
-    // Navigation and actions
     const back_product_list = () => {
-      emit('back_product_list', props.selectedProduct.id)
+      emit('back_product_list', props.selectedProduct.id);
     };
 
     const editProduct = () => {
-      emit('edit_product', props.selectedProduct.id)
+      emit('edit_product', props.selectedProduct.id);
     };
 
     const deleteProduct = () => {
-      emit('delete_product', {"product_id":props.selectedProduct.id,"product_type":"Light"})
-
+      emit('delete_product', { product_id: props.selectedProduct.id, product_type: "Light" });
     };
 
     return {
+      t,
+      locale,
       mainImageSrc,
       getImageUrl,
       formatDate,

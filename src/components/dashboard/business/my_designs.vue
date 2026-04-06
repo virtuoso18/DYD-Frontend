@@ -7,7 +7,7 @@
   </div>
 
   <div
-    v-else="!isLoading"
+    v-else
     class="sm:main sm:border border-gray-200 bg-white !mb-5 sm:translate-y-3 sm:rounded-2xl min-h-[100vh]"
   >
     <!-- TABS VIEW - Only show when view_type is 'all' -->
