@@ -3713,7 +3713,7 @@ export default {
   },
 
   async mounted() {
-    this.loadBrqandPurchasedPlanDetails();
+    this.loadBrandPurchasedPlanDetails();
 
     await this.initializeComponent();
     if (this.$route.query.home_design) {
@@ -3908,7 +3908,7 @@ export default {
       return this.planDetails.home_design === true;
     },
 
-    async loadBrqandPurchasedPlanDetails() {
+    async loadBrandPurchasedPlanDetails() {
       try {
         const url = `${this.$store.state.root_api}subscription/api/get-business-plan-details/${this.$route.query.brand}/`;
 

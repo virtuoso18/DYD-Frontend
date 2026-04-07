@@ -223,7 +223,7 @@
 
         <div style="width: 1px; height: 32px; background: #e5e7eb"></div>
 
-        <a-button
+        <!-- <a-button
           @click="this.$router.push('/admin-generate-banner')"
           size="medium"
           style="border: 2px solid #e5e7eb"
@@ -232,7 +232,7 @@
             <SettingOutlined />
           </template>
           Admin Panel
-        </a-button>
+        </a-button> -->
 
         <a-button
           @click="showCreateModal = true"

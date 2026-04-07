@@ -1,5 +1,6 @@
 <template>
-  <div v-if="isPlanBlocked" class="plan-blocked-overlay">
+    <div v-if="planDetails === null || planDetails === undefined" style="text-align:center"> Loading... </div>
+  <div v-else-if="isPlanBlocked" class="plan-blocked-overlay">
     <div class="plan-blocked-popup">
   <!-- {{ brand.brand_email }}
   {{ brand_data }} -->
@@ -99,8 +100,13 @@ export default {
 
   computed: {
     isPlanBlocked() {
-      return !this.planDetails || !this.planDetails.plan_name || this.planIsExpired;
-    },
+    // Wait until planDetails has actually loaded (not null/undefined)
+    if (this.planDetails === null || this.planDetails === undefined) {
+      return false; // Don't show anything while loading
+    }
+    // Now safely check if plan is missing or expired
+    return !this.planDetails.plan_name || this.planIsExpired;
+  },
     isBusiness() {
       return this.current_user?.user_type === 'Business';
     },

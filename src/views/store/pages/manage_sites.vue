@@ -9,268 +9,147 @@
     />
     <template #footer> </template>
   </a-modal>
-  <!-- {{business_info}} -->
+
   <div style="padding: 10px">
-    <div
-      style="
-        background-color: white;
-        padding: 10px;
-        border-radius: 10px;
-        border: 2px solid rgba(128, 128, 128, 0.16);
-      "
-    >
+    <div style="background-color: white; padding: 10px; border-radius: 10px; border: 2px solid rgba(128, 128, 128, 0.16);">
       <a-row>
         <a-col :span="20">
           <h2
             className="!text-gray-700 p-2"
-            :style="{
-              fontFamily: 'Poppins',
-              fontWeight: 500,
-              fontStyle: 'normal',
-              fontSize: '16px',
-              lineHeight: '24px',
-              letterSpacing: '0%',
-            }"
+            :style="{ fontFamily: 'Poppins', fontWeight: 500, fontStyle: 'normal', fontSize: '16px', lineHeight: '24px', letterSpacing: '0%' }"
           >
-            {{ isEditing ? "Edit Site" : "Manage Store" }}
+            {{ isEditing ? t('manageStore.editSite') : t('manageStore.manageStore') }}
           </h2>
         </a-col>
         <a-col :span="4" style="display: flex; justify-content: end">
-          <a-button v-if="!isEditing" type="primary" @click="enableEdit"
-            >Edit</a-button
-          >
+          <a-button v-if="!isEditing" type="primary" @click="enableEdit">
+            {{ t('manageStore.edit') }}
+          </a-button>
           <div v-else style="display: flex; gap: 10px">
-            <a-button @click="cancelEdit">Cancel</a-button>
-            <a-button type="primary" @click="saveChanges"
-              >Save Changes</a-button
-            >
+            <a-button @click="cancelEdit">{{ t('manageStore.cancel') }}</a-button>
+            <a-button type="primary" @click="saveChanges">{{ t('manageStore.saveChanges') }}</a-button>
           </div>
         </a-col>
       </a-row>
 
-      <div
-        class="business-bg-wrapper"
-        style="position: relative; overflow: hidden; height: 200px"
-      >
-        <!-- SKELETON, COVERS ENTIRE HEADER UNTIL IMAGE LOADED -->
-        <div
-          v-if="!imageLoadedMap.editBusiness"
-          class="business-bg-skeleton"
-        ></div>
-
-        <!-- PRELOAD IMAGE (INVISIBLE) -->
+      <div class="business-bg-wrapper" style="position: relative; overflow: hidden; height: 200px">
+        <div v-if="!imageLoadedMap.editBusiness" class="business-bg-skeleton"></div>
         <img
           :src="$store.state.root_media_api + editData.business_picture"
           style="position: absolute; width: 0; height: 0; opacity: 0"
           @load="onEditBusinessImageLoad"
           alt=""
         />
-
-        <!-- REAL HEADER BLOCK -->
         <div
-          v-show="imageLoadedMap.editBusiness"
-          class="business-bg-content"
-          :style="`
-      background: linear-gradient(
-        rgba(0,0,0,0.3),
-        rgba(0,0,0,0.3)
-      ),
-      url(${$store.state.root_media_api}${editData.business_picture})
-      center/cover no-repeat;
-    `"
-        >
-         <div class="flex flex-col items-center" style="text-align: center; width: 100%; padding: 0 16px;">
-  <div style="position: relative; display: inline-block; margin-bottom: 12px;">
-    <img
-      :src="$store.state.root_media_api + editData.banner_picture"
-      style="
-        width: 70px;
-        height: 70px;
-        border-radius: 50%;
-        object-fit: cover;
-      "
-      alt=""
-    />
-    <a-button
-      v-if="isEditing"
-      type="primary"
-      shape="circle"
-      size="small"
-      @click="changeBannerImage"
-      style="position: absolute; top: -5px; right: -5px; z-index: 10; display: flex; align-items: center; justify-content: center;"
-    >
-      <template #icon>
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none">
-          <path opacity="0.5" d="M9.77778 21H14.2222C17.3433 21 18.9038 21 20.0248 20.2646C20.51 19.9462 20.9267 19.5371 21.251 19.0607C22 17.9601 22 16.4279 22 13.3636C22 10.2994 22 8.76721 21.251 7.6666C20.9267 7.19014 20.51 6.78104 20.0248 6.46268C19.3044 5.99013 18.4027 5.82123 17.022 5.76086C16.3631 5.76086 15.7959 5.27068 15.6667 4.63636C15.4728 3.68489 14.6219 3 13.6337 3H10.3663C9.37805 3 8.52715 3.68489 8.33333 4.63636C8.20412 5.27068 7.63685 5.76086 6.978 5.76086C5.59733 5.82123 4.69555 5.99013 3.97524 6.46268C3.48995 6.78104 3.07328 7.19014 2.74902 7.6666C2 8.76721 2 10.2994 2 13.3636C2 16.4279 2 17.9601 2.74902 19.0607C3.07328 19.5371 3.48995 19.9462 3.97524 20.2646C5.09624 21 6.65675 21 9.77778 21Z" 
-            stroke="currentColor" stroke-width="2.5"/>
-          <path d="M14.5197 10.6799L14.2397 10.4C13.0026 9.16288 10.9969 9.16288 9.75984 10.4C8.52276 11.637 8.52276 13.6427 9.75984 14.8798C10.9969 16.1169 13.0026 16.1169 14.2397 14.8798C14.7665 14.353 15.069 13.6868 15.1471 13M14.5197 10.6799L13 11M14.5197 10.6799V9" 
-            stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </template>
-    </a-button>
-  </div>
-  
-  <div class="w-full" style="max-width: 100%;">
-    <div style="font-size: 14px; font-weight: 700; color: white; margin-bottom: 4px;">
-      Hi Ashish,
-    </div>
-    <div style="font-size: 14px; font-weight: 600; color: white; word-wrap: break-word; overflow-wrap: break-word; line-height: 1.4;">
-      {{ editData.welcomeMessage }}
-    </div>
-  </div>
-</div>
+            v-show="imageLoadedMap.editBusiness"
+            class="business-bg-content"
+            :style="`background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(${editData.business_picture && editData.business_picture.startsWith('data:') ? editData.business_picture : $store.state.root_media_api + editData.business_picture}) center/cover no-repeat;`"
+          >
+          <div class="flex flex-col items-center" style="text-align: center; width: 100%; padding: 0 16px;">
+            <div style="position: relative; display: inline-block; margin-bottom: 12px;">
+              <img
+            :src="editData.banner_picture && editData.banner_picture.startsWith('data:') ? editData.banner_picture : $store.state.root_media_api + editData.banner_picture"
+            style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover;"
+            alt=""
+          />
+              <a-button
+                v-if="isEditing"
+                type="primary"
+                shape="circle"
+                size="small"
+                @click="changeBannerImage"
+                style="position: absolute; top: -5px; right: -5px; z-index: 10; display: flex; align-items: center; justify-content: center;"
+              >
+                <template #icon>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path opacity="0.5" d="M9.77778 21H14.2222C17.3433 21 18.9038 21 20.0248 20.2646C20.51 19.9462 20.9267 19.5371 21.251 19.0607C22 17.9601 22 16.4279 22 13.3636C22 10.2994 22 8.76721 21.251 7.6666C20.9267 7.19014 20.51 6.78104 20.0248 6.46268C19.3044 5.99013 18.4027 5.82123 17.022 5.76086C16.3631 5.76086 15.7959 5.27068 15.6667 4.63636C15.4728 3.68489 14.6219 3 13.6337 3H10.3663C9.37805 3 8.52715 3.68489 8.33333 4.63636C8.20412 5.27068 7.63685 5.76086 6.978 5.76086C5.59733 5.82123 4.69555 5.99013 3.97524 6.46268C3.48995 6.78104 3.07328 7.19014 2.74902 7.6666C2 8.76721 2 10.2994 2 13.3636C2 16.4279 2 17.9601 2.74902 19.0607C3.07328 19.5371 3.48995 19.9462 3.97524 20.2646C5.09624 21 6.65675 21 9.77778 21Z"
+                      stroke="currentColor" stroke-width="2.5"/>
+                    <path d="M14.5197 10.6799L14.2397 10.4C13.0026 9.16288 10.9969 9.16288 9.75984 10.4C8.52276 11.637 8.52276 13.6427 9.75984 14.8798C10.9969 16.1169 13.0026 16.1169 14.2397 14.8798C14.7665 14.353 15.069 13.6868 15.1471 13M14.5197 10.6799L13 11M14.5197 10.6799V9"
+                      stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </template>
+              </a-button>
+            </div>
 
+            <div class="w-full" style="max-width: 100%;">
+              <div style="font-size: 14px; font-weight: 700; color: white; margin-bottom: 4px;">
+                {{ t('manageStore.hiUser') }}
+              </div>
+              <div style="font-size: 14px; font-weight: 600; color: white; word-wrap: break-word; overflow-wrap: break-word; line-height: 1.4;">
+                {{ editData.welcomeMessage }}
+              </div>
+            </div>
+          </div>
 
-          <!-- Background image edit button -->
-         <a-button
-  v-if="isEditing"
-  type="primary"
-  @click="changeBackgroundImage"
-  class="!flex !items-center !justify-center !p-0"
-  style="position: absolute; top: 10px; right: 10px; z-index: 10; width: 36px; height: 36px;"
->
-  <svg 
-    width="16"
-    height="16"
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    class="block"
-  >
-    <path 
-      d="M11 4H4C3.46957 4 2.96086 4.21071 2.58579 4.58579C2.21071 4.96086 2 5.46957 2 6V20C2 20.5304 2.21071 21.0391 2.58579 21.4142C2.96086 21.7893 3.46957 22 4 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V13"
-      stroke="white"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-    />
-    <path 
-      d="M18.5 2.5C18.8978 2.10217 19.4374 1.87868 20 1.87868C20.5626 1.87868 21.1022 2.10217 21.5 2.5C21.8978 2.89783 22.1213 3.43739 22.1213 4C22.1213 4.56261 21.8978 5.10217 21.5 5.5L12 15L8 16L9 12L18.5 2.5Z"
-      stroke="white"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-    />
-  </svg>
-</a-button>
-
+          <a-button
+            v-if="isEditing"
+            type="primary"
+            @click="changeBackgroundImage"
+            class="!flex !items-center !justify-center !p-0"
+            style="position: absolute; top: 10px; right: 10px; z-index: 10; width: 36px; height: 36px;"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="block">
+              <path d="M11 4H4C3.46957 4 2.96086 4.21071 2.58579 4.58579C2.21071 4.96086 2 5.46957 2 6V20C2 20.5304 2.21071 21.0391 2.58579 21.4142C2.96086 21.7893 3.46957 22 4 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V13" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M18.5 2.5C18.8978 2.10217 19.4374 1.87868 20 1.87868C20.5626 1.87868 21.1022 2.10217 21.5 2.5C21.8978 2.89783 22.1213 3.43739 22.1213 4C22.1213 4.56261 21.8978 5.10217 21.5 5.5L12 15L8 16L9 12L18.5 2.5Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a-button>
         </div>
       </div>
 
       <br />
       <div style="padding: 10px">
-        <div
-          class="!text-gray-700"
-          style="background: #f3f3f3; border-radius: 10px; padding: 10px"
-        >
-          <div
-            style="
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-              margin-bottom: 10px;
-            "
-          >
-            <h1 v-if="!isEditing" style="font-size: 18px">
-              {{ editData.storeTitle }}
-            </h1>
+        <div class="!text-gray-700" style="background: #f3f3f3; border-radius: 10px; padding: 10px">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <h1 v-if="!isEditing" style="font-size: 18px">{{ editData.storeTitle }}</h1>
             <a-input
               v-else
               v-model:value="editData.storeTitle"
-              style="
-                font-size: 18px;
-                font-weight: bold;
-                border: 1px dashed #ccc;
-              "
-              placeholder="Store title"
+              style="font-size: 18px; font-weight: bold; border: 1px dashed #ccc;"
+              :placeholder="t('manageStore.storeTitlePlaceholder')"
             />
-            <a-button
-              v-if="isEditing"
-              type="text"
-              @click="editStoreDescription = !editStoreDescription"
-            >
-              <template #icon
-                ><svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <path
-                    d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
-                  ></path>
-                  <path
-                    d="m18.5 2.5 a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"
-                  ></path></svg ></template>
+            <a-button v-if="isEditing" type="text" @click="editStoreDescription = !editStoreDescription">
+              <template #icon>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                  <path d="m18.5 2.5 a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+              </template>
             </a-button>
           </div>
-          <div v-if="!isEditing || !editStoreDescription">
-            {{ editData.storeDescription }}
-          </div>
+          <div v-if="!isEditing || !editStoreDescription">{{ editData.storeDescription }}</div>
           <a-textarea
             v-else
             v-model:value="editData.storeDescription"
             :rows="4"
             style="border: 1px dashed #ccc"
-            placeholder="Store description"
+            :placeholder="t('manageStore.storeDescriptionPlaceholder')"
           />
         </div>
       </div>
+
       <br />
       <div class="!text-gray-700" style="padding: 10px">
         <div style="background: #f3f3f3; border-radius: 10px; padding: 10px">
-          <div
-            style="
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-              margin-bottom: 10px;
-            "
-          >
-            <h1 v-if="!isEditing" style="font-size: 16px">
-              {{ editData.servicesTitle }}
-            </h1>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <h1 v-if="!isEditing" style="font-size: 16px">{{ editData.servicesTitle }}</h1>
             <a-input
               v-else
               v-model:value="editData.servicesTitle"
-              style="
-                font-size: 16px;
-                font-weight: bold;
-                border: 1px dashed #ccc;
-              "
-              placeholder="Services title"
+              style="font-size: 16px; font-weight: bold; border: 1px dashed #ccc;"
+              :placeholder="t('manageStore.servicesTitlePlaceholder')"
             />
-            <a-button
-              v-if="isEditing"
-              type="text"
-              @click="editServices = !editServices"
-            >
-              <template #icon
-                ><svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <path
-                    d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
-                  ></path>
-                  <path
-                    d="m18.5 2.5 a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"
-                  ></path></svg   ></template>
+            <a-button v-if="isEditing" type="text" @click="editServices = !editServices">
+              <template #icon>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                  <path d="m18.5 2.5 a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+              </template>
             </a-button>
           </div>
           <div v-if="!isEditing || !editServices">
             <ul>
-              <li v-for="(service, index) in editData.services" :key="index">
-                {{ service }}
-              </li>
+              <li v-for="(service, index) in editData.services" :key="index">{{ service }}</li>
             </ul>
           </div>
           <div v-else>
@@ -283,288 +162,90 @@
                 v-model:value="editData.services[index]"
                 :rows="2"
                 style="border: 1px dashed #ccc; margin-right: 10px"
-                placeholder="Service description"
+                :placeholder="t('manageStore.serviceDescriptionPlaceholder')"
               />
               <a-button type="text" danger @click="removeService(index)">
-                <template #icon
-                  ><svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                  >
+                <template #icon>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <polyline points="3,6 5,6 21,6"></polyline>
-                    <path
-                      d="m19,6v14a2,2 0 0,1-2,2H7a2,2 0 0,1-2-2V6m3,0V4a2,2 0 0,1,2-2h4a2,2 0 0,1,2,2v2"
-                    ></path></svg   ></template>
+                    <path d="m19,6v14a2,2 0 0,1-2,2H7a2,2 0 0,1-2-2V6m3,0V4a2,2 0 0,1,2-2h4a2,2 0 0,1,2,2v2"></path>
+                  </svg>
+                </template>
               </a-button>
             </div>
             <a-button type="dashed" @click="addService" style="width: 100%">
               <template #icon>+</template>
-              Add Service
+              {{ t('manageStore.addService') }}
             </a-button>
           </div>
         </div>
       </div>
+
       <br />
       <div>
         <a-row>
-          <a-col :sm="24" :xs="24" :md="12" :lg="12" style="">
+          <a-col :sm="24" :xs="24" :md="12" :lg="12">
             <a-row style="padding-top: 50px">
-              <a-col
-                :sm="12"
-                :xs="12"
-                :md="12"
-                :lg="12"
-                style="
-                  border-right: 2px solid rgba(0, 0, 0, 0.3);
-                  display: flex;
-                  justify-content: center;
-                  align-items: center;
-                  padding-top: 20px;
-                "
-              >
-                <div
-                  v-if="!loadingRatings"
-                  style="
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: center;
-                    align-items: center;
-                  "
-                >
-                  <h1>
-                    {{ businessRatings.average }}
-                  </h1>
-                  <a-rate
-                    :value="Math.round(businessRatings.average)"
-                    disabled
-                  ></a-rate>
+              <a-col :sm="12" :xs="12" :md="12" :lg="12" style="border-right: 2px solid rgba(0, 0, 0, 0.3); display: flex; justify-content: center; align-items: center; padding-top: 20px;">
+                <div v-if="!loadingRatings" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                  <h1>{{ businessRatings.average }}</h1>
+                  <a-rate :value="Math.round(businessRatings.average)" disabled></a-rate>
                   <h5>
                     ({{ businessRatings.unique_users }}
-                    {{ businessRatings.unique_users === 1 ? "User" : "Users" }})
+                    {{ businessRatings.unique_users === 1 ? t('manageStore.user') : t('manageStore.users') }})
                   </h5>
                 </div>
-
-                <!-- Loading state -->
-                <div
-                  v-else
-                  style="
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: center;
-                    align-items: center;
-                  "
-                >
+                <div v-else style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
                   <a-spin size="large" />
-                  <p style="margin-top: 10px; color: #666">
-                    Loading ratings...
-                  </p>
+                  <p style="margin-top: 10px; color: #666">{{ t('manageStore.loadingRatings') }}</p>
                 </div>
               </a-col>
 
               <!-- Rating Distribution -->
               <a-col :sm="12" :xs="12" :md="12" :lg="12" style="padding: 5px">
-                <!-- 5 Star -->
-                <div
-                  style="
-                    display: flex;
-                    gap: 5px;
-                    align-items: center;
-                    margin-bottom: 8px;
-                  "
-                >
+                <div style="display: flex; gap: 5px; align-items: center; margin-bottom: 8px;">
                   <span style="min-width: 20px; text-align: right">5</span>
-                  <a-progress
-                    :percent="
-                      calculatePercentage(
-                        businessRatings.distribution['5_star'],
-                      )
-                    "
-                    size="small"
-                    :status="
-                      businessRatings.distribution['5_star'] > 0
-                        ? 'active'
-                        : 'normal'
-                    "
-                    style="flex: 1"
-                  />
-                  <span
-                    style="
-                      min-width: 30px;
-                      text-align: right;
-                      font-size: 12px;
-                      color: #666;
-                    "
-                  >
-                    {{ businessRatings.distribution["5_star"] }}
-                  </span>
+                  <a-progress :percent="calculatePercentage(businessRatings.distribution['5_star'])" size="small" :status="businessRatings.distribution['5_star'] > 0 ? 'active' : 'normal'" style="flex: 1" />
+                  <span style="min-width: 30px; text-align: right; font-size: 12px; color: #666;">{{ businessRatings.distribution["5_star"] }}</span>
                 </div>
-
-                <!-- 4 Star -->
-                <div
-                  style="
-                    display: flex;
-                    gap: 5px;
-                    align-items: center;
-                    margin-bottom: 8px;
-                  "
-                >
+                <div style="display: flex; gap: 5px; align-items: center; margin-bottom: 8px;">
                   <span style="min-width: 20px; text-align: right">4</span>
-                  <a-progress
-                    :percent="
-                      calculatePercentage(
-                        businessRatings.distribution['4_star'],
-                      )
-                    "
-                    size="small"
-                    :status="
-                      businessRatings.distribution['4_star'] > 0
-                        ? 'active'
-                        : 'normal'
-                    "
-                    style="flex: 1"
-                  />
-                  <span
-                    style="
-                      min-width: 30px;
-                      text-align: right;
-                      font-size: 12px;
-                      color: #666;
-                    "
-                  >
-                    {{ businessRatings.distribution["4_star"] }}
-                  </span>
+                  <a-progress :percent="calculatePercentage(businessRatings.distribution['4_star'])" size="small" :status="businessRatings.distribution['4_star'] > 0 ? 'active' : 'normal'" style="flex: 1" />
+                  <span style="min-width: 30px; text-align: right; font-size: 12px; color: #666;">{{ businessRatings.distribution["4_star"] }}</span>
                 </div>
-
-                <!-- 3 Star -->
-                <div
-                  style="
-                    display: flex;
-                    gap: 5px;
-                    align-items: center;
-                    margin-bottom: 8px;
-                  "
-                >
+                <div style="display: flex; gap: 5px; align-items: center; margin-bottom: 8px;">
                   <span style="min-width: 20px; text-align: right">3</span>
-                  <a-progress
-                    :percent="
-                      calculatePercentage(
-                        businessRatings.distribution['3_star'],
-                      )
-                    "
-                    size="small"
-                    style="flex: 1"
-                  />
-                  <span
-                    style="
-                      min-width: 30px;
-                      text-align: right;
-                      font-size: 12px;
-                      color: #666;
-                    "
-                  >
-                    {{ businessRatings.distribution["3_star"] }}
-                  </span>
+                  <a-progress :percent="calculatePercentage(businessRatings.distribution['3_star'])" size="small" style="flex: 1" />
+                  <span style="min-width: 30px; text-align: right; font-size: 12px; color: #666;">{{ businessRatings.distribution["3_star"] }}</span>
                 </div>
-
-                <!-- 2 Star -->
-                <div
-                  style="
-                    display: flex;
-                    gap: 5px;
-                    align-items: center;
-                    margin-bottom: 8px;
-                  "
-                >
+                <div style="display: flex; gap: 5px; align-items: center; margin-bottom: 8px;">
                   <span style="min-width: 20px; text-align: right">2</span>
-                  <a-progress
-                    :percent="
-                      calculatePercentage(
-                        businessRatings.distribution['2_star'],
-                      )
-                    "
-                    size="small"
-                    style="flex: 1"
-                  />
-                  <span
-                    style="
-                      min-width: 30px;
-                      text-align: right;
-                      font-size: 12px;
-                      color: #666;
-                    "
-                  >
-                    {{ businessRatings.distribution["2_star"] }}
-                  </span>
+                  <a-progress :percent="calculatePercentage(businessRatings.distribution['2_star'])" size="small" style="flex: 1" />
+                  <span style="min-width: 30px; text-align: right; font-size: 12px; color: #666;">{{ businessRatings.distribution["2_star"] }}</span>
                 </div>
-
-                <!-- 1 Star -->
                 <div style="display: flex; gap: 5px; align-items: center">
                   <span style="min-width: 20px; text-align: right">1</span>
-                  <a-progress
-                    :percent="
-                      calculatePercentage(
-                        businessRatings.distribution['1_star'],
-                      )
-                    "
-                    size="small"
-                    :status="
-                      businessRatings.distribution['1_star'] > 0
-                        ? 'exception'
-                        : 'normal'
-                    "
-                    style="flex: 1"
-                  />
-                  <span
-                    style="
-                      min-width: 30px;
-                      text-align: right;
-                      font-size: 12px;
-                      color: #666;
-                    "
-                  >
-                    {{ businessRatings.distribution["1_star"] }}
-                  </span>
+                  <a-progress :percent="calculatePercentage(businessRatings.distribution['1_star'])" size="small" :status="businessRatings.distribution['1_star'] > 0 ? 'exception' : 'normal'" style="flex: 1" />
+                  <span style="min-width: 30px; text-align: right; font-size: 12px; color: #666;">{{ businessRatings.distribution["1_star"] }}</span>
                 </div>
               </a-col>
             </a-row>
           </a-col>
 
           <a-col :sm="24" :xs="24" :md="12" :lg="12" style="padding: 10px">
-            <!-- shape="circle"  -->
             <a-button
               type="primary"
               size="medium"
               @click="get_businesss_location_map_modal = true"
               style="position: absolute; bottom: 20px; right: 20px; z-index: 5"
             >
-              <div
-                style="
-                  display: flex;
-                  gap: 10px;
-                  justify-content: center;
-                  align-items: center;
-                "
-              >
+              <div style="display: flex; gap: 10px; justify-content: center; align-items: center;">
                 <EnvironmentOutlined />
-                <div>Update Location</div>
+                <div>{{ t('manageStore.updateLocation') }}</div>
               </div>
             </a-button>
 
-            <!-- Display Business Location Map -->
-            <div
-              v-if="businessLocationReady"
-              style="
-                border-radius: 10px;
-                width: 100%;
-                height: 200px;
-                overflow: hidden;
-              "
-            >
+            <div v-if="businessLocationReady" style="border-radius: 10px; width: 100%; height: 200px; overflow: hidden;">
               <MapLocationViewer
                 :latitude="businessLocation.latitude"
                 :longitude="businessLocation.longitude"
@@ -572,20 +253,7 @@
                 :readOnly="true"
               />
             </div>
-
-            <!-- Loading State -->
-            <div
-              v-else
-              style="
-                border-radius: 10px;
-                width: 100%;
-                height: 200px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                background: #f0f0f0;
-              "
-            >
+            <div v-else style="border-radius: 10px; width: 100%; height: 200px; display: flex; align-items: center; justify-content: center; background: #f0f0f0;">
               <a-spin size="large" />
             </div>
           </a-col>
@@ -593,22 +261,21 @@
       </div>
       <br />
     </div>
+
     <br />
+
     <!-- My Products Section -->
-    <div
-      class="!text-gray-700 sm:p-[10px] pt-0 bg-white rounded-[10px] sm:border border-gray-200"
-    >
+    <div class="!text-gray-700 sm:p-[10px] pt-0 bg-white rounded-[10px] sm:border border-gray-200">
       <a-row class="!px-2">
         <a-col :xs="10" :sm="10" :md="18" :lg="18" style="padding-top: 20px">
-          <b><h2>My Products</h2></b>
+          <b><h2>{{ t('manageStore.myProducts') }}</h2></b>
         </a-col>
         <a-col :xs="14" :sm="14" :md="6" :lg="6">
-          <!-- Add Product Button -->
           <div style="margin-top: 20px">
             <router-link to="/my-store/manage-products">
               <a-button type="primary" style="width: 100%">
                 <template #icon>+&nbsp;</template>
-                Add More Products
+                {{ t('manageStore.addMoreProducts') }}
               </a-button>
             </router-link>
           </div>
@@ -617,71 +284,41 @@
 
       <div class="!px-1 !py-2 sm:!p-2">
         <!-- Loading Spinner on First Load -->
-        <div
-          v-if="loading && productsPage === 1"
-          style="text-align: center; padding: 40px"
-        >
+        <div v-if="loading && productsPage === 1" style="text-align: center; padding: 40px">
           <a-spin size="large" />
-          <p style="margin-top: 15px; color: #666">Loading products...</p>
+          <p style="margin-top: 15px; color: #666">{{ t('manageStore.loadingProducts') }}</p>
         </div>
 
-        <!-- Empty State (no products and not loading) -->
-        <div
-          v-else-if="
-            our_products.length === 0 && !loading && productsPage === 1
-          "
-          style="text-align: center; padding: 60px 20px"
-        >
-          <a-empty
-            description="Business product catalogue is empty."
-            style="margin: 20px 0"
-          />
+        <!-- Empty State -->
+        <div v-else-if="our_products.length === 0 && !loading && productsPage === 1" style="text-align: center; padding: 60px 20px">
+          <a-empty :description="t('manageStore.emptyProducts')" style="margin: 20px 0" />
           <router-link to="/my-store/manage-products">
-            <a-button type="primary">Add Product</a-button>
+            <a-button type="primary">{{ t('manageStore.addProduct') }}</a-button>
           </router-link>
         </div>
 
         <!-- Products Loaded Successfully -->
         <div class="!text-gray-700" v-else style="width: 100%">
-          <!-- Debug Info (optional - remove in production) -->
           <div
             v-if="our_products.length > 0"
-            style="
-              background: #f9f9f9;
-              border: 1px solid #e8e8e8;
-              padding: 12px;
-              margin-bottom: 15px;
-              border-radius: 6px;
-              font-size: 12px;
-              color: #666;
-            "
+            style="background: #f9f9f9; border: 1px solid #e8e8e8; padding: 12px; margin-bottom: 15px; border-radius: 6px; font-size: 12px; color: #666;"
           >
-            <strong>Products Status:</strong> Showing
-            {{ our_products.length }} of {{ totalProducts }} | Page
-            {{ productsPage }} | More Available:
-            {{ hasMoreProducts ? "Yes" : "No" }}
+            <strong>{{ t('manageStore.productsStatus') }}:</strong>
+            {{ t('manageStore.showing') }} {{ our_products.length }} {{ t('manageStore.of') }} {{ totalProducts }} |
+            {{ t('manageStore.page') }} {{ productsPage }} |
+            {{ t('manageStore.moreAvailable') }}: {{ hasMoreProducts ? t('manageStore.yes') : t('manageStore.no') }}
           </div>
 
-          <!-- Products Grid Component -->
           <div v-if="our_products.length > 0">
-            <!-- hello world -->
             <buisnes_products_sailing :products="our_products" />
           </div>
 
-          <!-- Fallback - List products if component doesn't render -->
-          <div
-            v-else-if="our_products.length === 0"
-            style="text-align: center; padding: 30px"
-          >
-            <p style="color: #999">No products to display on this page</p>
+          <div v-else-if="our_products.length === 0" style="text-align: center; padding: 30px">
+            <p style="color: #999">{{ t('manageStore.noProductsOnPage') }}</p>
           </div>
 
           <!-- Load More Section -->
-          <div
-            v-if="our_products.length > 0"
-            style="margin-top: 30px; text-align: center"
-          >
-            <!-- More Products Button -->
+          <div v-if="our_products.length > 0" style="margin-top: 30px; text-align: center">
             <transition name="fade">
               <div v-if="hasMoreProducts" style="margin-bottom: 20px">
                 <a-button
@@ -691,237 +328,121 @@
                   :loading="isLoadingMoreProducts"
                   :disabled="isLoadingMoreProducts"
                 >
-                  <!-- style="padding: 12px 50px; border-radius: 8px; font-weight: 600; font-size: 15px;" -->
                   <span v-if="!isLoadingMoreProducts">
-                    Show More Products ({{
-                      totalProducts - our_products.length
-                    }}
-                    remaining)
+                    {{ t('manageStore.showMoreProducts') }} ({{ totalProducts - our_products.length }} {{ t('manageStore.remaining') }})
                   </span>
-                  <span v-else> Loading... </span>
+                  <span v-else>{{ t('manageStore.loading') }}</span>
                 </a-button>
               </div>
             </transition>
 
-            <!-- Pagination Info -->
-            <div
-              style="
-                color: #888;
-                font-size: 13px;
-                margin-top: 12px;
-                line-height: 1.6;
-              "
-            >
+            <div style="color: #888; font-size: 13px; margin-top: 12px; line-height: 1.6;">
               <p v-if="hasMoreProducts">
-                📊 Showing {{ our_products.length }} of
-                {{ totalProducts }} products
+                📊 {{ t('manageStore.showing') }} {{ our_products.length }} {{ t('manageStore.of') }} {{ totalProducts }} {{ t('manageStore.products') }}
               </p>
               <p v-else style="color: #aaa">
-                ✅ All {{ totalProducts }} products loaded
+                ✅ {{ t('manageStore.allProductsLoaded', { total: totalProducts }) }}
               </p>
             </div>
           </div>
         </div>
       </div>
     </div>
+
     <br />
-    <div
-      style="
-        padding: 10px;
-        background-color: white;
-        border-radius: 10px;
-        border: 2px solid rgba(128, 128, 128, 0.16);
-      "
-    >
-      <!-- <div style="padding:10px;background: #f2f2f3;;border-radius:10px">
-                <a-row>
-                    <a-col :sm="24" :xs="24" :md="20" :lg="20">
-                        <h3>User Generated Content</h3> 
-                    <p>Toggle on to allow your User generated content to be shown to other users.</p>
-                    </a-col>
-                    <a-col :sm="24" :xs="24" :md="4" :lg="4" style="display: flex;justify-content: end;">
-                          <a-switch v-model:checked="user_generated_content" />
-                    </a-col>
-                    
-                </a-row>
-            </div> -->
 
-      <div>
-        <!-- <a-col :lg="8" :md="8" :xs="24" :sm="24" style="padding:5px;"> -->
-        <!-- {{community_posts_virtualisations}} -->
-        <h3>Community Post Visualizations</h3>
-        <div v-if="community_posts_virtualisations.length == 0">
-          <a-empty description="No Community Posts Available "></a-empty>
-        </div>
-        <a-row v-else>
-          <a-col
-            v-for="post in community_posts_virtualisations"
-            :key="post.id"
-            :lg="8"
-            :md="8"
-            :xs="24"
-            :sm="24"
-          >
-            <div style="padding: 2px">
-              <div class="post-card" @click="openCommentsModal(post)">
-                <!-- Post Image -->
-                <div
-                  style="
-                    position: relative;
-                    overflow: hidden;
-                    width: 100%;
-                    height: 200px;
-                    border-radius: 10px;
-                  "
-                >
-                  <!-- SKELETON -->
-                  <div
-                    v-if="!imageLoadedMap[post.id]"
-                    class="post-image-skeleton"
-                  ></div>
+    <!-- Community Posts Section -->
+    <div style="padding: 10px; background-color: white; border-radius: 10px; border: 2px solid rgba(128, 128, 128, 0.16);">
+      <h3>{{ t('manageStore.communityPostVisualizations') }}</h3>
+      <div v-if="community_posts_virtualisations.length == 0">
+        <a-empty :description="t('manageStore.noCommunityPosts')" />
+      </div>
+      <a-row v-else>
+        <a-col
+          v-for="post in community_posts_virtualisations"
+          :key="post.id"
+          :lg="8" :md="8" :xs="24" :sm="24"
+        >
+          <div style="padding: 2px">
+            <div class="post-card" @click="openCommentsModal(post)">
+              <div style="position: relative; overflow: hidden; width: 100%; height: 200px; border-radius: 10px;">
+                <div v-if="!imageLoadedMap[post.id]" class="post-image-skeleton"></div>
+                <img
+                  :src="$store.state.root_media_api + post.post_image || require('../../../assets/home_main_banner.jpg')"
+                  style="position: absolute; width: 0; height: 0; opacity: 0"
+                  @load="onPostImageLoad(post.id)"
+                  alt=""
+                />
+                <img
+                  v-show="imageLoadedMap[post.id]"
+                  :src="$store.state.root_media_api + post.post_image || require('../../../assets/home_main_banner.jpg')"
+                  style="width: 100%; height: 200px; object-fit: cover; border-radius: 10px; padding: 5px; cursor: pointer;"
+                  :alt="post.title"
+                  @click="viewPost(post)"
+                />
 
-                  <!-- PRELOAD (INVISIBLE) -->
-                  <img
-                    :src="
-                      $store.state.root_media_api + post.post_image ||
-                      require('../../../assets/home_main_banner.jpg')
-                    "
-                    style="position: absolute; width: 0; height: 0; opacity: 0"
-                    @load="onPostImageLoad(post.id)"
-                    alt=""
-                  />
-
-                  <!-- REAL IMAGE -->
-                  <img
-                    v-show="imageLoadedMap[post.id]"
-                    :src="
-                      $store.state.root_media_api + post.post_image ||
-                      require('../../../assets/home_main_banner.jpg')
-                    "
-                    style="
-                      width: 100%;
-                      height: 200px;
-                      object-fit: cover;
-                      border-radius: 10px;
-                      padding: 5px;
-                      cursor: pointer;
-                    "
-                    :alt="post.title"
-                    @click="viewPost(post)"
-                  />
-
-                  <!-- Tags - Fixed for string array -->
-                  <div class="tags-overlay">
-                    <template v-if="post.tags && post.tags.length > 0">
-                      <a-tag
-                        v-for="(tag, index) in post.tags.slice(0, 3)"
-                        :key="index"
-                        color="blue"
-                        style="
-                          margin: 2px;
-                          border-radius: 12px;
-                          font-size: 11px;
-                        "
-                      >
-                        {{ tag }}
-                      </a-tag>
-                      <a-tag
-                        v-if="post.tags.length > 3"
-                        style="
-                          margin: 2px;
-                          border-radius: 12px;
-                          font-size: 11px;
-                          background: rgba(0, 0, 0, 0.6);
-                          color: white;
-                          border: none;
-                        "
-                      >
-                        +{{ post.tags.length - 3 }}
-                      </a-tag>
-                    </template>
-                  </div>
-
-                  <!-- View Count Overlay -->
-                  <div class="view-count-overlay">
-                    <EyeOutlined style="margin-right: 4px" />
-                    {{ formatNumber(post.view_count) }}
-                  </div>
-
-                  <!-- Pinned Badge -->
-                  <div v-if="post.is_pinned" class="pinned-badge">
-                    <PushpinOutlined />
-                    Pinned
-                  </div>
+                <div class="tags-overlay">
+                  <template v-if="post.tags && post.tags.length > 0">
+                    <a-tag v-for="(tag, index) in post.tags.slice(0, 3)" :key="index" color="blue" style="margin: 2px; border-radius: 12px; font-size: 11px;">
+                      {{ tag }}
+                    </a-tag>
+                    <a-tag v-if="post.tags.length > 3" style="margin: 2px; border-radius: 12px; font-size: 11px; background: rgba(0,0,0,0.6); color: white; border: none;">
+                      +{{ post.tags.length - 3 }}
+                    </a-tag>
+                  </template>
                 </div>
 
-                <!-- Post Content -->
-                <div style="padding: 5px">
-                  <!-- Actions Row -->
-                  <a-row style="align-items: center">
-                    <a-col :span="14" style="display: flex; gap: 10px">
-                      <img
-                        :src="
-                          this.$store.state.root_media_api + post.user_profile
-                        "
-                        style="
-                          width: 40px;
-                          height: 40px;
-                          border-radius: 100%;
-                          border: 1px solid rgba(0, 0, 0, 0.2);
-                        "
-                        alt=""
-                      />
-                      <span style="font-size: 16px; font-weight: 600">{{
-                        truncateText(post.post_by, 15)
-                      }}</span>
-                    </a-col>
-                    <a-col :span="10" style="display: flex">
-                      <!-- Post Stats -->
-                      <div class="post-stats">
-                        <div class="stat-item">
-                          <HeartFilled
-                            v-if="post.is_liked"
-                            style="color: #ff4d4f"
-                          />
-                          <HeartOutlined v-else />
-                          <span>{{ formatNumber(post.like_count) }}</span>
-                        </div>
-                        <div class="stat-item">
-                          <MessageOutlined />
-                          <span>{{ formatNumber(post.comment_count) }}</span>
-                        </div>
-                        <div class="stat-item" @click="sharePost(post)">
-                          <ShareAltOutlined />
-                          <span>{{ formatNumber(post.share_count) }}</span>
-                        </div>
-                      </div>
-                      <!-- More Actions Dropdown -->
-                    </a-col>
-                  </a-row>
+                <div class="view-count-overlay">
+                  <EyeOutlined style="margin-right: 4px" />
+                  {{ formatNumber(post.view_count) }}
+                </div>
+
+                <div v-if="post.is_pinned" class="pinned-badge">
+                  <PushpinOutlined />
+                  {{ t('manageStore.pinned') }}
                 </div>
               </div>
+
+              <div style="padding: 5px">
+                <a-row style="align-items: center">
+                  <a-col :span="14" style="display: flex; gap: 10px">
+                    <img
+                      :src="this.$store.state.root_media_api + post.user_profile"
+                      style="width: 40px; height: 40px; border-radius: 100%; border: 1px solid rgba(0,0,0,0.2);"
+                      alt=""
+                    />
+                    <span style="font-size: 16px; font-weight: 600">{{ truncateText(post.post_by, 15) }}</span>
+                  </a-col>
+                  <a-col :span="10" style="display: flex">
+                    <div class="post-stats">
+                      <div class="stat-item">
+                        <HeartFilled v-if="post.is_liked" style="color: #ff4d4f" />
+                        <HeartOutlined v-else />
+                        <span>{{ formatNumber(post.like_count) }}</span>
+                      </div>
+                      <div class="stat-item">
+                        <MessageOutlined />
+                        <span>{{ formatNumber(post.comment_count) }}</span>
+                      </div>
+                      <div class="stat-item" @click="sharePost(post)">
+                        <ShareAltOutlined />
+                        <span>{{ formatNumber(post.share_count) }}</span>
+                      </div>
+                    </div>
+                  </a-col>
+                </a-row>
+              </div>
             </div>
-          </a-col>
-        </a-row>
-      </div>
+          </div>
+        </a-col>
+      </a-row>
     </div>
 
-    <!-- Hidden file inputs for image uploads -->
-    <input
-      ref="backgroundImageInput"
-      type="file"
-      accept="image/*"
-      style="display: none"
-      @change="handleBackgroundImageChange"
-    />
-    <input
-      ref="bannerImageInput"
-      type="file"
-      accept="image/*"
-      style="display: none"
-      @change="handleBannerImageChange"
-    />
+    <!-- Hidden file inputs -->
+    <input ref="backgroundImageInput" type="file" accept="image/*" style="display: none" @change="handleBackgroundImageChange" />
+    <input ref="bannerImageInput" type="file" accept="image/*" style="display: none" @change="handleBannerImageChange" />
   </div>
+
   <CommentsModal
     :isOpen="showCommentsModal"
     :post="selectedPost"
@@ -932,19 +453,11 @@
 </template>
 
 <script>
+import { useI18n } from 'vue-i18n';
 import {
-  EyeOutlined,
-  HeartOutlined,
-  HeartFilled,
-  MessageOutlined,
-  ShareAltOutlined,
-  MoreOutlined,
-  EditOutlined,
-  DeleteOutlined,
-  PushpinOutlined,
-  ArrowLeftOutlined,
-  EnvironmentOutlined,
-  CloseOutlined,
+  EyeOutlined, HeartOutlined, HeartFilled, MessageOutlined,
+  ShareAltOutlined, MoreOutlined, EditOutlined, DeleteOutlined,
+  PushpinOutlined, ArrowLeftOutlined, EnvironmentOutlined, CloseOutlined,
 } from "@ant-design/icons-vue";
 
 import manage_products from "@/components/store/manage_products.vue";
@@ -952,27 +465,22 @@ import buisnes_products_sailing from "@/components/store/products_sailing.vue";
 import MapLocationSelector from "@/components/store/map_business_location.vue";
 import MapLocationViewer from "@/components/store/map_location_viewer.vue";
 import CommentsModal from "@/views/pages/CommentsModal.vue";
+
 export default {
   name: "manage_sites",
   components: {
-    EyeOutlined,
-    HeartOutlined,
-    HeartFilled,
-    MessageOutlined,
-    ShareAltOutlined,
-    MoreOutlined,
-    EditOutlined,
-    DeleteOutlined,
-    PushpinOutlined,
-    ArrowLeftOutlined,
-    EnvironmentOutlined,
-    CloseOutlined,
-    manage_products,
-    buisnes_products_sailing,
-    MapLocationSelector,
-    MapLocationViewer,
-    CommentsModal,
+    EyeOutlined, HeartOutlined, HeartFilled, MessageOutlined,
+    ShareAltOutlined, MoreOutlined, EditOutlined, DeleteOutlined,
+    PushpinOutlined, ArrowLeftOutlined, EnvironmentOutlined, CloseOutlined,
+    manage_products, buisnes_products_sailing,
+    MapLocationSelector, MapLocationViewer, CommentsModal,
   },
+
+  setup() {
+    const { t } = useI18n();
+    return { t };
+  },
+
   data() {
     return {
       imageLoadedMap: {},
@@ -980,35 +488,22 @@ export default {
         average: 0,
         unique_users: 0,
         total_ratings: 0,
-        distribution: {
-          "1_star": 0,
-          "2_star": 0,
-          "3_star": 0,
-          "4_star": 0,
-          "5_star": 0,
-        },
+        distribution: { "1_star": 0, "2_star": 0, "3_star": 0, "4_star": 0, "5_star": 0 },
         ratings: [],
       },
       loadingRatings: false,
       ratingsError: null,
-
       showCommentsModal: false,
       selectedPost: null,
       activeKey: "Visualization",
       user_generated_content: false,
-      business_info: JSON.parse(
-        localStorage.getItem("business_profile") || "{}",
-      ),
+      business_info: JSON.parse(localStorage.getItem("business_profile") || "{}"),
       isEditing: false,
       editStoreDescription: false,
       editServices: false,
       originalData: {},
-
-      // Products and pagination states
       our_products: [],
       community_posts_virtualisations: [],
-
-      // Pagination states for products
       productsPage: 1,
       productsPerPage: 10,
       totalProducts: 0,
@@ -1018,21 +513,14 @@ export default {
       loading: false,
       error: null,
       get_businesss_location_map_modal: false,
-
-      businessLocation: {
-        latitude: 0,
-        longitude: 0,
-        address: "Business Location",
-      },
+      businessLocation: { latitude: 0, longitude: 0, address: "Business Location" },
       businessLocationReady: false,
-
       editData: {
         business_picture: "",
         banner_picture: "",
         welcomeMessage: "Here is What Happening Your Business Today",
         storeTitle: "Your Lightning Store for perfect design",
-        storeDescription:
-          "Welcome to ALUMA, your go-to lighting store specializing in advanced lighting solutions for homes and businesses. With 14 years of experience in the industry, we offer a wide range of unique and stylish lighting fixtures, along with professional consultation services to bring your design vision to life.",
+        storeDescription: "Welcome to ALUMA, your go-to lighting store specializing in advanced lighting solutions for homes and businesses.",
         servicesTitle: "what do we offer ?",
         services: [
           "Architectural and Designer Lighting – A selection of modern, classic, and innovative lighting fixtures for every space",
@@ -1043,115 +531,76 @@ export default {
       },
     };
   },
+
   mounted() {
     this.loadBusinessProfile();
-    // Initialize editData with business_info
   },
+
   methods: {
-    // Add this new method to load business location from database
     async loadBusinessLocation() {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch(
-          `${this.$store.state.root_api}Auth/api/change-business-profile-location/`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Token ${token}`,
-              "Content-Type": "application/json",
-            },
-          },
-        );
-
+        const response = await fetch(`${this.$store.state.root_api}Auth/api/change-business-profile-location/`, {
+          method: "GET",
+          headers: { Authorization: `Token ${token}`, "Content-Type": "application/json" },
+        });
         const result = await response.json();
-
         if (result.success && result.data) {
           const data = result.data;
-          
-          // Set business location
           this.businessLocation = {
             latitude: data.latitude || 40.7128,
             longitude: data.longitude || -74.006,
-            address:
-              data.business_address ||
-              `${data.latitude}, ${data.longitude}` ||
-              "Business Location",
+            address: data.business_address || `${data.latitude}, ${data.longitude}` || "Business Location",
           };
-
           this.businessLocationReady = true;
         }
       } catch (error) {
         console.error("Error loading business location:", error);
-        this.businessLocationReady = true; // Show map anyway with default location
+        this.businessLocationReady = true;
       }
     },
 
     onEditBusinessImageLoad() {
       this.imageLoadedMap["editBusiness"] = false;
-      setTimeout(() => {
-        this.imageLoadedMap["editBusiness"] = true;
-      }, 1000);
+      setTimeout(() => { this.imageLoadedMap["editBusiness"] = true; }, 1000);
     },
 
     onPostImageLoad(id) {
       this.imageLoadedMap[id] = false;
-      setTimeout(() => {
-        this.imageLoadedMap[id] = true;
-      }, 1000); // 1s shimmer
+      setTimeout(() => { this.imageLoadedMap[id] = true; }, 1000);
     },
 
     async handleLocationConfirmed(locationData) {
-
-      // Update business location
       this.businessLocation = {
         latitude: locationData.latitude,
         longitude: locationData.longitude,
         address: locationData.address,
       };
-
-      // Close modal
       this.get_businesss_location_map_modal = false;
-
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch(
-          `${this.$store.state.root_api}Auth/api/change-business-profile-location/`,
-          {
-            method: "POST",
-            body: JSON.stringify(this.businessLocation),
-            headers: {
-              Authorization: `Token ${token}`,
-              "Content-Type": "application/json",
-            },
-          },
-        );
-
+        const response = await fetch(`${this.$store.state.root_api}Auth/api/change-business-profile-location/`, {
+          method: "POST",
+          body: JSON.stringify(this.businessLocation),
+          headers: { Authorization: `Token ${token}`, "Content-Type": "application/json" },
+        });
         const result = await response.json();
-
         if (result.success && result.data) {
           const data = result.data;
-
-          // Set business location
           this.businessLocation = {
             latitude: data.latitude || 40.7128,
             longitude: data.longitude || -74.006,
-            address:
-              data.business_address ||
-              `${data.latitude}, ${data.longitude}` ||
-              "Business Location",
+            address: data.business_address || `${data.latitude}, ${data.longitude}` || "Business Location",
           };
-
           this.businessLocationReady = true;
         }
       } catch (error) {
         console.error("Error loading business location:", error);
-        this.businessLocationReady = true; // Show map anyway with default location
+        this.businessLocationReady = true;
       }
-
-      // Show success message
-      this.$message.success("Business location updated successfully!");
+      this.$message.success(this.t('manageStore.locationUpdated'));
     },
-    // Utility methods
+
     formatNumber(num) {
       if (!num || num === 0) return "0";
       if (num >= 1000000) return (num / 1000000).toFixed(1) + "M";
@@ -1164,11 +613,10 @@ export default {
       const now = new Date();
       const diffTime = Math.abs(now - date);
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-      if (diffDays === 1) return "Yesterday";
-      if (diffDays <= 7) return `${diffDays} days ago`;
-      if (diffDays <= 30) return `${Math.ceil(diffDays / 7)} weeks ago`;
-      return date.toLocaleDateString();
+      if (diffDays === 1) return this.t('manageStore.yesterday');
+      if (diffDays <= 7) return this.t('manageStore.daysAgo', { days: diffDays });
+      if (diffDays <= 30) return this.t('manageStore.weeksAgo', { weeks: Math.ceil(diffDays / 7) });
+      return date.toLocaleDateString(this.$i18n.locale);
     },
 
     truncateText(text, length) {
@@ -1178,37 +626,27 @@ export default {
 
     async loadPosts() {
       try {
-        const response = await fetch(
-          `${this.$store.state.root_api}community/api/my-posts/`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Token ${localStorage.getItem("token")}`,
-              "Content-Type": "application/json",
-            },
-          },
-        );
-
+        const response = await fetch(`${this.$store.state.root_api}community/api/my-posts/`, {
+          method: "GET",
+          headers: { Authorization: `Token ${localStorage.getItem("token")}`, "Content-Type": "application/json" },
+        });
         const data = await response.json();
-
         if (data.success) {
           this.community_posts_virtualisations = data.data.map((post) => ({
             ...post,
-            // is_liked: false,
             tags: post.tags || [],
             like_count: post.like_count || 0,
             comment_count: post.comment_count || 0,
             share_count: post.share_count || 0,
             view_count: post.view_count || 0,
           }));
-
           this.hasMore = false;
         } else {
           throw new Error(data.message || "Failed to load posts");
         }
       } catch (error) {
         console.error("Failed to load posts:", error);
-        this.$message.error("Failed to load posts");
+        this.$message.error(this.t('manageStore.failedToLoadPosts'));
       } finally {
         this.loading = false;
       }
@@ -1225,91 +663,44 @@ export default {
         }
         const businessName = this.business_info?.slug;
         const token = localStorage.getItem("token");
-
         const response = await fetch(
           `${this.$store.state.root_api}Auth/api/business/products-sold/${businessName}?page=${pageNumber}&page_size=10`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Token ${token}`,
-              "Content-Type": "application/json",
-            },
-          },
+          { method: "GET", headers: { Authorization: `Token ${token}`, "Content-Type": "application/json" } }
         );
-
-        if (!response.ok) {
-          throw new Error(`API Error: ${response.status}`);
-        }
-
+        if (!response.ok) throw new Error(`API Error: ${response.status}`);
         const result = await response.json();
-
-        // Extract products data
         let productsData = [];
         let totalCount = 0;
         let hasNextPage = false;
-
-        // Check for nested results with success/data structure (YOUR API FORMAT)
-        if (
-          result.results &&
-          result.results.data &&
-          Array.isArray(result.results.data)
-        ) {
+        debugger;
+        if (result.results?.data && Array.isArray(result.results.data)) {
           productsData = result.results.data;
           totalCount = result.count || 0;
           hasNextPage = result.next !== null && result.next !== undefined;
-        }
-        // Check Django REST Pagination format (results as array)
-        else if (result.results && Array.isArray(result.results)) {
+        } else if (result.results && Array.isArray(result.results)) {
           productsData = result.results;
           totalCount = result.count || 0;
           hasNextPage = result.next !== null && result.next !== undefined;
-        }
-        // Fallback to success + data format
-        else if (result.success && result.data && Array.isArray(result.data)) {
+        } else if (result.success && result.data && Array.isArray(result.data)) {
           productsData = result.data;
           totalCount = result.total || result.data.length;
           hasNextPage = false;
-        }
-        // Direct array in data
-        else if (Array.isArray(result.data)) {
+        } else if (Array.isArray(result.data)) {
           productsData = result.data;
           totalCount = result.data.length;
           hasNextPage = false;
-        }
-        // Direct array response
-        else if (Array.isArray(result)) {
+        } else if (Array.isArray(result)) {
           productsData = result;
           totalCount = result.length;
           hasNextPage = false;
         }
-
-        
-
         if (productsData.length > 0) {
-          // Append products to existing list
-          if (pageNumber === 1) {
-            this.our_products = productsData;
-          } else {
-            this.our_products = [...this.our_products, ...productsData];
-          }
-
-          // Update pagination state
+          this.our_products = pageNumber === 1 ? productsData : [...this.our_products, ...productsData];
           this.totalProducts = totalCount;
           this.totalPagesProducts = Math.ceil(totalCount / 10);
           this.productsPage = pageNumber;
-
-          // Determine if there are more products
-          if (hasNextPage) {
-            this.hasMoreProducts = true;
-          } else if (productsData.length < 10) {
-            this.hasMoreProducts = false;
-          } else {
-            this.hasMoreProducts = true;
-          }
-
-         
+          this.hasMoreProducts = hasNextPage ? true : productsData.length >= 10;
         } else {
-          console.warn("⚠️ No products in response");
           if (pageNumber === 1) {
             this.our_products = [];
             this.totalProducts = 0;
@@ -1317,7 +708,7 @@ export default {
           }
         }
       } catch (error) {
-        console.error("❌ Error loading products:", error);
+        console.error("Error loading products:", error);
         if (pageNumber === 1) {
           this.error = `Failed to load products: ${error.message}`;
           this.our_products = [];
@@ -1331,17 +722,8 @@ export default {
     },
 
     async loadMoreProducts() {
-     
-
       if (!this.isLoadingMoreProducts && this.hasMoreProducts) {
         await this.loadBusinessProducts(this.productsPage + 1);
-      } else {
-        console.warn(
-          "⚠️ Cannot load more - isLoading:",
-          this.isLoadingMoreProducts,
-          "hasMore:",
-          this.hasMoreProducts,
-        );
       }
     },
 
@@ -1355,43 +737,26 @@ export default {
           business_picture: this.editData.business_picture,
           banner_picture: this.editData.banner_picture,
         };
-
         const token = localStorage.getItem("token");
-
-        const response = await fetch(
-          `${this.$store.state.root_api}Auth/api/business-profile/`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Token ${token}`,
-            },
-            body: JSON.stringify(payload),
-          },
-        );
-
+        const response = await fetch(`${this.$store.state.root_api}Auth/api/business-profile/`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: `Token ${token}` },
+          body: JSON.stringify(payload),
+        });
         const result = await response.json();
-
         if (result.success) {
-          this.$message.success("Changes saved successfully!");
+          this.$message.success(this.t('manageStore.changesSaved'));
           this.isEditing = false;
           this.editStoreDescription = false;
           this.editServices = false;
-
-          const updatedBusinessInfo = {
-            ...this.business_info,
-            ...payload,
-          };
-          localStorage.setItem(
-            "business_profile",
-            JSON.stringify(updatedBusinessInfo),
-          );
+          const updatedBusinessInfo = { ...this.business_info, ...payload };
+          localStorage.setItem("business_profile", JSON.stringify(updatedBusinessInfo));
           this.business_info = updatedBusinessInfo;
         } else {
-          this.$message.error(result.message || "Failed to save changes");
+          this.$message.error(result.message || this.t('manageStore.failedToSave'));
         }
       } catch (error) {
-        this.$message.error("Network error. Please try again.");
+        this.$message.error(this.t('manageStore.networkError'));
         console.error("Error saving changes:", error);
       }
     },
@@ -1399,48 +764,31 @@ export default {
     async loadBusinessProfile() {
       try {
         const token = localStorage.getItem("token");
-
-        const response = await fetch(
-          `${this.$store.state.root_api}Auth/api/business-profile/`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Token ${token}`,
-            },
-          },
-        );
-
+        const response = await fetch(`${this.$store.state.root_api}Auth/api/business-profile/`, {
+          method: "GET",
+          headers: { Authorization: `Token ${token}` },
+        });
         const result = await response.json();
-
         if (result.success) {
           const data = result.data;
-          
           this.editData = {
             ...this.editData,
-            business_picture:
-              data.business_picture || this.editData.business_picture,
+            business_picture: data.business_picture || this.editData.business_picture,
             banner_picture: data.banner_picture || this.editData.banner_picture,
             welcomeMessage: data.description || this.editData.welcomeMessage,
             storeTitle: data.buisness_info_title || this.editData.storeTitle,
-            storeDescription:
-              data.buisness_info || this.editData.storeDescription,
+            storeDescription: data.buisness_info || this.editData.storeDescription,
             services: data.services_offered || this.editData.services,
           };
-
           localStorage.setItem("business_profile", JSON.stringify(data));
           this.business_info = data;
-
           if (this.business_info) {
             this.editData = {
               ...this.editData,
-              business_picture:
-                this.business_info.business_picture ||
-                this.editData.business_picture,
-              banner_picture:
-                this.business_info.banner_picture ||
-                this.editData.banner_picture,
+              business_picture: this.business_info.business_picture || this.editData.business_picture,
+              banner_picture: this.business_info.banner_picture || this.editData.banner_picture,
             };
-            this.loadBusinessProducts(1); // Load first page
+            this.loadBusinessProducts(1);
             this.loadPosts();
             this.loadBusinessLocation();
             this.loadBusinessRatings();
@@ -1451,121 +799,74 @@ export default {
       }
     },
 
-    enableEdit() {
-      this.isEditing = true;
-      this.originalData = JSON.parse(JSON.stringify(this.editData));
-    },
-
+    enableEdit() { this.isEditing = true; this.originalData = JSON.parse(JSON.stringify(this.editData)); },
     cancelEdit() {
       this.isEditing = false;
       this.editStoreDescription = false;
       this.editServices = false;
       this.editData = JSON.parse(JSON.stringify(this.originalData));
     },
-
-    changeBackgroundImage() {
-      this.$refs.backgroundImageInput.click();
-    },
-
-    changeBannerImage() {
-      this.$refs.bannerImageInput.click();
-    },
-
+    changeBackgroundImage() { this.$refs.backgroundImageInput.click(); },
+    changeBannerImage() { this.$refs.bannerImageInput.click(); },
     handleBackgroundImageChange(event) {
-      const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          this.editData.business_picture = e.target.result;
-        };
-        reader.readAsDataURL(file);
-      }
-    },
-
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (e) => { 
+      this.editData.business_picture = e.target.result; // This will be a data:image/... base64 string
+    };
+    reader.readAsDataURL(file);
+  }
+},
     handleBannerImageChange(event) {
-      const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          this.editData.banner_picture = e.target.result;
-        };
-        reader.readAsDataURL(file);
-      }
-    },
-
-    addService() {
-      this.editData.services.push("");
-    },
-
-    removeService(index) {
-      this.editData.services.splice(index, 1);
-    },
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (e) => { 
+      this.editData.banner_picture = e.target.result; // This will be a data:image/... base64 string
+    };
+    reader.readAsDataURL(file);
+  }
+},
+    addService() { this.editData.services.push(""); },
+    removeService(index) { this.editData.services.splice(index, 1); },
 
     async loadBusinessRatings() {
       try {
         this.loadingRatings = true;
         this.ratingsError = null;
-
         const token = localStorage.getItem("token");
-        const businessSlug = this.business_info?.slug; // Use existing business slug
-
+        const businessSlug = this.business_info?.slug;
         const response = await fetch(
           `${this.$store.state.root_api}room/api/business-ratings/?business_slug=${businessSlug}`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Token ${token}`,
-              "Content-Type": "application/json",
-            },
-          },
+          { method: "GET", headers: { Authorization: `Token ${token}`, "Content-Type": "application/json" } }
         );
-
-        if (!response.ok) {
-          throw new Error(`API Error: ${response.status}`);
-        }
-
+        if (!response.ok) throw new Error(`API Error: ${response.status}`);
         const result = await response.json();
-
         if (result.success && result.data) {
           this.businessRatings = {
             average: result.data.statistics.average || 0,
             unique_users: result.data.statistics.unique_users || 0,
             total_ratings: result.data.statistics.total_ratings || 0,
-            distribution: result.data.statistics.distribution || {
-              "1_star": 0,
-              "2_star": 0,
-              "3_star": 0,
-              "4_star": 0,
-              "5_star": 0,
-            },
+            distribution: result.data.statistics.distribution || { "1_star": 0, "2_star": 0, "3_star": 0, "4_star": 0, "5_star": 0 },
             ratings: result.data.ratings || [],
           };
-
-         
         } else {
           throw new Error(result.message || "Failed to fetch ratings");
         }
       } catch (error) {
-        console.error("❌ Error loading business ratings:", error);
+        console.error("Error loading business ratings:", error);
         this.ratingsError = error.message;
-        // Set default values on error
         this.businessRatings = {
-          average: 0,
-          unique_users: 0,
-          total_ratings: 0,
-          distribution: {
-            "1_star": 0,
-            "2_star": 0,
-            "3_star": 0,
-            "4_star": 0,
-            "5_star": 0,
-          },
+          average: 0, unique_users: 0, total_ratings: 0,
+          distribution: { "1_star": 0, "2_star": 0, "3_star": 0, "4_star": 0, "5_star": 0 },
           ratings: [],
         };
       } finally {
         this.loadingRatings = false;
       }
     },
+
     async openCommentsModal(post) {
       this.selectedPost = {
         ...post,
@@ -1576,163 +877,100 @@ export default {
         likes: post.like_count,
         comments: post.comment_count,
         title: post.title || "Post",
-        content:
-          post.content || post.description || "No description available.",
-        description:
-          post.content || post.description || "No description available.",
+        content: post.content || post.description || this.t('manageStore.noDescription'),
+        description: post.content || post.description || this.t('manageStore.noDescription'),
         tags: post.tags || [],
         created_at: post.created_at || new Date().toISOString(),
         is_liked: post.is_liked || false,
         id: post.id,
       };
-
       this.showCommentsModal = true;
-
-      // Load comments for this post
       await this.loadModalComments(post.id);
     },
 
-    // Load comments for modal
     async loadModalComments(postId, page = 1) {
       try {
         this.loadingModalComments = true;
         const response = await fetch(
           `${this.$store.state.root_api}community/api/comments/?post_id=${postId}&page=${page}`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Token ${localStorage.getItem("token")}`,
-              "Content-Type": "application/json",
-            },
-          },
+          { method: "GET", headers: { Authorization: `Token ${localStorage.getItem("token")}`, "Content-Type": "application/json" } }
         );
-
         const data = await response.json();
         if (data.success) {
-          if (page === 1) {
-            this.modalComments = data.data;
-          } else {
-            this.modalComments.push(...data.data);
-          }
+          if (page === 1) { this.modalComments = data.data; }
+          else { this.modalComments.push(...data.data); }
           this.hasMoreModalComments = page < data.total_pages;
           this.modalCommentsPage = page;
         }
       } catch (error) {
         console.error("Failed to load comments:", error);
-        this.$message.error("Failed to load comments");
+        this.$message.error(this.t('manageStore.failedToLoadComments'));
       } finally {
         this.loadingModalComments = false;
       }
     },
 
-    // Calculate percentage for progress bars
     calculatePercentage(count) {
       if (this.businessRatings.total_ratings === 0) return 0;
       return Math.round((count / this.businessRatings.total_ratings) * 100);
     },
-    // Load more comments in modal
+
     async loadMoreModalComments() {
       if (this.selectedPost && this.hasMoreModalComments) {
-        await this.loadModalComments(
-          this.selectedPost.id,
-          this.modalCommentsPage + 1,
-        );
+        await this.loadModalComments(this.selectedPost.id, this.modalCommentsPage + 1);
       }
     },
 
-    // Add comment in modal
     async addModalComment() {
       if (!this.newModalComment.trim() || !this.selectedPost) return;
-
       try {
         this.addingModalComment = true;
-        const response = await fetch(
-          `${this.$store.state.root_api}community/api/comments/`,
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Token ${localStorage.getItem("token")}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              post_id: this.selectedPost.id,
-              content: this.newModalComment.trim(),
-            }),
-          },
-        );
-
+        const response = await fetch(`${this.$store.state.root_api}community/api/comments/`, {
+          method: "POST",
+          headers: { Authorization: `Token ${localStorage.getItem("token")}`, "Content-Type": "application/json" },
+          body: JSON.stringify({ post_id: this.selectedPost.id, content: this.newModalComment.trim() }),
+        });
         const data = await response.json();
         if (data.success) {
-          // Clear input
           this.newModalComment = "";
-
-          // Reload comments
           await this.loadModalComments(this.selectedPost.id);
-
-          // Update comment count in the main list
           this.selectedPost.comments += 1;
-          const postIndex = this.community_posts_virtualisations.findIndex(
-            (p) => p.id === this.selectedPost.id,
-          );
+          const postIndex = this.community_posts_virtualisations.findIndex((p) => p.id === this.selectedPost.id);
           if (postIndex !== -1) {
-            this.community_posts_virtualisations[postIndex].comment_count =
-              this.selectedPost.comments;
+            this.community_posts_virtualisations[postIndex].comment_count = this.selectedPost.comments;
           }
-
-          this.$message.success("Comment added successfully!");
+          this.$message.success(this.t('manageStore.commentAdded'));
         }
       } catch (error) {
-        this.$message.error("Failed to add comment");
+        this.$message.error(this.t('manageStore.failedToAddComment'));
       } finally {
         this.addingModalComment = false;
       }
     },
 
-    // Handle comment added event
-    onCommentAdded() {
-      this.loadPosts(); // Reload posts to update comment counts
-    },
+    onCommentAdded() { this.loadPosts(); },
+    onLikeToggled() { this.loadPosts(); },
 
-    // Handle like toggled event
-    onLikeToggled() {
-      this.loadPosts(); // Reload posts to update like counts
-    },
-
-    // Update your existing toggleLike method to work with the modal
     async toggleLike(post) {
       try {
-        const response = await fetch(
-          `${this.$store.state.root_api}community/api/posts/like/`,
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Token ${localStorage.getItem("token")}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              post_id: post.id,
-            }),
-          },
-        );
-
+        const response = await fetch(`${this.$store.state.root_api}community/api/posts/like/`, {
+          method: "POST",
+          headers: { Authorization: `Token ${localStorage.getItem("token")}`, "Content-Type": "application/json" },
+          body: JSON.stringify({ post_id: post.id }),
+        });
         const data = await response.json();
         if (data.success) {
           post.is_liked = data.data.action === "liked";
           post.like_count = data.data.like_count;
-
-          // If this is the currently selected post in modal, update it too
           if (this.selectedPost && this.selectedPost.id === post.id) {
             this.selectedPost.is_liked = post.is_liked;
             this.selectedPost.likes = post.like_count;
           }
-
-          this.$message.success(
-            post.is_liked ? "Post liked!" : "Post unliked!",
-          );
+          this.$message.success(post.is_liked ? this.t('manageStore.postLiked') : this.t('manageStore.postUnliked'));
         }
       } catch (error) {
         console.error("Failed to toggle like:", error);
-        this.$message.error("Failed to update like");
+        this.$message.error(this.t('manageStore.failedToUpdateLike'));
       }
     },
   },

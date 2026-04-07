@@ -157,10 +157,18 @@
               <button v-else-if="planRank(currentPlan) > planRank('basic')" class="get-started-btn basic-btn btn-disabled" disabled>Not Available</button>
               <button v-else class="get-started-btn basic-btn" @click="$router.push('/make-payment/basic')">Get Started</button>
               <div class="features-list">
+              
                 <div v-for="(feature, index) in pricingData.basic.description_list" :key="index" class="feature-item">
-                  <span class="checkmark">✓</span>
-                  <span>{{ feature }}</span>
-                </div>
+                <svg v-if="feature.enabled" width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-right: 8px; flex-shrink: 0;">
+                  <path d="M2.66797 6.66667L6.66797 10.6667L13.3346 4" stroke="#22c55e" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <svg v-else width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-right: 8px; flex-shrink: 0;">
+                  <path d="M4 4L12 12M12 4L4 12" stroke="#ff4d4f" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span >{{ feature.text }}</span>
+              </div>
+
+
               </div>
             </div>
 
@@ -181,10 +189,16 @@
               <button v-else-if="planRank(currentPlan) > 0 && planRank(currentPlan) < planRank('standard')" class="get-started-btn standard-btn" @click="$router.push('/make-payment-upgrade/standard')">Upgrade to Standard</button>
               <button v-else class="get-started-btn standard-btn" @click="$router.push('/make-payment/standard')">Get Started</button>
               <div class="features-list">
-                <div v-for="(feature, index) in pricingData.standard.description_list" :key="index" class="feature-item">
-                  <span class="checkmark">✓</span>
-                  <span>{{ feature }}</span>
-                </div>
+                  <div v-for="(feature, index) in pricingData.standard.description_list" :key="index" class="feature-item">
+                <svg v-if="feature.enabled" width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-right: 8px; flex-shrink: 0;">
+                  <path d="M2.66797 6.66667L6.66797 10.6667L13.3346 4" stroke="#22c55e" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <svg v-else width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-right: 8px; flex-shrink: 0;">
+                  <path d="M4 4L12 12M12 4L4 12" stroke="#ff4d4f" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span >{{ feature.text }}</span>
+              </div>
+
               </div>
             </div>
 
@@ -205,9 +219,14 @@
               <button v-else class="get-started-btn premium-btn" @click="$router.push('/make-payment/premium')">Get Started</button>
               <div class="features-list">
                 <div v-for="(feature, index) in pricingData.premium.description_list" :key="index" class="feature-item">
-                  <span class="checkmark">✓</span>
-                  <span>{{ feature }}</span>
-                </div>
+                <svg v-if="feature.enabled" width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-right: 8px; flex-shrink: 0;">
+                  <path d="M2.66797 6.66667L6.66797 10.6667L13.3346 4" stroke="#22c55e" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <svg v-else width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-right: 8px; flex-shrink: 0;">
+                  <path d="M4 4L12 12M12 4L4 12" stroke="#ff4d4f" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span >{{ feature.text }}</span>
+              </div>
               </div>
             </div>
 

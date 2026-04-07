@@ -28,13 +28,12 @@
 
     <!-- Title -->
     <h2 style="font-size:20px; font-weight:600; margin-bottom:8px;">
-      Subscription Expired
+      {{errorTitle}}
     </h2>
 
     <!-- Message -->
     <p style="font-size:14px; color:#666; margin-bottom:18px;" v-if="currentUser.user_type!=='User'">
-      Hi {{ buid?.first_name || "User" }}, your monthly subscription has expired.
-      Please renew to continue using the service.
+      Hi {{ buid?.first_name || "User" }}, {{creditErrorMessage}}
     </p>
 
     
@@ -76,7 +75,7 @@
     </div>
 
     <!-- CTA -->
-     <router-link :to="'/make-payment-upgrade/'+prev_subscription?.subscription_plan_name" v-if="currentUser.user_type=='Business'">
+     <router-link :to="'/make-payment-upgrade/'+prev_subscription?.subscription_plan_name" v-if="prev_subscription && currentUser.user_type=='Business'">
        <a-button
        v-if="currentUser.user_type !== 'User'"
        type="primary"
@@ -1927,8 +1926,19 @@ export default {
               this.buid = responseData.buid;
               return;
             }
+            if (responseData.type === "no_subscription_found") { 
+              this.showInstructionsModal = false;
+              this.showMonthlySubscription_activaFound_Modal = true;
+              this.btnText = responseData?.btn_text;
+              this.errorTitle = "Your have not yet purchased any subscription.";
+              this.creditErrorMessage = "Please explore our subscription plans and purchase one to continue with further simulations.";
+              // this.prev_subscription= responseData?.prev_subscription;
+              
+              this.buid = responseData.buid;
+              return;
+            }
         }
-
+        console.log(responseData);
         if (responseData.error) {
           this.showInstructionsModal = false;
           this.errorTitle = responseData?.title;
@@ -2278,13 +2288,37 @@ export default {
 
         if (responseData.error) {
           if (responseData.type === "out_of_monthly_virtulisation_limits") {  
-            this.creditErrorMessage = "Out of monthly visualizations limit quota. please connect the business User ";
+            this.showInstructionsModal = false;
+            this.btnText = responseData?.btn_text;
             this.errorTitle = "Out of monthly virtulisation.";
+            this.creditErrorMessage = "Out of monthly visualizations limit quota. please connect the business User ";
             this.showCreditModal = true;
             this.buid = responseData.buid;  
             return;
-          }
+            }
+            if (responseData.type === "no_monthly_active_subscription_found") { 
+              this.showInstructionsModal = false;
+              this.showMonthlySubscription_activaFound_Modal = true;
+              this.btnText = responseData?.btn_text;
+              this.errorTitle = "Your Monthly Subscription Got Expired.";
+              this.creditErrorMessage = "No active monthly subscription found. As your previous subscription got expired, You need to purchase new monthly subscription to continue further.";
+              this.prev_subscription= responseData?.prev_subscription;
+              this.buid = responseData.buid;
+              return;
+            }
+            if (responseData.type === "no_subscription_found") { 
+              this.showInstructionsModal = false;
+              this.showMonthlySubscription_activaFound_Modal = true;
+              this.btnText = responseData?.btn_text;
+              this.errorTitle = "Your have not yet purchased any subscription.";
+              this.creditErrorMessage = "Please explore our subscription plans and purchase one to continue with further simulations.";
+              // this.prev_subscription= responseData?.prev_subscription;
+              
+              this.buid = responseData.buid;
+              return;
+            }
         }
+
 
         if (responseData.error) {
           this.creditErrorMessage = responseData.msg;

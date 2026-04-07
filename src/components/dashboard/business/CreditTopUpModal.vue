@@ -13,10 +13,10 @@
           </div>
           <div class="flex-1 min-w-0">
             <h4 class="m-0 mb-2 !font-[Poppins] !font-medium !text-[16px] !leading-[24px] !tracking-[0] text-[#262626]">
-              Your remaining credits
+              {{ t('credits.remainingCredits') }}
             </h4>
             <p class="m-0 !font-[Poppins] !font-normal !text-[10px] md:w-80 !leading-[16px] !tracking-[0] text-[#8c8c8c]">
-              This will not affect your monthly subscription plan and will only be used after your monthly quota is exhausted.
+              {{ t('credits.quotaDescription') }}
             </p>
           </div>
         </div>
@@ -30,7 +30,7 @@
             @click="openModal"
             class="!font-[Poppins] !font-normal bg-[#3B63FB] !text-white rounded-lg px-6 py-2.5 transition-all duration-[800ms] ease-out hover:bg-[#2a50e0] active:scale-95"
           >
-            Buy more Credits
+            {{ t('credits.buyMoreCredits') }}
           </button>
         </div>
       </div>
@@ -39,7 +39,7 @@
     <!-- Ant Design Modal with Table -->
     <a-modal
       v-model:visible="isOpen"
-      title="Credit Top-up Plans"
+      :title="t('credits.modalTitle')"
       width="900px"
       :footer="null"
       @cancel="closeModal"
@@ -68,7 +68,7 @@
               @click="handleBuy(record)"
               style="width: 100%"
             >
-              Buy Now
+              {{ t('credits.buyNow') }}
             </a-button>
           </template>
         </template>
@@ -78,6 +78,8 @@
 </template>
 
 <script>
+import { useI18n } from 'vue-i18n';
+
 export default {
   name: 'CreditTopupModal',
 
@@ -94,6 +96,11 @@ export default {
 
   emits: ['purchased'],
 
+  setup() {
+    const { t } = useI18n();
+    return { t };
+  },
+
   data() {
     return {
       isOpen: false,
@@ -101,31 +108,31 @@ export default {
       error: false,
       plans: [],
       buyingId: null,
-      creditTopupColumns: [
+    };
+  },
+
+  computed: {
+    creditTopupColumns() {
+      return [
         {
-          title: 'Credits',
+          title: this.t('credits.columns.credits'),
           dataIndex: 'credits_count',
           key: 'credits_count',
           align: 'center',
         },
         {
-          title: 'Price',
+          title: this.t('credits.columns.price'),
           dataIndex: 'price',
           key: 'price',
           align: 'center',
         },
-        // {
-        //   title: 'Rate per Credit',
-        //   key: 'rate',
-        //   align: 'center',
-        // },
         {
-          title: 'Action',
+          title: this.t('credits.columns.action'),
           key: 'action',
           align: 'center',
         },
-      ],
-    };
+      ];
+    },
   },
 
   methods: {
@@ -167,7 +174,6 @@ export default {
       setTimeout(() => {
         this.closeModal();
         this.$router.push(`/make-payment-credit-topup/${plan.id}`);
-        // this.$emit('purchased', plan);
       }, 300);
     },
   },

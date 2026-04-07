@@ -121,6 +121,7 @@
                     <!-- Image -->
                     <img
                       v-if="design.image"
+                       v-show="imageLoadedMap[design.id]"
                       :src="$store.state.root_media_api + design.image"
                       :class="{ 'image-loaded': imageLoadedMap[design.id] }"
                       @load="onImageLoad(design.id)"

@@ -136,7 +136,7 @@
                     <a-tag>Room: {{ design.room_type }}</a-tag>
                     <a-tag>Style: {{ design.room_design_type }}</a-tag>
                   </a-col>
-                  <a-col :span="2">
+                  <!-- <a-col :span="2">
                     <a-dropdown :trigger="['click']" placement="bottomRight">
                       <MoreOutlined style="font-size: 16px; cursor: pointer" />
                       <template #overlay>
@@ -153,7 +153,7 @@
                         </a-menu>
                       </template>
                     </a-dropdown>
-                  </a-col>
+                  </a-col> -->
                 </a-row>
               </div>
             </a-col>

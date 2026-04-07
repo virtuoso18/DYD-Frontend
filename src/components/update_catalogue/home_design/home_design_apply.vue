@@ -626,11 +626,54 @@
 
           <!-- Save to My Design Button -->
           <button
+            v-if="!saved_toMyDesign"
             @click="open_SaveToMyDesignes = true"
-            class="w-full !mt-3 !bg-blue-600 hover:!bg-blue-700 !text-white !px-6 !py-4 !rounded-lg !text-base transition-all !shadow-sm"
+           class="w-full !mt-3 !bg-blue-600 hover:!bg-blue-700 !text-white !px-6 !py-4 !rounded-lg !text-base transition-all !shadow-sm"
           >
             Save to My Design
           </button>
+        
+            <a-button
+                type="default"
+                @click="gotoMyDesignes"
+                v-if="saved_toMyDesign"
+                style="
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  gap: 8px;
+                  padding: 4px 16px;
+                  height: auto;
+
+                  border-radius: 8px;
+                "
+                class="w-full !mt-3 !px-6 !py-4 !rounded-lg !text-base transition-all !shadow-sm"
+                block
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="30px"
+                  height="30px"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                >
+                  <path
+                    d="M3 8H17.8C18.9201 8 19.4802 8 19.908 8.21799C20.2843 8.40973 20.5903 8.71569 20.782 9.09202C21 9.51984 21 10.0799 21 11.2V16.8C21 17.9201 21 18.4802 20.782 18.908C20.5903 19.2843 20.2843 19.5903 19.908 19.782C19.4802 20 18.9201 20 17.8 20H6.2C5.0799 20 4.51984 20 4.09202 19.782C3.71569 19.5903 3.40973 19.2843 3.21799 18.908C3 18.4802 3 17.9201 3 16.8V8Z"
+                    fill="green"
+                    fill-opacity="0.24"
+                  />
+                  <path
+                    d="M3 8C3 7.06812 3 6.60218 3.15224 6.23463C3.35523 5.74458 3.74458 5.35523 4.23463 5.15224C4.60218 5 5.06812 5 6 5H8.34315C9.16065 5 9.5694 5 9.93694 5.15224C10.3045 5.30448 10.5935 5.59351 11.1716 6.17157L13 8H3Z"
+                    fill="green"
+                    fill-opacity="0.24"
+                  />
+                  <path
+                    d="M9 13.5L10.8939 15.3939C10.9525 15.4525 11.0475 15.4525 11.1061 15.3939L15 11.5"
+                    stroke="#000"
+                  />
+                </svg>
+                Saved To My Designes
+              </a-button>
         </div>
       </div>
     </div>
@@ -644,9 +687,12 @@ export default {
   name: "HomeDesignApplyChanges",
   data() {
     return {
+      user: JSON.parse(localStorage.getItem("user")),
+
       // Modal states
       open_products_used_model: false,
       open_SaveToMyDesignes: false,
+      saved_toMyDesign:false,
 
       // Images
       beforeImage:
@@ -655,7 +701,6 @@ export default {
         "https://images.unsplash.com/photo-1600210492493-0946911123ea?w=800&h=600&fit=crop",
       thumbnails: [],
       selectedThumb: 0,
-
       // Products and design data
       products_used: [],
       roomType: "Dinning Room",
@@ -704,6 +749,17 @@ export default {
     /**
      * Handle image load events
      */
+    gotoMyDesignes() {
+      if (this.user.user_type == "Business") {
+        this.$router.push("/business-dashboard/my-designs");
+      }
+      if (this.user.user_type == "Professional") {
+        this.$router.push("/professional-dashboard/my-designs");
+      }
+      if (this.user.user_type == "User") {
+        this.$router.push("/user-dashboard/my-designs");
+      }
+    },
     onImageLoad(type, index = null) {
       if (type === 'thumbnails' && index !== null) {
         this.imageLoaded.thumbnails[index] = true;
@@ -861,6 +917,7 @@ export default {
         if (responseData && !responseData.error) {
           this.$message.success("Design saved successfully!");
           this.open_SaveToMyDesignes = false;
+          this.saved_toMyDesign = true;
           this.form.description_room = "";
         } else {
           throw new Error(responseData.message || "Failed to save design");
