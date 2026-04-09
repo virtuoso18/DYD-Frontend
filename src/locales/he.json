@@ -545,7 +545,10 @@
     "networkErrorLoading": "שגיאת רשת בעת טעינת הפרופיל",
     "invalidImageFile": "אנא בחר קובץ תמונה",
     "avatarTooLarge": "תמונת האווטאר חייבת להיות קטנה מ-2MB",
-    "backgroundTooLarge": "תמונת הרקע חייבת להיות קטנה מ-5MB"
+    "backgroundTooLarge": "תמונת הרקע חייבת להיות קטנה מ-5MB",
+    "privacy_notice": "Privacy Notice",
+    "privacy_warning": "Please upload a room image without people. Images containing persons are not processed as per our privacy policies.",
+    "error": "Error"
   }
 },
 "likes": {
@@ -1461,6 +1464,175 @@
   "errorMessage": "שליחת הפנייה נכשלה. אנא נסה שוב.",
   "attachmentsLabel": "קבצים מצורפים",
   "optional": "אופציונלי"
-}
+},
+ "startNewCatalogue": {
+    "modals": {
+      "subscriptionExpired": {
+        "expiredTitle": "המנוי החודשי שלך פג תוקף.",
+        "notFoundTitle": "עדיין לא רכשת מנוי.",
+        "userMessage": "תוקף המנוי של העסק פג. תוכל לשלוח הודעה לעסק כדי לחדש את המנוי ל-DYD.",
+        "plan": "תוכנית",
+        "period": "תקופה",
+        "status": "סטטוס",
+        "statusValue": "פג תוקף",
+        "renewButton": "חדש מנוי",
+        "explorePlansButton": "עיין בתוכניות",
+        "contactBusinessButton": "צור קשר עם העסק"
+      },
+      "credits": {
+        "defaultTitle": "קרדיטים לא מספיקים",
+        "purchaseButton": "רכוש קרדיטים",
+        "messageBusinessButton": "שלח הודעה לעסק"
+      },
+      "loading": {
+        "loadingText": "טוען...",
+        "poweredBy": "מופעל על ידי",
+        "brandName": "D.Y.D"
+      },
+      "instructions": {
+        "uploadInstruction": "העלה כאן תמונה של החלל שלך.",
+        "tryProducts": "נסה את המוצרים שלנו בחלל",
+        "cleanCamera": "נקה את המצלמה",
+        "zoomInstruction": "צלם את התמונה בזום 0.5.",
+        "uploadButton": "העלה תמונה",
+        "processingButton": "מעבד...",
+        "uploadAlert": "בחרת מוצר לתצוגה מקדימה בחדר שלך. אנא צלם והעלה תמונה מוארת של החדר שלך כדי להמשיך.",
+        "imageReady": "התמונה נבחרה ומוכנה",
+        "changeRoomButton": "החלף תמונת חדר",
+        "continueButton": "המשך",
+        "fileSizeLabel": "גודל:"
+      }
+    },
+    "drawer": {
+      "projectStats": "סטטיסטיקות פרויקט",
+      "detectedObjects": "אובייקטים שזוהו",
+      "detectedObjectsDesc": "הקש על כל אובייקט שזוהה (מסגרות ירוקות) כדי להחליף או למחוק אותו.",
+      "objects": "אובייקטים",
+      "products": "מוצרים",
+      "replaced": "הוחלפו",
+      "useThisRoom": "השתמש בחדר זה",
+      "showObjects": "הצג אובייקטים",
+      "continueButton": "המשך",
+      "dydExampleRoom": "חדר לדוגמה של DYD"
+    },
+    "upload": {
+      "dragInstruction": "לחץ או גרור תמונה להעלאה",
+      "formatHint": "PNG או JPEG בלבד",
+      "uploadButton": "העלה תמונה",
+      "processingButton": "מעבד...",
+      "historyAlert": "בחרת מוצר לתצוגה מקדימה בחדר שלך. אנא צלם והעלה תמונה מוארת של החדר שלך כדי להמשיך, או בחר חדר שנשמר בעבר מההיסטוריה שלך השייך לאותו מותג כמו המוצר שבחרת."
+    },
+    "history": {
+      "label": "ההיסטוריה שלך",
+      "loadMore": "טען עוד",
+      "remaining": "נותרו",
+      "loading": "טוען..."
+    },
+    "examples": {
+      "label": "השתמש בחדר לדוגמה שלנו",
+      "roomTypes": {
+        "all": "הכל",
+        "livingRoom": "סלון",
+        "kitchen": "מטבח",
+        "bedroom": "חדר שינה",
+        "diningRoom": "חדר אוכל"
+      },
+      "emptyState": "לא נמצאו תמונות",
+      "allObjectsRemoved": "כל האובייקטים הוסרו!",
+      "roomReady": "החדר נקי ומוכן"
+    },
+    "objectManagement": {
+      "title": "אובייקטים שזוהו"
+    },
+    "errors": {
+      "outOfVisualisations": "חרגת ממכסת ההדמיות החודשית. אנא צור קשר עם משתמש העסק.",
+      "outOfVisualisationsTitle": "חרגת ממכסת ההדמיות החודשית.",
+      "noActiveSubscription": "לא נמצא מנוי חודשי פעיל. מכיוון שהמנוי הקודם שלך פג תוקף, עליך לרכוש מנוי חודשי חדש כדי להמשיך.",
+      "noSubscription": "אנא עיין בתוכניות המנוי שלנו ורכוש אחת כדי להמשיך עם הדמיות נוספות.",
+      "onlyImagesAllowed": "מותר להעלות קבצי תמונה בלבד!",
+      "imageTooLarge": "התמונה חייבת להיות קטנה מ-10MB!",
+      "uploadFailed": "ההעלאה נכשלה",
+      "uploadTimeout": "פסק הזמן של ההעלאה - הקובץ עשוי להיות גדול מדי או שהעיבוד לוקח זמן רב",
+      "networkError": "שגיאת רשת - אנא בדוק את החיבור שלך",
+      "unknownError": "אירעה שגיאה לא ידועה",
+      "selectImageFirst": "אנא בחר תמונה תחילה",
+      "roomProcessed": "החדר עובד בהצלחה!"
+    },
+    "brandMismatch": {
+      "title": "אי-התאמת מותג",
+      "message": "המוצר שאתה צופה בו שייך למותג אחר, והחדר שבחרת שייך אף הוא למותג אחר. אנא בחר חדר השייך לאותו מותג, או אם ברצונך להמשיך עם המותג הנוכחי, לא תוכל לצפות במוצר זה. לחלופין, תוכל להעלות תמונה חדשה לחדר חדש."
+    },
+    "heading": {
+      "main": "צור קטלוג AI עם",
+      "highlight": "טכנולוגיית הבימוי הווירטואלי המרהיבה שלנו"
+    }
+  },
+   "getCreditModal": {
+    "title": "נקודות חינם יומיות",
+    "heading": "נקודות חינם יומיות",
+    "description": "הנקודות החינמיות היומיות שלך מוכנות למימוש — תבע אותן עכשיו והפק את המיטב מהיום שלך.",
+    "claimButton": "תביעה הנקודות החינמיות שלי"
+  },
+  "common": {
+    "ok": "אישור",
+    "cancel": "ביטול"
+  },
+  "pricing": {
+    "header": {
+      "title": "מחירים",
+      "subtitle": "השתמש ב-DYD AI בחינם. שדרג לגישה לתכונות נוספות, והגדל את מגבלות העיצוב."
+    }
+  },
+  "catalog": {
+    "failed_rendering": {
+      "title": "עיבוד נכשל",
+      "message": "{{failure_reason}}"
+    },
+    "insufficient_credits": {
+      "title": "אין מספיק נקודות",
+      "message": "{{creditErrorMessage}}",
+      "purchase_credits": "רכישת נקודות",
+      "message_business": "שליחת הודעה לעסק"
+    },
+    "drawers": {
+      "wall_textures": "מרקמי קיר בקטלוג AI",
+      "floor_textures": "מרקמי רצפה בקטלוג AI",
+      "furnitures": "ריהוט בקטלוג AI",
+      "lights": "תאורה בקטלוג AI",
+      "explore_brands": "חקור את מותגי קטלוג ה-AI הטובים ביותר של DYD",
+      "change_room": "החלפת חדר",
+      "your_history": "ההיסטוריה שלך",
+      "use_example_room": "השתמש בחדר לדוגמה"
+    },
+    "buttons": {
+      "download": "הורדה",
+      "switch_brand": "החלף מותג",
+      "item_replace": "החלפת פריט",
+      "home_design": "עיצוב בית",
+      "change_room": "החלף חדר",
+      "upload_new_image": "העלאת תמונה חדשה",
+      "remove_persons": "הסרת אנשים",
+      "close": "סגור",
+      "retry": "נסה שוב"
+    },
+    "categories": {
+      "all": "הכל",
+      "furniture": "ריהוט",
+      "floor": "רצפה",
+      "wall": "קיר",
+      "lights": "תאורה"
+    },
+    "messages": {
+      "privacy_notice": "הצהרת פרטיות",
+      "privacy_warning": "אנא העלה תמונת חדר ללא אנשים. תמונות הכוללות אנשים לא יעובדו בהתאם למדיניות הפרטיות שלנו.",
+      "error": "שגיאה"
+    },
+    "tabs": {
+      "image": "תמונה",
+      "3d": "תלת-ממד",
+      "edit_image": "עריכת תמונה"
+    },
+    "social_share": "שיתוף ברשתות חברתיות:"
+  }
 
 }

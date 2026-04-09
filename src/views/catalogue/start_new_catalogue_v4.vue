@@ -38,7 +38,7 @@
 
     
     <p style="font-size:14px; color:#666; margin-bottom:18px;" v-else>
-      Hi {{ currentUser.full_name }}, t{{ modals.subscriptionExpired.userMessage }}
+      Hi {{ currentUser.full_name }}, the Business does have expired their sucscription you can message the business for the resubscribe DYD.
     </p>
     <!-- Previous Subscription Info -->
     <div
@@ -53,13 +53,13 @@
     >
       <!-- Plan -->
       <div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:6px;">
-        <span>t('startNewCatalogue.modals.subscriptionExpired.plan')</span>
+        <span>Plan</span>
         <strong>$ {{ prev_subscription?.subscription_plan_monthly_charges }}</strong>
       </div>
 
       <!-- Period -->
       <div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:6px;">
-        <span>t('startNewCatalogue.modals.subscriptionExpired.plan')</span>
+        <span>Period</span>
         <strong>
           {{ formatDate(prev_subscription?.period_start) }}
           →
@@ -69,8 +69,8 @@
 
       <!-- Status -->
       <div style="display:flex; justify-content:space-between; font-size:14px; color:#ff4d4f; font-weight:500;">
-        <span>t('startNewCatalogue.modals.subscriptionExpired.status')</span>
-        <strong>t('startNewCatalogue.modals.subscriptionExpired.statusValue')</strong>
+        <span>Status</span>
+        <strong>Expired</strong>
       </div>
     </div>
 
@@ -84,7 +84,7 @@
        style="height:46px; font-size:15px; border-radius:8px;margin-bottom:10px"
        @click="goToPurchaseCredits"
        >
-       t('startNewCatalogue.modals.subscriptionExpired.renewButton')
+       Renew Subscription
       </a-button>
     </router-link>
 
@@ -96,7 +96,7 @@
       style="height:46px; font-size:15px; border-radius:8px;"
       @click="goToPurchaseCredits"
     >
-    t('startNewCatalogue.modals.subscriptionExpired.explorePlansButton')
+      Explore Plans
     </a-button>
 
     <a-button
@@ -117,7 +117,7 @@
       @click="startchat_with_buisness_user"
     >
       <MessageOutlined />
-      t{{modals.subscriptionExpired.contactBusinessButton}}
+      Contact Business
     </a-button>
 
   </div>
@@ -164,7 +164,7 @@
       <!-- Heading -->
 
       <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 10px">
-        {{ errorTitle || t('startNewCatalogue.modals.credits.defaultTitle') }}
+        {{ errorTitle || "Insufficient Credits" }}
       </h2>
 
       <!-- Message -->
@@ -187,7 +187,7 @@
         style="height: 46px; font-size: 16px; border-radius: 8px"
         @click="goToPurchaseCredits"
       >
-        {{ btnText || t('startNewCatalogue.modals.credits.purchaseButton') }}
+        {{ btnText || "Purchase Credits" }}
       </a-button>
 
       <a-button
@@ -207,7 +207,7 @@
         @click="startchat_with_buisness_user"
       >
         <MessageOutlined style="font-size: 16px" />
-        {{t('startNewCatalogue.modals.credits.messageBusinessButton')}}
+        Message Business
       </a-button>
     </div>
   </a-modal>
@@ -253,10 +253,10 @@
               </svg>
             </div>
 
-            <p class="text-lg text-gray-700 mb-10 font-medium">{{t('startNewCatalogue.modals.loading.loadingText')}}</p>
+            <p class="text-lg text-gray-700 mb-10 font-medium">Loading...</p>
 
             <div class="text-center">
-              <p class="text-sm text-gray-500 mt-2 mb-2">{{t('startNewCatalogue.modals.loading.poweredBy')}}</p>
+              <p class="text-sm text-gray-500 mt-2 mb-2">Powered By</p>
               <h2 class="text-4xl font-bold text-black tracking-wider">
                 D.Y.D
               </h2>
@@ -333,7 +333,7 @@
                   </defs>
                 </svg>
                 <p class="text-[14px] !font-family-poppins text-gray-700">
-               {{  t('startNewCatalogue.modals.instructions.uploadInstruction')}}
+                  Upload the picture of your space here.
                 </p>
               </div>
 
@@ -353,7 +353,7 @@
                   />
                 </svg>
                 <p class="text-[14px] !font-family-poppins text-gray-700">
-               {{ t('startNewCatalogue.modals.instructions.tryProducts')}}
+                  Try our products in space
                 </p>
               </div>
 
@@ -388,7 +388,7 @@
                   />
                 </svg>
                 <p class="text-[14px] !font-family-poppins text-gray-700">
-              {{    t('startNewCatalogue.modals.instructions.cleanCamera')}}
+                  Clean the camera
                 </p>
               </div>
 
@@ -430,7 +430,7 @@
                   />
                 </svg>
                 <p class="text-[14px] !font-family-poppins text-gray-700">
-                {{  t('startNewCatalogue.modals.instructions.zoomInstruction')}}
+                  Take the picture at 0.5 zoom.
                 </p>
               </div>
             </div>
@@ -450,7 +450,7 @@
               <a-alert
                 style="margin-bottom: 10px"
                 v-show="this.$route.query.product_id"
-                :description="t('startNewCatalogue.modals.instructions.uploadAlert')"
+                description="You’ve selected a product to preview in your room. Please capture and upload a well-lit photo of your room to continue."
               >
               </a-alert>
               <button
@@ -520,7 +520,7 @@
                   </defs>
                 </svg>
 
-                {{ uploading ? t('startNewCatalogue.modals.instructions.processingButton'): t('startNewCatalogue.modals.instructions.uploadButton') }}
+                {{ uploading ? "Processing..." : "Upload a picture" }}
               </button>
 
               <!-- <div class="text-start">
@@ -552,10 +552,10 @@
 
               <div class="bg-gray-50 rounded-xl p-4 text-center">
                 <p class="text-sm text-gray-600 mb-2">
-                {{t('startNewCatalogue.modals.instructions.imageReady')}}
+                  Image selected and ready
                 </p>
                 <p class="text-xs text-gray-500">
-                {{t('startNewCatalogue.modals.instructions.fileSizeLabel')}}: {{ (modalFile?.size / 1024 / 1024).toFixed(2) }} MB
+                  Size: {{ (modalFile?.size / 1024 / 1024).toFixed(2) }} MB
                 </p>
               </div>
 
@@ -564,7 +564,7 @@
                   @click="resetModalPreview"
                   class="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3 px-4 text-[14px] !font-family-poppins rounded-lg transition-colors"
                 >
-                {{ t('startNewCatalogue.modals.instructions.changeRoomButton')}}
+                  Change Room Image
                 </button>
 
                 <button
@@ -593,7 +593,7 @@
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                     ></path>
                   </svg>
-                  {{ uploading ? t('startNewCatalogue.modals.instructions.processingButton') : t('startNewCatalogue.modals.instructions.continueButton') }}
+                  {{ uploading ? "Processing..." : "Continue" }}
                 </button>
               </div>
             </div>
@@ -711,7 +711,7 @@
                   class="text-base font-bold text-gray-900"
                   style="font-family: poppins"
                 >
-             {{t('startNewCatalogue.drawer.projectStats')}}
+                  Project Stats
                 </h4>
               </div>
 
@@ -721,10 +721,11 @@
                   class="text-lg font-bold text-gray-900 mb-2"
                   style="font-family: poppins"
                 >
-               {{ t('startNewCatalogue.drawer.detectedObjects') }} 
+                  Detected Objects
                 </h3>
                 <p class="text-sm text-gray-600 leading-relaxed">
-                 {{t('startNewCatalogue.drawer.detectedObjectsDesc')}}
+                  Tap on any detected objects (green boxes) to replace or delete
+                  it.
                 </p>
               </div>
 
@@ -743,7 +744,7 @@
                     class="text-xs text-gray-600 mt-1"
                     style="font-family: poppins"
                   >
-                   {{t('startNewCatalogue.drawer.objects')}}
+                    Objects
                   </p>
                 </div>
                 <div
@@ -754,8 +755,8 @@
                   </p>
 
                   <p class="text-xs text-gray-600 mt-1 font-family-poppins">
-                  {{t('startNewCatalogue.drawer.products')}} 
-                 </p>
+                    Products
+                  </p>
                 </div>
                 <div
                   class="bg-white rounded-xl border border-gray-200 p-3 flex flex-col items-center justify-center text-center hover:shadow-md transition-shadow"
@@ -770,7 +771,7 @@
                     class="text-xs text-gray-600 mt-1"
                     style="font-family: poppins"
                   >
-                  {{ t('startNewCatalogue.drawer.replaced')}}
+                    Replaced
                   </p>
                 </div>
               </div>
@@ -809,7 +810,7 @@
                       d="M5 13l4 4L19 7"
                     />
                   </svg>
-                  {{t('startNewCatalogue.drawer.useThisRoom')}}
+                  Use This Room
                 </button>
                 <button
                   v-else
@@ -830,7 +831,7 @@
                       d="M5 13l4 4L19 7"
                     />
                   </svg>
-                 {{t('startNewCatalogue.drawer.useThisRoom')}}
+                  Use This Room
                 </button>
               </div>
             </div>
@@ -902,7 +903,7 @@
                   border-radius: 100%;
                 "
                 src="../../assets/apply_changes_img.png"
-              />{{t('startNewCatalogue.drawer.dydExampleRoom')}}</span
+              />DYD Example Room</span
             >
             <button
               @click="closeDrawer"
@@ -946,7 +947,7 @@
               <div class="flex-1 overflow-y-auto p-6">
                 <div class="flex items-center justify-between mb-4">
                   <h4 class="text-base font-bold text-gray-900">
-                   {{t('startNewCatalogue.drawer.projectStats')}}
+                    Project Stats
                   </h4>
                 </div>
 
@@ -955,10 +956,11 @@
                   class="bg-gray-50 rounded-xl border border-gray-200 p-4 mb-6"
                 >
                   <h3 class="text-lg font-bold text-gray-900 mb-2">
-                   {{t('startNewCatalogue.drawer.detectedObjects')}}
+                    Detected Objects
                   </h3>
                   <p class="text-sm text-gray-600">
-                   {{t('startNewCatalogue.drawer.detectedObjectsDesc')}}
+                    Tap on any detected objects (green boxes) to replace or
+                    delete it.
                   </p>
                 </div>
                 <br />
@@ -983,7 +985,7 @@
                       >
                         {{ selectedImage.used_products }}
                       </p>
-                      <p class="text-xs text-gray-600">{{t('startNewCatalogue.drawer.products')}}</p>
+                      <p class="text-xs text-gray-600">Products</p>
                     </div>
                     <div
                       class="bg-gray-50 rounded-xl border border-gray-200 p-4 flex flex-col items-center justify-center text-center"
@@ -993,7 +995,7 @@
                       >
                         0
                       </p>
-                      <p class="text-xs text-gray-600">{{t('startNewCatalogue.drawer.replaced')}}</p>
+                      <p class="text-xs text-gray-600">Replaced</p>
                     </div>
                   </div>
                 </div>
@@ -1027,7 +1029,7 @@
                     />
                   </svg>
                   <!-- Manage Objects -->
-                  {{t('startNewCatalogue.drawer.showObjects')}}
+                  Show Objects
                 </button>
                 <!-- @click="useSelectedRoom" -->
                 <!-- @click="useSelectedRoom" -->
@@ -1050,7 +1052,7 @@
                       d="M5 13l4 4L19 7"
                     />
                   </svg>
-                  {{t('startNewCatalogue.drawer.continueButton')}}
+                  Continue
                 </button>
                 <button
                   v-else
@@ -1070,7 +1072,7 @@
                       d="M5 13l4 4L19 7"
                     />
                   </svg>
-                  {{t('startNewCatalogue.drawer.continueButton')}}
+                  Continue
                 </button>
               </div>
             </div>
@@ -1101,7 +1103,7 @@
           <div
             class="flex items-center justify-between px-4 py-4 border-b border-gray-200 bg-white sticky top-0 z-10 md:rounded-t-2xl"
           >
-            <h3 class="text-lg font-bold text-gray-900">{{t('startNewCatalogue.objectManagement.title')}}</h3>
+            <h3 class="text-lg font-bold text-gray-900">Detected Objects</h3>
             <button
               @click="showObjectManagement = false"
               class="p-2 hover:bg-gray-100 rounded-full transition-colors"
@@ -1160,9 +1162,9 @@
                       d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                     />
                   </svg>
-                  <p class="text-gray-500 font-medium">{{t('startNewCatalogue.examples.allObjectsRemoved')}}</p>
+                  <p class="text-gray-500 font-medium">All objects removed!</p>
                   <p class="text-sm text-gray-400 mt-1">
-                    {{t('startNewCatalogue.examples.roomReady')}}
+                    Room is clean and ready
                   </p>
                 </div>
               </div>
@@ -1203,8 +1205,8 @@
     <!-- Rest of your content... -->
     <div class="content-wrapper">
       <h1 class="main-heading">
-        {{t('startNewCatalogue.heading.main')}}<br />
-        <span class="highlight">{{t('startNewCatalogue.heading.highlight')}}</span>
+        Create an AI Catalog with our<br />
+        <span class="highlight">stunning Virtual Staging Technology</span>
       </h1>
 
       <!-- Upload Section -->
@@ -1220,18 +1222,18 @@
           :disabled="uploading"
         >
           <div class="upload-dragger-inner">
-            <p class="upload-instruction">{{t('startNewCatalogue.upload.dragInstruction')}}</p>
-            <p class="upload-hint">{{t('startNewCatalogue.upload.formatHint')}}</p>
+            <p class="upload-instruction">Click or drag image to upload</p>
+            <p class="upload-hint">PNG or JPEG only</p>
             <a-button type="primary" :loading="uploading">
               <CloudUploadOutlined style="font-size: 20px" />&nbsp;
-              {{ uploading ? t('startNewCatalogue.upload.processingButton') : t('startNewCatalogue.upload.uploadButton') }}
+              {{ uploading ? "Processing..." : "Upload An Image" }}
             </a-button>
           </div>
         </a-upload-dragger>
         <a-alert
           style="margin-bottom: 10px"
           v-show="this.$route.query.product_id"
-          :description="t('startNewCatalogue.upload.processingButton')"
+          description="You’ve selected a product to preview in your room. Please capture and upload a well-lit photo of your room to continue, or select a previously saved room from your history that belongs to the same brand as this product you selected."
         >
         </a-alert>
       </div>
@@ -1240,7 +1242,7 @@
       <!-- History -->
       <div v-if="your_history.length || loading_user_history_rooms">
         <p class="history-label pl-2">
-          <a-spin v-if="loading_user_history_rooms" /> {{t('startNewCatalogue.history.label')}}
+          <a-spin v-if="loading_user_history_rooms" /> Your History
         </p>
 
         <div
@@ -1342,8 +1344,8 @@
             </svg>
             {{
               loading_more_history
-                ? t('startNewCatalogue.history.loading')
-                : t('startNewCatalogue.history.loadMore')+ `(${history_pagination.count - your_history.length} remaining)`
+                ? "Loading..."
+                : `Load More (${history_pagination.count - your_history.length} remaining)`
             }}
           </button>
         </div>
@@ -1352,7 +1354,7 @@
       <!-- Examples -->
       <!-- Examples Section -->
       <p class="example-label !text-center pl-3 sm:pl-0">
-        <a-spin v-if="loading_Example_rooms" /> {{t('startNewCatalogue.examples.label')}}
+        <a-spin v-if="loading_Example_rooms" /> Use an our example room image
       </p>
 
       <!-- Room Type Filter Tabs -->
@@ -1445,7 +1447,7 @@
             />
           </svg>
           <p class="text-gray-500 font-medium">
-         {{t('startNewCatalogue.examples.emptyState')}}
+            No {{ selectedRoomType }} images found
           </p>
         </div>
       </div>
@@ -1471,7 +1473,6 @@ import {
   ArrowLeftOutlined,
   CloseOutlined,
 } from "@ant-design/icons-vue";
-import { useI18n } from 'vue-i18n';
 
 export default {
   components: {
@@ -1488,10 +1489,6 @@ export default {
     CloseOutlined,
     CloudUploadOutlined,
     MaskOverlay,
-  },
-   setup() {
-    const { t } = useI18n();
-    return { t };
   },
 
   data() {
@@ -1635,7 +1632,7 @@ export default {
         content: h(
           "div",
           { style: "color:red;" },
-          t('startNewCatalogue.brandMismatch.message')
+          "The product you are viewing already belongs to a different brand, and the room you have selected also belongs to another brand. Please either select a room that belongs to the same brand, or if you wish to proceed with this brand, you will not be able to view this product. Alternatively, you can upload a new image for a new room.",
         ),
         onOk: () => {
           this.useSelectedRoom();
@@ -1876,7 +1873,7 @@ export default {
     // NEW METHOD: Save and continue - fires the API with the selected image
     async saveAndContinue() {
       if (!this.modalFile) {
-        this.$message.error(t('startNewCatalogue.errors.selectImageFirst'));
+        this.$message.error("Please select an image first");
         return;
       }
 
@@ -1988,7 +1985,7 @@ export default {
           }
         } else {
           const errorMsg =
-            responseData.msg || `HTTP ${response.status}: t('startNewCatalogue.errors.uploadFailed')`;
+            responseData.msg || `HTTP ${response.status}: Upload failed`;
           this.uploadError = errorMsg;
           this.$message.error(errorMsg);
         }
@@ -1998,9 +1995,10 @@ export default {
         let errorMessage = "Upload failed";
 
         if (error.name === "AbortError") {
-          errorMessage = t('startNewCatalogue.errors.uploadTimeout');
+          errorMessage =
+            "Upload timeout - file may be too large or processing is taking too long";
         } else if (error.message.includes("fetch")) {
-          errorMessage = t('startNewCatalogue.errors.networkError');
+          errorMessage = "Network error - please check your connection";
         } else {
           errorMessage = error.message || "Unknown error occurred";
         }
@@ -2243,12 +2241,12 @@ export default {
       const isValidSize = file.size / 1024 / 1024 < 10;
 
       if (!isImage) {
-        this.$message.error(t('startNewCatalogue.errors.onlyImagesAllowed'));
+        this.$message.error("Only image files allowed!");
         return false;
       }
 
       if (!isValidSize) {
-        this.$message.error(t('startNewCatalogue.errors.imageTooLarge'));
+        this.$message.error("Image must be smaller than 10MB!");
         return false;
       }
 
@@ -2292,8 +2290,8 @@ export default {
           if (responseData.type === "out_of_monthly_virtulisation_limits") {  
             this.showInstructionsModal = false;
             this.btnText = responseData?.btn_text;
-            this.errorTitle = t('startNewCatalogue.errors.outOfVisualisationsTitle');
-            this.creditErrorMessage = t('startNewCatalogue.errors.outOfVisualisations');
+            this.errorTitle = "Out of monthly virtulisation.";
+            this.creditErrorMessage = "Out of monthly visualizations limit quota. please connect the business User ";
             this.showCreditModal = true;
             this.buid = responseData.buid;  
             return;
@@ -2302,8 +2300,8 @@ export default {
               this.showInstructionsModal = false;
               this.showMonthlySubscription_activaFound_Modal = true;
               this.btnText = responseData?.btn_text;
-              this.errorTitle = t('startNewCatalogue.modals.subscriptionExpired.expiredTitle');
-              this.creditErrorMessage = t('startNewCatalogue.errors.noActiveSubscription')
+              this.errorTitle = "Your Monthly Subscription Got Expired.";
+              this.creditErrorMessage = "No active monthly subscription found. As your previous subscription got expired, You need to purchase new monthly subscription to continue further.";
               this.prev_subscription= responseData?.prev_subscription;
               this.buid = responseData.buid;
               return;
@@ -2312,8 +2310,8 @@ export default {
               this.showInstructionsModal = false;
               this.showMonthlySubscription_activaFound_Modal = true;
               this.btnText = responseData?.btn_text;
-              this.errorTitle = t('startNewCatalogue.modals.subscriptionExpired.notFoundTitle');
-              this.creditErrorMessage = t('startNewCatalogue.errors.noSubscription')
+              this.errorTitle = "Your have not yet purchased any subscription.";
+              this.creditErrorMessage = "Please explore our subscription plans and purchase one to continue with further simulations.";
               // this.prev_subscription= responseData?.prev_subscription;
               
               this.buid = responseData.buid;
@@ -2332,7 +2330,7 @@ export default {
 
         if (response.ok && !responseData.error) {
           this.uploadResult = responseData;
-          this.$message.success(t('startNewCatalogue.errors.roomProcessed'));
+          this.$message.success("Room processed successfully!");
           onSuccess(responseData);
 
           this.$emit("upload-success", responseData);

@@ -4,10 +4,9 @@
     <div class="header-section">
       <div class="wave-pattern"></div>
       <div class="header-content">
-        <h1 class="header-title">Pricing</h1>
+        <h1 class="header-title">{{ t('pricing.header.title') }}</h1>
         <p class="header-subtitle">
-          Use DYD AI for free. Upgrade to access additional features,<br>
-          and increase limits design.
+          {{ t('pricing.header.subtitle') }}
         </p>
       </div>
     </div>
@@ -396,8 +395,14 @@
 </template>
 
 <script>
+import { useI18n } from 'vue-i18n';
 export default {
   name: 'pricing',
+  setup() {
+    const { t, locale } = useI18n();
+    const currentDirection = locale.value === 'he' ? 'rtl' : 'ltr';
+    return { t, currentDirection };
+  },
   data(){ 
     return {
       data: null,

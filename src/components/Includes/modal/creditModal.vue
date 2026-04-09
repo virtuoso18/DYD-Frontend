@@ -1,12 +1,13 @@
 <template>
   <div>
+    <!-- :title="t('getCreditModal.title')" -->
     <a-modal
       :visible="isShowModal"
       @cancel="$emit('close-modal')"
-      title=""
       :footer="null"
       centered
       :width="354"
+      :locale="modalLocale"
     >
       <div class="redeem-modal-content">
         <div class="star-sec h-[80px] !pt-6 relative">
@@ -41,12 +42,12 @@
           </svg>
         </div>
 
-        <div class="relative">
+        <div class="relative" :dir="currentDirection">
           <h2 class="!text-center text-[20px] font-semibold">
-            Daily Free Credits 
+            {{ t('getCreditModal.heading') }}
           </h2>
           <p class="!text-center leading-[20px] text-[15px] !mb-12">
-            Your daily free credits are ready to claim — claim them now and make the most of your day.
+            {{ t('getCreditModal.description') }}
           </p>
         </div>
 
@@ -57,7 +58,7 @@
             @click="handleBuyFreeCredits"
             class="w-full"
           >
-            Claim My Free Credits
+            {{ t('getCreditModal.claimButton') }}
           </a-button>
         </div>
       </div>
@@ -66,6 +67,8 @@
 </template>
 
 <script>
+import { useI18n } from 'vue-i18n';
+
 export default {
   name: "GetCreditModal",
 
@@ -88,6 +91,42 @@ export default {
     },
   },
 
+  setup() {
+    const { t, locale } = useI18n();
+    
+    // Set RTL direction for Hebrew
+    const currentDirection = locale.value === 'he' ? 'rtl' : 'ltr';
+    
+    // Modal locale for Ant Design components
+    const modalLocale = {
+      okText: t('common.ok'),
+      cancelText: t('common.cancel'),
+      justOkText: t('common.ok'),
+    };
+    
+    return { 
+      t, 
+      currentDirection,
+      modalLocale
+    };
+  },
+
+  watch: {
+    // Watch for locale changes to update direction
+    '$i18n.locale': {
+      handler(newLocale) {
+        this.currentDirection = newLocale === 'he' ? 'rtl' : 'ltr';
+        document.documentElement.setAttribute('dir', this.currentDirection);
+      },
+      immediate: true
+    }
+  },
+
+  mounted() {
+    // Set direction on mount
+    document.documentElement.setAttribute('dir', this.currentDirection);
+  },
+
   methods: {
     showModal() {
       this.$emit("update:isShowModal", true);
@@ -107,6 +146,21 @@ export default {
 
 :deep(.ant-modal) {
   padding: 0 !important;
+}
+
+/* RTL Support */
+[dir="rtl"] .star-sec svg:first-child {
+  left: auto;
+  right: 44%;
+}
+
+[dir="rtl"] .star-sec svg:last-child {
+  left: auto;
+  right: 62%;
+}
+
+[dir="rtl"] .redeem-modal-content {
+  direction: rtl;
 }
 
 .redeem-modal-content {

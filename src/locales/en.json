@@ -1458,8 +1458,176 @@
   "errorMessage": "Failed to send enquiry. Please try again.",
   "attachmentsLabel": "Attachments",
   "optional": "Optional"
-}
-
+},
+ "startNewCatalogue": {
+    "modals": {
+      "subscriptionExpired": {
+        "expiredTitle": "Your Monthly Subscription Got Expired.",
+        "notFoundTitle": "You have not yet purchased any subscription.",
+        "userMessage": "the Business has expired their subscription. You can message the business to resubscribe DYD.",
+        "plan": "Plan",
+        "period": "Period",
+        "status": "Status",
+        "statusValue": "Expired",
+        "renewButton": "Renew Subscription",
+        "explorePlansButton": "Explore Plans",
+        "contactBusinessButton": "Contact Business"
+      },
+      "credits": {
+        "defaultTitle": "Insufficient Credits",
+        "purchaseButton": "Purchase Credits",
+        "messageBusinessButton": "Message Business"
+      },
+      "loading": {
+        "loadingText": "Loading...",
+        "poweredBy": "Powered By",
+        "brandName": "D.Y.D"
+      },
+      "instructions": {
+        "uploadInstruction": "Upload the picture of your space here.",
+        "tryProducts": "Try our products in space",
+        "cleanCamera": "Clean the camera",
+        "zoomInstruction": "Take the picture at 0.5 zoom.",
+        "uploadButton": "Upload a picture",
+        "processingButton": "Processing...",
+        "uploadAlert": "You've selected a product to preview in your room. Please capture and upload a well-lit photo of your room to continue.",
+        "imageReady": "Image selected and ready",
+        "changeRoomButton": "Change Room Image",
+        "continueButton": "Continue",
+        "fileSizeLabel": "Size:"
+      }
+    },
+    "drawer": {
+      "projectStats": "Project Stats",
+      "detectedObjects": "Detected Objects",
+      "detectedObjectsDesc": "Tap on any detected objects (green boxes) to replace or delete it.",
+      "objects": "Objects",
+      "products": "Products",
+      "replaced": "Replaced",
+      "useThisRoom": "Use This Room",
+      "showObjects": "Show Objects",
+      "continueButton": "Continue",
+      "dydExampleRoom": "DYD Example Room"
+    },
+    "upload": {
+      "dragInstruction": "Click or drag image to upload",
+      "formatHint": "PNG or JPEG only",
+      "uploadButton": "Upload An Image",
+      "processingButton": "Processing...",
+      "historyAlert": "You've selected a product to preview in your room. Please capture and upload a well-lit photo of your room to continue, or select a previously saved room from your history that belongs to the same brand as this product you selected."
+    },
+    "history": {
+      "label": "Your History",
+      "loadMore": "Load More",
+      "remaining": "remaining",
+      "loading": "Loading..."
+    },
+    "examples": {
+      "label": "Use our example room image",
+      "roomTypes": {
+        "all": "All",
+        "livingRoom": "Living room",
+        "kitchen": "Kitchen",
+        "bedroom": "Bedroom",
+        "diningRoom": "Dining room"
+      },
+      "emptyState": "No images found",
+      "allObjectsRemoved": "All objects removed!",
+      "roomReady": "Room is clean and ready"
+    },
+    "objectManagement": {
+      "title": "Detected Objects"
+    },
+    "errors": {
+      "outOfVisualisations": "Out of monthly visualizations limit quota. Please connect the business User.",
+      "outOfVisualisationsTitle": "Out of monthly visualisation.",
+      "noActiveSubscription": "No active monthly subscription found. As your previous subscription got expired, You need to purchase new monthly subscription to continue further.",
+      "noSubscription": "Please explore our subscription plans and purchase one to continue with further simulations.",
+      "onlyImagesAllowed": "Only image files allowed!",
+      "imageTooLarge": "Image must be smaller than 10MB!",
+      "uploadFailed": "Upload failed",
+      "uploadTimeout": "Upload timeout - file may be too large or processing is taking too long",
+      "networkError": "Network error - please check your connection",
+      "unknownError": "Unknown error occurred",
+      "selectImageFirst": "Please select an image first",
+      "roomProcessed": "Room processed successfully!"
+    },
+    "brandMismatch": {
+      "title": "Brand Mismatch",
+      "message": "The product you are viewing already belongs to a different brand, and the room you have selected also belongs to another brand. Please either select a room that belongs to the same brand, or if you wish to proceed with this brand, you will not be able to view this product. Alternatively, you can upload a new image for a new room."
+    },
+    "heading": {
+      "main": "Create an AI Catalog with our",
+      "highlight": "stunning Virtual Staging Technology"
+    }
+  },
+  "getCreditModal": {
+    "title": "Daily Free Credits",
+    "heading": "Daily Free Credits",
+    "description": "Your daily free credits are ready to claim — claim them now and make the most of your day.",
+    "claimButton": "Claim My Free Credits"
+  },
+  "common": {
+    "ok": "OK",
+    "cancel": "Cancel"
+  },
+ "pricing": {
+    "header": {
+      "title": "Pricing",
+      "subtitle": "Use DYD AI for free. Upgrade to access additional features, and increase limits design."
+    }
+  },
+  "catalog": {
+    "failed_rendering": {
+      "title": "Failed Rendering",
+      "message": "{{failure_reason}}"
+    },
+    "insufficient_credits": {
+      "title": "Insufficient Credits",
+      "message": "{{creditErrorMessage}}",
+      "purchase_credits": "Purchase Credits",
+      "message_business": "Message Business"
+    },
+    "drawers": {
+      "wall_textures": "AI Catalog Wall Textures",
+      "floor_textures": "AI Catalog Floor Textures",
+      "furnitures": "AI Catalog Furnitures",
+      "lights": "AI Catalog Lights",
+      "explore_brands": "Explore DYD's Best AI Catalog Brands",
+      "change_room": "Change Room",
+      "your_history": "Your History",
+      "use_example_room": "Use an example room"
+    },
+    "buttons": {
+      "download": "Download",
+      "switch_brand": "Switch brand",
+      "item_replace": "Item Replace",
+      "home_design": "Home Design",
+      "change_room": "Change Room",
+      "upload_new_image": "Upload new Image",
+      "remove_persons": "Remove persons",
+      "close": "Close",
+      "retry": "Retry"
+    },
+    "categories": {
+      "all": "All",
+      "furniture": "Furniture",
+      "floor": "Floor",
+      "wall": "Wall",
+      "lights": "Lights"
+    },
+    "messages": {
+      "privacy_notice": "Privacy Notice",
+      "privacy_warning": "Please upload a room image without people. Images containing persons are not processed as per our privacy policies.",
+      "error": "Error"
+    },
+    "tabs": {
+      "image": "Image",
+      "3d": "3D",
+      "edit_image": "Edit Image"
+    },
+    "social_share": "Share on social:"
+  }
   
   
 }
