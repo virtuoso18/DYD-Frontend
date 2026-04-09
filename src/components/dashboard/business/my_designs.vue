@@ -793,13 +793,16 @@
                       </button>
                     </div>
 
+                    <!-- {{  product }} -->
                     <!-- Like Button - 25% width -->
                     <div class="w-1/4 flex items-end justify-end">
+                      <!-- {{ product.product_id}} -->
+                      <!-- {{  product.type}} -->
                       <button
                         @click="
                           toggleFavorite(
                             product.product_id,
-                            product.product_type,
+                            product.type,
                             product,
                           )
                         "
@@ -1129,11 +1132,14 @@
 
                     <!-- Like Button - 25% width -->
                     <div class="w-1/4 flex items-end justify-end">
+                      <!-- {{ product.product_id}} -->
+                      <!-- {{  product.type}} -->
+                      <!-- {{  product }} -->
                       <button
                         @click="
                           toggleFavorite(
                             product.product_id,
-                            product.product_type,
+                            product.type,
                             product,
                           )
                         "
@@ -1541,6 +1547,7 @@ export default {
     },
 
     async toggleFavorite(product_id, product_type, product) {
+      console.log(product_type);
       try {
         const token = localStorage.getItem("token");
         if (!token) {

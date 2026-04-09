@@ -52,7 +52,7 @@
       </p>
 
       <!-- Sub Description -->
-      <p class="text-sm text-gray-500 text-center mb-8">
+      <p class="text-sm text-white-500 text-center mb-8">
         Upgrade to unlock AI-powered texture customization and personalize your 3D designs!
       </p>
 
@@ -1663,7 +1663,7 @@ export default {
     }
     
     // ✅ Check texture access permission
-    const canChangeTexture = this.business_available_actions.change_texture_3d_item === true;
+    const canChangeTexture = this.business_available_actions.change_texture_3d_item;
     
     console.log('🎨 change_texture_3d_item value:', this.business_available_actions.change_texture_3d_item);
     console.log('🚦 Can Change Texture:', canChangeTexture);

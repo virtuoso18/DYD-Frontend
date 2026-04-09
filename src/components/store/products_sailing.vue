@@ -1,7 +1,5 @@
 <template>
-  <div class="sm:!main">
-    
-    <!-- ✅ FULL-SCREEN MODAL OVERLAY (shows product page with blur + modal) -->
+  <div class="sm:!main">  
      <a-modal
       v-model:open="showAccessModal"
       title=""
@@ -14,10 +12,7 @@
       wrapClassName="product-access-fullscreen-modal"
       :bodyStyle="{ padding: 0, height: '100vh' }"
     >
-      <!-- Background: Product Page Preview -->
-      <div class="blurred-product-page">
-        
-        <!-- ✅ LOADING SKELETON (shows immediately) -->
+      <div class="blurred-product-page">    
         <div v-if="!iframeLoaded" class="product-page-skeleton">
           <div class="skeleton-header">
             <div class="skeleton-back-btn"></div>
@@ -32,8 +27,6 @@
             </div>
           </div>
         </div>
-
-        <!-- ✅ ACTUAL IFRAME (hidden until loaded) -->
         <iframe 
           v-show="iframeLoaded"
           v-if="productPageUrl"
@@ -42,57 +35,39 @@
           @load="onIframeLoad"
         ></iframe>
       </div>
-
-      <!-- Upgrade Modal (On Top) -->
       <div class="upgrade-modal-overlay">
         <div class="upgrade-modal-content">
           <!-- Icon -->
           <div class="modal-icon">
-            <svg
-              width="40"
-              height="40"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path
                 d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
-                fill="#FBBF24"
-                stroke="#FBBF24"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                fill="#FBBF24" stroke="#FBBF24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
               />
             </svg>
           </div>
 
           <!-- Heading -->
-          <h2 class="modal-heading">Upgrade to Access AR Products</h2>
+          <h2 class="modal-heading">{{ t('products.accessModal.heading') }}</h2>
 
           <!-- Message -->
           <p class="modal-message">
-            This product includes <strong>AR (Augmented Reality)</strong> features. 
-            Upgrade to <strong>Standard</strong> or <strong>Premium</strong> to access full product details.
+            {{ t('products.accessModal.messagePart1') }}
+            <strong>{{ t('products.accessModal.ar') }}</strong>
+            {{ t('products.accessModal.messagePart2') }}
+            <strong>{{ t('products.accessModal.standard') }}</strong>
+            {{ t('products.accessModal.or') }}
+            <strong>{{ t('products.accessModal.premium') }}</strong>
+            {{ t('products.accessModal.messagePart3') }}
           </p>
 
           <!-- Buttons -->
           <a-space direction="vertical" style="width: 100%">
-            <a-button
-              type="primary"
-              block
-              size="large"
-              class="upgrade-button"
-              @click="handleUpgrade"
-            >
-              Upgrade Plan
+            <a-button type="primary" block size="large" class="upgrade-button" @click="handleUpgrade">
+              {{ t('products.accessModal.upgradePlan') }}
             </a-button>
-            <a-button
-              block
-              size="large"
-              class="back-button"
-              @click="closeModalAndNavigateBack"
-            >
-              Go Back
+            <a-button block size="large" class="back-button" @click="closeModalAndNavigateBack">
+              {{ t('products.accessModal.goBack') }}
             </a-button>
           </a-space>
         </div>
@@ -115,50 +90,33 @@
               @click="handleProductClick(product)"
             >
               <!-- Skeleton -->
-              <div
-                v-if="!imageLoadedMap[product.id]"
-                class="product-skeleton"
-              ></div>
-
-              <!-- Preload image -->
+              <div v-if="!imageLoadedMap[product.id]" class="product-skeleton"></div>
               <img
                 :src="this.$store.state.root_media_api + product.product_image"
                 style="position: absolute; width: 0; height: 0; opacity: 0"
                 @load="onProductImageLoad(product.id)"
                 alt=""
               />
-
-              <!-- Visible image -->
               <img
                 v-show="imageLoadedMap[product.id]"
                 :src="this.$store.state.root_media_api + product.product_image"
                 :alt="product.product_title"
                 class="product-image"
               />
-
-              <!-- Category Badge -->
               <div class="category-badge">{{ product.category_name }}</div>
-
-              <!-- AR Badge -->
-              <div class="ar-badge">AR</div>
+              <div class="ar-badge">{{ t('products.card.arBadge') }}</div>
             </div>
 
             <a-row>
               <a-col :span="24" style="padding-top: 10px">
                 <b class="truncate block">{{
-                  truncateText(
-                    product.product_title || "No title available",
-                    22,
-                  )
+                  truncateText(product.product_title || t('products.card.noTitle'), 22)
                 }}</b>
               </a-col>
 
-              <a-col :span="16"> Colors </a-col>
+              <a-col :span="16">{{ t('products.card.colors') }}</a-col>
 
-              <a-col
-                span="8"
-                style="display: flex; justify-content: end; gap: 4px"
-              >
+              <a-col span="8" style="display: flex; justify-content: end; gap: 4px">
                 <div
                   v-for="(c, i) in product.product_colors.slice(0, 2)"
                   :key="i"
@@ -167,7 +125,7 @@
                 ></div>
               </a-col>
 
-              <a-col span="12"> Price </a-col>
+              <a-col span="12">{{ t('products.card.price') }}</a-col>
 
               <a-col span="12" style="text-align: end">
                 <b>${{ product.product_price }}</b>
@@ -179,16 +137,14 @@
                   class="w-full !text-[10px] sm:!text-[12px]"
                   style="font-family: var(--font-family-main)"
                 >
-                  Product Details
+                  {{ t('products.card.productDetails') }}
                 </a-button>
               </a-col>
 
               <a-col span="1"></a-col>
               <a-col span="4" class="flex items-center">
                 <a-button
-                  @click="
-                    toggleFavorite(product.product_id, product.type, product)
-                  "
+                  @click="toggleFavorite(product.product_id, product.type, product)"
                   class="!flex !items-center !justify-center"
                 >
                   <template v-if="product.is_favorited">
@@ -207,8 +163,8 @@
   </div>
 </template>
 
-
 <script>
+import { useI18n } from 'vue-i18n';
 import { HeartOutlined, HeartFilled } from "@ant-design/icons-vue";
 
 export default {
@@ -220,17 +176,23 @@ export default {
   props: {
     products: Object,
   },
+
+  setup() {
+    const { t, locale } = useI18n();
+    return { t, locale };
+  },
+
   data() {
     return {
       imageLoadedMap: {},
-    business_available_actions: null,
-    iframeLoaded: false,
-    showAccessModal: false,
-    productPageUrl: null,
-    pendingProduct: null,
-    currentPlanName: undefined, // ← undefined means "not fetched yet", null means "fetched but no plan"
-    planLoading: false,
-    planLoaded: false,
+      business_available_actions: null,
+      iframeLoaded: false,
+      showAccessModal: false,
+      productPageUrl: null,
+      pendingProduct: null,
+      currentPlanName: undefined,
+      planLoading: false,
+      planLoaded: false,
     };
   },
 
@@ -239,73 +201,55 @@ export default {
   },
 
   methods: {
-    // ✅ Check if plan is basic or null (should show modal)
-isBasicOrNoPlan() {
-  const plan = this.currentPlanName;
-  // undefined = still loading, don't show modal yet
-  // null = no plan returned from API = treat as basic
-  // "basic" = basic plan
-  return plan === null || (typeof plan === 'string' && plan.toLowerCase() === 'basic');
-},
+    isBasicOrNoPlan() {
+      const plan = this.currentPlanName;
+      return plan === null || (typeof plan === 'string' && plan.toLowerCase() === 'basic');
+    },
 
-// ✅ API CALL TO GET BUSINESS PLAN
-async loadBrandPurchasedPlanDetails() {
-  if (this.planLoading || this.planLoaded) return;
-  this.planLoading = true;
+    async loadBrandPurchasedPlanDetails() {
+      if (this.planLoading || this.planLoaded) return;
+      this.planLoading = true;
 
-  try {
-    // ✅ business_slug with underscore
-    const brandSlug = this.$route.query.brand || this.products[0]?.business_slug;
+      try {
+        const brandSlug = this.$route.query.brand || this.products[0]?.business_slug;
 
-    if (!brandSlug) {
-      console.warn('❌ No brand slug found');
-      this.currentPlanName = null;
-      this.planLoaded = true;
-      return;
-    }
+        if (!brandSlug) {
+          console.warn('No brand slug found');
+          this.currentPlanName = null;
+          this.planLoaded = true;
+          return;
+        }
 
-    console.log('✅ brandSlug:', brandSlug);
+        const url = `${this.$store.state.root_api}subscription/api/get-business-plan-details/${brandSlug}`;
+        const token = localStorage.getItem('token');
 
-    const url = `${this.$store.state.root_api}subscription/api/get-business-plan-details/${brandSlug}`;
-    const token = localStorage.getItem('token');
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            Authorization: `Token ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
 
-    console.log('🌐 Fetching URL:', url);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        Authorization: `Token ${token}`,
-        'Content-Type': 'application/json',
-      },
-    });
+        const result = await response.json();
 
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        if (result.success && result.data) {
+          this.currentPlanName = result.data.plan_name || null;
+          this.businessavailableactions = result.data;
+        } else {
+          this.currentPlanName = null;
+        }
+      } catch (error) {
+        console.error('Error loading plan details:', error);
+        this.currentPlanName = null;
+      } finally {
+        this.planLoading = false;
+        this.planLoaded = true;
+      }
+    },
 
-    const result = await response.json();
-
-    console.log('📦 Full API result:', result);
-    console.log('🏷️ plan_name:', result.data?.plan_name);
-
-    if (result.success && result.data) {
-      this.currentPlanName = result.data.plan_name || null;
-      this.businessavailableactions = result.data;
-      console.log('✅ currentPlanName set to:', this.currentPlanName);
-    } else {
-      console.warn('⚠️ result.success false or result.data missing');
-      this.currentPlanName = null;
-    }
-
-  } catch (error) {
-    console.error('❌ Error loading plan details:', error);
-    this.currentPlanName = null;
-  } finally {
-    this.planLoading = false;
-    this.planLoaded = true;
-  }
-},
-
-
-    // ✅ BUILD PRODUCT PAGE URL
     buildProductPageUrl(product) {
       let produuct_type = "product";
       if (product.type == "light") {
@@ -331,30 +275,24 @@ async loadBrandPurchasedPlanDetails() {
       return baseUrl + route.href;
     },
 
-    // ✅ HANDLE PRODUCT CLICK — shows modal ONLY if plan is basic or null
-   async handleProductClick(product) {
-  this.pendingProduct = product;
+    async handleProductClick(product) {
+      this.pendingProduct = product;
 
-  // Wait for plan to finish loading if still in progress
-  if (!this.planLoaded) {
-    await this.loadBrandPurchasedPlanDetails();
-  }
+      if (!this.planLoaded) {
+        await this.loadBrandPurchasedPlanDetails();
+      }
 
-  console.log('🎯 Product click - plan name:', this.currentPlanName);
+      if (this.isBasicOrNoPlan()) {
+        this.iframeLoaded = false;
+        this.productPageUrl = this.buildProductPageUrl(product);
+        this.showAccessModal = true;
+        this.$message.warning(this.t('products.messages.upgradePlanWarning'));
+        return;
+      }
 
-  if (this.isBasicOrNoPlan()) {
-    console.log('🔒 Basic/no plan - showing modal');
-    this.iframeLoaded = false;
-    this.productPageUrl = this.buildProductPageUrl(product);
-    this.showAccessModal = true;
-    this.$message.warning('Upgrade your plan to access AR Product Details');
-    return;
-  }
+      this.goto_product_Route(product);
+    },
 
-  console.log('✅ Standard/Premium plan - navigating to product');
-  this.goto_product_Route(product);
-},
-    // ✅ NORMAL NAVIGATION
     goto_product_Route(product) {
       let produuct_type = "product";
       if (product.type == "light") {
@@ -377,7 +315,6 @@ async loadBrandPurchasedPlanDetails() {
       });
     },
 
-    // ✅ CLOSE MODAL AND RESET
     closeModalAndNavigateBack() {
       this.showAccessModal = false;
       this.productPageUrl = null;
@@ -385,14 +322,11 @@ async loadBrandPurchasedPlanDetails() {
       this.iframeLoaded = false;
     },
 
-    // ✅ HANDLE UPGRADE
     handleUpgrade() {
       this.showAccessModal = false;
-      this.$message.success('Redirecting to upgrade page...');
-      // this.$router.push('/pricing');
+      this.$message.success(this.t('products.messages.redirectingToUpgrade'));
     },
 
-    // ✅ IFRAME LOADED
     onIframeLoad() {
       setTimeout(() => {
         this.iframeLoaded = true;
@@ -412,28 +346,12 @@ async loadBrandPurchasedPlanDetails() {
       }, 1000);
     },
 
-    handleAddProduct() {
-      console.log("Add product clicked");
-    },
-
-    handleProductDetail(product) {
-      console.log("Product detail clicked:", product);
-      this.$router.push(
-        "/" +
-          this.$route.params.buisness_name +
-          "/" +
-          product.product_type +
-          "/" +
-          product.product_id,
-      );
-    },
-
     async toggleFavorite(product_id, product_type, product) {
       try {
         const token = localStorage.getItem("token");
 
         if (!token) {
-          this.$message.warning("Please login to add favorites");
+          this.$message.warning(this.t('products.messages.loginToFavorite'));
           return;
         }
 
@@ -445,10 +363,7 @@ async loadBrandPurchasedPlanDetails() {
               "Content-Type": "application/json",
               Authorization: `Token ${token}`,
             },
-            body: JSON.stringify({
-              id: product_id,
-              type: product_type,
-            }),
+            body: JSON.stringify({ id: product_id, type: product_type }),
           },
         );
 
@@ -456,12 +371,12 @@ async loadBrandPurchasedPlanDetails() {
         product.is_favorited = data.favorited;
 
         const message = data.favorited
-          ? "Added to favorites"
-          : "Removed from favorites";
+          ? this.t('products.messages.addedToFavorites')
+          : this.t('products.messages.removedFromFavorites');
         this.$message.success(message);
       } catch (error) {
         console.error("Favorite toggle failed", error);
-        this.$message.error("Failed to update favorite");
+        this.$message.error(this.t('products.messages.favoriteUpdateFailed'));
       }
     },
   },

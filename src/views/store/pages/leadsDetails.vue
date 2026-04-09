@@ -3,7 +3,7 @@
     <a-col :span="24">
       <div class="table-card">
         <div class="table-header">
-          <h3>Leads Summary</h3>
+          <h3>{{ t('leads.summary.title') }}</h3>
         </div>
 
         <!-- Plan Loading State -->
@@ -28,11 +28,11 @@
         >
           <LockOutlined style="font-size: 40px; color: #4f46e5; margin-bottom: 16px;" />
           <h3 style="font-size: 18px; font-weight: 600; color: #1f2937; margin-bottom: 8px;">
-            Premium Feature
+            {{ t('leads.premium.title') }}
           </h3>
           <p style="color: #6b7280; max-width: 400px; margin-bottom: 0;">
-            Leads Summary is available exclusively on the <strong>Premium</strong> plan.
-            Upgrade your plan to unlock detailed lead tracking and analytics.
+            {{ t('leads.premium.description') }} <strong>{{ t('leads.premium.plan_name') }}</strong>
+            {{ t('leads.premium.upgrade_message') }}
           </p>
         </div>
 
@@ -42,13 +42,13 @@
           <div style="margin-bottom: 16px; display: flex; gap: 16px; flex-wrap: wrap;">
             <a-date-picker
               v-model:value="leadsDateRange[0]"
-              placeholder="Start Date"
+              :placeholder="t('leads.filters.start_date')"
               style="width: 200px"
               @change="onDateFilterChange"
             />
             <a-date-picker
               v-model:value="leadsDateRange[1]"
-              placeholder="End Date"
+              :placeholder="t('leads.filters.end_date')"
               style="width: 200px"
               @change="onDateFilterChange"
             />
@@ -100,7 +100,7 @@
                   @click="viewLeadDetails(record.id, record.date)"
                 >
                   <OrderedListOutlined />
-                  View Details
+                  {{ t('leads.actions.view_details') }}
                 </a-button>
               </template>
             </template>
@@ -121,7 +121,7 @@
   >
     <template #title>
       <div style="display: flex; justify-content: space-between; font-size: 16px; font-weight: 600; align-items: center;">
-        Lead Details — {{ selectedLeadDate }}
+        {{ t('leads.detail.title') }} — {{ selectedLeadDate }}
       </div>
     </template>
 
@@ -133,19 +133,19 @@
       <!-- Summary Stats -->
       <div class="user-transaction-summary" style="margin-bottom: 20px;">
         <div class="summary-item">
-          <span class="summary-label">Total Leads:</span>
+          <span class="summary-label">{{ t('leads.detail.total_leads') }}:</span>
           <span class="summary-value">{{ leadDetail.total_leads }}</span>
         </div>
         <div class="summary-item">
-          <span class="summary-label">Products:</span>
+          <span class="summary-label">{{ t('leads.detail.products') }}:</span>
           <span class="summary-value">{{ leadDetail.products?.length || 0 }}</span>
         </div>
         <div class="summary-item">
-          <span class="summary-label">Wall Textures:</span>
+          <span class="summary-label">{{ t('leads.detail.wall_textures') }}:</span>
           <span class="summary-value">{{ leadDetail.wall_textures?.length || 0 }}</span>
         </div>
         <div class="summary-item">
-          <span class="summary-label">Floor Textures:</span>
+          <span class="summary-label">{{ t('leads.detail.floor_textures') }}:</span>
           <span class="summary-value">{{ leadDetail.floor_textures?.length || 0 }}</span>
         </div>
       </div>
@@ -154,7 +154,7 @@
       <a-tabs v-model:activeKey="activeDetailTab">
 
         <!-- Products Tab -->
-        <a-tab-pane key="products" tab="Products">
+        <a-tab-pane key="products" :tab="t('leads.detail.tabs.products')">
           <a-table
             :columns="productDetailColumns"
             :data-source="leadDetail.products"
@@ -215,7 +215,7 @@
         </a-tab-pane>
 
         <!-- Wall Textures Tab -->
-        <a-tab-pane key="wall_textures" tab="Wall Textures">
+        <a-tab-pane key="wall_textures" :tab="t('leads.detail.tabs.wall_textures')">
           <a-table
             :columns="textureDetailColumns"
             :data-source="leadDetail.wall_textures"
@@ -276,7 +276,7 @@
         </a-tab-pane>
 
         <!-- Floor Textures Tab -->
-        <a-tab-pane key="floor_textures" tab="Floor Textures">
+        <a-tab-pane key="floor_textures" :tab="t('leads.detail.tabs.floor_textures')">
           <a-table
             :columns="textureDetailColumns"
             :data-source="leadDetail.floor_textures"
@@ -343,6 +343,7 @@
 
 <script>
 import { OrderedListOutlined, LockOutlined } from '@ant-design/icons-vue'
+import { useI18n } from 'vue-i18n'
 
 export default {
   name: 'LeadsComponent',
@@ -350,6 +351,11 @@ export default {
   components: {
     OrderedListOutlined,
     LockOutlined,
+  },
+
+  setup() {
+    const { t, locale } = useI18n()
+    return { t, locale }
   },
 
   data() {
@@ -367,16 +373,16 @@ export default {
         pageSize: 10,
         total: 0,
         showSizeChanger: true,
-        showTotal: (total) => `Total ${total} records`,
+        showTotal: (total) => `${this.t('leads.pagination.total')} ${total} ${this.t('leads.pagination.records')}`,
       },
       leadsColumns: [
         { title: '#',             key: 'serial',        width: 60 },
-        { title: 'Date',          key: 'date',          dataIndex: 'date' },
-        { title: 'Total Leads',   key: 'total_leads',   dataIndex: 'total_leads' },
-        { title: 'Product Leads', key: 'product_leads', dataIndex: 'product_leads' },
-        { title: 'Wall Leads',    key: 'wall_leads',    dataIndex: 'wall_leads' },
-        { title: 'Floor Leads',   key: 'floor_leads',   dataIndex: 'floor_leads' },
-        { title: 'Actions',       key: 'actions',       width: 140 },
+        { title: this.t('leads.table.date'),          key: 'date',          dataIndex: 'date' },
+        { title: this.t('leads.table.total_leads'),   key: 'total_leads',   dataIndex: 'total_leads' },
+        { title: this.t('leads.table.product_leads'), key: 'product_leads', dataIndex: 'product_leads' },
+        { title: this.t('leads.table.wall_leads'),    key: 'wall_leads',    dataIndex: 'wall_leads' },
+        { title: this.t('leads.table.floor_leads'),   key: 'floor_leads',   dataIndex: 'floor_leads' },
+        { title: this.t('leads.table.actions'),       key: 'actions',       width: 140 },
       ],
 
       // ── Drawer / Detail ─────────────────────────────────────────────────────
@@ -389,28 +395,71 @@ export default {
       // ── Detail Table Columns ────────────────────────────────────────────────
       productDetailColumns: [
         { title: '#',           key: 'serial',       width: 60 },
-        { title: 'Image',       key: 'image',        width: 80 },
-        { title: 'Product',     key: 'product_name', dataIndex: 'product_name' },
-        { title: 'Usage Count', key: 'usage_count',  dataIndex: 'usage_count', width: 130 },
-        { title: 'Users',       key: 'users',        dataIndex: 'users' },
-        { title: 'Emails',      key: 'emails',       dataIndex: 'users', width: 220 },
+        { title: this.t('leads.detail.columns.image'),       key: 'image',        width: 80 },
+        { title: this.t('leads.detail.columns.product'),     key: 'product_name', dataIndex: 'product_name' },
+        { title: this.t('leads.detail.columns.usage_count'), key: 'usage_count',  dataIndex: 'usage_count', width: 130 },
+        { title: this.t('leads.detail.columns.users'),       key: 'users',        dataIndex: 'users' },
+        { title: this.t('leads.detail.columns.emails'),      key: 'emails',       dataIndex: 'users', width: 220 },
       ],
       textureDetailColumns: [
         { title: '#',           key: 'serial',      width: 60 },
-        { title: 'Image',       key: 'image',       width: 80 },
-        { title: 'Name',        key: 'name' },
-        { title: 'Usage Count', key: 'usage_count', dataIndex: 'usage_count', width: 130 },
-        { title: 'Users',       key: 'users',       dataIndex: 'users' },
-        { title: 'Emails',      key: 'emails',      dataIndex: 'users', width: 220 },
+        { title: this.t('leads.detail.columns.image'),       key: 'image',       width: 80 },
+        { title: this.t('leads.detail.columns.name'),        key: 'name' },
+        { title: this.t('leads.detail.columns.usage_count'), key: 'usage_count', dataIndex: 'usage_count', width: 130 },
+        { title: this.t('leads.detail.columns.users'),       key: 'users',       dataIndex: 'users' },
+        { title: this.t('leads.detail.columns.emails'),      key: 'emails',      dataIndex: 'users', width: 220 },
       ],
     }
   },
 
   mounted() {
     this.fetchActivePlan()
+    // Update column titles when locale changes
+    this.updateColumnTitles()
+  },
+
+  watch: {
+    'locale': {
+      handler() {
+        this.updateColumnTitles()
+      },
+      deep: true
+    }
   },
 
   methods: {
+    updateColumnTitles() {
+      this.leadsColumns = [
+        { title: '#',             key: 'serial',        width: 60 },
+        { title: this.t('leads.table.date'),          key: 'date',          dataIndex: 'date' },
+        { title: this.t('leads.table.total_leads'),   key: 'total_leads',   dataIndex: 'total_leads' },
+        { title: this.t('leads.table.product_leads'), key: 'product_leads', dataIndex: 'product_leads' },
+        { title: this.t('leads.table.wall_leads'),    key: 'wall_leads',    dataIndex: 'wall_leads' },
+        { title: this.t('leads.table.floor_leads'),   key: 'floor_leads',   dataIndex: 'floor_leads' },
+        { title: this.t('leads.table.actions'),       key: 'actions',       width: 140 },
+      ]
+
+      this.productDetailColumns = [
+        { title: '#',           key: 'serial',       width: 60 },
+        { title: this.t('leads.detail.columns.image'),       key: 'image',        width: 80 },
+        { title: this.t('leads.detail.columns.product'),     key: 'product_name', dataIndex: 'product_name' },
+        { title: this.t('leads.detail.columns.usage_count'), key: 'usage_count',  dataIndex: 'usage_count', width: 130 },
+        { title: this.t('leads.detail.columns.users'),       key: 'users',        dataIndex: 'users' },
+        { title: this.t('leads.detail.columns.emails'),      key: 'emails',       dataIndex: 'users', width: 220 },
+      ]
+
+      this.textureDetailColumns = [
+        { title: '#',           key: 'serial',      width: 60 },
+        { title: this.t('leads.detail.columns.image'),       key: 'image',       width: 80 },
+        { title: this.t('leads.detail.columns.name'),        key: 'name' },
+        { title: this.t('leads.detail.columns.usage_count'), key: 'usage_count', dataIndex: 'usage_count', width: 130 },
+        { title: this.t('leads.detail.columns.users'),       key: 'users',       dataIndex: 'users' },
+        { title: this.t('leads.detail.columns.emails'),      key: 'emails',      dataIndex: 'users', width: 220 },
+      ]
+
+      this.leadsPagination.showTotal = (total) => `${this.t('leads.pagination.total')} ${total} ${this.t('leads.pagination.records')}`
+    },
+
     // ── Image helpers ───────────────────────────────────────────────────────
     getImageUrl(imagePath) {
       if (!imagePath) return 'https://placehold.co/48x48?text=N/A'
@@ -528,7 +577,7 @@ export default {
     formatDate(dateStr) {
       if (!dateStr) return '-'
       const d = new Date(dateStr)
-      return d.toLocaleDateString('en-IN', {
+      return d.toLocaleDateString('he-IL', {
         day: '2-digit',
         month: 'short',
         year: 'numeric',

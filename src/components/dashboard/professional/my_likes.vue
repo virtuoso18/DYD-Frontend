@@ -3,7 +3,7 @@
     <div
       class="sm:main sm:border border-gray-200 sm:rounded-2xl min-h-[100vh] md:min-h-[136vh] xl:min-h-[170vh] 2xl:min-h-[150vh] bg-white"
     >
-      <div style=" border-radius: 15px; min-height: 100vh" class="p-4">
+      <div style=" border-radius: 15px; min-height: 100vh" class="p-2">
         <h3
           style="
             font-family: Poppins, sans-serif;
@@ -1144,7 +1144,8 @@ export default {
 .product-image-container {
   position: relative;
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  height: 240px !important;
+  height: 170px !important;
+  border-radius:8px;
   display: flex;
   align-items: center;
   justify-content: center;

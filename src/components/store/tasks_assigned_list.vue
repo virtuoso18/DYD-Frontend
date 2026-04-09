@@ -2,17 +2,17 @@
     <div class="container">
         <a-row>
             <a-col :span="10">
-                <h3>Task Management</h3>
+                <h3>{{ t('task.taskManagement') }}</h3>
             </a-col>
             <a-col :span="14">
                 <div class="filter-tabs">
                     <button 
                         v-for="filter in statusFilters" 
-                        :key="filter"
-                        :class="['filter-btn', { active: activeFilter === filter }]"
-                        @click="activeFilter = filter"
+                        :key="filter.value"
+                        :class="['filter-btn', { active: activeFilter === filter.value }]"
+                        @click="activeFilter = filter.value"
                     >
-                        {{ filter }}
+                        {{ filter.label }}
                     </button>
                 </div>
             </a-col>
@@ -24,13 +24,12 @@
                 :key="task.id" 
                 class="task-item"
             >
-            <!-- {{ task }} -->
                 <div class="task-header">
                     <span 
                         class="status-badge"
                         :class="getStatusClass(task.status)"
                     >
-                        {{ task.status }}
+                        {{ getStatusLabel(task.status) }}
                     </span>
                 </div>
 
@@ -40,7 +39,7 @@
                     
                     <div class="task-meta">
                         <div class="meta-item">
-                            <span class="meta-label">Created at:</span>
+                            <span class="meta-label">{{ t('task.createdAt') }}:</span>
                             <span class="meta-value">{{ formatDate(task.created_at) }}</span>
                         </div>
                     </div>
@@ -52,7 +51,7 @@
                         class="btn btn-start"
                         @click="startTask(task.id)"
                     >
-                        Start Task
+                        {{ t('task.startTask') }}
                     </button> -->
                 </div>
             </div>
@@ -61,34 +60,50 @@
 </template>
 
 <script>
+import { useI18n } from 'vue-i18n';
+
 export default {
     name: 'TaskManagement',
+
+    setup() {
+        const { t, locale } = useI18n();
+        return { t, locale };
+    },
+
     props: {
         tasks: {
             type: Array,
             default: () => []
         }
     },
+
     data() {
         return {
             activeFilter: 'All',
-            statusFilters: ['All', 'ToDo', 'InProgress', 'Completed']
         };
     },
+
     computed: {
+        statusFilters() {
+            return [
+                { value: 'All',        label: this.t('task.filter.all') },
+                { value: 'ToDo',       label: this.t('task.filter.todo') },
+                { value: 'InProgress', label: this.t('task.filter.inProgress') },
+                { value: 'Completed',  label: this.t('task.filter.completed') },
+            ];
+        },
+
         filteredTasks() {
-            // Use the tasks prop instead of local tasks_list
             const tasksList = this.tasks || [];
-            
             if (this.activeFilter === 'All') {
                 return tasksList;
             }
             return tasksList.filter(task => task.status === this.activeFilter);
         }
     },
+
     methods: {
         getStatusClass(status) {
-            // Map status to CSS classes
             const statusMap = {
                 'ToDo': 'status-todo',
                 'InProgress': 'status-inprogress',
@@ -96,19 +111,32 @@ export default {
             };
             return statusMap[status] || 'status-todo';
         },
-        formatDate(dateString) {
-            if (!dateString) return 'N/A';
-            const date = new Date(dateString);
-            return date.toLocaleDateString('en-US', { 
-                month: 'short', 
-                day: 'numeric', 
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
+
+        getStatusLabel(status) {
+            const labelMap = {
+                'ToDo':        this.t('task.status.todo'),
+                'InProgress':  this.t('task.status.inProgress'),
+                'Completed':   this.t('task.status.completed'),
+            };
+            return labelMap[status] || status;
         },
+
+        formatDate(dateString) {
+            if (!dateString) return this.t('task.na');
+            const date = new Date(dateString);
+            return date.toLocaleDateString(
+                this.locale === 'he' ? 'he-IL' : 'en-US',
+                {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                }
+            );
+        },
+
         startTask(taskId) {
-            // Emit event to parent component to handle API call
             this.$emit('start-task', taskId);
             console.log(`Task ${taskId} started`);
         }

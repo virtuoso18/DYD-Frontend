@@ -314,7 +314,7 @@
         </div>
 
         <!-- Colors Filter -->
-        <div
+        <!-- <div
           style="
             margin-bottom: 20px;
             padding-bottom: 15px;
@@ -378,7 +378,7 @@
               </div>
             </a-collapse-panel>
           </a-collapse>
-        </div>
+        </div> -->
 
       </a-col>
 

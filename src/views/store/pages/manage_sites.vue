@@ -131,13 +131,8 @@
       <div class="!text-gray-700" style="padding: 10px">
         <div style="background: #f3f3f3; border-radius: 10px; padding: 10px">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <h1 v-if="!isEditing" style="font-size: 16px">{{ editData.servicesTitle }}</h1>
-            <a-input
-              v-else
-              v-model:value="editData.servicesTitle"
-              style="font-size: 16px; font-weight: bold; border: 1px dashed #ccc;"
-              :placeholder="t('manageStore.servicesTitlePlaceholder')"
-            />
+            <h1  style="font-size: 16px">{{ editData.servicesTitle }}</h1>
+           
             <a-button v-if="isEditing" type="text" @click="editServices = !editServices">
               <template #icon>
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

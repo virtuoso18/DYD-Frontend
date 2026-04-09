@@ -4,10 +4,10 @@
     <div class="blue-section">
       <div class="hero-content hidden lg:block lg:-translate-y-16">
         <h1 class="hero-title">
-          Discover the world's top<br />interior design inspiration
+          {{ t('community.heroTitle') }}
         </h1>
         <p class="hero-subtitle">
-          Explore the work of the most talented designers to inspire your work.
+          {{ t('community.heroSubtitle') }}
         </p>
       </div>
       <div
@@ -16,15 +16,15 @@
         <h1
           class="text-white text-2xl md:text-3xl font-semibold leading-tight mb-5 drop-shadow-md z-10"
         >
-          Discover the world's top<br />interior design inspiration
+          {{ t('community.heroTitle') }}
         </h1>
         <p
           class="text-white/90 text-lg md:text-xl font-normal max-w-[500px] mx-auto relative z-10"
         >
-          Explore the work of the most talented designers to inspire your work.
+          {{ t('community.heroSubtitle') }}
         </p>
       </div>
-
+ 
       <!-- Hero Images -->
       <div class="hero-images hidden sm:block">
   
@@ -36,7 +36,7 @@
       v-if="!imageLoadedMap['hero_left']"
       class="hero-skeleton"
     ></div>
-
+ 
     <!-- Preload image -->
     <img
       src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
@@ -44,7 +44,7 @@
       @load="onHeroImageLoad('hero_left')"
       alt=""
     />
-
+ 
     <!-- Visible image -->
     <img
       v-show="imageLoadedMap['hero_left']"
@@ -52,7 +52,7 @@
       alt="Modern living room"
     />
   </div>
-
+ 
   <!-- RIGHT IMAGE -->
   <div class="image-card image-right -translate-y-10 relative" style="overflow:hidden;">
     
@@ -61,7 +61,7 @@
       v-if="!imageLoadedMap['hero_right']"
       class="hero-skeleton"
     ></div>
-
+ 
     <!-- Preload image -->
     <img
       src="https://images.unsplash.com/photo-1631889993959-41b4e9c6e3c5?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
@@ -69,7 +69,7 @@
       @load="onHeroImageLoad('hero_right')"
       alt=""
     />
-
+ 
     <!-- Visible image -->
     <img
       v-show="imageLoadedMap['hero_right']"
@@ -77,9 +77,9 @@
       alt="Elegant interior"
     />
   </div>
-
+ 
 </div>
-
+ 
       <div class="relative">
         <!-- Hero Images -->
         <div class="sm:hidden block">
@@ -93,7 +93,7 @@
               class="w-[200px] h-[150px] object-cover rounded-xl"
             />
           </div>
-
+ 
           <!-- Right Image Card -->
           <div
             class="translate-x-30 -translate-y-36 z-20 rounded-2xl p-1 shadow-[0_20px_40px_rgba(0,0,0,0.1)] transition-transform duration-300 hover:scale-105"
@@ -107,75 +107,11 @@
         </div>
       </div>
     </div>
-
+ 
     <!-- White Section with Search -->
     <div class="white-section z-100 -translate-y-20 sm:translate-y-0">
       <div class="search-section">
         <div class="search-container relative">
-          <!-- Custom Dropdown -->
-          <!-- <div class="custom-dropdown" @click.stop="toggleDropdown">
-            <div class="dropdown-selected">
-              <img
-                :src="selectedCategoryIcon"
-                alt="Interior"
-                class="selected-icon"
-              />
-              <span className="sm:hidden"
-                ><svg
-                  width="10"
-                  height="6"
-                  viewBox="0 0 10 6"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M0.53125 0.53125L4.53125 4.53125L8.53125 0.53125"
-                    stroke="#1A1A1A"
-                    stroke-width="1.5"
-                  />
-                </svg>
-              </span>
-              <span class="selected-text text-gray-600">{{
-                selectedCategoryText
-              }}</span>
-              <svg
-                class="dropdown-arrow"
-                :class="{ 'rotate-180': showDropdown }"
-                width="12"
-                height="12"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </div>
-            <ul class="dropdown-options" v-show="showDropdown">
-              <li
-                v-for="category in categoryOptions"
-                :key="category.value"
-                @click.stop="selectCategory(category)"
-                :data-value="category.value"
-              >
-                {{ category.text }}
-              </li>
-            </ul>
-          </div> -->
-
-          <!-- <input
-            type="text"
-            class="search-input"
-            placeholder="What are you looking for?"
-            v-model="searchQuery"
-            @keyup.enter="onSearch"
-          /> -->
-        
-  
     <div class="search-field" @click="showSearchModal = true">
       <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
@@ -183,47 +119,29 @@
       <input
         type="text"
         class="search-input"
-        placeholder="What are you looking for?"
+        :placeholder="t('community.searchPlaceholder')"
         readonly
       />
-    
-  </div>
-
-
+    </div>
+ 
 <!-- Modal -->
 <SearchModal
   v-model:visible="showSearchModal"
   @select="(tagName) => $router.push(`/comunity-posts/${encodeURIComponent(tagName)}`)"
 />
-
-      
-          <!-- <a-button type="primary" @click="showSearchModal = true" style="width:100%;max-width:100px;height:auto;border-radius:10px;" >Search</a-button> -->
-          <!-- <a-button type="primary" style="width:100%;max-width:100px" @click="onSearch">Search</a-button> -->
-
-
-          
-<!-- {{ tagResults }} -->
-
-        
-
+ 
         </div>
+      </div>
       
-       
-
-
-
-
-</div>
-      
-
+ 
       <!-- Trending Section -->
       <div class="trending-section">
         <h3
           class="!font-space !font-normal !text-[18px] text-gray-800 !leading-none !tracking-[0] text-center"
         >
-          Trending searches
+          {{ t('community.trendingSearches') }}
         </h3>
-
+ 
         <div
           class="trending-tags text-gray-700 flex flex-wrap gap-2 justify-center mt-3"
         >
@@ -233,28 +151,28 @@
           >
             Modern Interior
           </button>
-
+ 
           <!-- Button 2 -->
           <button @click="this.$router.push('/comunity-posts/modern-interior')"
             class="bg-[#F2F2F2] !px-4 !py-1 rounded-md text-[12px] font-[400] leading-[100%] text-center font-space  cursor-pointer"
           >
             Kitchen setup
           </button>
-
+ 
           <!-- Button 3 -->
           <button @click="this.$router.push('/comunity-posts/bedroom')"
             class="bg-[#F2F2F2] !px-4 !py-1 rounded-md text-[12px] font-[400] leading-[100%] text-center font-space  cursor-pointer"
           >
             Bedroom kids
           </button>
-
+ 
           <!-- Button 4 -->
           <button @click="this.$router.push('/comunity-posts/dining-room')"
             class="bg-[#F2F2F2] !px-4 !py-1 rounded-md text-[12px] font-[400] leading-[100%] text-center font-space  cursor-pointer"
           >
             Dining room elegant
           </button>
-
+ 
           <!-- Button 5 -->
           <button @click="this.$router.push('/comunity-posts/ccandinavian')"
             class="bg-[#F2F2F2] !px-4 !py-1 rounded-md text-[12px] font-[400] leading-[100%] text-center font-space  cursor-pointer"
@@ -264,127 +182,19 @@
         </div>
       </div>
     </div>
-
-    <!-- <div className="bg-[#F2F2F2] !py-6">
-      
-       <div class="flex flex-row overflow-x-auto !p-4 no-scrollbar  gap-6">
-        <DesignCard
-          image="https://kahedu.edu.in/n/wp-content/uploads/2021/07/6-SECRETS-FOR-MASTERING-THE-ART-OF-PUBLIC-SPEAKING-1-990x500.jpg"
-          avatar="https://www.svgrepo.com/show/382095/female-avatar-girl-face-woman-user-4.svg"
-          :tags="['Living Room', 'Modern']"
-          name="John Doe"
-          :likes="15000"
-          width="350px"
-          height="270px"
-        />
+ 
     
-        <DesignCard
-          image="https://kahedu.edu.in/n/wp-content/uploads/2021/07/6-SECRETS-FOR-MASTERING-THE-ART-OF-PUBLIC-SPEAKING-1-990x500.jpg"
-          avatar="https://www.svgrepo.com/show/382095/female-avatar-girl-face-woman-user-4.svg"
-          :tags="['Kitchen', 'Modern']"
-          name="Alice"
-          :likes="8200"
-          width="350px"
-          height="270px"
-        />
-    
-        <DesignCard
-          image="https://kahedu.edu.in/n/wp-content/uploads/2021/07/6-SECRETS-FOR-MASTERING-THE-ART-OF-PUBLIC-SPEAKING-1-990x500.jpg"
-          avatar="https://www.svgrepo.com/show/382095/female-avatar-girl-face-woman-user-4.svg"
-          :tags="['Kitchen', 'Modern']"
-          name="Alice"
-          :likes="8200"
-          height="270px"
-        />
-    
-        <DesignCard
-          image="https://kahedu.edu.in/n/wp-content/uploads/2021/07/6-SECRETS-FOR-MASTERING-THE-ART-OF-PUBLIC-SPEAKING-1-990x500.jpg"
-          avatar="https://www.svgrepo.com/show/382095/female-avatar-girl-face-woman-user-4.svg"
-          :tags="['Kitchen', 'Modern']"
-          :views="98"
-          name="Alice"
-          :likes="8200"
-          width="350px"
-          height="270px"
-        />
-    
-        <DesignCard
-          image="https://kahedu.edu.in/n/wp-content/uploads/2021/07/6-SECRETS-FOR-MASTERING-THE-ART-OF-PUBLIC-SPEAKING-1-990x500.jpg"
-          avatar="https://www.svgrepo.com/show/382095/female-avatar-girl-face-woman-user-4.svg"
-          :tags="['Kitchen', 'Modern']"
-          :views="98"
-          name="Alice"
-          :likes="8200"
-          width="350px"
-          height="270px"
-        />
-      </div> 
-    </div> -->
-
+ 
     <div class="w-full mx-auto px-4">
-      <!-- ==================== SECTION 1 ==================== -->
-      <!-- <h1 class="text-4xl font-semibold text-center !py-10">Community</h1> -->
-
-      <!-- Tabs -->
-      <!-- <div class="flex gap-6 justify-center pb-8">
-        <button
-          v-for="(tab, index) in tabs"
-          :key="index"
-          @click="changeTab(tab)"
-          class="tab-text tab-btn"
-          :class="activeTab === tab ? 'tab-active' : 'tab-inactive'"
-        >
-          {{ tab }}
-        </button>
-    </div> -->
-
-      <!-- Desktop Grid -->
-      <!-- <div class="grid grid-cols-4 sm:grid-cols-4 !pt-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 hidden sm:grid place-items-center !px-4 gap-x-10 gap-6 community-section">
-      <DesignCard
-        v-for="(card, index) in paginatedCards"
-        :key="`card-${page}-${index}`"
-        :image="card.image"
-        :avatar="card.avatar"
-        :tags="card.tags"
-        :views="card.views"
-        :name="card.name"
-        :likes="card.likes"
-        :comments="card.comments"
-        width="328px"
-        height="270px"
-        @click.stop="openCommentsModal(card)"
-        
-      />
-    </div> -->
-
-      <!-- Mobile Grid -->
-      <!-- <div class="grid grid-cols-2 gap-8 sm:grid-cols-2 !pt-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 sm:hidden block place-items-center !px-4 gap-x-10 gap-6 community-section">
-      <DesignCard
-        v-for="(card, index) in paginatedCards"
-        :key="`card-${page}-${index}`"
-        :image="card.image"
-        :avatar="card.avatar"
-        :tags="card.tags"
-        :views="card.views"
-        :name="card.name"
-        :likes="card.likes"
-        :comments="card.comments"
-        width="178px"
-        height="190px"
-        imageWidth="178px"
-        imageHeight="145px"
-        @click.stop="openCommentsModal(card)"
-      />
-    </div> -->
-
+    
       <!-- Today's Top Designs Section -->
       <div className="bg-[#F2F2F2] !py-6">
         <span
           class="!font-proza !font-semibold !text-[32px] leading-[40px] tracking-tight text-center text-gray-900 block"
         >
-          Today's Top Designs
+          {{ t('community.todaysTopDesigns') }}
         </span>
-
+ 
         <div
           class="flex flex-row overflow-x-auto !p-4 no-scrollbar gap-6"
           v-if="topDesigns.length > 0"
@@ -406,13 +216,13 @@
           />
         </div>
       </div>
-
+ 
       <!-- Community Section -->
       <div class="w-full mx-auto px-4">
         <h1 class="!text-[28px] sm:!text-4xl font-semibold !text-gray-700 text-center !py-10">
-          Community
+          {{ t('community.community') }}
         </h1>
-
+ 
         <!-- Tabs -->
         <div class="flex gap-6 !text-gray-700 justify-center pb-8">
           <button
@@ -429,7 +239,7 @@
             {{ tab }}
           </button>
         </div>
-
+ 
         <!-- Desktop Grid -->
         <div
           class="grid grid-cols-4 sm:grid-cols-4 !pt-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 hidden sm:grid place-items-center !px-4 gap-x-10 gap-6 community-section"
@@ -452,7 +262,7 @@
             @click.stop="openCommentsModal(post)"
           />
         </div>
-
+ 
         <!-- Mobile Grid -->
         <div
           class="grid grid-cols-2 gap-6 sm:grid-cols-2 !pt-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 sm:hidden block place-items-center !px-6 gap-x-10 gap-6 community-section"
@@ -475,19 +285,13 @@
             @click.stop="openCommentsModal(post)"
           />
         </div>
-
-        <!-- Loading State -->
-        <!-- <div v-if="loading" class="text-center !py-12">
-    <div class="loading-spinner"></div>
-    <p class="text-gray-500 mt-4">Loading posts...</p>
-  </div> -->
-
+ 
         <!-- Empty State -->
         <div v-if="!loading && apiData.length === 0" class="text-center !py-12">
-          <p class="text-gray-500">No posts found.</p>
+          <p class="text-gray-500">{{ t('community.noPostsFound') }}</p>
         </div>
       </div>
-
+ 
       <!-- Comments Modal -->
       <CommentsModal
         :isOpen="showCommentsModal"
@@ -498,9 +302,9 @@
       />
       <!-- Empty State -->
       <div v-if="paginatedCards.length === 0" class="text-center !py-12">
-        <p class="text-gray-500">No designs found for this category.</p>
+        <p class="text-gray-500">{{ t('community.noDesignsFound') }}</p>
       </div>
-
+ 
       <!-- Pagination -->
       <div class="flex justify-center items-center gap-3 !py-10">
         <!-- Previous Button -->
@@ -530,7 +334,7 @@
             />
           </svg>
         </button>
-        <!-- {{pageNumbers}} -->
+ 
         <!-- Page Numbers -->
         <button
           v-for="n in pageNumbers"
@@ -541,7 +345,7 @@
         >
           {{ n }}
         </button>
-
+ 
         <!-- Next Button -->
         <button
           @click="nextPage"
@@ -576,20 +380,19 @@
           </svg>
         </button>
       </div>
-
+ 
       <!-- Page Info -->
       <div class="text-center text-gray-600 text-sm !pb-2">
-        Showing {{ (currentPage - 1) * itemsPerPage + 1 }} -
-        {{ Math.min(currentPage * itemsPerPage, totalCount) }} of
-        {{ totalCount }} designs
+        {{ t('community.showing') }} {{ (currentPage - 1) * itemsPerPage + 1 }} -
+        {{ Math.min(currentPage * itemsPerPage, totalCount) }} {{ t('community.of') }}
+        {{ totalCount }} {{ t('community.designs') }}
       </div>
-
+ 
       <!-- Tap and Get credit -->
       <div class="flex justify-center">
         <button
           class="bg-[#3B63FB] !text-white !px-8 !py-2 rounded-xl font-medium shadow flex items-center gap-2"
         >
-          <!-- SVG Icon -->
           <svg
             width="17"
             height="17"
@@ -604,13 +407,11 @@
               fill="white"
             />
           </svg>
-
-          <!-- Text -->
-          <span>Tap and Get credit</span>
+          <span>{{ t('community.tapAndGetCredit') }}</span>
         </button>
       </div>
     </div>
-
+ 
     <div style="max-width: 100%; margin: auto">
       <div
         style="
@@ -623,7 +424,7 @@
         <h1
           class="!font-proza-libre !font-semibold !text-[28px] sm:!text-[38px] text-black !leading-none !tracking-[-0.02em] !text-center !mb-10"
         >
-          Our Happy Customers
+          {{ t('community.ourHappyCustomers') }}
         </h1>
         <swiper
           style="
@@ -654,7 +455,7 @@
                   alt=""
                   class="w-[80px] h-[80px] !mb-[-40px] z-10 bg-white rounded-full border border-gray-300"
                 />
-
+ 
                 <div
                   class="border border-black/20 rounded-2xl !pt-10 h-[240px] text-center"
                 >
@@ -664,9 +465,9 @@
                   <p class="m-0 text-[13px] text-[#666]">
                     {{ review.role }}
                   </p>
-
+ 
                   <a-rate :value="review.rating"></a-rate>
-
+ 
                   <p
                     class="text-[14px] leading-[1.5] text-[#333] m-0 text-center"
                   >
@@ -677,7 +478,7 @@
             </div>
           </swiper-slide>
         </swiper>
-
+ 
         <div
           style="
             position: absolute;
@@ -704,10 +505,10 @@
         ></div>
       </div>
     </div>
-
+ 
     <br />
     <div style="text-align: center">
-      <h1>Top Businesses</h1>
+      <h1>{{ t('community.topBusinesses') }}</h1>
       <br />
       <a-row>
         <a-col
@@ -752,7 +553,7 @@
                     font-size: 16px;
                   "
                 >
-                  Simulations:
+                  {{ t('community.simulations') }}:
                   <span
                     style="color: #3b63fb; font-weight: 700; font-size: 20px"
                     >{{ business.simulations }}</span
@@ -766,7 +567,7 @@
     </div>
     <br />
     <br />
-
+ 
     <div
       style="
         padding: 40px 10px;
@@ -777,9 +578,9 @@
       "
     >
       <h1 style="font-size: 28px; font-weight: 700; margin-bottom: 40px">
-        Top Designers
+        {{ t('community.topDesigners') }}
       </h1>
-
+ 
       <swiper
         style="
           margin-top: 20px;
@@ -808,12 +609,11 @@
               :alt="business.name"
               class="w-[60px] h-[60px] bg-white mb-2"
             />
-
             <h4 class="text-center">{{ business.name }}</h4>
           </div>
         </swiper-slide>
       </swiper>
-
+ 
       <div
         style="
           position: absolute;
@@ -872,6 +672,8 @@ import DesignCard from "@/components/Includes/DesignCard.vue";
 import CommentsModal from "./CommentsModal.vue";
 import SearchModal from "./CommunitySearchModal.vue";
 import router from "@/router";
+import { useI18n } from 'vue-i18n'
+
 
 export default {
   name: "InteriorDesignCommunityPage",
@@ -1359,38 +1161,25 @@ export default {
   }
 },
   setup() {
+    const { t, locale } = useI18n()  
+
     const onSwiper = (swiper) => {
       console.log(swiper);
     };
     const onSlideChange = () => {
       console.log("slide change");
     };
+
     return {
+      t,        
+      locale,   
       onSwiper,
       onSlideChange,
       modules: [Navigation, Pagination, Scrollbar, A11y, Autoplay],
     };
   },
   computed: {
-    // filteredCards() {
-    //   if (this.activeTab === "All Type") return this.allCards;
-    //   return this.allCards.filter((card) => card.category === this.activeTab);
-    // },
-    // totalPages() {
-    //   return Math.ceil(this.filteredCards.length / this.itemsPerPage);
-    // },
-    // paginatedCards() {
-    //   const start = (this.page - 1) * this.itemsPerPage;
-    //   const end = start + this.itemsPerPage;
-    //   return this.filteredCards.slice(start, end);
-    // },
-    // pageNumbers() {
-    //   const pages = [];
-    //   for (let i = 1; i <= this.totalPages; i++) {
-    //     pages.push(i);
-    //   }
-    //   return pages;
-    // }
+   
 
     totalPages() {
       return Math.ceil(this.filteredCards.length / this.itemsPerPage);
@@ -1491,169 +1280,7 @@ export default {
     this.resetTagSearch()
     this.$router.push(`/comunity-posts/${encodeURIComponent(tagName)}`)
   },
-    //     data() {
-    //   return {
-    //     // ... your existing data properties ...
-
-    //     // Add these for comments modal functionality
-    //     commentsModalVisible: false,
-    //     selectedPostForComments: null,
-    //     modalComments: [],
-    //     modalCommentsPage: 1,
-    //     hasMoreModalComments: false,
-    //     loadingModalComments: false,
-    //     addingModalComment: false,
-    //     newModalComment: "",
-    //     postComments: [] // Keep this for your existing CommentsModal if needed
-    //   };
-    // },
-    // methods: {
-    //   // ... your existing methods ...
-
-    //   // Comments Modal Methods - Integrated from provided logic
-    //   async openCommentsModal(post) {
-    //     this.selectedPostForComments = { ...post };
-    //     this.modalComments = [];
-    //     this.modalCommentsPage = 1;
-    //     this.hasMoreModalComments = false;
-    //     this.commentsModalVisible = true;
-
-    //     // Load comments for modal
-    //     await this.loadModalComments(post.id);
-    //   },
-
-    //   // Close comments modal
-    //   closeCommentsModal() {
-    //     this.commentsModalVisible = false;
-    //     this.selectedPostForComments = null;
-    //     this.modalComments = [];
-    //     this.newModalComment = "";
-    //   },
-
-    //   // Load comments for modal
-    //   async loadModalComments(postId, page = 1) {
-    //     try {
-    //       this.loadingModalComments = true;
-    //       const response = await fetch(
-    //         `${this.$store.state.root_api}community/api/comments/?post_id=${postId}&page=${page}`,
-    //         {
-    //           method: "GET",
-    //           headers: {
-    //             Authorization: `Token ${localStorage.getItem("token")}`,
-    //             "Content-Type": "application/json",
-    //           },
-    //         }
-    //       );
-
-    //       const data = await response.json();
-    //       if (data.success) {
-    //         if (page === 1) {
-    //           this.modalComments = data.data;
-    //         } else {
-    //           this.modalComments.push(...data.data);
-    //         }
-    //         this.hasMoreModalComments = page < data.total_pages;
-    //         this.modalCommentsPage = page;
-    //       }
-    //     } catch (error) {
-    //       console.error("Failed to load comments:", error);
-    //     } finally {
-    //       this.loadingModalComments = false;
-    //     }
-    //   },
-
-    //   // Load more comments in modal
-    //   async loadMoreModalComments() {
-    //     if (this.selectedPostForComments && this.hasMoreModalComments) {
-    //       await this.loadModalComments(
-    //         this.selectedPostForComments.id,
-    //         this.modalCommentsPage + 1
-    //       );
-    //     }
-    //   },
-
-    //   // Add comment in modal
-    //   async addModalComment() {
-    //     if (!this.newModalComment.trim() || !this.selectedPostForComments) return;
-
-    //     try {
-    //       this.addingModalComment = true;
-    //       const response = await fetch(
-    //         `${this.$store.state.root_api}community/api/comments/`,
-    //         {
-    //           method: "POST",
-    //           headers: {
-    //             Authorization: `Token ${localStorage.getItem("token")}`,
-    //             "Content-Type": "application/json",
-    //           },
-    //           body: JSON.stringify({
-    //             post_id: this.selectedPostForComments.id,
-    //             content: this.newModalComment.trim(),
-    //           }),
-    //         }
-    //       );
-
-    //       const data = await response.json();
-    //       if (data.success) {
-    //         // Clear input
-    //         this.newModalComment = "";
-
-    //         // Reload comments
-    //         await this.loadModalComments(this.selectedPostForComments.id);
-
-    //         // Update comment count in the main list
-    //         this.selectedPostForComments.comment_count += 1;
-    //         const postIndex = this.apiData.findIndex(
-    //           (p) => p.id === this.selectedPostForComments.id
-    //         );
-    //         if (postIndex !== -1) {
-    //           this.apiData[postIndex].comment_count =
-    //             this.selectedPostForComments.comment_count;
-    //         }
-
-    //         this.$message.success("Comment added successfully!");
-    //       }
-    //     } catch (error) {
-    //       console.error("Failed to add comment:", error);
-    //       this.$message.error("Failed to add comment");
-    //     } finally {
-    //       this.addingModalComment = false;
-    //     }
-    //   },
-
-    //   // Update your existing fetchPostComments to use the new structure if needed
-    //   async fetchPostComments(postId) {
-    //     try {
-    //       const response = await fetch(`http://localhost:8000/community/api/comments/?post_id=${postId}`, {
-    //         method: 'GET',
-    //         headers: {
-    //           'Authorization': `Token ${localStorage.getItem("token")}`,
-    //           'Content-Type': 'application/json',
-    //         },
-    //       });
-
-    //       if (!response.ok) {
-    //         throw new Error('Failed to fetch comments');
-    //       }
-
-    //       const data = await response.json();
-    //       if (data.success) {
-    //         this.postComments = data.data.map(comment => ({
-    //           id: comment.id,
-    //           name: comment.comment_owner?.username || 'Anonymous',
-    //           avatar: comment.comment_owner?.user_profile
-    //                   ? `http://localhost:8000${comment.comment_owner.user_profile}`
-    //                   : 'https://via.placeholder.com/40',
-    //           time: comment.created_at,
-    //           text: comment.content
-    //         }));
-    //       }
-    //     } catch (error) {
-    //       console.error('Error fetching comments:', error);
-    //       this.postComments = [];
-    //     }
-    //   },
-    // },
+ 
 
     async fetchPosts(page = 1) {
       this.loading = true;
@@ -1820,65 +1447,7 @@ export default {
       this.showDropdown = false;
       this.onCategoryChange();
     },
-    // async fetchTags() {
-    //   try {
-    //     const response = await fetch(`${this.$store.state.root_api}community/api/public/tags/`, {
-    //       method: 'GET',
-    //       headers: {
-    //         'Content-Type': 'application/json',
-    //       },
-    //     });
-    //     const data = await response.json();
-    //     if (data.success) {
-    //       this.availableTags = data.data;
-    //       this.popularTags = data.data.slice(0, 5);
-    //     }
-    //   } catch (error) {
-    //     console.error('Failed to load tags:', error);
-    //   }
-    // },
-    // async fetchDesigns(page = 1, append = false) {
-    //   try {
-    //     if (page === 1) {
-    //       this.loading = true;
-    //     } else {
-    //       this.loadingMore = true;
-    //     }
-    //     const params = new URLSearchParams({
-    //       page: page.toString(),
-    //       page_size: this.pageSize.toString()
-    //     });
-    //     if (this.selectedCategory) {
-    //       params.append('tag', this.selectedCategory);
-    //     }
-    //     const response = await fetch(
-    //       `${this.$store.state.root_api}community/api/public/posts/?${params}`,
-    //       {
-    //         method: 'GET',
-    //         headers: {
-    //           'Content-Type': 'application/json',
-    //         },
-    //       }
-    //     );
-    //     const data = await response.json();
-    //     if (data.success) {
-    //       const newDesigns = data.data;
-    //       if (append) {
-    //         this.designs = [...this.designs, ...newDesigns];
-    //       } else {
-    //         this.designs = newDesigns;
-    //       }
-    //       this.hasMore = data.pagination.has_next;
-    //       this.currentPage = data.pagination.current_page;
-    //     }
-    //   } catch (error) {
-    //     console.error('Failed to load designs:', error);
-    //     this.$message?.error('Failed to load designs');
-    //   } finally {
-    //     this.loading = false;
-    //     this.loadingMore = false;
-    //   }
-    // },
+    
     async loadMoreDesigns() {
       if (this.hasMore && !this.loadingMore) {
         await this.fetchDesigns(this.currentPage + 1, true);

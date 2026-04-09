@@ -89,6 +89,11 @@
   "productDetail": "Product Detail",
   "colorLabel": "Color",
   "priceLabel": "Price :",
+  "chooseFiles": "Choose Files",
+  "contactSending": "Sending...",
+  "contactFillAll": "Please fill in all fields",
+  "contactSuccess": "Message sent successfully!",
+  "contactError": "Something went wrong. Please try again.",
 
   
   "footer": {
@@ -633,7 +638,25 @@
     "availableColors": "Available Colors:",
     "price": "Price",
     "editProduct": "Edit Product",
-    "deleteProduct": "Delete Product"
+    "deleteProduct": "Delete Product",
+    "clearCart": "Clear Cart?",
+    "clearCartMessage": "Your cart contains items from a different seller. Do you want to clear the cart first in order to add this item?",
+    "yes": "Yes",
+    "no": "No",
+    "notLoggedIn": "Not logged in user",
+    "addToCart": "Add to Cart",
+    "seeInYourRoom": "See in your room",
+    "contactOnWhatsApp": "Contact on WhatsApp",
+    "viewOnAR": "View on AR",
+    "productNotFound": "Product not found",
+    "addedToCart": "Added to cart!",
+    "failedToAddCart": "Failed to add to cart",
+    "errorAddingToCart": "Error adding to cart",
+    "cartClearedAndAdded": "Cart cleared and item added successfully!",
+    "failedToAddAfterClear": "Failed to add item after clearing cart",
+    "failedToClearCart": "Failed to clear cart",
+    "errorClearingCart": "Error clearing cart",
+    "itemNotAdded": "Item was not added to cart"
 },
  "texture_details": {
     "createVariation": "Create Variation",
@@ -729,7 +752,23 @@
     "selectTagsPlaceholder": "Select or create tags...",
     "deletePostConfirmTitle": "Delete Post",
     "deletePostConfirmContent": "Are you sure you want to delete this post? This action cannot be undone.",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "heroTitle": "Discover the world's top interior design inspiration",
+    "heroSubtitle": "Explore the work of the most talented designers to inspire your work.",
+    "searchPlaceholder": "What are you looking for?",
+    "trendingSearches": "Trending searches",
+    "todaysTopDesigns": "Today's Top Designs",
+    "community": "Community",
+    "noPostsFound": "No posts found.",
+    "noDesignsFound": "No designs found for this category.",
+    "showing": "Showing",
+    "of": "of",
+    "designs": "designs",
+    "tapAndGetCredit": "Tap and Get credit",
+    "ourHappyCustomers": "Our Happy Customers",
+    "topBusinesses": "Top Businesses",
+    "simulations": "Simulations",
+    "topDesigners": "Top Designers"
   },
    "banner": {
     "myBanners": "My Banners",
@@ -948,7 +987,479 @@
     "postLiked": "Post liked!",
     "postUnliked": "Post unliked!",
     "failedToUpdateLike": "Failed to update like"
+  },
+  "products": {
+    "accessModal": {
+      "heading": "Upgrade to Access AR Products",
+      "messagePart1": "This product includes",
+      "ar": "AR (Augmented Reality)",
+      "messagePart2": "features. Upgrade to",
+      "standard": "Standard",
+      "or": "or",
+      "premium": "Premium",
+      "messagePart3": "to access full product details.",
+      "upgradePlan": "Upgrade Plan",
+      "goBack": "Go Back"
+    },
+    "card": {
+      "arBadge": "AR",
+      "noTitle": "No title available",
+      "colors": "Colors",
+      "price": "Price",
+      "productDetails": "Product Details"
+    },
+    "messages": {
+      "upgradePlanWarning": "Upgrade your plan to access AR Product Details",
+      "redirectingToUpgrade": "Redirecting to upgrade page...",
+      "loginToFavorite": "Please login to add favorites",
+      "addedToFavorites": "Added to favorites",
+      "removedFromFavorites": "Removed from favorites",
+      "favoriteUpdateFailed": "Failed to update favorite"
+    }
+  },
+  "requests": {
+  "noRequestsFound": "No requests found",
+  "noImage": "No Image",
+  "noMessageProvided": "No message provided",
+  "notGeneratedYet": "Not generated yet",
+  "pending": "Pending",
+  "id": "ID",
+  "requestId": "Request ID",
+  "requestedBy": "Requested by",
+  "roomPhoto": "Room photo",
+  "generatedRoom": "Generated room",
+  "processPhoto": "Process Photo",
+  "regenerate": "Regenerate",
+  "reject": "Reject",
+  "rejectRequest": "Reject Request",
+  "columns": {
+    "id": "ID",
+    "requestDate": "Request Date",
+    "requestedEmail": "Requested Email",
+    "roomPhoto": "Room Photo",
+    "generatedRoom": "Generated Room",
+    "status": "Status",
+    "actions": "Actions"
+  },
+  "rejectModal": {
+    "title": "Reject Request",
+    "requestId": "Request ID",
+    "email": "Email",
+    "reasonLabel": "Reason for rejection:",
+    "reasonPlaceholder": "Please provide a reason for rejection...",
+    "reasonRequired": "Rejection reason is required",
+    "confirmError": "Please type \"CONFIRM\" exactly"
+  },
+  "messages": {
+    "processStarted": "Photo processing started successfully",
+    "processFailed": "Failed to process photo",
+    "regenerateStarted": "Regeneration started successfully",
+    "regenerateFailed": "Failed to Regenerate room",
+    "rejectSuccess": "Request rejected successfully",
+    "rejectFailed": "Failed to reject request"
   }
+  },
+  "settings": {
+  "title": "Settings",
+  "watermark": {
+    "title": "Manage Watermark",
+    "description": "To display your brand watermark on product images, turn on the toggle"
+  },
+  "password": {
+    "title": "Manage Password",
+    "description": "Set a new password to keep your account safe.",
+    "changeButton": "Change Password",
+    "modalTitle": "Change Your Password",
+    "currentPassword": "Current Password",
+    "currentPasswordPlaceholder": "Enter current password",
+    "newPassword": "New Password",
+    "newPasswordPlaceholder": "Enter new password",
+    "confirmPassword": "Confirm New Password",
+    "confirmPasswordPlaceholder": "Confirm new password"
+  },
+  "productContains": {
+    "title": "Products Selling",
+    "infoTitle": "What is this?",
+    "infoMessage": "Toggling the Product Contains option on or off will affect the simulation screen. When enabled, the simulation screen will display the tab menu for the corresponding product type; when disabled, the tab menu will be hidden. Please disable this option for products that you do not officially sell on DYD.",
+    "floor": "Floor Products",
+    "furniture": "Furniture Products",
+    "walls": "Walls Products",
+    "lights": "Lights Products"
+  },
+  "messages": {
+    "updateFailed": "Failed to update settings",
+    "serverError": "Server error updating scene settings",
+    "fetchWatermarkFailed": "Failed to fetch watermark settings",
+    "watermarkUpdated": "Watermark setting updated",
+    "watermarkFailed": "Failed to update watermark setting",
+    "allFieldsRequired": "All fields are required",
+    "passwordsMismatch": "New passwords do not match",
+    "passwordTooShort": "Password must be at least 8 characters long",
+    "passwordChanged": "Password changed successfully",
+    "passwordChangedNotification": "Password Changed Successful",
+    "passwordChangeFailed": "Failed to change password"
+  }
+},
+"manageAccess": {
+  "title": "Staff & Task Management",
+  "cancel": "Cancel",
+  "save": "Save",
+  "refresh": "Refresh",
+  "noTasksAssigned": "No tasks got assigned.",
+  "tabs": {
+    "allStaff": "All Staff",
+    "allTasks": "All Tasks"
+  },
+  "userTabs": {
+    "accessPermissions": "Access Permissions",
+    "tasksAssigned": "Tasks Assigned",
+    "accessLogs": "Access Logs"
+  },
+  "table": {
+    "name": "Name",
+    "email": "Email",
+    "status": "Status",
+    "assignedTasks": "Assigned Tasks"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "grantAccess": {
+    "btn": "Grant Employee Access",
+    "modalTitle": "Grant Access to Employee",
+    "sendRequest": "Send Request",
+    "employeeEmail": "Employee Email",
+    "employeeEmailPlaceholder": "Enter employee user email",
+    "requestMessage": "Request Message",
+    "requestMessagePlaceholder": "Explain why you need this employee's access...",
+    "infoTitle": "Information",
+    "infoMessage": "An access request will be sent to the professional user. They will need to accept it before they appear in your staff list."
+  },
+  "assignTask": {
+    "modalTitle": "Assign New Task",
+    "assignmentType": "Task Assignment Type",
+    "internalStaff": "Internal Staff",
+    "platformProfessional": "Platform Professional",
+    "assignTo": "Assign To",
+    "selectStaff": "Select staff member",
+    "taskTitle": "Task Title",
+    "taskTitlePlaceholder": "Enter task title",
+    "taskDescription": "Task Description",
+    "taskDescriptionPlaceholder": "Describe what needs to be done...",
+    "priority": "Priority",
+    "low": "Low",
+    "medium": "Medium",
+    "high": "High",
+    "urgent": "Urgent",
+    "estimatedHours": "Estimated Hours",
+    "estimatedHoursPlaceholder": "e.g., 5.5",
+    "dueDate": "Due Date",
+    "assignTaskBtn": "Assign Task"
+  },
+  "createTask": {
+    "modalTitle": "Create New Task",
+    "createBtn": "Create Task",
+    "btn": "Create New Task"
+  },
+  "phone": {
+    "modalTitle": "Call Employee",
+    "phone": "Phone",
+    "unavailable": "Unavailable",
+    "call": "Call",
+    "whatsapp": "WhatsApp"
+  },
+  "mail": {
+    "modalTitle": "Send Email",
+    "send": "Send",
+    "to": "To",
+    "subject": "Subject",
+    "subjectPlaceholder": "Enter email subject",
+    "message": "Message",
+    "messagePlaceholder": "Enter email contents"
+  },
+  "editEmployee": {
+    "modalTitle": "Edit Employee",
+    "avatar": "Avatar",
+    "noImage": "No Image",
+    "uploadImage": "Upload Image",
+    "removeImage": "Remove Image",
+    "name": "Name",
+    "namePlaceholder": "Enter employee name",
+    "phone": "Phone",
+    "phonePlaceholder": "Enter phone number"
+  },
+  "deleteEmployee": {
+    "modalTitle": "Delete Employee",
+    "warningTitle": "Warning",
+    "warningMessage": "Once you delete this employee, you will not be able to manage this user further from the user profile. This action cannot be undone.",
+    "confirmInstruction": "Type \"CONFIRM\" to delete this employee:",
+    "confirmPlaceholder": "Type CONFIRM here",
+    "deleteBtn": "Delete"
+  },
+  "permissions": {
+    "title": "Permission Management",
+    "subtitle": "Configure access control settings",
+    "grantAll": "Grant All",
+    "revokeAll": "Revoke All",
+    "unsavedChanges": "Unsaved changes",
+    "saveChanges": "Save Changes",
+    "businessSite": "Business Site",
+    "productManagement": "Product Management",
+    "communityPost": "Community Post",
+    "userRequestManagement": "User Request Management",
+    "customerMessages": "Customer Messages",
+    "generateBanner": "Generate Banner",
+    "businessCustomers": "Business Customers",
+    "read": "Read",
+    "update": "Update",
+    "create": "Create",
+    "delete": "Delete",
+    "reject": "Reject",
+    "process": "Process",
+    "respond": "Respond",
+    "report": "Report",
+    "download": "Download",
+    "share": "Share"
+  },
+  "staffCard": {
+    "name": "Name",
+    "phone": "Phone",
+    "createdAt": "Created At"
+  },
+  "accessLogs": {
+    "action": "Action",
+    "message": "Message",
+    "timestamp": "Timestamp",
+    "userAgent": "User Agent"
+  },
+  "messages": {
+    "emailRequired": "Professional email is required",
+    "messageRequired": "Request message is required",
+    "invalidEmail": "Please enter a valid email address",
+    "accessRequestSent": "Access request sent to professional successfully!",
+    "accessRequestFailed": "Failed to send access request",
+    "accessRequestError": "An error occurred while sending the access request",
+    "fillTitleDescription": "Please fill in title and description",
+    "noStaffSelected": "No staff member selected",
+    "taskCreated": "Task created successfully",
+    "taskCreateFailed": "Failed to create task",
+    "taskCreateError": "An error occurred while creating the task",
+    "subjectMessageRequired": "Subject and message are required",
+    "emailSent": "Email sent successfully",
+    "permissionsSaved": "Permissions updated successfully",
+    "allGranted": "All permissions granted successfully",
+    "allRevoked": "All permissions revoked successfully",
+    "changesCancelled": "Changes cancelled and reverted to original state",
+    "staffDeleted": "Professional user deleted successfully",
+    "staffDeleteFailed": "Failed to delete professional user"
+  }
+},
+ "task": {
+    "taskManagement": "Task Management",
+    "createdAt": "Created at",
+    "startTask": "Start Task",
+    "na": "N/A",
+    "filter": {
+      "all": "All",
+      "todo": "ToDo",
+      "inProgress": "InProgress",
+      "completed": "Completed"
+    },
+    "status": {
+      "todo": "ToDo",
+      "inProgress": "InProgress",
+      "completed": "Completed"
+    }
+  },
+  
+  "analytics": {
+    "totalProducts": "Total Products",
+    "totalClicks": "Total Clicks",
+    "totalCreditsConsumed": "Total Credits Consumed",
+    "balanceCredits": "Balance Credits",
+
+    "dailyCreditConsumption": "Daily Credit Consumption",
+    "favoriteProduct": "Favorite product",
+    "userCreditSummary": "User-wise Credit Consumption Summary",
+    "topSimulationProducts": "Top simulation products",
+
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "sortBy": "Sort By",
+    "filterByStatus": "Filter by Status",
+    "filterByType": "Filter by Type",
+    "allStatus": "All Status",
+    "all": "All",
+    "pending": "Pending",
+    "success": "Success",
+    "failed": "Failed",
+    "deposit": "deposit",
+    "consume": "consume",
+
+    "creditsHighToLow": "Credits (High to Low)",
+    "creditsLowToHigh": "Credits (Low to High)",
+    "userNameAZ": "User Name (A-Z)",
+
+    "totalConsumed": "Total Consumed",
+    "avgDaily": "Avg Daily",
+    "activeDays": "Active Days",
+    "totalCredits": "Total Credits Consumed",
+    "totalTransactions": "Total Transactions",
+
+    "creditTransactions": "Credit Transactions",
+    "chat": "Chat",
+
+    "ar": "AR",
+
+    "totalUsers": "Total {count} users",
+    "totalItems": "Total {count} items",
+
+    "col": {
+      "userName": "User Name",
+      "email": "Email",
+      "totalCredits": "Total Credits Consumed",
+      "transactionCount": "Transaction Count",
+      "actions": "Actions",
+      "product": "Product",
+      "category": "Category",
+      "type": "Type",
+      "createDate": "Create date",
+      "size": "Size",
+      "color": "Color",
+      "price": "Price",
+      "usage": "Usage",
+      "arVr": "AR/VR",
+      "userEmail": "User Email",
+      "business": "Business",
+      "credits": "Credits",
+      "status": "Status",
+      "date": "Date",
+      "description": "Description"
+    }
+  },
+  "leads": {
+  "summary": {
+    "title": "Leads Summary"
+  },
+  "premium": {
+    "title": "Premium Feature",
+    "description": "Leads Summary is available exclusively on the",
+    "plan_name": "Premium",
+    "upgrade_message": "plan. Upgrade your plan to unlock detailed lead tracking and analytics."
+  },
+  "filters": {
+    "start_date": "Start Date",
+    "end_date": "End Date"
+  },
+  "table": {
+    "date": "Date",
+    "total_leads": "Total Leads",
+    "product_leads": "Product Leads",
+    "wall_leads": "Wall Leads",
+    "floor_leads": "Floor Leads",
+    "actions": "Actions"
+  },
+  "actions": {
+    "view_details": "View Details"
+  },
+  "pagination": {
+    "total": "Total",
+    "records": "records"
+  },
+  "detail": {
+    "title": "Lead Details",
+    "total_leads": "Total Leads",
+    "products": "Products",
+    "wall_textures": "Wall Textures",
+    "floor_textures": "Floor Textures",
+    "tabs": {
+      "products": "Products",
+      "wall_textures": "Wall Textures",
+      "floor_textures": "Floor Textures"
+    },
+    "columns": {
+      "image": "Image",
+      "product": "Product",
+      "usage_count": "Usage Count",
+      "users": "Users",
+      "emails": "Emails",
+      "name": "Name"
+    }
+  }
+},
+"chat": {
+    "messages_title": "Messages",
+    "search_placeholder": "Search by name",
+    "support_line_name": "DYD Customer Support Line",
+    "default_time_ago": "1 day ago",
+    "default_greeting": "Say Hi to, {name}",
+    "empty_state_title": "Select a conversation to start chatting",
+    "empty_state_description": "Choose from your existing conversations or start a new one",
+    "message_placeholder": "Type here"
+  },
+  "store": {
+    "nav": {
+      "analytics": "Analytics",
+      "messages": "Messages",
+      "customers": "Customers",
+      "manage_products": "Manage Products",
+      "manage_sites": "Manage Sites",
+      "requests": "Requests",
+      "settings": "Settings",
+      "manage_access": "Manage Access"
+    },
+    "access_modal": {
+      "title": "Access Restricted",
+      "description_start": "Your current plan",
+      "description_mid": "doesn't include",
+      "description_end": "features.",
+      "feature_name": "Staff Management",
+      "upgrade_message": "Upgrade to Premium to manage multiple staff members and control access permissions!",
+      "upgrade_button": "Upgrade to Premium",
+      "go_back_button": "Go Back",
+      "premium_includes": "Premium includes:",
+      "current_plan_default": "current plan",
+      "features": {
+        "unlimited_staff": "Unlimited Staff Members",
+        "role_permissions": "Role-based Permissions",
+        "activity_tracking": "Activity Tracking"
+      }
+    },
+    "email_verify": {
+      "message": "Your Business email is not verified yet. Please verify to access the store features.",
+      "button": "Verify now"
+    }
+  },
+  "searchModal": {
+  "placeholder": "Search designs, rooms, styles...",
+  "cancel": "Cancel",
+  "searching": "Searching…",
+  "resultsFor": "Results for",
+  "posts": "posts",
+  "viewMore": "View more results",
+  "loading": "Loading…",
+  "noResultsTitle": "No results found",
+  "noResultsSub": "Try \"bedroom\", \"kitchen\" or \"modern\"",
+  "trendingSearches": "Trending Searches"
+},
+"contactUs": {
+  "title": "Contact Us",
+  "subtitle": "Feel free to contact us",
+  "description": "Revolutionizing Interior Design with Virtual Technology & AI",
+  "formTitle": "Fill the Information",
+  "namePlaceholder": "Enter name",
+  "emailPlaceholder": "Your email",
+  "messagePlaceholder": "Your text",
+  "sendButton": "Send Now",
+  "sending": "Sending...",
+  "fillAllFields": "Please fill in all fields",
+  "successMessage": "Your enquiry has been sent successfully!",
+  "errorMessage": "Failed to send enquiry. Please try again.",
+  "attachmentsLabel": "Attachments",
+  "optional": "Optional"
+}
+
   
   
 }

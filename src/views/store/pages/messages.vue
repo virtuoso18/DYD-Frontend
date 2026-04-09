@@ -13,22 +13,17 @@
           <div class="p-5 border-b border-gray-200">
             <!-- Back button for mobile -->
             <div v-if="isMobile" class="flex items-center gap-3 mb-4">
-              <!-- <button @click="goBack" class="p-2 hover:bg-gray-100 rounded-full">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                </svg>
-              </button> -->
-              <h2 class="text-2xl font-medium text-gray-900">Messages</h2>
+              <h2 class="text-2xl font-medium text-gray-900">{{ t('chat.messages_title') }}</h2>
             </div>
             <h2 v-else class="text-2xl font-medium text-gray-900 mb-4">
-              Messages
+              {{ t('chat.messages_title') }}
             </h2>
 
             <!-- Search -->
             <div class="relative !mt-6">
               <input
                 type="text"
-                placeholder="Search by name"
+                :placeholder="t('chat.search_placeholder')"
                 class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-3xl text-sm outline-none transition-all focus:bg-white focus:border-blue-500 focus:shadow-lg"
                 v-model="searchQuery"
               />
@@ -57,7 +52,6 @@
                 )
               "
             >
-              <!-- {{ get_proper_user_avatar(room.userProfilsAvatar) }} -->
               <!-- Avatar -->
               <div v-if="!room.show_live_support_icon" class="mr-4 flex-shrink-0">
                 <a-avatar
@@ -123,24 +117,22 @@
                     }}
                   </h4>
                   <span class="text-xs text-gray-500 flex-shrink-0 ml-2">
-                    {{ room.lastMessageTime || "1 day ago" }}
+                    {{ room.lastMessageTime || t('chat.default_time_ago') }}
                   </span>
                 </div>
                 <div class="flex justify-between items-center mb-1" v-else>
                   <h4 class="text-base font-medium text-gray-900 truncate">
-                    DYD Customer Support Line
+                    {{ t('chat.support_line_name') }}
                   </h4>
                   <span class="text-xs text-gray-500 flex-shrink-0 ml-2">
-                    {{ room.lastMessageTime || "1 day ago" }}
+                    {{ room.lastMessageTime || t('chat.default_time_ago') }}
                   </span>
                 </div>
                 <div class="flex justify-between items-center">
                   <p class="text-sm text-gray-500 truncate flex-1">
                     {{
                       room.lastMessage ||
-                      "Say Hi to, " +
-                        get_proper_user_avatar(room.userProfilsAvatar)
-                          ?.first_name
+                      t('chat.default_greeting', { name: get_proper_user_avatar(room.userProfilsAvatar)?.first_name })
                     }}
                   </p>
                   <span
@@ -212,10 +204,10 @@
               class="flex flex-col items-center justify-center h-full text-center text-gray-500"
             >
               <h3 class="text-lg font-medium text-gray-900 mb-2">
-                Select a conversation to start chatting
+                {{ t('chat.empty_state_title') }}
               </h3>
               <p class="text-sm">
-                Choose from your existing conversations or start a new one
+                {{ t('chat.empty_state_description') }}
               </p>
             </div>
 
@@ -262,7 +254,7 @@
               <input
                 type="text"
                 v-model="newMessage"
-                placeholder="Type here"
+                :placeholder="t('chat.message_placeholder')"
                 class="flex-1 px-5 py-3 bg-gray-50 border border-gray-200 rounded-3xl text-sm outline-none transition-all focus:bg-white focus:border-blue-500 focus:shadow-lg"
                 @keypress.enter="sendMessage"
               />
@@ -296,8 +288,16 @@
 </template>
 
 <script>
+import { useI18n } from 'vue-i18n'
+
 export default {
   name: "ChatInterface",
+  
+  setup() {
+    const { t, locale } = useI18n()
+    return { t, locale }
+  },
+  
   data() {
     return {
       currentUser: JSON.parse(localStorage.getItem("user")),
@@ -784,23 +784,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
-</style>

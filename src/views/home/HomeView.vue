@@ -1047,31 +1047,71 @@
     <div class="flex justify-center items-center !mx-4">
       <div class="bg-white p-6 sm:p-6 rounded-xl shadow-[0_20px_60px_rgba(59,130,246,0.7)] max-w-[450px] w-full border-t-[4px] border-blue-500 blue-glow-border">
         <form @submit.prevent="submitForm" class="flex flex-col gap-5">
-          <div class="flex gap-2 sm:gap-4">
-            <input
-              type="text"
-              :placeholder="t('contactName')"
-              v-model="form.name"
-              class="flex-1 py-3 px-1 sm:px-3.5 border border-gray-300 rounded-md text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-              style="width: 100%"
-            />
-            <input
-              type="email"
-              :placeholder="t('contactEmail')"
-              v-model="form.email"
-              class="flex-1 py-3 px-1 sm:px-3.5 border border-gray-300 rounded-md text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-              style="width: 100%"
-            />
+  <div class="flex gap-2 sm:gap-4">
+    <input
+      type="text"
+      :placeholder="t('contactName')"
+      v-model="form.name"
+      class="flex-1 py-3 px-1 sm:px-3.5 border border-gray-300 rounded-md text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+      style="width: 100%"
+    />
+    <input
+      type="email"
+      :placeholder="t('contactEmail')"
+      v-model="form.email"
+      class="flex-1 py-3 px-1 sm:px-3.5 border border-gray-300 rounded-md text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+      style="width: 100%"
+    />
+  </div>
+  <textarea
+    :placeholder="t('contactMessage')"
+    v-model="form.message"
+    class="w-full min-h-[120px] py-3 px-3.5 border border-gray-300 rounded-md text-sm resize-y outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+  ></textarea>
+
+  <!-- Attachments -->
+  <div class="w-full">
+        <input
+          type="file"
+          multiple
+          ref="homeFileInput"
+          @change="handleHomeAttachmentChange"
+          class="hidden"
+        />
+        <button
+          type="button"
+          @click="$refs.homeFileInput.click()"
+          class="w-full border border-dashed border-blue-400 rounded-md p-2.5 text-[13px] text-blue-600 bg-blue-50 hover:bg-blue-100 transition text-center cursor-pointer"
+        >
+          📎 {{ t('chooseFiles') }}
+        </button>
+        <!-- Selected files preview -->
+        <div v-if="form.attachments.length" class="mt-2 flex flex-wrap gap-2">
+          <div
+            v-for="(file, index) in form.attachments"
+            :key="index"
+            class="flex items-center gap-1 bg-blue-50 text-blue-700 text-[11px] px-2 py-1 rounded-full"
+          >
+            <span>{{ file.name }}</span>
+            <button
+              type="button"
+              @click="removeHomeAttachment(index)"
+              class="ml-1 text-blue-400 hover:text-red-500 font-bold leading-none"
+            >
+              &times;
+            </button>
           </div>
-          <textarea
-            :placeholder="t('contactMessage')"
-            v-model="form.message"
-            class="w-full min-h-[120px] py-3 px-3.5 border border-gray-300 rounded-md text-sm resize-y outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-          ></textarea>
-          <button type="submit" class="bg-blue-500 !text-white py-3.5 border-none rounded-md text-base font-semibold cursor-pointer transition-all duration-300 w-full hover:bg-blue-600 active:scale-95">
-            {{ t('contactSend') }}
-          </button>
-        </form>
+        </div>
+      </div>
+
+      <button
+        type="submit"
+        :disabled="isHomeFormSubmitting"
+        class="bg-blue-500 !text-white py-3.5 border-none rounded-md text-base font-semibold cursor-pointer transition-all duration-300 w-full hover:bg-blue-600 active:scale-95 disabled:bg-gray-400 disabled:cursor-not-allowed"
+      >
+        {{ isHomeFormSubmitting ? t('contactSending') : t('contactSend') }}
+      </button>
+    </form>
       </div>
     </div>
 
@@ -1254,7 +1294,9 @@ export default {
         name: "",
         email: "",
         message: "",
+        attachments: [], 
       },
+      isHomeFormSubmitting: false,
 
       // Reviews data
       reviews: [
@@ -1857,10 +1899,61 @@ export default {
     },
 
     // Form submission
-    submitForm() {
-      console.log("Form submitted:", this.form);
-      alert("Message sent!");
-    },
+    handleHomeAttachmentChange(event) {
+  const selected = Array.from(event.target.files);
+  this.form.attachments = [...this.form.attachments, ...selected];
+  this.$refs.homeFileInput.value = "";
+},
+
+removeHomeAttachment(index) {
+  this.form.attachments.splice(index, 1);
+},
+
+async submitForm() {
+  try {
+    if (!this.form.name || !this.form.email || !this.form.message) {
+      this.$message.warning(this.t('contactFillAll'));
+      return;
+    }
+
+    this.isHomeFormSubmitting = true;
+
+    const payload = new FormData();
+    payload.append('name', this.form.name);
+    payload.append('email', this.form.email);
+    payload.append('content', this.form.message);
+
+    for (const file of this.form.attachments) {
+      payload.append('attachments', file);
+    }
+
+    const response = await fetch(
+      `${this.$store.state.root_api}customer-support/enquiries/create/`,
+      {
+        method: 'POST',
+        // No Content-Type header — browser sets multipart boundary automatically
+        body: payload,
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    await response.json();
+    this.$message.success(this.t('contactSuccess'));
+
+    // Reset form
+    this.form = { name: "", email: "", message: "", attachments: [] };
+    this.$refs.homeFileInput.value = "";
+
+  } catch (error) {
+    console.error("Home contact form submission failed", error);
+    this.$message.error(this.t('contactError'));
+  } finally {
+    this.isHomeFormSubmitting = false;
+  }
+},
     stopCorrespondingAnimation(slider) {
       if (slider === "virtualStaging") {
         this.stopStepVSSliderAnimation();

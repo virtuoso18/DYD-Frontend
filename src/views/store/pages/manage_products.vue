@@ -766,6 +766,8 @@
     <add_new_wallTexture
       v-model:visible="show_add_new_wall_texture"
       @product-created="this.fetchMyWallTextureProducts()"
+      @api-error="handleApiError"
+
     />
     <add_new_Light
       v-model:visible="show_add_new_light"
@@ -785,7 +787,13 @@
         <!--for desktop-->
         <div class="hidden md:flex justify-between items-center mb-5">
           <!-- Title -->
-          <h2
+          <h2 style="
+            font-family: Poppins, sans-serif;
+            font-weight: 500;
+            font-size: 16px;
+            line-height: 24px;
+            letter-spacing: 0;
+          "
             class="m-0 text-lg whitespace-nowrap px-2 lg:text-2xl font-semibold"
           >
             My Products
@@ -800,9 +808,9 @@
           <div
             class="flex justify-between items-end sm:flex-col sm:w-full xl:flex-row"
           >
-            <div className="flex flex-row gap-6">
+            <div className="flex flex-row gap-6 !justify-center !align-center w-full  ">
               <!-- View Toggle Buttons -->
-              <div
+              <!-- <div
                 style="
                   display: flex;
                   border: 1px solid #ddd;
@@ -834,7 +842,6 @@
                     <rect x="3" y="14" width="7" height="7"></rect>
                     <rect x="14" y="14" width="7" height="7"></rect>
                   </svg>
-                  <!-- Grid -->
                 </a-button>
                 <a-button
                   @click="viewMode = 'table'"
@@ -864,12 +871,11 @@
                     <line x1="3" y1="12" x2="3.01" y2="12"></line>
                     <line x1="3" y1="18" x2="3.01" y2="18"></line>
                   </svg>
-                  <!-- List -->
                 </a-button>
-              </div>
+              </div> -->
 
               <!-- Search -->
-              <div class="relative">
+              <!-- <div class="relative">
                 <input
                   type="text"
                   placeholder="Search Product"
@@ -888,15 +894,20 @@
                   <circle cx="11" cy="11" r="8"></circle>
                   <path d="m21 21-4.35-4.35"></path>
                 </svg>
-              </div>
+              </div> -->
+              <ProductSearchPopup
+                
+                :rootMediaApi="$store.state.root_media_api"
+                @select="handleSearchSelect"
+              />
             </div>
 
             <div className="flex flex-row gap-2 ">
               <!-- Wall Button -->
-              <button
+              <a-button
                 type="primary"
                 @click="show_add_new_wall_texture = true"
-                class="flex items-center gap-2 px-3 py-2 !text-white rounded-md bg-[#3B63FB]"
+                class="!flex items-center gap-2 px-3 py-2 !text-white rounded-md bg-[#3B63FB]"
                 style="font-family: var(--font-family-main)"
               >
                 <!-- Paste any SVG here -->
@@ -914,13 +925,13 @@
                   <rect x="13" y="13" width="8" height="8" rx="1" />
                 </svg>
                 Wall
-              </button>
+              </a-button>
 
               <!-- Floor Button -->
-              <button
+              <a-button
                 type="primary"
                 @click="show_add_new_floor_texture = true"
-                class="flex items-center gap-2 px-3 py-2 !text-white rounded-md bg-[#3B63FB]"
+                class="!flex items-center gap-2 px-3 py-2 !text-white rounded-md bg-[#3B63FB]"
                 style="font-family: var(--font-family-main)"
               >
                 <svg
@@ -942,13 +953,13 @@
                   <line x1="15" y1="3" x2="15" y2="21"></line>
                 </svg>
                 Floor
-              </button>
+              </a-button>
 
               <!-- Light Button -->
-              <button
+              <a-button
                 type="primary"
                 @click="show_add_new_light = true"
-                class="flex items-center gap-2 px-3 py-2 !text-white rounded-md bg-[#3B63FB]"
+                class="!flex items-center gap-2 px-3 py-2 !text-white rounded-md bg-[#3B63FB]"
                 style="font-family: var(--font-family-main)"
               >
                 <svg
@@ -971,13 +982,13 @@
                   <path d="M9 19h6v2H9z" />
                 </svg>
                 Light
-              </button>
+              </a-button>
 
               <!-- Add Product Button -->
-              <button
+              <a-button
                 @click="addProduct()"
                 type="primary"
-                class="flex items-center gap-2 px-3 py-2 !text-white whitespace-nowrap rounded-md bg-[#3B63FB]"
+                class="!flex items-center gap-2 px-3 py-2 !text-white whitespace-nowrap rounded-md bg-[#3B63FB]"
                 style="font-family: var(--font-family-main)"
               >
                 <svg
@@ -1001,7 +1012,7 @@
                   <path d="M9 15h6" />
                 </svg>
                 Add Product
-              </button>
+              </a-button>
             </div>
           </div>
         </div>
@@ -1058,7 +1069,11 @@
 
   <!-- Row 2: Search Bar Full Width -->
   <div class="relative w-full">
-    <svg
+    <ProductSearchPopup
+      :rootMediaApi="$store.state.root_media_api"
+      @select="handleSearchSelect"
+    />
+    <!-- <svg
       class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
       width="15" height="15" viewBox="0 0 24 24"
       fill="none" stroke="currentColor" stroke-width="2"
@@ -1071,8 +1086,9 @@
       placeholder="Search products..."
       v-model="searchQuery"
       class="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-xl bg-gray-50 text-sm outline-none focus:border-blue-400 focus:bg-white transition-all duration-200 text-gray-700 placeholder-gray-400"
-    />
+    /> -->
   </div>
+  
 
   <!-- Row 3: 4 Action Buttons in Grid -->
   <div class="grid grid-cols-4 gap-2">
@@ -1208,7 +1224,7 @@
                   {{ product.name || "No name available" }}
                 </b>
               </a-col>
-              <a-col span="16" style="font-family:Poppins,sans-serif;font-size:13px;font-weight:400;">Color</a-col>
+              <a-col span="16" style="font-family:Poppins,sans-serif;font-size:13px;font-weight:400;"> {{ t('myProducts.color') }}</a-col>
               <a-col span="8" style="display:flex;justify-content:end;">
                 <div
                   v-for="(color, index) in product.colors.slice(0, 2)"
@@ -1217,13 +1233,13 @@
                   :style="'background:' + color"
                 ></div>
               </a-col>
-              <a-col span="12" style="font-family:Poppins,sans-serif;font-size:13px;font-weight:400;">Price</a-col>
+              <a-col span="12" style="font-family:Poppins,sans-serif;font-size:13px;font-weight:400;">{{ t('myProducts.price') }}</a-col>
               <a-col span="12" style="display:flex;justify-content:end;font-weight:700;">
                 ${{ product.pricing.price }}
               </a-col>
               <a-col span="18">
                 <a-button block @click="viewProduct(product)" style="display:flex;justify-content:center;">
-                  Product Details
+                 {{ t('myProducts.productDetails') }}
                 </a-button>
               </a-col>
               <a-col :span="1"></a-col>
@@ -1294,7 +1310,7 @@
 
             <a-row style="margin-top:10px;">
               <a-col span="24"><b>{{ truncateText(product.title || "No title available", 19) }}</b></a-col>
-              <a-col span="18">Colors</a-col>
+              <a-col span="18">{{ t('myProducts.color') }}</a-col>
               <a-col span="6" style="display:flex;justify-content:end;">
                 <div
                   v-for="(color, index) in product.associated_colors.slice(0, 2)"
@@ -1302,12 +1318,12 @@
                   :style="{ background: color.color_hex, width:'20px', height:'20px', borderRadius:'20px', marginLeft:'2px' }"
                 ></div>
               </a-col>
-              <a-col span="12" style="margin-top:4px;">Price</a-col>
+              <a-col span="12" style="margin-top:4px;">{{ t('myProducts.price') }}</a-col>
               <a-col span="12" style="margin-top:4px;width:100%;display:flex;justify-content:end;">
                 <span style="font-size:14px;font-weight:600;margin-left:4px;">${{ product.sale_price_per_sqm || 0 }}</span>
               </a-col>
               <a-col span="17">
-                <a-button block @click="viewProduct(product)" style="display:flex;justify-content:center;">Product Details</a-button>
+                <a-button block @click="viewProduct(product)" style="display:flex;justify-content:center;">{{ t('myProducts.productDetails') }}</a-button>
               </a-col>
               <a-col :span="1"></a-col>
               <a-col span="6" style="display:flex;align-items:end;justify-content:end;">
@@ -1376,7 +1392,7 @@
 
           <a-row style="margin-top:10px;">
             <a-col span="24"><b>{{ product.title }}</b></a-col>
-            <a-col span="18">Colors</a-col>
+            <a-col span="18">{{ t('myProducts.color') }}</a-col>
             <a-col span="6" style="display:flex;justify-content:end;">
               <div
                 v-for="(color, index) in product.associated_colors.slice(0, 2)"
@@ -1384,7 +1400,7 @@
                 :style="{ background: color.color_hex, width:'20px', height:'20px', borderRadius:'20px', marginLeft:'2px' }"
               ></div>
             </a-col>
-            <a-col span="12" style="margin-top:4px;">Price</a-col>
+            <a-col span="12" style="margin-top:4px;">{{ t('myProducts.price') }}</a-col>
             <a-col span="12" style="margin-top:4px;">
               <span style="font-size:14px;font-weight:600;margin-left:4px;display:flex;justify-content:end;">
                 ${{ product.sale_price_per_sqm || 0 }}
@@ -1392,7 +1408,7 @@
             </a-col>
             <a-col span="17">
               <a-button block @click="viewProduct(product)" style="font-family:Poppins,sans-serif;font-size:12px;display:flex;justify-content:center;align-items:center;">
-                Product Details
+               {{ t('myProducts.productDetails') }}
               </a-button>
             </a-col>
             <a-col :span="1"></a-col>
@@ -1462,7 +1478,7 @@
 
             <a-row>
               <a-col span="24"><b>{{ truncateText(product.name || "No Name available", 19) }}</b></a-col>
-              <a-col span="18">Color</a-col>
+              <a-col span="18">{{ t('myProducts.color') }}</a-col>
               <a-col span="6" style="display:flex;justify-content:end;">
                 <div
                   v-for="(color, index) in product.colors.slice(0, 2)"
@@ -1471,13 +1487,13 @@
                   :style="'background:' + color"
                 ></div>
               </a-col>
-              <a-col span="12">Price</a-col>
+              <a-col span="12">{{ t('myProducts.price') }}</a-col>
               <a-col span="12" style="display:flex;justify-content:end;">
                 <b>${{ product.pricing.price }}</b>
               </a-col>
               <a-col span="18" style="font-family:Poppins,sans-serif;font-size:13px;padding-right:5px;">
                 <a-button block @click="viewProduct(product)" style="display:flex;width:100%;align-items:center;justify-content:center;">
-                  Product Details
+                  {{ t('myProducts.productDetails') }}
                 </a-button>
               </a-col>
               <a-col span="6" style="display:flex;align-items:end;justify-content:end;">
@@ -2679,12 +2695,15 @@ import {
 } from "@ant-design/icons-vue";
 import product_details from "@/components/store/product_details.vue";
 import errorModal from "@/components/Includes/modal/errorModal.vue";
+import ProductSearchPopup from '@/components/dashboard/Productsearchpopup.vue'
 // import edit_product from '@/components/store/edit_product.vue'
 // import add_new_product from '@/components/store/add_new_product.vue'
 
 import { Modal } from "ant-design-vue";
 
 import { createVNode } from "vue";
+import { useI18n } from "vue-i18n";
+
 
 // add new
 import add_new_floorTexture from "@/components/dashboard/business/my_products/add_new_product/add_floor_texture.vue";
@@ -2717,10 +2736,15 @@ import add_light_modal_local_3d_model from "@/components/dashboard/business/my_p
 
 export default {
   name: "UnifiedProducts",
+   setup() {
+      const { t, locale } = useI18n();
+      return { t, locale };
+    },
   components: {
     HeartOutlined,
     HeartFilled,
     ExclamationCircleOutlined,
+    ProductSearchPopup,
     product_details,
     // edit_product,
     // add_new_product,
@@ -2896,6 +2920,15 @@ export default {
     this.fetchMyFloorTextureProducts();
   },
   methods: {
+   handleSearchSelect(product, tabType) {
+  console.log(tabType)
+  
+  // Transform tabType to capitalized format
+  const formattedTabType = tabType.charAt(0).toUpperCase() + tabType.slice(1)
+  
+  this.active_tab = formattedTabType   
+  this.viewProduct(product) 
+},
     handleApiError(message) {
     this.errorModal.message = message;
     this.errorModal.visible = true;
@@ -3388,7 +3421,6 @@ export default {
     async fetchProductDetails(product_id) {
       try {
         let url_product_details = `${this.$store.state.root_api}product/api-product-owner/products/${product_id}`;
-
         if (this.active_tab === "Wall") {
           url_product_details = `${this.$store.state.root_api}room/api-owner/walls/${product_id}`;
         }

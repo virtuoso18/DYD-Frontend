@@ -507,13 +507,13 @@
                   <div>
                     <div style="background: #f3f3f3;;border-radius:10px;padding:10px;">
                       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                        <h1 v-if="!isEditMode" style="font-size:16px">
+                        <h1  style="font-size:16px">
                           {{ editData.servicesTitle }}
                         </h1>
-                        <a-input v-else 
+                        <!-- <a-input v-else 
                             v-model:value="editData.servicesTitle" 
                             style="font-size:16px; font-weight: bold; border: 1px dashed #ccc;" 
-                            placeholder="Services title" />
+                            placeholder="Services title" /> -->
 
                         <a-button v-if="isEditMode" 
                             type="text" 

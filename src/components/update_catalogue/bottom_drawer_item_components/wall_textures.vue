@@ -135,7 +135,7 @@
         </div>
 
         <!-- Colors Filter -->
-        <div
+        <!-- <div
           style="
             margin-bottom: 20px;
             padding-bottom: 15px;
@@ -199,7 +199,7 @@
               </div>
             </a-collapse-panel>
           </a-collapse>
-        </div>
+        </div> -->
       </a-col>
 
       <a-col :sm="24" :md="24" :lg="20">
@@ -420,7 +420,7 @@ export default {
     };
   },
   mounted() {
-    this.loadAvailableColors();
+    //this.loadAvailableColors();
     this.loadProducts();
   },
   methods: {

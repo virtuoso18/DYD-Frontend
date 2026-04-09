@@ -27,7 +27,7 @@
             v-model="query"
             class="sm-input"
             type="text"
-            placeholder="Search designs, rooms, styles..."
+            :placeholder="t('searchModal.placeholder')"
             autocomplete="off"
             @input="onQueryInput"
             @keydown.escape="handleClose"
@@ -44,7 +44,7 @@
         </div>
 
         <!-- Cancel -->
-        <button class="sm-cancel-btn" @click="handleClose">Cancel</button>
+        <button class="sm-cancel-btn" @click="handleClose">{{ t('searchModal.cancel') }}</button>
       </div>
 
       <!-- ── Divider ── -->
@@ -56,13 +56,13 @@
         <!-- Loading -->
         <div v-if="loading" class="sm-state-box">
           <div class="sm-spinner" />
-          <span class="sm-state-text">Searching…</span>
+          <span class="sm-state-text">{{ t('searchModal.searching') }}</span>
         </div>
 
         <!-- Results -->
         <template v-else-if="results.length > 0">
           <p class="sm-section-label">
-            Results for
+            {{ t('searchModal.resultsFor') }}
             <span class="sm-query-highlight">"{{ query }}"</span>
           </p>
 
@@ -77,7 +77,7 @@
                 <span class="sm-hash">#</span>
                 <span class="sm-tag-name">{{ tag.name }}</span>
               </div>
-              <span class="sm-post-count">{{ formatCount(tag.post_count) }} posts</span>
+              <span class="sm-post-count">{{ formatCount(tag.post_count) }} {{ t('searchModal.posts') }}</span>
             </li>
           </ul>
 
@@ -88,7 +88,7 @@
             :disabled="loadingMore"
             @click="loadMore"
           >
-            <span>{{ loadingMore ? 'Loading…' : 'View more results' }}</span>
+            <span>{{ loadingMore ? t('searchModal.loading') : t('searchModal.viewMore') }}</span>
             <svg v-if="!loadingMore" width="13" height="13" viewBox="0 0 24 24"
                  fill="none" stroke="currentColor" stroke-width="2.5">
               <path d="M6 9l6 6 6-6"/>
@@ -106,42 +106,39 @@
             <circle cx="11" cy="11" r="8"/>
             <path d="m21 21-4.35-4.35"/>
           </svg>
-          <p class="sm-empty-title">No results found</p>
-          <p class="sm-empty-sub">
-            Try "bedroom", "kitchen" or "modern"
-          </p>
+          <p class="sm-empty-title">{{ t('searchModal.noResultsTitle') }}</p>
+          <p class="sm-empty-sub">{{ t('searchModal.noResultsSub') }}</p>
         </div>
 
         <!-- Default / Trending -->
-        <!-- Default / Recent Tags -->
         <div v-else class="sm-trending">
-        <p class="sm-section-label">Trending Searches</p>
+          <p class="sm-section-label">{{ t('searchModal.trendingSearches') }}</p>
 
-        <!-- loading skeleton -->
-        <div v-if="loadingRecent" class="sm-trend-tags">
+          <!-- loading skeleton -->
+          <div v-if="loadingRecent" class="sm-trend-tags">
             <span
-            v-for="n in 5"
-            :key="n"
-            class="sm-trend-tag sm-trend-skeleton"
+              v-for="n in 5"
+              :key="n"
+              class="sm-trend-tag sm-trend-skeleton"
             />
-        </div>
+          </div>
 
-        <!-- populated -->
-        <div v-else class="sm-trend-tags">
+          <!-- populated -->
+          <div v-else class="sm-trend-tags">
             <button
-            v-for="tag in recentTags"
-            :key="tag.id"
-            class="sm-trend-tag"
-            @click="applyTrend(tag.name)"
+              v-for="tag in recentTags"
+              :key="tag.id"
+              class="sm-trend-tag"
+              @click="applyTrend(tag.name)"
             >
-            <svg width="11" height="11" viewBox="0 0 24 24"
-                fill="none" stroke="currentColor" stroke-width="2.5">
+              <svg width="11" height="11" viewBox="0 0 24 24"
+                  fill="none" stroke="currentColor" stroke-width="2.5">
                 <circle cx="11" cy="11" r="8"/>
                 <path d="m21 21-4.35-4.35"/>
-            </svg>
-            {{ tag.name }}
+              </svg>
+              {{ tag.name }}
             </button>
-        </div>
+          </div>
         </div>
 
       </div>
@@ -150,18 +147,16 @@
 </template>
 
 <script>
+import { useI18n } from 'vue-i18n';
+
 export default {
   name: "SearchModal",
 
   props: {
-    
     visible: {
       type: Boolean,
       default: false,
     },
-   
-   
-    /** Trending chips shown when the input is empty */
     trendingSearches: {
       type: Array,
       default: () => [
@@ -176,6 +171,11 @@ export default {
 
   emits: ["update:visible", "select"],
 
+  setup() {
+    const { t, locale } = useI18n();
+    return { t, locale };
+  },
+
   data() {
     return {
       query: "",
@@ -186,19 +186,18 @@ export default {
       loading: false,
       loadingMore: false,
       debounceTimer: null,
-      recentTags: [],         
+      recentTags: [],
       loadingRecent: false,
     };
   },
 
   watch: {
-    /** Auto-focus the input when the modal opens; reset on close */
     visible(val) {
       if (val) {
         this.$nextTick(() => {
           this.$refs.inputRef?.focus();
         });
-         this.fetchRecentTags();
+        this.fetchRecentTags();
       } else {
         this.resetState();
       }
@@ -206,29 +205,28 @@ export default {
   },
 
   methods: {
-    /* ─── query handling ─────────────────────────────────────── */
     async fetchRecentTags() {
-  this.loadingRecent = true;
-  try {
-    const params = new URLSearchParams({ page: 1, page_size: 5 });
-    const res = await fetch(
-      `${this.$store.state.root_api}community/api/search-post-tags?${params}`,
-      {
-        headers: {
-          Authorization: `Token ${localStorage.getItem("token")}`,
-          "Content-Type": "application/json",
-        },
+      this.loadingRecent = true;
+      try {
+        const params = new URLSearchParams({ page: 1, page_size: 5 });
+        const res = await fetch(
+          `${this.$store.state.root_api}community/api/search-post-tags?${params}`,
+          {
+            headers: {
+              Authorization: `Token ${localStorage.getItem("token")}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const json = await res.json();
+        this.recentTags = json.data || [];
+      } catch (err) {
+        console.error("[SearchModal] fetchRecentTags error:", err);
+      } finally {
+        this.loadingRecent = false;
       }
-    );
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const json = await res.json();
-    this.recentTags = json.data || [];
-  } catch (err) {
-    console.error("[SearchModal] fetchRecentTags error:", err);
-  } finally {
-    this.loadingRecent = false;
-  }
-},
+    },
 
     onQueryInput() {
       clearTimeout(this.debounceTimer);
@@ -261,8 +259,6 @@ export default {
       this.hasNext = false;
       this.$refs.inputRef?.focus();
     },
-
-    /* ─── API ────────────────────────────────────────────────── */
 
     async fetchTags(reset = false) {
       if (reset) {
@@ -312,15 +308,10 @@ export default {
       this.fetchTags(false);
     },
 
-    /* ─── selection ──────────────────────────────────────────── */
-
     selectTag(tagName) {
-      /** Emit to parent so the parent can navigate */
       this.$emit("select", tagName);
       this.handleClose();
     },
-
-    /* ─── modal lifecycle ────────────────────────────────────── */
 
     handleClose() {
       this.$emit("update:visible", false);
@@ -336,8 +327,6 @@ export default {
       this.loadingMore = false;
     },
 
-    /* ─── helpers ────────────────────────────────────────────── */
-
     formatCount(n) {
       if (!n && n !== 0) return "0";
       if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + "M";
@@ -349,7 +338,6 @@ export default {
 </script>
 
 <style>
-/* ── Ant Design modal overrides (not scoped so they reach the portal) ── */
 .search-modal-wrap .ant-modal-content {
   border-radius: 20px;
   padding: 0;
@@ -363,7 +351,6 @@ export default {
 </style>
 
 <style scoped>
-/* ── Root ───────────────────────────────────────────────────────────── */
 .sm-root {
   display: flex;
   flex-direction: column;
@@ -373,7 +360,6 @@ export default {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-/* ── Header ─────────────────────────────────────────────────────────── */
 .sm-header {
   display: flex;
   align-items: center;
@@ -452,14 +438,12 @@ export default {
   opacity: 0.75;
 }
 
-/* ── Divider ─────────────────────────────────────────────────────────── */
 .sm-divider {
   height: 1px;
   background: #f0f0f0;
   margin: 0 20px;
 }
 
-/* ── Body ────────────────────────────────────────────────────────────── */
 .sm-body {
   padding: 16px 20px 20px;
   min-height: 220px;
@@ -467,7 +451,6 @@ export default {
   overflow-y: auto;
 }
 
-/* custom scrollbar */
 .sm-body::-webkit-scrollbar {
   width: 4px;
 }
@@ -479,7 +462,6 @@ export default {
   border-radius: 4px;
 }
 
-/* ── Section label ───────────────────────────────────────────────────── */
 .sm-section-label {
   font-size: 12px;
   font-weight: 500;
@@ -496,7 +478,6 @@ export default {
   font-weight: 600;
 }
 
-/* ── Results list ────────────────────────────────────────────────────── */
 .sm-results-list {
   list-style: none;
   padding: 0;
@@ -549,7 +530,6 @@ export default {
   white-space: nowrap;
 }
 
-/* ── View more ───────────────────────────────────────────────────────── */
 .sm-view-more-btn {
   display: flex;
   align-items: center;
@@ -578,7 +558,6 @@ export default {
   cursor: not-allowed;
 }
 
-/* ── State boxes (loading / empty) ──────────────────────────────────── */
 .sm-state-box {
   display: flex;
   flex-direction: column;
@@ -620,7 +599,6 @@ export default {
   margin: 0;
 }
 
-/* ── Trending ────────────────────────────────────────────────────────── */
 .sm-trending {
   padding-top: 4px;
 }
@@ -655,6 +633,7 @@ export default {
 .sm-trend-tag svg {
   flex-shrink: 0;
 }
+
 .sm-trend-skeleton {
   width: 90px;
   background: #e5e7eb;
@@ -668,7 +647,6 @@ export default {
   50%       { opacity: 0.4; }
 }
 
-/* ── Mobile tweaks ───────────────────────────────────────────────────── */
 @media (max-width: 480px) {
   .sm-header {
     padding: 12px 14px;

@@ -1,7 +1,6 @@
 <template>
   <div class="md:!p-3 !bg-white !rounded-xl !border-2 !border-gray-200/20">
     <div class="!pb-5 md:!pb-6">
-      <!-- Responsive Grid -->
       <div class="grid grid-cols-2 px-1.25 gap-1.25 md:grid-cols-3 md:px-2 md:gap-2 lg:grid-cols-4 lg:px-2.5 lg:gap-2.5 xl:grid-cols-5 xl:px-3 xl:gap-3 w-full">
         <div 
           v-for="product in products"
@@ -14,13 +13,11 @@
               class="relative overflow-hidden cursor-pointer w-full h-[170px]"
               @click="goto_product_Route(product)"
             >
-              <!-- ✨ FIXED: Skeleton with proper class -->
               <div
                 v-if="!imageLoadedMap[product.product_id]"
                 class="product-image-skeleton"
               ></div>
 
-              <!-- Preload -->
               <img
                 :src="$store.state.root_media_api + product.product_image"
                 class="absolute w-0 h-0 opacity-0"
@@ -28,7 +25,6 @@
                 alt=""
               />
 
-              <!-- Visible Image -->
               <img
                 v-show="imageLoadedMap[product.product_id]"
                 :src="$store.state.root_media_api + product.product_image"
@@ -36,7 +32,6 @@
                 class="w-full h-full object-cover rounded-[10px] transition-transform duration-300 ease-in-out"
               />
 
-              <!-- Category Badge -->
               <div 
                 v-show="imageLoadedMap[product.product_id]"
                 class="absolute top-3 left-3 bg-black/75 text-white px-2 py-1 rounded-md text-[10px] font-semibold uppercase tracking-wider z-10"
@@ -44,27 +39,26 @@
                 {{ product.category_name }}
               </div>
 
-              <!-- AR Badge -->
               <div 
                 v-show="imageLoadedMap[product.product_id]"
                 class="absolute top-3 right-3 bg-gray-200 text-gray-700 px-2 py-1 rounded-md text-[10px] font-bold tracking-wider"
               >
-                AR
+                {{ t('products.card.arBadge') }}
               </div>
             </div>
 
-            <!-- Product Info -->
             <div class="space-y-1.5">
               <!-- Title -->
               <div class="w-full">
                 <b class="block w-full truncate font-medium text-sm text-start" :title="product.product_title">
-                  {{ product.product_title || 'No title available' }}
+                  {{ product.product_title || t('products.card.noTitle') }}
                 </b>
               </div>
 
-              <!-- Colors Row -->
               <div class="flex items-center justify-between">
-                <span class="font-['Poppins'] text-[13px] font-normal text-gray-700">Colors</span>
+                <span class="font-['Poppins'] text-[13px] font-normal text-gray-700">
+                  {{ t('products.card.colors') }}
+                </span>
                 <div class="flex -space-x-1">
                   <div
                     v-for="(c, i) in product.product_colors.slice(0, 2)"
@@ -75,26 +69,24 @@
                 </div>
               </div>
 
-              <!-- Price Row -->
               <div class="flex items-center justify-between">
-                <span class="font-['Poppins'] text-[13px] font-normal text-gray-700">Price</span>
+                <span class="font-['Poppins'] text-[13px] font-normal text-gray-700">
+                  {{ t('products.card.price') }}
+                </span>
                 <span class="font-bold text-base">${{ product.product_price }}</span>
               </div>
 
-              <!-- Buttons Row -->
               <div class="flex items-center gap-1.5 w-full">
-                <!-- Details Button -->
                 <div class="flex-1">
                   <a-button 
                     block 
                     @click="goto_product_Route(product)"
                     class="!px-2 !py-1 !text-[12px] h-7 flex items-center whitespace-nowrap"
                   >
-                    Product Details
+                    {{ t('products.card.productDetails') }}
                   </a-button>
                 </div>
-                
-                <!-- Like Button -->
+
                 <div class="flex-shrink-0">
                   <a-button 
                     @click="toggleFavorite(product.product_id, product.type, product)" 
@@ -118,7 +110,8 @@
 </template>
 
 <script>
-import { HeartOutlined, HeartFilled } from '@ant-design/icons-vue'
+import { useI18n } from 'vue-i18n';
+import { HeartOutlined, HeartFilled } from '@ant-design/icons-vue';
 
 export default {
   name: 'buisnes_products_sailing',
@@ -129,31 +122,33 @@ export default {
   props: {
     products: Object
   },
+
+  setup() {
+    const { t, locale } = useI18n();
+    return { t, locale };
+  },
+
   data() {
     return {
       imageLoadedMap: {},
     };
   },
+
   watch: {
     '$route.params.product_id'(newVal, oldVal) {
       if (newVal !== oldVal) {
-        window.location.reload()
+        window.location.reload();
       }
     },
   },
 
   methods: {
-    goto_product_Route(product){
-      let product_type = product.type
-      if(product.type === 'light'){
-        product_type = 'product'
-      }
-      if(product.type === 'floor_texture'){
-        product_type = 'floor'
-      }        
-      if(product.type === 'wall_texture'){
-        product_type = 'wall'
-      }
+    goto_product_Route(product) {
+      let product_type = product.type;
+      if (product.type === 'light') product_type = 'product';
+      if (product.type === 'floor_texture') product_type = 'floor';
+      if (product.type === 'wall_texture') product_type = 'wall';
+
       this.$router.push({
         name: 'buisness_product',
         params: {
@@ -161,15 +156,15 @@ export default {
           product_type: product_type,
           product_id: product.product_id
         }
-      })
+      });
     },
-    
+
     truncateText(text, charLimit = 18) {
       if (!text) return '';
       if (text.length <= charLimit) return text;
       return text.slice(0, charLimit) + '...';
     },
-    
+
     handleAddProduct() {
       console.log('Add product clicked');
     },
@@ -178,26 +173,26 @@ export default {
       this.imageLoadedMap[id] = false;
       setTimeout(() => {
         this.imageLoadedMap[id] = true;
-      }, 2000); // 2 second shimmer
+      }, 2000);
     },
-    
+
     handleProductDetail(product) {
       console.log('Product detail clicked:', product);
       this.$router.push(
-        '/' + this.$route.params.buisness_name + '/' + 
+        '/' + this.$route.params.buisness_name + '/' +
         product.product_type + '/' + product.product_id
       );
     },
-    
+
     async toggleFavorite(product_id, product_type, product) {
       try {
         const token = localStorage.getItem('token');
-        
+
         if (!token) {
-          this.$message.warning('Please login to add favorites');
+          this.$message.warning(this.t('products.messages.loginToFavorite'));
           return;
         }
-        
+
         const response = await fetch(
           `${this.$store.state.root_api}likes/favorites/toggle/`,
           {
@@ -212,16 +207,18 @@ export default {
             }),
           }
         );
-        
+
         const data = await response.json();
         product.is_favorited = data.favorited;
-        
-        const message = data.favorited ? 'Added to favorites' : 'Removed from favorites';
+
+        const message = data.favorited
+          ? this.t('products.messages.addedToFavorites')
+          : this.t('products.messages.removedFromFavorites');
         this.$message.success(message);
 
       } catch (error) {
         console.error("Favorite toggle failed", error);
-        this.$message.error('Failed to update favorite');
+        this.$message.error(this.t('products.messages.favoriteUpdateFailed'));
       }
     }
   }
@@ -230,7 +227,6 @@ export default {
 
 <style scoped>
 
-/* ✨ ADDED: Product Image Skeleton */
 .product-image-skeleton {
   position: absolute;
   inset: 0;

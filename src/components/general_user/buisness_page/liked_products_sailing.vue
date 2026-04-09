@@ -8,7 +8,7 @@
           class="product-responsive"
           :span="12"
           sm="8"
-          style="padding:5px;text-align: start;"
+          style="padding:2px;text-align: start;"
         >
           <div class="product">
             <div class="product-image-container" @click="goto_product_Route(product)">
@@ -55,7 +55,7 @@
               </a-col>
 
               <a-col :xs="16" :sm="16" :md="16" :lg="17" :xl="17">
-                <a-button
+                <a-button style="display: flex;justify-content: center;align-items: center;"
   block
   @click="goto_product_Route(product)"
   class="!text-[12px] md:!text-[14px]"

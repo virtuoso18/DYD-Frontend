@@ -89,6 +89,11 @@
   "productDetail": "פרטי מוצר",
   "colorLabel": "צבע",
   "priceLabel": "מחיר :",
+  "chooseFiles": "📎 בחר קבצים",
+  "contactSending": "שולח...",
+  "contactFillAll": "אנא מלא את כל השדות",
+  "contactSuccess": "ההודעה נשלחה בהצלחה!",
+  "contactError": "משהו השתבש. אנא נסה שוב.",
 
   "footer": {
     "tagline1": "מחוללים מהפכה בעיצוב פנים",
@@ -622,24 +627,38 @@
   "onSale": "במבצע",
   "editProduct": "ערוך מוצר",
   "deleteProduct": "מחק מוצר",
- 
     "productView": "תצוגת מוצר",
-    
     "product": "מוצר",
     "details": "פרטים",
-   
     "furnitureType": "סוג רהיט",
     "notSpecified": "לא צוין",
     "unknown": "לא ידוע",
     "invalidDate": "תאריך לא תקין",
     "technicalSpecifications": "מפרט טכני",
-    
     "modelNumber": "מספר דגם",
     "brand": "מותג",
     "material": "חומר",
     "created": "תאריך יצירה",
     "lastUpdated": "עדכון אחרון",
-    "availableColors": "צבעים זמינים:"
+    "availableColors": "צבעים זמינים:",
+    "clearCart": "לנקות את העגלה?",
+    "clearCartMessage": "העגלה שלך מכילה פריטים ממוכר אחר. האם ברצונך לנקות את העגלה תחילה כדי להוסיף פריט זה?",
+    "yes": "כן",
+    "no": "לא",
+    "notLoggedIn": "משתמש לא מחובר",
+    "addToCart": "הוסף לעגלה",
+    "seeInYourRoom": "ראה בחדר שלך",
+    "contactOnWhatsApp": "צור קשר בוואטסאפ",
+    "viewOnAR": "צפה במציאות רבודה",
+    "productNotFound": "המוצר לא נמצא",
+    "addedToCart": "נוסף לעגלה!",
+    "failedToAddCart": "הוספה לעגלה נכשלה",
+    "errorAddingToCart": "שגיאה בהוספה לעגלה",
+    "cartClearedAndAdded": "העגלה נוקתה והפריט נוסף בהצלחה!",
+    "failedToAddAfterClear": "הוספת הפריט לאחר ניקוי העגלה נכשלה",
+    "failedToClearCart": "ניקוי העגלה נכשל",
+    "errorClearingCart": "שגיאה בניקוי העגלה",
+    "itemNotAdded": "הפריט לא נוסף לעגלה"
     
 },
    "texture_details": {
@@ -740,7 +759,23 @@
     "selectTagsPlaceholder": "בחר או צור תגיות...",
     "deletePostConfirmTitle": "מחק פוסט",
     "deletePostConfirmContent": "האם אתה בטוח שברצונך למחוק פוסט זה? פעולה זו אינה ניתנת לביטול.",
-    "cancel": "ביטול"
+    "cancel": "ביטול",
+    "heroTitle": "גלה את ההשראה המובילה בעולם לעיצוב פנים",
+    "heroSubtitle": "חקור את עבודות המעצבים המוכשרים ביותר להשראת עבודתך.",
+    "searchPlaceholder": "מה אתה מחפש?",
+    "trendingSearches": "חיפושים פופולריים",
+    "todaysTopDesigns": "העיצובים המובילים של היום",
+    "community": "קהילה",
+    "noPostsFound": "לא נמצאו פוסטים.",
+    "noDesignsFound": "לא נמצאו עיצובים לקטגוריה זו.",
+    "showing": "מציג",
+    "of": "מתוך",
+    "designs": "עיצובים",
+    "tapAndGetCredit": "הקש וקבל קרדיט",
+    "ourHappyCustomers": "הלקוחות המרוצים שלנו",
+    "topBusinesses": "עסקים מובילים",
+    "simulations": "סימולציות",
+    "topDesigners": "מעצבים מובילים"
   },
   "banner": {
     "myBanners": "הבאנרים שלי",
@@ -956,5 +991,476 @@
     "postLiked": "הפרסום קיבל לייק!",
     "postUnliked": "הלייק הוסר מהפרסום!",
     "failedToUpdateLike": "עדכון הלייק נכשל"
+  },
+  "products": {
+    "accessModal": {
+      "heading": "שדרג כדי לגשת למוצרי AR",
+      "messagePart1": "מוצר זה כולל תכונות",
+      "ar": "מציאות רבודה (AR)",
+      "messagePart2": ". שדרג ל",
+      "standard": "סטנדרט",
+      "or": "או",
+      "premium": "פרמיום",
+      "messagePart3": "כדי לגשת לפרטי המוצר המלאים.",
+      "upgradePlan": "שדרג תוכנית",
+      "goBack": "חזור"
+    },
+    "card": {
+      "arBadge": "AR",
+      "noTitle": "אין כותרת זמינה",
+      "colors": "צבעים",
+      "price": "מחיר",
+      "productDetails": "פרטי המוצר"
+    },
+    "messages": {
+      "upgradePlanWarning": "שדרג את התוכנית שלך כדי לגשת לפרטי מוצרי AR",
+      "redirectingToUpgrade": "מעביר לדף השדרוג...",
+      "loginToFavorite": "אנא התחבר כדי להוסיף למועדפים",
+      "addedToFavorites": "נוסף למועדפים",
+      "removedFromFavorites": "הוסר מהמועדפים",
+      "favoriteUpdateFailed": "עדכון המועדפים נכשל"
+    }
+  },
+  "requests": {
+  "noRequestsFound": "לא נמצאו בקשות",
+  "noImage": "אין תמונה",
+  "noMessageProvided": "לא סופקה הודעה",
+  "notGeneratedYet": "טרם נוצר",
+  "pending": "ממתין",
+  "id": "מזהה",
+  "requestId": "מזהה בקשה",
+  "requestedBy": "התבקש על ידי",
+  "roomPhoto": "תמונת חדר",
+  "generatedRoom": "חדר שנוצר",
+  "processPhoto": "עבד תמונה",
+  "regenerate": "צור מחדש",
+  "reject": "דחה",
+  "rejectRequest": "דחה בקשה",
+  "columns": {
+    "id": "מזהה",
+    "requestDate": "תאריך בקשה",
+    "requestedEmail": "אימייל מבקש",
+    "roomPhoto": "תמונת חדר",
+    "generatedRoom": "חדר שנוצר",
+    "status": "סטטוס",
+    "actions": "פעולות"
+  },
+  "rejectModal": {
+    "title": "דחה בקשה",
+    "requestId": "מזהה בקשה",
+    "email": "אימייל",
+    "reasonLabel": "סיבת הדחייה:",
+    "reasonPlaceholder": "אנא ספק סיבה לדחייה...",
+    "reasonRequired": "סיבת הדחייה נדרשת",
+    "confirmError": "אנא הקלד \"CONFIRM\" בדיוק"
+  },
+  "messages": {
+    "processStarted": "עיבוד התמונה החל בהצלחה",
+    "processFailed": "עיבוד התמונה נכשל",
+    "regenerateStarted": "יצירה מחדש החלה בהצלחה",
+    "regenerateFailed": "יצירת החדר מחדש נכשלה",
+    "rejectSuccess": "הבקשה נדחתה בהצלחה",
+    "rejectFailed": "דחיית הבקשה נכשלה"
   }
+  },
+  "settings": {
+  "title": "הגדרות",
+  "watermark": {
+    "title": "ניהול סימן מים",
+    "description": "כדי להציג את סימן המים של המותג שלך על תמונות המוצר, הפעל את המתג"
+  },
+  "password": {
+    "title": "ניהול סיסמה",
+    "description": "הגדר סיסמה חדשה כדי לשמור על חשבונך מאובטח.",
+    "changeButton": "שנה סיסמה",
+    "modalTitle": "שנה את הסיסמה שלך",
+    "currentPassword": "סיסמה נוכחית",
+    "currentPasswordPlaceholder": "הכנס סיסמה נוכחית",
+    "newPassword": "סיסמה חדשה",
+    "newPasswordPlaceholder": "הכנס סיסמה חדשה",
+    "confirmPassword": "אשר סיסמה חדשה",
+    "confirmPasswordPlaceholder": "אשר סיסמה חדשה"
+  },
+  "productContains": {
+    "title": "מוצרים למכירה",
+    "infoTitle": "מה זה?",
+    "infoMessage": "הפעלה או כיבוי של אפשרות מכיל מוצר תשפיע על מסך הסימולציה. כאשר מופעל, מסך הסימולציה יציג את תפריט הלשוניות עבור סוג המוצר המתאים; כאשר מושבת, תפריט הלשוניות יוסתר. אנא השבת אפשרות זו עבור מוצרים שאינך מוכר רשמית ב-DYD.",
+    "floor": "מוצרי רצפה",
+    "furniture": "מוצרי ריהוט",
+    "walls": "מוצרי קירות",
+    "lights": "מוצרי תאורה"
+  },
+  "messages": {
+    "updateFailed": "עדכון ההגדרות נכשל",
+    "serverError": "שגיאת שרת בעדכון הגדרות הסצנה",
+    "fetchWatermarkFailed": "טעינת הגדרות סימן המים נכשלה",
+    "watermarkUpdated": "הגדרת סימן המים עודכנה",
+    "watermarkFailed": "עדכון הגדרת סימן המים נכשל",
+    "allFieldsRequired": "כל השדות נדרשים",
+    "passwordsMismatch": "הסיסמאות החדשות אינן תואמות",
+    "passwordTooShort": "הסיסמה חייבת להכיל לפחות 8 תווים",
+    "passwordChanged": "הסיסמה שונתה בהצלחה",
+    "passwordChangedNotification": "שינוי הסיסמה הצליח",
+    "passwordChangeFailed": "שינוי הסיסמה נכשל"
+  }
+},
+"manageAccess": {
+  "title": "ניהול צוות ומשימות",
+  "cancel": "ביטול",
+  "save": "שמור",
+  "refresh": "רענן",
+  "noTasksAssigned": "לא הוקצו משימות.",
+  "tabs": {
+    "allStaff": "כל הצוות",
+    "allTasks": "כל המשימות"
+  },
+  "userTabs": {
+    "accessPermissions": "הרשאות גישה",
+    "tasksAssigned": "משימות שהוקצו",
+    "accessLogs": "יומני גישה"
+  },
+  "table": {
+    "name": "שם",
+    "email": "אימייל",
+    "status": "סטטוס",
+    "assignedTasks": "משימות שהוקצו"
+  },
+  "status": {
+    "active": "פעיל",
+    "inactive": "לא פעיל"
+  },
+  "grantAccess": {
+    "btn": "הענק גישה לעובד",
+    "modalTitle": "הענק גישה לעובד",
+    "sendRequest": "שלח בקשה",
+    "employeeEmail": "אימייל עובד",
+    "employeeEmailPlaceholder": "הכנס אימייל משתמש עובד",
+    "requestMessage": "הודעת בקשה",
+    "requestMessagePlaceholder": "הסבר מדוע אתה צריך גישה לעובד זה...",
+    "infoTitle": "מידע",
+    "infoMessage": "בקשת גישה תישלח למשתמש המקצועי. הם יצטרכו לאשר אותה לפני שיופיעו ברשימת הצוות שלך."
+  },
+  "assignTask": {
+    "modalTitle": "הקצה משימה חדשה",
+    "assignmentType": "סוג הקצאת משימה",
+    "internalStaff": "צוות פנימי",
+    "platformProfessional": "מקצועי פלטפורמה",
+    "assignTo": "הקצה ל",
+    "selectStaff": "בחר חבר צוות",
+    "taskTitle": "כותרת משימה",
+    "taskTitlePlaceholder": "הכנס כותרת משימה",
+    "taskDescription": "תיאור משימה",
+    "taskDescriptionPlaceholder": "תאר מה צריך לעשות...",
+    "priority": "עדיפות",
+    "low": "נמוכה",
+    "medium": "בינונית",
+    "high": "גבוהה",
+    "urgent": "דחוף",
+    "estimatedHours": "שעות משוערות",
+    "estimatedHoursPlaceholder": "לדוגמה, 5.5",
+    "dueDate": "תאריך יעד",
+    "assignTaskBtn": "הקצה משימה"
+  },
+  "createTask": {
+    "modalTitle": "צור משימה חדשה",
+    "createBtn": "צור משימה",
+    "btn": "צור משימה חדשה"
+  },
+  "phone": {
+    "modalTitle": "התקשר לעובד",
+    "phone": "טלפון",
+    "unavailable": "לא זמין",
+    "call": "התקשר",
+    "whatsapp": "וואטסאפ"
+  },
+  "mail": {
+    "modalTitle": "שלח אימייל",
+    "send": "שלח",
+    "to": "אל",
+    "subject": "נושא",
+    "subjectPlaceholder": "הכנס נושא אימייל",
+    "message": "הודעה",
+    "messagePlaceholder": "הכנס תוכן אימייל"
+  },
+  "editEmployee": {
+    "modalTitle": "ערוך עובד",
+    "avatar": "תמונת פרופיל",
+    "noImage": "אין תמונה",
+    "uploadImage": "העלה תמונה",
+    "removeImage": "הסר תמונה",
+    "name": "שם",
+    "namePlaceholder": "הכנס שם עובד",
+    "phone": "טלפון",
+    "phonePlaceholder": "הכנס מספר טלפון"
+  },
+  "deleteEmployee": {
+    "modalTitle": "מחק עובד",
+    "warningTitle": "אזהרה",
+    "warningMessage": "לאחר מחיקת העובד, לא תוכל לנהל משתמש זה עוד מפרופיל המשתמש. פעולה זו אינה ניתנת לביטול.",
+    "confirmInstruction": "הקלד \"CONFIRM\" כדי למחוק עובד זה:",
+    "confirmPlaceholder": "הקלד CONFIRM כאן",
+    "deleteBtn": "מחק"
+  },
+  "permissions": {
+    "title": "ניהול הרשאות",
+    "subtitle": "הגדר הגדרות בקרת גישה",
+    "grantAll": "הענק הכל",
+    "revokeAll": "בטל הכל",
+    "unsavedChanges": "שינויים שלא נשמרו",
+    "saveChanges": "שמור שינויים",
+    "businessSite": "אתר עסקי",
+    "productManagement": "ניהול מוצרים",
+    "communityPost": "פוסט קהילה",
+    "userRequestManagement": "ניהול בקשות משתמש",
+    "customerMessages": "הודעות לקוחות",
+    "generateBanner": "יצירת באנר",
+    "businessCustomers": "לקוחות עסקיים",
+    "read": "קריאה",
+    "update": "עדכון",
+    "create": "יצירה",
+    "delete": "מחיקה",
+    "reject": "דחייה",
+    "process": "עיבוד",
+    "respond": "תגובה",
+    "report": "דיווח",
+    "download": "הורדה",
+    "share": "שיתוף"
+  },
+  "staffCard": {
+    "name": "שם",
+    "phone": "טלפון",
+    "createdAt": "נוצר ב"
+  },
+  "accessLogs": {
+    "action": "פעולה",
+    "message": "הודעה",
+    "timestamp": "חותמת זמן",
+    "userAgent": "סוכן משתמש"
+  },
+  "messages": {
+    "emailRequired": "אימייל מקצועי נדרש",
+    "messageRequired": "הודעת בקשה נדרשת",
+    "invalidEmail": "אנא הכנס כתובת אימייל תקינה",
+    "accessRequestSent": "בקשת הגישה נשלחה בהצלחה!",
+    "accessRequestFailed": "שליחת בקשת הגישה נכשלה",
+    "accessRequestError": "אירעה שגיאה בשליחת בקשת הגישה",
+    "fillTitleDescription": "אנא מלא כותרת ותיאור",
+    "noStaffSelected": "לא נבחר חבר צוות",
+    "taskCreated": "המשימה נוצרה בהצלחה",
+    "taskCreateFailed": "יצירת המשימה נכשלה",
+    "taskCreateError": "אירעה שגיאה ביצירת המשימה",
+    "subjectMessageRequired": "נושא והודעה נדרשים",
+    "emailSent": "האימייל נשלח בהצלחה",
+    "permissionsSaved": "ההרשאות עודכנו בהצלחה",
+    "allGranted": "כל ההרשאות הוענקו בהצלחה",
+    "allRevoked": "כל ההרשאות בוטלו בהצלחה",
+    "changesCancelled": "השינויים בוטלו והוחזרו למצב המקורי",
+    "staffDeleted": "המשתמש המקצועי נמחק בהצלחה",
+    "staffDeleteFailed": "מחיקת המשתמש המקצועי נכשלה"
+  }
+},
+"task": {
+    "taskManagement": "ניהול משימות",
+    "createdAt": "נוצר בתאריך",
+    "startTask": "התחל משימה",
+    "na": "לא זמין",
+    "filter": {
+      "all": "הכל",
+      "todo": "לביצוע",
+      "inProgress": "בתהליך",
+      "completed": "הושלם"
+    },
+    "status": {
+      "todo": "לביצוע",
+      "inProgress": "בתהליך",
+      "completed": "הושלם"
+    }
+  },
+  "analytics": {
+    "totalProducts": "סך כל המוצרים",
+    "totalClicks": "סך כל הלחיצות",
+    "totalCreditsConsumed": "סך כל הקרדיטים שנצרכו",
+    "balanceCredits": "יתרת קרדיטים",
+
+    "dailyCreditConsumption": "צריכת קרדיטים יומית",
+    "favoriteProduct": "מוצר מועדף",
+    "userCreditSummary": "סיכום צריכת קרדיטים לפי משתמש",
+    "topSimulationProducts": "מוצרי הסימולציה המובילים",
+
+    "startDate": "תאריך התחלה",
+    "endDate": "תאריך סיום",
+    "sortBy": "מיין לפי",
+    "filterByStatus": "סנן לפי סטטוס",
+    "filterByType": "סנן לפי סוג",
+    "allStatus": "כל הסטטוסים",
+    "all": "הכל",
+    "pending": "ממתין",
+    "success": "הצלחה",
+    "failed": "נכשל",
+    "deposit": "הפקדה",
+    "consume": "צריכה",
+
+    "creditsHighToLow": "קרדיטים (מהגבוה לנמוך)",
+    "creditsLowToHigh": "קרדיטים (מהנמוך לגבוה)",
+    "userNameAZ": "שם משתמש (א-ת)",
+
+    "totalConsumed": "סך נצרך",
+    "avgDaily": "ממוצע יומי",
+    "activeDays": "ימים פעילים",
+    "totalCredits": "סך קרדיטים שנצרכו",
+    "totalTransactions": "סך עסקאות",
+
+    "creditTransactions": "עסקאות קרדיטים",
+    "chat": "צ'אט",
+
+    "ar": "AR",
+
+    "totalUsers": "סך {count} משתמשים",
+    "totalItems": "סך {count} פריטים",
+
+    "col": {
+      "userName": "שם משתמש",
+      "email": "אימייל",
+      "totalCredits": "סך קרדיטים שנצרכו",
+      "transactionCount": "מספר עסקאות",
+      "actions": "פעולות",
+      "product": "מוצר",
+      "category": "קטגוריה",
+      "type": "סוג",
+      "createDate": "תאריך יצירה",
+      "size": "גודל",
+      "color": "צבע",
+      "price": "מחיר",
+      "usage": "שימוש",
+      "arVr": "AR/VR",
+      "userEmail": "אימייל משתמש",
+      "business": "עסק",
+      "credits": "קרדיטים",
+      "status": "סטטוס",
+      "date": "תאריך",
+      "description": "תיאור"
+    }
+  },
+  "leads": {
+    "summary": {
+      "title": "סיכום לידים"
+    },
+    "premium": {
+      "title": "תכונת פרימיום",
+      "description": "סיכום לידים זמין באופן בלעדי בתוכנית ה",
+      "plan_name": "פרימיום",
+      "upgrade_message": "שדרג את התוכנית שלך כדי לפתוח מעקב וניתוח לידים מפורטים."
+    },
+    "filters": {
+      "start_date": "תאריך התחלה",
+      "end_date": "תאריך סיום"
+    },
+    "table": {
+      "date": "תאריך",
+      "total_leads": "סה\"כ לידים",
+      "product_leads": "לידים ממוצרים",
+      "wall_leads": "לידים מקירות",
+      "floor_leads": "לידים מרצפות",
+      "actions": "פעולות"
+    },
+    "actions": {
+      "view_details": "צפה בפרטים"
+    },
+    "pagination": {
+      "total": "סה\"כ",
+      "records": "רשומות"
+    },
+    "detail": {
+      "title": "פרטי ליד",
+      "total_leads": "סה\"כ לידים",
+      "products": "מוצרים",
+      "wall_textures": "טקסטורות קיר",
+      "floor_textures": "טקסטורות רצפה",
+      "tabs": {
+        "products": "מוצרים",
+        "wall_textures": "טקסטורות קיר",
+        "floor_textures": "טקסטורות רצפה"
+      },
+      "columns": {
+        "image": "תמונה",
+        "product": "מוצר",
+        "usage_count": "מספר שימושים",
+        "users": "משתמשים",
+        "emails": "אימיילים",
+        "name": "שם"
+      }
+    }
+  },
+    "chat": {
+    "messages_title": "הודעות",
+    "search_placeholder": "חיפוש לפי שם",
+    "support_line_name": "קו תמיכת לקוחות DYD",
+    "default_time_ago": "לפני יום",
+    "default_greeting": "אמור שלום ל-{name}",
+    "empty_state_title": "בחר שיחה כדי להתחיל לצ'וטט",
+    "empty_state_description": "בחר מהשיחות הקיימות שלך או התחל שיחה חדשה",
+    "message_placeholder": "הקלד כאן"
+  },
+  "store": {
+    "nav": {
+      "analytics": "אנליטיקה",
+      "messages": "הודעות",
+      "customers": "לקוחות",
+      "manage_products": "ניהול מוצרים",
+      "manage_sites": "ניהול אתרים",
+      "requests": "בקשות",
+      "settings": "הגדרות",
+      "manage_access": "ניהול גישה"
+    },
+    "access_modal": {
+      "title": "הגישה מוגבלת",
+      "description_start": "התוכנית הנוכחית שלך",
+      "description_mid": "אינה כוללת",
+      "description_end": ".",
+      "feature_name": "ניהול צוות",
+      "upgrade_message": "שדרג לפרימיום כדי לנהל מספר חברי צוות ולשלוט בהרשאות גישה!",
+      "upgrade_button": "שדרג לפרימיום",
+      "go_back_button": "חזור",
+      "premium_includes": "פרימיום כולל:",
+      "current_plan_default": "תוכנית נוכחית",
+      "features": {
+        "unlimited_staff": "חברי צוות ללא הגבלה",
+        "role_permissions": "הרשאות מבוססות תפקיד",
+        "activity_tracking": "מעקב פעילות"
+      }
+    },
+    "email_verify": {
+      "message": "אימייל העסק שלך仍未 אומת. אנא אמת כדי לגשת לתכונות החנות.",
+      "button": "אמת עכשיו"
+    }
+  },
+ "searchModal": {
+  "placeholder": "חפש עיצובים, חדרים, סגנונות...",
+  "cancel": "ביטול",
+  "searching": "מחפש…",
+  "resultsFor": "תוצאות עבור",
+  "posts": "פוסטים",
+  "viewMore": "הצג תוצאות נוספות",
+  "loading": "טוען…",
+  "noResultsTitle": "לא נמצאו תוצאות",
+  "noResultsSub": "נסה \"חדר שינה\", \"מטבח\" או \"מודרני\"",
+  "trendingSearches": "חיפושים פופולריים"
+},
+"contactUs": {
+  "title": "צור קשר",
+  "subtitle": "אל תהסס לפנות אלינו",
+  "description": "מהפכה בעיצוב פנים עם טכנולוגיה וירטואלית ובינה מלאכותית",
+  "formTitle": "מלא את הפרטים",
+  "namePlaceholder": "הכנס שם",
+  "emailPlaceholder": "האימייל שלך",
+  "messagePlaceholder": "הטקסט שלך",
+  "sendButton": "שלח עכשיו",
+  "sending": "שולח...",
+  "fillAllFields": "אנא מלא את כל השדות",
+  "successMessage": "הפנייה שלך נשלחה בהצלחה!",
+  "errorMessage": "שליחת הפנייה נכשלה. אנא נסה שוב.",
+  "attachmentsLabel": "קבצים מצורפים",
+  "optional": "אופציונלי"
+}
+
 }

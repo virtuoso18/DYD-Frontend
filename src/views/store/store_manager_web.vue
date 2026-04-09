@@ -25,21 +25,21 @@
 
       <!-- Title -->
       <h2 class="text-3xl font-bold text-gray-900 text-center mb-4">
-        Access Restricted 🔒
+        {{ t('store.access_modal.title') }} 🔒
       </h2>
 
       <!-- Description -->
       <p class="text-base text-gray-600 text-center mb-3 leading-relaxed">
-        Your current plan 
-        <span class="font-semibold text-red-500">{{ currentPlanName }}</span> 
-        doesn't include 
-        <span class="font-semibold text-gray-900">Staff Management</span> 
-        features.
+        {{ t('store.access_modal.description_start') }} 
+        <span class="font-semibold text-red-500">{{ currentPlanName || t('store.access_modal.current_plan_default') }}</span> 
+        {{ t('store.access_modal.description_mid') }} 
+        <span class="font-semibold text-gray-900">{{ t('store.access_modal.feature_name') }}</span> 
+        {{ t('store.access_modal.description_end') }}
       </p>
 
       <!-- Sub Description -->
       <p class="text-sm text-gray-500 text-center mb-8">
-        Upgrade to Premium to manage multiple staff members and control access permissions!
+        {{ t('store.access_modal.upgrade_message') }}
       </p>
 
       <!-- Actions -->
@@ -52,38 +52,38 @@
             <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
             <path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path>
           </svg>
-          Upgrade to Premium
+          {{ t('store.access_modal.upgrade_button') }}
         </button>
 
         <button 
           @click="goBack"
           class="w-full h-12 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-lg transition-colors duration-200"
         >
-          Go Back
+          {{ t('store.access_modal.go_back_button') }}
         </button>
       </div>
 
       <!-- Features -->
       <div class="mt-6 pt-6 border-t border-gray-200">
-        <p class="text-xs text-gray-500 text-center mb-3">Premium includes:</p>
+        <p class="text-xs text-gray-500 text-center mb-3">{{ t('store.access_modal.premium_includes') }}</p>
         <div class="space-y-2">
           <div class="flex items-center gap-2 text-sm text-gray-600">
             <svg class="w-5 h-5 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
             </svg>
-            <span>Unlimited Staff Members</span>
+            <span>{{ t('store.access_modal.features.unlimited_staff') }}</span>
           </div>
           <div class="flex items-center gap-2 text-sm text-gray-600">
             <svg class="w-5 h-5 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
             </svg>
-            <span>Role-based Permissions</span>
+            <span>{{ t('store.access_modal.features.role_permissions') }}</span>
           </div>
           <div class="flex items-center gap-2 text-sm text-gray-600">
             <svg class="w-5 h-5 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
             </svg>
-            <span>Activity Tracking</span>
+            <span>{{ t('store.access_modal.features.activity_tracking') }}</span>
           </div>
         </div>
       </div>
@@ -102,34 +102,10 @@
           <div class="sidebar">
             <div class="user-info">
               <div class="user-avatar">
-                <!-- {{ business_info }} -->
                  <img :src="this.$store.state.root_media_api+business_info.banner_picture" alt="John Doe" />
               </div>
               <h3>{{ business_info?.name || 'John Doe' }}</h3>
               <p class="user-email">{{ business_info?.email || 'johndoe@gmail.com' }}</p>
-              
-              <!-- <div class="completion-badge">
-                <div class="completion-circle">
-                  <span class="completion-text">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="22px" height="22px" viewBox="0 0 24 24" fill="none">
-  <path fill-rule="evenodd" clip-rule="evenodd" d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12ZM12 17.75C12.4142 17.75 12.75 17.4142 12.75 17V11C12.75 10.5858 12.4142 10.25 12 10.25C11.5858 10.25 11.25 10.5858 11.25 11V17C11.25 17.4142 11.5858 17.75 12 17.75ZM12 7C12.5523 7 13 7.44772 13 8C13 8.55228 12.5523 9 12 9C11.4477 9 11 8.55228 11 8C11 7.44772 11.4477 7 12 7Z" fill="currentcolor"/>
-  </svg> &nbsp;90% completed</span>
-                </div>
-              </div>  -->
-              
-              <!-- <div class="package-info">
-                <div class="package-header">
-                  <span class="package-label">Your package</span>
-                  <router-link to="/pricing" class="upgrade-link">Upgrade</router-link>
-                </div>
-                <div class="package-card">
-                  <span class="package-type">Free User</span>
-                  <div class="package-icon">
-                    <img src="../../../assets/dyd-logo.png" alt="" style="width:40px;height:40px">
-                    
-                  </div>
-                </div>
-              </div> -->
             </div>
   
             <!-- Navigation Menu -->
@@ -137,7 +113,6 @@
               <router-link 
                 to="/my-store/analytics" 
                 class="nav-item"
-                
                 :class="{ active: $route.name === 'analytics' }"
               >
                 <div class="nav-icon-wrapper">
@@ -146,7 +121,7 @@
                     <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
                 </div>
-                <span class="nav-text">Analytics</span>
+                <span class="nav-text">{{ t('store.nav.analytics') }}</span>
               </router-link>
               
                <router-link 
@@ -154,15 +129,13 @@
                 to="/my-store/messages" 
                 :class="{ active: $route.name === 'messages' }"
                >
-               <!-- to="/my-store/my-messages"  -->
-               <!-- :class="{ active: $route.name === 'messages' }" -->
                <div class="nav-icon-wrapper">
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M9.19992 13.4739H14.8001M9.19992 9.52659H12M13.736 18.5186C17.0833 18.2999 19.749 15.6315 19.9682 12.2818C20.0106 11.6266 20.0106 10.9476 19.9682 10.2924C19.749 6.94346 17.0833 4.27665 13.736 4.05639C12.5799 3.9812 11.4201 3.9812 10.2639 4.05639C6.91666 4.27586 4.25099 6.94346 4.03178 10.2932C3.98941 10.9557 3.98941 11.6201 4.03178 12.2826C4.11179 13.5023 4.6582 14.6321 5.30222 15.5857C5.67583 16.2528 5.42942 17.0857 5.03981 17.8144C4.7598 18.3394 4.619 18.6015 4.7318 18.791C4.84381 18.9804 5.09581 18.9868 5.59903 18.9986C6.59505 19.0223 7.26627 18.7444 7.79908 18.3568C8.10069 18.1365 8.25189 18.0268 8.3559 18.0141C8.4599 18.0015 8.6655 18.0852 9.07512 18.251C9.44313 18.401 9.87114 18.4933 10.2631 18.5194C11.4032 18.5936 12.5944 18.5936 13.7368 18.5194" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
   
                 </div>
-                <span class="nav-text">Messages</span>
+                <span class="nav-text">{{ t('store.nav.messages') }}</span>
               </router-link>
               <router-link 
                 to="/my-store/customers" 
@@ -175,7 +148,7 @@
                     <path d="M22 3H16C14.9391 3 13.9217 3.42143 13.1716 4.17157C12.4214 4.92172 12 5.93913 12 7V21C12 20.2044 12.3161 19.4413 12.8787 18.8787C13.4413 18.3161 14.2044 18 15 18H22V3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
                 </div>
-                <span class="nav-text">Customers</span>
+                <span class="nav-text">{{ t('store.nav.customers') }}</span>
               </router-link>
               
               <router-link 
@@ -191,7 +164,7 @@
   </svg>
   
                 </div>
-                <span class="nav-text">Manage Products</span>
+                <span class="nav-text">{{ t('store.nav.manage_products') }}</span>
               </router-link>
               
               <router-link 
@@ -207,23 +180,8 @@
   </svg>
   
                 </div>
-                <span class="nav-text">Manage Sites</span>
+                <span class="nav-text">{{ t('store.nav.manage_sites') }}</span>
               </router-link>
-  <!--             
-              <router-link 
-                to="/my-store/messages" 
-                class="nav-item"
-                :class="{ active: $route.name === 'messages' }"
-              >
-                <div class="nav-icon-wrapper">
-                  <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
-                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <line x1="8" y1="21" x2="16" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <line x1="12" y1="17" x2="12" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </div>
-                <span class="nav-text">Messages</span>
-              </router-link> -->
               
               <router-link 
                 to="/my-store/requests" 
@@ -239,9 +197,10 @@
   </svg>
   
                 </div>
-                <span class="nav-text">Requests</span>
+                <span class="nav-text">{{ t('store.nav.requests') }}</span>
               </router-link>
-                          <router-link 
+              
+              <router-link 
                 to="/my-store/settings" 
                 class="nav-item"
                 :class="{ active: $route.name === 'settings' }"
@@ -253,7 +212,7 @@
   </svg>
   
                 </div>
-                <span class="nav-text">settings</span>
+                <span class="nav-text">{{ t('store.nav.settings') }}</span>
               </router-link>
   
                   <router-link 
@@ -294,7 +253,7 @@
   </svg>
   
                 </div>
-                <span class="nav-text">Manage-Access</span>
+                <span class="nav-text">{{ t('store.nav.manage_access') }}</span>
               </router-link>
             </nav>
           </div>
@@ -307,11 +266,11 @@
           <div v-else style="margin-top:10px;background: white;border-radius:15px;height:90vh;padding:10px;border:1px solid rgba(0,0,0,0.1);display: flex;justify-content: center;align-items: center;" >
           <div style="text-align:center;display: flex;justify-content: center;align-items: center;flex-direction: column;">
               <img src="../../assets/emailverify.jpg" style="max-width:200px;max-height:400px" alt=""><br>
-              Your Business email Is not verified yet please verify to access the store features. <br><br>
+              {{ t('store.email_verify.message') }} <br><br>
   
             <router-link to="/business-dashboard/business-details">
               <a-button type="primary">
-                Verify now 
+                {{ t('store.email_verify.button') }}
               </a-button>
             </router-link>
             </div>
@@ -324,10 +283,15 @@
   
 </template>
 
+
 <script>
+import { useI18n } from 'vue-i18n'
 export default {
   name: 'store_manager',
-  
+   setup() {
+    const { t, locale } = useI18n()
+    return { t, locale }
+  },
   data() {
   return {
     showAccessDeniedModal: false,

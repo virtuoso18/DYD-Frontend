@@ -349,7 +349,7 @@
           </div>
           <br />
           <a-row :gutter="8">
-            <a-col :span="10">
+            <a-col :span="12">
               <!-- Simple Add to Cart Button 
                     <a-button 
                       type="primary" 
@@ -383,7 +383,7 @@
               </a-button>
             </a-col>
 
-            <a-col :span="10">
+            <a-col :span="12">
               <!-- {{ selectedTexture.product_business_owner_phone }} -->
             <a-button
               type="default"
@@ -410,6 +410,7 @@
               </svg>
               Contact on WhatsApp
             </a-button>
+            
             </a-col>
           </a-row>
         </a-card>

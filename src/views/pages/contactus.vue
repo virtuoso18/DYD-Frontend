@@ -19,7 +19,7 @@
             letter-spacing: -0.02em;
           "
         >
-          Contact Us
+          {{ t('contactUs.title') }}
         </h1>
       </div>
     </div>
@@ -39,14 +39,14 @@
             letter-spacing: -0.02em;
           "
         >
-          Feel free to contact us
+          {{ t('contactUs.subtitle') }}
         </h3>
 
         <!-- Subtitle -->
         <div
           class="flex items-center justify-center text-gray-600 text-center font-[Poppins] font-normal text-[20px] leading-[28px] tracking-[-0.02em]"
         >
-          Revolutionizing Interior Design with Virtual Technology & AI
+          {{ t('contactUs.description') }}
         </div>
       </div>
 
@@ -69,7 +69,7 @@
             <h3
               class="text-center font-[Proza_Libre] font-bold text-[24px] text-gray-800 mb-6"
             >
-              Fill the Information
+              {{ t('contactUs.formTitle') }}
             </h3>
 
             <form class="flex flex-col gap-4" @submit.prevent="submitContactForm">
@@ -78,14 +78,14 @@
                 <input
                   v-model="formData.name"
                   type="text"
-                  placeholder="Enter name"
+                  :placeholder="t('contactUs.namePlaceholder')"
                   required
                   class="w-full border border-gray-300 rounded-md p-3 text-[16px] focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <input
                   v-model="formData.email"
                   type="email"
-                  placeholder="Your email"
+                  :placeholder="t('contactUs.emailPlaceholder')"
                   required
                   class="w-full border border-gray-300 rounded-md p-3 text-[16px] focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
@@ -95,18 +95,48 @@
               <textarea
                 v-model="formData.content"
                 rows="4"
-                placeholder="Your text"
+                :placeholder="t('contactUs.messagePlaceholder')"
                 required
                 class="w-full border border-gray-300 rounded-md p-3 resize-none text-[16px] focus:outline-none focus:ring-2 focus:ring-blue-500"
               ></textarea>
-
+              
+              <!-- Attachments field -->
+                <div class="w-full">
+                  <label class="block text-sm text-gray-600 mb-1 font-[Poppins]">
+                    {{ t('contactUs.attachmentsLabel') }} ({{ t('contactUs.optional') }})
+                  </label>
+                  <input
+                    type="file"
+                    multiple
+                    ref="fileInput"
+                    @change="handleFileChange"
+                    class="w-full border border-gray-300 rounded-md p-2 text-[14px] text-gray-600 file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:bg-blue-50 file:text-blue-700 file:cursor-pointer cursor-pointer"
+                  />
+                  <!-- Selected files preview -->
+                  <div v-if="formData.attachments.length" class="mt-2 flex flex-wrap gap-2">
+                    <div
+                      v-for="(file, index) in formData.attachments"
+                      :key="index"
+                      class="flex items-center gap-1 bg-blue-50 text-blue-700 text-[12px] px-2 py-1 rounded-full"
+                    >
+                      <span>{{ file.name }}</span>
+                      <button
+                        type="button"
+                        @click="removeAttachment(index)"
+                        class="ml-1 text-blue-400 hover:text-red-500 font-bold leading-none"
+                      >
+                        &times;
+                      </button>
+                    </div>
+                  </div>
+                </div>
               <!-- Send button -->
               <button
                 type="submit"
                 :disabled="isSubmitting"
                 class="w-full bg-[#3B63FB] !text-white py-3 rounded-md font-[Poppins] font-medium text-[16px] leading-[24px] tracking-[0em] text-center hover:bg-blue-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
-                {{ isSubmitting ? "Sending..." : "Send Now" }}
+                {{ isSubmitting ? t('contactUs.sending') : t('contactUs.sendButton') }}
               </button>
             </form>
           </div>
@@ -117,65 +147,82 @@
 </template>
 
 <script>
+import { useI18n } from 'vue-i18n';
+
 export default {
   name: "ContactUs",
+
+  setup() {
+    const { t, locale } = useI18n();
+    return { t, locale };
+  },
+
   data() {
     return {
       formData: {
         name: "",
         email: "",
         content: "",
+        attachments: []
       },
       isSubmitting: false,
     };
   },
   methods: {
-    async submitContactForm() {
-      try {
-        // Validate form data
-        if (!this.formData.name || !this.formData.email || !this.formData.content) {
-          this.$message.warning("Please fill in all fields");
-          return;
-        }
+    handleFileChange(event) {
+    const selected = Array.from(event.target.files);
+    this.formData.attachments = [...this.formData.attachments, ...selected];
 
-        this.isSubmitting = true;
+    this.$refs.fileInput.value = "";
+  },
+  removeAttachment(index) {
+    this.formData.attachments.splice(index, 1);
+  },
+   async submitContactForm() {
+  try {
+    if (!this.formData.name || !this.formData.email || !this.formData.content) {
+      this.$message.warning(this.t('contactUs.fillAllFields'));
+      return;
+    }
 
-        const response = await fetch(
-          `${this.$store.state.root_api}customer-support/enquiries/create/`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              name: this.formData.name,
-              email: this.formData.email,
-              content: this.formData.content,
-            }),
-          }
-        );
+    this.isSubmitting = true;
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+    const payload = new FormData();
+    payload.append('name', this.formData.name);
+    payload.append('email', this.formData.email);
+    payload.append('content', this.formData.content);
 
-        const data = await response.json();
-        
-        this.$message.success("Your enquiry has been sent successfully!");
-        
-        // Reset form
-        this.formData = {
-          name: "",
-          email: "",
-          content: "",
-        };
-      } catch (error) {
-        console.error("Contact form submission failed", error);
-        this.$message.error("Failed to send enquiry. Please try again.");
-      } finally {
-        this.isSubmitting = false;
+    for (const file of this.formData.attachments) {
+      payload.append('attachments', file);  // key matches request.FILES.getlist('attachments')
+    }
+
+    const response = await fetch(
+      `${this.$store.state.root_api}customer-support/enquiries/create/`,
+      {
+        method: "POST",
+       
+        body: payload,
       }
-    },
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    await response.json();
+    this.$message.success(this.t('contactUs.successMessage'));
+
+    // Reset form
+    this.formData = { name: "", email: "", content: "", attachments: [] };
+    this.$refs.fileInput.value = "";
+
+  } catch (error) {
+    console.error("Contact form submission failed", error);
+    this.$message.error(this.t('contactUs.errorMessage'));
+  } finally {
+    this.isSubmitting = false;
+  }
+},
   },
 };
 </script>
