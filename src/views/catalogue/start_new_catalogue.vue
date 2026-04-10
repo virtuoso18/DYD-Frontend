@@ -53,13 +53,13 @@
     >
       <!-- Plan -->
       <div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:6px;">
-        <span>t('startNewCatalogue.modals.subscriptionExpired.plan')</span>
+        <span>{{t('startNewCatalogue.modals.subscriptionExpired.plan')}}</span>
         <strong>$ {{ prev_subscription?.subscription_plan_monthly_charges }}</strong>
       </div>
 
       <!-- Period -->
       <div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:6px;">
-        <span>t('startNewCatalogue.modals.subscriptionExpired.plan')</span>
+        <span>{{t('startNewCatalogue.modals.subscriptionExpired.plan')}}</span>
         <strong>
           {{ formatDate(prev_subscription?.period_start) }}
           →
@@ -69,8 +69,8 @@
 
       <!-- Status -->
       <div style="display:flex; justify-content:space-between; font-size:14px; color:#ff4d4f; font-weight:500;">
-        <span>t('startNewCatalogue.modals.subscriptionExpired.status')</span>
-        <strong>t('startNewCatalogue.modals.subscriptionExpired.statusValue')</strong>
+        <span>{{t('startNewCatalogue.modals.subscriptionExpired.status')}}</span>
+        <strong>{{t('startNewCatalogue.modals.subscriptionExpired.statusValue')}}</strong>
       </div>
     </div>
 
@@ -84,7 +84,7 @@
        style="height:46px; font-size:15px; border-radius:8px;margin-bottom:10px"
        @click="goToPurchaseCredits"
        >
-       t('startNewCatalogue.modals.subscriptionExpired.renewButton')
+       {{t('startNewCatalogue.modals.subscriptionExpired.renewButton')}}
       </a-button>
     </router-link>
 
@@ -96,7 +96,7 @@
       style="height:46px; font-size:15px; border-radius:8px;"
       @click="goToPurchaseCredits"
     >
-    t('startNewCatalogue.modals.subscriptionExpired.explorePlansButton')
+    {{t('startNewCatalogue.modals.subscriptionExpired.explorePlansButton')}}
     </a-button>
 
     <a-button
@@ -117,7 +117,7 @@
       @click="startchat_with_buisness_user"
     >
       <MessageOutlined />
-      t{{modals.subscriptionExpired.contactBusinessButton}}
+      {{t('modals.subscriptionExpired.contactBusinessButton')}}
     </a-button>
 
   </div>

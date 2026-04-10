@@ -43,7 +43,7 @@
 
       <!-- Heading -->
       <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 10px">
-        Failed Rendering
+      {{ t('catalog.failed_rendering.title') }}
       </h2>
 
       <!-- Message -->
@@ -130,7 +130,7 @@
 
       <!-- Heading -->
       <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 10px">
-        Insufficient Credits
+       {{ t('catalog.insufficient_credits.title') }}
       </h2>
 
       <!-- Message -->
@@ -156,7 +156,7 @@
         style="height: 46px; font-size: 16px; border-radius: 8px"
         @click="goToPurchaseCredits"
       >
-        Purchase Credits
+      {{ t('catalog.insufficient_credits.purchase_credits') }}
       </a-button>
 
       <a-button
@@ -176,7 +176,7 @@
         @click="startchat_with_buisness_user"
       >
         <MessageOutlined style="font-size: 16px" />
-        Message Business
+       {{ t('catalog.insufficient_credits.message_business') }}
       </a-button>
     </div>
   </a-modal>
@@ -222,7 +222,7 @@
                 line-height: 20px;
                 letter-spacing: 0;
               "
-              >{{ brand_data.name }} AI Catalog Wall Textures</span
+              >{{ brand_data.name }} {{ t('catalog.drawers.wall_textures') }}</span
             >
             <!-- {{ brand_data }} -->
             <!-- <b>  {{truncateChars(brand_data.name,limit=15)}}</b> -->
@@ -265,7 +265,7 @@
               fill="white"
             />
           </svg>
-          Download
+        {{ t('catalog.buttons.download') }}
         </a-button>
       </div>
     </template>
@@ -299,7 +299,7 @@
           <span
             class="!text-gray-700 font-[Poppins] !font-semibold !text-xs sm:!text-base !leading-5 truncate"
           >
-            {{ brand_data.name }} AI Catalog Floor Textures
+            {{ brand_data.name }} {{ t('catalog.drawers.floor_textures') }}
           </span>
         </router-link>
 
@@ -375,7 +375,7 @@
                 line-height: 20px;
                 letter-spacing: 0;
               "
-              >{{ brand_data.name }} AI Catalog Furnitures</span
+              >{{ brand_data.name }} {{ t('catalog.drawers.furnitures') }}</span
             >
             <!-- {{ brand_data }} -->
             <!-- <b>  {{truncateChars(brand_data.name,limit=15)}}</b> -->
@@ -386,7 +386,7 @@
           v-if="user?.user_type === 'Professional'"
         >
           <a-button
-            tooltip="switch brand"
+            :tooltip="t('catalog.buttons.switch_brand')"
             @click="showSwitchBrandPanel"
             style="display: flex; justify-content: center; align-items: center"
             shape="circle"
@@ -459,7 +459,7 @@
                 line-height: 20px;
                 letter-spacing: 0;
               "
-              >{{ brand_data.name }} AI Catalog LightS</span
+              >{{ brand_data.name }} AI Catalog {{ t('catalog.drawers.lights') }}</span
             >
             <!-- {{ brand_data }} -->
             <!-- <b>  {{truncateChars(brand_data.name,limit=15)}}</b> -->
@@ -502,7 +502,7 @@
               fill="white"
             />
           </svg>
-          Download
+          {{ t('catalog.buttons.download') }}
         </a-button>
       </div>
     </template>
@@ -566,7 +566,7 @@
               fill="white"
             />
           </svg>
-          Download
+        {{ t('catalog.buttons.download') }}
         </a-button>
       </div>
     </template>
@@ -589,7 +589,7 @@
   />
 
   <a-drawer
-    title="Change Room  "
+    :title="t('catalog.drawers.change_room')",
     :placement="'bottom'"
     :closable="true"
     :open="openSeeAll_ChangeRoom"
@@ -608,7 +608,7 @@ Switch Furniture</a-button> -->
     </template>
 
     <!-- Examples -->
-    <p class="history-label">Your History</p>
+    <p class="history-label">{{ t('catalog.drawers.your_history') }}</p>
     <div class="example-images">
       <a-row>
         <a-col
@@ -654,7 +654,7 @@ Switch Furniture</a-button> -->
     </div>
 
     <!-- Examples -->
-    <p class="history-label">Use an example room</p>
+    <p class="history-label">{{ t('catalog.drawers.use_example_room') }}</p>
     <div class="example-images">
       <a-row>
         <a-col
@@ -1597,12 +1597,13 @@ Switch Furniture</a-button> -->
                         margin-bottom: 12px;
                       "
                     >
-                      ⚠️ Privacy Notice
+                    
+
+                                                ⚠️ {{ t('catalog.messages.privacy_notice') }}
+
                     </p>
                     <p style="font-size: 12px">
-                      Please upload a room image <b>without people</b>.<br />
-                      Images containing persons are <b>not processed</b> as per
-                      our privacy policies.
+                      {{ t('catalog.messages.privacy_warning') }}
                     </p>
                     <!-- <a-button type="primary" @click="this.$route.query.brand ? this.$router.push('/start-new-catalogue?brand='+this.$route.query.brand ):this.$router.push('/start-new-catalogue') " style="align-items: center;"><CloudUploadOutlined style="font-size: 18px;" /> Upload new Image</a-button> -->
 
@@ -1623,8 +1624,7 @@ Switch Furniture</a-button> -->
                           display: flex;
                           justify-content: center;
                         "
-                        ><CloudUploadOutlined style="font-size: 18px" /> Upload
-                        new Image</a-button
+                        ><CloudUploadOutlined style="font-size: 18px" /> {{ t('catalog.buttons.upload_new_image') }}</a-button
                       >
                       <a-button
                         size="small"
@@ -1636,8 +1636,7 @@ Switch Furniture</a-button> -->
                           display: flex;
                           justify-content: center;
                         "
-                        ><UserDeleteOutlined style="font-size: 18px" /> Remove
-                        persons</a-button
+                        ><UserDeleteOutlined style="font-size: 18px" /> {{ t('catalog.buttons.remove_persons') }}</a-button
                       >
                     </a-space>
                   </div>
@@ -1809,7 +1808,7 @@ Switch Furniture</a-button> -->
                       stroke-width="2"
                     />
                   </svg>
-                  <span>Image</span>
+                  <span>{{ t('catalog.tabs.image') }}</span>
                 </div>
                 <div
                   :class="
@@ -1840,7 +1839,7 @@ Switch Furniture</a-button> -->
                       stroke-width="2"
                     />
                   </svg>
-                  <span>3D</span>
+                  <span>{{ t('catalog.tabs.3d') }}</span>
                 </div>
                 <div
                   :class="
@@ -1868,7 +1867,7 @@ Switch Furniture</a-button> -->
                       stroke-width="2"
                     />
                   </svg>
-                  <span>Edit Image</span>
+                  <span>{{ t('catalog.tabs.edit_image') }}</span>
                 </div>
               </div>
             </a-col>
@@ -1919,7 +1918,7 @@ Switch Furniture</a-button> -->
                         d="M15.32 7.70C14.48 7.70 13.79 8.39 13.79 9.23V10.77C13.79 11.40 13.66 11.53 13.03 11.53H5.36C4.73 11.53 4.59 11.40 4.59 10.77V9.23C4.59 8.39 3.91 7.70 3.06 7.70C2.21 7.70 1.53 8.39 1.53 9.23C1.53 9.80 1.84 10.30 2.29 10.56V10.77C2.29 12.21 2.29 12.93 2.74 13.38C3.19 13.83 3.92 13.83 5.36 13.83H13.03C14.47 13.83 15.19 13.83 15.64 13.38C16.09 12.93 16.09 12.21 16.09 10.77V10.56C16.55 10.30 16.86 9.80 16.86 9.23C16.86 8.39 16.17 7.70 15.32 7.70Z"
                         stroke="currentColor"
                         stroke-width="1.5"
-                      /></svg> &nbsp; Item Replace
+                      /></svg> &nbsp; {{ t('catalog.buttons.item_replace') }}
                   </div>
                   <div
                     :class="
@@ -1951,7 +1950,7 @@ Switch Furniture</a-button> -->
                         stroke="currentColor"
                         stroke-width="1.5"
                         stroke-linecap="round"
-                      /></svg>&nbsp; Home Design
+                      /></svg>&nbsp;{{ t('catalog.buttons.home_design') }}
                   </div>
                 </div>
 
@@ -2728,7 +2727,7 @@ Switch Furniture</a-button> -->
                           stroke-linejoin="round"
                         />
                       </svg>
-                      Change Room
+                    {{ t('catalog.buttons.change_room') }}
                     </a-button>
                     <a-button
                       style="
@@ -2870,7 +2869,7 @@ Switch Furniture</a-button> -->
                     "
                   >
                     <span style="font-size: 16px; color: #444"
-                      >Share on social:</span
+                      >{{ t('catalog.social_share') }}</span
                     >
                     <img src="/whatsapp.svg" alt="Whatsapp" class="w-5 h-5" />
                     <img
@@ -2951,7 +2950,7 @@ Switch Furniture</a-button> -->
                           stroke-linejoin="round"
                         />
                       </svg>
-                      Download
+                 {{ t('catalog.buttons.download') }}
                     </a-button>
                   </div>
                 </div>
@@ -3348,13 +3347,10 @@ Switch Furniture</a-button> -->
                             margin-bottom: 12px;
                           "
                         >
-                          ⚠️ Privacy Notice
+                          ⚠️ {{ t('catalog.messages.privacy_notice') }}
                         </p>
                         <p>
-                          Please upload a room image
-                          <b>without people</b>.<br />
-                          Images containing persons are <b>not processed</b> as
-                          per our privacy policies.
+                         {{ t('catalog.messages.privacy_warning') }}
                         </p>
                         <a-space>
                           <a-button
@@ -3373,7 +3369,7 @@ Switch Furniture</a-button> -->
                               justify-content: center;
                             "
                             ><CloudUploadOutlined style="font-size: 18px" />
-                            Upload new Image</a-button
+                           {{ t('catalog.buttons.upload_new_image') }}</a-button
                           >
                           <a-button
                             type="default"
@@ -3385,7 +3381,7 @@ Switch Furniture</a-button> -->
                               justify-content: center;
                             "
                             ><UserDeleteOutlined style="font-size: 18px" />
-                            Remove persons</a-button
+                           {{ t('catalog.buttons.remove_persons') }}</a-button
                           >
                         </a-space>
                       </div>
@@ -3400,7 +3396,7 @@ Switch Furniture</a-button> -->
         <!-- Global Error Modal -->
         <a-modal
           v-model:visible="showErrorModal"
-          title="Error"
+          :title="t('catalog.messages.error')"
           :footer="null"
           @ok="showErrorModal = false"
         >
@@ -3411,14 +3407,14 @@ Switch Furniture</a-button> -->
             show-icon
           />
           <div style="margin-top: 16px; text-align: right">
-            <a-button @click="showErrorModal = false">Close</a-button>
+            <a-button @click="showErrorModal = false">{{ t('catalog.buttons.close') }}</a-button>
             <a-button
               v-if="modalError.retry"
               type="primary"
               @click="modalError.retry()"
               style="margin-left: 8px"
             >
-              Retry
+              {{ t('catalog.buttons.retry') }}
             </a-button>
           </div>
         </a-modal>
@@ -3467,9 +3463,14 @@ import fetch_all_drawer_component from "@/components/update_catalogue/bottom_dra
 import ai_catalog_item_replacement_3d_products from "@/components/update_catalogue/list_products/item_replacement_3d_products.vue";
 import PlanUpgradeModal from "./PlanUpgradeModal.vue";
 import { update } from "three/examples/jsm/libs/tween.module.js";
+import { useI18n } from 'vue-i18n';
 
 export default {
   name: "update_catelogue",
+  setup() {
+    const { t } = useI18n();
+    return { t };
+  },
 
   data() {
     return {
@@ -4366,8 +4367,8 @@ export default {
                 responseData.data.floor_3d_model_grid,
             );
 this.$nextTick(() => {
-              this.forceCanvasUpdate();
-            });
+              this.forceCanvasUpdate();
+            });
             if (this.roomPollingInterval) {
               clearInterval(this.roomPollingInterval);
               this.roomPollingInterval = null;

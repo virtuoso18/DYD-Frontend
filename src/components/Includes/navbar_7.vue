@@ -345,8 +345,7 @@
               <router-link :to="'/pricing'">
                 <a-button type="primary" size="small"
                   >{{t('navbar.buy')}}</a-button
-                ></router-link
-              >
+                ></router-link>
             </div>
 
             <div class="icon-actions">
