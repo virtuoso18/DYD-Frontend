@@ -1632,7 +1632,57 @@
       "3d": "תלת-ממד",
       "edit_image": "עריכת תמונה"
     },
-    "social_share": "שיתוף ברשתות חברתיות:"
+    "social_share": "שיתוף ברשתות חברתיות:",
+    "list_products": {
+      "wall": {
+        "wall_texture": "טקסטורת קיר",
+        "price": "מחיר",
+        "product_detail": "פרטי מוצר",
+        "load_more": "טען עוד",
+        "loading": "טוען...",
+        "no_products": "לא נמצאו מוצרים",
+        "filters": "סינון",
+        "room_type": "סוג חדר",
+        "style": "סגנון",
+        "color": "צבע",
+        "reset": "איפוס",
+        "apply": "אישור",
+        "sort_by": "מיין לפי",
+        "price_range": "טווח מחירים (למ\"ר)",
+        "search_placeholder": "חיפוש",
+        "see_all": "ראה הכל",
+        "ai_catalog": "קטלוג AI",
+        "colors_selected": "צבעים: {{count}} נבחרו",
+        "room_selected": "חדר: {{count}} נבחרו",
+        "style_selected": "סגנון: {{labels}}",
+        "sort_selected": "מיון: {{label}}",
+        "clear_all": "נקה הכל",
+        "price_filter": "מחיר: ${{min}} – ${{max}}",
+        "active_filters": "סינונים פעילים"
+      }
+    }
+  },
+   "wallsRenderer": {
+    "instructions": "הוראות",
+    "seeInstructions": "ראה הוראות",
+    "close": "סגור",
+    "ok": "אישור",
+    "loadingRoom": "טוען חדר...",
+    "processingMasks": "מעבד קירות...",
+    "selectAll": "בחר הכל",
+    "unselectAll": "בטל הכל",
+    "zoomIn": "הגדל",
+    "zoomOut": "הקטן",
+    "resetView": "איפוס תצוגה",
+    "rescaleRoomLayout": "אתחל מחדש מידות החדר",
+    "panInstructionsDesktop": "גרור עם העכבר לשינוי מיקום • גלגלת עכבר להתקרבות/התרחקות",
+    "panInstructionsTouch": "צביטה להתקרבות וצביטה הפוכה להתרחקות",
+    "noWallsHeader": "לא נמצאו קירות",
+    "noWallsMessage": "יש צורך בזיהוי קירות כדי לאפשר בחירת קירות.",
+    "before": "לפני",
+    "after": "אחרי",
+    "finaliseChanges": "שמור שינויים",
+    "wallTitle": "קיר {{index}}"
   }
 
 }

@@ -399,22 +399,6 @@ export default {
 
   data() {
     return {
-      _dragTargetPos: null,
-      _dragStartClient: null,
-      _dragDeadZonePassed: false,
-      _isDraggingSmooth: false,
-
-      _twoFingerRafId: null,
-      _twoFingerPending: null,
-      _twoFingerNewRotRad: null,
-      _finger0X: null,
-      _finger0Y: null,
-      _finger1X: null,
-      _finger1Y: null,
-      _finger0Id: -1,
-      _finger1Id: -1,
-      _twoFingerStartAngleGesture: 0,  // the raw atan2 angle between the two fingers at gesture start
-
       _isReloading: false,
       _pendingReload: false,
           _isRendering: false,   // ← add this
@@ -548,7 +532,6 @@ update_dimensions: {
     this._fn       = markRaw(new THREE.Vector3())
     this._spinQ    = markRaw(new THREE.Quaternion())
     this._spinAxis = markRaw(new THREE.Vector3())
-    this._dragTargetPos = markRaw(new THREE.Vector3())
 
     this._twoFingerRafId     = null
     this._twoFingerPending   = false
@@ -802,7 +785,7 @@ rescaleChair() {
       this.sofaSpotLight.penumbra = 0.6
       this.sofaSpotLight.decay    = 1.8
       this.sofaSpotLight.distance = 6
-      this.sofaSpotLight.castShadow = false
+      this.sofaSpotLight.castShadow = true
       this.sofaSpotLight.shadow.mapSize.set(1024, 1024)
       this.sofaSpotLight.shadow.camera.near = 0.2
       this.sofaSpotLight.shadow.camera.far  = 8
@@ -885,7 +868,7 @@ rescaleChair() {
       if (!this.chair || !this.floorPlaneTHREE) return
 
       if (event.pointerType === 'touch') {
-this.twoFingerPointers.set(event.pointerId, { x: event.clientX, y: event.clientY })
+        this.twoFingerPointers.set(event.pointerId, event.clientY)
 
         if (this.twoFingerPointers.size === 2) {
           this.isDragging    = false
@@ -896,17 +879,8 @@ this.twoFingerPointers.set(event.pointerId, { x: event.clientX, y: event.clientY
           const ids = Array.from(this.twoFingerPointers.keys())
           this._finger0Id = ids[0]
           this._finger1Id = ids[1]
-          // AFTER — store both X and Y for both fingers
-          const p0 = this.twoFingerPointers.get(ids[0])   // {x, y}
-          const p1 = this.twoFingerPointers.get(ids[1])
-          this._finger0X = p0.x; this._finger0Y = p0.y
-          this._finger1X = p1.x; this._finger1Y = p1.y
-          // Snapshot the angle between the two fingers right now
-          this._twoFingerStartAngleGesture = Math.atan2(
-            this._finger1Y - this._finger0Y,
-            this._finger1X - this._finger0X
-          )
-          this.twoFingerStartAngle = this._spinAngleRad
+          this._finger0Y  = this.twoFingerPointers.get(ids[0])
+          this._finger1Y  = this.twoFingerPointers.get(ids[1])
 
           this.twoFingerStartAvgY  = (this._finger0Y + this._finger1Y) / 2
           // ✅ FIX 2 OF 4: snapshot clean radian spin — NOT chair.rotation.y
@@ -971,49 +945,38 @@ this.twoFingerPointers.set(event.pointerId, { x: event.clientX, y: event.clientY
         this.chair.position.z - floorHit.z,
       )
 
-// ✅ NEW: store start client coords, don't commit drag yet
-this._dragStartClient = { x: event.clientX, y: event.clientY }
-this._dragPointerType = event.pointerType  // 'mouse', 'touch', or 'pen'
-this._dragDeadZonePassed = false
-this._dragTargetPos.copy(this.chair.position)   // initialise target at current pos
-this._isDraggingSmooth = false
+      this.isDragging    = true
+      this.isDraggingRef = true
 
-this.isDragging    = true
-this.isDraggingRef = true
-
-this.renderer.domElement.setPointerCapture(event.pointerId)
-event.preventDefault()
+      this.renderer.domElement.setPointerCapture(event.pointerId)
+      event.preventDefault()
     },
 
-   _snapRingToChairFast() {
-  if (!this.rotationRing || !this.chair) return
-  this.rotationRing.position.copy(this.chair.position)
-  this.rotationRing.position.addScaledVector(this.floorNormal3, 0.012)
-  this._fn.copy(this.floorNormal3).normalize()
-  // Guard: if normal is pathological, use world up
-  if (Math.abs(this._fn.y) < 0.5) this._fn.set(0, 1, 0)
-  this._tiltQ.setFromUnitVectors(this._worldUp, this._fn)
-  this.rotationRing.quaternion.copy(this._tiltQ)
-},
+    _snapRingToChairFast() {
+      if (!this.rotationRing || !this.chair) return
+      this.rotationRing.position.copy(this.chair.position)
+      this.rotationRing.position.addScaledVector(this.floorNormal3, 0.012)
+      this._fn.copy(this.floorNormal3).normalize()
+      this._tiltQ.setFromUnitVectors(this._worldUp, this._fn)
+      this.rotationRing.quaternion.copy(this._tiltQ)
+    },
+
     onPointerMove(event) {
       if (event.pointerType === 'touch' && this.isTwoFingerRotating) {
         if (!this.twoFingerPointers.has(event.pointerId)) return
 
-       if (event.pointerId === this._finger0Id) {
-          this._finger0X = event.clientX; this._finger0Y = event.clientY
+        if (event.pointerId === this._finger0Id) {
+          this._finger0Y = event.clientY
         } else if (event.pointerId === this._finger1Id) {
-          this._finger1X = event.clientX; this._finger1Y = event.clientY
+          this._finger1Y = event.clientY
         }
-        this.twoFingerPointers.set(event.pointerId, { x: event.clientX, y: event.clientY })
+        this.twoFingerPointers.set(event.pointerId, event.clientY)
 
         if (this.twoFingerPointers.size === 2) {
-          // Current angle between the two fingers
-          const currentAngle = Math.atan2(
-            this._finger1Y - this._finger0Y,
-            this._finger1X - this._finger0X
-          )
-          // Delta from when gesture started — pure angular delta, no Y-swipe artifacts
-          const deltaRad = currentAngle - this._twoFingerStartAngleGesture
+          const avgY     = (this._finger0Y + this._finger1Y) * 0.5
+          const deltaY   = avgY - this.twoFingerStartAvgY
+          const deltaRad = (deltaY / 200) * Math.PI * 2
+          // ✅ compute from clean radian baseline — no degree round-trip
           this._twoFingerNewRotRad = this.twoFingerStartAngle + deltaRad
 
           if (!this._twoFingerPending) {
@@ -1063,17 +1026,6 @@ event.preventDefault()
       if (this.isDragging) {
         this.raycaster.setFromCamera(this.mouse, this.camera)
 
-        if (!this._dragDeadZonePassed && this._dragStartClient) {
-          const dx = event.clientX - this._dragStartClient.x
-          const dy = event.clientY - this._dragStartClient.y
-          if (Math.sqrt(dx * dx + dy * dy) < 6) {
-            event.preventDefault()
-            return
-          }
-          this._dragDeadZonePassed = true
-          this._isDraggingSmooth   = true
-        }
-
         this.chair.visible = false
         const floorHit = this.raycastFloor()
         this.chair.visible = true
@@ -1096,15 +1048,10 @@ event.preventDefault()
           newY = (-d - n.x * newX - n.z * newZ) / n.y
         }
 
-        // ✅ FIX: set target to floor hit point, then add chairHalfH ONCE only
-        this._dragTargetPos.set(newX, newY, newZ)
-        this._dragTargetPos.addScaledVector(n, this.chairHalfH)  // ← only here, not twice
-
-        if (this._dragPointerType === 'mouse') {
-          this.chair.position.copy(this._dragTargetPos)
-          this._snapRingToChairFast()
-          this.snapLightToChair()
-        }
+        this.chair.position.set(newX, newY + this.chairHalfH * n.y, newZ)
+        this.chair.position.addScaledVector(n, this.chairHalfH)
+        this._snapRingToChairFast()
+        this.snapLightToChair()
 
         event.preventDefault()
       }
@@ -1168,21 +1115,6 @@ event.preventDefault()
       this.isRotating    = false
       this.isRotatingRef = false
 
-      // ✅ NEW: snap to final target immediately on release (no lingering lerp)
-      if (this._isDraggingSmooth && this.chair) {
-        this.chair.position.copy(this._dragTargetPos)
-        this._snapRingToChairFast()
-        this.snapLightToChair()
-      }
-        this._isDraggingSmooth   = false    // ← must be first
-        this._dragDeadZonePassed = false
-        this._dragStartClient    = null
-
-        if (this.chair) {
-          this.chair.position.copy(this._dragTargetPos)
-          this._snapRingToChairFast()
-          this.snapLightToChair()
-        }
       try { this.renderer.domElement.releasePointerCapture(event.pointerId) } catch (_) {}
 
       // ✅ FIX 3 OF 4 (single pointer path): same fix — read _spinAngleRad
@@ -1968,14 +1900,6 @@ event.preventDefault()
     console.warn('renderItem: not ready')
     return
   }
-  // ✅ Snap chair to its target immediately — kills any in-flight lerp
-  if (this._dragTargetPos) {
-    this.chair.position.copy(this._dragTargetPos)
-    this._snapRingToChairFast()
-    this.snapLightToChair()
-  }
-  this._isDraggingSmooth = false 
-
   this.$emit('update:isLoading', true)
   if (this.renderer?.domElement) {
     this.renderer.domElement.style.pointerEvents = 'none'
@@ -2312,31 +2236,9 @@ async createBinaryMaskBlob(bgWidth, bgHeight, snapPos, snapQuat, snapScale, froz
       this.floorCentroid3 = markRaw(new THREE.Vector3())
     },
 
- animate() {
+   animate() {
   this.animationFrameId = requestAnimationFrame(this.animate)
-  if (this._isRendering) return
-
-  // ✅ Tight lerp — snappy but still smooth, not floaty
-// AFTER
-if (this._isDraggingSmooth && this.chair && this._dragTargetPos) {
-  if (this._dragPointerType === 'mouse') {
-    // Mouse: snap exactly — no lag, cursor must match model
-    this.chair.position.copy(this._dragTargetPos)
-    this._isDraggingSmooth = false
-  } else {
-    // Touch: smooth lerp feels natural on finger
-    const dist = this.chair.position.distanceTo(this._dragTargetPos)
-    if (dist > 0.0005) {
-      this.chair.position.lerp(this._dragTargetPos, 0.35)
-    } else {
-      this.chair.position.copy(this._dragTargetPos)
-      this._isDraggingSmooth = false
-    }
-  }
-  this._snapRingToChairFast()
-  this.snapLightToChair()
-}
-
+  if (this._isRendering) return              // ← add this guard
   if (this.renderer && this.scene && this.camera) {
     this.renderer.render(this.scene, this.camera)
   }
@@ -2468,8 +2370,6 @@ if (this._isDraggingSmooth && this.chair && this._dragTargetPos) {
   object-position: center center;
   line-height: 0;
   overflow: hidden;
-  touch-action: none;           /* ✅ prevent browser scroll stealing touch */
-  overscroll-behavior: none;
 }
 @media (min-width: 769px) {
   .room-container { height:calc(100vh - 16vh);max-height:calc(100vh - 16vh);max-width:920px;margin:0 auto; }

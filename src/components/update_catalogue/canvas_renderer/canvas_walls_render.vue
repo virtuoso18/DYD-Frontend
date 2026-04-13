@@ -1,5 +1,5 @@
 <template>
-   <!-- ✅ Pure Tailwind Instruction Modal -->
+
 <Teleport to="body">
   <Transition
     enter-active-class="transition duration-200 ease-out"
@@ -26,12 +26,12 @@
         <!-- Header -->
         <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
           <h3 class="text-[15px] font-semibold text-gray-800 tracking-wide">
-            Instructions
+            {{ t('wallsRenderer.instructions') }}
           </h3>
           <button
             @click="closeInstructionModal"
             class="w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-all duration-150"
-            title="Close"
+            :title="t('wallsRenderer.close')"
           >
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none"
               viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
@@ -64,7 +64,7 @@
             @click="closeInstructionModal"
             class="px-5 py-[7px] bg-blue-500 hover:bg-blue-600 active:scale-95 !text-white text-sm font-medium rounded-lg transition-all duration-150 shadow-sm"
           >
-            OK
+            {{ t('wallsRenderer.ok') }}
           </button>
         </div>
       </div>
@@ -78,7 +78,7 @@
         src="../../../assets/icons/informationIcon.svg"
         alt="instruction"
         @click="showInstructionModal"
-        title="see instruction"
+        :title="t('wallsRenderer.seeInstructions')"
       />
     <!-- Loading Overlay -->
 
@@ -89,7 +89,7 @@
       >
         <div class="wave-overlay"></div>
         <div class="loading-text">
-          <div class="process-text">Loading Room...</div>
+          <div class="process-text">{{ t('wallsRenderer.loadingRoom') }}</div>
         </div>
       </div>
     </div>
@@ -143,7 +143,7 @@
         @click="toggleWallSelection(region.maskIndex)"
         @mouseenter="highlightWall(region.maskIndex)"
         @mouseleave="removeHighlight"
-        :title="`Wall ${region.maskIndex + 1}`"
+      :title="t('wallsRenderer.wallTitle', { index: region.maskIndex + 1 })"
       >
         <span class="wall-number">{{ region.maskIndex + 1 }}</span>
         <div
@@ -160,7 +160,7 @@
         :class="{ active: allWallsSelected }"
         @click="toggleSelectAll"
         :disabled="isLoading"
-        :title="allWallsSelected ? 'Unselect All' : 'Select All'"
+      :title="allWallsSelected ? t('wallsRenderer.unselectAll') : t('wallsRenderer.selectAll')"
       >
         <!-- <svg  width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
              <path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16zm3.5-5L7 6.5 4.5 9 3 7.5 7 3.5 13 9.5 11.5 11z"/>
@@ -199,7 +199,7 @@
         >
           ✓
         </div>
-        {{ allWallsSelected ? "Unselect All" : "Select All" }}
+     {{ allWallsSelected ? t('wallsRenderer.unselectAll') : t('wallsRenderer.selectAll') }}
       </a-button>
     </div>
 
@@ -223,7 +223,7 @@
     <div v-if="processingMasks" class="processing-overlay">
       <div class="processing-content">
         <div class="processing-spinner"></div>
-        <div class="processing-text">Processing wall masks...</div>
+        <div class="processing-text">{{ t('wallsRenderer.processingMasks') }}</div>
         <div class="processing-progress">
           {{ processingProgress }} / {{ processingTotal }}
         </div>
@@ -250,7 +250,7 @@
         class="!px-2 !py-1 whitespace-nowrap !text-black rounded-md btn-text-style flex items-center justify-center"
         type="primary"
         :disabled="isLoading"
-        title="Rescale Room Layout"
+      :title="t('wallsRenderer.rescaleRoomLayout')"
       >
         <svg
           width="16"
@@ -279,10 +279,10 @@
 
     <!-- Pan Instructions -->
     <div v-if="zoom > 1 && !isLoading && !isTouchDevice" class="instructions">
-      Click and drag to pan • Mouse wheel to zoom
+    {{ t('wallsRenderer.panInstructionsDesktop') }}
     </div>
     <div v-else-if="zoom > 1 && !isLoading && isTouchDevice" class="instructions">
-      Pinch in to zoom in & Pinch out to zoom out
+      {{ t('wallsRenderer.panInstructionsTouch') }}
     </div> 
 
     <!-- Empty State -->
@@ -300,8 +300,8 @@
           <circle cx="8.5" cy="8.5" r="1.5" />
           <polyline points="21,15 16,10 5,21" />
         </svg>
-        <h3>No Wall Masks Available</h3>
-        <p>Wall masks are required to enable wall selection functionality.</p>
+        <h3>{{ t('wallsRenderer.noWallsHeader') }}</h3>
+        <p>{{ t('wallsRenderer.noWallsMessage') }}</p>
       </div>
     </div>
   </div>
@@ -318,47 +318,24 @@
     >
       <div style="padding-top: 5px">
         <div style="display: flex; gap: 5px; padding-top: 5px">
-          <!-- <a-button 
-           class="control-btn"
-           :class="{ 'active': allWallsSelected }"
-           @click="toggleSelectAll"
-           :disabled="isLoading"
-           :title="allWallsSelected ? 'Deselect All' : 'Select All'"
-         >
-           <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-             <path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16zm3.5-5L7 6.5 4.5 9 3 7.5 7 3.5 13 9.5 11.5 11z"/>
-           </svg>
-           {{ allWallsSelected ? 'Deselect All' : 'Select All' }}
-         </a-button> -->
-          <!-- <a-button 
-         class="control-btn clear-btn"
-         @click="clearAllSelections"
-         :disabled="internalSelectedMasks.length === 0 || isLoading"
-         title="Clear Selection"
-         
-         >
-         <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-           <path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16zM4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
-         </svg>
-         Clear
-       </a-button> -->
+        
           <a-button
             type="primary"
             :disabled="isLoading"
             @click="rescaleRoomLayout()"
           >
-            Rescale Room layout
+         {{ t('wallsRenderer.rescaleRoomLayout') }}
           </a-button>
         </div>
       </div>
       <div>
         <div style="padding-top: 5px; display: flex; gap: 10px">
-          <a-button
+          <!-- <a-button
             class="toolbar-btn primary-btn"
             @click="reset_entire_room"
             :disabled="isLoading"
           >
-            Before
+            {{ t('wallsRenderer.before') }}
           </a-button>
           <a-button
             type="primary"
@@ -366,8 +343,8 @@
             @click="reset_entire_room"
             :disabled="isLoading"
           >
-            After
-          </a-button>
+            {{ t('wallsRenderer.after') }}
+          </a-button> -->
         </div>
       </div>
       <div style="padding-top: 10px">
@@ -377,7 +354,7 @@
           @click="$emit('Apply-Changes', 'Walls-Renerer')"
           :disabled="isLoading"
         >
-          Finalise Changes
+          {{ t('wallsRenderer.finaliseChanges') }}
         </a-button>
       </div>
     </div>
@@ -386,68 +363,11 @@
     <!-- LEFT SIDE -->
     <div class="pt-1">
       <div class="flex gap-3 pt-1 pr-1">
-        <!-- Select / Deselect All -->
-
-        <!-- <button
-  class="flex items-center gap-[3px] !px-4 !py-[6px] bg-[#4e70f9] !text-white whitespace-nowrap rounded-md btn-text-style !text-[12px]"
-  :class="{ 'active': allWallsSelected }"
-  @click="toggleSelectAll"
-  :disabled="isLoading"
-  :title="allWallsSelected ? 'Deselect All' : 'Select All'"
->
-  <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
-    <path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16zm3.5-5L7 6.5 4.5 9 3 7.5 7 3.5 13 9.5 11.5 11z"/>
-  </svg>
-
-  {{ allWallsSelected ? 'Deselect All' : 'Select All' }}
-</button> -->
-
-        <!-- Clear Button -->
-        <!-- <button
-        class="control-btn clear-btn !px-4 !py-[2px] bg-[#4e70f9] !text-red rounded-md btn-text-style  !text-[12px]"
-        @click="clearAllSelections"
-        :disabled="internalSelectedMasks.length === 0 || isLoading"
-        title="Clear Selection"
-      >
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-          <path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16zM4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
-        </svg>
-        Clear
-      </button> -->
-
-        <!-- Rescale -->
-        <!-- <button
-        class="!px-1 !py-[1px]  bg-[#4e70f9] whitespace-nowrap !text-white rounded-md btn-text-style  !text-[12px]"
-        type="primary"
-        :disabled="isLoading"
-        @click="rescaleRoomLayout()"
-      >
-        Rescale Room layout
-      </button> -->
+       
       </div>
     </div>
 
-    <!-- MIDDLE -->
-    <!-- <div>
-    <div class="!pt-2 flex gap-1  pr-1">
-      <button
-        class="toolbar-btn primary-btn !px-2 !py-[0px] bg-[#4e70f9] !text-white rounded-md btn-text-style  !text-[12px]"
-        @click="reset_entire_room"
-        :disabled="isLoading"
-      >
-        Before
-      </button>
-
-      <button
-        type="primary"
-        class="toolbar-btn primary-btn !px-2 !py-[2px] bg-[#4e70f9] !text-white rounded-md btn-text-style  !text-[12px]"
-        @click="reset_entire_room"
-        :disabled="isLoading"
-      >
-        After
-      </button>
-    </div>
-  </div> -->
+   
 
     <!-- RIGHT SIDE -->
     <div class="p-2">
@@ -472,10 +392,15 @@ import FlatSurfaceModal from "@/components/update_catalogue/FlatSurfaceModal.vue
 import ZoomInIcon from "@/assets/icons/zoomout.png";
 import ZoomOutIcon from "@/assets/icons/zoomin.png";
 import TapToSelect from "@/assets/icons/tap.png";
+import { useI18n } from 'vue-i18n';
 export default {
   name: "walls_renderer",
   components: {
     FlatSurfaceModal,
+  },
+    setup() {
+    const { t } = useI18n();
+    return { t };
   },
 
   // 1. Add maskUpdateTrigger as a prop in child component

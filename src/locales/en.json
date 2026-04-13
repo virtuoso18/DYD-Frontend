@@ -1626,7 +1626,57 @@
       "3d": "3D",
       "edit_image": "Edit Image"
     },
-    "social_share": "Share on social:"
+    "social_share": "Share on social:",
+    "list_products": {
+      "wall": {
+        "wall_texture": "Wall Texture",
+        "price": "Price",
+        "product_detail": "Product Detail",
+        "load_more": "Load More",
+        "loading": "Loading...",
+        "no_products": "No products found",
+        "filters": "Filters",
+        "room_type": "Room Type",
+        "style": "Style",
+        "color": "Color",
+        "reset": "Reset",
+        "apply": "Apply",
+        "sort_by": "Sort By",
+        "price_range": "Price Range (per sqm)",
+        "search_placeholder": "Search",
+        "see_all": "See all",
+        "ai_catalog": "AI Catalog",
+        "colors_selected": "Colors: {{count}} selected",
+        "room_selected": "Room: {{count}} selected",
+        "style_selected": "Style: {{labels}}",
+        "sort_selected": "Sort: {{label}}",
+        "clear_all": "Clear all",
+        "price_filter": "Price: ${{min}} – ${{max}}",
+        "active_filters": "Active Filters"
+      }
+    }
+  },
+  "wallsRenderer": {
+    "instructions": "Instructions",
+    "seeInstructions": "See instructions",
+    "close": "Close",
+    "ok": "OK",
+    "loadingRoom": "Loading Room...",
+    "processingMasks": "Processing wall masks...",
+    "selectAll": "Select All",
+    "unselectAll": "Unselect All",
+    "zoomIn": "Zoom In",
+    "zoomOut": "Zoom Out",
+    "resetView": "Reset View",
+    "rescaleRoomLayout": "Rescale Room Layout",
+    "panInstructionsDesktop": "Click and drag to pan • Mouse wheel to zoom",
+    "panInstructionsTouch": "Pinch in to zoom in & Pinch out to zoom out",
+    "noWallsHeader": "No Wall Masks Available",
+    "noWallsMessage": "Wall masks are required to enable wall selection functionality.",
+    "before": "Before",
+    "after": "After",
+    "finaliseChanges": "Finalise Changes",
+    "wallTitle": "Wall {{index}}"
   }
   
   

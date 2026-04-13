@@ -77,7 +77,7 @@
     "
   >
     <div style="display: flex; gap: 5px; padding-top: 10px">
-      <a-button
+      <!-- <a-button
         :disabled="isLoading"
         class="toolbar-btn primary-btn"
         @click="reset_entire_room"
@@ -91,7 +91,7 @@
         @click="reset_entire_room"
       >
         After
-      </a-button>
+      </a-button> -->
     </div>
     <div style="padding-top: 10px">
       <a-button

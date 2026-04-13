@@ -14,17 +14,17 @@
       <router-link :to="'/'+$route.query.brand">
         <div style="display: flex;gap:10px;">
           <a-avatar size="medium" style="border:1px solid rgba(0,0,0,0.2)" :src="this.$store.state.root_media_api+brand_data.business_picture"></a-avatar>
-          <span class="!text-gray-700 py-3" style="font-family: Poppins;font-weight: 700;font-style: normal;font-size: 16px;line-height: 20px;letter-spacing: 0;margin-top:-6px">AI Catalog</span>
+          <span class="!text-gray-700 py-3" style="font-family: Poppins;font-weight: 700;font-style: normal;font-size: 16px;line-height: 20px;letter-spacing: 0;margin-top:-6px">{{ t('catalog.list_products.wall.ai_catalog') }}</span>
         </div>
       </router-link>
-      <a-button size='small' type="default" class="see-all-link" @click="seeAllClicked">See all</a-button>
+      <a-button size='small' type="default" class="see-all-link" @click="seeAllClicked">{{ t('catalog.list_products.wall.see_all') }}</a-button>
     </div>
 
     <!-- Fixed Search Bar -->
     <div class="search-section">
       <a-input
         v-model:value="searchText"
-        placeholder="Search"
+        :placeholder="t('catalog.list_products.wall.search_placeholder')"
         class="search-input"
         @input="handleSearchChange"
       >
@@ -100,7 +100,7 @@
             </svg>
           </button>
         </span>
-        <button class="clear-all-btn" @click="clearAllFilters">Clear all</button>
+        <button class="clear-all-btn" @click="clearAllFilters">{{ t('catalog.list_products.wall.clear_all') }}</button>
       </div>
     </div>
 
@@ -134,7 +134,7 @@ padding:5px;" @click="selectTexture(item.id)"
          style="background-color: grey;color:white;border-radius:5px;
          padding-left:5px;padding-right:5px;padding-top:1px;
          height:22px;font-size:12px">
-      Wall Texture
+     {{ t('catalog.list_products.wall.wall_texture') }}
     </div>
 
     <!-- <div class="absolute top-2  rounded-md right-2 z-10 !text-white"
@@ -190,7 +190,7 @@ padding:5px;" @click="selectTexture(item.id)"
     </div> -->
 
     <div class="product-price">
-      Price <span style="font-weight: 600;">$ {{ item.sale_price_per_sqm }}</span>
+    {{ t('catalog.list_products.wall.price') }} <span style="font-weight: 600;">$ {{ item.sale_price_per_sqm }}</span>
     </div>
   </div>
 </div>
@@ -199,7 +199,7 @@ padding:5px;" @click="selectTexture(item.id)"
           <a-row>
             <a-col :span="18" style="padding-right:5px">
               <a-button block type="default" @click="this.$router.push('/'+item.business_slug+'/'+'wall'+'/'+item.id)" style="border: none;">
-                Product Detail
+              {{ t('catalog.list_products.wall.product_detail') }}
               </a-button>
             </a-col>
             <a-col :span="6">
@@ -215,18 +215,18 @@ padding:5px;" @click="selectTexture(item.id)"
       <!-- Load More Button -->
       <div v-if="catalogItems.length > 0 && paginationInfo.has_next" class="load-more-container">
         <a-button block type="default" size="large" :loading="loadingMore" @click="loadMoreItems" class="load-more-btn">
-          {{ loadingMore ? 'Loading...' : 'Load More' }}
+        {{ loadingMore ? t('catalog.list_products.wall.loading') : t('catalog.list_products.wall.load_more') }}
         </a-button>
       </div>
 
       <!-- No items message -->
       <div v-if="!loading && catalogItems.length === 0" class="no-items">
-        <p>No products found</p>
+        <p>{{ t('catalog.list_products.wall.no_products') }}</p>
       </div>
     </div>
      <div class="apply-section hidden md:block">
       <a-button type="primary" size="large" block class="apply-button" @click="updateItemRendering()">
-        Apply
+        {{ t('catalog.list_products.wall.apply') }}
       </a-button>
     </div>
 <!-- Backdrop (mobile only) -->
@@ -242,7 +242,7 @@ padding:5px;" @click="selectTexture(item.id)"
   <div v-if="showFilterDrawer" class="filter-popover" :class="{ 'filter-popover--mobile': isMobile }">
 
         <div class="filter-drawer-header">
-          <span class="filter-drawer-title">Filters</span>
+          <span class="filter-drawer-title">{{ t('catalog.list_products.wall.filters') }}</span>
           <button class="drawer-close-btn" @click="showFilterDrawer = false">
             <svg width="16" height="16" viewBox="0 0 18 18" fill="none">
               <path d="M1 1L17 17M17 1L1 17" stroke="#333" stroke-width="2" stroke-linecap="round"/>
@@ -283,7 +283,7 @@ padding:5px;" @click="selectTexture(item.id)"
           </div> -->
 <!-- ── Room Type ── -->
           <div class="filter-group" v-if="availableRoomTypes.length > 0">
-            <div class="filter-group-label">Room Type</div>
+            <div class="filter-group-label">{{ t('catalog.list_products.wall.room_type') }}</div>
             <div class="filter-style-options">
               <button
                 v-for="room in availableRoomTypes"
@@ -301,7 +301,7 @@ padding:5px;" @click="selectTexture(item.id)"
 
           <!-- Style Filter -->
           <div class="filter-group">
-            <div class="filter-group-label">Style</div>
+            <div class="filter-group-label">{{ t('catalog.list_products.wall.style') }}</div>
             <div class="filter-style-options">
               <button
                 v-for="style in styleOptions" :key="style.value"
@@ -349,8 +349,8 @@ padding:5px;" @click="selectTexture(item.id)"
         </div>
 
         <div class="filter-drawer-footer">
-          <button class="btn-reset-filters" @click="resetDraftFilters">Reset</button>
-          <button class="btn-apply-filters" @click="applyFilters">Apply</button>
+          <button class="btn-reset-filters" @click="resetDraftFilters">{{ t('catalog.list_products.wall.reset') }}</button>
+          <button class="btn-apply-filters" @click="applyFilters">{{ t('catalog.list_products.wall.apply') }}</button>
         </div>
       </div>
     </transition>
@@ -361,7 +361,7 @@ padding:5px;" @click="selectTexture(item.id)"
 <script>
 import { HeartFilled, HeartOutlined } from '@ant-design/icons-vue';
 import PlanBlockedOverlay from '../../update_catalogue/planExpired.vue';
-
+import { useI18n } from 'vue-i18n';
     
 
 export default {
@@ -450,6 +450,10 @@ export default {
         { label: 'Other', value: 'other' },
       ],
     };
+  },
+     setup() {
+    const { t } = useI18n();
+    return { t };
   },
   props: {
     brand_data: Object,
