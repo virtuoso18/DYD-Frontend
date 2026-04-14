@@ -975,7 +975,11 @@ this.twoFingerPointers.set(event.pointerId, { x: event.clientX, y: event.clientY
 this._dragStartClient = { x: event.clientX, y: event.clientY }
 this._dragPointerType = event.pointerType  // 'mouse', 'touch', or 'pen'
 this._dragDeadZonePassed = false
-this._dragTargetPos.copy(this.chair.position)   // initialise target at current pos
+
+// AFTER — strip the halfH offset so move doesn't double-add it
+this._dragTargetPos.copy(this.chair.position)
+this._dragTargetPos.addScaledVector(this.floorNormal3, -this.chairHalfH) // initialise target at current pos
+
 this._isDraggingSmooth = false
 
 this.isDragging    = true
@@ -1178,11 +1182,11 @@ event.preventDefault()
         this._dragDeadZonePassed = false
         this._dragStartClient    = null
 
-        if (this.chair) {
-          this.chair.position.copy(this._dragTargetPos)
-          this._snapRingToChairFast()
-          this.snapLightToChair()
-        }
+        if (this.chair && this._dragDeadZonePassed) {
+              this.chair.position.copy(this._dragTargetPos)
+              this._snapRingToChairFast()
+              this.snapLightToChair()
+            }
       try { this.renderer.domElement.releasePointerCapture(event.pointerId) } catch (_) {}
 
       // ✅ FIX 3 OF 4 (single pointer path): same fix — read _spinAngleRad
@@ -1190,6 +1194,10 @@ event.preventDefault()
         this.chairRotation = ((THREE.MathUtils.radToDeg(this._spinAngleRad) % 360) + 360) % 360
       }
       this._saveLastKnownTransform()
+// At the end of onPointerUp, after all the snapping:
+if (this.chair) {
+  this._dragTargetPos.copy(this.chair.position)
+}
     },
 
     _checkAllReady() {

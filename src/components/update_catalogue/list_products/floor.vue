@@ -21,17 +21,18 @@
           font-size: 16px;
           line-height: 20px;
           letter-spacing: 0;margin-top:-6px
-          ">AI Catalog</span>
+          ">{{ t('catalog.list_products.floor.ai_catalog') }}</span>
         </div>
       </router-link>
-      <a-button size='small' type="default" class="see-all-link" @click="seeAllClicked">See all</a-button>
+      <a-button size='small' type="default" class="see-all-link" @click="seeAllClicked">{{ t('catalog.list_products.floor.see_all') }}
+</a-button>
     </div>
     
     <!-- Fixed Search Bar -->
     <div class="search-section">
       <a-input 
         v-model:value="searchText" 
-        placeholder="Search"
+       :placeholder="t('catalog.list_products.floor.search_placeholder')"
         class="search-input"
         @input="handleSearchChange"
       >
@@ -174,14 +175,14 @@ padding:5px;
                   <div v-for="color in item.colors_available.slice(0, 3)" :key="color.id" class="color-dot" :style="{ backgroundColor: color.color_hex }"></div>
                 </div>
               </div> -->
-              <div class="product-price">Price <span style="font-weight: 600;">$ {{ item.sale_price_per_sqm || 0 }}</span></div>
+              <div class="product-price">   {{ t('catalog.list_products.floor.price') }} <span style="font-weight: 600;">$ {{ item.sale_price_per_sqm || 0 }}</span></div>
             </div>
           </div>
 
           <a-row>
             <a-col :span="18" style="padding-right:5px">
               <a-button  block type="default" @click.stop="this.$router.push('/'+item.business_slug+'/'+'floor'+'/'+item.id)"  style=" border: none;">
-                Product Detail
+                  {{ t('catalog.list_products.floor.product_detail') }}
               </a-button>
             </a-col>
             <a-col :span="6" style="">
@@ -204,19 +205,19 @@ padding:5px;
           @click="loadMoreItems"
           class="load-more-btn"
         >
-          {{ loadingMore ? 'Loading...' : 'Load More' }}
+           {{ loadingMore ? t('...loading') : t('...load_more') }}
         </a-button>
       </div>
 
       <!-- No items message -->
       <div v-if="!loading && catalogItems.length === 0" class="no-items">
-        <p>No products found</p>
+        <p>{{ t('catalog.list_products.floor.no_products') }}</p>
       </div>
     </div>
 
     <div class="apply-section hidden md:block">
       <a-button type="primary" size="large" block class="apply-button" @click="updateItemRendering()">
-        Apply
+      {{ t('catalog.list_products.floor.apply') }}
       </a-button>
     </div>
 
@@ -235,7 +236,7 @@ padding:5px;
    
    
         <div class="filter-drawer-header">
-          <span class="filter-drawer-title">Filters</span>
+            <span class="filter-drawer-title">{{ t('catalog.list_products.floor.filters') }}</span>
           <button class="drawer-close-btn" @click="showFilterDrawer = false">
             <svg width="16" height="16" viewBox="0 0 18 18" fill="none">
               <path d="M1 1L17 17M17 1L1 17" stroke="#333" stroke-width="2" stroke-linecap="round"/>
@@ -262,7 +263,7 @@ padding:5px;
 
                     
           <div class="filter-group" v-if="availableRoomTypes.length > 0">
-            <div class="filter-group-label">Room Type</div>
+            <div class="filter-group-label">{{ t('catalog.list_products.floor.room_type') }}</div>
             <div class="filter-style-options">
               <button
                 v-for="room in availableRoomTypes"
@@ -279,7 +280,7 @@ padding:5px;
           
           <!-- Style Filter -->
           <div class="filter-group">
-            <div class="filter-group-label">Style</div>
+            <div class="filter-group-label">{{ t('catalog.list_products.floor.style') }}</div>
             <div class="filter-style-options">
               <button
                 v-for="style in styleOptions" :key="style.value"
@@ -319,7 +320,7 @@ padding:5px;
                 <span class="swatch-label">{{ color.title }}</span>
               </button>
               <div v-if="availableColors.length === 0" style="color:#999;font-size:12px;">
-                No colors available
+               {{ t('catalog.list_products.floor.no_colors') }}
               </div>
             </div>
           </div>
@@ -327,8 +328,8 @@ padding:5px;
         </div>
 
         <div class="filter-drawer-footer">
-          <button class="btn-reset-filters" @click="resetDraftFilters">Reset</button>
-          <button class="btn-apply-filters" @click="applyFilters">Apply</button>
+          <button class="btn-reset-filters" @click="resetDraftFilters">{{ t('catalog.list_products.floor.reset') }}</button>
+          <button class="btn-apply-filters" @click="applyFilters">{{ t('catalog.list_products.floor.apply') }}</button>
         </div>
       </div>
     </transition>
@@ -339,9 +340,15 @@ padding:5px;
 <script>
 import { HeartFilled, HeartOutlined } from '@ant-design/icons-vue';
 import PlanBlockedOverlay from '../../update_catalogue/planExpired.vue';
+import { useI18n } from 'vue-i18n';
 
 export default {
   name: 'AiCatalog',
+
+    setup() {
+    const { t } = useI18n();
+    return { t };
+  },
   
   props:{
     brand_data:Object,

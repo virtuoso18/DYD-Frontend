@@ -1,8 +1,5 @@
 <template>
-  <!-- {{planDetails}}
-  {{planIsExpired}} -->
-  <!-- {{ brand_data }} -->
-  <!-- Upgrade Modal -->
+ 
   <a-modal 
     v-model:open="showUpgradeModal" 
     centered
@@ -18,23 +15,20 @@
           <circle cx="12" cy="16" r="1" fill="#ff4d4f"></circle>
         </svg>
       </div>
-      <h2 class="modal-title">Feature Locked</h2>
-      <p class="modal-description">
-        Your current plan <strong>({{ currentPlanName }})</strong> doesn't include the 
-        <strong>Switch Furniture</strong> feature.
-      </p>
-      <p class="modal-subdescription">
-        Upgrade to unlock AI-powered furniture replacement and many more premium features!
-      </p>
+      <h2 class="modal-title">{{ t('catalog.list_products.item_replacement.feature_locked') }}</h2>
+      <p class="modal-description" v-html="t('catalog.list_products.item_replacement.feature_locked_desc', { plan: currentPlanName })"></p>
+
+      <p class="modal-subdescription">{{ t('catalog.list_products.item_replacement.feature_locked_sub') }}</p>
+
       <div class="modal-actions">
         <a-button type="primary" size="large" @click="goToUpgrade" block>
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;">
             <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
             <path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path>
           </svg>
-          Upgrade Now
+         {{ t('catalog.list_products.item_replacement.upgrade_now') }}
         </a-button>
-        <a-button size="large" @click="showUpgradeModal = false" block>Maybe Later</a-button>
+        <a-button size="large" @click="showUpgradeModal = false" block>{{ t('catalog.list_products.item_replacement.maybe_later') }}</a-button>
       </div>
     </div>
   </a-modal>
@@ -42,18 +36,16 @@
   <!-- Switch Furniture Modal -->
   <a-modal :open="swichFurnitureModel" centered @cancel="showSwitchFurnitureModel()">
     <p>
-      Furniture switching will replace all similar furniture in the room with the selected item.
-      If the room does not already contain this type of furniture, the AI will rearrange or remove
-      existing items to create enough space for it.
+      {{ t('catalog.list_products.item_replacement.switch_furniture_modal_desc') }}
     </p>
-    <template #title>Switch Furniture</template>
+    <template #title>{{ t('catalog.list_products.item_replacement.switch_furniture_modal_title') }}</template>
     <template #footer>
       <a-row>
         <a-col :sm="0" :xs="0" :lg="24" :md="24">
-          <a-button type="primary" @click="startFurrnitureSwitch">Start Furniture Switch</a-button>
+          <a-button type="primary" @click="startFurrnitureSwitch"> {{ t('catalog.list_products.item_replacement.start_furniture_switch') }}</a-button>
         </a-col>
         <a-col :sm="24" :xs="24" :lg="0" :md="0">
-          <a-button type="primary" @click="startFurrnitureSwitch_mobile">Start Furniture Switch</a-button>
+          <a-button type="primary" @click="startFurrnitureSwitch_mobile"> {{ t('catalog.list_products.item_replacement.start_furniture_switch') }}</a-button>
         </a-col>
       </a-row>
     </template>
@@ -65,12 +57,12 @@
       <a-row>
         <a-col :span="12" style="padding:0px 0px 0px 5px">
           <a-button type="default" size="large" block @click="showSwitchFurnitureModel" :disabled="!selected_item">
-            Switch Furniture
+              {{ t('catalog.list_products.item_replacement.switch_furniture') }}
           </a-button>
         </a-col>
         <a-col :span="12" style="padding:0px 0px 0px 5px">
           <a-button :disabled="!selected_item" type="primary" size="large" block @click="$emit('trigger-render-3d-object_mobile')">
-            Add 3D Object
+          {{ t('catalog.list_products.item_replacement.add_3d_object') }}
           </a-button>
         </a-col>
       </a-row>
@@ -84,17 +76,17 @@
         <router-link :to="'/'+$route.query.brand">
           <div style="display:flex;gap:10px;">
             <a-avatar size="medium" style="border:1px solid rgba(0,0,0,0.2)" :src="this.$store.state.root_media_api+brand_data.business_picture"></a-avatar>
-            <span class="!text-gray-700 py-3" style="font-family:Poppins;font-weight:700;font-style:normal;font-size:16px;line-height:20px;letter-spacing:0;margin-top:-6px">AI Catalog</span>
+            <span class="!text-gray-700 py-3" style="font-family:Poppins;font-weight:700;font-style:normal;font-size:16px;line-height:20px;letter-spacing:0;margin-top:-6px">{{ t('catalog.list_products.item_replacement.ai_catalog') }}</span>
           </div>
         </router-link>
-        <a-button size='small' type="default" class="see-all-link" @click="seeAllClicked">See all</a-button>
+        <a-button size='small' type="default" class="see-all-link" @click="seeAllClicked">{{ t('catalog.list_products.item_replacement.see_all') }}</a-button>
       </div>
 
       <!-- Search Bar -->
       <div class="search-section">
         <a-input 
           v-model:value="searchText" 
-          placeholder="Search"
+         :placeholder="t('catalog.list_products.item_replacement.search_placeholder')"
           class="search-input"
           @input="handleSearchChange"
         >
@@ -207,14 +199,14 @@ max-height: 250px;
               </div>
               <div class="product-info">
                 <div class="product-name truncate">{{ truncateText(item.name || 'No Name available', 2) }}</div>
-                <div class="product-price">Price <span style="font-weight:600;">${{item.pricing.price}}</span></div>
+                <div class="product-price">{{t('catalog.list_products.item_replacement.price')}} <span style="font-weight:600;">${{item.pricing.price}}</span></div>
               </div>
             </div>
 
             <a-row>
               <a-col :span="18" style="padding-right:5px">
                 <a-button block type="default" @click="this.$router.push('/'+item.business_slug+'/'+'product'+'/'+item.id)" style="border:none;">
-                  Product Detail
+                 {{ t('catalog.list_products.item_replacement.product_detail') }}
                 </a-button>
               </a-col>
               <a-col :span="6">
@@ -230,12 +222,12 @@ max-height: 250px;
         <!-- Load More -->
         <div v-if="catalogItems.length > 0 && paginationInfo.has_next" class="load-more-container">
           <a-button block type="default" size="large" :loading="loadingMore" @click="loadMoreItems" class="load-more-btn">
-            {{ loadingMore ? 'Loading...' : 'Load More' }}
+          {{ loadingMore ? t('catalog.list_products.item_replacement.loading') : t('catalog.list_products.item_replacement.load_more') }}
           </a-button>
         </div>
 
         <div v-if="!loading && catalogItems.length === 0" class="no-items">
-          <p>No products found</p>
+          <p>{{ t('catalog.list_products.item_replacement.no_products') }}</p>
         </div>
       </div>
 
@@ -244,12 +236,12 @@ max-height: 250px;
         <a-row>
           <a-col :span="12" style="padding:0px 0px 0px 5px">
             <a-button type="default" size="large" block @click="showSwitchFurnitureModel" :disabled="!selected_item">
-              Switch Furniture
+            {{ t('catalog.list_products.item_replacement.switch_furniture') }}
             </a-button>
           </a-col>
           <a-col :span="12" style="padding:0px 0px 0px 5px">
             <a-button :disabled="!selected_item" type="primary" size="large" block @click="$emit('trigger-render-3d-object')">
-              Add 3D Object
+            {{ t('catalog.list_products.item_replacement.add_3d_object') }}
             </a-button>
           </a-col>
         </a-row>
@@ -260,7 +252,7 @@ max-height: 250px;
         <div v-if="showFilterDrawer" class="filter-popover">
 
           <div class="filter-drawer-header">
-            <span class="filter-drawer-title">Filters</span>
+            <span class="filter-drawer-title">{{ t('catalog.list_products.item_replacement.filters') }}</span>
             <button class="drawer-close-btn" @click="showFilterDrawer = false">
               <svg width="16" height="16" viewBox="0 0 18 18" fill="none">
                 <path d="M1 1L17 17M17 1L1 17" stroke="#333" stroke-width="2" stroke-linecap="round"/>
@@ -273,29 +265,14 @@ max-height: 250px;
             <!-- Loading state for filter options -->
             <div v-if="loadingFilterOptions" style="text-align:center;padding:40px 0;">
               <a-spin />
-              <p style="margin-top:12px;color:#999;font-size:13px;">Loading filters…</p>
+              <p style="margin-top:12px;color:#999;font-size:13px;">{{ t('catalog.list_products.item_replacement.loading_filters') }}</p>
             </div>
 
             <template v-else>
-
-              <!-- ── Price Range ── -->
-              <!-- <div class="filter-group">
-                <div class="filter-group-label">Price Range</div>
-                <a-slider
-                  :min="0"
-                  :max="500000"
-                  v-model:value="draftFilters.priceRange"
-                  range
-                  :tip-formatter="(val) => '$' + val.toLocaleString('en-IN')"
-                />
-                <p class="price-range-label">
-                  ${{ draftFilters.priceRange[0].toLocaleString('en-IN') }} – ${{ draftFilters.priceRange[1].toLocaleString('en-IN') }}
-                </p>
-              </div> -->
               
               <!-- ── Room Type ── -->
               <div class="filter-group" v-if="availableRoomTypes.length > 0">
-                <div class="filter-group-label">Room Type</div>
+                <div class="filter-group-label">{{ t('catalog.list_products.item_replacement.room_type') }}</div>
                 <div class="filter-pills">
                   <button
                     v-for="room in availableRoomTypes"
@@ -312,7 +289,7 @@ max-height: 250px;
 
               <!-- ── Category ── -->
               <div class="filter-group" v-if="availableCategories.length > 0">
-                <div class="filter-group-label">Category</div>
+                <div class="filter-group-label">{{ t('catalog.list_products.item_replacement.category') }}</div>
                 <div class="filter-pills">
                   <button
                     v-for="cat in availableCategories"
@@ -329,7 +306,7 @@ max-height: 250px;
              
               <!-- ── Furniture Type ── -->
               <div class="filter-group" v-if="availableFurnitureTypes.length > 0">
-                <div class="filter-group-label">Furniture Type</div>
+                <div class="filter-group-label">{{ t('catalog.list_products.item_replacement.furniture_type') }}</div>
                 <div class="filter-pills">
                   <button
                     v-for="type in availableFurnitureTypes"
@@ -375,8 +352,8 @@ max-height: 250px;
           </div>
 
           <div class="filter-drawer-footer">
-            <button class="btn-reset-filters" @click="resetDraftFilters">Reset</button>
-            <button class="btn-apply-filters" @click="applyFilters">Apply</button>
+            <button class="btn-reset-filters" @click="resetDraftFilters">{{ t('catalog.list_products.item_replacement.reset') }}</button>
+            <button class="btn-apply-filters" @click="applyFilters">{{ t('catalog.list_products.item_replacement.apply') }}</button>
           </div>
 
         </div>
@@ -389,6 +366,7 @@ max-height: 250px;
 <script>
 import { HeartFilled, HeartOutlined } from '@ant-design/icons-vue';
 import PlanBlockedOverlay from '../../update_catalogue/planExpired.vue';
+import { useI18n } from 'vue-i18n';
 
 export default {
   name: 'AiCatalog',
@@ -398,6 +376,11 @@ export default {
     planDetails:Object,
     planIsExpired:Object,
   },
+     setup() {
+    const { t } = useI18n();
+    return { t };
+  },
+  
 
   data() {
     return {
@@ -911,14 +894,6 @@ this.smoothMobileScrolltoTop()
           }
       this.selected_item = model_id;
       
-      // console.log("model_id --->",  model_id);
-      // console.log("model_url --->",  model_url);
-      // console.log("width --->",  width);
-      // console.log("height --->",  height);
-      // console.log("depth --->",  depth);
-      // console.log("is_resizable --->",  is_resizable);
-
-
       this.$emit('change-3d-model', {
         'model_uuid': model_id,
         'model_url': model_url,
@@ -941,7 +916,7 @@ this.smoothMobileScrolltoTop()
         });
         const data = await response.json();
         this.catalogItems[itemIndex].is_liked = data.favorited;
-        this.$message.success(data.favorited ? 'Added to favorites' : 'Removed from favorites');
+        this.$message.success(data.favorited ? this.t('catalog.list_products.item_replacement.added_to_favorites') : this.t('catalog.list_products.item_replacement.removed_from_favorites'));
       } catch (error) {
         console.error('Like toggle failed', error);
         this.$message.error('Failed to update favorite');

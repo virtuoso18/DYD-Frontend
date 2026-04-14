@@ -1,13 +1,11 @@
 <template>
-<!-- {{planDetails}}
-{{planIsExpired}} -->
-<!-- {{ brand_data }} -->
+
   <div >
 
     <div class="ai-catalog-section p-1 ">
       <div class="apply-section  md:hidden">
         <a-button type="primary" size="large" block class="apply-button" @click="$emit('Apply_Light_mobile', 'magnetic-light-Renerer-apply_mobile')">
-          Apply
+          {{ t('catalog.list_products.lights.apply') }}
         </a-button>
       </div>
 
@@ -22,17 +20,17 @@
           font-size: 16px;
           line-height: 20px;
           letter-spacing: 0;margin-top:-6px
-          ">AI Catalog</span>
+          ">{{ t('list_products.lights.ai_catalog') }}</span>
         </div>
       </router-link>
-      <a-button size='small' type="default" class="see-all-link" @click="seeAllClicked">See all</a-button>
+      <a-button size='small' type="default" class="see-all-link" @click="seeAllClicked">{{ t('list_products.lights.see_all') }}</a-button>
     </div>
       
       <!-- Fixed Search Bar -->
       <div class="search-section">
         <a-input 
           v-model:value="searchText" 
-          placeholder="Search"
+         :placeholder="t('list_products.lights.search_placeholder')"
           class="search-input"
           @input="handleSearchChange"
         >
@@ -96,7 +94,7 @@
               <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1 1L9 9M9 1L1 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
             </button>
           </span>
-          <button class="clear-all-btn" @click="clearAllFilters">Clear all</button>
+          <button class="clear-all-btn" @click="clearAllFilters">{{ t('list_products.lights.clear_all') }}</button>
         </div>
       </div>
   
@@ -205,7 +203,7 @@ padding:5px;"
 
        <div class="apply-section hidden md:block">
         <a-button type="primary" size="large" block class="apply-button"  @click="$emit('Apply_Light', 'magnetic-light-Renerer-apply')">
-          Apply
+          {{ t('list_products.lights.apply') }}
         </a-button>
       </div>
 
@@ -351,11 +349,15 @@ padding:5px;"
 <script>
 import { HeartFilled, HeartOutlined } from '@ant-design/icons-vue';
 import PlanBlockedOverlay from '../../update_catalogue/planExpired.vue';
-
+import { useI18n } from 'vue-i18n';
     
 
 export default {
   name: 'AiCatalog',
+  setup() {
+    const { t } = useI18n();
+    return { t };
+  },
   data() {
     return {
       searchText: '',
