@@ -1105,7 +1105,43 @@
     "passwordChanged": "הסיסמה שונתה בהצלחה",
     "passwordChangedNotification": "שינוי הסיסמה הצליח",
     "passwordChangeFailed": "שינוי הסיסמה נכשל"
-  }
+  },
+  "accessTokens": {
+      "title": "טוקני גישה",
+      "description": "נהל טוקני אורח המאפשרים למשתמשים אנונימיים גישה לפרופיל העסק שלך.",
+      "newButton": "טוקן חדש",
+      "createModalTitle": "יצירת טוקן גישה",
+      "createButton": "צור",
+      "labelField": "תווית",
+      "labelPlaceholder": "לדוגמה: קיוסק תערוכה, פורטל שותפים",
+      "expiresAtField": "תאריך תפוגה",
+      "expiresAtPlaceholder": "בחר תאריך ושעת תפוגה",
+      "expiresAtHint": "השאר ריק לטוקן ללא תפוגה.",
+      "newTokenTitle": "הטוקן נוצר",
+      "copyWarning": "העתק את הטוקן עכשיו — הוא לא יוצג שוב.",
+      "copy": "העתק",
+      "copied": "הועתק!",
+      "copyFailed": "ההעתקה נכשלה.",
+      "unnamedToken": "טוקן ללא שם",
+      "active": "פעיל",
+      "inactive": "לא פעיל",
+      "expired": "פג תוקף",
+      "created": "נוצר",
+      "expires": "פוקע",
+      "noExpiry": "ללא תפוגה",
+      "empty": "אין טוקני גישה עדיין. צור אחד כדי להתחיל.",
+      "activate": "הפעל טוקן",
+      "deactivate": "השבת טוקן",
+      "deleteConfirm": "האם אתה בטוח שברצונך למחוק טוקן זה? לא ניתן לבטל פעולה זו.",
+      "deleteOk": "מחק",
+      "deleteCancel": "ביטול",
+      "fetchFailed": "טעינת טוקני הגישה נכשלה.",
+      "createFailed": "יצירת טוקן הגישה נכשלה.",
+      "updateSuccess": "הטוקן עודכן בהצלחה.",
+      "updateFailed": "עדכון הטוקן נכשל.",
+      "deleteSuccess": "הטוקן נמחק בהצלחה.",
+      "deleteFailed": "מחיקת הטוקן נכשלה."
+    }
 },
 "manageAccess": {
   "title": "ניהול צוות ומשימות",
@@ -1780,6 +1816,118 @@
     "after": "אחרי",
     "finaliseChanges": "שמור שינויים",
     "wallTitle": "קיר {{index}}"
-  }
+  },
+   "profileModal": {
+    "title": "השלם את הפרופיל שלך",
+    "progress": "{percent}% הושלם",
+    "completeButton": "השלם תהליך",
+    "completed": "הושלם",
 
+    "steps": {
+      "personalDetails": {
+        "title": "פרטים אישיים",
+        "description": "אנא מלא את פרטיך האישיים בצורה מדויקת כדי להבטיח תהליך חלק.",
+        "fields": {
+          "firstName": "שם פרטי",
+          "lastName": "שם משפחה",
+          "phone": "מספר טלפון"
+        }
+      },
+      "businessDetails": {
+        "title": "פרטי העסק",
+        "description": "אנא מלא את פרטי העסק שלך בצורה מדויקת.",
+        "fields": {
+          "emailVerification": "אימות אימייל",
+          "businessName": "שם העסק"
+        }
+      },
+      "products": {
+        "title": "הוסף לפחות 3 מוצרים",
+        "description": "אנא הוסף לפחות שלושה מוצרים כדי להמשיך בתהליך.",
+        "fields": {
+          "remaining": "הוסף עוד {count} מוצר(ים)"
+        }
+      },
+      "simulation": {
+        "title": "צור את הסימולציה הראשונה שלך",
+        "description": "צור את הסימולציה הראשונה שלך עם מוצרים שקיימים בקטלוג שלך.",
+        "fields": {
+          "create": "צור סימולציה ראשונה"
+        }
+      }
+    }
+  },
+   "generateHistory": {
+    "title": "היסטוריית יצירה",
+    "empty": "אין היסטוריה זמינה",
+    "generated": "נוצר",
+    "addProduct": "הוסף מוצר"
+  },
+  "side_pane_3d": {
+    "header": {
+      "title": "תמונה לאובייקט תלת־ממד",
+      "multi_view": "רב־זוויתי"
+    },
+    "texture": {
+      "locked": {
+        "title": "תכונה נעולה",
+        "description": "התוכנית הנוכחית שלך {plan} אינה כוללת העלאת טקסטורה מותאמת.",
+        "sub_description": "שדרג כדי לפתוח התאמה אישית מבוססת AI לעיצובים שלך!",
+        "features_title": "התכונות בפרימיום כוללות:",
+          "features": {
+            "unlimited": "טקסטורות ללא הגבלה",
+            "ai": "כלי AI",
+            "support": "תמיכה בעדיפות גבוהה"
+          }
+      },
+      "apply": {
+        "title": "החל טקסטורה",
+        "upload_text": "לחץ לבחירת תמונת טקסטורה",
+        "supported_formats": "נתמכים: PNG, JPG",
+        "selected": "טקסטורה נבחרה ✓",
+        "change": "שנה טקסטורה",
+        "apply_button": "החל טקסטורה"
+      },
+      "section": {
+        "title": "טקסטורות",
+        "empty": "אין טקסטורות עדיין",
+        "add": "הוסף טקסטורה"
+      }
+    },
+    "queue": {
+      "title": "סטטוס תור עיבוד",
+      "add_title": "הוסף פריט לתור",
+      "empty": "אין פריטים בתור",
+      "add_to_queue": "הוסף לתור",
+      "remove": "הסר",
+      "view_result": "צפה בתוצאה",
+      "processing": "בעיבוד",
+      "pending": "ממתין"
+    },
+    "upload": {
+      "more_images": "העלה תמונות נוספות",
+      "single_view": "תצוגה אחת",
+      "multi_view": "רב תצוגות",
+      "upload_text": "לחץ / העלה / גרור ושחרר",
+      "formats": "פורמט נתמך: png, jpeg"
+    },
+    "background": {
+      "remove": "הסר רקע",
+      "removing": "מסיר רקע..."
+    },
+    "credits": {
+      "label": "קרדיטים"
+    },
+    "generate": {
+      "button": "צור",
+      "loading": "יוצר..."
+    },
+    "common": {
+      "cancel": "ביטול",
+      "save": "שמור שינויים",
+      "upgrade_now": "שדרג עכשיו",
+      "maybe_later": "אולי אחר כך"
+    }
+  }
+  
 }

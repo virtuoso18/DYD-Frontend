@@ -105,7 +105,10 @@
 // const Realestateagent = () => import('@/views/pages/realestateagent.vue')
 // const Aivirtualtour = () => import('@/views/pages/aivirtualtour.vue')
 
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory ,createMemoryHistory} from 'vue-router'
+
+const isEmbedded = typeof window !== 'undefined' && !document.getElementById('app')
+
 import home from '@/views/home/HomeView.vue'
 import NewHome from '@/views/newhome/Home.vue'
 
@@ -121,6 +124,14 @@ import dashboard_manager from '@/views/user/dashboard.vue'
 import start_new_catalogue from '@/views/catalogue/start_new_catalogue.vue'
 import update_catelogue from '@/views/catalogue/update_catelogue.vue'
 import render_catelogue from '@/views/catalogue/render_catelogue.vue'
+// =========   =========  =========  =========  =========  =========  =========  =========  
+// api update catalogue
+// =========   =========  =========  =========  =========  =========  =========  =========  
+
+// =========   =========  =========  =========  =========  =========  =========  =========  
+// api update catalogue
+// =========   =========  =========  =========  =========  =========  =========  =========  
+ 
 // my_store
 import my_store from '@/views/store/store_manager.vue'
 import analytics from '@/views/store/pages/analytics.vue'
@@ -223,7 +234,9 @@ import Software_license_agreement from '@/views/pages/tnc/software_license_agree
 import Home_design_apply from '@/components/update_catalogue/home_design/home_design_apply.vue'
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  // history: createWebHistory(import.meta.env.BASE_URL),
+  history: isEmbedded ? createMemoryHistory() : createWebHistory(import.meta.env.BASE_URL),
+
   routes: [
     
     // =========================================== 
@@ -476,6 +489,7 @@ const router = createRouter({
       component: update_catelogue,
        meta: { requiresAuth: true }
     },
+
     {
       path: '/update-catalogue/render-results/:id?',
       name: 'render_catelogue',
@@ -827,6 +841,13 @@ const router = createRouter({
 
   ],
 },
+
+
+
+
+
+
+
 // {
 //   path: '/access-business/:business_id',
 //   component: access_manager, // This acts as the layout

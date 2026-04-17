@@ -2,109 +2,89 @@
   <div>
     <!-- main banner section -->
     <a-row>
-      <a-col :sm="24" :xs="24" :md="24" :lg="24">
-        <div
-          class="!h-[600px] md:!h-[800px]"
-          :style="{
-            backgroundImage: `url(${bannerImage})`,
-            backgroundPosition: 'center 60%',
-            backgroundSize: 'cover',
-            backgroundRepeat: 'no-repeat',
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }"
-        >
-          <div style="text-align: center">
-            <div
-              class="banner-text"
-              style="
-                border-radius: 10px;
-                font-weight: 900;
-                padding-top: 20px;
-                margin-bottom: 24px;
-              "
-            >
-              <div className="hidden md:block">
-                <div
-                  class="my-2 text-center tracking-[-0.02em]"
-                  style="
-                    font-family: Proza Libre, sans-serif;
-                    font-weight: 700;
-                    font-style: normal;
-                    font-size: 44px;
-                    line-height: 52px;
-                  "
-                >
-                  {{ t("line1") }}
-                </div>
+    <a-col :sm="24" :xs="24" :md="24" :lg="24" style="padding: 0; margin: 0;">
+  <div
+    class="!h-[600px] md:!h-[800px]"
+    style="position: relative; width: 100%; display: flex; justify-content: center; align-items: center; overflow: hidden;"
+  >
+    <!-- Background Video -->
+    <video
+      :src="bannerVideo"
+      autoplay
+      muted
+      loop
+      playsinline
+      style="
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center 60%;
+        z-index: 0;
+          transform: translateY(-100px);
 
-                <div
-                  class="my-2 text-center tracking-[-0.02em]"
-                  style="
-                    font-family: Proza Libre, sans-serif;
-                    font-weight: 700;
-                    font-style: normal;
-                    font-size: 44px;
-                    line-height: 52px;
-                  "
-                >
-                  {{ t("line2") }}
-                </div>
-              </div>
+      "
+    />
 
-              <div className="md:hidden">
-                <div
-                  class="my-2 text-[32px] !font-bold text-[#111111] !text-center !tracking-[-0.02em]"
-                  style="font-family: Proza Libre, sans-serif;"
-                >
-                  {{ t("line1") }} {{ t("line2") }}
-                </div>
-
-                <div class="hidden lg:block text-center text-2xl text-gray-600 my-2">
-                  {{ t("line2") }}
-                </div>
-              </div>
-            </div>
-
-            <a-button
-              v-if="!isLogedIn"
-              type="primary"
-              size="large"
-              style="position: relative; width: 210px; height: 64px; font-size: 28px;"
-            >
-              <span style="position: absolute; left: -10px; bottom: -10px; font-size: 23px;">✦</span>
-              <span style="position: absolute; top: 0px; right: -5px; font-size: 15px;">✦</span>
-              <span style="position: absolute; top: 15px; right: 5px; font-size: 30px;">✦</span>
-              {{ t('joinUs') }}
-            </a-button>
-
-            <br />
-
-            <div
-              className="hidden md:block"
-              style="
-                font-size: 16px;
-                font-weight: 500;
-                color: #111827;
-                text-decoration: underline;
-                transform: translateY(260px);
-              "
-              @click="handleAuthorizeClick('tryDemo')"
-            >
-              {{ t('tryDemo') }}
-            </div>
-
-            <div
-              class="md:hidden text-base font-medium text-gray-900 underline md:translate-y-0 -translate-y-0 cursor-pointer"
-              @click="handleAuthorizeClick('tryDemo')"
-            >
-              {{ t('tryDemo') }}
-            </div>
+    <!-- Content -->
+    <div style="text-align: center; position: relative; z-index: 2; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+      
+      <div
+        class="banner-text"
+        style="border-radius: 10px; font-weight: 900; padding-top: 20px; margin-bottom: 300px;"
+      >
+        <!-- Desktop -->
+        <div class="hidden md:block">
+          <div
+            class="my-2 text-center tracking-[-0.02em]"
+            style="font-family: Proza Libre, sans-serif; font-weight: 700; font-style: normal; font-size: 44px; line-height: 52px;"
+          >
+            {{ t("line1") }}
+          </div>
+          <div
+            class="my-2 text-center tracking-[-0.02em]"
+            style="font-family: Proza Libre, sans-serif; font-weight: 700; font-style: normal; font-size: 44px; line-height: 52px;"
+          >
+            {{ t("line2") }}
           </div>
         </div>
-      </a-col>
+
+        <!-- Mobile -->
+        <div class="md:hidden">
+          <div
+            class="my-2 text-[32px] !font-bold text-[#111111] !text-center !tracking-[-0.02em]"
+            style="font-family: Proza Libre, sans-serif;"
+          >
+            {{ t("line1") }} {{ t("line2") }}
+          </div>
+        </div>
+      </div>
+
+      <a-button
+        v-if="!isLogedIn"
+        type="primary"
+        size="large"
+        style="position: relative; width: 210px; height: 64px; font-size: 28px;"
+      >
+        <span style="position: absolute; left: -10px; bottom: -10px; font-size: 23px;color:black">✦</span>
+        <span style="position: absolute; top: 0px; right: -5px; font-size: 15px;">✦</span>
+        <span style="position: absolute; top: 15px; right: 5px; font-size: 30px;">✦</span>
+        {{ t('joinUs') }}
+      </a-button>
+
+      <!-- Try Demo - pinned to bottom of banner -->
+      <div
+        style="position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%); font-size: 16px; font-weight: 500; color: #111827; text-decoration: underline; cursor: pointer; white-space: nowrap;"
+        @click="handleAuthorizeClick('tryDemo')"
+      >
+        {{ t('tryDemo') }}
+      </div>
+
+    </div>
+  </div>
+</a-col>
 
       <a-col :sm="24" :xs="24" :md="24" :lg="24">
         <div></div>
@@ -1171,6 +1151,8 @@
 
 <script>
 import bannerImage from "@/assets/home_main_banner.jpg";
+
+import bannerVideo from "@/assets/Homepage/home_banner_desktop.mp4";
 import { useI18n } from "vue-i18n";
 import { notification } from "ant-design-vue";
 
@@ -1257,6 +1239,7 @@ export default {
     return {
       isLogedIn: localStorage.getItem("token") ? true : false,
       bannerImage,
+      bannerVideo,
       messageTryForFree:"",
       selectedFileData: null,
       fileRefKey: Number(new Date()),

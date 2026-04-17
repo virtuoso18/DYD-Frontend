@@ -141,7 +141,7 @@
                 size="large"
                 style="display: flex; gap: 10px; justify-content: center; align-items: center;"
               >
-                {{ selectedProduct.is_favorited }}
+                <!-- {{ selectedProduct.is_favorited }} -->
                 <div style="display: flex; gap: 10px; justify-content: center; align-items: center;"
                   v-if="selectedProduct.is_favorited">
                   <HeartFilled class="!text-red-500 text-[16px] -translate-y-0.5 leading-none" />

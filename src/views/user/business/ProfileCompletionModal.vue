@@ -13,7 +13,7 @@
           <!-- Header -->
           <div class="flex items-center justify-between mb-8">
             <h2 class="font-poppins font-medium text-lg text-gray-900">
-              Complete Your profile
+            {{ t('profileModal.title') }}
             </h2>
             <button
               @click="closeModal"
@@ -29,7 +29,7 @@
           <div class="flex items-center gap-2 mb-8 pb-6 border-b border-gray-200">
             <div class="w-2 h-2 bg-blue-600 rounded-full"></div>
             <span class="font-poppins font-medium text-sm text-blue-600">
-              {{ completionPercentage }}% completed
+            {{ t('profileModal.progress', { percent: completionPercentage }) }}
             </span>
           </div>
 
@@ -119,7 +119,7 @@
                   >
                     <span class="px-2.5 py-1 bg-green-50 border border-green-200 rounded-full text-xs font-medium text-green-700 flex items-center gap-1.5 w-fit">
                       <span class="w-1 h-1 rounded-full bg-green-600"></span>
-                      Completed
+                      {{ t('profileModal.completed') }}
                     </span>
                   </div>
                 </div>
@@ -151,7 +151,7 @@
             @click="handleComplete"
 class="w-full bg-blue-600 hover:bg-blue-700 !text-white font-poppins font-medium text-sm py-3 px-6 rounded-xl transition-colors duration-200 shadow-md hover:shadow-lg"
           >
-            Complete Process
+           {{ t('profileModal.completeButton') }}
           </button>
         </div>
       </div>
@@ -160,6 +160,8 @@ class="w-full bg-blue-600 hover:bg-blue-700 !text-white font-poppins font-medium
 </template>
 
 <script>
+import { useI18n } from "vue-i18n"; 
+
 export default {
   name: 'ProfileCompletionModal',
 
@@ -174,51 +176,67 @@ export default {
     }
   },
 
+  setup() {
+    const { t, locale } = useI18n();
+    return { t, locale };
+  },
+
   data() {
     return {
       steps: [
         {
           id: 1,
-          title: 'Personal details',
-          description: 'Please fill in your personal details accurately to ensure a smooth process.',
+          key: 'personalDetails',
           completed: false,
-          missing_fields: ['First Name', 'Last Name', 'Phone Number']
+          missing_fields: ['firstName', 'lastName', 'phone']
         },
         {
           id: 2,
-          title: 'Business details',
-          description: 'Please fill in your Business details accurately.',
+          key: 'businessDetails',
           completed: false,
-          missing_fields: ['Email Verification', 'Business Name']
+          missing_fields: ['emailVerification', 'businessName']
         },
         {
           id: 3,
-          title: 'Add at least 3 products',
-          description: 'Please add at least three products to proceed with the process.',
+          key: 'products',
           completed: false,
-          missing_fields: ['Add 2 more product(s)']
+          missing_fields: [{ key: 'remaining', count: 2 }]
         },
         {
           id: 4,
-          title: 'Generate Your First Simulation',
-          description: 'Create your first simulation with products that you have in your business AI catalog.',
+          key: 'simulation',
           completed: false,
-          missing_fields: ['Create Your First Simulation']
+          missing_fields: ['create']
         }
       ],
-      expandedSteps: [] // Tracks which steps are expanded
-    }
+      expandedSteps: []
+    };
   },
 
   computed: {
+    // Map steps with translations
+    mappedSteps() {
+      return this.steps.map(step => ({
+        ...step,
+        title: this.t(`profileModal.steps.${step.key}.title`),
+        description: this.t(`profileModal.steps.${step.key}.description`),
+        translatedMissingFields: step.missing_fields.map(field => {
+          if (typeof field === 'string') {
+            return this.t(`profileModal.steps.${step.key}.fields.${field}`);
+          } else {
+            return this.t(`profileModal.steps.${step.key}.fields.${field.key}`, { count: field.count });
+          }
+        })
+      }));
+    },
+
     completionPercentage() {
       const completed = this.steps.filter(step => step.completed).length;
       return Math.round((completed / this.steps.length) * 100);
     },
 
     sortedSteps() {
-      // Completed steps first, then incomplete steps
-      return [...this.steps].sort((a, b) => {
+      return [...this.mappedSteps].sort((a, b) => {
         if (a.completed === b.completed) return 0;
         return a.completed ? -1 : 1;
       });
@@ -236,9 +254,15 @@ export default {
 
     initialSteps: {
       immediate: true,
+      deep: true,
       handler(newSteps) {
         if (newSteps && newSteps.length > 0) {
-          this.steps = newSteps;
+          this.steps = newSteps.map(step => ({
+            id: step.id,
+            key: step.key || this.getKeyFromId(step.id),
+            completed: step.completed || false,
+            missing_fields: step.missing_fields || []
+          }));
         }
       }
     }
@@ -250,13 +274,13 @@ export default {
     },
 
     handleComplete() {
-      // this.$emit('complete');
-      this.isOpen=false
+      this.$emit('complete');
+      this.isOpen = false;
     },
 
     toggleStep(stepId) {
       const step = this.steps.find(s => s.id === stepId);
-      if (step.completed) return; // Don't expand completed steps
+      if (step.completed) return;
       
       const position = this.expandedSteps.indexOf(stepId);
       if (position > -1) {
@@ -264,6 +288,16 @@ export default {
       } else {
         this.expandedSteps.push(stepId);
       }
+    },
+
+    getKeyFromId(id) {
+      const keyMap = {
+        1: 'personalDetails',
+        2: 'businessDetails',
+        3: 'products',
+        4: 'simulation'
+      };
+      return keyMap[id] || 'unknown';
     }
   }
 }

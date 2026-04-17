@@ -1635,7 +1635,7 @@ export default {
         content: h(
           "div",
           { style: "color:red;" },
-          t('startNewCatalogue.brandMismatch.message')
+          this.t('startNewCatalogue.brandMismatch.message')
         ),
         onOk: () => {
           this.useSelectedRoom();
@@ -1876,7 +1876,7 @@ export default {
     // NEW METHOD: Save and continue - fires the API with the selected image
     async saveAndContinue() {
       if (!this.modalFile) {
-        this.$message.error(t('startNewCatalogue.errors.selectImageFirst'));
+        this.$message.error(this.t('startNewCatalogue.errors.selectImageFirst'));
         return;
       }
 
@@ -1988,7 +1988,7 @@ export default {
           }
         } else {
           const errorMsg =
-            responseData.msg || `HTTP ${response.status}: t('startNewCatalogue.errors.uploadFailed')`;
+            responseData.msg || `HTTP ${response.status}: ${t('startNewCatalogue.errors.uploadFailed')}`;
           this.uploadError = errorMsg;
           this.$message.error(errorMsg);
         }
@@ -1998,9 +1998,9 @@ export default {
         let errorMessage = "Upload failed";
 
         if (error.name === "AbortError") {
-          errorMessage = t('startNewCatalogue.errors.uploadTimeout');
+          errorMessage = this.t('startNewCatalogue.errors.uploadTimeout');
         } else if (error.message.includes("fetch")) {
-          errorMessage = t('startNewCatalogue.errors.networkError');
+          errorMessage = this.t('startNewCatalogue.errors.networkError');
         } else {
           errorMessage = error.message || "Unknown error occurred";
         }
@@ -2243,12 +2243,12 @@ export default {
       const isValidSize = file.size / 1024 / 1024 < 10;
 
       if (!isImage) {
-        this.$message.error(t('startNewCatalogue.errors.onlyImagesAllowed'));
+        this.$message.error(this.t('startNewCatalogue.errors.onlyImagesAllowed'));
         return false;
       }
 
       if (!isValidSize) {
-        this.$message.error(t('startNewCatalogue.errors.imageTooLarge'));
+        this.$message.error(this.t('startNewCatalogue.errors.imageTooLarge'));
         return false;
       }
 
@@ -2292,8 +2292,8 @@ export default {
           if (responseData.type === "out_of_monthly_virtulisation_limits") {  
             this.showInstructionsModal = false;
             this.btnText = responseData?.btn_text;
-            this.errorTitle = t('startNewCatalogue.errors.outOfVisualisationsTitle');
-            this.creditErrorMessage = t('startNewCatalogue.errors.outOfVisualisations');
+            this.errorTitle = this.t('startNewCatalogue.errors.outOfVisualisationsTitle');
+            this.creditErrorMessage = this.t('startNewCatalogue.errors.outOfVisualisations');
             this.showCreditModal = true;
             this.buid = responseData.buid;  
             return;
@@ -2302,8 +2302,8 @@ export default {
               this.showInstructionsModal = false;
               this.showMonthlySubscription_activaFound_Modal = true;
               this.btnText = responseData?.btn_text;
-              this.errorTitle = t('startNewCatalogue.modals.subscriptionExpired.expiredTitle');
-              this.creditErrorMessage = t('startNewCatalogue.errors.noActiveSubscription')
+              this.errorTitle = this.t('startNewCatalogue.modals.subscriptionExpired.expiredTitle');
+              this.creditErrorMessage = this.t('startNewCatalogue.errors.noActiveSubscription')
               this.prev_subscription= responseData?.prev_subscription;
               this.buid = responseData.buid;
               return;
@@ -2313,7 +2313,7 @@ export default {
               this.showMonthlySubscription_activaFound_Modal = true;
               this.btnText = responseData?.btn_text;
               this.errorTitle = t('startNewCatalogue.modals.subscriptionExpired.notFoundTitle');
-              this.creditErrorMessage = t('startNewCatalogue.errors.noSubscription')
+              this.creditErrorMessage = this.t('startNewCatalogue.errors.noSubscription')
               // this.prev_subscription= responseData?.prev_subscription;
               
               this.buid = responseData.buid;
@@ -2332,7 +2332,7 @@ export default {
 
         if (response.ok && !responseData.error) {
           this.uploadResult = responseData;
-          this.$message.success(t('startNewCatalogue.errors.roomProcessed'));
+          this.$message.success(this.t('startNewCatalogue.errors.roomProcessed'));
           onSuccess(responseData);
 
           this.$emit("upload-success", responseData);

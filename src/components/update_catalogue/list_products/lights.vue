@@ -20,17 +20,17 @@
           font-size: 16px;
           line-height: 20px;
           letter-spacing: 0;margin-top:-6px
-          ">{{ t('list_products.lights.ai_catalog') }}</span>
+          ">{{ t('catalog.list_products.lights.ai_catalog') }}</span>
         </div>
       </router-link>
-      <a-button size='small' type="default" class="see-all-link" @click="seeAllClicked">{{ t('list_products.lights.see_all') }}</a-button>
+      <a-button size='small' type="default" class="see-all-link" @click="seeAllClicked">{{ t('catalog.list_products.lights.see_all') }}</a-button>
     </div>
       
       <!-- Fixed Search Bar -->
       <div class="search-section">
         <a-input 
           v-model:value="searchText" 
-         :placeholder="t('list_products.lights.search_placeholder')"
+         :placeholder="t('catalog.list_products.lights.search_placeholder')"
           class="search-input"
           @input="handleSearchChange"
         >
@@ -71,19 +71,19 @@
             </button>
           </span>
           <span v-if="appliedFilters.selectedCategories.length > 0" class="filter-chip">
-            Category: {{ appliedFilters.selectedCategories.length }} selected
+            {{ t('catalog.list_products.lights.category_selected', { count: appliedFilters.selectedCategories.length }) }}
             <button class="chip-remove" @click="removeFilter('selectedCategories')">
               <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1 1L9 9M9 1L1 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
             </button>
           </span>
           <span v-if="appliedFilters.selectedLightTypes.length > 0" class="filter-chip">
-            Type: {{ appliedFilters.selectedLightTypes.length }} selected
+          {{ t('catalog.list_products.lights.type_selected', {count: appliedFilters.selectedLightTypes.length}) }}
             <button class="chip-remove" @click="removeFilter('selectedLightTypes')">
               <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1 1L9 9M9 1L1 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
             </button>
           </span>
           <span v-if="appliedFilters.selectedRoomTypes.length > 0" class="filter-chip">
-          Room: {{ appliedFilters.selectedRoomTypes.length }} selected
+        {{ t('catalog.list_products.lights.room_selected', {count: appliedFilters.selectedRoomTypes.length}) }}
           <button class="chip-remove" @click="removeFilter('selectedRoomTypes')">
             <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1 1L9 9M9 1L1 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
           </button>
@@ -94,7 +94,7 @@
               <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1 1L9 9M9 1L1 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
             </button>
           </span>
-          <button class="clear-all-btn" @click="clearAllFilters">{{ t('list_products.lights.clear_all') }}</button>
+          <button class="clear-all-btn" @click="clearAllFilters">{{ t('catalog.list_products.lights.clear_all') }}</button>
         </div>
       </div>
   
@@ -114,10 +114,10 @@
         <div v-if="!loading || catalogItems.length > 0" class="product-container" :class="{ 'grid-view': showGrid, 'list-view': !showGrid }">
           <div v-for="(item, index) in catalogItems" :key="index" @click="updateItemRendering(item.id, item.light_type, item['3d_model'],item)" style="
            background: #f2f2f2;
-border: none;
-max-height:250px;
-border-radius: 4px;
-padding:5px;"
+            border: none;
+            max-height:250px;
+            border-radius: 4px;
+            padding:5px;"
             :style="selected_light===item.id ? 'border:1px solid blue': ''">
             <div class="product-item">
             <div class="product-image" style="position: relative; overflow: hidden;">
@@ -155,11 +155,11 @@ padding:5px;"
 </div>
                 <div class="product-price">
                   <span v-if="item.pricing.is_on_sale">
-                    Price 
+                   {{ t('catalog.list_products.lights.price') }}
                     <span style="text-decoration: line-through; color: #999; margin-left: 8px;">${{ item.pricing.price }}</span>
                   </span>
                   <span v-else style="font-weight:700 ;display: flex;justify-content: space-between;width:100%">
-                    Price <span style="font-weight: 700;">${{ item.pricing.current_price }}</span>
+                    {{ t('catalog.list_products.lights.price') }} <span style="font-weight: 700;">${{ item.pricing.current_price }}</span>
                   </span>
                 </div>
               </div>
@@ -168,7 +168,7 @@ padding:5px;"
            <a-row>
               <a-col :span="18" style="padding-right:5px">
                 <a-button block type="default" @click="this.$router.push('/'+item.business_slug+'/'+'product'+'/'+item.id)"  style="border: none;"  >
-                  Product Detail
+                {{ t('catalog.list_products.lights.product_detail') }}
                 </a-button>
               </a-col>
               <a-col :span="6" style="">
@@ -191,19 +191,19 @@ padding:5px;"
             @click="loadMoreItems"
             class="load-more-btn"
           >
-            {{ loadingMore ? 'Loading...' : 'Load More' }}
+            {{ loadingMore ? t('catalog.list_products.lights.loading') : t('catalog.list_products.lights.load_more') }}
           </a-button>
         </div>
   
         <!-- No items message -->
         <div v-if="!loading && catalogItems.length === 0" class="no-items">
-          <p>No products found</p>
+          <p>{{ t('catalog.list_products.lights.no_products') }}</p>
         </div>
       </div>
 
        <div class="apply-section hidden md:block">
         <a-button type="primary" size="large" block class="apply-button"  @click="$emit('Apply_Light', 'magnetic-light-Renerer-apply')">
-          {{ t('list_products.lights.apply') }}
+          {{ t('catalog.list_products.lights.apply') }}
         </a-button>
       </div>
 
@@ -223,7 +223,7 @@ padding:5px;"
   <div v-if="showFilterDrawer" class="filter-popover" :class="{ 'filter-popover--mobile': isMobile }">
 
           <div class="filter-drawer-header">
-            <span class="filter-drawer-title">Filters</span>
+            <span class="filter-drawer-title">{{ t('catalog.list_products.lights.filters') }}</span>
             <button class="drawer-close-btn" @click="showFilterDrawer = false">
               <svg width="16" height="16" viewBox="0 0 18 18" fill="none">
                 <path d="M1 1L17 17M17 1L1 17" stroke="#333" stroke-width="2" stroke-linecap="round"/>
@@ -236,7 +236,7 @@ padding:5px;"
             <!-- Loading state for filter options -->
             <div v-if="loadingFilterOptions" style="text-align:center;padding:40px 0;">
               <a-spin />
-              <p style="margin-top:12px;color:#999;font-size:13px;">Loading filters…</p>
+              <p style="margin-top:12px;color:#999;font-size:13px;">{{ t('catalog.list_products.lights.loading_filters') }}</p>
             </div>
 
             <template v-else>
@@ -256,7 +256,7 @@ padding:5px;"
                 </p>
               </div> -->
               <div class="filter-group" v-if="availableRoomTypes.length > 0">
-              <div class="filter-group-label">Room Type</div>
+              <div class="filter-group-label">{{ t('catalog.list_products.lights.room_type') }}</div>
               <div class="filter-pills">
                 <button
                   v-for="room in availableRoomTypes"
@@ -272,7 +272,7 @@ padding:5px;"
             </div>
               <!-- ── Category ── -->
               <div class="filter-group" v-if="availableCategories.length > 0">
-                <div class="filter-group-label">Category</div>
+                <div class="filter-group-label">{{ t('catalog.list_products.lights.category') }}</div>
                 <div class="filter-pills">
                   <button
                     v-for="cat in availableCategories"
@@ -289,7 +289,7 @@ padding:5px;"
 
               <!-- ── Light Type ── -->
               <div class="filter-group" v-if="availableLightTypes.length > 0">
-                <div class="filter-group-label">Light Type</div>
+                <div class="filter-group-label">{{ t('catalog.list_products.lights.light_type') }}</div>
                 <div class="filter-pills">
                   <button
                     v-for="type in availableLightTypes"
@@ -335,8 +335,8 @@ padding:5px;"
           </div>
 
           <div class="filter-drawer-footer">
-            <button class="btn-reset-filters" @click="resetDraftFilters">Reset</button>
-            <button class="btn-apply-filters" @click="applyFilters">Apply</button>
+            <button class="btn-reset-filters" @click="resetDraftFilters">{{ t('catalog.list_products.lights.reset') }}</button>
+            <button class="btn-apply-filters" @click="applyFilters">{{ t('catalog.list_products.lights.apply') }}</button>
           </div>
 
         </div>
@@ -695,7 +695,7 @@ export default {
         }
       } catch (error) {
         console.error("Failed to fetch:", error);
-        this.$message.error('Failed to load products');
+       this.$message.error(this.t('catalog.list_products.lights.failed_to_load'));
       } finally {
         this.loading = false;
         this.loadingMore = false;
@@ -733,7 +733,7 @@ export default {
       try {
         const token = localStorage.getItem('token');
         if (!token) {
-          this.$message.warning('Please login to add favorites');
+           this.$message.warning(this.t('catalog.list_products.lights.login_to_favorite'));
           return;
         }
         const response = await fetch(
@@ -752,11 +752,11 @@ export default {
         );
         const data = await response.json();
         this.catalogItems[itemIndex].is_liked = data.favorited;
-        const message = data.favorited ? 'Added to favorites' : 'Removed from favorites';
+        const message = data.favorited ? this.t('catalog.list_products.lights.added_to_favorites') : this.t('catalog.list_products.lights.removed_from_favorites');
         this.$message.success(message);
       } catch (error) {
         console.error("Like toggle failed", error);
-        this.$message.error('Failed to update favorite');
+        this.$message.error(this.t('catalog.list_products.lights.failed_to_update_favorite'));
       } 
     }
   }

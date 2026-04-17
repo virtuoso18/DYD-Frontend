@@ -39,21 +39,21 @@
 
       <!-- Title -->
       <h2 class="text-3xl font-bold text-gray-900 text-center mb-4">
-        Feature Locked
+  {{t('side_pane_3d.texture.locked.title')}}
       </h2>
 
       <!-- Description -->
       <p class="text-base text-gray-600 text-center mb-3 leading-relaxed">
-        Your current plan 
-        <span class="font-semibold text-red-500">{{ currentPlanName }}</span> 
-        doesn't include the 
+       {{ t('side_pane_3d.texture.locked.description', { plan: currentPlanName }) }}
+        <!-- <span class="font-semibold text-red-500">{{ currentPlanName }}</span>  -->
+        <!-- doesn't include the 
         <span class="font-semibold text-gray-900">Custom Texture Upload</span> 
-        feature.
+        feature. -->
       </p>
 
       <!-- Sub Description -->
       <p class="text-sm text-white-500 text-center mb-8">
-        Upgrade to unlock AI-powered texture customization and personalize your 3D designs!
+       {{ t('side_pane_3d.texture.locked.sub_description') }}
       </p>
 
       <!-- Actions -->
@@ -67,7 +67,7 @@
             <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
             <path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path>
           </svg>
-          Upgrade Now
+         {{ t('side_pane_3d.common.upgrade_now') }}
         </button>
 
         <!-- Cancel Button -->
@@ -75,31 +75,31 @@
           @click="showTextureUpgradeModal = false"
           class="w-full h-12 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-lg transition-colors duration-200"
         >
-          Maybe Later
+        {{ t('side_pane_3d.common.maybe_later') }}
         </button>
       </div>
 
       <!-- Features Preview (Optional) -->
       <div class="mt-6 pt-6 border-t border-gray-200">
-        <p class="text-xs text-gray-500 text-center mb-3">Premium features include:</p>
+        <p class="text-xs text-gray-500 text-center mb-3">{{ t('side_pane_3d.texture.locked.features_title') }}</p>
         <div class="flex justify-center gap-4 text-xs text-gray-600">
           <div class="flex items-center gap-1">
             <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
             </svg>
-            Unlimited Textures
+            {{t('side_pane_3d.texture.locked.features.unlimited')}}
           </div>
           <div class="flex items-center gap-1">
             <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
             </svg>
-            AI Tools
+          {{t('side_pane_3d.texture.locked.features.ai')}}
           </div>
           <div class="flex items-center gap-1">
             <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
             </svg>
-            Priority Support
+           {{t('side_pane_3d.texture.locked.features.support')}}
           </div>
         </div>
       </div>
@@ -111,7 +111,7 @@
     v-model:open="openTextureModal"
     width="60%"
     style="max-width: 500px"
-    title="Apply Texture"
+ :title="t('side_pane_3d.texture.apply.title')"
     :footer="null"
     centered
   >
@@ -142,9 +142,9 @@
             "
           />
           <p style="margin: 8px 0; font-weight: 500">
-            Click to select texture image
+            {{ t('side_pane_3d.texture.apply.upload_text') }}
           </p>
-          <small style="color: #999">PNG, JPG formats supported</small>
+          <small style="color: #999">{{ t('side_pane_3d.texture.apply.supported_formats') }}</small>
         </div>
 
         <!-- Texture preview -->
@@ -158,20 +158,20 @@
               alt="Texture preview"
               style="max-width: 100%; max-height: 150px; border-radius: 4px"
             />
-            <p style="margin: 8px 0; color: #666">Texture Selected ✓</p>
+            <p style="margin: 8px 0; color: #666">{{ t('side_pane_3d.texture.apply.selected') }}</p>
           </div>
         </div>
       </div>
       <!-- Remove button -->
       <div v-if="textureImage" style="text-align: center">
         <a-button danger @click="removeSelectedTexture()">
-          Change Texture
+        {{ t('side_pane_3d.texture.apply.change') }}
         </a-button>
       </div>
 
       <!-- Apply & Cancel buttons -->
       <div style="display: flex; gap: 8px">
-        <a-button block @click="closeTextureModal()"> Cancel </a-button>
+        <a-button block @click="closeTextureModal()"> {{ t('side_pane_3d.common.cancel') }}</a-button>
        <a-button
   type="primary"
   block
@@ -180,7 +180,7 @@
   :loading="isApplyingTexture"
   class="!flex !items-center !justify-center !gap-2"
 >
-  <span>Apply Texture</span>
+  <span>{{ t('side_pane_3d.texture.apply.apply_button') }}</span>
 
   <span class="!flex !items-center !gap-1">
     (
@@ -213,7 +213,7 @@
     :footer="null"
     :closable="true"
     centered
-    title="Add Multi-View Item to Queue"
+  :title="t('side_pane_3d.queue.multi_view_add_title')"
     class="multiview-queue-modal"
   >
     <div class="multiview-queue-content">
@@ -249,7 +249,7 @@
 
               <div v-if="view.uploading" class="uploading">
                 <a-spin size="small" />
-                <small>Uploading...</small>
+                <small>{{ t('side_pane_3d.common.processing') }}</small>
               </div>
 
               <div v-if="view.image" class="multiview-queue-image">
@@ -261,7 +261,7 @@
                   class="bg-processing-overlay small"
                 >
                   <a-spin size="small" />
-                  <small>Processing...</small>
+                  <small>{{ t('side_pane_3d.common.processing') }}</small>
                 </div>
 
                 <div
@@ -321,8 +321,8 @@
           </template>
           {{
             multiViewQueueProcessingBg
-              ? "Removing Background..."
-              : "Remove Background from All Images"
+              ? t('side_pane_3d.background.removing')
+              : t('side_pane_3d.background.remove_all')
           }}
         </a-button>
       </div>
@@ -357,23 +357,23 @@
     :footer="null"
     :closable="true"
     centered
-    title="Render Queue Status"
+    :title="t('side_pane_3d.queue.title')"
     class="queue-modal"
   >
     <div class="queue-content">
       <div class="queue-header">
         <a-row :gutter="16">
           <a-col :span="6">
-            <a-statistic title="Total Items" :value="queueItemsCount" />
+            <a-statistic :title="t('side_pane_3d.queue.total')" :value="queueItemsCount" />
           </a-col>
           <a-col :span="6">
             <a-statistic
-              title="Processing"
+              :title="t('side_pane_3d.queue.processing')"
               :value="processingQueueItems.length"
             />
           </a-col>
           <a-col :span="6">
-            <a-statistic title="Pending" :value="pendingQueueItems.length" />
+            <a-statistic :title="t('side_pane_3d.queue.pending')" :value="pendingQueueItems.length" />
           </a-col>
           <a-col :span="6">
             <a-button
@@ -381,7 +381,7 @@
               @click="showAddToQueueModal"
               :disabled="!canAddToQueue"
             >
-              Add to Queue
+          {{t('side_pane_3d.queue.add_to_queue')}}
             </a-button>
           </a-col>
         </a-row>
@@ -498,7 +498,7 @@
                       size="small"
                       @click="removeFromQueue(item.id)"
                     >
-                      Remove
+                     {{t('side_pane_3d.queue.remove')}}
                     </a-button>
                     <a-button
                       v-if="
@@ -509,7 +509,7 @@
                       size="small"
                       @click="view_result(item.generated_model_id)"
                     >
-                      View Result
+                     {{t('side_pane_3d.queue.view_result')}}
                     </a-button>
                   </div>
                 </a-col>
@@ -521,7 +521,7 @@
         </a-row>
 
         <div v-if="queueItems.length === 0" class="empty-queue">
-          <a-empty description="No items in queue" />
+          <a-empty :description="t('side_pane_3d.queue.empty')" />
         </div>
       </div>
     </div>
@@ -533,7 +533,7 @@
     :footer="null"
     :closable="true"
     centered
-    title="Add Item to Render Queue"
+    :title="t('side_pane_3d.queue.add_title')"
     class="add-queue-modal"
   >
     <div class="add-queue-content">
@@ -555,8 +555,8 @@
               <PlusOutlined />
             </div>
             <div class="upload-text">
-              <p>Click to upload image for 3D generation</p>
-              <small>Support format: png, jpeg</small>
+              <p>{{t('side_pane_3d.upload.upload_text')}}</p>
+              <small>{{t('side_pane_3d.upload.formats')}}</small>
             </div>
           </div>
 
@@ -571,7 +571,7 @@
             <!-- Background removal loading overlay -->
             <div v-if="queueImageProcessingBg" class="bg-processing-overlay">
               <a-spin />
-              <p>Removing background...</p>
+              <p>{{t('side_pane_3d.background.removing')}}</p>
             </div>
 
             <div class="image-actions" v-if="!queueImageProcessingBg">
@@ -622,7 +622,7 @@
       <div class="queue-modal-actions">
         <a-row :gutter="16">
           <a-col :span="12">
-            <a-button block @click="closeAddToQueueModal"> Cancel </a-button>
+            <a-button block @click="closeAddToQueueModal">{{t('side_pane_3d.common.cancel')}}</a-button>
           </a-col>
           <a-col :span="12">
             <a-button
@@ -631,7 +631,7 @@
               @click="addToQueue"
               :disabled="!queueImageUpload"
             >
-              Add to Queue
+              {{t('side_pane_3d.queue.add_to_queue')}}
             </a-button>
           </a-col>
         </a-row>
@@ -715,12 +715,12 @@
     <div>
       <!-- Header -->
       <div class="header">
-        <span class="title">Image to 3d Object</span>
+        <span class="title">{{t('side_pane_3d.header.title')}}</span>
       </div>
 
       <!-- Multi-view Toggle -->
       <div class="multi-view-section">
-        <span>Multi-view</span>
+        <span>{{t('side_pane_3d.header.multi_view')}}</span>
         <a-switch v-model:checked="multiView" :disabled="isProcessingBg" />
       </div>
 
@@ -742,8 +742,8 @@
               <PlusOutlined />
             </div>
             <div class="upload-text">
-              <p>Click / Upload from camera / drag and drop</p>
-              <small>Support format: png, jpeg</small>
+              <p>{{t('side_pane_3d.upload.upload_text')}}</p>
+              <small>{{t('side_pane_3d.upload.formats')}}</small>
             </div>
           </div>
 
@@ -835,7 +835,7 @@
               "
             >
               <PlusOutlined />
-              Add Texture
+       {{t('side_pane_3d.texture.section.add')}}
             </a-button>
           </div>
 
@@ -1004,7 +1004,7 @@
               border-radius: 6px;
             "
           >
-            <p style="margin: 0; font-size: 12px">No textures applied yet</p>
+            <p style="margin: 0; font-size: 12px">{{t('side_pane_3d.texture.section.empty')}}</p>
           </div>
         </div>
 
@@ -1013,7 +1013,7 @@
         <!-- Update your existing "Upload more images" section to show queue info -->
         <div class="more-images-section">
           <div class="section-header" style="padding: 0 10px">
-            <p>Upload more images</p>
+            <p>{{t('side_pane_3d.upload.more_images')}}</p>
             <a-badge :count="queueItemsCount" :offset="[10, 0]">
               <a-button type="link" @click="showQueueModal" style="padding: 0">
                 View Queue
@@ -1025,7 +1025,7 @@
   </div> -->
           <div class="upload-option" @click="showAddToQueueModal">
             <CameraOutlined />
-            <small>Single View</small>
+            <small>{{t('side_pane_3d.upload.single_view')}}</small>
           </div>
 
           <!-- Queue status indicator -->
@@ -1070,7 +1070,7 @@
 
               <div v-if="view.uploading" class="uploading">
                 <a-spin size="small" />
-                <small>Uploading...</small>
+                <small>{{ t('side_pane_3d.common.uploading') }}</small>
               </div>
 
               <div v-if="view.image" class="view-image">
@@ -1151,7 +1151,7 @@
                 <CameraOutlined />
                 <CameraOutlined />
               </div>
-              <small>Multi View</small>
+              <small>{{t('side_pane_3d.upload.multi_view')}}</small>
             </div>
           </div>
 
@@ -1207,7 +1207,7 @@
           <template #icon v-if="!isGenerating">
             <ThunderboltOutlined />
           </template>
-          {{ isGenerating ? "Generating..." : "Generate" }}
+          {{ isGenerating ? t('side_pane_3d.generate.loading') : t('side_pane_3d.generate.button') }}
         </a-button>
       </div>
     </div>
@@ -1337,7 +1337,7 @@ import {
   CreditCardOutlined,
   ThunderboltOutlined,
 } from "@ant-design/icons-vue";
-
+import { useI18n } from 'vue-i18n';
 export default {
   name: "sidepanel_3d_tab",
   components: {
@@ -1433,6 +1433,10 @@ export default {
       ],
       multiViewQueueProcessingBg: false,
     };
+  },
+   setup() {
+    const { t } = useI18n();
+    return { t };
   },
 
   // Add these lifecycle hooks:

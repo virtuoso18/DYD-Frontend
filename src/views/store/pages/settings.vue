@@ -147,13 +147,16 @@
         </a-col>
       </a-row>
     </div>
+
+    <AccessTokens/>
   </div>
+  
 </template>
 
 <script>
 import { useI18n } from 'vue-i18n';
 import { message, notification } from 'ant-design-vue';
-
+import AccessTokens from '@/views/store/pages/accessTokens.vue';
 export default {
   name: 'settings',
 
@@ -161,6 +164,10 @@ export default {
     const { t, locale } = useI18n();
     return { t, locale };
   },
+
+  components: {
+     AccessTokens,
+    },
 
   data() {
     return {

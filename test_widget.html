@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="http://localhost:5173/src/widget.css" />
+  <script src="http://localhost:5173/src/widget.js" type="module"></script>
+</head>
+<body>
+
+  <h1>Testing Client Website (Test)</h1>
+  <p>This simulates WordPress / Wix / Shopify sites.</p>
+
+  <div class="container">
+    <h2>Widget Below </h2>
+
+    <!-- data-product-id="123"
+    data-product-type="sofa"
+    data-window-name="living-room" -->
+   <div data-my-widget
+        data-brand="infinity-computer-labs-adas"
+        data-label="Try in your room"
+        data-token="069a0a0e4c267bb2fca0ce61c858de48a2db91f4"
+        data-title="Visualize This Product"
+        data-height="90vh"
+        data-locale="en">
+      </div>
+    <!--  data-locale = "en/he" -->
+
+  </div>
+
+  <!-- ❌ REMOVED the manual MyWidget.init block entirely.
+       The auto-init in widget.js already handles data-my-widget divs.
+       Calling init() again would double-mount and cause errors. -->
+
+</body>
+</html>

@@ -1098,6 +1098,42 @@
     "passwordChanged": "Password changed successfully",
     "passwordChangedNotification": "Password Changed Successful",
     "passwordChangeFailed": "Failed to change password"
+  },
+  "accessTokens": {
+    "title": "Access Tokens",
+    "description": "Manage guest tokens that allow anonymous users to access your business profile.",
+    "newButton": "New Token",
+    "createModalTitle": "Create Access Token",
+    "createButton": "Create",
+    "labelField": "Label",
+    "labelPlaceholder": "e.g. Trade show kiosk, Partner portal",
+    "expiresAtField": "Expires At",
+    "expiresAtPlaceholder": "Select expiry date and time",
+    "expiresAtHint": "Leave blank for a token that never expires.",
+    "newTokenTitle": "Token Created",
+    "copyWarning": "Copy this token now — it will not be shown again.",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "copyFailed": "Failed to copy token.",
+    "unnamedToken": "Unnamed Token",
+    "active": "Active",
+    "inactive": "Inactive",
+    "expired": "Expired",
+    "created": "Created",
+    "expires": "Expires",
+    "noExpiry": "No expiry",
+    "empty": "No access tokens yet. Create one to get started.",
+    "activate": "Activate token",
+    "deactivate": "Deactivate token",
+    "deleteConfirm": "Are you sure you want to delete this token? This action cannot be undone.",
+    "deleteOk": "Delete",
+    "deleteCancel": "Cancel",
+    "fetchFailed": "Failed to load access tokens.",
+    "createFailed": "Failed to create access token.",
+    "updateSuccess": "Token updated successfully.",
+    "updateFailed": "Failed to update token.",
+    "deleteSuccess": "Token deleted successfully.",
+    "deleteFailed": "Failed to delete token."
   }
 },
 "manageAccess": {
@@ -1683,6 +1719,7 @@
         "clear_all": "Clear all",
         "price_filter": "Price: ${{min}} – ${{max}}",
         "active_filters": "Active Filters"
+       
       },
       "item_replacement": {
         "ai_catalog": "AI Catalog",
@@ -1775,7 +1812,119 @@
     "after": "After",
     "finaliseChanges": "Finalise Changes",
     "wallTitle": "Wall {{index}}"
+  },
+ "profileModal": {
+    "title": "Complete Your Profile",
+    "progress": "{percent}% completed",
+    "completeButton": "Complete Process",
+    "completed": "Completed",
+
+    "steps": {
+      "personalDetails": {
+        "title": "Personal details",
+        "description": "Please fill in your personal details accurately to ensure a smooth process.",
+        "fields": {
+          "firstName": "First Name",
+          "lastName": "Last Name",
+          "phone": "Phone Number"
+        }
+      },
+      "businessDetails": {
+        "title": "Business details",
+        "description": "Please fill in your Business details accurately.",
+        "fields": {
+          "emailVerification": "Email Verification",
+          "businessName": "Business Name"
+        }
+      },
+      "products": {
+        "title": "Add at least 3 products",
+        "description": "Please add at least three products to proceed with the process.",
+        "fields": {
+          "remaining": "Add {count} more product(s)"
+        }
+      },
+      "simulation": {
+        "title": "Generate Your First Simulation",
+        "description": "Create your first simulation with products that you have in your business AI catalog.",
+        "fields": {
+          "create": "Create Your First Simulation"
+        }
+      }
+    }
+  },
+   "generateHistory": {
+    "title": "Generate History",
+    "empty": "No history available",
+    "generated": "Generated",
+    "addProduct": "Add Product"
+  },
+  "side_pane_3d": {
+    "header": {
+      "title": "Image to 3D Object",
+      "multi_view": "Multi-view"
+    },
+    "texture": {
+      "locked": {
+        "title": "Feature Locked",
+        "description": "Your current plan {plan} doesn't include the Custom Texture Upload feature.",
+        "sub_description": "Upgrade to unlock AI-powered texture customization and personalize your 3D designs!",
+        "features_title":"Premium features include:",
+        "features": {
+          "unlimited": "Unlimited Textures",
+          "ai": "AI Tools",
+          "support": "Priority Support"
+        }
+      },
+      "apply": {
+        "title": "Apply Texture",
+        "upload_text": "Click to select texture image",
+        "supported_formats": "PNG, JPG formats supported",
+        "selected": "Texture Selected ✓",
+        "change": "Change Texture",
+        "apply_button": "Apply Texture"
+      },
+      "section": {
+        "title": "Textures",
+        "empty": "No textures applied yet",
+        "add": "Add Texture"
+      }
+    },
+    "queue": {
+      "title": "Render Queue Status",
+      "add_title": "Add Item to Render Queue",
+      "empty": "No items in queue",
+      "add_to_queue": "Add to Queue",
+      "remove": "Remove",
+      "view_result": "View Result",
+      "processing": "Processing",
+      "pending": "Pending"
+    },
+    "upload": {
+      "more_images": "Upload more images",
+      "single_view": "Single View",
+      "multi_view": "Multi View",
+      "upload_text": "Click / Upload from camera / drag and drop",
+      "formats": "Support format: png, jpeg"
+    },
+    "background": {
+      "remove": "Remove Background",
+      "removing": "Removing Background..."
+    },
+    "credits": {
+      "label": "Credits"
+    },
+    "generate": {
+      "button": "Generate",
+      "loading": "Generating..."
+    },
+    "common": {
+      "cancel": "Cancel",
+      "save": "Save Changes",
+      "upgrade_now": "Upgrade Now",
+      "maybe_later": "Maybe Later"
+    }
   }
-  
+
   
 }

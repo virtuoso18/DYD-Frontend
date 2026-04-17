@@ -1759,7 +1759,27 @@ Switch Furniture</a-button> -->
               <p>Item Replacement tools will be displayed here</p>
             </div> -->
         </div>
+     
       </div>
+    
+    <div  
+        :style="{
+          position: 'fixed',
+          bottom: '12vh',
+          right: '35px',
+          zIndex: 1000,
+          width: '56px',
+          height: '56px',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+        }" >
+
+        <!-- <QuestionCircleOutlined style="font-size: 24px" /> -->
+        <RendererCards
+              :root-api="this.$store.state.root_api"
+              :room-id="this.$route.params.id"
+        /> 
+      </div>
+    
     </a-col>
     <a-col :sm="0" :xs="0" :md="24" :lg="24">
       <div>
@@ -3419,6 +3439,24 @@ Switch Furniture</a-button> -->
           </div>
         </a-modal>
       </div>
+
+      <div  
+        :style="{
+          position: 'fixed',
+          bottom: '12vh',
+          right: '35px',
+          zIndex: 1000,
+          width: '56px',
+          height: '56px',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+        }" >
+
+        <!-- <QuestionCircleOutlined style="font-size: 24px" /> -->
+        <RendererCards
+              :root-api="this.$store.state.root_api"
+              :room-id="this.$route.params.id"
+        /> 
+      </div>
     </a-col>
   </a-row>
 </template>
@@ -3432,6 +3470,7 @@ import {
   SwapOutlined,
   MessageOutlined,
 } from "@ant-design/icons-vue";
+import RendererCards from "./RendererCards.vue";
 import canvas_floor_render from "@/components/update_catalogue/canvas_renderer/canvas_floor_render.vue";
 import canvas_item_remover_render from "@/components/update_catalogue/canvas_renderer/canvas_item_remover_render.vue";
 import canvas_lights_render from "@/components/update_catalogue/canvas_renderer/canvas_lights_render.vue";
@@ -6298,6 +6337,7 @@ this.$nextTick(() => {
   },
 
   components: {
+    RendererCards,
     SwapOutlined,
     BulbOutlined,
     PlanUpgradeModal,
