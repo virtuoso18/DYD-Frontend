@@ -1924,7 +1924,12 @@
       "upgrade_now": "Upgrade Now",
       "maybe_later": "Maybe Later"
     }
-  }
+  },
 
-  
+ 
+  "wallsRenderer": {
+    "detectingWalls": "Detecting Walls",
+    "wallDetectionInProgress": "Wall detection is in progress..."
+  }
+ 
 }

@@ -328,6 +328,8 @@
     </a-drawer>
 
     <leadsDetails></leadsDetails>
+    <GuestCreatedRooms></GuestCreatedRooms>
+    <RoomsContact></RoomsContact>
 
     <br>
     <!-- Products Table -->
@@ -467,6 +469,8 @@ import AnalyticsProductCard from '@/components/store/AnalyticsProductCard.vue'
 import dayjs from 'dayjs'
 import { MessageOutlined, OrderedListOutlined } from '@ant-design/icons-vue'
 import leadsDetails from './leadsDetails.vue'
+import GuestCreatedRooms from '@/views/store/pages/guestRooms.vue'
+import RoomsContact from '@/views/store/pages/RoomsContact.vue'
 
 Chart.register(...registerables)
 
@@ -478,6 +482,8 @@ export default {
     MessageOutlined,
     OrderedListOutlined,
     leadsDetails,
+    GuestCreatedRooms,
+    RoomsContact
   },
 
   setup() {

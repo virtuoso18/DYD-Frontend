@@ -2592,7 +2592,7 @@ Switch Furniture</a-button> -->
 
                   <!-- Right: Buttons -->
                   <div style="display: flex; align-items: center; gap: 12px">
-                    <a-button
+                    <!-- <a-button
                       @click="Change_Room_SeeAll()"
                       style="
                         border: 1px solid rgba(0, 0, 0, 0.2);
@@ -2624,7 +2624,7 @@ Switch Furniture</a-button> -->
                         />
                       </svg>
                     {{ t('catalog.buttons.change_room') }}
-                    </a-button>
+                    </a-button> -->
                     <a-button
                       style="
                         border: 1px solid rgba(0, 0, 0, 0.2);
@@ -3372,11 +3372,11 @@ import main_panel_edit_image from "@/components/update_catalogue/edit_image/main
 import history_panel_edit_image from "@/components/update_catalogue/edit_image/history_panel.vue";
 import ceiling_3d_object_renderer from "@/components/update_catalogue/renderer_3d_objects/ceiling_3d_renderer.vue";
 
-import wall_textures_bottom_drawer_menu from "@/components/update_catalogue/bottom_drawer_item_components/wall_textures.vue";
-import floor_textures_bottom_drawer_menu from "@/components/update_catalogue/bottom_drawer_item_components/floor_textures.vue";
-import furnitures_bottom_drawer_menu from "@/components/update_catalogue/bottom_drawer_item_components/furnitures.vue";
-import light_items_bottom_drawer_menu from "@/components/update_catalogue/bottom_drawer_item_components/light_items.vue";
-import fetch_all_drawer_component from "@/components/update_catalogue/bottom_drawer_item_components/fetchAllDrawer.vue";
+import wall_textures_bottom_drawer_menu from "@/widget/bottom_drawer_item_components/wall_textures.vue";
+import floor_textures_bottom_drawer_menu from "@/widget/bottom_drawer_item_components/floor_textures.vue";
+import furnitures_bottom_drawer_menu from "@/widget/bottom_drawer_item_components/furnitures.vue";
+import light_items_bottom_drawer_menu from "@/widget/bottom_drawer_item_components/light_items.vue";
+import fetch_all_drawer_component from "@/widget/bottom_drawer_item_components/fetchAllDrawer.vue";
 
 import PlanUpgradeModal from "@/views/catalogue/PlanUpgradeModal.vue";
 import { update } from "three/examples/jsm/libs/tween.module.js";
@@ -3760,6 +3760,94 @@ export default {
         throw error;
       }
     },
+
+    startBinaryMaskPolling() {
+  console.log("🚀 Starting binary mask polling...");
+ 
+  if (this.binaryMaskPollingInterval) {
+    clearInterval(this.binaryMaskPollingInterval);
+  }
+ 
+  this.binaryMaskRetryCount = 0;
+ 
+  // ✅ FIX: Changed from 2000ms to 3000ms (every 3 seconds)
+  this.binaryMaskPollingInterval = setInterval(async () => {
+    try {
+      const masksReady = await this.checkBinaryMasksStatus();
+ 
+      if (masksReady || this.binaryMaskRetryCount >= this.maxBinaryMaskRetries) {
+        clearInterval(this.binaryMaskPollingInterval);
+        this.binaryMaskPollingInterval = null;
+ 
+        if (masksReady) {
+          console.log("✅ Binary masks ready");
+          await this.fetchBinaryWallMasks();
+          
+          this.loading.canvas = false;
+          this.canvasLoading = false;
+          this.forceCanvasUpdate();
+        } else {
+          console.error("❌ Binary masks not ready after max retries");
+          this.loading.canvas = false;
+          this.canvasLoading = false;
+        }
+      } else {
+        this.binaryMaskRetryCount++;
+        console.log(
+          `⏳ Waiting for masks... (${this.binaryMaskRetryCount}/${this.maxBinaryMaskRetries})`
+        );
+        this.$message?.loading("Detecting Walls !", 1);
+        
+      }
+    } catch (error) {
+      console.error("Error in binary mask polling:", error);
+      clearInterval(this.binaryMaskPollingInterval);
+      this.binaryMaskPollingInterval = null;
+      this.loading.canvas = false;
+      this.canvasLoading = false;
+    }
+  }, 3000); // ✅ CHANGED FROM 2000 TO 3000 (3 seconds)
+},
+
+async checkBinaryMasksStatus() {
+  try {
+    const roomId = this.$route.params.id;
+    const url = `${this.$store.state.root_api}room/api/room/${roomId}/`;
+ 
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Token ${localStorage.getItem("token")}`,
+      },
+    });
+ 
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+ 
+    // ✅ FIX 1: Parse JSON response (you were missing this!)
+    const data = await response.json();
+    
+    console.log("🔍 Mask status check:", {
+      walls_ready: data?.data?.is_rendered_walls_mask,
+      objects_ready: data?.data?.is_rendered_objects_mask,
+    });
+ 
+    // ✅ FIX 2: Check both conditions
+    if (data?.data) {
+      return (
+        data.data.is_rendered_walls_mask === true &&
+        data.data.is_rendered_objects_mask === true
+      );
+    }
+ 
+    return false;
+  } catch (error) {
+    console.error("❌ Failed to check mask status:", error);
+    return false;
+  }
+},
     async loadProductDetailsAndInitialize() {
       try {
         this.canvasLoading = true;
@@ -3843,7 +3931,8 @@ export default {
 
     async loadBrandPurchasedPlanDetails() {
       try {
-        const url = `${this.$store.state.root_api}subscription/api/get-business-plan-details/${this.brand}/`;
+        console.log(this.brand);
+        const url = `${this.$store.state.root_api}subscription/api/get-business-plan-details/${this.$route.query.brand}/`;
 
         console.log(" Fetching from:", url);
 
@@ -3869,7 +3958,7 @@ export default {
           // ==================================================================
           // Plan is not purchased 
           // ==================================================================
-          if (result.planDetails.plan_name ===null){
+          if (result.planDetails?.plan_name ===null){
             this.planIsExpired = true;
           }
           // ==================================================================
@@ -4119,7 +4208,9 @@ export default {
 
       try {
         await this.fetchRoom();
-
+        // debugger
+        // fetch teh binary  masks of walls differently 
+        this.startBinaryMaskPolling()
         if (this.is_ready) {
           this.roomLoadingMessage = "Loading room configurations...";
           await Promise.all([
@@ -4388,7 +4479,7 @@ this.$nextTick(() => {
       }
     },
 
-    startRoomPolling() {
+       startRoomPolling() {
       if (this.roomPollingInterval) {
         clearInterval(this.roomPollingInterval);
       }
@@ -4545,34 +4636,6 @@ this.$nextTick(() => {
       }
     },
 
-    async fetch3d_models_generated_by_room() {
-      this.loading_generated_models_history = true;
-
-      try {
-        const roomId = this.$route.params.id;
-        const url = `${this.$store.state.root_api}engine/generated-3d-models-history/${roomId}`;
-
-        const responseData = await this.makeApiRequest(
-          url,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Token ${localStorage.getItem("token")}`,
-            },
-          },
-          "fetch_generated_3d_models",
-        );
-
-        if (responseData) {
-          this.list_history_generated_3d_models = responseData.models || [];
-        }
-      } catch (error) {
-        console.error("❌ Failed to fetch 3D models:", error);
-      } finally {
-        this.loading_generated_models_history = false;
-      }
-    },
 
     // ==========================================
     // OBJECT MASK CACHING
@@ -5824,12 +5887,7 @@ this.$nextTick(() => {
     // ==========================================
     // 3D MODEL METHODS
     // ==========================================
-    async new3DModelGenerated(e) {
-      this.generated3dModel_url =
-        this.$store.state.root_media_api + e.media_url;
-      this.model_instance_id = e.new3d_model_instance;
-      await this.fetch3d_models_generated_by_room();
-    },
+    
 
     async get_3d_rendered_model_details(generated_3d_model_id) {
       this.loading_generated_models_history = true;

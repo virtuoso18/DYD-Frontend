@@ -3975,7 +3975,7 @@ export default {
           
           // ==================================================================
           // Plan is not purchased 
-          // ==================================================================
+          // ====================== ====================== ======================
           if (result.planDetails.plan_name ===null){
             this.planIsExpired = true;
           }
@@ -4197,7 +4197,6 @@ export default {
         }
 
         if (responseData) {
-          // await this.fetchBinaryWallMasks();
           // this.forceCanvasUpdate();
           this.startPollingResetWallBinaryMask(responseData?.renderer_id);
           // this.$message.success("Floor texture applied successfully!");
@@ -4226,7 +4225,9 @@ export default {
 
       try {
         await this.fetchRoom();
-
+        // debugger
+        // fetch the binary  masks of walls differently 
+        this.startBinaryMaskPolling()
         if (this.is_ready) {
           this.roomLoadingMessage = "Loading room configurations...";
           await Promise.all([
@@ -4516,7 +4517,94 @@ this.$nextTick(() => {
         }
       }, 3000);
     },
+ 
+startBinaryMaskPolling() {
+  console.log("🚀 Starting binary mask polling...");
+ 
+  if (this.binaryMaskPollingInterval) {
+    clearInterval(this.binaryMaskPollingInterval);
+  }
+ 
+  this.binaryMaskRetryCount = 0;
+ 
+  // ✅ FIX: Changed from 2000ms to 3000ms (every 3 seconds)
+  this.binaryMaskPollingInterval = setInterval(async () => {
+    try {
+      const masksReady = await this.checkBinaryMasksStatus();
+ 
+      if (masksReady || this.binaryMaskRetryCount >= this.maxBinaryMaskRetries) {
+        clearInterval(this.binaryMaskPollingInterval);
+        this.binaryMaskPollingInterval = null;
+ 
+        if (masksReady) {
+          console.log("✅ Binary masks ready");
+          await this.fetchBinaryWallMasks();
+          
+          this.loading.canvas = false;
+          this.canvasLoading = false;
+          this.forceCanvasUpdate();
+        } else {
+          console.error("❌ Binary masks not ready after max retries");
+          this.loading.canvas = false;
+          this.canvasLoading = false;
+        }
+      } else {
+        this.binaryMaskRetryCount++;
+        console.log(
+          `⏳ Waiting for masks... (${this.binaryMaskRetryCount}/${this.maxBinaryMaskRetries})`
+        );
+        this.$message?.loading("Detecting Walls !", 1);
+        
+      }
+    } catch (error) {
+      console.error("Error in binary mask polling:", error);
+      clearInterval(this.binaryMaskPollingInterval);
+      this.binaryMaskPollingInterval = null;
+      this.loading.canvas = false;
+      this.canvasLoading = false;
+    }
+  }, 3000); // ✅ CHANGED FROM 2000 TO 3000 (3 seconds)
+},
 
+async checkBinaryMasksStatus() {
+  try {
+    const roomId = this.$route.params.id;
+    const url = `${this.$store.state.root_api}room/api/room/${roomId}/`;
+ 
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Token ${localStorage.getItem("token")}`,
+      },
+    });
+ 
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+ 
+    // ✅ FIX 1: Parse JSON response (you were missing this!)
+    const data = await response.json();
+    
+    console.log("🔍 Mask status check:", {
+      walls_ready: data?.data?.is_rendered_walls_mask,
+      objects_ready: data?.data?.is_rendered_objects_mask,
+    });
+ 
+    // ✅ FIX 2: Check both conditions
+    if (data?.data) {
+      return (
+        data.data.is_rendered_walls_mask === true &&
+        data.data.is_rendered_objects_mask === true
+      );
+    }
+ 
+    return false;
+  } catch (error) {
+    console.error("❌ Failed to check mask status:", error);
+    return false;
+  }
+},
     async fetchRoom_floor_3d_cords() {
       try {
         const roomId = this.$route.params.id;
@@ -4644,9 +4732,9 @@ this.$nextTick(() => {
         }
       } catch (error) {
         console.error("❌ Failed to fetch masks:", error);
-        this.showError("Failed to Load Masks", error.message, () =>
-          this.fetchBinaryWallMasks(),
-        );
+        // this.showError("Failed to Load Masks", error.message, () =>
+        //   this.fetchBinaryWallMasks(),
+        // );
       } finally {
         this.loading.binaryMasks = false;
       }
@@ -4989,7 +5077,6 @@ this.$nextTick(() => {
 
           // this.$message.success('Room emptied successfully!')
           // this.base_image_url = this.$store.state.root_media_api + responseData.final_output;
-          // await this.fetchBinaryWallMasks();
           // this.forceCanvasUpdate();
           // this.$message.success('Room emptied successfully!');
         }
@@ -5146,7 +5233,6 @@ this.$nextTick(() => {
               //data.finalised_result_wall_processed_image +
               //"?t=" +
               //Date.now();
-              // this.fetchBinaryWallMasks();
 
               window.location.reload();
               return;

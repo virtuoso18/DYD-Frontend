@@ -36,7 +36,7 @@
           {{ t('settings.accessTokens.description') }}
         </p>
       </div>
-      <a-button type="primary" @click="openCreateTokenModal" :icon="h(PlusOutlined)">
+      <a-button type="primary" @click="openCreateTokenModal" :icon="h(PlusOutlined)" v-if="paginatedTokens.length===0">
         {{ t('settings.accessTokens.newButton') }}
       </a-button>
     </div>
@@ -59,7 +59,7 @@
         v-for="token in paginatedTokens"
         :key="token.key"
         class="token-row"
-        @click="openTokenModal(token)"
+        
         style="cursor: pointer;"
       >
         <div style="flex: 1; min-width: 0;">
@@ -94,15 +94,16 @@
 
         <!-- Actions -->
         <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
+            <a-button type="primary" size="small" @click="openTokenModal(token)" style="display:flex;justify-content: center;align-items: center;" ><EyeOutlined /></a-button>
         
           <a-popconfirm
             placement="left"
             :title="t('settings.accessTokens.deleteConfirm')"
             :ok-text="t('settings.accessTokens.deleteOk')"
             :cancel-text="t('settings.accessTokens.deleteCancel')"
-            @confirm="deleteToken(token.key)"
+            @confirm.stop="deleteToken(token.key)"
           >
-            <a-button type="text" danger size="small" :icon="h(DeleteOutlined)" />
+            <a-button type="text" danger size="small" style="display:flex;justify-content: center;align-items: center;" ><DeleteOutlined/> </a-button>
           </a-popconfirm>
         </div>
       </div>
@@ -210,17 +211,17 @@
 import { h } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { message } from 'ant-design-vue';
-import { PlusOutlined, DeleteOutlined, CopyOutlined } from '@ant-design/icons-vue';
+import { PlusOutlined, DeleteOutlined, CopyOutlined ,EyeOutlined} from '@ant-design/icons-vue';
 import dayjs from 'dayjs';
 
 export default {
   name: 'AccessTokens',
 
-  components: { PlusOutlined, DeleteOutlined, CopyOutlined },
+  components: { PlusOutlined, DeleteOutlined, CopyOutlined,EyeOutlined },
 
   setup() {
     const { t } = useI18n();
-    return { t, h, PlusOutlined, DeleteOutlined };
+    return { t, h, PlusOutlined, DeleteOutlined,EyeOutlined };
   },
 
   data() {
@@ -263,7 +264,7 @@ export default {
       js: `<scr` + `ipt src="http://localhost:5173/src/widget.js" type="module"></scr` + `ipt>`,
       div: `<div data-my-widget
         data-brand="${brand}"
-        data-label="Try in your room :couch_and_lamp:"
+        data-label="Try in your room :"
         data-token="${token}"
         data-title="Visualize This Product"
         data-height="90vh"

@@ -1237,7 +1237,6 @@
       </div>
 
       <!-- History -->
-      <!-- History -->
       <div v-if="your_history.length || loading_user_history_rooms">
         <p class="history-label pl-2">
           <a-spin v-if="loading_user_history_rooms" /> {{t('startNewCatalogue.history.label')}}
@@ -1972,6 +1971,12 @@ props: {
           this.uploadResult = responseData;
           this.$message.success("Room processed successfully!");
 
+          const existingRooms = JSON.parse(localStorage.getItem('rooms_created') || '[]');
+          if (!existingRooms.includes(responseData.room_id)) {
+            existingRooms.push(responseData.room_id);
+          }
+          localStorage.setItem('rooms_created', JSON.stringify(existingRooms));
+
           // Close the instructions modal
           this.showInstructionsModal = false;
 
@@ -2211,41 +2216,58 @@ props: {
       }
     },
 
-    async fetchUserHistoryRooms(loadMore = false) {
-      if (loadMore) {
-        this.loading_more_history = true;
-      } else {
-        this.loading_user_history_rooms = true;
-        this.history_pagination.offset = 0;
-        this.your_history = [];
-      }
+   async fetchUserHistoryRooms(loadMore = false) {
+  if (loadMore) {
+    this.loading_more_history = true;
+  } else {
+    this.loading_user_history_rooms = true;
+    this.history_pagination.offset = 0;
+    this.your_history = [];
+  }
 
-      try {
-        const { limit, offset } = this.history_pagination;
-        const url = `${this.$store.state.root_api}room/api/user-history-rooms/?limit=${limit}&offset=${offset}`;
-        const response = await fetch(url, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Token ${localStorage.getItem("token")}`,
-          },
-        });
-        const data = await response.json();
+  try {
+    // ✅ Read room IDs from localStorage
+    const roomIds = JSON.parse(localStorage.getItem('rooms_created') || '[]');
 
-        if (data && data.results?.data) {
-          this.your_history = [...this.your_history, ...data.results.data];
-          this.history_pagination.count = data.count;
-          this.history_pagination.next = data.next;
-          // Advance offset for next load
-          this.history_pagination.offset += this.history_pagination.limit;
-        }
-      } catch (error) {
-        console.error("Failed to fetch:", error);
-      } finally {
-        this.loading_user_history_rooms = false;
-        this.loading_more_history = false;
-      }
-    },
+    if (!roomIds.length) {
+      console.warn("No room IDs found in localStorage.");
+      return;
+    }
+
+    const { limit, offset } = this.history_pagination;
+    const url = `${this.$store.state.root_api}room/api/rooms/by-ids/?limit=${limit}&offset=${offset}`;
+
+    const response = await fetch(url, {
+      method: "POST",                          
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Token ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify({ room_ids: roomIds }),  
+    });
+
+    const data = await response.json();
+
+    if (data?.error) {
+      console.error("API Error:", data.msg);
+      this.$message?.error(data.msg || "Failed to fetch rooms.");
+      return;
+    }
+
+    if (data && data.results?.data) {
+      this.your_history = [...this.your_history, ...data.results.data];
+      this.history_pagination.count = data.count;
+      this.history_pagination.next = data.next;
+      this.history_pagination.offset += this.history_pagination.limit;
+    }
+  } catch (error) {
+    console.error("Failed to fetch:", error);
+    this.$message?.error("Something went wrong while fetching rooms.");
+  } finally {
+    this.loading_user_history_rooms = false;
+    this.loading_more_history = false;
+  }
+},
 
     beforeUpload(file) {
       const isImage = file.type.startsWith("image/");
@@ -2349,6 +2371,14 @@ props: {
 
           this.$emit("upload-success", responseData);
           const { brand, window_name, product_type, product_id } = this.queryParams
+
+          
+          const existingRooms = JSON.parse(localStorage.getItem('rooms_created') || '[]');
+          if (!existingRooms.includes(responseData.room_id)) {
+            existingRooms.push(responseData.room_id);
+          }
+          localStorage.setItem('rooms_created', JSON.stringify(existingRooms));
+
           this.$router.push({
               name: "api_update_catelogue",
               params: { id: responseData.room_id },

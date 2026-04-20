@@ -285,23 +285,16 @@
       {{ t('wallsRenderer.panInstructionsTouch') }}
     </div> 
 
-    <!-- Empty State -->
-    <div v-if="!isLoading && !hasWallMasks && isReady" class="empty-state">
-      <div class="empty-content">
-        <svg
-          width="48"
-          height="48"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-        >
-          <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-          <circle cx="8.5" cy="8.5" r="1.5" />
-          <polyline points="21,15 16,10 5,21" />
-        </svg>
-        <h3>{{ t('wallsRenderer.noWallsHeader') }}</h3>
-        <p>{{ t('wallsRenderer.noWallsMessage') }}</p>
+    <!-- Wall Detection Loading State -->
+    <div v-if="!isLoading && !hasWallMasks && isReady" class="empty-state" >
+      <div class="empty-content" style="background: rgba(0,0,0,0.3);display: flex;flex-direction: column;padding:10px;border-radius:10px; justify-content: center;align-items: center;">
+        <div class="detection-spinner">
+          <div class="spinner-ring"></div>
+          <div class="spinner-ring"></div>
+          <div class="spinner-ring"></div>
+        </div>
+        <h3 style="color:white;">{{ t('wallsRenderer.detectingWalls') || 'Detecting Walls' }}</h3>
+        <p style="color:white;">{{ t('wallsRenderer.wallDetectionInProgress') || 'Wall detection is in progress...' }}</p>
       </div>
     </div>
   </div>
@@ -2484,6 +2477,71 @@ export default {
   line-height: 1.4;
 }
 
+/* ===== NEW WALL DETECTION LOADING STYLES ===== */
+.detection-spinner {
+  width: 60px;
+  height: 60px;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.spinner-ring {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: 3px solid transparent;
+  border-radius: 50%;
+  border-top-color: #1890ff;
+  box-sizing: border-box;
+}
+
+.spinner-ring:nth-child(1) {
+  animation: spinnerRotate 1.5s linear infinite;
+}
+
+.spinner-ring:nth-child(2) {
+  width: 75%;
+  height: 75%;
+  top: 12.5%;
+  left: 12.5%;
+  border-top-color: #40a9ff;
+  animation: spinnerRotate 1s linear infinite reverse;
+}
+
+.spinner-ring:nth-child(3) {
+  width: 50%;
+  height: 50%;
+  top: 25%;
+  left: 25%;
+  border-top-color: #69c0ff;
+  animation: spinnerRotate 0.75s linear infinite;
+}
+
+@keyframes spinnerRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.empty-content h3 {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.empty-content p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #999;
+  letter-spacing: 0.3px;
+}
+/* ===== END WALL DETECTION LOADING STYLES ===== */
+
 /* Overlay Canvas */
 .overlay-canvas {
   pointer-events: none;
@@ -2533,6 +2591,11 @@ export default {
     bottom: 50px;
     right: 10px;
     font-size: 10px;
+  }
+
+  .detection-spinner {
+    width: 50px;
+    height: 50px;
   }
 }
 
@@ -2681,15 +2744,6 @@ export default {
   letter-spacing: 1px;
   text-transform: uppercase;
 }
-
-
-
-
-
-
-
-
-
 
 /* modal */
 .instruction-item {

@@ -22,17 +22,20 @@
 >
  <!-- Floating close button -->
   <a-button
-    shape="circle"
-    :icon="h(CloseOutlined)"
-    @click="open = false"
-    style="position: absolute; top: 16px; right: 16px; z-index: 10;"
-  />
+    shape="circle" 
+    @click="open = false" 
+    style="position: absolute; top: 16px; right: 16px; z-index: 10;;display:flex;justify-content: center;align-items: center;"
+    >
+      <CloseOutlined style="font-size:18px;"/>
+    </a-button>
+
   <a-button
     shape="circle"
-    :icon="h(LeftCircleOutlined )"
     @click="this.$router.back()"
-    style="position: absolute; top: 16px; right: 66px; z-index: 10;"
-  />
+    style="position: absolute; top: 16px; right: 66px; z-index: 10;;display:flex;justify-content: center;align-items: center;"
+  >
+    <LeftCircleOutlined style="font-size:18px;"/>
+  </a-button>
     <!-- :destroy-on-close="true" -->
     <!-- :closable="true" -->
     <!-- @close="open = false" -->

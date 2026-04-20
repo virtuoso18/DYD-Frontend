@@ -319,23 +319,22 @@
                     Grid: {{ product.columns }}x{{ product.rows }}
                   </a-col>
 
-                  <a-col span="17">
+                  <a-col span="24">
                     <a-button
                       block
-                      class="product-detail-btn"
                       @click="handleProductDetail(product)"
                       >Product Details</a-button
                     >
                   </a-col>
 
-                  <a-col span="1"></a-col>
+                  <!-- <a-col span="1"></a-col>
                   <a-col span="4">
                   <a-button block type="default" style="padding:0;display: flex;justify-content: center;align-items: center; border: none;" 
                     @click.stop="toggleLike(product.id, products.indexOf(product))">
                     <HeartFilled v-if="product.is_liked" style="color: red; font-size: 18px;" />
                     <HeartOutlined v-else style="font-size: 18px;" />
                   </a-button>
-                </a-col>
+                </a-col> -->
                 </a-row>
               </div>
             </a-col>

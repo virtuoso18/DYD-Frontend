@@ -166,17 +166,17 @@
             </div>
   
            <a-row>
-              <a-col :span="18" style="padding-right:5px">
+              <a-col :span="24" style="padding-right:5px">
                 <a-button block type="default" @click="this.$router.push('/'+item.business_slug+'/'+'product'+'/'+item.id)"  style="border: none;"  >
                 {{ t('catalog.list_products.lights.product_detail') }}
                 </a-button>
               </a-col>
-              <a-col :span="6" style="">
+              <!-- <a-col :span="6" style="">
                 <a-button block type="default" style="padding:0;display: flex;justify-content: center;align-items: center;border: none;" @click.stop="toggleLike(item.id, index)">
                   <HeartFilled v-if="item.is_liked" style="color: red;" />
                   <HeartOutlined v-else style="font-size: 18px;" />
                 </a-button>
-              </a-col>
+              </a-col> -->
             </a-row>
           </div>
         </div>

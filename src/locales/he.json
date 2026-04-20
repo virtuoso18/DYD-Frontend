@@ -1928,6 +1928,11 @@
       "upgrade_now": "שדרג עכשיו",
       "maybe_later": "אולי אחר כך"
     }
+  },
+  "wallsRenderer": {
+    "detectingWalls": "זיהוי קירות",
+    "wallDetectionInProgress": "זיהוי הקירות בתהליך..."
   }
+
   
 }

@@ -24,9 +24,9 @@
           <div class="card-inner">
             <div class="card-placeholder">
               <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="8" y="8" width="44" height="44" rx="4" stroke="#c8b8a2" stroke-width="1.5" stroke-dasharray="4 3"/>
-                <circle cx="22" cy="24" r="5" stroke="#c8b8a2" stroke-width="1.5"/>
-                <path d="M8 40 L20 28 L30 36 L40 24 L52 38" stroke="#c8b8a2" stroke-width="1.5" stroke-linejoin="round"/>
+                <rect x="8" y="8" width="44" height="44" rx="4" stroke="#a3a2c8" stroke-width="1.5" stroke-dasharray="4 3"/>
+                <circle cx="22" cy="24" r="5" stroke="#a3a2c8" stroke-width="1.5"/>
+                <path d="M8 40 L20 28 L30 36 L40 24 L52 38" stroke="#a3a2c8" stroke-width="1.5" stroke-linejoin="round"/>
               </svg>
             </div>
           </div>
@@ -110,9 +110,9 @@
           <!-- Empty -->
           <div v-else-if="allImages.length === 0" class="modal-state">
             <svg width="48" height="48" viewBox="0 0 60 60" fill="none">
-              <rect x="8" y="8" width="44" height="44" rx="6" stroke="#c8b8a2" stroke-width="1.5" stroke-dasharray="5 4"/>
-              <circle cx="22" cy="26" r="5" stroke="#c8b8a2" stroke-width="1.5"/>
-              <path d="M8 44 L22 30 L32 40 L42 26 L52 40" stroke="#c8b8a2" stroke-width="1.5" stroke-linejoin="round"/>
+              <rect x="8" y="8" width="44" height="44" rx="6" stroke="#a3a2c8" stroke-width="1.5" stroke-dasharray="5 4"/>
+              <circle cx="22" cy="26" r="5" stroke="#a3a2c8" stroke-width="1.5"/>
+              <path d="M8 44 L22 30 L32 40 L42 26 L52 40" stroke="#a3a2c8" stroke-width="1.5" stroke-linejoin="round"/>
             </svg>
             <p>No render history found.</p>
           </div>
@@ -412,15 +412,15 @@ export default {
   width: 60px;
   height: 80px;
   border-radius: 8px;
-  border: 1.5px solid #d4c4b0;
+  border: 1.5px solid #b0b5d4;
   box-shadow: 0 4px 12px rgba(0,0,0,0.10);
   transition: transform 0.3s ease;
   overflow: hidden;
 }
 
-.stack-card--back  { top: 0; left: 0; transform: rotate(-8deg); z-index: 1; background: #f0ebe3; border-color: #c8b8a2; }
-.stack-card--mid   { top: 2px; left: 6px; transform: rotate(-3deg); z-index: 2; background: #f7f2ec; border-color: #cbbda8; }
-.stack-card--front { top: 4px; left: 12px; transform: rotate(1deg); z-index: 3; background: #fff; border-color: #b8a48e; }
+.stack-card--back  { top: 0; left: 0; transform: rotate(-8deg); z-index: 1; background: #e5e3f0; border-color: #a3a2c8; }
+.stack-card--mid   { top: 2px; left: 6px; transform: rotate(-3deg); z-index: 2; background: #eeecf7; border-color: #a8a8cb; }
+.stack-card--front { top: 4px; left: 12px; transform: rotate(1deg); z-index: 3; background: #fff; border-color: #988eb8; }
 
 .cards-stack:hover .stack-card--back  { transform: rotate(-11deg) translateY(4px); }
 .cards-stack:hover .stack-card--mid   { transform: rotate(-4deg) translateY(2px); }
@@ -457,7 +457,7 @@ export default {
 
 .placeholder-label { 
   font-size: 8px; 
-  color: #9a8a78; 
+  color: #78799a; 
   letter-spacing: 0.03em; 
   text-align: center;
 }
@@ -468,10 +468,10 @@ export default {
   align-items: center; 
   gap: 5px;
   padding: 5px 12px;
-  border: 1.5px solid #8a7a68; 
+  border: 1.5px solid #68698a; 
   border-radius: 5px;
   background: #fff; 
-  color: #5a4a38;
+  color: #383c5a;
   font-family: 'Georgia', serif; 
   font-size: 11px; 
   letter-spacing: 0.04em;
@@ -480,9 +480,9 @@ export default {
 }
 
 .history-btn:hover {
-  background: #5a4a38; 
-  color: #faf6f1; 
-  border-color: #5a4a38;
+  background: #3d385a; 
+  color: #f1f1fa; 
+  border-color: #3f385a;
   box-shadow: 0 2px 8px rgba(90,74,56,0.18);
 }
 
@@ -500,9 +500,9 @@ export default {
 }
 
 .modal-panel {
-  background: #faf6f1;
+  background: #ffffff;
   border-radius: 14px; 
-  border: 1px solid #d4c4b0;
+  border: 1px solid #b0b5d4;
   width: 100%; 
   max-width: 1000px; 
   max-height: 86vh;
@@ -538,9 +538,9 @@ export default {
 
 .modal-count {
   font-size: 11px; 
-  color: #9a8a78;
+  color: #78799a;
   font-family: 'Courier New', monospace;
-  border: 1px solid #d4c4b0; 
+  border: 1px solid #b0b5d4; 
   padding: 2px 8px; 
   border-radius: 20px;
 }
@@ -548,7 +548,7 @@ export default {
 .modal-close {
   background: none; 
   border: none; 
-  color: #9a8a78; 
+  color: #78799a; 
   cursor: pointer;
   padding: 6px; 
   border-radius: 6px; 
@@ -570,7 +570,7 @@ export default {
   justify-content: center;
   gap: 12px; 
   padding: 60px 20px; 
-  color: #9a8a78; 
+  color: #78799a; 
   font-size: 14px;
 }
 
@@ -583,7 +583,7 @@ export default {
   width: 8px; 
   height: 8px; 
   border-radius: 50%; 
-  background: #b8a48e;
+  background: #988eb8;
   animation: dot-bounce 1.2s infinite ease-in-out;
 }
 
@@ -597,7 +597,7 @@ export default {
 
 .retry-btn {
   padding: 7px 18px; 
-  border: 1.5px solid #8a7a68; 
+  border: 1.5px solid #68698a; 
   border-radius: 6px;
   background: transparent; 
   color: #5a4a38; 
@@ -613,14 +613,13 @@ export default {
 
 /* ── Image Grid ── Proper responsive grid ────────────── */
 .modal-grid {
-  display: flex;                 /* instead of grid */
-  flex-direction: row;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 16px;
   padding: 20px 24px;
-  overflow-x: auto;              /* horizontal scroll */
-  overflow-y: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
   flex: 1;
-  scroll-behavior: smooth;
 }
 
 .modal-grid::-webkit-scrollbar { 
@@ -628,29 +627,29 @@ export default {
 }
 
 .modal-grid::-webkit-scrollbar-track { 
-  background: #f0ebe3; 
+  background: #e5e3f0; 
 }
 
 .modal-grid::-webkit-scrollbar-thumb { 
-  background: #c8b8a2; 
+  background: #a3a2c8; 
   border-radius: 3px; 
 }
 
+
 .grid-item {
-  min-width: 220px;   /* key for horizontal layout */
+  /* remove: min-width: 220px; */
+  /* remove: flex-shrink: 0; */
   height: 160px;
-  flex-shrink: 0;     /* prevent shrinking */
-  
   position: relative;
   border-radius: 10px;
   overflow: hidden;
   background: #ede6dc;
-  border: 1px solid #d4c4b0;
+  border: 1px solid #b0b5d4;
   cursor: pointer;
-
   animation: grid-in 0.3s ease both;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
+
 .grid-item:hover {
   transform: translateY(-3px);
   box-shadow: 0 8px 20px rgba(0,0,0,0.12);
@@ -822,12 +821,12 @@ export default {
 }
 
 .lightbox-sep   { 
-  color: #8a7a68; 
+  color: #68698a; 
 }
 
 .lightbox-date  { 
   font-size: 12px; 
-  color: #c8b8a2; 
+  color: #a3a2c8; 
   font-family: 'Courier New', monospace; 
 }
 
@@ -836,7 +835,7 @@ export default {
   font-size: 11px;
   border-left: 1px solid rgba(255,255,255,0.2);
   padding-left: 12px;
-  color: #c8b8a2;
+  color: #a3a2c8;
 }
 
 .split-layout {

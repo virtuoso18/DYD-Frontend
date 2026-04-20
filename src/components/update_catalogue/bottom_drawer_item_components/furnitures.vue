@@ -519,7 +519,6 @@
     
     <a-button
       block
-      class="product-detail-btn"
       style="flex: 1;"
       @click="handleProductDetail(product)"
     >
@@ -527,14 +526,14 @@
     </a-button>
 
     <!-- Fixed: removed nested a-col, just a plain a-button -->
-    <a-button
+    <!-- <a-button
       type="default"
       style="padding: 0; width: 36px; display: flex; justify-content: center; align-items: center; border: none; flex-shrink: 0;"
       @click.stop="toggleLike(product.id, products.indexOf(product))"
     >
       <HeartFilled v-if="product.is_liked" style="color: red; font-size: 18px;" />
       <HeartOutlined v-else style="font-size: 18px;" />
-    </a-button>
+    </a-button> -->
 
       
           </div>          

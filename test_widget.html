@@ -1,8 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="http://localhost:5173/src/widget.css" />
   <script src="http://localhost:5173/src/widget.js" type="module"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 16px;
+      font-family: sans-serif;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    /* Mobile */
+    @media (max-width: 600px) {
+      h1 { font-size: 1.4rem; }
+      h2 { font-size: 1.1rem; }
+
+      [data-my-widget] {
+        width: 100%;
+      }
+    }
+
+    /* Tablet */
+    @media (min-width: 601px) and (max-width: 1024px) {
+      h1 { font-size: 1.8rem; }
+
+      [data-my-widget] {
+        width: 100%;
+      }
+    }
+
+    /* Desktop */
+    @media (min-width: 1025px) {
+      body {
+        padding: 32px;
+      }
+
+      [data-my-widget] {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
 <body>
 
@@ -10,19 +60,19 @@
   <p>This simulates WordPress / Wix / Shopify sites.</p>
 
   <div class="container">
-    <h2>Widget Below </h2>
+    <h2>Widget Below</h2>
 
     <!-- data-product-id="123"
     data-product-type="sofa"
     data-window-name="living-room" -->
-   <div data-my-widget
-        data-brand="infinity-computer-labs-adas"
-        data-label="Try in your room"
-        data-token="069a0a0e4c267bb2fca0ce61c858de48a2db91f4"
-        data-title="Visualize This Product"
-        data-height="90vh"
-        data-locale="en">
-      </div>
+    <div data-my-widget
+         data-brand="infinity-computer-labs-adas"
+         data-label="Try in your room"
+         data-token="f503e4fb85fd242aa3384396b799811f8af21708"
+         data-title="Visualize This Product"
+         data-height="90vh"
+         data-locale="en">
+    </div>
     <!--  data-locale = "en/he" -->
 
   </div>

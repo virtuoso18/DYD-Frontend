@@ -1535,12 +1535,19 @@ FinaliseChanges
             size="large"
             type="primary"
             block
+           @click="openContactModal" 
             >
             <!-- @click="AddRoomitemstocart" -->
             <ShoppingCartOutlined style="font-size: 20px;color:white;" />
             Confirm Purchase 
           </a-button>
         </div>
+        <contact
+        :isOpen="showContactModal"
+        @close="closeContactModal"
+        @success="handleContactSuccess"
+        @error="handleContactError"
+      />
 
        
       </a-col>
@@ -1861,6 +1868,7 @@ import {
 } from "@ant-design/icons-vue";
 import BusinessRatingModal from "@/widget/ratings.vue";
 import ProductsUsedList from "@/views/catalogue/ProductsUsedList.vue";
+import contact from "@/widget/contact.vue";
 import { h } from "vue";
 
 export default {
@@ -1874,6 +1882,7 @@ props: {
 components: {
     BusinessRatingModal,
     ProductsUsedList,
+    contact,
     LeftOutlined,
     QuestionCircleOutlined,
     HomeOutlined,
@@ -1990,7 +1999,9 @@ components: {
         "#a0d911",
         "#2f54eb",
       ],
-      current_renderer_id:''
+      current_renderer_id:'',
+
+      showContactModal: false
     };
   },
 
@@ -2005,7 +2016,24 @@ watch: {
 
 
 methods: {
-  
+   openContactModal() {
+    console.log('this.$route.params.id----ROOM ID---->',`${this.$route.params.id}`)
+      this.showContactModal = true;
+    },
+
+    closeContactModal() {
+      this.showContactModal = false;
+    },
+
+    handleContactSuccess(data) {
+      console.log('Contact saved successfully:', data);
+      // Optional: Show success message, refresh data, etc.
+    },
+
+    handleContactError(error) {
+      console.error('Contact save failed:', error);
+      // Optional: Show error message, log error, etc.
+    },
     onRoomImageLoad() {
       this.imageLoadedMap["room"] = false;
       setTimeout(() => {
