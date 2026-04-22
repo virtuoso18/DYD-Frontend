@@ -252,6 +252,19 @@
                           style="border-radius: 6px; background: #f3f4f6; border: 1px solid #e5e7eb; resize: none;"
                         />
                       </div>
+
+                      <div style="margin-bottom: 16px;">
+                  <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">
+                    Original Product Link
+                  
+                  </label>
+                  <a-input
+                    v-model:value="form.original_item_link"
+                    placeholder="https://example.com/product/..."
+                    style="border-radius: 6px; background: #f3f4f6; border: 1px solid #e5e7eb;"
+                  />
+                </div>
+
                 <div style="margin-bottom: 16px;">
   <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">
     Room Type <span style="color: red;">*</span>
@@ -472,6 +485,7 @@ export default defineComponent({
       height: 100.00, // Changed from tile_height
       available_colors: [],
       is_active: true,
+      original_item_link:''
     });
 
     const selectedImages = ref([]);
@@ -511,6 +525,7 @@ export default defineComponent({
       form.title = 'DYD Floor Texture';
       form.description = '';
       form.texture_style = 'Modern';
+      form.original_item_link = '';
       form.sale_price_per_sqm = null;
       form.tile_width = 100.00;
       form.tile_height = 100.00;

@@ -1,4 +1,5 @@
 <template>
+<!-- {{this.$route}} -->
 <div
     v-if="showRemoveObjectModal"
     class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/10 backdrop-blur-sm"

@@ -1295,8 +1295,8 @@ FinaliseChanges
               border-radius: 10px;
               width: 800px;
               height: 500px;
-            "
-          >
+            " >
+         
             <div class="w-full h-full">
               <div
                 class="loading-screen"
@@ -1381,7 +1381,7 @@ FinaliseChanges
         "
       >
         <h3 style="text-align: center; margin: 0 0 15px 0">
-          Congratulation!<br />
+          Congratulation!<br/> 
           Your photo already set.
         </h3>
 

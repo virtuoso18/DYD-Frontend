@@ -53,9 +53,9 @@
 </template>
 
 <script setup>
-import { ref, onMounted, h } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { CloseOutlined,LeftCircleOutlined } from '@ant-design/icons-vue'
+import { CloseOutlined, LeftCircleOutlined } from '@ant-design/icons-vue'
 
 const props = defineProps({
   mode:        { type: String, default: 'floating' },
@@ -70,9 +70,15 @@ const props = defineProps({
 const open = ref(false)
 const router = useRouter()
 
-// On mount, navigate to / with the props as query params
-// so StartNewCatalogue receives them via route.query
 onMounted(() => {
+  // Store widget params on the router instance so the global guard can access them
+  router._widgetParams = {
+    brand:        props.brand       || undefined,
+    window_name:  props.windowName  || undefined,
+    product_type: props.productType || undefined,
+    product_id:   props.productId   || undefined,
+  }
+
   router.replace({
     name: 'api-start-new-catalogue',
     query: {

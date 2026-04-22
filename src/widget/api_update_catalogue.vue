@@ -3580,21 +3580,22 @@ export default {
     };
   },
 
-  props: {
-  brand: { type: String, default: null },
-  windowName: { type: String, default: null },
-  productType: { type: String, default: null },
-  productId: { type: String, default: null },
-},
- computed: {
-    queryParams() {
-    return {
-      brand:       this.brand       ?? this.$route.query?.brand,
-      window_name: this.windowName  ?? this.$route.query?.window_name,
-      product_type:this.productType ?? this.$route.query?.product_type,
-      product_id:  this.productId   ?? this.$route.query?.product_id,
-    }
+ props: {
+    roomId:      { type: String, default: null },
+    brand:       { type: String, default: null },
+    windowName:  { type: String, default: null },
+    productType: { type: String, default: null },
+    productId:   { type: String, default: null },
   },
+ computed: {
+   queryParams() {
+      return {
+        brand:        this.brand,
+        window_name:  this.windowName,
+        product_type: this.productType,
+        product_id:   this.productId,
+      }
+    },
     
     objectMasksLoadingStatus() {
       if (
@@ -3646,7 +3647,6 @@ export default {
   },
 
   async mounted() {
-    this.loadBrandPurchasedPlanDetails();
 
     await this.initializeComponent();
     if (this.$route.query.home_design) {
@@ -3662,6 +3662,8 @@ export default {
     ) {
       this.loadProductDetailsAndInitialize();
     }
+    this.loadBrandPurchasedPlanDetails();
+
   },
 
   beforeUnmount() {
@@ -3809,6 +3811,7 @@ export default {
   }, 3000); // ✅ CHANGED FROM 2000 TO 3000 (3 seconds)
 },
 
+
 async checkBinaryMasksStatus() {
   try {
     const roomId = this.$route.params.id;
@@ -3932,7 +3935,9 @@ async checkBinaryMasksStatus() {
     async loadBrandPurchasedPlanDetails() {
       try {
         console.log(this.brand);
-        const url = `${this.$store.state.root_api}subscription/api/get-business-plan-details/${this.$route.query.brand}/`;
+        const url = `${this.$store.state.root_api}subscription/api/get-business-plan-details/${this.queryParams.brand}/`;
+        console.log(this.queryParams);
+        debugger
 
         console.log(" Fetching from:", url);
 
@@ -4216,7 +4221,7 @@ async checkBinaryMasksStatus() {
           await Promise.all([
             this.fetchBinaryWallMasks(),
             // this.fetchRoom_floor_3d_cords(),
-            this.fetch3d_models_generated_by_room(),
+            // this.fetch3d_models_generated_by_room(),
           ]);
 
           console.log("✅ Component initialized");

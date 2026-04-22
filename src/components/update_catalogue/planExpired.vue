@@ -1,4 +1,5 @@
 <template>
+  <!-- {{this.$route.query}} -->
     <div v-if="planDetails === null || planDetails === undefined" style="text-align:center"> Loading... </div>
   <div v-else-if="isPlanBlocked" class="plan-blocked-overlay">
     <div class="plan-blocked-popup">

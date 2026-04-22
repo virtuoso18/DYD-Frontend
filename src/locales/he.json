@@ -1430,6 +1430,26 @@
       }
     }
   },
+  "guest_rooms": {
+  "title": "חדרים שיצרו אורחים",
+  "filters": { "search": "חיפוש לפי מזהה..." },
+  "table": {
+    "image": "תמונה",
+    "room_id": "מזהה חדר",
+    "used_products": "מוצרים בשימוש",
+    "status": "סטטוס",
+    "created_at": "נוצר בתאריך",
+    "updated_at": "עודכן בתאריך"
+  },
+  "status": {
+    "active": "פעיל",
+    "inactive": "לא פעיל"
+  },
+  "pagination": {
+    "total": "סה\"כ",
+    "records": "רשומות"
+  }
+},
     "chat": {
     "messages_title": "הודעות",
     "search_placeholder": "חיפוש לפי שם",
@@ -1732,7 +1752,7 @@
           "switch_furniture": "החלף רהיטים",
           "add_3d_object": "הוסף 3D",
           "feature_locked": "תכונה נעולה",
-          "feature_locked_desc": "התוכנית הנוכחית שלך <strong>({{plan}})</strong> אינה כוללת את תכונת <strong>החלפת הרהיטים</strong>.",
+          "feature_locked_desc": "התוכנית הנוכחית שלך <strong>({plan})</strong> אינה כוללת את תכונת <strong>החלפת הרהיטים</strong>.",
           "feature_locked_sub": "שדרג כדי לפתוח החלפת רהיטים מבוססת AI ועוד תכונות פרימיום רבות!",
           "upgrade_now": "שדרג עכשיו",
           "maybe_later": "אולי מאוחר יותר",
@@ -1815,7 +1835,7 @@
     "before": "לפני",
     "after": "אחרי",
     "finaliseChanges": "שמור שינויים",
-    "wallTitle": "קיר {{index}}"
+    "wallTitle": "קיר {index}"
   },
    "profileModal": {
     "title": "השלם את הפרופיל שלך",
@@ -1928,11 +1948,6 @@
       "upgrade_now": "שדרג עכשיו",
       "maybe_later": "אולי אחר כך"
     }
-  },
-  "wallsRenderer": {
-    "detectingWalls": "זיהוי קירות",
-    "wallDetectionInProgress": "זיהוי הקירות בתהליך..."
   }
-
   
 }

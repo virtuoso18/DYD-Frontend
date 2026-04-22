@@ -386,24 +386,38 @@
                           style="border-radius: 6px; background: #f3f4f6; border: 1px solid #e5e7eb; resize: none;"
                         />
                       </div>
-                <div style="margin-bottom: 16px;">
-  <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">
-    Room Type <span style="color: red;">*</span>
-  </label>
-  <a-select
-    v-model:value="selectedRoomType"
-    placeholder="Select room type"
-    style="width: 100%;"
-    :style="{ background: '#f3f4f6' }"
-    :loading="loadingRoomTypes"
-    :allow-clear="true"
-    @change="handleRoomTypeChange"
-  >
-    <a-select-option v-for="rt in roomTypes" :key="rt.id" :value="rt.id">
-      {{ rt.name }}
-    </a-select-option>
-  </a-select>
-</div>
+
+                      <div style="margin-bottom: 16px;">
+                      <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">
+                        Original Product Link
+                        <span style="font-size: 12px; color: #6b7280;">&nbsp;(Optional)</span>
+                      </label>
+                      <a-input
+                        v-model:value="form.original_item_link"
+                        placeholder="https://example.com/product/..."
+                        style="border-radius: 6px; background: #f3f4f6; border: 1px solid #e5e7eb;"
+                      />
+                    </div>
+
+
+                        <div style="margin-bottom: 16px;">
+                        <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">
+                          Room Type <span style="color: red;">*</span>
+                        </label>
+                        <a-select
+                          v-model:value="selectedRoomType"
+                          placeholder="Select room type"
+                          style="width: 100%;"
+                          :style="{ background: '#f3f4f6' }"
+                          :loading="loadingRoomTypes"
+                          :allow-clear="true"
+                          @change="handleRoomTypeChange"
+                        >
+                          <a-select-option v-for="rt in roomTypes" :key="rt.id" :value="rt.id">
+                            {{ rt.name }}
+                          </a-select-option>
+                        </a-select>
+                      </div>
                       <!-- Texture Style, Brand, Model Number Row -->
                       <a-row :gutter="12" style="margin-bottom: 16px;">
                         <a-col :span="12">
@@ -599,6 +613,7 @@ export default defineComponent({
     const form = reactive({
       title: 'DYD Floor Texture',
       description: '',
+      original_item_link: '',
       texture_style: 'Modern',
       sale_price_per_sqm: null,
       // tile_width: 100.00,
@@ -645,6 +660,7 @@ const selectedRoomTypeName = ref(null);
     const resetForm = () => {
       form.title = 'DYD Floor Texture';
       form.description = '';
+      form.original_item_link = '',
       form.texture_style = 'Modern';
       form.sale_price_per_sqm = null;
       form.tile_width = 100.00;

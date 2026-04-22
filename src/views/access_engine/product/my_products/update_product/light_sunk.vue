@@ -125,6 +125,26 @@
             <a-textarea v-model:value="productForm.description" :rows="4" placeholder="Product Description" style="border-radius: 8px; resize: none;" />
           </div>
 
+           <div style="margin-bottom: 20px">
+            <label
+              style="
+                display: block;
+                margin-bottom: 6px;
+                font-weight: 500;
+                font-size: 14px;
+                color: #374151;
+              "
+            >
+              Original Product Link
+            </label>
+            <a-input
+              v-model:value="productForm.original_item_link"
+              placeholder="https://example.com/product/..."
+              style="border-radius: 8px"
+              size="large"
+            />
+          </div>
+
           <!-- Room Type, Category, Furniture Type, Price -->
           <a-row :gutter="16" style="margin-bottom: 20px;">
 
@@ -293,6 +313,7 @@ export default {
       productForm: {
         name: '',
         description: '',
+        original_item_link: '',
         short_description: '',
         furniture_type: '',
         light_type: '',
@@ -528,6 +549,7 @@ export default {
         this.productForm = {
           name: this.selectedProduct.name || '',
           description: this.selectedProduct.description || '',
+          original_item_link: this.selectedProduct.original_item_link || '',
           short_description: this.selectedProduct.short_description || '',
           furniture_type: this.selectedProduct.furniture_type || '',
           light_type: this.selectedProduct.light_type || '',
@@ -874,6 +896,7 @@ export default {
         const productData = new FormData();
         productData.append('name', this.productForm.name);
         productData.append('description', this.productForm.description);
+        productData.append('original_item_link', this.productForm.original_item_link || "");
         productData.append('furniture_type', this.productForm.furniture_type);
 
         if (this.productForm.light_type) {

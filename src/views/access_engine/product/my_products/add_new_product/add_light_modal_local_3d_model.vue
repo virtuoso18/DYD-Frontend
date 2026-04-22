@@ -301,6 +301,17 @@
                         style="border-radius: 6px; background: #f3f4f6; border: 1px solid #e5e7eb; resize: none;"
                       />
                     </div>
+                    <div style="margin-bottom: 16px;">
+                    <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">
+                      Original Product Link
+                      <span style="font-size: 12px; color: #6b7280;">&nbsp;(Optional)</span>
+                    </label>
+                    <a-input
+                      v-model:value="productForm.original_item_link"
+                      placeholder="https://example.com/product/..."
+                      style="border-radius: 6px; background: #f3f4f6; border: 1px solid #e5e7eb;"
+                    />
+                  </div>
         
                     <!-- NEW: Room Type, Category, Type, Price Row -->
                <a-row :gutter="12" style="margin-bottom: 16px;">
@@ -669,6 +680,7 @@ export default {
       productForm: {
         name: '',
         description: '',
+        original_item_link: '',
         category_name: [],
         furniture_type: '',
         pricing: { price: null },
@@ -1220,6 +1232,7 @@ export default {
       this.productForm = {
         name: '',
         description: '',
+        original_item_link: '', 
         category_name: [],
         furniture_type: '',
         pricing: { price: null },
@@ -1420,6 +1433,7 @@ export default {
 
         formData.append('name', this.productForm.name);
         formData.append('description', this.productForm.description || '');
+        formData.append('original_item_link', this.productForm.original_item_link || '');
         formData.append('category_name', this.categoryNameDisplay);
         formData.append('light_type', 'hanging');
         if (this.productForm.furniture_type) {

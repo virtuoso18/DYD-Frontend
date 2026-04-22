@@ -132,7 +132,7 @@
   <!-- class="integration-modal" -->
   <div class="modal-header">
     <h3>{{  'Integration Code' }}</h3>
-    <p class="modal-description">Copy and paste the following code snippets to integrate the widget</p>
+    <p class="modal-description">Copy and paste the following code snippets to integrate the DYD in your Wix, Wordpress, Shopify site.</p>
   </div>
 
   <div class="snippets-container">
@@ -144,7 +144,7 @@
           <span>Copy</span>
         </button></span>
       </div>
-      <div style="line-height: 29px;margin-bottom:10px;">
+      <div style="line-height: 29px;margin-bottom:20px;width:100%;overflow-x: scroll;overflow-y: hidden;">
         <code class="snippet-code">{{ widgetSnippets.css }}</code>
         
         <code class="snippet-code">{{ widgetSnippets.js }}</code>
@@ -253,25 +253,46 @@ export default {
     return this.tokens.slice(start, start + this.pageSize);
   }, // ✅ REQUIRED
 
+  // widgetSnippets() {
+  //   if (!this.selectedToken) return { css: '', js: '', div: '' };
+
+  //   const token = this.selectedToken.key;
+  //   const brand = this.businessSlug;
+
+  //   return {
+  //     css: `<link rel="stylesheet" href="http://localhost:5173/src/widget.css" />`,
+  //     js: `<scr` + `ipt src="http://localhost:5173/src/widget.js" type="module"></scr` + `ipt>`,
+  //     div: `<div data-my-widget
+  //       data-brand="${brand}"
+  //       data-label="Try in your room :"
+  //       data-token="${token}"
+  //       data-title="Visualize This Product"
+  //       data-height="90vh"
+  //       data-locale="en">
+  //     </div>`
+  //   };
+  // }
   widgetSnippets() {
-    if (!this.selectedToken) return { css: '', js: '', div: '' };
+  if (!this.selectedToken) return { css: '', js: '', div: '' };
 
-    const token = this.selectedToken.key;
-    const brand = this.businessSlug;
+  const token = this.selectedToken.key;
+  const brand = this.businessSlug;
 
-    return {
-      css: `<link rel="stylesheet" href="http://localhost:5173/src/widget.css" />`,
-      js: `<scr` + `ipt src="http://localhost:5173/src/widget.js" type="module"></scr` + `ipt>`,
-      div: `<div data-my-widget
-        data-brand="${brand}"
-        data-label="Try in your room :"
-        data-token="${token}"
-        data-title="Visualize This Product"
-        data-height="90vh"
-        data-locale="en">
-      </div>`
-    };
-  }
+  const baseUrl = window.location.origin;
+
+  return {
+    css: `<link rel="stylesheet" href="${baseUrl}/src/widget.css" />`,
+    js: `<scr` + `ipt src="${baseUrl}/src/widget.js" type="module"></scr` + `ipt>`,
+    div: `<div data-my-widget
+      data-brand="${brand}"
+      data-label="Try in your room :"
+      data-token="${token}"
+      data-title="Visualize This Product"
+      data-height="90vh"
+      data-locale="en">
+    </div>`
+  };
+}
 },
   mounted() {
     this.fetchTokens();
@@ -508,7 +529,7 @@ h4 {
 }
 
 .snippets-container {
-  padding: 20px 24px;
+  /* padding: 20px 24px; */
   display: flex;
   flex-direction: column;
   gap: 20px;

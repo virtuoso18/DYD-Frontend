@@ -1260,7 +1260,7 @@
                   v-if="!imageLoadedMap[histry_card.id]"
                   class="history-image-skeleton"
                 ></div>
-
+<!-- {{ histry_card.brand }} -->
                 <!-- Preload image -->
                 <img
                   :src="$store.state.root_media_api + histry_card.image"
@@ -2101,16 +2101,16 @@ props: {
     useSelectedRoom() {
       if (this.selectedImage) {
         const { brand, window_name, product_type, product_id } = this.queryParams
-
-
+        console.log('------------------- ------------ --------- ----------- --');
+        console.log(brand);
+        debugger
         if (this.queryParams.brand
  === this.selectedImage?.brand) {
           this.$router.push({
             name: "api_update_catelogue",
             params: { id: this.selectedImage.id },
             query: {
-              brand: this.selectedImage.brand || this.queryParams.brand
-,
+              brand: brand,
               window_name: window_name,
               product_type: product_type,
               product_id: product_id,

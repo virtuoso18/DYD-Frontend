@@ -81,41 +81,7 @@
                   border-radius: 10px;
                 "
               />
-              <!-- <a-button 
-  type="text" 
-  danger 
-  @click="remove3DModel"
-  style="
-    position: absolute; 
-    top: 12px; 
-    right: 12px;
-    background: rgba(255,255,255,0.9); 
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    border-radius: 6px; 
-    width: 30px; 
-    height: 30px; 
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 1;
-  "
->
-  <template #icon>
-    <svg 
-      width="14" 
-      height="14" 
-      viewBox="0 0 24 24" 
-      fill="none" 
-      stroke="currentColor" 
-      stroke-width="2"
-      style="display: block;"
-    >
-      <line x1="18" y1="6" x2="6" y2="18"></line>
-      <line x1="6" y1="6" x2="18" y2="18"></line>
-    </svg>
-  </template>
-</a-button> -->
+ 
             </div>
 
             <!-- Upload 3D Model Area -->
@@ -620,6 +586,26 @@
               style="border-radius: 8px; resize: none"
             />
           </div>
+          <div style="margin-bottom: 20px">
+          <label
+            style="
+              display: block;
+              margin-bottom: 6px;
+              font-weight: 500;
+              font-size: 14px;
+              color: #374151;
+            "
+          >
+            Original Product Link
+            <span style="font-size: 12px; color: #6b7280">&nbsp;(Optional)</span>
+          </label>
+          <a-input
+            v-model:value="productForm.original_item_link"
+            placeholder="https://example.com/product/..."
+            style="border-radius: 8px"
+            size="large"
+          />
+        </div>
 
           <!-- Category, Type, Price -->
           <a-row :gutter="16" style="margin-bottom: 20px">
@@ -1857,6 +1843,7 @@ export default {
       productForm: {
         name: "",
         description: "",
+        original_item_link: "",
         category_name: "",
         furniture_type: "",
         pricing: { price: "", sale_price: "" },
@@ -2466,6 +2453,7 @@ handleSelectFocus() {
     this.productForm = {
       name: this.selectedProduct.name || "",
       description: this.selectedProduct.description || "",
+      original_item_link: this.selectedProduct.original_item_link || "",
       category_name: this.selectedProduct.category?.name || "",
       furniture_type: this.selectedProduct.furniture_type || "",
       pricing: {
@@ -3192,6 +3180,7 @@ handleSelectFocus() {
         const productData = new FormData();
         productData.append("name", this.productForm.name);
         productData.append("description", this.productForm.description);
+        productData.append("original_item_link", this.productForm.original_item_link || "");
         productData.append("category_name", this.productForm.category_name);
         productData.append("furniture_type", this.productForm.furniture_type);
         productData.append("price", this.productForm.pricing.price);

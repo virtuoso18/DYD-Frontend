@@ -1988,7 +1988,7 @@ export default {
           }
         } else {
           const errorMsg =
-            responseData.msg || `HTTP ${response.status}: ${t('startNewCatalogue.errors.uploadFailed')}`;
+            responseData.msg || `HTTP ${response.status}: ${this.t('startNewCatalogue.errors.uploadFailed')}`;
           this.uploadError = errorMsg;
           this.$message.error(errorMsg);
         }

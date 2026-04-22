@@ -380,6 +380,26 @@
             />
           </div>
 
+          <div style="margin-bottom: 20px">
+            <label
+              style="
+                display: block;
+                margin-bottom: 6px;
+                font-weight: 500;
+                font-size: 14px;
+                color: #374151;
+              "
+            >
+              Original Product Link           
+            </label>
+            <a-input
+              v-model:value="textureForm.original_item_link"
+              placeholder="https://example.com/product/..."
+              style="border-radius: 8px"
+              size="large"
+            />
+        </div>
+
           <!-- Texture Style, Brand, Model Number -->
           <a-row :gutter="16" style="margin-bottom: 20px">
             <a-col :span="6">
@@ -927,6 +947,7 @@ export default {
       textureForm: {
         title: "",
         description: "",
+        original_item_link: "",
         texture_style: "",
         brand: "",
         model_number: "",
@@ -1049,6 +1070,7 @@ export default {
         this.textureForm = {
           title: this.selectedTexture.title || "",
           description: this.selectedTexture.description || "",
+          original_item_link: this.selectedTexture.original_item_link || "",
           texture_style: this.selectedTexture.texture_style || "",
           brand: this.selectedTexture.brand || "",
           model_number: this.selectedTexture.model_number || "",

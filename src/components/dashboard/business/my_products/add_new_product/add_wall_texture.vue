@@ -260,6 +260,17 @@
     style="border-radius: 6px; background: #f3f4f6; border: 1px solid #e5e7eb; resize: none;"
   />
 </div>
+<div style="margin-bottom: 16px;">
+  <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">
+    Original Product Link
+  
+  </label>
+  <a-input
+    v-model:value="form.original_item_link"
+    placeholder="https://example.com/product/..."
+    style="border-radius: 6px; background: #f3f4f6; border: 1px solid #e5e7eb;"
+  />
+</div>
 
   <div style="margin-bottom: 16px;">
   <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">
@@ -380,6 +391,7 @@ export default defineComponent({
       tile_width: 100.00,
       tile_height: 100.00,
       available_colors: [],
+      original_item_link: ''
     });
 
     const selectedImages = ref([]);
@@ -418,6 +430,7 @@ const selectedRoomTypeName = ref(null);
     const resetForm = () => {
       form.title = 'DYD Wall Texture';
       form.description = '';
+      form.original_item_link = '';
       form.texture_style = 'Modern';
       form.sale_price_per_sqm = null;
       form.tile_width = 100.00;

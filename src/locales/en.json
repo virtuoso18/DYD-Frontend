@@ -1424,6 +1424,43 @@
     }
   }
 },
+"guest_rooms": {
+  "title": "Guest Created Rooms",
+  "filters": { "search": "Search by ID..." },
+  "table": {
+    "image": "Image", "room_id": "Room ID",
+    "used_products": "Products Used", "status": "Status",
+    "created_at": "Created At", "updated_at": "Updated At"
+  },
+  "status": { "active": "Active", "inactive": "Inactive" },
+  "pagination": { "total": "Total", "records": "records" }
+},
+"contact_modal": {
+    "title": "Contact Details",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email Address",
+    "contactNumber": "Contact Number",
+    "firstNamePlaceholder": "Enter your first name",
+    "lastNamePlaceholder": "Enter your last name",
+    "emailPlaceholder": "you@example.com",
+    "contactNumberPlaceholder": "+1 234 567 8900",
+    "saveButton": "Save Contact Details",
+    "errors": {
+      "firstNameRequired": "First name is required",
+      "firstNameMinLength": "First name must be at least 2 characters",
+      "lastNameRequired": "Last name is required",
+      "lastNameMinLength": "Last name must be at least 2 characters",
+      "emailRequired": "Email address is required",
+      "emailInvalid": "Please enter a valid email address",
+      "contactNumberRequired": "Contact number is required",
+      "contactNumberInvalid": "Please enter a valid contact number (10-15 digits)"
+    },
+    "messages": {
+      "success": "Contact details saved successfully!",
+      "error": "Failed to save contact details. Please try again."
+    }
+  },
 "chat": {
     "messages_title": "Messages",
     "search_placeholder": "Search by name",
@@ -1728,7 +1765,7 @@
         "switch_furniture": "Switch Furniture",
         "add_3d_object": "Add 3D Object",
         "feature_locked": "Feature Locked",
-        "feature_locked_desc": "Your current plan <strong>({{plan}})</strong> doesn't include the <strong>Switch Furniture</strong> feature.",
+        "feature_locked_desc": "Your current plan <strong>({plan})</strong> doesn't include the <strong>Switch Furniture</strong> feature.",
         "feature_locked_sub": "Upgrade to unlock AI-powered furniture replacement and many more premium features!",
         "upgrade_now": "Upgrade Now",
         "maybe_later": "Maybe Later",
@@ -1811,7 +1848,7 @@
     "before": "Before",
     "after": "After",
     "finaliseChanges": "Finalise Changes",
-    "wallTitle": "Wall {{index}}"
+    "wallTitle": "Wall {index}"
   },
  "profileModal": {
     "title": "Complete Your Profile",
@@ -1924,12 +1961,7 @@
       "upgrade_now": "Upgrade Now",
       "maybe_later": "Maybe Later"
     }
-  },
-
- 
-  "wallsRenderer": {
-    "detectingWalls": "Detecting Walls",
-    "wallDetectionInProgress": "Wall detection is in progress..."
   }
- 
+
+  
 }

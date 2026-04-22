@@ -376,6 +376,19 @@
                     style="border-radius: 6px; background: #f3f4f6; border: 1px solid #e5e7eb; resize: none;"
                   />
                 </div>
+
+                   <div style="margin-bottom: 16px;">
+                    <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">
+                      Original Product Link
+                    </label>
+                    <a-input
+                      v-model:value="productForm.original_item_link"
+                      placeholder="https://example.com/product/..."
+                      style="border-radius: 6px; background: #f3f4f6; border: 1px solid #e5e7eb;"
+                    />
+                </div>
+
+
     
                 <!-- Category, Type, Price Row -->
                  <a-row :gutter="12" style="margin-bottom: 16px;">
@@ -883,6 +896,7 @@ export default {
       productForm: {
         name: '',
         description: '',
+        original_item_link: '',
         category_name: [],
         furniture_type: '',
         pricing: { price: null },
@@ -1327,6 +1341,7 @@ export default {
       this.productForm = {
         name: defaults.name || '',
         description: defaults.description || '',
+        original_item_link: '',
         category_name: defaults.category_name || [],
         furniture_type: defaults.furniture_type || '',
         pricing: { 
@@ -1790,6 +1805,7 @@ export default {
         this.$message.error('At least one product image is required');
         return false;
       }
+      if (this.selectedTextures.length === 0) { this.$message.error('Please upload at least one texture image'); return false; }
       // if (!this.local3dModelUrl && !this.rendered_modal_3D_id) {
       //   console.error('3D model is required');
       //   return false;
@@ -1810,6 +1826,7 @@ export default {
         formData.append('variation_id', this.prepopulatedData.id);
         formData.append('name', this.productForm.name);
         formData.append('description', this.productForm.description || '');
+        formData.append('original_item_link', this.productForm.original_item_link || '');
         formData.append('category_name', this.categoryNameDisplay);
         
         if (this.productForm.furniture_type) {

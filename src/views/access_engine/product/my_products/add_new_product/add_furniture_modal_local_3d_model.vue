@@ -267,6 +267,17 @@
               />
             </div>
 
+            <div style="margin-bottom: 16px;">
+            <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">
+              Original Product Link
+            </label>
+            <a-input
+              v-model:value="productForm.original_item_link"
+              placeholder="https://example.com/product/..."
+              style="border-radius: 6px; background: #f3f4f6; border: 1px solid #e5e7eb;"
+            />
+          </div>
+
             <!-- Room Type, Category, Type, Price Row -->
             <a-row :gutter="12" style="margin-bottom: 16px;">
               <a-col :span="6">
@@ -589,6 +600,7 @@ export default {
       productForm: {
         name: this.defaultValues.name || '',
         description: this.defaultValues.description || '',
+        original_item_link: this.defaultValues.original_item_link || '',
         category_name: this.defaultValues.category_name || [],
         furniture_type: this.defaultValues.furniture_type || '',
         pricing: { price: this.defaultValues.pricing?.price || null },
@@ -833,6 +845,7 @@ export default {
       this.productForm = {
         name: defaults.name || '',
         description: defaults.description || '',
+        original_item_link: defaults.original_item_link || '',
         category_name: defaults.category_name || [],
         furniture_type: defaults.furniture_type || '',
         pricing: { price: defaults.pricing?.price || null },
@@ -1179,6 +1192,7 @@ export default {
         const formData = new FormData();
         formData.append('name', this.productForm.name);
         formData.append('description', this.productForm.description || '');
+        formData.append('original_item_link', this.productForm.original_item_link || '');
         formData.append('category_name', this.categoryNameDisplay);
         if (this.productForm.furniture_type) formData.append('furniture_type', this.productForm.furniture_type);
         formData.append('price', this.productForm.pricing.price);

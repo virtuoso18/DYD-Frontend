@@ -234,6 +234,18 @@
               />
             </div>
 
+            <div style="margin-bottom: 16px;">
+            <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #374151;">
+              Original Product Link
+            </label>
+            <a-input
+              v-model:value="form.original_item_link"
+              placeholder="https://example.com/product/..."
+              style="border-radius: 6px; background: #f3f4f6; border: 1px solid #e5e7eb;"
+            />
+          </div>
+
+
             <!-- Room Type and Category Row -->
             <a-row :gutter="12" style="margin-bottom: 16px;">
               <!-- Room Type -->
@@ -393,6 +405,7 @@ export default {
       form: {
         name: '',
         description: '',
+        original_item_link: '',
         category_name: [],
         furniture_type: 'Modern',
         price: null,
@@ -658,6 +671,7 @@ export default {
         const formData = new FormData();
         formData.append('name', this.form.name);
         formData.append('description', this.form.description || '');
+        formData.append('original_item_link', this.form.original_item_link || ''); 
         formData.append('furniture_type', this.form.furniture_type);
         formData.append('price', this.form.price);
         formData.append('light_type', this.form.light_type);
@@ -714,6 +728,7 @@ export default {
       this.allCategories = [];
       this.form.name = '';
       this.form.description = '';
+      this.original_item_link= '';
       this.form.category_name = [];
       this.form.furniture_type = 'Modern';
       this.form.price = null;
